@@ -1,0 +1,3 @@
+-e git://github.com/django/django@36c82ac8#egg=django
+celery
+django-celery
