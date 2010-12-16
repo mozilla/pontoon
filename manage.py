@@ -38,5 +38,8 @@ except ImportError:
             " Please come back and try again later.")
         raise
 
+import djcelery
+djcelery.setup_loader()
+
 if __name__ == "__main__":
     execute_manager(settings)

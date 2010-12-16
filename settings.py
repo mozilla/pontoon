@@ -82,6 +82,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    'djcelery',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     # 'django.contrib.sessions',
@@ -92,3 +93,13 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+## Celery
+BROKER_HOST = 'localhost'
+BROKER_PORT = 5672
+BROKER_USER = 'bam'
+BROKER_PASSWORD = 'bam'
+BROKER_VHOST = 'bam'
+BROKER_CONNECTION_TIMEOUT = 0.1
+CELERY_RESULT_BACKEND = 'amqp'
+CELERY_IGNORE_RESULT = True
