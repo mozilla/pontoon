@@ -1,0 +1,16 @@
+settings_local.py
+*.py[co]
+*.sw[po]
+.coverage
+pip-log.txt
+docs/_gh-pages
+build.py
+.DS_Store
+/media/img/uploads
+*-min.css
+*-all.css
+*-min.js
+*-all.js
+vendor
+.noseids
+tmp/*
