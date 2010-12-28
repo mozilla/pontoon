@@ -1,3 +1,3 @@
 [submodule "vendor"]
 	path = vendor
-	url = git://github.com/jbalogh/bam-lib.git
+	url = git://github.com/mozilla/playdoh-lib.git
