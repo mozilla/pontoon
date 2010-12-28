@@ -25,6 +25,9 @@ For development, you can run this in a [virtualenv environment][virtualenv]:
     easy_install pip
     pip install -r requirements/compiled.txt
 
+For more information on vendor libraries, read [Packaging in Zamboni][packaging].
+
+[packaging]: http://jbalogh.github.com/zamboni/topics/packages/
 [virtualenv]: http://pypi.python.org/pypi/virtualenv
 
 License
