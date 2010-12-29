@@ -14,7 +14,10 @@ Requirements
 You need Python 2.6.
 
 This project is set up to use a vendor library, i.e. a subdirectory ``vendor``
-that contains all pure Python libraries required by this project.
+that contains all pure Python libraries required by this project. After
+checkout, run:
+
+    git submodule update --init --recursive
 
 In addition, there are compiled libraries (such as Jinja2) that you will need
 to build yourself, either by installing them from ``pypi`` or by using your
