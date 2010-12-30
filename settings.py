@@ -103,6 +103,8 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
+AUTHENTICATION_BACKENDS = ('django_sha256.auth.Sha256Backend',)
+
 ## Celery
 BROKER_HOST = 'localhost'
 BROKER_PORT = 5672
