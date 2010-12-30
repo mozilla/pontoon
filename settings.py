@@ -92,6 +92,7 @@ ROOT_URLCONF = '%s.urls' % ROOT_PACKAGE
 INSTALLED_APPS = (
     'djcelery',
     'django.contrib.auth',
+    'django_sha256',  # Load after auth to monkey-patch it.
     'django.contrib.contenttypes',
 
     # 'django.contrib.sessions',
