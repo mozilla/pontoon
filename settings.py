@@ -92,7 +92,7 @@ ROOT_URLCONF = '%s.urls' % ROOT_PACKAGE
 INSTALLED_APPS = (
     'djcelery',
     'django.contrib.auth',
-    'django_sha256',  # Load after auth to monkey-patch it.
+    'django_sha2',  # Load after auth to monkey-patch it.
     'django.contrib.contenttypes',
 
     # 'django.contrib.sessions',
@@ -104,7 +104,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
-AUTHENTICATION_BACKENDS = ('django_sha256.auth.Sha256Backend',)
+AUTHENTICATION_BACKENDS = ('django_sha2.auth.Sha512Backend',)
 
 ## Celery
 BROKER_HOST = 'localhost'

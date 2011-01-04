@@ -1,7 +1,7 @@
 -e git://github.com/django/django@36c82ac8#egg=django
 
 # Security
--e git://github.com/fwenzel/django-sha256.git#egg=django-sha256
+-e git://github.com/fwenzel/django-sha2.git#egg=django-sha2
 
 # Celery: Message queue
 celery
