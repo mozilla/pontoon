@@ -3,3 +3,6 @@
 # package for developers (testing, docs, etc.), it goes in this file.
 
 -r prod.txt
+
+# Documentation
+Sphinx==1.0.6
