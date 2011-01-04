@@ -48,6 +48,16 @@ Eventually you'll probably diverge enough that you'll want to delete the base
 branch.
 
 
+Features
+--------
+Quick and dirty feature list:
+
+* Django
+* SHA-512 passwords
+* X-Frame-Options: DENY by default
+* Celery support
+
+
 License
 -------
 This software is licensed under the [New BSD License][BSD]. For more
