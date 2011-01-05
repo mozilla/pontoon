@@ -28,6 +28,7 @@ Contents
    :maxdepth: 2
 
    gettingstarted
+   libs 
 
 
 Indices and tables
