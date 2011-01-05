@@ -26,9 +26,13 @@ Deferred Execution (cron, message queues)
 * `django-gearman <https://github.com/fwenzel/django-gearman>`_:
   A convenience wrapper for Gearman clients and workers in Django/Python.
 
-Localization (L10n)
--------------------
+Internationalization (i18n) and Localization (L10n)
+---------------------------------------------------
 
+* `Babel <http://babel.edgewall.org/>`_:
+  A collection of tools for internationalizing Python applications.
+* `pytz <http://pytz.sourceforge.net/>`_:
+  World Timezone Definitions for Python.
 * `tower <https://github.com/clouserw/tower>`_\*:
   A library that builds on Babel and Jinja2 to make extracting strings easy and
   uniform.
