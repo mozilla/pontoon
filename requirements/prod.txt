@@ -1,4 +1,6 @@
+# Django and templates
 -e git://github.com/django/django@36c82ac8#egg=django
+-e git://github.com/jbalogh/jingo.git#egg=jingo
 
 # Various tidbits
 -e git://github.com/jsocol/commonware.git#egg=commonware
@@ -10,7 +12,7 @@
 celery
 django-celery
 
-# L10n.
+# L10n
 Babel>=0.9.4
 -e git://github.com/clouserw/tower.git#egg=tower
 pytz

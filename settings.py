@@ -76,6 +76,24 @@ TEMPLATE_DIRS = (
     path('templates'),
 )
 
+def JINJA_CONFIG():
+    import jinja2
+    from django.conf import settings
+#    from caching.base import cache
+    config = {'extensions': ['jinja2.ext.i18n', 'jinja2.ext.do',
+                             'jinja2.ext.with_', 'jinja2.ext.loopcontrols'],
+              'finalize': lambda x: x if x is not None else ''}
+#    if 'memcached' in cache.scheme and not settings.DEBUG:
+        # We're passing the _cache object directly to jinja because
+        # Django can't store binary directly; it enforces unicode on it.
+        # Details: http://jinja.pocoo.org/2/documentation/api#bytecode-cache
+        # and in the errors you get when you try it the other way.
+#        bc = jinja2.MemcachedBytecodeCache(cache._cache,
+#                                           "%sj2:" % settings.CACHE_PREFIX)
+#        config['cache_size'] = -1 # Never clear the cache
+#        config['bytecode_cache'] = bc
+    return config
+
 
 ## Middlewares, apps, URL configs.
 
@@ -104,6 +122,8 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+
+    'examples',
 )
 
 AUTHENTICATION_BACKENDS = ('django_sha2.auth.Sha512Backend',)
