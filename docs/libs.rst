@@ -29,7 +29,7 @@ Deferred Execution (cron, message queues)
 Localization (L10n)
 -------------------
 
-* `tower <https://github.com/clouserw/tower>`_:
+* `tower <https://github.com/clouserw/tower>`_\*:
   A library that builds on Babel and Jinja2 to make extracting strings easy and
   uniform.
 

@@ -80,7 +80,7 @@ def JINJA_CONFIG():
     import jinja2
     from django.conf import settings
 #    from caching.base import cache
-    config = {'extensions': ['jinja2.ext.i18n', 'jinja2.ext.do',
+    config = {'extensions': ['tower.template.i18n', 'jinja2.ext.do',
                              'jinja2.ext.with_', 'jinja2.ext.loopcontrols'],
               'finalize': lambda x: x if x is not None else ''}
 #    if 'memcached' in cache.scheme and not settings.DEBUG:
@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django_sha2',  # Load after auth to monkey-patch it.
     'django.contrib.contenttypes',
+    'tower',  # for ./manage.py extract (L10n)
 
     # 'django.contrib.sessions',
     # 'django.contrib.sites',
@@ -125,6 +126,30 @@ INSTALLED_APPS = (
 
     'examples',
 )
+
+# Tells the extract script what files to look for L10n in and what function
+# handles the extraction. The Tower library expects this.
+DOMAIN_METHODS = {
+    'messages': [
+        ('apps/**.py',
+            'tower.management.commands.extract.extract_tower_python'),
+        ('**/templates/**.html',
+            'tower.management.commands.extract.extract_tower_template'),
+    ],
+
+    ## Use this if you have localizable HTML files:
+    #'lhtml': [
+    #    ('**/templates/**.lhtml',
+    #        'tower.management.commands.extract.extract_tower_template'),
+    #],
+
+    ## Use this if you have localizable JS files:
+    #'javascript': [
+        # Make sure that this won't pull in strings from external libraries you
+        # may use.
+    #    ('media/js/**.js', 'javascript'),
+    #],
+}
 
 AUTHENTICATION_BACKENDS = ('django_sha2.auth.Sha512Backend',)
 

@@ -1,6 +1,12 @@
 {% extends "example_base.html" %}
 
 {% block content %}
-<h1>Hello world</h1>
-<p>This is a test view.</p>
+<h1>{{ _('Hello world') }}</h1>
+
+{# L10n: This is a localizer comment #}
+<p>
+  {% trans %}
+  This is a test view.
+  {% endtrans %}
+</p>
 {% endblock %}
