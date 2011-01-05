@@ -25,7 +25,7 @@ For development, you can run this in a `virtualenv environment`_:
 
 For more information on vendor libraries, read `Packaging in Zamboni`_.
 
-.. _virtual environment: http://pypi.python.org/pypi/virtualenv
+.. _virtualenv environment: http://pypi.python.org/pypi/virtualenv
 .. _packaging in Zamboni: http://jbalogh.github.com/zamboni/topics/packages/
 
 
