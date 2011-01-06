@@ -8,6 +8,9 @@ otherwise useful for it.
 **Note:** Libraries marked with an \*asterisk\* are bundled with playdoh by default. 
 
 
+Python
+======
+
 Database
 --------
 
@@ -90,4 +93,11 @@ Various
 
 * `nuggets <https://github.com/mozilla/nuggets/>`_:
   Little utilities that don't deserve a package.
+
+
+JavaScript
+==========
+
+* `jQuery <http://jquery.com/>`_\*:
+  The jQuery JavaScript library.
 

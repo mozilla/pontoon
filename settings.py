@@ -70,7 +70,16 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = ()
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+    'django.core.context_processors.csrf',
+    'django.contrib.messages.context_processors.messages',
+
+    #'jingo_minify.helpers.build_ids',
+)
 
 TEMPLATE_DIRS = (
     path('templates'),
@@ -94,6 +103,21 @@ def JINJA_CONFIG():
 #        config['bytecode_cache'] = bc
     return config
 
+# Bundles is a dictionary of two dictionaries, css and js, which list css files
+# and js files that can be bundled together by the minify app.
+MINIFY_BUNDLES = {
+    'css': {
+        'example_css': (
+            'css/examples/main.css',
+        ),
+    },
+    'js': {
+        'example_js': (
+            'js/libs/jquery-1.4.4.min.js',
+        ),
+    }
+}
+
 
 ## Middlewares, apps, URL configs.
 
@@ -114,6 +138,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django_sha2',  # Load after auth to monkey-patch it.
     'django.contrib.contenttypes',
+    'jingo_minify',
     'tower',  # for ./manage.py extract (L10n)
 
     # 'django.contrib.sessions',
@@ -150,6 +175,9 @@ DOMAIN_METHODS = {
     #    ('media/js/**.js', 'javascript'),
     #],
 }
+
+# Path to Java. Used for compress_assets.
+JAVA_BIN = '/usr/bin/java'
 
 AUTHENTICATION_BACKENDS = ('django_sha2.auth.Sha512Backend',)
 
