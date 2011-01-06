@@ -17,6 +17,9 @@ MANAGERS = ADMINS
 
 DATABASES = {}  # See settings_local.
 
+# Site ID is used by Django's Sites framework.
+SITE_ID = 1
+
 
 ## Internationalization.
 
@@ -29,12 +32,6 @@ DATABASES = {}  # See settings_local.
 # system time zone.
 TIME_ZONE = 'America/Los_Angeles'
 
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-US'
-
-SITE_ID = 1
-
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
@@ -42,6 +39,18 @@ USE_I18N = True
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
 USE_L10N = True
+
+# Language code for this installation. All choices can be found here:
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'en-US'
+
+# List of locales known to this project.
+LANGUAGES = ('en-US',)
+
+# List of RTL locales known to this project. Subset of LANGUAGES.
+RTL_LANGUAGES = ()  # ('ar', 'fa', 'fa-IR', 'he')
+
+LANGUAGE_URL_MAP = dict([(i.lower(), i) for i in LANGUAGES])
 
 
 ## Media and templates.
@@ -78,6 +87,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.csrf',
     'django.contrib.messages.context_processors.messages',
 
+    'commons.context_processors.i18n',
     #'jingo_minify.helpers.build_ids',
 )
 
@@ -138,8 +148,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django_sha2',  # Load after auth to monkey-patch it.
     'django.contrib.contenttypes',
-    'jingo_minify',
-    'tower',  # for ./manage.py extract (L10n)
 
     # 'django.contrib.sessions',
     # 'django.contrib.sites',
@@ -149,7 +157,11 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 
-    'examples',
+    'commons',  # Content common to most playdoh-based apps.
+    'jingo_minify',
+    'tower',  # for ./manage.py extract (L10n)
+
+    'examples',  # Example code. Can (and should) be removed for actual projects.
 )
 
 # Tells the extract script what files to look for L10n in and what function
