@@ -1,5 +1,36 @@
 /* An example CSS file that will be minified. */
-
 body {
     font-family: sans-serif;
+    background-color: rgb(56,142,222);
+    background-image: -webkit-gradient(
+      linear,
+      left bottom,
+      left top,
+      color-stop(0.19, rgb(56,142,222)),
+      color-stop(0.6, rgb(82,186,255))
+    );
+    background-image: -moz-linear-gradient(
+      center bottom,
+      rgb(56,142,222) 19%,
+      rgb(82,186,255) 60%
+    );
+    background-repeat: repeat-x;
+    min-height: 800px;
+}
+h1 { 
+    font-family: Helvetica, sans-serif; 
+    margin-left: 30px;
+}
+p { 
+    background-color: rgba(255,255,255,0.3);;
+    color: #333;
+    font-family: Courier, serif; 
+    line-height: 1.4;
+    margin-left: 30px;
+    padding: 5px;
+    width: 600px;
+}
+#playdoh { 
+    float: left;
+    margin-left: 645px;
 }
