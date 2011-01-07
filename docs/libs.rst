@@ -16,7 +16,7 @@ Database
 
 * `django-multidb-router <https://github.com/jbalogh/django-multidb-router>`_:
   Round-robin master/slave db router for Django 1.2.
-* `schematic <https://github.com/jbalogh/schematic>`_:
+* `schematic <https://github.com/jbalogh/schematic>`_\*:
   Simple database migration tool.
 
 Deferred Execution (cron, message queues)
