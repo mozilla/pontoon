@@ -144,11 +144,24 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = '%s.urls' % ROOT_PACKAGE
 
 INSTALLED_APPS = (
+    # Local apps
+    'commons',  # Content common to most playdoh-based apps.
+    'jingo_minify',
+    'tower',  # for ./manage.py extract (L10n)
+
+    'examples',  # Example code. Can (and should) be removed for actual projects.
+
+    # We need this so the jsi18n view will pick up our locale directory.
+    ROOT_PACKAGE,
+
+    # Third-party apps
     'djcelery',
+    'django_nose',
+
+    # Django contrib apps
     'django.contrib.auth',
     'django_sha2',  # Load after auth to monkey-patch it.
     'django.contrib.contenttypes',
-
     # 'django.contrib.sessions',
     # 'django.contrib.sites',
     # 'django.contrib.messages',
@@ -157,11 +170,6 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 
-    'commons',  # Content common to most playdoh-based apps.
-    'jingo_minify',
-    'tower',  # for ./manage.py extract (L10n)
-
-    'examples',  # Example code. Can (and should) be removed for actual projects.
 )
 
 # Tells the extract script what files to look for L10n in and what function
@@ -191,7 +199,11 @@ DOMAIN_METHODS = {
 # Path to Java. Used for compress_assets.
 JAVA_BIN = '/usr/bin/java'
 
+## Auth
 AUTHENTICATION_BACKENDS = ('django_sha2.auth.Sha512Backend',)
+
+## Tests
+TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
 
 ## Celery
 BROKER_HOST = 'localhost'

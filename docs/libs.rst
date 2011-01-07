@@ -72,8 +72,8 @@ Templates and Caching
   Automatic caching and invalidation for Django models through the ORM.
 * `jingo <https://github.com/jbalogh/jingo>`_\*:
   An adapter for using Jinja2 templates with Django.
-* `jingo-minify <https://github.com/jsocol/jingo-minify>`_:
-  Concatenate and minify JS and CSS for Jinja2+Jingo+Django.
+* `jingo-minify <https://github.com/jsocol/jingo-minify>`_\*:
+  Concatenate and minify JS and CSS for Jinja2 + Jingo + Django.
 * `hera <https://github.com/clouserw/hera>`_:
   Client for Zeus Traffic Manager SOAP API.
 
@@ -82,9 +82,11 @@ Testing
 
 * `django-fixture-magic <https://github.com/davedash/django-fixture-magic>`_:
   Utilities to extract and manipulate Django fixtures.
-* `django-nose <https://github.com/jbalogh/django-nose>`_:
-  Django test runner using ``nose``.
-* `test-utils <https://github.com/jbalogh/test-utils>`_:
+* `django-nose <https://github.com/jbalogh/django-nose>`_\*:
+  Django test runner using *nose*.
+* `nose <http://somethingaboutorange.com/mrl/projects/nose/>`_\*:
+  *nose* extends unittest to make testing easier.
+* `test-utils <https://github.com/jbalogh/test-utils>`_\*:
   A grab-bag of testing utilities that are pretty specific to our Django,
   Jinja2, and nose setup.
 

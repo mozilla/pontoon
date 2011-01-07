@@ -6,3 +6,8 @@
 
 # Documentation
 Sphinx==1.0.6
+
+# Testing
+nose==1.0.0
+-e git://github.com/jbalogh/django-nose.git#egg=django_nose
+-e git://github.com/jbalogh/test-utils.git#egg=test-utils
