@@ -42,7 +42,7 @@ def update_site(env, debug):
       (EXEC,  GIT_PULL % branch),
       (EXEC,  GIT_SUBMODULE),
       (CHDIR, os.path.join(here)),
-      (EXEC, 'pythonz vendor/src/schematic/schematic migrations/'),
+      (EXEC, 'python vendor/src/schematic/schematic migrations/'),
       (EXEC, 'python manage.py compress_assets'),
     ]
 
