@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Usage: update_site.py [options]
-Updates a server's sources, vendor libraries, packages CSS/JS 
+Updates a server's sources, vendor libraries, packages CSS/JS
 assets, migrates the database, and other nifty deployment tasks.
 
 Options:
@@ -14,11 +14,12 @@ Options:
 
 import os
 import sys
+from textwrap import dedent
 from optparse import  OptionParser
 
 ENV_BRANCH = {
-    'dev':   'master', 
-    'stage': 'master', 
+    'dev':   'master',
+    'stage': 'master',
     'prod':  'prod',
 }
 
@@ -28,8 +29,9 @@ GIT_SUBMODULE = "git submodule update --init"
 EXEC = 'exec'
 CHDIR = 'chdir'
 
+
 def update_site(env, debug):
-    """ Run through commands to update this site """
+    """Run through commands to update this site."""
     error_updating = False
     here = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     branch = {'branch': ENV_BRANCH[env]}
@@ -60,23 +62,26 @@ def update_site(env, debug):
         else:
             raise Exception("Unknown type of command %s" % cmd)
 
-    if error_updating:        
-        sys.stderr.write("There was an error while updating. Please \
-try again later. Aborting.\n")
+    if error_updating:
+        sys.stderr.write("There was an error while updating. Please try again "
+                         "later. Aborting.\n")
+
 
 def main():
     """ Handels command line args. """
     debug = False
-    usage = """Usage: %prog [options]
-Updates a server's sources, vendor libraries, packages CSS/JS 
-assets, migrates the database, and other nifty deployment tasks."""
+    usage = dedent("""\
+        %prog [options]
+        Updates a server's sources, vendor libraries, packages CSS/JS
+        assets, migrates the database, and other nifty deployment tasks.
+        """.rstrip())
 
     options = OptionParser(usage=usage)
     e_help = "Type of environment. One of (%s) Example: update_site.py \
         -e stage" % '|'.join(ENV_BRANCH.keys())
     options.add_option("-e", "--environment", help=e_help)
-    options.add_option("-v", "--verbose", 
-                       help="Echo actions before taking them.", 
+    options.add_option("-v", "--verbose",
+                       help="Echo actions before taking them.",
                        action="store_true", dest="verbose")
     (opts, _) = options.parse_args()
 
@@ -89,5 +94,6 @@ assets, migrates the database, and other nifty deployment tasks."""
         options.print_help(sys.stderr)
         sys.exit(1)
 
-if __name__ == '__main__':    
+
+if __name__ == '__main__':
     main()
