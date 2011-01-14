@@ -39,6 +39,8 @@ Internationalization (i18n) and Localization (L10n)
 * `tower <https://github.com/clouserw/tower>`_\*:
   A library that builds on Babel and Jinja2 to make extracting strings easy and
   uniform.
+* `The Translate toolkit <http://translate.sourceforge.net/wiki/toolkit/index>`_:
+  Tools for working between translation formats.
 
 Middleware
 ----------

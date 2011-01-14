@@ -29,6 +29,7 @@ Contents
 
    gettingstarted
    libs 
+   l10n_setup
 
 
 Indices and tables
