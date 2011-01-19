@@ -32,7 +32,7 @@ Deferred Execution (cron, message queues)
 Internationalization (i18n) and Localization (L10n)
 ---------------------------------------------------
 
-* `Babel <http://babel.edgewall.org/>`_:
+* `Babel <http://babel.edgewall.org/>`_\*:
   A collection of tools for internationalizing Python applications.
 * `pytz <http://pytz.sourceforge.net/>`_:
   World Timezone Definitions for Python.
