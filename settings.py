@@ -40,6 +40,9 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
+# Gettext text domain
+TEXT_DOMAIN = 'messages'
+
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-US'
