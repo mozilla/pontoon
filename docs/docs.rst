@@ -70,4 +70,12 @@ Here's a nice macro for creating headings::
 Compiling Documentation
 -----------------------
 
-Playdoh hosts its documentation on github pages. 
+Playdoh hosts its documentation on `github pages
+<http://mozilla.github.com/playdoh/>`_. When you change the docs, make sure
+they still build properly and look all right locally::
+
+    cd docs && make html && open _build/html/index.html
+
+If they do, run a build and push it to gh-pages::
+
+    ./build-github.zsh
