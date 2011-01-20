@@ -31,6 +31,7 @@ Contents
    libs 
    l10n_setup
    l10n_update
+   docs
 
 
 Indices and tables
