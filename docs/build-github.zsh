@@ -2,7 +2,7 @@
 
 # Should be run from the docs directory: (cd docs && ./build-github.zsh)
 
-REPO=$(dirname $(pwd))
+REPO=$(git config remote.origin.url)
 GH=_gh-pages
 
 
