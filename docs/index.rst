@@ -25,10 +25,11 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    gettingstarted
    libs 
+   bestpractices
    l10n_setup
    l10n_update
    docs
