@@ -1,7 +1,9 @@
+.. _l10n-update:
+
 L10n Update
 ===========
 
-Follow these steps to update strings for L10n.
+Follow these steps to **update** strings for L10n.
 
 We are using English strings for gettext message ids.
 
@@ -19,25 +21,33 @@ files and lastly commiting to SVN.
 Instructions:
 -------------
 
-1. ``./manage.py extract ``
-2. ``./manage.py verbatimize --rename``
-   This will copy the POT files created in step 1 to templates/LC_MESSAGES
-3. ``./manage.py merge``
+::
+
+    ./manage.py extract
+
+    ./manage.py verbatimize --rename
+    # This will copy the POT files created in step 1 to templates/LC_MESSAGES.
+
+    ./manage.py merge
+
 
 Optional:
 ---------
 
-4. ``locale/compile-mo.sh locale``
+To compile all .mo files::
+
+    ./bin/compile-mo.sh locale/
+
 
 New Locales:
 ------------
 
 Assuming you want to add 'fr':
 
-#. ``mkdir -p locale/fr/LC_MESSAGES``
-#. ``./manage.py merge``
+#.  ``mkdir -p locale/fr/LC_MESSAGES``
+#.  ``./manage.py merge``
 
 or
 
-#. ``msginit --no-translator -l fr -i templates/LC_MESSAGES/messages.pot -o fr/LC_MESSAGES/messages.po``
-#. repeat for other POT files
+#.  ``msginit --no-translator -l fr -i templates/LC_MESSAGES/messages.pot -o fr/LC_MESSAGES/messages.po``
+#.  repeat for other POT files
