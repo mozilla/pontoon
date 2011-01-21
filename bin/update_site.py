@@ -18,7 +18,7 @@ from textwrap import dedent
 from optparse import  OptionParser
 
 ENV_BRANCH = {
-    'dev':   'master',
+    'dev':   'master', # make this base if you are working on base
     'stage': 'master',
     'prod':  'prod',
 }

@@ -28,6 +28,7 @@ Contents
    :maxdepth: 1
 
    gettingstarted
+   operations
    libs 
    bestpractices
    l10n_setup
