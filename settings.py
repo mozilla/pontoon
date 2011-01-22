@@ -158,6 +158,7 @@ INSTALLED_APPS = (
     ROOT_PACKAGE,
 
     # Third-party apps
+    'commonware.response.cookies',
     'djcelery',
     'django_nose',
 
