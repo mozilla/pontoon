@@ -1,17 +1,17 @@
 Operations
 ==========
 
-Care and feeding of a Playdoh based app.
+Care and feeding of a Playdoh-based app.
 
 Web Server
 ----------
 
-Apps are typically run under mod_wsgi in production.
-::
+Apps are typically run under Apache and mod_wsgi in production. Entry point::
+
     wsgi.wsgi
 
-Developers can set that up or run in stand-alone mode:
-::
+Developers can set that up or run in stand-alone mode::
+
     ./manage.py runserver 0.0.0.0:8000
 
 Middleware Caching
@@ -37,7 +37,7 @@ Playdoh comes packaged with celery and works well with RabbitMQ.
 Updating your Environment
 -------------------------
 
-You can run update_site.py to keep your app current.
+You can run ``update_site.py`` to keep your app current.
 It does the following:
 
 * Updates source
@@ -51,12 +51,12 @@ It does the following:
     ./bin/update_site.py -e stage
     ./bin/update_site.py -e prod
 
-You may pass a -v and update_site will explain what
-commands as it runs them.
+You may pass a ``-v`` and update_site will explain what commands as it runs
+them.
 
 If there is an error on any step, the script stops.
 
-IT will typically put bin/update_site.py into a cron for
-auto deployment to stage environments.
+IT will typically put ``bin/update_site.py`` into a cron for auto-deployment
+to stage environments.
 
-Edit your copy to customize your branching and/or release practises.
+Edit your copy to customize your branching and/or release practices.
