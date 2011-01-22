@@ -67,8 +67,8 @@ and httponly cookies the default, unless specifically requested otherwise.
 To disable either of these patches, set ``COOKIES_SECURE = False`` or
 ``COOKIES_HTTPONLY = False`` in ``settings.py``.
 
-You can exempt every cookie by passing ``secure=False`` or ``httponly=False``
-to the ``set_cookie`` call, respectively::
+You can exempt any cookie by passing ``secure=False`` or ``httponly=False`` to
+the ``set_cookie`` call, respectively::
 
     response.set_cookie('hello', value='world', secure=False, httponly=False)
 
