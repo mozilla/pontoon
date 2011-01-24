@@ -25,6 +25,7 @@ ENV_BRANCH = {
 
 GIT_PULL = "git pull -q origin %(branch)s"
 GIT_SUBMODULE = "git submodule update --init"
+SVN_UP = "svn update"
 
 EXEC = 'exec'
 CHDIR = 'chdir'
@@ -37,15 +38,32 @@ def update_site(env, debug):
     branch = {'branch': ENV_BRANCH[env]}
 
     commands = [
-      (CHDIR, here),
-      (EXEC,  GIT_PULL % branch),
-      (EXEC,  GIT_SUBMODULE),
-      (CHDIR, os.path.join(here, 'vendor')),
-      (EXEC,  GIT_PULL % branch),
-      (EXEC,  GIT_SUBMODULE),
-      (CHDIR, os.path.join(here)),
-      (EXEC, 'python vendor/src/schematic/schematic migrations/'),
-      (EXEC, 'python manage.py compress_assets'),
+        (CHDIR, here),
+        (EXEC,  GIT_PULL % branch),
+        (EXEC,  GIT_SUBMODULE),
+    ]
+
+    # Update locale dir if applicable
+    if os.path.exists(os.path.join(here, 'locale', '.svn')):
+        commands += [
+            (CHDIR, os.path.join(here, 'locale')),
+            (EXEC, SVN_UP),
+            (CHDIR, here),
+        ]
+    elif os.path.exists(os.path.join(here, 'locale', '.git')):
+        commands += [
+            (CHDIR, os.path.join(here, 'locale')),
+            (EXEC, GIT_PULL % 'master'),
+            (CHDIR, here),
+        ]
+
+    commands += [
+        (CHDIR, os.path.join(here, 'vendor')),
+        (EXEC,  GIT_PULL % branch),
+        (EXEC,  GIT_SUBMODULE),
+        (CHDIR, os.path.join(here)),
+        (EXEC, 'python vendor/src/schematic/schematic migrations/'),
+        (EXEC, 'python manage.py compress_assets'),
     ]
 
     for cmd, cmd_args in commands:

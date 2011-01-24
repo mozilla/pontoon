@@ -21,8 +21,8 @@ Steps
 -----
 
 To allow localizers to translate your app on localize.mozilla.org, your .po
-files need to be in SVN. To play nice with our git-based application code,
-we need to keep this SVN repository in sync with a git repository.
+files need to be in SVN. You want a checkout of your locale directory to live
+inside the git checkout under ``locale``.
 
 The following steps will get you started:
 
@@ -34,23 +34,22 @@ The following steps will get you started:
         ./templates
         ./templates/LC_MESSAGES
 
-#.  Make a new git repository (a convention is to call it ``myproject-locale``),
-    and clone the SVN repo into it. ::
+#.  Check out this SVN repository inside your project path::
 
         cd /my/playdoh/project/dir/
-        git svn clone https://svn.mozilla.org/projects/something/trunk/locale locale
-        cd locale
-        git add remote origin git@github.com:mozilla/myproject-locale.git
-        git push origin master
-        cd ..
+        svn checkout https://svn.mozilla.org/projects/something/trunk/locale locale
 
-    Now extract strings from your project::
+        ## If you don't like svn, you may use git-svn too:
+        # git svn clone https://svn.mozilla.org/projects/something/trunk/locale locale
+
+#.  Now extract strings from your project::
 
         ./manage.py extract
         ./manage.py verbatimize --rename
         ./manage.py merge
 
-#.  Commit it all locally
+#.  Commit it all.
+
 #.  Build your .mo files and commit those as well::
 
         ./bin/compile-mo.sh locale/
@@ -58,25 +57,19 @@ The following steps will get you started:
         git add .
         git commit -m 'Built .mo files'
 
-#.  Finally push this to SVN followed by a push to git. ::
-
-        git svn dcommit && git push origin HEAD
-
-    **A note on SVN vs. git:** When you ``git svn dcommit``, git will add
-    SVN metadata to your git commit message. This causes the *commit ID to
-    change*. So you always want to push to SVN first, then to git, not
-    vice versa, or git will be a sad panda because your local and remote
-    histories diverge.
-
-#.  Add the ``locale/`` directory as a *git submodule* to your main code
-    repository, so that they can be deployed together::
-
-        git submodule add git://github.com/mozilla/myproject-locale.git locale
-        # (commit, push)
-    
 
 Advanced Steps
 --------------
+
+#.  Some projects keep a copy of the SVN checkout in git. When doing that,
+    keep in mind that ``git svn dcommit`` will change the commit message,
+    thus changing the git commit ID. Therefore, always commit to SVN first,
+    then push to git, never vice-versa::
+
+        cd locale/
+        # do something
+        git commit -am 'did something'
+        git svn dcommit && git push origin HEAD
 
 #.  localize.mozilla.org does not automatically compile .mo files when a
     localizer commits to SVN. Neither does it automate the push over to
@@ -85,7 +78,7 @@ Advanced Steps
     
     * pick up changed .po files from SVN,
     * compile the .mo files,
-    * then push everything over to git...
+    * then (if necessary) push everything over to git...
     * ... and retag the git submodule to the latest revision.
 
     The script is available in playdoh under ``bin/autol10n.sh``.
