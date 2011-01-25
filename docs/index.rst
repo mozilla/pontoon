@@ -15,10 +15,19 @@ Features
 --------
 Quick and dirty (and probably incomplete) feature list:
 
-* Django
-* SHA-512 passwords
-* X-Frame-Options: DENY by default
-* Celery support
+* Rich, but "cherry-pickable" features out of the box:
+
+  * Django
+  * jinja2 template engine
+  * Celery support
+  * Simple database migrations
+  * Full localization support
+
+* Secure by default:
+
+  * SHA-512 default password hashing
+  * X-Frame-Options: DENY by default
+  * secure and httponly flags on cookies enabled by default
 
 
 Contents
@@ -29,10 +38,11 @@ Contents
 
    gettingstarted
    operations
-   libs 
+   migrations
    bestpractices
    l10n_setup
    l10n_update
+   libs
    docs
 
 
