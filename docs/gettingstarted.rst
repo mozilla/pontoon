@@ -6,7 +6,7 @@ Requirements
 
 You need Python 2.6.
 
-To check out playdoh, run:
+To check out playdoh, run::
 
     git clone --recursive git://github.com/mozilla/playdoh.git
 
@@ -18,15 +18,14 @@ In addition, there are compiled libraries (such as Jinja2) that you will need
 to build yourself, either by installing them from ``pypi`` or by using your
 favorite package manager for your OS.
 
-For development, you can run this in a `virtualenv environment`_:
+For development, you can run this in a `virtualenv environment`_::
 
     easy_install pip
     pip install -r requirements/compiled.txt
 
-For more information on vendor libraries, read `Packaging in Zamboni`_.
+For more information on vendor libraries, read :ref:`packages`.
 
 .. _virtualenv environment: http://pypi.python.org/pypi/virtualenv
-.. _packaging in Zamboni: http://jbalogh.github.com/zamboni/topics/packages/
 
 
 Starting a project based on playdoh

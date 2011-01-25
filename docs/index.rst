@@ -37,13 +37,14 @@ Contents
    :maxdepth: 1
 
    gettingstarted
+   libs
    operations
    migrations
-   bestpractices
    l10n_setup
    l10n_update
-   libs
+   packages
    docs
+   bestpractices
 
 
 Indices and tables
