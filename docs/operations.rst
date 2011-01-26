@@ -8,7 +8,8 @@ Web Server
 
 Apps are typically run under Apache and mod_wsgi in production. Entry point::
 
-    wsgi.wsgi
+    wsgi/playdoh.wsgi
+(or whatever you rename it too...)
 
 Developers can set that up or run in stand-alone mode::
 
