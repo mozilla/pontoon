@@ -17,10 +17,15 @@ import sys
 from textwrap import dedent
 from optparse import  OptionParser
 
+# Constants
+PROJECT = 0
+VENDOR  = 1
+
 ENV_BRANCH = {
-    'dev':   'master', # make this base if you are working on base
-    'stage': 'master',
-    'prod':  'prod',
+    # 'environment': [PROJECT_BRANCH, VENDOR_BRANCH],
+    'dev':   ['base',   'master'], 
+    'stage': ['master', 'master'], 
+    'prod':  ['prod',   'master'],
 }
 
 GIT_PULL = "git pull -q origin %(branch)s"
@@ -35,11 +40,12 @@ def update_site(env, debug):
     """Run through commands to update this site."""
     error_updating = False
     here = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    branch = {'branch': ENV_BRANCH[env]}
+    project_branch = {'branch': ENV_BRANCH[env][PROJECT]}
+    vendor_branch = {'branch': ENV_BRANCH[env][VENDOR]}
 
     commands = [
         (CHDIR, here),
-        (EXEC,  GIT_PULL % branch),
+        (EXEC,  GIT_PULL % project_branch),
         (EXEC,  GIT_SUBMODULE),
     ]
 
@@ -59,7 +65,7 @@ def update_site(env, debug):
 
     commands += [
         (CHDIR, os.path.join(here, 'vendor')),
-        (EXEC,  GIT_PULL % branch),
+        (EXEC,  GIT_PULL % vendor_branch),
         (EXEC,  GIT_SUBMODULE),
         (CHDIR, os.path.join(here)),
         (EXEC, 'python vendor/src/schematic/schematic migrations/'),
