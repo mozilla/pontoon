@@ -13,4 +13,4 @@ nose==1.0.0
 -e git://github.com/jbalogh/test-utils.git#egg=test-utils
 
 # L10n
-translate-toolkit==1.6.0
+translate-toolkit==1.8.0
