@@ -6,11 +6,9 @@
 {# L10n: This is a localizer comment #}
 <p>{{ _('This is a test view.') }}</p>
 <p>
-  {% trans docs_url='http://playdoh.readthedocs.org/' %}
+  {% trans docs_url='http://mozilla.github.com/playdoh/' %}
   <a href="{{ docs_url }}">Learn you some Playdoh</a> and then go build
   something <strong>awesome</strong>.
   {% endtrans %}  
-  <img id="playdoh" src="{{ MEDIA_URL }}img/playdoh.png" width="357"
-       height="600" alt="{{ _('A can of Play-Doh') }}" />
 </p>
 {% endblock %}
