@@ -21,11 +21,6 @@ register.filter(defaultfilters.truncatewords)
 
 
 @register.function
-def page_title(title):
-    return u'%s | Mozilla Developer Network' % title
-
-
-@register.function
 def thisyear():
     """The current year."""
     return jinja2.Markup(datetime.date.today().year)
@@ -71,11 +66,3 @@ def _urlencode(items):
 def urlencode(txt):
     """Url encode a path."""
     return urllib.quote_plus(txt)
-
-@register.function
-def devmo_url(path):
-    """ Create a URL pointing to devmo.
-        Currently a no-op from when staging was on several servers. 
-        Might be a useful shim in the future.
-    """
-    return path
