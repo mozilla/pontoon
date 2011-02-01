@@ -70,16 +70,12 @@ The vendor repo was seeded with ::
 
 
 If we wanted to add a new dependency called ``cheeseballs`` to zamboni, you
-would add it to ``requirements/prod.txt`` or ``requirements/dev.txt`` and then
-do::
+would add it to ``requirements/prod.txt`` or ``requirements/dev.txt``. This makes it available to
+users installing into virtualenvs.
 
-    pip install -I --install-option="--home=`pwd`/vendor" --src='vendor/src' cheeseballs
+We also need to add the new package to the vendor lib.
 
-or for a git-based package::
-
-    pip install -I --install-option="--home=`pwd`/vendor" --src='vendor/src' -e git://github.com/mozilla/something.git#egg=something
-
-For git-based packages, you then need to update ``vendor/vendor.pth``. Python
+First, you then need to update ``vendor/vendor.pth``. Python
 uses ``.pth`` files to dynamically add directories to ``sys.path`` (`docs
 <http://docs.python.org/library/site.html>`_).
 
@@ -87,16 +83,32 @@ I created ``vendor.pth`` with this::
 
     find src/ -type d -depth 1 > vendor.pth
 
+Secondly, we need to add the source. There are two ways, depending on how
+this project is hosted:
+
+For non-git based repos (hg, CVS, tarball) do::
+
+    pip install -I --install-option="--home=`pwd`/vendor" --src='vendor/src' cheeseballs
+    cd vendor
+    git add src/cheeseballs
+    git commit vendor.pth src/cheeseballs
+
+For a git-based package, add it as a git submodule::
+
+    cd vendor
+    git submodule add git://github.com/mozilla/cheeseballs.git src/cheeseballs
+    git commit vendor.pth .gitmodules src/cheeseballs
+
 Some packages (like ``html5lib`` and ``selenium``) are troublesome, because
 their source lives inside an extra subdirectory ``src/`` inside their checkout.
 So they need to be sourced with ``src/html5lib/src``, for example. Hopefully
 you won't hit any snags like that.
 
 
-Adding submodules
-~~~~~~~~~~~~~~~~~
+Adding lots of git submodules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You want to make your git-based packages *git submodules* inside the vendor
+As noted in Adding new packages, you want to make your git-based packages *git submodules* inside the vendor
 library. To set up the first batch of submodules, something like the following
 happened::
 
