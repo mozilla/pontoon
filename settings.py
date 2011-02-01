@@ -2,6 +2,8 @@
 
 import os
 
+from django.utils.functional import lazy
+
 # Make file paths relative to settings.
 ROOT = os.path.dirname(os.path.abspath(__file__))
 path = lambda *a: os.path.join(ROOT, *a)
@@ -47,14 +49,25 @@ TEXT_DOMAIN = 'messages'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-US'
 
-# List of locales known to this project.
-LANGUAGES = ('en-US',)
+# Accepted locales
+KNOWN_LANGUAGES = ('en-US',)
 
 # List of RTL locales known to this project. Subset of LANGUAGES.
 RTL_LANGUAGES = ()  # ('ar', 'fa', 'fa-IR', 'he')
 
-LANGUAGE_URL_MAP = dict([(i.lower(), i) for i in LANGUAGES])
+LANGUAGE_URL_MAP = dict([(i.lower(), i) for i in KNOWN_LANGUAGES])
 
+# Override Django's built-in with our native names
+class LazyLangs(dict):
+    def __new__(self):
+        from product_details import product_details
+        return dict([(lang.lower(), product_details.languages[lang]['native'])
+                     for lang in KNOWN_LANGUAGES])
+
+# Where to store product details etc.
+PROD_DETAILS_DIR = path('lib/product_details_json')
+
+LANGUAGES = lazy(LazyLangs, dict)()
 
 ## Media and templates.
 
@@ -135,6 +148,7 @@ MINIFY_BUNDLES = {
 ## Middlewares, apps, URL configs.
 
 MIDDLEWARE_CLASSES = (
+    'commons.middleware.LocaleURLMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -173,6 +187,9 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+
+    # L10n
+    'product_details',
 
 )
 
