@@ -96,3 +96,6 @@ Q&A
 * *Why a git repo to mirror an SVN repo?* This allows us to have an external
   reference ("git submodule") and deploy the app including its translations
   easily.
+* *How do I use gettext?* In templates we use jinja_ 
+
+.. _jinja: http://jinja.pocoo.org/docs/templates/#i18n
