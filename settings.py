@@ -69,6 +69,10 @@ PROD_DETAILS_DIR = path('lib/product_details_json')
 
 LANGUAGES = lazy(LazyLangs, dict)()
 
+# Paths that don't require a locale code in the URL.
+SUPPORTED_NONLOCALES = []
+
+
 ## Media and templates.
 
 # Absolute path to the directory that holds media.
