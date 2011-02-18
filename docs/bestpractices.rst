@@ -15,33 +15,37 @@ Using something like ``mystring|safe`` in a template will prevent Jinja2 from
 auto-escaping it. Sadly, this requires us to be really sure that ``mystring``
 is not raw, user-entered data. Otherwise we introduce an XSS vulnerability.
 
-``|safe`` is safe to use in cases where, for example, you have a localized
-string that contains some HTML::
+We have therefore eliminated the need for ``|safe`` for localized strings. This
+works::
 
-    {{ _('Welcome to <strong>playdoh</strong>!')|safe }}
+    {{ _('Hello <strong>world</strong>!') }}
 
 
 String interpolation
 ~~~~~~~~~~~~~~~~~~~~
 
-When you *interpolate* data into such a string, do not use ``|f(...)|safe``.
-The data could be unsafe. Instead, use the helper ``|fe(...)``. It will
-escape all its arguments before doing string interpolation, then return
-HTML that's safe to use::
+When you *interpolate* data into such a string, however, the resulting output
+will lose its "safeness" and be escaped again. To mark the *localized part*
+of an interpolated string as safe, do not use ``|f(...)|safe``. The data could
+be unsafe. Instead, use the helper ``|fe(...)``. It will escape all its
+arguments before doing string interpolation, then return HTML that's safe to
+use::
 
     {{ _('Welcome back, <strong>{username}</strong>!')|fe(username=user.display_name) }}
 
-``|f(...)|safe`` is to be considered unsafe and should not pass code review.
+``|f(...)|safe`` is to be considered unsafe and **should not pass code
+review**.
 
 If you interpolate into a base string that does *not contain HTML*, you may
-keep on using ``|f(...)`` without ``|safe``, of course, as it will be
-auto-escaped on output::
+keep on using ``|f(...)`` without ``|safe``, of course, as the auto-escaping
+won't harm anything::
 
     {{ _('Author name: {author}')|f(author=user.display_name) }}
 
 
 Form fields
 ~~~~~~~~~~~
+
 Jinja2, unlike Django templates, by default does not consider Django forms
 "safe" to display. Thus, you'd use something like ``{{ form.myfield|safe }}``.
 
