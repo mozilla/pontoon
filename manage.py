@@ -46,5 +46,9 @@ setup_environ(settings)
 import djcelery
 djcelery.setup_loader()
 
+# Monkey-patch django forms to avoid having to use Jinja2's |safe everywhere.
+import safe_django_forms
+safe_django_forms.monkeypatch()
+
 if __name__ == "__main__":
     execute_manager(settings)
