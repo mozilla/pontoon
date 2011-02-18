@@ -1,5 +1,5 @@
-L10n Setup
-==========
+Localization (L10n)
+===================
 
 So you'd like to localize your webapp. **Congratulations!**
 
@@ -17,8 +17,20 @@ The one set of low level tools not provided is gettext.
     # or
     brew install gettext
 
-Steps
------
+
+Environment Setup
+-----------------
+
+Your top level directory named locale should be an SVN repository. This is
+because localizers are used to SVN and some tools like Pootle tie into it.
+Developers who never deal with L10n do not need to worry about this kind of
+setup. It's often easier to have a L10n dev setup, which a cron job updates
+the sources, updates the strings, and compiles the po files and lastly
+commiting to SVN.
+
+
+Initial Steps
+-------------
 
 To allow localizers to translate your app on localize.mozilla.org, your .po
 files need to be in SVN. You want a checkout of your locale directory to live
@@ -26,7 +38,7 @@ inside the git checkout under ``locale``.
 
 The following steps will get you started:
 
-#.  Create an SVN repository with directories based on MDN_ locale directory.
+#.  Create an SVN repository with locale-based directories and ``templates``.
     You need at least::
 
         ./en_US
@@ -58,6 +70,38 @@ The following steps will get you started:
         git commit -m 'Built .mo files'
 
 
+Extracting Strings
+------------------
+
+If you've developed a feature and changed or added strings, you need to extract
+them and merge them into the existing .po files::
+
+    ./manage.py extract
+
+    ./manage.py verbatimize --rename
+    # This will copy the POT files created in step 1 to templates/LC_MESSAGES.
+
+    ./manage.py merge
+
+Optionally compile all .mo files::
+
+    ./bin/compile-mo.sh locale/
+
+
+Creating New Locales
+--------------------
+
+Assuming you want to add 'fr':
+
+#.  ``mkdir -p locale/fr/LC_MESSAGES``
+#.  ``./manage.py merge``
+
+or
+
+#.  ``msginit --no-translator -l fr -i templates/LC_MESSAGES/messages.pot -o fr/LC_MESSAGES/messages.po``
+#.  repeat for other POT files
+
+
 Advanced Steps
 --------------
 
@@ -75,7 +119,7 @@ Advanced Steps
     localizer commits to SVN. Neither does it automate the push over to
     git. There's a handy little script called ``autol10n`` that you can
     run as a cron job somewhere, which will:
-    
+
     * pick up changed .po files from SVN,
     * compile the .mo files,
     * then (if necessary) push everything over to git...
@@ -83,11 +127,6 @@ Advanced Steps
 
     The script is available in playdoh under ``bin/autol10n.sh``.
 
-#.  Read the next section (:ref:`l10n-update`) for a better understanding of
-    what Django management commands are used to extract and merge strings into
-    your po files. It has instructions for adding more locales.
-
-.. _MDN: http://svn.mozilla.org/projects/mdn/trunk/locale/
 
 Q&A
 ---
@@ -96,6 +135,6 @@ Q&A
 * *Why a git repo to mirror an SVN repo?* This allows us to have an external
   reference ("git submodule") and deploy the app including its translations
   easily.
-* *How do I use gettext?* In templates we use jinja_ 
+* *How do I use gettext?* In templates we use jinja_
 
 .. _jinja: http://jinja.pocoo.org/docs/templates/#i18n

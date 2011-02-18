@@ -40,8 +40,7 @@ Contents
    libs
    operations
    migrations
-   l10n_setup
-   l10n_update
+   l10n
    packages
    docs
    bestpractices
