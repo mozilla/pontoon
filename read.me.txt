@@ -1,0 +1,4 @@
+1. Set "short_open_tag" to "On" in php.ini.
+2. Create project folder for l10n projects (e.g. test pilot).
+3. In pontoon.js: this.isEnchanted() should return false for Test Pilot -- remove <?php Pontoon::header_tags();?> from projects/testpilot/index.php.
+4. In pontoon.js: use relative path '../client/www/css/editable.css' (2 times).

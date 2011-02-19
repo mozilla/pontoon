@@ -1,0 +1,87 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  color: #666;
+  font-family: Helvetica;
+}
+
+#header {
+  height: 10%;
+  border-bottom: 1px solid #ccc;
+}
+
+#header > h1 {
+  margin: 0;
+  padding: 10px;
+}
+
+#ui {
+  height: 89%;
+  width: 18%;
+  float: left;
+  border-right: 1px solid #ccc;
+  overflow:auto;
+  padding: 10px;
+}
+
+#ui ul {
+  list-style-type: none;
+  margin:0;
+  padding: 0;
+  margin-top: 10px;
+  border: 1px solid #eee;
+}
+
+#ui li {
+  display: block;
+  padding: 5px 5px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.8em;
+}
+
+#ui label {
+  font-size: 0.8em;
+}
+
+#ui #locale {
+  border: 1px solid #ccc;
+}
+
+#ui .hovered {
+    text-decoration: underline;
+    background-color: #eee;
+    cursor: pointer;
+}
+
+#content {
+  margin-left: 20%;
+  width: 80%;
+  min-height: 89%;
+}
+
+#content > #address {
+  text-align: right;
+  padding: 20px;
+}
+
+#content > #address > input {
+  width: 400px;
+  border: 1px solid #ddd;
+  padding: 3px;
+  color: #666;
+}
+
+#content > #address > button {
+  border: 1px solid #ddd;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  -moz-border-radius: 0.7em;
+}
+
+#content > #source {
+  width: 97%;
+  height: 500px;
+  margin-left: 10px;
+  border: 1px solid #ddd;
+}
