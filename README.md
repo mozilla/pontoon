@@ -1,6 +1,7 @@
 Pontoon
 =======
 
+* Matjaž Horvat <matjaz@horv.at>
 * Frederic Wenzel <fwenzel@mozilla.com>
 * Zbigniew Braniecki <gandalf@mozilla.com>
 * Austin King <aking@mozilla.com>

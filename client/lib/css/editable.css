@@ -1,0 +1,59 @@
+.hovered {
+  box-shadow: 0 0 5px #AEEE00;
+  -moz-box-shadow: 0 0 5px #AEEE00;
+  -webkit-box-shadow: 0 0 5px #AEEE00;
+}
+
+.editableText {
+  min-height: 20px;
+}
+
+.editableText:hover {
+  box-shadow: 0 0 5px #AEEE00;
+  -moz-box-shadow: 0 0 5px #AEEE00;
+  -webkit-box-shadow: 0 0 5px #AEEE00;
+}
+
+.editableToolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  background-color: #EEEEEE;
+  border-top: 1px solid #AAAAAA;
+  border-left: 1px solid #AAAAAA;
+  border-right: 1px solid #AAAAAA;
+  border-top-right-radius: 0.2em;
+  border-top-left-radius: 0.2em;
+  -moz-border-radius-topright: 0.2em;
+  -moz-border-radius-topleft: 0.2em;
+  -webkit-border-top-right-radius: 0.2em;
+  -webkit-border-top-left-radius: 0.2em;
+  z-index: 100;
+}
+
+.editableToolbar:hover + * {
+  box-shadow: 0 0 5px #AEEE00;
+  -moz-box-shadow: 0 0 5px #AEEE00;
+  -webkit-box-shadow: 0 0 5px #AEEE00;
+}
+
+.editableToolbar a {
+  display: block;
+  width: 17px;
+  height: 15px;
+  float: left;
+  margin: 2px;
+}
+
+.editableToolbar .edit {    
+  background: url("../images/icons.png");
+}
+
+.editableToolbar .save {
+  background: url("../images/icons.png") -16px 0;
+}
+
+.editableToolbar .cancel {
+  background: url("../images/icons.png") 25px 0;
+}

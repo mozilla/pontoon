@@ -1,34 +1,82 @@
 <!doctype html>
 <html lang="en">
- <head>
-  <meta charset="utf-8">
-  <title>Live web localizer</title>
-  <link rel="stylesheet" href="./css/index.css" type="text/css" media="screen" />
-  <script type="text/javascript" src="./js/jquery-1.4.2-min.js"></script>
-  <script type="text/javascript" src="./js/jquery.domec-1.1.0.js"></script>
-  <script type="text/javascript" src="./js/jquery.editableText.js"></script>
-  <script type="text/javascript" src="../../lib/pontoon.js"></script>
-  <script type="text/javascript" src="./js/index.js"></script>
- </head>
- <body>
-  <div id="header">
-    <h1 class="editableText">Pontoon web client</h1>
-  </div>
-  <div id="ui">
-    <div id="entitylist">
-      <label for="locale">locale:</label>
-      <input type="text" id="locale" value="de" />
-      <ul id="list"></ul>
-      <button id="send">Send</button>
-    </div>
-  </div>
-  <div id="content">
-    <div id="address">
-      <label for="address_input"></label>
-      <input type="text" id="address_input" value="../../projects/testpilot/"/>
-      <button id="address_button">open</button>
-    </div>
+  <head>
+    <meta charset="utf-8">
+    
+    <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+ 
+    <title>Pontoon</title>
+    <meta name="description" content="Live web localization tool">
+    <meta name="author" content="Mozilla">
+    
+    <!-- Place favicon.ico in the root of domain and delete these reference -->
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="../lib/css/pontoon.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  
+  <body>
+	<!-- Frontpage -->
+    <section id="intro">
+      <h1 id="title">Pontoon</h1>
+      <fieldset class="location">
+        <input class="url" type="text" placeholder="Type URL and press Enter" />
+
+        <ul class="links">
+	      <li><a id="test-drive" href="#test-drive" >Test Drive</a></li>
+          <li><a href="javascript:(function(d){if(typeof Pontoon==='undefined'){Pontoon='http://localhost/pontoon/client/bookmarklet/';d.body.appendChild(d.createElement('script')).src=Pontoon+'/loader.js';}else{Pontoon.initialize();}})(document)" id="bookmarklet">Bookmarklet</a></li>
+	      <li><a href="../jetpack" target="_blank" >Jetpack</a></li>
+        </ul>
+
+      </fieldset>
+    </section>
+    
+	<!-- Main UI -->
+    <aside id="pontoon">
+
+      <header>
+        <span id="logo">Pontoon</span>
+        <input class="url" type="text" />
+        <span class="separator"></span>
+
+        <!-- Locale selector: should be automatic (use geolocaion or browser language) -->
+        <span id="flag" class="flag PL"></span>
+        <button class="button select" id="locale"><span class="language">Polski</span><span> &#9652;</span></button>
+        <ul id="locale-list">
+          <li><span class="flag DE"></span><span class="language">Deutsch</span></li>
+          <li><span class="flag FR"></span><span class="language">Français</span></li>
+          <li><span class="flag HR"></span><span class="language">Hrvatski</span></li>
+          <li><span class="flag PL"></span><span class="language">Polski</span></li>
+          <li><span class="flag SI"></span><span class="language">Slovenščina</span></li>
+        </ul>
+
+        <!-- Progress meter
+        <progress value="250" max="1000">
+          <span id="downloadProgress">25</span>%
+        </progress>-->
+
+        <button id="switch"></button>
+        <button class="button" id="send">Send</button>
+      </header>
+
+      <!-- Strings placeholder -->
+      <div id="entitylist"></div>
+    </aside>
+
+	<!-- Website placeholder -->
     <iframe id="source"></iframe>
-  </div>
- </body>
+    	
+	<!-- Javascript at the bottom for fast page loading -->
+    
+    <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script>!window.jQuery && document.write(unescape('%3Cscript src="../lib/js/jquery-1.5.min.js"%3E%3C/script%3E'))</script>
+    
+    <script type="text/javascript" src="../lib/js/jquery.editableText.js"></script>
+    <script type="text/javascript" src="../lib/js/pontoon.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+
+  </body>
 </html>
