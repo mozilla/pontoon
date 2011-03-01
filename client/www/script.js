@@ -41,11 +41,6 @@
       }
     });
     
-    // Send changes to server
-    $("#send").click(function () {
-      Pontoon._clients[0].send();
-    });
-
     // Click on a test drive icon
     $('#test-drive').click(function() {
       var event = $.Event("keypress");

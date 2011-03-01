@@ -261,8 +261,9 @@
 }
 
 #pontoon #entitylist textarea {
-  width: 100%;
+  width: 98%;
   border: 1px solid #CCCCCC;
+  padding: 5px;
 
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
@@ -271,6 +272,18 @@
   box-shadow: 0 1px #FFFFFF;
   -moz-box-shadow: 0 1px #FFFFFF;
   -webkit-box-shadow: 0 1px #FFFFFF;
+}
+
+#pontoon #entitylist textarea:hover {
+  border-color: #999999;
+}
+
+#pontoon #entitylist textarea:focus {
+  border-color: #AEEE00;
+
+  box-shadow: 0 0 2px 1px #AEEE00;
+  -moz-box-shadow: 0 0 2px 1px #AEEE00;
+  -webkit-box-shadow: 0 0 2px 1px #AEEE00;
 }
 
 /*

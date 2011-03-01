@@ -215,29 +215,33 @@ Pontoon.client.prototype = {
    * extracts entities from the document
    */ 
   extractEntitiesWithGuessing: function(node) {
-    if (!node)
+    if (!node) {
       var node = $(this._doc.body);
-    var self=this;
-    var nodeNames = ['P','H1','H2','LI','SPAN','A']
+    }
+    var self = this;
+    var nodeNames = ['P', 'H1', 'H2', 'LI', 'SPAN', 'A'];
     node.children().each(function() {
-      if (this.nodeType == 3) { // text
+      if (this.nodeType === 3) { // text
         //if (trim(this.textContent))
         //alert(this.nodeValue);
       } else {
         var isInline = false;
-        for (var i in nodeNames)
-          if(nodeNames[i]==this.nodeName) {
+        for (var i in nodeNames) {
+          if (nodeNames[i] === this.nodeName) {
             isInline = true;
             var entity = new Entity(self);
-            entity.node = $(this)
-            entity.string = $(this).html().toString()
-            entity.txtString = $(this).text().toString()
-            if (!trim(entity.txtString))
-                break;
+            entity.node = $(this);
+            entity.string = $(this).html();
+            entity.txtString = $(this).text();
+            if (!trim(entity.txtString)) {
+              break;
+            }
             self._entities.push(entity);
           }
-        if(!isInline)
+        }
+        if (!isInline) {
           self.extractEntities($(this));
+        }
       }
     });
   },
@@ -248,10 +252,10 @@ Pontoon.client.prototype = {
     // entity is an HTML Element, however... it contains one or more
     // Nodes which are marked html10n...
     //
-    var entity = element.get()[0].entity;
+    var entity = element.get(0).entity;
     var inL10n = false;
-    for (var nodeIndex = 0; nodeIndex < element.get()[0].childNodes.length; nodeIndex++) {
-      var node = element.get()[0].childNodes[nodeIndex];
+    for (var nodeIndex = 0; nodeIndex < element.get(0).childNodes.length; nodeIndex++) {
+      var node = element.get(0).childNodes[nodeIndex];
       // Is this a Comment?
       if (node.nodeType == 8) {
         if (node.nodeValue.indexOf('l10n ') == 0) {
@@ -335,9 +339,14 @@ Pontoon.client.prototype = {
       $('#locale .language').html($(this).find('.language').html());
       $('#locale').click();
     });
+
+    // Send changes to server
+    $("#send").click(function () {
+      Pontoon._clients[0].send();
+    });
   },
   /**
-   * Render original - translation pairs
+   * Render source - translation pairs
    */
   rebuildUIList: function(pc) {
     var list = $(pc._ptn).find('#entitylist').empty()
@@ -346,12 +355,12 @@ Pontoon.client.prototype = {
         i = 0;
 
 	$.each(pc._entities, function(i, entity) {
-      var tr = $('<tr><td class="original"><p>' + entity.txtString + '</p></td><td class="translation"><textarea>' + (entity.translation || '') + '</textarea></td></tr>', pc._ptn);
+      var tr = $('<tr><td class="source"><p>' + entity.txtString + '</p></td><td class="translation"><textarea>' + (entity.txtString || '') + '</textarea></td></tr>', pc._ptn);
           
       tr.get(0).entity = entity;
-
       entity.node.get(0).entity = entity;
       entity.ui = tr;
+
       list.find('tbody').append(tr);
 	});
 
