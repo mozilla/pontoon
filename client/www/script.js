@@ -18,8 +18,8 @@
         $('#intro').slideUp("fast", function() {
 
           // TODO: use real URLs
-          $('#source').attr('src', /*$('.url').val()*/ '../../projects/testpilot');
-          $('#pontoon .url').val(/*$('.url').val()*/'../../projects/testpilot');
+          $('#source').attr('src', /*$('.url').val()*/ window.location.href.split("client/www")[0] + 'projects/testpilot');
+          $('#pontoon .url').val(/*$('.url').val()*/ window.location.href.split("client/www")[0] + 'projects/testpilot');
         });
 
         $('#source').unbind("load.pontoon").bind("load.pontoon", function() {
