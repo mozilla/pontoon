@@ -257,17 +257,17 @@ Pontoon.client.prototype = {
     for (var nodeIndex = 0; nodeIndex < element.get(0).childNodes.length; nodeIndex++) {
       var node = element.get(0).childNodes[nodeIndex];
       // Is this a Comment?
-      if (node.nodeType == 8) {
-        if (node.nodeValue.indexOf('l10n ') == 0) {
+      if (node.nodeType === 8) {
+        if (node.nodeValue.indexOf('l10n ') === 0) {
           
         // Is this html10n comment the one we're looking for?
           var msgid = node.nodeValue.substring(5);
-          if (msgid == entity.id) {            
+          if (msgid === entity.id) {            
             inL10n = true;
             entity.translation = "";
             entity.txtTranslation = "";
           } 
-        } else if (node.nodeValue.indexOf('/l10n') == 0) {
+        } else if (node.nodeValue.indexOf('/l10n') === 0) {
             inL10n = false;            
         }
       // Was not a Comment
@@ -275,14 +275,14 @@ Pontoon.client.prototype = {
         // Is this a Text Node with a value or an Elment 
         if (inL10n && node.nodeValue) {
           entity.translation += node.nodeValue;
-          //entity.translation = editable.html().toString();
-          //entity.txtTranslation += element.html().toString();
+          //entity.translation = editable.html();
+          //entity.txtTranslation += element.html();
           //TODO nope... we should track msgid and msgstr and ignore the node.nodeValue
           entity.txtTranslation += $("<div>" + node.nodeValue + "</div>").text();
-        } else if (inL10n && node.nodeType == 1) {
+        } else if (inL10n && node.nodeType === 1) {
           var el = $(node);
           
-          entity.translation += '<' + el.html().toString();
+          entity.translation += '<' + el.html();
           entity.txtTranslation += el.text();
         } 
       }
@@ -299,7 +299,7 @@ Pontoon.client.prototype = {
     pc.enableEditing();
 
     $(".editableToolbar > .save", doc).click(function() {
-      var editable = $($(this).parent().get()[0].target);
+      var editable = $($(this).parent().get(0).target);
       //var html = this.contentWindow.document.body.innerHTML;
       pc.updateEntitiesFromElement(editable);
     });
