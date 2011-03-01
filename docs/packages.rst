@@ -56,7 +56,7 @@ or from::
 Global vs. local library
 ------------------------
 
-playdoh provides a its default library in the ``vendor/`` directory. You *may*
+playdoh provides its default library in the ``vendor/`` directory. You *may*
 fork and change it, but that will make it hard to pull updates from the
 upstream library later.
 
