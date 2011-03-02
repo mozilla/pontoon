@@ -155,8 +155,9 @@ Pontoon.client.prototype = {
    * extracts entities from the document
    */ 
   extractEntities: function(node) {
-	if (this.isEnchanted())
+	if (this.isEnchanted()) {
       return this.extractEntitiesWithSpan(node);
+    }
     return this.extractEntitiesWithGuessing(node);
   },
 
@@ -248,19 +249,20 @@ Pontoon.client.prototype = {
   /**
    * element jQuery wrapped HTML Element which contains html10n nodes
    */
-  updateEntitiesFromElement: function(element) {
+  updateEntities: function(element) {
     // entity is an HTML Element, however... it contains one or more
     // Nodes which are marked html10n...
     //
-    var entity = element.get(0).entity;
+    var entity = element.entity;
     var inL10n = false;
-    for (var nodeIndex = 0; nodeIndex < element.get(0).childNodes.length; nodeIndex++) {
-      var node = element.get(0).childNodes[nodeIndex];
-      // Is this a Comment?
+
+    // Is this a Comment?
+    // TODO: not tested yet
+    for (var nodeIndex = 0; nodeIndex < element.childNodes.length; nodeIndex++) {
+      var node = element.childNodes[nodeIndex];
       if (node.nodeType === 8) {
         if (node.nodeValue.indexOf('l10n ') === 0) {
-          
-        // Is this html10n comment the one we're looking for?
+          // Is this html10n comment the one we're looking for?
           var msgid = node.nodeValue.substring(5);
           if (msgid === entity.id) {            
             inL10n = true;
@@ -268,26 +270,15 @@ Pontoon.client.prototype = {
             entity.txtTranslation = "";
           } 
         } else if (node.nodeValue.indexOf('/l10n') === 0) {
-            inL10n = false;            
+          inL10n = false;            
         }
-      // Was not a Comment
-      } else {
-        // Is this a Text Node with a value or an Elment 
-        if (inL10n && node.nodeValue) {
-          entity.translation += node.nodeValue;
-          //entity.translation = editable.html();
-          //entity.txtTranslation += element.html();
-          //TODO nope... we should track msgid and msgstr and ignore the node.nodeValue
-          entity.txtTranslation += $("<div>" + node.nodeValue + "</div>").text();
-        } else if (inL10n && node.nodeType === 1) {
-          var el = $(node);
-          
-          entity.translation += '<' + el.html();
-          entity.txtTranslation += el.text();
-        } 
       }
     }
-    entity.ui.text(entity.txtTranslation)
+    
+    entity.translation = $(element).html();
+    entity.txtTranslation = $(element).text();
+    entity.ui.find('textarea').text(entity.translation)
+      
   },
   send: function() {
     Pontoon.service.send(this);
@@ -296,23 +287,23 @@ Pontoon.client.prototype = {
    * Initialize Pontoon Client
    */
   turnOn: function(pc, doc) {
-    pc.enableEditing();
-
-    $(".editableToolbar > .save", doc).click(function() {
-      var editable = $($(this).parent().get(0).target);
-      //var html = this.contentWindow.document.body.innerHTML;
-      pc.updateEntitiesFromElement(editable);
-    });
+    this.enableEditing();
 
     // Show and render main UI
+    this.attachHandlers(pc, doc);    
+    this.rebuildUIList(pc);
     $('#pontoon').slideDown();
-    pc.attachHandlers();    
-    pc.rebuildUIList(pc);
   },
   /**
    * Attach event handlers to Pontoon header element
    */
-  attachHandlers: function() {
+  attachHandlers: function(pc, doc) {
+    // Update entities when saved
+    $(".editableToolbar > .save", doc).click(function() {
+      var element = $(this).parent().get(0).target;
+      pc.updateEntities(element);
+    });
+
     // Open/close Pontoon UI
     $('#switch, #logo').unbind("click.pontoon").bind("click.pontoon", function() {
       if ($('#pontoon').is('.opened')) {
@@ -332,8 +323,6 @@ Pontoon.client.prototype = {
       $('#locale-list').css("left", $("#locale").position().left).toggle();
       $(this).toggleClass('opened');
     });
-
-    // Update locale
     $('#locale-list li').unbind("click.pontoon").bind("click.pontoon", function() {
       $('#flag').attr("class", $(this).find('span').attr("class"));
       $('#locale .language').html($(this).find('.language').html());
@@ -355,7 +344,7 @@ Pontoon.client.prototype = {
         i = 0;
 
 	$.each(pc._entities, function(i, entity) {
-      var tr = $('<tr><td class="source"><p>' + entity.txtString + '</p></td><td class="translation"><textarea>' + (entity.txtString || '') + '</textarea></td></tr>', pc._ptn);
+      var tr = $('<tr><td class="source"><p>' + entity.txtString + '</p></td><td class="translation"><textarea>' + entity.string + '</textarea></td></tr>', pc._ptn);
           
       tr.get(0).entity = entity;
       entity.node.get(0).entity = entity;
