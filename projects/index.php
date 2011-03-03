@@ -9,7 +9,7 @@ setlocale(LC_ALL,$locale);
 bindtextdomain('messages','./locale');
 textdomain('messages');
 
-require_once('./pontoon.php');
+require_once('../target/php/pontoon.php');
 
 ?>
 <html>
