@@ -141,10 +141,10 @@
 
             toolbar.find('.cancel').click(function(){
                 stopEditing(toolbar);
-                var target = toolbar.get()[0].target
+                var target = toolbar.get()[0].target;
                 $(target).html(target.prevValue);
-                target.entity.string=target.prevValue
-                //target.entity.ui.text(target.txtPrevValue)
+                target.entity.string = target.prevValue;
+                target.entity.ui.find('textarea').text("");
                 return false;
             });        
             // Display only edit button            
