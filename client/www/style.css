@@ -328,7 +328,7 @@ body {
   margin: 0 20px;
 }
 
-#test-drive {
+#test-pilot {
   color: #AAAAAA;
 }
 
@@ -343,6 +343,6 @@ body {
   transition: all 0.3s ease-out;  
 }
 
-.links li a:hover, #test-drive:hover {
+.links li a:hover, #test-pilot:hover {
   color: #AEEE00;
 }

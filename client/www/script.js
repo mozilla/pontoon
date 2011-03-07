@@ -41,8 +41,8 @@
       }
     });
     
-    // Click on a test drive icon
-    $('#test-drive').click(function() {
+    // Click on a test pilot link
+    $('#test-pilot').click(function() {
       var event = $.Event("keypress");
       event.which = 13;
       $("#intro .url").trigger(event);

@@ -22,11 +22,11 @@ Entity.prototype = {
   'id': null,
   
   hover: function() {
-    this.node.get()[0].showToolbar();
+    this.node.get(0).showToolbar();
     this.ui.toggleClass('hovered');
   },
   unhover: function() {
-    this.node.get()[0].hideToolbar();
+    this.node.get(0).hideToolbar();
     this.ui.toggleClass('hovered');
   }
 }
@@ -98,10 +98,6 @@ var Pontoon = {
 	  this._meta['url'] = meta.attr('ip');
     Pontoon._clients.push(this);
   },
-}
-
-function trim(str) {
-  return str.replace(/^\s+|\s+$/g, '')
 }
 
 Pontoon.L10N_PREFIX = 5;
@@ -223,7 +219,7 @@ Pontoon.client.prototype = {
     var nodeNames = ['P', 'H1', 'H2', 'LI', 'SPAN', 'A'];
     node.children().each(function() {
       if (this.nodeType === 3) { // text
-        //if (trim(this.textContent))
+        //if (this.textContent)
         //alert(this.nodeValue);
       } else {
         var isInline = false;
@@ -234,7 +230,7 @@ Pontoon.client.prototype = {
             entity.node = $(this);
             entity.string = $(this).html();
             entity.txtString = $(this).text();
-            if (!trim(entity.txtString)) {
+            if (!entity.txtString) {
               break;
             }
             self._entities.push(entity);
