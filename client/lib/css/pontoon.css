@@ -8,7 +8,7 @@
   border: none;
   color: #AAAAAA;
   cursor: pointer;
-  padding: 2px 5px;
+  padding: 3px 5px;
   text-shadow: 1px 1px 2px #000000;
   
   background-color: #444444;
@@ -36,7 +36,7 @@
 }
 
 #pontoon .button:active {
-  padding: 3px 5px 1px;
+  padding: 4px 5px 2px;
 }
 
 #pontoon {
@@ -53,7 +53,7 @@
 
 #pontoon header {
   font-size: 12px;
-  padding: 7px 5px;
+  padding: 8px 5px 6px;
   height: 24px;
   position: relative;
 
@@ -101,7 +101,12 @@
 
 #pontoon #locale {
   float: left;
-  margin: 1px 0 0 5px;
+  margin-left: 5px;
+  padding: 2px 5px;
+}
+
+#pontoon #locale:active {
+  padding: 3px 5px 1px;
 }
 
 #pontoon #locale.opened {
@@ -152,9 +157,56 @@
   margin: 2px 5px 0 0;
 }
 
+#pontoon #progress {
+  border: 1px solid #000000;
+  float: left;
+  height: 19px;
+  width: 100px;
+  text-align: center;
+
+  box-shadow: 0 1px 1px #444444;
+  -moz-box-shadow: 0 1px 1px #444444;
+  -webkit-box-shadow: 0 1px 1px #444444;
+
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+
+  background-color: #222222;
+  background-image: -moz-linear-gradient(center top, #333333, #000000); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #333333),color-stop(1, #000000)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#333333, #000000); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #333333, #000000);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#000000'); /* IE6–IE9 */
+}
+
+#pontoon #progress span {
+  background: #AEEE00;
+  float: left;
+  height: 100%;
+  width: 0%;
+  
+  border-radius: 3px 0 0 3px;
+  -moz-border-radius: 3px 0 0 3px;
+  -webkit-border-radius: 3px 0 0 3px;
+
+  background-color: #AEEE00;
+  background-image: -moz-linear-gradient(center top, #AEEE00, #405700); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #AEEE00),color-stop(1, #405700)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#AEEE00, #405700); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #AEEE00, #405700);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#AEEE00', EndColorStr='#405700'); /* IE6–IE9 */
+}
+
+#pontoon #progress-value {
+  color: #AAAAAA;
+  text-shadow: 1px 1px 2px #000000;
+  margin: 4px;
+  float: left;
+}
+
 #pontoon #send {
   float: right;
-  margin-top: 1px;
 }
 
 #pontoon #switch {
@@ -230,7 +282,7 @@
 }
 
 #pontoon #entitylist .translated td.translation {
-  border-left: 2px solid #9F423B;
+  border-left: 2px solid #AEEE00;
 }
 
 #pontoon #entitylist .changed td.translation {

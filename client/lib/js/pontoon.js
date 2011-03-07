@@ -258,7 +258,7 @@ Pontoon.client.prototype = {
 
     entity.translation = $(clone).html();
     entity.txtTranslation = $(clone).text();
-    entity.ui.find('textarea').text(entity.translation);
+    entity.ui.find('textarea').text(entity.translation).parents('tr').addClass('translated');
   },
   send: function() {
     Pontoon.service.send(this);
@@ -282,6 +282,12 @@ Pontoon.client.prototype = {
     $(".editableToolbar > .save", doc).click(function() {
       var element = $(this).parent().get(0).target;
       pc.updateEntities(element);
+      pc.updateProgress();
+    });
+
+    // Update progress when cancelled
+    $(".editableToolbar > .cancel", doc).click(function() {
+      pc.updateProgress();
     });
 
     // Open/close Pontoon UI
@@ -315,14 +321,14 @@ Pontoon.client.prototype = {
     });
   },
   /**
-   * Render source - translation pairs
+   * Build source - translation pairs
    */
   rebuildUIList: function(pc) {
     var list = $(pc._ptn).find('#entitylist').empty()
         // tables still need 'cellspacing="0"' in the markup: http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
-        .append('<table cellspacing="0"><thead><tr><th>Source</th><th>Translation</th></tr></thead><tbody></tbody></table>'),
-        i = 0;
+        .append('<table cellspacing="0"><thead><tr><th>Source</th><th>Translation</th></tr></thead><tbody></tbody></table>');
 
+    // Render
 	$.each(pc._entities, function(i, entity) {
       var tr = $('<tr><td class="source"><p>' + entity.txtString + '</p></td><td class="translation"><textarea>' + (entity.translation || '') + '</textarea></td></tr>', pc._ptn);
           
@@ -333,6 +339,7 @@ Pontoon.client.prototype = {
       list.find('tbody').append(tr);
 	});
 
+    // Event handlers
     $("#pontoon tr").hover(function() {
       this.entity.hover();
     }, function() {
@@ -340,6 +347,17 @@ Pontoon.client.prototype = {
     }).click(function() {
       $(pc._doc).find('.editableToolbar > .edit').click();
     });
+
+    this.updateProgress();
+  },
+  /**
+   * Update progress indicator and value
+   */
+  updateProgress: function() {
+  	var all = $("#pontoon tr").length,
+  	    translated = $("#pontoon tr.translated").length;
+    $('#progress span').width(Math.round(translated*100/all) + '%');
+    $('#progress-value').html(translated + '/' + all);
   }
 
 }

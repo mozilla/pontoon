@@ -18,6 +18,10 @@
           '<li><span class="flag PL"></span><span class="language">Polski</span></li>'+
           '<li><span class="flag SI"></span><span class="language">Slovenščina</span></li>'+
         '</ul>'+
+        '<span class="separator"></span>'+
+
+        '<div id="progress"><span></span></div>'+
+        '<span id="progress-value"></span>'+
 
         '<button id="switch"></button>'+
         '<button class="button" id="send">Send</button>'+

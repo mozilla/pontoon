@@ -144,7 +144,7 @@
                 var target = toolbar.get()[0].target;
                 $(target).html(target.prevValue);
                 target.entity.string = target.prevValue;
-                target.entity.ui.find('textarea').text("");
+                target.entity.ui.find('textarea').text('').parents('tr').removeClass('translated');
                 return false;
             });        
             // Display only edit button            
