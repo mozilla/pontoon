@@ -95,7 +95,7 @@ Testing
 Various
 -------
 
-* `nuggets <https://github.com/mozilla/nuggets/>`_:
+* `nuggets <https://github.com/mozilla/nuggets/>`_\*:
   Little utilities that don't deserve a package.
 
 
