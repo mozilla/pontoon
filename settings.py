@@ -183,6 +183,7 @@ INSTALLED_APPS = (
     # Django contrib apps
     'django.contrib.auth',
     'django_sha2',  # Load after auth to monkey-patch it.
+
     'django.contrib.contenttypes',
     # 'django.contrib.sessions',
     # 'django.contrib.sites',
@@ -225,7 +226,10 @@ DOMAIN_METHODS = {
 JAVA_BIN = '/usr/bin/java'
 
 ## Auth
-AUTHENTICATION_BACKENDS = ('django_sha2.auth.Sha512Backend',)
+PWD_ALGORITHM = 'bcrypt'
+HMAC_KEYS = {
+    #'2011-01-01': 'cheesecake',
+}
 
 ## Tests
 TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
