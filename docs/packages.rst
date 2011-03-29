@@ -63,8 +63,9 @@ For such repos or for packages coming from PyPI, do::
 
     pip install -I --install-option="--home=`pwd`/vendor-local" --src='vendor-local/src' cheeseballs
     cd vendor-local
-    git add src/cheeseballs
-    git commit src/cheeseballs
+    # if it's a non-git repository checkout, add a line to vendor.pth (see below)
+    git add .
+    git commit
 
 Done. Try ``./manage.py shell`` and then ``import cheeseballs`` to make sure
 it worked.
