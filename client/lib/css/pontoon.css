@@ -126,6 +126,7 @@
   color: #AAAAAA;
   list-style: none;
   padding: 10px;
+  margin-left: 0;
   position: absolute;
 
   border-radius: 4px 4px 0 0;
