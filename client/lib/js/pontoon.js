@@ -113,7 +113,7 @@ Pontoon.client.prototype = {
    * determine if the current page is "pontoon-enchanted"
    */ 
   isEnchanted: function() {
-	if (this._enchanted == null) {
+	if (this._enchanted === null) {
       var meta = $(this._doc).find('head > meta[name=Pontoon]');
       this._enchanted = (meta.size() > 0);
     }
@@ -137,7 +137,7 @@ Pontoon.client.prototype = {
    */ 
   disableEditing: function() {
 	$(this._doc).find('link').each(function() {
-	  if ($(this).attr('href') == '../../client/lib/css/editable.css') {
+	  if ($(this).attr('href') === '../../client/lib/css/editable.css') {
 		$(this).remove();	
 	  }
 	});
@@ -152,16 +152,9 @@ Pontoon.client.prototype = {
    */ 
   extractEntities: function(node) {
 	if (this.isEnchanted()) {
-      return this.extractEntitiesWithSpan(node);
+      return this.extractAllEntities(this._doc);
     }
     return this.extractEntitiesWithGuessing(node);
-  },
-
-  /**
-   * extracts entities from the document
-   */ 
-  extractEntitiesWithSpan: function(node) {
-    this.extractAllEntities(this._doc);
   },
   /**
    * Extracts all gettext msgid and msgstr from the document.
@@ -278,7 +271,7 @@ Pontoon.client.prototype = {
    * Attach event handlers to Pontoon header element
    */
   attachHandlers: function(pc, doc) {
-    // Update entities when saved
+    // Update entities and progress when saved
     $(".editableToolbar > .save", doc).click(function() {
       var element = $(this).parent().get(0).target;
       pc.updateEntities(element);
@@ -356,7 +349,7 @@ Pontoon.client.prototype = {
   updateProgress: function() {
   	var all = $("#pontoon tr").length,
   	    translated = $("#pontoon tr.translated").length;
-    $('#progress span').width(Math.round(translated*100/all) + '%');
+    $('#progress span').width(Math.round(translated*100 / all) + '%');
     $('#progress-value').html(translated + '/' + all);
   }
 

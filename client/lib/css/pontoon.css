@@ -249,7 +249,7 @@
 }
 
 #pontoon #entitylist thead th {
-  background: #F4F4F4;
+  background: #EBEBEB;
 }
 
 #pontoon #entitylist th {
@@ -267,7 +267,7 @@
 }
 
 #pontoon #entitylist tbody tr:hover {
-  background: #F4F4F4;
+  background: #EBEBEB;
   cursor: pointer;
 }
 
