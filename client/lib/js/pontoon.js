@@ -257,15 +257,43 @@ Pontoon.client.prototype = {
     Pontoon.service.send(this);
   },
   /**
-   * Initialize Pontoon Client
+   * Update progress indicator and value
    */
-  turnOn: function(pc, doc) {
-    this.enableEditing();
+  updateProgress: function() {
+  	var all = $("#pontoon tr").length,
+  	    translated = $("#pontoon tr.translated").length;
+    $('#progress span').width(Math.round(translated*100 / all) + '%');
+    $('#progress-value').html(translated + '/' + all);
+  },
+  /**
+   * Build source - translation pairs
+   */
+  rebuildUIList: function(pc) {
+    var list = $(pc._ptn).find('#entitylist').empty()
+        // tables still need 'cellspacing="0"' in the markup: http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
+        .append('<table cellspacing="0"><thead><tr><th>Source</th><th>Translation</th></tr></thead><tbody></tbody></table>');
 
-    // Show and render main UI
-    this.attachHandlers(pc, doc);    
-    this.rebuildUIList(pc);
-    $('#pontoon').slideDown();
+    // Render
+	$.each(pc._entities, function(i, entity) {
+      var tr = $('<tr><td class="source"><p>' + entity.txtString + '</p></td><td class="translation"><textarea>' + (entity.translation || '') + '</textarea></td></tr>', pc._ptn);
+          
+      tr.get(0).entity = entity;
+      entity.node.get(0).entity = entity;
+      entity.ui = tr;
+
+      list.find('tbody').append(tr);
+	});
+
+    // Event handlers
+    $("#pontoon tr").hover(function() {
+      this.entity.hover();
+    }, function() {
+      this.entity.unhover();
+    }).click(function() {
+      $(pc._doc).find('.editableToolbar > .edit').click();
+    });
+
+    this.updateProgress();
   },
   /**
    * Attach event handlers to Pontoon header element
@@ -314,43 +342,14 @@ Pontoon.client.prototype = {
     });
   },
   /**
-   * Build source - translation pairs
+   * Initialize Pontoon Client
    */
-  rebuildUIList: function(pc) {
-    var list = $(pc._ptn).find('#entitylist').empty()
-        // tables still need 'cellspacing="0"' in the markup: http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
-        .append('<table cellspacing="0"><thead><tr><th>Source</th><th>Translation</th></tr></thead><tbody></tbody></table>');
+  turnOn: function(pc, doc) {
+    this.enableEditing();
 
-    // Render
-	$.each(pc._entities, function(i, entity) {
-      var tr = $('<tr><td class="source"><p>' + entity.txtString + '</p></td><td class="translation"><textarea>' + (entity.translation || '') + '</textarea></td></tr>', pc._ptn);
-          
-      tr.get(0).entity = entity;
-      entity.node.get(0).entity = entity;
-      entity.ui = tr;
-
-      list.find('tbody').append(tr);
-	});
-
-    // Event handlers
-    $("#pontoon tr").hover(function() {
-      this.entity.hover();
-    }, function() {
-      this.entity.unhover();
-    }).click(function() {
-      $(pc._doc).find('.editableToolbar > .edit').click();
-    });
-
-    this.updateProgress();
-  },
-  /**
-   * Update progress indicator and value
-   */
-  updateProgress: function() {
-  	var all = $("#pontoon tr").length,
-  	    translated = $("#pontoon tr.translated").length;
-    $('#progress span').width(Math.round(translated*100 / all) + '%');
-    $('#progress-value').html(translated + '/' + all);
+    // Show and render main UI
+    this.attachHandlers(pc, doc);    
+    this.rebuildUIList(pc);
+    $('#pontoon').slideDown();
   }
-
 }

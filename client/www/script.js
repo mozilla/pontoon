@@ -3,7 +3,7 @@
 
   $(function() {
     // Empty iframe if cached
-    $("iframe").attr("src", "about:blank")
+    $("iframe").attr("src", "about:blank");
 
 	// Prepare iframe size and resize it with window
     $('#source').height($(document).height() - $('#pontoon').height());
@@ -29,6 +29,7 @@
           }
       
           // Remove any existing pontoon clients
+          // TODO: do we need this?
           if (Pontoon._clients.length) {
             Pontoon._clients = [];
           }
