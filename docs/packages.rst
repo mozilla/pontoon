@@ -61,15 +61,36 @@ Non-git based repos (hg, CVS, tarball)
 
 For such repos or for packages coming from PyPI, do::
 
-    pip install -I --install-option="--home=`pwd`/vendor-local" --src='vendor-local/src' cheeseballs
+    pip install -I --install-option="--home=`pwd`/vendor-local" cheeseballs
     cd vendor-local
-    # if it's a non-git repository checkout, add a line to vendor.pth (see below)
-    git add .
+    git add lib/python/cheeseballs
+    git commit
+
+Optionally, if the package installs executables add them too. For
+example::
+
+    cd vendor-local
+    git add bin/cheeseballer
     git commit
 
 Done. Try ``./manage.py shell`` and then ``import cheeseballs`` to make sure
 it worked.
 
+For hg repos that are not on PyPI, they can be installed with pip too
+but omit the ``--home`` option and use the ``--src`` instead. For
+example::
+
+    pip install -I --src='vendor-local/src' \    
+    -e hg+http://bitbucket.org/jespern/django-piston@default#egg=django-piston
+    cd vendor-local
+    git add src/django-piston
+    git commit
+
+Note: Installed source packages need to be appended to
+``vendor-local/vendor.pth``. See note below. For example::
+
+    echo src/django-piston >> vendor-local/vendor.pth
+    
 git-based repositories
 ~~~~~~~~~~~~~~~~~~~~~~
 
