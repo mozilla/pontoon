@@ -34,11 +34,17 @@ This is what is used in production:
 
 gunicorn
 ~~~~~~~~
+Totally optional and only for the cool kids.
+
 A lighter weight method of testing your mod_wsgi setup is by using gunicorn.
 
+One time setup:
     pip install gunicorn
-    gunicorn wsgi/playdoh.wsgi
-(or whatever you rename it too...)
+    ln -s wsgi/playdoh.wsgi wsgi/playdoh.py
+
+Each Time:
+    touch wsgi/__init__.py
+    gunicorn wsgi/playdoh:application
 
 Middleware Caching
 ------------------
