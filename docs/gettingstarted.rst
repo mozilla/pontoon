@@ -37,3 +37,10 @@ patch to base and move it upstream.
 
 Eventually you'll probably diverge enough that you'll want to delete the base
 branch.
+
+Publishing your repo
+--------------------
+
+    git remote rename origin playdoh
+    git remote add origin git@github.com:mozilla/foobar.git 
+    git push -u origin base
