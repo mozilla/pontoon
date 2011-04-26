@@ -15,6 +15,31 @@ Developers can set that up or run in stand-alone mode::
 
     ./manage.py runserver 0.0.0.0:8000
 
+It is critical that developers run the app atleast once via mod_wsgi before
+certifying an app as **stage ready**.
+
+Apache
+~~~~~~
+This is what is used in production:
+    <VirtualHost *:80>
+        ServerName %HOSTNAME%
+
+        Alias /media %APP_PATH/media
+
+        WSGIScriptAlias / %APP_PATH/wsgi/playdoh.wsgi
+        WSGIDaemonProcess playdoh processes=16 threads=1 display-name=playdoh
+        WSGIProcessGroup playdoh
+    </VirtualHost>
+
+
+gunicorn
+~~~~~~~~
+A lighter weight method of testing your mod_wsgi setup is by using gunicorn.
+
+    pip install gunicorn
+    gunicorn wsgi/playdoh.wsgi
+(or whatever you rename it too...)
+
 Middleware Caching
 ------------------
 

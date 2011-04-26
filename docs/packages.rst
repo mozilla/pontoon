@@ -6,8 +6,16 @@ pip and friends: Packaging
 
 *(largely borrowed from Zamboni)*
 
-There are two ways of getting packages in your playdoh-based project. ``pip``
-and ``virtualenv`` as well as the preferred method, a **vendor library**.
+Your app will depend on lots of tasty open source Python libararies. The list
+of all your dependencies should exist in two places:
+# requirements/prod.txt
+# As a submodule of vendor
+
+Ultimately your app code will run against the libraries under vendor via mod_wsgi.
+
+Why requirements? For developement, you can use virtualenvs and pip to have a 
+tidy self-contained environment. If run from the Django runserver command, you
+don't even need a web server.
 
 
 The vendor library
@@ -32,7 +40,7 @@ These can come from your system package manager or from::
 Global vs. local library
 ------------------------
 
-playdoh provides its default library in the ``vendor/`` directory. You *may*
+Playdoh provides its default library in the ``vendor/`` directory. You *may*
 fork and change it, but that will make it hard to pull updates from the
 upstream library later.
 
@@ -41,17 +49,24 @@ libs in ``vendor/``, make those changes to the directory ``vendor-local/``
 instead, which (in ``manage.py``) is given precedence over playdoh's vendor
 dir.
 
-All other instructions are equal.
-
+compiled.txt vs prod.txt
+------------------------
+If a Python library requires compilation, it should be recorded in compiled.txt.
+These aren't as portable and cannot be shipped in the vendor library.
+For local development, it's nice to pip install these into a virtualenv. A 
+common practise is to use virtual env **only** for compiled libraries and
+vendor for the rest of your dependencies.
 
 Adding new packages
 -------------------
 
 If we wanted to add a new dependency called ``cheeseballs`` to playdoh, you
-would add it to ``requirements/prod.txt`` or ``requirements/dev.txt``. This
-makes it available to users installing into virtualenvs.
+would add it to ``requirements/prod.txt``. If your library isn't used in 
+production, then put it in ``requirements/dev.txt``. This makes it available 
+to users installing into virtualenvs.
 
-We also need to add the new package to the vendor lib.
+We also need to add the new package to the vendor lib, since that is what runs
+in production...
 
 First, we need to add the source. There are two ways, depending on how
 this project is hosted:
@@ -72,9 +87,6 @@ example::
     cd vendor-local
     git add bin/cheeseballer
     git commit
-
-Done. Try ``./manage.py shell`` and then ``import cheeseballs`` to make sure
-it worked.
 
 For hg repos that are not on PyPI, they can be installed with pip too
 but omit the ``--home`` option and use the ``--src`` instead. For
@@ -114,9 +126,15 @@ you won't hit any snags like that.
 Done. Try ``./manage.py shell`` and then ``import cheeseballs`` to make sure
 it worked.
 
+Testing Your Vendor Change
+---------------
+It's critical that you test your app running under mod_wsgi. Although you
+may use runserver day to day, go ahead and run some code through WSGI to 
+prove vendor is setup properly. (throw an import into your view, etc)
 
 Advanced Topics
 ---------------
+TODO [automate these instructions](<https://github.com/mozilla/playdoh/issues/30)
 
 Initial creation of the vendor library
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
