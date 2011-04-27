@@ -1,10 +1,10 @@
 import re
 from os import listdir
-from os.path import join, dirname
+from os.path import join
 
 import test_utils
 
-import manage
+from playdohlib import manage
 
 
 class MigrationTests(test_utils.TestCase):

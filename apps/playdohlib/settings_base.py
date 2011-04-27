@@ -1,12 +1,11 @@
 # Django settings file for a project based on the playdoh template.
+# import * into your settings_local.py
 import logging
 import os
 
 from django.utils.functional import lazy
 
-# Make file paths relative to settings.
-ROOT = os.path.dirname(os.path.abspath(__file__))
-path = lambda *a: os.path.join(ROOT, *a)
+from playdohlib.manage import ROOT, path
 
 ROOT_PACKAGE = os.path.basename(ROOT)
 

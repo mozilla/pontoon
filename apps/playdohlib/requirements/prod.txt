@@ -1,0 +1,24 @@
+# Django stuff
+-e git://github.com/django/django@36c82ac8#egg=django
+
+# Templates
+-e git://github.com/jbalogh/jingo.git#egg=jingo
+-e git://github.com/jsocol/jingo-minify.git#egg=jingo-minify
+GitPython==0.1.7
+
+# Various tidbits
+-e git://github.com/jsocol/commonware.git#egg=commonware
+-e git://github.com/mozilla/nuggets.git#egg=nuggets
+
+# Security
+-e git://github.com/fwenzel/django-sha2.git#egg=django-sha2
+-e git://github.com/jsocol/bleach.git#egg=bleach
+
+# Celery: Message queue
+celery
+django-celery
+
+# L10n
+Babel>=0.9.4
+-e git://github.com/clouserw/tower.git#egg=tower
+-e git://github.com/fwenzel/django-mozilla-product-details#egg=django-mozilla-product-details

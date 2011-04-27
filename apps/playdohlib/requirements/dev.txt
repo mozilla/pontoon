@@ -2,5 +2,15 @@
 # needed to run the site, it belongs in requirements/prod.txt. If it's a
 # package for developers (testing, docs, etc.), it goes in this file.
 
--r ../apps/playdohlib/requirements/compiled.txt
--r ../apps/playdohlib/requirements/dev.txt
+-r prod.txt
+
+# Documentation
+Sphinx==1.0.6
+
+# Testing
+nose==1.0.0
+-e git://github.com/jbalogh/django-nose.git#egg=django_nose
+-e git://github.com/jbalogh/test-utils.git#egg=test-utils
+
+# L10n
+translate-toolkit==1.8.0
