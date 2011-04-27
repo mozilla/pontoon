@@ -9,7 +9,8 @@ Web Server
 Apps are typically run under Apache and mod_wsgi in production. Entry point::
 
     wsgi/playdoh.wsgi
-(or whatever you rename it too...)
+
+(or whatever you rename it to...)
 
 Developers can set that up or run in stand-alone mode::
 
@@ -20,7 +21,8 @@ certifying an app as **stage ready**.
 
 Apache
 ~~~~~~
-This is what is used in production:
+This is a typical virtualhost directive being used in production::
+
     <VirtualHost *:80>
         ServerName %HOSTNAME%
 
@@ -36,15 +38,19 @@ gunicorn
 ~~~~~~~~
 Totally optional and only for the cool kids.
 
-A lighter weight method of testing your mod_wsgi setup is by using gunicorn.
+A lighter weight method of testing your mod_wsgi setup is by using
+`gunicorn <http://gunicorn.org/>`_.
 
-One time setup:
+One time setup::
+
     pip install gunicorn
     ln -s wsgi/playdoh.wsgi wsgi/playdoh.py
 
-Each Time:
+Each Time::
+
     touch wsgi/__init__.py
     gunicorn wsgi/playdoh:application
+
 
 Middleware Caching
 ------------------
