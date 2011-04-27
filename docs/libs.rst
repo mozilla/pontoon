@@ -29,6 +29,12 @@ Deferred Execution (cron, message queues)
 * `django-gearman <https://github.com/fwenzel/django-gearman>`_:
   A convenience wrapper for Gearman clients and workers in Django/Python.
 
+Deployment
+----------
+
+* `django-waffle <https://github.com/jsocol/django-waffle>`_:
+  A feature flipper for Django.
+
 Internationalization (i18n) and Localization (L10n)
 ---------------------------------------------------
 
