@@ -15,7 +15,7 @@ Developers can set that up or run in stand-alone mode::
 
     ./manage.py runserver 0.0.0.0:8000
 
-It is critical that developers run the app atleast once via mod_wsgi before
+It is critical that developers run the app at least once via mod_wsgi before
 certifying an app as **stage ready**.
 
 Apache
