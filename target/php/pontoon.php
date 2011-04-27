@@ -74,7 +74,7 @@ class Pontoon
      * wraps an (already translated) string into Pontoon comments
      */
     static function wrap($translated, $msgid) {
-        $wrapped = sprintf('<!--l10n %1$s-->%2$s<!--/l10n-->',
+        $wrapped = sprintf('<!--l10n %1$s-->%2$s',
                        $msgid, $translated);
 
         return $wrapped;

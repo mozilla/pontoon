@@ -41,7 +41,7 @@
 
 #pontoon {
   display: none;
-  background: #C0DEED;
+  background: #EBEBEB;
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -234,7 +234,7 @@
 
 #pontoon #entitylist {
   display: none;
-  height: 220px;
+  height: 300px;
   padding: 10px;
   overflow-y: scroll;
 }
@@ -250,7 +250,7 @@
 }
 
 #pontoon #entitylist thead th {
-  background: #EBEBEB;
+  background: #CCCCCC;
 }
 
 #pontoon #entitylist th {
@@ -260,11 +260,6 @@
 
 #pontoon #entitylist tbody tr {
   border-top: 1px solid #EBEBEB;
-
-  -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
-  -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
-  -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
-  transition: all 0.3s ease-out;  
 }
 
 #pontoon #entitylist tbody tr:hover {
@@ -338,6 +333,65 @@
   box-shadow: 0 0 2px 1px #AEEE00;
   -moz-box-shadow: 0 0 2px 1px #AEEE00;
   -webkit-box-shadow: 0 0 2px 1px #AEEE00;
+}
+
+#pontoon #entitylist .suggestions {
+	float: right;
+	padding-right: 10px;
+}
+
+#pontoon #entitylist .suggestions a:link,
+#pontoon #entitylist .suggestions a:visited {
+  color: #666666;
+  font-size: 10px;
+  text-decoration: none;
+  text-transform: uppercase;
+  padding: 3px 5px;
+  margin-right: 3px;
+  background: #EBEBEB;
+  border-left: 1px solid #CCCCCC;
+  border-right: 1px solid #CCCCCC;
+  border-top: 1px solid #CCCCCC;
+}
+
+#pontoon #entitylist .suggestions a:hover,
+#pontoon #entitylist .suggestions a:active,
+#pontoon #entitylist .suggestions a.active {
+  background: #FFFFFF;
+}
+
+#pontoon #entitylist .source p {
+  float: left;
+}
+
+#pontoon #entitylist .source .tools {
+  float: right;
+  list-style: none;
+}
+
+#pontoon #entitylist .source .tools li {
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+  margin-bottom: 3px;
+  border: 1px solid #BBBBBB;
+}
+
+#pontoon #entitylist .source .tools li:hover {
+  background-color: #FFFFFF;
+}
+
+#pontoon #entitylist .source .tools .copy {
+  background: #EBEBEB url('../images/copy.png') 2px 2px no-repeat;
+
+}
+
+#pontoon #entitylist .source .tools .auto-translate {
+  background: #EBEBEB url('../images/auto-translate.png') 2px 2px no-repeat;
+}
+
+#pontoon #entitylist .source .tools .comment {
+  background: #EBEBEB url('../images/comment.png') 2px 2px no-repeat;
 }
 
 /*

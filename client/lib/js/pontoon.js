@@ -1,14 +1,13 @@
+// TODO: do we need to separate markup and text?
 var Entity = function(pc) {
   var _client = pc;
-  this.string=null;
-  this.txtString=null;
-  // Translated String used in UI (text only), derived from this.translation
-  this.txtTranslation=null;
-  // Translated String used in PO file (may include HTML markup)
-  this.translation=null;
-  this.node=null;
-  this.ui=null;
-  this.id=null;
+  this.string = null; /* Original string used in PO file (may include HTML markup) */
+  this.txtString = null; /* Original string used in UI (text only), derived from this.string */
+  this.translation = null; /* Translated string used in PO file (may include HTML markup) */
+  this.txtTranslation = null; /* Translated string used in UI (text only), derived from this.translation */
+  this.node = null; /* HTML Element holding string */
+  this.ui = null; /* HTML Element representing string in the main UI */
+  this.id = null;
 }
 
 Entity.prototype = {
@@ -16,7 +15,7 @@ Entity.prototype = {
   'string': null,
   'txtString': null,
   'translation': null,
-  'txtTranslation':null,
+  'txtTranslation': null,
   'node': null,
   'ui': null,
   'id': null,
@@ -36,58 +35,61 @@ var PontoonService = function() {
 
 PontoonService.prototype = {
   url: 'http://pontoon.server.ubuntu:8001/push/',
+
+  /*
+   * Pontoon server push expects a POST with the following properties:
+   *
+   * id - list of msgid strings. The length of id should match the length of value ['Hello World']
+   * value - list of msgstr - should be empty if no changes, otherwise set to the an edited value ['Hallo Welt']
+   * project - url of the page being localized
+   * locale - locale msgstrs are localized too
+  */
   send: function(pc) {
-    var project = ('project' in pc._meta)?pc._meta['project']:pc._doc.location.href;
-    var url = ('url' in pc._meta)?pc._meta['url']:'http://pontoon.server.ubuntu:8001/push/';
-    var lang = $(pc._ptn).find('input').val();
+    var project = ('project' in pc._meta) ? pc._meta['project'] : pc._doc.location.href,
+        lang = $(pc._ptn).find('input').val(),
+        data = {
+          'id': [], 
+          'value': [],
+          'project': project,
+          'locale': lang
+        },
+        entities = [],
+        url = ('url' in pc._meta) ? pc._meta['url'] : 'http://pontoon.server.ubuntu:8001/push/';
+    
+    $(pc._entities).each(function() {
+      var entity = this,
+          trans = entity.translation ? entity.translation : entity.string;
+      entities.push({
+        'id': entity.string,
+        'value': trans
+      })
+    });
+    
+    $(entities).each(function() {
+      data['id'].push(this.id);
+      if (this.id === this.value) {
+        data['value'].push("");
+      } else {
+        data['value'].push(this.value);
+      }
+    });
 
-    /*
-     Pontoon server push expects a POST with the following properties
-     id - list of msgid strings. The length of id should match the length of value
-             Example: ['Hello World']
-     value - list of msgstr - should be empty if no changes, otherwise set to the an edited value
-             Example: ['Hallo Welt']
-     project - url of the page being localized
-     locale - locale msgstr are localized too
-    */
-    var data = { 'id': Array(), 
-                 'value': Array(),
-                 'project': project,
-                 'locale': lang}
-    var entities = Array();
-
-    for(var i in pc._entities) {
-      var entity = pc._entities[i];
-      var trans = entity.translation?entity.translation:entity.string
-      entities.push({'id':entity.string,'value':trans})
-    }
-    for (i in entities) {
-      data['id'].push(entities[i].id)
-      if (entities[i].id==entities[i].value)
-        data['value'].push("")
-      else
-        data['value'].push(entities[i].value)      
-    }
     $.ajaxSettings.traditional = true;
     $.post(url, data, null, "text");
   },
-}
-
-var PontoonUI = function() {}
-
-PontoonUI.prototype = {
 }
 
 var Pontoon = {
   _clients: [],
   service: new PontoonService(),
   client: function(doc, ptn) {
-    if (!doc)
+    if (!doc) {
       throw "Document handler required";
-    this._doc = doc;
-    this._ptn = ptn;
-    this._entities = [];
-    this._meta = {};
+    }
+    this._doc = doc,
+    this._ptn = ptn,
+    this._entities = [],
+    this._meta = {},
     this._enchanted = null;
 
 	var meta = $(doc).find('head > meta[name=Pontoon]');
@@ -109,177 +111,33 @@ Pontoon.client.prototype = {
   _meta: {},
   _enchanted: null,
 
-  /**
-   * determine if the current page is "pontoon-enchanted"
-   */ 
-  isEnchanted: function() {
-	if (this._enchanted === null) {
-      var meta = $(this._doc).find('head > meta[name=Pontoon]');
-      this._enchanted = (meta.size() > 0);
-    }
-    return this._enchanted;
-  },
+
 
   /**
-   * enables document editing
-   */ 
-  enableEditing: function() {
-  	var ss = $('<link rel="stylesheet" href="../../client/lib/css/editable.css">', this._doc);
-    $('head', this._doc).append(ss);
-    this.extractEntities();
-    for (var i in this._entities) {
-      this._entities[i].node.editableText();
-    }
-  },
-
-  /**
-   * disables document editing
-   */ 
-  disableEditing: function() {
-	$(this._doc).find('link').each(function() {
-	  if ($(this).attr('href') === '../../client/lib/css/editable.css') {
-		$(this).remove();	
-	  }
-	});
-    for (var i in this._entities) {
-      this._entities[i].node.disableEditableText();
-    }
-	$(this._doc).find('.editableToolbar').remove();
-  },
-
-  /**
-   * extracts entities from the document
-   */ 
-  extractEntities: function(node) {
-	if (this.isEnchanted()) {
-      return this.extractAllEntities(this._doc);
-    }
-    return this.extractEntitiesWithGuessing(node);
-  },
-  /**
-   * Extracts all gettext msgid and msgstr from the document.
-   * Strings are wrapped in html10n comments.
-   * Example: <!--l10n Hello World-->Hallo Welt<!--/l10n-->
+   * Send data to server
    */
-  extractAllEntities: function(document) {
-    var inL10n = false;
-    var self=this;
-    var eles = document.getElementsByTagName('*');
-    var entity;
-    for (var elIndex=0; elIndex < eles.length; elIndex++) {
-      var nodes = eles[elIndex].childNodes;
-      for (var nodeIndex = 0; nodeIndex < nodes.length; nodeIndex++) {
-        var node = nodes[nodeIndex];
-        //Is this a Comment?
-        if (node.nodeType == 8) {
-          if (node.nodeValue.indexOf('l10n ') == 0) {
-            
-            if (window.consle && inL10n == true) {
-              window.console.error("Already in l10n block, should never happen!");
-            }
-            inL10n = true;
-            entity = new Entity(self);
-            
-            entity.string = node.nodeValue.substring(Pontoon.L10N_PREFIX);
-            //entity.node will be the parentElement
-            //entity.txtString will be the value of the next sibling node
-            entity.id = entity.string;
-            self._entities.push(entity);
-            
-          // Are we ending the html10n comment?
-          } else if (node.nodeValue.indexOf('/l10n') == 0) {
-            inL10n = false;
-            entity = null;
-          }
-        // wasn't a Comment
-        } else {
-          if (inL10n && entity.node == null && node.nodeType == 3) {
-            entity.node = $(node.parentNode);//Element
-            entity.txtString = node.nodeValue;
-          } // if (inL10n)
-        }
-      }
-    }
-  },
-  /**
-   * extracts entities from the document
-   */ 
-  extractEntitiesWithGuessing: function(node) {
-    if (!node) {
-      var node = $(this._doc.body);
-    }
-    var self = this;
-    var nodeNames = ['P', 'H1', 'H2', 'LI', 'SPAN', 'A'];
-    node.children().each(function() {
-      if (this.nodeType === 3) { // text
-        //if (this.textContent)
-        //alert(this.nodeValue);
-      } else {
-        var isInline = false;
-        for (var i in nodeNames) {
-          if (nodeNames[i] === this.nodeName) {
-            isInline = true;
-            var entity = new Entity(self);
-            entity.node = $(this);
-            entity.string = $(this).html();
-            entity.txtString = $(this).text();
-            if (!entity.txtString) {
-              break;
-            }
-            self._entities.push(entity);
-          }
-        }
-        if (!isInline) {
-          self.extractEntities($(this));
-        }
-      }
-    });
-  },
-  /**
-   * element HTML Element which contains html10n nodes
-   */
-  updateEntities: function(element) {
-    var entity = element.entity,
-        clone = $(element).clone();
-
-    // Fliter out comments
-    clone.contents().each(function() {
-      if (this.nodeType === 8) {
-        $(this).remove();
-      }
-    });
-
-    entity.translation = $(clone).html();
-    entity.txtTranslation = $(clone).text();
-    entity.ui.find('textarea').text(entity.translation).parents('tr').addClass('translated');
-  },
   send: function() {
     Pontoon.service.send(this);
   },
-  /**
-   * Update progress indicator and value
-   */
-  updateProgress: function() {
-  	var all = $("#pontoon tr").length,
-  	    translated = $("#pontoon tr.translated").length;
-    $('#progress span').width(Math.round(translated*100 / all) + '%');
-    $('#progress-value').html(translated + '/' + all);
-  },
+
+
+
   /**
    * Build source - translation pairs
    */
   rebuildUIList: function(pc) {
     var list = $(pc._ptn).find('#entitylist').empty()
-        // tables still need 'cellspacing="0"' in the markup: http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
+        // tables still need 'cellspacing="0"' in the markup
+        // http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
         .append('<table cellspacing="0"><thead><tr><th>Source</th><th>Translation</th></tr></thead><tbody></tbody></table>');
 
     // Render
-	$.each(pc._entities, function(i, entity) {
-      var tr = $('<tr><td class="source"><p>' + entity.txtString + '</p></td><td class="translation"><textarea>' + (entity.translation || '') + '</textarea></td></tr>', pc._ptn);
+	$(pc._entities).each(function() {
+      var tr = $('<tr><td class="source"><p>' + this.txtString + '</p><ul class="tools"><li title="Copy original string to translation" class="copy"></li><li title="Machine translation by Google Translate" class="auto-translate"></li><li title="Comment" class="comment"></li></ul></td><td class="translation"><div class="suggestions"><a href="#translation" class="translation active">Translation</a><a href="#translation-memory" class="tm">Translation memory</a><a href="#other-users" class="users">Other users</a><a href="#other-locales" class="locales">Other locales</a></div><textarea>' + (this.translation || '') + '</textarea></td></tr>', pc._ptn);
           
-      tr.get(0).entity = entity;
-      entity.node.get(0).entity = entity;
-      entity.ui = tr;
+      tr.get(0).entity = this;
+      this.node.get(0).entity = this;
+      this.ui = tr;
 
       list.find('tbody').append(tr);
 	});
@@ -295,33 +153,41 @@ Pontoon.client.prototype = {
 
     this.updateProgress();
   },
+
+
+
   /**
-   * Attach event handlers to Pontoon header element
+   * Update progress indicator and value
    */
-  attachHandlers: function(pc, doc) {
+  updateProgress: function() {
+  	var all = $("#pontoon tbody tr").length,
+  	    translated = $("#pontoon tbody tr.translated").length;
+    $('#progress span').width(Math.round(translated*100 / all) + '%');
+    $('#progress-value').html(translated + '/' + all);
+  },
+
+
+
+  /**
+   * Attach event handlers
+   */
+  attachHandlers: function(pc) {
     // Update entities and progress when saved
-    $(".editableToolbar > .save", doc).click(function() {
+    $(".editableToolbar > .save", this._doc).click(function() {
       var element = $(this).parent().get(0).target;
       pc.updateEntities(element);
       pc.updateProgress();
     });
 
     // Update progress when cancelled
-    $(".editableToolbar > .cancel", doc).click(function() {
+    $(".editableToolbar > .cancel", this._doc).click(function() {
       pc.updateProgress();
     });
 
     // Open/close Pontoon UI
     $('#switch, #logo').unbind("click.pontoon").bind("click.pontoon", function() {
-      if ($('#pontoon').is('.opened')) {
-        $('#entitylist').slideUp(function() {
-          $('#source').height($(document).height() - $('#pontoon').height());
-        });
-      } else {
-        $('#entitylist').slideDown(function() {
-          $('#source').height($(document).height() - $('#pontoon').height());
-        });
-      }
+      $('#entitylist').toggle();
+      $('#source').height($(document).height() - $('#pontoon').height());
       $('#pontoon').toggleClass('opened');
     });
 
@@ -338,17 +204,140 @@ Pontoon.client.prototype = {
 
     // Send changes to server
     $("#send").click(function () {
-      Pontoon._clients[0].send();
+      pc.send();
     });
   },
+
+
+
+  /**
+   * Update entity and main UI
+   * 
+   * element HTML Element which contains html10n nodes
+   */
+  updateEntities: function(element) {
+    var entity = element.entity,
+        clone = $(element).clone();
+
+    entity.translation = $(clone).html();
+    entity.txtTranslation = $(clone).text();
+    entity.ui.find('textarea').text(entity.translation).parents('tr').addClass('translated');
+  },
+
+
+
+  /**
+   * Extract entities from the document
+   * Create entity from every non-empty text node
+   */ 
+  guessEntities: function() {
+    var self = this,
+        entity = null;
+
+    $(this._doc).find(':not("script, style")').contents().each(function() {
+      if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0) {
+        entity = new Entity(self);
+        entity.string = entity.txtString = entity.translation = entity.txtTranslation = entity.id = this.nodeValue;
+        entity.node = $(this).parent();
+        self._entities.push(entity);
+
+        $(this).parent().attr("data-l10n", entity.string);
+      }
+    });    
+  },
+
+
+
+  /**
+   * Extract all gettext msgid and msgstr from the document
+   * Strings are prepended with l10n comment nodes
+   * Example: <!--l10n Hello World-->Hallo Welt
+   *
+   * Create entity object from comment and the text node that follows
+   * Move comment node contents to the parent's element data-l10n attribute
+   * Remove comment nodes
+   */
+  parseEntities: function() {
+    var self = this,
+        entity = null;
+
+    $(this._doc).find('*').contents().each(function() {
+      if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n ') === 0) {
+        entity = new Entity(self);
+        entity.string = entity.txtString = entity.id = this.nodeValue.substring(Pontoon.L10N_PREFIX);
+        entity.translation = entity.txtTranslation = $(this.nextSibling).text();
+        entity.node = $(this).parent();
+        self._entities.push(entity);
+
+        $(this).parent().attr("data-l10n", entity.string);
+        $(this).remove();
+      }
+    });
+  },
+
+
+
+  /**
+   * Determine if the current page is prepared for working with Pontoon
+   */ 
+  isEnchanted: function() {
+	if (this._enchanted === null) {
+      this._enchanted = ($(this._doc).find('head > meta[name=Pontoon]').length > 0);
+    }
+    return this._enchanted;
+  },
+
+
+
+  /**
+   * Extract entities from the document
+   */ 
+  extractEntities: function() {
+	if (this.isEnchanted()) {
+      return this.parseEntities();
+    }
+    return this.guessEntities();
+  },
+
+
+
+  /**
+   * Disable document editing
+   */ 
+  disableEditing: function() {
+    $(this._doc).find('link[href="../../client/lib/css/editable.css"]').each(function() {
+      $(this).remove();
+    });
+    $(this._entities).each(function() {
+      this.node.disableEditableText();
+    });
+	$(this._doc).find('.editableToolbar').remove();
+  },
+
+
+
+  /**
+   * Enable document editing
+   */ 
+  enableEditing: function() {
+  	var ss = $('<link rel="stylesheet" href="../../client/lib/css/editable.css">', this._doc);
+    $('head', this._doc).append(ss);
+    this.extractEntities();
+    $(this._entities).each(function() {
+      this.node.editableText();
+    });
+  },
+
+
+
   /**
    * Initialize Pontoon Client
    */
-  turnOn: function(pc, doc) {
+  turnOn: function(pc) {
     this.enableEditing();
 
     // Show and render main UI
-    this.attachHandlers(pc, doc);    
+    this.attachHandlers(pc);    
     this.rebuildUIList(pc);
     $('#pontoon').slideDown();
   }

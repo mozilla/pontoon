@@ -37,7 +37,8 @@
           // Turn on Pontoon client
           var doc = this.contentDocument,
               pc = new Pontoon.client(doc, document);
-          pc.turnOn(pc, doc);
+          // TODO: pc should not be used twice
+          pc.turnOn(pc);
         });
       }
     });
