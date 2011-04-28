@@ -23,14 +23,15 @@ VENDOR  = 1
 
 ENV_BRANCH = {
     # 'environment': [PROJECT_BRANCH, VENDOR_BRANCH],
-    'dev':   ['base',   'master'], 
-    'stage': ['master', 'master'], 
+    'dev':   ['base',   'master'],
+    'stage': ['master', 'master'],
     'prod':  ['prod',   'master'],
 }
 
 GIT_PULL = "git pull -q origin %(branch)s"
 GIT_SUBMODULE = "git submodule update --init"
 SVN_UP = "svn update"
+COMPILE_PO = "./compile.sh"
 
 EXEC = 'exec'
 CHDIR = 'chdir'
@@ -54,6 +55,7 @@ def update_site(env, debug):
         commands += [
             (CHDIR, os.path.join(here, 'locale')),
             (EXEC, SVN_UP),
+            (EXEC, COMPILE_PO),
             (CHDIR, here),
         ]
     elif os.path.exists(os.path.join(here, 'locale', '.git')):
@@ -68,8 +70,8 @@ def update_site(env, debug):
         (EXEC,  GIT_PULL % vendor_branch),
         (EXEC,  GIT_SUBMODULE),
         (CHDIR, os.path.join(here)),
-        (EXEC, 'python vendor/src/schematic/schematic migrations/'),
-        (EXEC, 'python manage.py compress_assets'),
+        (EXEC, 'python2.6 vendor/src/schematic/schematic migrations/'),
+        (EXEC, 'python2.6 manage.py compress_assets'),
     ]
 
     for cmd, cmd_args in commands:
