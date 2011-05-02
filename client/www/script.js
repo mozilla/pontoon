@@ -28,17 +28,8 @@
             return;
           }
       
-          // Remove any existing pontoon clients
-          // TODO: do we need this?
-          if (Pontoon._clients.length) {
-            Pontoon._clients = [];
-          }
-      
-          // Turn on Pontoon client
-          var doc = this.contentDocument,
-              pc = new Pontoon.client(doc, document);
-          // TODO: pc should not be used twice
-          pc.turnOn(pc);
+          // Initialize Pontoon
+          Pontoon.init(this.contentDocument, document);
         });
       }
     });
