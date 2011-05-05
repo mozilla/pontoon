@@ -7,6 +7,8 @@ var Pontoon = function() {
   /* public  */
   return {
 
+
+
     /*
      * Send data to server
      * Pontoon server push expects a POST with the following properties:
@@ -52,6 +54,29 @@ var Pontoon = function() {
   
   
   
+    /*
+     * Set language using browser language detection
+     *
+     * Browser language cannot be generally obtained via navigator.language
+     * Using HTTP 'Accept-Language' header via external service temporary
+     * Source: http://stackoverflow.com/questions/1043339/javascript-for-detecting-browser-language-preference
+     *
+     * TODO: explore Jetpack options and develop internal solution
+    */
+    setLanguage: function() {
+      $.ajax({ 
+        url: "http://ajaxhttpheaders.appspot.com", 
+        dataType: 'jsonp', 
+        success: function(headers) {
+          var language = headers['Accept-Language'].substring(0, 2);
+          $('#flag').addClass(language);
+          $('#locale .language').html($('#locale-list .flag.' + language).next().text())
+        }
+      });
+    },
+
+
+
     /**
      * Build source - translation pairs
      */
@@ -330,6 +355,7 @@ var Pontoon = function() {
       // Show and render main UI
       this.attachHandlers();
       this.rebuildUIList();
+      this.setLanguage();
       $('#pontoon').slideDown();
     }
 

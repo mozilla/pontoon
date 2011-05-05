@@ -10,7 +10,7 @@
     $(window).resize(function () {
       $('#source').height($(document).height() - $('#pontoon').height());
     });
-		
+
     // Load website into iframe
     $('.url').keypress(function (e) {
       var code = (e.keyCode ? e.keyCode : e.which);
@@ -27,13 +27,13 @@
           if (!$(this).attr('src')) {
             return;
           }
-      
+
           // Initialize Pontoon
           Pontoon.init(this.contentDocument, document);
         });
       }
     });
-    
+
     // Click on a test pilot link
     $('#test-pilot').click(function() {
       var event = $.Event("keypress");
