@@ -82,7 +82,7 @@
   cursor: pointer;
 }
 
-#pontoon .separator {
+#pontoon .vertical-separator {
   border-left: 1px solid #040404;
   border-right: 1px solid #2F2F2F;
   display: block;
@@ -141,11 +141,6 @@
 #pontoon #locale-list li {
   padding: 2px;
   text-shadow: 1px 1px 2px #000000;
-
-  -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
-  -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
-  -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
-  transition: all 0.3s ease-out;  
 }
 
 #pontoon #locale-list li:hover {
@@ -154,8 +149,15 @@
   background: #444444;
 }
 
+#pontoon #locale-list li.horizontal-separator {
+  border-top: 1px solid #040404;
+  border-bottom: 1px solid #444444;
+  padding: 0;
+  margin-bottom: 3px;
+}
+
 #pontoon #locale-list li .flag {
-  margin: 2px 5px 0 0;
+  margin: 1px 13px 0 0;
 }
 
 #pontoon #progress {

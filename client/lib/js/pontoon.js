@@ -126,7 +126,7 @@ var Pontoon = function() {
   
       // Locale selector
       $('#locale').unbind("click.pontoon").bind("click.pontoon", function() {
-        $('#locale-list').css("left", $("#locale").position().left).toggle();
+        $('#locale-list').css("left", $("#flag").position().left - 12).toggle();
         $(this).toggleClass('opened');
       });
       $('#locale-list li').unbind("click.pontoon").bind("click.pontoon", function() {
