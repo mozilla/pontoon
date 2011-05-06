@@ -70,8 +70,10 @@ var Pontoon = function() {
         success: function(headers) {
           var language = headers['Accept-Language'].substring(0, 2);
           $('#flag').addClass(language);
-          $('#locale .language').html($('#locale-list .flag.' + language).next().text())
+          $('#locale .language').html($('#locale-list .flag.' + language).next().text());
         }
+      }).done(function() {
+        $('#pontoon').slideDown();
       });
     },
 
@@ -85,7 +87,7 @@ var Pontoon = function() {
           list = $(this.client._ptn).find('#entitylist').empty()
           // tables still need 'cellspacing="0"' in the markup
           // http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
-          .append('<table cellspacing="0"><thead><tr><th>Source</th><th>Translation</th></tr></thead><tbody></tbody></table>');
+          .append('<table cellpadding="0" cellspacing="0" border="0"><thead><tr><th>Source</th><th>Translation</th></tr></thead><tbody></tbody></table>');
   
       // Render
       $(this.client._entities).each(function() {
@@ -154,7 +156,7 @@ var Pontoon = function() {
         $('#locale-list').css("left", $("#flag").position().left - 12).toggle();
         $(this).toggleClass('opened');
       });
-      $('#locale-list li').unbind("click.pontoon").bind("click.pontoon", function() {
+      $('#locale-list li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
         $('#flag').attr("class", $(this).find('span').attr("class"));
         $('#locale .language').html($(this).find('.language').html());
         $('#locale').click();
@@ -356,7 +358,6 @@ var Pontoon = function() {
       this.attachHandlers();
       this.rebuildUIList();
       this.setLanguage();
-      $('#pontoon').slideDown();
     }
 
   };

@@ -125,7 +125,7 @@
   bottom: 38px;
   color: #AAAAAA;
   list-style: none;
-  padding: 10px;
+  padding: 0;
   margin-left: 0;
   position: absolute;
 
@@ -139,7 +139,7 @@
 }
 
 #pontoon #locale-list li {
-  padding: 2px;
+  padding: 2px 12px;
   text-shadow: 1px 1px 2px #000000;
 }
 
@@ -147,13 +147,19 @@
   cursor: pointer;
   color: #FFFFFF;
   background: #444444;
+
+  border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  -webkit-border-radius: 4px 4px 0 0;
 }
 
-#pontoon #locale-list li.horizontal-separator {
-  border-top: 1px solid #040404;
-  border-bottom: 1px solid #444444;
-  padding: 0;
-  margin-bottom: 3px;
+#pontoon #locale-list li.add {
+  border-bottom: 1px solid #040404;
+  padding: 7px 0 4px 12px;
+}
+
+#pontoon #locale-list li:nth-child(2) {
+  border-top: 1px solid #444444;
 }
 
 #pontoon #locale-list li .flag {
@@ -398,6 +404,12 @@
 
 /*
  * Flags
+ *
+ * TODO: replace country codes with lowercase language codes
+ *
+ * Resources:
+ * https://github.com/dansingerman/jQuery-Browser-Language/blob/master/jquery.browserLanguage.js
+ * http://en.wikipedia.org/wiki/ISO_639-1_language_matrix
  */
 
 #pontoon .flag.AA { background-position:-16px -11px; }
@@ -456,7 +468,7 @@
 #pontoon .flag.CX { background-position:-48px -264px; }
 #pontoon .flag.CY { background-position:-48px -275px; }
 #pontoon .flag.CZ { background-position:-48px -286px; }
-#pontoon .flag.DE { background-position:-64px -55px; }
+#pontoon .flag.de { background-position:-64px -55px; } /* DE */
 #pontoon .flag.DJ { background-position:-64px -110px; }
 #pontoon .flag.DK { background-position:-64px -121px; }
 #pontoon .flag.DM { background-position:-64px -143px; }
@@ -475,7 +487,7 @@
 #pontoon .flag.FK { background-position:-96px -121px; }
 #pontoon .flag.FM { background-position:-96px -143px; }
 #pontoon .flag.FO { background-position:-96px -165px; }
-#pontoon .flag.FR { background-position:-96px -198px; }
+#pontoon .flag.fr { background-position:-96px -198px; } /* FR */
 #pontoon .flag.GA { background-position:-112px -11px; }
 #pontoon .flag.GB { background-position:-112px -22px; }
 #pontoon .flag.GD { background-position:-112px -44px; }
@@ -497,7 +509,7 @@
 #pontoon .flag.HK { background-position:-128px -121px; }
 #pontoon .flag.HM { background-position:-128px -143px; }
 #pontoon .flag.HN { background-position:-128px -154px; }
-#pontoon .flag.HR { background-position:-128px -198px; }
+#pontoon .flag.hr { background-position:-128px -198px; } /* HR */
 #pontoon .flag.HT { background-position:-128px -220px; }
 #pontoon .flag.HU { background-position:-128px -231px; }
 #pontoon .flag.ID { background-position:-144px -44px; }
@@ -575,7 +587,7 @@
 #pontoon .flag.PG { background-position:-256px -77px; }
 #pontoon .flag.PH { background-position:-256px -88px; }
 #pontoon .flag.PK { background-position:-256px -121px; }
-#pontoon .flag.PL { background-position:-256px -132px; }
+#pontoon .flag.pl { background-position:-256px -132px; } /* PL */
 #pontoon .flag.PM { background-position:-256px -143px; }
 #pontoon .flag.PN { background-position:-256px -154px; }
 #pontoon .flag.PR { background-position:-256px -198px; }
@@ -596,7 +608,7 @@
 #pontoon .flag.SE { background-position:-304px -55px; }
 #pontoon .flag.SG { background-position:-304px -77px; }
 #pontoon .flag.SH { background-position:-304px -88px; }
-#pontoon .flag.sl { background-position:-304px -99px; }
+#pontoon .flag.sl { background-position:-304px -99px; } /* SL */
 #pontoon .flag.SJ { background-position:-304px -110px; }
 #pontoon .flag.SK { background-position:-304px -121px; }
 #pontoon .flag.SL { background-position:-304px -132px; }
