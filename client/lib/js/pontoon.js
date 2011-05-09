@@ -68,9 +68,12 @@ var Pontoon = function() {
         url: "http://ajaxhttpheaders.appspot.com", 
         dataType: 'jsonp', 
         success: function(headers) {
-          var language = headers['Accept-Language'].substring(0, 2);
-          $('#flag').addClass(language);
-          $('#locale .language').html($('#locale-list .flag.' + language).next().text());
+          var language = headers['Accept-Language'].substring(0, 2),
+              entry = $('#locale-list .flag.' + language);
+          if (entry.length !== 0) {
+            $('#flag').addClass(language);
+            $('#locale .language').html(entry.next().text());
+          }
         }
       }).done(function() {
         $('#pontoon').slideDown();

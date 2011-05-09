@@ -56,7 +56,8 @@
         .unbind('mousemove', mouseMoveHandler)
         .unbind('mouseup', mouseUpHandler);
 
-      $('#iframe-cover').remove(); // iframe fix
+      $('#iframe-cover').hide(); // iframe fix
+      $('#pontoon').removeClass('unselectable');
     };
 	$('#pontoon header').bind('mousedown', function(e) {
       var up = $('#source'),
@@ -72,7 +73,8 @@
           };
 
       // iframe fix: Prevent iframes from capturing the mousemove events during a drag
-      up.after('<div id="iframe-cover" style="height:' + up.height() + 'px"></div>');
+      $('#iframe-cover').show().height(up.height());
+      $('#pontoon').addClass('unselectable');
 
       $(document)
         .bind('mousemove', { initial: data }, mouseMoveHandler)

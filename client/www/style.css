@@ -287,10 +287,19 @@ body {
 }
 
 #iframe-cover {
+  display: none;
   position: absolute;
   width: 100%;
   top: 0;
-  z-index: 99;
+  z-index: 10; /* Must be lower than locale-list */
+}
+
+.unselectable * {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 
 .url {
