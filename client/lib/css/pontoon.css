@@ -56,6 +56,7 @@
   padding: 8px 5px 6px;
   height: 24px;
   position: relative;
+  cursor: ns-resize;
 
   background-color: #222222;
   background-image: -moz-linear-gradient(center top, #333333, #111111); /* FF3.6 */
@@ -241,15 +242,13 @@
 }
 
 #pontoon #entitylist {
-  display: none;
-  height: 300px;
-  padding: 10px;
+  height: 0;
   overflow-y: scroll;
 }
 
 #pontoon #entitylist table {
   background: #FFFFFF;
-  margin: 10px;
+  margin: 20px 10px 10px;
   text-align: left;
 
   border-radius: 5px 5px 5px 5px;

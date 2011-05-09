@@ -286,6 +286,13 @@ body {
   width: 100%;
 }
 
+#iframe-cover {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  z-index: 99;
+}
+
 .url {
   background: #888888;
   border: 1px solid #000000;

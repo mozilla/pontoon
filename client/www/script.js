@@ -41,6 +41,44 @@
       $("#intro .url").trigger(event);
     });
 
+    // Resizable
+	var mouseMoveHandler = function(e) {
+	  var initial = e.data.initial,
+          u = Math.min(Math.max(initial.uHeight + (e.pageY - initial.offTop), initial.min), initial.max),
+          b = Math.min(Math.max(initial.bHeight - (e.pageY - initial.offTop), initial.min), initial.max);
+      initial.up.height(u);
+      initial.below.height(b);
+
+      $('#iframe-cover').height(initial.up.height()); // iframe fix
+    };
+    var mouseUpHandler = function(e) {
+      $(document)
+        .unbind('mousemove', mouseMoveHandler)
+        .unbind('mouseup', mouseUpHandler);
+
+      $('#iframe-cover').remove(); // iframe fix
+    };
+	$('#pontoon header').bind('mousedown', function(e) {
+      var up = $('#source'),
+          below = $('#entitylist'),
+          data = {
+            up: up,
+            below: below,
+            uHeight: up.height(),
+            bHeight: below.height(),
+            offTop: e.pageY,
+            min: 0,
+            max: $(document).height()
+          };
+
+      // iframe fix: Prevent iframes from capturing the mousemove events during a drag
+      up.after('<div id="iframe-cover" style="height:' + up.height() + 'px"></div>');
+
+      $(document)
+        .bind('mousemove', { initial: data }, mouseMoveHandler)
+        .bind('mouseup', mouseUpHandler);
+    });
+
 	// Generate bookmarklet
     var publicDomain = window.location.href.split("client/www/")[0]; // Transfer public folder location to the bookmarklet
     $("#bookmarklet").attr("href", "javascript:(function(d){if(typeof Pontoon==='undefined'){PontoonBookmarklet='" + publicDomain + "';d.body.appendChild(d.createElement('script')).src=PontoonBookmarklet+'/client/bookmarklet/loader.js';}})(document)");

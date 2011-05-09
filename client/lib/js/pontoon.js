@@ -146,7 +146,11 @@ var Pontoon = function() {
   
       // Open/close Pontoon UI
       $('#switch, #logo').unbind("click.pontoon").bind("click.pontoon", function() {
-        $('#entitylist').toggle();
+        if ($('#pontoon').is('.opened')) {
+          $('#entitylist').height(0);
+        } else {
+          $('#entitylist').height(300);
+        }
         $('#source').height($(document).height() - $('#pontoon').height());
         $('#pontoon').toggleClass('opened');
       });
