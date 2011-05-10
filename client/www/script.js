@@ -57,9 +57,15 @@
         .unbind('mouseup', mouseUpHandler);
 
       $('#iframe-cover').hide(); // iframe fix
-      $('#pontoon').removeClass('unselectable');
+      if (e.data.initial.below.height() === 0) {
+      	$('#pontoon').removeClass('opened');
+      } else {
+      	$('#pontoon').addClass('opened');
+      }
     };
-	$('#pontoon header').bind('mousedown', function(e) {
+	$('#logo').bind('mousedown', function(e) {
+      e.preventDefault();
+
       var up = $('#source'),
           below = $('#entitylist'),
           data = {
@@ -74,11 +80,10 @@
 
       // iframe fix: Prevent iframes from capturing the mousemove events during a drag
       $('#iframe-cover').show().height(up.height());
-      $('#pontoon').addClass('unselectable');
 
       $(document)
         .bind('mousemove', { initial: data }, mouseMoveHandler)
-        .bind('mouseup', mouseUpHandler);
+        .bind('mouseup', { initial: data }, mouseUpHandler);
     });
 
 	// Generate bookmarklet

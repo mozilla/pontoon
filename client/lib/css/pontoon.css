@@ -56,7 +56,6 @@
   padding: 8px 5px 6px;
   height: 24px;
   position: relative;
-  cursor: ns-resize;
 
   background-color: #222222;
   background-image: -moz-linear-gradient(center top, #333333, #111111); /* FF3.6 */
@@ -77,10 +76,7 @@
   margin-top: -3px;
   padding: 7px 5px 8px 25px;
   text-transform: lowercase;
-}
-
-#pontoon #logo:hover {
-  cursor: pointer;
+  cursor: ns-resize;
 }
 
 #pontoon .vertical-separator {
