@@ -1,34 +1,31 @@
 Pontoon
 =======
+This is a proof-of-concept implementation of an in-place website localization tool, as [outlined by Austin King][outline]. Please note that Pontoon is in a very early alpha version, under heavy development, and unlikely to do much out of the box. If you are interested in the technology, feel free to step by `#pontoon` on <irc://irc.mozilla.org> or get more information from a [wiki][wiki].
 
+Pontoon.jpg contains a schema of the application's components.
+
+Usage
+-----
+Web client:
+* Map / on a web server to the root of this project.
+* Point your browser to /client/wwww.
+* Click on the Test Pilot link (Make sure you have Gettext support installed on your web server).
+
+Django server:
+* `cd server`
+* `python manage.py runserver 0.0.0.0:8000`
+
+Update hostnames as needed:
+* client/lib/js/pontoon.js - 127.0.0.1:8000 - change to server hostname and port
+* target/php/pontoon.php - 8000 - change port number
+
+Contributors
+------------
 * Matjaž Horvat <matjaz@horv.at>
 * Frederic Wenzel <fwenzel@mozilla.com>
 * Zbigniew Braniecki <gandalf@mozilla.com>
 * Austin King <aking@mozilla.com>
 
-This is a proof-of-concept implementation of an in-place website localization tool, as outlined in <http://ozten.com/psto/2009/08/14/a-sketch-of-po-liveedit/>.
-
-Please note that this is a very early alpha version, under development, and unlikely to do much out of the box. If you are interested in the technology, feel free to step by `#webdev` on <irc://irc.mozilla.org>.
-
-Pontoon.jpg contains a schema of the application's components.
-
-Prerequisites
--------------
-...
-
-Usage
------
-Hacking on the demo
-Map / on a web server to the root of this project.
-Point your browser to /client/wwww
-
-Startup the django server
-cd server
-python manage.py runserver 0.0.0.0:8000
-
-Update hostnames as needed:
-  * lib/pontoon.js - 127.0.0.1:8000 - change to server hostname and port
-  * target/php/pontoon.php - 8000 - change port number
 License
 -------
     ***** BEGIN LICENSE BLOCK *****
@@ -67,3 +64,5 @@ License
 
     ***** END LICENSE BLOCK *****
 
+[outline]:  http://ozten.com/psto/2009/08/14/a-sketch-of-po-liveedit/   "A Sketch of PO LiveEdit"
+[wiki]:  https://wiki.mozilla.org/L10n:Pontoon   "L10n:Pontoon - MozillaWiki"
