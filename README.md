@@ -7,15 +7,18 @@ Pontoon.jpg contains a schema of the application's components.
 Usage
 -----
 Web client:
+
 * Map / on a web server to the root of this project.
 * Point your browser to /client/wwww.
 * Click on the Test Pilot link (Make sure you have Gettext support installed on your web server).
 
 Django server:
+
 * `cd server`
 * `python manage.py runserver 0.0.0.0:8000`
 
 Update hostnames as needed:
+
 * client/lib/js/pontoon.js - 127.0.0.1:8000 - change to server hostname and port
 * target/php/pontoon.php - 8000 - change port number
 
