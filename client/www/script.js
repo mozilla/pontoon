@@ -86,10 +86,6 @@
         .bind('mouseup', { initial: data }, mouseUpHandler);
     });
 
-	// Generate bookmarklet
-    var publicDomain = window.location.href.split("client/www/")[0]; // Transfer public folder location to the bookmarklet
-    $("#bookmarklet").attr("href", "javascript:(function(d){if(typeof Pontoon==='undefined'){PontoonBookmarklet='" + publicDomain + "';d.body.appendChild(d.createElement('script')).src=PontoonBookmarklet+'/client/bookmarklet/loader.js';}})(document)");
-
   });
 
 }(this.jQuery));

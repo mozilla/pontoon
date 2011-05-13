@@ -28,7 +28,7 @@ var Pontoon = function() {
             'locale': lang
           },
           entities = [],
-          url = ('url' in this.client._meta) ? this.client._meta['url'] : 'http://pontoon.server.ubuntu:8001/push/';
+          url = ('url' in this.client._meta) ? this.client._meta['url'] : 'http://127.0.0.1:8000/push/';
       
       $(this.client._entities).each(function() {
         var entity = this,
