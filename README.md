@@ -9,7 +9,7 @@ Usage
 Web client:
 
 * Map / on a web server to the root of this project.
-* Point your browser to /client/www.
+* Point your browser to /.
 * Click on the Test Pilot link (Make sure you have Gettext support installed on your web server).
 
 Django server:
