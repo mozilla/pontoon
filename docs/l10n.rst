@@ -57,7 +57,6 @@ The following steps will get you started:
 #.  Now extract strings from your project::
 
         ./manage.py extract
-        ./manage.py verbatimize --rename
         ./manage.py merge
 
 #.  Commit it all.
@@ -77,10 +76,6 @@ If you've developed a feature and changed or added strings, you need to extract
 them and merge them into the existing .po files::
 
     ./manage.py extract
-
-    ./manage.py verbatimize --rename
-    # This will copy the POT files created in step 1 to templates/LC_MESSAGES.
-
     ./manage.py merge
 
 Optionally compile all .mo files::

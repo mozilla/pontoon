@@ -44,6 +44,8 @@ USE_L10N = True
 
 # Gettext text domain
 TEXT_DOMAIN = 'messages'
+STANDALONE_DOMAINS = [TEXT_DOMAIN, 'javascript']
+TOWER_KEYWORDS = {'_lazy': None}
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
