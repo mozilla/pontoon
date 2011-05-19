@@ -2,43 +2,11 @@
 (function($) {
 
   $(function() {
-    // Empty iframe if cached
-    $("iframe").attr("src", "about:blank");
-
+  	
 	// Prepare iframe size and resize it with window
     $('#source').height($(document).height() - $('#pontoon').height());
     $(window).resize(function () {
       $('#source').height($(document).height() - $('#pontoon').height());
-    });
-
-    // Load website into iframe
-    $('.url').keypress(function (e) {
-      var code = (e.keyCode ? e.keyCode : e.which);
-      if (code === 13) {
-        $('#intro').slideUp("fast", function() {
-
-          // TODO: use real URLs
-          $('#source').attr('src', /*$('.url').val()*/ 'projects/testpilot');
-          $('#pontoon .url').val(/*$('.url').val()*/ 'projects/testpilot');
-        });
-
-        $('#source').unbind("load.pontoon").bind("load.pontoon", function() {
-          // Quit if website not specified
-          if (!$(this).attr('src')) {
-            return;
-          }
-
-          // Initialize Pontoon
-          Pontoon.init(this.contentDocument, document);
-        });
-      }
-    });
-
-    // Click on a test pilot link
-    $('#test-pilot').click(function() {
-      var event = $.Event("keypress");
-      event.which = 13;
-      $("#intro .url").trigger(event);
     });
 
     // Resizable
@@ -84,6 +52,37 @@
       $(document)
         .bind('mousemove', { initial: data }, mouseMoveHandler)
         .bind('mouseup', { initial: data }, mouseUpHandler);
+    });
+
+	// Load iframe contents
+    var website = window.location.search.split("?url=")[1] || "";
+    if (website.length > 0) {
+      $('#intro').slideUp("fast", function() {
+        // TODO: use real URLs
+        $('#source').attr('src', /*$('.url').val()*/ website);
+        $('#pontoon .url').val(/*$('.url').val()*/ website);
+      });
+
+      $('#source').unbind("load.pontoon").bind("load.pontoon", function() {
+        // Quit if website not specified
+        if (!$(this).attr('src')) {
+          return;
+        }
+        // Initialize Pontoon
+        Pontoon.init(this.contentDocument, document);
+      });
+        
+    } else {
+	    // Empty iframe if cached
+	    $("#source").attr("src", "about:blank");
+  	}
+
+    // Load website into iframe
+    $('.url').keypress(function (e) {
+      var code = (e.keyCode ? e.keyCode : e.which);
+      if (code === 13) {
+      	window.location.search = "url=projects/testpilot";
+      }
     });
 
   });
