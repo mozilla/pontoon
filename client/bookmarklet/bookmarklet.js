@@ -32,8 +32,6 @@
   );
 
   // Turn on Pontoon client
-  var doc = this.contentDocument,
-      pc = new Pontoon.client(document, document);
-  pc.turnOn(pc, document);
+  Pontoon.init(document, document);
 
 })(this.jQuery);
