@@ -1,7 +1,9 @@
 {% extends "example_base.html" %}
 
 {% block content %}
-<h1>{{ _('Hello world') }}</h1>
+<h1>
+    <a href="/">{{ _('Hello world') }}</a>
+</h1>
 
 {# L10n: This is a localizer comment #}
 <p>{{ _('This is a <em>test view</em>.') }}</p>
@@ -10,5 +12,11 @@
   <a href="{{ docs_url }}">Learn you some Playdoh</a> and then go build
   something <strong>awesome</strong>.
   {% endtrans %}  
+</p>
+<p>
+  {% trans langs=LANGUAGES.items() %}
+    Current locale: {{ LANG }}.<br>
+    Available locales: {{ langs }}.
+  {% endtrans %}
 </p>
 {% endblock %}

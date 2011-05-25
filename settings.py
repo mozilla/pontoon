@@ -10,6 +10,8 @@ path = lambda *a: os.path.join(ROOT, *a)
 
 ROOT_PACKAGE = os.path.basename(ROOT)
 
+# Is this a dev instance?
+DEV = False
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -51,25 +53,41 @@ TOWER_KEYWORDS = {'_lazy': None}
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-US'
 
-# Accepted locales
-KNOWN_LANGUAGES = ('en-US',)
+## Accepted locales
 
-# List of RTL locales known to this project. Subset of LANGUAGES.
-RTL_LANGUAGES = ()  # ('ar', 'fa', 'fa-IR', 'he')
+# On dev instances, the list of accepted locales defaults to the contents of 
+# the `locale` directory.  A localizer can add their locale in the l10n 
+# repository (copy of which is checked out into `locale`) in order to start 
+# testing the localization on the dev server.
+DEV_LANGUAGES = [loc.replace('_', '-') for loc in os.listdir(path('locale'))
+                 if os.path.isdir(path('locale', loc)) and 
+                    loc != 'templates']
 
-LANGUAGE_URL_MAP = dict([(i.lower(), i) for i in KNOWN_LANGUAGES])
+# On stage/prod, the list of accepted locales is manually maintained.  Only 
+# locales whose localizers have signed off on their work should be listed here.
+PROD_LANGUAGES = (
+    'en-US',
+)
+
+def lazy_lang_url_map():
+    from django.conf import settings
+    langs = DEV_LANGUAGES if settings.DEV else PROD_LANGUAGES
+    return dict([(i.lower(), i) for i in langs])
+
+LANGUAGE_URL_MAP = lazy(lazy_lang_url_map, dict)()
 
 # Override Django's built-in with our native names
-class LazyLangs(dict):
-    def __new__(self):
-        from product_details import product_details
-        return dict([(lang.lower(), product_details.languages[lang]['native'])
-                     for lang in KNOWN_LANGUAGES])
+def lazy_langs():
+    from django.conf import settings
+    from product_details import product_details
+    langs = DEV_LANGUAGES if settings.DEV else PROD_LANGUAGES
+    return dict([(lang.lower(), product_details.languages[lang]['native'])
+                 for lang in langs])
 
 # Where to store product details etc.
 PROD_DETAILS_DIR = path('lib/product_details_json')
 
-LANGUAGES = lazy(LazyLangs, dict)()
+LANGUAGES = lazy(lazy_langs, dict)()
 
 # Paths that don't require a locale code in the URL.
 SUPPORTED_NONLOCALES = ['media']
