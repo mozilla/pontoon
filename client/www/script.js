@@ -59,8 +59,8 @@
     if (website.length > 0) {
       $('#intro').slideUp("fast", function() {
         // TODO: use real URLs
-        $('#source').attr('src', /*$('.url').val()*/ website);
-        $('#pontoon .url').val(/*$('.url').val()*/ website);
+        $('#source').attr('src', /* website */ 'projects/testpilot');
+        $('#pontoon .url').val(/* website */ 'projects/testpilot');
       });
 
       $('#source').unbind("load.pontoon").bind("load.pontoon", function() {
