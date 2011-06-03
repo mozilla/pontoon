@@ -1,19 +1,28 @@
 #!/bin/bash
 
-# syntax:
-# compile-mo.sh locale-dir/
+TARGET=$1
+LOCKFILE="/tmp/compile-mo-${2}.lock"
 
 function usage() {
     echo "syntax:"
-    echo "compile.sh locale-dir/"
+    echo "  compile-mo.sh locale-dir/ [unique]"
+    echo "unique is an optional string that will be used as the name of the lockfile"
     exit 1
 }
 
 # check if file and dir are there
-if [[ ($# -ne 1) || (! -d "$1") ]]; then usage; fi
+if [[ ($# -gt 2) || (! -d "$TARGET") ]]; then usage; fi
 
-for lang in `find $1 -type f -name "*.po"`; do
+# check if the lockfile exists
+if [ -e $LOCKFILE ]; then
+    echo "$LOCKFILE present, exiting"
+    exit 99
+fi
+
+touch $LOCKFILE
+for lang in `find $TARGET -type f -name "*.po"`; do
     dir=`dirname $lang`
     stem=`basename $lang .po`
     msgfmt -o ${dir}/${stem}.mo $lang
 done
+rm $LOCKFILE
