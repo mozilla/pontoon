@@ -59,9 +59,13 @@ LANGUAGE_CODE = 'en-US'
 # the `locale` directory.  A localizer can add their locale in the l10n 
 # repository (copy of which is checked out into `locale`) in order to start 
 # testing the localization on the dev server.
-DEV_LANGUAGES = [loc.replace('_', '-') for loc in os.listdir(path('locale'))
-                 if os.path.isdir(path('locale', loc)) and 
-                    loc != 'templates']
+try:
+    DEV_LANGUAGES = [
+        loc.replace('_', '-') for loc in os.listdir(path('locale'))
+        if os.path.isdir(path('locale', loc)) and loc != 'templates'
+    ]
+except OSError:
+    DEV_LANGUAGES = ('en-US',)
 
 # On stage/prod, the list of accepted locales is manually maintained.  Only 
 # locales whose localizers have signed off on their work should be listed here.
