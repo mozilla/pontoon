@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# A useful build script for projects hosted on github:
+# It can build your Sphinx docs and push them straight to your gh-pages branch.
+
 # Should be run from the docs directory: (cd docs && ./build-github.zsh)
 
 REPO=$(git config remote.origin.url)

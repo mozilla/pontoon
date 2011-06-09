@@ -1,49 +1,25 @@
-===================================
-Welcome to playdoh's documentation!
-===================================
+========================================
+Welcome to this project's documentation!
+========================================
 
-**Mozilla's Playdoh** is a web application template based on Django_.
-
-Patches are welcome! Feel free to fork and contribute to this project on
-Github_.
-
-.. _Django: http://www.djangoproject.com/
-.. _Github: https://github.com/mozilla/playdoh
+This is a documentation template for a **web application based on Playdoh**.
+Feel free to change this to your liking.
 
 
-Features
---------
-Quick and dirty (and probably incomplete) feature list:
+About playdoh
+-------------
 
-* Rich, but "cherry-pickable" features out of the box:
+This project is based on **playdoh**. Mozilla's Playdoh is an open source
+web application template based on `Django <http://www.djangoproject.com/>`_.
 
-  * Django
-  * jinja2 template engine
-  * Celery support
-  * Simple database migrations
-  * Full localization support
-
-* Secure by default:
-
-  * SHA-512 default password hashing
-  * X-Frame-Options: DENY by default
-  * secure and httponly flags on cookies enabled by default
-
+To learn more about it, step by the `playdoh project page
+<https://github.com/mozilla/playdoh>`_.
 
 Contents
 --------
 
 .. toctree::
    :maxdepth: 1
-
-   gettingstarted
-   libs
-   operations
-   migrations
-   l10n
-   packages
-   docs
-   bestpractices
 
 
 Indices and tables

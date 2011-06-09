@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'playdoh'
-copyright = u'2011, Mozilla'
+project = u'a playdoh-based project'
+copyright = u'2011, the authors'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -211,8 +211,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'playdoh', u'playdoh Documentation',
-     [u'Mozilla'], 1)
+    ('index', 'a-playdoh-app', u"a-playdoh-app's Documentation",
+     [u'the authors'], 1)
 ]
 
 
