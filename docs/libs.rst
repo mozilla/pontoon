@@ -53,6 +53,8 @@ Middleware
 
 * `commonware <http://github.com/jsocol/commonware>`_\*:
   Middlewares and other stuff we share.
+* `django-mobility <https://github.com/jbalogh/django-mobility>`_:
+  Middleware and decorators for directing users to your mobile site.
 
 Mozilla
 -------
