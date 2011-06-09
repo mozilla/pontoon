@@ -71,7 +71,7 @@ Security and Data Sanitization
 * `bleach <https://github.com/jsocol/bleach>`_:
   An easy, HTML5, whitelisting HTML sanitizer.
 * `django-sha2 <http://github.com/fwenzel/django-sha2>`_\*:
-  Monkey-patches SHA-256 and SHA-512 support into Django.
+  Monkey-patches strong password hashing support into Django.
 * `happyforms <https://github.com/jbalogh/happyforms>`_:
   Extension to Django Forms that strips spaces.
 
