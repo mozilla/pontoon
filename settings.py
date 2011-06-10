@@ -55,9 +55,9 @@ LANGUAGE_CODE = 'en-US'
 
 ## Accepted locales
 
-# On dev instances, the list of accepted locales defaults to the contents of 
-# the `locale` directory.  A localizer can add their locale in the l10n 
-# repository (copy of which is checked out into `locale`) in order to start 
+# On dev instances, the list of accepted locales defaults to the contents of
+# the `locale` directory.  A localizer can add their locale in the l10n
+# repository (copy of which is checked out into `locale`) in order to start
 # testing the localization on the dev server.
 try:
     DEV_LANGUAGES = [
@@ -67,7 +67,7 @@ try:
 except OSError:
     DEV_LANGUAGES = ('en-US',)
 
-# On stage/prod, the list of accepted locales is manually maintained.  Only 
+# On stage/prod, the list of accepted locales is manually maintained.  Only
 # locales whose localizers have signed off on their work should be listed here.
 PROD_LANGUAGES = (
     'en-US',
@@ -250,8 +250,8 @@ DOMAIN_METHODS = {
 JAVA_BIN = '/usr/bin/java'
 
 ## Auth
-PWD_ALGORITHM = 'bcrypt'
-HMAC_KEYS = {
+PWD_ALGORITHM = 'sha512'  # recommended: 'bcrypt'
+HMAC_KEYS = {  # for bcrypt only
     #'2011-01-01': 'cheesecake',
 }
 
