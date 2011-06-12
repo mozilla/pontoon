@@ -16,6 +16,7 @@ import os
 import sys
 from textwrap import dedent
 from optparse import  OptionParser
+from hashlib import md5
 
 # Constants
 PROJECT = 0
@@ -28,10 +29,17 @@ ENV_BRANCH = {
     'prod':  ['prod',   'master'],
 }
 
+# The URL of the SVN repository with the localization files (*.po). If you set 
+# it to a non-empty value, remember to `git rm --cached -r locale` in the root 
+# of the project.  Example:
+# LOCALE_REPO_URL = 'https://svn.mozilla.org/projects/l10n-misc/trunk/playdoh/locale'
+LOCALE_REPO_URL = ''
+
 GIT_PULL = "git pull -q origin %(branch)s"
 GIT_SUBMODULE = "git submodule update --init"
+SVN_CO = "svn checkout --force %(url)s locale"
 SVN_UP = "svn update"
-COMPILE_PO = "./compile.sh"
+COMPILE_MO = "./bin/compile-mo.sh %(localedir)s %(unique)s"
 
 EXEC = 'exec'
 CHDIR = 'chdir'
@@ -41,6 +49,8 @@ def update_site(env, debug):
     """Run through commands to update this site."""
     error_updating = False
     here = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    locale = os.path.join(here, 'locale')
+    unique = md5(locale).hexdigest()
     project_branch = {'branch': ENV_BRANCH[env][PROJECT]}
     vendor_branch = {'branch': ENV_BRANCH[env][VENDOR]}
 
@@ -50,17 +60,24 @@ def update_site(env, debug):
         (EXEC,  GIT_SUBMODULE),
     ]
 
-    # Update locale dir if applicable
-    if os.path.exists(os.path.join(here, 'locale', '.svn')):
+    # Checkout the locale repo into locale/ if the URL is known
+    if LOCALE_REPO_URL and not os.path.exists(os.path.join(locale, '.svn')):
         commands += [
-            (CHDIR, os.path.join(here, 'locale')),
-            (EXEC, SVN_UP),
-            (EXEC, COMPILE_PO),
-            (CHDIR, here),
+            (EXEC, SVN_CO % {'url': LOCALE_REPO_URL}),
+            (EXEC, COMPILE_MO % {'localedir': locale, 'unique': unique}),
         ]
-    elif os.path.exists(os.path.join(here, 'locale', '.git')):
+
+    # Update locale dir if applicable
+    if os.path.exists(os.path.join(locale, '.svn')):
         commands += [
-            (CHDIR, os.path.join(here, 'locale')),
+            (CHDIR, locale),
+            (EXEC, SVN_UP),
+            (CHDIR, here),
+            (EXEC, COMPILE_MO % {'localedir': locale, 'unique': unique}),
+        ]
+    elif os.path.exists(os.path.join(locale, '.git')):
+        commands += [
+            (CHDIR, locale),
             (EXEC, GIT_PULL % 'master'),
             (CHDIR, here),
         ]
