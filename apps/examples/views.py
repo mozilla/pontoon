@@ -15,7 +15,7 @@ def home(request):
 
 @csrf_exempt
 def bleach_test(request):
-    """A view outlining bleach's input sanitization."""
+    """A view outlining bleach's HTML sanitization."""
     allowed_tags = ('strong', 'em')
 
     data = {}
