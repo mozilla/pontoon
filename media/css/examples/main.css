@@ -16,21 +16,37 @@ body {
     );
     background-repeat: repeat-x;
     min-height: 800px;
+    padding-left: 30px;
 }
-h1 { 
-    font-family: Helvetica, sans-serif; 
-    margin-left: 30px;
+h1 {
+    font-family: Helvetica, sans-serif;
 }
-p { 
+section, p, ul {
     background-color: rgba(255,255,255,0.3);;
     color: #333;
-    font-family: Courier, serif; 
+    font-family: Courier, serif;
     line-height: 1.4;
-    margin-left: 30px;
     padding: 5px;
     width: 600px;
 }
-#playdoh { 
-    float: left;
-    margin-left: 645px;
+li {
+    margin-left: 30px;
+}
+
+#bleachform {
+    margin: 50px 0;
+}
+#bleachform p {
+    font-size: 80%;
+}
+#bleachform textarea {
+    height: 100px;
+    width: 600px;
+}
+#bleached {
+    background-color: rgba(255, 0, 0, .5);
+    margin: 50px 0;
+}
+#bleached p {
+    background-color: transparent;
 }

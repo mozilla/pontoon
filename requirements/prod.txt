@@ -12,6 +12,7 @@ GitPython==0.1.7
 
 # Security
 -e git://github.com/fwenzel/django-sha2.git#egg=django-sha2
+-e git://github.com/jsocol/bleach.git#egg=bleach
 
 # Celery: Message queue
 celery
