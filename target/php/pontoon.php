@@ -85,17 +85,6 @@ class Pontoon
      * the client that this is a Pontoon enhanced page
      */
     static function header_tags() {
-        echo '<meta name="Pontoon" content="mozilla.org" ip="http://'.$_SERVER['SERVER_ADDR'].':8000/push/"/>'."\n";
-        echo <<<STYLE
-<style type="text/css"><!--
-span.l10n {
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    background: transparent !important;
-}
-span.l10n.hilight { outline: red dashed 2px !important; }
---></style>
-STYLE;
+        echo '<meta name="Pontoon" content="mozilla.org" entities="data.json" ip="http://'.$_SERVER['SERVER_ADDR'].':8000/push/"/>'."\n";
     }
 }
