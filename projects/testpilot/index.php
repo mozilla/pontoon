@@ -3,7 +3,7 @@
 <?php require_once('../../target/php/pontoon.php'); ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<?php Pontoon::header_tags();?>
+	<?php Pontoon::header_tags();?>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title><?= _w('Mozilla Labs Test Pilot')?></title>
 	<link rel="stylesheet" type="text/css" media="all" href="screen.css" />
