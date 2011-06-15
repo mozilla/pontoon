@@ -1,9 +1,5 @@
 var Pontoon = function() {
 
-  /* private */
-  var PREFIX = 5,
-      _clients = [];
-  
   /* public  */
   return {
 
@@ -231,7 +227,7 @@ var Pontoon = function() {
   
       $(this.client._doc).find(':not("script, style")').contents().each(function() {
         if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0) {
-          entity = {};
+          var entity = {};
           entity.string = entity.txtString = entity.translation = entity.txtTranslation = entity.id = this.nodeValue;
           entity.node = $(this).parent();
           self.createEntity(entity);
@@ -248,23 +244,27 @@ var Pontoon = function() {
      * Strings are prepended with l10n comment nodes
      * Example: <!--l10n Hello World-->Hallo Welt
      *
-     * Create entity object from comment and the text node that follows
+     * Create entity object from comment and the nodes that follow
      * Move comment node contents to the parent's element data-l10n attribute
      * Remove comment nodes
      */
     parseEntities: function() {
-      var self = this;
+      var self = this,
+          prefix = 'l10n ';
   
       $(this.client._doc).find('*').contents().each(function() {
-        if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n ') === 0) {
-          entity = {};
-          entity.string = entity.txtString = entity.id = this.nodeValue.substring(PREFIX);
-          entity.translation = entity.txtTranslation = $(this.nextSibling).text();
-          entity.node = $(this).parent();
+        if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
+          var entity = {};
+          entity.string = entity.txtString = entity.id = this.nodeValue.substring(prefix.length);
+
+          var parent = $(this).parent();
+          $(this).remove();
+
+          entity.translation = entity.txtTranslation = parent.html();
+          entity.node = parent;
           self.createEntity(entity);
           
-          $(this).parent().attr("data-l10n", entity.string);
-          $(this).remove();
+          parent.attr("data-l10n", entity.string);
         }
       });
     },
@@ -355,8 +355,6 @@ var Pontoon = function() {
       if (meta.attr('ip')) {
         this.client._meta['url'] = meta.attr('ip');
       }
-
-      _clients.push(this.client);
 
       // Enable editable text
       this.enableEditing();
