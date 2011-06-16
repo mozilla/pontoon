@@ -74,9 +74,7 @@ class Pontoon
      * wraps an (already translated) string into Pontoon comments
      */
     static function wrap($msgid, $translated) {
-        $wrapped = '<!--l10n '.$msgid.'-->'.$translated.'<!--/l10n-->';
-
-        return $wrapped;
+        return '<em class="l10n" data-l10n="'.htmlspecialchars($msgid).'">'.$translated.'</em>';
     }
 
     /**
@@ -84,6 +82,6 @@ class Pontoon
      * the client that this is a Pontoon enhanced page
      */
     static function header_tags() {
-        echo '<meta name="Pontoon" content="mozilla.org" entities="data.json" ip="http://'.$_SERVER['SERVER_ADDR'].':8000/push/"/>'."\n";
+        if (self::has_gettext()) echo '<meta name="Pontoon" content="Test Pilot" ip="http://'.$_SERVER['SERVER_ADDR'].':8000/push/"/>'."\n";
     }
 }

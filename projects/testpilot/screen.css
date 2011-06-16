@@ -264,3 +264,7 @@ src: url('fonts/DroidSans-Bold.ttf') format('truetype');
     width: 45%;
     margin: 20px 0px;
 }
+
+em.l10n {
+	font-style: inherit;
+}
