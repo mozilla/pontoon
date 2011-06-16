@@ -44,7 +44,7 @@ function _w($str) {
     if (!Pontoon::has_gettext()) return $str;
 
     $translated = _($str);
-    return Pontoon::wrap($translated, $str);
+    return Pontoon::wrap($str, $translated);
 }
 
 /**
@@ -73,9 +73,8 @@ class Pontoon
     /**
      * wraps an (already translated) string into Pontoon comments
      */
-    static function wrap($translated, $msgid) {
-        $wrapped = sprintf('<!--l10n %1$s-->%2$s',
-                       $msgid, $translated);
+    static function wrap($msgid, $translated) {
+        $wrapped = '<!--l10n '.$msgid.'-->'.$translated.'<!--/l10n-->';
 
         return $wrapped;
     }
