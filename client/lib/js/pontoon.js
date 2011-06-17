@@ -249,15 +249,23 @@ var Pontoon = function() {
      * Remove comment nodes
      */
     parseEntities: function() {
-      var self = this;
+      var self = this,
+          prefix = 'l10n';
   
-      $(this.client._doc).find('.l10n').each(function() {
+      $(this.client._doc).find('*').contents().each(function() {
+        if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
           var entity = {};
-          entity.string = entity.txtString = entity.id = $(this).attr("data-l10n");
-          entity.translation = entity.txtTranslation = $(this).html();
-          
-          entity.node = $(this);
+          entity.string = entity.txtString = entity.id = this.nodeValue.substring(prefix.length + 1);
+
+          var parent = $(this).parent();
+          $(this).remove();
+
+          entity.translation = entity.txtTranslation = parent.html();
+          entity.node = parent;
           self.createEntity(entity);
+          
+          parent.attr("data-l10n", entity.string);
+        }
       });
     },
   
