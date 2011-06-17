@@ -220,21 +220,26 @@ var Pontoon = function() {
   
     /**
      * Extract entities from the document, not prepared for working with Pontoon
+     * 
      * Create entity object from every non-empty text node
+     * Exclude nodes from special tags, e.g. <script> and <link>
+     * Skip nodes already included in parent nodes
      */ 
     guessEntities: function() {
       var self = this;
   
       $(this.client._doc).find(':not("script, style")').contents().each(function() {
-        if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents("[data-l10n]").length === 0) {
+        if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
           var entity = {};
           entity.string = entity.txtString = entity.translation = entity.txtTranslation = entity.id = $(this).parent().html();
           entity.node = $(this).parent();
           self.createEntity(entity);
-  
-          $(this).parent().attr("data-l10n", entity.string);
+          // Add temporary pontoon-entity class to prevent duplicate entities when guessing 
+          $(this).parent().addClass("pontoon-entity");
         }
-      });    
+      });
+      
+      $(".pontoon-entity").removeClass("pontoon-entity");
     },
   
   
@@ -245,7 +250,6 @@ var Pontoon = function() {
      * Example: <!--l10n Hello World-->Hallo Welt
      *
      * Create entity object from comment and the nodes that follow
-     * Move comment node contents to the parent's element data-l10n attribute
      * Remove comment nodes
      */
     parseEntities: function() {
@@ -263,8 +267,6 @@ var Pontoon = function() {
           entity.translation = entity.txtTranslation = parent.html();
           entity.node = parent;
           self.createEntity(entity);
-          
-          parent.attr("data-l10n", entity.string);
         }
       });
     },
