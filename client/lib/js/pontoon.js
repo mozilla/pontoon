@@ -276,12 +276,12 @@ var Pontoon = function() {
     /**
      * Determine if the current page is prepared for working with Pontoon
      */ 
-    isEnchanted: function() {
-      if (this.client._enchanted === null) {
-        this.client._enchanted = ($(this.client._doc).find('head > meta[name=Pontoon]').length > 0);
+    hasHooks: function() {
+      if (this.client._hasHooks === null) {
+        this.client._hasHooks = ($(this.client._doc).find('head > meta[name=Pontoon]').length > 0);
       }
       
-      return this.client._enchanted;
+      return this.client._hasHooks;
     },
   
   
@@ -290,7 +290,7 @@ var Pontoon = function() {
      * Extract entities from the document
      */ 
     extractEntities: function() {
-      if (this.isEnchanted()) {
+      if (this.hasHooks()) {
         return this.parseEntities();
       }
       
@@ -346,7 +346,7 @@ var Pontoon = function() {
         _ptn: ptn,
         _entities: [],
         _meta: {},
-        _enchanted: null
+        _hasHooks: null
       };
       
       // Read meta values
