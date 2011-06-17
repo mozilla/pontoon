@@ -226,9 +226,9 @@ var Pontoon = function() {
       var self = this;
   
       $(this.client._doc).find(':not("script, style")').contents().each(function() {
-        if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0) {
+        if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents("[data-l10n]").length === 0) {
           var entity = {};
-          entity.string = entity.txtString = entity.translation = entity.txtTranslation = entity.id = this.nodeValue;
+          entity.string = entity.txtString = entity.translation = entity.txtTranslation = entity.id = $(this).parent().html();
           entity.node = $(this).parent();
           self.createEntity(entity);
   
