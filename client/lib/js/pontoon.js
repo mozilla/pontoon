@@ -224,6 +224,8 @@ var Pontoon = function() {
      * Create entity object from every non-empty text node
      * Exclude nodes from special tags, e.g. <script> and <link>
      * Skip nodes already included in parent nodes
+     * 
+     * Show and render main UI
      */ 
     guessEntities: function() {
       var self = this;
@@ -234,41 +236,62 @@ var Pontoon = function() {
           entity.string = entity.txtString = entity.translation = entity.txtTranslation = entity.id = $(this).parent().html();
           entity.node = $(this).parent();
           self.createEntity(entity);
+          
           // Add temporary pontoon-entity class to prevent duplicate entities when guessing 
           $(this).parent().addClass("pontoon-entity");
         }
       });
       
       $(".pontoon-entity").removeClass("pontoon-entity");
+      // Enable editable text
+      $(self.client._entities).each(function() {
+        this.node.editableText();
+      });
+      
+      // Show and render main UI
+      self.rebuildUIList();
     },
   
   
   
     /**
-     * Extract all gettext msgid and msgstr from the document
-     * Strings are prepended with l10n comment nodes
+     * Get data from external meta file: original, translation, comment, suggestions...
+     * Match with each string in the document, which is prepended with l10n comment nodes
      * Example: <!--l10n Hello World-->Hallo Welt
      *
-     * Create entity object from comment and the nodes that follow
+     * Create entity objects
      * Remove comment nodes
      */
     parseEntities: function() {
       var self = this,
-          prefix = 'l10n';
-  
-      $(this.client._doc).find('*').contents().each(function() {
-        if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
-          var entity = {};
-          entity.string = entity.txtString = entity.id = this.nodeValue.substring(prefix.length + 1);
+          prefix = 'l10n',
+          counter = 1,
+          parent = null;
 
-          var parent = $(this).parent();
-          $(this).remove();
+      $.getJSON($("#source").attr("src") + "/data.json").success(function(data) {
+        $(self.client._doc).find('*').contents().each(function() {
+          if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
+            var entity = {};
+            entity.string = entity.txtString = entity.id = data.entity[counter].original;
 
-          entity.translation = entity.txtTranslation = parent.html();
-          entity.node = parent;
-          self.createEntity(entity);
-        }
+            parent = $(this).parent();
+            $(this).remove();
+
+            entity.translation = entity.txtTranslation = data.entity[counter].translation;
+            entity.node = parent;
+            self.createEntity(entity);
+            counter++;
+          }
+        });
+        // Enable editable text
+        $(self.client._entities).each(function() {
+          this.node.editableText();
+        });
+
+        // Show and render main UI
+        self.rebuildUIList();
       });
+
     },
   
   
@@ -323,11 +346,7 @@ var Pontoon = function() {
       var ss = $('<link rel="stylesheet" href="../../client/lib/css/editable.css">', this.client._doc);
       $('head', this.client._doc).append(ss);
       
-      this.extractEntities();
-      
-      $(this.client._entities).each(function() {
-        this.node.editableText();
-      });
+      this.extractEntities();      
     },
   
   
@@ -361,9 +380,8 @@ var Pontoon = function() {
       // Enable editable text
       this.enableEditing();
   
-      // Show and render main UI
+      // Prepare main UI
       this.attachHandlers();
-      this.rebuildUIList();
       this.setLanguage();
     }
 

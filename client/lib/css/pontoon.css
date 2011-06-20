@@ -264,11 +264,11 @@
 
 #pontoon #entitylist tbody tr {
   border-top: 1px solid #EBEBEB;
+  cursor: pointer;
 }
 
 #pontoon #entitylist tbody tr:hover {
   background: #EBEBEB;
-  cursor: pointer;
 }
 
 #pontoon #entitylist td {

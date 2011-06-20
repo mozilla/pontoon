@@ -1,13 +1,21 @@
-"entity":
+{"entity":
 [
   {
     "original": "Mozilla Labs Test Pilot",
-    "translation": "",
-    "comment": ""
+    "translation": "Mozilla Labs Test Pilot",
+    "comment": "Test Pilot is a brand name and should not be translated.",
+    "suggestions": [
+      {
+        "translation": "Testni pilot Mozilla Labs"
+      },
+      {
+        "translation": "Test Pilot iz Mozilla Labs"
+      }
+    ]
   },
   {
     "original": "Become a Test Pilot!",
-    "translation": "",
+    "translation": "Postani Test Pilot!",
     "comment": ""
   },
   {
@@ -86,7 +94,7 @@
     "comment": ""
   },
   {
-    "original": "When a product is not easy to use, don\'t just wonder why it\'s designed that way. Make your mark on the design and help us improve it! <a href=\"https://addons.mozilla.org/services/install.php?addon_id=\"testpilot\"> Join the forces, we want you! </a>",
+    "original": "When a product is not easy to use, don't just wonder why it's designed that way. Make your mark on the design and help us improve it! <a href=\"https://addons.mozilla.org/services/install.php?addon_id=\"testpilot\"> Join the forces, we want you! </a>",
     "translation": "",
     "comment": ""
   },
@@ -111,23 +119,8 @@
     "comment": ""
   },
   {
-    "original": "Copyright &copy; 2005-2009 Mozilla. All rights reserved.",
-    "translation": "",
-    "comment": ""
-  },
-  {
-    "original": "Mozilla Labs",
-    "translation": "",
-    "comment": ""
-  },
-  {
-    "original": "Privacy Policy",
-    "translation": "",
-    "comment": ""
-  },
-  {
-    "original": "Legal Notices",
+    "original": "Copyright &copy; 2005-2009 Mozilla. All rights reserved. &nbsp; &nbsp; <a href=\"http://labs.mozilla.com/\">Mozilla Labs</a> &nbsp; &nbsp; <a href=\"http://www.mozilla.com/en-US/privacy-policy.html\">Privacy Policy</a> &nbsp; &nbsp; <a href=\"http://www.mozilla.com/en-US/about/legal.html\">Legal Notices</a>",
     "translation": "",
     "comment": ""
   }
-]
+]}
