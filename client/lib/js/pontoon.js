@@ -190,7 +190,7 @@ var Pontoon = function() {
     /**
      * Update entity and main UI
      * 
-     * element HTML Element which contains html10n nodes
+     * element HTML Element which contains l10n entities
      */
     updateEntity: function(element) {
       var entity = element.entity,
@@ -213,7 +213,7 @@ var Pontoon = function() {
         ui: e.ui || null, /* HTML Element representing string in the main UI */
         id: e.id || null,      
         _client: this,
-        
+
         hover: function() {
           this.node.get(0).showToolbar();
           this.ui.toggleClass('hovered');
@@ -259,7 +259,7 @@ var Pontoon = function() {
     /**
      * Get data from external meta file: original, translation, comment, suggestions...
      * Match with each string in the document, which is prepended with l10n comment nodes
-     * Example: <!--l10n Hello World-->Hallo Welt
+     * Example: <!--l10n-->Hallo Welt
      *
      * Create entity objects
      * Remove comment nodes
@@ -268,7 +268,8 @@ var Pontoon = function() {
       var self = this,
           prefix = 'l10n',
           counter = 1, /* TODO: use IDs or XPath */
-          parent = null;
+          parent = null,
+          translation = "";
 
       $.getJSON($("#source").attr("src") + "/sl.json").success(function(data) {
         $(self.client._doc).find('*').contents().each(function() {
@@ -279,7 +280,11 @@ var Pontoon = function() {
             parent = $(this).parent();
             $(this).remove();
 
-            entity.translation = data.entity[counter].translation;
+            translation = data.entity[counter].translation;
+            if (translation.length > 0) {
+              entity.translation = translation;
+              parent.html(translation);
+            }
             entity.node = parent;
             self.createEntity(entity);
             counter++;
