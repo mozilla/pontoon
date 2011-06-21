@@ -129,12 +129,15 @@ var Pontoon = function() {
         $(self.client._doc).find('.editableToolbar > .edit').click();
       });
   
-      // Copy from original string handler
+      // Copy original string to translation
       $("#pontoon .copy").click(function(e) {
       	e.stopPropagation();
-        $(self.client._doc).find('.editableToolbar')
-          .find('.edit').click().end()
-          .find('.save').click();
+        var toolbar = $(self.client._doc).find('.editableToolbar');
+        toolbar.find('.edit').click().end();
+
+      	var entity = $(this).parents('tr').get(0).entity;
+      	$(entity.node).html(entity.original);
+        toolbar.find('.save').click();
       });
   
       this.updateProgress();
