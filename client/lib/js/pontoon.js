@@ -36,8 +36,8 @@ var Pontoon = function() {
       });
       
       $(entities).each(function() {
-        data['id'].push(this.id);
-        if (this.id === this.value) {
+        data['id'].push(this.original);
+        if (this.original === this.value) {
           data['value'].push("");
         } else {
           data['value'].push(this.value);
@@ -86,11 +86,32 @@ var Pontoon = function() {
           list = $(this.client._ptn).find('#entitylist').empty()
           // tables still need 'cellspacing="0"' in the markup
           // http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
-          .append('<table cellpadding="0" cellspacing="0" border="0"><thead><tr><th>Source</th><th>Translation</th></tr></thead><tbody></tbody></table>');
+          .append(
+            '<table cellpadding="0" cellspacing="0" border="0">' + 
+              '<thead><tr><th>Source</th><th>Translation</th></tr></thead>' + 
+              '<tbody></tbody>' + 
+            '</table>');
   
       // Render
       $(this.client._entities).each(function() {
-        var tr = $('<tr' + (this.translation ? ' class="translated"' : '') + '><td class="source"><p>' + this.original + '</p><ul class="tools"><li title="Copy original string to translation" class="copy"></li><li title="Machine translation by Google Translate" class="auto-translate"></li><li title="Comment" class="comment"></li></ul></td><td class="translation"><div class="suggestions"><a href="#translation" class="translation active">Translation</a><a href="#translation-memory" class="tm">Translation memory</a><a href="#other-users" class="users">Other users</a><a href="#other-locales" class="locales">Other locales</a></div><textarea>' + (this.translation || '') + '</textarea></td></tr>', self.client._ptn);
+        var tr = $('<tr' + (this.translation ? ' class="translated"' : '') + '>' + 
+        '<td class="source">' + 
+          '<p>' + this.original + '</p>' + 
+          '<ul class="tools">' + 
+            '<li title="Copy original string to translation" class="copy"></li>' + 
+            '<li title="Machine translation by Google Translate" class="auto-translate"></li>' + 
+            (this.comment ? '<li title="' + this.comment + '" class="comment"></li>' : '') + 
+          '</ul>' + 
+        '</td>' +
+        '<td class="translation">' + 
+          '<div class="suggestions">' + 
+            '<a href="#translation" class="translation active">Translation</a>' + 
+            '<a href="#translation-memory" class="tm">Translation memory</a>' + 
+            '<a href="#other-users" class="users">Other users</a>' + 
+            '<a href="#other-locales" class="locales">Other locales</a>' + 
+          '</div>' + 
+          '<textarea>' + (this.translation || '') + '</textarea>' + 
+        '</td></tr>', self.client._ptn);
             
         tr.get(0).entity = this;
         this.node.get(0).entity = this;
@@ -207,11 +228,11 @@ var Pontoon = function() {
      */
     createEntity: function(e) {
       var entity = {
-        original: e.original || null, /* Original string used in PO file (may include HTML markup) */
-        translation: e.translation || null, /* Translated string used in PO file (may include HTML markup) */
+        original: e.original || null, /* Original string (may include HTML markup) */
+        translation: e.translation || null, /* Translated string (may include HTML markup) */
+        comment: e.comment || null, /* String comment */
         node: e.node || null, /* HTML Element holding string */
         ui: e.ui || null, /* HTML Element representing string in the main UI */
-        id: e.id || null,      
         _client: this,
 
         hover: function() {
@@ -242,7 +263,7 @@ var Pontoon = function() {
       $(this.client._doc).find(':not("script, style")').contents().each(function() {
         if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
           var entity = {};
-          entity.original = entity.translation = entity.id = $(this).parent().html();
+          entity.original = entity.translation = $(this).parent().html();
           entity.node = $(this).parent();
           self.createEntity(entity);
           
@@ -274,17 +295,14 @@ var Pontoon = function() {
       $.getJSON($("#source").attr("src") + "/sl.json").success(function(data) {
         $(self.client._doc).find('*').contents().each(function() {
           if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
-            var entity = {};
-            entity.original = entity.id = data.entity[counter].original;
-
+            var entity = data.entity[counter];
+            
             parent = $(this).parent();
             $(this).remove();
-
-            translation = data.entity[counter].translation;
-            if (translation.length > 0) {
-              entity.translation = translation;
-              parent.html(translation);
+            if (entity.translation.length > 0) {
+              parent.html(entity.translation);
             }
+
             entity.node = parent;
             self.createEntity(entity);
             counter++;
