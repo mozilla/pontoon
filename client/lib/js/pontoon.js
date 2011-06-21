@@ -120,13 +120,21 @@ var Pontoon = function() {
         list.find('tbody').append(tr);
       });
   
-      // Event handlers
+      // Main entity list handlers
       $("#pontoon tr").hover(function() {
         this.entity.hover();
       }, function() {
         this.entity.unhover();
       }).click(function() {
         $(self.client._doc).find('.editableToolbar > .edit').click();
+      });
+  
+      // Copy from original string handler
+      $("#pontoon .copy").click(function(e) {
+      	e.stopPropagation();
+        $(self.client._doc).find('.editableToolbar')
+          .find('.edit').click().end()
+          .find('.save').click();
       });
   
       this.updateProgress();
