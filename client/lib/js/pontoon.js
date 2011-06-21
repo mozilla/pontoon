@@ -90,7 +90,7 @@ var Pontoon = function() {
   
       // Render
       $(this.client._entities).each(function() {
-        var tr = $('<tr><td class="source"><p>' + this.original + '</p><ul class="tools"><li title="Copy original string to translation" class="copy"></li><li title="Machine translation by Google Translate" class="auto-translate"></li><li title="Comment" class="comment"></li></ul></td><td class="translation"><div class="suggestions"><a href="#translation" class="translation active">Translation</a><a href="#translation-memory" class="tm">Translation memory</a><a href="#other-users" class="users">Other users</a><a href="#other-locales" class="locales">Other locales</a></div><textarea>' + (this.translation || '') + '</textarea></td></tr>', self.client._ptn);
+        var tr = $('<tr' + (this.translation ? ' class="translated"' : '') + '><td class="source"><p>' + this.original + '</p><ul class="tools"><li title="Copy original string to translation" class="copy"></li><li title="Machine translation by Google Translate" class="auto-translate"></li><li title="Comment" class="comment"></li></ul></td><td class="translation"><div class="suggestions"><a href="#translation" class="translation active">Translation</a><a href="#translation-memory" class="tm">Translation memory</a><a href="#other-users" class="users">Other users</a><a href="#other-locales" class="locales">Other locales</a></div><textarea>' + (this.translation || '') + '</textarea></td></tr>', self.client._ptn);
             
         tr.get(0).entity = this;
         this.node.get(0).entity = this;
@@ -259,7 +259,7 @@ var Pontoon = function() {
     /**
      * Get data from external meta file: original, translation, comment, suggestions...
      * Match with each string in the document, which is prepended with l10n comment nodes
-     * Example: <!--l10n-->Hallo Welt
+     * Example: <!--l10n-->Hello World
      *
      * Create entity objects
      * Remove comment nodes

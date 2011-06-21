@@ -37,14 +37,13 @@
  * ***** END LICENSE BLOCK ***** */
 
 /**
- * Wrapper for gettext(), returns Pontoon-wrapped, localized strings to
+ * Wrapper for gettext(), returns Pontoon-wrapped strings to
  * be handled by the Pontoon client component
  */
-function _w($str) {
-    if (!Pontoon::has_gettext()) return $str;
+function _w($original) {
+    if (!Pontoon::has_gettext()) return $original;
 
-    $translated = _($str);
-    return Pontoon::wrap($str, $translated);
+    return Pontoon::wrap($original);
 }
 
 /**
@@ -71,10 +70,10 @@ class Pontoon
     }
 
     /**
-     * wraps an (already translated) string into Pontoon comments
+     * marks strings for translation with Pontoon comments
      */
-    static function wrap($msgid, $translated) {
-        return sprintf('<!--l10n %1$s-->%2$s', $msgid, $translated);
+    static function wrap($original) {
+        return sprintf('<!--l10n-->%1$s', $original);
     }
 
     /**

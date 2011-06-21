@@ -3,20 +3,20 @@
   {
     "original": "Mozilla Labs Test Pilot",
     "translation": "Mozilla Labs Test Pilot",
-    "comment": "Test Pilot is a brand name and should not be translated.",
-    "suggestions": [
-      {
-        "translation": "Testni pilot Mozilla Labs"
-      },
-      {
-        "translation": "Test Pilot iz Mozilla Labs"
-      }
-    ]
+    "comment": "Test Pilot is a brand name and should not be translated."
   },
   {
     "original": "Become a Test Pilot!",
-    "translation": "Postani Test Pilot!",
-    "comment": ""
+    "translation": "Postani Testni Pilot!",
+    "comment": "Test Pilot is a brand name and should not be translated.",
+    "suggestions": [
+      {
+        "translation": "Postani Test pilot"
+      },
+      {
+        "translation": "Postanite Testni Pilot"
+      }
+    ]
   },
   {
     "original": "Home",
@@ -45,7 +45,7 @@
   },
   {
     "original": "Welcome to Test Pilot",
-    "translation": "",
+    "translation": "Pozdravljeni v Testnem Pilotu",
     "comment": ""
   },
   {
