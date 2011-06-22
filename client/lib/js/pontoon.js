@@ -96,7 +96,8 @@ var Pontoon = function() {
       $(this.client._entities).each(function() {
         var tr = $('<tr' + (this.translation ? ' class="translated"' : '') + '>' + 
         '<td class="source">' + 
-          '<p>' + this.original + '</p>' + 
+          // Do not render HTML code
+          '<p>' + this.original.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' + 
           '<ul class="tools">' + 
             '<li title="Copy original string to translation" class="copy"></li>' + 
             '<li title="Machine translation by Google Translate" class="auto-translate"></li>' + 
@@ -274,7 +275,7 @@ var Pontoon = function() {
       $(this.client._doc).find(':not("script, style")').contents().each(function() {
         if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
           var entity = {};
-          entity.original = entity.translation = $(this).parent().html();
+          entity.original = $(this).parent().html();
           entity.node = $(this).parent();
           self.createEntity(entity);
           
