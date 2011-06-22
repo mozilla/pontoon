@@ -193,9 +193,9 @@
   height: 100%;
   width: 0%;
   
-  border-radius: 3px 0 0 3px;
-  -moz-border-radius: 3px 0 0 3px;
-  -webkit-border-radius: 3px 0 0 3px;
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
 
   background-color: #AEEE00;
   background-image: -moz-linear-gradient(center top, #AEEE00, #405700); /* FF3.6 */

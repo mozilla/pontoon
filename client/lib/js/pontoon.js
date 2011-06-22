@@ -78,6 +78,17 @@ var Pontoon = function() {
 
 
 
+    /*
+     * Do not render HTML code
+     *
+     * string : explore Jetpack options and develop internal solution
+    */
+    doNotRender: function(string) {
+      return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    },
+
+
+
     /**
      * Build source - translation pairs
      */
@@ -96,8 +107,7 @@ var Pontoon = function() {
       $(this.client._entities).each(function() {
         var tr = $('<tr' + (this.translation ? ' class="translated"' : '') + '>' + 
         '<td class="source">' + 
-          // Do not render HTML code
-          '<p>' + this.original.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' + 
+          '<p>' + self.doNotRender(this.original) + '</p>' + 
           '<ul class="tools">' + 
             '<li title="Copy original string to translation" class="copy"></li>' + 
             '<li title="Machine translation by Google Translate" class="auto-translate"></li>' + 
@@ -111,7 +121,7 @@ var Pontoon = function() {
             '<a href="#other-users" class="users">Other users</a>' + 
             '<a href="#other-locales" class="locales">Other locales</a>' + 
           '</div>' + 
-          '<textarea>' + (this.translation || '') + '</textarea>' + 
+          '<textarea>' + (this.translation ? self.doNotRender(this.translation) : '') + '</textarea>' + 
         '</td></tr>', self.client._ptn);
             
         tr.get(0).entity = this;
@@ -237,6 +247,8 @@ var Pontoon = function() {
   
     /**
      * Create entity object
+     * 
+     * e Temporary entity object
      */
     createEntity: function(e) {
       var entity = {
@@ -350,6 +362,9 @@ var Pontoon = function() {
   
     /**
      * Initialize Pontoon Client
+     *
+     * doc Website document object
+     * ptn Pontoon document object
      */
     init: function(doc, ptn) {
       if (!doc) {
