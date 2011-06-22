@@ -1,7 +1,7 @@
 .hovered {
-  box-shadow: 0 0 5px #444444;
   -moz-box-shadow: 0 0 5px #444444;
   -webkit-box-shadow: 0 0 5px #444444;
+  box-shadow: 0 0 5px #444444;
 }
 
 .editableText {
@@ -9,9 +9,9 @@
 }
 
 .editableText:hover {
-  box-shadow: 0 0 5px #444444;
   -moz-box-shadow: 0 0 5px #444444;
   -webkit-box-shadow: 0 0 5px #444444;
+  box-shadow: 0 0 5px #444444;
 }
 
 .editableToolbar {
@@ -23,19 +23,19 @@
   border-top: 1px solid #AAAAAA;
   border-left: 1px solid #AAAAAA;
   border-right: 1px solid #AAAAAA;
-  border-top-right-radius: 0.2em;
-  border-top-left-radius: 0.2em;
   -moz-border-radius-topright: 0.2em;
   -moz-border-radius-topleft: 0.2em;
   -webkit-border-top-right-radius: 0.2em;
   -webkit-border-top-left-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  border-top-left-radius: 0.2em;
   z-index: 100;
 }
 
 .editableToolbar:hover + * {
-  box-shadow: 0 0 5px #444444;
   -moz-box-shadow: 0 0 5px #444444;
   -webkit-box-shadow: 0 0 5px #444444;
+  box-shadow: 0 0 5px #444444;
 }
 
 .editableToolbar a {
