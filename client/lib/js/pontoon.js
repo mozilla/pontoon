@@ -304,7 +304,7 @@ var Pontoon = function() {
           parent = null,
           translation = "";
 
-      $.getJSON($("#source").attr("src") + "/sl.json").success(function(data) {
+      $.getJSON($("#source").attr("src") + "/pontoon/sl.json").success(function(data) {
         $(self.client._doc).find('*').contents().each(function() {
           if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
             var entity = data.entity[counter];
