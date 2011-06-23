@@ -76,7 +76,7 @@ PROD_LANGUAGES = (
 
 def lazy_lang_url_map():
     from django.conf import settings
-    langs = DEV_LANGUAGES if settings.DEV else PROD_LANGUAGES
+    langs = settings.DEV_LANGUAGES if settings.DEV else settings.PROD_LANGUAGES
     return dict([(i.lower(), i) for i in langs])
 
 LANGUAGE_URL_MAP = lazy(lazy_lang_url_map, dict)()
