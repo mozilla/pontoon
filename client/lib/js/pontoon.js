@@ -6,7 +6,7 @@ var Pontoon = function() {
 
 
     /*
-     * Send data to server
+     * Save data to server
      * Pontoon server push expects a POST with the following properties:
      *
      * id - list of msgid strings, the length of id should match the length of value ['Hello World']
@@ -14,38 +14,30 @@ var Pontoon = function() {
      * project - url of the page being localized
      * locale - locale msgstrs are localized too
     */
-    send: function() {
-      var project = ('project' in this.client._meta) ? this.client._meta['project'] : this.client._doc.location.href,
-          lang = $(this.client._ptn).find('input').val(),
-          data = {
-            'id': [], 
-            'value': [],
+    save: function() {
+      // Deep copy: http://api.jquery.com/jQuery.extend
+      var data = jQuery.extend(true, {}, this.client._data);
+
+      $(data.entities).each(function() {
+        delete this.node;
+        delete this.ui;
+        delete this.hover;
+        delete this.unhover;
+      });
+
+      var self = this,
+          url = ('url' in this.client._meta) ? this.client._meta['url'] : 'http://127.0.0.1:8000/push/',
+          project = ('project' in this.client._meta) ? this.client._meta['project'] : this.client._doc.location.href,
+          locale = $(this.client._ptn).find('input').val(),
+          params = {
             'project': project,
-            'locale': lang
-          },
-          entities = [],
-          url = ('url' in this.client._meta) ? this.client._meta['url'] : 'http://127.0.0.1:8000/push/';
-      
-      $(this.client._entities).each(function() {
-        var entity = this,
-            trans = entity.translation ? entity.translation : entity.original;
-        entities.push({
-          'id': entity.original,
-          'value': trans
-        });
-      });
-      
-      $(entities).each(function() {
-        data['id'].push(this.original);
-        if (this.original === this.value) {
-          data['value'].push("");
-        } else {
-          data['value'].push(this.value);
-        }
-      });
-  
+            'locale': locale,
+            // TODO: add, support other browsers - https://developer.mozilla.org/en/Using_JSON_in_Firefox
+            'data': JSON.stringify(data)
+          };
+
       $.ajaxSettings.traditional = true;
-      $.post(url, data, null, "text");
+      $.post(url, params);
     },
   
   
@@ -104,7 +96,7 @@ var Pontoon = function() {
             '</table>');
   
       // Render
-      $(this.client._entities).each(function() {
+      $(this.client._data.entities).each(function() {
         var tr = $('<tr' + (this.translation ? ' class="translated"' : '') + '>' + 
         '<td class="source">' + 
           '<p>' + self.doNotRender(this.original) + '</p>' + 
@@ -121,11 +113,13 @@ var Pontoon = function() {
             '<a href="#other-users" class="users">Other users</a>' + 
             '<a href="#other-locales" class="locales">Other locales</a>' + 
           '</div>' + 
-          '<textarea>' + (this.translation ? self.doNotRender(this.translation) : '') + '</textarea>' + 
+          '<textarea>' + (this.translation || '') + '</textarea>' + 
         '</td></tr>', self.client._ptn);
             
         tr.get(0).entity = this;
-        this.node.get(0).entity = this;
+        if (this.node) { // For entities not found on the website
+          this.node.get(0).entity = this;
+        }
         this.ui = tr;
   
         list.find('tbody').append(tr);
@@ -208,9 +202,9 @@ var Pontoon = function() {
         $('#locale').click();
       });
   
-      // Send changes to server
-      $("#send").click(function () {
-        self.send();
+      // Save changes to server
+      $("#save").click(function () {
+        self.save();
       });
     },
   
@@ -221,8 +215,10 @@ var Pontoon = function() {
      * Enable editable text
      */
     renderTools: function() {
-      $(this.client._entities).each(function() {
-        this.node.editableText();
+      $(this.client._data.entities).each(function() {
+        if (this.node) { // For entities not found on the website
+          this.node.editableText();
+        }
       });
       this.attachHandlers();
       this.rebuildList();
@@ -246,30 +242,25 @@ var Pontoon = function() {
   
   
     /**
-     * Create entity object
+     * Extend entity object
      * 
      * e Temporary entity object
      */
-    createEntity: function(e) {
-      var entity = {
-        original: e.original || null, /* Original string (may include HTML markup) */
-        translation: e.translation || null, /* Translated string (may include HTML markup) */
-        comment: e.comment || null, /* String comment */
-        node: e.node || null, /* HTML Element holding string */
-        ui: e.ui || null, /* HTML Element representing string in the main UI */
-        _client: this,
+    extendEntity: function(e) {
+      e.original = e.original || ""; /* Original string */
+      e.translation = e.translation || ""; /* Translated string */
+      e.comment = e.comment || ""; /* Comment for localizers */
+      e.node = e.node || null; /* HTML Element holding string */
+      e.ui = e.ui || null; /* HTML Element representing string in the main UI */
 
-        hover: function() {
-          this.node.get(0).showToolbar();
-          this.ui.toggleClass('hovered');
-        },
-        unhover: function() {
-          this.node.get(0).hideToolbar();
-          this.ui.toggleClass('hovered');
-        }
-      }
-      
-      this.client._entities.push(entity);
+      e.hover = function() {
+        this.node.get(0).showToolbar();
+        this.ui.toggleClass('hovered');
+      };
+      e.unhover = function() {
+        this.node.get(0).hideToolbar();
+        this.ui.toggleClass('hovered');
+      };
     },
   
   
@@ -280,21 +271,23 @@ var Pontoon = function() {
      * Create entity object from every non-empty text node
      * Exclude nodes from special tags, e.g. <script> and <link>
      * Skip nodes already included in parent nodes
+     * Add temporary pontoon-entity class to prevent duplicate entities when guessing
      */ 
     guessEntities: function() {
       var self = this;
+      this.client._data.entities = [];
   
       $(this.client._doc).find(':not("script, style")').contents().each(function() {
         if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
           var entity = {};
           entity.original = $(this).parent().html();
           entity.node = $(this).parent();
-          self.createEntity(entity);
-          
-          // Add temporary pontoon-entity class to prevent duplicate entities when guessing 
+          self.extendEntity(entity);
+          self.client._data.entities.push(entity);
           $(this).parent().addClass("pontoon-entity");
         }
       });
+      
       $(".pontoon-entity").removeClass("pontoon-entity");
       self.renderTools();
     },
@@ -313,22 +306,25 @@ var Pontoon = function() {
       var self = this,
           prefix = 'l10n',
           counter = 1, /* TODO: use IDs or XPath */
-          parent = null,
-          translation = "";
+          parent = null;
 
       $.getJSON($("#source").attr("src") + "/pontoon/sl.json").success(function(data) {
+      	self.client._data = data;
+      	var entities = self.client._data.entities;
+      	
         $(self.client._doc).find('*').contents().each(function() {
           if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
-            var entity = data.entity[counter];
+            var entity = entities[counter],
+                translation = entity.translation;
             
             parent = $(this).parent();
             $(this).remove();
-            if (entity.translation.length > 0) {
-              parent.html(entity.translation);
+            if (translation.length > 0) {
+              parent.html(translation);
             }
 
             entity.node = parent;
-            self.createEntity(entity);
+            self.extendEntity(entity);
             counter++;
           }
         });
@@ -375,8 +371,8 @@ var Pontoon = function() {
       this.client = {
         _doc: doc,
         _ptn: ptn,
-        _entities: [],
-        _meta: {}
+        _meta: {},
+        _data: {}
       };
       
       // Enable document editing
