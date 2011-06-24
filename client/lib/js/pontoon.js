@@ -206,10 +206,12 @@ var Pontoon = function() {
       
       // Authentication
       $('#authentication-menu .restricted .go').unbind("click.pontoon").bind("click.pontoon", function() {
-        var author = $('#nickname').val() || ($('#email').val() || 'Sign in');
-        $('#authentication .author').html(author).toggleClass('authenticated');
-        $('#authentication .selector').click();
-        $('#authentication-menu, #save-menu').toggleClass('menu');
+        var author = $('#nickname').val() || $('#email').val();
+          $('#authentication .selector').click();
+        if (author) {
+          $('#authentication .author').html(author).toggleClass('authenticated');
+          $('#authentication-menu, #save-menu').toggleClass('menu');
+        }
       });
 
       // Authentication switch
@@ -219,12 +221,13 @@ var Pontoon = function() {
           .find('#password').toggle();
       });
 
-      // Save menue out
+      // Save menu
       $('#save-menu').find('.sign-out').unbind("click.pontoon").bind("click.pontoon", function() {
-        $('#authentication .author').html('Sign in').toggleClass('authenticated');
         $('#authentication .selector').click();
+        $('#authentication .author').html('Sign in').toggleClass('authenticated');
         $('#authentication-menu, #save-menu').toggleClass('menu');
       }).end().find('.server').unbind("click.pontoon").bind("click.pontoon", function() {
+        $('#authentication .selector').click();
         self.save();
       });
 
