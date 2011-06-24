@@ -193,7 +193,7 @@ var Pontoon = function() {
   
       // Selector box
       $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
-        $(this).next('.menu').toggle();
+        $(this).siblings('.menu').toggle();
         $(this).toggleClass('opened');
       });
 
@@ -206,20 +206,28 @@ var Pontoon = function() {
       
       // Authentication
       $('#authentication-menu .restricted .go').unbind("click.pontoon").bind("click.pontoon", function() {
-          var author = $('#nickname').val() || ($('#email').val() || 'Sign in');
-          $('#authentication .author').html(author);
-          $('#authentication .selector').click();
+        var author = $('#nickname').val() || ($('#email').val() || 'Sign in');
+        $('#authentication .author').html(author).toggleClass('authenticated');
+        $('#authentication .selector').click();
+        $('#authentication-menu, #save-menu').toggleClass('menu');
       });
 
       // Authentication switch
       $('#authentication-menu .switch').unbind("click.pontoon").bind("click.pontoon", function() {
         $('#authentication-menu')
           .find('.wrapper').toggle().end()
-          .find('.password').toggle();
+          .find('#password').toggle();
       });
 
-      // Save changes to server
-      // self.save();
+      // Save menue out
+      $('#save-menu').find('.sign-out').unbind("click.pontoon").bind("click.pontoon", function() {
+        $('#authentication .author').html('Sign in').toggleClass('authenticated');
+        $('#authentication .selector').click();
+        $('#authentication-menu, #save-menu').toggleClass('menu');
+      }).end().find('.server').unbind("click.pontoon").bind("click.pontoon", function() {
+        self.save();
+      });
+
     },
   
   

@@ -48,13 +48,13 @@
         .bind('mouseup', { initial: data }, mouseUpHandler);
     });
 
-	// Prepare iframe size and resize it with window
+    // Prepare iframe size and resize it with window
     $('#source').height($(document).height() - $('#pontoon').height());
     $(window).resize(function () {
       $('#source').height($(document).height() - $('#pontoon').height());
     });
 
-	// Load iframe contents
+    // Load iframe contents
     var website = window.location.search.split("?url=")[1] || "";
     if (website.length > 0) {
       $('#intro').slideUp("fast", function() {

@@ -11,8 +11,16 @@
 
 /* COMMONS */
 
-#pontoon .right {
-  float: right;
+#pontoon {
+  display: none;
+  background: #EBEBEB;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  
+  box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
 }
 
 #pontoon h2 {
@@ -21,7 +29,7 @@
   font-weight: normal;
   text-shadow: 1px 1px 1px #000000;
   text-transform: uppercase;
-  padding: 0 0 2px 1px;
+  padding-bottom: 2px;
 }
 
 #pontoon a:link,
@@ -164,16 +172,8 @@
   padding: 7px 0 4px 12px;
 }
 
-#pontoon {
-  display: none;
-  background: #EBEBEB;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  
-  box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
+#pontoon .right {
+  float: right;
 }
 
 
@@ -240,11 +240,11 @@
   left: -33px;
 }
 
-#pontoon #locale-menu li.add {
+#pontoon ul.menu li:nth-child(1) {
   border-bottom: 1px solid #040404;
 }
 
-#pontoon #locale-menu li:nth-child(2) {
+#pontoon ul.menu li:nth-child(2) {
   border-top: 1px solid #444444;
 }
 
@@ -298,16 +298,6 @@
   text-shadow: 1px 1px 2px #000000;
   margin: 6px;
   float: left;
-}
-
-#pontoon #save {
-  display: none;
-  float: left;
-}
-
-#pontoon #save-menu {
-  width: 110px;
-  left: -7px;
 }
 
 #pontoon #authentication {
@@ -376,7 +366,7 @@
   height: 24px;
   width: 24px;
 }
-    
+
 /*
  * ICON SET: Social Media Mini by Paul Robert Lloyd
  *
@@ -396,6 +386,11 @@
 
 #pontoon #authentication-menu .restricted a.openid {
   background: url('../images/openid.png') no-repeat;
+}
+
+#pontoon #save-menu {
+  display: none;
+  right: 0;
 }
 
 #pontoon #switch {

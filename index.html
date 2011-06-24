@@ -68,24 +68,13 @@
         
         <div class="right">
 
-          <!-- Save/Export -->
-          <div id="save" class="select">
-            <div class="button selector">Save/Export &#9652;</div>
-            <ul id="save-menu" class="menu">
-              <li class="server">Save to server</li>
-              <li class="html">Save as HTML</li>
-              <li class="po">Save as PO</li>
-              <li class="xml">Save as XML</li>
-              <li class="json">Save as JSON</li>
-            </ul>
-          </div>
-
-          <!-- Authentication -->
           <div id="authentication" class="select">
             <div class="button selector">
               <span class="author">Sign in</span>
               <span> &#9652;</span>
             </div>
+            
+            <!-- Authentication -->
             <div id="authentication-menu" class="menu">
               <section class="full">
                 <h2>Full access</h2>
@@ -97,7 +86,7 @@
                     <div class="button">Sign in</div>
                   </div>
                   <div class="wrapper send-password">
-                    <a class="switch" href="#authentication-wrapper">Sign in</a>
+                    <a class="switch" href="#authentication-wrapper">Back to sign in</a>
                     <div class="button">Send password</div>
                   </div>
                 </form>
@@ -112,6 +101,14 @@
                 <a class="openid" href="#openid"></a>
               </section>
             </div>
+            
+            <!-- Save and Export -->
+            <ul id="save-menu">
+              <li class="sign-out">Sign out</li>
+              <li class="server">Save to server</li>
+              <li class="html">Export as HTML</li>
+              <li class="po">Export as PO</li>
+            </ul>
           </div>
 
           <button id="switch"></button>
