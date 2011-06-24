@@ -3,12 +3,6 @@
 
   $(function() {
   	
-	// Prepare iframe size and resize it with window
-    $('#source').height($(document).height() - $('#pontoon').height());
-    $(window).resize(function () {
-      $('#source').height($(document).height() - $('#pontoon').height());
-    });
-
     // Resizable
 	var mouseMoveHandler = function(e) {
 	  var initial = e.data.initial,
@@ -52,6 +46,12 @@
       $(document)
         .bind('mousemove', { initial: data }, mouseMoveHandler)
         .bind('mouseup', { initial: data }, mouseUpHandler);
+    });
+
+	// Prepare iframe size and resize it with window
+    $('#source').height($(document).height() - $('#pontoon').height());
+    $(window).resize(function () {
+      $('#source').height($(document).height() - $('#pontoon').height());
     });
 
 	// Load iframe contents

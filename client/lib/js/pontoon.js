@@ -57,10 +57,10 @@ var Pontoon = function() {
         dataType: 'jsonp', 
         success: function(headers) {
           var language = headers['Accept-Language'].substring(0, 2),
-              entry = $('#locale-list .flag.' + language);
+              entry = $('#locale-menu .flag.' + language);
           if (entry.length !== 0) {
             $('#flag').addClass(language);
-            $('#locale .language').html(entry.next().text());
+            $('#locale .selector .language').html(entry.next().text());
           }
         }
       }).done(function() {
@@ -191,21 +191,35 @@ var Pontoon = function() {
         $('#pontoon').toggleClass('opened');
       });
   
-      // Locale selector
-      $('#locale').unbind("click.pontoon").bind("click.pontoon", function() {
-        $('#locale-list').css("left", $("#flag").position().left - 12).toggle();
+      // Selector box
+      $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
+        $(this).next('.menu').toggle();
         $(this).toggleClass('opened');
       });
-      $('#locale-list li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
+
+      // Locale selector
+      $('#locale-menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
         $('#flag').attr("class", $(this).find('span').attr("class"));
-        $('#locale .language').html($(this).find('.language').html());
-        $('#locale').click();
+        $('#locale .selector .language').html($(this).find('.language').html());
+        $('#locale .selector').click();
       });
-  
+      
+      // Authentication
+      $('#authentication-menu .restricted .go').unbind("click.pontoon").bind("click.pontoon", function() {
+          var author = $('#nickname').val() || ($('#email').val() || 'Sign in');
+          $('#authentication .author').html(author);
+          $('#authentication .selector').click();
+      });
+
+      // Authentication switch
+      $('#authentication-menu .switch').unbind("click.pontoon").bind("click.pontoon", function() {
+        $('#authentication-menu')
+          .find('.wrapper').toggle().end()
+          .find('.password').toggle();
+      });
+
       // Save changes to server
-      $("#save").click(function () {
-        self.save();
-      });
+      // self.save();
     },
   
   

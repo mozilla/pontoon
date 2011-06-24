@@ -264,6 +264,8 @@ body {
 }
 
 #intro .url {
+  background: #888888;
+  border: 1px solid #000000;
   padding: 5px;
   width: 600px;
   text-align: center;
@@ -272,14 +274,25 @@ body {
   border-radius: 5px 5px 5px 5px;
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-radius: 5px 5px 5px 5px;
+
+  box-shadow: 0 1px 1px #444444;
+  -moz-box-shadow: 0 1px 1px #444444;
+  -webkit-box-shadow: 0 1px 1px #444444;
 }
 
 #intro .url:focus {
+  background: #FFFFFF;
+  border-color: #FFFFFF;
   text-align: left;
 
   box-shadow: 0 0 5px 1px #AEEE00;
   -moz-box-shadow: 0 0 5px 1px #AEEE00;
   -webkit-box-shadow: 0 0 5px 1px #AEEE00;
+
+  -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
+  -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
+  -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
+  transition: all 0.3s ease-out;  
 }
 
 #source {
@@ -300,38 +313,6 @@ body {
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
-}
-
-.url {
-  background: #888888;
-  border: 1px solid #000000;
-  padding: 3px 3px 3px 9px;
-  width: 300px;
-  text-align: left;
-  float: left;
-
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
-
-  box-shadow: 0 1px 1px #444444;
-  -moz-box-shadow: 0 1px 1px #444444;
-  -webkit-box-shadow: 0 1px 1px #444444;
-}
-
-.url:focus {
-  background: #FFFFFF;
-  text-align: left;
-  border-color: #FFFFFF;
-
-  box-shadow: 0 0 2px 1px #AEEE00;
-  -moz-box-shadow: 0 0 2px 1px #AEEE00;
-  -webkit-box-shadow: 0 0 2px 1px #AEEE00;
-
-  -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
-  -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
-  -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
-  transition: all 0.3s ease-out;  
 }
 
 .links {

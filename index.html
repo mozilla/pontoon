@@ -40,27 +40,83 @@
       <header>
         <span id="logo">Pontoon</span>
         <input class="url" type="text" />
+
         <span class="vertical-separator"></span>
 
-        <!-- Locale selector: should be automatic (use geolocaion or browser language) -->
+        <!-- Locale selector -->
         <span id="flag" class="flag"></span>
-        <button id="locale" class="button select"><span class="language">Select language</span><span> &#9652;</span></button>
-        <ul id="locale-list">
-          <li class="add"><span>Add language</span></li>
-          <li><span class="flag de"></span><span class="language">Deutsch</span></li>
-          <li><span class="flag fr"></span><span class="language">Français</span></li>
-          <li><span class="flag hr"></span><span class="language">Hrvatski</span></li>
-          <li><span class="flag pl"></span><span class="language">Polski</span></li>
-          <li><span class="flag sl"></span><span class="language">Slovenščina</span></li>
-        </ul>
+        <div id="locale" class="select">
+          <div class="button selector">
+            <span class="language">Select language</span>
+            <span> &#9652;</span>
+          </div>
+          <ul id="locale-menu" class="menu">
+            <li class="add"><span>Add language</span></li>
+            <li><span class="flag de"></span><span class="language">Deutsch</span></li>
+            <li><span class="flag fr"></span><span class="language">Français</span></li>
+            <li><span class="flag hr"></span><span class="language">Hrvatski</span></li>
+            <li><span class="flag pl"></span><span class="language">Polski</span></li>
+            <li><span class="flag sl"></span><span class="language">Slovenščina</span></li>
+          </ul>
+        </div>
+        
         <span class="vertical-separator"></span>
 
         <!-- Progress indicator -->
         <div id="progress"><span></span></div>
         <span id="progress-value"></span>
+        
+        <div class="right">
 
-        <button id="switch"></button>
-        <button class="button" id="save">Save</button>
+          <!-- Save/Export -->
+          <div id="save" class="select">
+            <div class="button selector">Save/Export &#9652;</div>
+            <ul id="save-menu" class="menu">
+              <li class="server">Save to server</li>
+              <li class="html">Save as HTML</li>
+              <li class="po">Save as PO</li>
+              <li class="xml">Save as XML</li>
+              <li class="json">Save as JSON</li>
+            </ul>
+          </div>
+
+          <!-- Authentication -->
+          <div id="authentication" class="select">
+            <div class="button selector">
+              <span class="author">Sign in</span>
+              <span> &#9652;</span>
+            </div>
+            <div id="authentication-menu" class="menu">
+              <section class="full">
+                <h2>Full access</h2>
+                <form>
+                  <input id="email" type="text" placeholder="Email" />
+                  <input id="password" type="password" placeholder="Password" />
+                  <div class="wrapper sign-in">
+                    <a class="switch" href="#forgot">Forgot password?</a>
+                    <div class="button">Sign in</div>
+                  </div>
+                  <div class="wrapper send-password">
+                    <a class="switch" href="#authentication-wrapper">Sign in</a>
+                    <div class="button">Send password</div>
+                  </div>
+                </form>
+              </section>
+              <section class="restricted">
+                <h2>Suggestions only</h2>
+                <input id="nickname" type="text" placeholder="Enter your name" />
+                <div class="go button">Go</div>
+                <a class="facebook" href="#facebook"></a>
+                <a class="twitter" href="#twitter"></a>
+                <a class="google" href="#google"></a>
+                <a class="openid" href="#openid"></a>
+              </section>
+            </div>
+          </div>
+
+          <button id="switch"></button>
+        </div>
+
       </header>
 
       <!-- Strings placeholder -->
