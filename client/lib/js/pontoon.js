@@ -52,6 +52,7 @@ var Pontoon = function() {
      * TODO: explore Jetpack options and develop internal solution
     */
     setLanguage: function() {
+      /*
       $.ajax({ 
         url: "http://ajaxhttpheaders.appspot.com", 
         dataType: 'jsonp', 
@@ -66,6 +67,8 @@ var Pontoon = function() {
       }).done(function() {
         $('#pontoon').slideDown();
       });
+      */
+      $('#pontoon').slideDown();
     },
 
 
