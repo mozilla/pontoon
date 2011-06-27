@@ -236,8 +236,16 @@
   margin-left: 5px;
 }
 
+#pontoon #locale .selector .flag {
+  margin: 1px 10px 0 2px;
+}
+
+#pontoon #locale .selector .flag.blank {
+  display: none;
+}
+
 #pontoon #locale-menu {
-  left: -33px;
+  left: -5px;
 }
 
 #pontoon ul.menu li:nth-child(1) {

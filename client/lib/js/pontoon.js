@@ -68,7 +68,7 @@ var Pontoon = function() {
         $('#pontoon').slideDown();
       });
       */
-      $('#pontoon').slideDown();
+      
     },
 
 
@@ -76,7 +76,7 @@ var Pontoon = function() {
     /*
      * Do not render HTML code
      *
-     * string : explore Jetpack options and develop internal solution
+     * string HTML snippet that has to be displayed as code instead of rendered
     */
     doNotRender: function(string) {
       return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -250,6 +250,7 @@ var Pontoon = function() {
       });
       this.attachHandlers();
       this.rebuildList();
+      $('#pontoon').slideDown();
     },
   
   
@@ -407,9 +408,6 @@ var Pontoon = function() {
       var ss = $('<link rel="stylesheet" href="../../client/lib/css/editable.css">', doc);
       $('head', doc).append(ss);      
       this.extractEntities();      
-  
-      // TODO: move to web client part of the code, selector should be on frontpage
-      this.setLanguage();
     }
 
   };
