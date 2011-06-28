@@ -43,37 +43,6 @@ var Pontoon = function() {
   
   
     /*
-     * Set language using browser language detection
-     *
-     * Browser language cannot be generally obtained via navigator.language
-     * Using HTTP 'Accept-Language' header via external service temporary
-     * Source: http://stackoverflow.com/questions/1043339/javascript-for-detecting-browser-language-preference
-     *
-     * TODO: explore Jetpack options and develop internal solution
-    */
-    setLanguage: function() {
-      /*
-      $.ajax({ 
-        url: "http://ajaxhttpheaders.appspot.com", 
-        dataType: 'jsonp', 
-        success: function(headers) {
-          var language = headers['Accept-Language'].substring(0, 2),
-              entry = $('#locale-menu .flag.' + language);
-          if (entry.length !== 0) {
-            $('#flag').addClass(language);
-            $('#locale .selector .language').html(entry.next().text());
-          }
-        }
-      }).done(function() {
-        $('#pontoon').slideDown();
-      });
-      */
-      
-    },
-
-
-
-    /*
      * Do not render HTML code
      *
      * string HTML snippet that has to be displayed as code instead of rendered
@@ -129,7 +98,7 @@ var Pontoon = function() {
       });
   
       // Main entity list handlers
-      $("#pontoon tr").hover(function() {
+      $("#main tr").hover(function() {
         this.entity.hover();
       }, function() {
         this.entity.unhover();
@@ -138,7 +107,7 @@ var Pontoon = function() {
       });
   
       // Copy original string to translation
-      $("#pontoon .copy").click(function(e) {
+      $("#main .copy").click(function(e) {
       	e.stopPropagation();
         var toolbar = $(self.client._doc).find('.editableToolbar');
         toolbar.find('.edit').click().end();
@@ -157,8 +126,8 @@ var Pontoon = function() {
      * Update progress indicator and value
      */
     updateProgress: function() {
-      var all = $("#pontoon tbody tr").length,
-          translated = $("#pontoon tbody tr.translated").length;
+      var all = $("#main tbody tr").length,
+          translated = $("#main tbody tr.translated").length;
       $('#progress span').width(Math.round(translated*100 / all) + '%');
       $('#progress-value').html(translated + '/' + all);
     },
@@ -185,26 +154,26 @@ var Pontoon = function() {
   
       // Open/close Pontoon UI
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function() {
-        if ($('#pontoon').is('.opened')) {
+        if ($('#main').is('.opened')) {
           $('#entitylist').height(0);
         } else {
           $('#entitylist').height(300);
         }
-        $('#source').height($(document).height() - $('#pontoon').height());
-        $('#pontoon').toggleClass('opened');
+        $('#source').height($(document).height() - $('#main').height());
+        $('#main').toggleClass('opened');
       });
   
-      // Selector box
+      // Selector handler
       $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
         $(this).siblings('.menu').toggle();
         $(this).toggleClass('opened');
       });
 
       // Locale selector
-      $('#locale-menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
-        $('#flag').attr("class", $(this).find('span').attr("class"));
-        $('#locale .selector .language').html($(this).find('.language').html());
-        $('#locale .selector').click();
+      $('.locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
+        $('.locale .selector .flag').attr("class", $(this).find('span').attr("class"));
+        $('.locale .selector .language').html($(this).find('.language').html());
+        $('.locale .selector').click();
       });
       
       // Authentication
@@ -250,7 +219,7 @@ var Pontoon = function() {
       });
       this.attachHandlers();
       this.rebuildList();
-      $('#pontoon').slideDown();
+      $('#main').slideDown();
     },
   
   
@@ -337,7 +306,7 @@ var Pontoon = function() {
           counter = 1, /* TODO: use IDs or XPath */
           parent = null;
 
-      $.getJSON($("#source").attr("src") + "/pontoon/sl.json").success(function(data) {
+      $.getJSON($("#source").attr("src") + "/pontoon/" + this.client._locale + ".json").success(function(data) {
       	self.client._data = data;
       	var entities = self.client._data.entities;
       	
@@ -391,7 +360,7 @@ var Pontoon = function() {
      * doc Website document object
      * ptn Pontoon document object
      */
-    init: function(doc, ptn) {
+    init: function(doc, ptn, locale) {
       if (!doc) {
         throw "Document handler required";
       }
@@ -400,6 +369,7 @@ var Pontoon = function() {
       this.client = {
         _doc: doc,
         _ptn: ptn,
+        _locale: locale,
         _meta: {},
         _data: {}
       };

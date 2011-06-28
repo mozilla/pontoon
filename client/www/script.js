@@ -20,9 +20,9 @@
 
       $('#iframe-cover').hide(); // iframe fix
       if (e.data.initial.below.height() === 0) {
-      	$('#pontoon').removeClass('opened');
+      	$('#main').removeClass('opened');
       } else {
-      	$('#pontoon').addClass('opened');
+      	$('#main').addClass('opened');
       }
     };
 	$('#logo').bind('mousedown', function(e) {
@@ -49,42 +49,82 @@
     });
 
     // Prepare iframe size and resize it with window
-    $('#source').height($(document).height() - $('#pontoon').height());
+    $('#source').height($(document).height() - $('#main').height());
     $(window).resize(function () {
-      $('#source').height($(document).height() - $('#pontoon').height());
+      $('#source').height($(document).height() - $('#main').height());
     });
 
-    // Load iframe contents
-    var website = window.location.search.split("?url=")[1] || "";
-    if (website.length > 0) {
-      $('#intro').slideUp("fast", function() {
-        // TODO: use real URLs
-        $('#source').attr('src', /* website */ 'projects/testpilot');
-        $('#pontoon .url').val(/* website */ 'projects/testpilot');
-      });
+    // Selector handler
+    $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
+      $(this).siblings('.menu').toggle();
+      $(this).toggleClass('opened');
+    });
 
-      $('#source').unbind("load.pontoon").bind("load.pontoon", function() {
-        // Quit if website not specified
-        if (!$(this).attr('src')) {
-          return;
-        }
-        // Initialize Pontoon
-        Pontoon.init(this.contentDocument, document);
-      });
+    // Locale selector
+    $('.locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
+      $('.locale .selector .flag').attr("class", $(this).find('span').attr("class"));
+      $('.locale .selector .language').html($(this).find('.language').html());
+      $('.locale .selector').click();
+    });
+
+    function loadIframeContents(code) {
+      var website = window.location.search.split("?url=")[1] || "";
+      if (website.length > 0) {
+        $('#intro').slideUp("fast", function() {
+          // TODO: use real URLs
+          $('#source').attr('src', /* website */ 'projects/testpilot');
+          $('#main .url').val(/* website */ 'projects/testpilot');
+        });
+
+        $('#source').unbind("load.pontoon").bind("load.pontoon", function() {
+          // Quit if website not specified
+          if (!$(this).attr('src')) {
+            return;
+          }
+          // Initialize Pontoon
+          Pontoon.init(this.contentDocument, document, code);
+        });
         
-    } else {
+      } else {
 	    // Empty iframe if cached
-	    $("#source").attr("src", "about:blank");
-  	}
+  	    $("#source").attr("src", "about:blank");
+      }
+    }
 
-    // Load website into iframe
-    $('.url').keypress(function (e) {
-      var code = (e.keyCode ? e.keyCode : e.which);
-      if (code === 13) {
-      	window.location.search = "url=projects/testpilot";
+    function updateLocale(code, name) {
+      $('.locale .selector')
+        .find('.flag').addClass(code).removeClass('blank').end()
+        .find('.language').html(name).end()
+        .find('.handle').html(' &#9652;').end();
+      
+      loadIframeContents(code);
+    }
+
+    /*
+     * Set locale using browser language detection
+     * TODO: develop internal solution
+     *
+     * Browser language cannot be generally obtained via navigator.language
+     * Using HTTP 'Accept-Language' header via external service temporary
+     * Source: http://stackoverflow.com/questions/1043339/javascript-for-detecting-browser-language-preference
+    */
+    $.ajax({ 
+      url: "http://ajaxhttpheaders.appspot.com", 
+      dataType: 'jsonp', 
+      success: function(headers) {
+        var locale = headers['Accept-Language'].substring(0, 2),
+            entry = $('#intro .locale .menu .flag.' + locale);
+        if (entry.length !== 0) {
+          updateLocale(locale, entry.next().text());
+        } else {
+          updateLocale('de', 'Deutsch');
+        }
+      },
+      error: function() {
+        updateLocale('de', 'Deutsch');
       }
     });
-
+      
   });
 
 }(this.jQuery));

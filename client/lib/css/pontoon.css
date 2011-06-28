@@ -11,18 +11,6 @@
 
 /* COMMONS */
 
-#pontoon {
-  display: none;
-  background: #EBEBEB;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  
-  box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
-}
-
 #pontoon h2 {
   color: #888888;
   font-size: 14px;
@@ -153,23 +141,30 @@
   -webkit-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
 }
 
-#pontoon .menu li {
+#pontoon ul.menu li {
   padding: 2px 12px;
   text-shadow: 1px 1px 2px #000000;
 }
 
-#pontoon .menu li:hover {
+#pontoon ul.menu li:hover {
   cursor: pointer;
   color: #FFFFFF;
   background: #444444;
+}
 
+#pontoon ul.menu li:nth-child(1) {
+  padding: 7px 0 4px 12px;
+  border-bottom: 1px solid #040404;
+}
+
+#pontoon ul.menu li:nth-child(1):hover {
   border-radius: 4px 4px 0 0;
   -moz-border-radius: 4px 4px 0 0;
   -webkit-border-radius: 4px 4px 0 0;
 }
 
-#pontoon .menu li:nth-child(1) {
-  padding: 7px 0 4px 12px;
+#pontoon ul.menu li:nth-child(2) {
+  border-top: 1px solid #444444;
 }
 
 #pontoon .right {
@@ -181,6 +176,18 @@
 
 
 /* HEADER */
+
+#pontoon #main {
+  display: none;
+  background: #EBEBEB;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  
+  box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
+}
 
 #pontoon header {
   font-size: 12px;
@@ -231,32 +238,20 @@
   margin: 7px 0;
 }
 
-#pontoon #locale {
+#pontoon .locale {
   float: left;
   margin-left: 5px;
 }
 
-#pontoon #locale .selector .flag {
+#pontoon .locale .selector .flag {
   margin: 1px 10px 0 2px;
 }
 
-#pontoon #locale .selector .flag.blank {
-  display: none;
-}
-
-#pontoon #locale-menu {
+#pontoon .locale .menu {
   left: -5px;
 }
 
-#pontoon ul.menu li:nth-child(1) {
-  border-bottom: 1px solid #040404;
-}
-
-#pontoon ul.menu li:nth-child(2) {
-  border-top: 1px solid #444444;
-}
-
-#pontoon #locale-menu li .flag {
+#pontoon .locale .menu li .flag {
   margin: 1px 10px 0 0;
 }
 
@@ -414,11 +409,11 @@
   background: url('../images/arrow-up-hover.png') no-repeat;
 }
 
-#pontoon.opened #switch {
+#pontoon #main.opened #switch {
   background: url('../images/arrow-down.png') no-repeat;
 }
 
-#pontoon.opened #switch:hover {
+#pontoon #main.opened #switch:hover {
   background: url('../images/arrow-down-hover.png') no-repeat;
 }
 

@@ -110,9 +110,6 @@ html { overflow-y: scroll; } */
 /* Accessible focus treatment: people.opera.com/patrickl/experiments/keyboard/test */
 a:hover, a:active { outline: none; }
 
-a, a:active, a:visited { color: #607890; }
-a:hover { color: #036; }
-
 
 ul, ol { margin-left: 1.8em; }
 ol { list-style-type: decimal; }
@@ -232,8 +229,10 @@ body {
   position: fixed;
   background: #000000;
   border-bottom: 1px solid #555555;
+  padding-bottom: 50px;
   width: 100%;
-  
+  text-align: center;
+
   box-shadow: 0 0 5px 1px #000000;
   -moz-box-shadow: 0 0 5px 1px #000000;
   -webkit-box-shadow: 0 0 5px 1px #000000;
@@ -257,42 +256,78 @@ body {
   margin: 80px 0 10px;
 }
 
-#intro .location {
-  text-align: center;
-  font-size: 20px;
-  margin-bottom: 50px;
+#intro form {
+	width: 660px;
+	height: 40px;
+	margin: 0 auto;
 }
 
-#intro .url {
-  background: #888888;
-  border: 1px solid #000000;
+#pontoon #intro input[type=text] {
   padding: 5px;
-  width: 600px;
+  width: 500px;
+  font-size: 20px;
   text-align: center;
-  float: none;
+  float: left;
 
   border-radius: 5px 5px 5px 5px;
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-radius: 5px 5px 5px 5px;
-
-  box-shadow: 0 1px 1px #444444;
-  -moz-box-shadow: 0 1px 1px #444444;
-  -webkit-box-shadow: 0 1px 1px #444444;
 }
 
-#intro .url:focus {
-  background: #FFFFFF;
-  border-color: #FFFFFF;
+#pontoon #intro input[type=text]:focus {
   text-align: left;
 
   box-shadow: 0 0 5px 1px #AEEE00;
   -moz-box-shadow: 0 0 5px 1px #AEEE00;
   -webkit-box-shadow: 0 0 5px 1px #AEEE00;
+}
 
-  -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
-  -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
-  -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
-  transition: all 0.3s ease-out;  
+#pontoon #intro .select {
+  float: right;
+  display: inline;
+  padding: 1px 0;
+  margin-left: 0;
+  text-align: left;
+  font-size: 14px;
+}
+
+#pontoon #intro .select .button {
+  height: 22px;
+  width: 130px;
+  padding: 8px 5px 2px;
+}
+
+#pontoon #intro .select .button:active {
+  padding: 9px 5px 1px;
+}
+
+#pontoon #intro .select .menu {
+  left: 0;
+  bottom: -50px;
+
+  border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#pontoon #intro .locale .selector .flag {
+  margin: 1px 7px 0 2px;
+}
+
+.links {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.links li {
+  list-style: none;
+  display: inline;
+  margin: 0 20px;
+  font-size: 14px;
 }
 
 #source {
@@ -313,33 +348,4 @@ body {
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
-}
-
-.links {
-  margin: 5px 0;
-}
-
-.links li {
-  list-style: none;
-  display: inline;
-  margin: 0 20px;
-}
-
-#test-pilot {
-  color: #AAAAAA;
-}
-
-.links li a:link, .links li a:visited, .links li a:active {
-  color: #555555;
-  font-size: 14px;
-  text-decoration: none;
-
-  -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
-  -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
-  -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
-  transition: all 0.3s ease-out;  
-}
-
-.links li a:hover, #test-pilot:hover {
-  color: #AEEE00;
 }
