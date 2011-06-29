@@ -432,14 +432,13 @@
   background: #FFFFFF;
   margin: 20px 10px 10px;
   text-align: left;
-
-  border-radius: 5px 5px 5px 5px;
-  -moz-border-radius: 5px 5px 5px 5px;
-  -webkit-border-radius: 5px 5px 5px 5px;
 }
 
 #pontoon #entitylist thead th {
   background: #CCCCCC;
+  font-weight: normal;
+  text-shadow: 0 1px 0 #FFFFFF; 
+  text-transform: uppercase;
 }
 
 #pontoon #entitylist th {
@@ -460,42 +459,6 @@
   width: 50%;
   font-size: 14px;
   padding: 10px 20px;
-}
-
-#pontoon #entitylist td.tools {
-  border-right: 2px solid #9F423B;
-}
-
-#pontoon #entitylist .translated td.tools {
-  border-right: 2px solid #AEEE00;
-}
-
-#pontoon #entitylist .changed td.tools {
-  border-right: 2px solid #AFC8E1;
-}
-
-#pontoon #entitylist table th:first-child {
-  border-top-left-radius: 5px;
-  -moz-border-radius-topleft: 5px;
-  -webkit-border-top-left-radius: 5px;
-}
-
-#pontoon #entitylist table th:last-child {
-  border-top-right-radius: 5px;
-  -moz-border-radius-topright: 5px;
-  -webkit-border-top-right-radius: 5px;
-}
-
-#pontoon #entitylist table tr:last-child td:first-child {
-  border-bottom-left-radius: 5px;
-  -moz-border-radius-bottomleft: 5px;
-  -webkit-border-bottom-left-radius: 5px;
-}
-
-#pontoon #entitylist table tr:last-child td:last-child {
-  border-bottom-right-radius: 5px;
-  -moz-border-radius-bottomright: 5px;
-  -webkit-border-bottom-right-radius: 5px;
 }
 
 #pontoon #entitylist textarea {
@@ -554,10 +517,19 @@
 }
 
 #pontoon #entitylist .tools {
-  width: 42px;
-  padding: 10px;
+  width: 32px;
+  padding: 5px;
   background: #EBEBEB;
 }
+
+#pontoon #entitylist td.tools {
+  background: #DFBBBB;
+}
+
+#pontoon #entitylist .translated .tools {
+  background: #CCFF66;
+}
+
 
 #pontoon #entitylist .tools ul {
   float: right;
