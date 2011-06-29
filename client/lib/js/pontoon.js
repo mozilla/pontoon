@@ -63,7 +63,7 @@ var Pontoon = function() {
           // http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
           .append(
             '<table cellpadding="0" cellspacing="0" border="0">' + 
-              '<thead><tr><th>Source</th><th>Translation</th></tr></thead>' + 
+              '<thead><tr><th>Source</th><th class="tools"></th><th>Translation</th></tr></thead>' + 
               '<tbody></tbody>' + 
             '</table>');
   
@@ -72,7 +72,9 @@ var Pontoon = function() {
         var tr = $('<tr' + (this.translation ? ' class="translated"' : '') + '>' + 
         '<td class="source">' + 
           '<p>' + self.doNotRender(this.original) + '</p>' + 
-          '<ul class="tools">' + 
+        '</td>' +
+        '<td class="tools">' +
+          '<ul>' + 
             '<li title="Copy original string to translation" class="copy"></li>' + 
             '<li title="Machine translation by Google Translate" class="auto-translate"></li>' + 
             (this.comment ? '<li title="' + this.comment + '" class="comment"></li>' : '') + 

@@ -462,16 +462,16 @@
   padding: 10px 20px;
 }
 
-#pontoon #entitylist td.translation {
-  border-left: 2px solid #9F423B;
+#pontoon #entitylist td.tools {
+  border-right: 2px solid #9F423B;
 }
 
-#pontoon #entitylist .translated td.translation {
-  border-left: 2px solid #AEEE00;
+#pontoon #entitylist .translated td.tools {
+  border-right: 2px solid #AEEE00;
 }
 
-#pontoon #entitylist .changed td.translation {
-  border-left: 2px solid #AFC8E1;
+#pontoon #entitylist .changed td.tools {
+  border-right: 2px solid #AFC8E1;
 }
 
 #pontoon #entitylist table th:first-child {
@@ -553,12 +553,19 @@
   float: left;
 }
 
-#pontoon #entitylist .source .tools {
-  float: right;
-  list-style: none;
+#pontoon #entitylist .tools {
+  width: 42px;
+  padding: 10px;
+  background: #EBEBEB;
 }
 
-#pontoon #entitylist .source .tools li {
+#pontoon #entitylist .tools ul {
+  float: right;
+  list-style: none;
+  margin: 0;
+}
+
+#pontoon #entitylist .tools li {
   width: 16px;
   height: 16px;
   padding: 2px;
@@ -566,20 +573,20 @@
   border: 1px solid #BBBBBB;
 }
 
-#pontoon #entitylist .source .tools li:hover {
+#pontoon #entitylist .tools li:hover {
   background-color: #FFFFFF;
 }
 
-#pontoon #entitylist .source .tools .copy {
+#pontoon #entitylist .tools .copy {
   background: #EBEBEB url('../images/copy.png') 2px 2px no-repeat;
 
 }
 
-#pontoon #entitylist .source .tools .auto-translate {
+#pontoon #entitylist .tools .auto-translate {
   background: #EBEBEB url('../images/auto-translate.png') 2px 2px no-repeat;
 }
 
-#pontoon #entitylist .source .tools .comment {
+#pontoon #entitylist .tools .comment {
   background: #EBEBEB url('../images/comment.png') 2px 2px no-repeat;
 }
 
