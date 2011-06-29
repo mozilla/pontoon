@@ -62,69 +62,70 @@
 
     // Locale selector
     $('.locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
-      $('.locale .selector .flag').attr("class", $(this).find('span').attr("class"));
-      $('.locale .selector .language').html($(this).find('.language').html());
-      $('.locale .selector').click();
+      // TODO: url and locale validation
+      window.location = "?url=" + $('#intro .url').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
     });
 
-    function loadIframeContents(code) {
-      var website = window.location.search.split("?url=")[1] || "";
-      if (website.length > 0) {
-        $('#intro').slideUp("fast", function() {
-          // TODO: use real URLs
-          $('#source').attr('src', /* website */ 'projects/testpilot');
-          $('#main .url').val(/* website */ 'projects/testpilot');
-        });
-
-        $('#source').unbind("load.pontoon").bind("load.pontoon", function() {
-          // Quit if website not specified
-          if (!$(this).attr('src')) {
-            return;
-          }
-          // Initialize Pontoon
-          Pontoon.init(this.contentDocument, document, code);
-        });
-        
-      } else {
-	    // Empty iframe if cached
-  	    $("#source").attr("src", "about:blank");
-      }
-    }
-
-    function updateLocale(code, name) {
+    // Update locale selector
+    function updateLocale(locale) {
+      var l = locale || 'de';
       $('.locale .selector')
-        .find('.flag').addClass(code).removeClass('blank').end()
-        .find('.language').html(name).end()
-        .find('.handle').html(' &#9652;').end();
-      
-      loadIframeContents(code);
+        .find('.flag').addClass(l).end()
+        .find('.language').html($('.locale .menu .flag.' + l).siblings('.language').html()).end()
+        .find('.handle').html(' &#9652;');
     }
 
-    /*
-     * Set locale using browser language detection
-     * TODO: develop internal solution
-     *
-     * Browser language cannot be generally obtained via navigator.language
-     * Using HTTP 'Accept-Language' header via external service temporary
-     * Source: http://stackoverflow.com/questions/1043339/javascript-for-detecting-browser-language-preference
-    */
-    $.ajax({ 
-      url: "http://ajaxhttpheaders.appspot.com", 
-      dataType: 'jsonp', 
-      success: function(headers) {
-        var locale = headers['Accept-Language'].substring(0, 2),
-            entry = $('#intro .locale .menu .flag.' + locale);
-        if (entry.length !== 0) {
-          updateLocale(locale, entry.next().text());
-        } else {
-          updateLocale('de', 'Deutsch');
-        }
-      },
-      error: function() {
-        updateLocale('de', 'Deutsch');
+    // When website loaded, initialize Pontoon
+    $('#source').unbind("load.pontoon").bind("load.pontoon", function() {
+      if (!$(this).attr('src')) {
+        return;
       }
+      Pontoon.init(this.contentDocument, document, "sl");
     });
-      
+
+    // Empty iframe if cached
+    $("#source").removeAttr("src");
+
+    // Check for params
+    var locale = window.location.search.split("&locale=")[1] || "",
+        temp = window.location.search.split("?url=")[1],
+        website = temp ? temp.split("&locale=")[0] : "";
+
+    if (website.length > 0 && locale.length > 0) {
+      // TODO: use real params
+      website = "projects/testpilot";
+      locale = null;
+
+      $('#intro').slideUp("fast", function() {
+        $('#source').attr('src', website);
+        $('#main .url').val(website);
+        updateLocale(locale);
+      });
+    } else {
+      /*
+       * Set locale using browser language detection
+       * TODO: develop internal solution
+       *
+       * Source: http://stackoverflow.com/questions/1043339/javascript-for-detecting-browser-language-preference
+      */
+      $.ajax({ 
+        url: "http://ajaxhttpheaders.appspot.com", 
+        dataType: 'jsonp', 
+        success: function(headers) {
+          var locale = headers['Accept-Language'].substring(0, 2),
+              entry = $('#intro .locale .menu .flag.' + locale);
+          if (entry.length !== 0) {
+            updateLocale(locale);
+          } else {
+            updateLocale();
+          }
+        },
+        error: function() {
+          updateLocale();
+        }
+      });
+    }
+
   });
 
 }(this.jQuery));

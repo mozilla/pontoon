@@ -173,9 +173,8 @@ var Pontoon = function() {
 
       // Locale selector
       $('.locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
-        $('.locale .selector .flag').attr("class", $(this).find('span').attr("class"));
-        $('.locale .selector .language').html($(this).find('.language').html());
-        $('.locale .selector').click();
+        // TODO: url and locale validation
+        window.location = "?url=" + $('#main .url').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
       });
       
       // Authentication
