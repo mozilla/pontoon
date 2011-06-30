@@ -164,11 +164,25 @@ var Pontoon = function() {
         $('#source').height($(document).height() - $('#main').height());
         $('#main').toggleClass('opened');
       });
-  
+
+      // Hide menus on click outside
+      $('html').unbind("click.pontoon").bind("click.pontoon", function() {
+        $('.menu').hide();
+        $('.select').removeClass('opened');
+      });
+      $('.menu').unbind("click.pontoon").bind("click.pontoon", function(e) {
+        e.stopPropagation();
+      });
+    
       // Selector handler
       $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
-        $(this).siblings('.menu').toggle();
-        $(this).parents('.select').toggleClass('opened');
+        if (!$(this).siblings('.menu').is(':visible')) {
+          e.stopPropagation();
+          $('.menu').hide();
+          $('.select').removeClass('opened');
+          $(this).siblings('.menu').show();
+          $(this).parents('.select').addClass('opened');
+        }
       });
 
       // Locale selector

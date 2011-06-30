@@ -54,24 +54,42 @@
       $('#source').height($(document).height() - $('#main').height());
     });
 
+    // Hide menus on click outside
+    // TODO: merge with pontoon.js
+    $('html').unbind("click.pontoon").bind("click.pontoon", function() {
+      $('.menu').hide();
+      $('.select').removeClass('opened');
+    });
+    $('.menu').unbind("click.pontoon").bind("click.pontoon", function(e) {
+      e.stopPropagation();
+    });
+
     // Selector handler
+    // TODO: merge with pontoon.js
     $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
-      $(this).siblings('.menu').toggle();
-      $(this).parents('.select').toggleClass('opened');
+      if (!$(this).siblings('.menu').is(':visible')) {
+        e.stopPropagation();
+        $('.menu').hide();
+        $('.select').removeClass('opened');
+        $(this).siblings('.menu').show();
+        $(this).parents('.select').addClass('opened');
+      }
     });
 
     // Locale selector
+    // TODO: merge with pontoon.js
     $('.locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
       // TODO: url and locale validation
       window.location = "?url=" + $('#intro .url').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
     });
 
     // Confirm url
+    // TODO: merge with pontoon.js
     $('.locale .confirm').unbind("click.pontoon").bind("click.pontoon", function() {
       // TODO: url and locale validation
       window.location = "?url=" + $('#main .url').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
     });
-
+    
     // Update locale selector
     function updateLocale(locale) {
       var l = locale || 'de';
