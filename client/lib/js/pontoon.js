@@ -168,6 +168,7 @@ var Pontoon = function() {
       // Hide menus on click outside
       $('html').unbind("click.pontoon").bind("click.pontoon", function() {
         $('.menu').hide();
+        $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
       });
       $('.menu').unbind("click.pontoon").bind("click.pontoon", function(e) {
@@ -179,8 +180,10 @@ var Pontoon = function() {
         if (!$(this).siblings('.menu').is(':visible')) {
           e.stopPropagation();
           $('.menu').hide();
+          $('#iframe-cover').hide(); // iframe fix
           $('.select').removeClass('opened');
           $(this).siblings('.menu').show();
+          $('#iframe-cover').show().height($('#source').height()); // iframe fix
           $(this).parents('.select').addClass('opened');
         }
       });
