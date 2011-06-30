@@ -96,11 +96,9 @@
     // Update locale selector
     function updateLocale(locale) {
       var l = locale || 'de';
-      $('.locale')
-        .find('.button')
-          .find('.flag').addClass(l).end()
-          .find('.language').html($('.locale .menu .flag.' + l).siblings('.language').html()).end().end()
-        .find('.handle').html(' &#9652;');
+      $('.locale .button')
+        .find('.flag').addClass(l).end()
+        .find('.language').html($('.locale .menu .flag.' + l).siblings('.language').html());
     }
 
     // When website loaded, initialize Pontoon
