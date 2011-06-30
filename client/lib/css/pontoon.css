@@ -71,19 +71,19 @@
 
 #pontoon .button {
   border: none;
-  color: #AAAAAA;
+  color: #EBEBEB;
   cursor: pointer;
   padding: 4px 5px;
   text-shadow: 1px 1px 2px #000000;
   display: inline-block;
   height: 16px;
   
-  background-color: #444444;
-  background-image: -moz-linear-gradient(top, #666666, #333333); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #666666),color-stop(1, #333333)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#666666, #333333); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #666666, #333333);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#333333'); /* IE6–IE9 */
+  background-color: #777777;
+  background-image: -moz-linear-gradient(top, #AAAAAA, #555555); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #AAAAAA),color-stop(1, #555555)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#AAAAAA, #555555); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #AAAAAA, #555555);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#AAAAAA', EndColorStr='#555555'); /* IE6–IE9 */
 
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
