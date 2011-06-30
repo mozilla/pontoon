@@ -106,11 +106,11 @@
   position: relative;
 }
 
-#pontoon .select.opened .button {
+#pontoon .select.opened > .button {
   background: transparent;
 }
 
-#pontoon .select.opened:hover .button {
+#pontoon .select.opened:hover > .button {
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
