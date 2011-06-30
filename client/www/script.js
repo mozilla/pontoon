@@ -57,7 +57,7 @@
     // Selector handler
     $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
       $(this).siblings('.menu').toggle();
-      $(this).toggleClass('opened');
+      $(this).parents('.select').toggleClass('opened');
     });
 
     // Locale selector
@@ -69,9 +69,10 @@
     // Update locale selector
     function updateLocale(locale) {
       var l = locale || 'de';
-      $('.locale .selector')
-        .find('.flag').addClass(l).end()
-        .find('.language').html($('.locale .menu .flag.' + l).siblings('.language').html()).end()
+      $('.locale')
+        .find('.button')
+          .find('.flag').addClass(l).end()
+          .find('.language').html($('.locale .menu .flag.' + l).siblings('.language').html()).end().end()
         .find('.handle').html(' &#9652;');
     }
 

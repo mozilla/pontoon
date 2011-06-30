@@ -168,11 +168,17 @@ var Pontoon = function() {
       // Selector handler
       $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
         $(this).siblings('.menu').toggle();
-        $(this).toggleClass('opened');
+        $(this).parents('.select').toggleClass('opened');
       });
 
       // Locale selector
       $('.locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
+        // TODO: url and locale validation
+        window.location = "?url=" + $('#main .url').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
+      });
+      
+      // Confirm url
+      $('.locale .confirm').unbind("click.pontoon").bind("click.pontoon", function() {
         // TODO: url and locale validation
         window.location = "?url=" + $('#main .url').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
       });

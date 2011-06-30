@@ -103,18 +103,18 @@
 }
 
 #pontoon .button:active {
-  padding: 5px 5px 3px;
+  /*padding: 5px 5px 3px;*/
 }
 
 #pontoon .select {
   position: relative;
 }
 
-#pontoon .selector.opened {
+#pontoon .select.opened .button {
   background: transparent;
 }
 
-#pontoon .selector.opened:hover {
+#pontoon .select.opened:hover .button {
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
@@ -217,10 +217,6 @@
   cursor: ns-resize;
 }
 
-#pontoon .url:focus {
-  width: 200px;	
-}
-
 #pontoon .vertical-separator {
   border-left: 1px solid #040404;
   border-right: 1px solid #2F2F2F;
@@ -243,7 +239,18 @@
   margin-left: 5px;
 }
 
-#pontoon .locale .selector .flag {
+#pontoon .locale .confirm {
+  float: left;
+  border-radius: 3px 0 0 3px;
+}
+
+#pontoon .locale .selector {
+  float: right;
+  border-radius: 0 3px 3px 0;
+  margin-left: 1px;
+}
+
+#pontoon .locale .button .flag {
   margin: 1px 10px 0 2px;
 }
 
@@ -525,7 +532,6 @@
 #pontoon #entitylist .translated .tools {
   background: #CCFF66;
 }
-
 
 #pontoon #entitylist .tools ul {
   float: right;
