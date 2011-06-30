@@ -314,6 +314,12 @@ body {
   -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+#pontoon #intro ul.menu li:last-child.hover {
+  border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  -webkit-border-radius: 0 0 4px 4px;
+}
+
 #pontoon #intro .locale .selector .flag {
   margin: 1px 7px 0 2px;
 }
