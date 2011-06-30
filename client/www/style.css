@@ -257,7 +257,7 @@ body {
 }
 
 #intro form {
-	width: 660px;
+	width: 680px;
 	height: 40px;
 	margin: 0 auto;
 }
@@ -293,12 +293,11 @@ body {
 
 #pontoon #intro .select .button {
   height: 22px;
-  width: 130px;
   padding: 8px 5px 2px;
 }
 
-#pontoon #intro .select .button:active {
-  padding: 9px 5px 1px;
+#pontoon #intro .select .confirm {
+  width: 130px;
 }
 
 #pontoon #intro .select .menu {

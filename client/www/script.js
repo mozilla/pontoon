@@ -66,6 +66,12 @@
       window.location = "?url=" + $('#intro .url').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
     });
 
+    // Confirm url
+    $('.locale .confirm').unbind("click.pontoon").bind("click.pontoon", function() {
+      // TODO: url and locale validation
+      window.location = "?url=" + $('#main .url').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
+    });
+
     // Update locale selector
     function updateLocale(locale) {
       var l = locale || 'de';
