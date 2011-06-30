@@ -102,10 +102,6 @@
   -webkit-box-shadow: 0 0 3px #AEEE00;
 }
 
-#pontoon .button:active {
-  /*padding: 5px 5px 3px;*/
-}
-
 #pontoon .select {
   position: relative;
 }
