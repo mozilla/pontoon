@@ -174,35 +174,6 @@ var Pontoon = function() {
       $('.menu').unbind("click.pontoon").bind("click.pontoon", function(e) {
         e.stopPropagation();
       });
-
-      // Use arrow keys inside locale selector
-      $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
-        if ($('.locale .menu').is(':visible')) {
-          var key = e.keyCode || e.which,
-              menu = $('.locale .menu:visible'),
-              hovered = menu.find('li.hover');
-      	      
-          if (key === 38) { // up arrow
-            if (hovered.length === 0 || menu.find('li:first').is('.hover')) {
-              menu.find('li.hover').removeClass('hover');
-              menu.find('li:last').addClass('hover');
-            } else {
-              menu.find('li.hover').removeClass('hover').prev().addClass('hover');
-            }
-            return false;
-          }
-          
-          if (key === 40) { // down arrow
-            if (hovered.length === 0 || menu.find('li:last').is('.hover')) {
-              menu.find('li.hover').removeClass('hover');
-              menu.find('li:first').addClass('hover');
-            } else {
-              menu.find('li.hover').removeClass('hover').next().addClass('hover');
-            }
-            return false;
-          }
-        }
-      });
     
       // Selector handler
       $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
@@ -230,7 +201,41 @@ var Pontoon = function() {
       }, function() {
       	$(this).removeClass('hover');
       });
-      
+
+      // Use arrow keys to move around locale selector and confirm with enter
+      $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
+        if ($('.locale .menu').is(':visible')) {
+          var key = e.keyCode || e.which,
+              menu = $('.locale .menu:visible'),
+              hovered = menu.find('li.hover');
+      	      
+          if (key === 38) { // up arrow
+            if (hovered.length === 0 || menu.find('li:first').is('.hover')) {
+              menu.find('li.hover').removeClass('hover');
+              menu.find('li:last').addClass('hover');
+            } else {
+              menu.find('li.hover').removeClass('hover').prev().addClass('hover');
+            }
+            return false;
+          }
+          
+          if (key === 40) { // down arrow
+            if (hovered.length === 0 || menu.find('li:last').is('.hover')) {
+              menu.find('li.hover').removeClass('hover');
+              menu.find('li:first').addClass('hover');
+            } else {
+              menu.find('li.hover').removeClass('hover').next().addClass('hover');
+            }
+            return false;
+          }
+
+          if (key === 13) { // Enter
+            menu.find('li.hover').click();
+            return false;
+          }
+        }
+      });
+
       // Confirm url
       $('.locale .confirm').unbind("click.pontoon").bind("click.pontoon", function() {
         // TODO: url and locale validation
