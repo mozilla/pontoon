@@ -79,11 +79,18 @@
       }
     });
 
-    // Locale selector
+    // Start new project with current website url and locale
     // TODO: merge with pontoon.js
-    $('.locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
+    $('.locale .confirm, .locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
       // TODO: url and locale validation
-      window.location = "?url=" + $('#intro .url').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
+      window.location = "?url=" + $('.url:visible').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
+    });
+    $('.url').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
+      var key = e.keyCode || e.which;
+      if (key === 13) { // Enter
+        $('.locale .confirm:visible').click();
+        return false;
+      }
     });
 
     // Locale menu hover
@@ -128,13 +135,6 @@
           return false;
         }
       }
-    });
-
-    // Confirm url
-    // TODO: merge with pontoon.js
-    $('.locale .confirm').unbind("click.pontoon").bind("click.pontoon", function() {
-      // TODO: url and locale validation
-      window.location = "?url=" + $('#main .url').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
     });
     
     // Update locale selector
