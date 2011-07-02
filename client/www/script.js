@@ -54,92 +54,9 @@
       $('#source').height($(document).height() - $('#main').height());
     });
 
-    // Hide menus on click outside
-    // TODO: merge with pontoon.js
-    $('html').unbind("click.pontoon").bind("click.pontoon", function() {
-      $('.menu').hide();
-      $('#iframe-cover').hide(); // iframe fix
-      $('.select').removeClass('opened');
-    });
-    $('.menu').unbind("click.pontoon").bind("click.pontoon", function(e) {
-      e.stopPropagation();
-    });
+    // Common functions used in both, client specific code and Pontoon library
+    Pontoon.common();
 
-    // Selector handler
-    // TODO: merge with pontoon.js
-    $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
-      if (!$(this).siblings('.menu').is(':visible')) {
-        e.stopPropagation();
-        $('.menu').hide();
-        $('#iframe-cover').hide(); // iframe fix
-        $('.select').removeClass('opened');
-        $(this).siblings('.menu').show();
-        $('#iframe-cover').show().height($('#source').height()); // iframe fix
-        $(this).parents('.select').addClass('opened');
-      }
-    });
-
-    // Start new project with current website url and locale
-    // TODO: merge with pontoon.js
-    $('.locale .confirm, .locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
-      // TODO: url and locale validation
-      window.location = "?url=" + $('.url:visible').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
-    });
-    $('.url').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
-      var key = e.keyCode || e.which;
-      if (key === 13) { // Enter
-        $('.locale .confirm:visible').click();
-        return false;
-      }
-    });
-
-    // Menu hover
-    // TODO: merge with pontoon.js
-    $('.menu li').live('hover', function() {
-      $('.menu li.hover').removeClass('hover');
-      $(this).toggleClass('hover');
-    });
-
-    // Use arrow keys to move around menu, confirm with enter, close with escape
-    // TODO: merge with pontoon.js
-    $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
-      if ($('.menu').is(':visible')) {
-        var key = e.keyCode || e.which,
-            menu = $('.menu:visible'),
-            hovered = menu.find('li.hover');
-    	      
-        if (key === 38) { // Up arrow
-          if (hovered.length === 0 || menu.find('li:first').is('.hover')) {
-            menu.find('li.hover').removeClass('hover');
-            menu.find('li:last').addClass('hover');
-          } else {
-            menu.find('li.hover').removeClass('hover').prev().addClass('hover');
-          }
-          return false;
-        }
-        
-        if (key === 40) { // Down arrow
-          if (hovered.length === 0 || menu.find('li:last').is('.hover')) {
-            menu.find('li.hover').removeClass('hover');
-            menu.find('li:first').addClass('hover');
-          } else {
-            menu.find('li.hover').removeClass('hover').next().addClass('hover');
-          }
-          return false;
-        }
-
-        if (key === 13) { // Enter
-          menu.find('li.hover').click();
-          return false;
-        }
-
-        if (key === 27) { // Escape
-          menu.siblings('.selector').click();
-          return false;
-        }
-      }
-    });
-    
     // Update locale selector
     function updateLocale(locale) {
       var l = locale || 'de';
