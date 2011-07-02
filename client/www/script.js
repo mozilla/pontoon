@@ -93,13 +93,11 @@
       }
     });
 
-    // Locale menu hover
+    // Menu hover
     // TODO: merge with pontoon.js
-    $('.locale .menu li').hover(function() {
-      $('.locale .menu li.hover').removeClass('hover');
-      $(this).addClass('hover');
-    }, function() {
-      $(this).removeClass('hover');
+    $('.menu li').live('hover', function() {
+      $('.menu li.hover').removeClass('hover');
+      $(this).toggleClass('hover');
     });
 
     // Use arrow keys to move around menu and confirm with enter
