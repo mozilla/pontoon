@@ -100,7 +100,7 @@
       $(this).toggleClass('hover');
     });
 
-    // Use arrow keys to move around menu and confirm with enter
+    // Use arrow keys to move around menu, confirm with enter, close with escape
     // TODO: merge with pontoon.js
     $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
       if ($('.menu').is(':visible')) {
@@ -130,6 +130,11 @@
 
         if (key === 13) { // Enter
           menu.find('li.hover').click();
+          return false;
+        }
+
+        if (key === 27) { // Escape
+          menu.siblings('.selector').click();
           return false;
         }
       }

@@ -207,7 +207,7 @@ var Pontoon = function() {
         $(this).toggleClass('hover');
       });
 
-      // Use arrow keys to move around menu and confirm with enter
+      // Use arrow keys to move around menu, confirm with enter, close with escape
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
         if ($('.menu').is(':visible')) {
           var key = e.keyCode || e.which,
@@ -236,6 +236,11 @@ var Pontoon = function() {
 
           if (key === 13) { // Enter
             menu.find('li.hover').click();
+            return false;
+          }
+
+          if (key === 27) { // Escape
+            menu.siblings('.selector').click();
             return false;
           }
         }
