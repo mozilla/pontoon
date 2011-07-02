@@ -102,12 +102,12 @@
       $(this).removeClass('hover');
     });
 
-    // Use arrow keys to move around locale selector and confirm with enter
+    // Use arrow keys to move around menu and confirm with enter
     // TODO: merge with pontoon.js
     $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
-      if ($('.locale .menu').is(':visible')) {
+      if ($('.menu').is(':visible')) {
         var key = e.keyCode || e.which,
-            menu = $('.locale .menu:visible'),
+            menu = $('.menu:visible'),
             hovered = menu.find('li.hover');
     	      
         if (key === 38) { // Up arrow

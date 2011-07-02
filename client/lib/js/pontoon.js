@@ -209,11 +209,11 @@ var Pontoon = function() {
       	$(this).removeClass('hover');
       });
 
-      // Use arrow keys to move around locale selector and confirm with enter
+      // Use arrow keys to move around menu and confirm with enter
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
-        if ($('.locale .menu').is(':visible')) {
+        if ($('.menu').is(':visible')) {
           var key = e.keyCode || e.which,
-              menu = $('.locale .menu:visible'),
+              menu = $('.menu:visible'),
               hovered = menu.find('li.hover');
       	      
           if (key === 38) { // up arrow
@@ -246,15 +246,22 @@ var Pontoon = function() {
       // Authentication
       $('#authentication-menu .restricted .go').unbind("click.pontoon").bind("click.pontoon", function() {
         var author = $('#nickname').val() || $('#email').val();
-          $('#authentication .selector').click();
+        $('#authentication .selector').click();
         if (author) {
           $('#authentication .author').html(author).toggleClass('authenticated');
           $('#authentication-menu, #save-menu').toggleClass('menu');
         }
       });
+      $('#nickname').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
+        var key = e.keyCode || e.which;
+        if (key === 13) { // Enter
+          $('#authentication-menu .restricted .go').click();
+          return false;
+        }
+      });
 
-      // Authentication switch
-      $('#authentication-menu .switch').unbind("click.pontoon").bind("click.pontoon", function() {
+      // Authentication toggle
+      $('#authentication-menu .toggle').unbind("click.pontoon").bind("click.pontoon", function() {
         $('#authentication-menu')
           .find('.wrapper').toggle().end()
           .find('#password').toggle();
