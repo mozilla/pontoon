@@ -20,7 +20,7 @@ Django server:
 Update hostnames as needed:
 
 * client/lib/js/pontoon.js - 127.0.0.1:8000 - change to server hostname and port
-* target/php/pontoon.php - 8000 - change port number
+* hook/php/pontoon.php - 8000 - change port number
 
 Contributors
 ------------
