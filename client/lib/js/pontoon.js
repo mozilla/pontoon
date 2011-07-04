@@ -26,7 +26,7 @@ var Pontoon = function() {
       });
 
       var self = this,
-          url = ('url' in this.client._meta) ? this.client._meta['url'] : 'http://127.0.0.1:8000/push/',
+          url = ('url' in this.client._meta) ? this.client._meta['url'] : 'http://localhost/pontoon/server/json.php',
           project = ('project' in this.client._meta) ? this.client._meta['project'] : this.client._doc.location.href,
           params = {
             'project': project,
