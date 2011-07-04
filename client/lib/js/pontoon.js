@@ -28,10 +28,9 @@ var Pontoon = function() {
       var self = this,
           url = ('url' in this.client._meta) ? this.client._meta['url'] : 'http://127.0.0.1:8000/push/',
           project = ('project' in this.client._meta) ? this.client._meta['project'] : this.client._doc.location.href,
-          locale = $(this.client._ptn).find('input').val(),
           params = {
             'project': project,
-            'locale': locale,
+            'locale': this.client._locale,
             // TODO: add, support other browsers - https://developer.mozilla.org/en/Using_JSON_in_Firefox
             'data': JSON.stringify(data)
           };
