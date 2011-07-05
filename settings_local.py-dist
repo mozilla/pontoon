@@ -47,3 +47,6 @@ DEV = True
 #    '2011-01-01': 'cheesecake',
 #}
 
+# True says to simulate background tasks without actually using celeryd.
+# Set this to False if you run celeryd locally or in production.
+CELERY_ALWAYS_EAGER = True
