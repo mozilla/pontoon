@@ -47,6 +47,11 @@ DEV = True
 #    '2011-01-01': 'cheesecake',
 #}
 
-# True says to simulate background tasks without actually using celeryd.
-# Set this to False if you run celeryd locally or in production.
-CELERY_ALWAYS_EAGER = True
+# Uncomment these to activate and customize Celery:
+# CELERY_ALWAYS_EAGER = False  # required to activate celeryd
+# BROKER_HOST = 'localhost'
+# BROKER_PORT = 5672
+# BROKER_USER = 'playdoh'
+# BROKER_PASSWORD = 'playdoh'
+# BROKER_VHOST = 'playdoh'
+# CELERY_RESULT_BACKEND = 'amqp'
