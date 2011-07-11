@@ -75,7 +75,7 @@ var Pontoon = function() {
         '<td class="tools">' +
           '<ul>' + 
             '<li title="Copy original string to translation" class="copy"></li>' + 
-            '<li title="Machine translation by Google Translate" class="auto-translate"></li>' + 
+            '<li title="Machine translation by Microsoft Translator" class="auto-translate"></li>' + 
             (this.comment ? '<li title="' + this.comment + '" class="comment"></li>' : '') + 
           '</ul>' + 
         '</td>' +
@@ -116,6 +116,22 @@ var Pontoon = function() {
       	var entity = $(this).parents('tr').get(0).entity;
       	$(entity.node).html(entity.original);
         toolbar.find('.save').click();
+      });
+
+      // Fetch machine translations
+      $("#main .auto-translate").click(function(e) {
+        e.stopPropagation();
+        var toolbar = $(self.client._doc).find('.editableToolbar');
+        toolbar.find('.edit').click().end();
+
+        var entity = $(this).parents('tr').get(0).entity;
+        var stringToTranslate = entity.original;
+        $.translate(stringToTranslate, self.client._locale, {
+            complete: function (t) {
+                $(entity.node).html(t);
+                toolbar.find('.save').click();
+            }
+        });
       });
   
       this.updateProgress();
@@ -373,7 +389,10 @@ var Pontoon = function() {
       // Enable document editing
       var ss = $('<link rel="stylesheet" href="../../client/lib/css/editable.css">', doc);
       $('head', doc).append(ss);      
-      this.extractEntities();      
+      this.extractEntities();       
+
+      // Instantate Microsoft Translator API
+      $.translate.load('TRANSLATOR-API-KEY');
     },
 
 
