@@ -22,8 +22,6 @@ Update hostnames as needed:
 * client/lib/js/pontoon.js - 127.0.0.1:8000 - change to server hostname and port
 * hook/php/pontoon.php - 8000 - change port number
 
-To use Microsoft Translator API for machine translation, update client/lib/js/pontoon.js and replace TRANSLATOR-API-KEY with a valid API key, available from the [Bing Developer Center][bdc].
-
 Contributors
 ------------
 * Matjaž Horvat <matjaz@horv.at>
@@ -71,4 +69,3 @@ License
 
 [outline]:  http://ozten.com/psto/2009/08/14/a-sketch-of-po-liveedit/   "A Sketch of PO LiveEdit"
 [wiki]:  https://wiki.mozilla.org/L10n:Pontoon   "L10n:Pontoon - MozillaWiki"
-[bdc]: http://www.bing.com/developers/createapp.aspx   "Bing Developer Center"

@@ -392,7 +392,7 @@ var Pontoon = function() {
       this.extractEntities();       
 
       // Instantate Microsoft Translator API
-      $.translate.load('TRANSLATOR-API-KEY');
+      $.translate.load('358E917FC0C2FD40EA4F9DE51BEF4D5E35A9A004');
     },
 
 
