@@ -23,6 +23,12 @@ DATABASES = {}  # See settings_local.
 
 # Site ID is used by Django's Sites framework.
 SITE_ID = 1
+# Logging
+LOG_LEVEL = logging.DEBUG
+HAS_SYSLOG = True
+SYSLOG_TAG = "http_app_playdoh"  # Change this after you fork.
+LOGGING_CONFIG = None
+LOGGING = { }
 
 
 ## Internationalization.
