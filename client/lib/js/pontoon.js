@@ -127,10 +127,10 @@ var Pontoon = function() {
         var entity = $(this).parents('tr').get(0).entity;
         var stringToTranslate = entity.original;
         $.translate(stringToTranslate, self.client._locale, {
-            complete: function (t) {
-                $(entity.node).html(t);
-                toolbar.find('.save').click();
-            }
+          complete: function (t) {
+            $(entity.node).html(t);
+            toolbar.find('.save').click();
+          }
         });
       });
   
