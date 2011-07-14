@@ -373,6 +373,8 @@ var Pontoon = function() {
      * locale ISO 639-1 language code of the language website is localized to
      */
     init: function(doc, ptn, locale) {
+      var self = this;
+
       if (!doc) {
         throw "Document handler required";
       }
@@ -383,7 +385,8 @@ var Pontoon = function() {
         _ptn: ptn,
         _locale: locale,
         _meta: {},
-        _data: {}
+        _data: {},
+        _mt: ''
       };
       
       // Enable document editing
@@ -392,7 +395,10 @@ var Pontoon = function() {
       this.extractEntities();       
 
       // Instantate Microsoft Translator API
-      $.translate.load('TRANSLATOR-API-KEY');
+      $.getScript("client/lib/js/local-settings.js", function() {
+        $.translate.load(self.client._mt);
+      });
+      
     },
 
 
