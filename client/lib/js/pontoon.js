@@ -110,10 +110,14 @@ var Pontoon = function() {
       // Copy original string to translation
       $("#main .copy").click(function(e) {
         e.stopPropagation();
-        var toolbar = $(self.client._doc).find('.editableToolbar');
-        toolbar.find('.edit').click().end();
+        var toolbar = $(self.client._doc).find('.editableToolbar'),
+      	    entity = $(this).parents('tr').get(0).entity;
 
-      	var entity = $(this).parents('tr').get(0).entity;
+        // quit if other entity being edited
+      	if (!entity.node.is('.hovered')) {
+      	  return;
+      	}
+
       	$(entity.node).html(entity.original);
         toolbar.find('.save').click();
       });
@@ -121,12 +125,15 @@ var Pontoon = function() {
       // Fetch machine translations
       $("#main .auto-translate").click(function(e) {
         e.stopPropagation();
-        var toolbar = $(self.client._doc).find('.editableToolbar');
-        toolbar.find('.edit').click().end();
+        var toolbar = $(self.client._doc).find('.editableToolbar'),
+      	    entity = $(this).parents('tr').get(0).entity;
 
-        var entity = $(this).parents('tr').get(0).entity;
-        var stringToTranslate = entity.original;
-        $.translate(stringToTranslate, self.client._locale, {
+        // quit if other entity being edited
+      	if (!entity.node.is('.hovered')) {
+      	  return;
+      	}
+
+        $.translate(entity.original, self.client._locale, {
           complete: function (t) {
             $(entity.node).html(t);
             toolbar.find('.save').click();
