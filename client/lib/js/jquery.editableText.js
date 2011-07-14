@@ -141,10 +141,10 @@
 
             toolbar.find('.cancel').click(function(){
                 stopEditing(toolbar);
-                var target = toolbar.get()[0].target;
+                var target = toolbar.get(0).target;
                 $(target).html(target.prevValue);
-                target.entity.string = target.prevValue;
-                target.entity.ui.find('textarea').text(target.prevValue).parents('tr').removeClass('translated');
+                target.entity.translation = target.prevValue;
+                target.entity.ui.find('textarea').text('').parents('tr').removeClass('translated');
                 return false;
             });        
             // Display only edit button            
