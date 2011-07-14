@@ -1,5 +1,5 @@
 # Django settings file for a project based on the playdoh template.
-
+import logging
 import os
 
 from django.utils.functional import lazy
