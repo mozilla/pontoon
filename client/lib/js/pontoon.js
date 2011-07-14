@@ -113,7 +113,7 @@ var Pontoon = function() {
         var toolbar = $(self.client._doc).find('.editableToolbar'),
       	    entity = $(this).parents('tr').get(0).entity;
 
-        // quit if other entity being edited
+        // quit if other entity is being edited
       	if (!entity.node.is('.hovered')) {
       	  return;
       	}
@@ -128,7 +128,7 @@ var Pontoon = function() {
         var toolbar = $(self.client._doc).find('.editableToolbar'),
       	    entity = $(this).parents('tr').get(0).entity;
 
-        // quit if other entity being edited
+        // quit if other entity is being edited
       	if (!entity.node.is('.hovered')) {
       	  return;
       	}
