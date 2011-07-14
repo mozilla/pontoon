@@ -109,7 +109,7 @@ var Pontoon = function() {
   
       // Copy original string to translation
       $("#main .copy").click(function(e) {
-      	e.stopPropagation();
+        e.stopPropagation();
         var toolbar = $(self.client._doc).find('.editableToolbar');
         toolbar.find('.edit').click().end();
 
@@ -297,7 +297,7 @@ var Pontoon = function() {
         }
       });
       
-      $(".pontoon-entity").removeClass("pontoon-entity");
+      $(this.client._doc).find(".pontoon-entity").removeClass("pontoon-entity");
       self.renderTools();
     },
   
