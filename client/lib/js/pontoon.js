@@ -117,10 +117,11 @@ var Pontoon = function() {
         var toolbar = $(self.client._doc).find('.editableToolbar'),
       	    entity = $(this).parents('tr').get(0).entity;
 
-        // only if no other entity is being edited
+        // Only if no other entity is being edited
         if (entity.node && entity.node.is('.hovered')) {
           $(entity.node).html(entity.original);
           toolbar.find('.save').click();
+        // Head entities cannot be edited in-place
         } else if (!entity.node) {
           entity.translation = entity.original;
           self.updateEntityUI(entity);
@@ -134,7 +135,7 @@ var Pontoon = function() {
         var toolbar = $(self.client._doc).find('.editableToolbar'),
       	    entity = $(this).parents('tr').get(0).entity;
 
-        // only if no other entity is being edited
+        // Only if no other entity is being edited
         if (entity.node && entity.node.is('.hovered')) {
           $.translate(entity.original, self.client._locale, {
             complete: function (t) {
@@ -142,6 +143,7 @@ var Pontoon = function() {
               toolbar.find('.save').click();
             }
           });
+        // Head entities cannot be edited in-place
         } else if (!entity.node) {
           $.translate(entity.original, self.client._locale, {
             complete: function (t) {
@@ -261,7 +263,7 @@ var Pontoon = function() {
      * entity Entity
      */
     updateEntityUI: function(entity) {
-      entity.ui.find('textarea').text(entity.translation).parents('tr').addClass('translated');
+      entity.ui.find('textarea').val(entity.translation).parents('tr').addClass('translated');
       this.updateProgress();
     },
   
