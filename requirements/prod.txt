@@ -1,1 +1,1 @@
--r ../apps/playdohlib/requirements/prod.txt
+-r ../vendor/src/funfactory/funfactory/requirements/prod.txt

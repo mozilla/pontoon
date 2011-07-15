@@ -4,7 +4,7 @@ import shutil
 from django.conf import settings
 import test_utils
 
-from playdohlib import manage
+from funfactory import manage
 
 
 class AcceptedLocalesTest(test_utils.TestCase):

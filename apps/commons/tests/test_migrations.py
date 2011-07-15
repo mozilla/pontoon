@@ -4,7 +4,7 @@ from os.path import join
 
 import test_utils
 
-from playdohlib import manage
+from funfactory import manage
 
 
 class MigrationTests(test_utils.TestCase):

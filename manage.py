@@ -2,10 +2,12 @@
 import os
 import sys
 
-tmp_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'apps')
+# Add a temporary path so that we can import the funfactory
+tmp_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        'vendor', 'src', 'funfactory')
 sys.path.append(tmp_path)
 
-from playdohlib import manage
+from funfactory import manage
 
 # Let the path magic happen in setup_environ() !
 sys.path.remove(tmp_path)

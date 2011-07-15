@@ -1,7 +1,7 @@
 # This is an example settings_local.py file.
 # Copy it and add your local settings here.
 
-from playdohlib.settings_base import *
+from funfactory.settings_base import *
 
 
 DATABASES = {
