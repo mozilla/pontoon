@@ -68,7 +68,11 @@ var Pontoon = function() {
   
       // Render
       $(this.client._data.entities).each(function() {
-        var tr = $('<tr' + (this.translation ? ' class="translated"' : '') + '>' + 
+        var tr = $('<tr' + 
+          // append classes to translated and head entities
+          (this.translation ? 
+            (!this.node ? ' class="translated head"' : ' class="translated"') : 
+            (!this.node ? ' class="head"' : '')) + '>' + 
         '<td class="source">' + 
           '<p>' + self.doNotRender(this.original) + '</p>' + 
         '</td>' +
@@ -90,7 +94,7 @@ var Pontoon = function() {
         '</td></tr>', self.client._ptn);
             
         tr.get(0).entity = this;
-        if (this.node) { // For entities not found on the website
+        if (this.node) { // For entities found on the website
           this.node.get(0).entity = this;
         }
         this.ui = tr;
@@ -99,7 +103,7 @@ var Pontoon = function() {
       });
   
       // Main entity list handlers
-      $("#main tr").hover(function() {
+      $("#main tr:not('.head')").hover(function() {
         this.entity.hover();
       }, function() {
         this.entity.unhover();
@@ -113,13 +117,16 @@ var Pontoon = function() {
         var toolbar = $(self.client._doc).find('.editableToolbar'),
       	    entity = $(this).parents('tr').get(0).entity;
 
-        // quit if other entity is being edited
-      	if (!entity.node.is('.hovered')) {
-      	  return;
-      	}
+        // only if no other entity is being edited
+        if (entity.node && entity.node.is('.hovered')) {
+          $(entity.node).html(entity.original);
+          toolbar.find('.save').click();
+        } else if (!entity.node) {
+          entity.translation = entity.original;
+          entity.ui.find('textarea').text(entity.translation).parents('tr').addClass('translated');
+          self.updateProgress();
+        }
 
-      	$(entity.node).html(entity.original);
-        toolbar.find('.save').click();
       });
 
       // Fetch machine translations
@@ -128,19 +135,25 @@ var Pontoon = function() {
         var toolbar = $(self.client._doc).find('.editableToolbar'),
       	    entity = $(this).parents('tr').get(0).entity;
 
-        // quit if other entity is being edited
-      	if (!entity.node.is('.hovered')) {
-      	  return;
-      	}
-
-        $.translate(entity.original, self.client._locale, {
-          complete: function (t) {
-            $(entity.node).html(t);
-            toolbar.find('.save').click();
-          }
-        });
+        // only if no other entity is being edited
+        if (entity.node && entity.node.is('.hovered')) {
+          $.translate(entity.original, self.client._locale, {
+            complete: function (t) {
+              $(entity.node).html(t);
+              toolbar.find('.save').click();
+            }
+          });
+        } else if (!entity.node) {
+          $.translate(entity.original, self.client._locale, {
+            complete: function (t) {
+              entity.translation = t;
+              entity.ui.find('textarea').text(entity.translation).parents('tr').addClass('translated');
+              self.updateProgress();
+            }
+          });
+        }
       });
-  
+
       this.updateProgress();
     },
   
@@ -297,8 +310,13 @@ var Pontoon = function() {
         if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
           var entity = {};
           entity.original = $(this).parent().html();
-          entity.node = $(this).parent();
-          self.extendEntity(entity);
+
+          // Head entities cannot be edited in-place
+          if ($(this).parents('head').length === 0) {
+            entity.node = $(this).parent();
+            self.extendEntity(entity);
+          }
+
           self.client._data.entities.push(entity);
           $(this).parent().addClass("pontoon-entity");
         }

@@ -458,6 +458,11 @@
   background: #EBEBEB;
 }
 
+#pontoon #entitylist tbody tr.head:hover {
+  cursor: auto;
+  background: transparent;
+}
+
 #pontoon #entitylist td {
   width: 50%;
   font-size: 14px;

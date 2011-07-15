@@ -103,8 +103,8 @@
           function startEditing(toolbar){
               toolbar.children().css('display','inline');
               toolbar.find('.edit').css('display','none');
-              $(toolbar.get()[0].target).attr('contentEditable', true);
-              toolbar.get()[0].target.focus()
+              $(toolbar.get(0).target).attr('contentEditable', true);
+              toolbar.get(0).target.focus();
           }
           /**
            * Makes element non-editable
