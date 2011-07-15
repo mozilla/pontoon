@@ -343,9 +343,10 @@ var Pontoon = function() {
                 translation = entity.translation;
             
             parent = $(this).parent();
-            $(this).remove();
             if (translation.length > 0) {
               parent.html(translation);
+            } else {
+              $(this).remove();
             }
 
             entity.node = parent; /* HTML Element holding string */
