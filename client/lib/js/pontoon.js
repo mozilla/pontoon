@@ -97,11 +97,11 @@ var Pontoon = function() {
         if (this.node) { // For entities found on the website
           this.node.get(0).entity = this;
         }
-        this.ui = tr;
+        this.ui = tr; /* HTML Element representing string in the main UI */
   
         list.find('tbody').append(tr);
       });
-  
+
       // Main entity list handlers
       $("#main tr:not('.head')").hover(function() {
         this.entity.hover();
@@ -276,12 +276,6 @@ var Pontoon = function() {
      * e Temporary entity object
      */
     extendEntity: function(e) {
-      e.original = e.original || ""; /* Original string */
-      e.translation = e.translation || ""; /* Translated string */
-      e.comment = e.comment || ""; /* Comment for localizers */
-      e.node = e.node || null; /* HTML Element holding string */
-      e.ui = e.ui || null; /* HTML Element representing string in the main UI */
-
       e.hover = function() {
         this.node.get(0).showToolbar();
         this.ui.toggleClass('hovered');
@@ -313,7 +307,7 @@ var Pontoon = function() {
 
           // Head entities cannot be edited in-place
           if ($(this).parents('head').length === 0) {
-            entity.node = $(this).parent();
+            entity.node = $(this).parent(); /* HTML Element holding string */
             self.extendEntity(entity);
           }
 
@@ -357,7 +351,7 @@ var Pontoon = function() {
               parent.html(translation);
             }
 
-            entity.node = parent;
+            entity.node = parent; /* HTML Element holding string */
             self.extendEntity(entity);
             counter++;
           }
