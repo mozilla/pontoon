@@ -123,8 +123,7 @@ var Pontoon = function() {
           toolbar.find('.save').click();
         } else if (!entity.node) {
           entity.translation = entity.original;
-          entity.ui.find('textarea').text(entity.translation).parents('tr').addClass('translated');
-          self.updateProgress();
+          self.updateEntityUI(entity, entity.translation);
         }
 
       });
@@ -147,8 +146,7 @@ var Pontoon = function() {
           $.translate(entity.original, self.client._locale, {
             complete: function (t) {
               entity.translation = t;
-              entity.ui.find('textarea').text(entity.translation).parents('tr').addClass('translated');
-              self.updateProgress();
+              self.updateEntityUI(entity, entity.translation);
             }
           });
         }
@@ -179,9 +177,11 @@ var Pontoon = function() {
       
       // Update entities and progress when saved
       $(".editableToolbar > .save", this.client._doc).click(function() {
-        var element = $(this).parent().get(0).target;
-        self.updateEntity(element);
-        self.updateProgress();
+        var element = $(this).parent().get(0).target,
+            entity = element.entity;
+
+        entity.translation = $($(element).clone()).html();
+        self.updateEntityUI(entity, entity.translation);
       });
   
       // Update progress when cancelled
@@ -256,16 +256,13 @@ var Pontoon = function() {
   
   
     /**
-     * Update entity and main UI
+     * Update entity in the main UI
      * 
-     * element HTML Element which contains l10n entities
+     * translation Entity translation
      */
-    updateEntity: function(element) {
-      var entity = element.entity,
-          clone = $(element).clone();
-  
-      entity.translation = $(clone).html();
-      entity.ui.find('textarea').text(entity.translation).parents('tr').addClass('translated');
+    updateEntityUI: function(entity, translation) {
+      entity.ui.find('textarea').text(translation).parents('tr').addClass('translated');
+      this.updateProgress();
     },
   
   
