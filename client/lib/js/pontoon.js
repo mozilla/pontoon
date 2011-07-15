@@ -123,7 +123,7 @@ var Pontoon = function() {
           toolbar.find('.save').click();
         } else if (!entity.node) {
           entity.translation = entity.original;
-          self.updateEntityUI(entity, entity.translation);
+          self.updateEntityUI(entity);
         }
 
       });
@@ -146,7 +146,7 @@ var Pontoon = function() {
           $.translate(entity.original, self.client._locale, {
             complete: function (t) {
               entity.translation = t;
-              self.updateEntityUI(entity, entity.translation);
+              self.updateEntityUI(entity);
             }
           });
         }
@@ -181,7 +181,7 @@ var Pontoon = function() {
             entity = element.entity;
 
         entity.translation = $($(element).clone()).html();
-        self.updateEntityUI(entity, entity.translation);
+        self.updateEntityUI(entity);
       });
   
       // Update progress when cancelled
@@ -258,10 +258,10 @@ var Pontoon = function() {
     /**
      * Update entity in the main UI
      * 
-     * translation Entity translation
+     * entity Entity
      */
-    updateEntityUI: function(entity, translation) {
-      entity.ui.find('textarea').text(translation).parents('tr').addClass('translated');
+    updateEntityUI: function(entity) {
+      entity.ui.find('textarea').text(entity.translation).parents('tr').addClass('translated');
       this.updateProgress();
     },
   
