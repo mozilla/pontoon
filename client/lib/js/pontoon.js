@@ -155,7 +155,7 @@ var Pontoon = function() {
       });
 
       // Translate in textarea
-      // TODO: focus
+      // TODO: add support for focus, not only click
       $("#main textarea").click(function(e) {
       	e.stopPropagation();
         var entity = $(this).parents('tr').get(0).entity;
@@ -269,7 +269,7 @@ var Pontoon = function() {
      * Show and render main UI
      * Enable editable text
      */
-    renderTools: function() {
+    renderMainUI: function() {
       $(this.client._data.entities).each(function() {
         if (this.node) { // For entities not found on the website
           this.node.editableText();
@@ -341,7 +341,7 @@ var Pontoon = function() {
       });
       
       $(this.client._doc).find(".pontoon-entity").removeClass("pontoon-entity");
-      self.renderTools();
+      self.renderMainUI();
     },
   
   
@@ -381,7 +381,7 @@ var Pontoon = function() {
             counter++;
           }
         });
-        self.renderTools();
+        self.renderMainUI();
       });
     },
   
