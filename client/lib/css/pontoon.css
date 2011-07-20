@@ -519,7 +519,7 @@
   text-transform: lowercase;
   padding: 3px 5px;
   margin-right: 3px;
-  background: transparent;
+  background-color: transparent;
   border-left: 1px solid #CCCCCC;
   border-right: 1px solid #CCCCCC;
   border-top: 1px solid #CCCCCC;
@@ -529,10 +529,16 @@
   -webkit-border-radius: 3px 3px 0 0;
 }
 
+#pontoon #entitylist .extra a.comment {
+  background: transparent url('../images/comment.png') 2px 2px no-repeat;
+  vertical-align: bottom;
+  padding: 10px;
+}
+
 #pontoon #entitylist .extra a:hover,
 #pontoon #entitylist .extra a:active,
 #pontoon #entitylist .extra a.active {
-  background: #FFFFFF;
+  background-color: #FFFFFF;
 }
 
 #pontoon #entitylist .tools {
@@ -565,15 +571,10 @@
 
 #pontoon #entitylist .tools .copy {
   background: #EBEBEB url('../images/copy.png') 2px 2px no-repeat;
-
 }
 
 #pontoon #entitylist .tools .auto-translate {
   background: #EBEBEB url('../images/auto-translate.png') 2px 2px no-repeat;
-}
-
-#pontoon #entitylist .tools .comment {
-  background: #EBEBEB url('../images/comment.png') 2px 2px no-repeat;
 }
 
 

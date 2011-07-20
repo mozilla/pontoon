@@ -80,6 +80,7 @@ var Pontoon = function() {
               '<a href="#translation-memory" class="tm">Translation memory</a>' + 
               '<a href="#other-users" class="users">Other users</a>' + 
               '<a href="#other-locales" class="locales">Other locales</a>' + 
+              (this.comment ? '<a href="#comment" class="comment" title="' + this.comment + '"></a>' : '') + 
             '</div>' +
           '</div>' +
         '</td>' +
@@ -87,7 +88,6 @@ var Pontoon = function() {
           '<ul>' + 
             '<li title="Copy original string to translation" class="copy"></li>' + 
             '<li title="Machine translation by Microsoft Translator" class="auto-translate"></li>' + 
-            (this.comment ? '<li title="' + this.comment + '" class="comment"></li>' : '') + 
           '</ul>' + 
         '</td>' +
         '<td class="translation">' + 
