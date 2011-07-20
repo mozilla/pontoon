@@ -154,6 +154,31 @@ var Pontoon = function() {
         }
       });
 
+      // Translate in textarea
+      // TODO: focus
+      $("#main textarea").click(function(e) {
+      	e.stopPropagation();
+        var entity = $(this).parents('tr').get(0).entity;
+
+        // Only if no other entity is being edited
+        if (entity.node && !entity.node.is('.hovered')) {
+          $(this).blur();
+        }
+      }).blur(function() {
+        var toolbar = $(self.client._doc).find('.editableToolbar'),
+      	    entity = $(this).parents('tr').get(0).entity;
+
+        // Only if no other entity is being edited
+        if (entity.node && entity.node.is('.hovered')) {
+          $(entity.node).html($(this).val());
+          toolbar.find('.save').click();
+        // Head entities cannot be edited in-place
+        } else if (!entity.node) {
+          entity.translation = $(this).val();
+          self.updateEntityUI(entity);
+        }
+      });
+
       this.updateProgress();
     },
   
