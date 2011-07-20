@@ -74,7 +74,14 @@ var Pontoon = function() {
             (!this.node ? ' class="translated head"' : ' class="translated"') : 
             (!this.node ? ' class="head"' : '')) + '>' + 
         '<td class="source">' + 
-          '<p>' + self.doNotRender(this.original) + '</p>' + 
+          '<div class="source-wrapper">' +
+            '<p>' + self.doNotRender(this.original) + '</p>' + 
+            '<div class="extra">' + 
+              '<a href="#translation-memory" class="tm">Translation memory</a>' + 
+              '<a href="#other-users" class="users">Other users</a>' + 
+              '<a href="#other-locales" class="locales">Other locales</a>' + 
+            '</div>' +
+          '</div>' +
         '</td>' +
         '<td class="tools">' +
           '<ul>' + 
@@ -84,12 +91,6 @@ var Pontoon = function() {
           '</ul>' + 
         '</td>' +
         '<td class="translation">' + 
-          '<div class="suggestions">' + 
-            '<a href="#translation" class="translation active">Translation</a>' + 
-            '<a href="#translation-memory" class="tm">Translation memory</a>' + 
-            '<a href="#other-users" class="users">Other users</a>' + 
-            '<a href="#other-locales" class="locales">Other locales</a>' + 
-          '</div>' + 
           '<textarea>' + (this.translation || '') + '</textarea>' + 
         '</td></tr>', self.client._ptn);
             
