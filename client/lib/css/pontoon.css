@@ -458,9 +458,8 @@
   background: #EBEBEB;
 }
 
-#pontoon #entitylist tbody tr.head:hover {
+#pontoon #entitylist tbody tr.head {
   cursor: auto;
-  background: transparent;
 }
 
 #pontoon #entitylist td {
@@ -501,21 +500,26 @@
 }
 
 #pontoon #entitylist .extra {
+  display: none;
+  position: absolute;
   bottom: 0;
   left: 0;
-  position: absolute;
+}
+
+#pontoon #entitylist tbody tr:hover .extra {
+  display: block;
 }
 
 #pontoon #entitylist .extra a:link,
 #pontoon #entitylist .extra a:visited {
   display: inline-block;
   color: #666666;
-  font-size: 10px;
+  font-size: 11px;
   text-decoration: none;
   text-transform: lowercase;
   padding: 3px 5px;
   margin-right: 3px;
-  background: #EBEBEB;
+  background: transparent;
   border-left: 1px solid #CCCCCC;
   border-right: 1px solid #CCCCCC;
   border-top: 1px solid #CCCCCC;
