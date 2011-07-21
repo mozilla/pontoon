@@ -1,7 +1,7 @@
 # This is an example settings_local.py file.
 # Copy it and add your local settings here.
 
-from funfactory.settings_base import *
+from settings import *
 
 
 DATABASES = {
@@ -39,13 +39,16 @@ DEBUG = TEMPLATE_DEBUG = True
 # instances and False on stage/prod.
 DEV = True
 
-# Playdoh ships with sha512 password hashing by default. Bcrypt+HMAC is safer,
-# so it is recommended. Please read <https://github.com/fwenzel/django-sha2#readme>,
-# then switch this to bcrypt and pick a secret HMAC key for your application.
-#PWD_ALGORITHM = 'bcrypt'
-#HMAC_KEYS = {  # for bcrypt only
-#    '2011-01-01': 'cheesecake',
-#}
+# # Playdoh ships with sha512 password hashing by default. Bcrypt+HMAC is safer,
+# # so it is recommended. Please read <https://github.com/fwenzel/django-sha2#readme>,
+# # then switch this to bcrypt and pick a secret HMAC key for your application.
+# PWD_ALGORITHM = 'bcrypt'
+# HMAC_KEYS = {  # for bcrypt only
+#     '2011-01-01': 'cheesecake',
+# }
+
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = '1iz#v0m55@h26^m6hxk3a7at*h$qj_2a$juu1#nv50548j(x1v'
 
 # Uncomment these to activate and customize Celery:
 # CELERY_ALWAYS_EAGER = False  # required to activate celeryd
