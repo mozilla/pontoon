@@ -424,7 +424,7 @@
 
 
 
-/* EXTENDED */
+/* ENTITY LIST */
 
 #pontoon #entitylist {
   height: 0;
@@ -435,6 +435,7 @@
   background: #FFFFFF;
   margin: 20px 10px 10px;
   text-align: left;
+  border: 1px solid #CCCCCC;
 }
 
 #pontoon #entitylist thead th {
@@ -450,8 +451,16 @@
 }
 
 #pontoon #entitylist tbody tr {
-  border-top: 1px solid #EBEBEB;
   cursor: pointer;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+#pontoon #entitylist tbody td.source {
+  border-right: 2px solid #CCCCCC;
+}
+
+#pontoon #entitylist tbody .translated td.source {
+  border-right: 2px solid #ADD605;
 }
 
 #pontoon #entitylist tbody tr:hover {
@@ -465,11 +474,15 @@
 #pontoon #entitylist td {
   width: 50%;
   font-size: 13px;
-  padding: 10px 20px 0 20px;
+}
+
+#pontoon #entitylist td.translation {
+  padding: 10px 20px 0;
 }
 
 #pontoon #entitylist textarea {
   width: 98%;
+  height: 70px;
   border: 1px solid #CCCCCC;
   padding: 5px;
 
@@ -494,16 +507,22 @@
   -webkit-box-shadow: 0 0 2px 1px #AEEE00;
 }
 
-#pontoon #entitylist .source .source-wrapper {
+#pontoon #entitylist .source-wrapper {
   position: relative;
-  height: 65px;
+  height: 102px;
+  overflow: hidden;
+}
+
+#pontoon #entitylist .source-wrapper .content {
+  padding: 10px 30px 0;
 }
 
 #pontoon #entitylist .extra {
   display: none;
+  width: 150px;
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: -123px;
 }
 
 #pontoon #entitylist tbody tr:hover .extra {
@@ -512,21 +531,17 @@
 
 #pontoon #entitylist .extra a:link,
 #pontoon #entitylist .extra a:visited {
-  display: inline-block;
+  position: relative;
+  left: 0;
+  display: block;
   color: #666666;
   font-size: 11px;
   text-decoration: none;
   text-transform: lowercase;
   padding: 3px 5px;
-  margin-right: 3px;
+  margin: 0 3px -1px 0;
   background-color: transparent;
-  border-left: 1px solid #CCCCCC;
-  border-right: 1px solid #CCCCCC;
-  border-top: 1px solid #CCCCCC;
-
-  border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
+  border: 1px solid #CCCCCC;
 }
 
 #pontoon #entitylist .extra a.comment {
@@ -535,46 +550,55 @@
   padding: 10px;
 }
 
+#pontoon #entitylist .extra a.original-string {
+  background: transparent url('../images/original-string.png') 126px 2px no-repeat;
+}
+
+#pontoon #entitylist .extra a.other-users {
+  background: transparent url('../images/other-users.png') 126px 2px no-repeat;
+}
+
+#pontoon #entitylist .extra a.other-locales {
+  background: transparent url('../images/other-locales.png') 126px 2px no-repeat;
+}
+
+#pontoon #entitylist .extra a.translation-memory {
+  background: transparent url('../images/translation-memory.png') 126px 2px no-repeat;
+}
+
+#pontoon #entitylist .extra a.machine-translation {
+  background: transparent url('../images/machine-translation.png') 126px 2px no-repeat;
+}
+
 #pontoon #entitylist .extra a:hover,
-#pontoon #entitylist .extra a:active,
+#pontoon #entitylist .extra a:active {
+  background-color: #FFFFFF;
+  left: 122px;
+}
+
 #pontoon #entitylist .extra a.active {
   background-color: #FFFFFF;
 }
 
 #pontoon #entitylist .tools {
-  width: 32px;
-  padding: 5px;
-  background: #EBEBEB;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
-#pontoon #entitylist .translated .tools {
-  background: #CCFF66;
-}
-
-#pontoon #entitylist .tools ul {
-  float: right;
-  list-style: none;
-  margin: 0;
-}
-
-#pontoon #entitylist .tools li {
+#pontoon #entitylist .tools a.copy {
+  background: #EBEBEB url('../images/copy.png') 2px 2px no-repeat;
+  display: block;
   width: 16px;
   height: 16px;
+  margin: -1px;
   padding: 2px;
-  margin-bottom: 3px;
   border: 1px solid #BBBBBB;
 }
 
-#pontoon #entitylist .tools li:hover {
+#pontoon #entitylist .tools a:hover,
+#pontoon #entitylist .tools a:active {
   background-color: #FFFFFF;
-}
-
-#pontoon #entitylist .tools .copy {
-  background: #EBEBEB url('../images/copy.png') 2px 2px no-repeat;
-}
-
-#pontoon #entitylist .tools .auto-translate {
-  background: #EBEBEB url('../images/auto-translate.png') 2px 2px no-repeat;
 }
 
 

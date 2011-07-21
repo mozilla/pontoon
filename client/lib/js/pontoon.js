@@ -62,7 +62,7 @@ var Pontoon = function() {
           // http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
           .append(
             '<table cellpadding="0" cellspacing="0" border="0">' + 
-              '<thead><tr><th>Source</th><th class="tools"></th><th>Translation</th></tr></thead>' + 
+              '<thead><tr><th>Source</th><th>Translation</th></tr></thead>' + 
               '<tbody></tbody>' + 
             '</table>');
   
@@ -75,20 +75,21 @@ var Pontoon = function() {
             (!this.node ? ' class="head"' : '')) + '>' + 
         '<td class="source">' + 
           '<div class="source-wrapper">' +
-            '<p>' + self.doNotRender(this.original) + '</p>' + 
             '<div class="extra">' + 
-              '<a href="#translation-memory" class="tm">Translation memory</a>' + 
-              '<a href="#other-users" class="users">Other users</a>' + 
-              '<a href="#other-locales" class="locales">Other locales</a>' + 
+              '<a href="#original-string" class="active original-string">Original string</a>' + 
+              '<a href="#other-users" class="other-users">Other users</a>' + 
+              '<a href="#other-locales" class="other-locales">Other locales</a>' + 
+              '<a href="#translation-memory" class="translation-memory">Translation memory</a>' + 
+              '<a href="#machine-translation" class="machine-translation">Machine translation</a>' + 
               (this.comment ? '<a href="#comment" class="comment" title="' + this.comment + '"></a>' : '') + 
             '</div>' +
+            '<div class="content">' + 
+              '<p class="original">' + self.doNotRender(this.original) + '</p>' + 
+            '</div>' +
+            '<div class="tools">' + 
+              '<a href="#copy" class="copy" title="Copy original string to translation"></a>' + 
+            '</div>' +
           '</div>' +
-        '</td>' +
-        '<td class="tools">' +
-          '<ul>' + 
-            '<li title="Copy original string to translation" class="copy"></li>' + 
-            '<li title="Machine translation by Microsoft Translator" class="auto-translate"></li>' + 
-          '</ul>' + 
         '</td>' +
         '<td class="translation">' + 
           '<textarea>' + (this.translation || '') + '</textarea>' + 
