@@ -75,14 +75,14 @@ var Pontoon = function() {
             (!this.node ? ' class="head"' : '')) + '>' + 
         '<td class="source">' + 
           '<div class="source-wrapper">' +
-            '<div class="extra">' + 
-              '<a href="#original-string" class="active original-string">Original string</a>' + 
-              '<a href="#other-users" class="other-users">Other users</a>' + 
-              '<a href="#other-locales" class="other-locales">Other locales</a>' + 
-              '<a href="#translation-memory" class="translation-memory">Translation memory</a>' + 
-              '<a href="#machine-translation" class="machine-translation">Machine translation</a>' + 
+            '<ul class="extra">' + 
+              '<li class="active original-string"><a href="#original-string">Original string</a></li>' + 
+              '<li class="other-users"><a href="#other-users">Other users</a></li>' + 
+              '<li class="other-locales"><a href="#other-locales">Other locales</a></li>' + 
+              '<li class="translation-memory"><a href="#translation-memory">Translation memory</a></li>' + 
+              '<li class="machine-translation"><a href="#machine-translation">Machine translation</a></li>' + 
               (this.comment ? '<a href="#comment" class="comment" title="' + this.comment + '"></a>' : '') + 
-            '</div>' +
+            '</ul>' +
             '<div class="content">' + 
               '<p class="original">' + self.doNotRender(this.original) + '</p>' + 
             '</div>' +
@@ -113,6 +113,13 @@ var Pontoon = function() {
         $(self.client._doc).find('.editableToolbar > .edit').click();
       });
   
+      // Source menu
+      $("#main .extra li").hover(function(e) {
+        $(this).siblings().addClass("hover");
+      }, function(e) {
+        $(this).siblings().removeClass("hover");
+      });
+
       // Copy original string to translation
       $("#main .copy").click(function(e) {
         e.stopPropagation();
