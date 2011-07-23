@@ -133,7 +133,8 @@ var Pontoon = function() {
       // Other users
       // TODO: implement missing functionality
       $("#main .extra .other-users").click(function() {
-        var tr = $(this).parents('tr');
+        var tr = $(this).parents('tr'),
+            entity = tr.get(0).entity;
         setTimeout(function() {
           tr.find(".content .other-users p").removeClass("loader").html("Not implemented");
         }, 2000);
@@ -142,7 +143,8 @@ var Pontoon = function() {
       // Other locales
       // TODO: implement missing functionality
       $("#main .extra .other-locales").click(function() {
-        var tr = $(this).parents('tr');
+        var tr = $(this).parents('tr'),
+            entity = tr.get(0).entity;
         setTimeout(function() {
           tr.find(".content .other-locales p").removeClass("loader").html("Not implemented");
         }, 2000);
@@ -151,7 +153,8 @@ var Pontoon = function() {
       // Translation memory
       // TODO: implement missing functionality
       $("#main .extra .translation-memory").click(function() {
-        var tr = $(this).parents('tr');
+        var tr = $(this).parents('tr'),
+            entity = tr.get(0).entity;
         setTimeout(function() {
           tr.find(".content .translation-memory p").removeClass("loader").html("Not implemented");
         }, 2000);
