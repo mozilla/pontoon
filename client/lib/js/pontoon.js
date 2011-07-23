@@ -85,10 +85,10 @@ var Pontoon = function() {
             '</ul>' +
             '<ul class="content">' + 
               '<li class="active original-string"><p class="original">' + self.doNotRender(this.original) + '</p></li>' + 
-              '<li class="other-users"><p>Other users</p></li>' + 
-              '<li class="other-locales"><p>Other locales</p></li>' + 
-              '<li class="translation-memory"><p>Translation memory</p></li>' + 
-              '<li class="machine-translation"><p>Loading...</p></li>' + 
+              '<li class="other-users"><p class="loader">Loading data from other users...</p></li>' + 
+              '<li class="other-locales"><p class="loader">Loading data from other locales...</p></li>' + 
+              '<li class="translation-memory"><p class="loader">Loading translation memory...</p></li>' + 
+              '<li class="machine-translation"><p class="loader">Loading machine translation...</p></li>' + 
             '</ul>' +
             '<div class="tools">' + 
               '<a href="#copy" class="copy" title="Copy original string to translation"></a>' + 
@@ -130,6 +130,44 @@ var Pontoon = function() {
         t.addClass("active");
       });
 
+      // Other users
+      // TODO: implement missing functionality
+      $("#main .extra .other-users").click(function() {
+        var tr = $(this).parents('tr');
+        setTimeout(function() {
+          tr.find(".content .other-users p").removeClass("loader").html("Not implemented");
+        }, 2000);
+      });
+
+      // Other locales
+      // TODO: implement missing functionality
+      $("#main .extra .other-locales").click(function() {
+        var tr = $(this).parents('tr');
+        setTimeout(function() {
+          tr.find(".content .other-locales p").removeClass("loader").html("Not implemented");
+        }, 2000);
+      });
+
+      // Translation memory
+      // TODO: implement missing functionality
+      $("#main .extra .translation-memory").click(function() {
+        var tr = $(this).parents('tr');
+        setTimeout(function() {
+          tr.find(".content .translation-memory p").removeClass("loader").html("Not implemented");
+        }, 2000);
+      });
+
+      // Machine translations
+      $("#main .extra .machine-translation").click(function() {
+        var tr = $(this).parents('tr'),
+            entity = tr.get(0).entity;
+        $.translate(entity.original, self.client._locale, {
+          complete: function (t) {
+            tr.find(".content .machine-translation p").removeClass("loader").html(t);
+          }
+        });
+      });
+
       // Copy original string to translation
       $("#main .copy").click(function(e) {
         e.stopPropagation();
@@ -146,17 +184,6 @@ var Pontoon = function() {
           self.updateEntityUI(entity);
         }
 
-      });
-
-      // Fetch machine translations
-      $("#main .extra .machine-translation").click(function() {
-        var tr = $(this).parents('tr'),
-            entity = tr.get(0).entity;
-        $.translate(entity.original, self.client._locale, {
-          complete: function (t) {
-            tr.find(".content .machine-translation p").html(t);
-          }
-        });
       });
 
       // Translate in textarea
