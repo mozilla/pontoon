@@ -83,9 +83,13 @@ var Pontoon = function() {
               '<li class="machine-translation"><a href="#machine-translation">Machine translation</a></li>' + 
               (this.comment ? '<a href="#comment" class="comment" title="' + this.comment + '"></a>' : '') + 
             '</ul>' +
-            '<div class="content">' + 
-              '<p class="original">' + self.doNotRender(this.original) + '</p>' + 
-            '</div>' +
+            '<ul class="content">' + 
+              '<li class="active original-string"><p class="original">' + self.doNotRender(this.original) + '</p></li>' + 
+              '<li class="other-users"><p>Other users</p></li>' + 
+              '<li class="other-locales"><p>Other locales</p></li>' + 
+              '<li class="translation-memory"><p>Translation memory</p></li>' + 
+              '<li class="machine-translation"><p>Machine translation</p></li>' + 
+            '</ul>' +
             '<div class="tools">' + 
               '<a href="#copy" class="copy" title="Copy original string to translation"></a>' + 
             '</div>' +
@@ -114,10 +118,16 @@ var Pontoon = function() {
       });
   
       // Source menu
-      $("#main .extra li").hover(function(e) {
-        $(this).siblings().addClass("hover");
-      }, function(e) {
-        $(this).siblings().removeClass("hover");
+      $("#main .extra li").click(function(e) {
+      	e.preventDefault();
+      	var t = $(this);
+        t.parents(".extra").find("li").removeClass("active").end()
+
+          .siblings(".content")
+            .find("li.active").removeClass("active").end()
+            .find("li." + t.attr("class")).addClass("active");
+
+        t.addClass("active");
       });
 
       // Copy original string to translation
