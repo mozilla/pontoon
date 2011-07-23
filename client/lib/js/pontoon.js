@@ -88,7 +88,7 @@ var Pontoon = function() {
               '<li class="other-users"><p>Other users</p></li>' + 
               '<li class="other-locales"><p>Other locales</p></li>' + 
               '<li class="translation-memory"><p>Translation memory</p></li>' + 
-              '<li class="machine-translation"><p>Machine translation</p></li>' + 
+              '<li class="machine-translation"><p>Loading...</p></li>' + 
             '</ul>' +
             '<div class="tools">' + 
               '<a href="#copy" class="copy" title="Copy original string to translation"></a>' + 
@@ -119,7 +119,7 @@ var Pontoon = function() {
   
       // Source menu
       $("#main .extra li").click(function(e) {
-      	e.preventDefault();
+      	e.stopPropagation();
       	var t = $(this);
         t.parents(".extra").find("li").removeClass("active").end()
 
@@ -149,28 +149,14 @@ var Pontoon = function() {
       });
 
       // Fetch machine translations
-      $("#main .auto-translate").click(function(e) {
-        e.stopPropagation();
-        var toolbar = $(self.client._doc).find('.editableToolbar'),
-      	    entity = $(this).parents('tr').get(0).entity;
-
-        // Only if no other entity is being edited
-        if (entity.node && entity.node.is('.hovered')) {
-          $.translate(entity.original, self.client._locale, {
-            complete: function (t) {
-              $(entity.node).html(t);
-              toolbar.find('.save').click();
-            }
-          });
-        // Head entities cannot be edited in-place
-        } else if (!entity.node) {
-          $.translate(entity.original, self.client._locale, {
-            complete: function (t) {
-              entity.translation = t;
-              self.updateEntityUI(entity);
-            }
-          });
-        }
+      $("#main .extra .machine-translation").click(function() {
+        var tr = $(this).parents('tr'),
+            entity = tr.get(0).entity;
+        $.translate(entity.original, self.client._locale, {
+          complete: function (t) {
+            tr.find(".content .machine-translation p").html(t);
+          }
+        });
       });
 
       // Translate in textarea
