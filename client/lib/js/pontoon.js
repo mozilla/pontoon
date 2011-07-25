@@ -131,51 +131,68 @@ var Pontoon = function() {
         t.addClass("active");
       });
 
-      // Other users
-      // TODO: implement missing functionality
-      $("#main .extra .other-users").click(function() {
-        var tr = $(this).parents('tr'),
-            entity = tr.get(0).entity;
-        setTimeout(function() {
-          tr.find(".content .other-users p").removeClass("loader").html("Not implemented");
-        }, 2000);
-      });
-
       // Original string
       $("#main .extra .original-string").click(function() {
         $(this).parents('tr').find('.tools').show();
       });
 
+      // Other users
+      $("#main .extra .other-users").click(function() {
+        var tr = $(this).parents('tr'),
+            loader = tr.find(".content .other-users .loader"),
+            entity = tr.get(0).entity;
+        if (loader.length === 0) {
+          // TODO: implement missing functionality
+        } else {
+          setTimeout(function() {
+            loader.removeClass("loader").html("Not implemented");
+          }, 2000);
+        }
+      });
+
       // Other locales
-      // TODO: implement missing functionality
       $("#main .extra .other-locales").click(function() {
         var tr = $(this).parents('tr'),
+            loader = tr.find(".content .other-locales .loader"),
             entity = tr.get(0).entity;
-        setTimeout(function() {
-          tr.find(".content .other-locales p").removeClass("loader").html("Not implemented");
-        }, 2000);
+        if (loader.length === 0) {
+          // TODO: implement missing functionality
+        } else {
+          setTimeout(function() {
+            loader.removeClass("loader").html("Not implemented");
+          }, 2000);
+        }
       });
 
       // Translation memory
-      // TODO: implement missing functionality
       $("#main .extra .translation-memory").click(function() {
         var tr = $(this).parents('tr'),
+            loader = tr.find(".content .translation-memory .loader"),
             entity = tr.get(0).entity;
-        setTimeout(function() {
-          tr.find(".content .translation-memory p").removeClass("loader").html("Not implemented");
-        }, 2000);
+        if (loader.length === 0) {
+          // TODO: implement missing functionality
+        } else {
+          setTimeout(function() {
+            loader.removeClass("loader").html("Not implemented");
+          }, 2000);
+        }
       });
 
       // Machine translations
       $("#main .extra .machine-translation").click(function() {
         var tr = $(this).parents('tr'),
+            loader = tr.find(".content .machine-translation .loader"),
             entity = tr.get(0).entity;
-        $.translate(entity.original, self.client._locale, {
-          complete: function (t) {
-            tr.find(".content .machine-translation p").removeClass("loader").addClass("source").html(t);
-            tr.find(".tools").show();
-          }
-        });
+        if (loader.length === 0) {
+          tr.find(".tools").show();
+        } else {
+          $.translate(entity.original, self.client._locale, {
+            complete: function (t) {
+              loader.removeClass("loader").addClass("source").html(t);
+              tr.find(".tools").show();
+            }
+          });
+        }
       });
 
       // Copy source to translation
