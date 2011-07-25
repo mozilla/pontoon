@@ -431,55 +431,67 @@
   overflow-y: scroll;
 }
 
-#pontoon #entitylist table {
+#pontoon #entitylist > ul {
   background: #EBEBEB;
-  margin: 20px 0 0;
+  margin: 20px 10px;
+  list-style: none;
+  border-top: 1px solid #CCCCCC;
+  border-left: 1px solid #CCCCCC;
+  border-right: 1px solid #CCCCCC;
   text-align: left;
+
+  border-radius: 5px 5px 5px 5px;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
 }
 
-#pontoon #entitylist thead th {
-  background: #CCCCCC;
-  font-weight: normal;
-  text-shadow: 0 1px 0 #FFFFFF; 
-  text-transform: uppercase;
-}
-
-#pontoon #entitylist th {
-  width: 50%;
-  padding: 10px;
-}
-
-#pontoon #entitylist tbody tr {
+#pontoon #entitylist > ul > li {
   cursor: pointer;
   border-bottom: 1px solid #CCCCCC;
+  border-top: 1px solid #FFFFFF;
+  height: 104px;
+
+  background-color: #EBEBEB;
+  background-image: -moz-linear-gradient(top, #F7F7F7, #E8E8E8); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #F7F7F7),color-stop(1, #E8E8E8)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#F7F7F7, #E8E8E8); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #F7F7F7, #E8E8E8);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#F7F7F7', EndColorStr='#E8E8E8'); /* IE6–IE9 */
 }
 
-#pontoon #entitylist tbody td.source {
-  border-right: 1px solid #CCCCCC;
+#pontoon #entitylist > ul > li:first-child {
+  border-radius: 5px 5px 0 0;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
 }
 
-#pontoon #entitylist tbody .translated textarea {
-  border-color: #ADD605;
+#pontoon #entitylist > ul > li:last-child {
+  border-radius: 0 0 5px 5px;
+  -moz-border-radius: 0 0 5px 5px;
+  -webkit-border-radius: 0 0 5px 5px;
 }
 
-#pontoon #entitylist tbody tr:hover {
+#pontoon #entitylist > ul > li:hover {
   background: #FFFFFF;
 }
 
-#pontoon #entitylist tbody tr.head {
+#pontoon #entitylist > ul > li.head {
   cursor: auto;
 }
 
-#pontoon #entitylist td {
+#pontoon #entitylist li .source,
+#pontoon #entitylist li .translation {
+  display: inline-block;
+  float: left;
   width: 50%;
   font-size: 13px;
 }
 
-#pontoon #entitylist td.translation {
-  padding: 10px 20px 0;
+#pontoon #entitylist .translation-wrapper {
+  padding: 10px;
 }
 
-#pontoon #entitylist textarea {
+#pontoon #entitylist .translation textarea {
   width: 98%;
   height: 70px;
   border: 1px solid #CCCCCC;
@@ -494,11 +506,15 @@
   -webkit-box-shadow: 0 1px #FFFFFF;
 }
 
-#pontoon #entitylist textarea:hover {
+#pontoon #entitylist .translated .translation textarea {
+  border-color: #AEEE00;
+}
+
+#pontoon #entitylist .translation textarea:hover {
   border-color: #999999;
 }
 
-#pontoon #entitylist textarea:focus {
+#pontoon #entitylist .translation textarea:focus {
   border-color: #AEEE00;
 
   box-shadow: 0 0 2px 1px #AEEE00;
@@ -506,26 +522,26 @@
   -webkit-box-shadow: 0 0 2px 1px #AEEE00;
 }
 
-#pontoon #entitylist .source-wrapper {
+#pontoon #entitylist .source {
   position: relative;
   height: 104px;
 }
 
-#pontoon #entitylist .source-wrapper .content {
+#pontoon #entitylist .source .content {
   padding: 10px 35px 0 35px;
   list-style: none;
   margin: 0;
 }
 
-#pontoon #entitylist .source-wrapper .content li {
+#pontoon #entitylist .source .content li {
   display: none;
 }
 
-#pontoon #entitylist .source-wrapper .content li.active {
+#pontoon #entitylist .source .content li.active {
   display: block;
 }
 
-#pontoon #entitylist .source-wrapper .content .loader {
+#pontoon #entitylist .source .content .loader {
   background: transparent url('../images/loader.gif') 0 0 no-repeat;
   height: 25px;
   padding: 10px 0 0 30px;
@@ -540,12 +556,12 @@
   list-style: none;
 }
 
-#pontoon #entitylist tbody tr:hover .extra {
+#pontoon #entitylist li:hover .extra {
   display: block;
 }
 
 #pontoon #entitylist .extra li {
-  background: #EBEBEB 5px 2px no-repeat;
+  background: #EBEBEB none 5px 2px no-repeat;
   height: 20px;
   width: 25px;
   overflow: hidden;
@@ -558,7 +574,7 @@
 }
 
 #pontoon #entitylist .extra li.active {
-  background: #FFFFFF 5px 2px no-repeat;
+  background: transparent none 5px 2px no-repeat;
   border-right: none;
 }
 
@@ -628,11 +644,11 @@
 }
 
 #pontoon #entitylist .tools a.copy {
-  background: transparent url('../images/copy.png') 2px 2px no-repeat;
+  background: transparent url('../images/copy.png') 0 0 no-repeat;
   display: block;
   width: 16px;
   height: 16px;
-  padding: 2px;
+  margin-top: 44px;
 }
 
 #pontoon #entitylist .tools a.copy:hover,

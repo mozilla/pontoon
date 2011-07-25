@@ -57,59 +57,51 @@ var Pontoon = function() {
      */
     rebuildList: function() {
       var self = this,
-          list = $(this.client._ptn).find('#entitylist').empty()
-          // tables still need 'cellspacing="0"' in the markup
-          // http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
-          .append(
-            '<table cellpadding="0" cellspacing="0" border="0">' + 
-              '<thead><tr><th>Source</th><th>Translation</th></tr></thead>' + 
-              '<tbody></tbody>' + 
-            '</table>');
+          list = $(this.client._ptn).find('#entitylist').empty().append('<ul></ul>');
   
       // Render
       $(this.client._data.entities).each(function() {
-        var tr = $('<tr' + 
+        var li = $('<li class="entity' + 
           // append classes to translated and head entities
-          (this.translation ? 
-            (!this.node ? ' class="translated head"' : ' class="translated"') : 
-            (!this.node ? ' class="head"' : '')) + '>' + 
-        '<td class="source">' + 
-          '<div class="source-wrapper">' +
-            '<ol class="extra">' + 
-              '<li class="active original-string" title="Original string"></li>' + 
-              '<li class="other-users" title="Suggestions from other users"></li>' + 
-              '<li class="other-locales" title="Suggestions from other locales"></li>' + 
-              '<li class="translation-memory" title="Translation memory"></li>' + 
-              '<li class="machine-translation" title="Machine translation by Microsoft Translator"></li>' + 
-              (this.comment ? '<a href="#comment" class="comment" title="' + this.comment + '"></a>' : '') + 
-            '</ol>' +
-            '<ol class="content">' + 
-              '<li class="active original-string"><p class="original source">' + self.doNotRender(this.original) + '</p></li>' + 
-              '<li class="other-users"><p class="loader">Loading data from other users...</p></li>' + 
-              '<li class="other-locales"><p class="loader">Loading data from other locales...</p></li>' + 
-              '<li class="translation-memory"><p class="loader">Loading translation memory...</p></li>' + 
-              '<li class="machine-translation"><p class="loader">Loading machine translation...</p></li>' + 
-            '</ol>' +
-            '<div class="tools">' + 
-              '<a href="#copy" class="copy" title="Copy source to translation"></a>' + 
-            '</div>' +
+          (this.translation ? ' translated' : '') + 
+          (!this.node ? ' head' : '') + '">' + 
+        '<div class="source">' + 
+          '<ol class="extra">' + 
+            '<li class="active original-string" title="Original string"></li>' + 
+            '<li class="other-users" title="Suggestions from other users"></li>' + 
+            '<li class="other-locales" title="Suggestions from other locales"></li>' + 
+            '<li class="translation-memory" title="Translation memory"></li>' + 
+            '<li class="machine-translation" title="Machine translation by Microsoft Translator"></li>' + 
+            (this.comment ? '<a href="#comment" class="comment" title="' + this.comment + '"></a>' : '') + 
+          '</ol>' +
+          '<ol class="content">' + 
+            '<li class="active original-string"><p class="original source-string">' + self.doNotRender(this.original) + '</p></li>' + 
+            '<li class="other-users"><p class="loader">Loading data from other users...</p></li>' + 
+            '<li class="other-locales"><p class="loader">Loading data from other locales...</p></li>' + 
+            '<li class="translation-memory"><p class="loader">Loading translation memory...</p></li>' + 
+            '<li class="machine-translation"><p class="loader">Loading machine translation...</p></li>' + 
+          '</ol>' +
+          '<div class="tools">' + 
+            '<a href="#copy" class="copy" title="Copy source to translation"></a>' + 
           '</div>' +
-        '</td>' +
-        '<td class="translation">' + 
-          '<textarea>' + (this.translation || '') + '</textarea>' + 
-        '</td></tr>', self.client._ptn);
+        '</div>' +
+        '<div class="translation">' + 
+          '<div class="translation-wrapper">' +
+            '<textarea>' + (this.translation || '') + '</textarea>' + 
+          '</div>' +
+        '</div></li>', self.client._ptn);
             
-        tr.get(0).entity = this;
+        li.get(0).entity = this;
         if (this.node) { // For entities found on the website
           this.node.get(0).entity = this;
         }
-        this.ui = tr; /* HTML Element representing string in the main UI */
+        this.ui = li; /* HTML Element representing string in the main UI */
   
-        list.find('tbody').append(tr);
+        list.find('ul').append(li);
       });
 
       // Main entity list handlers
-      $("#main tr:not('.head')").hover(function() {
+      $("#main .entity:not('.head')").hover(function() {
         this.entity.hover();
       }, function() {
         this.entity.unhover();
@@ -133,14 +125,14 @@ var Pontoon = function() {
 
       // Original string
       $("#main .extra .original-string").click(function() {
-        $(this).parents('tr').find('.tools').show();
+        $(this).parents('.entity').find('.tools').show();
       });
 
       // Other users
       $("#main .extra .other-users").click(function() {
-        var tr = $(this).parents('tr'),
-            loader = tr.find(".content .other-users .loader"),
-            entity = tr.get(0).entity;
+        var li = $(this).parents('.entity'),
+            loader = li.find(".content .other-users .loader"),
+            entity = li.get(0).entity;
         if (loader.length === 0) {
           // TODO: implement missing functionality
         } else {
@@ -152,9 +144,9 @@ var Pontoon = function() {
 
       // Other locales
       $("#main .extra .other-locales").click(function() {
-        var tr = $(this).parents('tr'),
-            loader = tr.find(".content .other-locales .loader"),
-            entity = tr.get(0).entity;
+        var li = $(this).parents('.entity'),
+            loader = li.find(".content .other-locales .loader"),
+            entity = li.get(0).entity;
         if (loader.length === 0) {
           // TODO: implement missing functionality
         } else {
@@ -166,9 +158,9 @@ var Pontoon = function() {
 
       // Translation memory
       $("#main .extra .translation-memory").click(function() {
-        var tr = $(this).parents('tr'),
-            loader = tr.find(".content .translation-memory .loader"),
-            entity = tr.get(0).entity;
+        var li = $(this).parents('.entity'),
+            loader = li.find(".content .translation-memory .loader"),
+            entity = li.get(0).entity;
         if (loader.length === 0) {
           // TODO: implement missing functionality
         } else {
@@ -180,16 +172,16 @@ var Pontoon = function() {
 
       // Machine translations
       $("#main .extra .machine-translation").click(function() {
-        var tr = $(this).parents('tr'),
-            loader = tr.find(".content .machine-translation .loader"),
-            entity = tr.get(0).entity;
+        var li = $(this).parents('.entity'),
+            loader = li.find(".content .machine-translation .loader"),
+            entity = li.get(0).entity;
         if (loader.length === 0) {
-          tr.find(".tools").show();
+          li.find(".tools").show();
         } else {
           $.translate(entity.original, self.client._locale, {
             complete: function (t) {
-              loader.removeClass("loader").addClass("source").html(t);
-              tr.find(".tools").show();
+              loader.removeClass("loader").addClass("source-string").html(t);
+              li.find(".tools").show();
             }
           });
         }
@@ -199,9 +191,9 @@ var Pontoon = function() {
       $("#main .copy").click(function(e) {
         e.stopPropagation();
         var toolbar = $(self.client._doc).find('.editableToolbar'),
-            tr = $(this).parents('tr'),
-      	    entity = tr.get(0).entity,
-      	    source = tr.find('.source-wrapper .content .active .source').html();
+            li = $(this).parents('.entity'),
+      	    entity = li.get(0).entity,
+      	    source = li.find('.source .content .active .source-string').html();
 
         // Only if no other entity is being edited
         if (entity.node && entity.node.is('.hovered')) {
@@ -219,7 +211,7 @@ var Pontoon = function() {
       // TODO: add support for focus, not only click
       $("#main textarea").click(function(e) {
       	e.stopPropagation();
-        var entity = $(this).parents('tr').get(0).entity;
+        var entity = $(this).parents('.entity').get(0).entity;
 
         // Only if no other entity is being edited
         if (entity.node && !entity.node.is('.hovered')) {
@@ -227,7 +219,7 @@ var Pontoon = function() {
         }
       }).blur(function() {
         var toolbar = $(self.client._doc).find('.editableToolbar'),
-      	    entity = $(this).parents('tr').get(0).entity;
+      	    entity = $(this).parents('.entity').get(0).entity;
 
         // Only if no other entity is being edited
         if (entity.node && entity.node.is('.hovered')) {
@@ -249,8 +241,8 @@ var Pontoon = function() {
      * Update progress indicator and value
      */
     updateProgress: function() {
-      var all = $("#main tbody tr").length,
-          translated = $("#main tbody tr.translated").length;
+      var all = $("#entitylist .entity").length,
+          translated = $("#entitylist .entity.translated").length;
       $('#progress span').width(Math.round(translated*100 / all) + '%');
       $('#progress-value').html(translated + '/' + all);
     },
@@ -349,7 +341,7 @@ var Pontoon = function() {
      * entity Entity
      */
     updateEntityUI: function(entity) {
-      entity.ui.find('textarea').val(entity.translation).parents('tr').addClass('translated');
+      entity.ui.find('textarea').val(entity.translation).parents('.entity').addClass('translated');
       this.updateProgress();
     },
   
