@@ -458,8 +458,8 @@
   border-right: 1px solid #CCCCCC;
 }
 
-#pontoon #entitylist tbody .translated td.source {
-  border-right: 1px solid #ADD605;
+#pontoon #entitylist tbody .translated textarea {
+  border-color: #ADD605;
 }
 
 #pontoon #entitylist tbody tr:hover {
