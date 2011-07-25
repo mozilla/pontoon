@@ -512,7 +512,7 @@
 }
 
 #pontoon #entitylist .source-wrapper .content {
-  padding: 10px 30px 0 10px;
+  padding: 10px 10px 0 35px;
   list-style: none;
   margin: 0;
 }
@@ -534,9 +534,9 @@
 #pontoon #entitylist .extra {
   display: none;
   position: absolute;
-  bottom: 0;
-  right: -130px;
-  width: 155px;
+  bottom: -1px;
+  left: 0;
+  margin: 0;
   list-style: none;
 }
 
@@ -545,61 +545,62 @@
 }
 
 #pontoon #entitylist .extra li {
+  background: #EBEBEB 5px 2px no-repeat;
   height: 20px;
   width: 25px;
   overflow: hidden;
-  border: 1px solid #CCCCCC;
-  margin: -1px;
-}
-
-#pontoon #entitylist .extra li:hover,
-#pontoon #entitylist .extra li:active {
-  width: 100%;
+  border-bottom: 1px solid #CCCCCC;
+  border-right: 1px solid #CCCCCC;
 }
 
 #pontoon #entitylist .extra li.active {
-  border-left: none;
-  padding-left: 1px;
+  background: #FFFFFF 5px 2px no-repeat;
+  border-right: none;
 }
 
 #pontoon #entitylist .extra .original-string {
-  background: #EBEBEB url('../images/original-string.png') 5px 2px no-repeat;
+  background-image: url('../images/original-string.png');
 }
 
-#pontoon #entitylist .extra .original-string.active {
-  background: #FFFFFF url('../images/original-string-active.png') 5px 2px no-repeat;
+#pontoon #entitylist .extra .original-string.active,
+#pontoon #entitylist .extra .original-string:hover {
+  background-image: url('../images/original-string-active.png');
 }
 
 #pontoon #entitylist .extra .other-users {
-  background: #EBEBEB url('../images/other-users.png') 5px 2px no-repeat;
+  background-image: url('../images/other-users.png');
 }
 
-#pontoon #entitylist .extra .other-users.active {
-  background: #FFFFFF url('../images/other-users-active.png') 5px 2px no-repeat;
+#pontoon #entitylist .extra .other-users.active,
+#pontoon #entitylist .extra .other-users:hover {
+  background-image: url('../images/other-users-active.png');
 }
 
 #pontoon #entitylist .extra .other-locales {
-  background: #EBEBEB url('../images/other-locales.png') 5px 2px no-repeat;
+  background-image: url('../images/other-locales.png');
 }
 
-#pontoon #entitylist .extra .other-locales.active {
-  background: #FFFFFF url('../images/other-locales-active.png') 5px 2px no-repeat;
+#pontoon #entitylist .extra .other-locales.active,
+#pontoon #entitylist .extra .other-locales:hover {
+  background-image: url('../images/other-locales-active.png');
 }
 
 #pontoon #entitylist .extra .translation-memory {
-  background: #EBEBEB url('../images/translation-memory.png') 5px 2px no-repeat;
+  background-image: url('../images/translation-memory.png');
 }
 
-#pontoon #entitylist .extra .translation-memory.active {
-  background: #FFFFFF url('../images/translation-memory-active.png') 5px 2px no-repeat;
+#pontoon #entitylist .extra .translation-memory.active,
+#pontoon #entitylist .extra .translation-memory:hover {
+  background-image: url('../images/translation-memory-active.png');
 }
 
 #pontoon #entitylist .extra .machine-translation {
-  background: #EBEBEB url('../images/machine-translation.png') 5px 2px no-repeat;
+  background-image: url('../images/machine-translation.png');
 }
 
-#pontoon #entitylist .extra .machine-translation.active {
-  background: #FFFFFF url('../images/machine-translation-active.png') 5px 2px no-repeat;
+#pontoon #entitylist .extra .machine-translation.active,
+#pontoon #entitylist .extra .machine-translation:hover {
+  background-image: url('../images/machine-translation-active.png');
 }
 
 #pontoon #entitylist .extra a:link,

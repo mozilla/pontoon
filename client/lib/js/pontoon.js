@@ -75,21 +75,21 @@ var Pontoon = function() {
             (!this.node ? ' class="head"' : '')) + '>' + 
         '<td class="source">' + 
           '<div class="source-wrapper">' +
-            '<ul class="extra">' + 
-              '<li class="active original-string"><a href="#original-string">Original string</a></li>' + 
-              '<li class="other-users"><a href="#other-users">Other users</a></li>' + 
-              '<li class="other-locales"><a href="#other-locales">Other locales</a></li>' + 
-              '<li class="translation-memory"><a href="#translation-memory">Translation memory</a></li>' + 
-              '<li class="machine-translation"><a href="#machine-translation">Machine translation</a></li>' + 
+            '<ol class="extra">' + 
+              '<li class="active original-string" title="Original string"></li>' + 
+              '<li class="other-users" title="Suggestions from other users"></li>' + 
+              '<li class="other-locales" title="Suggestions from other locales"></li>' + 
+              '<li class="translation-memory" title="Translation memory"></li>' + 
+              '<li class="machine-translation" title="Machine translation by Microsoft Translator"></li>' + 
               (this.comment ? '<a href="#comment" class="comment" title="' + this.comment + '"></a>' : '') + 
-            '</ul>' +
-            '<ul class="content">' + 
+            '</ol>' +
+            '<ol class="content">' + 
               '<li class="active original-string"><p class="original">' + self.doNotRender(this.original) + '</p></li>' + 
               '<li class="other-users"><p class="loader">Loading data from other users...</p></li>' + 
               '<li class="other-locales"><p class="loader">Loading data from other locales...</p></li>' + 
               '<li class="translation-memory"><p class="loader">Loading translation memory...</p></li>' + 
               '<li class="machine-translation"><p class="loader">Loading machine translation...</p></li>' + 
-            '</ul>' +
+            '</ol>' +
             '<div class="tools">' + 
               '<a href="#copy" class="copy" title="Copy original string to translation"></a>' + 
             '</div>' +
