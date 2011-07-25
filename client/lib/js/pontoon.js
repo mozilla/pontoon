@@ -84,14 +84,14 @@ var Pontoon = function() {
               (this.comment ? '<a href="#comment" class="comment" title="' + this.comment + '"></a>' : '') + 
             '</ol>' +
             '<ol class="content">' + 
-              '<li class="active original-string"><p class="original">' + self.doNotRender(this.original) + '</p></li>' + 
+              '<li class="active original-string"><p class="original source">' + self.doNotRender(this.original) + '</p></li>' + 
               '<li class="other-users"><p class="loader">Loading data from other users...</p></li>' + 
               '<li class="other-locales"><p class="loader">Loading data from other locales...</p></li>' + 
               '<li class="translation-memory"><p class="loader">Loading translation memory...</p></li>' + 
               '<li class="machine-translation"><p class="loader">Loading machine translation...</p></li>' + 
             '</ol>' +
             '<div class="tools">' + 
-              '<a href="#copy" class="copy" title="Copy original string to translation"></a>' + 
+              '<a href="#copy" class="copy" title="Copy source to translation"></a>' + 
             '</div>' +
           '</div>' +
         '</td>' +
@@ -123,6 +123,7 @@ var Pontoon = function() {
       	var t = $(this);
         t.parents(".extra").find("li").removeClass("active").end()
 
+          .siblings(".tools").hide()
           .siblings(".content")
             .find("li.active").removeClass("active").end()
             .find("li." + t.attr("class")).addClass("active");
@@ -138,6 +139,11 @@ var Pontoon = function() {
         setTimeout(function() {
           tr.find(".content .other-users p").removeClass("loader").html("Not implemented");
         }, 2000);
+      });
+
+      // Original string
+      $("#main .extra .original-string").click(function() {
+        $(this).parents('tr').find('.tools').show();
       });
 
       // Other locales
@@ -166,24 +172,27 @@ var Pontoon = function() {
             entity = tr.get(0).entity;
         $.translate(entity.original, self.client._locale, {
           complete: function (t) {
-            tr.find(".content .machine-translation p").removeClass("loader").html(t);
+            tr.find(".content .machine-translation p").removeClass("loader").addClass("source").html(t);
+            tr.find(".tools").show();
           }
         });
       });
 
-      // Copy original string to translation
+      // Copy source to translation
       $("#main .copy").click(function(e) {
         e.stopPropagation();
         var toolbar = $(self.client._doc).find('.editableToolbar'),
-      	    entity = $(this).parents('tr').get(0).entity;
+            tr = $(this).parents('tr'),
+      	    entity = tr.get(0).entity,
+      	    source = tr.find('.source-wrapper .content .active .source').html();
 
         // Only if no other entity is being edited
         if (entity.node && entity.node.is('.hovered')) {
-          $(entity.node).html(entity.original);
+          $(entity.node).html(source);
           toolbar.find('.save').click();
         // Head entities cannot be edited in-place
         } else if (!entity.node) {
-          entity.translation = entity.original;
+          entity.translation = source;
           self.updateEntityUI(entity);
         }
 

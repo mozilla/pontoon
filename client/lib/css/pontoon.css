@@ -512,7 +512,7 @@
 }
 
 #pontoon #entitylist .source-wrapper .content {
-  padding: 10px 10px 0 35px;
+  padding: 10px 35px 0 35px;
   list-style: none;
   margin: 0;
 }
@@ -622,20 +622,22 @@
 }
 
 #pontoon #entitylist .tools {
-  display: none;
   position: absolute;
-  left: 0;
+  right: 0;
   top: 0;
 }
 
 #pontoon #entitylist .tools a.copy {
-  background: #EBEBEB url('../images/copy.png') 2px 2px no-repeat;
+  background: transparent url('../images/copy.png') 2px 2px no-repeat;
   display: block;
   width: 16px;
   height: 16px;
-  margin: -1px;
   padding: 2px;
-  border: 1px solid #BBBBBB;
+}
+
+#pontoon #entitylist .tools a.copy:hover,
+#pontoon #entitylist .tools a.copy:active {
+  background-image: url('../images/copy-active.png');
 }
 
 #pontoon #entitylist .tools a:hover,
