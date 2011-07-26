@@ -646,15 +646,15 @@
 
 #pontoon #entitylist .translation .toolbar {
   right: 7px;
-  top: 30px;
+  top: 26px;
 }
 
 #pontoon #entitylist .toolbar a {
-  background: transparent none 2px 2px no-repeat;
+  background: transparent none 4px 4px no-repeat;
   border: 1px solid transparent;
   display: block;
-  height: 20px;
-  width: 20px;
+  height: 24px;
+  width: 24px;
 
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
@@ -674,7 +674,7 @@
 
 #pontoon #entitylist .toolbar a.copy {
   background-image: url('../images/copy.png');
-  margin-top: 41px;
+  margin-top: 39px;
 }
 
 #pontoon #entitylist .toolbar a.copy:hover,
