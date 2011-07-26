@@ -488,7 +488,8 @@
 }
 
 #pontoon #entitylist .translation-wrapper {
-  padding: 10px;
+  padding: 10px 35px 10px 10px;
+  position: relative;
 }
 
 #pontoon #entitylist .translation textarea {
@@ -637,28 +638,66 @@
   color: #888888;
 }
 
-#pontoon #entitylist .tools {
+#pontoon #entitylist .toolbar {
   position: absolute;
   right: 0;
   top: 0;
 }
 
-#pontoon #entitylist .tools a.copy {
-  background: transparent url('../images/copy.png') 0 0 no-repeat;
-  display: block;
-  width: 16px;
-  height: 16px;
-  margin-top: 44px;
+#pontoon #entitylist .translation .toolbar {
+  right: 7px;
+  top: 30px;
 }
 
-#pontoon #entitylist .tools a.copy:hover,
-#pontoon #entitylist .tools a.copy:active {
+#pontoon #entitylist .toolbar a {
+  background: transparent none 2px 2px no-repeat;
+  border: 1px solid transparent;
+  display: block;
+  height: 20px;
+  width: 20px;
+
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+
+  -moz-transition: none;  /* FF3.7+ */
+  -o-transition: none;  /* Opera 10.5 */
+  -webkit-transition: none;  /* Saf3.2+, Chrome */
+  transition: none;  
+}
+
+#pontoon #entitylist .toolbar a:hover,
+#pontoon #entitylist .toolbar a:active {
+  border: 1px solid #CCCCCC;
+  background-color: #EBEBEB;
+}
+
+#pontoon #entitylist .toolbar a.copy {
+  background-image: url('../images/copy.png');
+  margin-top: 41px;
+}
+
+#pontoon #entitylist .toolbar a.copy:hover,
+#pontoon #entitylist .toolbar a.copy:active {
   background-image: url('../images/copy-active.png');
 }
 
-#pontoon #entitylist .tools a:hover,
-#pontoon #entitylist .tools a:active {
-  background-color: #FFFFFF;
+#pontoon #entitylist .toolbar a.save {
+  background-image: url('../images/save.png');
+}
+
+#pontoon #entitylist .toolbar a.save:hover,
+#pontoon #entitylist .toolbar a.save:active {
+  background-image: url('../images/save-active.png');
+}
+
+#pontoon #entitylist .toolbar a.undo {
+  background-image: url('../images/undo.png');
+}
+
+#pontoon #entitylist .toolbar a.undo:hover,
+#pontoon #entitylist .toolbar a.undo:active {
+  background-image: url('../images/undo-active.png');
 }
 
 

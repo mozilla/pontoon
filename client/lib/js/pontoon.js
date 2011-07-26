@@ -81,13 +81,17 @@ var Pontoon = function() {
             '<li class="translation-memory"><p class="loader">Loading translation memory...</p></li>' + 
             '<li class="machine-translation"><p class="loader">Loading machine translation...</p></li>' + 
           '</ol>' +
-          '<div class="tools">' + 
+          '<div class="toolbar">' + 
             '<a href="#copy" class="copy" title="Copy source to translation"></a>' + 
           '</div>' +
         '</div>' +
         '<div class="translation">' + 
           '<div class="translation-wrapper">' +
             '<textarea>' + (this.translation || '') + '</textarea>' + 
+            '<div class="toolbar">' + 
+              '<a href="#save" class="save" title="Save translation"></a>' + 
+              '<a href="#undo" class="undo" title="Undo to initial translation"></a>' + 
+            '</div>' +
           '</div>' +
         '</div></li>', self.client._ptn);
             
@@ -115,7 +119,7 @@ var Pontoon = function() {
       	var t = $(this);
         t.parents(".extra").find("li").removeClass("active").end()
 
-          .siblings(".tools").hide()
+          .siblings(".toolbar").hide()
           .siblings(".content")
             .find("li.active").removeClass("active").end()
             .find("li." + t.attr("class")).addClass("active");
@@ -125,7 +129,7 @@ var Pontoon = function() {
 
       // Original string
       $("#main .extra .original-string").click(function() {
-        $(this).parents('.entity').find('.tools').show();
+        $(this).parents('.entity').find('.toolbar').show();
       });
 
       // Other users
@@ -176,12 +180,12 @@ var Pontoon = function() {
             loader = li.find(".content .machine-translation .loader"),
             entity = li.get(0).entity;
         if (loader.length === 0) {
-          li.find(".tools").show();
+          li.find(".toolbar").show();
         } else {
           $.translate(entity.original, self.client._locale, {
             complete: function (t) {
               loader.removeClass("loader").addClass("source-string").html(t);
-              li.find(".tools").show();
+              li.find(".toolbar").show();
             }
           });
         }
