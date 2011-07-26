@@ -55,7 +55,7 @@ var Pontoon = function() {
     /**
      * Build source - translation pairs
      */
-    rebuildList: function() {
+    entityList: function() {
       var self = this,
           list = $(this.client._ptn).find('#entitylist').empty().append('<ul></ul>');
   
@@ -192,14 +192,14 @@ var Pontoon = function() {
       });
 
       // Copy source to translation
-      $("#main .copy").click(function(e) {
+      $("#main .source .copy").click(function(e) {
         e.stopPropagation();
         var toolbar = $(self.client._doc).find('.editableToolbar'),
             li = $(this).parents('.entity'),
       	    entity = li.get(0).entity,
       	    source = li.find('.source .content .active .source-string').html();
 
-        // Only if no other entity is being edited
+        // Only if no other entity is being edited in-place
         if (entity.node && entity.node.is('.hovered')) {
           $(entity.node).html(source);
           toolbar.find('.save').click();
@@ -213,25 +213,29 @@ var Pontoon = function() {
 
       // Translate in textarea
       // TODO: add support for focus, not only click
-      $("#main textarea").click(function(e) {
+      $("#main .translation textarea").click(function(e) {
       	e.stopPropagation();
         var entity = $(this).parents('.entity').get(0).entity;
 
-        // Only if no other entity is being edited
+        // Only if no other entity is being edited in-place
         if (entity.node && !entity.node.is('.hovered')) {
           $(this).blur();
         }
-      }).blur(function() {
+      });
+      $("#main .translation .save").click(function(e) {
+        e.stopPropagation();
         var toolbar = $(self.client._doc).find('.editableToolbar'),
-      	    entity = $(this).parents('.entity').get(0).entity;
+            li = $(this).parents('.entity'),
+      	    entity = li.get(0).entity,
+      	    source = li.find('.translation textarea').val();
 
-        // Only if no other entity is being edited
+        // Only if no other entity is being edited in-place
         if (entity.node && entity.node.is('.hovered')) {
-          $(entity.node).html($(this).val());
+          $(entity.node).html(source);
           toolbar.find('.save').click();
         // Head entities cannot be edited in-place
         } else if (!entity.node) {
-          entity.translation = $(this).val();
+          entity.translation = source;
           self.updateEntityUI(entity);
         }
       });
@@ -333,7 +337,7 @@ var Pontoon = function() {
         }
       });
       this.attachHandlers();
-      this.rebuildList();
+      this.entityList();
       $('#main').slideDown();
     },
   
