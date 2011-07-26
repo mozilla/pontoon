@@ -488,12 +488,12 @@
 }
 
 #pontoon #entitylist .translation-wrapper {
-  padding: 10px 35px 10px 10px;
+  padding: 10px 50px 10px 10px;
   position: relative;
 }
 
 #pontoon #entitylist .translation textarea {
-  width: 98%;
+  width: 100%;
   height: 70px;
   border: 1px solid #CCCCCC;
   padding: 5px;
@@ -555,6 +555,7 @@
   left: 0;
   margin: 0;
   list-style: none;
+  cursor: pointer;
 }
 
 #pontoon #entitylist li:hover .extra {
@@ -624,20 +625,6 @@
   background-image: url('../images/machine-translation-active.png');
 }
 
-#pontoon #entitylist .extra a:link,
-#pontoon #entitylist .extra a:visited {
-  color: #AAAAAA;
-  font-size: 10px;
-  text-decoration: none;
-  text-transform: uppercase;
-  padding: 5px 5px 5px 30px;
-  float: left;
-}
-
-#pontoon #entitylist .extra li.active a {
-  color: #888888;
-}
-
 #pontoon #entitylist .toolbar {
   position: absolute;
   right: 0;
@@ -645,7 +632,7 @@
 }
 
 #pontoon #entitylist .translation .toolbar {
-  right: 7px;
+  right: 6px;
   top: 26px;
 }
 
