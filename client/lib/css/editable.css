@@ -39,21 +39,22 @@
 }
 
 .editableToolbar a {
+  background: transparent none 0 0 no-repeat;
   display: block;
-  width: 17px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   float: left;
   margin: 2px;
 }
 
 .editableToolbar .edit {    
-  background: url("../images/icons.png");
+  background-image: url('../images/edit-active.png');
 }
 
 .editableToolbar .save {
-  background: url("../images/icons.png") -16px 0;
+  background-image: url('../images/save-active.png');
 }
 
 .editableToolbar .cancel {
-  background: url("../images/icons.png") 25px 0;
+  background-image: url('../images/undo-active.png');
 }
