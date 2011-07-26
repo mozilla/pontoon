@@ -402,14 +402,14 @@
 #pontoon #switch {
   background: url('../images/arrow-up.png') no-repeat;
   float: right;
-  height: 13px;
-  width: 13px;
+  height: 16px;
+  width: 16px;
   border: none;
-  margin: 6px 0 0 5px; 
+  margin: 5px 0 0 5px; 
 }
 
 #pontoon #switch:hover {
-  background: url('../images/arrow-up-hover.png') no-repeat;
+  background: url('../images/arrow-up-active.png') no-repeat;
 }
 
 #pontoon #main.opened #switch {
@@ -417,7 +417,7 @@
 }
 
 #pontoon #main.opened #switch:hover {
-  background: url('../images/arrow-down-hover.png') no-repeat;
+  background: url('../images/arrow-down-active.png') no-repeat;
 }
 
 
