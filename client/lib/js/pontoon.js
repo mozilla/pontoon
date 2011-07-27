@@ -75,13 +75,26 @@ var Pontoon = function() {
           '</ol>' +
           '<ol class="content">' + 
             '<li class="active original-string">' + 
+              '<h3>Original string</h3>' + 
               '<p class="original source-string">' + self.doNotRender(this.original) + '</p>' + 
               (this.comment ? '<div class="comment" title="' + this.comment + '"></div>' : '') + 
             '</li>' + 
-            '<li class="other-users"><p class="loader">Loading data from other users...</p></li>' + 
-            '<li class="other-locales"><p class="loader">Loading data from other locales...</p></li>' + 
-            '<li class="translation-memory"><p class="loader">Loading translation memory...</p></li>' + 
-            '<li class="machine-translation"><p class="loader">Loading machine translation...</p></li>' + 
+            '<li class="other-users">' + 
+              '<h3>Other users</h3>' + 
+              '<p class="loader">Loading data from other users...</p>' + 
+            '</li>' + 
+            '<li class="other-locales">' + 
+              '<h3>Other locales</h3>' + 
+              '<p class="loader">Loading data from other locales...</p>' + 
+            '</li>' + 
+            '<li class="translation-memory">' + 
+              '<h3>Translation memory</h3>' + 
+              '<p class="loader">Loading translation memory...</p>' + 
+            '</li>' + 
+            '<li class="machine-translation">' + 
+              '<h3>Machine translation</h3>' + 
+              '<p class="loader">Loading machine translation...</p>' + 
+            '</li>' + 
           '</ol>' +
           '<div class="toolbar">' + 
             '<a href="#copy" class="copy" title="Copy source to translation"></a>' + 

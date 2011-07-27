@@ -507,13 +507,13 @@
 }
 
 #pontoon #entitylist .translation-wrapper {
-  padding: 10px 50px 10px 6px;
+  padding: 9px 50px 8px 6px;
   position: relative;
 }
 
 #pontoon #entitylist .translation textarea {
   width: 100%;
-  height: 70px;
+  height: 73px;
   border: 1px solid #CCCCCC;
   padding: 5px;
 
@@ -549,7 +549,7 @@
 }
 
 #pontoon #entitylist .source .content {
-  padding: 10px 35px 0 35px;
+  padding: 9px 35px 0 35px;
   list-style: none;
   margin: 0;
 }
@@ -560,6 +560,14 @@
 
 #pontoon #entitylist .source .content li.active {
   display: block;
+}
+
+#pontoon #entitylist .source .content li h3 {
+  color: #888888;
+  font-size: 10px;
+  padding-bottom: 5px;
+  text-shadow: 0 1px 0 #FFFFFF;
+  text-transform: uppercase;
 }
 
 #pontoon #entitylist .source .content .loader {
