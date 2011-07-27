@@ -472,7 +472,15 @@
 }
 
 #pontoon #entitylist > ul > li:hover {
-  background: #FFFFFF;
+  border-bottom: 1px solid #AFCB99;
+  border-top: 1px solid #FCFEF9;
+
+  background-color: #DAF7C5;
+  background-image: -moz-linear-gradient(top, #F1FCEA, #DAF7C5); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #F1FCEA),color-stop(1, #DAF7C5)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#F1FCEA, #DAF7C5); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #F1FCEA, #DAF7C5);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#F1FCEA', EndColorStr='#DAF7C5'); /* IE6–IE9 */
 }
 
 #pontoon #entitylist > ul > li.head {
