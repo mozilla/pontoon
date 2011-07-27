@@ -2,15 +2,20 @@
 import os
 import sys
 
-# Add a temporary path so that we can import the funfactory
-tmp_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                        'vendor', 'src', 'funfactory')
-sys.path.append(tmp_path)
+try:
+    # For local development in a virtualenv:
+    from funfactory import manage
+except ImportError:
+    # Production:
+    # Add a temporary path so that we can import the funfactory
+    tmp_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            'vendor', 'src', 'funfactory')
+    sys.path.append(tmp_path)
 
-from funfactory import manage
+    from funfactory import manage
 
-# Let the path magic happen in setup_environ() !
-sys.path.remove(tmp_path)
+    # Let the path magic happen in setup_environ() !
+    sys.path.remove(tmp_path)
 
 
 manage.setup_environ(__file__)
