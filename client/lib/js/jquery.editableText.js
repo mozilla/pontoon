@@ -15,86 +15,89 @@
        * could add public methods here
        */
       $.editableText = {};
-      $.editableText.defaults = {         
-          /**
-           * Pass true to enable line breaks.
-           * Useful with divs that contain paragraphs.
-           */
-          newlinesEnabled : false,
-          /**
-           * Event that is triggered when editable text is changed
-           */
-          changeEvent : 'change'
+      $.editableText.defaults = {
+        /**
+         * Pass true to enable line breaks.
+         * Useful with divs that contain paragraphs.
+         */
+        newlinesEnabled: false,
+        /**
+         * Event that is triggered when editable text is changed
+         */
+        changeEvent: 'change'
       };           
       /**
        * Usage $('selector).editableText(optionArray);
        * See $.editableText.defaults for valid options 
        */        
       $.fn.editableText = function(options){
-          var options = $.extend({}, $.editableText.defaults, options);
-          var doc = this.get()[0].ownerDocument;
-          var body = $(doc.body);
+          var options = $.extend({}, $.editableText.defaults, options),
+              doc = this.get(0).ownerDocument,
+              body = $(doc.body);
 
           // Create edit/save buttons
           function showToolbar(elem) {
-              if ($(elem).attr('class')=='editableToolbar') {
-                var toolbar = $(elem);
-                var curTarget =  toolbar.get()[0].target
-                var newTarget = null;
-                curTarget.entity.hover()
-                return true;
-              } else {       
-                var body = $($(elem).get()[0].ownerDocument.body); 
-                var win = $(elem).get()[0].ownerDocument.defaultView;
-                var toolbar = body.find('.editableToolbar')
-                var curTarget =  toolbar.get()[0].target
-                var newTarget = elem;
-                if ($(curTarget).attr('contentEditable')=='true')
-                    return;
-                if (curTarget && curTarget!=newTarget) {
-                  hideToolbar(curTarget);
-                }
-                var left = newTarget.getBoundingClientRect().left+win.scrollX
-                var top = newTarget.getBoundingClientRect().top+win.scrollY
-                toolbar.css('left', left+'px')
-                toolbar.css('top', top-20+'px')
-              }           
-              var toolbarNode = toolbar.get()[0]
-              if(toolbarNode.I!==null) {
-                clearTimeout(toolbarNode.I)
-                toolbarNode.I = null;
+            if ($(elem).attr('class') === 'editableToolbar') {
+              var toolbar = $(elem),
+                  curTarget =  toolbar.get(0).target,
+                  newTarget = null;
+              curTarget.entity.hover();
+              return true;
+            } else {       
+              var body = $($(elem).get(0).ownerDocument.body),
+                  win = $(elem).get(0).ownerDocument.defaultView,
+                  toolbar = body.find('.editableToolbar'),
+                  curTarget =  toolbar.get(0).target,
+                  newTarget = elem;
+              if ($(curTarget).attr('contentEditable') === 'true') {
+                return;
               }
-              if (newTarget)
-                toolbarNode.target=newTarget;
-              $(newTarget).addClass('hovered')
-              toolbar.css('display', 'block')
+              if (curTarget && curTarget !== newTarget) {
+                hideToolbar(curTarget);
+              }
+              var left = newTarget.getBoundingClientRect().left + win.scrollX,
+                  top = newTarget.getBoundingClientRect().top + win.scrollY;
+              toolbar.css('left', left + 'px')
+                     .css('top', top-20 + 'px');
+            }           
+            var toolbarNode = toolbar.get(0);
+            if (toolbarNode.I !== null) {
+              clearTimeout(toolbarNode.I);
+              toolbarNode.I = null;
+            }
+            if (newTarget) {
+              toolbarNode.target = newTarget;
+            }
+            $(newTarget).addClass('hovered');
+            toolbar.css('display', 'block');
           }
 
           function hideToolbar(elem) {
-            if ($(elem).attr('class')=='editableToolbar') {
-                var toolbar = $(elem);
+            if ($(elem).attr('class') === 'editableToolbar') {
+              var toolbar = $(elem);
             } else {
-              var body = $($(elem).get()[0].ownerDocument.body); 
-              var toolbar = body.find('.editableToolbar')
+              var body = $($(elem).get(0).ownerDocument.body),
+                  toolbar = body.find('.editableToolbar');
             }
-            var toolbarNode = toolbar.get()[0]
-            var target = toolbarNode.target
-            if ($(target).attr('contentEditable')=='true')
+            var toolbarNode = toolbar.get(0),
+                target = toolbarNode.target;
+            if ($(target).attr('contentEditable') === 'true') {
               return;
+            }
             function hide() {
               if (target) {
                 target.blur();
                 stopEditing(toolbar);
-                if (target==toolbar.get()[0].target) {
-                  toolbar.get()[0].target=null;
-                  $(target).removeClass('hovered')
-                  toolbar.css('display', 'none')
+                if (target === toolbar.get(0).target) {
+                  toolbar.get(0).target = null;
+                  $(target).removeClass('hovered');
+                  toolbar.css('display', 'none');
                 } else {
-                  $(target).removeClass('hovered')
+                  $(target).removeClass('hovered');
                 }
               }
             }
-            toolbar.get()[0].I = setTimeout(hide, 50);
+            toolbar.get(0).I = setTimeout(hide, 50);
           }
 
           /**
@@ -112,12 +115,12 @@
           function stopEditing(toolbar){
               toolbar.children().css('display','none');
               toolbar.find('.edit').css('display','inline');
-              $(toolbar.get()[0].target).attr('contentEditable', false);
+              $(toolbar.get(0).target).attr('contentEditable', false);
           }
           if (!body.find('.editableToolbar').length) {
             var toolbar = $(
                   "<div class='editableToolbar'>" +
-                        "<a href='#' class='edit'></a>" +
+                    "<a href='#' class='edit'></a>" +
                     "<a href='#' class='save'></a>" +
                     "<a href='#' class='cancel'></a>" +
                 "</div>", doc).appendTo(body);
