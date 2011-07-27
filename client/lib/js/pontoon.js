@@ -240,6 +240,11 @@ var Pontoon = function() {
         }
       });
 
+      $("#main .translation .undo").click(function(e) {
+        e.stopPropagation();
+        // TODO: implement missing functionality
+      });
+
       this.updateProgress();
     },
   
