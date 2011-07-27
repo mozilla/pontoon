@@ -548,6 +548,18 @@
   padding: 10px 0 0 30px;
 }
 
+#pontoon #entitylist .source .content .original-string .comment {
+  background: transparent url('../images/comment.png') 0 0 no-repeat;
+  height: 20px;
+  width: 20px;
+  display: block;
+  cursor: auto;
+}
+
+#pontoon #entitylist .source .content .original-string .comment:hover {
+  background-image: url('../images/comment-active.png');
+}
+
 #pontoon #entitylist .extra {
   display: none;
   position: absolute;

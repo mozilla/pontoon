@@ -72,10 +72,12 @@ var Pontoon = function() {
             '<li class="other-locales" title="Suggestions from other locales"></li>' + 
             '<li class="translation-memory" title="Translation memory"></li>' + 
             '<li class="machine-translation" title="Machine translation by Microsoft Translator"></li>' + 
-            (this.comment ? '<a href="#comment" class="comment" title="' + this.comment + '"></a>' : '') + 
           '</ol>' +
           '<ol class="content">' + 
-            '<li class="active original-string"><p class="original source-string">' + self.doNotRender(this.original) + '</p></li>' + 
+            '<li class="active original-string">' + 
+              '<p class="original source-string">' + self.doNotRender(this.original) + '</p>' + 
+              (this.comment ? '<div class="comment" title="' + this.comment + '"></div>' : '') + 
+            '</li>' + 
             '<li class="other-users"><p class="loader">Loading data from other users...</p></li>' + 
             '<li class="other-locales"><p class="loader">Loading data from other locales...</p></li>' + 
             '<li class="translation-memory"><p class="loader">Loading translation memory...</p></li>' + 
