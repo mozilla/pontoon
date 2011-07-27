@@ -103,19 +103,23 @@
           /**
            * Makes element editable
            */
-          function startEditing(toolbar){
-              toolbar.children().css('display','inline');
-              toolbar.find('.edit').css('display','none');
-              $(toolbar.get(0).target).attr('contentEditable', true);
-              toolbar.get(0).target.focus();
+          function startEditing(toolbar) {
+            toolbar.children().css('display','inline');
+            toolbar.find('.edit').css('display','none');
+            var target = toolbar.get(0).target;
+            $(target).attr('contentEditable', true);
+            target.focus();
+            $(target.entity.ui).addClass("active");
           }
           /**
            * Makes element non-editable
            */
-          function stopEditing(toolbar){
-              toolbar.children().css('display','none');
-              toolbar.find('.edit').css('display','inline');
-              $(toolbar.get(0).target).attr('contentEditable', false);
+          function stopEditing(toolbar) {
+            toolbar.children().css('display','none');
+            toolbar.find('.edit').css('display','inline');
+            var target = toolbar.get(0).target;
+            $(target).attr('contentEditable', false);
+            $(target.entity.ui).removeClass("active");
           }
           if (!body.find('.editableToolbar').length) {
             var toolbar = $(
