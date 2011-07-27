@@ -510,9 +510,9 @@
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
 
-  box-shadow: 0 1px #FFFFFF;
-  -moz-box-shadow: 0 1px #FFFFFF;
-  -webkit-box-shadow: 0 1px #FFFFFF;
+  box-shadow: 0 1px #FFFFFF, 0 1px 3px -1px #CCCCCC inset;
+  -moz-box-shadow: 0 1px #FFFFFF, 0 1px 3px -1px #CCCCCC inset;
+  -webkit-box-shadow: 0 1px #FFFFFF, 0 1px 3px -1px #CCCCCC inset;
 }
 
 #pontoon #entitylist .translated .translation textarea {
@@ -520,15 +520,11 @@
 }
 
 #pontoon #entitylist .translation textarea:hover {
-  border-color: #999999;
+  border-color: #AEEE00;
 }
 
 #pontoon #entitylist .translation textarea:focus {
-  border-color: #AEEE00;
-
-  box-shadow: 0 0 2px 1px #AEEE00;
-  -moz-box-shadow: 0 0 2px 1px #AEEE00;
-  -webkit-box-shadow: 0 0 2px 1px #AEEE00;
+  border-color: #999999;
 }
 
 #pontoon #entitylist .source {
