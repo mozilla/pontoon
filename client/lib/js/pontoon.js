@@ -81,19 +81,19 @@ var Pontoon = function() {
             '</li>' + 
             '<li class="other-users">' + 
               '<h3>Other users</h3>' + 
-              '<p class="loader">Loading data from other users...</p>' + 
+              '<p class="loader"></p>' + 
             '</li>' + 
             '<li class="other-locales">' + 
               '<h3>Other locales</h3>' + 
-              '<p class="loader">Loading data from other locales...</p>' + 
+              '<p class="loader"></p>' + 
             '</li>' + 
             '<li class="translation-memory">' + 
               '<h3>Translation memory</h3>' + 
-              '<p class="loader">Loading translation memory...</p>' + 
+              '<p class="loader"></p>' + 
             '</li>' + 
             '<li class="machine-translation">' + 
               '<h3>Machine translation</h3>' + 
-              '<p class="loader">Loading machine translation...</p>' + 
+              '<p class="loader"></p>' + 
             '</li>' + 
           '</ol>' +
           '<div class="toolbar">' + 
