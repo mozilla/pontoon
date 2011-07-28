@@ -185,7 +185,7 @@
   -webkit-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
 }
 
-#pontoon header {
+#pontoon > #main > header {
   font-size: 12px;
   padding: 6px 5px;
   height: 26px;
@@ -549,7 +549,7 @@
 }
 
 #pontoon #entitylist .source .content {
-  padding: 9px 35px 0 35px;
+  padding: 2px 35px 0 35px;
   list-style: none;
   margin: 0;
 }
@@ -562,25 +562,26 @@
   display: block;
 }
 
+#pontoon #entitylist .source .content li header {
+  overflow: hidden;
+  height: 16px;
+  padding-top: 7px;
+}
+
 #pontoon #entitylist .source .content li h3 {
   color: #888888;
   font-size: 10px;
-  padding-bottom: 5px;
   text-shadow: 0 1px 0 #FFFFFF;
   text-transform: uppercase;
-}
-
-#pontoon #entitylist .source .content .loader {
-  background: transparent url('../images/loader.gif') 0 0 no-repeat;
-  height: 25px;
-  padding: 10px 0 0 30px;
+  float: left;
 }
 
 #pontoon #entitylist .source .content .original-string .comment {
   background: transparent url('../images/comment.png') 0 0 no-repeat;
-  height: 20px;
-  width: 20px;
-  display: block;
+  height: 16px;
+  width: 16px;
+  float: left;
+  margin: -7px 0 0 5px;
   cursor: auto;
 }
 
@@ -588,6 +589,11 @@
   background-image: url('../images/comment-active.png');
 }
 
+#pontoon #entitylist .source .content .loader {
+  background: transparent url('../images/loader.gif') 0 0 no-repeat;
+  height: 25px;
+  padding: 10px 0 0 30px;
+}
 #pontoon #entitylist .extra {
   display: none;
   position: absolute;

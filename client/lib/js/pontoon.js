@@ -75,24 +75,26 @@ var Pontoon = function() {
           '</ol>' +
           '<ol class="content">' + 
             '<li class="active original-string">' + 
-              '<h3>Original string</h3>' + 
-              '<p class="original source-string">' + self.doNotRender(this.original) + '</p>' + 
-              (this.comment ? '<div class="comment" title="' + this.comment + '"></div>' : '') + 
+              '<header>' + 
+                '<h3>Original string</h3>' + 
+                (this.comment ? '<span class="comment" title="' + this.comment + '"></span>' : '') + 
+              '</header>' + 
+              '<p class="source-string">' + self.doNotRender(this.original) + '</p>' + 
             '</li>' + 
             '<li class="other-users">' + 
-              '<h3>Other users</h3>' + 
+              '<header><h3>Other users</h3></header>' + 
               '<p class="loader"></p>' + 
             '</li>' + 
             '<li class="other-locales">' + 
-              '<h3>Other locales</h3>' + 
+              '<header><h3>Other locales</h3></header>' + 
               '<p class="loader"></p>' + 
             '</li>' + 
             '<li class="translation-memory">' + 
-              '<h3>Translation memory</h3>' + 
+              '<header><h3>Translation memory</h3></header>' + 
               '<p class="loader"></p>' + 
             '</li>' + 
             '<li class="machine-translation">' + 
-              '<h3>Machine translation</h3>' + 
+              '<header><h3>Machine translation</h3></header>' + 
               '<p class="loader"></p>' + 
             '</li>' + 
           '</ol>' +
