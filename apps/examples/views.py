@@ -1,10 +1,10 @@
 """Example views. Feel free to delete this app."""
 
 from django import http
-from django.views.decorators.csrf import csrf_exempt
 
 import bleach
 import jingo
+from session_csrf import anonymous_csrf
 
 
 def home(request):
@@ -13,7 +13,7 @@ def home(request):
     return jingo.render(request, 'examples/home.html', data)
 
 
-@csrf_exempt
+@anonymous_csrf
 def bleach_test(request):
     """A view outlining bleach's HTML sanitization."""
     allowed_tags = ('strong', 'em')
