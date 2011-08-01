@@ -33,7 +33,7 @@
 
 #pontoon a:hover,
 #pontoon a:active {
-  color: #AEE000;
+  color: #AEEE00;
   text-decoration: none;
 }
 
@@ -41,17 +41,17 @@
 #pontoon input[type=password] {
   background: #888888;
   border: 1px solid #000000;
-  padding: 5px 3px 4px 9px;
-  width: 100px;
+  padding: 6px 3px 4px;
+  width: 104px;
   float: left;
 
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
 
-  box-shadow: 0 1px 1px #444444;
-  -moz-box-shadow: 0 1px 1px #444444;
-  -webkit-box-shadow: 0 1px 1px #444444;
+  box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
+  -moz-box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
+  -webkit-box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
 }
 
 #pontoon input[type=text]:focus,
@@ -70,36 +70,39 @@
 }
 
 #pontoon .button {
-  border: none;
-  color: #EBEBEB;
+  border: 1px solid #0D0D0D;
+  color: #AAAAAA;
   cursor: pointer;
-  padding: 4px 5px;
+  padding: 5px 4px 2px;
   text-shadow: 1px 1px 2px #000000;
   display: inline-block;
   height: 16px;
   
-  background-color: #777777;
-  background-image: -moz-linear-gradient(top, #AAAAAA, #555555); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #AAAAAA),color-stop(1, #555555)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#AAAAAA, #555555); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #AAAAAA, #555555);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#AAAAAA', EndColorStr='#555555'); /* IE6–IE9 */
+  background-color: #444444;
+  background-image: -moz-linear-gradient(top, #555555, #333333); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #555555),color-stop(1, #333333)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#555555, #333333); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #555555, #333333);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#555555', EndColorStr='#333333'); /* IE6–IE9 */
+
+  box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
+  -moz-box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
+  -webkit-box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
 
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
-
-  -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
-  -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
-  -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
-  transition: all 0.3s ease-out;  
 }
 
 #pontoon .button:hover {
-  color: #AEEE00;
-  box-shadow: 0 0 3px #AEEE00;
-  -moz-box-shadow: 0 0 3px #AEEE00;
-  -webkit-box-shadow: 0 0 3px #AEEE00;
+  color: #EBEBEB;
+
+  background-color: #555555;
+  background-image: -moz-linear-gradient(top, #666666, #444444); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #666666),color-stop(1, #444444)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#666666, #444444); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #666666, #444444);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#444444'); /* IE6–IE9 */
 }
 
 #pontoon .select {
@@ -108,6 +111,8 @@
 
 #pontoon .select.opened > .button {
   background: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 #pontoon .select.opened:hover > .button {
@@ -207,8 +212,8 @@
   background: url('../images/logo-small.png') no-repeat 2px 9px;
   color: #AEEE00;
   float: left;
-  margin-top: -3px;
-  padding: 9px 5px 8px 25px;
+  margin-top: -4px;
+  padding: 10px 5px 0 25px;
   text-transform: lowercase;
   cursor: ns-resize;
 }
@@ -243,7 +248,7 @@
 #pontoon .locale .selector {
   float: right;
   border-radius: 0 3px 3px 0;
-  margin-left: 1px;
+  margin-left: -1px;
 }
 
 #pontoon .locale .button .flag {
@@ -261,13 +266,13 @@
 #pontoon #progress {
   border: 1px solid #000000;
   float: left;
-  height: 21px;
+  height: 23px;
   width: 100px;
   text-align: center;
 
-  box-shadow: 0 1px 1px #444444;
-  -moz-box-shadow: 0 1px 1px #444444;
-  -webkit-box-shadow: 0 1px 1px #444444;
+  box-shadow: 0 1px #333333;
+  -moz-box-shadow: 0 1px #333333;
+  -webkit-box-shadow: 0 1px #333333;
 
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
@@ -297,6 +302,11 @@
   background-image: -webkit-linear-gradient(#AEEE00, #405700); /* Chrome 10+, Saf6 */
   background-image: linear-gradient(top, #AEEE00, #405700);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#AEEE00', EndColorStr='#405700'); /* IE6–IE9 */
+
+  -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
+  -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
+  -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
+  transition: all 0.3s ease-out;  
 }
 
 #pontoon #progress-value {
@@ -319,6 +329,24 @@
   padding: 10px;
 }
 
+#pontoon #authentication-menu input {
+  box-shadow: 0 1px #444444, 0 1px 2px #444444 inset;
+  -moz-box-shadow: 0 1px #444444, 0 1px 2px #444444 inset;
+  -webkit-box-shadow: 0 1px #444444, 0 1px 2px #444444 inset;
+}
+
+#pontoon #authentication-menu input:focus {
+  box-shadow: 0 0 2px 1px #AEEE00;
+  -moz-box-shadow: 0 0 2px 1px #AEEE00;
+  -webkit-box-shadow: 0 0 2px 1px #AEEE00;
+}
+
+#pontoon #authentication-menu .button {
+  box-shadow: 0 1px #444444, 0 2px 1px -1px #666666 inset;
+  -moz-box-shadow: 0 1px #444444, 0 2px 1px -1px #666666 inset;
+  -webkit-box-shadow: 0 1px #444444, 0 2px 1px -1px #666666 inset;
+}
+
 #pontoon #authentication-menu .full {
   border-bottom: 1px solid #040404;
   padding-bottom: 5px;
@@ -330,7 +358,7 @@
 }
 
 #pontoon #authentication-menu .full input {
-  width: 235px;
+  width: 240px;
   margin-bottom: 5px;
 }
 
@@ -343,7 +371,7 @@
 
 #pontoon #authentication-menu .wrapper .toggle {
   float: left;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 #pontoon #authentication-menu .wrapper .button {
@@ -357,14 +385,13 @@
 
 #pontoon #authentication-menu .restricted input {
   margin-right: 3px;
+  padding: 6px 3px 3px;
 }
 
 #pontoon #authentication-menu .restricted .go {
   float: left;
-  height: 16px;
-  width: 16px;
   margin: 0 3px 0 0;
-  padding: 5px 4px 3px;
+  padding: 4px 3px 2px;
 }
 
 #pontoon #authentication-menu .restricted a {
@@ -489,9 +516,9 @@
   border-top: 1px solid #CCCCCC;
   background: #DBDBDB;
 
-  box-shadow: 0 1px 3px -1px #CCCCCC inset;
-  -moz-box-shadow: 0 1px 3px -1px #CCCCCC inset;
-  -webkit-box-shadow: 0 1px 3px -1px #CCCCCC inset;
+  box-shadow: 0 0 3px 1px #CCCCCC inset;
+  -moz-box-shadow: 0 0 3px 1px #CCCCCC inset;
+  -webkit-box-shadow: 0 0 3px 1px #CCCCCC inset;
 }
 
 #pontoon #entitylist > ul > li.head {
