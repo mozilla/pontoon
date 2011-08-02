@@ -257,9 +257,9 @@ body {
 }
 
 #intro form {
-	width: 680px;
-	height: 40px;
-	margin: 0 auto;
+  width: 680px;
+  height: 40px;
+  margin: 0 auto;
 }
 
 #pontoon #intro input[type=text] {

@@ -15,21 +15,19 @@
 }
 
 .editableToolbar {
+  background-color: #EBEBEB;
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 100;
   display: none;
-  background-color: #EEEEEE;
   border-top: 1px solid #AAAAAA;
   border-left: 1px solid #AAAAAA;
   border-right: 1px solid #AAAAAA;
-  -moz-border-radius-topright: 0.2em;
-  -moz-border-radius-topleft: 0.2em;
-  -webkit-border-top-right-radius: 0.2em;
-  -webkit-border-top-left-radius: 0.2em;
-  border-top-right-radius: 0.2em;
-  border-top-left-radius: 0.2em;
-  z-index: 100;
+
+  border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
 }
 
 .editableToolbar:hover + * {

@@ -58,7 +58,7 @@
               var left = newTarget.getBoundingClientRect().left + win.scrollX,
                   top = newTarget.getBoundingClientRect().top + win.scrollY;
               toolbar.css('left', left + 'px')
-                     .css('top', top-20 + 'px');
+                     .css('top', top-21 + 'px');
             }           
             var toolbarNode = toolbar.get(0);
             if (toolbarNode.I !== null) {
