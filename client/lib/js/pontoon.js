@@ -107,7 +107,7 @@ var Pontoon = function() {
             '<textarea>' + (this.translation || '') + '</textarea>' + 
             '<div class="toolbar">' + 
               '<a href="#save" class="save" title="Save translation"></a>' + 
-              '<a href="#undo" class="undo" title="Undo to initial translation"></a>' + 
+              '<a href="#cancel" class="cancel" title="Cancel and revert to initial translation"></a>' + 
             '</div>' +
           '</div>' +
         '</div></li>', self.client._ptn);
@@ -257,7 +257,7 @@ var Pontoon = function() {
         }
       });
 
-      $("#main .translation .undo").click(function(e) {
+      $("#main .translation .cancel").click(function(e) {
         e.stopPropagation();
         // TODO: implement missing functionality
       });

@@ -752,13 +752,13 @@
   background-image: url('../images/save-active.png');
 }
 
-#pontoon #entitylist .toolbar a.undo {
-  background-image: url('../images/undo.png');
+#pontoon #entitylist .toolbar a.cancel {
+  background-image: url('../images/cancel.png');
 }
 
-#pontoon #entitylist .toolbar a.undo:hover,
-#pontoon #entitylist .toolbar a.undo:active {
-  background-image: url('../images/undo-active.png');
+#pontoon #entitylist .toolbar a.cancel:hover,
+#pontoon #entitylist .toolbar a.cancel:active {
+  background-image: url('../images/cancel-active.png');
 }
 
 
