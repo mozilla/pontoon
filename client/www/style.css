@@ -264,14 +264,15 @@ body {
 
 #pontoon #intro input[type=text] {
   padding: 5px;
+  height: 21px;
   width: 500px;
   font-size: 20px;
   text-align: center;
   float: left;
 
-  border-radius: 5px 5px 5px 5px;
-  -moz-border-radius: 5px 5px 5px 5px;
-  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
 }
 
 #pontoon #intro input[type=text]:focus {
@@ -285,14 +286,13 @@ body {
 #pontoon #intro .select {
   float: right;
   display: inline;
-  padding: 1px 0;
   margin-left: 0;
   text-align: left;
   font-size: 14px;
 }
 
 #pontoon #intro .select .button {
-  height: 22px;
+  height: 21px;
   padding: 8px 5px 2px;
 }
 
