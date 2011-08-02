@@ -140,20 +140,11 @@
                 return false;
             });                            
 
-            toolbar.find('.save').click(function(){
+            toolbar.find('.save, .cancel').click(function(){
                 stopEditing(toolbar);
-                //editable.trigger(options.changeEvent);
                 return false;
             });
 
-            toolbar.find('.cancel').click(function(){
-                stopEditing(toolbar);
-                var target = toolbar.get(0).target;
-                $(target).html(target.prevValue);
-                target.entity.translation = target.prevValue;
-                target.entity.ui.find('textarea').text('').parents('tr').removeClass('translated');
-                return false;
-            });        
             // Display only edit button            
             toolbar.children().css('display', 'none');
             editEl.show();

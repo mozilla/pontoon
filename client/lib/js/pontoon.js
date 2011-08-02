@@ -239,6 +239,7 @@ var Pontoon = function() {
           $(this).blur();
         }
       });
+
       $("#main .translation .save").click(function(e) {
         e.stopPropagation();
         var toolbar = $(self.client._doc).find('.editableToolbar'),
@@ -259,7 +260,19 @@ var Pontoon = function() {
 
       $("#main .translation .cancel").click(function(e) {
         e.stopPropagation();
-        // TODO: implement missing functionality
+        var toolbar = $(self.client._doc).find('.editableToolbar'),
+            li = $(this).parents('.entity'),
+      	    entity = li.get(0).entity;
+
+        // Only if no other entity is being edited in-place
+        if (entity.node && entity.node.is('.hovered')) {
+          toolbar.find('.cancel').click();
+        // Head entities cannot be edited in-place
+        } else if (!entity.node) {
+          entity.translation = "";
+          entity.ui.find('textarea').val(entity.translation).parents('.entity').removeClass('translated');
+          self.updateProgress();
+        }
       });
 
       this.updateProgress();
@@ -296,6 +309,12 @@ var Pontoon = function() {
   
       // Update progress when cancelled
       $(".editableToolbar > .cancel", this.client._doc).click(function() {
+        var element = $(this).parent().get(0).target,
+            entity = element.entity;
+
+        $(element).html(element.prevValue);
+        entity.translation = "";
+        entity.ui.find('textarea').val(entity.translation).parents('.entity').removeClass('translated');
         self.updateProgress();
       });
   
