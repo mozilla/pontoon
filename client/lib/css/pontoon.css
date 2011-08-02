@@ -510,7 +510,6 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#F1FCEA', EndColorStr='#DAF7C5'); /* IE6–IE9 */
 }
 
-#pontoon #entitylist > ul > li:active,
 #pontoon #entitylist > ul > li.active {
   border-bottom: 1px solid #CCCCCC;
   border-top: 1px solid #CCCCCC;
@@ -565,7 +564,6 @@
   border-color: #999999;
 }
 
-#pontoon #entitylist > ul > li:active .translation textarea,
 #pontoon #entitylist > ul > li.active .translation textarea {
   border-color: #BBBBBB;
 }
