@@ -109,12 +109,12 @@
 }
 
 #pontoon .button:active {
-  background-color: #444444;
-  background-image: -moz-linear-gradient(top, #555555, #333333); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #555555),color-stop(1, #333333)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#555555, #333333); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #555555, #333333);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#555555', EndColorStr='#333333'); /* IE6–IE9 */
+  background-color: #333333;
+  background-image: -moz-linear-gradient(top, #444444, #222222); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #444444),color-stop(1, #222222)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#444444, #222222); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #444444, #222222);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#444444', EndColorStr='#222222'); /* IE6–IE9 */
 
   box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
   -moz-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
