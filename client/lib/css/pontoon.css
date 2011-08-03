@@ -108,6 +108,19 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#444444'); /* IE6–IE9 */
 }
 
+#pontoon .button:active {
+  background-color: #444444;
+  background-image: -moz-linear-gradient(top, #555555, #333333); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #555555),color-stop(1, #333333)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#555555, #333333); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #555555, #333333);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#555555', EndColorStr='#333333'); /* IE6–IE9 */
+
+  box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
+  -moz-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
+  -webkit-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
+}
+
 #pontoon .select {
   position: relative;
 }
@@ -115,7 +128,10 @@
 #pontoon .select.opened > .button {
   background: transparent;
   border-color: transparent;
+
   box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
 }
 
 #pontoon .select.opened:hover > .button {
@@ -348,6 +364,12 @@
   box-shadow: 0 1px #444444, 0 2px 1px -1px #666666 inset;
   -moz-box-shadow: 0 1px #444444, 0 2px 1px -1px #666666 inset;
   -webkit-box-shadow: 0 1px #444444, 0 2px 1px -1px #666666 inset;
+}
+
+#pontoon #authentication-menu .button:active {
+  box-shadow: 0 1px #444444, 0 0 5px #000000 inset;
+  -moz-box-shadow: 0 1px #444444, 0 0 5px #000000 inset;
+  -webkit-box-shadow: 0 1px #444444, 0 0 5px #000000 inset;
 }
 
 #pontoon #authentication-menu .full {
