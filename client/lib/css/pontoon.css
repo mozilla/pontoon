@@ -626,6 +626,11 @@
   float: left;
 }
 
+#pontoon #entitylist .source .content li .no {
+  color: #888888;
+  font-style: italic;
+}
+
 #pontoon #entitylist .source .content .original-string .comment {
   background: transparent url('../images/comment.png') 0 0 no-repeat;
   height: 16px;

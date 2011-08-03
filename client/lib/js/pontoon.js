@@ -82,8 +82,13 @@ var Pontoon = function() {
               '<p class="source-string">' + self.doNotRender(this.original) + '</p>' + 
             '</li>' + 
             '<li class="other-users">' + 
-              '<header><h3>Other users</h3></header>' + 
-              '<p class="loader"></p>' + 
+              '<header>' + 
+                '<h3>Other users' + 
+                (this.suggestions ? ' (' + this.suggestions[0].author + ')' : '') + 
+                '</h3>' + 
+              '</header>' + 
+              (this.suggestions ? '<p class="source-string">' + this.suggestions[0].translation + '</p>' :
+               '<p class="no">No suggestions available</p>') + 
             '</li>' + 
             '<li class="other-locales">' + 
               '<header><h3>Other locales</h3></header>' + 
@@ -152,14 +157,10 @@ var Pontoon = function() {
       // Other users
       $("#main .extra .other-users").click(function() {
         var li = $(this).parents('.entity'),
-            loader = li.find(".content .other-users .loader"),
             entity = li.get(0).entity;
-        if (loader.length === 0) {
-          // TODO: implement missing functionality
-        } else {
-          setTimeout(function() {
-            loader.removeClass("loader").html("Not implemented");
-          }, 2000);
+        
+        if (entity.suggestions) {
+          li.find('.toolbar').show();
         }
       });
 
