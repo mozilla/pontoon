@@ -641,17 +641,23 @@
   height: 20px;
   width: 25px;
   overflow: hidden;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid transparent;
   border-right: 1px solid #CCCCCC;
-}
-
-#pontoon #entitylist .extra li:last-child {
-  border-bottom: none;
 }
 
 #pontoon #entitylist .extra li.active {
   background: transparent none 5px 2px no-repeat;
   border-right: none;
+  border-bottom: 1px solid #CCCCCC;
+  border-top: 1px solid #CCCCCC;
+}
+
+#pontoon #entitylist .extra li:first-child {
+  border-top: none;
+}
+
+#pontoon #entitylist .extra li:last-child {
+  border-bottom: none;
 }
 
 #pontoon #entitylist .extra .original-string {
