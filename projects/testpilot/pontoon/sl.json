@@ -11,9 +11,11 @@
     "comment": "Test Pilot is a brand name and should not be translated.",
     "suggestions": [
       {
+        "author": "Marija",
         "translation": "Postani Test pilot"
       },
       {
+        "author": "Janez",
         "translation": "Postanite Testni Pilot"
       }
     ]

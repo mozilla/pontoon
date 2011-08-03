@@ -11,10 +11,12 @@
     "comment": "Test Pilot is a brand name and should not be translated.",
     "suggestions": [
       {
+        "author": "Sara",
         "translation": "Wird Test pilot"
       },
       {
-        "translation": "Werden Sie Testni Pilot"
+        "author": "Niclas",
+        "translation": "Werden Sie Test Pilot"
       }
     ]
   },
