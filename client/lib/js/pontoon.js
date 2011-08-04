@@ -88,7 +88,7 @@ var Pontoon = function() {
                 (this.suggestions ? ' (<span class="author">' + this.suggestions[0].author + '</span>)' : '') + 
                 '</h3>' + 
               '</header>' + 
-              (this.suggestions ? '<p class="source-string">' + this.suggestions[0].translation + '</p>' :
+              (this.suggestions ? '<p data-id="0" class="source-string">' + this.suggestions[0].translation + '</p>' :
                '<p class="no">No suggestions available</p>') + 
             '</li>' + 
             '<li class="other-locales">' + 
@@ -165,6 +165,46 @@ var Pontoon = function() {
         }
       });
 
+      // Navigate among suggestions fron other users
+      $("#main .source .prev").click(function(e) {
+        e.stopPropagation();
+        var entity = $(this).parents('.entity'),
+            suggestions = entity.get(0).entity.suggestions,
+            max = suggestions.length,
+            author = entity.find(".other-users .author"),
+            string = entity.find(".other-users .source-string"),
+            id = string.data("id"),
+            next = max - 1;
+
+        if (id > 0) {
+          next = id - 1;
+        }
+        
+        author.html(suggestions[next].author);
+        string
+          .html(suggestions[next].translation)
+          .data("id", next);
+      });
+      $("#main .source .next").click(function(e) {
+        e.stopPropagation();
+        var entity = $(this).parents('.entity'),
+            suggestions = entity.get(0).entity.suggestions,
+            max = suggestions.length,
+            author = entity.find(".other-users .author"),
+            string = entity.find(".other-users .source-string"),
+            id = string.data("id"),
+            next = 0;
+
+        if (id < max - 1) {
+          next = id + 1;
+        }
+        
+        author.html(suggestions[next].author);
+        string
+          .html(suggestions[next].translation)
+          .data("id", next);
+      });
+
       // Other locales
       $("#main .extra .other-locales").click(function() {
         var li = $(this).parents('.entity'),
@@ -227,7 +267,6 @@ var Pontoon = function() {
           entity.translation = source;
           self.updateEntityUI(entity);
         }
-
       });
 
       // Translate in textarea
