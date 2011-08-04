@@ -626,17 +626,12 @@
   float: left;
 }
 
-#pontoon #entitylist .source .content li .no {
-  color: #888888;
-  font-style: italic;
-}
-
 #pontoon #entitylist .source .content .original-string .comment {
   background: transparent url('../images/comment.png') 0 0 no-repeat;
   height: 16px;
   width: 16px;
   float: left;
-  margin: -7px 0 0 5px;
+  margin: -7px 5px 0 0;
   cursor: auto;
 }
 
@@ -644,11 +639,43 @@
   background-image: url('../images/comment-active.png');
 }
 
+#pontoon #entitylist .source .content .prev {
+  background: transparent url('../images/prev.png') 0 0 no-repeat;
+  height: 16px;
+  width: 16px;
+  float: left;
+  margin: -7px 0 0 0;
+  cursor: auto;
+}
+
+#pontoon #entitylist .source .content .prev:hover {
+  background-image: url('../images/prev-active.png');
+}
+
+#pontoon #entitylist .source .content .next {
+  background: transparent url('../images/next.png') 0 0 no-repeat;
+  height: 16px;
+  width: 16px;
+  float: left;
+  margin: -7px 5px 0 0;
+  cursor: auto;
+}
+
+#pontoon #entitylist .source .content .next:hover {
+  background-image: url('../images/next-active.png');
+}
+
+#pontoon #entitylist .source .content li .no {
+  color: #888888;
+  font-style: italic;
+}
+
 #pontoon #entitylist .source .content .loader {
   background: transparent url('../images/loader.gif') 0 0 no-repeat;
   height: 25px;
   padding: 10px 0 0 30px;
 }
+
 #pontoon #entitylist .extra {
   display: none;
   position: absolute;
@@ -674,17 +701,29 @@
 
 #pontoon #entitylist .extra li.active {
   background: transparent none 5px 2px no-repeat;
-  border-right: none;
-  border-bottom: 1px solid #CCCCCC;
   border-top: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
+  border-right: none;
 }
 
 #pontoon #entitylist .extra li:first-child {
   border-top: none;
 }
 
+#pontoon #entitylist > ul > li:first-child .extra li:first-child {
+  border-radius: 5px 0 0 0;
+  -moz-border-radius: 5px 0 0 0;
+  -webkit-border-radius: 5px 0 0 0;
+}
+
 #pontoon #entitylist .extra li:last-child {
   border-bottom: none;
+}
+
+#pontoon #entitylist > ul > li:last-child .extra li:last-child {
+  border-radius: 0 0 0 5px;
+  -moz-border-radius: 0 0 0 5px;
+  -webkit-border-radius: 0 0 0 5px;
 }
 
 #pontoon #entitylist .extra .original-string {
