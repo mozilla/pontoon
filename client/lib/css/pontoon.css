@@ -604,26 +604,31 @@
   margin: 0;
 }
 
-#pontoon #entitylist .source .content li {
+#pontoon #entitylist .source .content > li {
   display: none;
 }
 
-#pontoon #entitylist .source .content li.active {
+#pontoon #entitylist .source .content > li.active {
   display: block;
 }
 
-#pontoon #entitylist .source .content li header {
+#pontoon #entitylist .source .content > li header {
   overflow: hidden;
   height: 16px;
   padding-top: 7px;
 }
 
-#pontoon #entitylist .source .content li h3 {
+#pontoon #entitylist .source .content > li h3 {
   color: #888888;
   font-size: 10px;
   text-shadow: 0 1px 0 #FFFFFF;
   text-transform: uppercase;
   float: left;
+}
+
+#pontoon #entitylist .source .content > li .no {
+  color: #888888;
+  font-style: italic;
 }
 
 #pontoon #entitylist .source .content .original-string .comment {
@@ -645,7 +650,6 @@
   width: 16px;
   float: left;
   margin: -7px 0 0 0;
-  cursor: auto;
 }
 
 #pontoon #entitylist .source .content .prev:hover {
@@ -658,16 +662,10 @@
   width: 16px;
   float: left;
   margin: -7px 5px 0 0;
-  cursor: auto;
 }
 
 #pontoon #entitylist .source .content .next:hover {
   background-image: url('../images/next-active.png');
-}
-
-#pontoon #entitylist .source .content li .no {
-  color: #888888;
-  font-style: italic;
 }
 
 #pontoon #entitylist .source .content .loader {
@@ -694,16 +692,16 @@
   background: #EBEBEB none 5px 2px no-repeat;
   height: 20px;
   width: 25px;
-  overflow: hidden;
   border-bottom: 1px solid transparent;
   border-right: 1px solid #CCCCCC;
 }
 
 #pontoon #entitylist .extra li.active {
-  background: transparent none 5px 2px no-repeat;
+  background: transparent none 5px 1px no-repeat;
   border-top: 1px solid #CCCCCC;
   border-bottom: 1px solid #CCCCCC;
   border-right: none;
+  height: 19px;
 }
 
 #pontoon #entitylist .extra li:first-child {
