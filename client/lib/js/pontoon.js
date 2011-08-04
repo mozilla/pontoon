@@ -89,7 +89,7 @@ var Pontoon = function() {
                 '</h3>' + 
               '</header>' + 
               (this.suggestions ? '<p data-id="0" class="source-string">' + this.suggestions[0].translation + '</p>' :
-               '<p class="no">No suggestions available</p>') + 
+               '<p class="no">No suggestions yet</p>') + 
             '</li>' + 
             '<li class="other-locales">' + 
               '<header><h3>Other locales</h3></header>' + 
@@ -110,7 +110,7 @@ var Pontoon = function() {
         '</div>' +
         '<div class="translation">' + 
           '<div class="translation-wrapper">' +
-            '<textarea>' + (this.translation || '') + '</textarea>' + 
+            '<textarea>' + this.translation + '</textarea>' + 
             '<div class="toolbar">' + 
               '<a href="#save" class="save" title="Save translation"></a>' + 
               '<a href="#cancel" class="cancel" title="Cancel and revert to initial translation"></a>' + 
@@ -182,7 +182,7 @@ var Pontoon = function() {
         
         author.html(suggestions[next].author);
         string
-          .html(suggestions[next].translation)
+          .html(self.doNotRender(suggestions[next].translation))
           .data("id", next);
       });
       $("#main .source .next").click(function(e) {
@@ -201,7 +201,7 @@ var Pontoon = function() {
         
         author.html(suggestions[next].author);
         string
-          .html(suggestions[next].translation)
+          .html(self.doNotRender(suggestions[next].translation))
           .data("id", next);
       });
 
@@ -243,7 +243,7 @@ var Pontoon = function() {
         } else {
           $.translate(entity.original, self.client._locale, {
             complete: function (t) {
-              loader.removeClass("loader").addClass("source-string").html(t);
+              loader.removeClass("loader").addClass("source-string").html(self.doNotRender(t));
               li.find(".toolbar").show();
             }
           });
