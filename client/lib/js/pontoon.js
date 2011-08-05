@@ -92,8 +92,21 @@ var Pontoon = function() {
                '<p class="no">No suggestions yet</p>') + 
             '</li>' + 
             '<li class="other-locales">' + 
-              '<header><h3>Other locales</h3></header>' + 
-              '<p class="loader"></p>' + 
+              '<header class="select">' + 
+                '<h3 class="selector">' + 
+                  '<span class="flag"></span>' + 
+                  '<span class="language">Select locale</span>' + 
+                  '<span class="handle"> &#9652;</span>' + 
+                '</h3>' + 
+                '<ul class="menu">' + 
+                  '<li><span class="flag de"></span><span class="language">Deutsch</span></li>' + 
+                  '<li><span class="flag fr"></span><span class="language">Français</span></li>' + 
+                  '<li><span class="flag hr"></span><span class="language">Hrvatski</span></li>' + 
+                  '<li><span class="flag pl"></span><span class="language">Polski</span></li>' + 
+                  '<li><span class="flag sl"></span><span class="language">Slovenščina</span></li>' + 
+                '</ul>' + 
+              '</header>' + 
+              '<p class="no">No suggestions yet</p>' +
             '</li>' + 
             '<li class="translation-memory">' + 
               '<header><h3>Translation memory</h3></header>' + 
@@ -124,7 +137,7 @@ var Pontoon = function() {
         }
         this.ui = li; /* HTML Element representing string in the main UI */
   
-        list.find('ul').append(li);
+        list.children('ul').append(li);
       });
 
       // Main entity list handlers
@@ -157,10 +170,9 @@ var Pontoon = function() {
 
       // Other users
       $("#main .extra .other-users").click(function() {
-        var li = $(this).parents('.entity'),
-            entity = li.get(0).entity;
+        var li = $(this).parents('.entity');
         
-        if (entity.suggestions) {
+        if (li.get(0).entity.suggestions) {
           li.find('.toolbar').show();
         }
       });
@@ -168,10 +180,10 @@ var Pontoon = function() {
       // Navigate among suggestions from other users
       $("#main .source").find(".prev, .next").click(function(e) {
         e.stopPropagation();
-        var entity = $(this).parents('.entity'),
-            suggestions = entity.get(0).entity.suggestions,
+        var li = $(this).parents('.entity'),
+            suggestions = li.get(0).entity.suggestions,
             max = suggestions.length,
-            ou = entity.find(".other-users"),
+            ou = li.find(".other-users"),
             string = ou.find(".source-string"),
             id = string.data("id"),
             next = 0,
@@ -195,17 +207,39 @@ var Pontoon = function() {
       });
 
       // Other locales
-      // TODO: AJAX request to only display locales with translations available
-      $("#main .extra .other-locales").click(function() {
-        var li = $(this).parents('.entity'),
-            loader = li.find(".content .other-locales .loader"),
-            entity = li.get(0).entity;
-        if (loader.length === 0) {
-          // TODO: implement missing functionality
+      $("#main .source .other-locales .selector").click(function(e) {
+        e.stopPropagation();
+        $(this).siblings(".menu").show();
+      });
+      $("#main .source .other-locales .select .menu li").click(function(e) {
+        e.stopPropagation();
+        var li = $(this),
+            entity = li.parents(".entity"),
+            index = entity.index(),
+            locale = li.find(".flag").attr("class").split(" ")[1],
+            p = li.parents('.select').next('p').show();
+              	
+        li.parents('.menu').siblings('.selector')
+          .find('.flag').attr("class", li.find('.flag').attr('class')).end()
+          .find('.language').html(li.find('.language').html()).end().end()
+        .hide();
+
+        // TODO: AJAX request to only display locales with current string translation available
+        if (locale === "sl") {
+          // TODO: Only request each locale meta file once
+          $.getJSON($("#source").attr("src") + "/pontoon/" + locale + ".json").success(function(data) {
+            var translation = data.entities[index].translation;
+            if (translation) {
+              p.removeClass("no").addClass("source-string").html(translation);
+              entity.find('.toolbar').show();
+            } else {
+              p.addClass("no").html('No translations yet');
+              entity.find('.toolbar').hide();
+            }
+          });
         } else {
-          setTimeout(function() {
-            loader.removeClass("loader").html("Not implemented");
-          }, 2000);
+          p.addClass("no").html('No translations yet');
+          entity.find('.toolbar').hide();
         }
       });
 

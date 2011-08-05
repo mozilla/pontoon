@@ -636,7 +636,7 @@
   height: 16px;
   width: 16px;
   float: left;
-  margin: -7px 5px 0 0;
+  margin: -7px 5px 0 1px;
   cursor: auto;
 }
 
@@ -666,6 +666,43 @@
 
 #pontoon #entitylist .source .content .next:hover {
   background-image: url('../images/next-active.png');
+}
+
+#pontoon #entitylist .source .content .other-locales .select {
+  position: static;
+}
+
+#pontoon #entitylist .source .content .other-locales .selector .flag {
+  margin: -2px 5px 0 1px;
+}
+
+#pontoon #entitylist .source .content .other-locales h3 {
+  cursor: pointer;
+}
+
+#pontoon #entitylist .source .content .other-locales h3:hover {
+  text-decoration: underline;
+}
+
+#pontoon #entitylist .source .content .other-locales .menu {
+  bottom: 0;
+}
+
+#pontoon #entitylist .source .content .other-locales .menu li:nth-child(1) {
+  border-bottom: none;
+  padding: 2px 12px;
+}
+
+#pontoon #entitylist .source .content .other-locales .menu li:nth-child(2) {
+  border-top: none;
+}
+
+#pontoon #entitylist .source .content .other-locales .menu .flag {
+  margin: 2px 5px 0 0;
+}
+
+#pontoon #entitylist .source .content .other-locales .no {
+  display: none;
 }
 
 #pontoon #entitylist .source .content .loader {
