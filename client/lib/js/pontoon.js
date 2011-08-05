@@ -165,47 +165,37 @@ var Pontoon = function() {
         }
       });
 
-      // Navigate among suggestions fron other users
-      $("#main .source .prev").click(function(e) {
+      // Navigate among suggestions from other users
+      $("#main .source").find(".prev, .next").click(function(e) {
         e.stopPropagation();
         var entity = $(this).parents('.entity'),
             suggestions = entity.get(0).entity.suggestions,
             max = suggestions.length,
-            author = entity.find(".other-users .author"),
-            string = entity.find(".other-users .source-string"),
+            ou = entity.find(".other-users"),
+            string = ou.find(".source-string"),
             id = string.data("id"),
-            next = max - 1;
+            next = 0,
+            cls = $(this).attr("class");
 
-        if (id > 0) {
-          next = id - 1;
+        if (cls === "prev") {
+          next = max - 1;
+          if (id > 0) {
+            next = id - 1;
+          }
+        } else if (cls === "next") {
+          if (id < max - 1) {
+            next = id + 1;
+          }
         }
-        
-        author.html(suggestions[next].author);
-        string
-          .html(self.doNotRender(suggestions[next].translation))
-          .data("id", next);
-      });
-      $("#main .source .next").click(function(e) {
-        e.stopPropagation();
-        var entity = $(this).parents('.entity'),
-            suggestions = entity.get(0).entity.suggestions,
-            max = suggestions.length,
-            author = entity.find(".other-users .author"),
-            string = entity.find(".other-users .source-string"),
-            id = string.data("id"),
-            next = 0;
 
-        if (id < max - 1) {
-          next = id + 1;
-        }
-        
-        author.html(suggestions[next].author);
+        ou.find(".author").html(suggestions[next].author);
         string
           .html(self.doNotRender(suggestions[next].translation))
           .data("id", next);
       });
 
       // Other locales
+      // TODO: AJAX request to only display locales with translations available
       $("#main .extra .other-locales").click(function() {
         var li = $(this).parents('.entity'),
             loader = li.find(".content .other-locales .loader"),
