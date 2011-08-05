@@ -69,7 +69,7 @@ var Pontoon = function() {
           '<ol class="extra">' + 
             '<li class="active original-string" title="Original string"></li>' + 
             '<li class="other-users" title="Suggestions from other users"></li>' + 
-            '<li class="other-locales" title="Suggestions from other locales"></li>' + 
+            '<li class="other-locales" title="Translations from other locales"></li>' + 
             '<li class="translation-memory" title="Translation memory"></li>' + 
             '<li class="machine-translation" title="Machine translation by Microsoft Translator"></li>' + 
           '</ol>' +
@@ -490,7 +490,7 @@ var Pontoon = function() {
   
   
     /**
-     * Get data from external meta file: original, translation, comment, suggestions...
+     * Get data from external meta file: original string, translation, comment, suggestions...
      * Match with each string in the document, which is prepended with l10n comment nodes
      * Example: <!--l10n-->Hello World
      *
