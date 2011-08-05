@@ -110,7 +110,7 @@ var Pontoon = function() {
         '</div>' +
         '<div class="translation">' + 
           '<div class="translation-wrapper">' +
-            '<textarea>' + this.translation + '</textarea>' + 
+            '<textarea>' + (this.translation || '') + '</textarea>' + 
             '<div class="toolbar">' + 
               '<a href="#save" class="save" title="Save translation"></a>' + 
               '<a href="#cancel" class="cancel" title="Cancel and revert to initial translation"></a>' + 
