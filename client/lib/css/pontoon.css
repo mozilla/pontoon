@@ -152,9 +152,9 @@
   width: 150px;
   z-index: 20; /* Must be higher than iframe-cover */
 
-  border-radius: 4px 4px 0 0;
-  -moz-border-radius: 4px 4px 0 0;
-  -webkit-border-radius: 4px 4px 0 0;
+  border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
 
   box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
@@ -178,9 +178,9 @@
 }
 
 #pontoon ul.menu li:first-child.hover {
-  border-radius: 4px 4px 0 0;
-  -moz-border-radius: 4px 4px 0 0;
-  -webkit-border-radius: 4px 4px 0 0;
+  border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
 }
 
 #pontoon ul.menu li:nth-child(2) {
@@ -688,9 +688,9 @@
   height: 100%;
   top: 25px;
 
-  border-radius: 4px 4px 4px 4px;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
 
   box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
