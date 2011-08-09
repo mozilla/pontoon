@@ -253,7 +253,7 @@ var Pontoon = function() {
         } else {
           setTimeout(function() {
             loader.removeClass("loader").html("Not implemented");
-          }, 2000);
+          }, 1000);
         }
       });
 
