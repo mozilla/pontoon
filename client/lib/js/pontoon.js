@@ -209,7 +209,12 @@ var Pontoon = function() {
       // Other locales
       $("#main .source .other-locales .selector").click(function(e) {
         e.stopPropagation();
-        $(this).siblings(".menu").show();
+        if ($(this).siblings(".menu").is(":visible")) {
+          $("#main .source .other-locales .menu").hide();
+        } else {
+          $("#main .source .other-locales .menu").hide();
+          $(this).siblings('.menu').show();
+        }
       });
       $("#main .source .other-locales .select .menu li").click(function(e) {
         e.stopPropagation();
