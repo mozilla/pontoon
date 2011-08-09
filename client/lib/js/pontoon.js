@@ -96,7 +96,7 @@ var Pontoon = function() {
                 '<h3 class="selector">' + 
                   '<span class="flag"></span>' + 
                   '<span class="language">Select locale</span>' + 
-                  '<span class="handle"> &#9652;</span>' + 
+                  '<span class="handle"> &#9662;</span>' + 
                 '</h3>' + 
                 '<ul class="menu">' + 
                   '<li><span class="flag de"></span><span class="language">Deutsch</span></li>' + 
