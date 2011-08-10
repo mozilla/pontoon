@@ -257,7 +257,7 @@ var Pontoon = function() {
           // TODO: implement missing functionality
         } else {
           setTimeout(function() {
-            loader.removeClass("loader").html("Not implemented");
+            loader.removeClass("loader").addClass("no").html("Not implemented");
           }, 1000);
         }
       });
