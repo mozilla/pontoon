@@ -225,7 +225,7 @@ var Pontoon = function() {
             p = li.parents('.select').next('p').show();
               	
         li.parents('.menu').siblings('.selector')
-          .find('.flag').attr("class", li.find('.flag').attr('class')).end()
+          .find('.flag').attr("class", li.find('.flag').attr('class')).show().end()
           .find('.language').html(li.find('.language').html()).end().end()
         .hide();
 

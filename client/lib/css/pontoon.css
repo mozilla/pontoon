@@ -673,6 +673,7 @@
 }
 
 #pontoon #entitylist .source .content .other-locales .selector .flag {
+  display: none;
   margin: -2px 5px 0 1px;
 }
 
