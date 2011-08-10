@@ -152,7 +152,8 @@ var Pontoon = function() {
       // Source menu
       $("#main .extra li").click(function(e) {
       	e.stopPropagation();
-      	var t = $(this);
+      	var t = $(this),
+      	    li = t.parents('.entity');
         t.parents(".extra").find("li").removeClass("active").end()
 
           .siblings(".toolbar").hide()
@@ -161,6 +162,10 @@ var Pontoon = function() {
             .find("li." + t.attr("class")).addClass("active");
 
         t.addClass("active");
+
+        if (li.find(".content > li:visible p.source-string").length > 0) {
+          li.find('.toolbar').show();
+        }
       });
 
       // Original string
