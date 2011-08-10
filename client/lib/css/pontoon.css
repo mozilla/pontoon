@@ -710,10 +710,6 @@
   margin: 2px 5px 0 0;
 }
 
-#pontoon #entitylist .source .content .other-locales .no {
-  display: none;
-}
-
 #pontoon #entitylist .source .content .loader {
   background: transparent url('../images/loader.gif') 0 0 no-repeat;
   height: 25px;

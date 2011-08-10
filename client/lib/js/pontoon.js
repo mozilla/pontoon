@@ -106,7 +106,7 @@ var Pontoon = function() {
                   '<li><span class="flag sl"></span><span class="language">Slovenščina</span></li>' + 
                 '</ul>' + 
               '</header>' + 
-              '<p class="no">No suggestions yet</p>' +
+              '<p class="no">Get inspiration from other locales</p>' +
             '</li>' + 
             '<li class="translation-memory">' + 
               '<header><h3>Translation memory</h3></header>' + 
