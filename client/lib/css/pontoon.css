@@ -693,9 +693,9 @@
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
 
-  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
 }
 
 #pontoon #entitylist .source .content .other-locales .menu li:nth-child(1) {
