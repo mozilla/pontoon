@@ -227,6 +227,13 @@
   -webkit-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.5);
 }
 
+#pontoon > #main > header #drag {
+  border: none;
+  cursor: ns-resize;
+  height: 6px;
+  margin: -6px 0 0;
+}
+
 #pontoon #logo {
   background: url('../images/logo-small.png') no-repeat 2px 9px;
   color: #AEEE00;

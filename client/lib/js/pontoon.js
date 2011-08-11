@@ -225,7 +225,7 @@ var Pontoon = function() {
         e.stopPropagation();
         var li = $(this),
             entity = li.parents(".entity"),
-            index = entity.index(),
+            index = entity.index(), /* TODO: use IDs or XPath */
             locale = li.find(".flag").attr("class").split(" ")[1],
             p = li.parents('.select').next('p').show();
               	
