@@ -584,10 +584,6 @@
   -webkit-box-shadow: 0 1px #FFFFFF, 0 1px 3px -1px #CCCCCC inset;
 }
 
-#pontoon #entitylist .translated .translation textarea {
-  border-color: #AEEE00;
-}
-
 #pontoon #entitylist .translation textarea:hover {
   border-color: #AEEE00;
 }
@@ -598,6 +594,10 @@
 
 #pontoon #entitylist > ul > li.active .translation textarea {
   border-color: #BBBBBB;
+}
+
+#pontoon #entitylist > ul > li.translated .translation textarea {
+  border-color: #AEEE00;
 }
 
 #pontoon #entitylist .source {
