@@ -438,7 +438,7 @@ var Pontoon = function() {
         self.save();
       });
 
-      // Use enter key to move around entities and confirm translations
+      // In-place keyboard shortcuts
       $("html", self.client._doc).unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
         var key = e.keyCode || e.which,
             toolbar = $(".editableToolbar", self.client._doc),
@@ -446,17 +446,31 @@ var Pontoon = function() {
             ui = toolbar.get(0).target.entity.ui,
             next = ui.next();
 
-        if (save.is(":visible") && key === 13) { // Enter
-          // If on last entity, jump to the first
-          if (next.length === 0) {
-            next = $(".entity:not('.head'):first");
+        if (save.is(":visible")) {
+          if (key === 13) { // Enter: confirm translation
+            save.click();
+            toolbar.get(0).target.hideToolbar();
+            return false;
           }
 
-          save.click();
-          $(toolbar.get(0).target).removeClass("hovered");
-          next.get(0).entity.hover();
-          next.click();
-          return false;
+          if (key === 27) { // Esc: cancel translation
+            toolbar.find(".cancel").click();
+            toolbar.get(0).target.hideToolbar();
+            return false;
+          }
+
+          if (key === 9) { // Tab: confirm + move around entities
+            // If on last entity, jump to the first
+            if (next.length === 0) {
+              next = $(".entity:not('.head'):first");
+            }
+
+            save.click();
+            $(toolbar.get(0).target).removeClass("hovered");
+            next.get(0).entity.hover();
+            next.click();
+            return false;
+          }
         }
       });
 
