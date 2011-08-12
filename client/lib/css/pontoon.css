@@ -214,6 +214,7 @@
   padding: 6px 5px;
   height: 26px;
   position: relative;
+  z-index: 1;
 
   background-color: #222222;
   background-image: -moz-linear-gradient(center top, #333333, #111111); /* FF3.6 */
