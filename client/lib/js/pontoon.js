@@ -438,6 +438,27 @@ var Pontoon = function() {
         self.save();
       });
 
+      // Use enter key to move around entities and confirm translations
+      $("html", self.client._doc).unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
+        var key = e.keyCode || e.which,
+            toolbar = $(".editableToolbar", self.client._doc),
+            save = toolbar.find(".save"),
+            ui = toolbar.get(0).target.entity.ui,
+            next = ui.next();
+
+        if (save.is(":visible") && key === 13) { // Enter
+          // If on last entity, jump to the first
+          if (next.length === 0) {
+            next = $(".entity:not('.head'):first");
+          }
+
+          save.click();
+          next.get(0).entity.hover();
+          next.click();
+          return false;
+        }
+      });
+
     },
 
 
