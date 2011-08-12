@@ -214,7 +214,7 @@
   padding: 6px 5px;
   height: 26px;
   position: relative;
-  z-index: 1;
+  z-index: 15; /* Must be higher than iframe-cover */
 
   background-color: #222222;
   background-image: -moz-linear-gradient(center top, #333333, #111111); /* FF3.6 */
