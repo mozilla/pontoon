@@ -453,6 +453,7 @@ var Pontoon = function() {
           }
 
           save.click();
+          $(toolbar.get(0).target).removeClass("hovered");
           next.get(0).entity.hover();
           next.click();
           return false;
