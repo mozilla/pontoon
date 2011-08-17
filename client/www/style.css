@@ -245,6 +245,10 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#444444', EndColorStr='#000000'); /* IE6–IE9 */
 }
 
+#intro noscript p {
+  text-transform: uppercase;
+}
+
 #title {
   color: #AEEE00;
   text-transform: lowercase;
