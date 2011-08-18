@@ -189,6 +189,7 @@
 
 #pontoon .right {
   float: right;
+  margin-right: 5px;
 }
 
 
@@ -211,7 +212,7 @@
 
 #pontoon > #main > header {
   font-size: 12px;
-  padding: 6px 5px;
+  padding: 6px 0;
   height: 26px;
   position: relative;
   z-index: 15; /* Must be higher than iframe-cover */
@@ -236,11 +237,11 @@
 }
 
 #pontoon #logo {
-  background: url('../images/logo-small.png') no-repeat 2px 9px;
+  background: url('../images/logo-small.png') no-repeat 7px 9px;
   color: #AEEE00;
   float: left;
   margin-top: -4px;
-  padding: 10px 5px 11px 25px;
+  padding: 10px 5px 11px 30px;
   text-transform: lowercase;
   cursor: ns-resize;
 }
