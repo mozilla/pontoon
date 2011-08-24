@@ -3,9 +3,6 @@
 
 from funfactory.settings_base import *
 
-# Logging
-SYSLOG_TAG = "http_app_playdoh"  # Make this unique to your project.
-
 
 # Bundles is a dictionary of two dictionaries, css and js, which list css files
 # and js files that can be bundled together by the minify app.
@@ -28,7 +25,6 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     'examples',
 ]
 
-
 # Tells the extract script what files to look for L10n in and what function
 # handles the extraction. The Tower library expects this.
 
@@ -44,3 +40,5 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
 #    # may use.
 #    ('media/js/**.js', 'javascript'),
 # ]
+
+LOGGING = dict(loggers=dict(playdoh = {'level': logging.DEBUG}))

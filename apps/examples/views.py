@@ -3,13 +3,17 @@
 from django import http
 
 import bleach
+import commonware
 import jingo
 from session_csrf import anonymous_csrf
 
 
+log = commonware.log.getLogger('playdoh')
+
 def home(request):
     """Main example view."""
     data = {}  # You'd add data here that you're sending to the template.
+    log.debug("I'm alive!")
     return jingo.render(request, 'examples/home.html', data)
 
 
