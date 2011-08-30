@@ -273,7 +273,7 @@ var Pontoon = function() {
           }).error(function() {
             loader.removeClass("loader").addClass("no").html("Ooops, something went wrong... Please try again.");
           }).success(function(response) {
-          	if (response != null) {
+          	if (response !== null) {
               // Not supported in some browsers, but needed with current JSON output:
               // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/keys
               // TODO - use this kind of output: http://pastebin.mozilla.org/1316020
