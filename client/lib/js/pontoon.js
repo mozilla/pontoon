@@ -1,5 +1,7 @@
 var Pontoon = function () {
 
+  'use strict';
+
   /* public  */
   return {
 
