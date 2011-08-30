@@ -259,11 +259,42 @@ var Pontoon = function() {
             loader = li.find(".content .translation-memory .loader"),
             entity = li.get(0).entity;
         if (loader.length === 0) {
-          // TODO: implement missing functionality
+          li.find(".toolbar").show();
         } else {
-          setTimeout(function() {
-            loader.removeClass("loader").addClass("no").html("Not implemented");
-          }, 1000);
+          $.ajax({
+            url: 'http://www.frenchmozilla.fr/transvision/webservice.php',
+            data: {
+              recherche: li.find('.original-string .source-string').html(),
+              locale: self.client._locale,
+              whole_word: 'whole_word',
+              repo: 'beta'
+            },
+            dataType: 'jsonp'
+          }).error(function() {
+            loader.removeClass("loader").addClass("no").html("Ooops, something went wrong... Please try again.");
+          }).success(function(response) {
+          	if (response != null) {
+              // Not supported in some browsers, but needed with current JSON output:
+              // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/keys
+              // TODO - use this kind of output: http://pastebin.mozilla.org/1316020
+              Object.keys = function( obj ) {
+                var array = new Array();
+                for ( var prop in obj ) {
+                  if ( obj.hasOwnProperty( prop ) ) {
+                    array.push( prop );
+                  }
+                }
+                return array;
+              };
+
+              var first = response[Object.keys(response)[0]],
+                  translation = first[Object.keys(first)[0]];
+              loader.removeClass("loader").addClass("source-string").html(self.doNotRender(translation));
+              li.find(".toolbar").show();
+            } else {
+              loader.removeClass("loader").addClass("no").html("No translations yet");
+            }
+          });
         }
       });
 
