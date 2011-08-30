@@ -1,4 +1,4 @@
-var Pontoon = function () {
+var Pontoon = (function () {
 
   'use strict';
 
@@ -17,8 +17,14 @@ var Pontoon = function () {
      * locale - locale msgstrs are localized too
     */
     save: function () {
-      // Deep copy: http://api.jquery.com/jQuery.extend
-      var data = $.extend(true, {}, this.client._data);
+      var url = this.client._meta.url || 'http://0.0.0.0:8000/push/',
+          project = this.client._meta.project || this.client._doc.location.href,
+          params = {
+            'project': project,
+            'locale': this.client._locale
+          },
+          // Deep copy: http://api.jquery.com/jQuery.extend
+          data = $.extend(true, {}, this.client._data);
 
       $(data.entities).each(function () {
         delete this.node;
@@ -27,15 +33,9 @@ var Pontoon = function () {
         delete this.unhover;
       });
 
-      var url = ('url' in this.client._meta) ? this.client._meta['url'] : 'http://0.0.0.0:8000/push/',
-          project = ('project' in this.client._meta) ? this.client._meta['project'] : this.client._doc.location.href,
-          params = {
-            'project': project,
-            'locale': this.client._locale,
-            // TODO: add, support other browsers - https://developer.mozilla.org/en/Using_JSON_in_Firefox
-            'data': JSON.stringify(data)
-          };
-
+      // TODO: add, support other browsers - https://developer.mozilla.org/en/Using_JSON_in_Firefox
+      params.data = JSON.stringify(data);
+      
       $.ajaxSettings.traditional = true;
       $.post(url, params);
     },
@@ -47,7 +47,7 @@ var Pontoon = function () {
      *
      * string HTML snippet that has to be displayed as code instead of rendered
     */
-    doNotRender: function(string) {
+    doNotRender: function (string) {
       return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     },
 
@@ -151,10 +151,10 @@ var Pontoon = function () {
       });
 
       // Source menu
-      $("#main .extra li").click(function(e) {
-      	e.stopPropagation();
-      	var t = $(this),
-      	    li = t.parents('.entity');
+      $("#main .extra li").click(function (e) {
+        e.stopPropagation();
+        var t = $(this),
+            li = t.parents('.entity');
         t.parents(".extra").find("li").removeClass("active").end()
 
           .siblings(".toolbar").hide()
@@ -184,7 +184,7 @@ var Pontoon = function () {
       });
 
       // Navigate among suggestions from other users
-      $("#main .source").find(".prev, .next").click(function(e) {
+      $("#main .source").find(".prev, .next").click(function (e) {
         e.stopPropagation();
         var li = $(this).parents('.entity'),
             suggestions = li.get(0).entity.suggestions,
@@ -213,7 +213,7 @@ var Pontoon = function () {
       });
 
       // Other locales
-      $("#main .source .other-locales .selector").click(function(e) {
+      $("#main .source .other-locales .selector").click(function (e) {
         e.stopPropagation();
         if ($(this).siblings(".menu").is(":visible")) {
           $("#main .source .other-locales .menu").hide();
@@ -222,14 +222,14 @@ var Pontoon = function () {
           $(this).siblings('.menu').show();
         }
       });
-      $("#main .source .other-locales .select .menu li").click(function(e) {
+      $("#main .source .other-locales .select .menu li").click(function (e) {
         e.stopPropagation();
         var li = $(this),
             entity = li.parents(".entity"),
             index = entity.index(), /* TODO: use IDs or XPath */
             locale = li.find(".flag").attr("class").split(" ")[1],
             p = li.parents('.select').next('p').show();
-              	
+
         li.parents('.menu').siblings('.selector')
           .find('.flag').attr("class", li.find('.flag').attr('class')).show().end()
           .find('.language').html(li.find('.language').html()).end().end()
@@ -238,7 +238,7 @@ var Pontoon = function () {
         // TODO: AJAX request to only display locales with current string translation available
         if (locale === "sl") {
           // TODO: Only request each locale meta file once
-          $.getJSON($("#source").attr("src") + "/pontoon/" + locale + ".json").success(function(data) {
+          $.getJSON($("#source").attr("src") + "/pontoon/" + locale + ".json").success(function (data) {
             var translation = data.entities[index].translation;
             if (translation) {
               p.removeClass("no").addClass("source-string").html(translation);
@@ -257,8 +257,7 @@ var Pontoon = function () {
       // Translation memory
       $("#main .extra .translation-memory").click(function () {
         var li = $(this).parents('.entity'),
-            loader = li.find(".content .translation-memory .loader"),
-            entity = li.get(0).entity;
+            loader = li.find(".content .translation-memory .loader");
         if (loader.length === 0) {
           li.find(".toolbar").show();
         } else {
@@ -273,16 +272,17 @@ var Pontoon = function () {
             dataType: 'jsonp'
           }).error(function () {
             loader.removeClass("loader").addClass("no").html("Ooops, something went wrong... Please try again.");
-          }).success(function(response) {
-          	if (response !== null) {
+          }).success(function (response) {
+            if (response !== null) {
               // Not supported in some browsers, but needed with current JSON output:
               // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/keys
               // TODO - use this kind of output: http://pastebin.mozilla.org/1316020
-              Object.keys = function( obj ) {
-                var array = new Array();
-                for ( var prop in obj ) {
-                  if ( obj.hasOwnProperty( prop ) ) {
-                    array.push( prop );
+              Object.keys = function (obj) {
+                var array = [],
+                    prop;
+                for (prop in obj) {
+                  if (obj.hasOwnProperty(prop)) {
+                    array.push(prop);
                   }
                 }
                 return array;
@@ -317,12 +317,12 @@ var Pontoon = function () {
       });
 
       // Copy source to translation
-      $("#main .source .copy").click(function(e) {
+      $("#main .source .copy").click(function (e) {
         e.stopPropagation();
         var toolbar = $(self.client._doc).find('.editableToolbar'),
             li = $(this).parents('.entity'),
-      	    entity = li.get(0).entity,
-      	    source = li.find('.source .content .active .source-string').html();
+            entity = li.get(0).entity,
+            source = li.find('.source .content .active .source-string').html();
 
         // Only if no other entity is being edited in-place
         if (entity.node && entity.node.is('.hovered')) {
@@ -337,8 +337,8 @@ var Pontoon = function () {
 
       // Translate in textarea
       // TODO: add support for focus, not only click
-      $("#main .translation textarea").click(function(e) {
-      	e.stopPropagation();
+      $("#main .translation textarea").click(function (e) {
+        e.stopPropagation();
         var entity = $(this).parents('.entity').get(0).entity;
 
         // Only if no other entity is being edited in-place
@@ -347,12 +347,12 @@ var Pontoon = function () {
         }
       });
 
-      $("#main .translation .save").click(function(e) {
+      $("#main .translation .save").click(function (e) {
         e.stopPropagation();
         var toolbar = $(self.client._doc).find('.editableToolbar'),
             li = $(this).parents('.entity'),
-      	    entity = li.get(0).entity,
-      	    source = li.find('.translation textarea').val();
+            entity = li.get(0).entity,
+            source = li.find('.translation textarea').val();
 
         // Only if no other entity is being edited in-place
         if (entity.node && entity.node.is('.hovered')) {
@@ -365,11 +365,11 @@ var Pontoon = function () {
         }
       });
 
-      $("#main .translation .cancel").click(function(e) {
+      $("#main .translation .cancel").click(function (e) {
         e.stopPropagation();
         var toolbar = $(self.client._doc).find('.editableToolbar'),
             li = $(this).parents('.entity'),
-      	    entity = li.get(0).entity;
+            entity = li.get(0).entity;
 
         // Only if no other entity is being edited in-place
         if (entity.node && entity.node.is('.hovered')) {
@@ -393,7 +393,7 @@ var Pontoon = function () {
     updateProgress: function () {
       var all = $("#entitylist .entity").length,
           translated = $("#entitylist .entity.translated").length;
-      $('#progress span').width(Math.round(translated*100 / all) + '%');
+      $('#progress span').width(Math.round(translated * 100 / all) + '%');
       $('#progress-value').html(translated + '/' + all);
     },
 
@@ -445,7 +445,7 @@ var Pontoon = function () {
           $('#authentication-menu, #save-menu').toggleClass('menu');
         }
       });
-      $('#nickname').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
+      $('#nickname').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         var key = e.keyCode || e.which;
         if (key === 13) { // Enter
           $('#authentication-menu .restricted .go').click();
@@ -471,7 +471,7 @@ var Pontoon = function () {
       });
 
       // In-place keyboard shortcuts
-      $("html", self.client._doc).unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
+      $("html", self.client._doc).unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         var key = e.keyCode || e.which,
             toolbar = $(".editableToolbar", self.client._doc),
             save = toolbar.find(".save"),
@@ -532,7 +532,7 @@ var Pontoon = function () {
      * 
      * entity Entity
      */
-    updateEntityUI: function(entity) {
+    updateEntityUI: function (entity) {
       entity.ui.find('textarea').val(entity.translation).parents('.entity').addClass('translated');
       this.updateProgress();
     },
@@ -544,7 +544,7 @@ var Pontoon = function () {
      * 
      * e Temporary entity object
      */
-    extendEntity: function(e) {
+    extendEntity: function (e) {
       e.hover = function () {
         this.node.get(0).showToolbar();
         this.ui.toggleClass('hovered');
@@ -605,9 +605,9 @@ var Pontoon = function () {
           counter = 1, /* TODO: use IDs or XPath */
           parent = null;
 
-      $.getJSON($("#source").attr("src") + "/pontoon/" + this.client._locale + ".json").success(function(data) {
-      	self.client._data = data;
-      	var entities = self.client._data.entities;
+      $.getJSON($("#source").attr("src") + "/pontoon/" + this.client._locale + ".json").success(function (data) {
+        self.client._data = data;
+        var entities = self.client._data.entities;
 
         $(self.client._doc).find('*').contents().each(function () {
           if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
@@ -623,7 +623,7 @@ var Pontoon = function () {
 
             entity.node = parent; /* HTML Element holding string */
             self.extendEntity(entity);
-            counter++;
+            counter = counter + 1;
           }
         });
         self.renderMainUI();
@@ -640,10 +640,10 @@ var Pontoon = function () {
       var meta = $(this.client._doc).find('head > meta[name=Pontoon]');
       if (meta.length > 0) {
         if (meta.attr('content')) {
-          this.client._meta['project'] = meta.attr('content');
+          this.client._meta.project = meta.attr('content');
         }
         if (meta.attr('ip')) {
-          this.client._meta['url'] = meta.attr('ip');
+          this.client._meta.url = meta.attr('ip');
         }
         return this.getEntities();
       }
@@ -661,12 +661,13 @@ var Pontoon = function () {
      * ptn Pontoon document object
      * locale ISO 639-1 language code of the language website is localized to
      */
-    init: function(doc, ptn, locale) {
-      var self = this;
-
+    init: function (doc, ptn, locale) {
       if (!doc) {
         throw "Document handler required";
       }
+
+      var self = this,
+          ss = $('<link rel="stylesheet" href="../../client/lib/css/editable.css">', doc);
 
       // Build client object
       this.client = {
@@ -679,7 +680,6 @@ var Pontoon = function () {
       };
 
       // Enable document editing
-      var ss = $('<link rel="stylesheet" href="../../client/lib/css/editable.css">', doc);
       $('head', doc).append(ss);      
       this.extractEntities();       
 
@@ -687,7 +687,6 @@ var Pontoon = function () {
       $.getScript("client/lib/js/local-settings.js", function () {
         $.translate.load(self.client._mt);
       });
-
     },
 
 
@@ -698,7 +697,7 @@ var Pontoon = function () {
     common: function () {
 
       // Show/hide menu on click
-      $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
+      $('.selector').unbind("click.pontoon").bind("click.pontoon", function (e) {
         if (!$(this).siblings('.menu').is(':visible')) {
           e.stopPropagation();
           $('.menu').hide();
@@ -716,7 +715,7 @@ var Pontoon = function () {
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
       });
-      $('.menu').unbind("click.pontoon").bind("click.pontoon", function(e) {
+      $('.menu').unbind("click.pontoon").bind("click.pontoon", function (e) {
         e.stopPropagation();
       });
 
@@ -725,7 +724,7 @@ var Pontoon = function () {
         // TODO: url and locale validation
         window.location = "?url=" + $('.url:visible').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
       });
-      $('.url').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
+      $('.url').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         var key = e.keyCode || e.which;
         if (key === 13) { // Enter
           $('.locale .confirm:visible').click();
@@ -740,7 +739,7 @@ var Pontoon = function () {
       });
 
       // Use arrow keys to move around menu, confirm with enter, close with escape
-      $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function(e) {
+      $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         if ($('.menu').is(':visible')) {
           var key = e.keyCode || e.which,
               menu = $('.menu:visible'),
@@ -780,4 +779,4 @@ var Pontoon = function () {
     }
 
   };
-}();
+}());
