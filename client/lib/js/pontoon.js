@@ -25,8 +25,7 @@ var Pontoon = function() {
         delete this.unhover;
       });
 
-      var self = this,
-          url = ('url' in this.client._meta) ? this.client._meta['url'] : 'http://0.0.0.0:8000/push/',
+      var url = ('url' in this.client._meta) ? this.client._meta['url'] : 'http://0.0.0.0:8000/push/',
           project = ('project' in this.client._meta) ? this.client._meta['project'] : this.client._doc.location.href,
           params = {
             'project': project,
