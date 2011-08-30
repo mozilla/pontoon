@@ -1,4 +1,4 @@
-var Pontoon = function() {
+var Pontoon = function () {
 
   /* public  */
   return {
@@ -14,11 +14,11 @@ var Pontoon = function() {
      * project - url of the page being localized
      * locale - locale msgstrs are localized too
     */
-    save: function() {
+    save: function () {
       // Deep copy: http://api.jquery.com/jQuery.extend
-      var data = jQuery.extend(true, {}, this.client._data);
+      var data = $.extend(true, {}, this.client._data);
 
-      $(data.entities).each(function() {
+      $(data.entities).each(function () {
         delete this.node;
         delete this.ui;
         delete this.hover;
@@ -54,12 +54,12 @@ var Pontoon = function() {
     /**
      * Build source - translation pairs
      */
-    entityList: function() {
+    entityList: function () {
       var self = this,
           list = $(this.client._ptn).find('#entitylist').empty().append('<ul></ul>');
 
       // Render
-      $(this.client._data.entities).each(function() {
+      $(this.client._data.entities).each(function () {
         var li = $('<li class="entity' + 
           // append classes to translated and head entities
           (this.translation ? ' translated' : '') + 
@@ -140,11 +140,11 @@ var Pontoon = function() {
       });
 
       // Main entity list handlers
-      $("#main .entity:not('.head')").hover(function() {
+      $("#main .entity:not('.head')").hover(function () {
         this.entity.hover();
-      }, function() {
+      }, function () {
         this.entity.unhover();
-      }).click(function() {
+      }).click(function () {
         $(self.client._doc).find('.editableToolbar > .edit').click();
       });
 
@@ -168,12 +168,12 @@ var Pontoon = function() {
       });
 
       // Original string
-      $("#main .extra .original-string").click(function() {
+      $("#main .extra .original-string").click(function () {
         $(this).parents('.entity').find('.toolbar').show();
       });
 
       // Other users
-      $("#main .extra .other-users").click(function() {
+      $("#main .extra .other-users").click(function () {
         var li = $(this).parents('.entity');
 
         if (li.get(0).entity.suggestions) {
@@ -253,7 +253,7 @@ var Pontoon = function() {
       });
 
       // Translation memory
-      $("#main .extra .translation-memory").click(function() {
+      $("#main .extra .translation-memory").click(function () {
         var li = $(this).parents('.entity'),
             loader = li.find(".content .translation-memory .loader"),
             entity = li.get(0).entity;
@@ -269,7 +269,7 @@ var Pontoon = function() {
               repo: 'beta'
             },
             dataType: 'jsonp'
-          }).error(function() {
+          }).error(function () {
             loader.removeClass("loader").addClass("no").html("Ooops, something went wrong... Please try again.");
           }).success(function(response) {
           	if (response !== null) {
@@ -298,7 +298,7 @@ var Pontoon = function() {
       });
 
       // Machine translations
-      $("#main .extra .machine-translation").click(function() {
+      $("#main .extra .machine-translation").click(function () {
         var li = $(this).parents('.entity'),
             loader = li.find(".content .machine-translation .loader"),
             entity = li.get(0).entity;
@@ -388,7 +388,7 @@ var Pontoon = function() {
     /**
      * Update progress indicator and value
      */
-    updateProgress: function() {
+    updateProgress: function () {
       var all = $("#entitylist .entity").length,
           translated = $("#entitylist .entity.translated").length;
       $('#progress span').width(Math.round(translated*100 / all) + '%');
@@ -400,11 +400,11 @@ var Pontoon = function() {
     /**
      * Attach event handlers
      */
-    attachHandlers: function() {
+    attachHandlers: function () {
       var self = this;
 
       // Update entities and progress when saved
-      $(".editableToolbar > .save", this.client._doc).click(function() {
+      $(".editableToolbar > .save", this.client._doc).click(function () {
         var element = $(this).parent().get(0).target,
             entity = element.entity;
 
@@ -413,7 +413,7 @@ var Pontoon = function() {
       });
 
       // Update progress when cancelled
-      $(".editableToolbar > .cancel", this.client._doc).click(function() {
+      $(".editableToolbar > .cancel", this.client._doc).click(function () {
         var element = $(this).parent().get(0).target,
             entity = element.entity;
 
@@ -424,7 +424,7 @@ var Pontoon = function() {
       });
 
       // Open/close Pontoon UI
-      $('#switch').unbind("click.pontoon").bind("click.pontoon", function() {
+      $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
         if ($('#main').is('.opened')) {
           $('#entitylist').height(0);
         } else {
@@ -435,7 +435,7 @@ var Pontoon = function() {
       });
 
       // Authentication
-      $('#authentication-menu .restricted .go').unbind("click.pontoon").bind("click.pontoon", function() {
+      $('#authentication-menu .restricted .go').unbind("click.pontoon").bind("click.pontoon", function () {
         var author = $('#nickname').val() || $('#email').val();
         $('#authentication .selector').click();
         if (author) {
@@ -452,18 +452,18 @@ var Pontoon = function() {
       });
 
       // Authentication toggle
-      $('#authentication-menu .toggle').unbind("click.pontoon").bind("click.pontoon", function() {
+      $('#authentication-menu .toggle').unbind("click.pontoon").bind("click.pontoon", function () {
         $('#authentication-menu')
           .find('.wrapper').toggle().end()
           .find('#password').toggle();
       });
 
       // Save menu
-      $('#save-menu').find('.sign-out').unbind("click.pontoon").bind("click.pontoon", function() {
+      $('#save-menu').find('.sign-out').unbind("click.pontoon").bind("click.pontoon", function () {
         $('#authentication .selector').click();
         $('#authentication .author').html('Sign in').toggleClass('authenticated');
         $('#authentication-menu, #save-menu').toggleClass('menu');
-      }).end().find('.server').unbind("click.pontoon").bind("click.pontoon", function() {
+      }).end().find('.server').unbind("click.pontoon").bind("click.pontoon", function () {
         $('#authentication .selector').click();
         self.save();
       });
@@ -512,8 +512,8 @@ var Pontoon = function() {
      * Show and render main UI
      * Enable editable text
      */
-    renderMainUI: function() {
-      $(this.client._data.entities).each(function() {
+    renderMainUI: function () {
+      $(this.client._data.entities).each(function () {
         if (this.node) { // For entities not found on the website
           this.node.editableText();
         }
@@ -543,11 +543,11 @@ var Pontoon = function() {
      * e Temporary entity object
      */
     extendEntity: function(e) {
-      e.hover = function() {
+      e.hover = function () {
         this.node.get(0).showToolbar();
         this.ui.toggleClass('hovered');
       };
-      e.unhover = function() {
+      e.unhover = function () {
         this.node.get(0).hideToolbar();
         this.ui.toggleClass('hovered');
       };
@@ -563,11 +563,11 @@ var Pontoon = function() {
      * Skip nodes already included in parent nodes
      * Add temporary pontoon-entity class to prevent duplicate entities when guessing
      */ 
-    guessEntities: function() {
+    guessEntities: function () {
       var self = this;
       this.client._data.entities = [];
 
-      $(this.client._doc).find(':not("script, style")').contents().each(function() {
+      $(this.client._doc).find(':not("script, style")').contents().each(function () {
         if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
           var entity = {};
           entity.original = $(this).parent().html();
@@ -597,7 +597,7 @@ var Pontoon = function() {
      * Create entity objects
      * Remove comment nodes
      */
-    getEntities: function() {
+    getEntities: function () {
       var self = this,
           prefix = 'l10n',
           counter = 1, /* TODO: use IDs or XPath */
@@ -607,7 +607,7 @@ var Pontoon = function() {
       	self.client._data = data;
       	var entities = self.client._data.entities;
 
-        $(self.client._doc).find('*').contents().each(function() {
+        $(self.client._doc).find('*').contents().each(function () {
           if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
             var entity = entities[counter],
                 translation = entity.translation;
@@ -634,7 +634,7 @@ var Pontoon = function() {
      * Extract entities from the document
      * Determine if the current page is prepared for working with Pontoon
      */ 
-    extractEntities: function() {
+    extractEntities: function () {
       var meta = $(this.client._doc).find('head > meta[name=Pontoon]');
       if (meta.length > 0) {
         if (meta.attr('content')) {
@@ -682,7 +682,7 @@ var Pontoon = function() {
       this.extractEntities();       
 
       // Instantate Microsoft Translator API
-      $.getScript("client/lib/js/local-settings.js", function() {
+      $.getScript("client/lib/js/local-settings.js", function () {
         $.translate.load(self.client._mt);
       });
 
@@ -693,7 +693,7 @@ var Pontoon = function() {
     /**
      * Common functions used in both, client specific code and Pontoon library
      */
-    common: function() {
+    common: function () {
 
       // Show/hide menu on click
       $('.selector').unbind("click.pontoon").bind("click.pontoon", function(e) {
@@ -709,7 +709,7 @@ var Pontoon = function() {
       });
 
       // Hide menus on click outside
-      $('html').unbind("click.pontoon").bind("click.pontoon", function() {
+      $('html').unbind("click.pontoon").bind("click.pontoon", function () {
         $('.menu').hide();
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
@@ -719,7 +719,7 @@ var Pontoon = function() {
       });
 
       // Start new project with current website url and locale
-      $('.locale .confirm, .locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function() {
+      $('.locale .confirm, .locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function () {
         // TODO: url and locale validation
         window.location = "?url=" + $('.url:visible').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
       });
@@ -732,7 +732,7 @@ var Pontoon = function() {
       });
 
       // Menu hover
-      $('.menu li').live('hover', function() {
+      $('.menu li').live('hover', function () {
         $('.menu li.hover').removeClass('hover');
         $(this).toggleClass('hover');
       });
