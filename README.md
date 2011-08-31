@@ -12,7 +12,7 @@ Web client:
 * Point your browser to /.
 * Click on the Test Pilot link (Make sure you have Gettext support installed on your web server).
 
-Django server:
+Django server ([Django][django] is required):
 
 * `cd server`
 * `python manage.py runserver 0.0.0.0:8000`
@@ -72,3 +72,4 @@ License
 [outline]:  http://ozten.com/psto/2009/08/14/a-sketch-of-po-liveedit/   "A Sketch of PO LiveEdit"
 [wiki]:  https://wiki.mozilla.org/L10n:Pontoon   "L10n:Pontoon - MozillaWiki"
 [bdc]: http://www.bing.com/developers/createapp.aspx   "Bing Developer Center"
+[django]: https://www.djangoproject.com/   "Django"
