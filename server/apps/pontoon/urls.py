@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns('pontoon.views',
+urlpatterns = patterns('apps.pontoon.views',
     (r'^$', 'stats'),
     (r'^push/', 'push'),
 )
