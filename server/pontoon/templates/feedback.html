@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Pontoon Feedback Stats</h1>
+    <table border="1">
+      <tr><th>id</th><th>page</th><th>locale</th><th>string</th><th>type</th><th>comment</th></tr>
+      $for row in rows:
+        <tr>
+        $for cell in row:
+          <td>$cell</td>
+        </tr>        
+    </table>
+  </body>
+</html>
