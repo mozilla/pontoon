@@ -17,11 +17,6 @@ Django server ([Django][django] is required):
 * `cd server`
 * `python manage.py runserver 0.0.0.0:8000`
 
-Update hostnames as needed:
-
-* client/lib/js/pontoon.js - 127.0.0.1:8000 - change to server hostname and port
-* hook/php/pontoon.php - 8000 - change port number
-
 To use Microsoft Translator API for machine translation, obtain a valid API key from the [Bing Developer Center][bdc] and store it in a variable Pontoon.client._mt in your local settings file in client/lib/js/local-settings.js.
 
 Contributors
