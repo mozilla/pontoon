@@ -235,7 +235,7 @@ var Pontoon = (function () {
           .find('.language').html(li.find('.language').html()).end().end()
         .hide();
 
-        // TODO: AJAX request to only display locales with current string translation available
+        // TODO: AJAX request to display only locales with current string translation available
         if (locale === "sl") {
           // TODO: Only request each locale meta file once
           $.getJSON($("#source").attr("src") + "/pontoon/" + locale + ".json").success(function (data) {
@@ -336,7 +336,6 @@ var Pontoon = (function () {
       });
 
       // Translate in textarea
-      // TODO: add support for focus, not only click
       $("#main .translation textarea").click(function (e) {
         e.stopPropagation();
         var entity = $(this).parents('.entity').get(0).entity;
