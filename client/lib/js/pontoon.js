@@ -682,6 +682,17 @@ var Pontoon = (function () {
       $('head', doc).append(ss);      
       this.extractEntities();       
 
+      // Context menu
+      $('body', doc)
+        .attr("contextmenu", "context")
+        .append(
+        '<menu type="context" id="context">' +
+          '<menuitem label="Toggle Pontoon" icon="../../client/lib/images/logo-small.png"></menuitem>' +
+        '</menu>')
+        .find("#context menuitem").live("click", function() {
+          $("#switch").click();
+        });
+
       // Instantate Microsoft Translator API
       $.getScript("client/lib/js/local-settings.js", function () {
         $.translate.load(self.client._mt);
