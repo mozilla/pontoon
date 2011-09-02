@@ -428,8 +428,10 @@ var Pontoon = (function () {
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
         if ($('#main').is('.opened')) {
           $('#entitylist').height(0);
+          $("#context .mode", self.client._doc).attr("label", "Advanced mode");
         } else {
           $('#entitylist').height(300);
+          $("#context .mode", self.client._doc).attr("label", "Basic mode");
         }
         $('#source').height($(document).height() - $('#main').height());
         $('#main').toggleClass('opened');
@@ -687,9 +689,9 @@ var Pontoon = (function () {
         .attr("contextmenu", "context")
         .append(
         '<menu type="context" id="context">' +
-          '<menuitem label="Advanced mode" icon="../../client/lib/images/logo-small.png"></menuitem>' +
+          '<menuitem class="mode" label="Advanced mode" icon="../../client/lib/images/logo-small.png"></menuitem>' +
         '</menu>')
-        .find("#context menuitem").live("click", function() {
+        .find("#context .mode").live("click", function() {
           $("#switch").click();
           if ($("#main").is(".opened")) {
             $(this).attr("label", "Basic mode");
