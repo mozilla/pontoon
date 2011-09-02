@@ -687,10 +687,15 @@ var Pontoon = (function () {
         .attr("contextmenu", "context")
         .append(
         '<menu type="context" id="context">' +
-          '<menuitem label="Toggle Pontoon" icon="../../client/lib/images/logo-small.png"></menuitem>' +
+          '<menuitem label="Advanced mode" icon="../../client/lib/images/logo-small.png"></menuitem>' +
         '</menu>')
         .find("#context menuitem").live("click", function() {
           $("#switch").click();
+          if ($("#main").is(".opened")) {
+            $(this).attr("label", "Basic mode");
+          } else {
+            $(this).attr("label", "Advanced mode");
+          }
         });
 
       // Instantate Microsoft Translator API
