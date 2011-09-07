@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
-# from utils import generate_po, compile_po, normalize_project_name
+from utils import generate_po, compile_po, normalize_project_name
 from models import Project
 
 import os
@@ -9,7 +9,7 @@ def stats(request):
     return render_to_response('stats.html', {
     });
 
-'''def push(request):
+def push(request):
     if request.method == 'OPTIONS':
         response = HttpResponse('')
         response['Access-Control-Allow-Origin'] = request.META['HTTP_ORIGIN']
@@ -35,4 +35,3 @@ def stats(request):
     compile_po(path)
     response = HttpResponse('OK')
     return response
-'''
