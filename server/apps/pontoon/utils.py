@@ -3,10 +3,10 @@ import commands
 
 try:
     import sys
-    import silme.core
+    #import silme.core
     import silme.format
     import silme.io
-    silme.format.Manager.register('gettext')
+    #silme.format.Manager.register('gettext')
 except:
     raise
 
