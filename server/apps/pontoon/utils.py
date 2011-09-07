@@ -3,7 +3,6 @@ import commands
 
 try:
     import sys
-    sys.path.append('/Users/mathjazz/Mozilla/l10n/silme/lib/silme/')
     import silme.core
     import silme.format
     import silme.io
