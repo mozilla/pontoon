@@ -242,8 +242,8 @@
   float: left;
   margin-top: -4px;
   padding: 10px 5px 11px 30px;
-  text-transform: lowercase;
   cursor: ns-resize;
+  font-weight: 100;
 }
 
 #pontoon .vertical-separator {

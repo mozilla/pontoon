@@ -251,10 +251,10 @@ body {
 
 #title {
   color: #AEEE00;
-  text-transform: lowercase;
-  text-shadow: 5px 5px 5px #000000;
-  letter-spacing: -3px;
-  font-weight: normal;
+  text-shadow: 3px 3px 3px #000000;
+  letter-spacing: -2px;
+  font-family: Helvetica Neue;
+  font-weight: 100;
   text-align: center;
   font-size: 100px;
   margin: 80px 0 10px;
