@@ -11,10 +11,15 @@ MINIFY_BUNDLES = {
         'example_css': (
             'css/examples/main.css',
         ),
+        'example_mobile_css': (
+            'css/examples/mobile.css',
+        ),
     },
     'js': {
         'example_js': (
             'js/libs/jquery-1.4.4.min.js',
+            'js/libs/jquery.cookie.js',
+            'js/example.js',
         ),
     }
 }
