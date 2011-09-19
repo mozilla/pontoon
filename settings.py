@@ -17,9 +17,9 @@ MINIFY_BUNDLES = {
     },
     'js': {
         'example_js': (
-            'js/libs/jquery-1.4.4.min.js',
-            'js/libs/jquery.cookie.js',
-            'js/example.js',
+            'js/examples/libs/jquery-1.4.4.min.js',
+            'js/examples/libs/jquery.cookie.js',
+            'js/examples/init.js',
         ),
     }
 }
