@@ -4,17 +4,20 @@ from django import http
 
 import bleach
 import commonware
+from mobility.decorators import mobile_template
 import jingo
 from session_csrf import anonymous_csrf
 
 
 log = commonware.log.getLogger('playdoh')
 
-def home(request):
+
+@mobile_template('examples/{mobile/}home.html')
+def home(request, template=None):
     """Main example view."""
     data = {}  # You'd add data here that you're sending to the template.
     log.debug("I'm alive!")
-    return jingo.render(request, 'examples/home.html', data)
+    return jingo.render(request, template, data)
 
 
 @anonymous_csrf

@@ -6,7 +6,11 @@
 </h1>
 
 {# L10n: This is a localizer comment #}
-<p>{{ _('This is a <em>test view</em>.') }}</p>
+{% if request.MOBILE %}
+  <p>{{ _('This is a <em>test view</em> for mobile browsers.') }}</p>
+{% else %}
+  <p>{{ _('This is a <em>test view</em> for desktop browsers.') }}</p>
+{% endif %}
 <p>
   {% trans docs_url='http://playdoh.rtfd.org/' %}
   <a href="{{ docs_url }}">Learn you some Playdoh</a> and then go build
