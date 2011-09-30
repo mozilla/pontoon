@@ -7,8 +7,8 @@ from settings import *
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',
-        'USER': '',
+        'NAME': 'playdoh_app',
+        'USER': 'root',
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
