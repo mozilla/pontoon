@@ -85,7 +85,7 @@
 
     if (website.length > 0 && locale.length > 0) {
       // TODO: use real params
-      website = "projects/testpilot";
+      website = "http://pontoon.com/pontoon/projects/testpilot";
       locale = null;
 
       $('#intro').slideUp("fast", function() {

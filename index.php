@@ -1,3 +1,7 @@
+<?php
+header("X-Content-Security-Policy: allow *; options inline-script");
+?>
+
 <!doctype html>
 <html lang="en">
   <head>
