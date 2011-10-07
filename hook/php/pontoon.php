@@ -81,6 +81,6 @@ class Pontoon
      * the client that this is a Pontoon enhanced page
      */
     static function header_tags() {
-        if (self::has_gettext()) echo '<meta name="Pontoon" content="Test Pilot" ip="http://0.0.0.0:8000/push/"/>'."\n";
+        if (self::has_gettext()) echo '<meta name="Pontoon" content="Test Pilot" data-ip="http://0.0.0.0:8000/push/"/>'."\n";
     }
 }

@@ -643,8 +643,8 @@ var Pontoon = (function () {
         if (meta.attr('content')) {
           this.client._meta.project = meta.attr('content');
         }
-        if (meta.attr('ip')) {
-          this.client._meta.url = meta.attr('ip');
+        if (meta.attr('data-ip')) {
+          this.client._meta.url = meta.attr('data-ip');
         }
         return this.getEntities();
       }
@@ -658,7 +658,7 @@ var Pontoon = (function () {
     /**
      * Initialize Pontoon Client
      *
-     * doc Website document object
+     * doc Website (iframe) document object
      * ptn Pontoon document object
      * locale ISO 639-1 language code of the language website is localized to
      */
