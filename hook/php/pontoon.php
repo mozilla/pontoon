@@ -88,6 +88,6 @@ class Pontoon
      * inject javascript to the target app, to help with iframe cross-domain policy problem
      */
     static function footer_tags() {
-        echo '<script src="http://localhost/pontoon/client/lib/js/pontoon-client.js"/>'."\n";
+        echo '<script src="http://localhost/pontoon/client/lib/js/pontoon-project.js"></script>'."\n";
     }
 }
