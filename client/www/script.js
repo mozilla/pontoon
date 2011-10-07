@@ -21,10 +21,10 @@
       $('#iframe-cover').hide(); // iframe fix
       if (e.data.initial.below.height() === 0) {
       	$('#main').removeClass('opened');
-        $("#context .mode", Pontoon.client._doc).attr("label", "Advanced mode");
+        $("#context .mode", Pontoon._doc).attr("label", "Advanced mode");
       } else {
       	$('#main').addClass('opened');
-        $("#context .mode", Pontoon.client._doc).attr("label", "Basic mode");
+        $("#context .mode", Pontoon._doc).attr("label", "Basic mode");
       }
     };
 	$('#logo, #drag').bind('mousedown', function(e) {
