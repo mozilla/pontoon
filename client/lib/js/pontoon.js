@@ -667,9 +667,6 @@ var Pontoon = (function () {
         throw "Document handler required";
       }
 
-      var self = this,
-          ss = $('<link rel="stylesheet" href="../../client/lib/css/editable.css">', doc);
-
       // Build client object
       this.client = {
         _doc: doc,
@@ -680,25 +677,8 @@ var Pontoon = (function () {
         _mt: ''
       };
 
-      // Enable document editing
-      $('head', doc).append(ss);      
-      this.extractEntities();       
-
-      // Context menu
-      $('body', doc)
-        .attr("contextmenu", "context")
-        .append(
-        '<menu type="context" id="context">' +
-          '<menuitem class="mode" label="Advanced mode" icon="../../client/lib/images/logo-small.png"></menuitem>' +
-        '</menu>')
-        .find("#context .mode").live("click", function() {
-          $("#switch").click();
-          if ($("#main").is(".opened")) {
-            $(this).attr("label", "Basic mode");
-          } else {
-            $(this).attr("label", "Advanced mode");
-          }
-        });
+      this.extractEntities();
+      var self = this;
 
       // Instantate Microsoft Translator API
       $.getScript("client/lib/js/local-settings.js", function () {

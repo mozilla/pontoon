@@ -8,8 +8,26 @@
     $.noConflict();
     jQuery(document).ready(function($) {
 
-      // Code that uses jQuery's $ can follow here.
-      
+      // Toolbar stylesheet
+      var ss = $('<link rel="stylesheet" href="../../client/lib/css/editable.css">');
+      $('head').append(ss);      
+
+      // Context menu
+      $('body')
+        .attr("contextmenu", "context")
+        .append(
+        '<menu type="context" id="context">' +
+          '<menuitem class="mode" label="Advanced mode" icon="../../client/lib/images/logo-small.png"></menuitem>' +
+        '</menu>')
+        .find("#context .mode").live("click", function() {
+          $("#switch").click();
+          if ($("#main").is(".opened")) {
+            $(this).attr("label", "Basic mode");
+          } else {
+            $(this).attr("label", "Advanced mode");
+          }
+        });
+
     });
   }
 
