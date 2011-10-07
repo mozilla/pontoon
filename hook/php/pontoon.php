@@ -83,4 +83,11 @@ class Pontoon
     static function header_tags() {
         if (self::has_gettext()) echo '<meta name="Pontoon" content="Test Pilot" data-ip="http://0.0.0.0:8000/push/"/>'."\n";
     }
+
+    /**
+     * inject javascript to the target app, to help with iframe cross-domain policy problem
+     */
+    static function footer_tags() {
+        echo '<script src="http://localhost/pontoon/client/lib/js/pontoon-client.js"/>'."\n";
+    }
 }
