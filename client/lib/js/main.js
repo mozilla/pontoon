@@ -404,26 +404,6 @@ var Pontoon = (function () {
     attachHandlers: function () {
       var self = this;
 
-      // Update entities and progress when saved
-      $(".editableToolbar > .save", this._doc).click(function () {
-        var element = $(this).parent().get(0).target,
-            entity = element.entity;
-
-        entity.translation = $($(element).clone()).html();
-        self.updateEntityUI(entity);
-      });
-
-      // Update progress when cancelled
-      $(".editableToolbar > .cancel", this._doc).click(function () {
-        var element = $(this).parent().get(0).target,
-            entity = element.entity;
-
-        $(element).html(element.prevValue);
-        entity.translation = "";
-        entity.ui.find('textarea').val(entity.translation).parents('.entity').removeClass('translated');
-        self.updateProgress();
-      });
-
       // Open/close Pontoon UI
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
         if ($('#main').is('.opened')) {
@@ -470,6 +450,26 @@ var Pontoon = (function () {
         $('#authentication .selector').click();
         self.save();
       });
+/*
+      // Update entities and progress when saved
+      $(".editableToolbar > .save", this._doc).click(function () {
+        var element = $(this).parent().get(0).target,
+            entity = element.entity;
+
+        entity.translation = $($(element).clone()).html();
+        self.updateEntityUI(entity);
+      });
+
+      // Update progress when cancelled
+      $(".editableToolbar > .cancel", this._doc).click(function () {
+        var element = $(this).parent().get(0).target,
+            entity = element.entity;
+
+        $(element).html(element.prevValue);
+        entity.translation = "";
+        entity.ui.find('textarea').val(entity.translation).parents('.entity').removeClass('translated');
+        self.updateProgress();
+      });
 
       // In-place keyboard shortcuts
       $("html", self._doc).unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
@@ -505,8 +505,7 @@ var Pontoon = (function () {
             return false;
           }
         }
-      });
-
+      });*/
     },
 
 
@@ -594,7 +593,6 @@ var Pontoon = (function () {
      * Common functions used in both, client specific code and Pontoon library
      */
     common: function () {
-
       // Show/hide menu on click
       $('.selector').unbind("click.pontoon").bind("click.pontoon", function (e) {
         if (!$(this).siblings('.menu').is(':visible')) {
