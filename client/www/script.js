@@ -72,7 +72,7 @@
       if (!$(this).attr('src')) {
         return;
       }
-      Pontoon.init(this.contentDocument, document, "de");
+      Pontoon.init(this.contentWindow, document, "de");
     });
 
     // Empty iframe if cached
