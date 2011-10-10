@@ -121,8 +121,16 @@
       }
 
       // Inject toolbar stylesheet
-      var css = $('<link rel="stylesheet" href="../../client/lib/css/editable.css">');
-      $('head').append(css);
+      $('<link>', {
+        rel: 'stylesheet',
+        href: '../../client/lib/css/editable.css'
+      }).appendTo('head');
+
+      // Inject editableText jQuery Plugin
+      // TODO: jQuerify
+      var js = document.createElement('script');
+      js.src = "../../client/lib/js/jquery.editableText.js";
+      document.body.appendChild(js);
 
       // Enable context menu
       $('body')
