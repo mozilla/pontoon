@@ -581,7 +581,7 @@ var Pontoon = (function () {
       });
       
       // Activate project-side code: pontoon.js (iframe cross-domain policy solution)
-      Pontoon._doc.postMessage(self._locale, Pontoon._doc.location.href);
+      Pontoon._doc.postMessage(self._locale, $("#source").attr("src"));
 
       // Wait for project-side code to provide entities
       // TODO: timeout if no response for 5 seconds

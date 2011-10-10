@@ -25,7 +25,6 @@
           delete this.hover; // TODO: move to main.js
           delete this.unhover; // TODO: move to main.js
         });
-
         Pontoon._ptn.postMessage(JSON.stringify(Pontoon._data), "*");
       }
 
