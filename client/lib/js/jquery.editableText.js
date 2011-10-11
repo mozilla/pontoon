@@ -153,6 +153,7 @@
           return this.each(function(){
                // Add jQuery methods to the element
               var editable = $(this);
+              console.log(editable);
 
               /**
                * Save value to restore if user presses cancel
@@ -175,17 +176,6 @@
                   });
               }
 
-          });
-      }
-      $.fn.disableEditableText = function(options){
-          return this.each(function(){
-               // Add jQuery methods to the element
-              var editable = $(this);
-              this.prevValue = undefined;
-              this.txtPrevValue = undefined;
-              this.showToolbar = undefined;
-              this.hideToolbar = undefined;
-              $(this).unbind('mouseenter mouseleave keypress');
           });
       }
   })();
