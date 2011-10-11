@@ -16,19 +16,6 @@
     jQuery(document).ready(function($) {
 
       /**
-       * Enable editable text for entities found on the website
-       */
-      function makeEditable() {
-        $(Pontoon._data.entities).each(function () {
-          if (this.node) { // 
-            this.node.editableText();
-          }
-        });
-      }
-
-
-
-      /**
        * Send data to main Pontoon code
        */
       function sendData() {
@@ -39,8 +26,6 @@
           delete this.node;
         });
         Pontoon._ptn.postMessage(JSON.stringify(data), "*");
-
-        makeEditable();
       }
 
 
@@ -82,7 +67,8 @@
 
             // Head entities cannot be edited in-place
             if ($(this).parents('head').length === 0) {
-              entity.node = $(this).parent(); /* HTML Element holding string */
+              entity.node = $(this).parent(); // HTML Element holding string
+              entity.node.editableText(); // Make nodes editable
               extendEntity(entity);
             }
 
@@ -107,7 +93,7 @@
        */
       function loadEntities() {
         var prefix = 'l10n',
-            counter = 1, /* TODO: use IDs or XPath */
+            counter = 1, // TODO: use IDs or XPath
             parent = null;
 
         $.getJSON("pontoon/" + Pontoon._locale + ".json").success(function (data) {
@@ -126,7 +112,8 @@
                 $(this).remove();
               }
 
-              entity.node = parent; /* HTML Element holding string */
+              entity.node = parent; // HTML Element holding string
+              entity.node.editableText(); // Make nodes editable
               extendEntity(entity);
               counter = counter + 1;
             }
