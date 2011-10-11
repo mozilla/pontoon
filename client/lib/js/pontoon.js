@@ -16,13 +16,31 @@
     jQuery(document).ready(function($) {
 
       /**
-       * Send data to Pontoon 
+       * Enable editable text for entities found on the website
+       */
+      function makeEditable() {
+        $(Pontoon._data.entities).each(function () {
+          if (this.node) { // 
+            this.node.editableText();
+          }
+        });
+      }
+
+
+
+      /**
+       * Send data to main Pontoon code
        */
       function sendData() {
-        $(Pontoon._data.entities).each(function () {
+        // Deep copy: http://api.jquery.com/jQuery.extend
+        var data = $.extend(true, {}, Pontoon._data);
+
+        $(data.entities).each(function () {
           delete this.node;
         });
-        Pontoon._ptn.postMessage(JSON.stringify(Pontoon._data), "*");
+        Pontoon._ptn.postMessage(JSON.stringify(data), "*");
+
+        makeEditable();
       }
 
 
