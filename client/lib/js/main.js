@@ -133,9 +133,6 @@ var Pontoon = (function () {
         '</div></li>', self._ptn);
 
         li.get(0).entity = this;
-        if (this.node) { // For entities found on the website
-          this.node.get(0).entity = this;
-        }
         this.ui = li; /* HTML Element representing string in the main UI */
 
         list.children('ul').append(li);
@@ -276,7 +273,7 @@ var Pontoon = (function () {
             if (response !== null) {
               // Not supported in some browsers, but needed with current JSON output:
               // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/keys
-              // TODO - use this kind of output: http://pastebin.mozilla.org/1316020
+              // TODO: use this kind of output - http://pastebin.mozilla.org/1316020
               Object.keys = function (obj) {
                 var array = [],
                     prop;
@@ -531,13 +528,6 @@ var Pontoon = (function () {
       var self = Pontoon;
       if (e.source === self._doc) {
         self._data = JSON.parse(e.data);
-        /* TODO: move to project code
-        $(self._data.entities).each(function () {
-          if (this.node) { // Enable editable text for entities found on the website
-            this.node.editableText();
-          }
-        });
-        */
         self.attachHandlers();
         self.entityList();
         $('#main').slideDown();

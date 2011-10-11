@@ -69,6 +69,7 @@
             if ($(this).parents('head').length === 0) {
               entity.node = $(this).parent(); // HTML Element holding string
               entity.node.editableText(); // Make nodes editable
+              entity.node.get(0).entity = entity; // Store entity reference to the node
               extendEntity(entity);
             }
 
@@ -114,6 +115,7 @@
 
               entity.node = parent; // HTML Element holding string
               entity.node.editableText(); // Make nodes editable
+              entity.node.get(0).entity = entity; // Store entity reference to the node
               extendEntity(entity);
               counter = counter + 1;
             }
@@ -129,7 +131,7 @@
       }).appendTo('head');
 
       // Inject editableText jQuery Plugin
-      // TODO: jQuerify
+      // TODO: integrate plugin into this file
       var js = document.createElement('script');
       js.src = "../../client/lib/js/jquery.editableText.js";
       $(js).appendTo('body');

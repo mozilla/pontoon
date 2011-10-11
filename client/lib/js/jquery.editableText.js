@@ -1,38 +1,20 @@
 /**
- * editableText plugin that uses contentEditable property (FF2 is not supported)
- * Project page - http://github.com/valums/editableText
+ * editableText plugin that uses contentEditable property
  * Copyright (c) 2009 Andris Valums, http://valums.com
  * Licensed under the MIT license (http://valums.com/mit-license/)
  */
  (function(){
-      /**
-       * The dollar sign could be overwritten globally,
-       * but jQuery should always stay accesible
-       */
+
+      // The dollar sign could be overwritten globally, but jQuery should always stay accesible
       var $ = jQuery;
-      /**
-       * Extending jQuery namespace, we
-       * could add public methods here
-       */
+
+      // Extending jQuery namespace, we could add public methods here
       $.editableText = {};
-      $.editableText.defaults = {
-        /**
-         * Pass true to enable line breaks.
-         * Useful with divs that contain paragraphs.
-         */
-        newlinesEnabled: false,
-        /**
-         * Event that is triggered when editable text is changed
-         */
-        changeEvent: 'change'
-      };           
-      /**
-       * Usage $('selector).editableText(optionArray);
-       * See $.editableText.defaults for valid options 
-       */        
-      $.fn.editableText = function(options){
-          var options = $.extend({}, $.editableText.defaults, options),
-              doc = this.get(0).ownerDocument,
+      $.editableText.defaults;
+
+      // Usage $('selector).editableText(optionArray);
+      $.fn.editableText = function(){
+          var doc = this.get(0).ownerDocument,
               body = $(doc.body);
 
           // Create edit/save buttons
@@ -153,11 +135,8 @@
           return this.each(function(){
                // Add jQuery methods to the element
               var editable = $(this);
-              console.log(editable);
 
-              /**
-               * Save value to restore if user presses cancel
-               */
+              // Save value to restore if user presses cancel
               this.prevValue = editable.html().toString();
               this.txtPrevValue = editable.text().toString();
               this.showToolbar = function(){showToolbar(this)}
@@ -166,16 +145,7 @@
                 this.entity.hover();
               },function() {
                 this.entity.unhover();
-              })
-
-              if (!options.newlinesEnabled){
-                  // Prevents user from adding newlines to headers, links, etc.
-                  editable.keypress(function(event){
-                      // event is cancelled if enter is pressed
-                      return event.which != 13;
-                  });
-              }
-
+              });
           });
       }
   })();
