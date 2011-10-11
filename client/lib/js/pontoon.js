@@ -21,9 +21,6 @@
       function sendData() {
         $(Pontoon._data.entities).each(function () {
           delete this.node;
-          delete this.ui;
-          delete this.hover; // TODO: move to main.js
-          delete this.unhover; // TODO: move to main.js
         });
         Pontoon._ptn.postMessage(JSON.stringify(Pontoon._data), "*");
       }
@@ -130,7 +127,7 @@
       // TODO: jQuerify
       var js = document.createElement('script');
       js.src = "../../client/lib/js/jquery.editableText.js";
-      document.body.appendChild(js);
+      $(js).appendTo('body');
 
       // Enable context menu
       $('body')

@@ -524,7 +524,6 @@ var Pontoon = (function () {
 
     /**
      * Show and render main UI
-     * Update entity in the main UI
      * 
      * entity Entity
      */
@@ -532,11 +531,13 @@ var Pontoon = (function () {
       var self = Pontoon;
       if (e.source === self._doc) {
         self._data = JSON.parse(e.data);
+        /* TODO: move to project code
         $(self._data.entities).each(function () {
           if (this.node) { // Enable editable text for entities found on the website
             this.node.editableText();
           }
         });
+        */
         self.attachHandlers();
         self.entityList();
         $('#main').slideDown();
