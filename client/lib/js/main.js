@@ -399,6 +399,18 @@ var Pontoon = (function () {
 
 
     /**
+     * Update entity in the main UI
+     * 
+     * entity Entity
+     */
+    updateEntityUI: function (entity) {
+      entity.ui.find('textarea').val(entity.translation).parents('.entity').addClass('translated');
+      this.updateProgress();
+    },
+
+
+
+    /**
      * Attach event handlers
      */
     attachHandlers: function () {
@@ -512,42 +524,22 @@ var Pontoon = (function () {
 
     /**
      * Show and render main UI
-     * Enable editable text
-     */
-    renderMainUI: function () {
-      $(this._data.entities).each(function () {
-        if (this.node) { // For entities found on the website
-          this.node.editableText();
-        }
-      });
-      this.attachHandlers();
-      this.entityList();
-      $('#main').slideDown();
-    },
-
-
-
-    /**
      * Update entity in the main UI
      * 
      * entity Entity
      */
-    updateEntityUI: function (entity) {
-      entity.ui.find('textarea').val(entity.translation).parents('.entity').addClass('translated');
-      this.updateProgress();
-    },
-
-
-
-    /**
-     * Update entity in the main UI
-     * 
-     * entity Entity
-     */
-    getEntities: function (e) {
-      if (e.source === Pontoon._doc) {
-        Pontoon._data = JSON.parse(e.data);
-        Pontoon.renderMainUI();
+    renderMainUI: function (e) {
+      var self = Pontoon;
+      if (e.source === self._doc) {
+        self._data = JSON.parse(e.data);
+        $(self._data.entities).each(function () {
+          if (this.node) { // Enable editable text for entities found on the website
+            this.node.editableText();
+          }
+        });
+        self.attachHandlers();
+        self.entityList();
+        $('#main').slideDown();
       }
     },
 
@@ -584,7 +576,7 @@ var Pontoon = (function () {
 
       // Wait for project-side code to provide entities
       // TODO: timeout if no response for 5 seconds
-      window.addEventListener("message", self.getEntities, false);  
+      window.addEventListener("message", self.renderMainUI, false);  
     },
 
 
