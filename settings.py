@@ -30,6 +30,13 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     'examples',
 ]
 
+
+# Because Jinja2 is the default template loader, add any non-Jinja templated
+# apps here:
+JINGO_EXCLUDE_APPS = [
+    'admin',
+]
+
 # Tells the extract script what files to look for L10n in and what function
 # handles the extraction. The Tower library expects this.
 
