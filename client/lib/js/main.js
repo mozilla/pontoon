@@ -520,17 +520,18 @@ var Pontoon = (function () {
 
 
     /**
-     * Show and render main UI
-     * 
-     * entity Entity
+     * Handle messages from project code
      */
-    renderMainUI: function (e) {
-      var self = Pontoon;
-      if (e.source === self._doc) {
-        self._data = JSON.parse(e.data);
-        self.attachHandlers();
-        self.entityList();
-        $('#main').slideDown();
+    receiveMessage: function (e) {
+      if (e.source === Pontoon._doc) {
+        if (e.data === "hovered") {
+          // this.ui.toggleClass('hovered');
+        } else {
+          Pontoon._data = JSON.parse(e.data);
+          Pontoon.attachHandlers();
+          Pontoon.entityList();
+          $('#main').slideDown();
+        }
       }
     },
 
@@ -562,12 +563,12 @@ var Pontoon = (function () {
         $.translate.load(self._mt);
       });
       
-      // Activate project-side code: pontoon.js (iframe cross-domain policy solution)
+      // Activate project code: pontoon.js (iframe cross-domain policy solution)
       Pontoon._doc.postMessage(self._locale, $("#source").attr("src"));
 
-      // Wait for project-side code to provide entities
-      // TODO: timeout if no response for 5 seconds
-      window.addEventListener("message", self.renderMainUI, false);  
+      // Wait for project code messages
+      // TODO: display page not ready for Pontoon notification if event not triggered
+      window.addEventListener("message", self.receiveMessage, false);
     },
 
 

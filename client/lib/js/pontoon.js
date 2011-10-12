@@ -25,7 +25,7 @@
         $(data.entities).each(function () {
           delete this.node;
         });
-        Pontoon._ptn.postMessage(JSON.stringify(data), "*");
+        Pontoon._ptn.postMessage(JSON.stringify(data), "*"); // TODO: hardcode Pontoon domain name
       }
 
 
@@ -39,11 +39,11 @@
       function extendEntity(e) {
         e.hover = function () {
           this.node.get(0).showToolbar();
-          this.ui.toggleClass('hovered');
+          Pontoon._ptn.postMessage("hovered", "*"); // TODO: hardcode Pontoon domain name
         };
         e.unhover = function () {
           this.node.get(0).hideToolbar();
-          this.ui.toggleClass('hovered');
+          Pontoon._ptn.postMessage("hovered", "*"); // TODO: hardcode Pontoon domain name
         };
       }
 
@@ -334,14 +334,16 @@
     }
   }
 
-  // Prevent execution of any code if page not loaded in Pontoon iframe
+  // Handle messages from project code
   function receiveMessage(e) {
-    // TODO: hardcode Pontoon domain name in equation with e.origin to check if we trust the sender of this message
-    if (e.source === Pontoon._ptn) {
+    // Prevent execution of any code if page not loaded in Pontoon iframe
+    if (e.source === Pontoon._ptn) { // TODO: hardcode Pontoon domain name
       Pontoon._locale = e.data; // Set locale
       loadJquery();
     }
   }
+
+  // Wait for main code messages
   window.addEventListener("message", receiveMessage, false);  
   
 })();
