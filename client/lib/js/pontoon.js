@@ -50,6 +50,32 @@
 
 
       /**
+       * Makes DOM nodes editable using contentEditable property
+       * Based on editableText plugin by Andris Valums, http://valums.com
+       */ 
+      function makeEditable(node) {
+        // Save value to restore if user presses cancel
+        node.prevValue = $(node).html().toString();
+
+        // Show/hide toolbar
+        node.showToolbar = function () {
+          showToolbar(this);
+        }
+        node.hideToolbar = function () {
+          hideToolbar(this);
+        }
+
+        // Hover handler
+        $(node).hover(function () {
+          this.entity.hover();
+        }, function() {
+          this.entity.unhover();
+        });
+      }
+
+
+
+      /**
        * Extract entities from the document, not prepared for working with Pontoon
        * 
        * Create entity object from every non-empty text node
@@ -68,7 +94,7 @@
             // Head entities cannot be edited in-place
             if ($(this).parents('head').length === 0) {
               entity.node = $(this).parent(); // HTML Element holding string
-              entity.node.editableText(); // Make nodes editable
+              makeEditable(entity.node.get(0)); // Make nodes editable
               entity.node.get(0).entity = entity; // Store entity reference to the node
               extendEntity(entity);
             }
@@ -114,7 +140,7 @@
               }
 
               entity.node = parent; // HTML Element holding string
-              entity.node.editableText(); // Make nodes editable
+              makeEditable(entity.node.get(0)); // Make nodes editable
               entity.node.get(0).entity = entity; // Store entity reference to the node
               extendEntity(entity);
               counter = counter + 1;
@@ -124,17 +150,131 @@
         });
       }
 
+
+
+      /**
+       * Show editable toolbar
+       */
+      function showToolbar(element) {
+        if ($(element).is('.editableToolbar')) {
+          $(element).get(0).target.entity.hover();
+          return true;
+        } else {       
+          var toolbar = $('.editableToolbar'),
+              curTarget = toolbar.get(0).target,
+              newTarget = element;
+          if ($(curTarget).attr('contentEditable') === 'true') {
+            return;
+          }
+          if (curTarget && curTarget !== newTarget) {
+            hideToolbar(curTarget);
+          }
+          var left = newTarget.getBoundingClientRect().left + window.scrollX,
+              top = newTarget.getBoundingClientRect().top + window.scrollY;
+          toolbar.css('left', left + 'px')
+                 .css('top', top-21 + 'px');
+        }           
+        var toolbarNode = toolbar.get(0);
+        if (toolbarNode.I !== null) {
+          clearTimeout(toolbarNode.I);
+          toolbarNode.I = null;
+        }
+        if (newTarget) {
+          toolbarNode.target = newTarget;
+        }
+        $(newTarget).addClass('hovered');
+        toolbar.show();
+      }
+
+
+
+      /**
+       * Hide editable toolbar
+       */
+      function hideToolbar(element) {
+        if ($(element).is('.editableToolbar')) {
+          var toolbar = $(element);
+        } else {
+          var toolbar = $('.editableToolbar');
+        }
+        var toolbarNode = toolbar.get(0),
+            target = toolbarNode.target;
+        if ($(target).attr('contentEditable') === 'true') {
+          return;
+        }
+        function hide() {
+          if (target) {
+            target.blur();
+            stopEditing(toolbar);
+            if (target === toolbar.get(0).target) {
+              toolbar.get(0).target = null;
+              $(target).removeClass('hovered');
+              toolbar.hide();
+            } else {
+              $(target).removeClass('hovered');
+            }
+          }
+        }
+        toolbar.get(0).I = setTimeout(hide, 50);
+      }
+
+
+
+      /**
+       * Enable editable mode
+       * TODO: remove toolbar parameter and use selector instead
+       */
+      function startEditing(toolbar) {
+        toolbar.children().show().end()
+          .find('.edit').hide();
+        var target = toolbar.get(0).target;
+        $(target).attr('contentEditable', true);
+        $(target.entity.ui).addClass("active");
+        target.focus();
+      }
+
+
+
+      /**
+       * Disable editable mode
+       * TODO: remove toolbar parameter and use selector instead
+       */
+      function stopEditing(toolbar) {
+        toolbar.children().hide().end()
+          .find('.edit').show();
+        var target = toolbar.get(0).target;
+        $(target).attr('contentEditable', false);
+        $(target.entity.ui).removeClass("active");
+      }
+
+
+
       // Inject toolbar stylesheet
       $('<link>', {
         rel: 'stylesheet',
         href: '../../client/lib/css/editable.css'
       }).appendTo('head');
 
-      // Inject editableText jQuery Plugin
-      // TODO: integrate plugin into this file
-      var js = document.createElement('script');
-      js.src = "../../client/lib/js/jquery.editableText.js";
-      $(js).appendTo('body');
+      // Prepare editable toolbar
+      var toolbar = $(
+        "<div class='editableToolbar'>" +
+          "<a href='#' class='edit'></a>" +
+          "<a href='#' class='save'></a>" +
+          "<a href='#' class='cancel'></a>" +
+        "</div>").appendTo($('body'));
+      toolbar.hover(function () {
+        showToolbar(this);
+      }, function () {
+        this.target.entity.unhover();
+      })
+      .find('.edit').click(function () {
+        startEditing(toolbar);
+        return false;
+      }).end()
+      .find('.save, .cancel').click(function () {
+        stopEditing(toolbar);
+        return false;
+      });
 
       // Enable context menu
       $('body')
@@ -153,7 +293,6 @@
         });
 
       // Determine if the current page is prepared for working with Pontoon
-      // Extract entities from the document
       var meta = $('head > meta[name=Pontoon]');
       if (meta.length > 0) {
         if (meta.attr('content')) {
