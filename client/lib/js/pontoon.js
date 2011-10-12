@@ -52,6 +52,8 @@
       /**
        * Makes DOM nodes editable using contentEditable property
        * Based on editableText plugin by Andris Valums, http://valums.com
+       *
+       * node DOM node
        */ 
       function makeEditable(node) {
         // Save value to restore if user presses cancel
@@ -154,15 +156,17 @@
 
       /**
        * Show editable toolbar
+       *
+       * node DOM node
        */
-      function showToolbar(element) {
-        if ($(element).is('.editableToolbar')) {
-          $(element).get(0).target.entity.hover();
+      function showToolbar(node) {
+        if ($(node).is('.editableToolbar')) {
+          $(node).get(0).target.entity.hover();
           return true;
         } else {       
           var toolbar = $('.editableToolbar'),
               curTarget = toolbar.get(0).target,
-              newTarget = element;
+              newTarget = node;
           if ($(curTarget).attr('contentEditable') === 'true') {
             return;
           }
@@ -190,10 +194,12 @@
 
       /**
        * Hide editable toolbar
+       *
+       * node DOM node
        */
-      function hideToolbar(element) {
-        if ($(element).is('.editableToolbar')) {
-          var toolbar = $(element);
+      function hideToolbar(node) {
+        if ($(node).is('.editableToolbar')) {
+          var toolbar = $(node);
         } else {
           var toolbar = $('.editableToolbar');
         }
