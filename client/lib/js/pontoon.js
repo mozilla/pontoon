@@ -205,7 +205,7 @@
         function hide() {
           if (target) {
             target.blur();
-            stopEditing(toolbar);
+            stopEditing();
             if (target === toolbar.get(0).target) {
               toolbar.get(0).target = null;
               $(target).removeClass('hovered');
@@ -224,7 +224,8 @@
        * Enable editable mode
        * TODO: remove toolbar parameter and use selector instead
        */
-      function startEditing(toolbar) {
+      function startEditing() {
+      	var toolbar = $('.editableToolbar');
         toolbar.children().show().end()
           .find('.edit').hide();
         var target = toolbar.get(0).target;
@@ -239,7 +240,8 @@
        * Disable editable mode
        * TODO: remove toolbar parameter and use selector instead
        */
-      function stopEditing(toolbar) {
+      function stopEditing() {
+      	var toolbar = $('.editableToolbar');
         toolbar.children().hide().end()
           .find('.edit').show();
         var target = toolbar.get(0).target;
@@ -268,11 +270,11 @@
         this.target.entity.unhover();
       })
       .find('.edit').click(function () {
-        startEditing(toolbar);
+        startEditing();
         return false;
       }).end()
       .find('.save, .cancel').click(function () {
-        stopEditing(toolbar);
+        stopEditing();
         return false;
       });
 
