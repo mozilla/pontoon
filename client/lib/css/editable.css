@@ -51,8 +51,10 @@
 
 .editableToolbar .save {
   background-image: url('../images/save-active.png');
+  display: none;
 }
 
 .editableToolbar .cancel {
   background-image: url('../images/cancel-active.png');
+  display: none;
 }
