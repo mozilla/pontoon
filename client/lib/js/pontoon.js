@@ -21,11 +21,15 @@
       function sendData() {
         // Deep copy: http://api.jquery.com/jQuery.extend
         var data = $.extend(true, {}, Pontoon._data);
-
         $(data.entities).each(function () {
           delete this.node;
         });
-        Pontoon._ptn.postMessage(JSON.stringify(data), "*"); // TODO: hardcode Pontoon domain name
+
+        var message = {
+          type: "data",
+          value: data
+        }
+        Pontoon._ptn.postMessage(JSON.stringify(message), "*"); // TODO: hardcode Pontoon domain name
       }
 
 
@@ -39,11 +43,19 @@
       function extendEntity(e) {
         e.hover = function () {
           this.node.get(0).showToolbar();
-          Pontoon._ptn.postMessage("hovered", "*"); // TODO: hardcode Pontoon domain name
+          var message = {
+            type: "hover",
+            value: this.id
+          }
+          Pontoon._ptn.postMessage(JSON.stringify(message), "*"); // TODO: hardcode Pontoon domain name
         };
         e.unhover = function () {
           this.node.get(0).hideToolbar();
-          Pontoon._ptn.postMessage("hovered", "*"); // TODO: hardcode Pontoon domain name
+          var message = {
+            type: "hover",
+            value: this.id
+          }
+          Pontoon._ptn.postMessage(JSON.stringify(message), "*"); // TODO: hardcode Pontoon domain name
         };
       }
 
@@ -87,10 +99,13 @@
        */ 
       function guessEntities() {
         Pontoon._data.entities = [];
+        var counter = 0; // TODO: use IDs or XPath
 
         $(':not("script, style")').contents().each(function () {
           if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
             var entity = {};
+            entity.id = counter;
+            counter++;
             entity.original = $(this).parent().html();
 
             // Head entities cannot be edited in-place
@@ -141,11 +156,12 @@
                 $(this).remove();
               }
 
+              entity.id = counter;
               entity.node = parent; // HTML Element holding string
               makeEditable(entity.node.get(0)); // Make nodes editable
               entity.node.get(0).entity = entity; // Store entity reference to the node
               extendEntity(entity);
-              counter = counter + 1;
+              counter++;
             }
           });
           sendData();

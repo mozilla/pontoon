@@ -524,10 +524,11 @@ var Pontoon = (function () {
      */
     receiveMessage: function (e) {
       if (e.source === Pontoon._doc) {
-        if (e.data === "hovered") {
-          // this.ui.toggleClass('hovered');
-        } else {
-          Pontoon._data = JSON.parse(e.data);
+        var message = JSON.parse(e.data);
+        if (message.type === "hover") {
+          Pontoon._data.entities[message.value].ui.toggleClass('hovered');
+        } else if (message.type === "data") {
+          Pontoon._data = message.value;
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $('#main').slideDown();
