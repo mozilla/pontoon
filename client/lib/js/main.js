@@ -43,6 +43,26 @@ var Pontoon = (function () {
 
 
     /*
+     * window.postMessage improved
+     *
+     * messageType data type to be sent to the other window
+     * messageValue data value to be sent to the other window
+     * otherWindow reference to another window
+     * targetOrigin specifies what the origin of otherWindow must be
+    */
+    postMessage: function (messageType, messageValue, otherWindow, targetOrigin) {
+      var otherWindow = otherWindow || Pontoon._doc,
+          targetOrigin = targetOrigin || $("#source").attr("src"),
+          message = {
+            type: messageType,
+            value: messageValue
+          }
+      otherWindow.postMessage(JSON.stringify(message), targetOrigin);
+    },
+
+
+
+    /*
      * Do not render HTML code
      *
      * string HTML snippet that has to be displayed as code instead of rendered
@@ -65,7 +85,7 @@ var Pontoon = (function () {
         var li = $('<li class="entity' + 
           // append classes to translated and head entities
           (this.translation ? ' translated' : '') + 
-          (!this.node ? ' head' : '') + '">' + 
+          (!this.body ? ' head' : '') + '">' + 
         '<div class="source">' + 
           '<ol class="extra">' + 
             '<li class="active original-string" title="Original string"></li>' + 
@@ -140,11 +160,11 @@ var Pontoon = (function () {
 
       // Main entity list handlers
       $("#main .entity:not('.head')").hover(function () {
-        this.entity.hover();
+        self.postMessage("hover", this.entity.id);
       }, function () {
-        this.entity.unhover();
+        self.postMessage("unhover", this.entity.id);
       }).click(function () {
-        $(self._doc).find('.editableToolbar > .edit').click();
+        self.postMessage("edit", this.entity.id);
       });
 
       // Source menu
@@ -565,7 +585,7 @@ var Pontoon = (function () {
       });
       
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
-      Pontoon._doc.postMessage(self._locale, $("#source").attr("src"));
+      self.postMessage("locale", self._locale);
 
       // Wait for project code messages
       // TODO: display page not ready for Pontoon notification if event not triggered

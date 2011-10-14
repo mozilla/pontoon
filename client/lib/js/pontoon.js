@@ -15,6 +15,28 @@
     $.noConflict();
     jQuery(document).ready(function($) {
 
+
+
+      /*
+       * window.postMessage improved
+       *
+       * messageType data type to be sent to the other window
+       * messageValue data value to be sent to the other window
+       * otherWindow reference to another window
+       * targetOrigin specifies what the origin of otherWindow must be
+      */
+      function postMessage(messageType, messageValue, otherWindow, targetOrigin) {
+        var otherWindow = otherWindow || Pontoon._ptn,
+            targetOrigin = targetOrigin || "*", // TODO: hardcode Pontoon domain name
+            message = {
+              type: messageType,
+              value: messageValue
+            }
+        otherWindow.postMessage(JSON.stringify(message), targetOrigin);
+      }
+
+
+
       /**
        * Send data to main Pontoon code
        */
@@ -25,11 +47,7 @@
           delete this.node;
         });
 
-        var message = {
-          type: "data",
-          value: data
-        }
-        Pontoon._ptn.postMessage(JSON.stringify(message), "*"); // TODO: hardcode Pontoon domain name
+        postMessage("data", data);
       }
 
 
@@ -43,19 +61,11 @@
       function extendEntity(e) {
         e.hover = function () {
           this.node.get(0).showToolbar();
-          var message = {
-            type: "hover",
-            value: this.id
-          }
-          Pontoon._ptn.postMessage(JSON.stringify(message), "*"); // TODO: hardcode Pontoon domain name
+          postMessage("hover", this.id);
         };
         e.unhover = function () {
           this.node.get(0).hideToolbar();
-          var message = {
-            type: "hover",
-            value: this.id
-          }
-          Pontoon._ptn.postMessage(JSON.stringify(message), "*"); // TODO: hardcode Pontoon domain name
+          postMessage("hover", this.id);
         };
       }
 
@@ -110,7 +120,9 @@
 
             // Head entities cannot be edited in-place
             if ($(this).parents('head').length === 0) {
+              // TODO: remove entity.node from Pontoon._data?
               entity.node = $(this).parent(); // HTML Element holding string
+              entity.body = true;
               makeEditable(entity.node.get(0)); // Make nodes editable
               entity.node.get(0).entity = entity; // Store entity reference to the node
               extendEntity(entity);
@@ -157,7 +169,9 @@
               }
 
               entity.id = counter;
+              // TODO: remove entity.node from Pontoon._data?
               entity.node = parent; // HTML Element holding string
+              entity.body = true;
               makeEditable(entity.node.get(0)); // Make nodes editable
               entity.node.get(0).entity = entity; // Store entity reference to the node
               extendEntity(entity);
@@ -273,6 +287,25 @@
 
 
 
+      /**
+       * Handle messages from project code
+       */
+      function receiveMessage(e) {
+        if (e.source === Pontoon._ptn) { // TODO: hardcode Pontoon domain name
+          var message = JSON.parse(e.data);
+          if (message.type === "hover") {
+            Pontoon._data.entities[message.value].hover();
+          } else if (message.type === "unhover") {
+            Pontoon._data.entities[message.value].unhover();
+          } else if (message.type === "edit") {
+            $('.editableToolbar > .edit').click();
+          }
+        }
+      }
+
+      // Wait for main code messages
+      window.addEventListener("message", receiveMessage, false);
+
       // Inject toolbar stylesheet
       $('<link>', {
         rel: 'stylesheet',
@@ -350,16 +383,18 @@
     }
   }
 
-  // Handle messages from project code
-  function receiveMessage(e) {
+  // Wait for main code trigger
+  function initizalize(e) {
     // Prevent execution of any code if page not loaded in Pontoon iframe
     if (e.source === Pontoon._ptn) { // TODO: hardcode Pontoon domain name
-      Pontoon._locale = e.data; // Set locale
-      loadJquery();
+      var message = JSON.parse(e.data);
+      if (message.type === "locale") {
+        Pontoon._locale = message.value; // Set locale
+        loadJquery();
+        window.removeEventListener("message", initizalize, false);
+      }
     }
   }
-
-  // Wait for main code messages
-  window.addEventListener("message", receiveMessage, false);  
+  window.addEventListener("message", initizalize, false);
   
 })();
