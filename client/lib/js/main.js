@@ -18,7 +18,7 @@ var Pontoon = (function () {
     */
     save: function () {
       var url = this._meta.url || 'http://0.0.0.0:8000/push/',
-          project = this._meta.project || this._doc.location.href,
+          project = this._meta.project || $("#source").attr("src"),
           params = {
             'project': project,
             'locale': this._locale
