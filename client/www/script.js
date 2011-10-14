@@ -19,12 +19,12 @@
         .unbind('mouseup', mouseUpHandler);
 
       $('#iframe-cover').hide(); // iframe fix
-      var message = {type: "drag", value: "Advanced"};
+      var message = {type: "mode", value: "Advanced"};
       if (e.data.initial.below.height() === 0) {
       	$('#main').removeClass('opened');
       } else {
       	$('#main').addClass('opened');
-        message = {type: "drag", value: "Basic"};
+        message = {type: "mode", value: "Basic"};
       }
       // TODO: Use postMessage from main code (move to common)
       $("#source").get(0).contentWindow.postMessage(JSON.stringify(message), $("#source").attr("src"));

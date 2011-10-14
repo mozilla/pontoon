@@ -437,10 +437,10 @@ var Pontoon = (function () {
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
         if ($('#main').is('.opened')) {
           $('#entitylist').height(0);
-          $("#context .mode", self._doc).attr("label", "Advanced mode");
+          self.postMessage("mode", "Advanced");
         } else {
           $('#entitylist').height(300);
-          $("#context .mode", self._doc).attr("label", "Basic mode");
+          self.postMessage("mode", "Basic");
         }
         $('#source').height($(document).height() - $('#main').height());
         $('#main').toggleClass('opened');

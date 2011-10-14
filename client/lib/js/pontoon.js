@@ -330,7 +330,7 @@
             Pontoon._data.entities[message.value].unhover();
           } else if (message.type === "edit") {
             $('.editableToolbar > .edit').click();
-          } else if (message.type === "drag") {
+          } else if (message.type === "mode") {
             $("#context .mode").attr("label", message.value + " mode");
           }
         }
