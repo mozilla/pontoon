@@ -299,6 +299,8 @@
             Pontoon._data.entities[message.value].unhover();
           } else if (message.type === "edit") {
             $('.editableToolbar > .edit').click();
+          } else if (message.type === "drag") {
+            $("#context .mode").attr("label", message.value + " mode");
           }
         }
       }

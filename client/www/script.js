@@ -19,13 +19,14 @@
         .unbind('mouseup', mouseUpHandler);
 
       $('#iframe-cover').hide(); // iframe fix
+      var message = {type: "drag", value: "Advanced"};
       if (e.data.initial.below.height() === 0) {
       	$('#main').removeClass('opened');
-        $("#context .mode", Pontoon._doc).attr("label", "Advanced mode");
       } else {
       	$('#main').addClass('opened');
-        $("#context .mode", Pontoon._doc).attr("label", "Basic mode");
+        message = {type: "drag", value: "Basic"};
       }
+      $("#source").get(0).contentWindow.postMessage(JSON.stringify(message), $("#source").attr("src"));
     };
 	$('#logo, #drag').bind('mousedown', function(e) {
       e.preventDefault();
