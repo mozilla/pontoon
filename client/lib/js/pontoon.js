@@ -79,6 +79,48 @@
           sendData();
           postMessage("cancel", entity.id);
         });
+
+        // In-place keyboard shortcuts
+        $("html").unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
+          var key = e.keyCode || e.which,
+              toolbar = $(".editableToolbar"),
+              save = toolbar.find(".save"),
+              target = toolbar.get(0).target,
+              entity = target.entity,
+              id = entity.id,
+              next = id + 1,
+              entities = Pontoon._data.entities;
+
+          if (save.is(":visible")) {
+            if (key === 13) { // Enter: confirm translation
+              save.click();
+              target.hideToolbar();
+              return false;
+            }
+
+            if (key === 27) { // Esc: cancel translation
+              toolbar.find(".cancel").click();
+              target.hideToolbar();
+              return false;
+            }
+
+            if (key === 9) { // Tab: confirm + move around entities
+              // If on last entity, jump to the first
+              if (next > entities.length) {
+              	$.each(entities, function() {
+                  if (this.body) {
+                    next = this.id;
+                  }
+                });
+              }
+              save.click();
+              $(target).removeClass("hovered");
+              entities[next].hover();
+              $(".editableToolbar > .edit").click();
+              return false;
+            }
+          }
+        });
       }
 
 
@@ -355,7 +397,7 @@
       toolbar.hover(function () {
         showToolbar(this);
       }, function () {
-        this.target.entity.unhover();
+        hideToolbar(this);
       })
       .find('.edit').click(function () {
         startEditing();
