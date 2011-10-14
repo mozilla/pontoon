@@ -26,6 +26,7 @@
       	$('#main').addClass('opened');
         message = {type: "drag", value: "Basic"};
       }
+      // TODO: Use postMessage from main code (move to common)
       $("#source").get(0).contentWindow.postMessage(JSON.stringify(message), $("#source").attr("src"));
     };
 	$('#logo, #drag').bind('mousedown', function(e) {

@@ -480,26 +480,6 @@ var Pontoon = (function () {
         self.save();
       });
 /*
-      // Update entities and progress when saved
-      $(".editableToolbar > .save", this._doc).click(function () {
-        var element = $(this).parent().get(0).target,
-            entity = element.entity;
-
-        entity.translation = $($(element).clone()).html();
-        self.updateEntityUI(entity);
-      });
-
-      // Update progress when cancelled
-      $(".editableToolbar > .cancel", this._doc).click(function () {
-        var element = $(this).parent().get(0).target,
-            entity = element.entity;
-
-        $(element).html(element.prevValue);
-        entity.translation = "";
-        entity.ui.find('textarea').val(entity.translation).parents('.entity').removeClass('translated');
-        self.updateProgress();
-      });
-
       // In-place keyboard shortcuts
       $("html", self._doc).unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         var key = e.keyCode || e.which,
@@ -548,10 +528,18 @@ var Pontoon = (function () {
         if (message.type === "hover") {
           Pontoon._data.entities[message.value].ui.toggleClass('hovered');
         } else if (message.type === "data") {
-          Pontoon._data = message.value;
+          // Deep copy: http://api.jquery.com/jQuery.extend
+          Pontoon._data = $.extend(true, Pontoon._data, message.value);
+        } else if (message.type === "render") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $('#main').slideDown();
+        } else if (message.type === "save") {
+          Pontoon.updateEntityUI(Pontoon._data.entities[message.value]);
+        } else if (message.type === "cancel") {
+          var entity = Pontoon._data.entities[message.value];
+          entity.ui.find('textarea').val(entity.translation).parents('.entity').removeClass('translated');
+          Pontoon.updateProgress();
         }
       }
     },

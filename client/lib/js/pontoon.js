@@ -53,6 +53,37 @@
 
 
       /**
+       * Render main UI and handle events
+       */
+      function renderHandle() {
+        sendData();
+        postMessage("render");
+
+        // Update UI and progress when saved
+        $(".editableToolbar > .save").click(function () {
+          var element = $(this).parent().get(0).target,
+              entity = element.entity;
+
+          entity.translation = $($(element).clone()).html();
+          sendData();
+          postMessage("save", entity.id);
+        });
+
+        // Update progress when cancelled
+        $(".editableToolbar > .cancel").click(function () {
+          var element = $(this).parent().get(0).target,
+              entity = element.entity;
+
+          $(element).html(element.prevValue);
+          entity.translation = "";
+          sendData();
+          postMessage("cancel", entity.id);
+        });
+      }
+
+
+
+      /**
        * Extend entity object
        * TODO: move to main.js
        * 
@@ -134,7 +165,7 @@
         });
 
         $(".pontoon-entity").removeClass("pontoon-entity");
-        sendData();
+        renderHandle();
       }
 
 
@@ -178,7 +209,7 @@
               counter++;
             }
           });
-          sendData();
+          renderHandle();
         });
       }
 
