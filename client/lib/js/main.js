@@ -390,7 +390,7 @@ var Pontoon = (function () {
         // Head entities cannot be edited in-place
         } else if (!entity.body) {
           entity.translation = "";
-          entity.ui.find('textarea').val(entity.translation).parents('.entity').removeClass('translated');
+          entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           self.updateProgress();
         }
       });
@@ -418,7 +418,7 @@ var Pontoon = (function () {
      * entity Entity
      */
     updateEntityUI: function (entity) {
-      entity.ui.find('textarea').val(entity.translation).parents('.entity').addClass('translated');
+      entity.ui.addClass('translated').find('textarea').val(entity.translation);
       this.updateProgress();
     },
 
@@ -486,20 +486,20 @@ var Pontoon = (function () {
     receiveMessage: function (e) {
       if (e.source === Pontoon._doc) {
         var message = JSON.parse(e.data);
-        if (message.type === "hover") {
-          Pontoon._data.entities[message.value].ui.toggleClass('hovered');
-        } else if (message.type === "data") {
+        if (message.type === "data") {
           // Deep copy: http://api.jquery.com/jQuery.extend
           Pontoon._data = $.extend(true, Pontoon._data, message.value);
         } else if (message.type === "render") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $('#main').slideDown();
+        } if (message.type === "hover") {
+          Pontoon._data.entities[message.value].ui.toggleClass('hovered');
         } else if (message.type === "save") {
           Pontoon.updateEntityUI(Pontoon._data.entities[message.value]);
         } else if (message.type === "cancel") {
           var entity = Pontoon._data.entities[message.value];
-          entity.ui.find('textarea').val(entity.translation).parents('.entity').removeClass('translated');
+          entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
         }
       }
