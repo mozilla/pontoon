@@ -375,6 +375,7 @@
           } else if (message.type === "cancel") {
             $('.editableToolbar > .cancel').click();
           } else if (message.type === "save") {
+            $('.editableToolbar').get(0).target.entity.node.html(message.value);
             $('.editableToolbar > .save').click();
           } else if (message.type === "mode") {
             $("#context .mode").attr("label", message.value + " mode");

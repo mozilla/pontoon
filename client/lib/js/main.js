@@ -27,7 +27,6 @@ var Pontoon = (function () {
           data = $.extend(true, {}, this._data);
 
       $(data.entities).each(function () {
-        delete this.node;
         delete this.ui;
         delete this.hover;
         delete this.unhover;
@@ -341,11 +340,10 @@ var Pontoon = (function () {
             source = li.find('.source .content .active .source-string').html();
 
         // Only if no other entity is being edited in-place
-        if (entity.node && entity.node.is('.hovered')) {
-          $(entity.node).html(source);
-          self.postMessage("save");
+        if (li.is('.hovered')) {
+          self.postMessage("save", source);
         // Head entities cannot be edited in-place
-        } else if (!entity.node) {
+        } else if (!entity.body) {
           entity.translation = source;
           self.updateEntityUI(entity);
         }
@@ -354,14 +352,16 @@ var Pontoon = (function () {
       // Translate in textarea
       $("#main .translation textarea").click(function (e) {
         e.stopPropagation();
-        var entity = $(this).parents('.entity').get(0).entity;
+        var li = $(this).parents('.entity'),
+            entity = li.get(0).entity;
 
         // Only if no other entity is being edited in-place
-        if (entity.node && !entity.node.is('.hovered')) {
+        if (!li.is('.hovered')) {
           $(this).blur();
         }
       });
 
+      // Save translation
       $("#main .translation .save").click(function (e) {
         e.stopPropagation();
         var li = $(this).parents('.entity'),
@@ -369,26 +369,26 @@ var Pontoon = (function () {
             source = li.find('.translation textarea').val();
 
         // Only if no other entity is being edited in-place
-        if (entity.node && entity.node.is('.hovered')) {
-          $(entity.node).html(source);
-          self.postMessage("save");
+        if (li.is('.hovered')) {
+          self.postMessage("save", source);
         // Head entities cannot be edited in-place
-        } else if (!entity.node) {
+        } else if (!entity.body) {
           entity.translation = source;
           self.updateEntityUI(entity);
         }
       });
 
+      // Cancel translation
       $("#main .translation .cancel").click(function (e) {
         e.stopPropagation();
         var li = $(this).parents('.entity'),
             entity = li.get(0).entity;
 
         // Only if no other entity is being edited in-place
-        if (entity.node && entity.node.is('.hovered')) {
-          self.postMessage("cancel");
+        if (li.is('.hovered')) {
+          self.postMessage("cancel", entity.id);
         // Head entities cannot be edited in-place
-        } else if (!entity.node) {
+        } else if (!entity.body) {
           entity.translation = "";
           entity.ui.find('textarea').val(entity.translation).parents('.entity').removeClass('translated');
           self.updateProgress();
