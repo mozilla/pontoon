@@ -115,6 +115,7 @@
               }
               save.click();
               $(target).removeClass("hovered");
+              postMessage("hover", id);
               entities[next].hover();
               $(".editableToolbar > .edit").click();
               return false;
@@ -134,11 +135,9 @@
       function extendEntity(e) {
         e.hover = function () {
           this.node.get(0).showToolbar();
-          postMessage("hover", this.id);
         };
         e.unhover = function () {
           this.node.get(0).hideToolbar();
-          postMessage("hover", this.id);
         };
       }
 
@@ -290,6 +289,7 @@
           toolbarNode.target = newTarget;
         }
         $(newTarget).addClass('hovered');
+        postMessage("hover", newTarget.entity.id);
         toolbar.show();
       }
 
@@ -318,9 +318,11 @@
             if (target === toolbar.get(0).target) {
               toolbar.get(0).target = null;
               $(target).removeClass('hovered');
+              postMessage("unhover");
               toolbar.hide();
             } else {
               $(target).removeClass('hovered');
+              postMessage("unhover");
             }
           }
         }

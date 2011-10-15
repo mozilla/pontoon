@@ -493,8 +493,10 @@ var Pontoon = (function () {
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $('#main').slideDown();
-        } if (message.type === "hover") {
-          Pontoon._data.entities[message.value].ui.toggleClass('hovered');
+        } else if (message.type === "hover") {
+          Pontoon._data.entities[message.value].ui.addClass('hovered');
+        } else if (message.type === "unhover") {
+          $("#entitylist .entity").removeClass('hovered');
         } else if (message.type === "save") {
           Pontoon.updateEntityUI(Pontoon._data.entities[message.value]);
         } else if (message.type === "cancel") {
