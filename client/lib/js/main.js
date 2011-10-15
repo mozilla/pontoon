@@ -164,7 +164,7 @@ var Pontoon = (function () {
       }, function () {
         self.postMessage("unhover", this.entity.id);
       }).click(function () {
-        self.postMessage("edit", this.entity.id);
+        self.postMessage("edit");
       });
 
       // Source menu
@@ -336,15 +336,14 @@ var Pontoon = (function () {
       // Copy source to translation
       $("#main .source .copy").click(function (e) {
         e.stopPropagation();
-        var toolbar = $(self._doc).find('.editableToolbar'),
-            li = $(this).parents('.entity'),
+        var li = $(this).parents('.entity'),
             entity = li.get(0).entity,
             source = li.find('.source .content .active .source-string').html();
 
         // Only if no other entity is being edited in-place
         if (entity.node && entity.node.is('.hovered')) {
           $(entity.node).html(source);
-          toolbar.find('.save').click();
+          self.postMessage("save");
         // Head entities cannot be edited in-place
         } else if (!entity.node) {
           entity.translation = source;
@@ -365,15 +364,14 @@ var Pontoon = (function () {
 
       $("#main .translation .save").click(function (e) {
         e.stopPropagation();
-        var toolbar = $(self._doc).find('.editableToolbar'),
-            li = $(this).parents('.entity'),
+        var li = $(this).parents('.entity'),
             entity = li.get(0).entity,
             source = li.find('.translation textarea').val();
 
         // Only if no other entity is being edited in-place
         if (entity.node && entity.node.is('.hovered')) {
           $(entity.node).html(source);
-          toolbar.find('.save').click();
+          self.postMessage("save");
         // Head entities cannot be edited in-place
         } else if (!entity.node) {
           entity.translation = source;
@@ -383,13 +381,12 @@ var Pontoon = (function () {
 
       $("#main .translation .cancel").click(function (e) {
         e.stopPropagation();
-        var toolbar = $(self._doc).find('.editableToolbar'),
-            li = $(this).parents('.entity'),
+        var li = $(this).parents('.entity'),
             entity = li.get(0).entity;
 
         // Only if no other entity is being edited in-place
         if (entity.node && entity.node.is('.hovered')) {
-          toolbar.find('.cancel').click();
+          self.postMessage("cancel");
         // Head entities cannot be edited in-place
         } else if (!entity.node) {
           entity.translation = "";
