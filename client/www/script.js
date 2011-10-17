@@ -3,6 +3,14 @@
 
   $(function() {
   	
+    // Update locale selector
+    function updateLocale(locale) {
+      var l = locale || 'de';
+      $('.locale .button')
+        .find('.flag').addClass(l).end()
+        .find('.language').html($('.locale .menu .flag.' + l).siblings('.language').html());
+    }
+
     // Resizable
 	var mouseMoveHandler = function(e) {
 	  var initial = e.data.initial,
@@ -19,15 +27,13 @@
         .unbind('mouseup', mouseUpHandler);
 
       $('#iframe-cover').hide(); // iframe fix
-      var message = {type: "mode", value: "Advanced"};
       if (e.data.initial.below.height() === 0) {
-      	$('#main').removeClass('opened');
+        $('#main').removeClass('opened');
+        Pontoon.common.postMessage("mode", "Advanced");
       } else {
-      	$('#main').addClass('opened');
-        message = {type: "mode", value: "Basic"};
-      }
-      // TODO: Use postMessage from main code (move to common)
-      $("#source").get(0).contentWindow.postMessage(JSON.stringify(message), $("#source").attr("src"));
+        $('#main').addClass('opened');
+        Pontoon.common.postMessage("mode", "Basic");
+      }      
     };
 	$('#logo, #drag').bind('mousedown', function(e) {
       e.preventDefault();
@@ -57,17 +63,6 @@
     $(window).resize(function () {
       $('#source').height($(document).height() - $('#main').height());
     });
-
-    // Common functions used in both, client specific code and Pontoon library
-    Pontoon.common();
-
-    // Update locale selector
-    function updateLocale(locale) {
-      var l = locale || 'de';
-      $('.locale .button')
-        .find('.flag').addClass(l).end()
-        .find('.language').html($('.locale .menu .flag.' + l).siblings('.language').html());
-    }
 
     // When website loaded, initialize Pontoon
     $('#source').unbind("load.pontoon").bind("load.pontoon", function() {

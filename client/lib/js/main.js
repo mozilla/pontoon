@@ -42,26 +42,6 @@ var Pontoon = (function () {
 
 
     /*
-     * window.postMessage improved
-     *
-     * messageType data type to be sent to the other window
-     * messageValue data value to be sent to the other window
-     * otherWindow reference to another window
-     * targetOrigin specifies what the origin of otherWindow must be
-    */
-    postMessage: function (messageType, messageValue, otherWindow, targetOrigin) {
-      var otherWindow = otherWindow || Pontoon._doc,
-          targetOrigin = targetOrigin || $("#source").attr("src"),
-          message = {
-            type: messageType,
-            value: messageValue
-          }
-      otherWindow.postMessage(JSON.stringify(message), targetOrigin);
-    },
-
-
-
-    /*
      * Do not render HTML code
      *
      * string HTML snippet that has to be displayed as code instead of rendered
@@ -159,11 +139,11 @@ var Pontoon = (function () {
 
       // Main entity list handlers
       $("#main .entity:not('.head')").hover(function () {
-        self.postMessage("hover", this.entity.id);
+        self.common.postMessage("hover", this.entity.id);
       }, function () {
-        self.postMessage("unhover", this.entity.id);
+        self.common.postMessage("unhover", this.entity.id);
       }).click(function () {
-        self.postMessage("edit");
+        self.common.postMessage("edit");
       });
 
       // Source menu
@@ -341,7 +321,7 @@ var Pontoon = (function () {
 
         // Only if no other entity is being edited in-place
         if (li.is('.hovered')) {
-          self.postMessage("save", source);
+          self.common.postMessage("save", source);
         // Head entities cannot be edited in-place
         } else if (!entity.body) {
           entity.translation = source;
@@ -370,7 +350,7 @@ var Pontoon = (function () {
 
         // Only if no other entity is being edited in-place
         if (li.is('.hovered')) {
-          self.postMessage("save", source);
+          self.common.postMessage("save", source);
         // Head entities cannot be edited in-place
         } else if (!entity.body) {
           entity.translation = source;
@@ -386,7 +366,7 @@ var Pontoon = (function () {
 
         // Only if no other entity is being edited in-place
         if (li.is('.hovered')) {
-          self.postMessage("cancel", entity.id);
+          self.common.postMessage("cancel", entity.id);
         // Head entities cannot be edited in-place
         } else if (!entity.body) {
           entity.translation = "";
@@ -434,10 +414,10 @@ var Pontoon = (function () {
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
         if ($('#main').is('.opened')) {
           $('#entitylist').height(0);
-          self.postMessage("mode", "Advanced");
+          self.common.postMessage("mode", "Advanced");
         } else {
           $('#entitylist').height(300);
-          self.postMessage("mode", "Basic");
+          self.common.postMessage("mode", "Basic");
         }
         $('#source').height($(document).height() - $('#main').height());
         $('#main').toggleClass('opened');
@@ -540,7 +520,7 @@ var Pontoon = (function () {
       });
       
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
-      self.postMessage("locale", self._locale);
+      self.common.postMessage("locale", self._locale);
 
       // Wait for project code messages
       // TODO: display page not ready for Pontoon notification if event not triggered
@@ -552,7 +532,7 @@ var Pontoon = (function () {
     /**
      * Common functions used in both, client specific code and Pontoon library
      */
-    common: function () {
+    common: (function () {
       // Show/hide menu on click
       $('.selector').unbind("click.pontoon").bind("click.pontoon", function (e) {
         if (!$(this).siblings('.menu').is(':visible')) {
@@ -633,7 +613,27 @@ var Pontoon = (function () {
           }
         }
       });
-    }
+
+      /*
+       * window.postMessage improved
+       *
+       * messageType data type to be sent to the other window
+       * messageValue data value to be sent to the other window
+       * otherWindow reference to another window
+       * targetOrigin specifies what the origin of otherWindow must be
+      */
+      return {
+        postMessage: function (messageType, messageValue, otherWindow, targetOrigin) {
+          var otherWindow = otherWindow || Pontoon._doc,
+              targetOrigin = targetOrigin || $("#source").attr("src"),
+              message = {
+                type: messageType,
+                value: messageValue
+              }
+          otherWindow.postMessage(JSON.stringify(message), targetOrigin);
+        }
+      }
+    })()
 
   };
 }());
