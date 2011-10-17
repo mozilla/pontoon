@@ -81,14 +81,19 @@
         website = temp ? temp.split("&locale=")[0] : "";
 
     if (website.length > 0 && locale.length > 0) {
-      // TODO: use real params
-      website = "http://pontoon.com/pontoon/projects/testpilot";
-      locale = null;
-
-      $('#intro').slideUp("fast", function() {
-        $('#source').attr('src', website);
-        $('#main .url').val(website);
-        updateLocale(locale);
+      $.ajax({
+        url: website,
+        error: function() {
+          // TODO: show url doesn't exist warning and change locale
+          // TODO: if locale not valid, suggest adding one
+        },
+        success: function() {
+          $('#intro').slideUp("fast", function() {
+            $('#source').attr('src', website);
+            $('#main .url').val(website);
+            updateLocale(locale);
+          });
+        }        
       });
     } else {
       /*

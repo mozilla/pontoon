@@ -625,7 +625,7 @@ var Pontoon = (function () {
       return {
         postMessage: function (messageType, messageValue, otherWindow, targetOrigin) {
           var otherWindow = otherWindow || Pontoon._doc,
-              targetOrigin = targetOrigin || $("#source").attr("src"),
+              targetOrigin = targetOrigin || "*",
               message = {
                 type: messageType,
                 value: messageValue
