@@ -496,11 +496,11 @@ var Pontoon = (function () {
         } else if (message.type === "hover") {
           Pontoon._data.entities[message.value].ui.addClass('hovered');
         } else if (message.type === "unhover") {
-          $("#entitylist .entity").removeClass('hovered');
+          Pontoon._data.entities[message.value].ui.removeClass('hovered');
         } else if (message.type === "active") {
           Pontoon._data.entities[message.value].ui.addClass('active');
         } else if (message.type === "inactive") {
-          $("#entitylist .entity").removeClass('active');
+          Pontoon._data.entities[message.value].ui.removeClass('active');
         } else if (message.type === "save") {
           Pontoon.updateEntityUI(Pontoon._data.entities[message.value]);
         } else if (message.type === "cancel") {

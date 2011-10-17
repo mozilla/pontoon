@@ -318,11 +318,11 @@
             if (target === toolbar.get(0).target) {
               toolbar.get(0).target = null;
               $(target).removeClass('hovered');
-              postMessage("unhover");
+              postMessage("unhover", target.entity.id);
               toolbar.hide();
             } else {
               $(target).removeClass('hovered');
-              postMessage("unhover");
+              postMessage("unhover", target.entity.id);
             }
           }
         }
@@ -357,7 +357,7 @@
           .find('.edit').show();
         var target = toolbar.get(0).target;
         $(target).attr('contentEditable', false);
-        postMessage("inactive");
+        postMessage("inactive", target.entity.id);
       }
 
 
