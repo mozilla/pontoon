@@ -497,6 +497,10 @@ var Pontoon = (function () {
           Pontoon._data.entities[message.value].ui.addClass('hovered');
         } else if (message.type === "unhover") {
           $("#entitylist .entity").removeClass('hovered');
+        } else if (message.type === "active") {
+          Pontoon._data.entities[message.value].ui.addClass('active');
+        } else if (message.type === "inactive") {
+          $("#entitylist .entity").removeClass('active');
         } else if (message.type === "save") {
           Pontoon.updateEntityUI(Pontoon._data.entities[message.value]);
         } else if (message.type === "cancel") {

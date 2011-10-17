@@ -341,7 +341,7 @@
           .find('.edit').hide();
         var target = toolbar.get(0).target;
         $(target).attr('contentEditable', true);
-        $(target.entity.ui).addClass("active");
+        postMessage("active", target.entity.id);
         target.focus();
       }
 
@@ -357,7 +357,7 @@
           .find('.edit').show();
         var target = toolbar.get(0).target;
         $(target).attr('contentEditable', false);
-        $(target.entity.ui).removeClass("active");
+        postMessage("inactive");
       }
 
 
