@@ -328,6 +328,11 @@ body {
   margin: 1px 7px 0 2px;
 }
 
+#pontoon .error {
+  display: none;
+  color: #F00038;
+}
+
 .links {
   text-align: center;
   margin: 10px 0;

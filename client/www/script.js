@@ -3,14 +3,6 @@
 
   $(function() {
   	
-    // Update locale selector
-    function updateLocale(locale) {
-      var l = locale || 'de';
-      $('.locale .button')
-        .find('.flag').addClass(l).end()
-        .find('.language').html($('.locale .menu .flag.' + l).siblings('.language').html());
-    }
-
     // Resizable
 	var mouseMoveHandler = function(e) {
 	  var initial = e.data.initial,
@@ -58,8 +50,10 @@
         .bind('mouseup', { initial: data }, mouseUpHandler);
     });
 
-    // Prepare iframe size and resize it with window
-    $('#source').height($(document).height() - $('#main').height());
+
+
+    // Empty iframe if cached, prepare size and resize it with window
+    $('#source').removeAttr("src").height($(document).height() - $('#main').height());
     $(window).resize(function () {
       $('#source').height($(document).height() - $('#main').height());
     });
@@ -72,47 +66,52 @@
       Pontoon.init(this.contentWindow, document, "de");
     });
 
-    // Empty iframe if cached
-    $("#source").removeAttr("src");
-
     // Check for params
     var locale = window.location.search.split("&locale=")[1] || "",
         temp = window.location.search.split("?url=")[1],
         website = temp ? temp.split("&locale=")[0] : "";
 
-    if (website.length > 0 && locale.length > 0) {
+    // Validate URL
+    function checkURL() {
+      if (!website) {
+        return;
+      }
       $.ajax({
         url: website,
         error: function() {
-          // TODO: show url doesn't exist warning and change locale
-          // TODO: if locale not valid, suggest adding one
+          $('#intro .error').html("URL doesn't exist.").show();
         },
         success: function() {
           $('#intro').slideUp("fast", function() {
             $('#source').attr('src', website);
             $('#main .url').val(website);
-            updateLocale(locale);
           });
         }        
       });
-    } else {
-      /*
-       * Set locale using browser language detection
-       * TODO: develop internal solution
-       *
-       * Source: http://stackoverflow.com/questions/1043339/javascript-for-detecting-browser-language-preference
-      */
+    }
+
+    // Update locale selector
+    function updateLocale(locale) {
+      if (!locale && $('.locale .menu .flag.' + locale).length === 0) {
+        locale = $("#intro .menu .flag:first").attr("class").split(" ")[1];
+      }
+      $('.locale .button')
+        .find('.flag').addClass(locale).end()
+        .find('.language').html($('.locale .menu .flag.' + locale).siblings('.language').html());
+      checkURL();
+    }
+
+    // Set locale using browser language detection
+    // TODO: develop internal solution
+    // Source: http://stackoverflow.com/questions/1043339/javascript-for-detecting-browser-language-preference
+    function guessLocale() {
       $.ajax({ 
         url: "http://ajaxhttpheaders.appspot.com", 
         dataType: 'jsonp', 
         success: function(headers) {
           var locale = headers['Accept-Language'].substring(0, 2),
               entry = $('#intro .locale .menu .flag.' + locale);
-          if (entry.length !== 0) {
-            updateLocale(locale);
-          } else {
-            updateLocale();
-          }
+          updateLocale(locale);
         },
         error: function() {
           updateLocale();
@@ -120,6 +119,23 @@
       });
     }
 
+    // Validate locale
+    function isValidLocale(locale) {
+      var valid = false;
+      $("#intro .menu .flag").each(function() {
+        if (locale === $(this).attr("class").split(" ")[1]) {
+          valid = true;
+        }
+      });
+      return valid;
+    }
+
+    // Main code
+    if (isValidLocale(locale)) {
+      updateLocale(locale);
+    } else {
+      guessLocale();
+    }
   });
 
 }(this.jQuery));
