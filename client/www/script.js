@@ -70,6 +70,7 @@
     var locale = window.location.search.split("&locale=")[1] || "",
         temp = window.location.search.split("?url=")[1],
         website = temp ? temp.split("&locale=")[0] : "";
+    $('.url').val(website);
 
     // Validate URL
     function checkURL() {
@@ -79,12 +80,11 @@
       $.ajax({
         url: website,
         error: function() {
-          $('#intro .error').html("URL doesn't exist.").show();
+          $('#intro .error').css("visibility", "visible");
         },
         success: function() {
           $('#intro').slideUp("fast", function() {
             $('#source').attr('src', website);
-            $('#main .url').val(website);
           });
         }        
       });

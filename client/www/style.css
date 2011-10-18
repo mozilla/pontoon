@@ -329,8 +329,13 @@ body {
 }
 
 #pontoon .error {
-  display: none;
-  color: #F00038;
+  visibility: hidden;
+  color: red;
+  margin: 0 auto;
+  text-align: left;
+  text-transform: uppercase;
+  font-weight: 100;
+  width: 680px;
 }
 
 .links {
