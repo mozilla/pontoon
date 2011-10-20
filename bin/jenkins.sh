@@ -3,7 +3,8 @@
 # codebase.
 set -e
 
-DB_HOST=sm-hudson01
+DB_HOST="localhost"
+DB_USER="hudson"
 
 cd $WORKSPACE
 VENV=$WORKSPACE/venv
@@ -11,7 +12,7 @@ VENV=$WORKSPACE/venv
 echo "Starting build on executor $EXECUTOR_NUMBER..."
 
 # Make sure there's no old pyc files around.
-find . -name '*.pyc' | xargs rm
+find . -name '*.pyc' -exec rm {} \;
 
 if [ ! -d "$VENV/bin" ]; then
   echo "No virtualenv found.  Making one..."
@@ -35,7 +36,7 @@ pip install -q -r requirements/dev.txt
 cat > settings/local.py <<SETTINGS
 from settings.base import *
 
-ROOT_URLCONF = '${JOB_NAME}.urls'
+ROOT_URLCONF = 'workspace.urls'
 LOG_LEVEL = logging.ERROR
 # Database name has to be set because of sphinx
 DATABASES = {
@@ -57,7 +58,7 @@ CELERY_ALWAYS_EAGER = True
 SETTINGS
 
 echo "Creating database if we need it..."
-echo "CREATE DATABASE IF NOT EXISTS ${JOB_NAME}"|mysql -u root -h $DB_HOST
+echo "CREATE DATABASE IF NOT EXISTS ${JOB_NAME}"|mysql -u $DB_USER -h $DB_HOST
 
 echo "Starting tests..."
 export FORCE_DB=1
