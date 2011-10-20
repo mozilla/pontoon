@@ -11,7 +11,7 @@ VENV=$WORKSPACE/venv
 echo "Starting build on executor $EXECUTOR_NUMBER..."
 
 # Make sure there's no old pyc files around.
-find . -name '*.pyc' -exec rm {} \;
+find . -name '*.pyc' | xargs rm
 
 if [ ! -d "$VENV/bin" ]; then
   echo "No virtualenv found.  Making one..."
