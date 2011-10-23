@@ -16,13 +16,13 @@ class playdoh {
 
     exec { "syncdb":
         cwd => "$PROJ_DIR",
-        command => "python2.6 ./manage.py syncdb --noinput",
+        command => "python ./manage.py syncdb --noinput",
         require => Exec["grant_mysql_database"];
     }
 
     exec { "sql_migrate":
         cwd => "$PROJ_DIR",
-        command => "python2.6 ./vendor/src/schematic/schematic migrations/",
+        command => "python ./vendor/src/schematic/schematic migrations/",
         require => [
             Service["mysql"],
             Package["python2.6-dev", "libapache2-mod-wsgi", "python-wsgi-intercept" ],
