@@ -9,7 +9,16 @@ class init {
     case $operatingsystem {
         ubuntu: {
             exec { "update_apt":
-                command => "/usr/bin/sudo /usr/bin/apt-get update",
+                command => "sudo apt-get update",
+            }
+
+            # Provides "add-apt-repository" command, useful if you need
+            # to install software from other apt repositories.
+            package { "python-software-properties":
+                ensure => present,
+                require => [
+                    Exec['update_apt'],
+                ];
             }
         }
     }

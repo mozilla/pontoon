@@ -10,6 +10,10 @@ $PROJ_DIR = "/home/vagrant/project"
 $DB_NAME = "playdoh_app"
 $DB_USER = "root"
 
+Exec {
+    path => "/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/bin",
+}
+
 class dev {
     class {
         init: before => Class[mysql];
