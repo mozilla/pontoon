@@ -52,8 +52,7 @@
 
 
 
-    // Empty iframe if cached, prepare size and resize it with window
-    $('#source').removeAttr("src").height($(document).height() - $('#main').height());
+    // Resize iframe with window
     $(window).resize(function () {
       $('#source').height($(document).height() - $('#main').height());
     });
@@ -65,12 +64,6 @@
       }
       Pontoon.init(this.contentWindow, document, "de");
     });
-
-    // Check for params
-    var locale = window.location.search.split("&locale=")[1] || "",
-        temp = window.location.search.split("?url=")[1],
-        url = temp ? temp.split("&locale=")[0] : "";
-    $('.url').val(url);
 
     // Validate URL
     function checkURL() {
@@ -121,7 +114,20 @@
       return valid;
     }
 
+
+
     // Main code
+
+    // Check for params
+    var locale = window.location.search.split("&locale=")[1] || "",
+        temp = window.location.search.split("?url=")[1],
+        url = temp ? temp.split("&locale=")[0] : "";
+    $('.url').val(url);
+
+    // Empty iframe if cached, prepare size and resize it with window
+    $('#source').removeAttr("src").height($(document).height() - $('#main').height());
+
+    // Set locale
     if (isValidLocale(locale)) {
       updateLocale(locale);
     } else {
