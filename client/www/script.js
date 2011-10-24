@@ -69,16 +69,14 @@
     // Check for params
     var locale = window.location.search.split("&locale=")[1] || "",
         temp = window.location.search.split("?url=")[1],
-        website = temp ? temp.split("&locale=")[0] : "";
-    $('.url').val(website);
+        url = temp ? temp.split("&locale=")[0] : "";
+    $('.url').val(url);
 
     // Validate URL
     function checkURL() {
-      if (website) {
-        $('#intro').slideUp("fast", function() {
-          $('#source').attr('src', website);
-        });
-      }
+      $('#intro').slideUp("fast", function() {
+        $('#source').attr('src', url);
+      });
     }
 
     // Update locale selector
@@ -89,7 +87,9 @@
       $('.locale .button')
         .find('.flag').addClass(locale).end()
         .find('.language').html($('.locale .menu .flag.' + locale).siblings('.language').html());
-      checkURL();
+      if (url) {
+        checkURL();
+      }
     }
 
     // Set locale using browser language detection
