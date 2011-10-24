@@ -478,5 +478,17 @@
     }
   }
   window.addEventListener("message", initizalize, false);
-  
+
+  // Notify web client that project website supports Pontoon for five seconds
+  var i = 0;
+  var callback = setInterval(function() {
+    if (i < 50) {
+      i++;
+      var message = {type: "supported"};
+      Pontoon._ptn.postMessage(JSON.stringify(message), "*");
+    } else {
+      clearInterval(callback);
+    }
+  }, 100);
+
 })();

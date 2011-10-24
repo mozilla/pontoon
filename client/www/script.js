@@ -62,7 +62,16 @@
       if (!$(this).attr('src')) {
         return;
       }
-      Pontoon.init(this.contentWindow, document, "de");
+
+      // Wait for project code callback
+      function receiveMessage(e) {
+        // TODO: Check origin -- hardcode Pontoon domain name
+        if (JSON.parse(e.data).type === "supported") {
+          Pontoon.init($('#source').get(0).contentWindow, document, "de");
+          window.removeEventListener("message", receiveMessage, false);
+        }
+      }
+      window.addEventListener("message", receiveMessage, false);
     });
 
     // Validate URL
