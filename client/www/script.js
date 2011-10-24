@@ -74,20 +74,11 @@
 
     // Validate URL
     function checkURL() {
-      if (!website) {
-        return;
+      if (website) {
+        $('#intro').slideUp("fast", function() {
+          $('#source').attr('src', website);
+        });
       }
-      $.ajax({
-        url: website,
-        error: function() {
-          $('#intro .error').css("visibility", "visible");
-        },
-        success: function() {
-          $('#intro').slideUp("fast", function() {
-            $('#source').attr('src', website);
-          });
-        }        
-      });
     }
 
     // Update locale selector
