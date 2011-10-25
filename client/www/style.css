@@ -351,6 +351,7 @@ body {
 }
 
 #source {
+  display: none;
   width: 100%;
 }
 

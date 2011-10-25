@@ -63,28 +63,30 @@
       function receiveMessage(e) {
         // TODO: Check origin - hardcode Pontoon domain name
         if (e.data === "supported") {
+          // Slide up intro page and show iframe
+          $('#intro').slideUp("fast", function() {
+            $('#source').show();
+          });
           Pontoon.init($('#source').get(0).contentWindow, document, "de");
           window.removeEventListener("message", receiveMessage, false);
         }
       }
       window.addEventListener("message", receiveMessage, false);
 
-      // Slide up intro page and load project page into iframe
-      $('#intro').slideUp("fast", function() {
-        $('#source').attr('src', url);
-      });
+      // Load project page into iframe
+      $('#source').attr('src', url);
 
-      // Redirect if no callback for 5 seconds: Pontoon/iframe not supported, 404…
+      // Show error message if no callback for 5 seconds: Pontoon/iframe not supported, 404…
       var i = 0,
           l = window.location,
           callback = setInterval(function() {
             if (i < 50) {
               i++;
-              if (Pontoon._doc) {
+              if (Pontoon._doc) { // Set in Pontoon.init() which is called on "supported"
                 clearInterval(callback);
               }
             } else {
-              window.location = l.protocol + "//" + l.hostname + l.pathname;
+              $('#intro .error').css("visibility", "visible");
             }
           }, 100);
     }
