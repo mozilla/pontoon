@@ -57,25 +57,24 @@
       $('#source').height($(document).height() - $('#main').height());
     });
 
-    // When website loaded, initialize Pontoon
+    // Redirect if page doesn't load for 7 seconds (404, iframe not supported…)
     $('#source').unbind("load.pontoon").bind("load.pontoon", function() {
-      if (!$(this).attr('src')) {
-        return;
-      }
 
-      // Wait for project code callback
+    });
+
+    // Validate URL
+    function checkURL() {
+      // Initialize Pontoon only if project code supports it
       function receiveMessage(e) {
-        // TODO: Check origin -- hardcode Pontoon domain name
-        if (JSON.parse(e.data).type === "supported") {
+        // TODO: Check origin - hardcode Pontoon domain name
+        if (e.data === "supported") {
           Pontoon.init($('#source').get(0).contentWindow, document, "de");
           window.removeEventListener("message", receiveMessage, false);
         }
       }
       window.addEventListener("message", receiveMessage, false);
-    });
 
-    // Validate URL
-    function checkURL() {
+      // Slide up intro page and load project page into iframe
       $('#intro').slideUp("fast", function() {
         $('#source').attr('src', url);
       });
