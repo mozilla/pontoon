@@ -101,7 +101,7 @@
 
     // Update locale selector
     function updateLocale(locale) {
-      if (!locale && $('.locale .menu .flag.' + locale).length === 0) {
+      if (!locale || $('.locale .menu .flag.' + locale).length === 0) {
         locale = $("#intro .menu .flag:first").attr("class").split(" ")[1];
       }
       $('.locale .button')
