@@ -57,11 +57,6 @@
       $('#source').height($(document).height() - $('#main').height());
     });
 
-    // Redirect if page doesn't load for 7 seconds (404, iframe not supported…)
-    $('#source').unbind("load.pontoon").bind("load.pontoon", function() {
-
-    });
-
     // Validate URL
     function checkURL() {
       // Initialize Pontoon only if project code supports it
@@ -78,6 +73,20 @@
       $('#intro').slideUp("fast", function() {
         $('#source').attr('src', url);
       });
+
+      // Redirect if no callback for 5 seconds: Pontoon/iframe not supported, 404…
+      var i = 0,
+          l = window.location,
+          callback = setInterval(function() {
+            if (i < 50) {
+              i++;
+              if (Pontoon._doc) {
+                clearInterval(callback);
+              }
+            } else {
+              window.location = l.protocol + "//" + l.hostname + l.pathname;
+            }
+          }, 100);
     }
 
     // Update locale selector

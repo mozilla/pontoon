@@ -479,7 +479,7 @@
   }
   window.addEventListener("message", initizalize, false);
 
-  // Notify web client that project website supports Pontoon for five seconds
+  // Notify web client that project website supports Pontoon
   Pontoon._ptn.postMessage("supported", "*");
 
 })();
