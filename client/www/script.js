@@ -2,7 +2,7 @@
 (function($) {
 
   $(function() {
-  	
+
     // Resizable
 	var mouseMoveHandler = function(e) {
 	  var initial = e.data.initial,
@@ -64,10 +64,10 @@
         // TODO: Check origin - hardcode Pontoon domain name
         if (e.data === "supported") {
           // Slide up intro page and show iframe
-          $('#intro').slideUp("fast", function() {
+          $('#intro').slideUp("slow", function() {
             $('#source').show();
+            Pontoon.init($('#source').get(0).contentWindow, document, "de");
           });
-          Pontoon.init($('#source').get(0).contentWindow, document, "de");
           window.removeEventListener("message", receiveMessage, false);
         }
       }
@@ -75,6 +75,10 @@
 
       // Load project page into iframe
       $('#source').attr('src', url);
+      $('#intro .notification')
+        .html('Loading...')
+        .addClass('message').removeClass('error')
+        .css('visibility', 'visible');
 
       // Show error message if no callback for 5 seconds: Pontoon/iframe not supported, 404…
       var i = 0,
@@ -86,7 +90,11 @@
                 clearInterval(callback);
               }
             } else {
-              $('#intro .error').css("visibility", "visible");
+              clearInterval(callback);
+              $('#intro .notification')
+                .html('Oops, website is either not supported by Pontoon or could not be found.')
+                .addClass('error').removeClass('message')
+                .css('visibility', 'visible');
             }
           }, 100);
     }

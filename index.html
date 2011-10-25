@@ -20,44 +20,48 @@
   <body id="pontoon">
 	<!-- Frontpage -->
     <section id="intro">
-      <h1 id="title">Pontoon</h1>
+      <div id="inner">
 
-      <form>
-        <input name="url" class="url" type="text" placeholder="Type URL and press Enter" />
-        <!-- Locale selector -->
-        <div class="locale select">
-          <div class="button confirm">
-            <span class="flag"></span>
-            <span class="language"></span>
+        <h1 id="title">Pontoon</h1>
+
+        <form>
+          <input name="url" class="url" type="text" placeholder="Type URL and press Enter" />
+          <!-- Locale selector -->
+          <div class="locale select">
+            <div class="button confirm">
+              <span class="flag"></span>
+              <span class="language"></span>
+            </div>
+            <div class="button selector">
+              <span class="handle"> &#9652;</span>
+            </div>
+            <ul class="menu">
+              <li class="add"><span>Add language</span></li>
+              <li><span class="flag de"></span><span class="language">Deutsch</span></li>
+              <li><span class="flag fr"></span><span class="language">Français</span></li>
+              <li><span class="flag hr"></span><span class="language">Hrvatski</span></li>
+              <li><span class="flag pl"></span><span class="language">Polski</span></li>
+              <li><span class="flag sl"></span><span class="language">Slovenščina</span></li>
+            </ul>
           </div>
-          <div class="button selector">
-            <span class="handle"> &#9652;</span>
-          </div>
-          <ul class="menu">
-            <li class="add"><span>Add language</span></li>
-            <li><span class="flag de"></span><span class="language">Deutsch</span></li>
-            <li><span class="flag fr"></span><span class="language">Français</span></li>
-            <li><span class="flag hr"></span><span class="language">Hrvatski</span></li>
-            <li><span class="flag pl"></span><span class="language">Polski</span></li>
-            <li><span class="flag sl"></span><span class="language">Slovenščina</span></li>
+        </form>
+
+        <p class="notification">...</p>
+
+        <nav>
+          <ul class="links">
+            <li><a id="test-pilot" href="?url=projects/testpilot&locale=de" title="Web client">Demo</a></li>
+            <li><a href="https://wiki.mozilla.org/L10n:Pontoon" target="_blank" title="Learn">Wiki</a></li>
+            <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="Hack">GitHub</a></li>
+            <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="Follow">Twitter</a></li>
           </ul>
-        </div>
-      </form>
+        </nav>
 
-      <p class="error">Oops, website is either not support by Pontoon or could not be found.</p>
+        <noscript>
+          <p>In order to use Pontoon, please <a href="http://www.activatejavascript.org/" target="_blank">enable JavaScript</a>.</p>
+        </noscript>
 
-      <nav>
-        <ul class="links">
-          <li><a id="test-pilot" href="?url=projects/testpilot&locale=de" title="Web client">Demo</a></li>
-          <li><a href="https://wiki.mozilla.org/L10n:Pontoon" target="_blank" title="Learn">Wiki</a></li>
-          <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="Hack">GitHub</a></li>
-          <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="Follow">Twitter</a></li>
-        </ul>
-      </nav>
-
-      <noscript>
-        <p>In order to use Pontoon, please <a href="http://www.activatejavascript.org/" target="_blank">enable JavaScript</a>.</p>
-      </noscript>
+      </div>
     </section>
     
 	<!-- Main UI -->
