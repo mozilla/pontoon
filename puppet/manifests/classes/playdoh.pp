@@ -3,9 +3,16 @@
 
 # TODO: Make this rely on things that are not straight-up exec.
 class playdoh {
+    file { "$PROJ_DIR/settings/local.py":
+        ensure => file,
+        source => "$PROJ_DIR/settings/local.py-dist",
+        replace => false;
+    }
+
     exec { "create_mysql_database":
         command => "mysqladmin -uroot create $DB_NAME",
         unless  => "mysql -uroot -B --skip-column-names -e 'show databases' | /bin/grep '$DB_NAME'",
+        require => File["$PROJ_DIR/settings/local.py"]
     }
 
     exec { "grant_mysql_database":
