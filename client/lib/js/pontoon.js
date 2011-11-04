@@ -480,7 +480,7 @@
   window.addEventListener("message", initizalize, false);
 
   // Notify web client that project website supports Pontoon
-  if (window != window.top) {
+  if (window !== window.top) {
     Pontoon._ptn.postMessage("supported", "*");
   }
 
