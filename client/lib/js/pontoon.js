@@ -183,7 +183,7 @@
         Pontoon._data.entities = [];
         var counter = 0; // TODO: use IDs or XPath
 
-        $(':not("script, style")').contents().each(function () {
+        $(':not("script, style, iframe")').contents().each(function () {
           if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
             var entity = {};
             entity.id = counter;
