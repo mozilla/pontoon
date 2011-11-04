@@ -12,8 +12,7 @@
 
   // Main code
   function jqueryLoaded() {
-    $.noConflict();
-    jQuery(document).ready(function($) {
+    $(function() {
 
 
 
