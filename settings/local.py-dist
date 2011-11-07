@@ -27,6 +27,9 @@ DATABASES = {
     # },
 }
 
+# Uncomment this and set to all slave DBs in use on the site.
+# SLAVE_DATABASES = ['slave']
+
 # Recipients of traceback emails and other notifications.
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
