@@ -182,7 +182,15 @@
         Pontoon._data.entities = [];
         var counter = 0; // TODO: use IDs or XPath
 
-        $(':not("script, style, iframe")').contents().each(function () {
+        // <noscript> contents are not in the DOM
+        $('noscript').each(function() {
+          $("<div/>", {
+          	class: "pontoon-noscript",
+            innerHTML: $(this).text()
+          }).appendTo("body");
+        });
+
+        $(':not("script, style, iframe, noscript")').contents().each(function () {
           if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
             var entity = {};
             entity.id = counter;
@@ -205,6 +213,7 @@
         });
 
         $(".pontoon-entity").removeClass("pontoon-entity");
+        $(".pontoon-noscript").remove();
         renderHandle();
       }
 
