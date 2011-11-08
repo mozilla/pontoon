@@ -42,12 +42,23 @@ var Pontoon = (function () {
 
 
     /*
-     * Do not render HTML code
+     * Do not render HTML tags
      *
      * string HTML snippet that has to be displayed as code instead of rendered
     */
     doNotRender: function (string) {
-      return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    },
+
+
+
+    /*
+     * Reverse function: do render HTML tags
+     *
+     * string HTML snippet that has to be rendered instead of displayed as code
+    */
+    doRender: function (string) {
+      return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     },
 
 
@@ -317,7 +328,7 @@ var Pontoon = (function () {
         e.stopPropagation();
         var li = $(this).parents('.entity'),
             entity = li.get(0).entity,
-            source = li.find('.source .content .active .source-string').html();
+            source = self.doRender(li.find('.source .content .active .source-string').html());
 
         // Only if no other entity is being edited in-place
         if (li.is('.hovered')) {
