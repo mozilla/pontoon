@@ -207,6 +207,13 @@
               extendEntity(entity);
             }
 
+            // Remove entities of child nodes
+            $(this).parent().find(".pontoon-entity").each(function() {
+              Pontoon._data.entities.pop(this.entity);
+              entity.id--;
+              counter--;
+            });
+
             Pontoon._data.entities.push(entity);
             $(this).parent().addClass("pontoon-entity");
           }
