@@ -258,17 +258,18 @@ body {
 
 #install p {
   color: #AAAAAA;
+  font-size: 14px;
 }
 
 #install code {
   background: #444444;
-  color: #000000;
+  color: #AAAAAA;
   border: 1px solid #000000;
   padding: 5px 10px;
 
-  box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
-  -moz-box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
-  -webkit-box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
+  box-shadow: 0 1px #333333, 1px 2px 2px #333333 inset;
+  -moz-box-shadow: 0 1px #333333, 1px 2px 2px #333333 inset;
+  -webkit-box-shadow: 0 1px #333333, 1px 2px 2px #333333 inset;
 }
 
 #intro noscript p {
