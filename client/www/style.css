@@ -252,6 +252,25 @@ body {
   padding-bottom: 100px;
 }
 
+#install {
+  padding-top: 100px;
+}
+
+#install p {
+  color: #AAAAAA;
+}
+
+#install code {
+  background: #444444;
+  color: #000000;
+  border: 1px solid #000000;
+  padding: 5px 10px;
+
+  box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
+  -moz-box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
+  -webkit-box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
+}
+
 #intro noscript p {
   text-transform: uppercase;
 }
