@@ -207,7 +207,7 @@
               extendEntity(entity);
             }
 
-            // Remove entities of child nodes
+            // Remove entities from child nodes if parent node is entity
             $(this).parent().find(".pontoon-entity").each(function() {
               Pontoon._data.entities.pop(this.entity);
               entity.id--;
