@@ -11,6 +11,7 @@ site.addsitedir(os.path.abspath(os.path.join(wsgidir, '../')))
 import manage
 
 import django.core.handlers.wsgi
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 application = django.core.handlers.wsgi.WSGIHandler()
 
 # vim: ft=python
