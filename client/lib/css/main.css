@@ -45,7 +45,7 @@
   background: #888888;
   border: 1px solid #000000;
   padding: 6px 3px 4px;
-  width: 104px;
+  width: 133px;
   float: left;
 
   border-radius: 3px 3px 3px 3px;
@@ -428,31 +428,8 @@
   padding: 4px 3px 2px;
 }
 
-#pontoon #authentication-menu .restricted a {
-  display: inline-block;
-  height: 24px;
-  width: 24px;
-}
-
-/*
- * ICON SET: Social Media Mini by Paul Robert Lloyd
- *
- * http://www.iconfinder.com/search/?q=iconset%3Asocialmediaicons_v120 
- */
-#pontoon #authentication-menu .restricted a.google {
-  background: url('../images/google.png') no-repeat;
-}
-
-#pontoon #authentication-menu .restricted a.facebook {
-  background: url('../images/facebook.png') no-repeat;
-}
-
-#pontoon #authentication-menu .restricted a.twitter {
-  background: url('../images/twitter.png') no-repeat;
-}
-
-#pontoon #authentication-menu .restricted a.openid {
-  background: url('../images/openid.png') no-repeat;
+#pontoon #authentication-menu .restricted #browserid {
+  cursor: pointer;
 }
 
 #pontoon #save-menu {

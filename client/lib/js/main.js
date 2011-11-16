@@ -450,6 +450,24 @@ var Pontoon = (function () {
           return false;
         }
       });
+      $("#browserid").click(function() {
+        navigator.id.getVerifiedEmail(function(assertion) {
+          if (assertion) {
+            $.ajax({
+              type: 'POST',
+              url: 'https://browserid.org/verify',
+              data: {
+                assertion: assertion,
+                audience: "http://pontoon.com"
+              },
+              success: function(data) {
+                $('#nickname').val(JSON.parse(data).email);
+                $('#authentication-menu .restricted .go').click();
+              }
+           });
+          }
+        });
+      });
 
       // Authentication toggle
       $('#authentication-menu .toggle').unbind("click.pontoon").bind("click.pontoon", function () {
