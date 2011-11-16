@@ -481,6 +481,7 @@ var Pontoon = (function () {
         $('#authentication .selector').click();
         $('#authentication .author').html('Sign in').toggleClass('authenticated');
         $('#authentication-menu, #save-menu').toggleClass('menu');
+        $('#authentication-menu input').val("");
       }).end().find('.server').unbind("click.pontoon").bind("click.pontoon", function () {
         $('#authentication .selector').click();
         self.save();
