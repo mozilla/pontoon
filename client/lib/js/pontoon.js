@@ -406,7 +406,7 @@
       // Inject toolbar stylesheet
       $('<link>', {
         rel: 'stylesheet',
-        href: '../../client/lib/css/editable.css'
+        href: '../../client/lib/css/pontoon.css'
       }).appendTo('head');
 
       // Prepare editable toolbar
