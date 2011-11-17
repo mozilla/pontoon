@@ -331,6 +331,10 @@ body {
   width: 130px;
 }
 
+#pontoon #intro .select .flag {
+  margin-top: 3px;
+}
+
 #pontoon #intro .select .menu {
   left: 0;
   bottom: -50px;
@@ -373,16 +377,24 @@ body {
   color: #AEEE00;
 }
 
-.links {
+#pontoon .links {
   text-align: center;
   margin: 10px 0;
 }
 
-.links li {
+#pontoon .links li {
   list-style: none;
   display: inline;
   margin: 0 20px;
   font-size: 14px;
+  line-height: 14px;
+}
+
+#pontoon .links li .button {
+  -moz-transition: none;  /* FF3.7+ */
+  -o-transition: none;  /* Opera 10.5 */
+  -webkit-transition: none;  /* Saf3.2+, Chrome */
+  transition: none;  
 }
 
 #source {
