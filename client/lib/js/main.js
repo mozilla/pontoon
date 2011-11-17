@@ -314,11 +314,21 @@ var Pontoon = (function () {
         if (loader.length === 0) {
           li.find(".toolbar").show();
         } else {
-          $.translate(entity.original, self._locale, {
-            complete: function (t) {
-              loader.removeClass("loader").addClass("source-string").html(self.doNotRender(t));
-              li.find(".toolbar").show();
+          $.ajax({
+            url: "http://api.microsofttranslator.com/V2/Ajax.svc/Translate",
+            dataType: "jsonp",
+            jsonp: "oncomplete",
+            crossDomain: true,
+            data: {
+              appId: self._mt,
+              text: entity.original,
+              from: "en",
+              to: self._locale,
+              contentType: "text/html"
             }
+          }).success(function(t) {
+            loader.removeClass("loader").addClass("source-string").html(self.doNotRender(t));
+            li.find(".toolbar").show();
           });
         }
       });
@@ -547,9 +557,7 @@ var Pontoon = (function () {
       this._mt = '';
 
       // Instantate Microsoft Translator API
-      $.getScript("client/lib/js/local-settings.js", function () {
-        $.translate.load(self._mt);
-      });
+      $.getScript("client/lib/js/local-settings.js");
       
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
       self.common.postMessage("locale", self._locale);
