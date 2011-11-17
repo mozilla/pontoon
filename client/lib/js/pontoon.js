@@ -438,12 +438,7 @@
           '<menuitem class="mode" label="Advanced mode" icon="../../client/lib/images/logo-small.png"></menuitem>' +
         '</menu>')
         .find("#context .mode").live("click", function() {
-          $("#switch").click();
-          if ($("#main").is(".opened")) {
-            $(this).attr("label", "Basic mode");
-          } else {
-            $(this).attr("label", "Advanced mode");
-          }
+          postMessage("switch");
         });
 
       // Determine if the current page is prepared for working with Pontoon

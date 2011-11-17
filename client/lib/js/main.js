@@ -503,6 +503,8 @@ var Pontoon = (function () {
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $('#main').slideDown();
+        } else if (message.type === "switch") {
+          $("#switch").click();
         } else if (message.type === "hover") {
           Pontoon._data.entities[message.value].ui.addClass('hovered');
         } else if (message.type === "unhover") {
