@@ -468,7 +468,7 @@ var Pontoon = (function () {
               url: 'https://browserid.org/verify',
               data: {
                 assertion: assertion,
-                audience: "http://pontoon.com"
+                audience: "http://horv.at/pontoon"
               },
               success: function(data) {
                 $('#nickname').val(JSON.parse(data).email);
