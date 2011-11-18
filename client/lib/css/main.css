@@ -344,6 +344,54 @@
   float: left;
 }
 
+#pontoon #info {
+  display: none;
+  cursor: pointer;
+  float: left;
+  opacity: 0.5;
+  padding: 4px 5px 4px 0;
+}
+
+#pontoon #info:hover,
+#pontoon #info.active {
+  opacity: 1;
+}
+
+#pontoon #info-box {
+  display: none;
+  position: absolute;
+  width: 400px;
+  bottom: 38px;
+  left: 75px;
+  background: #333333;
+  color: #AAAAAA;
+  margin: 0 auto;
+  padding: 10px 0;
+  z-index: 25; /* Must be higher than iframe-cover */
+
+  border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
+
+  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.5);
+}
+
+#pontoon #info-box section {
+  border-top: 1px solid #444444;
+  border-bottom: 1px solid #040404;
+  padding: 10px 20px;
+}
+
+#pontoon #info-box section:first-child {
+  border-top: none;
+}
+
+#pontoon #info-box section:last-child {
+  border-bottom: none;
+}
+
 #pontoon #authentication {
   float: left;
 }

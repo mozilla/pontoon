@@ -429,7 +429,22 @@ var Pontoon = (function () {
      * Attach event handlers
      */
     attachHandlers: function () {
-      var self = this;
+      var self = this,
+          info = self._data.info;
+
+      // Info
+      if (info) {
+        $('#info-box')
+          .find('.brief p').html(info.brief).end()
+          .find('.locales p').html(info.locales).end()
+          .find('.audience p').html(info.audience).end()
+          .find('.metrics p').html(info.metrics);
+
+        $('#info').show().unbind("click.pontoon").bind("click.pontoon", function () {
+          $(this).toggleClass('active');
+          $('#info-box').toggle();
+        });
+      }
 
       // Open/close Pontoon UI
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
