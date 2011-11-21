@@ -432,18 +432,13 @@ var Pontoon = (function () {
       var self = this,
           info = self._data.info;
 
-      // Info
+      // General Project Info
       if (info) {
-        $('#info-box')
+        $('#info .menu')
           .find('.brief p').html(info.brief).end()
           .find('.locales p').html(info.locales).end()
           .find('.audience p').html(info.audience).end()
           .find('.metrics p').html(info.metrics);
-
-        $('#info').show().unbind("click.pontoon").bind("click.pontoon", function () {
-          $(this).toggleClass('active');
-          $('#info-box').toggle();
-        });
       }
 
       // Open/close Pontoon UI
