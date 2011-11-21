@@ -434,11 +434,13 @@ var Pontoon = (function () {
 
       // General Project Info
       if (info) {
-        $('#info .menu')
-          .find('.brief p').html(info.brief).end()
-          .find('.locales p').html(info.locales).end()
-          .find('.audience p').html(info.audience).end()
-          .find('.metrics p').html(info.metrics);
+        $('#info')
+          .find('.selector').show().end()
+          .find('.menu')
+            .find('.brief p').html(info.brief).end()
+            .find('.locales p').html(info.locales).end()
+            .find('.audience p').html(info.audience).end()
+            .find('.metrics p').html(info.metrics);
       }
 
       // Open/close Pontoon UI
