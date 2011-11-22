@@ -62,7 +62,7 @@
       // Initialize Pontoon only if project code supports it
       function receiveMessage(e) {
         // TODO: Check origin - hardcode Pontoon domain name
-        if (e.data === "supported") {
+        if (JSON.parse(e.data).type === "supported") {
           // Slide up intro page and show iframe
           $('#intro').slideUp("slow", function() {
             $('#source').show();

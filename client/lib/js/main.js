@@ -486,7 +486,7 @@ var Pontoon = (function () {
               success: function(data) {
                 $('#nickname').val(data.email);
                 $('#authentication-menu .restricted .go').click();
-              }            
+              }
            });
           }
         });
@@ -542,6 +542,8 @@ var Pontoon = (function () {
           var entity = Pontoon._data.entities[message.value];
           entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
+        } else if (message.type === "supported") {
+          Pontoon.init($('#source').get(0).contentWindow, document, Pontoon._locale);
         }
       }
     },

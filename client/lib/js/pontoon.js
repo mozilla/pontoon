@@ -16,26 +16,6 @@
 
 
 
-      /*
-       * window.postMessage improved
-       *
-       * messageType data type to be sent to the other window
-       * messageValue data value to be sent to the other window
-       * otherWindow reference to another window
-       * targetOrigin specifies what the origin of otherWindow must be
-      */
-      function postMessage(messageType, messageValue, otherWindow, targetOrigin) {
-        var otherWindow = otherWindow || Pontoon._ptn,
-            targetOrigin = targetOrigin || "*", // TODO: hardcode Pontoon domain name
-            message = {
-              type: messageType,
-              value: messageValue
-            }
-        otherWindow.postMessage(JSON.stringify(message), targetOrigin);
-      }
-
-
-
       /**
        * Send data to main Pontoon code
        */
@@ -459,6 +439,24 @@
     });
   }
 
+  /*
+    * window.postMessage improved
+    *
+    * messageType data type to be sent to the other window
+    * messageValue data value to be sent to the other window
+    * otherWindow reference to another window
+    * targetOrigin specifies what the origin of otherWindow must be
+  */
+  function postMessage(messageType, messageValue, otherWindow, targetOrigin) {
+    var otherWindow = otherWindow || Pontoon._ptn,
+        targetOrigin = targetOrigin || "*", // TODO: hardcode Pontoon domain name
+        message = {
+          type: messageType,
+          value: messageValue
+        }
+    otherWindow.postMessage(JSON.stringify(message), targetOrigin);
+  }
+
   // Load jQuery if not loaded yet
   function loadJquery() {
     if (!window.jQuery) {
@@ -491,7 +489,7 @@
 
   // When loaded inside web client, notify it that project supports Pontoon
   if (window !== window.top) {
-    Pontoon._ptn.postMessage("supported", "*");
+    postMessage("supported");
   }
 
 })();
