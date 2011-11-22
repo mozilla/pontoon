@@ -478,14 +478,15 @@ var Pontoon = (function () {
             $.ajax({
               type: 'POST',
               url: 'https://browserid.org/verify',
+              dataType: 'json',
               data: {
                 assertion: assertion,
                 audience: "http://horv.at/pontoon"
               },
               success: function(data) {
-                $('#nickname').val(JSON.parse(data).email);
+                $('#nickname').val(data.email);
                 $('#authentication-menu .restricted .go').click();
-              }
+              }            
            });
           }
         });
