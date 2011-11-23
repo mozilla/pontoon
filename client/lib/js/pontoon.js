@@ -22,7 +22,7 @@
       function sendData() {
         // Deep copy: http://api.jquery.com/jQuery.extend
         var data = $.extend(true, {}, Pontoon._data);
-        $(data.entities).each(function () {
+        $(data.pages[0].entities).each(function () {
           delete this.node;
         });
 
@@ -68,7 +68,7 @@
               entity = target.entity,
               id = entity.id,
               next = id + 1,
-              entities = Pontoon._data.entities;
+              entities = Pontoon._data.pages[0].entities;
 
           if (save.is(":visible")) {
             if (key === 13) { // Enter: confirm translation
@@ -159,7 +159,9 @@
        * Add temporary pontoon-entity class to prevent duplicate entities when guessing
        */ 
       function guessEntities() {
-        Pontoon._data.entities = [];
+        Pontoon._data.pages = [{
+          entities: []
+        }];
         var counter = 0; // TODO: use IDs or XPath
 
         // <noscript> contents are not in the DOM
@@ -189,12 +191,12 @@
 
             // Remove entities from child nodes if parent node is entity
             $(this).parent().find(".pontoon-entity").each(function() {
-              Pontoon._data.entities.pop(this.entity);
+              Pontoon._data.pages[0].entities.pop(this.entity);
               entity.id--;
               counter--;
             });
 
-            Pontoon._data.entities.push(entity);
+            Pontoon._data.pages[0].entities.push(entity);
             $(this).parent().addClass("pontoon-entity");
           }
         });
@@ -221,7 +223,7 @@
 
         $.getJSON("pontoon/" + Pontoon._locale + ".json").success(function (data) {
           Pontoon._data = data;
-          var entities = Pontoon._data.entities;
+          var entities = Pontoon._data.pages[0].entities;
 
           $('*').contents().each(function () {
             if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
@@ -364,9 +366,9 @@
         if (e.source === Pontoon._ptn) { // TODO: hardcode Pontoon domain name
           var message = JSON.parse(e.data);
           if (message.type === "hover") {
-            Pontoon._data.entities[message.value].hover();
+            Pontoon._data.pages[0].entities[message.value].hover();
           } else if (message.type === "unhover") {
-            Pontoon._data.entities[message.value].unhover();
+            Pontoon._data.pages[0].entities[message.value].unhover();
           } else if (message.type === "edit") {
             $('.editableToolbar > .edit').click();
           } else if (message.type === "save") {

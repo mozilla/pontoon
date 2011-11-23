@@ -26,7 +26,7 @@ var Pontoon = (function () {
           // Deep copy: http://api.jquery.com/jQuery.extend
           data = $.extend(true, {}, this._data);
 
-      $(data.entities).each(function () {
+      $(data.pages[0].entities).each(function () {
         delete this.ui;
         delete this.hover;
         delete this.unhover;
@@ -71,7 +71,7 @@ var Pontoon = (function () {
           list = $(this._ptn).find('#entitylist').empty().append('<ul></ul>');
 
       // Render
-      $(this._data.entities).each(function () {
+      $(this._data.pages[0].entities).each(function () {
         var li = $('<li class="entity' + 
           // append classes to translated and head entities
           (this.translation ? ' translated' : '') + 
@@ -529,17 +529,17 @@ var Pontoon = (function () {
         } else if (message.type === "switch") {
           $("#switch").click();
         } else if (message.type === "hover") {
-          Pontoon._data.entities[message.value].ui.addClass('hovered');
+          Pontoon._data.pages[0].entities[message.value].ui.addClass('hovered');
         } else if (message.type === "unhover") {
-          Pontoon._data.entities[message.value].ui.removeClass('hovered');
+          Pontoon._data.pages[0].entities[message.value].ui.removeClass('hovered');
         } else if (message.type === "active") {
-          Pontoon._data.entities[message.value].ui.addClass('active');
+          Pontoon._data.pages[0].entities[message.value].ui.addClass('active');
         } else if (message.type === "inactive") {
-          Pontoon._data.entities[message.value].ui.removeClass('active');
+          Pontoon._data.pages[0].entities[message.value].ui.removeClass('active');
         } else if (message.type === "save") {
-          Pontoon.updateEntityUI(Pontoon._data.entities[message.value]);
+          Pontoon.updateEntityUI(Pontoon._data.pages[0].entities[message.value]);
         } else if (message.type === "cancel") {
-          var entity = Pontoon._data.entities[message.value];
+          var entity = Pontoon._data.pages[0].entities[message.value];
           entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
         } else if (message.type === "supported") {
