@@ -22,12 +22,12 @@
 			
 				<div class="button">
 			
-					<span class="menuOn"><a href="index.php"><?= _w('Home')?></a></span>
+					<span class="menuItem"><a href="index.php"><?= _w('Home')?></a></span>
 
 					<span class="menuItem"><a href="testcases.php"><?= _w('Test Cases')?></a></span>
 					<span class="menuItem"><a href="principles.php"><?= _w('Guiding Principles')?></a></span>
                     <span class="menuItem"><a href="faq.php"><?= _w('FAQ')?></a></span>
-					<span class="menuItem"><a href="privacy.php"><?= _w('Privacy Policy')?></a></span>
+					<span class="menuOn"><a href="privacy.php"><?= _w('Privacy Policy')?></a></span>
 
 				
 				</div>
@@ -35,7 +35,7 @@
 				<div id="intro">
 
 				
-					<h2><?= _w('Welcome to Test Pilot')?></h2>
+					<h2><?= _w('Privacy Policy')?></h2>
 			  
 					<p><?= _w('Test Pilot is a platform collecting structured user feedback through Firefox. Test Pilot studies explore how people use their web browser and the Internet - and help us build better products. ')?></p>
 				  
