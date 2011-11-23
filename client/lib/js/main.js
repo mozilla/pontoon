@@ -13,7 +13,7 @@ var Pontoon = (function () {
      *
      * id - list of msgid strings, the length of id should match the length of value ['Hello World']
      * value - list of msgstrs, should be empty if no changes, otherwise set to the edited value ['Hallo Welt']
-     * project - url of the page being localized
+     * project - url of the project being localized
      * locale - locale msgstrs are localized too
     */
     save: function () {

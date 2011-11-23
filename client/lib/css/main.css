@@ -172,9 +172,8 @@
   background: #444444;
 }
 
-#pontoon ul.menu li:nth-child(1) {
+#pontoon ul.menu li:first-child {
   padding: 7px 0 4px 12px;
-  border-bottom: 1px solid #040404;
 }
 
 #pontoon ul.menu li:first-child.hover {
@@ -183,7 +182,11 @@
   -webkit-border-radius: 3px 3px 0 0;
 }
 
-#pontoon ul.menu li:nth-child(2) {
+#pontoon .locale ul.menu li:first-child {
+  border-bottom: 1px solid #040404;
+}
+
+#pontoon .locale ul.menu li:nth-child(2) {
   border-top: 1px solid #444444;
 }
 
@@ -327,6 +330,26 @@
 
 #pontoon .locale .menu li .flag {
   margin: 1px 10px 0 0;
+}
+
+#pontoon .page {
+  display: none;
+  float: left;
+  margin-right: 10px;
+}
+
+#pontoon .page .menu {
+  left: -7px;
+}
+
+#pontoon .page .menu .progress {
+  float: right;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+#pontoon .page .menu li:first-child {
+  padding-right: 12px;
 }
 
 #pontoon #progress {
