@@ -430,7 +430,8 @@ var Pontoon = (function () {
      */
     attachHandlers: function () {
       var self = this,
-          info = self._data.info;
+          info = self._data.info,
+          pages = self._data.pages;
 
       // General Project Info
       if (info) {
@@ -441,6 +442,31 @@ var Pontoon = (function () {
             .find('.locales p').html(info.locales).end()
             .find('.audience p').html(info.audience).end()
             .find('.metrics p').html(info.metrics);
+      }
+
+      // Page selector
+      if (pages.length > 1) {
+        $('#pontoon .page')
+          .find('.selector .title').html(pages[0].title).end()
+          .show();
+          
+        $(pages).each(function() {
+          var count = 0,
+              entities = this.entities;
+          $(entities).each(function() {
+            if (this.translation.length > 0) {
+              count++;
+            }
+          });
+          $('#pontoon .page .menu').append('<li>' +
+            '<span class="title" data-url="' + this.url + '">' + this.title + '</span>' +
+            '<span class="progress">' + Math.round(count*100/entities.length) + '%</span>' +
+          '</li>');
+        });
+
+        $('#pontoon .page .menu li').click(function() {
+          window.location = "?url=" + $(this).find('.title').data("url") + "&locale=" + self._locale;
+        });
       }
 
       // Open/close Pontoon UI

@@ -82,7 +82,6 @@
 
       // Show error message if no callback for 5 seconds: Pontoon/iframe not supported, 404…
       var i = 0,
-          l = window.location,
           callback = setInterval(function() {
             if (i < 50) {
               i++;
