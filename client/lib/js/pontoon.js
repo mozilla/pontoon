@@ -426,11 +426,8 @@
       // Determine if the current page is prepared for working with Pontoon
       var meta = $('head > meta[name=Pontoon]');
       if (meta.length > 0) {
-        if (meta.attr('content')) {
-          Pontoon._meta.project = meta.attr('content');
-        }
-        if (meta.attr('data-ip')) {
-          Pontoon._meta.url = meta.attr('data-ip');
+        if (meta.attr('data-project')) {
+          Pontoon._meta.project = meta.data('project');
         }
         loadEntities();
       } else {

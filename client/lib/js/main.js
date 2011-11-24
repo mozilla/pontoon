@@ -17,8 +17,7 @@ var Pontoon = (function () {
      * locale - locale msgstrs are localized too
     */
     save: function () {
-      var url = this._meta.url || 'http://0.0.0.0:8000/push/',
-          project = this._meta.project || $("#source").attr("src"),
+      var project = this._meta.project || $("#source").attr("src"),
           params = {
             'project': project,
             'locale': this._locale
@@ -36,7 +35,7 @@ var Pontoon = (function () {
       params.data = JSON.stringify(data);
       
       $.ajaxSettings.traditional = true;
-      $.post(url, params);
+      $.post('http://0.0.0.0:8000/push/', params);
     },
 
 
