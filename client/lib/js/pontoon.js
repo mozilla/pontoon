@@ -5,6 +5,7 @@
         _ptn: window.top,
         _locale: "",
         _meta: {},
+        _page: 0,
         _data: {}
   	  },
       jqueryAppended = false,
@@ -22,11 +23,15 @@
       function sendData() {
         // Deep copy: http://api.jquery.com/jQuery.extend
         var data = $.extend(true, {}, Pontoon._data);
-        $(data.pages[0].entities).each(function () {
+        $(data.pages[Pontoon._page].entities).each(function () {
           delete this.node;
         });
 
-        postMessage("data", data);
+        postMessage("data", {
+          meta: Pontoon._meta,
+          page: Pontoon._page,
+          data: data
+        });
       }
 
 
@@ -68,7 +73,7 @@
               entity = target.entity,
               id = entity.id,
               next = id + 1,
-              entities = Pontoon._data.pages[0].entities;
+              entities = Pontoon._data.pages[Pontoon._page].entities;
 
           if (save.is(":visible")) {
             if (key === 13) { // Enter: confirm translation
@@ -191,12 +196,12 @@
 
             // Remove entities from child nodes if parent node is entity
             $(this).parent().find(".pontoon-entity").each(function() {
-              Pontoon._data.pages[0].entities.pop(this.entity);
+              Pontoon._data.pages[Pontoon._page].entities.pop(this.entity);
               entity.id--;
               counter--;
             });
 
-            Pontoon._data.pages[0].entities.push(entity);
+            Pontoon._data.pages[Pontoon._page].entities.push(entity);
             $(this).parent().addClass("pontoon-entity");
           }
         });
@@ -223,7 +228,15 @@
 
         $.getJSON(Pontoon._meta.project + "/pontoon/" + Pontoon._locale + ".json").success(function (data) {
           Pontoon._data = data;
-          var entities = Pontoon._data.pages[0].entities;
+
+          // Find current page entities in metafile
+          var url = Pontoon._ptn.location.search.split("?url=")[1].split("&locale=")[0];
+          $(Pontoon._data.pages).each(function(i) {
+            if (this.url === url) {
+              Pontoon._page = i;
+            }
+          });
+          var entities = Pontoon._data.pages[Pontoon._page].entities;
 
           $('*').contents().each(function () {
             if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
@@ -366,9 +379,9 @@
         if (e.source === Pontoon._ptn) { // TODO: hardcode Pontoon domain name
           var message = JSON.parse(e.data);
           if (message.type === "hover") {
-            Pontoon._data.pages[0].entities[message.value].hover();
+            Pontoon._data.pages[Pontoon._page].entities[message.value].hover();
           } else if (message.type === "unhover") {
-            Pontoon._data.pages[0].entities[message.value].unhover();
+            Pontoon._data.pages[Pontoon._page].entities[message.value].unhover();
           } else if (message.type === "edit") {
             $('.editableToolbar > .edit').click();
           } else if (message.type === "save") {
