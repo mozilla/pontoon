@@ -77,15 +77,18 @@ class Pontoon
     }
 
     /**
-     * prints out header tags for the target app's template header, telling
-     * the client that this is a Pontoon enhanced page
+     * prints out header tags for the target project's header,
+     * telling the client that this is a Pontoon enhanced page
+     * and where are the metafiles for it stored
+     * TODO: hardcode url
      */
-    static function header_tags() {
-        if (self::has_gettext()) echo '<meta name="Pontoon" content="Test Pilot" data-ip="http://0.0.0.0:8000/push/"/>'."\n";
+    static function header_tags($project) {
+        if (self::has_gettext()) echo '<meta name="Pontoon" data-project="../../projects/'.$project.'" />'."\n";
     }
 
     /**
      * inject javascript to the target app, to help with iframe cross-domain policy problem
+     * TODO: hardcode url
      */
     static function footer_tags() {
         echo '<script src="../../client/lib/js/pontoon.js"></script>'."\n";

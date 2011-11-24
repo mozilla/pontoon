@@ -221,7 +221,7 @@
             counter = 1, // TODO: use IDs or XPath
             parent = null;
 
-        $.getJSON("pontoon/" + Pontoon._locale + ".json").success(function (data) {
+        $.getJSON(Pontoon._meta.project + "/pontoon/" + Pontoon._locale + ".json").success(function (data) {
           Pontoon._data = data;
           var entities = Pontoon._data.pages[0].entities;
 
