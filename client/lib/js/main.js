@@ -507,7 +507,7 @@ var Pontoon = (function () {
               dataType: 'json',
               data: {
                 assertion: assertion,
-                audience: "http://horv.at/pontoon"
+                audience: "http://horv.at/pontoon" // TODO: update on domain change
               },
               success: function(data) {
                 $('#nickname').val(data.email);
