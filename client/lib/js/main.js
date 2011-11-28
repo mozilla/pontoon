@@ -447,6 +447,7 @@ var Pontoon = (function () {
       if (pages.length > 1) {
         $('#pontoon .page')
           .find('.selector .title').html(pages[Pontoon._page].title).end()
+          .find('.menu').empty().end()
           .show();
           
         $(pages).each(function() {
