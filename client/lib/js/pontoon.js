@@ -230,7 +230,8 @@
           Pontoon._data = data;
 
           // Find current page entities in metafile
-          var url = Pontoon._ptn.location.search.split("?url=")[1].split("&locale=")[0];
+          // TODO: move projects to external domain or folder and use absolute url
+          var url = Pontoon._doc.location.href.split("http://horv.at/pontoon/")[1];
           $(Pontoon._data.pages).each(function(i) {
             if (this.url === url) {
               Pontoon._page = i;
