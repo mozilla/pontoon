@@ -507,7 +507,7 @@ var Pontoon = (function () {
               dataType: 'json',
               data: {
                 assertion: assertion,
-                audience: "http://horv.at/pontoon" // TODO: update on domain change
+                audience: self._domain // TODO: update on domain change
               },
               success: function(data) {
                 $('#nickname').val(data.email);
@@ -595,6 +595,7 @@ var Pontoon = (function () {
       // Build Pontoon object
       this._doc = iframe;
       this._ptn = ptn;
+      this._domain = "http://horv.at/pontoon/";
       this._locale = locale;
       this._meta = {};
       this._page = 0;
@@ -605,7 +606,7 @@ var Pontoon = (function () {
       $.getScript("client/lib/js/local-settings.js");
       
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
-      self.common.postMessage("locale", self._locale);
+      self.common.postMessage("locale", {locale: self._locale, domain: self._domain});
 
       // Wait for project code messages
       // TODO: display page not ready for Pontoon notification if event not triggered

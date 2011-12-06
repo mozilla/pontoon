@@ -4,6 +4,7 @@
         _doc: window,
         _ptn: window.top,
         _locale: "",
+        _domain: "",
         _meta: {},
         _page: 0,
         _data: {}
@@ -231,7 +232,7 @@
 
           // Find current page entities in metafile
           // TODO: move projects to external domain or folder and use absolute url
-          var url = Pontoon._doc.location.href.split("http://horv.at/pontoon/")[1];
+          var url = Pontoon._doc.location.href.split(Pontoon._domain)[1];
           $(Pontoon._data.pages).each(function(i) {
             if (this.url === url) {
               Pontoon._page = i;
@@ -402,7 +403,7 @@
       // Inject toolbar stylesheet
       $('<link>', {
         rel: 'stylesheet',
-        href: '../../client/lib/css/pontoon.css'
+        href: Pontoon._domain + 'client/lib/css/pontoon.css'
       }).appendTo('head');
 
       // Prepare editable toolbar
@@ -492,7 +493,8 @@
     if (e.source === Pontoon._ptn) { // TODO: hardcode Pontoon domain name
       var message = JSON.parse(e.data);
       if (message.type === "locale") {
-        Pontoon._locale = message.value; // Set locale
+        Pontoon._locale = message.value.locale; // Set locale
+        Pontoon._domain = message.value.domain; // Set domain
         loadJquery();
         window.removeEventListener("message", initizalize, false);
       }
