@@ -182,11 +182,13 @@
   -webkit-border-radius: 3px 3px 0 0;
 }
 
-#pontoon .locale ul.menu li:first-child {
+#pontoon .locale ul.menu li:first-child,
+#pontoon #save-menu li:first-child {
   border-bottom: 1px solid #040404;
 }
 
-#pontoon .locale ul.menu li:nth-child(2) {
+#pontoon .locale ul.menu li:nth-child(2),
+#pontoon #save-menu li:nth-child(2) {
   border-top: 1px solid #444444;
 }
 
