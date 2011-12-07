@@ -41,7 +41,7 @@
  * be handled by the Pontoon client component
  */
 function _w($original) {
-    if (!Pontoon::has_gettext()) return $original;
+    if (!function_exists('gettext')) return $original;
 
     return Pontoon::wrap($original);
 }
@@ -51,7 +51,7 @@ function _w($original) {
  * FIXME: This probably does not work yet
  */
 function n_w($str1, $str2, $ct) {
-    if (!Pontoon::has_gettext()) return $str1;
+    if (!function_exists('gettext')) return $str1;
 
     $translated = ngettext($str1, $str2, $ct);
     return Pontoon::wrap($translated, $str1);
@@ -62,13 +62,6 @@ function n_w($str1, $str2, $ct) {
  */
 class Pontoon
 {
-    /**
-     * is gettext installed?
-     */
-    static function has_gettext() {
-        return function_exists('gettext');
-    }
-
     /**
      * marks strings for localization with Pontoon comments
      */
@@ -83,7 +76,7 @@ class Pontoon
      * TODO: hardcode url
      */
     static function header_tags($project) {
-        if (self::has_gettext()) echo '<meta name="Pontoon" data-project="../../projects/'.$project.'" />'."\n";
+        if (function_exists('gettext')) echo '<meta name="Pontoon" data-project="../../projects/'.$project.'" />'."\n";
     }
 
     /**
