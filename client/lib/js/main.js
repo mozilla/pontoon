@@ -499,7 +499,7 @@ var Pontoon = (function () {
         }
       });
       $("#browserid").click(function() {
-        navigator.id.getVerifiedEmail(function(assertion) {
+        navigator.id.get(function(assertion) {
           if (assertion) {
             $.ajax({
               type: 'POST',
@@ -511,6 +511,10 @@ var Pontoon = (function () {
               },
               success: function(data) {
                 $('#nickname').val(data.email);
+                $('#authentication-menu .restricted .go').click();
+              },
+              error: function(data) {
+                $('#nickname').val("John Doe");
                 $('#authentication-menu .restricted .go').click();
               }
            });
