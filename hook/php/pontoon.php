@@ -20,6 +20,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ *   Matjaz Horvat <matjaz@mozilla.com>
  *   Frederic Wenzel <fwenzel@mozilla.com> (Original Author)
  *
  * Alternatively, the contents of this file may be used under the terms of
