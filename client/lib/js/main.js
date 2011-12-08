@@ -18,10 +18,6 @@ var Pontoon = (function () {
     */
     save: function () {
       var project = this._meta.project || $("#source").attr("src"),
-          params = {
-            'project': project,
-            'locale': this._locale
-          },
           // Deep copy: http://api.jquery.com/jQuery.extend
           data = $.extend(true, {}, this._data);
 
@@ -32,10 +28,10 @@ var Pontoon = (function () {
       });
 
       // TODO: add, support other browsers - https://developer.mozilla.org/en/Using_JSON_in_Firefox
-      params.data = JSON.stringify(data);
+      data = JSON.stringify(data);
       
-      $.ajaxSettings.traditional = true;
-      $.post('http://0.0.0.0:8000/push/', params);
+      window.open(this._domain + 'save.php?project=' + project + '&locale=' + this._locale + '&data=' + data);
+      
     },
 
 
@@ -513,7 +509,7 @@ var Pontoon = (function () {
                 $('#nickname').val(data.email);
                 $('#authentication-menu .restricted .go').click();
               }
-           });
+            });
           }
         });
       });
@@ -531,7 +527,7 @@ var Pontoon = (function () {
         $('#authentication .author').html('Sign in').toggleClass('authenticated');
         $('#authentication-menu, #save-menu').toggleClass('menu');
         $('#authentication-menu input').val("");
-      }).end().find('.server').unbind("click.pontoon").bind("click.pontoon", function () {
+      }).end().find('.json').unbind("click.pontoon").bind("click.pontoon", function () {
         $('#authentication .selector').click();
         self.save();
       });
