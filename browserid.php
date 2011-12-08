@@ -1,8 +1,6 @@
-/**
- * Verify BrowserID assertion
- */
 <?php
- 
+  /* Verify BrowserID assertion */ 
+
   $url = 'https://browserid.org/verify';
   $params = 'assertion='.$_GET['assertion'].'&audience='.$_GET['audience'];
 
