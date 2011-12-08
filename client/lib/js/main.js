@@ -501,20 +501,16 @@ var Pontoon = (function () {
       $("#browserid").click(function() {
         navigator.id.get(function(assertion) {
           if (assertion) {
+            // Validate assertion on our own server
             $.ajax({
-              type: 'POST',
-              url: 'https://browserid.org/verify',
+              url: self._domain + 'browserid.php',
               dataType: 'json',
               data: {
                 assertion: assertion,
-                audience: self._domain // TODO: update on domain change
+                audience: self._domain
               },
               success: function(data) {
                 $('#nickname').val(data.email);
-                $('#authentication-menu .restricted .go').click();
-              },
-              error: function(data) {
-                $('#nickname').val("John Doe");
                 $('#authentication-menu .restricted .go').click();
               }
            });
