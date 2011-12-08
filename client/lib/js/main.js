@@ -599,7 +599,7 @@ var Pontoon = (function () {
       // Build Pontoon object
       this._doc = iframe;
       this._ptn = ptn;
-      this._domain = "http://horv.at/pontoon/";
+      this._domain = window.location.href.split("?")[0]; // TOOD: more robust domain parser
       this._locale = locale;
       this._meta = {};
       this._page = 0;
