@@ -27,11 +27,26 @@ var Pontoon = (function () {
         delete this.unhover;
       });
 
-      // TODO: add, support other browsers - https://developer.mozilla.org/en/Using_JSON_in_Firefox
-      data = JSON.stringify(data);
-      
-      window.open(this._domain + 'save.php?project=' + project + '&locale=' + this._locale + '&data=' + data);
-      
+      var params = {
+        'project': project,
+        'locale': this._locale,
+        'data': data
+      };
+
+      var post = $('<form>', {
+        method: 'post',
+        action: this._domain + 'save.php'
+      });
+
+      for(var key in params) {
+        $('<input>', {
+          type: 'hidden',
+          name: key,
+          value: JSON.stringify(params[key], null, "\t")
+        }).appendTo(post);
+      }
+
+      post.appendTo('body').submit().remove();
     },
 
 
