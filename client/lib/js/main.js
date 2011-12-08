@@ -8,31 +8,11 @@ var Pontoon = (function () {
 
 
     /*
-     * Save data to server
-     * Pontoon server push expects a POST with the following properties:
+     * Simulate form POST
      *
-     * id - list of msgid strings, the length of id should match the length of value ['Hello World']
-     * value - list of msgstrs, should be empty if no changes, otherwise set to the edited value ['Hallo Welt']
-     * project - url of the project being localized
-     * locale - locale msgstrs are localized too
+     * params Parameters sending to server
     */
-    save: function () {
-      var project = this._meta.project || $("#source").attr("src"),
-          // Deep copy: http://api.jquery.com/jQuery.extend
-          data = $.extend(true, {}, this._data);
-
-      $(data.pages[Pontoon._page].entities).each(function () {
-        delete this.ui;
-        delete this.hover;
-        delete this.unhover;
-      });
-
-      var params = {
-        'project': project,
-        'locale': this._locale,
-        'data': data
-      };
-
+    post: function (params) {
       var post = $('<form>', {
         method: 'post',
         action: this._domain + 'save.php'
@@ -42,11 +22,47 @@ var Pontoon = (function () {
         $('<input>', {
           type: 'hidden',
           name: key,
-          value: JSON.stringify(params[key], null, "\t")
+          value: params[key]
         }).appendTo(post);
       }
 
       post.appendTo('body').submit().remove();
+    },
+
+
+
+    /*
+     * Save data to server
+     * Pontoon server push expects a POST with the following properties:
+     *
+     * id - list of msgid strings, the length of id should match the length of value ['Hello World']
+     * value - list of msgstrs, should be empty if no changes, otherwise set to the edited value ['Hallo Welt']
+     * project - url of the project being localized
+     * locale - locale msgstrs are localized too
+    */
+    save: function (type) {
+      var params = {
+        type: type,
+        project: this._meta.project || $("#source").attr("src"),
+        locale: this._locale
+      };
+
+      if (type === "json") {
+        var data = $.extend(true, {}, this._data); // Deep copy: http://api.jquery.com/jQuery.extend
+        $(data.pages[Pontoon._page].entities).each(function () {
+          delete this.ui;
+          delete this.hover;
+          delete this.unhover;
+        });
+        params.data = JSON.stringify(data, null, "\t");
+
+      } else if (type === "html") {
+        
+      } else if (type === "server") {
+        // TODO: save to server
+      }
+
+      this.post(params);
     },
 
 
@@ -542,9 +558,9 @@ var Pontoon = (function () {
         $('#authentication .author').html('Sign in').toggleClass('authenticated');
         $('#authentication-menu, #save-menu').toggleClass('menu');
         $('#authentication-menu input').val("");
-      }).end().find('.json').unbind("click.pontoon").bind("click.pontoon", function () {
+      }).end().find('li:not(".sign-out")').unbind("click.pontoon").bind("click.pontoon", function () {
         $('#authentication .selector').click();
-        self.save();
+        self.save($(this).attr('class'));
       });
     },
 
@@ -560,8 +576,7 @@ var Pontoon = (function () {
           var value = message.value;
           Pontoon._meta = value.meta;
           Pontoon._page = value.page;
-          // Deep copy: http://api.jquery.com/jQuery.extend
-          Pontoon._data = $.extend(true, Pontoon._data, value.data);
+          Pontoon._data = $.extend(true, Pontoon._data, value.data); // Deep copy: http://api.jquery.com/jQuery.extend
         } else if (message.type === "render") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
