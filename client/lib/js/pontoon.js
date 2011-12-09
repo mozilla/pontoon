@@ -394,7 +394,17 @@
           } else if (message.type === "mode") {
             $("#context .mode").attr("label", message.value + " mode");
           } else if (message.type === "html") {
-            postMessage("html", $("html").html());
+            var dt = document.doctype,
+                public = (dt.publicId) ? ' PUBLIC "' + dt.publicId + '"' : "",
+                system = (dt.systemId) ? ' "' + dt.systemId + '"': "",
+                doctype = '<!DOCTYPE ' + dt.name + public + system + '>',
+                html = '<html';
+
+            $($("html")[0].attributes).each(function() {
+              html += ' ' + this.name + '="' + this.nodeValue + '"';
+            });
+
+            postMessage("html", doctype + "\n" + html + ">\n" + $("html").html() + "\n</html>");
           }
         }
       }
