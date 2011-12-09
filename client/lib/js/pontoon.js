@@ -393,6 +393,8 @@
             $('.editableToolbar > .cancel').click();
           } else if (message.type === "mode") {
             $("#context .mode").attr("label", message.value + " mode");
+          } else if (message.type === "html") {
+            postMessage("html", $("html").html());
           }
         }
       }

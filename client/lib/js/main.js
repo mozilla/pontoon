@@ -11,7 +11,7 @@ var Pontoon = (function () {
      * Simulate form POST
      *
      * params Parameters sending to server
-    */
+     */
     post: function (params) {
       var post = $('<form>', {
         method: 'post',
@@ -33,14 +33,11 @@ var Pontoon = (function () {
 
     /*
      * Save data to server
-     * Pontoon server push expects a POST with the following properties:
      *
-     * id - list of msgid strings, the length of id should match the length of value ['Hello World']
-     * value - list of msgstrs, should be empty if no changes, otherwise set to the edited value ['Hallo Welt']
-     * project - url of the project being localized
-     * locale - locale msgstrs are localized too
-    */
-    save: function (type) {
+     * type Data format
+     * value Data
+     */
+    save: function (type, value) {
       var params = {
         type: type,
         project: this._meta.project || $("#source").attr("src"),
@@ -55,14 +52,14 @@ var Pontoon = (function () {
           delete this.unhover;
         });
         params.data = JSON.stringify(data, null, "\t");
+        this.post(params);
 
       } else if (type === "html") {
-        
+        params.data = value;
+        this.post(params);
       } else if (type === "server") {
         // TODO: save to server
       }
-
-      this.post(params);
     },
 
 
@@ -71,7 +68,7 @@ var Pontoon = (function () {
      * Do not render HTML tags
      *
      * string HTML snippet that has to be displayed as code instead of rendered
-    */
+     */
     doNotRender: function (string) {
       return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     },
@@ -82,7 +79,7 @@ var Pontoon = (function () {
      * Reverse function: do render HTML tags
      *
      * string HTML snippet that has to be rendered instead of displayed as code
-    */
+     */
     doRender: function (string) {
       return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     },
@@ -560,7 +557,11 @@ var Pontoon = (function () {
         $('#authentication-menu input').val("");
       }).end().find('li:not(".sign-out")').unbind("click.pontoon").bind("click.pontoon", function () {
         $('#authentication .selector').click();
-        self.save($(this).attr('class'));
+        if ($(this).is(".html")) {
+          self.common.postMessage("html");
+        } else {
+          self.save($(this).attr('class').split(" ")[0]);
+        }
       });
     },
 
@@ -599,6 +600,8 @@ var Pontoon = (function () {
           Pontoon.updateProgress();
         } else if (message.type === "supported") {
           Pontoon.init($('#source').get(0).contentWindow, document, Pontoon._locale);
+        } else if (message.type === "html") {
+          Pontoon.save("html", message.value);
         }
       }
     },
