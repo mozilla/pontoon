@@ -12,10 +12,10 @@ var Pontoon = (function () {
      *
      * params Parameters sending to server
      */
-    post: function (params) {
+    post: function (url, params) {
       var post = $('<form>', {
         method: 'post',
-        action: this._domain + 'save.php'
+        action: url
       });
 
       for(var key in params) {
@@ -52,11 +52,11 @@ var Pontoon = (function () {
           delete this.unhover;
         });
         params.data = JSON.stringify(data, null, "\t");
-        this.post(params);
+        this.post(this._domain + 'save.php', params);
 
       } else if (type === "html") {
         params.data = value;
-        this.post(params);
+        this.post(this._domain + 'save.php', params);
       } else if (type === "server") {
         // TODO: save to server
       }
