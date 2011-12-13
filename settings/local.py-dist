@@ -67,4 +67,8 @@ SECRET_KEY = ''
 ## Log settings
 
 # SYSLOG_TAG = "http_app_playdoh"  # Make this unique to your project.
-# LOGGING = dict(loggers=dict(playdoh = {'level': logging.DEBUG}))
+# LOGGING = dict(loggers=dict(playdoh={'level': logging.DEBUG}))
+
+# Common Event Format logging parameters
+#CEF_PRODUCT = 'Playdoh'
+#CEF_VENDOR = 'Mozilla'

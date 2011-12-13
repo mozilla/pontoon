@@ -1,10 +1,13 @@
 """Example views. Feel free to delete this app."""
 
+import logging
+
 from django import http
 from django.shortcuts import render
 
 import bleach
 import commonware
+from funfactory.log import log_cef
 from mobility.decorators import mobile_template
 from session_csrf import anonymous_csrf
 
@@ -32,5 +35,11 @@ def bleach_test(request):
         data['bleachme'] = bleachme
         if bleachme:
             data['bleached'] = bleach.clean(bleachme, tags=allowed_tags)
+
+        # CEF logging: Log user input that needed to be "bleached".
+        if data['bleached'] != bleachme:
+            log_cef('Bleach Alert', logging.INFO, request,
+                    username='anonymous', signature='BLEACHED',
+                    msg='User data needed to be bleached: %s' % bleachme)
 
     return render(request, 'examples/bleach.html', data)
