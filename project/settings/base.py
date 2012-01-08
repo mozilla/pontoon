@@ -3,7 +3,6 @@
 
 from funfactory.settings_base import *
 
-
 # Bundles is a dictionary of two dictionaries, css and js, which list css files
 # and js files that can be bundled together by the minify app.
 MINIFY_BUNDLES = {
@@ -24,10 +23,14 @@ MINIFY_BUNDLES = {
     }
 }
 
+# Defines the views served for root URLs.
+ROOT_URLCONF = 'project.urls'
 
 INSTALLED_APPS = list(INSTALLED_APPS) + [
+    # Application base, containing global templates.
+    'project.base',
     # Example code. Can (and should) be removed for actual projects.
-    'examples',
+    'project.examples',
 ]
 
 
