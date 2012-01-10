@@ -1,13 +1,30 @@
 <?php
   /* Verify BrowserID assertion */ 
-
   $url = 'https://browserid.org/verify';
-  $params = 'assertion='.$_GET['assertion'].'&audience='.$_GET['audience'];
-
-  $ch = curl_init($url);
-  curl_setopt($ch, CURLOPT_POST, 1);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-  curl_exec($ch);
-  curl_close($ch);
-
+  
+  $data = array(
+    'assertion' => $_GET['assertion'],
+    'audience' => $_GET['audience']
+  );
+  
+  $params = array('http' => array(
+                'method' => 'POST',
+                'content' => $data,
+                'header' => 'Content-Type: application/json'              
+  ));
+  
+  $ctx = stream_context_create($params);
+  $fp = @fopen($url, 'rb', false, $ctx);
+  
+  if (!$fp) {
+    throw new Exception("Problem with $url, $php_errormsg");
+  }
+  
+  $response = @stream_get_contents($fp);
+  
+  if ($response === false) {
+    throw new Exception("Problem reading data from $url, $php_errormsg");
+  }
+  
+  echo $response;
 ?>
