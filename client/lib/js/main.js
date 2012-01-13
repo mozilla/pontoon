@@ -339,7 +339,7 @@ var Pontoon = (function () {
         } else {
           $.ajax({
             url: "http://api.microsofttranslator.com/V2/Ajax.svc/Translate",
-            dataType: "jsonp",
+            dataType: 'jsonp',
             jsonp: "oncomplete",
             crossDomain: true,
             data: {
