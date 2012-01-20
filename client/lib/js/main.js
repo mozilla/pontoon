@@ -50,6 +50,8 @@ var Pontoon = (function () {
           delete this.ui;
           delete this.hover;
           delete this.unhover;
+          delete this.id;
+          delete this.body;
         });
         params.data = JSON.stringify(data, null, "\t");
         this.post(this._domain + 'save.php', params);
