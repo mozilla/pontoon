@@ -29,7 +29,7 @@ class apache {
         ubuntu: {
             package { "apache2-dev":
                 ensure => present,
-                before => File['/etc/apache2/sites-enabled/playdoh.conf']; 
+                before => File['/etc/apache2/sites-enabled/playdoh.conf'];
             }
 
             file { "/etc/apache2/sites-enabled/playdoh.conf":
@@ -40,6 +40,13 @@ class apache {
                 ];
             }
 
+	    exec {
+	    	 'a2enmod rewrite':
+		 	  onlyif => 'test ! -e /etc/apache2/mods-enabled/rewrite.load';
+		 'a2enmod proxy':
+		 	  onlyif => 'test ! -e /etc/apache2/mods-enabled/proxy.load';
+	    }
+
             service { "apache2":
                 ensure => running,
                 enable => true,
@@ -48,6 +55,7 @@ class apache {
                     File['/etc/apache2/sites-enabled/playdoh.conf']
                 ];
             }
+
         }
     }
 }
