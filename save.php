@@ -10,6 +10,6 @@
     header('Content-type: text/html');
   }
 
-  echo stripslashes($_POST['data']);
+  echo $_POST['data'];
   
 ?>
