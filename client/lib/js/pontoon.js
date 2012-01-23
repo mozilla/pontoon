@@ -166,6 +166,8 @@
        */ 
       function guessEntities() {
         Pontoon._data.pages = [{
+          title: document.title,
+          url: window.location.href,
           entities: []
         }];
         var counter = 0; // TODO: use IDs or XPath
