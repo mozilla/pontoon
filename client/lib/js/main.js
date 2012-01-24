@@ -61,14 +61,31 @@ var Pontoon = (function () {
         this.post(this._domain + 'save.php', params);
 
       } else if (type === "po") {
-        var strings = "";
+        var strings = 
+          "# " + params.project + " - " + params.locale + " language file" + "\n" + // TODO: page title
+          "# This file is distributed under the same license as the website." + "\n" + 
+          "# FIRST AUTHOR <EMAIL@ADDRESS>, " + new Date().getFullYear() + "\n" + // TODO: author data
+          "#" + "\n" + 
+          "#, fuzzy" + "\n" + 
+          "msgid \"\"" + "\n" + 
+          "msgstr \"\"" + "\n" + 
+          "\"Project-Id-Version: PACKAGE VERSION 1.0\\n\"" + "\n" + 
+          "\"POT-Creation-Date: 2003-08-08 16:33+0200\\n\"" + "\n" + // TODO: current date
+          "\"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\n\"" + "\n" + // TODO: current date
+          "\"Last-Translator: FULL NAME <EMAIL@ADDRESS>\\n\"" + "\n" + // TODO: author data
+          "\"Language-Team: LANGUAGE <LL@li.org>\\n\"" + "\n" + // TODO: language
+          "\"MIME-Version: 1.0\\n\"" + "\n" + 
+          "\"Content-Type: text/plain; charset=UTF-8\\n\"" + "\n" + 
+          "\"Content-Transfer-Encoding: 8bit\\n\"" + "\n";
+
         $(this._data.pages).each(function () {
           $(this.entities).each(function () {
             strings += 
+              "\n" + 
               (this.comment ? "#. " + this.comment + "\n" : "") + 
               "#: " + $("#source").attr("src") + ":" + this.id + "\n" + 
               "msgid \"" + this.original.replace(/"/g, "\\\"") + "\"\n" + 
-              "msgstr \"" + (this.translation? this.translation.replace(/"/g, "\\\"") : "") + "\"\n\n";
+              "msgstr \"" + (this.translation? this.translation.replace(/"/g, "\\\"") : "") + "\"\n";
           });
         });
         params.data = strings;
