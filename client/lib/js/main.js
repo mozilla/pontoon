@@ -583,12 +583,18 @@ var Pontoon = (function () {
           .find('#password').toggle();
       });
 
+      // TODO: Temporarily skip login
+      $('#nickname').val("Download");
+      $('#authentication-menu .restricted .go').click();      
+      $('#authentication-menu').hide();
+      $('#authentication').removeClass("opened");
+
       // Save menu
       $('#save-menu').find('.sign-out').unbind("click.pontoon").bind("click.pontoon", function () {
-        $('#authentication .selector').click();
+        /*$('#authentication .selector').click();
         $('#authentication .author').html('Sign in').toggleClass('authenticated');
         $('#authentication-menu, #save-menu').toggleClass('menu');
-        $('#authentication-menu input').val("");
+        $('#authentication-menu input').val("");*/
       }).end().find('li:not(".sign-out")').unbind("click.pontoon").bind("click.pontoon", function () {
         $('#authentication .selector').click();
         if ($(this).is(".html")) {
