@@ -9,6 +9,8 @@
     header('Content-type: application/json');
   } else if ($type == 'html') {
     header('Content-type: text/html');
+  } else if ($type == 'po') {
+    header('Content-Type: text/plain');
   }
 
   if (get_magic_quotes_gpc()) { // Deprecated starting in PHP 5.3.0

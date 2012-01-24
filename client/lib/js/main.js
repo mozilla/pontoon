@@ -59,6 +59,21 @@ var Pontoon = (function () {
       } else if (type === "html") {
         params.data = value;
         this.post(this._domain + 'save.php', params);
+
+      } else if (type === "po") {
+        var strings = "";
+        $(this._data.pages).each(function () {
+          $(this.entities).each(function () {
+            strings += 
+              (this.comment ? "#. " + this.comment + "\n" : "") + 
+              "#: " + $("#source").attr("src") + ":" + this.id + "\n" + 
+              "msgid \"" + this.original.replace(/"/g, "\\\"") + "\"\n" + 
+              "msgstr \"" + (this.translation? this.translation.replace(/"/g, "\\\"") : "") + "\"\n\n";
+          });
+        });
+        params.data = strings;
+        this.post(this._domain + 'save.php', params);
+
       } else if (type === "server") {
         // TODO: save to server
       }
