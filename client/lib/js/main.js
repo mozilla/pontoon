@@ -61,7 +61,7 @@ var Pontoon = (function () {
         this.post(this._app._path + 'save.php', params);
 
       } else if (type === "po") {
-        var strings = 
+        var po = 
           "# " + self._project._title + " - " + params.locale + " language file" + "\n" + // TODO: full locale
           "# This file is distributed under the same license as the website." + "\n" + 
           "# YOUR NAME <EMAIL@ADDRESS>, " + new Date().getFullYear() + "\n" + // TODO: author data
@@ -80,7 +80,7 @@ var Pontoon = (function () {
 
         $(this._project._data.pages).each(function () {
           $(this.entities).each(function () {
-            strings += 
+            po += 
               "\n" + 
               (this.comment ? "#. " + this.comment + "\n" : "") + 
               "#: " + self._project._url + "\n" + 
@@ -88,7 +88,7 @@ var Pontoon = (function () {
               "msgstr \"" + (this.translation? this.translation.replace(/"/g, "\\\"") : "") + "\"\n";
           });
         });
-        params.data = strings;
+        params.data = po;
         this.post(this._app._path + 'save.php', params);
 
       } else if (type === "server") {
