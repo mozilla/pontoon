@@ -13,7 +13,10 @@
           _data: {},
           _meta: ""
         },
-        _locale: ""
+        _locale: {
+          _code: "",
+          _language: ""
+        }
   	  },
       jqueryAppended = false,
       script = document.createElement('script');
@@ -237,7 +240,7 @@
             counter = 1, // TODO: use IDs or XPath
             parent = null;
 
-        $.getJSON(Pontoon._project._meta + "/pontoon/" + Pontoon._locale + ".json").success(function (data) {
+        $.getJSON(Pontoon._project._meta + "/pontoon/" + Pontoon._locale._code + ".json").success(function (data) {
           Pontoon._project._data = data;
 
           // Find current page entities in metafile

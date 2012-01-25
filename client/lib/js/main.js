@@ -41,7 +41,7 @@ var Pontoon = (function () {
       var self = this,
           params = {
             type: type,
-            locale: this._locale
+            locale: this._locale._code
           };
 
       if (type === "html") {
@@ -61,8 +61,20 @@ var Pontoon = (function () {
         this.post(this._app._path + 'save.php', params);
 
       } else if (type === "po") {
+        var date = new Date(),
+            temp = date.toLocaleDateString().split("/"),
+            y = temp[2],
+            m = temp[0],
+            d = temp[1],
+            time = date.toTimeString(),
+            temp = time.split(":"),
+            h = temp[0],
+            mi = temp[1],
+            z = time.split("GMT")[1].split(" ")[0],
+            timestamp = y + "-" + m + "-" + d + " " + h + ":" + mi + z;
+
         var po = 
-          "# " + self._project._title + " - " + params.locale + " language file" + "\n" + // TODO: full locale
+          "# " + self._project._title + " language file (" + self._locale._language + ")\n" +
           "# This file is distributed under the same license as the website." + "\n" + 
           "# YOUR NAME <EMAIL@ADDRESS>, " + new Date().getFullYear() + "\n" + // TODO: author data
           "#" + "\n" + 
@@ -70,10 +82,10 @@ var Pontoon = (function () {
           "msgid \"\"" + "\n" + 
           "msgstr \"\"" + "\n" + 
           "\"Project-Id-Version: " + self._project._title + " 1.0\\n\"" + "\n" + 
-          "\"POT-Creation-Date: 2003-08-08 16:33+0200\\n\"" + "\n" + // TODO: current date
-          "\"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\n\"" + "\n" + // TODO: current date
+          "\"POT-Creation-Date: " + timestamp + "\\n\"" + "\n" +
+          "\"PO-Revision-Date: " + timestamp + "\\n\"" + "\n" +
           "\"Last-Translator: YOUR NAME <EMAIL@ADDRESS>\\n\"" + "\n" + // TODO: author data
-          "\"Language-Team: LANGUAGE <LL@li.org>\\n\"" + "\n" + // TODO: full locale
+          "\"Language-Team: " + self._locale._language + "\\n\"" + "\n" +
           "\"MIME-Version: 1.0\\n\"" + "\n" + 
           "\"Content-Type: text/plain; charset=UTF-8\\n\"" + "\n" + 
           "\"Content-Transfer-Encoding: 8bit\\n\"" + "\n";
@@ -329,7 +341,7 @@ var Pontoon = (function () {
             url: 'http://www.frenchmozilla.fr/transvision/webservice.php',
             data: {
               recherche: li.find('.original-string .source-string').html(),
-              locale: self._locale,
+              locale: self._locale._code,
               whole_word: 'whole_word',
               repo: 'beta'
             },
@@ -380,7 +392,7 @@ var Pontoon = (function () {
               appId: self._app._mt,
               text: entity.original,
               from: "en",
-              to: self._locale,
+              to: self._locale._code,
               contentType: "text/html"
             }
           }).success(function(t) {
@@ -523,7 +535,7 @@ var Pontoon = (function () {
         });
 
         $('#pontoon .page .menu li').click(function() {
-          window.location = "?url=" + $(this).find('.title').data("url") + "&locale=" + self._locale;
+          window.location = "?url=" + $(this).find('.title').data("url") + "&locale=" + self._locale._code;
         });
       }
 
@@ -641,7 +653,7 @@ var Pontoon = (function () {
           entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
         } else if (message.type === "supported") {
-          Pontoon.init(Pontoon._project._win, document, Pontoon._locale);
+          Pontoon.init(Pontoon._project._win, document, Pontoon._locale._code);
         } else if (message.type === "html") {
           Pontoon.save("html", message.value);
         }
@@ -677,7 +689,10 @@ var Pontoon = (function () {
         _data: {},
         _meta: ""
       };
-      this._locale = locale;
+      this._locale = {
+        _code: locale,
+        _language: $("#main .language").html()
+      };
 
       // Instantate Microsoft Translator API
       $.getScript("client/lib/js/local-settings.js");
