@@ -35,9 +35,11 @@
         });
 
         postMessage("data", {
-          meta: Pontoon._project._meta,
           page: Pontoon._app._page,
-          data: data
+          url: Pontoon._project._url,
+          title: Pontoon._project._title,
+          data: data,
+          meta: Pontoon._project._meta
         });
       }
 

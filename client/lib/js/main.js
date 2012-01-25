@@ -614,9 +614,11 @@ var Pontoon = (function () {
         var message = JSON.parse(e.data);
         if (message.type === "data") {
           var value = message.value;
-          Pontoon._project._meta = value.meta;
           Pontoon._app._page = value.page;
+          Pontoon._project._url = value.url;
+          Pontoon._project._title = value.title;
           Pontoon._project._data = $.extend(true, Pontoon._project._data, value.data); // Deep copy: http://api.jquery.com/jQuery.extend
+          Pontoon._project._meta = value.meta;
         } else if (message.type === "render") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
