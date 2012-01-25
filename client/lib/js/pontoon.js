@@ -1,13 +1,19 @@
 (function () {
 
   var Pontoon = {
-        _doc: window,
-        _ptn: window.top,
-        _locale: "",
-        _domain: "",
-        _meta: {},
-        _page: 0,
-        _data: {}
+        _app: {
+          _win: window.top,
+          _path: "",
+          _page: 0
+        },
+        _project: {
+          _win: window,
+          _url: window.location.href,
+          _title: window.document.title,
+          _data: {},
+          _meta: ""
+        },
+        _locale: ""
   	  },
       jqueryAppended = false,
       script = document.createElement('script');
@@ -23,14 +29,14 @@
        */
       function sendData() {
         // Deep copy: http://api.jquery.com/jQuery.extend
-        var data = $.extend(true, {}, Pontoon._data);
-        $(data.pages[Pontoon._page].entities).each(function () {
+        var data = $.extend(true, {}, Pontoon._project._data);
+        $(data.pages[Pontoon._app._page].entities).each(function () {
           delete this.node;
         });
 
         postMessage("data", {
-          meta: Pontoon._meta,
-          page: Pontoon._page,
+          meta: Pontoon._project._meta,
+          page: Pontoon._app._page,
           data: data
         });
       }
@@ -74,7 +80,7 @@
               entity = target.entity,
               id = entity.id,
               next = id + 1,
-              entities = Pontoon._data.pages[Pontoon._page].entities;
+              entities = Pontoon._project._data.pages[Pontoon._app._page].entities;
 
           if (save.is(":visible")) {
             if (key === 13) { // Enter: confirm translation
@@ -165,7 +171,7 @@
        * Add temporary pontoon-entity class to prevent duplicate entities when guessing
        */ 
       function guessEntities() {
-        Pontoon._data.pages = [{
+        Pontoon._project._data.pages = [{
           title: document.title,
           url: window.location.href,
           entities: []
@@ -189,7 +195,7 @@
 
             // Head entities cannot be edited in-place
             if ($(this).parents('head').length === 0) {
-              // TODO: remove entity.node from Pontoon._data?
+              // TODO: remove entity.node from Pontoon._project._data?
               entity.node = $(this).parent(); // HTML Element holding string
               entity.body = true;
               makeEditable(entity.node.get(0)); // Make nodes editable
@@ -199,12 +205,12 @@
 
             // Remove entities from child nodes if parent node is entity
             $(this).parent().find(".pontoon-entity").each(function() {
-              Pontoon._data.pages[Pontoon._page].entities.pop(this.entity);
+              Pontoon._project._data.pages[Pontoon._app._page].entities.pop(this.entity);
               entity.id--;
               counter--;
             });
 
-            Pontoon._data.pages[Pontoon._page].entities.push(entity);
+            Pontoon._project._data.pages[Pontoon._app._page].entities.push(entity);
             $(this).parent().addClass("pontoon-entity");
           }
         });
@@ -229,18 +235,18 @@
             counter = 1, // TODO: use IDs or XPath
             parent = null;
 
-        $.getJSON(Pontoon._meta.project + "/pontoon/" + Pontoon._locale + ".json").success(function (data) {
-          Pontoon._data = data;
+        $.getJSON(Pontoon._project._meta + "/pontoon/" + Pontoon._locale + ".json").success(function (data) {
+          Pontoon._project._data = data;
 
           // Find current page entities in metafile
           // TODO: move projects to external domain or folder and use absolute url
-          var url = Pontoon._doc.location.href.split(Pontoon._domain)[1];
-          $(Pontoon._data.pages).each(function(i) {
+          var url = Pontoon._project._win.location.href.split(Pontoon._app._path)[1];
+          $(Pontoon._project._data.pages).each(function(i) {
             if (this.url === url) {
-              Pontoon._page = i;
+              Pontoon._app._page = i;
             }
           });
-          var entities = Pontoon._data.pages[Pontoon._page].entities;
+          var entities = Pontoon._project._data.pages[Pontoon._app._page].entities;
 
           $('*').contents().each(function () {
             if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
@@ -255,7 +261,7 @@
               }
 
               entity.id = counter;
-              // TODO: remove entity.node from Pontoon._data?
+              // TODO: remove entity.node from Pontoon._project._data?
               entity.node = parent; // HTML Element holding string
               entity.body = true;
               makeEditable(entity.node.get(0)); // Make nodes editable
@@ -380,12 +386,12 @@
        * Handle messages from project code
        */
       function receiveMessage(e) {
-        if (e.source === Pontoon._ptn) { // TODO: hardcode Pontoon domain name
+        if (e.source === Pontoon._app._win) { // TODO: hardcode Pontoon domain name
           var message = JSON.parse(e.data);
           if (message.type === "hover") {
-            Pontoon._data.pages[Pontoon._page].entities[message.value].hover();
+            Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].hover();
           } else if (message.type === "unhover") {
-            Pontoon._data.pages[Pontoon._page].entities[message.value].unhover();
+            Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].unhover();
           } else if (message.type === "edit") {
             $('.editableToolbar > .edit').click();
           } else if (message.type === "save") {
@@ -425,7 +431,7 @@
       // Inject toolbar stylesheet
       $('<link>', {
         rel: 'stylesheet',
-        href: Pontoon._domain + 'client/lib/css/pontoon.css'
+        href: Pontoon._app._path + 'client/lib/css/pontoon.css'
       }).appendTo('head');
 
       // Prepare editable toolbar
@@ -463,8 +469,8 @@
       // Determine if the current page is prepared for working with Pontoon
       var meta = $('head > meta[name=Pontoon]');
       if (meta.length > 0) {
-        if (meta.attr('data-project')) {
-          Pontoon._meta.project = meta.data('project');
+        if (meta.attr('data-meta')) {
+          Pontoon._project._meta = meta.data('meta');
         }
         loadEntities();
       } else {
@@ -484,7 +490,7 @@
     * targetOrigin specifies what the origin of otherWindow must be
   */
   function postMessage(messageType, messageValue, otherWindow, targetOrigin) {
-    var otherWindow = otherWindow || Pontoon._ptn,
+    var otherWindow = otherWindow || Pontoon._app._win,
         targetOrigin = targetOrigin || "*", // TODO: hardcode Pontoon domain name
         message = {
           type: messageType,
@@ -512,11 +518,11 @@
   // Wait for main code trigger
   function initizalize(e) {
     // Prevent execution of any code if page not loaded in Pontoon iframe
-    if (e.source === Pontoon._ptn) { // TODO: hardcode Pontoon domain name
+    if (e.source === Pontoon._app._win) { // TODO: hardcode Pontoon domain name
       var message = JSON.parse(e.data);
       if (message.type === "locale") {
         Pontoon._locale = message.value.locale; // Set locale
-        Pontoon._domain = message.value.domain; // Set domain
+        Pontoon._app._path = message.value.domain; // Set domain
         loadJquery();
         window.removeEventListener("message", initizalize, false);
       }

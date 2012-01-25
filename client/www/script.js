@@ -66,7 +66,7 @@
           // Slide up intro page and show iframe
           $('#intro').slideUp("slow", function() {
             $('#source').show();
-            Pontoon.init($('#source').get(0).contentWindow, document, locale);
+            Pontoon.init(window, $('#source').get(0).contentWindow, locale);
           });
           window.removeEventListener("message", receiveMessage, false);
         }

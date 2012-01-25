@@ -40,13 +40,12 @@ var Pontoon = (function () {
     save: function (type, value) {
       var params = {
         type: type,
-        project: this._meta.project || $("#source").attr("src"),
         locale: this._locale
       };
 
       if (type === "json") {
-        var data = $.extend(true, {}, this._data); // Deep copy: http://api.jquery.com/jQuery.extend
-        $(data.pages[Pontoon._page].entities).each(function () {
+        var data = $.extend(true, {}, this._project._data); // Deep copy: http://api.jquery.com/jQuery.extend
+        $(data.pages[Pontoon._app._page].entities).each(function () {
           delete this.ui;
           delete this.hover;
           delete this.unhover;
@@ -54,17 +53,17 @@ var Pontoon = (function () {
           delete this.body;
         });
         params.data = JSON.stringify(data, null, "\t");
-        this.post(this._domain + 'save.php', params);
+        this.post(this._app._path + 'save.php', params);
 
       } else if (type === "html") {
         params.data = value;
-        this.post(this._domain + 'save.php', params);
+        this.post(this._app._path + 'save.php', params);
 
       } else if (type === "po") {
         var strings = 
-          "# " + params.project + " - " + params.locale + " language file" + "\n" + // TODO: page title
+          "# PROJECT TITLE - " + params.locale + " language file" + "\n" + // TODO: page title, full locale
           "# This file is distributed under the same license as the website." + "\n" + 
-          "# FIRST AUTHOR <EMAIL@ADDRESS>, " + new Date().getFullYear() + "\n" + // TODO: author data
+          "# YOUR NAME <EMAIL@ADDRESS>, " + new Date().getFullYear() + "\n" + // TODO: author data
           "#" + "\n" + 
           "#, fuzzy" + "\n" + 
           "msgid \"\"" + "\n" + 
@@ -72,13 +71,13 @@ var Pontoon = (function () {
           "\"Project-Id-Version: PACKAGE VERSION 1.0\\n\"" + "\n" + 
           "\"POT-Creation-Date: 2003-08-08 16:33+0200\\n\"" + "\n" + // TODO: current date
           "\"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\n\"" + "\n" + // TODO: current date
-          "\"Last-Translator: FULL NAME <EMAIL@ADDRESS>\\n\"" + "\n" + // TODO: author data
+          "\"Last-Translator: YOUR NAME <EMAIL@ADDRESS>\\n\"" + "\n" + // TODO: author data
           "\"Language-Team: LANGUAGE <LL@li.org>\\n\"" + "\n" + // TODO: language
           "\"MIME-Version: 1.0\\n\"" + "\n" + 
           "\"Content-Type: text/plain; charset=UTF-8\\n\"" + "\n" + 
           "\"Content-Transfer-Encoding: 8bit\\n\"" + "\n";
 
-        $(this._data.pages).each(function () {
+        $(this._project._data.pages).each(function () {
           $(this.entities).each(function () {
             strings += 
               "\n" + 
@@ -89,7 +88,7 @@ var Pontoon = (function () {
           });
         });
         params.data = strings;
-        this.post(this._domain + 'save.php', params);
+        this.post(this._app._path + 'save.php', params);
 
       } else if (type === "server") {
         // TODO: save to server
@@ -125,10 +124,10 @@ var Pontoon = (function () {
      */
     entityList: function () {
       var self = this,
-          list = $(this._ptn).find('#entitylist').empty().append('<ul></ul>');
+          list = $(this._app._win.document).find('#entitylist').empty().append('<ul></ul>');
 
       // Render
-      $(this._data.pages[Pontoon._page].entities).each(function () {
+      $(this._project._data.pages[Pontoon._app._page].entities).each(function () {
         var li = $('<li class="entity' + 
           // append classes to translated and head entities
           (this.translation ? ' translated' : '') + 
@@ -197,7 +196,7 @@ var Pontoon = (function () {
               '<a href="#cancel" class="cancel" title="Cancel and revert to initial translation"></a>' + 
             '</div>' +
           '</div>' +
-        '</div></li>', self._ptn);
+        '</div></li>', self._app._win);
 
         li.get(0).entity = this;
         this.ui = li; /* HTML Element representing string in the main UI */
@@ -377,7 +376,7 @@ var Pontoon = (function () {
             jsonp: "oncomplete",
             crossDomain: true,
             data: {
-              appId: self._mt,
+              appId: self._app._mt,
               text: entity.original,
               from: "en",
               to: self._locale,
@@ -487,8 +486,8 @@ var Pontoon = (function () {
      */
     attachHandlers: function () {
       var self = this,
-          info = self._data.info,
-          pages = self._data.pages;
+          info = self._project._data.info,
+          pages = self._project._data.pages;
 
       // General Project Info
       if (info) {
@@ -504,7 +503,7 @@ var Pontoon = (function () {
       // Page selector
       if (pages.length > 1) {
         $('#pontoon .page')
-          .find('.selector .title').html(pages[Pontoon._page].title).end()
+          .find('.selector .title').html(pages[Pontoon._app._page].title).end()
           .find('.menu').empty().end()
           .show();
           
@@ -561,11 +560,11 @@ var Pontoon = (function () {
           if (assertion) {
             // Validate assertion on our own server
             $.ajax({
-              url: self._domain + 'browserid.php',
+              url: self._app._path + 'browserid.php',
               dataType: 'json',
               data: {
                 assertion: assertion,
-                audience: self._domain
+                audience: self._app._path
               },
               success: function(data) {
                 $('#nickname').val(data.email);
@@ -611,13 +610,13 @@ var Pontoon = (function () {
      * Handle messages from project code
      */
     receiveMessage: function (e) {
-      if (e.source === Pontoon._doc) {
+      if (e.source === Pontoon._project._win) {
         var message = JSON.parse(e.data);
         if (message.type === "data") {
           var value = message.value;
-          Pontoon._meta = value.meta;
-          Pontoon._page = value.page;
-          Pontoon._data = $.extend(true, Pontoon._data, value.data); // Deep copy: http://api.jquery.com/jQuery.extend
+          Pontoon._project._meta = value.meta;
+          Pontoon._app._page = value.page;
+          Pontoon._project._data = $.extend(true, Pontoon._project._data, value.data); // Deep copy: http://api.jquery.com/jQuery.extend
         } else if (message.type === "render") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
@@ -625,17 +624,17 @@ var Pontoon = (function () {
         } else if (message.type === "switch") {
           $("#switch").click();
         } else if (message.type === "hover") {
-          Pontoon._data.pages[Pontoon._page].entities[message.value].ui.addClass('hovered');
+          Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].ui.addClass('hovered');
         } else if (message.type === "unhover") {
-          Pontoon._data.pages[Pontoon._page].entities[message.value].ui.removeClass('hovered');
+          Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].ui.removeClass('hovered');
         } else if (message.type === "active") {
-          Pontoon._data.pages[Pontoon._page].entities[message.value].ui.addClass('active');
+          Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].ui.addClass('active');
         } else if (message.type === "inactive") {
-          Pontoon._data.pages[Pontoon._page].entities[message.value].ui.removeClass('active');
+          Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].ui.removeClass('active');
         } else if (message.type === "save") {
-          Pontoon.updateEntityUI(Pontoon._data.pages[Pontoon._page].entities[message.value]);
+          Pontoon.updateEntityUI(Pontoon._project._data.pages[Pontoon._app._page].entities[message.value]);
         } else if (message.type === "cancel") {
-          var entity = Pontoon._data.pages[Pontoon._page].entities[message.value];
+          var entity = Pontoon._project._data.pages[Pontoon._app._page].entities[message.value];
           entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
         } else if (message.type === "supported") {
@@ -651,31 +650,37 @@ var Pontoon = (function () {
     /**
      * Initialize Pontoon
      *
-     * iframe Website window object
-     * ptn Pontoon document object
+     * app Pontoon window object
+     * project Website window object
      * locale ISO 639-1 language code of the language website is localized to
      */
-    init: function (iframe, ptn, locale) {
+    init: function (app, project, locale) {
       var self = this;
-      if (!iframe) {
+      if (!project) {
         throw "Website handler required";
       }
 
       // Build Pontoon object
-      this._doc = iframe;
-      this._ptn = ptn;
-      this._domain = window.location.href.split("?")[0]; // TOOD: more robust domain parser
+      this._app = {
+        _win: app,
+        _path: window.location.href.split("?")[0], // TOOD: more robust domain parser
+        _mt: '',
+        _page: 0
+      };
+      this._project = {
+        _win: project,
+        _url: "",
+        _title: "",
+        _data: {},
+        _meta: ""
+      };
       this._locale = locale;
-      this._meta = {};
-      this._page = 0;
-      this._data = {};
-      this._mt = '';
 
       // Instantate Microsoft Translator API
       $.getScript("client/lib/js/local-settings.js");
       
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
-      self.common.postMessage("locale", {locale: self._locale, domain: self._domain});
+      self.common.postMessage("locale", {locale: self._locale, domain: self._app._path});
 
       // Wait for project code messages
       // TODO: display page not ready for Pontoon notification if event not triggered
@@ -779,7 +784,7 @@ var Pontoon = (function () {
       */
       return {
         postMessage: function (messageType, messageValue, otherWindow, targetOrigin) {
-          var otherWindow = otherWindow || Pontoon._doc,
+          var otherWindow = otherWindow || Pontoon._project._win,
               targetOrigin = targetOrigin || "*",
               message = {
                 type: messageType,
