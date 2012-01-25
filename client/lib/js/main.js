@@ -32,7 +32,7 @@ var Pontoon = (function () {
 
 
     /*
-     * Save data to server
+     * Save data in different formats
      *
      * type Data format
      * value Data
@@ -44,7 +44,11 @@ var Pontoon = (function () {
             locale: this._locale
           };
 
-      if (type === "json") {
+      if (type === "html") {
+        params.data = value;
+        this.post(this._app._path + 'save.php', params);
+
+      } else if (type === "json") {
         var data = $.extend(true, {}, this._project._data); // Deep copy: http://api.jquery.com/jQuery.extend
         $(data.pages[Pontoon._app._page].entities).each(function () {
           delete this.ui;
@@ -54,10 +58,6 @@ var Pontoon = (function () {
           delete this.body;
         });
         params.data = JSON.stringify(data, null, "\t");
-        this.post(this._app._path + 'save.php', params);
-
-      } else if (type === "html") {
-        params.data = value;
         this.post(this._app._path + 'save.php', params);
 
       } else if (type === "po") {
