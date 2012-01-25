@@ -38,10 +38,11 @@ var Pontoon = (function () {
      * value Data
      */
     save: function (type, value) {
-      var params = {
-        type: type,
-        locale: this._locale
-      };
+      var self = this,
+          params = {
+            type: type,
+            locale: this._locale
+          };
 
       if (type === "json") {
         var data = $.extend(true, {}, this._project._data); // Deep copy: http://api.jquery.com/jQuery.extend
@@ -82,7 +83,7 @@ var Pontoon = (function () {
             strings += 
               "\n" + 
               (this.comment ? "#. " + this.comment + "\n" : "") + 
-              "#: " + $("#source").attr("src") + ":" + this.id + "\n" + 
+              "#: " + self._project._url + ":" + this.id + "\n" + 
               "msgid \"" + this.original.replace(/"/g, "\\\"") + "\"\n" + 
               "msgstr \"" + (this.translation? this.translation.replace(/"/g, "\\\"") : "") + "\"\n";
           });
@@ -301,7 +302,7 @@ var Pontoon = (function () {
         // TODO: AJAX request to display only locales with current string translation available
         if (locale === "sl") {
           // TODO: Only request each locale meta file once
-          $.getJSON($("#source").attr("src") + "/pontoon/" + locale + ".json").success(function (data) {
+          $.getJSON(self._project._url + "pontoon/" + locale + ".json").success(function (data) {
             var translation = data.entities[index].translation;
             if (translation) {
               p.removeClass("no").addClass("source-string").html(translation);
