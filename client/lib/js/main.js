@@ -641,7 +641,7 @@ var Pontoon = (function () {
           entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
         } else if (message.type === "supported") {
-          Pontoon.init($('#source').get(0).contentWindow, document, Pontoon._locale);
+          Pontoon.init(Pontoon._project._win, document, Pontoon._locale);
         } else if (message.type === "html") {
           Pontoon.save("html", message.value);
         }
