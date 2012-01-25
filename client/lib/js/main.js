@@ -62,18 +62,18 @@ var Pontoon = (function () {
 
       } else if (type === "po") {
         var strings = 
-          "# PROJECT TITLE - " + params.locale + " language file" + "\n" + // TODO: page title, full locale
+          "# " + self._project._title + " - " + params.locale + " language file" + "\n" + // TODO: full locale
           "# This file is distributed under the same license as the website." + "\n" + 
           "# YOUR NAME <EMAIL@ADDRESS>, " + new Date().getFullYear() + "\n" + // TODO: author data
           "#" + "\n" + 
           "#, fuzzy" + "\n" + 
           "msgid \"\"" + "\n" + 
           "msgstr \"\"" + "\n" + 
-          "\"Project-Id-Version: PACKAGE VERSION 1.0\\n\"" + "\n" + 
+          "\"Project-Id-Version: " + self._project._title + " 1.0\\n\"" + "\n" + 
           "\"POT-Creation-Date: 2003-08-08 16:33+0200\\n\"" + "\n" + // TODO: current date
           "\"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\n\"" + "\n" + // TODO: current date
           "\"Last-Translator: YOUR NAME <EMAIL@ADDRESS>\\n\"" + "\n" + // TODO: author data
-          "\"Language-Team: LANGUAGE <LL@li.org>\\n\"" + "\n" + // TODO: language
+          "\"Language-Team: LANGUAGE <LL@li.org>\\n\"" + "\n" + // TODO: full locale
           "\"MIME-Version: 1.0\\n\"" + "\n" + 
           "\"Content-Type: text/plain; charset=UTF-8\\n\"" + "\n" + 
           "\"Content-Transfer-Encoding: 8bit\\n\"" + "\n";
@@ -83,7 +83,7 @@ var Pontoon = (function () {
             strings += 
               "\n" + 
               (this.comment ? "#. " + this.comment + "\n" : "") + 
-              "#: " + self._project._url + ":" + this.id + "\n" + 
+              "#: " + self._project._url + "\n" + 
               "msgid \"" + this.original.replace(/"/g, "\\\"") + "\"\n" + 
               "msgstr \"" + (this.translation? this.translation.replace(/"/g, "\\\"") : "") + "\"\n";
           });

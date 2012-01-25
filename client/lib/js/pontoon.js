@@ -174,8 +174,8 @@
        */ 
       function guessEntities() {
         Pontoon._project._data.pages = [{
-          title: document.title,
-          url: window.location.href,
+          title: Pontoon._project._title,
+          url: Pontoon._project._url,
           entities: []
         }];
         var counter = 0; // TODO: use IDs or XPath
