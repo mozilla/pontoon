@@ -407,25 +407,21 @@
           } else if (message.type === "mode") {
             $("#context .mode").attr("label", message.value + " mode");
           } else if (message.type === "html") {
-            var dt = document.doctype,
-                public = (dt.publicId) ? ' PUBLIC "' + dt.publicId + '"' : "",
-                system = (dt.systemId) ? ' "' + dt.systemId + '"': "",
-                doctype = '<!DOCTYPE ' + dt.name + public + system + '>',
-                html = '<html',
-                inner = $("html").clone();
+            $.ajax(Pontoon._project._url).done(function(data) {
+              var response = data,
+                  index = data.toLowerCase().indexOf("<head"),
+                  start = response.substring(0, index);
+                  inner = $("html").clone();
 
-            $($("html")[0].attributes).each(function() {
-              html += ' ' + this.name + '="' + this.nodeValue + '"';
+              // Remove Pontoon-content
+              inner
+                .find("script[src*='pontoon.js']").remove().end()
+                .find("script[src*='jquery.min.js']").remove().end()
+                .find(".editableToolbar").remove().end()
+                .find("menu#context").remove();
+
+              postMessage("html", start + inner.html() + "\n</html>");  
             });
-
-            // Remove Pontoon-content
-            inner
-              .find("script[src*='pontoon.js']").remove().end()
-              .find("script[src*='jquery.min.js']").remove().end()
-              .find(".editableToolbar").remove().end()
-              .find("menu#context").remove();
-
-            postMessage("html", doctype + "\n" + html + ">\n" + inner.html() + "\n</html>");
           }
         }
       }
