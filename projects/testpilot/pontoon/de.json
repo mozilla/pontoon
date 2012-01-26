@@ -33,7 +33,13 @@
         {
           "original": "Home",
           "translation": "",
-          "comment": ""
+          "comment": "",
+          "suggestions": [
+            {
+              "author": "Tobias",
+              "translation": "Startseite"
+            }
+          ]
         },
         {
           "original": "Test Cases",

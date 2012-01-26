@@ -92,14 +92,24 @@ var Pontoon = (function () {
 
         $(this._project._data.pages).each(function () {
           $(this.entities).each(function () {
+            var fuzzy = false,
+                msgstr = this.translation;
+
+            if (this.suggestions && !msgstr) {
+              fuzzy = true,
+              msgstr = this.suggestions[0].translation;
+            }
+
             po += 
               "\n" + 
               (this.comment ? "#. " + this.comment + "\n" : "") + 
               "#: " + self._project._url + "\n" + 
+              (fuzzy ? "#, fuzzy\n" : "") + 
               "msgid \"" + this.original.replace(/"/g, "\\\"") + "\"\n" + 
-              "msgstr \"" + (this.translation? this.translation.replace(/"/g, "\\\"") : "") + "\"\n";
+              "msgstr \"" + (msgstr? msgstr.replace(/"/g, "\\\"") : "") + "\"\n";
           });
         });
+
         params.data = po;
         this.post(this._app._path + 'save.php', params);
 
