@@ -1,0 +1,14 @@
+SRC_DIR = ''
+WWW_DIR = ''
+
+CRON_NAME = ''
+
+DEPLOY_SCRIPT = ''
+REMOTE_UPDATE_SCRIPT = ''
+
+WEB_HOSTGROUP = ''
+CELERY_HOSTGROUP = ''
+CELERY_SERVICE = ''
+
+UPDATE_REF = 'origin/master'
+SSH_KEY = None
