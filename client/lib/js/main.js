@@ -436,7 +436,7 @@ var Pontoon = (function () {
             entity = li.get(0).entity;
 
         // Only if no other entity is being edited in-place
-        if (!li.is('.hovered')) {
+        if (!li.is('.hovered') && entity.body) {
           $(this).blur();
         }
       });
