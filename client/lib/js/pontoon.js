@@ -13,11 +13,11 @@
           _data: {},
           _meta: ""
         },
-        _locale: {
-          _code: "",
-          _language: ""
+        locale: {
+          code: "",
+          language: ""
         },
-        _user: {
+        user: {
           name: "",
           email: ""
         }
@@ -244,7 +244,7 @@
             counter = 1, // TODO: use IDs or XPath
             parent = null;
 
-        $.getJSON(Pontoon._project._meta + "/pontoon/" + Pontoon._locale._code + ".json").success(function (data) {
+        $.getJSON(Pontoon._project._meta + "/pontoon/" + Pontoon.locale.code + ".json").success(function (data) {
           Pontoon._project._data = data;
 
           // Find current page entities in metafile
@@ -427,7 +427,7 @@
               postMessage("html", start + inner.html() + "\n</html>");  
             });
           } else if (message.type === "user") {
-            Pontoon._user = message.value;
+            Pontoon.user = message.value;
           }
         }
       }
@@ -528,7 +528,7 @@
     if (e.source === Pontoon._app._win) { // TODO: hardcode Pontoon domain name
       var message = JSON.parse(e.data);
       if (message.type === "locale") {
-        Pontoon._locale = message.value.locale; // Set locale
+        Pontoon.locale = message.value.locale; // Set locale
         Pontoon._app._path = message.value.domain; // Set domain
         loadJquery();
         window.removeEventListener("message", initizalize, false);

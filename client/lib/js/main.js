@@ -41,7 +41,7 @@ var Pontoon = (function () {
       var self = this,
           params = {
             type: type,
-            locale: this._locale._code
+            locale: this.locale.code
           };
 
       if (type === "html") {
@@ -74,9 +74,9 @@ var Pontoon = (function () {
             timestamp = y + "-" + m + "-" + d + " " + h + ":" + mi + z;
 
         var po = 
-          "# " + self._project._title + " language file (" + self._locale._language + ")\n" +
+          "# " + self._project._title + " language file (" + self.locale.language + ")\n" +
           "# This file is distributed under the same license as the website." + "\n" + 
-          "# " + self._user.name + " <" + self._user.email + ">, " + new Date().getFullYear() + "\n" +
+          "# " + self.user.name + " <" + self.user.email + ">, " + new Date().getFullYear() + "\n" +
           "#" + "\n" + 
           "#, fuzzy" + "\n" + 
           "msgid \"\"" + "\n" + 
@@ -84,8 +84,8 @@ var Pontoon = (function () {
           "\"Project-Id-Version: " + self._project._title + " 1.0\\n\"" + "\n" + 
           "\"POT-Creation-Date: " + timestamp + "\\n\"" + "\n" +
           "\"PO-Revision-Date: " + timestamp + "\\n\"" + "\n" +
-          "\"Last-Translator: " + self._user.name + " <" + self._user.email + "\\n\"" + "\n" +
-          "\"Language-Team: " + self._locale._language + "\\n\"" + "\n" +
+          "\"Last-Translator: " + self.user.name + " <" + self.user.email + "\\n\"" + "\n" +
+          "\"Language-Team: " + self.locale.language + "\\n\"" + "\n" +
           "\"MIME-Version: 1.0\\n\"" + "\n" + 
           "\"Content-Type: text/plain; charset=UTF-8\\n\"" + "\n" + 
           "\"Content-Transfer-Encoding: 8bit\\n\"" + "\n";
@@ -351,7 +351,7 @@ var Pontoon = (function () {
             url: 'http://www.frenchmozilla.fr/transvision/webservice.php',
             data: {
               recherche: li.find('.original-string .source-string').html(),
-              locale: self._locale._code,
+              locale: self.locale.code,
               whole_word: 'whole_word',
               repo: 'beta'
             },
@@ -402,7 +402,7 @@ var Pontoon = (function () {
               appId: self._app._mt,
               text: entity.original,
               from: "en",
-              to: self._locale._code,
+              to: self.locale.code,
               contentType: "text/html"
             }
           }).success(function(t) {
@@ -545,7 +545,7 @@ var Pontoon = (function () {
         });
 
         $('#pontoon .page .menu li').click(function() {
-          window.location = "?url=" + $(this).find('.title').data("url") + "&locale=" + self._locale._code;
+          window.location = "?url=" + $(this).find('.title').data("url") + "&locale=" + self.locale.code;
         });
       }
 
@@ -590,10 +590,10 @@ var Pontoon = (function () {
                 audience: self._app._path
               },
               success: function(data) {
-                self._user.email = data.email;
-                self._user.name = self._user.email.split("@")[0];
-                self.common.postMessage("user", self._user);
-                $('#nickname').val(self._user.name);
+                self.user.email = data.email;
+                self.user.name = self.user.email.split("@")[0];
+                self.common.postMessage("user", self.user);
+                $('#nickname').val(self.user.name);
                 $('#authentication-menu .restricted .go').click();
               }
             });
@@ -660,7 +660,7 @@ var Pontoon = (function () {
           entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
         } else if (message.type === "supported") {
-          Pontoon.init(Pontoon._project._win, document, Pontoon._locale._code);
+          Pontoon.init(Pontoon._project._win, document, Pontoon.locale.code);
         } else if (message.type === "html") {
           Pontoon.save("html", message.value);
         }
@@ -696,11 +696,11 @@ var Pontoon = (function () {
         _data: {},
         _meta: ""
       };
-      this._locale = {
-        _code: locale,
-        _language: $("#main .language").html()
+      this.locale = {
+        code: locale,
+        language: $("#main .language").html()
       };
-      this._user = {
+      this.user = {
         name: "",
         email: ""
       };
@@ -709,7 +709,7 @@ var Pontoon = (function () {
       $.getScript("client/lib/js/local-settings.js");
       
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
-      self.common.postMessage("locale", {locale: self._locale, domain: self._app._path});
+      self.common.postMessage("locale", {locale: self.locale, domain: self._app._path});
 
       // Wait for project code messages
       // TODO: display page not ready for Pontoon notification if event not triggered
