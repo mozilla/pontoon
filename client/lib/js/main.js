@@ -590,7 +590,10 @@ var Pontoon = (function () {
                 audience: self._app._path
               },
               success: function(data) {
-                $('#nickname').val(data.email);
+                self._user.email = data.email;
+                self._user.name = self._user.email.split("@")[0];
+                self.common.postMessage("user", self._user);
+                $('#nickname').val(self._user.name);
                 $('#authentication-menu .restricted .go').click();
               }
             });
@@ -696,6 +699,10 @@ var Pontoon = (function () {
       this._locale = {
         _code: locale,
         _language: $("#main .language").html()
+      };
+      this._user = {
+        name: "",
+        email: ""
       };
 
       // Instantate Microsoft Translator API

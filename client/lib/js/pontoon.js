@@ -16,6 +16,10 @@
         _locale: {
           _code: "",
           _language: ""
+        },
+        _user: {
+          name: "",
+          email: ""
         }
   	  },
       jqueryAppended = false,
@@ -422,6 +426,8 @@
 
               postMessage("html", start + inner.html() + "\n</html>");  
             });
+          } else if (message.type === "user") {
+            Pontoon._user = message.value;
           }
         }
       }
