@@ -3,15 +3,15 @@
   var Pontoon = {
         _app: {
           _win: window.top,
-          _path: "",
-          _page: 0
+          _path: ""
         },
         _project: {
           _win: window,
           _url: window.location.href,
           _title: window.document.title,
           _data: {},
-          _meta: ""
+          _meta: "",
+          _page: 0
         },
         locale: {
           code: "",
@@ -37,12 +37,12 @@
       function sendData() {
         // Deep copy: http://api.jquery.com/jQuery.extend
         var data = $.extend(true, {}, Pontoon._project._data);
-        $(data.pages[Pontoon._app._page].entities).each(function () {
+        $(data.pages[Pontoon._project._page].entities).each(function () {
           delete this.node;
         });
 
         postMessage("data", {
-          page: Pontoon._app._page,
+          page: Pontoon._project._page,
           url: Pontoon._project._url,
           title: Pontoon._project._title,
           data: data,
@@ -89,7 +89,7 @@
               entity = target.entity,
               id = entity.id,
               next = id + 1,
-              entities = Pontoon._project._data.pages[Pontoon._app._page].entities;
+              entities = Pontoon._project._data.pages[Pontoon._project._page].entities;
 
           if (save.is(":visible")) {
             if (key === 13) { // Enter: confirm translation
@@ -214,12 +214,12 @@
 
             // Remove entities from child nodes if parent node is entity
             $(this).parent().find(".pontoon-entity").each(function() {
-              Pontoon._project._data.pages[Pontoon._app._page].entities.pop(this.entity);
+              Pontoon._project._data.pages[Pontoon._project._page].entities.pop(this.entity);
               entity.id--;
               counter--;
             });
 
-            Pontoon._project._data.pages[Pontoon._app._page].entities.push(entity);
+            Pontoon._project._data.pages[Pontoon._project._page].entities.push(entity);
             $(this).parent().addClass("pontoon-entity");
           }
         });
@@ -252,10 +252,10 @@
           var url = Pontoon._project._win.location.href.split(Pontoon._app._path)[1];
           $(Pontoon._project._data.pages).each(function(i) {
             if (this.url === url) {
-              Pontoon._app._page = i;
+              Pontoon._project._page = i;
             }
           });
-          var entities = Pontoon._project._data.pages[Pontoon._app._page].entities;
+          var entities = Pontoon._project._data.pages[Pontoon._project._page].entities;
 
           $('*').contents().each(function () {
             if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
@@ -398,9 +398,9 @@
         if (e.source === Pontoon._app._win) { // TODO: hardcode Pontoon domain name
           var message = JSON.parse(e.data);
           if (message.type === "hover") {
-            Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].hover();
+            Pontoon._project._data.pages[Pontoon._project._page].entities[message.value].hover();
           } else if (message.type === "unhover") {
-            Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].unhover();
+            Pontoon._project._data.pages[Pontoon._project._page].entities[message.value].unhover();
           } else if (message.type === "edit") {
             $('.editableToolbar > .edit').click();
           } else if (message.type === "save") {

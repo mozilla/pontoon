@@ -50,7 +50,7 @@ var Pontoon = (function () {
 
       } else if (type === "json") {
         var data = $.extend(true, {}, this._project._data); // Deep copy: http://api.jquery.com/jQuery.extend
-        $(data.pages[Pontoon._app._page].entities).each(function () {
+        $(data.pages[Pontoon._project._page].entities).each(function () {
           delete this.ui;
           delete this.hover;
           delete this.unhover;
@@ -150,7 +150,7 @@ var Pontoon = (function () {
           list = $(this._app._win.document).find('#entitylist').empty().append('<ul></ul>');
 
       // Render
-      $(this._project._data.pages[Pontoon._app._page].entities).each(function () {
+      $(this._project._data.pages[Pontoon._project._page].entities).each(function () {
         var li = $('<li class="entity' + 
           // append classes to translated and head entities
           (this.translation ? ' translated' : '') + 
@@ -526,7 +526,7 @@ var Pontoon = (function () {
       // Page selector
       if (pages.length > 1) {
         $('#pontoon .page')
-          .find('.selector .title').html(pages[Pontoon._app._page].title).end()
+          .find('.selector .title').html(pages[Pontoon._project._page].title).end()
           .find('.menu').empty().end()
           .show();
           
@@ -634,7 +634,7 @@ var Pontoon = (function () {
         var message = JSON.parse(e.data);
         if (message.type === "data") {
           var value = message.value;
-          Pontoon._app._page = value.page;
+          Pontoon._project._page = value.page;
           Pontoon._project._url = value.url;
           Pontoon._project._title = value.title;
           Pontoon._project._data = $.extend(true, Pontoon._project._data, value.data); // Deep copy: http://api.jquery.com/jQuery.extend
@@ -646,17 +646,17 @@ var Pontoon = (function () {
         } else if (message.type === "switch") {
           $("#switch").click();
         } else if (message.type === "hover") {
-          Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].ui.addClass('hovered');
+          Pontoon._project._data.pages[Pontoon._project._page].entities[message.value].ui.addClass('hovered');
         } else if (message.type === "unhover") {
-          Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].ui.removeClass('hovered');
+          Pontoon._project._data.pages[Pontoon._project._page].entities[message.value].ui.removeClass('hovered');
         } else if (message.type === "active") {
-          Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].ui.addClass('active');
+          Pontoon._project._data.pages[Pontoon._project._page].entities[message.value].ui.addClass('active');
         } else if (message.type === "inactive") {
-          Pontoon._project._data.pages[Pontoon._app._page].entities[message.value].ui.removeClass('active');
+          Pontoon._project._data.pages[Pontoon._project._page].entities[message.value].ui.removeClass('active');
         } else if (message.type === "save") {
-          Pontoon.updateEntityUI(Pontoon._project._data.pages[Pontoon._app._page].entities[message.value]);
+          Pontoon.updateEntityUI(Pontoon._project._data.pages[Pontoon._project._page].entities[message.value]);
         } else if (message.type === "cancel") {
-          var entity = Pontoon._project._data.pages[Pontoon._app._page].entities[message.value];
+          var entity = Pontoon._project._data.pages[Pontoon._project._page].entities[message.value];
           entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
         } else if (message.type === "supported") {
@@ -686,15 +686,15 @@ var Pontoon = (function () {
       this._app = {
         _win: app,
         _path: window.location.href.split("?")[0], // TOOD: more robust domain parser
-        _mt: '',
-        _page: 0
+        _mt: ''
       };
       this._project = {
         _win: project,
         _url: "",
         _title: "",
         _data: {},
-        _meta: ""
+        _meta: "",
+        _page: 0
       };
       this.locale = {
         code: locale,
