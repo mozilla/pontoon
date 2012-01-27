@@ -76,7 +76,7 @@ var Pontoon = (function () {
         var po = 
           "# " + self._project._title + " language file (" + self._locale._language + ")\n" +
           "# This file is distributed under the same license as the website." + "\n" + 
-          "# YOUR NAME <EMAIL@ADDRESS>, " + new Date().getFullYear() + "\n" + // TODO: author data
+          "# " + self._user.name + " <" + self._user.email + ">, " + new Date().getFullYear() + "\n" +
           "#" + "\n" + 
           "#, fuzzy" + "\n" + 
           "msgid \"\"" + "\n" + 
@@ -84,7 +84,7 @@ var Pontoon = (function () {
           "\"Project-Id-Version: " + self._project._title + " 1.0\\n\"" + "\n" + 
           "\"POT-Creation-Date: " + timestamp + "\\n\"" + "\n" +
           "\"PO-Revision-Date: " + timestamp + "\\n\"" + "\n" +
-          "\"Last-Translator: YOUR NAME <EMAIL@ADDRESS>\\n\"" + "\n" + // TODO: author data
+          "\"Last-Translator: " + self._user.name + " <" + self._user.email + "\\n\"" + "\n" +
           "\"Language-Team: " + self._locale._language + "\\n\"" + "\n" +
           "\"MIME-Version: 1.0\\n\"" + "\n" + 
           "\"Content-Type: text/plain; charset=UTF-8\\n\"" + "\n" + 
