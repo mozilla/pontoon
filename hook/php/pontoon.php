@@ -65,7 +65,7 @@ class Pontoon
      * TODO: hardcode url
      */
     static function header_tags($project) {
-        if (function_exists('gettext')) echo '<meta name="Pontoon" data-meta="../../projects/'.$project.'" />'."\n";
+        echo '<meta name="Pontoon" data-meta="../../projects/'.$project.'" />'."\n";
     }
 
     /**
