@@ -54,7 +54,8 @@ class Pontoon
      * marks strings for localization with Pontoon comments
      */
     static function wrap($original) {
-        return sprintf('<!--l10n-->%1$s', $original);
+        if (!function_exists('gettext')) return sprintf('<!--l10n-->%1$s', $original);
+        return sprintf('<!--l10n-->%1$s', gettext($original));
     }
 
     /**
