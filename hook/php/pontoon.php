@@ -71,9 +71,9 @@ class Pontoon
     }
 
     /**
-     * prints out header tags for the target project's header,
+     * prints out meta tag to the target project's header,
      * telling the client that this is a Pontoon enhanced page
-     * and where are the metafiles for it stored
+     * and where is the metafile for it is stored
      * TODO: hardcode url
      */
     static function header_tags($project) {
