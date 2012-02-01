@@ -42,8 +42,6 @@
  * be handled by the Pontoon client component
  */
 function _w($original) {
-    if (!function_exists('gettext')) return $original;
-
     return Pontoon::wrap($original);
 }
 
