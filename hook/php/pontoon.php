@@ -48,17 +48,6 @@ function _w($original) {
 }
 
 /**
- * Wrapper for ngettext()
- * FIXME: This probably does not work yet
- */
-function n_w($str1, $str2, $ct) {
-    if (!function_exists('gettext')) return $str1;
-
-    $translated = ngettext($str1, $str2, $ct);
-    return Pontoon::wrap($translated, $str1);
-}
-
-/**
  * Main hook component
  */
 class Pontoon
