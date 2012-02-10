@@ -21,7 +21,7 @@ To use Microsoft Translator API for machine translation, obtain a valid API key 
 
 Contributors
 ------------
-* Matjaž Horvat <matjaz@horv.at>
+* Matjaž Horvat <matjaz@mozilla.com>
 * Frederic Wenzel <fwenzel@mozilla.com>
 * Zbigniew Braniecki <gandalf@mozilla.com>
 * Austin King <aking@mozilla.com>
