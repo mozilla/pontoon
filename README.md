@@ -8,6 +8,7 @@ Dependencies
 ------------
 * Apache
 * PHP
+* Django 
 
 Usage
 -----
