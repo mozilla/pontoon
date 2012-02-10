@@ -4,6 +4,11 @@ This is a proof-of-concept implementation of an in-place website localization to
 
 Pontoon.jpg contains a schema of the application's components.
 
+Dependencies
+------------
+* Apache
+* PHP
+
 Usage
 -----
 Web client:
