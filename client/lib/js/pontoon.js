@@ -1,9 +1,9 @@
 (function () {
 
   var Pontoon = {
-        _app: {
-          _win: window.top,
-          _path: ""
+        app: {
+          win: window.top,
+          path: ""
         },
         _project: {
           _win: window,
@@ -249,7 +249,7 @@
 
           // Find current page entities in metafile
           // TODO: move projects to external domain or folder and use absolute url
-          var url = Pontoon._project._win.location.href.split(Pontoon._app._path)[1];
+          var url = Pontoon._project._win.location.href.split(Pontoon.app.path)[1];
           $(Pontoon._project._data.pages).each(function(i) {
             if (this.url === url) {
               Pontoon._project._page = i;
@@ -395,7 +395,7 @@
        * Handle messages from project code
        */
       function receiveMessage(e) {
-        if (e.source === Pontoon._app._win) { // TODO: hardcode Pontoon domain name
+        if (e.source === Pontoon.app.win) { // TODO: hardcode Pontoon domain name
           var message = JSON.parse(e.data);
           if (message.type === "hover") {
             Pontoon._project._data.pages[Pontoon._project._page].entities[message.value].hover();
@@ -438,7 +438,7 @@
       // Inject toolbar stylesheet
       $('<link>', {
         rel: 'stylesheet',
-        href: Pontoon._app._path + 'client/lib/css/pontoon.css'
+        href: Pontoon.app.path + 'client/lib/css/pontoon.css'
       }).appendTo('head');
 
       // Prepare editable toolbar
@@ -497,7 +497,7 @@
     * targetOrigin specifies what the origin of otherWindow must be
   */
   function postMessage(messageType, messageValue, otherWindow, targetOrigin) {
-    var otherWindow = otherWindow || Pontoon._app._win,
+    var otherWindow = otherWindow || Pontoon.app.win,
         targetOrigin = targetOrigin || "*", // TODO: hardcode Pontoon domain name
         message = {
           type: messageType,
@@ -525,11 +525,11 @@
   // Wait for main code trigger
   function initizalize(e) {
     // Prevent execution of any code if page not loaded in Pontoon iframe
-    if (e.source === Pontoon._app._win) { // TODO: hardcode Pontoon domain name
+    if (e.source === Pontoon.app.win) { // TODO: hardcode Pontoon domain name
       var message = JSON.parse(e.data);
       if (message.type === "locale") {
         Pontoon.locale = message.value.locale; // Set locale
-        Pontoon._app._path = message.value.domain; // Set domain
+        Pontoon.app.path = message.value.domain; // Set domain
         loadJquery();
         window.removeEventListener("message", initizalize, false);
       }

@@ -46,7 +46,7 @@ var Pontoon = (function () {
 
       if (type === "html") {
         params.data = value;
-        this.post(this._app._path + 'save.php', params);
+        this.post(this.app.path + 'save.php', params);
 
       } else if (type === "json") {
         var data = $.extend(true, {}, this._project._data); // Deep copy: http://api.jquery.com/jQuery.extend
@@ -58,7 +58,7 @@ var Pontoon = (function () {
           delete this.body;
         });
         params.data = JSON.stringify(data, null, "\t");
-        this.post(this._app._path + 'save.php', params);
+        this.post(this.app.path + 'save.php', params);
 
       } else if (type === "po") {
         var date = new Date(),
@@ -111,7 +111,7 @@ var Pontoon = (function () {
         });
 
         params.data = po;
-        this.post(this._app._path + 'save.php', params);
+        this.post(this.app.path + 'save.php', params);
 
       } else if (type === "server") {
         // TODO: save to server
@@ -147,7 +147,7 @@ var Pontoon = (function () {
      */
     entityList: function () {
       var self = this,
-          list = $(this._app._win.document).find('#entitylist').empty().append('<ul></ul>');
+          list = $(this.app.win.document).find('#entitylist').empty().append('<ul></ul>');
 
       // Render
       $(this._project._data.pages[Pontoon._project._page].entities).each(function () {
@@ -219,7 +219,7 @@ var Pontoon = (function () {
               '<a href="#cancel" class="cancel" title="Cancel and revert to initial translation"></a>' + 
             '</div>' +
           '</div>' +
-        '</div></li>', self._app._win);
+        '</div></li>', self.app.win);
 
         li.get(0).entity = this;
         this.ui = li; /* HTML Element representing string in the main UI */
@@ -399,7 +399,7 @@ var Pontoon = (function () {
             jsonp: "oncomplete",
             crossDomain: true,
             data: {
-              appId: self._app._mt,
+              appId: self.app.mt,
               text: entity.original,
               from: "en",
               to: self.locale.code,
@@ -583,11 +583,11 @@ var Pontoon = (function () {
           if (assertion) {
             // Validate assertion on our own server
             $.ajax({
-              url: self._app._path + 'browserid.php',
+              url: self.app.path + 'browserid.php',
               dataType: 'json',
               data: {
                 assertion: assertion,
-                audience: self._app._path
+                audience: self.app.path
               },
               success: function(data) {
                 self.user.email = data.email;
@@ -683,10 +683,10 @@ var Pontoon = (function () {
       }
 
       // Build Pontoon object
-      this._app = {
-        _win: app,
-        _path: window.location.href.split("?")[0], // TOOD: more robust domain parser
-        _mt: ''
+      this.app = {
+        win: app,
+        path: window.location.href.split("?")[0], // TOOD: more robust domain parser
+        mt: ''
       };
       this._project = {
         _win: project,
@@ -709,7 +709,7 @@ var Pontoon = (function () {
       $.getScript("client/lib/js/local-settings.js");
       
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
-      self.common.postMessage("locale", {locale: self.locale, domain: self._app._path});
+      self.common.postMessage("locale", {locale: self.locale, domain: self.app.path});
 
       // Wait for project code messages
       // TODO: display page not ready for Pontoon notification if event not triggered
