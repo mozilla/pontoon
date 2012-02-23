@@ -4,8 +4,8 @@
   $(function() {
 
     // Resizable
-	var mouseMoveHandler = function(e) {
-	  var initial = e.data.initial,
+	  var mouseMoveHandler = function(e) {
+	    var initial = e.data.initial,
           u = Math.min(Math.max(initial.uHeight + (e.pageY - initial.offTop), initial.min), initial.max),
           b = Math.min(Math.max(initial.bHeight - (e.pageY - initial.offTop), initial.min), initial.max);
       initial.up.height(u);
@@ -27,7 +27,7 @@
         Pontoon.common.postMessage("mode", "Basic");
       }      
     };
-	$('#logo, #drag').bind('mousedown', function(e) {
+	  $('#logo, #drag').bind('mousedown', function(e) {
       e.preventDefault();
 
       var up = $('#source'),
@@ -49,8 +49,6 @@
         .bind('mousemove', { initial: data }, mouseMoveHandler)
         .bind('mouseup', { initial: data }, mouseUpHandler);
     });
-
-
 
     // Resize iframe with window
     $(window).resize(function () {
@@ -140,8 +138,6 @@
       return valid;
     }
 
-
-
     // Main code
 
     // Check for params
@@ -152,6 +148,11 @@
 
     // Empty iframe if cached, prepare size and resize it with window
     $('#source').removeAttr("src").height($(document).height() - $('#main').height());
+
+    // Set include script URL
+    $("#install")
+      .find("code").html('&lt;script src="' + window.location.href + 'client/lib/js/pontoon.js"&gt;&lt;/script&gt;')
+      .end().css("visibility", "visible");
 
     // Set locale
     if (isValidLocale(locale)) {

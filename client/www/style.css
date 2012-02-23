@@ -253,6 +253,7 @@ body {
 }
 
 #install {
+  visibility: hidden;
   padding-top: 100px;
 }
 
