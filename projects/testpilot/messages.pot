@@ -135,12 +135,3 @@ msgid ""
 "&nbsp; &nbsp; <a href=\"http://www.mozilla.com/en-US/about/legal.html"
 "\">Legal Notices</a>"
 msgstr ""
-
-#: index.php:75
-msgid "Testing one two"
-msgstr ""
-
-#: index.php:85
-msgid "Testing Three Four"
-msgstr ""
-
