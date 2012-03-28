@@ -249,15 +249,17 @@
           dataType: 'jsonp',
           success: function(data) {
             var po = data.content,
-                msgid = po.split("msgid"),
+                msgid = po.split("msgid").slice(2),
                 entities = [];
 
             $(msgid).each(function(i, v) {
-              var id = v.split("msgstr")[0].replace(/"\n"/g, ""),
+              var original = v.split("msgstr")[0].replace(/"\n"/g, ""),
+                  translation = v.split("msgstr")[1].split("\n\n")[0].replace(/"\n"/g, ""),
                   entity = {};
-              entity.id = counter;
-              counter++;
-              entity.original = $.trim(id.substring(2, id.length-2));
+
+              entity.id = i+1;
+              entity.original = $.trim(original.substring(2, original.length-2));
+              entity.translation = $.trim(translation.substring(2, translation.length-1));
               entities.push(entity);
             });
           }
