@@ -244,6 +244,25 @@
             counter = 1, // TODO: use IDs or XPath
             parent = null;
 
+        $.ajax({
+          url: 'https://www.transifex.net/api/2/project/testpilot/resource/index/translation/' + Pontoon.locale.code + '/',
+          dataType: 'jsonp',
+          success: function(data) {
+            var po = data.content,
+                msgid = po.split("msgid"),
+                entities = [];
+
+            $(msgid).each(function(i, v) {
+              var id = v.split("msgstr")[0].replace(/"\n"/g, ""),
+                  entity = {};
+              entity.id = counter;
+              counter++;
+              entity.original = $.trim(id.substring(2, id.length-2));
+              entities.push(entity);
+            });
+          }
+        });
+
         $.getJSON(Pontoon.project.meta + "/pontoon/" + Pontoon.locale.code + ".json").success(function (data) {
           Pontoon.project.data = data;
 
