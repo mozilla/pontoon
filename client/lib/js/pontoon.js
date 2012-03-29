@@ -8,7 +8,7 @@
         project: {
           win: window,
           url: window.location.href,
-          title: window.document.title,
+          title: document.title.split("-->")[1] || document.title,
           data: {},
           meta: "",
           page: 0
