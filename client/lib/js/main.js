@@ -639,7 +639,7 @@ var Pontoon = (function () {
           Pontoon.project.title = value.title;
           Pontoon.project.info = value.info
           Pontoon.project.pages = $.extend(true, Pontoon.project.pages, value.pages); // Deep copy: http://api.jquery.com/jQuery.extend
-          Pontoon.project.meta = value.meta;
+          Pontoon.project.name = value.name;
         } else if (message.type === "render") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
@@ -693,7 +693,7 @@ var Pontoon = (function () {
         win: project,
         url: "",
         title: "",
-        meta: "",
+        name: "",
         info: null,
         pages: [],
         page: 0

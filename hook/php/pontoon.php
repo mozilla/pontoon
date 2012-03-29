@@ -61,11 +61,11 @@ class Pontoon
     /**
      * prints out meta tag to the target project's header,
      * telling the client that this is a Pontoon enhanced page
-     * and where is the metafile for it is stored
+     * and what is the name of the corresponding Transifex project
      * TODO: hardcode url
      */
     static function header_tags($project) {
-        echo '<meta name="Pontoon" data-meta="../../projects/'.$project.'" />'."\n";
+        echo '<meta name="Pontoon" data-meta="'.$project.'" />'."\n";
     }
 
     /**

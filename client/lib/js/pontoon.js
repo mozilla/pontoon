@@ -9,7 +9,7 @@
           win: window,
           url: window.location.href,
           title: document.title.split("-->")[1] || document.title,
-          meta: "",
+          name: "",
           info: null,
           pages: [],
           page: 0
@@ -48,7 +48,7 @@
           title: Pontoon.project.title,
           info: Pontoon.project.info,
           pages: pages,
-          meta: Pontoon.project.meta
+          name: Pontoon.project.name
         });
       }
 
@@ -493,7 +493,7 @@
       var meta = $('head > meta[name=Pontoon]');
       if (meta.length > 0) {
         if (meta.attr('data-meta')) {
-          Pontoon.project.meta = meta.data('meta');
+          Pontoon.project.name = meta.data('meta');
         }
         loadEntities();
       } else {
