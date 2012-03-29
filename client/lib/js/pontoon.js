@@ -9,8 +9,9 @@
           win: window,
           url: window.location.href,
           title: document.title.split("-->")[1] || document.title,
-          data: {},
           meta: "",
+          info: null,
+          pages: [],
           page: 0
         },
         locale: {
@@ -36,8 +37,8 @@
        */
       function sendData() {
         // Deep copy: http://api.jquery.com/jQuery.extend
-        var data = $.extend(true, {}, Pontoon.project.data);
-        $(data.pages[Pontoon.project.page].entities).each(function () {
+        var pages = $.extend(true, {}, Pontoon.project.pages);
+        $(pages[Pontoon.project.page].entities).each(function () {
           delete this.node;
         });
 
@@ -45,7 +46,8 @@
           page: Pontoon.project.page,
           url: Pontoon.project.url,
           title: Pontoon.project.title,
-          data: data,
+          info: Pontoon.project.info,
+          pages: pages,
           meta: Pontoon.project.meta
         });
       }
@@ -89,7 +91,7 @@
               entity = target.entity,
               id = entity.id,
               next = id + 1,
-              entities = Pontoon.project.data.pages[Pontoon.project.page].entities;
+              entities = Pontoon.project.pages[Pontoon.project.page].entities;
 
           if (save.is(":visible")) {
             if (key === 13) { // Enter: confirm translation
@@ -180,7 +182,7 @@
        * Add temporary pontoon-entity class to prevent duplicate entities when guessing
        */ 
       function guessEntities() {
-        Pontoon.project.data.pages = [{
+        Pontoon.project.pages = [{
           title: Pontoon.project.title,
           url: Pontoon.project.url,
           entities: []
@@ -204,7 +206,7 @@
 
             // Head entities cannot be edited in-place
             if ($(this).parents('head').length === 0) {
-              // TODO: remove entity.node from Pontoon.project.data?
+              // TODO: remove entity.node from Pontoon.project.pages?
               entity.node = $(this).parent(); // HTML Element holding string
               entity.body = true;
               makeEditable(entity.node.get(0)); // Make nodes editable
@@ -214,12 +216,12 @@
 
             // Remove entities from child nodes if parent node is entity
             $(this).parent().find(".pontoon-entity").each(function() {
-              Pontoon.project.data.pages[Pontoon.project.page].entities.pop(this.entity);
+              Pontoon.project.pages[Pontoon.project.page].entities.pop(this.entity);
               entity.id--;
               counter--;
             });
 
-            Pontoon.project.data.pages[Pontoon.project.page].entities.push(entity);
+            Pontoon.project.pages[Pontoon.project.page].entities.push(entity);
             $(this).parent().addClass("pontoon-entity");
           }
         });
@@ -240,7 +242,7 @@
        * Remove comment nodes
        */
       function loadEntities() {
-        Pontoon.project.data.pages = [{
+        Pontoon.project.pages = [{
           title: Pontoon.project.title,
           url: Pontoon.project.url,
           entities: []
@@ -266,10 +268,10 @@
                   entity = {};
               entity.original = $.trim(original.substring(2, original.length-1));
               entity.translation = $.trim(translation.substring(2, translation.length-1));
-              Pontoon.project.data.pages[Pontoon.project.page].entities.push(entity);
+              Pontoon.project.pages[Pontoon.project.page].entities.push(entity);
             });
 
-            var entities = Pontoon.project.data.pages[Pontoon.project.page].entities;
+            var entities = Pontoon.project.pages[Pontoon.project.page].entities;
             $('*').contents().each(function () {
               if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
                 var entity = entities[counter],
@@ -283,7 +285,7 @@
                 }
 
                 entity.id = counter;
-                // TODO: remove entity.node from Pontoon.project.data?
+                // TODO: remove entity.node from Pontoon.project.pages?
                 entity.node = parent; // HTML Element holding string
                 entity.body = true;
                 makeEditable(entity.node.get(0)); // Make nodes editable
@@ -412,9 +414,9 @@
         if (e.source === Pontoon.app.win) { // TODO: hardcode Pontoon domain name
           var message = JSON.parse(e.data);
           if (message.type === "hover") {
-            Pontoon.project.data.pages[Pontoon.project.page].entities[message.value].hover();
+            Pontoon.project.pages[Pontoon.project.page].entities[message.value].hover();
           } else if (message.type === "unhover") {
-            Pontoon.project.data.pages[Pontoon.project.page].entities[message.value].unhover();
+            Pontoon.project.pages[Pontoon.project.page].entities[message.value].unhover();
           } else if (message.type === "edit") {
             $('.editableToolbar > .edit').click();
           } else if (message.type === "save") {

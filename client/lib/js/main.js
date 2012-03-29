@@ -49,15 +49,15 @@ var Pontoon = (function () {
         this.post(this.app.path + 'save.php', params);
 
       } else if (type === "json") {
-        var data = $.extend(true, {}, this.project.data); // Deep copy: http://api.jquery.com/jQuery.extend
-        $(data.pages[Pontoon.project.page].entities).each(function () {
+        var pages = $.extend(true, {}, this.project.pages); // Deep copy: http://api.jquery.com/jQuery.extend
+        $(pages[Pontoon.project.page].entities).each(function () {
           delete this.ui;
           delete this.hover;
           delete this.unhover;
           delete this.id;
           delete this.body;
         });
-        params.data = JSON.stringify(data, null, "\t");
+        params.data = JSON.stringify(pages, null, "\t");
         this.post(this.app.path + 'save.php', params);
 
       } else if (type === "po") {
@@ -90,7 +90,7 @@ var Pontoon = (function () {
           "\"Content-Type: text/plain; charset=UTF-8\\n\"" + "\n" + 
           "\"Content-Transfer-Encoding: 8bit\\n\"" + "\n";
 
-        $(this.project.data.pages).each(function () {
+        $(this.project.pages).each(function () {
           $(this.entities).each(function () {
             var fuzzy = false,
                 msgstr = this.translation;
@@ -150,7 +150,7 @@ var Pontoon = (function () {
           list = $(this.app.win.document).find('#entitylist').empty().append('<ul></ul>');
 
       // Render
-      $(this.project.data.pages[Pontoon.project.page].entities).each(function () {
+      $(this.project.pages[Pontoon.project.page].entities).each(function () {
         var li = $('<li class="entity' + 
           // append classes to translated and head entities
           (this.translation ? ' translated' : '') + 
@@ -509,8 +509,8 @@ var Pontoon = (function () {
      */
     attachHandlers: function () {
       var self = this,
-          info = self.project.data.info,
-          pages = self.project.data.pages;
+          info = self.project.info,
+          pages = self.project.pages;
 
       // General Project Info
       if (info) {
@@ -637,7 +637,8 @@ var Pontoon = (function () {
           Pontoon.project.page = value.page;
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
-          Pontoon.project.data = $.extend(true, Pontoon.project.data, value.data); // Deep copy: http://api.jquery.com/jQuery.extend
+          Pontoon.project.info = value.info
+          Pontoon.project.pages = $.extend(true, Pontoon.project.pages, value.pages); // Deep copy: http://api.jquery.com/jQuery.extend
           Pontoon.project.meta = value.meta;
         } else if (message.type === "render") {
           Pontoon.attachHandlers();
@@ -646,17 +647,17 @@ var Pontoon = (function () {
         } else if (message.type === "switch") {
           $("#switch").click();
         } else if (message.type === "hover") {
-          Pontoon.project.data.pages[Pontoon.project.page].entities[message.value].ui.addClass('hovered');
+          Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.addClass('hovered');
         } else if (message.type === "unhover") {
-          Pontoon.project.data.pages[Pontoon.project.page].entities[message.value].ui.removeClass('hovered');
+          Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.removeClass('hovered');
         } else if (message.type === "active") {
-          Pontoon.project.data.pages[Pontoon.project.page].entities[message.value].ui.addClass('active');
+          Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.addClass('active');
         } else if (message.type === "inactive") {
-          Pontoon.project.data.pages[Pontoon.project.page].entities[message.value].ui.removeClass('active');
+          Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.removeClass('active');
         } else if (message.type === "save") {
-          Pontoon.updateEntityUI(Pontoon.project.data.pages[Pontoon.project.page].entities[message.value]);
+          Pontoon.updateEntityUI(Pontoon.project.pages[Pontoon.project.page].entities[message.value]);
         } else if (message.type === "cancel") {
-          var entity = Pontoon.project.data.pages[Pontoon.project.page].entities[message.value];
+          var entity = Pontoon.project.pages[Pontoon.project.page].entities[message.value];
           entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
         } else if (message.type === "supported") {
@@ -692,8 +693,9 @@ var Pontoon = (function () {
         win: project,
         url: "",
         title: "",
-        data: {},
         meta: "",
+        info: null,
+        pages: [],
         page: 0
       };
       this.locale = {
