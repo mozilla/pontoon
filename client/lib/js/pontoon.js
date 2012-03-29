@@ -252,7 +252,7 @@
             parent = null;
 
         $.ajax({
-          url: 'https://www.transifex.net/api/2/project/' + Pontoon.locale.name + '/resource/index/translation/' + Pontoon.locale.code + '/',
+          url: 'https://www.transifex.net/api/2/project/' + Pontoon.project.name + '/resource/index/translation/' + Pontoon.locale.code + '/',
           dataType: 'jsonp',
           success: function(data) {
             // Temporary PO file parser until Transifex API supports JSON output
