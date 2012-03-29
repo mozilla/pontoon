@@ -37,6 +37,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+require_once('local-settings.php');
+
 /**
  * Wrapper for gettext(), returns Pontoon-wrapped strings to
  * be handled by the Pontoon client component
@@ -67,6 +69,8 @@ class Pontoon
      */
     static function header_tags($project, $resource) {
         echo '<meta name="Pontoon" data-project="'.$project.'" data-resource="'.$resource.'" />'."\n";
-        echo '<script src="https://pontoon-dev.mozillalabs.com/client/lib/js/pontoon.js"></script>'."\n";
+
+        $url = $GLOBALS["path"] ? $GLOBALS["path"] : "https://pontoon-dev.mozillalabs.com";
+        echo '<script src="'.$url.'/client/lib/js/pontoon.js"></script>'."\n";
     }
 }
