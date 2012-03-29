@@ -64,10 +64,9 @@ class Pontoon
      * and the names of the corresponding Transifex project and resource.
      *
      * Also inject javascript to solve iframe cross-domain policy problem
-     * TODO: hardcode url
      */
     static function header_tags($project, $resource) {
         echo '<meta name="Pontoon" data-project="'.$project.'" data-resource="'.$resource.'" />'."\n";
-        echo '<script src="../../client/lib/js/pontoon.js"></script>'."\n";
+        echo '<script src="https://pontoon-dev.mozillalabs.com/client/lib/js/pontoon.js"></script>'."\n";
     }
 }
