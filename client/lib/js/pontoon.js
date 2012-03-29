@@ -240,6 +240,11 @@
        * Remove comment nodes
        */
       function loadEntities() {
+        Pontoon.project.data.pages = [{
+          title: Pontoon.project.title,
+          url: Pontoon.project.url,
+          entities: []
+        }];
         var prefix = 'l10n',
             counter = 1, // TODO: use IDs or XPath
             parent = null;
@@ -248,59 +253,43 @@
           url: 'https://www.transifex.net/api/2/project/testpilot/resource/index/translation/' + Pontoon.locale.code + '/',
           dataType: 'jsonp',
           success: function(data) {
+            // Temporary PO file parser until Transifex API supports JSON output
             var po = data.content,
-                msgid = po.split("msgid").slice(2),
-                entities = [];
-
+                msgid = po.split("msgid").slice(2);
             $(msgid).each(function(i, v) {
-              var original = v.split("msgstr")[0].replace(/"\n"/g, ""),
-                  translation = v.split("msgstr")[1].split("\n\n")[0].replace(/"\n"/g, ""),
+              var original = v.split("msgstr")[0].replace(/"\n"/g, "").replace(/\n/g, ""),
+                  translation = v.split("msgstr")[1].split("\n\n")[0].replace(/"\n"/g, "").replace(/\n/g, ""),
                   entity = {};
-
-              entity.id = i+1;
-              entity.original = $.trim(original.substring(2, original.length-2));
+              entity.original = $.trim(original.substring(2, original.length-1));
               entity.translation = $.trim(translation.substring(2, translation.length-1));
-              entities.push(entity);
+              Pontoon.project.data.pages[Pontoon.project.page].entities.push(entity);
             });
-          }
-        });
 
-        $.getJSON(Pontoon.project.meta + "/pontoon/" + Pontoon.locale.code + ".json").success(function (data) {
-          Pontoon.project.data = data;
+            var entities = Pontoon.project.data.pages[Pontoon.project.page].entities;
+            $('*').contents().each(function () {
+              if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
+                var entity = entities[counter],
+                    translation = entity.translation;
 
-          // Find current page entities in metafile
-          // TODO: move projects to external domain or folder and use absolute url
-          var url = Pontoon.project.win.location.href.split(Pontoon.app.path)[1];
-          $(Pontoon.project.data.pages).each(function(i) {
-            if (this.url === url) {
-              Pontoon.project.page = i;
-            }
-          });
-          var entities = Pontoon.project.data.pages[Pontoon.project.page].entities;
+                parent = $(this).parent();
+                if (translation.length > 0) {
+                  parent.html(translation);
+                } else {
+                  $(this).remove();
+                }
 
-          $('*').contents().each(function () {
-            if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
-              var entity = entities[counter],
-                  translation = entity.translation;
-
-              parent = $(this).parent();
-              if (translation.length > 0) {
-                parent.html(translation);
-              } else {
-                $(this).remove();
+                entity.id = counter;
+                // TODO: remove entity.node from Pontoon.project.data?
+                entity.node = parent; // HTML Element holding string
+                entity.body = true;
+                makeEditable(entity.node.get(0)); // Make nodes editable
+                entity.node.get(0).entity = entity; // Store entity reference to the node
+                extendEntity(entity);
+                counter++;
               }
-
-              entity.id = counter;
-              // TODO: remove entity.node from Pontoon.project.data?
-              entity.node = parent; // HTML Element holding string
-              entity.body = true;
-              makeEditable(entity.node.get(0)); // Make nodes editable
-              entity.node.get(0).entity = entity; // Store entity reference to the node
-              extendEntity(entity);
-              counter++;
-            }
-          });
-          renderHandle();
+            });
+            renderHandle();
+          }
         });
       }
 
