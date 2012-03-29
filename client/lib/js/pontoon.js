@@ -234,7 +234,7 @@
 
 
       /**
-       * Load data from external meta file: original string, translation, comment, suggestions...
+       * Load data from Transifex: original string, translation, comment, suggestions...
        * Match with each string in the document, which is prepended with l10n comment nodes
        * Example: <!--l10n-->Hello World
        *
@@ -252,7 +252,7 @@
             parent = null;
 
         $.ajax({
-          url: 'https://www.transifex.net/api/2/project/testpilot/resource/index/translation/' + Pontoon.locale.code + '/',
+          url: 'https://www.transifex.net/api/2/project/' + Pontoon.locale.name + '/resource/index/translation/' + Pontoon.locale.code + '/',
           dataType: 'jsonp',
           success: function(data) {
             // Temporary PO file parser until Transifex API supports JSON output
@@ -497,7 +497,6 @@
         }
         loadEntities();
       } else {
-        // Read meta values
         guessEntities();
       }
 
