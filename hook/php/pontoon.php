@@ -37,7 +37,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('local-settings.php');
+if (is_readable('local-settings.php')) {
+    require_once('local-settings.php');    
+}
 
 /**
  * Wrapper for gettext(), returns Pontoon-wrapped strings to
