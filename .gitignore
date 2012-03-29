@@ -1,2 +1,3 @@
 # Local settings
 client/lib/js/local-settings.js
+hook/php/local-settings.php
