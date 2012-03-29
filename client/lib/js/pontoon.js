@@ -254,11 +254,15 @@
           dataType: 'jsonp',
           success: function(data) {
             // Temporary PO file parser until Transifex API supports JSON output
+            function clean(s) {
+              return s.replace(/"\n"/g, "").replace(/\n/g, "").replace(/\\"/g, '"');
+            }
             var po = data.content,
                 msgid = po.split("msgid").slice(2);
             $(msgid).each(function(i, v) {
-              var original = v.split("msgstr")[0].replace(/"\n"/g, "").replace(/\n/g, ""),
-                  translation = v.split("msgstr")[1].split("\n\n")[0].replace(/"\n"/g, "").replace(/\n/g, ""),
+              var msgstr = v.split("msgstr"),
+                  original = clean(msgstr[0]),
+                  translation = clean(msgstr[1].split("\n\n")[0]),
                   entity = {};
               entity.original = $.trim(original.substring(2, original.length-1));
               entity.translation = $.trim(translation.substring(2, translation.length-1));
