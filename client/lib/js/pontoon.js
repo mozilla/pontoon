@@ -10,6 +10,7 @@
           url: window.location.href,
           title: document.title.split("-->")[1] || document.title,
           name: "",
+          resource: "",
           info: null,
           pages: [],
           page: 0
@@ -48,7 +49,8 @@
           title: Pontoon.project.title,
           info: Pontoon.project.info,
           pages: pages,
-          name: Pontoon.project.name
+          name: Pontoon.project.name,
+          resource: Pontoon.project.resource
         });
       }
 
@@ -252,7 +254,8 @@
             parent = null;
 
         $.ajax({
-          url: 'https://www.transifex.net/api/2/project/' + Pontoon.project.name + '/resource/index/translation/' + Pontoon.locale.code + '/',
+          url: 'https://www.transifex.net/api/2/project/' + Pontoon.project.name + '/resource/' + 
+                Pontoon.project.resource + '/translation/' + Pontoon.locale.code + '/',
           dataType: 'jsonp',
           success: function(data) {
             // Temporary PO file parser until Transifex API supports JSON output
@@ -492,8 +495,11 @@
       // Determine if the current page is prepared for working with Pontoon
       var meta = $('head > meta[name=Pontoon]');
       if (meta.length > 0) {
-        if (meta.attr('data-meta')) {
-          Pontoon.project.name = meta.data('meta');
+        if (meta.attr('data-project')) {
+          Pontoon.project.name = meta.data('project');
+        }
+        if (meta.attr('data-resource')) {
+          Pontoon.project.resource = meta.data('resource');
         }
         loadEntities();
       } else {
