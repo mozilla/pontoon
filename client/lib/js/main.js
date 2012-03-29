@@ -322,10 +322,20 @@ var Pontoon = (function () {
         .hide();
 
         // TODO: AJAX request to display only locales with current string translation available
-        if (locale === "sl") {
-          // TODO: Only request each locale meta file once
-          $.getJSON(self.project.url + "pontoon/" + locale + ".json").success(function (data) {
-            var translation = data.entities[index].translation;
+        // TODO: Only request each locale meta file once
+        $.ajax({
+          url: 'https://www.transifex.net/api/2/project/' + Pontoon.project.name + '/resource/' + 
+                Pontoon.project.resource + '/translation/' + locale + '/',
+          dataType: 'jsonp',
+          success: function(data) {
+            // Temporary PO file parser until Transifex API supports JSON output
+            var translations = [];
+            $(data.content.split("msgid").slice(2)).each(function(i, v) {
+              var trans = v.split("msgstr")[1].split("\n\n")[0].replace(/"\n"/g, "").replace(/\n/g, "").replace(/\\"/g, '"');
+              translations.push($.trim(trans.substring(2, trans.length-1)));
+            });
+
+            var translation = translations[index];
             if (translation) {
               p.removeClass("no").addClass("source-string").html(translation);
               entity.find('.toolbar').show();
@@ -333,11 +343,8 @@ var Pontoon = (function () {
               p.addClass("no").html('No translations yet');
               entity.find('.toolbar').hide();
             }
-          });
-        } else {
-          p.addClass("no").html('No translations yet');
-          entity.find('.toolbar').hide();
-        }
+          }
+        });
       });
 
       // Translation memory
