@@ -43,7 +43,7 @@
           delete this.node;
         });
 
-        postMessage("data", {
+        postMessage("DATA", {
           page: Pontoon.project.page,
           url: Pontoon.project.url,
           title: Pontoon.project.title,
@@ -61,7 +61,7 @@
        */
       function renderHandle() {
         sendData();
-        postMessage("render");
+        postMessage("RENDER");
 
         // Update UI and progress when saved
         $(".editableToolbar > .save").click(function () {
@@ -70,7 +70,7 @@
 
           entity.translation = $($(element).clone()).html();
           sendData();
-          postMessage("save", entity.id);
+          postMessage("SAVE", entity.id);
         });
 
         // Update progress when cancelled
@@ -81,7 +81,7 @@
           $(element).html(element.prevValue);
           entity.translation = "";
           sendData();
-          postMessage("cancel", entity.id);
+          postMessage("CANCEL", entity.id);
         });
 
         // In-place keyboard shortcuts
@@ -119,7 +119,7 @@
               }
               save.click();
               $(target).removeClass("hovered");
-              postMessage("hover", id);
+              postMessage("HOVER", id);
               entities[next].hover();
               $(".editableToolbar > .edit").click();
               return false;
@@ -337,7 +337,7 @@
           toolbarNode.target = newTarget;
         }
         $(newTarget).addClass('hovered');
-        postMessage("hover", newTarget.entity.id);
+        postMessage("HOVER", newTarget.entity.id);
         toolbar.show();
       }
 
@@ -366,11 +366,11 @@
             if (target === toolbar.get(0).target) {
               toolbar.get(0).target = null;
               $(target).removeClass('hovered');
-              postMessage("unhover", target.entity.id);
+              postMessage("UNHOVER", target.entity.id);
               toolbar.hide();
             } else {
               $(target).removeClass('hovered');
-              postMessage("unhover", target.entity.id);
+              postMessage("UNHOVER", target.entity.id);
             }
           }
         }
@@ -389,7 +389,7 @@
           .find('.edit').hide();
         var target = toolbar.get(0).target;
         $(target).attr('contentEditable', true);
-        postMessage("active", target.entity.id);
+        postMessage("ACTIVE", target.entity.id);
         target.focus();
       }
 
@@ -405,7 +405,7 @@
           .find('.edit').show();
         var target = toolbar.get(0).target;
         $(target).attr('contentEditable', false);
-        postMessage("inactive", target.entity.id);
+        postMessage("INACTIVE", target.entity.id);
       }
 
 
@@ -416,20 +416,20 @@
       function receiveMessage(e) {
         if (e.source === Pontoon.app.win) { // TODO: hardcode Pontoon domain name
           var message = JSON.parse(e.data);
-          if (message.type === "hover") {
+          if (message.type === "HOVER") {
             Pontoon.project.pages[Pontoon.project.page].entities[message.value].hover();
-          } else if (message.type === "unhover") {
+          } else if (message.type === "UNHOVER") {
             Pontoon.project.pages[Pontoon.project.page].entities[message.value].unhover();
-          } else if (message.type === "edit") {
+          } else if (message.type === "EDIT") {
             $('.editableToolbar > .edit').click();
-          } else if (message.type === "save") {
+          } else if (message.type === "SAVE") {
             $('.editableToolbar').get(0).target.entity.node.html(message.value);
             $('.editableToolbar > .save').click();
-          } else if (message.type === "cancel") {
+          } else if (message.type === "CANCEL") {
             $('.editableToolbar > .cancel').click();
-          } else if (message.type === "mode") {
+          } else if (message.type === "MODE") {
             $("#context .mode").attr("label", message.value + " mode");
-          } else if (message.type === "html") {
+          } else if (message.type === "HTML") {
             $.ajax(Pontoon.project.url).done(function(data) {
               var response = data,
                   index = data.toLowerCase().indexOf("<head"),
@@ -443,9 +443,9 @@
                 .find(".editableToolbar").remove().end()
                 .find("menu#context").remove();
 
-              postMessage("html", start + inner.html() + "\n</html>");  
+              postMessage("HTML", start + inner.html() + "\n</html>");  
             });
-          } else if (message.type === "user") {
+          } else if (message.type === "USER") {
             Pontoon.user = message.value;
           }
         }
@@ -489,7 +489,7 @@
           '<menuitem class="mode" label="Advanced mode" icon="../../client/lib/images/logo-small.png"></menuitem>' +
         '</menu>')
         .find("#context .mode").live("click", function() {
-          postMessage("switch");
+          postMessage("SWITCH");
         });
 
       // Determine if the current page is prepared for working with Pontoon
@@ -548,7 +548,7 @@
     // Prevent execution of any code if page not loaded in Pontoon iframe
     if (e.source === Pontoon.app.win) { // TODO: hardcode Pontoon domain name
       var message = JSON.parse(e.data);
-      if (message.type === "locale") {
+      if (message.type === "LOCALE") {
         Pontoon.locale = message.value.locale; // Set locale
         Pontoon.app.path = message.value.domain; // Set domain
         loadJquery();
@@ -560,7 +560,7 @@
 
   // When loaded inside web client, notify it that project supports Pontoon
   if (window !== window.top) {
-    postMessage("supported");
+    postMessage("SUPPORTED");
   }
 
 })();

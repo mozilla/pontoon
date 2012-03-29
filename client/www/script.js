@@ -21,10 +21,10 @@
       $('#iframe-cover').hide(); // iframe fix
       if (e.data.initial.below.height() === 0) {
         $('#main').removeClass('opened');
-        Pontoon.common.postMessage("mode", "Advanced");
+        Pontoon.common.postMessage("MODE", "Advanced");
       } else {
         $('#main').addClass('opened');
-        Pontoon.common.postMessage("mode", "Basic");
+        Pontoon.common.postMessage("MODE", "Basic");
       }      
     };
 	  $('#logo, #drag').bind('mousedown', function(e) {
@@ -60,7 +60,7 @@
       // Initialize Pontoon only if project code supports it
       function receiveMessage(e) {
         // TODO: Check origin - hardcode Pontoon domain name
-        if (JSON.parse(e.data).type === "supported") {
+        if (JSON.parse(e.data).type === "SUPPORTED") {
           // Slide up intro page and show iframe
           $('#intro').slideUp("slow", function() {
             $('#source').show();

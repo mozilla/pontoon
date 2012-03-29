@@ -229,11 +229,11 @@ var Pontoon = (function () {
 
       // Main entity list handlers
       $("#main .entity:not('.head')").hover(function () {
-        self.common.postMessage("hover", this.entity.id);
+        self.common.postMessage("HOVER", this.entity.id);
       }, function () {
-        self.common.postMessage("unhover", this.entity.id);
+        self.common.postMessage("UNHOVER", this.entity.id);
       }).click(function () {
-        self.common.postMessage("edit");
+        self.common.postMessage("EDIT");
       });
 
       // Source menu
@@ -421,7 +421,7 @@ var Pontoon = (function () {
 
         // Only if no other entity is being edited in-place
         if (li.is('.hovered')) {
-          self.common.postMessage("save", source);
+          self.common.postMessage("SAVE", source);
         // Head entities cannot be edited in-place
         } else if (!entity.body) {
           entity.translation = source;
@@ -450,7 +450,7 @@ var Pontoon = (function () {
 
         // Only if no other entity is being edited in-place
         if (li.is('.hovered')) {
-          self.common.postMessage("save", source);
+          self.common.postMessage("SAVE", source);
         // Head entities cannot be edited in-place
         } else if (!entity.body) {
           entity.translation = source;
@@ -466,7 +466,7 @@ var Pontoon = (function () {
 
         // Only if no other entity is being edited in-place
         if (li.is('.hovered')) {
-          self.common.postMessage("cancel", entity.id);
+          self.common.postMessage("CANCEL", entity.id);
         // Head entities cannot be edited in-place
         } else if (!entity.body) {
           entity.translation = "";
@@ -553,10 +553,10 @@ var Pontoon = (function () {
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
         if ($('#main').is('.opened')) {
           $('#entitylist').height(0);
-          self.common.postMessage("mode", "Advanced");
+          self.common.postMessage("MODE", "Advanced");
         } else {
           $('#entitylist').height(300);
-          self.common.postMessage("mode", "Basic");
+          self.common.postMessage("MODE", "Basic");
         }
         $('#source').height($(document).height() - $('#main').height());
         $('#main').toggleClass('opened');
@@ -592,7 +592,7 @@ var Pontoon = (function () {
               success: function(data) {
                 self.user.email = data.email;
                 self.user.name = self.user.email.split("@")[0];
-                self.common.postMessage("user", self.user);
+                self.common.postMessage("USER", self.user);
                 $('#nickname').val(self.user.name);
                 $('#authentication-menu .restricted .go').click();
               }
@@ -617,7 +617,7 @@ var Pontoon = (function () {
       }).end().find('li:not(".sign-out")').unbind("click.pontoon").bind("click.pontoon", function () {
         $('#authentication .selector').click();
         if ($(this).is(".html")) {
-          self.common.postMessage("html");
+          self.common.postMessage("HTML");
         } else {
           self.save($(this).attr('class').split(" ")[0]);
         }
@@ -632,7 +632,7 @@ var Pontoon = (function () {
     receiveMessage: function (e) {
       if (e.source === Pontoon.project.win) {
         var message = JSON.parse(e.data);
-        if (message.type === "data") {
+        if (message.type === "DATA") {
           var value = message.value;
           Pontoon.project.page = value.page;
           Pontoon.project.url = value.url;
@@ -641,29 +641,29 @@ var Pontoon = (function () {
           Pontoon.project.pages = $.extend(true, Pontoon.project.pages, value.pages); // Deep copy: http://api.jquery.com/jQuery.extend
           Pontoon.project.name = value.name;
           Pontoon.project.resource = value.resource;
-        } else if (message.type === "render") {
+        } else if (message.type === "RENDER") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $('#main').slideDown();
-        } else if (message.type === "switch") {
+        } else if (message.type === "SWITCH") {
           $("#switch").click();
-        } else if (message.type === "hover") {
+        } else if (message.type === "HOVER") {
           Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.addClass('hovered');
-        } else if (message.type === "unhover") {
+        } else if (message.type === "UNHOVER") {
           Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.removeClass('hovered');
-        } else if (message.type === "active") {
+        } else if (message.type === "ACTIVE") {
           Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.addClass('active');
-        } else if (message.type === "inactive") {
+        } else if (message.type === "INACTIVE") {
           Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.removeClass('active');
-        } else if (message.type === "save") {
+        } else if (message.type === "SAVE") {
           Pontoon.updateEntityUI(Pontoon.project.pages[Pontoon.project.page].entities[message.value]);
-        } else if (message.type === "cancel") {
+        } else if (message.type === "CANCEL") {
           var entity = Pontoon.project.pages[Pontoon.project.page].entities[message.value];
           entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
-        } else if (message.type === "supported") {
+        } else if (message.type === "SUPPORTED") {
           Pontoon.init(Pontoon.project.win, document, Pontoon.locale.code);
-        } else if (message.type === "html") {
+        } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }
       }
@@ -713,7 +713,7 @@ var Pontoon = (function () {
       $.getScript("client/lib/js/local-settings.js");
       
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
-      self.common.postMessage("locale", {locale: self.locale, domain: self.app.path});
+      self.common.postMessage("LOCALE", {locale: self.locale, domain: self.app.path});
 
       // Wait for project code messages
       // TODO: display page not ready for Pontoon notification if event not triggered
