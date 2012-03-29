@@ -393,6 +393,7 @@ var Pontoon = (function () {
       });
 
       // Machine translations
+      // TODO: fallback if no API key provided in Pontoon.app.mt
       $("#main .extra .machine-translation").click(function () {
         var li = $(this).parents('.entity'),
             loader = li.find(".content .machine-translation .loader"),
