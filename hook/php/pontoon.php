@@ -51,7 +51,7 @@ function _w($original) {
 class Pontoon
 {
     /**
-     * marks strings for localization with Pontoon comments
+     * Marks strings for localization with Pontoon comments
      */
     static function wrap($original) {
         if (!function_exists('gettext')) return sprintf('<!--l10n-->%1$s', $original);
@@ -59,19 +59,15 @@ class Pontoon
     }
 
     /**
-     * prints out meta tag to the target project's header,
+     * Prints out meta tag to the target project's header,
      * telling the client that this is a Pontoon enhanced page
-     * and what is the name of the corresponding Transifex project
+     * and the names of the corresponding Transifex project and resource.
+     *
+     * Also inject javascript to solve iframe cross-domain policy problem
+     * TODO: hardcode url
      */
     static function header_tags($project, $resource) {
         echo '<meta name="Pontoon" data-project="'.$project.'" data-resource="'.$resource.'" />'."\n";
-    }
-
-    /**
-     * inject javascript to the target app, to help with iframe cross-domain policy problem
-     * TODO: hardcode url
-     */
-    static function footer_tags() {
         echo '<script src="../../client/lib/js/pontoon.js"></script>'."\n";
     }
 }

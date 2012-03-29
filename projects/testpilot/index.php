@@ -75,7 +75,6 @@
 		</div>
 			
 		
-	<?php Pontoon::footer_tags();?>		
 </body>
 </html>
 
