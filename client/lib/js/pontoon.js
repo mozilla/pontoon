@@ -558,9 +558,10 @@
     // Prevent execution of any code if page not loaded in Pontoon iframe
     if (e.source === Pontoon.app.win) { // TODO: hardcode Pontoon domain name
       var message = JSON.parse(e.data);
-      if (message.type === "LOCALE") {
+      if (message.type === "INITIALIZE") {
         Pontoon.locale = message.value.locale; // Set locale
-        Pontoon.app.path = message.value.domain; // Set domain
+        Pontoon.app.path = message.value.path; // Set domain
+        Pontoon.transifex = message.value.transifex; // Set Transifex credentials
         loadJquery();
         window.removeEventListener("message", initizalize, false);
       }

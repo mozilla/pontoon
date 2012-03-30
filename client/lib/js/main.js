@@ -722,12 +722,16 @@ var Pontoon = (function () {
         resource: ""
       };
 
-      // Instantate Microsoft Translator API
-      $.getScript("client/lib/js/local-settings.js");
-      
+      // Initialize Microsoft Translator API
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
-      self.common.postMessage("LOCALE", {locale: self.locale, domain: self.app.path});
-
+      $.getScript("client/lib/js/local-settings.js", function() {
+        self.common.postMessage("INITIALIZE", {
+          locale: self.locale,
+          path: self.app.path,
+          transifex: self.transifex
+        });
+      });
+      
       // Wait for project code messages
       // TODO: display page not ready for Pontoon notification if event not triggered
       window.addEventListener("message", self.receiveMessage, false);
