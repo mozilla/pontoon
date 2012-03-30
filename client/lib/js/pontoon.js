@@ -501,6 +501,11 @@
         if (meta.attr('data-resource')) {
           Pontoon.project.resource = meta.data('resource');
         }
+        if (meta.attr('data-info')) {          
+          $.getJSON(Pontoon.project.url + meta.data('info')).success(function (data) {
+            Pontoon.project.info = data;
+          });
+        }
         loadEntities();
       } else {
         guessEntities();
