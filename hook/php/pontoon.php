@@ -37,8 +37,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-if (is_readable('local-settings.php')) {
-    require_once('local-settings.php');    
+if (is_readable(dirname(__FILE__).'/local-settings.php')) {
+    require_once('local-settings.php');
 }
 
 /**
