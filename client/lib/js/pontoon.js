@@ -9,8 +9,6 @@
           win: window,
           url: window.location.href,
           title: document.title.split("-->")[1] || document.title,
-          name: "",
-          resource: "",
           info: null,
           pages: [],
           page: 0
@@ -22,6 +20,12 @@
         user: {
           name: "",
           email: ""
+        },
+        transifex: {
+          username: "",
+          password: "",
+          project: "",
+          resource: ""
         }
   	  },
       jqueryAppended = false,
@@ -49,8 +53,8 @@
           title: Pontoon.project.title,
           info: Pontoon.project.info,
           pages: pages,
-          name: Pontoon.project.name,
-          resource: Pontoon.project.resource
+          name: Pontoon.transifex.project,
+          resource: Pontoon.transifex.resource
         });
       }
 
@@ -254,8 +258,9 @@
             parent = null;
 
         $.ajax({
-          url: 'https://www.transifex.net/api/2/project/' + Pontoon.project.name + '/resource/' + 
-                Pontoon.project.resource + '/translation/' + Pontoon.locale.code + '/',
+          url: 'http://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
+               '@www.transifex.net/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
+               Pontoon.transifex.resource + '/translation/' + Pontoon.locale.code + '/',
           dataType: 'jsonp',
           success: function(data) {
             // Temporary PO file parser until Transifex API supports JSON output
@@ -496,10 +501,10 @@
       var meta = $('head > meta[name=Pontoon]');
       if (meta.length > 0) {
         if (meta.attr('data-project')) {
-          Pontoon.project.name = meta.data('project');
+          Pontoon.transifex.project = meta.data('project');
         }
         if (meta.attr('data-resource')) {
-          Pontoon.project.resource = meta.data('resource');
+          Pontoon.transifex.resource = meta.data('resource');
         }
         if (meta.attr('data-info')) {          
           $.getJSON(Pontoon.project.url + meta.data('info')).success(function (data) {

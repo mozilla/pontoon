@@ -324,8 +324,9 @@ var Pontoon = (function () {
         // TODO: AJAX request to display only locales with current string translation available
         // TODO: Only request each locale meta file once
         $.ajax({
-          url: 'https://www.transifex.net/api/2/project/' + Pontoon.project.name + '/resource/' + 
-                Pontoon.project.resource + '/translation/' + locale + '/',
+          url: 'http://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
+               '@www.transifex.net/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
+                Pontoon.transifex.resource + '/translation/' + locale + '/',
           dataType: 'jsonp',
           success: function(data) {
             // Temporary PO file parser until Transifex API supports JSON output
@@ -647,8 +648,8 @@ var Pontoon = (function () {
           Pontoon.project.title = value.title;
           Pontoon.project.info = value.info
           Pontoon.project.pages = $.extend(true, Pontoon.project.pages, value.pages); // Deep copy: http://api.jquery.com/jQuery.extend
-          Pontoon.project.name = value.name;
-          Pontoon.project.resource = value.resource;
+          Pontoon.transifex.project = value.name;
+          Pontoon.transifex.resource = value.resource;
         } else if (message.type === "RENDER") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
@@ -702,8 +703,6 @@ var Pontoon = (function () {
         win: project,
         url: "",
         title: "",
-        name: "",
-        resource: "",
         info: null,
         pages: [],
         page: 0
@@ -715,6 +714,12 @@ var Pontoon = (function () {
       this.user = {
         name: "",
         email: ""
+      };
+      this.transifex = {
+        username: "",
+        password: "",
+        project: "",
+        resource: ""
       };
 
       // Instantate Microsoft Translator API
