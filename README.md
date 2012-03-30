@@ -23,7 +23,9 @@ Django server ([Django][django] is required):
 * `cd server`
 * `python manage.py runserver 0.0.0.0:8000`
 
-To use Microsoft Translator API for machine translation, obtain a valid API key from the [Bing Developer Center][bdc] and store it in a variable Pontoon._app._mt in your local settings file in client/lib/js/local-settings.js.
+To use Microsoft Translator API for machine translation, obtain a valid API key from the [Bing Developer Center][bdc] and store it in a variable Pontoon._app._mt in your local JS settings file client/lib/js/local-settings.js.
+
+Store Pontoon client path in the $path variable in your local PHP settings file hook/php/local-settings.php.
 
 Contributors
 ------------
