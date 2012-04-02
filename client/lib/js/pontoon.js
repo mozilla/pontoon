@@ -25,7 +25,8 @@
           username: "",
           password: "",
           project: "",
-          resource: ""
+          resource: "",
+          po: ""
         }
   	  },
       jqueryAppended = false,
@@ -54,7 +55,8 @@
           info: Pontoon.project.info,
           pages: pages,
           name: Pontoon.transifex.project,
-          resource: Pontoon.transifex.resource
+          resource: Pontoon.transifex.resource,
+          po: Pontoon.transifex.po
         });
       }
 
@@ -267,6 +269,7 @@
             function clean(s) {
               return s.replace(/"\n"/g, "").replace(/\n/g, "").replace(/\\"/g, '"');
             }
+            Pontoon.transifex.po = data.content;
             var po = data.content,
                 msgid = po.split("msgid").slice(2);
             $(msgid).each(function(i, v) {

@@ -50,7 +50,7 @@ var Pontoon = (function () {
 
       } else if (type === "json") {
         var pages = $.extend(true, {}, this.project.pages); // Deep copy: http://api.jquery.com/jQuery.extend
-        $(pages[Pontoon.project.page].entities).each(function () {
+        $(pages[self.project.page].entities).each(function () {
           delete this.ui;
           delete this.hover;
           delete this.unhover;
@@ -114,7 +114,23 @@ var Pontoon = (function () {
         this.post(this.app.path + 'save.php', params);
 
       } else if (type === "server") {
-        // TODO: save to server
+        var segments = self.transifex.po.split("\n\n"),
+            head = segments[0],
+            strings = segments.slice(1, segments.length),
+            entities = self.project.pages[self.project.page].entities;
+
+        $(strings).each(function(i, v) {
+          var split = v.split("\nmsgstr");
+          strings[i] = split[0] + "\nmsgstr \"" + entities[i].translation + "\"";
+        });
+
+        self.transifex.po = head + "\n\n" + strings.join("\n\n");
+        params.transifex = self.transifex;
+
+        $.ajax({
+          url: self.app.path + 'transifex.php',
+          data: params
+        });
       }
     },
 
@@ -150,7 +166,7 @@ var Pontoon = (function () {
           list = $(this.app.win.document).find('#entitylist').empty().append('<ul></ul>');
 
       // Render
-      $(this.project.pages[Pontoon.project.page].entities).each(function () {
+      $(self.project.pages[self.project.page].entities).each(function () {
         var li = $('<li class="entity' + 
           // append classes to translated and head entities
           (this.translation ? ' translated' : '') + 
@@ -535,7 +551,7 @@ var Pontoon = (function () {
       // Page selector
       if (pages.length > 1) {
         $('#pontoon .page')
-          .find('.selector .title').html(pages[Pontoon.project.page].title).end()
+          .find('.selector .title').html(pages[self.project.page].title).end()
           .find('.menu').empty().end()
           .show();
           
@@ -650,6 +666,7 @@ var Pontoon = (function () {
           Pontoon.project.pages = $.extend(true, Pontoon.project.pages, value.pages); // Deep copy: http://api.jquery.com/jQuery.extend
           Pontoon.transifex.project = value.name;
           Pontoon.transifex.resource = value.resource;
+          Pontoon.transifex.po = value.po;
         } else if (message.type === "RENDER") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
@@ -719,7 +736,8 @@ var Pontoon = (function () {
         username: "",
         password: "",
         project: "",
-        resource: ""
+        resource: "",
+        po: ""
       };
 
       // Initialize Microsoft Translator API
