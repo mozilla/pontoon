@@ -8,7 +8,7 @@
         project: {
           win: window,
           url: window.location.href,
-          title: document.title.split("-->")[1] || document.title,
+          title: "",
           info: null,
           pages: [],
           page: 0
@@ -514,8 +514,10 @@
             Pontoon.project.info = data;
           });
         }
+        Pontoon.project.title = document.title.split("-->")[1];
         loadEntities();
       } else {
+        Pontoon.project.title = document.title;
         guessEntities();
       }
 
