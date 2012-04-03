@@ -587,6 +587,7 @@ var Pontoon = (function () {
         $('#main').toggleClass('opened');
       });
 
+      // Authentication and profile menu
       $("#browserid").click(function() {
         navigator.id.get(function(assertion) {
           if (assertion) {
@@ -608,7 +609,7 @@ var Pontoon = (function () {
                       '<span class="author">' + self.user.name + '</span>' +
                       '<span> &#9652;</span>' +
                     '</div>' +
-                    '<ul id="save-menu" class="menu">' +
+                    '<ul id="profile-menu" class="menu">' +
                       '<li class="sign-out">Sign out</li>' +
                       '<li class="server">Save to server</li>' +
                       '<li class="html">Download HTML</li>' +
@@ -624,7 +625,7 @@ var Pontoon = (function () {
       });
 
       // Save menu
-      $('#save-menu').find('.sign-out').live("click.pontoon", function () {
+      $('#profile-menu').find('.sign-out').live("click.pontoon", function () {
         $('#profile').remove();
         $("#browserid").show();
         Pontoon.user = {
