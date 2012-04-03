@@ -772,7 +772,7 @@ var Pontoon = (function () {
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
       });
-      $('.menu').unbind("click.pontoon").bind("click.pontoon", function (e) {
+      $('.menu').live("click.pontoon", function (e) {
         e.stopPropagation();
       });
 
