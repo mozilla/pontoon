@@ -587,22 +587,6 @@ var Pontoon = (function () {
         $('#main').toggleClass('opened');
       });
 
-      // Authentication
-      $('#authentication-menu .restricted .go').unbind("click.pontoon").bind("click.pontoon", function () {
-        var author = $('#nickname').val() || $('#email').val();
-        $('#authentication .selector').click();
-        if (author) {
-          $('#authentication .author').html(author).toggleClass('authenticated');
-          $('#authentication-menu, #save-menu').toggleClass('menu');
-        }
-      });
-      $('#nickname').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
-        var key = e.keyCode || e.which;
-        if (key === 13) { // Enter
-          $('#authentication-menu .restricted .go').click();
-          return false;
-        }
-      });
       $("#browserid").click(function() {
         navigator.id.get(function(assertion) {
           if (assertion) {
@@ -618,29 +602,36 @@ var Pontoon = (function () {
                 self.user.email = data.email;
                 self.user.name = self.user.email.split("@")[0];
                 self.common.postMessage("USER", self.user);
-                $('#nickname').val(self.user.name);
-                $('#authentication-menu .restricted .go').click();
+                $("#browserid").hide().after(
+                  '<div id="profile" class="select">' +
+                    '<div class="button selector">' +
+                      '<span class="author">' + self.user.name + '</span>' +
+                      '<span> &#9652;</span>' +
+                    '</div>' +
+                    '<ul id="save-menu" class="menu">' +
+                      '<li class="sign-out">Sign out</li>' +
+                      '<li class="server">Save to server</li>' +
+                      '<li class="html">Download HTML</li>' +
+                      '<li class="json">Download JSON</li>' +
+                      '<li class="po">Download PO</li>' +
+                    '</ul>' +
+                  '</div>'
+                );
               }
             });
           }
         });
       });
 
-      // Authentication toggle
-      $('#authentication-menu .toggle').unbind("click.pontoon").bind("click.pontoon", function () {
-        $('#authentication-menu')
-          .find('.wrapper').toggle().end()
-          .find('#password').toggle();
-      });
-
       // Save menu
-      $('#save-menu').find('.sign-out').unbind("click.pontoon").bind("click.pontoon", function () {
-        $('#authentication .selector').click();
-        $('#authentication .author').html('Sign in').toggleClass('authenticated');
-        $('#authentication-menu, #save-menu').toggleClass('menu');
-        $('#authentication-menu input').val("");
-      }).end().find('li:not(".sign-out")').unbind("click.pontoon").bind("click.pontoon", function () {
-        $('#authentication .selector').click();
+      $('#save-menu').find('.sign-out').live("click.pontoon", function () {
+        $('#profile').remove();
+        $("#browserid").show();
+        Pontoon.user = {
+          name: "",
+          email: ""
+        };
+      }).end().find('li:not(".sign-out")').live("click.pontoon", function () {
         if ($(this).is(".html")) {
           self.common.postMessage("HTML");
         } else {
@@ -762,7 +753,7 @@ var Pontoon = (function () {
      */
     common: (function () {
       // Show/hide menu on click
-      $('.selector').unbind("click.pontoon").bind("click.pontoon", function (e) {
+      $('.selector').live("click.pontoon", function (e) {
         if (!$(this).siblings('.menu').is(':visible')) {
           e.stopPropagation();
           $('.menu').hide();

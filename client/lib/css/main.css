@@ -408,92 +408,13 @@
   float: left;
 }
 
-#pontoon #authentication {
-  float: left;
-}
-
-#pontoon #authentication-menu {
-  right: 0;
-  width: 270px;
-}
-
-#pontoon #authentication-menu section {
-  padding: 10px;
-}
-
-#pontoon #authentication-menu input {
-  box-shadow: 0 1px #444444, 0 1px 2px #444444 inset;
-  -moz-box-shadow: 0 1px #444444, 0 1px 2px #444444 inset;
-  -webkit-box-shadow: 0 1px #444444, 0 1px 2px #444444 inset;
-}
-
-#pontoon #authentication-menu input:focus {
-  box-shadow: 0 0 2px 1px #AEEE00;
-  -moz-box-shadow: 0 0 2px 1px #AEEE00;
-  -webkit-box-shadow: 0 0 2px 1px #AEEE00;
-}
-
-#pontoon #authentication-menu .button {
-  box-shadow: 0 1px #444444, 0 2px 1px -1px #666666 inset;
-  -moz-box-shadow: 0 1px #444444, 0 2px 1px -1px #666666 inset;
-  -webkit-box-shadow: 0 1px #444444, 0 2px 1px -1px #666666 inset;
-}
-
-#pontoon #authentication-menu .button:active {
-  box-shadow: 0 1px #444444, 0 0 5px #000000 inset;
-  -moz-box-shadow: 0 1px #444444, 0 0 5px #000000 inset;
-  -webkit-box-shadow: 0 1px #444444, 0 0 5px #000000 inset;
-}
-
-#pontoon #authentication-menu .full {
-  border-bottom: 1px solid #040404;
-  padding-bottom: 5px;
-}
-
-#pontoon #authentication-menu .restricted {
-  border-top: 1px solid #444444;
-  padding-bottom: 0;
-}
-
-#pontoon #authentication-menu .full input {
-  width: 240px;
-  margin-bottom: 5px;
-}
-
-#pontoon #authentication-menu .wrapper {
-  clear: both;
-  overflow: auto;
-  width: 100%;
-  padding: 2px 0;
-}
-
-#pontoon #authentication-menu .wrapper .toggle {
-  float: left;
-  margin-top: 6px;
-}
-
-#pontoon #authentication-menu .wrapper .button {
-  float: right;
-  margin: 0 2px 0 0;
-}
-
-#pontoon #authentication-menu .send-password {
-  display: none;
-}
-
-#pontoon #authentication-menu .restricted input {
-  margin-right: 3px;
-  padding: 6px 3px 3px;
-}
-
-#pontoon #authentication-menu .restricted .go {
-  float: left;
-  margin: 0 3px 0 0;
-  padding: 4px 3px 2px;
-}
-
-#pontoon #authentication-menu .restricted #browserid {
+#pontoon #browserid {
   cursor: pointer;
+  margin-top: 2px;
+}
+
+#pontoon #profile {
+  float: left;
 }
 
 #pontoon #save-menu {
