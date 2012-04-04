@@ -265,18 +265,21 @@
                Pontoon.transifex.resource + '/translation/' + Pontoon.locale.code + '/',
           dataType: 'jsonp',
           success: function(data) {
+
             // Temporary PO file parser until Transifex API supports JSON output
             function clean(s) {
               return s.replace(/"\n"/g, "").replace(/\n/g, "").replace(/\\"/g, '"');
             }
-            Pontoon.transifex.po = data.content;
-            var po = data.content,
-                msgid = po.split("msgid").slice(2);
-            $(msgid).each(function(i, v) {
+            var po = Pontoon.transifex.po = data.content,
+                segments = po.split("\n\n").slice(1);
+            $(segments).each(function(i, v) {
               var msgstr = v.split("msgstr"),
-                  original = clean(msgstr[0]),
+                  msgid = msgstr[0].split("msgid"),
+                  comment = msgid[0].split("#. "),
                   translation = clean(msgstr[1].split("\n\n")[0]),
+                  original = clean(msgid[1]),
                   entity = {};
+              entity.comment = comment[1] ? clean(comment[1].split("\n")[0]) : "";
               entity.original = $.trim(original.substring(2, original.length-1));
               entity.translation = $.trim(translation.substring(2, translation.length-1));
               Pontoon.project.pages[Pontoon.project.page].entities.push(entity);
