@@ -535,7 +535,7 @@ var Pontoon = (function () {
      * text Loader text (e.g. Loading...)
      */
     startLoader: function (text) {
-      $('#loading').html(text);
+      $('#loading').html(text).addClass('loader').show();
     },
 
 
@@ -546,7 +546,7 @@ var Pontoon = (function () {
      * text End of operation text (e.g. Done!)
      */
     endLoader: function (text) {
-      $('#loading').html(text);
+      $('#loading').html(text).removeClass('loader');
       setTimeout(function() {
         $('#loading').fadeOut(function() {
           $(this).empty();

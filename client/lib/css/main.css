@@ -408,11 +408,18 @@
 }
 
 #pontoon #loading {
+  display: none;
   color: #AEEE00;
   float: left;
   font-weight: 100;
-  padding: 6px 5px 5px 0;
+  padding: 6px 0 5px 0;
+  margin-right: 5px;
   text-transform: uppercase;
+}
+
+#pontoon #loading.loader {
+  background: transparent url('../images/loader-light.gif') right 4px no-repeat;
+  padding-right: 20px;
 }
 
 #pontoon #browserid {
