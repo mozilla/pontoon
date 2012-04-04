@@ -242,11 +242,10 @@
 }
 
 #pontoon #logo {
-  background: url('../images/logo-small.png') no-repeat 7px 9px;
+  background: url('../images/logo-small.png') no-repeat 7px 5px;
   color: #AEEE00;
   float: left;
-  margin-top: -4px;
-  padding: 10px 5px 11px 30px;
+  padding: 6px 5px 5px 30px;
   cursor: ns-resize;
   font-weight: 100;
 }
