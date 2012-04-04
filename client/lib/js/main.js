@@ -116,7 +116,7 @@ var Pontoon = (function () {
       } else if (type === "server") {
         var segments = self.transifex.po.split("\n\n"),
             head = segments[0],
-            strings = segments.slice(1, segments.length),
+            strings = segments.slice(1),
             entities = self.project.pages[self.project.page].entities;
 
         $(strings).each(function(i, v) {
