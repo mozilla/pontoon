@@ -61,9 +61,12 @@
       function receiveMessage(e) {
         // TODO: Check origin - hardcode Pontoon domain name
         if (JSON.parse(e.data).type === "SUPPORTED") {
-          // Slide up intro page and show iframe
-          $('#intro').slideUp("slow", function() {
+          // Slide up intro page, show header and iframe with appropriate height
+          $('#intro').slideUp(function() {
             $('#source').show();
+            $('#main').slideDown(function() {
+              $('#source').height($(document).height() - $(this).height());
+            });
             Pontoon.init(window, $('#source').get(0).contentWindow, locale);
           });
           window.removeEventListener("message", receiveMessage, false);
@@ -146,8 +149,8 @@
         url = temp ? temp.split("&locale=")[0] : "";
     $('.url').val(url);
 
-    // Empty iframe if cached, prepare size and resize it with window
-    $('#source').removeAttr("src").height($(document).height() - $('#main').height());
+    // Empty iframe if cached
+    $('#source').removeAttr("src");
 
     // Set include script URL
     $("#install")

@@ -227,6 +227,7 @@ body {
 
 #intro {
   position: fixed;
+  bottom: 0;
   display: table;
   overflow: hidden;
   border-bottom: 1px solid #555555;

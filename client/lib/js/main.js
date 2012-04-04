@@ -695,7 +695,7 @@ var Pontoon = (function () {
         } else if (message.type === "RENDER") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
-          $('#main').slideDown();
+          $("#main > header > .container").fadeIn();
         } else if (message.type === "SWITCH") {
           $("#switch").click();
         } else if (message.type === "HOVER") {
