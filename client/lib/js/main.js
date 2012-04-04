@@ -758,16 +758,16 @@ var Pontoon = (function () {
         if (!$(this).siblings('.menu').is(':visible')) {
           e.stopPropagation();
           $('.menu').hide();
-          $('#iframe-cover').hide(); // iframe fix
           $('.select').removeClass('opened');
-          $(this).siblings('.menu').show();
+          $('#iframe-cover').hide(); // iframe fix
+          $(this).siblings('.menu').show().end()
+                 .parents('.select').addClass('opened');
           $('#iframe-cover').show().height($('#source').height()); // iframe fix
-          $(this).parents('.select').addClass('opened');
         }
       });
 
       // Hide menus on click outside
-      $('html').unbind("click.pontoon").bind("click.pontoon", function () {
+      $('html').live("click.pontoon", function () {
         $('.menu').hide();
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
