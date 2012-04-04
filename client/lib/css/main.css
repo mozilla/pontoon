@@ -423,6 +423,7 @@
 }
 
 #pontoon #browserid {
+  float: left;
   cursor: pointer;
   margin-top: 1px;
 }

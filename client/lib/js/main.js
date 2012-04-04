@@ -114,6 +114,7 @@ var Pontoon = (function () {
         this.post(this.app.path + 'save.php', params);
 
       } else if (type === "server") {
+        self.startLoader('Saving...');
         var segments = self.transifex.po.split("\n\n"),
             head = segments[0],
             strings = segments.slice(1),
@@ -129,7 +130,10 @@ var Pontoon = (function () {
 
         $.ajax({
           url: self.app.path + 'transifex.php',
-          data: params
+          data: params,
+          success: function() {
+            self.endLoader('Done!');
+          }
         });
       }
     },
@@ -800,9 +804,6 @@ var Pontoon = (function () {
         $('.menu').hide();
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
-      });
-      $('.menu').live("click.pontoon", function (e) {
-        e.stopPropagation();
       });
 
       // Start new project with current website url and locale
