@@ -591,6 +591,7 @@ var Pontoon = (function () {
       $("#browserid").click(function() {
         navigator.id.get(function(assertion) {
           if (assertion) {
+            $('#loading').html('Validating...');
             // Validate assertion on our own server
             $.ajax({
               url: self.app.path + 'browserid.php',
@@ -600,6 +601,7 @@ var Pontoon = (function () {
                 audience: self.app.path
               },
               success: function(data) {
+                $('#loading').empty();
                 self.user.email = data.email;
                 self.user.name = self.user.email.split("@")[0];
                 self.common.postMessage("USER", self.user);
