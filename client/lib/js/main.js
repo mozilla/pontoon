@@ -530,6 +530,33 @@ var Pontoon = (function () {
 
 
     /**
+     * Display loader text to provide feedback about the background process
+     * 
+     * text Loader text (e.g. Loading...)
+     */
+    startLoader: function (text) {
+      $('#loading').html(text);
+    },
+
+
+
+    /**
+     * Remove loader text
+     * 
+     * text End of operation text (e.g. Done!)
+     */
+    endLoader: function (text) {
+      $('#loading').html(text);
+      setTimeout(function() {
+        $('#loading').fadeOut(function() {
+          $(this).empty();
+        });
+      }, 2000);
+    },
+
+
+
+    /**
      * Attach event handlers
      */
     attachHandlers: function () {
@@ -591,7 +618,7 @@ var Pontoon = (function () {
       $("#browserid").click(function() {
         navigator.id.get(function(assertion) {
           if (assertion) {
-            $('#loading').html('Validating...');
+            self.startLoader('Validating...');
             // Validate assertion on our own server
             $.ajax({
               url: self.app.path + 'browserid.php',
@@ -601,7 +628,6 @@ var Pontoon = (function () {
                 audience: self.app.path
               },
               success: function(data) {
-                $('#loading').empty();
                 self.user.email = data.email;
                 self.user.name = self.user.email.split("@")[0];
                 self.common.postMessage("USER", self.user);
@@ -620,6 +646,7 @@ var Pontoon = (function () {
                     '</ul>' +
                   '</div>'
                 );
+                self.endLoader('Howdy!');
               }
             });
           }
