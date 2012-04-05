@@ -113,7 +113,7 @@ var Pontoon = (function () {
         params.data = po;
         this.post(this.app.path + 'save.php', params);
 
-      } else if (type === "server") {
+      } else if (type === "transifex") {
         self.startLoader('Saving...');
         var segments = self.transifex.po.split("\n\n"),
             head = segments[0],
@@ -643,7 +643,7 @@ var Pontoon = (function () {
                     '</div>' +
                     '<ul id="profile-menu" class="menu">' +
                       '<li class="sign-out">Sign out</li>' +
-                      '<li class="server">Save to server</li>' +
+                      '<li class="transifex">Save to Transifex</li>' +
                       '<li class="html">Download HTML</li>' +
                       '<li class="json">Download JSON</li>' +
                       '<li class="po">Download PO</li>' +
