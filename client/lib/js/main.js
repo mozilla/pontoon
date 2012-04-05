@@ -712,8 +712,6 @@ var Pontoon = (function () {
           var entity = Pontoon.project.pages[Pontoon.project.page].entities[message.value];
           entity.ui.removeClass('translated').find('textarea').val(entity.translation);
           Pontoon.updateProgress();
-        } else if (message.type === "SUPPORTED") {
-          Pontoon.init(Pontoon.project.win, document, Pontoon.locale.code);
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }
