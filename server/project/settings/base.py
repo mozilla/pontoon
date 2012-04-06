@@ -13,12 +13,26 @@ MINIFY_BUNDLES = {
         'example_mobile_css': (
             'css/examples/mobile.css',
         ),
+        'app': (
+            'css/app/style.css',
+            'css/app/main.css',
+        ),
+        'project': (
+            'css/project/pontoon.css',
+        ),
     },
     'js': {
         'example_js': (
             'js/examples/libs/jquery-1.4.4.min.js',
             'js/examples/libs/jquery.cookie.js',
             'js/examples/init.js',
+        ),
+        'app': (
+            'js/app/script.js',
+            'js/app/main.js',
+        ),
+        'project': (
+            'js/project/pontoon.js',
         ),
     }
 }
@@ -31,6 +45,8 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     'project.base',
     # Example code. Can (and should) be removed for actual projects.
     'project.examples',
+    'project.pontoon',
+    'django.contrib.admin',
 ]
 
 
