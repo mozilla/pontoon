@@ -1,14 +1,27 @@
 #!/usr/bin/env python
-from django.core.management import execute_manager
-import imp
-try:
-    imp.find_module('settings') # Assumed to be in the same directory.
-except ImportError:
-    import sys
-    sys.stderr.write("Error: Can't find the file 'settings.py' in the directory containing %r. It appears you've customized things.\nYou'll have to run django-admin.py, passing it your settings module.\n" % __file__)
-    sys.exit(1)
+import os
+import sys
 
-import settings
+# Edit this if necessary or override the variable in your environment.
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
+
+try:
+    # For local development in a virtualenv:
+    from funfactory import manage
+except ImportError:
+    # Production:
+    # Add a temporary path so that we can import the funfactory
+    tmp_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            'vendor', 'src', 'funfactory')
+    sys.path.append(tmp_path)
+
+    from funfactory import manage
+
+    # Let the path magic happen in setup_environ() !
+    sys.path.remove(tmp_path)
+
+
+manage.setup_environ(__file__, more_pythonic=True)
 
 if __name__ == "__main__":
-    execute_manager(settings)
+    manage.main()

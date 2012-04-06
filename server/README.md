@@ -1,4 +1,23 @@
-Server component
-================
+playdoh
+=======
 
-The server component is a django based webapp that provides an API necessary for the client. It provides user authentication, accepts partial and full translations of the document, presents information on the current status of the document's translation, and synchronizes work between multiple localizers.
+Mozilla's Playdoh is a web application template based on [Django][django].
+
+Patches are welcome! Feel free to fork and contribute to this project on
+[github][gh-playdoh].
+
+Full [documentation][docs] is available as well.
+
+
+[django]: http://www.djangoproject.com/
+[gh-playdoh]: https://github.com/mozilla/playdoh
+[docs]: http://playdoh.rtfd.org/
+
+
+License
+-------
+This software is licensed under the [New BSD License][BSD]. For more
+information, read the file ``LICENSE``.
+
+[BSD]: http://creativecommons.org/licenses/BSD/
+
