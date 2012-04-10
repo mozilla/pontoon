@@ -1,0 +1,3 @@
+[submodule "server/vendor"]
+	path = server/vendor
+	url = git://github.com/mozilla/playdoh-lib.git
