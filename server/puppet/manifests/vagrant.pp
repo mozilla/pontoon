@@ -3,7 +3,7 @@
 #
 import "classes/*.pp"
 
-$PROJ_DIR = "/home/vagrant/project"
+$PROJ_DIR = "/home/vagrant/pontoon"
 
 # You can make these less generic if you like, but these are box-specific
 # so it's not required.
