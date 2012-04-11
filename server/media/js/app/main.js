@@ -765,7 +765,7 @@ var Pontoon = (function () {
 
       // Initialize Microsoft Translator API
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
-      $.getScript("media/js/app/local-settings.js", function() {
+      $.getScript("/media/js/app/local-settings.js", function() {
         self.common.postMessage("INITIALIZE", {
           locale: self.locale,
           path: self.app.path,
