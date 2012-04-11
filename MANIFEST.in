@@ -1,0 +1,2 @@
+recursive-include */*/templates *.*
+recursive-include */locale *.*
