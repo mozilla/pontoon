@@ -47,12 +47,6 @@ Contributors
 * Zbigniew Braniecki <gandalf@mozilla.com>
 * Austin King <aking@mozilla.com>
 
-License
--------
-This software is licensed under the [New BSD License][BSD]. For more
-information, read the file ``LICENSE``.
-
-[BSD]: http://creativecommons.org/licenses/BSD/
 [outline]:  http://ozten.com/psto/2009/08/14/a-sketch-of-po-liveedit/   "A Sketch of PO LiveEdit"
 [wiki]:  https://wiki.mozilla.org/L10n:Pontoon   "L10n:Pontoon - MozillaWiki"
 [bdc]: http://www.bing.com/developers/createapp.aspx   "Bing Developer Center"
