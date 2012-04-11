@@ -549,7 +549,7 @@
   function loadJquery() {
     if (!window.jQuery) {
       if (!jqueryAppended) {
-        script.src = "//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js";
+        script.src = "//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js";
         document.body.appendChild(script);
         jqueryAppended = true;
         arguments.callee();
