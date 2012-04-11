@@ -468,7 +468,7 @@
       // Inject toolbar stylesheet
       $('<link>', {
         rel: 'stylesheet',
-        href: Pontoon.app.path + 'client/lib/css/pontoon.css'
+        href: Pontoon.app.path + '/media/css/project/pontoon.css'
       }).appendTo('head');
 
       // Prepare editable toolbar
