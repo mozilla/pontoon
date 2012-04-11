@@ -1,4 +1,23 @@
 # Local settings
-client/lib/js/local-settings.js
-server/media/js/app/local-settings.js
+media/js/app/local-settings.js
 hook/php/local-settings.php
+settings_local.py
+settings/local.py
+*/settings/local.py
+
+*.py[co]
+*.sw[po]
+.coverage
+pip-log.txt
+docs/_gh-pages
+build.py
+build
+.DS_Store
+*-min.css
+*-all.css
+*-min.js
+*-all.js
+.noseids
+tmp/*
+*~
+*.mo

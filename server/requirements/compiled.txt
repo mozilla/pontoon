@@ -1,1 +1,0 @@
--r ../vendor/src/funfactory/funfactory/requirements/compiled.txt
