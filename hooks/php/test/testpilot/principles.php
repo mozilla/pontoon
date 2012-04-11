@@ -2,7 +2,7 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<?php require_once('../../hooks/php/pontoon.php'); ?>
+	<?php require_once('../../pontoon.php'); ?>
 	<?php Pontoon::header_tags('testpilot', 'index', 'pontoon.json');?>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title><?php echo _w('Mozilla Labs Test Pilot')?></title>
@@ -25,9 +25,9 @@
 					<span class="menuItem"><a href="index.php"><?php echo _w('Home')?></a></span>
 
 					<span class="menuItem"><a href="testcases.php"><?php echo _w('Test Cases')?></a></span>
-					<span class="menuItem"><a href="principles.php"><?php echo _w('Guiding Principles')?></a></span>
+					<span class="menuOn"><a href="principles.php"><?php echo _w('Guiding Principles')?></a></span>
                     <span class="menuItem"><a href="faq.php"><?php echo _w('FAQ')?></a></span>
-					<span class="menuOn"><a href="privacy.php"><?php echo _w('Privacy Policy')?></a></span>
+					<span class="menuItem"><a href="privacy.php"><?php echo _w('Privacy Policy')?></a></span>
 
 				
 				</div>
@@ -35,7 +35,7 @@
 				<div id="intro">
 
 				
-					<h2><?php echo _w('Privacy Policy')?></h2>
+					<h2><?php echo _w('Guiding Principles')?></h2>
 			  
 					<p><?php echo _w('Test Pilot is a platform collecting structured user feedback through Firefox. Test Pilot studies explore how people use their web browser and the Internet - and help us build better products. ')?></p>
 				  
