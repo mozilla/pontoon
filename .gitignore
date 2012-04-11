@@ -1,6 +1,6 @@
 # Local settings
 media/js/app/local-settings.js
-hook/php/local-settings.php
+hooks/php/local-settings.php
 settings_local.py
 settings/local.py
 */settings/local.py
