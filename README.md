@@ -40,13 +40,6 @@ To use Microsoft Translator API for machine translation, obtain a valid API key 
 
 Store Pontoon client path in the $path variable in your local PHP settings file hook/php/local-settings.php.
 
-Contributors
-------------
-* Matjaž Horvat <matjaz@mozilla.com>
-* Frederic Wenzel <fwenzel@mozilla.com>
-* Zbigniew Braniecki <gandalf@mozilla.com>
-* Austin King <aking@mozilla.com>
-
 [outline]:  http://ozten.com/psto/2009/08/14/a-sketch-of-po-liveedit/   "A Sketch of PO LiveEdit"
 [wiki]:  https://wiki.mozilla.org/L10n:Pontoon   "L10n:Pontoon - MozillaWiki"
 [bdc]: http://www.bing.com/developers/createapp.aspx   "Bing Developer Center"
