@@ -21,3 +21,4 @@ build
 tmp/*
 *~
 *.mo
+.vagrant
