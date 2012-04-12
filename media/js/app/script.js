@@ -154,7 +154,7 @@
 
     // Set include script URL
     $("#install")
-      .find("code").html('&lt;script src="' + window.location.href.split("?")[0] + 'client/lib/js/pontoon.js"&gt;&lt;/script&gt;')
+      .find("code").html('&lt;script src="' + window.location.href.split("?")[0] + 'media/js/project/pontoon.js"&gt;&lt;/script&gt;')
       .end().css("visibility", "visible");
 
     // Set locale
