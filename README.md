@@ -1,46 +1,64 @@
 Pontoon
 =======
-This is a proof-of-concept implementation of an in-place website localization tool, as [outlined by Austin King][outline]. Please note that Pontoon is in a very early alpha version, under heavy development, and unlikely to do much out of the box. If you are interested in the technology, feel free to step by `#pontoon` on <irc://irc.mozilla.org> or get more information from a [wiki][wiki].
+Pontoon is a live website localization tool. Instead of extracting original strings and then merging translated strings back, Pontoon can turn any website into editable mode using the [contentEditable attribute][contentEditable].
 
-Client components
------------------
+This enables localizers to translate websites in-place with context and spatial limitations right in front of them. A full list of extracted strings is also available, to help with strings that are hard to reach, e.g. error messages and the `<title>` tag.
 
-The client components run on the user's computer and allow them to localize a document by presenting both a list of extracted entities from the document and specific widgets that overlay the document and enable in-page translation. Different clients can be written, e.g. web client, jetpack client, bookmarklet etc.
+To enable localization of your site with Pontoon, simply include the script located at `/media/js/project/pontoon.js` to overcome cross frame scripting, and Pontoon will autodetect strings. Or, to make the best out of Pontoon, fully prepare your site with hooks that will mark strings for localization and include all the neccessary tags.
 
-Hook components
----------------
-
-The hook component(s) are the part of the web app that hook into the target project and prepare it to work with the client. As of yet, these components are only available in PHP.
-
-Server component
-----------------
-
-The server component is a django based webapp that provides an API necessary for the client. It provides user authentication, accepts partial and full translations of the document, presents information on the current status of the document's translation, and synchronizes work between multiple localizers.
-
-Dependencies
+Installation
 ------------
-* Apache
-* PHP
-* Django 
+Pontoon uses [Playdoh][playdoh], which supports running web apps in virtual machines. This is an ideal way to get started developing Pontoon quickly without dealing with dependancies, compiling things and polluting your development system.
+
+1. Install [VirtualBox][virtualbox] by Oracle to run our VM.
+2. Install [Vagrant][vagrant] to easily customize and access our VM:
+ * `gem install vagrant` (requires [Ruby][ruby] and [gem][gem], but most modern *NIX systems have them)
+3. Get a copy of Pontoon or your [fork][fork] in a directory called `/pontoon`:
+ * `git clone --recursive git://github.com/mathjazz/pontoon.git` 
+4. Run a virtual development environment from your working copy directory:
+ * `cd pontoon`
+ * `vagrant up`
+
+If you’re running it for the first time, `vagrant up` will take a few minutes to download base VM image, boot Ubuntu VM, install all the necessary packages and run initialization scripts.
 
 Usage
 -----
-Web client:
+You can edit files in your working copy directory (`/pontoon`) locally and they will automatically show up under `/home/vagrant/pontoon` in the VM without any weird FTPing.
+
+1. In not running yet, start the VM from your working copy directory:
+ * `vagrant up`
+2. Enter VM:
+ * `vagrant ssh`
+3. Run the development web server (in VM):
+ * `cd pontoon`
+ * `python manage.py runserver 0.0.0.0:8000`
+4. Point your web browser to [http://localhost:8000](http://localhost:8000) and click Demo.
+
+Note that you’ll need to explicitly set the host and port for runserver to be accessible from outside the VM. Vagrant setup already forwards port 8000 (the usual Django development port).
 
 * Map /pontoon on a web server to the root of this project.
-* Point your browser to /pontoon.
-* Click on the Demo link.
 
-Django server ([Django][django] is required):
+Local settings
+--------------
 
-* `cd server`
-* `python manage.py runserver 0.0.0.0:8000`
+To use Microsoft Translator API for machine translation, obtain a valid API key from the [Bing Developer Center][bdc] and store it in a variable Pontoon._app._mt in your local JS settings file `media/js/app/local-settings.js`.
 
-To use Microsoft Translator API for machine translation, obtain a valid API key from the [Bing Developer Center][bdc] and store it in a variable Pontoon._app._mt in your local JS settings file client/lib/js/local-settings.js.
+Store Pontoon client path in the $path variable in your local PHP settings file in `hooks/php/local-settings.php`.
 
-Store Pontoon client path in the $path variable in your local PHP settings file hook/php/local-settings.php.
+Get involved
+------------
+* Join #pontoon on [IRC][irc]
+* Follow us on [Twitter][twitter]
+* Read more on [Wiki][wiki] 
 
-[outline]:  http://ozten.com/psto/2009/08/14/a-sketch-of-po-liveedit/   "A Sketch of PO LiveEdit"
-[wiki]:  https://wiki.mozilla.org/L10n:Pontoon   "L10n:Pontoon - MozillaWiki"
+[contentEditable]:  https://developer.mozilla.org/en/DOM/element.contentEditable   "Element.contentEditable - MDN"
+[playdoh]:  https://github.com/mozilla/playdoh   "Playdoh"
+[virtualbox]:  https://www.virtualbox.org/wiki/Downloads   "VirtualBox Download"
+[vagrant]:  http://vagrantup.com/docs/getting-started/index.html   "Vagrant: Getting Started"
+[ruby]:  http://www.ruby-lang.org/   "Ruby"
+[gem]:  http://rubygems.org/   "RubyGems.org"
+[fork]:  http://help.github.com/fork-a-repo/   "Fork A Repo"
 [bdc]: http://www.bing.com/developers/createapp.aspx   "Bing Developer Center"
-[django]: https://www.djangoproject.com/   "Django"
+[irc]:  https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon   "Mibbit"
+[twitter]:  https://twitter.com/#!/mozillapontoon   "Mozilla Pontoon on Twitter"
+[wiki]:  https://wiki.mozilla.org/L10n:Pontoon   "L10n:Pontoon - MozillaWiki"
