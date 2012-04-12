@@ -1,0 +1,5 @@
+<?php
+
+$path = "http://localhost:8000/";
+
+?>
