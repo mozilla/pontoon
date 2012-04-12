@@ -12,8 +12,8 @@ Pontoon uses [Playdoh][playdoh], which supports running web apps in virtual mach
 
 1. Install [VirtualBox][virtualbox] by Oracle to run our VM.
 2. Install [Vagrant][vagrant] to easily customize and access our VM:
- * `gem install vagrant` (requires [Ruby][ruby] and [gem][gem], but most modern *NIX systems have them)
-3. Get a copy of Pontoon or your [fork][fork] in a directory called `/pontoon`:
+ * `gem install vagrant` (requires [Ruby][ruby] and [gem][gem], but most modern *NIX systems already have them)
+3. Clone Pontoon or your [fork][fork] to your web server's document root (needed for PHP hooks):
  * `git clone --recursive git://github.com/mathjazz/pontoon.git` 
 4. Run a virtual development environment from your working copy directory:
  * `cd pontoon`
@@ -36,14 +36,18 @@ You can edit files in your working copy directory (`/pontoon`) locally and they 
 
 Note that you’ll need to explicitly set the host and port for runserver to be accessible from outside the VM. Vagrant setup already forwards port 8000 (the usual Django development port).
 
-* Map /pontoon on a web server to the root of this project.
+Updates
+-------
+To sync your repository with upstream changes, just update the code using git:
+
+`git pull && git submodule sync --quiet && git submodule update --init --recursive`
 
 Local settings
 --------------
 
 To use Microsoft Translator API for machine translation, obtain a valid API key from the [Bing Developer Center][bdc] and store it in a variable Pontoon._app._mt in your local JS settings file `media/js/app/local-settings.js`.
 
-Store Pontoon client path in the $path variable in your local PHP settings file in `hooks/php/local-settings.php`.
+To use PHP hooks, store Pontoon application path in the $path variable in your local PHP settings file in `hooks/php/local-settings.php`.
 
 Get involved
 ------------
