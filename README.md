@@ -13,7 +13,7 @@ Pontoon uses [Playdoh][playdoh], which supports running web apps in virtual mach
 1. Install [VirtualBox][virtualbox] by Oracle to run our VM.
 2. Install [Vagrant][vagrant] to easily customize and access our VM:
  * `gem install vagrant` (requires [Ruby][ruby] and [gem][gem], but most modern *NIX systems already have them)
-3. Clone Pontoon or your [fork][fork] to your web server's document root (needed for testing PHP hooks):
+3. Clone Pontoon or your [fork][fork] to your web server's document root (location needed for testing PHP hooks):
  * `git clone --recursive git://github.com/mathjazz/pontoon.git` 
 4. Run a virtual development environment from your working copy directory:
  * `cd pontoon`
