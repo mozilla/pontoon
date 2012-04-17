@@ -4,7 +4,6 @@ hooks/php/local-settings.php
 settings_local.py
 settings/local.py
 */settings/local.py
-
 *.py[co]
 *.sw[po]
 .coverage

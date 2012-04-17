@@ -55,6 +55,10 @@ Get involved
 * Follow us on [Twitter][twitter]
 * Read more on [Wiki][wiki] 
 
+License
+-------
+This software is licensed under the [New BSD License][BSD]. For more information, read the file ``LICENSE``.
+
 [contentEditable]:  https://developer.mozilla.org/en/DOM/element.contentEditable   "Element.contentEditable - MDN"
 [playdoh]:  https://github.com/mozilla/playdoh   "Playdoh"
 [virtualbox]:  https://www.virtualbox.org/wiki/Downloads   "VirtualBox Download"
@@ -66,3 +70,4 @@ Get involved
 [irc]:  https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon   "Mibbit"
 [twitter]:  https://twitter.com/#!/mozillapontoon   "Mozilla Pontoon on Twitter"
 [wiki]:  https://wiki.mozilla.org/L10n:Pontoon   "L10n:Pontoon - MozillaWiki"
+[BSD]: http://creativecommons.org/licenses/BSD/
