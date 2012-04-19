@@ -47,8 +47,23 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     'apps.examples',
     'apps.pontoon',
     'django.contrib.admin',
+    'django_browserid',
 ]
 
+# Add BrowserID as authentication backend
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'django_browserid.context_processors.browserid_form',
+)
+
+# Required for BrowserID. Very important security feature
+SITE_URL = 'http://localhost:8000'
+
+# Instruct session-csrf to always produce tokens for anonymous users
+ANON_ALWAYS = True
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:

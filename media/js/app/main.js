@@ -622,8 +622,11 @@ var Pontoon = (function () {
       $("#browserid").click(function() {
         navigator.id.get(function(assertion) {
           if (assertion) {
+            var $e = $('#id_assertion');
+            $e.val(assertion.toString());
+            $e.parent().submit();
+            /* Validate assertion on our own server
             self.startLoader('Validating...');
-            // Validate assertion on our own server
             $.ajax({
               url: self.app.path + 'browserid.php',
               dataType: 'json',
@@ -652,7 +655,7 @@ var Pontoon = (function () {
                 );
                 self.endLoader('Howdy!');
               }
-            });
+            });*/
           }
         });
       });
