@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     (r'^examples/', include(examples)),
 
     # BrowserID:
-    (r'^browserid/', include('django_browserid.urls')),
+    (r'', include('django_browserid.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
