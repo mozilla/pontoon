@@ -622,9 +622,7 @@ var Pontoon = (function () {
       $("#browserid").click(function() {
         navigator.id.get(function(assertion) {
           if (assertion) {
-            var $e = $('#id_assertion');
-            $e.val(assertion.toString());
-            $e.parent().submit();
+            $('#id_assertion').val(assertion.toString()).parent().submit();
             /* Validate assertion on our own server
             self.startLoader('Validating...');
             $.ajax({
