@@ -146,6 +146,19 @@
                 {{ browserid_form }}
               </form>
             {% else %}
+              <div id="profile" class="select">
+                <div class="button selector">
+                  <span class="author">{{ user.email }}</span>
+                  <span> &#9652;</span>
+                </div>
+                <ul id="profile-menu" class="menu">
+                  <li class="sign-out">Sign out</li>
+                  <li class="transifex">Save to Transifex</li>
+                  <li class="html">Download HTML</li>
+                  <li class="json">Download JSON</li>
+                  <li class="po">Download PO</li>
+                </ul>
+              </div>
             {% endif %}
             <button id="switch"></button>
           </div>
