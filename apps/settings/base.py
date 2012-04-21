@@ -53,6 +53,7 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
 # Add BrowserID as authentication backend
 AUTHENTICATION_BACKENDS = (
     'django_browserid.auth.BrowserIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS += (
