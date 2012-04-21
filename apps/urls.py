@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls.defaults import patterns, include
+from django.conf.urls.defaults import patterns, include, url
 
 from .pontoon import urls as pontoon
 from .examples import urls as examples
@@ -18,6 +18,9 @@ urlpatterns = patterns('',
 
     # BrowserID:
     (r'', include('django_browserid.urls')),
+
+    # Logout
+    url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),

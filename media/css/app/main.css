@@ -192,6 +192,20 @@
   border-top: 1px solid #444444;
 }
 
+#pontoon ul.menu li a:link,
+#pontoon ul.menu li a:visited {
+  height: 100%;
+  width: 100%;
+  display: block;
+  margin: -8px -12px -4px ;
+  padding: 8px 0 4px 12px;
+}
+
+#pontoon ul.menu li a:hover,
+#pontoon ul.menu li a:active {
+  color: #FFFFFF;
+}
+
 #pontoon .right {
   float: right;
   margin-right: 5px;

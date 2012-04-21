@@ -659,14 +659,7 @@ var Pontoon = (function () {
       });
 
       // Save menu
-      $('#profile-menu').find('.sign-out').live("click.pontoon", function () {
-        $('#profile').remove();
-        $("#browserid").show();
-        Pontoon.user = {
-          name: "",
-          email: ""
-        };
-      }).end().find('li:not(".sign-out")').live("click.pontoon", function () {
+      $('#profile-menu').find('li:not(".sign-out")').live("click.pontoon", function () {
         if ($(this).is(".html")) {
           self.common.postMessage("HTML");
         } else {
