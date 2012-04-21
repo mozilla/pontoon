@@ -210,10 +210,10 @@ var Pontoon = (function () {
                 '</h3>' + 
                 '<ul class="menu">' + 
                   '<li><span class="flag de"></span><span class="language">Deutsch</span></li>' + 
-                  '<li><span class="flag fr"></span><span class="language">FranÃ§ais</span></li>' + 
+                  '<li><span class="flag fr"></span><span class="language">Français</span></li>' + 
                   '<li><span class="flag hr"></span><span class="language">Hrvatski</span></li>' + 
                   '<li><span class="flag pl"></span><span class="language">Polski</span></li>' + 
-                  '<li><span class="flag sl"></span><span class="language">SlovenÅ¡Äina</span></li>' + 
+                  '<li><span class="flag sl"></span><span class="language">Slovenščina</span></li>' + 
                 '</ul>' + 
               '</header>' + 
               '<p class="no">Get inspiration from other locales</p>' +
