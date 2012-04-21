@@ -63,6 +63,8 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 # Required for BrowserID. Very important security feature
 SITE_URL = 'http://localhost:8000'
 
+LOGIN_REDIRECT_URL = '/'
+
 # Instruct session-csrf to always produce tokens for anonymous users
 ANON_ALWAYS = True
 
