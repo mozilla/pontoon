@@ -59,6 +59,7 @@ ANON_ALWAYS = True
 # apps here:
 JINGO_EXCLUDE_APPS = [
     'admin',
+    'registration',
 ]
 
 # Tells the extract script what files to look for L10n in and what function
