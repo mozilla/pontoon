@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.conf.urls.defaults import patterns, include, url
 
-from .pontoon import urls as pontoon
-
 from funfactory.monkeypatches import patch
 patch()
 
@@ -12,7 +10,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Main app:
-    (r'', include(pontoon)),
+    (r'', include('apps.pontoon.urls')),
 
     # BrowserID:
     (r'', include('django_browserid.urls')),
