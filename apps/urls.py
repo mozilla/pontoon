@@ -2,7 +2,6 @@ from django.conf import settings
 from django.conf.urls.defaults import patterns, include, url
 
 from .pontoon import urls as pontoon
-from .examples import urls as examples
 
 from funfactory.monkeypatches import patch
 patch()
@@ -12,9 +11,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
+    # Main app:
     (r'', include(pontoon)),
-    (r'^examples/', include(examples)),
 
     # BrowserID:
     (r'', include('django_browserid.urls')),
@@ -23,7 +21,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),

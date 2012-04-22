@@ -7,12 +7,6 @@ from funfactory.settings_base import *
 # and js files that can be bundled together by the minify app.
 MINIFY_BUNDLES = {
     'css': {
-        'example_css': (
-            'css/examples/main.css',
-        ),
-        'example_mobile_css': (
-            'css/examples/mobile.css',
-        ),
         'app': (
             'css/app/style.css',
             'css/app/main.css',
@@ -22,11 +16,6 @@ MINIFY_BUNDLES = {
         ),
     },
     'js': {
-        'example_js': (
-            'js/examples/libs/jquery-1.4.4.min.js',
-            'js/examples/libs/jquery.cookie.js',
-            'js/examples/init.js',
-        ),
         'app': (
             'js/app/script.js',
             'js/app/main.js',
@@ -43,10 +32,8 @@ ROOT_URLCONF = 'apps.urls'
 INSTALLED_APPS = list(INSTALLED_APPS) + [
     # Application base, containing global templates.
     'apps.base',
-    # Example code. Can (and should) be removed for actual projects.
-    'apps.examples',
     'apps.pontoon',
-    'django.contrib.admin',
+    'django.contrib.admin', 
     'django_browserid',
 ]
 
