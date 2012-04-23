@@ -127,7 +127,7 @@ var Pontoon = (function () {
         params.transifex = self.transifex;
 
         $.ajax({
-          url: self.app.path + 'transifex.php',
+          url: self.app.path + 'transifex/',
           data: params,
           success: function() {
             self.endLoader('Done!');
