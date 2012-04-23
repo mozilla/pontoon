@@ -624,36 +624,11 @@ var Pontoon = (function () {
           if (assertion) {
             $('#id_assertion').val(assertion.toString()).parent().submit();
             /* Validate assertion on our own server
-            self.startLoader('Validating...');
-            $.ajax({
-              url: self.app.path + 'browserid.php',
-              dataType: 'json',
-              data: {
-                assertion: assertion,
-                audience: self.app.path
-              },
-              success: function(data) {
                 self.user.email = data.email;
                 self.user.name = self.user.email.split("@")[0];
                 self.common.postMessage("USER", self.user);
-                $("#browserid").hide().after(
-                  '<div id="profile" class="select">' +
-                    '<div class="button selector">' +
-                      '<span class="author">' + self.user.name + '</span>' +
-                      '<span> &#9652;</span>' +
-                    '</div>' +
-                    '<ul id="profile-menu" class="menu">' +
-                      '<li class="sign-out">Sign out</li>' +
-                      '<li class="transifex">Save to Transifex</li>' +
-                      '<li class="html">Download HTML</li>' +
-                      '<li class="json">Download JSON</li>' +
-                      '<li class="po">Download PO</li>' +
-                    '</ul>' +
-                  '</div>'
-                );
-                self.endLoader('Howdy!');
               }
-            });*/
+            */
           }
         });
       });
