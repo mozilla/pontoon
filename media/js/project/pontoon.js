@@ -449,6 +449,7 @@
 
               // Remove Pontoon-content
               inner
+                .find("link[href*='pontoon.css']").remove().end()
                 .find("script[src*='pontoon.js']").remove().end()
                 .find("script[src*='jquery.min.js']").remove().end()
                 .find(".editableToolbar").remove().end()
@@ -468,7 +469,7 @@
       // Inject toolbar stylesheet
       $('<link>', {
         rel: 'stylesheet',
-        href: Pontoon.app.path + '/media/css/project/pontoon.css'
+        href: Pontoon.app.path + 'media/css/project/pontoon.css'
       }).appendTo('head');
 
       // Prepare editable toolbar

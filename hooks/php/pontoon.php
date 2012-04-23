@@ -74,6 +74,6 @@ class Pontoon
         echo '<meta name="Pontoon" data-project="'.$project.'" data-resource="'.$resource.'" data-info="'.$info.'" />'."\n";
 
         $url = $GLOBALS["path"] ? $GLOBALS["path"] : "https://pontoon-dev.mozillalabs.com";
-        echo '<script src="'.$url.'/media/js/project/pontoon.js"></script>'."\n";
+        echo '<script src="'.$url.'media/js/project/pontoon.js"></script>'."\n";
     }
 }
