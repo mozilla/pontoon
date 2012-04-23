@@ -10,13 +10,11 @@ var Pontoon = (function () {
     /*
      * Simulate form POST
      *
+     * action POST form action parameter
      * params Parameters sending to server
      */
-    post: function (url, params) {
-      var post = $('<form>', {
-        method: 'post',
-        action: url
-      });
+    post: function (action, params) {
+      var post = $('#post-form');
 
       for(var key in params) {
         $('<input>', {
@@ -26,7 +24,7 @@ var Pontoon = (function () {
         }).appendTo(post);
       }
 
-      post.appendTo('body').submit().remove();
+      post.attr("action", action).submit();
     },
 
 
@@ -46,7 +44,7 @@ var Pontoon = (function () {
 
       if (type === "html") {
         params.data = value;
-        this.post(this.app.path + 'save.php', params);
+        this.post(this.app.path + 'download/', params);
 
       } else if (type === "json") {
         var pages = $.extend(true, {}, this.project.pages); // Deep copy: http://api.jquery.com/jQuery.extend
@@ -58,7 +56,7 @@ var Pontoon = (function () {
           delete this.body;
         });
         params.data = JSON.stringify(pages, null, "\t");
-        this.post(this.app.path + 'save.php', params);
+        this.post(this.app.path + 'download/', params);
 
       } else if (type === "po") {
         var date = new Date(),
@@ -111,7 +109,7 @@ var Pontoon = (function () {
         });
 
         params.data = po;
-        this.post(this.app.path + 'save.php', params);
+        this.post(this.app.path + 'download/', params);
 
       } else if (type === "transifex") {
         self.startLoader('Saving...');
@@ -622,6 +620,9 @@ var Pontoon = (function () {
       $("#browserid").click(function() {
         navigator.id.get(function(assertion) {
           if (assertion) {
+            self.post(self.app.path + 'browserid/verify/', {
+              assertion: assertion.toString()
+            });
             $('#id_assertion').val(assertion.toString()).parent().submit();
             /* Validate assertion on our own server
                 self.user.email = data.email;

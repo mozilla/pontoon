@@ -17,6 +17,11 @@
   </head>
   
   <body id="pontoon">
+    <!-- POST Form -->
+    <form id="post-form" method="POST" class="hidden">
+      {{ csrf() }}
+    </form>
+
     <!-- Frontpage -->
     <section id="intro">
       <div id="inner">
@@ -141,10 +146,6 @@
             <span id="loading"></span>
             {% if not user.is_authenticated() %}
               <img id="browserid" src="{{ MEDIA_URL }}img/sign_in_blue.png" alt="Sign in using BrowserID" />
-              <form method="POST" action="{{ url('browserid_verify') }}" class="hidden">
-                {{ csrf() }}
-                {{ browserid_form }}
-              </form>
             {% else %}
               <div id="profile" class="select">
                 <div class="button selector">
