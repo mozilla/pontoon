@@ -153,11 +153,11 @@
                   <span> &#9652;</span>
                 </div>
                 <ul id="profile-menu" class="menu">
-                  <li class="sign-out"><a href="{{ url('logout') }}">Sign out</a></li>
-                  <li class="transifex">Save to Transifex</li>
-                  <li class="html">Download HTML</li>
-                  <li class="json">Download JSON</li>
-                  <li class="po">Download PO</li>
+                  <li><a class="sign-out" href="{{ url('logout') }}">Sign out</a></li>
+                  <li><a class="transifex" href="{{ url('pontoon.transifex') }}">Save to Transifex</a></li>
+                  <li><a class="html" href="{{ url('pontoon.download') }}">Download HTML</a></li>
+                  <li><a class="json" href="{{ url('pontoon.download') }}">Download JSON</a></li>
+                  <li><a class="po" href="{{ url('pontoon.download') }}">Download PO</a></li>
                 </ul>
               </div>
             {% endif %}

@@ -635,7 +635,8 @@ var Pontoon = (function () {
       });
 
       // Save menu
-      $('#profile-menu').find('li:not(".sign-out")').live("click.pontoon", function () {
+      $('#profile-menu').find('a:not(".sign-out")').live("click.pontoon", function (e) {
+        e.preventDefault();
         if ($(this).is(".html")) {
           self.common.postMessage("HTML");
         } else {
