@@ -1,15 +1,16 @@
 
 import logging
+import urllib2
+import base64
 
 from django import http
 from django.http import HttpResponse
 from django.shortcuts import render
 
-import subprocess
-
 import commonware
 from funfactory.log import log_cef
 from mobility.decorators import mobile_template
+from web import *
 
 
 log = commonware.log.getLogger('playdoh')
@@ -43,22 +44,33 @@ def download(request, template=None):
 
 def transifex(request, template=None):
     """Save translations to Transifex."""
-    data = {}  # You'd add data here that you're sending to the template.
     log.debug("Save to Transifex")
 
-    locale = request.GET['locale'];
-    username = request.GET['transifex[username]'];
-    password = request.GET['transifex[password]'];
-    project = request.GET['transifex[project]'];
-    resource = request.GET['transifex[resource]'];
-    data = request.GET['transifex[po]'];
+    locale = request.GET['locale']
+    username = request.GET['transifex[username]']
+    password = request.GET['transifex[password]']
+    project = request.GET['transifex[project]']
+    resource = request.GET['transifex[resource]']
+    po = request.GET['transifex[po]']
 
     """ Save PO file to Pontoon server """
     f = open(locale + '.po', 'w')
-    f.write(data.encode('utf-8'))
+    f.write(po.encode('utf-8'))
     f.close()
 
     """ Save PO file to Transifex """
-    subprocess.call("curl -i -L --user " + username + ":" + password + " -F file=@" + locale + ".po -X PUT https://www.transifex.net/api/2/project/" + project + "/resource/" + resource + "/translation/" + locale + "/", shell=True);
-    
+    url = 'https://www.transifex.net/api/2/project/' + project + '/resource/' + resource + '/translation/' + locale + '/'
+    data = { "resource" : resource,
+             "language" : locale,
+             "uploaded_file" : open(locale + '.po', 'rb') }
+    req = RequestWithMethod(url=url, data=data, method='PUT')
+
+    base64string = base64.encodestring('%s:%s' % (username, password))[:-1]
+    authheader = "Basic %s" % base64string
+    req.add_header("Authorization", authheader)
+    req.add_header("Accept-Encoding", "gzip,deflate")
+
+    urllib2.install_opener(urllib2.build_opener(MultipartPostHandler))
+    response = urllib2.urlopen(req, timeout=10)
+
     return HttpResponse()
