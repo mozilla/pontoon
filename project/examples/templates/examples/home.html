@@ -5,6 +5,17 @@
     <a href="/">{{ _('Hello world') }}</a>
 </h1>
 
+{% if request.user.is_active %}
+    <p>{{ _('You are logged in as {username}')|f(username=request.user) }}.
+    <a href="{{ url('examples.logout') }}">{{ _('Log out') }}</a></p>
+{% else %}
+    <p><a id="browserid" href="#">{{ _('Log in with BrowserID') }}</a></p>
+    <form method="POST" action="{{ url('browserid_verify') }}">
+        {{ csrf() }}
+        {{ browserid_form.as_p() }}
+    </form>
+{% endif %}
+
 {# L10n: This is a localizer comment #}
 {% if request.MOBILE %}
   <p>{{ _('This is a <em>test view</em> for mobile browsers.') }}</p>
@@ -15,7 +26,7 @@
   {% trans docs_url='http://playdoh.rtfd.org/' %}
   <a href="{{ docs_url }}">Learn you some Playdoh</a> and then go build
   something <strong>awesome</strong>.
-  {% endtrans %}  
+  {% endtrans %}
 </p>
 <p>
   {% trans langs=LANGUAGES.items() %}
@@ -27,4 +38,10 @@
 <ul>
   <li><a href="{{ url('examples.bleach') }}">Input sanitization with Bleach</a></li>
 </ul>
+{% endblock %}
+{% block site_js %}
+    {{ js('example_js') }}
+    {% if not request.user.is_active %}
+        {{ browserid_form.media }}
+    {% endif %}
 {% endblock %}
