@@ -66,11 +66,10 @@ def transifex(request, template=None):
     req = RequestWithMethod(url=url, data=data, method='PUT')
 
     base64string = base64.encodestring('%s:%s' % (username, password))[:-1]
-    authheader = "Basic %s" % base64string
-    req.add_header("Authorization", authheader)
+    req.add_header("Authorization", "Basic %s" % base64string)
     req.add_header("Accept-Encoding", "gzip,deflate")
 
     urllib2.install_opener(urllib2.build_opener(MultipartPostHandler))
-    response = urllib2.urlopen(req, timeout=10)
+    urllib2.urlopen(req, timeout=10)
 
     return HttpResponse()
