@@ -625,24 +625,21 @@ var Pontoon = (function () {
               url: self.app.path + 'browserid/verify/',
               type: 'POST',
               data: {
-                assertion: assertion.toString(),
+                assertion: assertion,
                 csrfmiddlewaretoken: $('#post-form input[name="csrfmiddlewaretoken"]').val()
               },
               success: function(data) {
+                self.user.email = data.browserid.email;
+                self.user.name = self.user.email.split("@")[0];
+                self.common.postMessage("USER", self.user);
                 $('#browserid').hide();
-                $('#profile').find('.author').html(data.browserid.email).end().show();
+                $('#profile').find('.author').html(self.user.email).end().show();
                 self.endLoader('Welcome!');
               },
               error: function() {
                 self.endLoader('Oops! Please try again.', 'error');
               }
             });
-            /* Validate assertion on our own server
-                self.user.email = data.email;
-                self.user.name = self.user.email.split("@")[0];
-                self.common.postMessage("USER", self.user);
-              }
-            */
           }
         });
       });
