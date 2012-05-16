@@ -2,6 +2,7 @@
 import logging
 import urllib2
 import base64
+import json
 
 from django import http
 from django.http import HttpResponse
@@ -14,9 +15,7 @@ from web import *
 
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
-from django.http import (HttpResponse, HttpResponseBadRequest,
-                         HttpResponseForbidden)
-import json
+from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseForbidden)
 from django.contrib import auth
 from django.views.decorators.http import require_POST
 
