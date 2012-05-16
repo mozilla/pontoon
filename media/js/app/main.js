@@ -547,8 +547,8 @@ var Pontoon = (function () {
      * 
      * text End of operation text (e.g. Done!)
      */
-    endLoader: function (text) {
-      $('#loading').html(text).removeClass('loader');
+    endLoader: function (text, type) {
+      $('#loading').html(text).removeClass('loader').addClass(type);
       setTimeout(function() {
         $('#loading').fadeOut(function() {
           $(this).empty();
@@ -618,12 +618,25 @@ var Pontoon = (function () {
 
       // Authentication and profile menu
       $("#browserid").click(function() {
+        self.startLoader();
         navigator.id.get(function(assertion) {
           if (assertion) {
-            self.post(self.app.path + 'browserid/verify/', {
-              assertion: assertion.toString()
+            $.ajax({
+              url: self.app.path + 'browserid/verify/',
+              type: 'POST',
+              data: {
+                assertion: assertion.toString(),
+                csrfmiddlewaretoken: $('#post-form input[name="csrfmiddlewaretoken"]').val()
+              },
+              success: function(data) {
+                $('#browserid').hide();
+                $('#profile').find('.author').html(data.browserid.email).end().show();
+                self.endLoader('Welcome!');
+              },
+              error: function() {
+                self.endLoader('Oops! Please try again.', 'error');
+              }
             });
-            $('#id_assertion').val(assertion.toString()).parent().submit();
             /* Validate assertion on our own server
                 self.user.email = data.email;
                 self.user.name = self.user.email.split("@")[0];

@@ -434,6 +434,7 @@
   display: none;
   color: #AEEE00;
   float: left;
+  height: 12px;
   font-weight: 100;
   padding: 6px 0 5px 0;
   margin-right: 5px;
@@ -445,10 +446,19 @@
   padding-right: 20px;
 }
 
+#pontoon #loading.error {
+  color: #F00038;
+}
+
 #pontoon #browserid {
+  display: block;
   float: left;
   cursor: pointer;
   margin-top: 1px;
+}
+
+#pontoon .authenticated #browserid {
+  display: none;
 }
 
 #pontoon #browserid:active {
@@ -456,7 +466,12 @@
 }
 
 #pontoon #profile {
+  display: none;
   float: left;
+}
+
+#pontoon .authenticated #profile {
+  display: block;
 }
 
 #pontoon #profile-menu {

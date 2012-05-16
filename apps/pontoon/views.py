@@ -12,6 +12,14 @@ from funfactory.log import log_cef
 from mobility.decorators import mobile_template
 from web import *
 
+from django_browserid import verify as browserid_verify
+from django_browserid import get_audience
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseForbidden)
+import json
+from django.contrib import auth
+from django.views.decorators.http import require_POST
+
 
 log = commonware.log.getLogger('playdoh')
 
@@ -73,3 +81,25 @@ def transifex(request, template=None):
     urllib2.urlopen(req, timeout=10)
 
     return HttpResponse()
+
+@require_POST
+def verify(request, template=None):
+    """
+    Verify a BrowserID assertion, and return whether a user is registered
+    with Affiliates.
+    """
+    assertion = request.POST.get('assertion', None)
+    if assertion is None:
+        return HttpResponseBadRequest()
+
+    verification = browserid_verify(assertion, get_audience(request))
+    if not verification:
+        return HttpResponseForbidden()
+
+    response_data = {'registered': False, 'browserid': verification}
+    user = auth.authenticate(assertion=assertion, audience=get_audience(request))
+    if user is not None:
+        auth.login(request, user)
+        response_data = {'registered': True, 'browserid': verification}
+
+    return HttpResponse(json.dumps(response_data), mimetype='application/json')
