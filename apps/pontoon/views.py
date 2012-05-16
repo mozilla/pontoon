@@ -15,9 +15,10 @@ from web import *
 
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
-from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseForbidden)
+from django.http import (HttpResponseBadRequest, HttpResponseForbidden)
 from django.contrib import auth
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 
 log = commonware.log.getLogger('playdoh')
@@ -30,6 +31,7 @@ def home(request, template=None):
     log.debug("I'm alive!")
     return render(request, template, data)
 
+@login_required(login_url='/')
 def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations")
@@ -49,6 +51,7 @@ def download(request, template=None):
     response['Content-Disposition'] = 'attachment; filename=' + locale + '.' + type
     return response
 
+@login_required(login_url='/')
 def transifex(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex")
