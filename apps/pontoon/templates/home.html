@@ -144,18 +144,18 @@
                   
           <div class="right{% if user.is_authenticated() %} authenticated{% endif %}">
             <span id="loading"></span>
-            <img id="browserid" src="{{ MEDIA_URL }}img/sign_in_blue.png" alt="Sign in using BrowserID" />
+            <img id="browserid" src="{{ MEDIA_URL }}img/sign_in_blue.png" alt="{{ _('Sign in using BrowserID') }}" />
             <div id="profile" class="select">
               <div class="button selector">
                 <span class="author">{{ user.email }}</span>
                 <span> &#9652;</span>
               </div>
               <ul id="profile-menu" class="menu">
-                <li><a class="sign-out" href="{{ url('logout') }}">Sign out</a></li>
-                <li><a class="transifex" href="{{ url('pontoon.transifex') }}">Save to Transifex</a></li>
-                <li><a class="html" href="{{ url('pontoon.download') }}">Download HTML</a></li>
-                <li><a class="json" href="{{ url('pontoon.download') }}">Download JSON</a></li>
-                <li><a class="po" href="{{ url('pontoon.download') }}">Download PO</a></li>
+                <li><a class="sign-out" href="{{ url('logout') }}">{{ _('Sign out') }}</a></li>
+                <li><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
+                <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download HTML') }}</a></li>
+                <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download JSON') }}</a></li>
+                <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download PO') }}</a></li>
               </ul>
             </div>
             <button id="switch"></button>
