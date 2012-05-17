@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = patterns('',
     url(r'^$', views.home, name='pontoon.home'),
+    url(r'^locale/(?P<locale>[A-Za-z\-]+)/url/(?P<url>\S+)/$', views.translate, name='pontoon.translate'),
     url(r'^download/', views.download, name='pontoon.download'),
     url(r'^transifex/', views.transifex, name='pontoon.transifex'),
 )

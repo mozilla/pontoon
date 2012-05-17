@@ -26,15 +26,22 @@ log = commonware.log.getLogger('playdoh')
 
 @mobile_template('{mobile/}home.html')
 def home(request, template=None):
-    """Main example view."""
-    data = {}  # You'd add data here that you're sending to the template.
-    log.debug("I'm alive!")
+    """Main view."""
+    log.debug("Main view.")
+    return render(request, template, data)
+
+@mobile_template('{mobile/}home.html')
+def translate(request, locale, url, template=None):
+    """Translate view."""
+    log.debug("Translate view.")
+
+    data = {'locale_code': locale, 'project_url': url}
     return render(request, template, data)
 
 @login_required(login_url='/')
 def download(request, template=None):
     """Download translations in appropriate form."""
-    log.debug("Download translations")
+    log.debug("Download translations.")
 
     type = request.POST['type']
     data = request.POST['data']
@@ -54,7 +61,7 @@ def download(request, template=None):
 @login_required(login_url='/')
 def transifex(request, template=None):
     """Save translations to Transifex."""
-    log.debug("Save to Transifex")
+    log.debug("Save to Transifex.")
 
     locale = request.GET['locale']
     username = request.GET['transifex[username]']
@@ -86,10 +93,9 @@ def transifex(request, template=None):
 
 @require_POST
 def verify(request, template=None):
-    """
-    Verify a BrowserID assertion, and return whether a user is registered
-    with Affiliates.
-    """
+    """Verify BrowserID assertion, and return whether a user is registered."""
+    log.debug("Verify BrowserID assertion.")
+
     assertion = request.POST.get('assertion', None)
     if assertion is None:
         return HttpResponseBadRequest()
