@@ -28,7 +28,7 @@ log = commonware.log.getLogger('playdoh')
 def home(request, template=None):
     """Main view."""
     log.debug("Main view.")
-    return render(request, template, data)
+    return render(request, template)
 
 @mobile_template('{mobile/}home.html')
 def translate(request, locale, url, template=None):
