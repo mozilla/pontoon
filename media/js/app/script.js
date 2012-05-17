@@ -141,28 +141,36 @@
       return valid;
     }
 
-    // Main code
-
-    // Check for params
-    var locale = window.location.search.split("&locale=")[1] || "",
-        temp = window.location.search.split("?url=")[1],
-        url = temp ? temp.split("&locale=")[0] : "";
-    $('.url').val(url);
+    // MAIN CODE
 
     // Empty iframe if cached
     $('#source').removeAttr("src");
 
-    // Set include script URL
-    $("#install")
-      .find("code").html('&lt;script src="' + window.location.href.split("?")[0] + 'media/js/project/pontoon.js"&gt;&lt;/script&gt;')
-      .end().css("visibility", "visible");
+    // Check for params
+    var locale = $('#server').data('locale'),
+        url = $('#server').data('url');
 
-    // Set locale
-    if (isValidLocale(locale)) {
-      updateLocale(locale);
-    } else {
+    if (locale && url) { // Translate
+      $('.url').val(url);
+
+      // Set locale
+      if (isValidLocale(locale)) {
+        updateLocale(locale);
+      } else {
+        guessLocale();
+      }
+
+    } else { // Intro
       guessLocale();
+
+      // Set include script URL
+      $("#install")
+        .find("code").html('&lt;script src="' + window.location.href + 'media/js/project/pontoon.js"&gt;&lt;/script&gt;')
+        .end().css("visibility", "visible");
+
+      $("#intro").css("display", "table");
     }
+
   });
 
 }(this.jQuery));

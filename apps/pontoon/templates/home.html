@@ -17,6 +17,12 @@
   </head>
   
   <body id="pontoon">
+    <!-- Server data -->
+    <div id="server"
+         class="hidden"
+         {% if locale_code %}data-locale="{{ locale_code }}"{% endif %}
+         {% if project_url %}data-url="{{ project_url }}"{% endif %}>
+    </div>
     <!-- POST Form -->
     <form id="post-form" method="POST" class="hidden">
       {{ csrf() }}
