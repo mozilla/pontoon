@@ -112,11 +112,6 @@
       }
     }
 
-    // Set locale using Accept-Language header
-    function guessLocale() {
-      updateLocale($('#server').data('language'));
-    }
-
     // Validate locale
     function isValidLocale(locale) {
       var valid = false;
@@ -135,7 +130,8 @@
 
     // Check for params
     var locale = $('#server').data('locale'),
-        url = $('#server').data('url');
+        url = $('#server').data('url'),
+        acceptLanguage = $('#server').data('accept-language');
 
     // Translate
     if (locale && url) {
@@ -144,12 +140,12 @@
       if (isValidLocale(locale)) {
         updateLocale(locale);
       } else {
-        guessLocale();
+        updateLocale(acceptLanguage);
       }
 
     // Intro
     } else {
-      guessLocale();
+      updateLocale(acceptLanguage);
       // Set include script URL
       $("#install")
         .find("code").html('&lt;script src="' + window.location.href + 'media/js/project/pontoon.js"&gt;&lt;/script&gt;')
