@@ -112,22 +112,9 @@
       }
     }
 
-    // Set locale using browser language detection
-    // TODO: develop internal solution
-    // Source: http://stackoverflow.com/questions/1043339/javascript-for-detecting-browser-language-preference
+    // Set locale using Accept-Language header
     function guessLocale() {
-      $.ajax({ 
-        url: "http://ajaxhttpheaders.appspot.com", 
-        dataType: 'jsonp', 
-        success: function(headers) {
-          var locale = headers['Accept-Language'].substring(0, 2),
-              entry = $('#intro .locale .menu .flag.' + locale);
-          updateLocale(locale);
-        },
-        error: function() {
-          updateLocale();
-        }
-      });
+      updateLocale($('#server').data('language'));
     }
 
     // Validate locale
@@ -150,9 +137,9 @@
     var locale = $('#server').data('locale'),
         url = $('#server').data('url');
 
-    if (locale && url) { // Translate
+    // Translate
+    if (locale && url) {
       $('.url').val(url);
-
       // Set locale
       if (isValidLocale(locale)) {
         updateLocale(locale);
@@ -160,14 +147,13 @@
         guessLocale();
       }
 
-    } else { // Intro
+    // Intro
+    } else {
       guessLocale();
-
       // Set include script URL
       $("#install")
         .find("code").html('&lt;script src="' + window.location.href + 'media/js/project/pontoon.js"&gt;&lt;/script&gt;')
         .end().css("visibility", "visible");
-
       $("#intro").css("display", "table");
     }
 
