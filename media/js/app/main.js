@@ -202,16 +202,15 @@ var Pontoon = (function () {
             '<li class="other-locales">' + 
               '<header class="select">' + 
                 '<h3 class="selector">' + 
-                  '<span class="flag"></span>' + 
                   '<span class="language">Select locale</span>' + 
                   '<span class="handle"> &#9662;</span>' + 
                 '</h3>' + 
                 '<ul class="menu">' + 
-                  '<li><span class="flag de"></span><span class="language">Deutsch</span></li>' + 
-                  '<li><span class="flag fr"></span><span class="language">Français</span></li>' + 
-                  '<li><span class="flag hr"></span><span class="language">Hrvatski</span></li>' + 
-                  '<li><span class="flag pl"></span><span class="language">Polski</span></li>' + 
-                  '<li><span class="flag sl"></span><span class="language">Slovenščina</span></li>' + 
+                  '<li><span class="language de">Deutsch</span></li>' + 
+                  '<li><span class="language fr">Français</span></li>' + 
+                  '<li><span class="language hr">Hrvatski</span></li>' + 
+                  '<li><span class="language pl">Polski</span></li>' + 
+                  '<li><span class="language sl">Slovenščina</span></li>' + 
                 '</ul>' + 
               '</header>' + 
               '<p class="no">Get inspiration from other locales</p>' +
@@ -331,12 +330,11 @@ var Pontoon = (function () {
         var li = $(this),
             entity = li.parents(".entity"),
             index = entity.index(), /* TODO: use IDs or XPath */
-            locale = li.find(".flag").attr("class").split(" ")[1],
+            locale = li.find(".language").attr("class").split(" ")[1],
             p = li.parents('.select').next('p').show();
 
         li.parents('.menu').siblings('.selector')
-          .find('.flag').attr("class", li.find('.flag').attr('class')).show().end()
-          .find('.language').html(li.find('.language').html()).end().end()
+          .find('.language').attr('class', li.find('.language').attr('class')).html(li.find('.language').html()).end().end()
         .hide();
 
         // TODO: AJAX request to display only locales with current string translation available
@@ -787,8 +785,12 @@ var Pontoon = (function () {
 
       // Start new project with current website url and locale
       $('.locale .confirm, .locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function () {
-        // TODO: url and locale validation
-        window.location = "?url=" + $('.url:visible').val() + "&locale=" + $(this).find('.flag').attr('class').split(' ')[1];
+        // TODO: show warning on bad locale and/or url
+        var locale = $(this).find('.language').attr('class').split(' ')[1],
+            url = $('.url:visible').val();
+        if (locale && url) {
+          window.location = '/locale/' + locale + '/url/' + url + '/';
+        }
       });
       $('.url').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         var key = e.keyCode || e.which;

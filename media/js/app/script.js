@@ -101,26 +101,16 @@
 
     // Update locale selector
     function updateLocale(locale) {
-      if (!locale || $('.locale .menu .flag.' + locale).length === 0) {
-        locale = $("#intro .menu .flag:first").attr("class").split(" ")[1];
+      var menu = $('.locale .menu');
+      if (menu.find('.language.' + locale).length === 0) {
+        locale = menu.find('.language:first').attr('class').split(' ')[1];
       }
-      $('.locale .button')
-        .find('.flag').addClass(locale).end()
-        .find('.language').html($('.locale .menu .flag.' + locale).siblings('.language').html());
-      if (url) {
-        checkURL();
-      }
+      $('.locale .button .language').addClass(locale).html(menu.find('.language.' + locale).html());
     }
 
-    // Validate locale
-    function isValidLocale(locale) {
-      var valid = false;
-      $("#intro .menu .flag").each(function() {
-        if (locale === $(this).attr("class").split(" ")[1]) {
-          valid = true;
-        }
-      });
-      return valid;
+    // Check if locale on the list
+    function isSupportedLocale(locale) {
+      return $('.locale .menu .language.' + locale).length ? true : false;
     }
 
     // MAIN CODE
@@ -137,10 +127,13 @@
     if (locale && url) {
       $('.url').val(url);
       // Set locale
-      if (isValidLocale(locale)) {
+      if (isSupportedLocale(locale)) {
         updateLocale(locale);
+        checkURL();
       } else {
+        // TODO: show warning that we have switched locales
         updateLocale(acceptLanguage);
+        checkURL();
       }
 
     // Intro
