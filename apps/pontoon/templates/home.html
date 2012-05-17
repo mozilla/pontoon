@@ -9,7 +9,8 @@
     <title>{{ _('Pontoon') }}</title>
     <meta name="description" content="{{ _('Live web localization tool') }}">
     <meta name="author" content="{{ _('Mozilla') }}">
-    
+    <base href="{{ settings.SITE_URL }}/{{ LANG }}/">  
+
     <!-- Place favicon.ico in the root of domain and delete these reference -->
     <link rel="shortcut icon" href="{{ MEDIA_URL }}img/favicon.ico">
 
@@ -24,6 +25,7 @@
          {% if project_url %}data-url="{{ project_url }}"{% endif %}
          {% if accept_language %}data-accept-language="{{ accept_language }}"{% endif %}>
     </div>
+
     <!-- POST Form -->
     <form id="post-form" method="POST" class="hidden">
       {{ csrf() }}
@@ -31,7 +33,7 @@
 
     <!-- Frontpage -->
     <section id="intro">
-      <div id="inner">
+      <div class="inner">
 
         <h1 id="title">{{ _('Pontoon') }}</h1>
 
@@ -176,7 +178,15 @@
     <!-- Website placeholder + iframe fix: prevent iframes from capturing the mousemove events during a drag -->
     <iframe id="source"></iframe>
     <div id="iframe-cover"></div>
-      
+
+    <!-- Project loading indicator -->
+    <div id="project-load">
+      <div class="inner">
+        <p>Loading</p>
+        <img src="{{ MEDIA_URL }}img/loader-big.gif" />
+      </div>
+    </div>
+
     <!-- Javascript at the bottom for fast page loading -->
     
     <!-- Grab Google CDN's jQuery. fall back to local if necessary -->

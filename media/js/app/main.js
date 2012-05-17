@@ -715,7 +715,7 @@ var Pontoon = (function () {
       // Build Pontoon object
       this.app = {
         win: app,
-        path: window.location.href.split("?")[0], // TOOD: more robust domain parser
+        path: $('base').attr('href'),
         mt: ''
       };
       this.project = {

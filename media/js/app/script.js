@@ -76,6 +76,7 @@
 
       // Load project page into iframe
       $('#source').attr('src', url);
+      $('#project-load').show();
       $('#intro .notification')
         .html('Loading...')
         .addClass('message').removeClass('error')
@@ -86,15 +87,18 @@
           callback = setInterval(function() {
             if (i < 50) {
               i++;
-              if (Pontoon._doc) { // Set in Pontoon.init() which is called on "supported"
+              if (Pontoon.app) { // Set in Pontoon.init() which is called on "supported"
                 clearInterval(callback);
               }
             } else {
               clearInterval(callback);
-              $('#intro .notification')
+              $('#project-load').hide();
+              $("#install").css('visibility', 'visible');
+              $('#intro').find('.notification')
                 .html('Oops, website is either not supported by Pontoon or could not be found.')
                 .addClass('error').removeClass('message')
-                .css('visibility', 'visible');
+                .css('visibility', 'visible')
+                .end().css('display', 'table').hide().fadeIn();
             }
           }, 100);
     }
@@ -108,11 +112,6 @@
       $('.locale .button .language').addClass(locale).html(menu.find('.language.' + locale).html());
     }
 
-    // Check if locale on the list
-    function isSupportedLocale(locale) {
-      return $('.locale .menu .language.' + locale).length ? true : false;
-    }
-
     // MAIN CODE
 
     // Empty iframe if cached
@@ -123,27 +122,27 @@
         url = $('#server').data('url'),
         acceptLanguage = $('#server').data('accept-language');
 
+    // Set include script URL
+    $("#install code").html('&lt;script src="' + window.location.href + 'media/js/project/pontoon.js"&gt;&lt;/script&gt;');
+
     // Translate
     if (locale && url) {
       $('.url').val(url);
       // Set locale
-      if (isSupportedLocale(locale)) {
+      if ($('.locale .menu .language.' + locale).length) { // Locale on the list?
         updateLocale(locale);
-        checkURL();
       } else {
-        // TODO: show warning that we have switched locales
+        // TODO: show warning about switching locales
         updateLocale(acceptLanguage);
-        checkURL();
       }
+      checkURL();
 
     // Intro
     } else {
       updateLocale(acceptLanguage);
-      // Set include script URL
-      $("#install")
-        .find("code").html('&lt;script src="' + window.location.href + 'media/js/project/pontoon.js"&gt;&lt;/script&gt;')
-        .end().css("visibility", "visible");
-      $("#intro").css("display", "table");
+      $('#install').css('visibility', 'visible');
+      $('#project-load').hide();
+      $('#intro').css('display', 'table').hide().fadeIn(function() {});
     }
 
   });

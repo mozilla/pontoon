@@ -47,7 +47,7 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django_browserid.context_processors.browserid_form',
 )
 
-# Required for BrowserID. Very important security feature
+# Required for BrowserID. Very important security feature. Override in local settings file
 SITE_URL = 'http://localhost:8000'
 
 LOGIN_REDIRECT_URL = '/'
