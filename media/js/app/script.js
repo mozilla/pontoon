@@ -55,6 +55,19 @@
       $('#source').height($(document).height() - $('#main').height());
     });
 
+    // Show page load Error
+    function showError(callback) {
+      clearInterval(callback);
+      $('#project-load').hide();
+      $("#install").css('visibility', 'visible');
+      $('#intro')
+        .find('.notification')
+          .html('Oops, website is either not supported by Pontoon or could not be found.')
+          .addClass('error').removeClass('message')
+          .css('visibility', 'visible').end()
+        .css('display', 'table').hide().fadeIn();
+    }
+
     // Validate URL
     function checkURL() {
       // Initialize Pontoon only if project code supports it
@@ -87,17 +100,23 @@
                 clearInterval(callback);
               }
             } else {
-              clearInterval(callback);
-              $('#project-load').hide();
-              $("#install").css('visibility', 'visible');
-              $('#intro')
-                .find('.notification')
-                  .html('Oops, website is either not supported by Pontoon or could not be found.')
-                  .addClass('error').removeClass('message')
-                  .css('visibility', 'visible').end()
-                .css('display', 'table').hide().fadeIn();
+              showError(callback);
             }
           }, 100);
+
+      // If loading page fails, don't wait 5 seconds to trigger error (ignore localhost)
+      if (url.split('://')[1].indexOf('localhost') !== 0) {
+        $.ajax({
+          url: base + 'checkurl/',
+          data: {url: url},
+          timeout: 4500,
+          success: function(data) {
+            if (data === "invalid") {
+              showError(callback);
+            }
+          }
+        });
+      }
     }
 
     // Update locale selector
@@ -117,10 +136,11 @@
     // Check for params
     var locale = $('#server').data('locale'),
         url = $('#server').data('url'),
-        acceptLanguage = $('#server').data('accept-language');
+        acceptLanguage = $('#server').data('accept-language'),
+        base = $('base').attr('href');
 
     // Set include script URL
-    $("#install code").html('&lt;script src="' + window.location.href + 'media/js/project/pontoon.js"&gt;&lt;/script&gt;');
+    $("#install code").html('&lt;script src="' + base + 'media/js/project/pontoon.js"&gt;&lt;/script&gt;');
 
     // Translate
     if (locale && url) {

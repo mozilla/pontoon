@@ -8,6 +8,9 @@ from django import http
 from django.http import HttpResponse
 from django.shortcuts import render
 
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
 import commonware
 from funfactory.log import log_cef
 from mobility.decorators import mobile_template
@@ -30,11 +33,25 @@ def home(request, locale=None, url=None, template=None):
     log.debug("Main view.")
 
     data = {
-      'locale_code': locale,
-      'project_url': url,
-      'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0]
+        'locale_code': locale,
+        'project_url': url,
+        'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0]
     }
     return render(request, template, data)
+
+def check_url(request, template=None):
+    """Check if URL exists."""
+    log.debug("Check if URL exists.")
+    log.debug(request.GET['url'])
+
+    validate = URLValidator(verify_exists=True)
+    try:
+        validate(request.GET['url'])
+        status = "valid"
+    except ValidationError, e:
+        log.debug(e)
+        status = "invalid"
+    return HttpResponse(status)
 
 @login_required(login_url='/')
 def download(request, template=None):
@@ -94,7 +111,7 @@ def verify(request, template=None):
     """Verify BrowserID assertion, and return whether a user is registered."""
     log.debug("Verify BrowserID assertion.")
 
-    assertion = request.POST.get('assertion', None)
+    assertion = request.POST['assertion']
     if assertion is None:
         return HttpResponseBadRequest()
 
