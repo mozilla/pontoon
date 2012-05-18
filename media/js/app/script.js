@@ -55,18 +55,13 @@
       $('#source').height($(document).height() - $('#main').height());
     });
 
-    // Show page load Error
-    function showError(callback, message) {
-      var error = message || 'Oops, website is either not supported by Pontoon or could not be found.';
-      clearInterval(callback);
+    // Show error message
+    function showError(interval, message) {
+      clearInterval(interval);
       $('#project-load').hide();
       $("#install").css('visibility', 'visible');
-      $('#intro')
-        .find('.notification')
-          .html(error)
-          .addClass('error').removeClass('message')
-          .css('visibility', 'visible').end()
-        .css('display', 'table').hide().fadeIn();
+      Pontoon.common.showError(message);
+      $('#intro').css('display', 'table').hide().fadeIn();
     }
 
     // Validate URL
@@ -90,14 +85,14 @@
 
       // Show error message if no callback for 5 seconds: Pontoon/iframe not supported, 404…
       var i = 0,
-          callback = setInterval(function() {
+          interval = setInterval(function() {
             if (i < 50) {
               i++;
               if (Pontoon.app) { // Set in Pontoon.init() which is called on "supported"
-                clearInterval(callback);
+                clearInterval(interval);
               }
             } else {
-              showError(callback, 'Oops, website is not supported by Pontoon. Check instructions below.');
+              showError(interval, 'Oops, website is not supported by Pontoon. Check instructions below.');
             }
           }, 100);
 
@@ -109,7 +104,7 @@
           timeout: 4500,
           success: function(data) {
             if (data === "invalid") {
-              showError(callback, 'Oops, website could not be found.');
+              showError(interval, 'Oops, website could not be found.');
             }
           }
         });

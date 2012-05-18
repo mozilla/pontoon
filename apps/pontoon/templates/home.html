@@ -150,7 +150,7 @@
           <span id="progress-value"></span>
                   
           <div class="right{% if user.is_authenticated() %} authenticated{% endif %}">
-            <span id="loading"></span>
+            <span id="loading" class="notification"></span>
             <img id="browserid" src="{{ MEDIA_URL }}img/sign_in_blue.png" alt="{{ _('Sign in using BrowserID') }}" />
             <div id="profile" class="select">
               <div class="button selector">

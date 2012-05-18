@@ -788,8 +788,11 @@ var Pontoon = (function () {
         // TODO: show warning on bad locale and/or url
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             url = $('.url:visible').val();
-        if (locale && url) {
+        if (url) {
           window.location = '/locale/' + locale + '/url/' + url + '/';
+        } else {
+          Pontoon.common.showError("Please enter the URL first.");
+          $('.url:visible').focus();
         }
       });
       $('.url').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
@@ -845,15 +848,27 @@ var Pontoon = (function () {
         }
       });
 
-      /*
-       * window.postMessage improved
-       *
-       * messageType data type to be sent to the other window
-       * messageValue data value to be sent to the other window
-       * otherWindow reference to another window
-       * targetOrigin specifies what the origin of otherWindow must be
-      */
       return {
+        /*
+         * Show error message
+         *
+         * message Error message to be displayed
+         */
+        showError: function(message) {
+          var error = message || 'Oops, website is either not supported by Pontoon or could not be found.';
+          $('.notification')
+            .html(error)
+            .addClass('error')
+            .css('visibility', 'visible').show();
+        },
+        /*
+         * window.postMessage improved
+         *
+         * messageType data type to be sent to the other window
+         * messageValue data value to be sent to the other window
+         * otherWindow reference to another window
+         * targetOrigin specifies what the origin of otherWindow must be
+         */
         postMessage: function (messageType, messageValue, otherWindow, targetOrigin) {
           var otherWindow = otherWindow || Pontoon.project.win,
               targetOrigin = targetOrigin || "*",

@@ -423,6 +423,7 @@
   padding: 6px 0 5px 0;
   margin-right: 5px;
   text-transform: uppercase;
+  width: auto;
 }
 
 #pontoon #loading.loader {
