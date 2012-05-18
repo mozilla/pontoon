@@ -102,7 +102,7 @@
           }, 100);
 
       // If loading page fails, don't wait 5 seconds to trigger error (ignore localhost)
-      if (url.split('://')[1].indexOf('localhost') !== 0) {
+      if (!url.split('://')[1] || url.split('://')[1].indexOf('localhost') !== 0) {
         $.ajax({
           url: base + 'checkurl/',
           data: {url: url},
