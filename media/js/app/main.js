@@ -732,10 +732,12 @@ var Pontoon = (function () {
         code: locale,
         language: $("#main .language").html()
       };
+      var email = $("#profile .author").html();
       this.user = {
-        name: "",
-        email: ""
+        email: email,
+        name: email.split("@")[0]
       };
+      self.common.postMessage("USER", self.user);
       this.transifex = {
         username: "",
         password: "",
