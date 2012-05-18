@@ -77,10 +77,6 @@
       // Load project page into iframe
       $('#source').attr('src', url);
       $('#project-load').show();
-      $('#intro .notification')
-        .html('Loading...')
-        .addClass('message').removeClass('error')
-        .css('visibility', 'visible');
 
       // Show error message if no callback for 5 seconds: Pontoon/iframe not supported, 404…
       var i = 0,
@@ -94,11 +90,12 @@
               clearInterval(callback);
               $('#project-load').hide();
               $("#install").css('visibility', 'visible');
-              $('#intro').find('.notification')
-                .html('Oops, website is either not supported by Pontoon or could not be found.')
-                .addClass('error').removeClass('message')
-                .css('visibility', 'visible')
-                .end().css('display', 'table').hide().fadeIn();
+              $('#intro')
+                .find('.notification')
+                  .html('Oops, website is either not supported by Pontoon or could not be found.')
+                  .addClass('error').removeClass('message')
+                  .css('visibility', 'visible').end()
+                .css('display', 'table').hide().fadeIn();
             }
           }, 100);
     }
