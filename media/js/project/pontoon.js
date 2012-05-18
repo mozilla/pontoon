@@ -558,7 +558,7 @@
   // Load jQuery if not loaded yet
   function loadJquery() {
     if (!window.jQuery) {
-      if (!jqueryAppended) {
+      if (!jqueryAppended && document.body) {
         script.src = "//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js";
         document.body.appendChild(script);
         jqueryAppended = true;
