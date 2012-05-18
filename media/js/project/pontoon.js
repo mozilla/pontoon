@@ -455,6 +455,8 @@
                 .find("script[src*='pontoon.js']").remove().end()
                 .find("script[src*='jquery.min.js']").remove().end()
                 .find(".editableToolbar").remove().end()
+                .find("[contenteditable]").removeAttr("contenteditable").end()
+                .find("body").removeAttr("contextmenu").end()
                 .find("menu#context").remove();
 
               postMessage("HTML", start + inner.html() + "\n</html>");  
