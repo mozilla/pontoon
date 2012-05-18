@@ -73,6 +73,7 @@
           // Show header and iframe with appropriate height
           $('#main').slideDown(function() {
             $('#source').fadeIn().height($(document).height() - $(this).height());
+            $('#project-load').hide();
           });
           Pontoon.init(window, $('#source').get(0).contentWindow, locale);
           window.removeEventListener("message", receiveMessage, false);
