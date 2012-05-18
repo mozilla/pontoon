@@ -56,13 +56,14 @@
     });
 
     // Show page load Error
-    function showError(callback) {
+    function showError(callback, message) {
+      var error = message || 'Oops, website is either not supported by Pontoon or could not be found.';
       clearInterval(callback);
       $('#project-load').hide();
       $("#install").css('visibility', 'visible');
       $('#intro')
         .find('.notification')
-          .html('Oops, website is either not supported by Pontoon or could not be found.')
+          .html(error)
           .addClass('error').removeClass('message')
           .css('visibility', 'visible').end()
         .css('display', 'table').hide().fadeIn();
@@ -96,7 +97,7 @@
                 clearInterval(callback);
               }
             } else {
-              showError(callback);
+              showError(callback, 'Oops, website is not supported by Pontoon. Check instructions below.');
             }
           }, 100);
 
@@ -108,7 +109,7 @@
           timeout: 4500,
           success: function(data) {
             if (data === "invalid") {
-              showError(callback);
+              showError(callback, 'Oops, website could not be found.');
             }
           }
         });
