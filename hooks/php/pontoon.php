@@ -73,7 +73,7 @@ class Pontoon
     static function header_tags($project, $resource, $info) {
         echo '<meta name="Pontoon" data-project="'.$project.'" data-resource="'.$resource.'" data-info="'.$info.'" />'."\n";
 
-        $url = $GLOBALS["path"] ? $GLOBALS["path"] : "https://pontoon-dev.mozillalabs.com";
+        $url = $GLOBALS["path"] ? $GLOBALS["path"] : "http://localhost:8000/";
         echo '<script src="'.$url.'media/js/project/pontoon.js"></script>'."\n";
     }
 }
