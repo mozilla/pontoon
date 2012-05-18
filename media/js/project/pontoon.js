@@ -54,6 +54,8 @@
           title: Pontoon.project.title,
           info: Pontoon.project.info,
           pages: pages,
+          username: Pontoon.transifex.username,
+          password: Pontoon.transifex.password,
           name: Pontoon.transifex.project,
           resource: Pontoon.transifex.resource,
           po: Pontoon.transifex.po
@@ -509,11 +511,16 @@
       if (meta.length > 0) {
         if (meta.attr('data-project')) {
           Pontoon.transifex.project = meta.data('project');
+          /* Credentials for demo project to test PHP hooks */
+          if (Pontoon.transifex.project === 'testpilot') {
+            Pontoon.transifex.username = 'pontoon';
+            Pontoon.transifex.password = 'mozilla';
+          }
         }
         if (meta.attr('data-resource')) {
           Pontoon.transifex.resource = meta.data('resource');
         }
-        if (meta.attr('data-info')) {          
+        if (meta.attr('data-info')) {
           $.getJSON(Pontoon.project.url + meta.data('info')).success(function (data) {
             Pontoon.project.info = data;
           });
