@@ -424,6 +424,7 @@
   margin-right: 5px;
   text-transform: uppercase;
   width: auto;
+  visibility: visible;
 }
 
 #pontoon #loading.loader {
