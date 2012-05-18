@@ -393,6 +393,7 @@ body {
 #source {
   display: none;
   width: 100%;
+  height: 0;
 }
 
 #iframe-cover {

@@ -74,14 +74,11 @@
       function receiveMessage(e) {
         // TODO: Check origin - hardcode Pontoon domain name
         if (JSON.parse(e.data).type === "SUPPORTED") {
-          // Slide up intro page, show header and iframe with appropriate height
-          $('#intro').slideUp(function() {
-            $('#source').show();
-            $('#main').slideDown(function() {
-              $('#source').height($(document).height() - $(this).height());
-            });
-            Pontoon.init(window, $('#source').get(0).contentWindow, locale);
+          // Show header and iframe with appropriate height
+          $('#main').slideDown(function() {
+            $('#source').fadeIn().height($(document).height() - $(this).height());
           });
+          Pontoon.init(window, $('#source').get(0).contentWindow, locale);
           window.removeEventListener("message", receiveMessage, false);
         }
       }
@@ -89,7 +86,6 @@
 
       // Load project page into iframe
       $('#source').attr('src', url);
-      $('#project-load').show();
 
       // Show error message if no callback for 5 seconds: Pontoon/iframe not supported, 404…
       var i = 0,
