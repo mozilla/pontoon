@@ -81,7 +81,7 @@ def transifex(request, template=None):
 
     profile = request.user.get_profile()
     username = request.GET.get('auth[username]', profile.transifex_username)
-    password = request.GET.get('auth[password]', profile.transifex_password)
+    password = request.GET.get('auth[password]', base64.decodestring(profile.transifex_password))
 
     if not (password or username):
         return HttpResponse("authenticate")
@@ -127,7 +127,7 @@ def transifex(request, template=None):
 
     if 'auth[remember]' in request.GET and request.GET.get('auth[remember]') == '1':
         profile.transifex_username = request.GET['auth[username]']
-        profile.transifex_password = request.GET['auth[password]']
+        profile.transifex_password = base64.encodestring(request.GET['auth[password]'])
         profile.save()
     return HttpResponse("done")
 
