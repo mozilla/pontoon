@@ -490,12 +490,12 @@
 
 #pontoon #transifex .remember {
   float: left;
-  padding: 6px 0 0 18px;
+  padding: 6px 0 0 16px;
 }
 
 #pontoon #transifex .remember input {
   float: left;
-  margin-left: -18px;
+  margin-left: -16px;
 }
 
 #pontoon #transifex .buttons {
