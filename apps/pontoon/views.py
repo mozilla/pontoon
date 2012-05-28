@@ -79,7 +79,7 @@ def transifex(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
 
-    profile = request.user.profile
+    profile = request.user.get_profile()
     username = request.GET.get('auth[username]', profile.transifex_username)
     password = request.GET.get('auth[password]', profile.transifex_password)
 
@@ -125,11 +125,10 @@ def transifex(request, template=None):
         log.debug('Generic exception: ' + traceback.format_exc())
         return HttpResponse("error")
 
-    """ TODO: Save Transifex credentials """
-    if 'auth[remember]' in request.GET:
-        log.debug("UN: " + username)
-        log.debug("PW: " + password)
-        log.debug(request.GET['auth[remember]'])
+    if 'auth[remember]' in request.GET and request.GET.get('auth[remember]') == '1':
+        profile.transifex_username = request.GET['auth[username]']
+        profile.transifex_password = request.GET['auth[password]']
+        profile.save()
     return HttpResponse("done")
 
 @require_POST
