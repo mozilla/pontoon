@@ -871,7 +871,12 @@ var Pontoon = (function () {
           }
 
           if (key === 13) { // Enter
-            menu.find('li.hover').click();
+            var a = hovered.find('a');
+            if (a.length > 0) {
+              a.click();
+            } else {
+              hovered.click();
+            }
             return false;
           }
 
