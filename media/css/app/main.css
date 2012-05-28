@@ -140,7 +140,8 @@
   -webkit-box-shadow: none;
 }
 
-#pontoon .select .menu {
+#pontoon .select .menu,
+#pontoon .select .popup {
   display: none;
   background: #333333;
   bottom: 31px;
@@ -161,39 +162,39 @@
   -webkit-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
 }
 
-#pontoon ul.menu li {
+#pontoon .menu li {
   padding: 2px 12px;
   text-shadow: 1px 1px 2px #000000;
 }
 
-#pontoon ul.menu li.hover {
+#pontoon .menu li.hover {
   cursor: pointer;
   color: #FFFFFF;
   background: #444444;
 }
 
-#pontoon ul.menu li:first-child {
+#pontoon .menu li:first-child {
   padding: 7px 0 4px 12px;
 }
 
-#pontoon ul.menu li:first-child.hover {
+#pontoon .menu li:first-child.hover {
   border-radius: 3px 3px 0 0;
   -moz-border-radius: 3px 3px 0 0;
   -webkit-border-radius: 3px 3px 0 0;
 }
 
-#pontoon .locale ul.menu li:first-child,
+#pontoon .locale .menu li:first-child,
 #pontoon #profile-menu li:first-child {
   border-bottom: 1px solid #040404;
 }
 
-#pontoon .locale ul.menu li:nth-child(2),
+#pontoon .locale .menu li:nth-child(2),
 #pontoon #profile-menu li:nth-child(2) {
   border-top: 1px solid #444444;
 }
 
-#pontoon ul.menu li a:link,
-#pontoon ul.menu li a:visited {
+#pontoon .menu li a:link,
+#pontoon .menu li a:visited {
   height: 100%;
   width: 100%;
   display: block;
@@ -206,8 +207,8 @@
   transition: none;  
 }
 
-#pontoon ul.menu li a:hover,
-#pontoon ul.menu li a:active {
+#pontoon .menu li a:hover,
+#pontoon .menu li a:active {
   color: #FFFFFF;
 }
 
@@ -294,7 +295,6 @@
 
 #pontoon #info .menu {
   width: 400px;
-  padding: 10px 0;
 }
 
 #pontoon #info .menu section {
@@ -463,6 +463,47 @@
 #pontoon #profile-menu {
   display: none;
   right: 0;
+}
+
+#pontoon #transifex {
+  padding: 12px 12px 4px;
+  right: 0;
+  width: 200px;
+}
+
+#pontoon #transifex input[type=text],
+#pontoon #transifex input[type=password] {
+  margin-bottom: 5px;
+  width: 192px;
+
+  box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
+  -moz-box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
+  -webkit-box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
+}
+
+#pontoon #transifex input[type=text]:focus,
+#pontoon #transifex input[type=password]:focus {
+  box-shadow: 0 0 2px 1px #AEEE00;
+  -moz-box-shadow: 0 0 2px 1px #AEEE00;
+  -webkit-box-shadow: 0 0 2px 1px #AEEE00;
+}
+
+#pontoon #transifex .remember {
+  float: left;
+  padding: 6px 0 0 18px;
+}
+
+#pontoon #transifex .remember input {
+  float: left;
+  margin-left: -18px;
+}
+
+#pontoon #transifex .buttons {
+  float: right;
+}
+
+#pontoon #transifex .buttons a {
+  margin-right: 5px;
 }
 
 #pontoon #switch {

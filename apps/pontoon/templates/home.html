@@ -164,6 +164,20 @@
                 <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download JSON') }}</a></li>
                 <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download PO') }}</a></li>
               </ul>
+              <aside id="transifex" class="popup">
+                <h2>Sign in to Transifex</h2>
+                <form>
+                  <input id="username" name="username" type="text" placeholder="Email or Username" />
+                  <input id="password" name="password" type="password" placeholder="Password" />
+                  <label class="remember">
+                    <input id="remember" name="remember" type="checkbox" />Remember
+                  </label>
+                  <div class="buttons">
+                    <a class="cancel" href="#">Cancel</a><div class="button">Sign in</div>
+                  </div>
+                  
+                </form>
+              </aside>
             </div>
             <button id="switch"></button>
           </div>

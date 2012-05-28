@@ -3,6 +3,7 @@ import logging
 import urllib2
 import base64
 import json
+import traceback
 
 from django import http
 from django.http import HttpResponse
@@ -78,9 +79,14 @@ def transifex(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
 
+    profile = request.user.profile
+    username = request.GET.get('auth[username]', profile.transifex_username)
+    password = request.GET.get('auth[password]', profile.transifex_password)
+
+    if not (password or username):
+        return HttpResponse("authenticate")
+
     locale = request.GET['locale']
-    username = request.GET['transifex[username]']
-    password = request.GET['transifex[password]']
     project = request.GET['transifex[project]']
     resource = request.GET['transifex[resource]']
     po = request.GET['transifex[po]']
@@ -100,11 +106,31 @@ def transifex(request, template=None):
     base64string = base64.encodestring('%s:%s' % (username, password))[:-1]
     req.add_header("Authorization", "Basic %s" % base64string)
     req.add_header("Accept-Encoding", "gzip,deflate")
-
     urllib2.install_opener(urllib2.build_opener(MultipartPostHandler))
-    urllib2.urlopen(req, timeout=10)
 
-    return HttpResponse()
+    try: 
+        urllib2.urlopen(req, timeout=10)
+    except urllib2.HTTPError, e:
+        log.debug('HTTPError: ' + str(e.code))
+        if e.code == 401:
+            return HttpResponse("authenticate")
+        return HttpResponse("error")
+    except urllib2.URLError, e:
+        log.debug('URLError: ' + str(e.reason))
+        return HttpResponse("error")
+    except httplib.HTTPException, e:
+        log.debug('HTTPException')
+        return HttpResponse("error")
+    except Exception:
+        log.debug('Generic exception: ' + traceback.format_exc())
+        return HttpResponse("error")
+
+    """ TODO: Save Transifex credentials """
+    if 'auth[remember]' in request.GET:
+        log.debug("UN: " + username)
+        log.debug("PW: " + password)
+        log.debug(request.GET['auth[remember]'])
+    return HttpResponse("done")
 
 @require_POST
 def verify(request, template=None):

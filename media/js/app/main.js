@@ -126,11 +126,31 @@ var Pontoon = (function () {
         self.transifex.po = head + "\n\n" + strings.join("\n\n");
         params.transifex = self.transifex;
 
+        if (value) {
+          params.auth = {
+            username: value[0].value,
+            password: value[1].value,
+            remember: value[2] ? 1 : 0
+          };
+        }
+
         $.ajax({
           url: self.app.path + 'transifex/',
           data: params,
-          success: function() {
-            self.endLoader('Done!');
+          success: function(data) {
+            if (data === "authenticate") {
+              self.endLoader('Please sign in to Transifex.', 'error');
+              $("#transifex").show();
+            } else if (data === "done") {
+              self.endLoader('Done!');
+              $('#transifex').hide();
+            } else if (data === "error") {
+              self.endLoader('Oops, something went wrong.', 'error');
+              $('#transifex').hide();
+            }
+          },
+          error: function() {
+            self.endLoader('Oops, something went wrong.', 'error');
           }
         });
       }
@@ -381,7 +401,7 @@ var Pontoon = (function () {
             },
             dataType: 'jsonp'
           }).error(function () {
-            loader.removeClass("loader").addClass("no").html("Ooops, something went wrong... Please try again.");
+            loader.removeClass("loader").addClass("no").html("Oops, something went wrong.");
           }).success(function (response) {
             if (response !== null) {
               // Not supported in some browsers, but needed with current JSON output:
@@ -535,7 +555,7 @@ var Pontoon = (function () {
      * text Loader text (e.g. Loading...)
      */
     startLoader: function (text) {
-      $('#loading').html(text).addClass('loader').show();
+      $('#loading').html(text).removeClass().addClass('loader').show();
     },
 
 
@@ -544,6 +564,7 @@ var Pontoon = (function () {
      * Remove loader text
      * 
      * text End of operation text (e.g. Done!)
+     * type [error]
      */
     endLoader: function (text, type) {
       $('#loading').html(text).removeClass('loader').addClass(type);
@@ -635,7 +656,7 @@ var Pontoon = (function () {
                 self.endLoader('Welcome!');
               },
               error: function() {
-                self.endLoader('Oops! Please try again.', 'error');
+                self.endLoader('Oops, something went wrong.', 'error');
               }
             });
           }
@@ -650,6 +671,15 @@ var Pontoon = (function () {
         } else {
           self.save($(this).attr('class').split(" ")[0]);
         }
+      });
+
+      // Transifex authentication
+      $('#transifex').find('.cancel').live("click.pontoon", function (e) {
+        e.preventDefault();
+        $('#transifex').hide();
+      }).end().find('.button').live("click.pontoon", function (e) {
+        e.preventDefault();
+        self.save('transifex', $('#transifex form').serializeArray());
       });
     },
 
@@ -847,6 +877,15 @@ var Pontoon = (function () {
 
           if (key === 27) { // Escape
             menu.siblings('.selector').click();
+            return false;
+          }
+        }
+        if ($('.popup').is(':visible')) {
+          var key = e.keyCode || e.which,
+              popup = $('.popup:visible');
+
+          if (key === 13) { // Enter
+            popup.find('.button').click();
             return false;
           }
         }

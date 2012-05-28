@@ -50,7 +50,8 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 # Required for BrowserID. Very important security feature. Override in local settings file
 SITE_URL = 'http://localhost:8000'
 
-LOGIN_REDIRECT_URL = '/'
+# Required for storing additional information about users
+AUTH_PROFILE_MODULE = 'pontoon.UserProfile'
 
 # Instruct session-csrf to always produce tokens for anonymous users
 ANON_ALWAYS = True
