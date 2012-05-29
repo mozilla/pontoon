@@ -8,28 +8,6 @@ var Pontoon = (function () {
 
 
     /*
-     * Simulate form POST
-     *
-     * action POST form action parameter
-     * params Parameters sending to server
-     */
-    post: function (action, params) {
-      var post = $('#post-form');
-
-      for(var key in params) {
-        $('<input>', {
-          type: 'hidden',
-          name: key,
-          value: params[key]
-        }).appendTo(post);
-      }
-
-      post.attr("action", action).submit();
-    },
-
-
-
-    /*
      * Save data in different formats
      *
      * type Data format
@@ -44,7 +22,7 @@ var Pontoon = (function () {
 
       if (type === "html") {
         params.data = value;
-        this.post(this.app.path + 'download/', params);
+        window.location = self.app.path + 'download/?' + $.param(params);
 
       } else if (type === "json") {
         var pages = $.extend(true, {}, this.project.pages); // Deep copy: http://api.jquery.com/jQuery.extend
@@ -56,7 +34,7 @@ var Pontoon = (function () {
           delete this.body;
         });
         params.data = JSON.stringify(pages, null, "\t");
-        this.post(this.app.path + 'download/', params);
+        window.location = self.app.path + 'download/?' + $.param(params);
 
       } else if (type === "po") {
         var date = new Date(),
@@ -109,7 +87,7 @@ var Pontoon = (function () {
         });
 
         params.data = po;
-        this.post(this.app.path + 'download/', params);
+        window.location = self.app.path + 'download/?' + $.param(params);
 
       } else if (type === "transifex") {
         self.startLoader('Saving...');

@@ -59,9 +59,9 @@ def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations.")
 
-    type = request.POST['type']
-    data = request.POST['data']
-    locale = request.POST['locale']
+    type = request.GET['type']
+    data = request.GET['data']
+    locale = request.GET['locale']
 
     response = HttpResponse(data)
     if type == 'json':
