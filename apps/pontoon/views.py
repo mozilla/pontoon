@@ -40,6 +40,7 @@ def home(request, locale=None, url=None, template=None):
     }
     return render(request, template, data)
 
+@login_required(redirect_field_name='', login_url='/')
 def check_url(request, template=None):
     """Check if URL exists."""
     log.debug("Check if URL exists.")
@@ -54,7 +55,7 @@ def check_url(request, template=None):
         status = "invalid"
     return HttpResponse(status)
 
-@login_required(login_url='/')
+@login_required(redirect_field_name='', login_url='/')
 def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations.")
@@ -74,7 +75,7 @@ def download(request, template=None):
     response['Content-Disposition'] = 'attachment; filename=' + locale + '.' + type
     return response
 
-@login_required(login_url='/')
+@login_required(redirect_field_name='', login_url='/')
 def transifex(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
