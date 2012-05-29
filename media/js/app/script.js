@@ -72,7 +72,7 @@
         if (JSON.parse(e.data).type === "SUPPORTED") {
           // Show header and iframe with appropriate height
           $('#main').slideDown(function() {
-            $('#source').fadeIn().height($(document).height() - $(this).height());
+            $('#source').show().height($(document).height() - $(this).height());
             $('#project-load').hide();
           });
           Pontoon.init(window, $('#source').get(0).contentWindow, locale);
