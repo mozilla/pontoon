@@ -360,7 +360,7 @@ var Pontoon = (function () {
         // TODO: AJAX request to display only locales with current string translation available
         // TODO: Only request each locale meta file once
         $.ajax({
-          url: 'http://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
+          url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
                '@www.transifex.net/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
                 Pontoon.transifex.resource + '/translation/' + locale + '/',
           dataType: 'jsonp',

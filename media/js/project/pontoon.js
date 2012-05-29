@@ -262,7 +262,7 @@
             parent = null;
 
         $.ajax({
-          url: 'http://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
+          url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
                '@www.transifex.net/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
                Pontoon.transifex.resource + '/translation/' + Pontoon.locale.code + '/',
           dataType: 'jsonp',
