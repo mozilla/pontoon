@@ -327,35 +327,28 @@ var Pontoon = (function () {
         e.stopPropagation();
         var li = $(this),
             entity = li.parents(".entity"),
-            index = entity.index(), /* TODO: use IDs or XPath */
+            original = entity[0].entity.original,
             locale = li.find(".language").attr("class").split(" ")[1],
             p = li.parents('.select').next('p').show();
 
+        p.addClass("loader").html('');
         li.parents('.menu').siblings('.selector')
           .find('.language').attr('class', li.find('.language').attr('class')).html(li.find('.language').html()).end().end()
         .hide();
 
         // TODO: AJAX request to display only locales with current string translation available
-        // TODO: Only request each locale meta file once
         $.ajax({
           url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
                '@www.transifex.net/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
-                Pontoon.transifex.resource + '/translation/' + locale + '/',
+                Pontoon.transifex.resource + '/translation/' + locale + '/strings?key=' + original,
           dataType: 'jsonp',
           success: function(data) {
-            // Temporary PO file parser until Transifex API supports JSON output
-            var translations = [];
-            $(data.content.split("msgid").slice(2)).each(function(i, v) {
-              var trans = v.split("msgstr")[1].split("\n\n")[0].replace(/"\n"/g, "").replace(/\n/g, "").replace(/\\"/g, '"');
-              translations.push($.trim(trans.substring(2, trans.length-1)));
-            });
-
-            var translation = translations[index];
-            if (translation) {
-              p.removeClass("no").addClass("source-string").html(translation);
+            var response = data[0];            
+            if (response) {
+              p.removeClass("loader no").addClass("source-string").html(self.doNotRender(response.translation));
               entity.find('.toolbar').show();
             } else {
-              p.addClass("no").html('No translations yet');
+              p.removeClass("loader").addClass("no").html('No translations yet');
               entity.find('.toolbar').hide();
             }
           }
