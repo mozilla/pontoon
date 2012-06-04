@@ -431,6 +431,7 @@ var Pontoon = (function () {
       // Copy source to translation
       $("#main .source .copy").click(function (e) {
         e.stopPropagation();
+        e.preventDefault();
         var li = $(this).parents('.entity'),
             entity = li.get(0).entity,
             source = self.doRender(li.find('.source .content .active .source-string').html());
@@ -460,6 +461,7 @@ var Pontoon = (function () {
       // Save translation
       $("#main .translation .save").click(function (e) {
         e.stopPropagation();
+        e.preventDefault();
         var li = $(this).parents('.entity'),
             entity = li.get(0).entity,
             source = li.find('.translation textarea').val();
@@ -477,6 +479,7 @@ var Pontoon = (function () {
       // Cancel translation
       $("#main .translation .cancel").click(function (e) {
         e.stopPropagation();
+        e.preventDefault();
         var li = $(this).parents('.entity'),
             entity = li.get(0).entity;
 
