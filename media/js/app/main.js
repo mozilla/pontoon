@@ -406,7 +406,9 @@ var Pontoon = (function () {
         var li = $(this).parents('.entity'),
             loader = li.find(".content .machine-translation .loader"),
             entity = li.get(0).entity;
-        if (loader.length === 0) {
+        if (!self.app.mt) {
+          loader.removeClass("loader").addClass("no").html("Machine translation not supported");
+        } else if (loader.length === 0) {
           li.find(".toolbar").show();
         } else {
           $.ajax({
@@ -713,7 +715,8 @@ var Pontoon = (function () {
      * locale ISO 639-1 language code of the language website is localized to
      */
     init: function (app, project, locale) {
-      var self = this;
+      var self = this,
+          email = $("#profile .author").html();
       if (!project) {
         throw "Website handler required";
       }
@@ -722,7 +725,7 @@ var Pontoon = (function () {
       this.app = {
         win: app,
         path: $('base').attr('href'),
-        mt: ''
+        mt: $('#server').data('mt-apikey') || ""
       };
       this.project = {
         win: project,
@@ -736,12 +739,10 @@ var Pontoon = (function () {
         code: locale,
         language: $("#main .language").html()
       };
-      var email = $("#profile .author").html();
       this.user = {
         email: email,
         name: email.split("@")[0]
       };
-      self.common.postMessage("USER", self.user);
       this.transifex = {
         username: "",
         password: "",
@@ -750,16 +751,16 @@ var Pontoon = (function () {
         po: ""
       };
 
-      // Initialize Microsoft Translator API
+      // Sync user data
+      self.common.postMessage("USER", self.user);
+
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
-      $.getScript("/media/js/app/local-settings.js", function() {
-        self.common.postMessage("INITIALIZE", {
-          locale: self.locale,
-          path: self.app.path,
-          transifex: self.transifex
-        });
+      self.common.postMessage("INITIALIZE", {
+        locale: self.locale,
+        path: self.app.path,
+        transifex: self.transifex
       });
-      
+
       // Wait for project code messages
       // TODO: display page not ready for Pontoon notification if event not triggered
       window.addEventListener("message", self.receiveMessage, false);

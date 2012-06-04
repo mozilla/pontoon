@@ -8,6 +8,7 @@ import traceback
 from django import http
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.conf import settings
 
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
@@ -38,6 +39,10 @@ def home(request, locale=None, url=None, template=None):
         'project_url': url,
         'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0]
     }
+
+    if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
+        data['mt_apikey'] = settings.MICROSOFT_TRANSLATOR_API_KEY
+
     return render(request, template, data)
 
 @login_required(redirect_field_name='', login_url='/')

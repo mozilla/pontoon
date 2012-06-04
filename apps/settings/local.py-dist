@@ -71,3 +71,9 @@ SECRET_KEY = ''
 # Common Event Format logging parameters
 #CEF_PRODUCT = 'Playdoh'
 #CEF_VENDOR = 'Mozilla'
+
+# Required for BrowserID. Very important security feature
+SITE_URL = 'http://localhost:8000'
+
+# Microsoft Translator API Key
+MICROSOFT_TRANSLATOR_API_KEY = ''
