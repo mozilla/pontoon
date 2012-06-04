@@ -177,20 +177,22 @@
   padding: 7px 0 4px 12px;
 }
 
-#pontoon .menu li:first-child.hover {
-  border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
+#pontoon .locale .menu li:first-child {
+  padding: 7px 0 2px 12px;
 }
 
-#pontoon .locale .menu li:first-child,
 #pontoon #profile-menu li:first-child {
   border-bottom: 1px solid #040404;
 }
 
-#pontoon .locale .menu li:nth-child(2),
 #pontoon #profile-menu li:nth-child(2) {
   border-top: 1px solid #444444;
+}
+
+#pontoon .menu li:first-child.hover {
+  border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
 }
 
 #pontoon .menu li a:link,
@@ -736,7 +738,7 @@
 }
 
 #pontoon #entitylist .source .content .other-locales .menu {
-  height: 100%;
+  bottom: auto;
   top: 25px;
 
   border-radius: 3px 3px 3px 3px;
@@ -748,13 +750,14 @@
   -webkit-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
 }
 
-#pontoon #entitylist .source .content .other-locales .menu li:nth-child(1) {
-  border-bottom: none;
-  padding: 2px 12px;
+#pontoon #entitylist .source .content .other-locales .menu li:first-child {
+  padding: 4px 0 2px 12px;
 }
 
-#pontoon #entitylist .source .content .other-locales .menu li:nth-child(2) {
-  border-top: none;
+#pontoon #entitylist .source .content .other-locales .menu li:last-child.hover {
+  border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  -webkit-border-radius: 0 0 3px 3px;
 }
 
 #pontoon #entitylist .source .content .loader {
