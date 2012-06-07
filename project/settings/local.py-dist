@@ -1,8 +1,9 @@
 # This is an example settings/local.py file.
 # These settings overrides what's in settings/base.py
 
+from . import base
+
 # To extend any settings from settings/base.py here's an example:
-#from . import base
 #INSTALLED_APPS = base.INSTALLED_APPS + ['debug_toolbar']
 
 DATABASES = {
@@ -47,22 +48,14 @@ DEV = True
 # Uncomment the following line if you prefer to access your app via localhost
 # SITE_URL = 'http://localhost:8000'
 
-# # Playdoh ships with sha512 password hashing by default. Bcrypt+HMAC is safer,
-# # so it is recommended. Please read <https://github.com/fwenzel/django-sha2#readme>,
-# # uncomment the bcrypt hasher and pick a secret HMAC key for your application.
-# BASE_PASSWORD_HASHERS = (
-#     'django_sha2.hashers.BcryptHMACCombinedPasswordVerifier',
-#     'django_sha2.hashers.SHA512PasswordHasher',
-#     'django_sha2.hashers.SHA256PasswordHasher',
-#     'django.contrib.auth.hashers.SHA1PasswordHasher',
-#     'django.contrib.auth.hashers.MD5PasswordHasher',
-#     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
-# )
-# HMAC_KEYS = {  # for bcrypt only
-#     '2011-01-01': 'cheesecake',
-# }
-# from django_sha2 import get_password_hashers
-# PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
+# Playdoh ships with Bcrypt+HMAC by default because it's the most secure.
+# To use bcrypt, fill in a secret HMAC key. It cannot be blank.
+HMAC_KEYS = {
+    #'2012-06-06': 'some secret',
+}
+
+from django_sha2 import get_password_hashers
+PASSWORD_HASHERS = get_password_hashers(base.BASE_PASSWORD_HASHERS, HMAC_KEYS)
 
 # Make this unique, and don't share it with anybody.  It cannot be blank.
 SECRET_KEY = ''
