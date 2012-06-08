@@ -5,7 +5,9 @@
     <title>{% block page_title %}playdoh examples{% endblock %}</title>
 
     {% block site_css %}
-      {{ css('example_css') }}
+      {% compress css %}
+      <link href="{{ static('examples/css/main.css') }}" rel="stylesheet">
+      {% endcompress %}
     {% endblock %}
   </head>
   <body data-mobile-cookie="{{ settings.MOBILE_COOKIE }}">
@@ -23,4 +25,3 @@
     {% endblock %}
   </body>
 </html>
-

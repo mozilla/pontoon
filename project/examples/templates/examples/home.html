@@ -40,7 +40,11 @@
 </ul>
 {% endblock %}
 {% block site_js %}
-    {{ js('example_js') }}
+    {% compress js %}
+    <script src="{{ static('examples/js/libs/jquery-1.4.4.min.js') }}"></script>
+    <script src="{{ static('examples/js/libs/jquery.cookie.js') }}"></script>
+    <script src="{{ static('examples/js/init.js') }}"></script>
+    {% endcompress %}
     {% if not request.user.is_active %}
         {{ browserid_form.media }}
     {% endif %}

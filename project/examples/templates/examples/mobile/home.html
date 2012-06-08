@@ -1,5 +1,7 @@
 {% extends "examples/home.html" %}
 
 {% block site_css %}
-  {{ css('example_mobile_css') }}
+  {% compress css %}
+    <link href="{{ static('examples/css/mobile.css') }}" rel="stylesheet">
+  {% endcompress %}
 {% endblock %}
