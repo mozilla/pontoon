@@ -116,6 +116,7 @@
     function updateLocale(locale) {
       var menu = $('.locale .menu');
       if (menu.find('.language.' + locale).length === 0) {
+        // TODO: show warning about switching locales
         locale = menu.find('.language:first').attr('class').split(' ')[1];
       }
       $('.locale .button .language').addClass(locale).html(menu.find('.language.' + locale).html());
@@ -128,6 +129,7 @@
 
     // Check for params
     var locale = $('#server').data('locale'),
+        escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
         url = $('#server').data('url'),
         acceptLanguage = $('#server').data('accept-language'),
         base = $('base').attr('href');
@@ -139,8 +141,8 @@
     if (locale && url) {
       $('.url').val(url);
       // Set locale
-      if ($('.locale .menu .language.' + locale).length) { // Locale on the list?
-        updateLocale(locale);
+      if ($('.locale .menu .language.' + escapedLocale).length) { // Locale on the list?
+        updateLocale(escapedLocale);
       } else {
         // TODO: show warning about switching locales
         updateLocale(acceptLanguage);
