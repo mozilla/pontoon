@@ -340,8 +340,9 @@
 
 #pontoon .locale .menu {
   left: -5px;
-  max-height: 196px;
+  max-height: 174px;
   overflow: auto;
+  width: 170px;
 }
 
 #pontoon .page {
