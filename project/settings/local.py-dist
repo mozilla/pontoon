@@ -77,3 +77,7 @@ SECRET_KEY = ''
 # Common Event Format logging parameters
 #CEF_PRODUCT = 'Playdoh'
 #CEF_VENDOR = 'Mozilla'
+
+# Uncomment this line if you are running a local development install without
+# HTTPS to disable HTTPS-only cookies.
+#SESSION_COOKIE_SECURE = False
