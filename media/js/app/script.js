@@ -56,8 +56,7 @@
     });
 
     // Show error message
-    function showError(interval, message) {
-      clearInterval(interval);
+    function showError(message) {
       $('#project-load').hide();
       $("#install").css('visibility', 'visible');
       Pontoon.common.showError(message);
@@ -93,7 +92,8 @@
                 clearInterval(interval);
               }
             } else {
-              showError(interval, 'Oops, website is not supported by Pontoon. Check instructions below.');
+              clearInterval(interval);
+              showError('Oops, website is not supported by Pontoon. Check instructions below.');
             }
           }, 100);
 
@@ -105,21 +105,12 @@
           timeout: 4500,
           success: function(data) {
             if (data === "invalid") {
-              showError(interval, 'Oops, website could not be found.');
+              clearInterval(interval);
+              showError('Oops, website could not be found.');
             }
           }
         });
       }
-    }
-
-    // Update locale selector
-    function updateLocale(locale) {
-      var menu = $('.locale .menu');
-      if (menu.find('.language.' + locale).length === 0) {
-        // TODO: show warning about switching locales
-        locale = menu.find('.language:first').attr('class').split(' ')[1];
-      }
-      $('.locale .button .language').addClass(locale).html(menu.find('.language.' + locale).html());
     }
 
     // MAIN CODE
@@ -140,18 +131,21 @@
     if (locale && url) {
       $('.url').val(url);
       // Set locale
-      var escapedLocale = locale.replace(".", "\\.").replace("@", "\\@");
-      if ($('.locale .menu .language.' + escapedLocale).length) { // Locale on the list?
-        updateLocale(escapedLocale);
+      var escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
+          escapedLocaleElement = $('.locale .menu .language.' + escapedLocale);
+      if (escapedLocaleElement.length) { // Locale on the list
+        $('.locale .button .language').addClass(escapedLocale).html(escapedLocaleElement.html());
+        checkURL();
       } else {
-        // TODO: show warning about switching locales
-        updateLocale(acceptLanguage);
+        showError('Oops, locale not supported.');
       }
-      checkURL();
 
     // Intro
     } else {
-      updateLocale(acceptLanguage);
+      if ($('.locale .menu .language.' + acceptLanguage).length === 0) { // Locale not on the list
+        acceptLanguage = $('.locale .menu .language:first').attr('class').split(' ')[1];
+      }
+      $('.locale .button .language').addClass(acceptLanguage).html($('.locale .menu .language.' + acceptLanguage).html());
       $('#install').css('visibility', 'visible');
       $('#project-load').hide();
       $('#intro').css('display', 'table').hide().fadeIn(function() {});
