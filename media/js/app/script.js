@@ -129,7 +129,6 @@
 
     // Check for params
     var locale = $('#server').data('locale'),
-        escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
         url = $('#server').data('url'),
         acceptLanguage = $('#server').data('accept-language'),
         base = $('base').attr('href');
@@ -141,6 +140,7 @@
     if (locale && url) {
       $('.url').val(url);
       // Set locale
+      var escapedLocale = locale.replace(".", "\\.").replace("@", "\\@");
       if ($('.locale .menu .language.' + escapedLocale).length) { // Locale on the list?
         updateLocale(escapedLocale);
       } else {
