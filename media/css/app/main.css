@@ -267,6 +267,16 @@
   margin: -6px 0 0;
 }
 
+#pontoon > #main > header #spinner {
+  display: inline-block;
+  height: 20px;
+}
+
+#pontoon > #main > header .loader {
+  background: transparent url('../../img/loader-light.gif') right 4px no-repeat;
+  padding-right: 20px;
+}
+
 #pontoon #logo {
   background: url('../../img/logo-small.png') no-repeat 7px 5px;
   color: #AEEE00;
@@ -430,11 +440,6 @@
   text-transform: uppercase;
   width: auto;
   visibility: visible;
-}
-
-#pontoon #loading.loader {
-  background: transparent url('../../img/loader-light.gif') right 4px no-repeat;
-  padding-right: 20px;
 }
 
 #pontoon #loading.error {

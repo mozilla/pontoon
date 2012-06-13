@@ -704,7 +704,9 @@ var Pontoon = (function () {
         } else if (message.type === "RENDER") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
-          $("#main > header > .container").fadeIn();
+          $("#spinner").fadeOut(function() {
+            $("#main > header > .container").fadeIn();
+          });
         } else if (message.type === "SWITCH") {
           $("#switch").click();
         } else if (message.type === "HOVER") {
