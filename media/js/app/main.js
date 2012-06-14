@@ -23,7 +23,7 @@ var Pontoon = (function () {
       if (type === "html") {
         params.data = value;
         self.confirmLeaving(false);
-        window.location = self.app.path + 'download/?' + $.param(params);
+        window.location = 'download/?' + $.param(params);
         self.confirmLeaving(true);
 
       } else if (type === "json") {
@@ -37,7 +37,7 @@ var Pontoon = (function () {
         });
         params.data = JSON.stringify(pages, null, "\t");
         self.confirmLeaving(false);
-        window.location = self.app.path + 'download/?' + $.param(params);
+        window.location = 'download/?' + $.param(params);
         self.confirmLeaving(true);
 
       } else if (type === "po") {
@@ -92,7 +92,7 @@ var Pontoon = (function () {
 
         params.data = po;
         self.confirmLeaving(false);
-        window.location = self.app.path + 'download/?' + $.param(params);
+        window.location = 'download/?' + $.param(params);
         self.confirmLeaving(true);
 
       } else if (type === "transifex") {
@@ -119,7 +119,7 @@ var Pontoon = (function () {
         }
 
         $.ajax({
-          url: self.app.path + 'transifex/',
+          url: 'transifex/',
           data: params,
           success: function(data) {
             if (data === "authenticate") {
@@ -639,7 +639,7 @@ var Pontoon = (function () {
         navigator.id.get(function(assertion) {
           if (assertion) {
             $.ajax({
-              url: self.app.path + 'browserid/verify/',
+              url: 'browserid/verify/',
               type: 'POST',
               data: {
                 assertion: assertion,
