@@ -879,9 +879,9 @@ var Pontoon = (function () {
           if (key === 38) { // up arrow
             if (hovered.length === 0 || menu.find('li:first').is('.hover')) {
               menu.find('li.hover').removeClass('hover');
-              menu.find('li:last').addClass('hover');
+              menu.find('li:visible:last').addClass('hover');
             } else {
-              menu.find('li.hover').removeClass('hover').prev().addClass('hover');
+              menu.find('li.hover').removeClass('hover').prev(':visible').addClass('hover');
             }
             return false;
           }
@@ -889,9 +889,9 @@ var Pontoon = (function () {
           if (key === 40) { // down arrow
             if (hovered.length === 0 || menu.find('li:last').is('.hover')) {
               menu.find('li.hover').removeClass('hover');
-              menu.find('li:first').addClass('hover');
+              menu.find('li:visible:first').addClass('hover');
             } else {
-              menu.find('li.hover').removeClass('hover').next().addClass('hover');
+              menu.find('li.hover').removeClass('hover').next(':visible').addClass('hover');
             }
             return false;
           }
