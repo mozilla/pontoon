@@ -850,7 +850,7 @@ var Pontoon = (function () {
 
       // Reset locale search
       $('.locale .selector').live('click.pontoon', function() {
-        $('.search').val('').focus().siblings('ul').find('.no-match').hide().siblings().show();
+        $('.search').val('').focus().siblings('ul').scrollTop(0).find('.no-match').hide().siblings().removeClass('hover').show();
       });
 
       // Search locales

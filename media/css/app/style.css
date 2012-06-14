@@ -362,6 +362,14 @@ body {
   -webkit-border-radius: 0 0 4px 4px;
 }
 
+#pontoon #intro .select .button .code {
+  padding: 2px;
+}
+
+#pontoon #intro .select .menu .code {
+  padding: 1px 12px 0 0;
+}
+
 #pontoon .notification {
   visibility: hidden;
   margin: 0 auto;
