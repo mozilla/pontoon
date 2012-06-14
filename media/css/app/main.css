@@ -178,9 +178,15 @@
 }
 
 #pontoon .locale .menu .search {
+  background: url("../../img/search.png") no-repeat 145px center #888888;
   float: none;
-  width: 158px;
+  width: 138px;
+  padding-right: 24px;
   margin: 6px 12px;
+}
+
+#pontoon .locale .menu .search:focus {
+  background-color: #FFFFFF;
 }
 
 #pontoon #profile-menu li:first-child {

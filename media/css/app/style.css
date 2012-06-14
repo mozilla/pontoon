@@ -348,7 +348,8 @@ body {
 }
 
 #pontoon #intro .select .menu .search {
-  width: 178px;
+  width: 158px;
+  background-position: 165px center;
 }
 
 #pontoon #intro .select .menu ul {
