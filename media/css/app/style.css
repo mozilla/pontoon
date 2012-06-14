@@ -290,7 +290,7 @@ body {
 }
 
 #intro form {
-  width: 680px;
+  width: 710px;
   height: 40px;
   margin: 0 auto;
 }
@@ -308,7 +308,7 @@ body {
   -webkit-border-radius: 3px 3px 3px 3px;
 }
 
-#pontoon #intro input[type=text]:focus {
+#pontoon #intro input[type=text].url:focus {
   text-align: left;
 
   box-shadow: 0 0 5px 1px #AEEE00;
@@ -330,7 +330,7 @@ body {
 }
 
 #pontoon #intro .select .confirm {
-  width: 130px;
+  width: 160px;
 }
 
 #pontoon #intro .select .menu {
