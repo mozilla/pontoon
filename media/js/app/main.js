@@ -662,9 +662,11 @@ var Pontoon = (function () {
       });
 
       // Save menu
-      $('#profile-menu').find('a:not(".sign-out")').live("click.pontoon", function (e) {
+      $('#profile-menu').find('a').live("click.pontoon", function (e) {
         e.preventDefault();
-        if ($(this).is(".html")) {
+        if ($(this).is(".sign-out")) {
+          window.location = 'logout/'; // Without this, Enter doesn't open the link
+        } else if ($(this).is(".html")) {
           self.common.postMessage("HTML");
         } else {
           self.save($(this).attr('class').split(" ")[0]);
