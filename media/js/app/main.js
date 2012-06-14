@@ -850,16 +850,23 @@ var Pontoon = (function () {
 
       // Reset locale search
       $('.locale .selector').live('click.pontoon', function() {
-        $('.search').val('').focus().siblings('ul').find('li').show();
+        $('.search').val('').focus().siblings('ul').find('.no-match').hide().siblings().show();
       });
 
       // Search locales
       $('.search').live("click.pontoon", function (e) {
         e.stopPropagation();
       }).live("keyup.pontoon", function(e) {
-        $(this).siblings('ul')
+        var ul = $(this).siblings('ul'),
+            val = $(this).val();
+        ul
           .find('li').show().end()
-          .find('li:not(":containsi("' + $(this).val() + '")")').hide();
+          .find('li:not(":containsi("' + val + '")")').hide();
+        if (ul.find('li:not(".no-match"):visible').length === 0) {
+          ul.find('.no-match').find('span').html(val).end().show();
+        } else {
+          ul.find('.no-match').hide();
+        }
       });
 
       // Use arrow keys to move around menu, confirm with enter, close with escape

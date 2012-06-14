@@ -222,6 +222,10 @@
   color: #FFFFFF;
 }
 
+#pontoon .menu li.no-match {
+  display: none;
+}
+
 #pontoon .right {
   float: right;
   margin-right: 5px;
@@ -367,7 +371,7 @@
 }
 
 #pontoon .locale .menu ul {
-  max-height: 150px;
+  height: 150px;
   overflow: auto;
   margin-left: 0;
 }
