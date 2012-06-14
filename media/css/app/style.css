@@ -356,18 +356,12 @@ body {
   height: 170px;
 }
 
-#pontoon #intro .select .menu li:last-child.hover {
-  border-radius: 0 0 4px 4px;
-  -moz-border-radius: 0 0 4px 4px;
-  -webkit-border-radius: 0 0 4px 4px;
-}
-
 #pontoon #intro .select .button .code {
   padding: 2px;
 }
 
 #pontoon #intro .select .menu .code {
-  padding: 1px 12px 0 0;
+  padding: 1px 4px 0 0;
 }
 
 #pontoon .notification {
