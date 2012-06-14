@@ -818,9 +818,8 @@ var Pontoon = (function () {
         $('.select').removeClass('opened');
       });
 
-      // Start new project with current website url and locale
-      $('.locale .confirm, .locale .menu li:not(".add")').unbind("click.pontoon").bind("click.pontoon", function () {
-        // TODO: show warning on bad locale and/or url
+      // Confirm and select locale handlers
+      $('.locale .confirm, .locale .menu li').unbind("click.pontoon").bind("click.pontoon", function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             url = $('.url:visible').val();
         if (url) {
@@ -842,6 +841,18 @@ var Pontoon = (function () {
       $('.menu li').live('hover', function () {
         $('.menu li.hover').removeClass('hover');
         $(this).toggleClass('hover');
+      });
+
+      // Search locales
+      $('.locale .selector').live('click.pontoon', function() {
+        $('.search').val('').focus().siblings('ul').find('li').show();
+      });
+      $('.search').live("click.pontoon", function (e) {
+        e.stopPropagation();
+      }).live("keyup.pontoon", function(e) {
+        $(this).siblings('ul')
+          .find('li').show().end()
+          .find('li:not(":contains("' + $(this).val() + '")")').hide();
       });
 
       // Use arrow keys to move around menu, confirm with enter, close with escape

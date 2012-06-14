@@ -173,12 +173,14 @@
   background: #444444;
 }
 
-#pontoon .menu li:first-child {
+#pontoon ul.menu li:first-child {
   padding: 7px 0 4px 12px;
 }
 
-#pontoon .locale .menu li:first-child {
-  padding: 7px 0 2px 12px;
+#pontoon .locale .menu .search {
+  float: none;
+  width: 158px;
+  margin: 6px 12px;
 }
 
 #pontoon #profile-menu li:first-child {
@@ -189,7 +191,7 @@
   border-top: 1px solid #444444;
 }
 
-#pontoon .menu li:first-child.hover {
+#pontoon ul.menu li:first-child.hover {
   border-radius: 3px 3px 0 0;
   -moz-border-radius: 3px 3px 0 0;
   -webkit-border-radius: 3px 3px 0 0;
@@ -332,6 +334,11 @@
   margin: 0 10px;
 }
 
+#pontoon .horizontal-separator {
+  border-top: 1px solid #040404;
+  border-bottom: 1px solid #444444;
+}
+
 #pontoon .locale {
   float: left;
   margin-left: 5px;
@@ -350,9 +357,13 @@
 
 #pontoon .locale .menu {
   left: -5px;
-  max-height: 174px;
-  overflow: auto;
   width: 190px;
+}
+
+#pontoon .locale .menu ul {
+  max-height: 150px;
+  overflow: auto;
+  margin-left: 0;
 }
 
 #pontoon .page {

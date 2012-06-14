@@ -295,7 +295,7 @@ body {
   margin: 0 auto;
 }
 
-#pontoon #intro input[type=text] {
+#pontoon #intro input[type=text].url {
   padding: 5px;
   height: 21px;
   width: 500px;
@@ -336,7 +336,6 @@ body {
 #pontoon #intro .select .menu {
   left: 0;
   bottom: -50px;
-  max-height: 196px;
   width: 210px;
 
   border-radius: 4px 4px 4px 4px;
@@ -348,7 +347,15 @@ body {
   -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-#pontoon #intro ul.menu li:last-child.hover {
+#pontoon #intro .select .menu .search {
+  width: 178px;
+}
+
+#pontoon #intro .select .menu ul {
+  max-height: 170px;
+}
+
+#pontoon #intro .select .menu li:last-child.hover {
   border-radius: 0 0 4px 4px;
   -moz-border-radius: 0 0 4px 4px;
   -webkit-border-radius: 0 0 4px 4px;
