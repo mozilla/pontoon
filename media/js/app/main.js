@@ -843,16 +843,23 @@ var Pontoon = (function () {
         $(this).toggleClass('hover');
       });
 
-      // Search locales
+      // Add case insensitive :contains-like selector to jQuery (needed for locale search)
+      $.expr[':'].containsi = function(a,i,m){
+        return (a.textContent || a.innerText || '').toUpperCase().indexOf(m[3].toUpperCase())>=0;
+      };
+
+      // Reset locale search
       $('.locale .selector').live('click.pontoon', function() {
         $('.search').val('').focus().siblings('ul').find('li').show();
       });
+
+      // Search locales
       $('.search').live("click.pontoon", function (e) {
         e.stopPropagation();
       }).live("keyup.pontoon", function(e) {
         $(this).siblings('ul')
           .find('li').show().end()
-          .find('li:not(":contains("' + $(this).val() + '")")').hide();
+          .find('li:not(":containsi("' + $(this).val() + '")")').hide();
       });
 
       // Use arrow keys to move around menu, confirm with enter, close with escape
