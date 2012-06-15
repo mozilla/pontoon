@@ -169,7 +169,8 @@ var Pontoon = (function () {
      */
     entityList: function () {
       var self = this,
-          list = $(this.app.win.document).find('#entitylist').empty().append('<ul></ul>');
+          list = $(this.app.win.document).find('#entitylist').empty().append('<ul></ul>'),
+          localeMenu = $('.locale .menu').eq(0).html();
 
       // Render
       $(self.project.pages[self.project.page].entities).each(function () {
@@ -204,18 +205,12 @@ var Pontoon = (function () {
                '<p class="no">No suggestions yet</p>') + 
             '</li>' + 
             '<li class="other-locales">' + 
-              '<header class="select">' + 
+              '<header class="locale select">' + 
                 '<h3 class="selector">' + 
                   '<span class="language">Select locale</span>' + 
                   '<span class="handle"> &#9662;</span>' + 
                 '</h3>' + 
-                '<ul class="menu">' + 
-                  '<li><span class="language de">Deutsch</span></li>' + 
-                  '<li><span class="language fr">Français</span></li>' + 
-                  '<li><span class="language hr">Hrvatski</span></li>' + 
-                  '<li><span class="language pl">Polski</span></li>' + 
-                  '<li><span class="language sl">Slovenščina</span></li>' + 
-                '</ul>' + 
+                '<div class="menu">' + localeMenu + '</div>' + 
               '</header>' + 
               '<p class="no">Get inspiration from other locales</p>' +
             '</li>' + 
@@ -322,12 +317,15 @@ var Pontoon = (function () {
       // Other locales
       $("#main .source .other-locales .selector").click(function (e) {
         e.stopPropagation();
+        $('#main header .container .menu:visible').siblings('.selector').click();
         if ($(this).siblings(".menu").is(":visible")) {
           $("#main .source .other-locales .menu").hide();
         } else {
           $("#main .source .other-locales .menu").hide();
           $(this).siblings('.menu').show();
         }
+        // TODO: join with same expression in Pontoon.common() 
+        $('.search').val('').focus().siblings('ul').scrollTop(0).find('.no-match').hide().siblings().removeClass('hover').show();
       });
       $("#main .source .other-locales .select .menu li").click(function (e) {
         e.stopPropagation();
@@ -339,7 +337,7 @@ var Pontoon = (function () {
 
         p.addClass("loader").html('');
         li.parents('.menu').siblings('.selector')
-          .find('.language').attr('class', li.find('.language').attr('class')).html(li.find('.language').html()).end().end()
+          .find('.language').attr('class', li.find('.language').attr('class')).html(li.find('.language').contents()[0].nodeValue).end().end()
         .hide();
 
         // TODO: AJAX request to display only locales with current string translation available
@@ -809,9 +807,7 @@ var Pontoon = (function () {
       var hoveredBottom = hoveredTop + hovered.outerHeight();
 
       if (hoveredBottom >= visibleBottom) {
-        var difference = hoveredBottom - maxHeight,
-            value = (difference > 0) ? difference : 0;
-        menu.scrollTop(value);
+        menu.scrollTop(Math.max(hoveredBottom - maxHeight, 0));
       } else if (hoveredTop < visibleTop) {
         menu.scrollTop(hoveredTop);
       }

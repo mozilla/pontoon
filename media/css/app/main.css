@@ -790,10 +790,13 @@
 
 #pontoon #entitylist .source .content .other-locales .select {
   position: static;
+  float: none;
+  margin-left: 0;
 }
 
 #pontoon #entitylist .source .content .other-locales h3 {
   cursor: pointer;
+  margin-left: 0;
 }
 
 #pontoon #entitylist .source .content .other-locales h3:hover {
@@ -802,6 +805,7 @@
 
 #pontoon #entitylist .source .content .other-locales .menu {
   bottom: auto;
+  left: auto;
   top: 25px;
 
   border-radius: 3px 3px 3px 3px;
@@ -811,16 +815,6 @@
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
-}
-
-#pontoon #entitylist .source .content .other-locales .menu li:first-child {
-  padding: 4px 0 2px 12px;
-}
-
-#pontoon #entitylist .source .content .other-locales .menu li:last-child.hover {
-  border-radius: 0 0 3px 3px;
-  -moz-border-radius: 0 0 3px 3px;
-  -webkit-border-radius: 0 0 3px 3px;
 }
 
 #pontoon #entitylist .source .content .loader {
