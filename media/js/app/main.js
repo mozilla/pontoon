@@ -795,6 +795,31 @@ var Pontoon = (function () {
 
 
     /**
+     * Update slider position in the menu
+     * 
+     * menu Menu element
+     */
+    updateSlider: function (menu) {
+      var hovered = menu.find('li.hover');
+
+      var maxHeight = menu.height();
+      var visibleTop = menu.scrollTop();
+      var visibleBottom = visibleTop + maxHeight;
+      var hoveredTop = visibleTop + hovered.position().top;
+      var hoveredBottom = hoveredTop + hovered.outerHeight();
+
+      if (hoveredBottom >= visibleBottom) {
+        var difference = hoveredBottom - maxHeight,
+            value = (difference > 0) ? difference : 0;
+        menu.scrollTop(value);
+      } else if (hoveredTop < visibleTop) {
+        menu.scrollTop(hoveredTop);
+      }
+    },
+
+
+
+    /**
      * Common functions used in both, client specific code and Pontoon library
      */
     common: (function () {
@@ -877,22 +902,24 @@ var Pontoon = (function () {
               hovered = menu.find('li.hover');
 
           if (key === 38) { // up arrow
-            if (hovered.length === 0 || menu.find('li:first').is('.hover')) {
+            if (hovered.length === 0 || menu.find('li:visible:first').is('.hover')) {
               menu.find('li.hover').removeClass('hover');
               menu.find('li:visible:last').addClass('hover');
             } else {
               menu.find('li.hover').removeClass('hover').prev(':visible').addClass('hover');
             }
+            Pontoon.updateSlider(menu.find('ul'));
             return false;
           }
 
           if (key === 40) { // down arrow
-            if (hovered.length === 0 || menu.find('li:last').is('.hover')) {
+            if (hovered.length === 0 || menu.find('li:visible:last').is('.hover')) {
               menu.find('li.hover').removeClass('hover');
               menu.find('li:visible:first').addClass('hover');
             } else {
               menu.find('li.hover').removeClass('hover').next(':visible').addClass('hover');
             }
+            Pontoon.updateSlider(menu.find('ul'));
             return false;
           }
 
