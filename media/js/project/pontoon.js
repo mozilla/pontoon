@@ -86,7 +86,7 @@
           var element = $(this).parent().get(0).target,
               entity = element.entity;
 
-          $(element).html(element.prevValue);
+          $(element).html(entity.original);
           entity.translation = "";
           sendData();
           postMessage("CANCEL", entity.id);
@@ -162,9 +162,6 @@
        * node DOM node
        */ 
       function makeEditable(node) {
-        // Save value to restore if user presses cancel
-        node.prevValue = $(node).html().toString();
-
         // Show/hide toolbar
         node.showToolbar = function () {
           showToolbar(this);
