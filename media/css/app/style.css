@@ -370,7 +370,7 @@ body {
   text-align: left;
   text-transform: uppercase;
   font-weight: 100;
-  width: 680px;
+  width: 710px; /* Must be same as #intro form */
 }
 
 #pontoon .notification.error {
