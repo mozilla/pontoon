@@ -41,56 +41,33 @@ var Pontoon = (function () {
         self.confirmLeaving(true);
 
       } else if (type === "po") {
-        var date = new Date(),
-            temp = date.toLocaleDateString().split("/"),
-            y = temp[2],
-            m = temp[0],
-            d = temp[1],
-            time = date.toTimeString(),
-            temp = time.split(":"),
-            h = temp[0],
-            mi = temp[1],
-            z = time.split("GMT")[1].split(" ")[0],
-            timestamp = y + "-" + m + "-" + d + " " + h + ":" + mi + z;
-
-        var po = 
-          "# " + self.project.title + " language file (" + self.locale.language + ")\n" +
-          "# This file is distributed under the same license as the website." + "\n" + 
-          "# " + self.user.name + " <" + self.user.email + ">, " + new Date().getFullYear() + "\n" +
-          "#" + "\n" + 
-          "#, fuzzy" + "\n" + 
-          "msgid \"\"" + "\n" + 
-          "msgstr \"\"" + "\n" + 
-          "\"Project-Id-Version: " + self.project.title + " 1.0\\n\"" + "\n" + 
-          "\"POT-Creation-Date: " + timestamp + "\\n\"" + "\n" +
-          "\"PO-Revision-Date: " + timestamp + "\\n\"" + "\n" +
-          "\"Last-Translator: " + self.user.name + " <" + self.user.email + "\\n\"" + "\n" +
-          "\"Language-Team: " + self.locale.language + "\\n\"" + "\n" +
-          "\"MIME-Version: 1.0\\n\"" + "\n" + 
-          "\"Content-Type: text/plain; charset=UTF-8\\n\"" + "\n" + 
-          "\"Content-Transfer-Encoding: 8bit\\n\"" + "\n";
+        var po = {
+            metadata: {
+                'project_title': self.project_title,
+                'locale_language': self.locale.language,
+                'username': self.user.name,
+                'user_email': self.user.email
+            },
+            translations: {}
+        }
 
         $(this.project.pages).each(function () {
           $(this.entities).each(function () {
-            var fuzzy = false,
-                msgstr = this.translation;
+            var msgid = this.original;
+            po.translations[msgid] = {
+                fuzzy: false,
+                msgstr: this.translation,
+                occurrence: self.project.url,
+            };
 
             if (this.suggestions && !msgstr) {
-              fuzzy = true,
-              msgstr = this.suggestions[0].translation;
+              po.translations[msgid].fuzzy = true,
+              po.translations[msgid].msgstr = this.suggestions[0].translation;
             }
-
-            po += 
-              "\n" + 
-              (this.comment ? "#. " + this.comment + "\n" : "") + 
-              "#: " + self.project.url + "\n" + 
-              (fuzzy ? "#, fuzzy\n" : "") + 
-              "msgid \"" + this.original.replace(/"/g, "\\\"") + "\"\n" + 
-              "msgstr \"" + (msgstr? msgstr.replace(/"/g, "\\\"") : "") + "\"\n";
           });
         });
 
-        params.data = po;
+        params.data = JSON.stringify(po);
         self.confirmLeaving(false);
         window.location = 'download/?' + $.param(params);
         self.confirmLeaving(true);
