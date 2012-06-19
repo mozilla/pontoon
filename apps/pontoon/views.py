@@ -1,29 +1,26 @@
 
-import logging
-import urllib2
 import base64
+import commonware
 import json
+import logging
+import requests
 import traceback
+from hashlib import md5
 
 from django import http
-from django.http import HttpResponse
-from django.shortcuts import render
 from django.conf import settings
-
-from django.core.validators import URLValidator
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-
-import commonware
-from funfactory.log import log_cef
-from mobility.decorators import mobile_template
-from web import *
-
+from django.core.validators import URLValidator
+from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseForbidden)
+from django.shortcuts import render
+from django.views.decorators.http import require_POST
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
-from django.http import (HttpResponseBadRequest, HttpResponseForbidden)
-from django.contrib import auth
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
+
+from funfactory.log import log_cef
+from mobility.decorators import mobile_template
 
 
 log = commonware.log.getLogger('playdoh')
@@ -85,55 +82,62 @@ def transifex(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
 
-    profile = request.user.get_profile()
-    username = request.GET.get('auth[username]', profile.transifex_username)
-    password = request.GET.get('auth[password]', base64.decodestring(profile.transifex_password))
+    data = json.loads(request.GET['data'])
 
+    """Check if user authenticated to Transifex."""
+    profile = request.user.get_profile()
+    username = data.get('auth', {}).get('username', profile.transifex_username)
+    password = data.get('auth', {}).get('password', base64.decodestring(profile.transifex_password))
     if not (password or username):
         return HttpResponse("authenticate")
 
-    locale = request.GET['locale']
-    project = request.GET['transifex[project]']
-    resource = request.GET['transifex[resource]']
-    po = request.GET['transifex[po]']
+    """Make PUT request to Transifex API."""
+    project = data['project']
+    resource = data['resource']
+    locale = data['locale']
+    url = 'https://www.transifex.net/api/2/project/' + project + '/resource/' + resource + '/translation/' + locale + '/strings/'
+    headers = {'content-type': 'application/json'}
 
-    """ Save PO file to Pontoon server """
-    f = open(locale + '.po', 'w')
-    f.write(po.encode('utf-8'))
-    f.close()
+    payload = []
+    for entity in data.get('strings'):
+        obj = {
+            # Identify translation strings using hashes
+            "source_entity_hash": md5(':'.join([entity['original'], '']).encode('utf-8')).hexdigest(),
+            "translation": entity['translation']
+        }
+        payload.append(obj)
 
-    """ Save PO file to Transifex """
-    url = 'https://www.transifex.net/api/2/project/' + project + '/resource/' + resource + '/translation/' + locale + '/'
-    data = { "resource" : resource,
-             "language" : locale,
-             "uploaded_file" : open(locale + '.po', 'rb') }
-    req = RequestWithMethod(url=url, data=data, method='PUT')
-
-    base64string = base64.encodestring('%s:%s' % (username, password))[:-1]
-    req.add_header("Authorization", "Basic %s" % base64string)
-    req.add_header("Accept-Encoding", "gzip,deflate")
-    urllib2.install_opener(urllib2.build_opener(MultipartPostHandler))
-
-    try: 
-        urllib2.urlopen(req, timeout=10)
-    except urllib2.HTTPError, e:
-        log.debug('HTTPError: ' + str(e.code))
-        if e.code == 401:
+    try:
+        r = requests.put(url, auth=(username, password), data=json.dumps(payload), headers=headers, timeout=10)
+        log.debug(r.text)
+        if r.status_code == 401:
             return HttpResponse("authenticate")
+    except requests.exceptions.ConnectionError, e: # Network problem (DNS failure, refused connection, etc.)
+        log.debug('ConnectionError: ' + str(e))
         return HttpResponse("error")
-    except urllib2.URLError, e:
-        log.debug('URLError: ' + str(e.reason))
+    except requests.exceptions.HTTPError, e: # Invalid HTTP response
+        log.debug('HTTPError: ' + str(e))
         return HttpResponse("error")
-    except httplib.HTTPException, e:
-        log.debug('HTTPException')
+    except requests.exceptions.URLRequired, e: # A valid URL is required
+        log.debug('URLRequired: ' + str(e))
+        return HttpResponse("error")
+    except requests.exceptions.Timeout, e: # Request times out
+        log.debug('Timeout: ' + str(e))
+        return HttpResponse("error")
+    except requests.exceptions.TooManyRedirects, e: # Request exceeds the number of maximum redirections
+        log.debug('TooManyRedirects: ' + str(e))
+        return HttpResponse("error")
+    except requests.exceptions.RequestException, e: # Ambiguous exception occurres
+        log.debug('RequestException: ' + str(e))
         return HttpResponse("error")
     except Exception:
         log.debug('Generic exception: ' + traceback.format_exc())
         return HttpResponse("error")
 
-    if 'auth[remember]' in request.GET and request.GET.get('auth[remember]') == '1':
-        profile.transifex_username = request.GET['auth[username]']
-        profile.transifex_password = base64.encodestring(request.GET['auth[password]'])
+    """Save Transifex username and password."""
+    if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == '1':
+        profile.transifex_username = data['auth']['username']
+        profile.transifex_password = base64.encodestring(data['auth']['password'])
         profile.save()
     return HttpResponse("done")
 

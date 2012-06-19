@@ -97,18 +97,18 @@ var Pontoon = (function () {
 
       } else if (type === "transifex") {
         self.startLoader('Saving...');
-        var segments = self.transifex.po.split("\n\n"),
-            head = segments[0],
-            strings = segments.slice(1),
-            entities = self.project.pages[self.project.page].entities;
 
-        $(strings).each(function(i, v) {
-          var split = v.split("\nmsgstr");
-          strings[i] = split[0] + "\nmsgstr \"" + entities[i].translation + "\"";
+        params.strings = [];
+        $("#entitylist .translated").each(function() {
+          var entity = $(this)[0].entity;
+          params.strings.push({
+            original: (entity.original),
+            translation: (entity.translation)
+          });
         });
 
-        self.transifex.po = head + "\n\n" + strings.join("\n\n");
-        params.transifex = self.transifex;
+        params.project = self.transifex.project;
+        params.resource = self.transifex.resource;
 
         if (value) {
           params.auth = {
@@ -120,7 +120,9 @@ var Pontoon = (function () {
 
         $.ajax({
           url: 'transifex/',
-          data: params,
+          data: {
+            data: JSON.stringify(params)
+          },
           success: function(data) {
             if (data === "authenticate") {
               self.endLoader('Please sign in to Transifex.', 'error');
@@ -761,7 +763,7 @@ var Pontoon = (function () {
       };
       this.locale = {
         code: locale,
-        language: $("#main .language").html()
+        language: $("#main .language:first").contents()[0].nodeValue
       };
       this.user = {
         email: email,
