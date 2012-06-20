@@ -45,11 +45,11 @@ To sync your repository with upstream changes, just update the code using git:
 Local settings
 --------------
 
-Specify your SITE_URL in the Django local settings file `apps/settings/local.py` if different from `http://localhost:8000`.
+Specify your SITE_URL in the Django local settings file `/apps/settings/local.py` if different from `http://localhost:8000`.
 
 To use Microsoft Translator API for machine translation, obtain a valid API key from the [Bing Developer Center][bdc] and store it in a variable MICROSOFT_TRANSLATOR_API_KEY in your Django local settings file `/apps/settings/local.py`.
 
-To use PHP hooks, store Pontoon application path in the $path variable in your local PHP settings file in `hooks/php/local-settings.php` if different from `http://localhost:8000`.
+To use PHP hooks, store Pontoon application path in the $path variable in your local PHP settings file in `/hooks/php/local-settings.php` if different from `http://localhost:8000`.
 
 Get involved
 ------------
