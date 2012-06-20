@@ -184,7 +184,7 @@
        * Extract entities from the document, not prepared for working with Pontoon
        * 
        * Create entity object from every non-empty text node
-       * Exclude nodes from special tags, e.g. <script> and <link>
+       * Exclude nodes from special tags (e.g. <script>) and with translate=no attribute
        * Skip nodes already included in parent nodes
        * Add temporary pontoon-entity class to prevent duplicate entities when guessing
        */ 
@@ -204,7 +204,7 @@
           }).appendTo("body");
         });
 
-        $(':not("script, style, iframe, noscript")').contents().each(function () {
+        $(':not("script, style, iframe, noscript, [translate=\"no\"]")').contents().each(function () {
           if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
             var entity = {};
             entity.id = counter;
