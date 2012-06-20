@@ -542,6 +542,18 @@
   width: 200px;
 }
 
+#pontoon #transifex .cancel {
+  background: url('../../img/cancel-active.png') no-repeat;
+  float: right;
+  height: 16px;
+  margin-top: -2px;
+  width: 16px;
+}
+
+#pontoon #transifex .cancel:hover {
+  background-image: url('../../img/cancel.png');
+}
+
 #pontoon #transifex input[type=text],
 #pontoon #transifex input[type=password] {
   margin-bottom: 5px;
@@ -552,6 +564,10 @@
   -webkit-box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
 }
 
+#pontoon #transifex input[type=password] {
+    width: 140px;
+}
+
 #pontoon #transifex input[type=text]:focus,
 #pontoon #transifex input[type=password]:focus {
   outline: none; /* Remove WebKit Glow */
@@ -559,6 +575,20 @@
   box-shadow: 0 0 2px 1px #AEEE00;
   -moz-box-shadow: 0 0 2px 1px #AEEE00;
   -webkit-box-shadow: 0 0 2px 1px #AEEE00;
+}
+
+#pontoon #transifex .button {
+  float: right;
+
+  box-shadow: 0 1px #555555, 0 2px 1px -1px #666666 inset;
+  -moz-box-shadow: 0 1px #555555, 0 2px 1px -1px #666666 inset;
+  -webkit-box-shadow: 0 1px #555555, 0 2px 1px -1px #666666 inset;
+}
+
+#pontoon #transifex .button:active {
+  box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
+  -moz-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
+  -webkit-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
 }
 
 #pontoon #transifex .remember {
@@ -571,12 +601,13 @@
   margin-left: -16px;
 }
 
-#pontoon #transifex .buttons {
-  float: right;
+#pontoon #transifex .bottom {
+  font-size: 11px;
 }
 
-#pontoon #transifex .buttons a {
-  margin-right: 5px;
+#pontoon #transifex .bottom .new {
+  float: right;
+  margin-top: 6px;
 }
 
 #pontoon #switch {

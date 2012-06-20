@@ -139,17 +139,20 @@
                 <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download PO') }}</a></li>
               </ul>
               <aside id="transifex" class="popup">
-                <h2>Sign in to Transifex</h2>
+                <h2>
+                  Sign in to Transifex
+                  <a class="cancel" href="#"></a>
+                </h2>
                 <form>
                   <input id="username" name="username" type="text" placeholder="Email or Username" />
                   <input id="password" name="password" type="password" placeholder="Password" />
-                  <label class="remember">
-                    <input id="remember" name="remember" type="checkbox" />Remember
-                  </label>
-                  <div class="buttons">
-                    <a class="cancel" href="#">Cancel</a><div class="button">Sign in</div>
+                  <span class="button">Sign in</span>
+                  <div class="bottom">
+                    <label class="remember">
+                      <input id="remember" name="remember" type="checkbox" />Remember me
+                    </label>
+                    <a class="new" target="_blank" href="https://www.transifex.net/plans/signup/free/">New to Transifex?</a>
                   </div>
-                  
                 </form>
               </aside>
             </div>
