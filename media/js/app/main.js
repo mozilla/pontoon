@@ -326,8 +326,7 @@ var Pontoon = (function () {
           $("#main .source .other-locales .menu").hide();
           $(this).siblings('.menu').show();
         }
-        // TODO: join with same expression in Pontoon.common() 
-        $('.search').val('').focus().siblings('ul').scrollTop(0).find('.no-match').hide().siblings().removeClass('hover').show();
+        $('.search:visible').focus();
       });
       $("#main .source .other-locales .select .menu li").click(function (e) {
         e.stopPropagation();
@@ -871,9 +870,9 @@ var Pontoon = (function () {
         return (a.textContent || a.innerText || '').toUpperCase().indexOf(m[3].toUpperCase())>=0;
       };
 
-      // Reset locale search
+      // Focus locale search
       $('.locale .selector').live('click.pontoon', function() {
-        $('.search').val('').focus().siblings('ul').scrollTop(0).find('.no-match').hide().siblings().removeClass('hover').show();
+        $('.search:visible').focus();
       });
 
       // Search locales
