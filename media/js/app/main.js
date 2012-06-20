@@ -102,8 +102,8 @@ var Pontoon = (function () {
         $("#entitylist .translated").each(function() {
           var entity = $(this)[0].entity;
           params.strings.push({
-            original: (entity.original),
-            translation: (entity.translation)
+            original: entity.original,
+            translation: entity.translation
           });
         });
 
