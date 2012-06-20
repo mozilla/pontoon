@@ -69,6 +69,24 @@ JINGO_EXCLUDE_APPS = [
     'registration',
 ]
 
+# BrowserID configuration
+AUTHENTICATION_BACKENDS = [
+    'django_browserid.auth.BrowserIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+SITE_URL = 'http://127.0.0.1:8000'
+LOGIN_URL = '/'
+LOGIN_REDIRECT_URL = 'examples.home'
+LOGIN_REDIRECT_URL_FAILURE = 'examples.home'
+
+TEMPLATE_CONTEXT_PROCESSORS = list(TEMPLATE_CONTEXT_PROCESSORS) + [
+    'django_browserid.context_processors.browserid_form',
+]
+
+# Always generate a CSRF token for anonymous users.
+ANON_ALWAYS = True
+
 # Tells the extract script what files to look for L10n in and what function
 # handles the extraction. The Tower library expects this.
 DOMAIN_METHODS['messages'] = [
