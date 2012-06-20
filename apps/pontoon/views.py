@@ -1,8 +1,10 @@
 
 import base64
 import commonware
+import datetime
 import json
 import logging
+import polib
 import requests
 import traceback
 from hashlib import md5
@@ -57,24 +59,79 @@ def check_url(request, template=None):
         status = "invalid"
     return HttpResponse(status)
 
+def _generate_po_content(data):
+    """
+    Generate PO content from data JSON.
+
+    Args:
+        data: A JSON string
+    Returns:
+        A string for generated PO content.
+    """
+    json_dict = json.loads(data)
+    po = polib.POFile()
+    current_time = datetime.datetime.now()
+    metadata = json_dict.get('metadata', {})
+    translations = json_dict.get('translations', {})
+
+    # Add PO metadata
+    po.metadata = {
+        'Project-Id-Version': '1.0',
+        'POT-Creation-Date': current_time,
+        'PO-Revision-Date': current_time,
+        'Last-Translator': '%s <%s>' % (json_dict['metadata'].get('username'),
+            json_dict['metadata'].get('user_email')),
+        'Language-Team': json_dict['metadata'].get('locale_language'),
+        'MIME-Version': '1.0',
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Content-Transfer-Encoding': '8bit'
+    }
+
+    # Add PO header
+    po.header = (
+            "%(project_title)s language file (%(locale_language)s)\n"
+            "This is distributed under the same license as the website.\n"
+            "%(username)s <%(user_email)s>, %(year)s\n" % {
+                'project_title': metadata.get('project_title'),
+                'locale_language': metadata.get('locale_language'),
+                'username': metadata.get('username'),
+                'user_email': metadata.get('user_email'),
+                'year': current_time.year
+             }
+    )
+
+    # Append PO entries
+    for msgid in translations.keys():
+        po_entry = polib.POEntry(
+                msgid=msgid,
+                msgstr=translations[msgid].get('msgstr', ''),
+                occurrences = [(translations[msgid].get('occurrence', ''), '')]
+        )
+        if translations[msgid].get('fuzzy'):
+            po_entry.flags.append('fuzzy')
+        po.append(po_entry)
+    return unicode(po).encode('utf-8')
+
 @login_required(redirect_field_name='', login_url='/')
 def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations.")
-
     type = request.GET['type']
     data = request.GET['data']
     locale = request.GET['locale']
 
-    response = HttpResponse(data)
+    response = HttpResponse()
     if type == 'json':
         response['Content-Type'] = 'application/json'
     elif type == 'html':
         response['Content-Type'] = 'text/html'
     elif type == 'po':
+        data = _generate_po_content(data)
         response['Content-Type'] = 'text/plain'
 
-    response['Content-Disposition'] = 'attachment; filename=' + locale + '.' + type
+    response.content = data
+    response['Content-Disposition'] = 'attachment; filename=' + locale +\
+            '.' + type
     return response
 
 @login_required(redirect_field_name='', login_url='/')
