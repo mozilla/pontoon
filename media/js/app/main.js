@@ -43,7 +43,7 @@ var Pontoon = (function () {
       } else if (type === "po") {
         var po = {
             metadata: {
-                'project_title': self.project_title,
+                'project_title': self.project.title,
                 'locale_language': self.locale.language,
                 'username': self.user.name,
                 'user_email': self.user.email
