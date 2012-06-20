@@ -125,7 +125,7 @@
         base = $('base').attr('href');
 
     // Set include script URL
-    $("#install code").html('&lt;script src="' + base + 'media/js/project/pontoon.js"&gt;&lt;/script&gt;');
+    $("#install code").html('&lt;script src="' + base + 'static/js/project/pontoon.js"&gt;&lt;/script&gt;');
 
     // Translate
     if (locale && url) {

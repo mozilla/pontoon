@@ -4,7 +4,7 @@ Pontoon is a live website localization tool. Instead of extracting original stri
 
 This enables localizers to translate websites in-place with context and spatial limitations right in front of them. A full list of extracted strings is also available, to help with strings that are hard to reach, e.g. error messages and the `<title>` tag.
 
-To enable localization of your site with Pontoon, simply include the script located at `/media/js/project/pontoon.js` to overcome cross frame scripting, and Pontoon will autodetect strings. Or, to make the best out of Pontoon, fully prepare your site with hooks that will mark strings for localization and include all the neccessary tags.
+To enable localization of your site with Pontoon, simply include the script located at `/static/js/project/pontoon.js` to overcome cross frame scripting, and Pontoon will autodetect strings. Or, to make the best out of Pontoon, fully prepare your site with hooks that will mark strings for localization and include all the neccessary tags.
 
 Installation
 ------------

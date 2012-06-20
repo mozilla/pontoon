@@ -12,9 +12,12 @@
     <base href="{{ settings.SITE_URL }}/{{ LANG }}/">  
 
     <!-- Place favicon.ico in the root of domain and delete these reference -->
-    <link rel="shortcut icon" href="{{ MEDIA_URL }}img/favicon.ico">
+    <link rel="shortcut icon" href="{{ static('img/favicon.ico') }}">
 
-    {{ css('app') }}
+    {% compress css %}
+    <link rel="stylesheet" href="{{ static('css/app/style.css') }}">
+    <link rel="stylesheet" href="{{ static('css/app/main.css') }}">
+    {% endcompress %}
   </head>
   
   <body id="pontoon">
@@ -125,7 +128,7 @@
                   
           <div class="right{% if user.is_authenticated() %} authenticated{% endif %}">
             <span id="loading" class="notification"></span>
-            <img id="browserid" src="{{ MEDIA_URL }}img/sign_in_blue.png" alt="{{ _('Sign in using BrowserID') }}" />
+            <img id="browserid" src="{{ static('img/sign_in_blue.png') }}" alt="{{ _('Sign in using BrowserID') }}" />
             <div id="profile" class="select">
               <div class="button selector">
                 <span class="author">{{ user.email }}</span>
@@ -174,7 +177,7 @@
     <div id="project-load">
       <div class="inner">
         <p>Loading</p>
-        <img src="{{ MEDIA_URL }}img/loader-big.gif" />
+        <img src="{{ static('img/loader-big.gif') }}" />
       </div>
     </div>
 
@@ -182,10 +185,13 @@
     
     <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ MEDIA_URL }}js/jquery-1.7.2.min.js"%3E%3C/script%3E'))</script>
+    <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ static('js/app/jquery-1.7.2.min.js') }}"%3E%3C/script%3E'))</script>
     
     <script src="https://browserid.org/include.js"></script>
-    {{ js('app') }}
+    {% compress js %}
+    <script src="{{ static('js/app/script.js') }}"></script>
+    <script src="{{ static('js/app/main.js') }}"></script>
+    {% endcompress %}
 
   </body>
 </html>
