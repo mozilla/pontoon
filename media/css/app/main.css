@@ -61,6 +61,7 @@
 #pontoon input[type=password]:focus {
   background: #FFFFFF;
   border-color: #FFFFFF;
+  outline: none; /* Remove WebKit Glow */
 
   box-shadow: 0 0 2px 1px #AEEE00;
   -moz-box-shadow: 0 0 2px 1px #AEEE00;
@@ -393,6 +394,7 @@
 
 #pontoon .locale .menu .search:focus {
   background-color: #FFFFFF;
+  outline: none; /* Remove WebKit Glow */
 
   box-shadow: 0 0 2px 1px #AEEE00;
   -moz-box-shadow: 0 0 2px 1px #AEEE00;
@@ -552,6 +554,8 @@
 
 #pontoon #transifex input[type=text]:focus,
 #pontoon #transifex input[type=password]:focus {
+  outline: none; /* Remove WebKit Glow */
+  
   box-shadow: 0 0 2px 1px #AEEE00;
   -moz-box-shadow: 0 0 2px 1px #AEEE00;
   -webkit-box-shadow: 0 0 2px 1px #AEEE00;
@@ -707,6 +711,7 @@
 
 #pontoon #entitylist .translation textarea:focus {
   border-color: #999999;
+  outline: none; /* Remove WebKit Glow */
 }
 
 #pontoon #entitylist > ul > li.active .translation textarea {

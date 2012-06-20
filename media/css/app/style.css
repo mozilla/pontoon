@@ -310,6 +310,7 @@ body {
 
 #pontoon #intro input[type=text].url:focus {
   text-align: left;
+  outline: none; /* Remove WebKit Glow */
 
   box-shadow: 0 0 5px 1px #AEEE00;
   -moz-box-shadow: 0 0 5px 1px #AEEE00;
