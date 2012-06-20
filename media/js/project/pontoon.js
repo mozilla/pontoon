@@ -335,8 +335,8 @@
           }
           var left = newTarget.getBoundingClientRect().left + window.scrollX,
               top = newTarget.getBoundingClientRect().top + window.scrollY;
-          toolbar.css('left', left + 'px')
-                 .css('top', top-21 + 'px');
+          toolbar.css('left', left)
+                 .css('top', top - toolbar.outerHeight());
         }           
         var toolbarNode = toolbar.get(0);
         if (toolbarNode.I !== null) {
