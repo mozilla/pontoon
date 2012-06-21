@@ -194,7 +194,7 @@
           url: Pontoon.project.url,
           entities: []
         }];
-        var counter = 0; // TODO: use IDs or XPath
+        var counter = 0;
 
         // <noscript> contents are not in the DOM
         $('noscript').each(function() {
@@ -206,15 +206,15 @@
 
         $(':not("script, style, iframe, noscript, [translate=\"no\"]")').contents().each(function () {
           if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
-            var entity = {};
+            var entity = {},
+                parent = $(this).parent();
             entity.id = counter;
             counter++;
-            entity.original = $(this).parent().html();
+            entity.original = parent.html();
 
             // Head entities cannot be edited in-place
             if ($(this).parents('head').length === 0) {
-              // TODO: remove entity.node from Pontoon.project.pages?
-              entity.node = $(this).parent(); // HTML Element holding string
+              entity.node = parent; // HTML Element holding string
               entity.body = true;
               makeEditable(entity.node.get(0)); // Make nodes editable
               entity.node.get(0).entity = entity; // Store entity reference to the node
@@ -222,14 +222,16 @@
             }
 
             // Remove entities from child nodes if parent node is entity
-            $(this).parent().find(".pontoon-entity").each(function() {
+            // TODO: do we need this now that we have additional check in the top-level IF?
+            // Also: pop() removes the last element from the array
+            parent.find(".pontoon-entity").each(function() {
               Pontoon.project.pages[Pontoon.project.page].entities.pop(this.entity);
               entity.id--;
               counter--;
             });
 
             Pontoon.project.pages[Pontoon.project.page].entities.push(entity);
-            $(this).parent().addClass("pontoon-entity");
+            parent.addClass("pontoon-entity");
           }
         });
 
@@ -254,59 +256,66 @@
           url: Pontoon.project.url,
           entities: []
         }];
-        var prefix = 'l10n',
-            counter = 1, // TODO: use IDs or XPath
-            parent = null;
-
+        var counter = 0,
+            prefix = 'l10n';
+            
         $.ajax({
           url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
                '@www.transifex.net/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
-               Pontoon.transifex.resource + '/translation/' + Pontoon.locale.code.replace("-", "_") + '/',
+               Pontoon.transifex.resource + '/translation/' + Pontoon.locale.code.replace("-", "_") + '/strings/',
           dataType: 'jsonp',
           success: function(data) {
-
-            // Temporary PO file parser until Transifex API supports JSON output
-            function clean(s) {
-              return s.replace(/"\n"/g, "").replace(/\n/g, "").replace(/\\"/g, '"');
-            }
-            var po = Pontoon.transifex.po = data.content,
-                segments = po.split("\n\n").slice(1);
-            $(segments).each(function(i, v) {
-              var msgstr = v.split("msgstr"),
-                  msgid = msgstr[0].split("msgid"),
-                  comment = msgid[0].split("#. "),
-                  translation = clean(msgstr[1].split("\n\n")[0]),
-                  original = clean(msgid[1]),
-                  entity = {};
-              entity.comment = comment[1] ? clean(comment[1].split("\n")[0]) : "";
-              entity.original = $.trim(original.substring(2, original.length-1));
-              entity.translation = $.trim(translation.substring(2, translation.length-1));
-              Pontoon.project.pages[Pontoon.project.page].entities.push(entity);
-            });
-
-            var entities = Pontoon.project.pages[Pontoon.project.page].entities;
             $('*').contents().each(function () {
               if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
-                var entity = entities[counter],
-                    translation = entity.translation;
+                var entity = {},
+                    parent = $(this).parent();
+                entity.id = counter;
+                counter++;
+                $(this).remove();
 
-                parent = $(this).parent();
-                if (translation.length > 0) {
-                  parent.html(translation);
-                } else {
-                  $(this).remove();
+                // Match strings in the document with Transifex data
+                $(data).each(function() {
+                  // Renedered text could be different than source
+                  $('body').append('<div id="pontoon-string" style="display: none">' + this.key + '</div>');
+                  if ($('#pontoon-string').html() === parent.html()) {
+                    entity.original = this.key;
+                    entity.comment = this.comment;
+                    var translation = this.translation;
+                    if (translation.length > 0) {
+                      entity.translation = this.translation;
+                      parent.html(translation);
+                    }
+                    this.pontoon = true;
+                  }
+                  $('#pontoon-string').remove();
+                });
+
+                // Head strings cannot be edited in-place
+                if ($(this).parents('head').length === 0) {
+                  entity.node = parent; // HTML Element holding string
+                  entity.body = true;
+                  makeEditable(entity.node.get(0)); // Make nodes editable
+                  entity.node.get(0).entity = entity; // Store entity reference to the node
+                  extendEntity(entity);
                 }
 
-                entity.id = counter;
-                // TODO: remove entity.node from Pontoon.project.pages?
-                entity.node = parent; // HTML Element holding string
-                entity.body = true;
-                makeEditable(entity.node.get(0)); // Make nodes editable
-                entity.node.get(0).entity = entity; // Store entity reference to the node
-                extendEntity(entity);
-                counter++;
+                Pontoon.project.pages[Pontoon.project.page].entities.push(entity);
               }
             });
+
+            // Prepare unmatched Transifex entities to be displayed in Advanced mode
+            $(data).each(function() {
+              if(!this.pontoon) {
+                var entity = {};
+                counter++;
+                entity.id = counter;
+                entity.original = this.key;
+                entity.comment = this.comment;
+                entity.translation = this.translation;
+                Pontoon.project.pages[Pontoon.project.page].entities.push(entity);
+              }
+            });
+
             renderHandle();
           }
         });
