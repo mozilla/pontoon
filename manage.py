@@ -3,7 +3,7 @@ import os
 import sys
 
 # Edit this if necessary or override the variable in your environment.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'apps.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pontoon.settings')
 
 try:
     # For local development in a virtualenv:
