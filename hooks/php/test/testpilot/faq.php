@@ -51,7 +51,7 @@
 
 				    <p><?php echo _w('Test Pilot study results are made available under open licenses, with the data being anonymized before release.')?></p>
 
-<p><?php echo _w('When a product is not easy to use, don\'t just wonder why it\'s designed that way. Make your mark on the design and help us improve it! <a href="https://addons.mozilla.org/services/install.php?addon_id="testpilot"> Join the forces, we want you! </a>')?></p>
+<p><?php echo _w('When a product is not easy to use, don\'t just wonder why it\'s designed that way. Make your mark on the design and help us improve it! <a href="https://addons.mozilla.org/services/install.php?addon_id=testpilot"> Join the forces, we want you! </a>')?></p>
 
  <div class="home_button"><a href="https://testpilot.mozillalabs.com/faq.html"><?php echo _w('Learn more about Test Pilot &raquo;')?></a></div>
 				</div>
