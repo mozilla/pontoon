@@ -143,10 +143,6 @@ def transifex(request, template=None):
 
     """Check if user authenticated to Transifex."""
     profile = request.user.get_profile()
-    log.debug("PROFILE");
-    log.debug(profile.transifex_username);
-    log.debug(profile.transifex_password);
-    log.debug("PROFILE");
     username = data.get('auth', {}).get('username', profile.transifex_username)
     password = data.get('auth', {}).get('password', base64.decodestring(profile.transifex_password))
     if not (password or username):
@@ -196,7 +192,7 @@ def transifex(request, template=None):
         return HttpResponse("error")
 
     """Save Transifex username and password."""
-    if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == '1':
+    if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
         profile.transifex_username = data['auth']['username']
         profile.transifex_password = base64.encodestring(data['auth']['password'])
         profile.save()
