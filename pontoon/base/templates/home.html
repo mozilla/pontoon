@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="{{ LANG }}" dir="{{ DIR }}">
+  <head>
+    <meta charset="utf-8">
+    
+    <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+ 
+    <title>{{ _('Pontoon') }}</title>
+    <meta name="description" content="{{ _('Live web localization tool') }}">
+    <meta name="author" content="{{ _('Mozilla') }}">
+    <base href="{{ settings.SITE_URL }}/{{ LANG }}/">  
+
+    <!-- Place favicon.ico in the root of domain and delete these reference -->
+    <link rel="shortcut icon" href="{{ static('img/favicon.ico') }}">
+
+    {% compress css %}
+    <link rel="stylesheet" href="{{ static('css/app/style.css') }}">
+    <link rel="stylesheet" href="{{ static('css/app/main.css') }}">
+    {% endcompress %}
+  </head>
+  
+  <body id="pontoon">
+    <!-- Server data -->
+    <div id="server"
+         class="hidden"
+         {% if locale_code %}data-locale="{{ locale_code }}"{% endif %}
+         {% if project_url %}data-url="{{ project_url }}"{% endif %}
+         {% if accept_language %}data-accept-language="{{ accept_language }}"{% endif %}
+         {% if mt_apikey %}data-mt-apikey="{{ mt_apikey }}"{% endif %}>
+    </div>
+
+    <!-- POST Form -->
+    <form id="post-form" method="POST" class="hidden">
+      {{ csrf() }}
+    </form>
+
+    <!-- Frontpage -->
+    <section id="intro">
+      <div class="inner">
+
+        <h1 id="title">{{ _('Pontoon') }}</h1>
+
+        <form>
+          <input name="url" class="url" type="text" placeholder="{{ _('Type URL and press Enter') }}" />
+          <!-- Locale selector -->
+          {% include 'locales.html' %}
+        </form>
+
+        <p class="notification">...</p>
+
+        <nav>
+          <ul class="links">
+            <li><a id="test-pilot" class="button" href="/locale/de/url/http://localhost/pontoon/hooks/php/test/testpilot/" title="Demo">{{ _('Demo') }}</a></li>
+            <li><a href="https://wiki.mozilla.org/L10n:Pontoon" target="_blank" title="Learn">Wiki</a></li>
+            <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="Hack">GitHub</a></li>
+            <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="Follow">Twitter</a></li>
+          </ul>
+        </nav>
+
+        <div id="install">
+          <p>{{ _('To enable localization of your site with Pontoon, paste this code before the closing &lt;/head&gt; tag:') }}</p>
+          <pre>
+            <code></code>
+          </pre>
+        </div>
+
+        <noscript>
+          <p>{{ _('In order to use Pontoon, please <a href="http://www.activatejavascript.org/" target="_blank">enable JavaScript</a>.') }}</p>
+        </noscript>
+
+      </div>
+    </section>
+    
+    <!-- Main UI -->
+    <aside id="main">
+
+      <header>
+        <!-- Loading Main UI spinner -->
+        <span id="spinner" class="loader"></span>
+
+        <div class="container">
+          <hr id="drag">
+          <span id="logo">{{ _('Pontoon') }}</span>
+
+          <!-- General project info -->
+          <div id="info" class="select">
+            <div class="selector"></div>
+            <aside class="menu">
+              <section class="brief">
+                <h2>{{ _('Campaign Brief') }}</h2>
+                <p></p>
+              </section>
+              <section class="locales">
+                <h2>{{ _('Locales and Regions') }}</h2>
+                <p></p>
+              </section>
+              <section class="audience">
+                <h2>{{ _('Audience, Reach, and Impact') }}</h2>
+                <p></p>
+              </section>
+              <section class="metrics">
+                <h2>{{ _('Success Metrics') }}</h2>
+                <p></p>
+              </section>
+            </aside>
+          </div>
+
+          <input class="url" type="text" />
+
+          <!-- Locale selector -->
+          {% include 'locales.html' %}
+          
+          <span class="vertical-separator"></span>
+
+          <!-- Page selector -->
+          <div class="page select">
+            <div class="button selector">
+              <span class="title"></span>
+              <span> &#9652;</span>
+            </div>
+            <ul class="menu"></ul>
+          </div>
+
+          <!-- Progress indicator -->
+          <div id="progress"><span></span></div>
+          <span id="progress-value"></span>
+                  
+          <div class="right{% if user.is_authenticated() %} authenticated{% endif %}">
+            <span id="loading" class="notification"></span>
+            <img id="browserid" src="{{ static('img/sign_in_blue.png') }}" alt="{{ _('Sign in using BrowserID') }}" />
+            <div id="profile" class="select">
+              <div class="button selector">
+                <span class="author">{{ user.email }}</span>
+                <span> &#9652;</span>
+              </div>
+              <ul id="profile-menu" class="menu">
+                <li><a class="sign-out" href="{{ url('logout') }}">{{ _('Sign out') }}</a></li>
+                <li><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
+                <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download HTML') }}</a></li>
+                <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download JSON') }}</a></li>
+                <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download PO') }}</a></li>
+              </ul>
+              <aside id="transifex" class="popup">
+                <h2>
+                  Sign in to Transifex
+                  <a class="cancel" href="#"></a>
+                </h2>
+                <form>
+                  <input id="username" name="username" type="text" placeholder="Email or Username" />
+                  <input id="password" name="password" type="password" placeholder="Password" />
+                  <span class="button">Sign in</span>
+                  <div class="bottom">
+                    <label class="remember">
+                      <input id="remember" name="remember" type="checkbox" />Remember me
+                    </label>
+                    <a class="new" target="_blank" href="https://www.transifex.net/plans/signup/free/">New to Transifex?</a>
+                  </div>
+                </form>
+              </aside>
+            </div>
+            <button id="switch"></button>
+          </div>
+
+        </div>
+      </header>
+
+      <!-- Strings placeholder -->
+      <div id="entitylist"></div>
+    </aside>
+
+    <!-- Website placeholder + iframe fix: prevent iframes from capturing the mousemove events during a drag -->
+    <iframe id="source"></iframe>
+    <div id="iframe-cover"></div>
+
+    <!-- Project loading indicator -->
+    <div id="project-load">
+      <div class="inner">
+        <p>Loading</p>
+        <img src="{{ static('img/loader-big.gif') }}" />
+      </div>
+    </div>
+
+    <!-- Javascript at the bottom for fast page loading -->
+    
+    <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ static('js/app/jquery-1.7.2.min.js') }}"%3E%3C/script%3E'))</script>
+    
+    <script src="https://browserid.org/include.js"></script>
+    {% compress js %}
+    <script src="{{ static('js/app/script.js') }}"></script>
+    <script src="{{ static('js/app/main.js') }}"></script>
+    {% endcompress %}
+
+  </body>
+</html>
