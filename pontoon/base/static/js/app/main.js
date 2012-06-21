@@ -615,7 +615,7 @@ var Pontoon = (function () {
         navigator.id.get(function(assertion) {
           if (assertion) {
             $.ajax({
-              url: 'browserid/verify/',
+              url: 'browserid/',
               type: 'POST',
               data: {
                 assertion: assertion,
