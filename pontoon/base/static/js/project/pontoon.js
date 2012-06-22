@@ -339,9 +339,16 @@
             hideToolbar(curTarget);
           }
           var left = newTarget.getBoundingClientRect().left + window.scrollX,
-              top = newTarget.getBoundingClientRect().top + window.scrollY;
-          toolbar.css('left', left)
-                 .css('top', top - toolbar.outerHeight());
+              top = newTarget.getBoundingClientRect().top + window.scrollY,
+              toolbarTop = top - toolbar.outerHeight();
+
+          toolbar.css('left', left);
+          // Display toolbar at the bottom if otherwise too high
+          if (toolbarTop >= 0) {
+            toolbar.removeClass('bottom').css('top', toolbarTop);
+          } else{
+            toolbar.addClass('bottom').css('top', top + $(newTarget).outerHeight());
+          };          
         }           
         var toolbarNode = toolbar.get(0);
         if (toolbarNode.I !== null) {
