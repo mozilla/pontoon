@@ -25,8 +25,7 @@
           username: "",
           password: "",
           project: "",
-          resource: "",
-          po: ""
+          resource: ""
         }
   	  },
       jqueryAppended = false,
@@ -57,8 +56,7 @@
           username: Pontoon.transifex.username,
           password: Pontoon.transifex.password,
           name: Pontoon.transifex.project,
-          resource: Pontoon.transifex.resource,
-          po: Pontoon.transifex.po
+          resource: Pontoon.transifex.resource
         });
       }
 

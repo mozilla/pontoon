@@ -684,7 +684,6 @@ var Pontoon = (function () {
           Pontoon.transifex.password = value.password;
           Pontoon.transifex.project = value.name;
           Pontoon.transifex.resource = value.resource;
-          Pontoon.transifex.po = value.po;
         } else if (message.type === "RENDER") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
@@ -751,8 +750,7 @@ var Pontoon = (function () {
         username: "",
         password: "",
         project: "",
-        resource: "",
-        po: ""
+        resource: ""
       };
 
       // Sync user data
