@@ -166,9 +166,11 @@ def transifex(request, template=None):
 
     try:
         r = requests.put(url, auth=(username, password), data=json.dumps(payload), headers=headers, timeout=10)
-        log.debug(r.text)
+        log.debug(r.status_code)
         if r.status_code == 401:
             return HttpResponse("authenticate")
+        elif r.status_code != 200:
+            return HttpResponse("error")
     except requests.exceptions.ConnectionError, e: # Network problem (DNS failure, refused connection, etc.)
         log.debug('ConnectionError: ' + str(e))
         return HttpResponse("error")
