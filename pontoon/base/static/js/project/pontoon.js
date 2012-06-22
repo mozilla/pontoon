@@ -94,6 +94,7 @@
           var key = e.keyCode || e.which,
               toolbar = $(".editableToolbar"),
               save = toolbar.find(".save"),
+              cancel = toolbar.find(".cancel"),
               target = toolbar.get(0).target,
               entity = target.entity,
               id = entity.id,
@@ -107,13 +108,13 @@
               return false;
             }
 
-            if (key === 27) { // Esc: cancel translation
-              toolbar.find(".cancel").click();
+            if (key === 27) { // Esc: status quo
+              cancel.click();
               target.hideToolbar();
               return false;
             }
 
-            if (key === 9) { // Tab: confirm + move around entities
+            if (key === 9) { // Tab: status quo + move around entities
               // If on last entity, jump to the first
               if (next > entities.length) {
               	$.each(entities, function() {
@@ -122,7 +123,7 @@
                   }
                 });
               }
-              save.click();
+              cancel.click();
               $(target).removeClass("hovered");
               postMessage("HOVER", id);
               entities[next].hover();
