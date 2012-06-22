@@ -435,6 +435,20 @@ var Pontoon = (function () {
         if (!li.is('.hovered') && li.get(0).entity.body) {
           $(this).blur();
         }
+      // Keyboard navigation in textarea
+      }).unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
+        var key = e.keyCode || e.which,
+            li = $(this).parents('.entity');
+
+        if (key === 13) { // Enter: confirm translation
+          li.find('.save').click();
+          return false;
+        }
+
+        if (key === 27) { // Esc: status quo
+          li.find('.cancel').click();
+          return false;
+        }
       });
 
       // Save translation
