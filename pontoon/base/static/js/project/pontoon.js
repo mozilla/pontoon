@@ -140,7 +140,6 @@
 
       /**
        * Extend entity object
-       * TODO: move to main.js
        * 
        * e Temporary entity object
        */
@@ -277,6 +276,7 @@
                 $(data).each(function() {
                   // Renedered text could be different than source
                   $('body').append('<div id="pontoon-string" style="display: none">' + this.key + '</div>');
+
                   if ($('#pontoon-string').html() === parent.html()) {
                     entity.original = this.key;
                     entity.comment = this.comment;
@@ -400,7 +400,6 @@
 
       /**
        * Enable editable mode
-       * TODO: remove toolbar parameter and use selector instead
        */
       function startEditing() {
       	var toolbar = $('.editableToolbar');
@@ -416,7 +415,6 @@
 
       /**
        * Disable editable mode
-       * TODO: remove toolbar parameter and use selector instead
        */
       function stopEditing() {
       	var toolbar = $('.editableToolbar');

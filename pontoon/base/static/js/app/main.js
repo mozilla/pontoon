@@ -318,7 +318,6 @@ var Pontoon = (function () {
           .find('.language').attr('class', li.find('.language').attr('class')).html(li.find('.language').contents()[0].nodeValue).end().end()
         .hide();
 
-        // TODO: AJAX request to display only locales with current string translation available
         $.ajax({
           url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
                '@www.transifex.net/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
@@ -764,7 +763,6 @@ var Pontoon = (function () {
       });
 
       // Wait for project code messages
-      // TODO: display page not ready for Pontoon notification if event not triggered
       window.addEventListener("message", self.receiveMessage, false);
     },
 
