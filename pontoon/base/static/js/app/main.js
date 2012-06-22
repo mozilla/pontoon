@@ -358,7 +358,6 @@ var Pontoon = (function () {
             if (response !== null) {
               // Not supported in some browsers, but needed with current JSON output:
               // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/keys
-              // TODO: use this kind of output - http://pastebin.mozilla.org/1316020
               Object.keys = function (obj) {
                 var array = [],
                     prop;
