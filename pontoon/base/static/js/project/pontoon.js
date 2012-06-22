@@ -476,6 +476,11 @@
         href: Pontoon.app.path + 'static/css/project/pontoon.css'
       }).appendTo('head');
 
+      // Disable links
+      $('a').click(function(e) {
+        e.preventDefault();
+      });
+
       // Prepare editable toolbar
       var toolbar = $(
         "<div class='editableToolbar'>" +
