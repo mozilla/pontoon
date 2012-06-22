@@ -876,7 +876,9 @@ var Pontoon = (function () {
             } else {
               menu.find('li.hover').removeClass('hover').prev(':visible').addClass('hover');
             }
-            Pontoon.updateSlider(menu.find('ul'));
+            if (menu.parent().is('.locale')) {
+              Pontoon.updateSlider(menu.find('ul'));
+            }
             return false;
           }
 
@@ -887,7 +889,9 @@ var Pontoon = (function () {
             } else {
               menu.find('li.hover').removeClass('hover').next(':visible').addClass('hover');
             }
-            Pontoon.updateSlider(menu.find('ul'));
+            if (menu.parent().is('.locale')) {
+              Pontoon.updateSlider(menu.find('ul'));
+            }
             return false;
           }
 
