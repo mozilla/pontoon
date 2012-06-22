@@ -19,6 +19,9 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     '%s.examples' % PROJECT_MODULE,
 ]
 
+LOCALE_PATHS = (
+    os.path.join(ROOT, PROJECT_MODULE, 'locale'),
+)
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:
