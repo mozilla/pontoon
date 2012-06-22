@@ -455,21 +455,18 @@ var Pontoon = (function () {
         }
       });
 
-      // Cancel translation
+      // Do not change anything when cancelled
       $("#main .translation .cancel").click(function (e) {
         e.stopPropagation();
         e.preventDefault();
         var li = $(this).parents('.entity'),
-            entity = li.get(0).entity;
+            entity = li.get(0).entity,
+            textarea = li.find('.translation textarea');
 
         // Only if no other entity is being edited in-place
         if (li.is('.hovered')) {
+          textarea.val(entity.translation || entity.orignal);
           self.common.postMessage("CANCEL", entity.id);
-        // Head entities cannot be edited in-place
-        } else if (!entity.body) {
-          entity.translation = "";
-          entity.ui.removeClass('translated').find('textarea').val(entity.translation);
-          self.updateProgress();
         }
       });
 
@@ -692,10 +689,6 @@ var Pontoon = (function () {
           Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.removeClass('active');
         } else if (message.type === "SAVE") {
           Pontoon.updateEntityUI(Pontoon.project.pages[Pontoon.project.page].entities[message.value]);
-        } else if (message.type === "CANCEL") {
-          var entity = Pontoon.project.pages[Pontoon.project.page].entities[message.value];
-          entity.ui.removeClass('translated').find('textarea').val(entity.translation);
-          Pontoon.updateProgress();
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }

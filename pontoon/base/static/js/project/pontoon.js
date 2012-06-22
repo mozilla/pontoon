@@ -81,15 +81,12 @@
           postMessage("SAVE", entity.id);
         });
 
-        // Update progress when cancelled
+        // Do not change anything when cancelled
         $(".editableToolbar > .cancel").click(function () {
           var element = $(this).parent().get(0).target,
               entity = element.entity;
 
-          $(element).html(entity.original);
-          entity.translation = "";
-          sendData();
-          postMessage("CANCEL", entity.id);
+          $(element).html(entity.translation || entity.original);
         });
 
         // In-place keyboard shortcuts
