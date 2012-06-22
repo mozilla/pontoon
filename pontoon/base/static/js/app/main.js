@@ -384,8 +384,9 @@ var Pontoon = (function () {
       $("#main .extra .machine-translation").click(function () {
         var li = $(this).parents('.entity'),
             loader = li.find(".content .machine-translation .loader"),
-            entity = li.get(0).entity;
-        if (!self.app.mt) {
+            entity = li.get(0).entity,
+            mt = $('#server').data('mt-apikey');
+        if (!mt) {
           loader.removeClass("loader").addClass("no").html("Machine translation not supported");
         } else if (loader.length === 0) {
           li.find(".toolbar").show();
@@ -396,7 +397,7 @@ var Pontoon = (function () {
             jsonp: "oncomplete",
             crossDomain: true,
             data: {
-              appId: self.app.mt,
+              appId: mt,
               text: entity.original,
               from: "en",
               to: self.locale.code,
@@ -727,8 +728,7 @@ var Pontoon = (function () {
       // Build Pontoon object
       this.app = {
         win: app,
-        path: $('base').attr('href'),
-        mt: $('#server').data('mt-apikey') || ""
+        path: $('base').attr('href')
       };
       this.project = {
         win: project,
