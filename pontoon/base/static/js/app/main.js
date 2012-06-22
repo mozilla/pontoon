@@ -428,13 +428,11 @@ var Pontoon = (function () {
       });
 
       // Translate in textarea
-      $("#main .translation textarea").click(function (e) {
-        e.stopPropagation();
-        var li = $(this).parents('.entity'),
-            entity = li.get(0).entity;
+      $("#main .translation textarea").focus(function (e) {
+        var li = $(this).parents('.entity');
 
         // Only if no other entity is being edited in-place
-        if (!li.is('.hovered') && entity.body) {
+        if (!li.is('.hovered') && li.get(0).entity.body) {
           $(this).blur();
         }
       });
