@@ -3,7 +3,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<?php require_once('../../pontoon.php'); ?>
-	<?php Pontoon::header_tags('testpilot', 'index', 'pontoon.json');?>
+	<?php Pontoon::header(array(
+		'project'=>'testpilot',
+		'resource'=>'index',
+		'extra'=>'http://localhost/pontoon/hooks/php/test/testpilot/pontoon.json'
+	));?>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title><?php echo _w('Mozilla Labs Test Pilot')?></title>
 	<link rel="stylesheet" type="text/css" media="all" href="screen.css" />
@@ -75,7 +79,6 @@
 		</div>
 			
 		
-	<?php Pontoon::footer_tags();?>		
 </body>
 </html>
 

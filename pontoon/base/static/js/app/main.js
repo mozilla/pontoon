@@ -562,7 +562,9 @@ var Pontoon = (function () {
     attachHandlers: function () {
       var self = this,
           info = self.project.info,
-          pages = self.project.pages;
+          subpages = self.project.subpages;
+
+      self.confirmLeaving(true);
 
       // General Project Info
       if (info) {
@@ -575,32 +577,18 @@ var Pontoon = (function () {
             .find('.metrics p').html(info.metrics);
       }
 
-      self.confirmLeaving(true);
-
       // Page selector
-      if (pages.length > 1) {
+      if (subpages && Object.keys(subpages).length > 1) {
         $('#pontoon .page')
-          .find('.selector .title').html(pages[self.project.page].title).end()
+          .find('.selector .title').html(subpages[self.project.url]).end()
           .find('.menu').empty().end()
           .show();
           
-        $(pages).each(function() {
-          var count = 0,
-              entities = this.entities;
-          $(entities).each(function() {
-            if (this.translation.length > 0) {
-              count++;
-            }
-          });
+        for (var prop in subpages) {
           $('#pontoon .page .menu').append('<li>' +
-            '<span class="title" data-url="' + this.url + '">' + this.title + '</span>' +
-            '<span class="progress">' + Math.round(count*100/entities.length) + '%</span>' +
+            '<a class="title" href="/locale/' + self.locale.code + '/url/' + prop + '">' + subpages[prop] + '</a>' +
           '</li>');
-        });
-
-        $('#pontoon .page .menu li').click(function() {
-          window.location = "?url=" + $(this).find('.title').data("url") + "&locale=" + self.locale.code;
-        });
+        }
       }
 
       // Open/close Pontoon UI
@@ -681,6 +669,7 @@ var Pontoon = (function () {
           Pontoon.project.title = value.title;
           Pontoon.project.info = value.info
           Pontoon.project.pages = $.extend(true, Pontoon.project.pages, value.pages); // Deep copy: http://api.jquery.com/jQuery.extend
+          Pontoon.project.subpages = value.subpages;
           Pontoon.transifex.username = value.username;
           Pontoon.transifex.password = value.password;
           Pontoon.transifex.project = value.name;

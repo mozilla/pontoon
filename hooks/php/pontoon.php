@@ -65,13 +65,21 @@ class Pontoon
     /**
      * Prints out meta tag to the target project's header,
      * telling the client that this is a Pontoon enhanced page
-     * with the names of the corresponding Transifex project and resource
-     * and project info url.
+     * with the names of the corresponding Transifex project and resource,
+     * and project extra data url.
      *
      * Also inject javascript to solve iframe cross-domain policy problem
      */
-    static function header_tags($project, $resource, $info) {
-        echo '<meta name="Pontoon" data-project="'.$project.'" data-resource="'.$resource.'" data-info="'.$info.'" />'."\n";
+    static function header($params) {
+        $project = $params['project'];
+        $resource = $params['resource'];
+        $extra = $params['extra'];
+
+        echo '<meta name="Pontoon"
+            data-project="'.$project.'"
+            data-resource="'.$resource.'"'
+            .(($extra != NULL) ? 'data-extra="'.$extra.'"' : '')
+            .'/>'."\n";
 
         $url = $GLOBALS["path"] ? $GLOBALS["path"] : "http://localhost:8000/";
         echo '<script src="'.$url.'static/js/project/pontoon.js"></script>'."\n";

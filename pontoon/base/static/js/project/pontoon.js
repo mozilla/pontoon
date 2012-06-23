@@ -53,6 +53,7 @@
           title: Pontoon.project.title,
           info: Pontoon.project.info,
           pages: pages,
+          subpages: Pontoon.project.subpages,
           username: Pontoon.transifex.username,
           password: Pontoon.transifex.password,
           name: Pontoon.transifex.project,
@@ -523,20 +524,24 @@
       // Determine if the current page is prepared for working with Pontoon
       var meta = $('head > meta[name=Pontoon]');
       if (meta.length > 0) {
+        // Transifex project
         if (meta.attr('data-project')) {
           Pontoon.transifex.project = meta.data('project');
-          /* Credentials for demo project to test PHP hooks */
+          // Credentials for demo project to test PHP hooks
           if (Pontoon.transifex.project === 'testpilot') {
             Pontoon.transifex.username = 'pontoon';
             Pontoon.transifex.password = 'mozilla';
           }
         }
+        // Transifex project resource
         if (meta.attr('data-resource')) {
           Pontoon.transifex.resource = meta.data('resource');
         }
-        if (meta.attr('data-info')) {
-          $.getJSON(Pontoon.project.url + meta.data('info')).success(function (data) {
-            Pontoon.project.info = data;
+        // Pages and project info
+        if (meta.attr('data-extra')) {
+          $.getJSON(meta.data('extra')).success(function (data) {
+            Pontoon.project.info = data.info;
+            Pontoon.project.subpages = data.pages;
           });
         }
         Pontoon.project.title = document.title.split("-->")[1];
