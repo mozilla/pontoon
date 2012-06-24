@@ -28,7 +28,7 @@ var Pontoon = (function () {
 
       } else if (type === "json") {
         var pages = $.extend(true, {}, this.project.pages); // Deep copy: http://api.jquery.com/jQuery.extend
-        $(pages[self.project.page].entities).each(function () {
+        $(pages[0].entities).each(function () {
           delete this.ui;
           delete this.hover;
           delete this.unhover;
@@ -152,7 +152,7 @@ var Pontoon = (function () {
           localeMenu = $('.locale .menu').eq(0).html();
 
       // Render
-      $(self.project.pages[self.project.page].entities).each(function () {
+      $(self.project.pages[0].entities).each(function () {
         var li = $('<li class="entity' + 
           // append classes to translated and head entities
           (this.translation ? ' translated' : '') + 
@@ -664,7 +664,6 @@ var Pontoon = (function () {
         var message = JSON.parse(e.data);
         if (message.type === "DATA") {
           var value = message.value;
-          Pontoon.project.page = value.page;
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
           Pontoon.project.info = value.info
@@ -683,15 +682,15 @@ var Pontoon = (function () {
         } else if (message.type === "SWITCH") {
           $("#switch").click();
         } else if (message.type === "HOVER") {
-          Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.addClass('hovered');
+          Pontoon.project.pages[0].entities[message.value].ui.addClass('hovered');
         } else if (message.type === "UNHOVER") {
-          Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.removeClass('hovered');
+          Pontoon.project.pages[0].entities[message.value].ui.removeClass('hovered');
         } else if (message.type === "ACTIVE") {
-          Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.addClass('active');
+          Pontoon.project.pages[0].entities[message.value].ui.addClass('active');
         } else if (message.type === "INACTIVE") {
-          Pontoon.project.pages[Pontoon.project.page].entities[message.value].ui.removeClass('active');
+          Pontoon.project.pages[0].entities[message.value].ui.removeClass('active');
         } else if (message.type === "SAVE") {
-          Pontoon.updateEntityUI(Pontoon.project.pages[Pontoon.project.page].entities[message.value]);
+          Pontoon.updateEntityUI(Pontoon.project.pages[0].entities[message.value]);
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }
@@ -717,23 +716,22 @@ var Pontoon = (function () {
       // Build Pontoon object
       this.app = {
         win: app,
-        path: $('base').attr('href')
+        path: $('base').attr('href') // pontoon.css injection
       };
       this.project = {
         win: project,
         url: "",
         title: "",
         info: null,
-        pages: [],
-        page: 0
+        pages: []
       };
       this.locale = {
         code: locale,
-        language: $("#main .language:first").contents()[0].nodeValue
+        language: $("#main .language:first").contents()[0].nodeValue // PO file
       };
       this.user = {
         email: email,
-        name: email.split("@")[0]
+        name: email.split("@")[0] // PO file
       };
       this.transifex = {
         username: "",

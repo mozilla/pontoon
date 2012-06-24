@@ -10,8 +10,7 @@
           url: window.location.href,
           title: "",
           info: null,
-          pages: [],
-          page: 0
+          pages: []
         },
         locale: {
           code: "",
@@ -43,12 +42,11 @@
       function sendData() {
         // Deep copy: http://api.jquery.com/jQuery.extend
         var pages = $.extend(true, {}, Pontoon.project.pages);
-        $(pages[Pontoon.project.page].entities).each(function () {
+        $(pages[0].entities).each(function () {
           delete this.node;
         });
 
         postMessage("DATA", {
-          page: Pontoon.project.page,
           url: Pontoon.project.url,
           title: Pontoon.project.title,
           info: Pontoon.project.info,
@@ -98,7 +96,7 @@
               entity = target.entity,
               id = entity.id,
               next = id + 1,
-              entities = Pontoon.project.pages[Pontoon.project.page].entities;
+              entities = Pontoon.project.pages[0].entities;
 
           if (save.is(":visible")) {
             if (key === 13) { // Enter: confirm translation
@@ -221,12 +219,12 @@
             // TODO: do we need this now that we have additional check in the top-level IF?
             // Also: pop() removes the last element from the array
             parent.find(".pontoon-entity").each(function() {
-              Pontoon.project.pages[Pontoon.project.page].entities.pop(this.entity);
+              Pontoon.project.pages[0].entities.pop(this.entity);
               entity.id--;
               counter--;
             });
 
-            Pontoon.project.pages[Pontoon.project.page].entities.push(entity);
+            Pontoon.project.pages[0].entities.push(entity);
             parent.addClass("pontoon-entity");
           }
         });
@@ -296,7 +294,7 @@
                   extendEntity(entity);
                 }
 
-                Pontoon.project.pages[Pontoon.project.page].entities.push(entity);
+                Pontoon.project.pages[0].entities.push(entity);
               }
             });
 
@@ -309,7 +307,7 @@
                 entity.original = this.key;
                 entity.comment = this.comment;
                 entity.translation = this.translation;
-                Pontoon.project.pages[Pontoon.project.page].entities.push(entity);
+                Pontoon.project.pages[0].entities.push(entity);
               }
             });
 
@@ -438,9 +436,9 @@
         if (e.source === Pontoon.app.win) { // TODO: hardcode Pontoon domain name
           var message = JSON.parse(e.data);
           if (message.type === "HOVER") {
-            Pontoon.project.pages[Pontoon.project.page].entities[message.value].hover();
+            Pontoon.project.pages[0].entities[message.value].hover();
           } else if (message.type === "UNHOVER") {
-            Pontoon.project.pages[Pontoon.project.page].entities[message.value].unhover();
+            Pontoon.project.pages[0].entities[message.value].unhover();
           } else if (message.type === "EDIT") {
             $('.editableToolbar > .edit').click();
           } else if (message.type === "SAVE") {
