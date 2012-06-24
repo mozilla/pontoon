@@ -10,7 +10,8 @@
           url: window.location.href,
           title: "",
           info: null,
-          pages: []
+          entities: [],
+          pages: {}
         },
         locale: {
           code: "",
@@ -41,8 +42,8 @@
        */
       function sendData() {
         // Deep copy: http://api.jquery.com/jQuery.extend
-        var pages = $.extend(true, {}, Pontoon.project.pages);
-        $(pages[0].entities).each(function () {
+        var entities = $.extend(true, [], Pontoon.project.entities);
+        $(entities).each(function () {
           delete this.node;
         });
 
@@ -50,8 +51,8 @@
           url: Pontoon.project.url,
           title: Pontoon.project.title,
           info: Pontoon.project.info,
-          pages: pages,
-          subpages: Pontoon.project.subpages,
+          entities: entities,
+          pages: Pontoon.project.pages,
           username: Pontoon.transifex.username,
           password: Pontoon.transifex.password,
           name: Pontoon.transifex.project,
@@ -96,7 +97,7 @@
               entity = target.entity,
               id = entity.id,
               next = id + 1,
-              entities = Pontoon.project.pages[0].entities;
+              entities = Pontoon.project.entities;
 
           if (save.is(":visible")) {
             if (key === 13) { // Enter: confirm translation
@@ -183,11 +184,6 @@
        * Add temporary pontoon-entity class to prevent duplicate entities when guessing
        */ 
       function guessEntities() {
-        Pontoon.project.pages = [{
-          title: Pontoon.project.title,
-          url: Pontoon.project.url,
-          entities: []
-        }];
         var counter = 0;
 
         // <noscript> contents are not in the DOM
@@ -219,12 +215,12 @@
             // TODO: do we need this now that we have additional check in the top-level IF?
             // Also: pop() removes the last element from the array
             parent.find(".pontoon-entity").each(function() {
-              Pontoon.project.pages[0].entities.pop(this.entity);
+              Pontoon.project.entities.pop(this.entity);
               entity.id--;
               counter--;
             });
 
-            Pontoon.project.pages[0].entities.push(entity);
+            Pontoon.project.entities.push(entity);
             parent.addClass("pontoon-entity");
           }
         });
@@ -245,11 +241,6 @@
        * Remove comment nodes
        */
       function loadEntities() {
-        Pontoon.project.pages = [{
-          title: Pontoon.project.title,
-          url: Pontoon.project.url,
-          entities: []
-        }];
         var counter = 0,
             prefix = 'l10n';
             
@@ -294,7 +285,7 @@
                   extendEntity(entity);
                 }
 
-                Pontoon.project.pages[0].entities.push(entity);
+                Pontoon.project.entities.push(entity);
               }
             });
 
@@ -307,7 +298,7 @@
                 entity.original = this.key;
                 entity.comment = this.comment;
                 entity.translation = this.translation;
-                Pontoon.project.pages[0].entities.push(entity);
+                Pontoon.project.entities.push(entity);
               }
             });
 
@@ -436,9 +427,9 @@
         if (e.source === Pontoon.app.win) { // TODO: hardcode Pontoon domain name
           var message = JSON.parse(e.data);
           if (message.type === "HOVER") {
-            Pontoon.project.pages[0].entities[message.value].hover();
+            Pontoon.project.entities[message.value].hover();
           } else if (message.type === "UNHOVER") {
-            Pontoon.project.pages[0].entities[message.value].unhover();
+            Pontoon.project.entities[message.value].unhover();
           } else if (message.type === "EDIT") {
             $('.editableToolbar > .edit').click();
           } else if (message.type === "SAVE") {
@@ -539,7 +530,7 @@
         if (meta.attr('data-extra')) {
           $.getJSON(meta.data('extra')).success(function (data) {
             Pontoon.project.info = data.info;
-            Pontoon.project.subpages = data.pages;
+            Pontoon.project.pages = data.pages;
           });
         }
         Pontoon.project.title = document.title.split("-->")[1];

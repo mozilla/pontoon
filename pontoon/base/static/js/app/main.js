@@ -27,15 +27,15 @@ var Pontoon = (function () {
         self.confirmLeaving(true);
 
       } else if (type === "json") {
-        var pages = $.extend(true, {}, this.project.pages); // Deep copy: http://api.jquery.com/jQuery.extend
-        $(pages[0].entities).each(function () {
+        var entities = $.extend(true, [], this.project.entities); // Deep copy: http://api.jquery.com/jQuery.extend
+        $(entities).each(function () {
           delete this.ui;
           delete this.hover;
           delete this.unhover;
           delete this.id;
           delete this.body;
         });
-        params.data = JSON.stringify(pages, null, "\t");
+        params.data = JSON.stringify(entities, null, "\t");
         self.confirmLeaving(false);
         window.location = 'download/?' + $.param(params);
         self.confirmLeaving(true);
@@ -51,7 +51,7 @@ var Pontoon = (function () {
             translations: {}
         }
 
-        $(this.project.pages).each(function () {
+        $(this.project.entities).each(function () {
           $(this.entities).each(function () {
             var msgid = this.original;
             po.translations[msgid] = {
@@ -152,7 +152,7 @@ var Pontoon = (function () {
           localeMenu = $('.locale .menu').eq(0).html();
 
       // Render
-      $(self.project.pages[0].entities).each(function () {
+      $(self.project.entities).each(function () {
         var li = $('<li class="entity' + 
           // append classes to translated and head entities
           (this.translation ? ' translated' : '') + 
@@ -562,7 +562,7 @@ var Pontoon = (function () {
     attachHandlers: function () {
       var self = this,
           info = self.project.info,
-          subpages = self.project.subpages;
+          pages = self.project.pages;
 
       self.confirmLeaving(true);
 
@@ -578,15 +578,15 @@ var Pontoon = (function () {
       }
 
       // Page selector
-      if (subpages && Object.keys(subpages).length > 1) {
+      if (pages && Object.keys(pages).length > 1) {
         $('#pontoon .page')
-          .find('.selector .title').html(subpages[self.project.url]).end()
+          .find('.selector .title').html(pages[self.project.url]).end()
           .find('.menu').empty().end()
           .show();
           
-        for (var prop in subpages) {
+        for (var prop in pages) {
           $('#pontoon .page .menu').append('<li>' +
-            '<a class="title" href="/locale/' + self.locale.code + '/url/' + prop + '">' + subpages[prop] + '</a>' +
+            '<a class="title" href="/locale/' + self.locale.code + '/url/' + prop + '">' + pages[prop] + '</a>' +
           '</li>');
         }
       }
@@ -667,8 +667,8 @@ var Pontoon = (function () {
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
           Pontoon.project.info = value.info
-          Pontoon.project.pages = $.extend(true, Pontoon.project.pages, value.pages); // Deep copy: http://api.jquery.com/jQuery.extend
-          Pontoon.project.subpages = value.subpages;
+          Pontoon.project.entities = $.extend(true, Pontoon.project.entities, value.entities); // Deep copy: http://api.jquery.com/jQuery.extend
+          Pontoon.project.pages = value.pages;
           Pontoon.transifex.username = value.username;
           Pontoon.transifex.password = value.password;
           Pontoon.transifex.project = value.name;
@@ -682,15 +682,15 @@ var Pontoon = (function () {
         } else if (message.type === "SWITCH") {
           $("#switch").click();
         } else if (message.type === "HOVER") {
-          Pontoon.project.pages[0].entities[message.value].ui.addClass('hovered');
+          Pontoon.project.entities[message.value].ui.addClass('hovered');
         } else if (message.type === "UNHOVER") {
-          Pontoon.project.pages[0].entities[message.value].ui.removeClass('hovered');
+          Pontoon.project.entities[message.value].ui.removeClass('hovered');
         } else if (message.type === "ACTIVE") {
-          Pontoon.project.pages[0].entities[message.value].ui.addClass('active');
+          Pontoon.project.entities[message.value].ui.addClass('active');
         } else if (message.type === "INACTIVE") {
-          Pontoon.project.pages[0].entities[message.value].ui.removeClass('active');
+          Pontoon.project.entities[message.value].ui.removeClass('active');
         } else if (message.type === "SAVE") {
-          Pontoon.updateEntityUI(Pontoon.project.pages[0].entities[message.value]);
+          Pontoon.updateEntityUI(Pontoon.project.entities[message.value]);
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }
@@ -723,7 +723,8 @@ var Pontoon = (function () {
         url: "",
         title: "",
         info: null,
-        pages: []
+        entities: [],
+        pages: {}
       };
       this.locale = {
         code: locale,
