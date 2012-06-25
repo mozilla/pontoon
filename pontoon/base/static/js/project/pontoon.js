@@ -565,7 +565,7 @@
   function loadJquery() {
     if (!window.jQuery) {
       if (!jqueryAppended && document.body) {
-        script.src = "//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js";
+        script.src = Pontoon.app.path + 'static/js/jquery-1.7.2.min.js';
         document.body.appendChild(script);
         jqueryAppended = true;
         arguments.callee();
