@@ -531,10 +531,13 @@
           $.getJSON(meta.data('extra')).success(function (data) {
             Pontoon.project.info = data.info;
             Pontoon.project.pages = data.pages;
+            Pontoon.project.title = document.title.split("-->")[1];
+            guessEntities();
           });
+        } else {
+          Pontoon.project.title = document.title.split("-->")[1];
+          guessEntities();
         }
-        Pontoon.project.title = document.title.split("-->")[1];
-        loadEntities();
       } else {
         Pontoon.project.title = document.title;
         guessEntities();
