@@ -504,7 +504,7 @@
         .attr("contextmenu", "context")
         .append(
         '<menu type="context" id="context">' +
-          '<menuitem class="mode" label="Advanced mode" icon="../../client/lib/images/logo-small.png"></menuitem>' +
+          '<menuitem class="mode" label="Advanced mode" icon="' + Pontoon.app.path + 'static/img/logo-small.png' + '"></menuitem>' +
         '</menu>')
         .find("#context .mode").live("click", function() {
           postMessage("SWITCH");
