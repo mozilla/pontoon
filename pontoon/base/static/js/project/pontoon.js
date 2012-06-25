@@ -532,11 +532,11 @@
             Pontoon.project.info = data.info;
             Pontoon.project.pages = data.pages;
             Pontoon.project.title = document.title.split("-->")[1];
-            guessEntities();
+            loadEntities();
           });
         } else {
           Pontoon.project.title = document.title.split("-->")[1];
-          guessEntities();
+          loadEntities();
         }
       } else {
         Pontoon.project.title = document.title;
