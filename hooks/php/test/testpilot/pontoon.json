@@ -1,10 +1,9 @@
 {
   "pages": {
 	"http://localhost/pontoon/hooks/php/test/testpilot/": "Homepage",
-	"http://localhost/pontoon/hooks/php/test/testpilot/testcases.php": "Test cases",
-	"http://localhost/pontoon/hooks/php/test/testpilot/principles.php": "Guiding Principles",
-	"http://localhost/pontoon/hooks/php/test/testpilot/faq.php": "FAQ",
-	"http://localhost/pontoon/hooks/php/test/testpilot/privacy.php": "Privacy Policy"
+	"http://localhost/pontoon/hooks/php/test/testpilot/?page=testcases.php": "Test cases",
+	"http://localhost/pontoon/hooks/php/test/testpilot/?page=principles.php": "Guiding Principles",
+	"http://localhost/pontoon/hooks/php/test/testpilot/?page=privacy.php": "Privacy Policy"
   },
   "info": {
 	"brief": "Please draft an overview of your campaign, including its purpose and goals. Anything you've provided WebDev, copywriters and/or designers is helpful.",

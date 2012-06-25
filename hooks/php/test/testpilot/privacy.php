@@ -1,84 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<?php require_once('../../pontoon.php'); ?>
-	<?php Pontoon::header(array(
-		'project'=>'testpilot',
-		'resource'=>'index',
-		'extra'=>'http://localhost/pontoon/hooks/php/test/testpilot/pontoon.json'
-	));?>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title><?php echo _w('Mozilla Labs Test Pilot')?></title>
-	<link rel="stylesheet" type="text/css" media="all" href="screen.css" />
-    <script type="text/javascript">
-      var s_account="mozillatestpilotmozillalabscom";
-    </script>
-</head>
-<body>
+<div id="intro">
 
-		<div id="container">
-		
-			<div id="logo"><a href="http://labs.mozilla.com"><img src="images/logo.png" border="0"></a></div>
-			
-			<div id="download"><div id="downloadsource" class="button" onclick="window.location='https://addons.mozilla.org/services/install.php?addon_id=testpilot'"><img class="downloadButton" src="images/download_arrow.png"> <span class="downloadH1"><?php echo _w('Become a Test Pilot!')?></span> </div></div>
-			<div id="content">
-			
-				<div class="button">
-			
-					<span class="menuItem"><a href="index.php"><?php echo _w('Home')?></a></span>
+	<h2><?php echo _w('Privacy Policy')?></h2>
 
-					<span class="menuItem"><a href="testcases.php"><?php echo _w('Test Cases')?></a></span>
-					<span class="menuItem"><a href="principles.php"><?php echo _w('Guiding Principles')?></a></span>
-                    <span class="menuItem"><a href="faq.php"><?php echo _w('FAQ')?></a></span>
-					<span class="menuOn"><a href="privacy.php"><?php echo _w('Privacy Policy')?></a></span>
+	<h3><?php echo _w('Mozilla Test Pilot')?></h3>
+	<p><?php echo _w('Adopted: August 11, 2009')?></p>
+	<p><?php echo _w('Revised: April 28, 2010')?></p>
+	<p><?php echo _w('We’re working hard to protect your privacy while delivering products and services that bring you the performance and protection you desire in your personal computing.  This Mozilla Test Pilot Privacy Policy (“Policy”) explains how Mozilla Corporation (“Mozilla”), a wholly-owned subsidiary of the non-profit Mozilla Foundation, collects and uses information from user tests conducted through Mozilla’s Test Pilot program (“Test Pilot”).  It does not apply to other Mozilla websites, products or services, each of which have their own privacy policy.  If you are using another Mozilla product at the time you are participating in Test Pilot, you should look at the relevant privacy policy to determine what other information is being collected (e.g., See Mozilla’s <a href="http://www.mozilla.com/en-US/legal/privacy/firefox-en.html">Firefox Privacy Policy</a> for further information on data collected from all Firefox users).')?></p>
+  
+    <h3><?php echo _w('What is Test Pilot?')?></h3>
+	<p><?php echo _w('Test Pilot was created to provide a new set of tools and capabilities to increase the efficiency and effectiveness of our user testing.  Test Pilot is a stand-alone platform.  Test Pilot may be used as an add-on to your web browser, or bundled into other products.  However Test Pilot is made available, you will always have to choose to submit your data and unless you do so, no data will be transfered to Test Pilot server.  You are in control. You choose to participate and you choose to share your data. No data will be collected unless you choose to do so. Please visit <a href="https://labs.mozilla.com/projects/test-pilot/">https://labs.mozilla.com/projects/test-pilot/</a> for more information on Test Pilot.')?></p>
 
-				
-				</div>
-				
-				<div id="intro">
+    <h3><?php echo _w('Information Collected from Test Pilot Participants')?></h3>
+	<p><?php echo _w('In order to improve our user testing, Mozilla will collect certain data in relation to your participation in Test Pilot tests. Your data won\'t be transmitted until you choose to submit your data.&nbsp; When your data is submitted, it will be aggregated into a big batch with everyone else\'s info and will not be directly connected back to you. All the aggregated data will be open to the public, but to be extra clear none of it will be personally identifiable as yours or anyone else\'s.')?></p>
+	<p><?php echo _w('After you install Test Pilot, you will have an opportunity to review a description of each test, including its duration and the types of data that will be collected through the test (the “Test Description”). The data required for the test (“Test Data”) will be collected locally on your computer in a database within Firefox. At the end of the test, you will be able to review the Test Data and will be asked whether you would like to submit the Test Data to Mozilla. ')?></p>
+	<p><?php echo _w('The Test Data consist of information that cannot be directly associated with a specific person or entity, and include your self-assessed technical level, computer configuration, the version of Firefox or other products that you use, the URL or Uniform Resource Locators (the addresses of web pages you navigate). The Test Data do not include your name or email address, and will not be combined with any information that personally identifies you.')?></p>
+	<p><?php echo _w('If you change your mind about participating in a test, you may opt out from the test at any time before you choose to share the Test Data, and the Test Data will not be transmitted to Mozilla. Similarly, if you choose not to submit the Test Data at the end of the test, the Test Data will not be transmitted to Mozilla.')?></p>
 
-				
-					<h2><?php echo _w('Privacy Policy')?></h2>
-			  
-					<p><?php echo _w('Test Pilot is a platform collecting structured user feedback through Firefox. Test Pilot studies explore how people use their web browser and the Internet - and help us build better products. ')?></p>
-				  
-				         <p><?php echo _w('As a Test pilot, not only will you try before anyone else the newest features and coolest user-interface ideas, you could also learn how those study results may contribute to future designs. The goal for this platform is to encourage everyone from all skill levels to improve the Web experience by conducting and participating in these studies.')?></p>
-
-<p><?php echo _w('Once you <a href="https://addons.mozilla.org/services/install.php?addon_id=testpilot"> install the Test Pilot add-on</a>, you will automatically  receive notifications on upcoming and finished studies. You have the full control on your participation: ')?></p>
-				  <ul><li><?php echo _w('You choose if you want to participate in a particular study')?></li>
-
-				    <li><?php echo _w('You can see what data has been collected from you in real time ')?></li>
-				    <li><?php echo _w('At the end of a study, you choose if you want to submit your data to the Test Pilot servers')?></li>
-				    <li><?php echo _w('You also have the option to quit the platform')?></li>
-				    <li><?php echo _w('If the test requires you to install a new feature or product, the platform will ask for your permission')?></li></ul>
-
-				    <p><?php echo _w('Test Pilot study results are made available under open licenses, with the data being anonymized before release.')?></p>
-
-<p><?php echo _w('When a product is not easy to use, don\'t just wonder why it\'s designed that way. Make your mark on the design and help us improve it! <a href="https://addons.mozilla.org/services/install.php?addon_id=testpilot"> Join the forces, we want you! </a>')?></p>
-
- <div class="home_button"><a href="https://testpilot.mozillalabs.com/faq.html"><?php echo _w('Learn more about Test Pilot &raquo;')?></a></div>
-				</div>
-				
-				<div id="links">
-				
-					<div class="home_callout"><img class="homeIcon" src="images/home_computer.png"> <a href="http://labs.mozilla.com/projects/test-pilot/"><?php echo _w('Test Pilot Blog &raquo;')?></a></div> <br>
-					
-					<div class="home_callout"><img class="homeIcon" src="images/home_upcoming.png"><a href="https://wiki.mozilla.org/Labs/Test_Pilot"><?php echo _w('Test Pilot Wiki &raquo;')?></a></div> <br>
-					
-					<div class="home_callout"><img class="homeIcon" src="images/home_results.png"><a href="https://testpilot.mozillalabs.com/testcases/"><?php echo _w('All Test Cases &raquo;')?></a></span></div> <br>
-
-				</div>
-			
-			</div>
-			
-<div id="footer"><?php echo _w('<img class="mozLogo" src="images/mozilla-logo.png">Copyright &copy; 2005-2009 Mozilla. All rights reserved. &nbsp; &nbsp; <a href="http://labs.mozilla.com/">Mozilla Labs</a> &nbsp; &nbsp; <a href="http://www.mozilla.com/en-US/privacy-policy.html">Privacy Policy</a> &nbsp; &nbsp; <a href="http://www.mozilla.com/en-US/about/legal.html">Legal Notices</a>')?></div>
-
-		
-			
-		</div>
-			
-		
-</body>
-</html>
-
+</div>
