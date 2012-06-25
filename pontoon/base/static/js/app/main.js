@@ -586,7 +586,7 @@ var Pontoon = (function () {
           
         for (var prop in pages) {
           $('#pontoon .page .menu').append('<li>' +
-            '<a class="title" href="/locale/' + self.locale.code + '/url/' + prop + '">' + pages[prop] + '</a>' +
+            '<a class="title" href="/locale/' + self.locale.code + '/url/' + escape(prop) + '">' + pages[prop] + '</a>' +
           '</li>');
         }
       }
@@ -809,7 +809,7 @@ var Pontoon = (function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             url = $('.url:visible').val();
         if (url) {
-          window.location = '/locale/' + locale + '/url/' + url + '/';
+          window.location = '/locale/' + locale + '/url/' + escape(url) + '/';
         } else {
           Pontoon.common.showError("Please enter the URL first.");
           $('.url:visible').focus();
