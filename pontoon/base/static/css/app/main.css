@@ -704,7 +704,7 @@
   -webkit-box-shadow: 0 0 3px 1px #CCCCCC inset;
 }
 
-#pontoon #entitylist > ul > li.head {
+#pontoon #entitylist > ul > li.uneditable {
   cursor: auto;
 }
 

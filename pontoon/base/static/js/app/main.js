@@ -154,9 +154,9 @@ var Pontoon = (function () {
       // Render
       $(self.project.entities).each(function () {
         var li = $('<li class="entity' + 
-          // append classes to translated and head entities
+          // append classes to translated and uneditable entities
           (this.translation ? ' translated' : '') + 
-          (!this.body ? ' head' : '') + '">' + 
+          (!this.body ? ' uneditable' : '') + '">' + 
         '<div class="source">' + 
           '<ol class="extra">' + 
             '<li class="active original-string" title="Original string"></li>' + 
@@ -223,7 +223,7 @@ var Pontoon = (function () {
       });
 
       // Main entity list handlers
-      $("#main .entity:not('.head')").hover(function () {
+      $("#main .entity:not('.uneditable')").hover(function () {
         self.common.postMessage("HOVER", this.entity.id);
       }, function () {
         self.common.postMessage("UNHOVER", this.entity.id);
