@@ -808,6 +808,8 @@
   font-weight: 300;
   letter-spacing: 0;
   text-shadow: 0 1px 0 #FFFFFF;
+  height: 73px;
+  overflow: auto;
 }
 
 #pontoon #entitylist .source .content > li .no {
