@@ -135,28 +135,15 @@
 
 
       /**
-       * Extend entity object
-       * 
-       * e Temporary entity object
-       */
-      function extendEntity(e) {
-        e.hover = function () {
-          this.node.get(0).showToolbar();
-        };
-        e.unhover = function () {
-          this.node.get(0).hideToolbar();
-        };
-      }
-
-
-
-      /**
        * Makes DOM nodes editable using contentEditable property
-       * Based on editableText plugin by Andris Valums, http://valums.com
        *
-       * node DOM node
+       * entity Entity object
        */ 
-      function makeEditable(node) {
+      function makeEditable(entity) {
+        var node = entity.node.get(0);
+        entity.body = true;
+        node.entity = entity; // Store entity reference to the node
+        
         // Show/hide toolbar
         node.showToolbar = function () {
           showToolbar(this);
@@ -165,7 +152,15 @@
           hideToolbar(this);
         }
 
-        // Hover handler
+        // On entity hover
+        entity.hover = function () {
+          this.node.get(0).showToolbar();
+        };
+        entity.unhover = function () {
+          this.node.get(0).hideToolbar();
+        };
+
+        // On node hover
         $(node).hover(function () {
           this.entity.hover();
         }, function() {
@@ -204,11 +199,8 @@
 
             // Head entities cannot be edited in-place
             if ($(this).parents('head').length === 0) {
-              entity.node = parent; // HTML Element holding string
-              entity.body = true;
-              makeEditable(entity.node.get(0)); // Make nodes editable
-              entity.node.get(0).entity = entity; // Store entity reference to the node
-              extendEntity(entity);
+              entity.node = parent;
+              makeEditable(entity);
             }
 
             // Remove entities from child nodes if parent node is entity
@@ -273,11 +265,8 @@
 
                     // Head strings cannot be edited in-place
                     if ($(this).parents('head').length === 0) {
-                      entity.node = parent; // HTML Element holding string
-                      entity.body = true;
-                      makeEditable(entity.node.get(0)); // Make nodes editable
-                      entity.node.get(0).entity = entity; // Store entity reference to the node
-                      extendEntity(entity);
+                      entity.node = parent;
+                      makeEditable(entity);
                     }
 
                     Pontoon.project.entities.push(entity);
