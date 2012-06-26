@@ -240,8 +240,7 @@
        * Remove comment nodes
        */
       function loadEntities() {
-        var counter = 0,
-            prefix = 'l10n';
+        var counter = 0;
             
         $.ajax({
           url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
@@ -250,41 +249,41 @@
           dataType: 'jsonp',
           success: function(data) {
             $('*').contents().each(function () {
-              if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf(prefix) === 0) {
+              if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
                 var entity = {},
                     parent = $(this).parent();
-                entity.id = counter;
-                counter++;
                 $(this).remove();
 
                 // Match strings in the document with Transifex data
                 $(data).each(function() {
                   // Renedered text could be different than source
-                  $('body').append('<div id="pontoon-string" style="display: none">' + this.key + '</div>');
+                  parent.next('<div id="pontoon-string" style="display: none">' + this.key + '</div>');
 
                   if ($('#pontoon-string').html() === parent.html()) {
+                    entity.id = counter;
+                    counter++;
                     entity.original = this.key;
                     entity.comment = this.comment;
                     var translation = this.translation;
                     if (translation.length > 0) {
-                      entity.translation = this.translation;
+                      entity.translation = translation;
                       parent.html(translation);
                     }
                     this.pontoon = true;
+
+                    // Head strings cannot be edited in-place
+                    if ($(this).parents('head').length === 0) {
+                      entity.node = parent; // HTML Element holding string
+                      entity.body = true;
+                      makeEditable(entity.node.get(0)); // Make nodes editable
+                      entity.node.get(0).entity = entity; // Store entity reference to the node
+                      extendEntity(entity);
+                    }
+
+                    Pontoon.project.entities.push(entity);
                   }
                   $('#pontoon-string').remove();
                 });
-
-                // Head strings cannot be edited in-place
-                if ($(this).parents('head').length === 0) {
-                  entity.node = parent; // HTML Element holding string
-                  entity.body = true;
-                  makeEditable(entity.node.get(0)); // Make nodes editable
-                  entity.node.get(0).entity = entity; // Store entity reference to the node
-                  extendEntity(entity);
-                }
-
-                Pontoon.project.entities.push(entity);
               }
             });
 
@@ -292,8 +291,8 @@
             $(data).each(function() {
               if(!this.pontoon) {
                 var entity = {};
-                counter++;
                 entity.id = counter;
+                counter++;
                 entity.original = this.key;
                 entity.comment = this.comment;
                 entity.translation = this.translation;
