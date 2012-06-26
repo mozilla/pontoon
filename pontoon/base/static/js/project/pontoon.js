@@ -213,7 +213,7 @@
 
             // Remove entities from child nodes if parent node is entity
             parent.find(".pontoon-entity").each(function() {
-              this.entity.node = null ;
+              delete this.entity;
               Pontoon.project.entities.pop();
               entity.id--;
               counter--;
