@@ -148,7 +148,7 @@ var Pontoon = (function () {
      */
     entityList: function () {
       var self = this,
-          list = $(this.app.win.document).find('#entitylist').empty().append('<ul></ul>'),
+          list = $('#entitylist').append('<ul class="editables"></ul>'),
           localeMenu = $('.locale .menu').eq(0).html();
 
       // Render
@@ -219,8 +219,15 @@ var Pontoon = (function () {
         li.get(0).entity = this;
         this.ui = li; /* HTML Element representing string in the main UI */
 
-        list.children('ul').append(li);
+        list.find('.editables').append(li);
       });
+
+      // Move uneditable entities to a separate list
+      var uneditables = $(".entity.uneditable");
+      if (uneditables.length > 0) {
+        list.find('.editables').after('<h3>Strings not found on the current page</h3><ul class="uneditables"></ul>');
+        uneditables.appendTo("#entitylist ul.uneditables")
+      }
 
       // Main entity list handlers
       $("#main .entity:not('.uneditable')").hover(function () {

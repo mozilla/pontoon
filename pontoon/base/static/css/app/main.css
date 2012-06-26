@@ -671,15 +671,21 @@
 }
 
 #pontoon #entitylist > ul > li:first-child {
-  border-radius: 5px 5px 0 0;
-  -moz-border-radius: 5px 5px 0 0;
-  -webkit-border-radius: 5px 5px 0 0;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
 }
 
 #pontoon #entitylist > ul > li:last-child {
-  border-radius: 0 0 5px 5px;
-  -moz-border-radius: 0 0 5px 5px;
-  -webkit-border-radius: 0 0 5px 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
 }
 
 #pontoon #entitylist > ul > li:hover {
@@ -706,6 +712,15 @@
 
 #pontoon #entitylist > ul > li.uneditable {
   cursor: auto;
+}
+
+#pontoon #entitylist > h3  {
+  color: #888888;
+  font-family: Helvetica Neue;
+  font-size: 12px;
+  font-weight: 300;
+  margin: 0 10px -15px;
+  text-shadow: 0 1px 0 #FFFFFF;
 }
 
 #pontoon #entitylist li .source,
@@ -774,16 +789,25 @@
 
 #pontoon #entitylist .source .content > li header {
   overflow: hidden;
-  height: 16px;
+  height: 20px;
   padding-top: 7px;
 }
 
 #pontoon #entitylist .source .content > li h3 {
-  color: #888888;
-  font-size: 10px;
+  font-family: Helvetica Neue;
+  color: #333333;
+  font-size: 14px;
   text-shadow: 0 1px 0 #FFFFFF;
-  text-transform: uppercase;
   float: left;
+}
+
+#pontoon #entitylist .source .content p {
+  font-family: Helvetica Neue;
+  color: #666666;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0;
+  text-shadow: 0 1px 0 #FFFFFF;
 }
 
 #pontoon #entitylist .source .content > li .no {
