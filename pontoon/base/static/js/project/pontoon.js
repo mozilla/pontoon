@@ -102,13 +102,13 @@
           if (save.is(":visible")) {
             if (key === 13) { // Enter: confirm translation
               save.click();
-              target.hideToolbar();
+              hideToolbar(target);
               return false;
             }
 
             if (key === 27) { // Esc: status quo
               cancel.click();
-              target.hideToolbar();
+              hideToolbar(target);
               return false;
             }
 
@@ -144,27 +144,19 @@
         entity.body = true;
         node.entity = entity; // Store entity reference to the node
         
-        // Show/hide toolbar
-        node.showToolbar = function () {
-          showToolbar(this);
-        }
-        node.hideToolbar = function () {
-          hideToolbar(this);
-        }
-
-        // On entity hover
+        // Show/hide toolbar on entity hover
         entity.hover = function () {
-          this.node.get(0).showToolbar();
+          showToolbar(this.node.get(0));
         };
         entity.unhover = function () {
-          this.node.get(0).hideToolbar();
+          hideToolbar(this.node.get(0));
         };
 
-        // On node hover
+        // Show/hide toolbar on node hover
         $(node).hover(function () {
-          this.entity.hover();
+          showToolbar(this);
         }, function() {
-          this.entity.unhover();
+          hideToolbar(this);
         });
       }
 
