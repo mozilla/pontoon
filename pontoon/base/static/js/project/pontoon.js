@@ -241,7 +241,7 @@
                 // Match strings in the document with Transifex data
                 $(data).each(function() {
                   // Renedered text could be different than source
-                  parent.next('<div id="pontoon-string" style="display: none">' + this.key + '</div>');
+                  parent.after('<div id="pontoon-string" style="display: none">' + this.key + '</div>');
 
                   if ($('#pontoon-string').html() === parent.html()) {
                     entity.id = counter;
