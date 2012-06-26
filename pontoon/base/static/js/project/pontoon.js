@@ -212,10 +212,9 @@
             }
 
             // Remove entities from child nodes if parent node is entity
-            // TODO: do we need this now that we have additional check in the top-level IF?
-            // Also: pop() removes the last element from the array
             parent.find(".pontoon-entity").each(function() {
-              Pontoon.project.entities.pop(this.entity);
+              this.entity.node = null ;
+              Pontoon.project.entities.pop();
               entity.id--;
               counter--;
             });
