@@ -225,7 +225,7 @@
        */
       function loadEntities() {
         var counter = 0;
-            
+
         $.ajax({
           url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
                '@www.transifex.net/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
@@ -491,32 +491,21 @@
 
       // Determine if the current page is prepared for working with Pontoon
       var meta = $('head > meta[name=Pontoon]');
-      if (meta.length > 0) {
-        // Transifex project
-        if (meta.attr('data-project')) {
-          Pontoon.transifex.project = meta.data('project');
+      if (meta.length > 0 && meta.attr('data-meta')) {
+        $.getJSON(meta.data('meta')).success(function (data) {
+          Pontoon.project.pages = data.pages; // Pages URLs
+          Pontoon.project.info = data.info; // Campaign info
+          Pontoon.transifex.project = data.transifex.project; // Transifex project
+          Pontoon.transifex.resource = data.transifex.resource; // Transifex resource
+
           // Credentials for demo project to test PHP hooks
           if (Pontoon.transifex.project === 'testpilot') {
             Pontoon.transifex.username = 'pontoon';
             Pontoon.transifex.password = 'mozilla';
           }
-        }
-        // Transifex project resource
-        if (meta.attr('data-resource')) {
-          Pontoon.transifex.resource = meta.data('resource');
-        }
-        // Pages and project info
-        if (meta.attr('data-extra')) {
-          $.getJSON(meta.data('extra')).success(function (data) {
-            Pontoon.project.info = data.info;
-            Pontoon.project.pages = data.pages;
-            Pontoon.project.title = document.title.split("-->")[1];
-            loadEntities();
-          });
-        } else {
           Pontoon.project.title = document.title.split("-->")[1];
           loadEntities();
-        }
+        });
       } else {
         Pontoon.project.title = document.title;
         guessEntities();
