@@ -11,7 +11,8 @@
           title: "",
           info: null,
           entities: [],
-          pages: {}
+          pages: {},
+          hooks: false
         },
         locale: {
           code: "",
@@ -48,15 +49,7 @@
         });
 
         postMessage("DATA", {
-          url: Pontoon.project.url,
-          title: Pontoon.project.title,
-          info: Pontoon.project.info,
-          entities: entities,
-          pages: Pontoon.project.pages,
-          username: Pontoon.transifex.username,
-          password: Pontoon.transifex.password,
-          name: Pontoon.transifex.project,
-          resource: Pontoon.transifex.resource
+          entities: entities
         });
       }
 
@@ -67,7 +60,17 @@
        */
       function renderHandle() {
         sendData();
-        postMessage("RENDER");
+        postMessage("RENDER", {
+          url: Pontoon.project.url,
+          title: Pontoon.project.title,
+          info: Pontoon.project.info,
+          pages: Pontoon.project.pages,
+          hooks: Pontoon.project.hooks,
+          username: Pontoon.transifex.username,
+          password: Pontoon.transifex.password,
+          name: Pontoon.transifex.project,
+          resource: Pontoon.transifex.resource
+        });
 
         // Update UI and progress when saved
         $(".editableToolbar > .save").click(function () {
@@ -504,6 +507,7 @@
             Pontoon.transifex.password = 'mozilla';
           }
           Pontoon.project.title = document.title.split("-->")[1];
+          Pontoon.project.hooks = true;
           loadEntities();
         });
       } else {

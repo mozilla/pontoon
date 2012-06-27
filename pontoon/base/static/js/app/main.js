@@ -27,7 +27,8 @@ var Pontoon = (function () {
         self.confirmLeaving(true);
 
       } else if (type === "json") {
-        var entities = $.extend(true, [], this.project.entities); // Deep copy: http://api.jquery.com/jQuery.extend
+        // Deep copy: http://api.jquery.com/jQuery.extend
+        var entities = $.extend(true, [], this.project.entities);
         $(entities).each(function () {
           delete this.ui;
           delete this.hover;
@@ -670,17 +671,19 @@ var Pontoon = (function () {
       if (e.source === Pontoon.project.win) {
         var message = JSON.parse(e.data);
         if (message.type === "DATA") {
+          // Deep copy: http://api.jquery.com/jQuery.extend
+          Pontoon.project.entities = $.extend(true, Pontoon.project.entities, message.value.entities);
+        } else if (message.type === "RENDER") {
           var value = message.value;
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
           Pontoon.project.info = value.info
-          Pontoon.project.entities = $.extend(true, Pontoon.project.entities, value.entities); // Deep copy: http://api.jquery.com/jQuery.extend
           Pontoon.project.pages = value.pages;
+          Pontoon.project.hooks = value.hooks;
           Pontoon.transifex.username = value.username;
           Pontoon.transifex.password = value.password;
           Pontoon.transifex.project = value.name;
           Pontoon.transifex.resource = value.resource;
-        } else if (message.type === "RENDER") {
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $("#spinner").fadeOut(function() {
@@ -731,7 +734,8 @@ var Pontoon = (function () {
         title: "",
         info: null,
         entities: [],
-        pages: {}
+        pages: {},
+        hooks: false
       };
       this.locale = {
         code: locale,
