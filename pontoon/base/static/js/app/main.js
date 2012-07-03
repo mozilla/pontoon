@@ -53,7 +53,6 @@ var Pontoon = (function () {
         }
 
         $(this.project.entities).each(function () {
-          $(this.entities).each(function () {
             var msgid = this.original;
             po.translations[msgid] = {
                 fuzzy: false,
@@ -65,7 +64,6 @@ var Pontoon = (function () {
               po.translations[msgid].fuzzy = true,
               po.translations[msgid].msgstr = this.suggestions[0].translation;
             }
-          });
         });
 
         params.data = JSON.stringify(po);
