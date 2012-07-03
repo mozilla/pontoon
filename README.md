@@ -49,7 +49,7 @@ To only update Playdoh and submodules, do:
 Local settings
 --------------
 
-Specify your SITE_URL in the Django local settings file `/pontoon/settings/local.py` if different from `http://127.0.0.1:8000`.
+Specify your SITE_URL in the Django local settings file `/pontoon/settings/local.py` if different from `http://127.0.0.1:8000`. Uncomment `SESSION_COOKIE_SECURE = False` if you are running a local development install without HTTPS to disable HTTPS-only cookies.
 
 To use Microsoft Translator API for machine translation, obtain a valid API key from the [Bing Developer Center][bdc] and store it in a variable MICROSOFT_TRANSLATOR_API_KEY in your Django local settings file `/pontoon/settings/local.py`.
 
