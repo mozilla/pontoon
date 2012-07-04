@@ -53,17 +53,17 @@ var Pontoon = (function () {
         }
 
         $(this.project.entities).each(function () {
-            var msgid = this.original;
-            po.translations[msgid] = {
-                fuzzy: false,
-                msgstr: this.translation,
-                occurrence: self.project.url,
-            };
+          var msgid = this.original;
+          po.translations[msgid] = {
+              fuzzy: false,
+              msgstr: this.translation,
+              occurrence: self.project.url,
+          };
 
-            if (this.suggestions && !msgstr) {
-              po.translations[msgid].fuzzy = true,
-              po.translations[msgid].msgstr = this.suggestions[0].translation;
-            }
+          if (this.suggestions && !msgstr) {
+            po.translations[msgid].fuzzy = true,
+            po.translations[msgid].msgstr = this.suggestions[0].translation;
+          }
         });
 
         params.data = JSON.stringify(po);
@@ -326,7 +326,7 @@ var Pontoon = (function () {
 
         $.ajax({
           url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
-               '@www.transifex.net/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
+               '@www.transifex.com/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
                 Pontoon.transifex.resource + '/translation/' + locale + '/strings?key=' + original,
           dataType: 'jsonp',
           success: function(data) {

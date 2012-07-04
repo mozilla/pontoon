@@ -231,7 +231,7 @@
 
         $.ajax({
           url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
-               '@www.transifex.net/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
+               '@www.transifex.com/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
                Pontoon.transifex.resource + '/translation/' + Pontoon.locale.code.replace("-", "_") + '/strings/',
           dataType: 'jsonp',
           success: function(data) {
