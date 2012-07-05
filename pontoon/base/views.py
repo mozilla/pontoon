@@ -60,6 +60,20 @@ def check_url(request, template=None):
     return HttpResponse(status)
 
 def _request(type, project, resource, locale, username, password, payload=False):
+    """
+    Make request to Transifex server.
+
+    Args:
+        type: Request type
+        project: Transifex project name
+        resource: Transifex resource name
+        locale: Locale code
+        username: Transifex username
+        password: Transifex password
+        payload: Data to be sent to the server
+    Returns:
+        A server response or error message.
+    """
     url = 'https://www.transifex.com/api/2/project/' + project + '/resource/' + resource + '/translation/' + locale + '/strings/'
 
     try:
@@ -96,9 +110,9 @@ def _request(type, project, resource, locale, username, password, payload=False)
         log.debug('Generic exception: ' + traceback.format_exc())
         return "error"
 
-def get(request, template=None):
-    """Get project entities."""
-    log.debug("Get project entities.")
+def load_entities(request, template=None):
+    """Load project entities."""
+    log.debug("Load project entities.")
 
     project = request.GET['project']
     resource = request.GET['resource']
@@ -112,17 +126,17 @@ def get(request, template=None):
         data = []
         entities = Entity.objects.filter(project=p)
 
-        for entity in entities:
+        for e in entities:
             try:
-                t = Translation.objects.get(entity=entity)
-                trans = unicode(t.string).encode('utf-8')
+                t = Translation.objects.get(entity=e)
+                translation = unicode(t.string).encode('utf-8')
             except Translation.DoesNotExist:
-                trans = ""
+                translation = ""
 
             obj = {
-                "key": entity.string,
-                "comment": entity.comment,
-                "translation": trans
+                "key": e.string,
+                "comment": e.comment,
+                "translation": translation
             }
             data.append(obj)
 

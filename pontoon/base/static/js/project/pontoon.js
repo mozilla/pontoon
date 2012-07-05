@@ -230,7 +230,7 @@
         var counter = 0;
 
         $.ajax({
-          url: Pontoon.app.path + 'get/',
+          url: Pontoon.app.path + 'load/',
           data: {
             project: Pontoon.transifex.project,
             resource: Pontoon.transifex.resource,
