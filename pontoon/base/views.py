@@ -110,15 +110,43 @@ def _request(type, project, resource, locale, username, password, payload=False)
         log.debug('Generic exception: ' + traceback.format_exc())
         return "error"
 
+def get_translation(request, template=None):
+    """Get entity translation in a specified project and locale."""
+    log.debug("Get entity translation in a specified project and locale.")
+
+    key = request.GET['key']
+    project = request.GET['project']
+    locale = request.GET['locale']
+    resource = request.GET['resource']
+
+    log.debug("Entity: " + key)
+    log.debug("Project: " + project)
+    log.debug("Locale: " + locale)
+
+    """Query DB by Transifex project name or load data from Transifex."""
+    p = Project.objects.filter(name=project)
+    e = Entity.objects.filter(project=p, string=key)
+
+    try:
+        t = Translation.objects.get(entity=e, locale=locale)
+        log.debug("Translation: " + t.string)
+        return HttpResponse(t.string)
+    except Translation.DoesNotExist:
+        log.debug("Translation does not exist.")
+        return HttpResponse("error")
+
 def load_entities(request, template=None):
-    """Load project entities."""
-    log.debug("Load project entities.")
+    """Load project entities and translations in a specified locale."""
+    log.debug("Load project entities and translations in a specified locale.")
 
     project = request.GET['project']
     resource = request.GET['resource']
     locale = request.GET['locale']
     project_url = request.GET['url']
     callback = str(request.GET.get('callback', '')) # JSONP
+
+    log.debug("Project: " + project)
+    log.debug("Locale: " + locale)
 
     """Query DB by Transifex project name or load data from Transifex."""
     p = Project.objects.filter(name=project)
@@ -128,8 +156,8 @@ def load_entities(request, template=None):
 
         for e in entities:
             try:
-                t = Translation.objects.get(entity=e)
-                translation = unicode(t.string).encode('utf-8')
+                t = Translation.objects.get(entity=e, locale=locale)
+                translation = t.string
             except Translation.DoesNotExist:
                 translation = ""
 
@@ -175,7 +203,7 @@ def load_entities(request, template=None):
                 translation = entity["translation"]
                 if len(translation) > 0:
                     # TODO: add locale
-                    t = Translation(entity=e, author=entity["user"], string=translation, date=datetime.datetime.now())
+                    t = Translation(entity=e, locale=locale, author=entity["user"], string=translation, date=datetime.datetime.now())
                     t.save()
             log.debug("Transifex data saved to DB.")
 

@@ -33,6 +33,7 @@ class Entity(models.Model):
 
 class Translation(models.Model):
     entity = models.ForeignKey(Entity)
+    locale = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
     string = models.TextField()
     date = models.DateTimeField()

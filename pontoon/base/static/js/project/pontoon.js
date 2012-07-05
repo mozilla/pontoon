@@ -23,8 +23,6 @@
           email: ""
         },
         transifex: {
-          username: "",
-          password: "",
           project: "",
           resource: ""
         }
@@ -66,8 +64,6 @@
           info: Pontoon.project.info,
           pages: Pontoon.project.pages,
           hooks: Pontoon.project.hooks,
-          username: Pontoon.transifex.username,
-          password: Pontoon.transifex.password,
           name: Pontoon.transifex.project,
           resource: Pontoon.transifex.resource
         });
@@ -507,12 +503,6 @@
           Pontoon.project.info = data.info; // Campaign info
           Pontoon.transifex.project = data.transifex.project; // Transifex project
           Pontoon.transifex.resource = data.transifex.resource; // Transifex resource
-
-          // Credentials for demo project to test PHP hooks
-          if (Pontoon.transifex.project === 'testpilot') {
-            Pontoon.transifex.username = 'pontoon';
-            Pontoon.transifex.password = 'mozilla';
-          }
           Pontoon.project.title = document.title.split("-->")[1];
           Pontoon.project.hooks = true;
           loadEntities();

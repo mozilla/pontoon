@@ -316,7 +316,6 @@ var Pontoon = (function () {
         var li = $(this),
             entity = li.parents(".entity"),
             original = entity[0].entity.original,
-            locale = li.find(".language").attr("class").split(" ")[1],
             p = li.parents('.select').next('p').show();
 
         p.addClass("loader").html('');
@@ -325,14 +324,16 @@ var Pontoon = (function () {
         .hide();
 
         $.ajax({
-          url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
-               '@www.transifex.com/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
-                Pontoon.transifex.resource + '/translation/' + locale + '/strings?key=' + original,
-          dataType: 'jsonp',
+          url: Pontoon.app.path + 'get/',
+          data: {
+            project: Pontoon.transifex.project,
+            resource: Pontoon.transifex.resource,
+            locale: li.find(".language").attr("class").split(" ")[1].replace("-", "_"),
+            key: original
+          },
           success: function(data) {
-            var response = data[0];            
-            if (response) {
-              p.removeClass("loader no").addClass("source-string").html(self.doNotRender(response.translation));
+            if (data !== "error") {
+              p.removeClass("loader no").addClass("source-string").html(self.doNotRender(data));
               entity.find('.toolbar').show();
             } else {
               p.removeClass("loader").addClass("no").html('No translations yet');
@@ -678,8 +679,6 @@ var Pontoon = (function () {
           Pontoon.project.info = value.info
           Pontoon.project.pages = value.pages;
           Pontoon.project.hooks = value.hooks;
-          Pontoon.transifex.username = value.username;
-          Pontoon.transifex.password = value.password;
           Pontoon.transifex.project = value.name;
           Pontoon.transifex.resource = value.resource;
           Pontoon.attachHandlers();
@@ -747,8 +746,6 @@ var Pontoon = (function () {
         name: email.split("@")[0] // PO file
       };
       this.transifex = {
-        username: "",
-        password: "",
         project: "",
         resource: ""
       };
