@@ -230,9 +230,13 @@
         var counter = 0;
 
         $.ajax({
-          url: 'https://' + Pontoon.transifex.username + ':' + Pontoon.transifex.password + 
-               '@www.transifex.com/api/2/project/' + Pontoon.transifex.project + '/resource/' + 
-               Pontoon.transifex.resource + '/translation/' + Pontoon.locale.code.replace("-", "_") + '/strings/',
+          url: Pontoon.app.path + 'get/',
+          data: {
+            project: Pontoon.transifex.project,
+            resource: Pontoon.transifex.resource,
+            locale: Pontoon.locale.code.replace("-", "_"),
+            url: Pontoon.project.url
+          },
           dataType: 'jsonp',
           success: function(data) {
             $('*').contents().each(function () {

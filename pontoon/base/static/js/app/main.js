@@ -103,7 +103,7 @@ var Pontoon = (function () {
             if (data === "authenticate") {
               self.endLoader('Please sign in to Transifex.', 'error');
               $("#transifex").show();
-            } else if (data === "done") {
+            } else if (data === "200") {
               self.endLoader('Done!');
               $('#transifex').hide();
             } else if (data === "error") {

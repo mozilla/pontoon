@@ -15,3 +15,27 @@ def create_user_profile(sender, instance, created, **kwargs):
         UserProfile.objects.create(user=instance)
 
 post_save.connect(create_user_profile, sender=User)
+
+class Project(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    url = models.URLField(unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+class Entity(models.Model):
+    project = models.ForeignKey(Project)
+    string = models.TextField()
+    comment = models.TextField()
+
+    def __unicode__(self):
+        return self.string
+
+class Translation(models.Model):
+    entity = models.ForeignKey(Entity)
+    author = models.CharField(max_length=100)
+    string = models.TextField()
+    date = models.DateTimeField()
+
+    def __unicode__(self):
+        return self.string

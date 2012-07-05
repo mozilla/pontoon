@@ -20,6 +20,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_POST
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
+from pontoon.base.models import Project, Entity, Translation
 
 from funfactory.log import log_cef
 from mobility.decorators import mobile_template
@@ -44,7 +45,6 @@ def home(request, locale=None, url=None, template=None):
 
     return render(request, template, data)
 
-@login_required(redirect_field_name='', login_url='/')
 def check_url(request, template=None):
     """Check if URL exists."""
     log.debug("Check if URL exists.")
@@ -58,6 +58,114 @@ def check_url(request, template=None):
         log.debug(e)
         status = "invalid"
     return HttpResponse(status)
+
+def _request(type, project, resource, locale, username, password, payload=False):
+    url = 'https://www.transifex.com/api/2/project/' + project + '/resource/' + resource + '/translation/' + locale + '/strings/'
+
+    try:
+        if type == 'get':
+            r = requests.get(url + '?details', auth=(username, password), timeout=10)
+        elif type == 'put':
+            r = requests.put(url, auth=(username, password), timeout=10, 
+                data=json.dumps(payload), headers={'content-type': 'application/json'})
+        log.debug(r.status_code)
+        if r.status_code == 401:
+            return "authenticate"
+        elif r.status_code != 200:
+            return "error"
+        return r
+    except requests.exceptions.ConnectionError, e: # Network problem (DNS failure, refused connection, etc.)
+        log.debug('ConnectionError: ' + str(e))
+        return "error"
+    except requests.exceptions.HTTPError, e: # Invalid HTTP response
+        log.debug('HTTPError: ' + str(e))
+        return "error"
+    except requests.exceptions.URLRequired, e: # A valid URL is required
+        log.debug('URLRequired: ' + str(e))
+        return "error"
+    except requests.exceptions.Timeout, e: # Request times out
+        log.debug('Timeout: ' + str(e))
+        return "error"
+    except requests.exceptions.TooManyRedirects, e: # Request exceeds the number of maximum redirections
+        log.debug('TooManyRedirects: ' + str(e))
+        return "error"
+    except requests.exceptions.RequestException, e: # Ambiguous exception occurres
+        log.debug('RequestException: ' + str(e))
+        return "error"
+    except Exception:
+        log.debug('Generic exception: ' + traceback.format_exc())
+        return "error"
+
+def get(request, template=None):
+    """Get project entities."""
+    log.debug("Get project entities.")
+
+    project = request.GET['project']
+    resource = request.GET['resource']
+    locale = request.GET['locale']
+    project_url = request.GET['url']
+    callback = str(request.GET.get('callback', '')) # JSONP
+
+    """Query DB by Transifex project name or load data from Transifex."""
+    p = Project.objects.filter(name=project)
+    if len(p) > 0:
+        data = []
+        entities = Entity.objects.filter(project=p)
+
+        for entity in entities:
+            try:
+                t = Translation.objects.get(entity=entity)
+                trans = unicode(t.string).encode('utf-8')
+            except Translation.DoesNotExist:
+                trans = ""
+
+            obj = {
+                "key": entity.string,
+                "comment": entity.comment,
+                "translation": trans
+            }
+            data.append(obj)
+
+        log.debug(json.dumps(data))
+        return HttpResponse(callback + '(' + json.dumps(data) + ');')
+
+    else:
+        """Check if user authenticated to Transifex."""
+        if project == 'testpilot':
+            username = 'pontoon'
+            password = 'mozilla'
+        else:
+            profile = request.user.get_profile()
+            username = profile.transifex_username
+            password = base64.decodestring(profile.transifex_password)
+        if not (password or username):
+            return HttpResponse(callback + '(authenticate);')
+
+        """Make GET request to Transifex API."""
+        response = _request('get', project, resource, locale, username, password)
+        log.debug(response.content)
+
+        """Save Transifex data to DB."""
+        if response.status_code == 200:
+            p = Project(name=project, url=project_url)
+            p.save()
+
+            entities = json.loads(response.content)
+            for entity in entities:
+                e = Entity(project=p, string=entity["key"])
+                comment = entity["comment"]
+                if len(comment) > 0:
+                    e.comment = comment
+                e.save()
+
+                translation = entity["translation"]
+                if len(translation) > 0:
+                    # TODO: add locale
+                    t = Translation(entity=e, author=entity["user"], string=translation, date=datetime.datetime.now())
+                    t.save()
+            log.debug("Transifex data saved to DB.")
+
+        return HttpResponse(callback + '(' + response.content + ');')
 
 def _generate_po_content(data):
     """
@@ -135,7 +243,7 @@ def download(request, template=None):
     return response
 
 @login_required(redirect_field_name='', login_url='/')
-def transifex(request, template=None):
+def transifex_save(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
 
@@ -149,12 +257,6 @@ def transifex(request, template=None):
         return HttpResponse("authenticate")
 
     """Make PUT request to Transifex API."""
-    project = data['project']
-    resource = data['resource']
-    locale = data['locale']
-    url = 'https://www.transifex.net/api/2/project/' + project + '/resource/' + resource + '/translation/' + locale + '/strings/'
-    headers = {'content-type': 'application/json'}
-
     payload = []
     for entity in data.get('strings'):
         obj = {
@@ -163,42 +265,21 @@ def transifex(request, template=None):
             "translation": entity['translation']
         }
         payload.append(obj)
+    log.debug(json.dumps(payload))
 
-    try:
-        r = requests.put(url, auth=(username, password), data=json.dumps(payload), headers=headers, timeout=10)
-        log.debug(r.status_code)
-        if r.status_code == 401:
-            return HttpResponse("authenticate")
-        elif r.status_code != 200:
-            return HttpResponse("error")
-    except requests.exceptions.ConnectionError, e: # Network problem (DNS failure, refused connection, etc.)
-        log.debug('ConnectionError: ' + str(e))
-        return HttpResponse("error")
-    except requests.exceptions.HTTPError, e: # Invalid HTTP response
-        log.debug('HTTPError: ' + str(e))
-        return HttpResponse("error")
-    except requests.exceptions.URLRequired, e: # A valid URL is required
-        log.debug('URLRequired: ' + str(e))
-        return HttpResponse("error")
-    except requests.exceptions.Timeout, e: # Request times out
-        log.debug('Timeout: ' + str(e))
-        return HttpResponse("error")
-    except requests.exceptions.TooManyRedirects, e: # Request exceeds the number of maximum redirections
-        log.debug('TooManyRedirects: ' + str(e))
-        return HttpResponse("error")
-    except requests.exceptions.RequestException, e: # Ambiguous exception occurres
-        log.debug('RequestException: ' + str(e))
-        return HttpResponse("error")
-    except Exception:
-        log.debug('Generic exception: ' + traceback.format_exc())
-        return HttpResponse("error")
+    """Make PUT request to Transifex API."""
+    response = _request('put', data['project'], data['resource'], data['locale'], username, password, payload)
 
     """Save Transifex username and password."""
     if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
         profile.transifex_username = data['auth']['username']
         profile.transifex_password = base64.encodestring(data['auth']['password'])
         profile.save()
-    return HttpResponse("done")
+
+    try:
+        return HttpResponse(response.status_code)
+    except AttributeError:
+        return HttpResponse(response)
 
 @require_POST
 def verify(request, template=None):
