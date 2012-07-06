@@ -22,9 +22,7 @@ var Pontoon = (function () {
 
       if (type === "html") {
         params.data = value;
-        self.confirmLeaving(false);
         window.location = 'download/?' + $.param(params);
-        self.confirmLeaving(true);
 
       } else if (type === "json") {
         // Deep copy: http://api.jquery.com/jQuery.extend
@@ -37,9 +35,7 @@ var Pontoon = (function () {
           delete this.body;
         });
         params.data = JSON.stringify(entities, null, "\t");
-        self.confirmLeaving(false);
         window.location = 'download/?' + $.param(params);
-        self.confirmLeaving(true);
 
       } else if (type === "po") {
         var po = {
@@ -67,9 +63,7 @@ var Pontoon = (function () {
         });
 
         params.data = JSON.stringify(po);
-        self.confirmLeaving(false);
         window.location = 'download/?' + $.param(params);
-        self.confirmLeaving(true);
 
       } else if (type === "transifex") {
         self.startLoader('Saving...');
@@ -549,28 +543,12 @@ var Pontoon = (function () {
 
 
     /**
-     * Are you sure you want to leave this page?
-     * In Firefox 4 and later the returned string is not displayed to the user
-     *
-     * enable Enables confirm leaving page dialog
-     */
-    confirmLeaving: function (enable) {
-      window.onbeforeunload = (enable) ? function() {
-        return "Your translations have not been saved.";
-      } : null;
-    },
-
-
-
-    /**
      * Attach event handlers
      */
     attachHandlers: function () {
       var self = this,
           info = self.project.info,
           pages = self.project.pages;
-
-      self.confirmLeaving(true);
 
       // General Project Info
       if (info) {
