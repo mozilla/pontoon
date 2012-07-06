@@ -120,27 +120,60 @@ def get_translation(request, template=None):
     """Get entity translation of a specified project and locale."""
     log.debug("Get entity translation of a specified project and locale.")
 
-    key = request.GET['key']
+    original = request.GET['original']
     project = request.GET['project']
     locale = request.GET['locale']
-    resource = request.GET['resource']
 
-    log.debug("Entity: " + key)
+    log.debug("Entity: " + original)
     log.debug("Project: " + project)
     log.debug("Locale: " + locale)
 
-    """Query DB by Transifex project name or load data from Transifex."""
     p = Project.objects.filter(name=project)
-    e = Entity.objects.filter(project=p, string=key)
+    e = Entity.objects.filter(project=p, string=original)
+    l = Locale.objects.get(code=locale)
 
     try:
-        l = Locale.objects.get(code=locale)
         t = Translation.objects.get(entity=e, locale=l)
         log.debug("Translation: " + t.string)
         return HttpResponse(t.string)
     except Translation.DoesNotExist:
         log.debug("Translation does not exist.")
         return HttpResponse("error")
+
+def save_translation(request, template=None):
+    """Save entity translation to the specified project and locale."""
+    log.debug("Save entity translation to the specified project and locale.")
+
+    original = request.GET['original']
+    translation = request.GET['translation']
+    project = request.GET['project']
+    locale = request.GET['locale']
+
+    log.debug("Entity: " + original)
+    log.debug("Translation: " + translation)
+    log.debug("Project: " + project)
+    log.debug("Locale: " + locale)
+
+    p = Project.objects.filter(name=project)
+    e = Entity.objects.filter(project=p, string=original)
+    l = Locale.objects.get(code=locale)
+
+    try:
+        """Update existing translation."""
+        t = Translation.objects.get(entity=e[0], locale=l)
+        t.string = translation
+        t.save()
+        log.debug("Translation updated.")
+        return HttpResponse("updated")
+
+    except Translation.DoesNotExist:
+        """Save new translation."""
+        t = Translation(entity=e[0], locale=l, string=translation, 
+            author=request.user.email, date=datetime.datetime.now())
+        t.save()
+
+        log.debug("Translation saved.")
+        return HttpResponse("saved")
 
 def load_entities(request, template=None):
     """Load all project entities and translations."""
@@ -201,8 +234,8 @@ def load_entities(request, template=None):
             log.debug(response.content)
             entities = json.loads(response.content)
             p = Project.objects.filter(name=project)
-            """Add locale and translations to the project."""
             if len(p) > 0:
+                """Add locale and translations to the project."""
                 p[0].locales.add(l)
 
                 for entity in entities:
@@ -212,8 +245,8 @@ def load_entities(request, template=None):
                         t = Translation(entity=e[0], locale=l, string=translation, 
                             author=entity["user"], date=datetime.datetime.now())
                         t.save()
-            """Create a new project."""
             else:
+                """Create a new project."""
                 p = Project(name=project, url=project_url)
                 p.save()
                 p.locales.add(l)

@@ -324,12 +324,11 @@ var Pontoon = (function () {
         .hide();
 
         $.ajax({
-          url: Pontoon.app.path + 'get/',
+          url: 'get/',
           data: {
             project: Pontoon.transifex.project,
-            resource: Pontoon.transifex.resource,
             locale: li.find(".language").attr("class").split(" ")[1].replace("-", "_"),
-            key: original
+            original: original
           },
           success: function(data) {
             if (data !== "error") {
@@ -700,7 +699,22 @@ var Pontoon = (function () {
         } else if (message.type === "INACTIVE") {
           Pontoon.project.entities[message.value].ui.removeClass('active');
         } else if (message.type === "SAVE") {
-          Pontoon.updateEntityUI(Pontoon.project.entities[message.value]);
+          var entity = Pontoon.project.entities[message.value];
+          Pontoon.updateEntityUI(entity);
+          // Save to server
+          Pontoon.startLoader('');
+          $.ajax({
+            url: 'save/',
+            data: {
+              project: Pontoon.transifex.project,
+              locale: Pontoon.locale.code.replace("-", "_"),
+              original: entity.original,
+              translation: entity.translation
+            },
+            success: function(data) {
+              Pontoon.endLoader('Translation ' + data + '!');
+            }
+          });
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }
