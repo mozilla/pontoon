@@ -37,7 +37,8 @@ def home(request, locale=None, url=None, template=None):
     data = {
         'locale_code': locale,
         'project_url': url,
-        'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0]
+        'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
+        'locales': Locale.objects.all()
     }
 
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
