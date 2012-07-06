@@ -16,9 +16,17 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 post_save.connect(create_user_profile, sender=User)
 
+class Locale(models.Model):
+    code = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.name
+
 class Project(models.Model):
     name = models.CharField(max_length=100, unique=True)
     url = models.URLField(unique=True)
+    locales = models.ManyToManyField(Locale)
 
     def __unicode__(self):
         return self.name
@@ -33,9 +41,9 @@ class Entity(models.Model):
 
 class Translation(models.Model):
     entity = models.ForeignKey(Entity)
-    locale = models.CharField(max_length=100)
-    author = models.CharField(max_length=100)
+    locale = models.ForeignKey(Locale)
     string = models.TextField()
+    author = models.CharField(max_length=100)
     date = models.DateTimeField()
 
     def __unicode__(self):

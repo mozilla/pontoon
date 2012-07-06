@@ -20,7 +20,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_POST
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
-from pontoon.base.models import Project, Entity, Translation
+from pontoon.base.models import Project, Entity, Locale, Translation
 
 from funfactory.log import log_cef
 from mobility.decorators import mobile_template
@@ -88,22 +88,28 @@ def _request(type, project, resource, locale, username, password, payload=False)
         elif r.status_code != 200:
             return "error"
         return r
-    except requests.exceptions.ConnectionError, e: # Network problem (DNS failure, refused connection, etc.)
+    # Network problem (DNS failure, refused connection, etc.)
+    except requests.exceptions.ConnectionError, e:
         log.debug('ConnectionError: ' + str(e))
         return "error"
-    except requests.exceptions.HTTPError, e: # Invalid HTTP response
+    # Invalid HTTP response
+    except requests.exceptions.HTTPError, e:
         log.debug('HTTPError: ' + str(e))
         return "error"
-    except requests.exceptions.URLRequired, e: # A valid URL is required
+    # A valid URL is required
+    except requests.exceptions.URLRequired, e:
         log.debug('URLRequired: ' + str(e))
         return "error"
-    except requests.exceptions.Timeout, e: # Request times out
+    # Request times out
+    except requests.exceptions.Timeout, e:
         log.debug('Timeout: ' + str(e))
         return "error"
-    except requests.exceptions.TooManyRedirects, e: # Request exceeds the number of maximum redirections
+    # Request exceeds the number of maximum redirections
+    except requests.exceptions.TooManyRedirects, e:
         log.debug('TooManyRedirects: ' + str(e))
         return "error"
-    except requests.exceptions.RequestException, e: # Ambiguous exception occurres
+    # Ambiguous exception occurres
+    except requests.exceptions.RequestException, e:
         log.debug('RequestException: ' + str(e))
         return "error"
     except Exception:
@@ -111,8 +117,8 @@ def _request(type, project, resource, locale, username, password, payload=False)
         return "error"
 
 def get_translation(request, template=None):
-    """Get entity translation in a specified project and locale."""
-    log.debug("Get entity translation in a specified project and locale.")
+    """Get entity translation of a specified project and locale."""
+    log.debug("Get entity translation of a specified project and locale.")
 
     key = request.GET['key']
     project = request.GET['project']
@@ -128,7 +134,8 @@ def get_translation(request, template=None):
     e = Entity.objects.filter(project=p, string=key)
 
     try:
-        t = Translation.objects.get(entity=e, locale=locale)
+        l = Locale.objects.get(code=locale)
+        t = Translation.objects.get(entity=e, locale=l)
         log.debug("Translation: " + t.string)
         return HttpResponse(t.string)
     except Translation.DoesNotExist:
@@ -136,8 +143,8 @@ def get_translation(request, template=None):
         return HttpResponse("error")
 
 def load_entities(request, template=None):
-    """Load project entities and translations in a specified locale."""
-    log.debug("Load project entities and translations in a specified locale.")
+    """Load all project entities and translations."""
+    log.debug("Load all project entities and translations.")
 
     project = request.GET['project']
     resource = request.GET['resource']
@@ -148,15 +155,17 @@ def load_entities(request, template=None):
     log.debug("Project: " + project)
     log.debug("Locale: " + locale)
 
-    """Query DB by Transifex project name or load data from Transifex."""
+    """Query DB by project name and locale or load data from Transifex."""
+    l = Locale.objects.get(code=locale)
     p = Project.objects.filter(name=project)
-    if len(p) > 0:
-        data = []
+    if len(p) > 0 and len(p[0].locales.filter(code=locale)) > 0:
+        log.debug("Load data from DB.")
         entities = Entity.objects.filter(project=p)
 
+        data = []
         for e in entities:
             try:
-                t = Translation.objects.get(entity=e, locale=locale)
+                t = Translation.objects.get(entity=e, locale=l)
                 translation = t.string
             except Translation.DoesNotExist:
                 translation = ""
@@ -168,10 +177,11 @@ def load_entities(request, template=None):
             }
             data.append(obj)
 
-        log.debug(json.dumps(data))
-        return HttpResponse(callback + '(' + json.dumps(data) + ');')
+        log.debug(json.dumps(data, indent=4))
+        return HttpResponse(callback + '(' + json.dumps(data, indent=4) + ');')
 
     else:
+        log.debug("Load data from Transifex.")
         """Check if user authenticated to Transifex."""
         if project == 'testpilot':
             username = 'pontoon'
@@ -185,28 +195,42 @@ def load_entities(request, template=None):
 
         """Make GET request to Transifex API."""
         response = _request('get', project, resource, locale, username, password)
-        log.debug(response.content)
 
         """Save Transifex data to DB."""
         if response.status_code == 200:
-            p = Project(name=project, url=project_url)
-            p.save()
-
+            log.debug(response.content)
             entities = json.loads(response.content)
-            for entity in entities:
-                e = Entity(project=p, string=entity["key"])
-                comment = entity["comment"]
-                if len(comment) > 0:
-                    e.comment = comment
-                e.save()
+            p = Project.objects.filter(name=project)
+            """Add locale and translations to the project."""
+            if len(p) > 0:
+                p[0].locales.add(l)
 
-                translation = entity["translation"]
-                if len(translation) > 0:
-                    # TODO: add locale
-                    t = Translation(entity=e, locale=locale, author=entity["user"], string=translation, date=datetime.datetime.now())
-                    t.save()
+                for entity in entities:
+                    e = Entity.objects.filter(project=p[0], string=entity["key"])
+                    translation = entity["translation"]
+                    if len(translation) > 0:
+                        t = Translation(entity=e[0], locale=l, string=translation, 
+                            author=entity["user"], date=datetime.datetime.now())
+                        t.save()
+            """Create a new project."""
+            else:
+                p = Project(name=project, url=project_url)
+                p.save()
+                p.locales.add(l)
+
+                for entity in entities:
+                    e = Entity(project=p, string=entity["key"])
+                    comment = entity["comment"]
+                    if len(comment) > 0:
+                        e.comment = comment
+                    e.save()
+                    translation = entity["translation"]
+                    if len(translation) > 0:
+                        t = Translation(entity=e, locale=l, string=translation, 
+                            author=entity["user"], date=datetime.datetime.now())
+                        t.save()
+
             log.debug("Transifex data saved to DB.")
-
         return HttpResponse(callback + '(' + response.content + ');')
 
 def _generate_po_content(data):
@@ -307,7 +331,7 @@ def transifex_save(request, template=None):
             "translation": entity['translation']
         }
         payload.append(obj)
-    log.debug(json.dumps(payload))
+    log.debug(json.dumps(payload, indent=4))
 
     """Make PUT request to Transifex API."""
     response = _request('put', data['project'], data['resource'], data['locale'], username, password, payload)
