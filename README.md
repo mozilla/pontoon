@@ -47,7 +47,7 @@ Django local settings file is located at `/pontoon/settings/local.py`.
 Hooks
 --------------
 
-To use PHP hooks, link or move Pontoon clone to your web server's document root. Store Pontoon application path in the $path variable in your local PHP settings file in `/hooks/php/local-settings.php` if different from `http://localhost:8000`. To extract strings, run `xgettext -L PHP --keyword=_w --from-code=UTF-8 --output=messages.pot *.php`.
+To use PHP hooks, link `/hooks/` to your web server's document root. Store Pontoon application path in the $path variable in your local PHP settings file in `/hooks/php/local-settings.php` if different from `http://localhost:8000`. To extract strings, run `xgettext -L PHP --keyword=_w --from-code=UTF-8 --output=messages.pot *.php`.
 
 Updates
 -------
