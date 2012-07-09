@@ -36,16 +36,6 @@ You can edit files in your working copy directory (`/pontoon`) locally and they 
 
 Note that you’ll need to explicitly set the host and port for runserver to be accessible from outside the VM. Vagrant setup already forwards port 8000 (the usual Django development port).
 
-Updates
--------
-To sync your repository with upstream changes, just update the code using git:
-
-`git pull && git submodule sync --quiet && git submodule update --init --recursive`
-
-To only update Playdoh and submodules, do:
-
-`git pull playdoh master && git submodule foreach git pull origin master`
-
 Local settings
 --------------
 
@@ -58,6 +48,16 @@ Hooks
 --------------
 
 To use PHP hooks, link or move Pontoon clone to your web server's document root. Store Pontoon application path in the $path variable in your local PHP settings file in `/hooks/php/local-settings.php` if different from `http://localhost:8000`. To extract strings, run `xgettext -L PHP --keyword=_w --from-code=UTF-8 --output=messages.pot *.php`.
+
+Updates
+-------
+To sync your repository with upstream changes, just update the code using git:
+
+`git pull && git submodule sync --quiet && git submodule update --init --recursive`
+
+To only update Playdoh and submodules, do:
+
+`git pull playdoh master && git submodule foreach git pull origin master`
 
 Get involved
 ------------
