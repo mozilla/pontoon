@@ -32,7 +32,7 @@ You can edit files in your working copy directory (`/pontoon`) locally and they 
 3. Run the development web server (in VM):
  * `cd pontoon`
  * `python manage.py runserver 0.0.0.0:8000`
-4. Point your web browser to [http://localhost:8000](http://localhost:8000) and click Demo.
+4. Point your web browser to [http://localhost:8000](http://localhost:8000).
 
 Note that you’ll need to explicitly set the host and port for runserver to be accessible from outside the VM. Vagrant setup already forwards port 8000 (the usual Django development port).
 
