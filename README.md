@@ -40,7 +40,7 @@ Local settings
 --------------
 
 Django local settings file is located at `/pontoon/settings/local.py`.
- * `SESSION_COOKIE_SECURE = False`: uncomment if you are running a local development install without HTTPS to disable HTTPS-only cookies.
+ * `SESSION_COOKIE_SECURE = False`: uncomment if running a local development install without HTTPS to disable HTTPS-only cookies.
  * `SITE_URL`: required for BrowserID, set if different from `http://127.0.0.1:8000`.
  * `MICROSOFT_TRANSLATOR_API_KEY`: set to a valid [Microsoft Translator API key][bdc] to use machine translation.
 
@@ -49,9 +49,10 @@ Hooks
 
 To use PHP hooks:
  * Link `/hooks/` to your web server's document root.
- * Store Pontoon application path in the $path variable in your local PHP settings file in `/hooks/php/local-settings.php` if different from `http://localhost:8000`.
+ * Store Pontoon application path in the $path variable in `/hooks/php/local-settings.php` if different from `http://localhost:8000`.
 
-To extract strings, run `xgettext -L PHP --keyword=_w --from-code=UTF-8 --output=messages.pot *.php`.
+To extract strings, run:
+ * `xgettext -L PHP --keyword=_w --from-code=UTF-8 --output=messages.pot *.php`
 
 Updates
 -------
