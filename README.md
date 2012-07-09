@@ -81,7 +81,7 @@ This software is licensed under the [New BSD License][BSD]. For more information
 [ruby]:  http://www.ruby-lang.org/   "Ruby"
 [gem]:  http://rubygems.org/   "RubyGems.org"
 [fork]:  http://help.github.com/fork-a-repo/   "Fork A Repo"
-[bdc]: http://www.bing.com/developers/createapp.aspx   "Bing Developer Center"
+[bdc]: http://msdn.microsoft.com/en-us/library/hh454950   "MSDN"
 [irc]:  https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon   "Mibbit"
 [twitter]:  https://twitter.com/#!/mozillapontoon   "Mozilla Pontoon on Twitter"
 [wiki]:  https://wiki.mozilla.org/L10n:Pontoon   "L10n:Pontoon - MozillaWiki"
