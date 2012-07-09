@@ -13,7 +13,7 @@ Pontoon uses [Playdoh][playdoh], which supports running web apps in virtual mach
 1. Install [VirtualBox][virtualbox] by Oracle to run our VM.
 2. Install [Vagrant][vagrant] to easily customize and access our VM:
  * `gem install vagrant` (requires [Ruby][ruby] and [gem][gem], but most modern *NIX systems already have them)
-3. Clone Pontoon or your [fork][fork] to your web server's document root (location needed for testing PHP hooks):
+3. Clone Pontoon or your [fork][fork]:
  * `git clone --recursive git://github.com/mathjazz/pontoon.git` 
 4. Run a virtual development environment from your working copy directory:
  * `cd pontoon`
@@ -49,11 +49,15 @@ To only update Playdoh and submodules, do:
 Local settings
 --------------
 
-Specify your SITE_URL in the Django local settings file `/pontoon/settings/local.py` if different from `http://127.0.0.1:8000`. Uncomment `SESSION_COOKIE_SECURE = False` if you are running a local development install without HTTPS to disable HTTPS-only cookies.
+Django local settings file is located at `/pontoon/settings/local.py`.
+ * `SESSION_COOKIE_SECURE = False`: uncomment if you are running a local development install without HTTPS to disable HTTPS-only cookies.
+ * `SITE_URL`: required for BrowserID, set if different from `http://127.0.0.1:8000`.
+ * `MICROSOFT_TRANSLATOR_API_KEY`: set to a valid [Microsoft Translator API key][bdc] to use machine translation.
 
-To use Microsoft Translator API for machine translation, obtain a valid API key from the [Bing Developer Center][bdc] and store it in a variable MICROSOFT_TRANSLATOR_API_KEY in your Django local settings file `/pontoon/settings/local.py`.
+Hooks
+--------------
 
-To use PHP hooks, store Pontoon application path in the $path variable in your local PHP settings file in `/hooks/php/local-settings.php` if different from `http://localhost:8000`. To extract strings, run `xgettext -L PHP --keyword=_w --from-code=UTF-8 --output=messages.pot *.php`.
+To use PHP hooks, link or move Pontoon clone to your web server's document root. Store Pontoon application path in the $path variable in your local PHP settings file in `/hooks/php/local-settings.php` if different from `http://localhost:8000`. To extract strings, run `xgettext -L PHP --keyword=_w --from-code=UTF-8 --output=messages.pot *.php`.
 
 Get involved
 ------------
