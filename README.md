@@ -40,8 +40,8 @@ Local settings
 --------------
 
 Django local settings file is located at `/pontoon/settings/local.py`.
- * `SESSION_COOKIE_SECURE = False`: uncomment if running a local development install without HTTPS to disable HTTPS-only cookies.
  * `SITE_URL`: required for BrowserID, set if different from `http://127.0.0.1:8000`.
+ * `SESSION_COOKIE_SECURE = False`: uncomment if running a local development install without HTTPS to disable HTTPS-only cookies.
  * `MICROSOFT_TRANSLATOR_API_KEY`: set to a valid [Microsoft Translator API key][bdc] to use machine translation.
 
 Hooks

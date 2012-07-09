@@ -82,8 +82,5 @@ SECRET_KEY = ''
 # HTTPS to disable HTTPS-only cookies.
 #SESSION_COOKIE_SECURE = False
 
-# Required for BrowserID. Very important security feature
-SITE_URL = 'http://localhost:8000'
-
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = ''
