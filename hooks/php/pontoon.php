@@ -72,8 +72,8 @@ class Pontoon
      */
     static function header($meta) {
 
-        echo '<meta name="Pontoon"'
-            .(($meta != NULL) ? 'data-meta="'.$meta.'"' : '')
+        echo '<meta name="Pontoon" '
+            .(($meta != NULL) ? 'data-meta="'.$meta.'" ' : '')
             .'/>'."\n";
 
         $url = $GLOBALS["path"] ? $GLOBALS["path"] : "http://localhost:8000/";
