@@ -11,9 +11,6 @@
     <meta name="author" content="Mozilla">
     <base href="{{ settings.SITE_URL }}/{{ LANG }}/">  
 
-    <!-- Place favicon.ico in the root of domain and delete these reference -->
-    <link rel="shortcut icon" href="{{ static('img/favicon.ico') }}">
-
     {% block site_css %}
       {% compress css %}
       <link rel="stylesheet" href="{{ static('css/app/style.css') }}">

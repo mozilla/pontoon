@@ -23,6 +23,9 @@ urlpatterns = patterns('',
     url(r'^404/$', 'django.views.generic.simple.direct_to_template', {'template': '404.html'}),
     url(r'^500/$', 'django.views.generic.simple.direct_to_template', {'template': '500.html'}),
 
+    # Favicon
+    url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/img/favicon.ico'}),
+
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
 )
