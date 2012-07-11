@@ -117,7 +117,7 @@
 
     // Dynamically set Demo URL
     var l = window.location;
-    $('#test-pilot').attr('href', '/locale/de/url/' + l.protocol + '//' + l.hostname + '/pontoon/hooks/php/test/testpilot/');
+    $('#demo').attr('href', '/locale/de/url/' + l.protocol + '//' + l.hostname + '/pontoon/hooks/php/test/testpilot/');
 
     // Empty iframe if cached
     $('#source').removeAttr("src");
