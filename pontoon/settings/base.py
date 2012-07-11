@@ -18,8 +18,9 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     'django.contrib.admin', 
 ]
 
-# Required for storing additional information about users
-AUTH_PROFILE_MODULE = 'base.UserProfile'
+LOCALE_PATHS = (
+    os.path.join(ROOT, PROJECT_MODULE, 'locale'),
+)
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:
@@ -71,3 +72,6 @@ DOMAIN_METHODS['messages'] = [
 # ]
 
 LOGGING = dict(loggers=dict(playdoh = {'level': logging.DEBUG}))
+
+# Required for storing additional information about users
+AUTH_PROFILE_MODULE = 'base.UserProfile'
