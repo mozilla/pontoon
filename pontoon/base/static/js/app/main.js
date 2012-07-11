@@ -35,7 +35,7 @@ var Pontoon = (function () {
           params = {
             type: type,
             locale: this.locale.code,
-            csrfmiddlewaretoken: $('#post-form input[name="csrfmiddlewaretoken"]').val()
+            csrfmiddlewaretoken: $('#server').data('csrf')
           };
 
       if (type === "html") {
@@ -617,7 +617,7 @@ var Pontoon = (function () {
               type: 'POST',
               data: {
                 assertion: assertion,
-                csrfmiddlewaretoken: $('#post-form input[name="csrfmiddlewaretoken"]').val()
+                csrfmiddlewaretoken: $('#server').data('csrf')
               },
               success: function(data) {
                 self.user.email = data.browserid.email;
