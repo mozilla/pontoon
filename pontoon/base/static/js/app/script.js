@@ -115,10 +115,6 @@
 
     // MAIN CODE
 
-    // Dynamically set Demo URL
-    var l = window.location;
-    $('#demo').attr('href', '/locale/de/url/' + l.protocol + '//' + l.hostname + '/pontoon/hooks/php/test/testpilot/');
-
     // Empty iframe if cached
     $('#source').removeAttr("src");
 
@@ -127,6 +123,10 @@
         url = $('#server').data('url'),
         acceptLanguage = $('#server').data('accept-language'),
         base = $('base').attr('href');
+
+    // Set Demo URL
+    var l = window.location;
+    $('#demo').attr('href', '/locale/de/url/' + l.protocol + '//' + l.hostname + '/pontoon/hooks/php/test/testpilot/');
 
     // Set include script URL
     $("#install code").html('&lt;script src="' + base + 'static/js/project/pontoon.js"&gt;&lt;/script&gt;');
