@@ -230,14 +230,9 @@ body {
   bottom: 0;
   display: none;
   overflow: hidden;
-  border-bottom: 1px solid #555555;
   width: 100%;
   height: 100%;
   text-align: center;
-
-  box-shadow: 0 0 5px 1px #000000;
-  -moz-box-shadow: 0 0 5px 1px #000000;
-  -webkit-box-shadow: 0 0 5px 1px #000000;
   
   background-color: #111111;
   background-image: -moz-linear-gradient(top, #444444, #000000); /* FF3.6 */
@@ -245,6 +240,15 @@ body {
   background-image: -webkit-linear-gradient(#444444, #000000); /* Chrome 10+, Saf6 */
   background-image: linear-gradient(top, #444444, #000000);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#444444', EndColorStr='#000000'); /* IE6–IE9 */
+}
+
+#intro.error {
+  display: table;
+}
+
+#intro.error .notification {
+  text-align: center;
+  visibility: visible;
 }
 
 .inner {

@@ -1,15 +1,162 @@
-<!DOCTYPE html>
-<html LANG="{{ LANG }}" dir="{{ DIR }}">
+<!doctype html>
+<html>
   <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-    <title>{{ _('Something went wrong!') }}</title>
+    <meta charset="utf-8">
+    
+    <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+ 
+    <title>Pontoon · Server Error</title>
+    <meta name="description" content="Live web localization tool">
+    <meta name="author" content="Mozilla">
+
+    <!-- Place favicon.ico in the root of domain and delete these reference -->
+    <link rel="shortcut icon" href="{{ static('img/favicon.ico') }}">
+
+    <style>
+      /* http://meyerweb.com/eric/tools/css/reset/ 
+         v2.0 | 20110126
+         License: none (public domain)
+      */
+
+      html, body, div, span, applet, object, iframe,
+      h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+      a, abbr, acronym, address, big, cite, code,
+      del, dfn, em, img, ins, kbd, q, s, samp,
+      small, strike, strong, sub, sup, tt, var,
+      b, u, i, center,
+      dl, dt, dd, ol, ul, li,
+      fieldset, form, label, legend,
+      table, caption, tbody, tfoot, thead, tr, th, td,
+      article, aside, canvas, details, embed, 
+      figure, figcaption, footer, header, hgroup, 
+      menu, nav, output, ruby, section, summary,
+      time, mark, audio, video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+      }
+      /* HTML5 display-role reset for older browsers */
+      article, aside, details, figcaption, figure, 
+      footer, header, hgroup, menu, nav, section {
+        display: block;
+      }
+      body {
+        line-height: 1;
+      }
+      ol, ul {
+        list-style: none;
+      }
+      blockquote, q {
+        quotes: none;
+      }
+      blockquote:before, blockquote:after,
+      q:before, q:after {
+        content: '';
+        content: none;
+      }
+      table {
+        border-collapse: collapse;
+        border-spacing: 0;
+      }
+
+      /* End CSS Reset */
+
+      body {
+        font: 13px/1.231 sans-serif;
+      }
+
+      #intro {
+        position: fixed;
+        bottom: 0;
+        display: table;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+
+        background-color: #111111;
+        background-image: -moz-linear-gradient(top, #444444, #000000); /* FF3.6 */
+        background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #444444),color-stop(1, #000000)); /* Saf4+, Chrome */
+        background-image: -webkit-linear-gradient(#444444, #000000); /* Chrome 10+, Saf6 */
+        background-image: linear-gradient(top, #444444, #000000);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#444444', EndColorStr='#000000'); /* IE6–IE9 */
+      }
+
+      .inner {
+        display: table-cell;
+        vertical-align: middle;
+        padding-bottom: 100px;
+      }
+
+      #title {
+        color: #AEEE00;
+        text-shadow: 3px 3px 3px #000000;
+        letter-spacing: -2px;
+        font-family: Helvetica Neue;
+        font-weight: 100;
+        text-align: center;
+        font-size: 100px;
+        margin-bottom: 10px;
+      }
+
+      .notification {
+        color: #F00038;
+        font-weight: 100;
+        text-transform: uppercase;
+      }
+
+      .links {
+        text-align: center;
+        margin: 10px 0;
+      }
+
+      .links li {
+        list-style: none;
+        display: inline;
+        margin: 0 20px;
+        font-size: 14px;
+        line-height: 14px;
+      }
+
+      a:link, a:visited {
+        color: #AAAAAA;
+        text-decoration: none;
+
+        -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
+        -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
+        -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
+        transition: all 0.3s ease-out;  
+      }
+
+      a:hover, a:active {
+        color: #AEEE00;
+        text-decoration: none;
+      }
+    </style>
   </head>
-  <body>
-    <h1>{{ _('Page not found') }}</h1>
-    <p>
-      {% trans %}
-        Sorry, but something went wrong.
-      {% endtrans %}
-    </p>
+  
+  <body id="pontoon">
+    <section id="intro">
+      <div class="inner">
+
+        <h1 id="title">Oops</h1>
+
+        <p class="notification">Sorry, something is wrong. We're going to fix it soon.</p>
+
+        <nav>
+          <ul class="links">
+            <li><a href="/" title="Home">Home</a></li>
+            <li><a href="https://wiki.mozilla.org/L10n:Pontoon" target="_blank" title="Learn">Wiki</a></li>
+            <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="Hack">GitHub</a></li>
+            <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="Follow">Twitter</a></li>
+          </ul>
+        </nav>
+
+      </div>
+    </section>
   </body>
 </html>
