@@ -128,9 +128,6 @@
         acceptLanguage = $('#server').data('accept-language'),
         base = $('base').attr('href');
 
-    // HACK!
-    if (url) url = url.replace(":/", "://");
-
     // Set include script URL
     $("#install code").html('&lt;script src="' + base + 'static/js/project/pontoon.js"&gt;&lt;/script&gt;');
 
