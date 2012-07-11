@@ -14,15 +14,33 @@ var Pontoon = (function () {
      * value Data
      */
     save: function (type, value) {
+
+      // Impossible to download files with $.post
+      function download(params) {
+        var post = $('<form>', {
+          method: 'post',
+          action: 'download/'
+        });
+        for(var key in params) {
+          $('<input>', {
+            type: 'hidden',
+            name: key,
+            value: params[key]
+          }).appendTo(post);
+        }
+        post.appendTo('body').submit().remove();
+      }
+
       var self = this,
           params = {
             type: type,
-            locale: this.locale.code
+            locale: this.locale.code,
+            csrfmiddlewaretoken: $('#post-form input[name="csrfmiddlewaretoken"]').val()
           };
 
       if (type === "html") {
-        params.data = value;
-        window.location = 'download/?' + $.param(params);
+        params.content = value;
+        download(params);
 
       } else if (type === "json") {
         // Deep copy: http://api.jquery.com/jQuery.extend
@@ -34,8 +52,8 @@ var Pontoon = (function () {
           delete this.id;
           delete this.body;
         });
-        params.data = JSON.stringify(entities, null, "\t");
-        window.location = 'download/?' + $.param(params);
+        params.content = JSON.stringify(entities, null, "\t");
+        download(params);
 
       } else if (type === "po") {
         var po = {
@@ -62,12 +80,13 @@ var Pontoon = (function () {
           }
         });
 
-        params.data = JSON.stringify(po);
-        window.location = 'download/?' + $.param(params);
+        params.content = JSON.stringify(po);
+        download(params);
 
       } else if (type === "transifex") {
         self.startLoader('Saving...');
 
+        params.csrfmiddlewaretoken = null;
         params.strings = [];
         $("#entitylist .translated").each(function() {
           var entity = $(this)[0].entity;

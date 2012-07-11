@@ -320,13 +320,15 @@ def _generate_po_content(data):
         po.append(po_entry)
     return unicode(po).encode('utf-8')
 
+@require_POST
 @login_required(redirect_field_name='', login_url='/')
 def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations.")
-    type = request.GET['type']
-    data = request.GET['data']
-    locale = request.GET['locale']
+
+    type = request.POST['type']
+    content = request.POST['content']
+    locale = request.POST['locale']
 
     response = HttpResponse()
     if type == 'json':
@@ -334,10 +336,10 @@ def download(request, template=None):
     elif type == 'html':
         response['Content-Type'] = 'text/html'
     elif type == 'po':
-        data = _generate_po_content(data)
+        content = _generate_po_content(content)
         response['Content-Type'] = 'text/plain'
 
-    response.content = data
+    response.content = content
     response['Content-Disposition'] = 'attachment; filename=' + locale +\
             '.' + type
     return response
