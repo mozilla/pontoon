@@ -279,7 +279,10 @@
                 counter++;
                 entity.original = this.key;
                 entity.comment = this.comment;
-                entity.translation = this.translation;
+                var translation = this.translation;
+                if (translation.length > 0) {
+                  entity.translation = translation;
+                }
                 Pontoon.project.entities.push(entity);
               }
             });
