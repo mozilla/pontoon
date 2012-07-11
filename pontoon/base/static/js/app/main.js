@@ -161,7 +161,7 @@ var Pontoon = (function () {
     entityList: function () {
       var self = this,
           list = $('#entitylist').append('<ul class="editables"></ul>'),
-          localeMenu = $('.locale .menu').eq(0).html();
+          localeMenu = $('.locale .menu').html();
 
       // Render
       $(self.project.entities).each(function () {
