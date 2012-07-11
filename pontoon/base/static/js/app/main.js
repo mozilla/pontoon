@@ -941,9 +941,8 @@ var Pontoon = (function () {
          * message Error message to be displayed
          */
         showError: function(message) {
-          var error = message || 'Oops, website is either not supported by Pontoon or could not be found.';
           $('.notification')
-            .html(error)
+            .html(message)
             .addClass('error')
             .css('visibility', 'visible').show();
         },
