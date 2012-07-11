@@ -30,14 +30,25 @@ log = commonware.log.getLogger('playdoh')
 
 
 @mobile_template('{mobile/}home.html')
-def home(request, locale=None, url=None, template=None):
+def home(request, template=None):
     """Main view."""
     log.debug("Main view.")
 
     data = {
+        'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
+        'locales': Locale.objects.all()
+    }
+
+    return render(request, template, data)
+
+@mobile_template('{mobile/}translate.html')
+def translate(request, locale, url, template=None):
+    """Translate view."""
+    log.debug("Translate view.")
+
+    data = {
         'locale_code': locale,
         'project_url': url,
-        'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
         'locales': Locale.objects.all()
     }
 

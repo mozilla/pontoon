@@ -147,7 +147,7 @@
     // Intro
     } else {
       if ($('.locale .menu .language.' + acceptLanguage).length === 0) { // Locale not on the list
-        acceptLanguage = $('.locale .menu .language:first').attr('class').split(' ')[1];
+        acceptLanguage = $('.locale .menu .language').attr('class').split(' ')[1];
       }
       $('.locale .button .language').addClass(acceptLanguage).html($('.locale .menu .language.' + acceptLanguage).html());
       $('#install').css('visibility', 'visible');

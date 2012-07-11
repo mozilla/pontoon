@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+     {% if locale_code %}data-locale="{{ locale_code }}"{% endif %}
+     {% if project_url %}data-url="{{ project_url }}"{% endif %}
+     {% if mt_apikey %}data-mt-apikey="{{ mt_apikey }}"{% endif %}>
+</div>
+
+<!-- Main UI -->
+<aside id="main">
+
+  <header>
+    <!-- Loading Main UI spinner -->
+    <span id="spinner" class="loader"></span>
+
+    <div class="container">
+      <hr id="drag">
+      <span id="logo">{{ _('Pontoon') }}</span>
+
+      <!-- General project info -->
+      <div id="info" class="select">
+        <div class="selector"></div>
+        <aside class="menu">
+          <section class="brief">
+            <h2>{{ _('Campaign Brief') }}</h2>
+            <p></p>
+          </section>
+          <section class="locales">
+            <h2>{{ _('Locales and Regions') }}</h2>
+            <p></p>
+          </section>
+          <section class="audience">
+            <h2>{{ _('Audience, Reach, and Impact') }}</h2>
+            <p></p>
+          </section>
+          <section class="metrics">
+            <h2>{{ _('Success Metrics') }}</h2>
+            <p></p>
+          </section>
+        </aside>
+      </div>
+
+      <input class="url" type="text" />
+
+      <!-- Locale selector -->
+      {% include 'locales.html' %}
+      
+      <span class="vertical-separator"></span>
+
+      <!-- Page selector -->
+      <div class="page select">
+        <div class="button selector">
+          <span class="title"></span>
+          <span> &#9652;</span>
+        </div>
+        <ul class="menu"></ul>
+      </div>
+
+      <!-- Progress indicator -->
+      <div id="progress"><span></span></div>
+      <span id="progress-value"></span>
+              
+      <div class="right{% if user.is_authenticated() %} authenticated{% endif %}">
+        <span id="loading" class="notification"></span>
+        <img id="browserid" src="{{ static('img/sign_in_blue.png') }}" alt="{{ _('Sign in using BrowserID') }}" />
+        <div id="profile" class="select">
+          <div class="button selector">
+            <span class="author">{{ user.email }}</span>
+            <span> &#9652;</span>
+          </div>
+          <ul id="profile-menu" class="menu">
+            <li><a class="sign-out" href="{{ url('logout') }}">{{ _('Sign out') }}</a></li>
+            <li><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
+            <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download HTML') }}</a></li>
+            <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download JSON') }}</a></li>
+            <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download PO') }}</a></li>
+          </ul>
+          <aside id="transifex" class="popup">
+            <h2>
+              Sign in to Transifex
+              <a class="cancel" href="#"></a>
+            </h2>
+            <form>
+              <input id="username" name="username" type="text" placeholder="Email or Username" />
+              <input id="password" name="password" type="password" placeholder="Password" />
+              <span class="button">Sign in</span>
+              <div class="bottom">
+                <label class="remember">
+                  <input id="remember" name="remember" type="checkbox" />Remember me
+                </label>
+                <a class="new" target="_blank" href="https://www.transifex.net/plans/signup/free/">New to Transifex?</a>
+              </div>
+            </form>
+          </aside>
+        </div>
+        <button id="switch"></button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Strings placeholder -->
+  <div id="entitylist"></div>
+</aside>
+
+<!-- Website placeholder + iframe fix: prevent iframes from capturing the mousemove events during a drag -->
+<iframe id="source"></iframe>
+<div id="iframe-cover"></div>
+
+<!-- Project loading indicator -->
+{% include 'loader.html' %}
+
+{% endblock %}

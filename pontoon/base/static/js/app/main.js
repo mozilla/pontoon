@@ -750,7 +750,7 @@ var Pontoon = (function () {
       };
       this.locale = {
         code: locale,
-        language: $("#main .language:first").contents()[0].nodeValue // PO file
+        language: $("#main .language").contents()[0].nodeValue // PO file
       };
       this.user = {
         email: email,
