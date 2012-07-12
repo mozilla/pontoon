@@ -91,14 +91,15 @@
           var key = e.keyCode || e.which,
               toolbar = $(".editableToolbar"),
               save = toolbar.find(".save"),
-              cancel = toolbar.find(".cancel"),
-              target = toolbar.get(0).target,
-              entity = target.entity,
-              id = entity.id,
-              next = id + 1,
-              entities = Pontoon.project.entities;
+              cancel = toolbar.find(".cancel");
 
           if (save.is(":visible")) {
+            var target = toolbar.get(0).target,
+                entity = target.entity,
+                id = entity.id,
+                next = id + 1,
+                entities = Pontoon.project.entities;
+
             if (key === 13) { // Enter: confirm translation
               save.click();
               hideToolbar(target);
