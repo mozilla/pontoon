@@ -360,6 +360,7 @@ body {
 
 #pontoon #intro .select .menu ul {
   height: 170px;
+  margin-bottom: 6px;
 }
 
 #pontoon #intro .select .button .code {
