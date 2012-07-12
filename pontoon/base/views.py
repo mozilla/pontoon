@@ -15,9 +15,8 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseForbidden)
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
 from django.shortcuts import render
-from django.views.decorators.http import require_POST
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 from pontoon.base.models import Project, Entity, Locale, Translation
@@ -332,11 +331,13 @@ def _generate_po_content(data):
         po.append(po_entry)
     return unicode(po).encode('utf-8')
 
-@require_POST
 @login_required(redirect_field_name='', login_url='/')
 def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations.")
+
+    if request.method != 'POST':
+        raise Http404
 
     type = request.POST['type']
     content = request.POST['content']
@@ -395,10 +396,12 @@ def transifex_save(request, template=None):
     except AttributeError:
         return HttpResponse(response)
 
-@require_POST
 def verify(request, template=None):
     """Verify BrowserID assertion, and return whether a user is registered."""
     log.debug("Verify BrowserID assertion.")
+
+    if request.method != 'POST':
+        raise Http404
 
     assertion = request.POST['assertion']
     if assertion is None:
