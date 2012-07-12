@@ -151,7 +151,7 @@ def get_translation(request, template=None):
         log.debug("Translation does not exist.")
         return HttpResponse("error")
 
-@login_required(redirect_field_name='', login_url='/')
+@login_required(redirect_field_name='', login_url='/404')
 def save_translation(request, template=None):
     """Save entity translation to the specified project and locale."""
     log.debug("Save entity translation to the specified project and locale.")
@@ -331,7 +331,7 @@ def _generate_po_content(data):
         po.append(po_entry)
     return unicode(po).encode('utf-8')
 
-@login_required(redirect_field_name='', login_url='/')
+@login_required(redirect_field_name='', login_url='/404')
 def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations.")
@@ -357,7 +357,7 @@ def download(request, template=None):
             '.' + type
     return response
 
-@login_required(redirect_field_name='', login_url='/')
+@login_required(redirect_field_name='', login_url='/404')
 def transifex_save(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
