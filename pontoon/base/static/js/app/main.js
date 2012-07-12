@@ -699,19 +699,21 @@ var Pontoon = (function () {
           var entity = Pontoon.project.entities[message.value];
           Pontoon.updateEntityUI(entity);
           // Save to server
-          Pontoon.startLoader('');
-          $.ajax({
-            url: 'save/',
-            data: {
-              project: Pontoon.transifex.project,
-              locale: Pontoon.locale.code.replace("-", "_"),
-              original: entity.original,
-              translation: entity.translation
-            },
-            success: function(data) {
-              Pontoon.endLoader('Translation ' + data + '!');
-            }
-          });
+          if (Pontoon.user.email && Pontoon.project.hooks) {
+            Pontoon.startLoader('');
+            $.ajax({
+              url: 'save/',
+              data: {
+                project: Pontoon.transifex.project,
+                locale: Pontoon.locale.code.replace("-", "_"),
+                original: entity.original,
+                translation: entity.translation
+              },
+              success: function(data) {
+                Pontoon.endLoader('Translation ' + data + '!');
+              }
+            });
+          }
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }
