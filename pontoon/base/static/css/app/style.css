@@ -284,6 +284,7 @@ body {
 
 #title {
   color: #AEEE00;
+  display: inline-block;
   text-shadow: 3px 3px 3px #000000;
   letter-spacing: -2px;
   font-family: Helvetica Neue;
