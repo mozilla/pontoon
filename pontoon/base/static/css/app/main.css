@@ -74,7 +74,7 @@
 }
 
 #pontoon .button {
-  border: 1px solid #0D0D0D;
+  border: 1px solid #000000;
   color: #AAAAAA;
   cursor: pointer;
   padding: 5px 4px 2px;
@@ -129,23 +129,39 @@
 #pontoon .select.opened > .button {
   background: transparent;
   border-color: transparent;
-
+ 
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
 }
-
+ 
 #pontoon .select.opened:hover > .button {
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
 }
 
+#pontoon .select.opened > .confirm {
+  border-bottom: none;
+
+  border-bottom-left-radius: 0;
+  -moz-border-radius-bottomleft: 0;
+  -webkit-border-bottom-left-radius: 0;
+}
+
+#pontoon .select.opened > .selector {
+  border-bottom: none;
+
+  border-bottom-right-radius: 0;
+  -moz-border-radius-bottomright: 0;
+  -webkit-border-bottom-right-radius: 0;
+}
+
 #pontoon .select .menu,
 #pontoon .select .popup {
   display: none;
   background: #333333;
-  bottom: 31px;
+  bottom: 30px;
   color: #AAAAAA;
   list-style: none;
   padding: 0;
@@ -179,7 +195,7 @@
 }
 
 #pontoon #profile-menu li:first-child {
-  border-bottom: 1px solid #040404;
+  border-bottom: 1px solid #000000;
 }
 
 #pontoon #profile-menu li:nth-child(2) {
@@ -320,7 +336,7 @@
 
 #pontoon #info .menu section {
   border-top: 1px solid #444444;
-  border-bottom: 1px solid #040404;
+  border-bottom: 1px solid #000000;
   padding: 10px 20px;
 }
 
@@ -333,7 +349,7 @@
 }
 
 #pontoon .vertical-separator {
-  border-left: 1px solid #040404;
+  border-left: 1px solid #000000;
   border-right: 1px solid #2F2F2F;
   display: block;
   float: left;
@@ -342,7 +358,7 @@
 }
 
 #pontoon .horizontal-separator {
-  border-top: 1px solid #040404;
+  border-top: 1px solid #000000;
   border-bottom: 1px solid #444444;
 }
 
@@ -374,7 +390,7 @@
 }
 
 #pontoon .locale .menu ul {
-  height: 150px;
+  max-height: 150px;
   overflow: auto;
   margin: 6px 12px 0;
   position: relative;

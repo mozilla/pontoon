@@ -295,7 +295,7 @@ body {
 }
 
 #intro form {
-  width: 710px;
+  width: 730px;
   height: 40px;
   margin: 0 auto;
 }
@@ -330,36 +330,72 @@ body {
   font-size: 14px;
 }
 
+#pontoon #intro .select.opened {
+  box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
+}
+
+#pontoon #intro .select.opened > .button {
+  border-color: #000000;
+
+  background-color: #444444;
+  background-image: -moz-linear-gradient(top, #555555, #333333); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #555555),color-stop(1, #333333)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#555555, #333333); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #555555, #333333);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#555555', EndColorStr='#333333'); /* IE6–IE9 */
+
+  box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
+  -moz-box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
+  -webkit-box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
+}
+ 
+#pontoon #intro .select.opened:hover > .button {
+  box-shadow: auto;
+  -moz-box-shadow: auto;
+  -webkit-box-shadow: auto;
+}
+
 #pontoon #intro .select .button {
   height: 21px;
   padding: 8px 5px 2px;
 }
 
 #pontoon #intro .select .confirm {
-  width: 160px;
+  width: 181px;
 }
 
 #pontoon #intro .select .menu {
+  border: 1px solid #000000;
+  border-top: none;
+  bottom: auto;
+  top: 32px;
   left: 0;
-  bottom: -50px;
   width: 210px;
 
-  border-radius: 4px 4px 4px 4px;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
+  border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  -webkit-border-radius: 0 0 3px 3px;
 
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
+}
+
+#pontoon #intro .select .menu .horizontal-separator {
+    display: block;
+    visibility: visible;
 }
 
 #pontoon #intro .select .menu .search {
-  width: 158px;
   background-position: 165px center;
+  width: 158px;
+  margin: 6px 12px;
 }
 
 #pontoon #intro .select .menu ul {
-  height: 170px;
+  max-height: 170px;
   margin-bottom: 6px;
 }
 
@@ -377,7 +413,7 @@ body {
   text-align: left;
   text-transform: uppercase;
   font-weight: 100;
-  width: 710px; /* Must be same as #intro form */
+  width: 730px; /* Must be same as #intro form */
 }
 
 #pontoon .notification.error {
