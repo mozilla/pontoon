@@ -17,6 +17,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
 from django.shortcuts import render
+from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 from pontoon.base.models import Project, Entity, Locale, Translation
@@ -59,11 +60,17 @@ def translate(request, locale, url, template=None):
 def check_url(request, template=None):
     """Check if URL exists."""
     log.debug("Check if URL exists.")
-    log.debug(request.GET['url'])
+
+    try:
+        url = request.GET['url']
+    except MultiValueDictKeyError:
+        raise Http404
+
+    log.debug(url)
 
     validate = URLValidator(verify_exists=True)
     try:
-        validate(request.GET['url'])
+        validate(url)
         status = "valid"
     except ValidationError, e:
         log.debug(e)
@@ -131,9 +138,12 @@ def get_translation(request, template=None):
     """Get entity translation of a specified project and locale."""
     log.debug("Get entity translation of a specified project and locale.")
 
-    original = request.GET['original']
-    project = request.GET['project']
-    locale = request.GET['locale']
+    try:
+        original = request.GET['original']
+        project = request.GET['project']
+        locale = request.GET['locale']
+    except MultiValueDictKeyError:
+        raise Http404
 
     log.debug("Entity: " + original)
     log.debug("Project: " + project)
@@ -156,10 +166,13 @@ def save_translation(request, template=None):
     """Save entity translation to the specified project and locale."""
     log.debug("Save entity translation to the specified project and locale.")
 
-    original = request.GET['original']
-    translation = request.GET['translation']
-    project = request.GET['project']
-    locale = request.GET['locale']
+    try:
+        original = request.GET['original']
+        translation = request.GET['translation']
+        project = request.GET['project']
+        locale = request.GET['locale']
+    except MultiValueDictKeyError:
+        raise Http404
 
     log.debug("Entity: " + original)
     log.debug("Translation: " + translation)
@@ -191,11 +204,14 @@ def load_entities(request, template=None):
     """Load all project entities and translations."""
     log.debug("Load all project entities and translations.")
 
-    project = request.GET['project']
-    resource = request.GET['resource']
-    locale = request.GET['locale']
-    project_url = request.GET['url']
-    callback = str(request.GET.get('callback', '')) # JSONP
+    try:
+        project = request.GET['project']
+        resource = request.GET['resource']
+        locale = request.GET['locale']
+        project_url = request.GET['url']
+        callback = str(request.GET.get('callback', '')) # JSONP
+    except MultiValueDictKeyError:
+        raise Http404
 
     log.debug("Project: " + project)
     log.debug("Locale: " + locale)
@@ -339,9 +355,12 @@ def download(request, template=None):
     if request.method != 'POST':
         raise Http404
 
-    type = request.POST['type']
-    content = request.POST['content']
-    locale = request.POST['locale']
+    try:
+        type = request.POST['type']
+        content = request.POST['content']
+        locale = request.POST['locale']
+    except MultiValueDictKeyError:
+        raise Http404
 
     response = HttpResponse()
     if type == 'json':
@@ -362,7 +381,10 @@ def transifex_save(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
 
-    data = json.loads(request.GET['data'])
+    try:
+        data = json.loads(request.GET['data'])
+    except MultiValueDictKeyError:
+        raise Http404
 
     """Check if user authenticated to Transifex."""
     profile = request.user.get_profile()
