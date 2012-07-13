@@ -351,12 +351,6 @@ body {
   -webkit-box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
 }
  
-#pontoon #intro .select.opened:hover > .button {
-  box-shadow: auto;
-  -moz-box-shadow: auto;
-  -webkit-box-shadow: auto;
-}
-
 #pontoon #intro .select .button {
   height: 21px;
   padding: 8px 5px 2px;
