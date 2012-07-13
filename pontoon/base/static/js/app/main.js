@@ -340,7 +340,7 @@ var Pontoon = (function () {
           url: 'get/',
           data: {
             project: Pontoon.transifex.project,
-            locale: li.find(".language").attr("class").split(" ")[1].replace("-", "_"),
+            locale: li.find(".language").attr("class").split(" ")[1],
             original: original
           },
           success: function(data) {
@@ -705,7 +705,7 @@ var Pontoon = (function () {
               url: 'save/',
               data: {
                 project: Pontoon.transifex.project,
-                locale: Pontoon.locale.code.replace("-", "_"),
+                locale: Pontoon.locale.code,
                 original: entity.original,
                 translation: entity.translation
               },

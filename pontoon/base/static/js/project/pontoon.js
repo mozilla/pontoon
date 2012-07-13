@@ -231,7 +231,7 @@
           data: {
             project: Pontoon.transifex.project,
             resource: Pontoon.transifex.resource,
-            locale: Pontoon.locale.code.replace("-", "_"),
+            locale: Pontoon.locale.code,
             url: Pontoon.project.url
           },
           dataType: 'jsonp',
