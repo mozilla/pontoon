@@ -97,7 +97,7 @@ class PontoonMiddleware(object):
 
     def process_response(self, request, response):
         """
-        Replace PONTOON_PSEUDO_WRAPPER_TAG with PONTOON_WRAPPER_TAR
+        Replace PONTOON_PSEUDO_WRAPPER_TAG with PONTOON_WRAPPER_TAG
         in rendered response.
         """
         response.content = response.content.replace(PONTOON_PSEUDO_WRAPPER_TAG,
