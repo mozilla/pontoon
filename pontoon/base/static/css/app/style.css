@@ -377,11 +377,6 @@ body {
   -webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
 }
 
-#pontoon #intro .select .menu .horizontal-separator {
-    display: block;
-    visibility: visible;
-}
-
 #pontoon #intro .select .menu .search {
   background-position: 165px center;
   width: 158px;

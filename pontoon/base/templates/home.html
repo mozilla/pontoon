@@ -16,7 +16,25 @@
     <form>
       <input name="url" class="url" type="text" placeholder="{{ _('Type URL and press Enter') }}" />
       <!-- Locale selector -->
-      {% include 'locales.html' %}
+     <div class="locale select">
+       <div class="button confirm">
+         <span class="language"></span>
+       </div>
+       <div class="button selector">
+         <span class="handle"> &#9662;</span>
+       </div>
+       <div class="menu">
+         <div class="horizontal-separator"></div>
+         <input type="text" class="search">
+         <div class="horizontal-separator"></div>
+         <ul>
+         {% for locale in locales %}
+         <li><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
+         {% endfor %}
+         <li class="no-match">{{ _('No results match') }} "<span></span>"</li>
+         </ul>
+       </div>
+     </div>
     </form>
 
     <p class="notification">...</p>
