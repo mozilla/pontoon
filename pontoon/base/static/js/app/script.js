@@ -27,7 +27,7 @@
         Pontoon.common.postMessage("MODE", "Basic");
       }      
     };
-	  $('#logo, #drag').bind('mousedown', function(e) {
+	  $('#drag').bind('mousedown', function(e) {
       e.preventDefault();
 
       var up = $('#source'),
