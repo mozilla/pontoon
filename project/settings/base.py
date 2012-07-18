@@ -45,6 +45,11 @@ TEMPLATE_CONTEXT_PROCESSORS = list(TEMPLATE_CONTEXT_PROCESSORS) + [
     'django_browserid.context_processors.browserid_form',
 ]
 
+# Should robots.txt deny everything or disallow a calculated list of URLs we
+# don't want to be crawled?  Default is false, disallow everything.
+# Also see http://www.google.com/support/webmasters/bin/answer.py?answer=93710
+ENGAGE_ROBOTS = False
+
 # Always generate a CSRF token for anonymous users.
 ANON_ALWAYS = True
 

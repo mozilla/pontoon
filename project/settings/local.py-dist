@@ -60,6 +60,9 @@ PASSWORD_HASHERS = get_password_hashers(base.BASE_PASSWORD_HASHERS, HMAC_KEYS)
 # Make this unique, and don't share it with anybody.  It cannot be blank.
 SECRET_KEY = ''
 
+# Should robots.txt allow web crawlers?  Set this to True for production
+ENGAGE_ROBOTS = True
+
 # Uncomment these to activate and customize Celery:
 # CELERY_ALWAYS_EAGER = False  # required to activate celeryd
 # BROKER_HOST = 'localhost'

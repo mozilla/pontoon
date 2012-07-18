@@ -14,6 +14,14 @@ patch()
 urlpatterns = patterns('',
     # Example:
     (r'', include(urls)),
+    
+    # Generate a robots.txt
+    (r'^robots\.txt$', 
+        lambda r: HttpResponse(
+            "User-agent: *\n%s: /" % 'Allow' if settings.ENGAGE_ROBOTS else 'Disallow' ,
+            mimetype="text/plain"
+        )
+    )
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
