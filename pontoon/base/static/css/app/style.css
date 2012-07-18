@@ -364,6 +364,10 @@ body {
 
 #pontoon #intro .project.select .menu {
   width: 510px;
+
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
 }
 
 #pontoon #intro .project.select .menu ul {
