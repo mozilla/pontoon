@@ -36,7 +36,8 @@ def home(request, template=None):
 
     data = {
         'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
-        'locales': Locale.objects.all()
+        'locales': Locale.objects.all(),
+        'projects': Project.objects.all()
     }
 
     return render(request, template, data)

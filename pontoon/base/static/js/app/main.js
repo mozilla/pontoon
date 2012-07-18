@@ -845,6 +845,11 @@ var Pontoon = (function () {
         }
       });
 
+      // Project menu handler
+      $('.project .menu li').live("click.pontoon", function () {
+        $('.url').val($(this).find('.project-url').html());
+      });
+
       // Menu hover
       $('.menu li').live('hover', function () {
         $('.menu li.hover').removeClass('hover');
@@ -877,6 +882,23 @@ var Pontoon = (function () {
         }
       });
 
+      // Search projects
+      $('.url').live("keyup.pontoon", function(e) {
+        var menu = $(this).siblings('.menu'),
+            ul = menu.find('ul'),
+            val = $(this).val();
+
+        ul
+          .find('li').addClass('match').end()
+          .find('li:not(":containsi("' + val + '")")').removeClass('match');
+
+        if (ul.find('li.match').length === 0) {
+          menu.hide().parent().removeClass('opened');
+        } else {
+          menu.show().parent().addClass('opened');
+        }
+      });
+
       // Use arrow keys to move around menu, confirm with enter, close with escape
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         if ($('.menu').is(':visible')) {
@@ -894,6 +916,9 @@ var Pontoon = (function () {
             if (menu.parent().is('.locale')) {
               Pontoon.updateSlider(menu.find('ul'));
             }
+            if (menu.parent().is('.project')) {
+              $('.url').val($('.project .menu li.hover').find('.project-url').html());
+            }
             return false;
           }
 
@@ -906,6 +931,9 @@ var Pontoon = (function () {
             }
             if (menu.parent().is('.locale')) {
               Pontoon.updateSlider(menu.find('ul'));
+            }
+            if (menu.parent().is('.project')) {
+              $('.url').val($('.project .menu li.hover').find('.project-url').html());
             }
             return false;
           }

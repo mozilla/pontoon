@@ -298,19 +298,29 @@ body {
   width: 730px;
   height: 40px;
   margin: 0 auto;
+  position: relative;
+}
+
+#pontoon #intro .project.select {
+  float: left;
 }
 
 #pontoon #intro input[type=text].url {
-  padding: 5px;
+  padding: 7px 5px 3px;
   height: 21px;
   width: 500px;
   font-size: 20px;
-  text-align: center;
-  float: left;
+  text-align: left;
 
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
+}
+
+#pontoon #intro .project.select.opened input[type=text].url {
+  border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
 }
 
 #pontoon #intro input[type=text].url:focus {
@@ -322,6 +332,55 @@ body {
   -webkit-box-shadow: 0 0 5px 1px #AEEE00;
 }
 
+#pontoon #intro .project.select .button {
+  height: 18px;
+  top: 6px;
+  right: 6px;
+  padding: 1px 5px 0;
+  position: absolute;
+
+  box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+  -moz-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+  -webkit-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+}
+
+#pontoon #intro .project.select .button:active {
+  box-shadow: 0 1px #666666, 0 0 5px #000000 inset;
+  -moz-box-shadow: 0 1px #666666, 0 0 5px #000000 inset;
+  -webkit-box-shadow: 0 1px #666666, 0 0 5px #000000 inset;
+}
+
+#pontoon #intro .project.select.opened .button {
+  border-bottom: 1px solid #000000;
+
+  border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+
+  box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+  -moz-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+  -webkit-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+}
+
+#pontoon #intro .project.select .menu {
+  width: 510px;
+}
+
+#pontoon #intro .project.select .menu ul {
+  list-style: none;
+  margin: 6px 12px;
+  overflow: auto;
+}
+
+#pontoon #intro .project.select .menu ul li {
+  padding: 2px 4px;
+}
+
+#pontoon #intro .project.select .menu ul li .project-url {
+  float: right;
+  color: #AEE000;
+}
+
 #pontoon #intro .select {
   float: right;
   display: inline;
@@ -330,7 +389,7 @@ body {
   font-size: 14px;
 }
 
-#pontoon #intro .select.opened {
+#pontoon #intro .locale.select.opened {
   box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
@@ -357,7 +416,7 @@ body {
 }
 
 #pontoon #intro .select .confirm {
-  width: 181px;
+  width: 180px;
 }
 
 #pontoon #intro .select .menu {
