@@ -308,6 +308,7 @@ body {
 #pontoon #intro input[type=text].url {
   padding: 7px 5px 3px;
   height: 21px;
+  margin-left: 0;
   width: 500px;
   font-size: 20px;
   text-align: left;
