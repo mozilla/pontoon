@@ -77,6 +77,6 @@ class Pontoon
             .'/>'."\n";
 
         $url = $GLOBALS["path"] ? $GLOBALS["path"] : "http://localhost:8000/";
-        echo '<script src="'.$url.'static/js/project/pontoon.js"></script>'."\n";
+        echo '<script src="'.$url.'static/pontoon.js"></script>'."\n";
     }
 }

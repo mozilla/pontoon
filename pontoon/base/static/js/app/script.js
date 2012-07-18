@@ -129,7 +129,7 @@
     $('#demo').attr('href', '/locale/de/url/' + l.protocol + '//' + l.hostname + '/pontoon/hooks/php/test/testpilot/');
 
     // Set include script URL
-    $("#install code").html('&lt;script src="' + base + 'static/js/project/pontoon.js"&gt;&lt;/script&gt;');
+    $("#install code").html('&lt;script src="' + base + 'static/pontoon.js"&gt;&lt;/script&gt;');
 
     // Translate
     if (locale && url) {
