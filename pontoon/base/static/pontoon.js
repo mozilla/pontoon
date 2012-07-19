@@ -26,7 +26,7 @@
           project: "",
           resource: ""
         }
-  	  },
+      },
       jqueryAppended = false,
       script = document.createElement('script');
 
@@ -115,7 +115,7 @@
             if (key === 9) { // Tab: status quo + move around entities
               // If on last entity, jump to the first
               if (next > entities.length) {
-              	$.each(entities, function() {
+                $.each(entities, function() {
                   if (this.body) {
                     next = this.id;
                   }
@@ -176,7 +176,7 @@
         // <noscript> contents are not in the DOM
         $('noscript').each(function() {
           $("<div/>", {
-          	class: "pontoon-noscript",
+            class: "pontoon-noscript",
             innerHTML: $(this).text()
           }).appendTo("body");
         });
@@ -381,7 +381,7 @@
        * Enable editable mode
        */
       function startEditing() {
-      	var toolbar = $('.editableToolbar');
+        var toolbar = $('.editableToolbar');
         toolbar.children().show().end()
           .find('.edit').hide();
         var target = toolbar.get(0).target;
@@ -396,7 +396,7 @@
        * Disable editable mode
        */
       function stopEditing() {
-      	var toolbar = $('.editableToolbar');
+        var toolbar = $('.editableToolbar');
         toolbar.children().hide().end()
           .find('.edit').show();
         var target = toolbar.get(0).target;
@@ -424,6 +424,12 @@
           } else if (message.type === "SAVE") {
             $('.editableToolbar').get(0).target.entity.node.html(message.value);
             $('.editableToolbar > .save').click();
+          } else if (message.type === "DELETE") {
+            var entity = $('.editableToolbar').get(0).target.entity;
+            entity.node.html(message.value);
+            entity.translation = '';
+            sendData();
+            postMessage("DELETE", entity.id);
           } else if (message.type === "CANCEL") {
             $('.editableToolbar > .cancel').click();
           } else if (message.type === "MODE") {
@@ -547,7 +553,7 @@
         arguments.callee();
       } else {
         window.setTimeout(arguments.callee, 100);
-  	  }
+      }
     } else {
       jqueryLoaded();
     }

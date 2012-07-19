@@ -189,17 +189,25 @@ def save_translation(request, template=None):
         t = Translation.objects.get(entity=e[0], locale=l)
         t.string = translation
         t.save()
-        log.debug("Translation updated.")
-        return HttpResponse("updated")
+
+        if translation != '':
+            log.debug("Translation updated.")
+            return HttpResponse("updated")
+        else:
+            log.debug("Translation deleted.")
+            return HttpResponse("deleted")
 
     except Translation.DoesNotExist:
         """Save new translation."""
-        t = Translation(entity=e[0], locale=l, string=translation, 
-            author=request.user.email, date=datetime.datetime.now())
-        t.save()
-
-        log.debug("Translation saved.")
-        return HttpResponse("saved")
+        if translation != '':
+            t = Translation(entity=e[0], locale=l, string=translation, 
+                author=request.user.email, date=datetime.datetime.now())
+            t.save()
+            log.debug("Translation saved.")
+            return HttpResponse("saved")
+        else:
+            log.debug("Translation not set.")
+            return HttpResponse("not set")
 
 def load_entities(request, template=None):
     """Load all project entities and translations."""

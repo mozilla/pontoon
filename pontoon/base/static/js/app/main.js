@@ -482,12 +482,23 @@ var Pontoon = (function () {
 
         // Only if no other entity is being edited in-place
         if (li.is('.hovered')) {
-          self.common.postMessage("SAVE", source);
+          if (source !== '') {
+            self.common.postMessage("SAVE", source);
+          } else {
+            self.common.postMessage("DELETE", entity.original);
+          }
         // Head entities cannot be edited in-place
         } else if (!entity.body) {
-          entity.translation = source;
-          self.updateEntityUI(entity);
-          self.saveToServer(entity);
+          if (source !== '') {
+            entity.translation = source;
+            self.updateEntityUI(entity);
+            self.saveToServer(entity);
+          } else {
+            entity.translation = '';
+            entity.ui.removeClass('translated');
+            self.updateProgress();
+            self.saveToServer(entity);
+          }
         }
       });
 
@@ -726,6 +737,11 @@ var Pontoon = (function () {
         } else if (message.type === "SAVE") {
           var entity = Pontoon.project.entities[message.value];
           Pontoon.updateEntityUI(entity);
+          Pontoon.saveToServer(entity);
+        } else if (message.type === "DELETE") {
+          var entity = Pontoon.project.entities[message.value];
+          entity.ui.removeClass('translated');
+          Pontoon.updateProgress();
           Pontoon.saveToServer(entity);
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
