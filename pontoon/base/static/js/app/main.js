@@ -339,7 +339,7 @@ var Pontoon = (function () {
         $.ajax({
           url: 'get/',
           data: {
-            project: Pontoon.transifex.project,
+            project: self.transifex.project,
             locale: li.find(".language").attr("class").split(" ")[1],
             original: original
           },
@@ -444,6 +444,7 @@ var Pontoon = (function () {
         } else if (!entity.body) {
           entity.translation = source;
           self.updateEntityUI(entity);
+          self.saveToServer(entity);
         }
       });
 
@@ -486,6 +487,7 @@ var Pontoon = (function () {
         } else if (!entity.body) {
           entity.translation = source;
           self.updateEntityUI(entity);
+          self.saveToServer(entity);
         }
       });
 
@@ -529,6 +531,32 @@ var Pontoon = (function () {
     updateEntityUI: function (entity) {
       entity.ui.addClass('translated').find('textarea').val(entity.translation);
       this.updateProgress();
+    },
+
+
+
+    /**
+     * Save entity translation to server
+     * 
+     * entity Entity
+     */
+    saveToServer: function (entity) {
+      var self = this;
+      if (self.user.email && self.project.hooks) {
+        self.startLoader('');
+        $.ajax({
+          url: 'save/',
+          data: {
+            project: self.transifex.project,
+            locale: self.locale.code,
+            original: entity.original,
+            translation: entity.translation
+          },
+          success: function(data) {
+            Pontoon.endLoader('Translation ' + data + '!');
+          }
+        });
+      }
     },
 
 
@@ -698,22 +726,7 @@ var Pontoon = (function () {
         } else if (message.type === "SAVE") {
           var entity = Pontoon.project.entities[message.value];
           Pontoon.updateEntityUI(entity);
-          // Save to server
-          if (Pontoon.user.email && Pontoon.project.hooks) {
-            Pontoon.startLoader('');
-            $.ajax({
-              url: 'save/',
-              data: {
-                project: Pontoon.transifex.project,
-                locale: Pontoon.locale.code,
-                original: entity.original,
-                translation: entity.translation
-              },
-              success: function(data) {
-                Pontoon.endLoader('Translation ' + data + '!');
-              }
-            });
-          }
+          Pontoon.saveToServer(entity);
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }
