@@ -718,7 +718,7 @@ var Pontoon = (function () {
           Pontoon.transifex.resource = value.resource;
           Pontoon.attachHandlers();
           Pontoon.entityList();
-          if (!Pontoon.project.hooks) {
+          if (!Pontoon.transifex.project) {
             $('#profile-menu .transifex').parent().remove();
           }
           $("#spinner").fadeOut(function() {
