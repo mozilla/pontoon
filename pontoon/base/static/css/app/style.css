@@ -254,7 +254,6 @@ body {
 .inner {
   display: table-cell;
   vertical-align: middle;
-  padding-bottom: 100px;
 }
 
 #install {
