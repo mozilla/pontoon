@@ -363,7 +363,7 @@ var Pontoon = (function () {
           li.find(".toolbar").show();
         } else {
           $.ajax({
-            url: 'http://www.frenchmozilla.fr/transvision/webservice.php',
+            url: 'http://transvision.mozfr.org/webservice.php',
             data: {
               recherche: li.find('.original-string .source-string').html(),
               locale: self.locale.code,
