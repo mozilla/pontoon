@@ -714,12 +714,16 @@ var Pontoon = (function () {
           Pontoon.project.info = value.info
           Pontoon.project.pages = value.pages;
           Pontoon.project.hooks = value.hooks;
+          Pontoon.project.svn = value.svn;
           Pontoon.transifex.project = value.name;
           Pontoon.transifex.resource = value.resource;
           Pontoon.attachHandlers();
           Pontoon.entityList();
           if (!Pontoon.transifex.project) {
             $('#profile-menu .transifex').parent().remove();
+          }
+          if (!Pontoon.project.svn) {
+            $('#profile-menu .svn').parent().remove();
           }
           $("#spinner").fadeOut(function() {
             $("#main > header > .container").fadeIn();
@@ -798,8 +802,7 @@ var Pontoon = (function () {
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
       self.common.postMessage("INITIALIZE", {
         locale: self.locale,
-        path: self.app.path,
-        transifex: self.transifex
+        path: self.app.path
       });
 
       // Wait for project code messages

@@ -386,7 +386,7 @@ def download(request, template=None):
     return response
 
 @login_required(redirect_field_name='', login_url='/404')
-def transifex_save(request, template=None):
+def save_to_transifex(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
 
@@ -426,6 +426,13 @@ def transifex_save(request, template=None):
         return HttpResponse(response.status_code)
     except AttributeError:
         return HttpResponse(response)
+
+@login_required(redirect_field_name='', login_url='/404')
+def commit_to_svn(request, template=None):
+    """Commit translations to SVN."""
+    log.debug("Commit translations to SVN.")
+
+    return HttpResponse("TODO")
 
 def verify(request, template=None):
     """Verify BrowserID assertion, and return whether a user is registered."""

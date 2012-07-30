@@ -11,5 +11,6 @@ urlpatterns = patterns('',
     url(r'^save/', views.save_translation, name='pontoon.save'),
     url(r'^load/', views.load_entities, name='pontoon.load'),
     url(r'^download/', views.download, name='pontoon.download'),
-    url(r'^transifex/', views.transifex_save, name='pontoon.transifex'),
+    url(r'^transifex/', views.save_to_transifex, name='pontoon.transifex'),
+    url(r'^svn/', views.commit_to_svn, name='pontoon.svn'),
 )

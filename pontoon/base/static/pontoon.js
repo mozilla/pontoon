@@ -12,7 +12,8 @@
           info: null,
           entities: [],
           pages: {},
-          hooks: false
+          hooks: false,
+          svn: ""
         },
         locale: {
           code: "",
@@ -64,6 +65,7 @@
           info: Pontoon.project.info,
           pages: Pontoon.project.pages,
           hooks: Pontoon.project.hooks,
+          svn: Pontoon.project.svn,
           name: Pontoon.transifex.project,
           resource: Pontoon.transifex.resource
         });
@@ -216,7 +218,7 @@
 
 
       /**
-       * Load data from Transifex: original string, translation, comment, suggestions...
+       * Load data from DB: original string, translation, comment, suggestions...
        * Match with each string in the document, which is prepended with l10n comment nodes
        * Example: <!--l10n-->Hello World
        *
@@ -242,7 +244,7 @@
                     parent = $(this).parent();
                 $(this).remove();
 
-                // Match strings in the document with Transifex data
+                // Match strings in the document with DB data
                 $(data).each(function() {
                   // Renedered text could be different than source
                   parent.after('<div id="pontoon-string" style="display: none">' + this.key + '</div>');
@@ -272,7 +274,7 @@
               }
             });
 
-            // Prepare unmatched Transifex entities to be displayed in Advanced mode
+            // Prepare unmatched DB entities to be displayed in Advanced mode
             $(data).each(function() {
               if(!this.pontoon) {
                 var entity = {};
@@ -511,8 +513,11 @@
         $.getJSON(meta.data('meta')).success(function (data) {
           Pontoon.project.pages = data.pages; // Pages URLs
           Pontoon.project.info = data.info; // Campaign info
-          Pontoon.transifex.project = data.transifex.project; // Transifex project
-          Pontoon.transifex.resource = data.transifex.resource; // Transifex resource
+          Pontoon.project.svn = data.svn; // Project SVN repository
+          if (data.transifex) {
+            Pontoon.transifex.project = data.transifex.project; // Transifex project
+            Pontoon.transifex.resource = data.transifex.resource; // Transifex resource
+          }
           Pontoon.project.title = document.title.split("-->")[1];
           Pontoon.project.hooks = true;
           loadEntities();
@@ -567,7 +572,6 @@
       if (message.type === "INITIALIZE") {
         Pontoon.locale = message.value.locale; // Set locale
         Pontoon.app.path = message.value.path; // Set domain
-        Pontoon.transifex = message.value.transifex; // Set Transifex credentials
         loadJquery();
         window.removeEventListener("message", initizalize, false);
       }
