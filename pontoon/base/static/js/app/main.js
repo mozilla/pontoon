@@ -728,6 +728,11 @@ var Pontoon = (function () {
           $("#spinner").fadeOut(function() {
             $("#main > header > .container").fadeIn();
           });
+        } else if (message.type === "ERROR") {
+          Pontoon.common.showError('Oops, something went wrong. Refresh to try again.');
+          $("#spinner").fadeOut(function() {
+            $("#main > header > .container").fadeIn();
+          });
         } else if (message.type === "SWITCH") {
           $("#switch").click();
         } else if (message.type === "HOVER") {

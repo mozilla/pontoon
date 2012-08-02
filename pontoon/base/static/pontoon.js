@@ -237,6 +237,9 @@
             url: Pontoon.project.url
           },
           dataType: 'jsonp',
+          error: function(data) {
+            postMessage("ERROR");
+          },
           success: function(data) {
             $('*').contents().each(function () {
               if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {

@@ -267,41 +267,44 @@ def load_entities(request, template=None):
         response = _request('get', project, resource, locale, username, password)
 
         """Save Transifex data to DB."""
-        if response.status_code == 200:
-            log.debug(response.content)
-            entities = json.loads(response.content)
-            p = Project.objects.filter(name=project)
-            if len(p) > 0:
-                """Add locale and translations to the project."""
-                p[0].locales.add(l)
+        try:
+            if response.status_code == 200:
+                log.debug(response.content)
+                entities = json.loads(response.content)
+                p = Project.objects.filter(name=project)
+                if len(p) > 0:
+                    """Add locale and translations to the project."""
+                    p[0].locales.add(l)
 
-                for entity in entities:
-                    e = Entity.objects.filter(project=p[0], string=entity["key"])
-                    translation = entity["translation"]
-                    if len(translation) > 0:
-                        t = Translation(entity=e[0], locale=l, string=translation, 
-                            author=entity["user"], date=datetime.datetime.now())
-                        t.save()
-            else:
-                """Create a new project."""
-                p = Project(name=project, url=project_url)
-                p.save()
-                p.locales.add(l)
+                    for entity in entities:
+                        e = Entity.objects.filter(project=p[0], string=entity["key"])
+                        translation = entity["translation"]
+                        if len(translation) > 0:
+                            t = Translation(entity=e[0], locale=l, string=translation, 
+                                author=entity["user"], date=datetime.datetime.now())
+                            t.save()
+                else:
+                    """Create a new project."""
+                    p = Project(name=project, url=project_url)
+                    p.save()
+                    p.locales.add(l)
 
-                for entity in entities:
-                    e = Entity(project=p, string=entity["key"])
-                    comment = entity["comment"]
-                    if len(comment) > 0:
-                        e.comment = comment
-                    e.save()
-                    translation = entity["translation"]
-                    if len(translation) > 0:
-                        t = Translation(entity=e, locale=l, string=translation, 
-                            author=entity["user"], date=datetime.datetime.now())
-                        t.save()
+                    for entity in entities:
+                        e = Entity(project=p, string=entity["key"])
+                        comment = entity["comment"]
+                        if len(comment) > 0:
+                            e.comment = comment
+                        e.save()
+                        translation = entity["translation"]
+                        if len(translation) > 0:
+                            t = Translation(entity=e, locale=l, string=translation, 
+                                author=entity["user"], date=datetime.datetime.now())
+                            t.save()
 
-            log.debug("Transifex data saved to DB.")
-        return HttpResponse(callback + '(' + response.content + ');')
+                log.debug("Transifex data saved to DB.")
+            return HttpResponse(callback + '(' + response.content + ');')
+        except AttributeError:
+            return HttpResponse(callback + '(' + response + ');')
 
 def _generate_po_content(data):
     """
