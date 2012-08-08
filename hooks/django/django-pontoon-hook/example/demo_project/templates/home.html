@@ -2,7 +2,8 @@
 
 <html>
     <head>
-        <script src="{{ STATIC_URL }}js/pontoon.js"></script>
+        <meta name="Pontoon" data-meta="{{ STATIC_URL }}pontoon.json" />
+        <script src="http://localhost:8000/static/pontoon.js"></script>
     </head>
     <body>
         <h2>{% trans "Pontoon hook for Django" %}</h2>

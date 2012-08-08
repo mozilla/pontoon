@@ -1,1 +1,0 @@
-/home/rtnpro/projects/pontoon/hooks/django/django-pontoon-hook/example/demo_project/static/js/pontoon.js
