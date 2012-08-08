@@ -847,7 +847,7 @@ var Pontoon = (function () {
       $('.selector').live("click.pontoon", function (e) {
         if (!$(this).siblings('.menu').is(':visible')) {
           e.stopPropagation();
-          $('.menu').hide();
+          $('.menu, .popup').hide();
           $('.select').removeClass('opened');
           $('#iframe-cover').hide(); // iframe fix
           $(this).siblings('.menu').show().end()
