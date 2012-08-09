@@ -15,8 +15,44 @@ var Pontoon = (function () {
      */
     save: function (type, value) {
 
-      // Impossible to download files with $.post
+      var self = this,
+          params = {
+            type: type,
+            locale: this.locale.code
+          };
+
+      // Generate PO file object
+      function getPO() {
+        var po = {
+            metadata: {
+                'project_title': self.project.title,
+                'locale_language': self.locale.language,
+                'username': self.user.name,
+                'user_email': self.user.email
+            },
+            translations: {}
+        }
+
+        $(self.project.entities).each(function () {
+          var msgid = this.original;
+          po.translations[msgid] = {
+              fuzzy: false,
+              msgstr: this.translation,
+              occurrence: self.project.url,
+          };
+
+          if (this.suggestions && !msgstr) {
+            po.translations[msgid].fuzzy = true,
+            po.translations[msgid].msgstr = this.suggestions[0].translation;
+          }
+        });
+
+        return po;
+      }
+
+      // It is impossible to download files with AJAX
       function download(params) {
+        params.csrfmiddlewaretoken = $('#server').data('csrf');
         var post = $('<form>', {
           method: 'post',
           action: 'download/'
@@ -30,13 +66,6 @@ var Pontoon = (function () {
         }
         post.appendTo('body').submit().remove();
       }
-
-      var self = this,
-          params = {
-            type: type,
-            locale: this.locale.code,
-            csrfmiddlewaretoken: $('#server').data('csrf')
-          };
 
       if (type === "html") {
         params.content = value;
@@ -56,37 +85,12 @@ var Pontoon = (function () {
         download(params);
 
       } else if (type === "po") {
-        var po = {
-            metadata: {
-                'project_title': self.project.title,
-                'locale_language': self.locale.language,
-                'username': self.user.name,
-                'user_email': self.user.email
-            },
-            translations: {}
-        }
-
-        $(this.project.entities).each(function () {
-          var msgid = this.original;
-          po.translations[msgid] = {
-              fuzzy: false,
-              msgstr: this.translation,
-              occurrence: self.project.url,
-          };
-
-          if (this.suggestions && !msgstr) {
-            po.translations[msgid].fuzzy = true,
-            po.translations[msgid].msgstr = this.suggestions[0].translation;
-          }
-        });
-
-        params.content = JSON.stringify(po);
+        params.content = JSON.stringify(getPO());
         download(params);
 
       } else if (type === "transifex") {
         self.startLoader('Saving...');
 
-        params.csrfmiddlewaretoken = null;
         params.strings = [];
         $("#entitylist .translated").each(function() {
           var entity = $(this)[0].entity;
@@ -122,6 +126,31 @@ var Pontoon = (function () {
             } else if (data === "error") {
               self.endLoader('Oops, something went wrong.', 'error');
               $('#transifex').hide();
+            }
+          },
+          error: function() {
+            self.endLoader('Oops, something went wrong.', 'error');
+          }
+        });
+
+      } else if (type === "svn") {
+        self.startLoader('Saving...');
+
+        params.svn = self.project.svn;
+        params.content = JSON.stringify(getPO());
+
+        $.ajax({
+          url: 'svn/',
+          type: 'POST',
+          data: {
+            csrfmiddlewaretoken: $('#server').data('csrf'),
+            data: JSON.stringify(params)
+          },
+          success: function(data) {
+            if (data === '200') {
+              self.endLoader('Done!');
+            } else if (data === 'error') {
+              self.endLoader('Oops, something went wrong.', 'error');
             }
           },
           error: function() {

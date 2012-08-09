@@ -435,7 +435,20 @@ def commit_to_svn(request, template=None):
     """Commit translations to SVN."""
     log.debug("Commit translations to SVN.")
 
-    return HttpResponse("TODO")
+    if request.method != 'POST':
+        raise Http404
+
+    try:
+        data = json.loads(request.POST['data'])
+        locale = data['locale']
+        svn = data['svn']
+        content = data['content']
+    except MultiValueDictKeyError:
+        raise Http404
+
+    content = _generate_po_content(content)
+    log.debug(content)
+    return HttpResponse("200")
 
 def verify(request, template=None):
     """Verify BrowserID assertion, and return whether a user is registered."""
