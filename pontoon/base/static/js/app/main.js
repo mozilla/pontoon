@@ -134,10 +134,18 @@ var Pontoon = (function () {
         });
 
       } else if (type === "svn") {
-        self.startLoader('Saving...');
+        self.startLoader('Comitting...');
 
         params.svn = self.project.svn;
         params.content = JSON.stringify(getPO());
+
+        if (value) {
+          params.auth = {
+            username: value[0].value,
+            password: value[1].value,
+            remember: value[2] ? 1 : 0
+          };
+        }
 
         $.ajax({
           url: 'svn/',
@@ -147,10 +155,15 @@ var Pontoon = (function () {
             data: JSON.stringify(params)
           },
           success: function(data) {
-            if (data === '200') {
+            if (data === "authenticate") {
+              self.endLoader('Please sign in to SVN.', 'error');
+              $("#svn").show();
+            } else if (data === "200") {
               self.endLoader('Done!');
+              $('#svn').hide();
             } else if (data === 'error') {
               self.endLoader('Oops, something went wrong.', 'error');
+              $('#svn').hide();
             }
           },
           error: function() {
@@ -715,13 +728,14 @@ var Pontoon = (function () {
         }
       });
 
-      // Transifex authentication
-      $('#transifex').find('.cancel').live("click.pontoon", function (e) {
+      // Transifex and SVN authentication
+      $('.popup').find('.cancel').live("click.pontoon", function (e) {
         e.preventDefault();
-        $('#transifex').hide();
+        $('.popup').hide();
       }).end().find('.button').live("click.pontoon", function (e) {
         e.preventDefault();
-        self.save('transifex', $('#transifex form').serializeArray());
+        var type = $(this).parents('.popup').attr('id');
+        self.save(type, $('#' + type + ' form').serializeArray());
       });
     },
 

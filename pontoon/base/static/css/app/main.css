@@ -555,13 +555,13 @@
   right: 0;
 }
 
-#pontoon #transifex {
+#pontoon .select#profile .popup {
   padding: 12px 12px 4px;
   right: 0;
   width: 200px;
 }
 
-#pontoon #transifex .cancel {
+#pontoon .popup .cancel {
   background: url('../../img/cancel-active.png') no-repeat;
   float: right;
   height: 16px;
@@ -569,12 +569,12 @@
   width: 16px;
 }
 
-#pontoon #transifex .cancel:hover {
+#pontoon .popup .cancel:hover {
   background-image: url('../../img/cancel.png');
 }
 
-#pontoon #transifex input[type=text],
-#pontoon #transifex input[type=password] {
+#pontoon .popup input[type=text],
+#pontoon .popup input[type=password] {
   margin-bottom: 5px;
   width: 192px;
 
@@ -583,12 +583,12 @@
   -webkit-box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
 }
 
-#pontoon #transifex input[type=password] {
+#pontoon .popup input[type=password] {
     width: 140px;
 }
 
-#pontoon #transifex input[type=text]:focus,
-#pontoon #transifex input[type=password]:focus {
+#pontoon .popup input[type=text]:focus,
+#pontoon .popup input[type=password]:focus {
   outline: none; /* Remove WebKit Glow */
   
   box-shadow: 0 0 2px 1px #AEEE00;
@@ -596,7 +596,7 @@
   -webkit-box-shadow: 0 0 2px 1px #AEEE00;
 }
 
-#pontoon #transifex .button {
+#pontoon .popup .button {
   float: right;
 
   box-shadow: 0 1px #555555, 0 2px 1px -1px #666666 inset;
@@ -604,27 +604,27 @@
   -webkit-box-shadow: 0 1px #555555, 0 2px 1px -1px #666666 inset;
 }
 
-#pontoon #transifex .button:active {
+#pontoon .popup .button:active {
   box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
   -moz-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
   -webkit-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
 }
 
-#pontoon #transifex .remember {
+#pontoon .popup .remember {
   float: left;
   padding: 6px 0 0 16px;
 }
 
-#pontoon #transifex .remember input {
+#pontoon .popup .remember input {
   float: left;
   margin-left: -16px;
 }
 
-#pontoon #transifex .bottom {
+#pontoon .popup .bottom {
   font-size: 11px;
 }
 
-#pontoon #transifex .bottom .new {
+#pontoon .popup .bottom .new {
   float: right;
   margin-top: 6px;
 }

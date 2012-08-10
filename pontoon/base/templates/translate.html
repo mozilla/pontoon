@@ -103,14 +103,31 @@
               <a class="cancel" href="#"></a>
             </h2>
             <form>
-              <input id="username" name="username" type="text" placeholder="Email or Username" />
-              <input id="password" name="password" type="password" placeholder="Password" />
+              <input name="username" type="text" placeholder="Email or Username" />
+              <input name="password" type="password" placeholder="Password" />
               <span class="button">{{ _('Sign in') }}</span>
               <div class="bottom">
                 <label class="remember">
-                  <input id="remember" name="remember" type="checkbox" />{{ _('Remember me') }}
+                  <input name="remember" type="checkbox" />{{ _('Remember me') }}
                 </label>
                 <a class="new" target="_blank" href="https://www.transifex.net/plans/signup/free/">{{ _('New to Transifex?') }}</a>
+              </div>
+            </form>
+          </aside>
+          <aside id="svn" class="popup">
+            <h2>
+              {{ _('Sign in to Mozilla SVN') }}
+              <a class="cancel" href="#"></a>
+            </h2>
+            <form>
+              <input name="username" type="text" placeholder="Email" />
+              <input name="password" type="password" placeholder="Password" />
+              <span class="button">{{ _('Sign in') }}</span>
+              <div class="bottom">
+                <label class="remember">
+                  <input name="remember" type="checkbox" />{{ _('Remember me') }}
+                </label>
+                <a class="new" target="_blank" href="https://l10n.mozilla.org/">{{ _('New to Mozilla?') }}</a>
               </div>
             </form>
           </aside>
