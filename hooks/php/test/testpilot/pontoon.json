@@ -11,7 +11,7 @@
 	"audience": "Include the types of individuals and/or users your campaign targeting, the way that you want to engage or impact these individuals or groups, and the length of commitment (time) or level of engagement that you want to achieve. E.g. some projects will short or low levels of engagement, other will be more encompassing.",
 	"metrics": "Describe what success looks like and what measurement you will be using. Examples: Page views, Participants, Social Media mentions, Downloads."
   },
-  "svn": "https://svn.mozilla.org/projects/l10n-misc/trunk/testpilot/",
+  "svn": "https://svn.mozilla.org/projects/l10n-misc/trunk/testpilot",
   "transifex": {
 	"project": "testpilot",
 	"resource": "index"
