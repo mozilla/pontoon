@@ -5,6 +5,7 @@ import datetime
 import json
 import logging
 import polib
+import pysvn
 import requests
 import traceback
 from hashlib import md5
@@ -402,7 +403,7 @@ def save_to_transifex(request, template=None):
     profile = request.user.get_profile()
     username = data.get('auth', {}).get('username', profile.transifex_username)
     password = data.get('auth', {}).get('password', base64.decodestring(profile.transifex_password))
-    if not (password or username):
+    if not (username or password):
         return HttpResponse("authenticate")
 
     """Make PUT request to Transifex API."""
@@ -440,15 +441,42 @@ def commit_to_svn(request, template=None):
 
     try:
         data = json.loads(request.POST['data'])
-        locale = data['locale']
-        svn = data['svn']
-        content = data['content']
     except MultiValueDictKeyError:
         raise Http404
 
-    content = _generate_po_content(content)
-    log.debug(content)
-    return HttpResponse("200")
+    """Check if user authenticated to SVN."""
+    profile = request.user.get_profile()
+    username = data.get('auth', {}).get('username', profile.svn_username)
+    password = data.get('auth', {}).get('password', base64.decodestring(profile.svn_password))
+    if not (username or password):
+        return HttpResponse("authenticate")
+
+    locale = data['locale']
+    svn = data['svn']
+    content = data['content']
+    project = svn.split("/")[-1]
+
+    client = pysvn.Client()
+    client.set_default_username(username)
+    client.set_default_password(password)
+
+    f = open('./media/translations/' + project + '/' + locale +
+        '/LC_MESSAGES/messages.po', 'w')
+    f.write(_generate_po_content(content))
+    f.close()
+
+    """Save SVN username and password."""
+    if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
+        profile.svn_username = data['auth']['username']
+        profile.svn_password = base64.encodestring(data['auth']['password'])
+        profile.save()
+
+    try:
+        client.checkin(['./media/translations/' + project + '/' + locale],
+            'Pontoon: update ' + locale + ' localization of ' + project + '')
+        return HttpResponse("200")
+    except pysvn.ClientError:
+        return HttpResponse("error")
 
 def verify(request, template=None):
     """Verify BrowserID assertion, and return whether a user is registered."""

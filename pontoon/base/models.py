@@ -9,6 +9,8 @@ class UserProfile(models.Model):
     # Other fields here
     transifex_username = models.CharField(max_length=20)
     transifex_password = models.CharField(max_length=128)
+    svn_username = models.CharField(max_length=20)
+    svn_password = models.CharField(max_length=128)
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
