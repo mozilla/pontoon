@@ -226,16 +226,26 @@
        * Remove comment nodes
        */
       function loadEntities() {
-        var counter = 0;
+        var counter = 0,
+            params = {
+              locale: Pontoon.locale.code,
+              url: Pontoon.project.url
+            };
+
+        if (Pontoon.project.svn) {
+          params.svn = Pontoon.project.svn;
+          params.source = 'svn';
+        } else if (Pontoon.transifex) {
+          params.project = Pontoon.transifex.project;
+          params.resource = Pontoon.transifex.resource;
+          params.source = 'transifex';
+        } else {
+          // TODO: meta file error
+        }
 
         $.ajax({
           url: Pontoon.app.path + 'load/',
-          data: {
-            project: Pontoon.transifex.project,
-            resource: Pontoon.transifex.resource,
-            locale: Pontoon.locale.code,
-            url: Pontoon.project.url
-          },
+          data: params,
           dataType: 'jsonp',
           error: function(data) {
             postMessage("ERROR");

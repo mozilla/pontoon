@@ -215,8 +215,13 @@ def load_entities(request, template=None):
     log.debug("Load all project entities and translations.")
 
     try:
-        project = request.GET['project']
-        resource = request.GET['resource']
+        source = request.GET['source']
+        if source == 'svn':
+            svn = request.GET['svn']
+            project = svn.split("/")[-1]
+        elif source == 'project':
+            resource = request.GET['resource']
+            project = request.GET['project']
         locale = request.GET['locale']
         project_url = request.GET['url']
         callback = str(request.GET.get('callback', '')) # JSONP
@@ -226,7 +231,7 @@ def load_entities(request, template=None):
     log.debug("Project: " + project)
     log.debug("Locale: " + locale)
 
-    """Query DB by project name and locale or load data from Transifex."""
+    """Query DB by project name and locale or load data from SVN/Transifex."""
     l = Locale.objects.get(code=locale)
     p = Project.objects.filter(name=project)
     if len(p) > 0 and len(p[0].locales.filter(code=locale)) > 0:
@@ -251,7 +256,9 @@ def load_entities(request, template=None):
         log.debug(json.dumps(data, indent=4))
         return HttpResponse(callback + '(' + json.dumps(data, indent=4) + ');')
 
-    else:
+    elif source == 'svn':
+        log.debug("Load data from SVN.")
+    elif source == 'transifex':
         log.debug("Load data from Transifex.")
         """Check if user authenticated to Transifex."""
         if project == 'testpilot':
