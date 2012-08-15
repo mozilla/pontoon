@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Pontoon &middot; Admin') }}{% endblock %}
+
+{% block content %}
+<section id="intro" class="visible admin">
+  <div class="inner">
+
+    <a href="/a"><h1 id="title">{{ _('Admin') }}</h1></a>
+
+    <form>
+      <!-- Project input/select -->
+      <div class="project select">
+        <input name="url" class="url" type="text" placeholder="{{ _('Select a project or add a new one') }}" autocomplete="off" />
+        <div class="button selector">
+          <span class="handle">&#9662;</span>
+        </div>
+        <div class="menu">
+          <div class="horizontal-separator"></div>
+          <ul>
+            {% for project in projects %}
+            <li>{{ project.name }}<span class="project-url">{{ project.url }}</span></li>
+            {% endfor %}
+          </ul>
+          <div class="horizontal-separator"></div>
+          <a class="add" href="/a/project/">Add a new project</a>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</section>
+{% endblock %}

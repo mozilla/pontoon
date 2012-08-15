@@ -706,6 +706,9 @@ var Pontoon = (function () {
                 self.common.postMessage("USER", self.user);
                 $('#browserid').hide();
                 $('#profile').find('.author').html(self.user.email).end().show();
+                if (data.manager) {
+                  $('#profile-menu .sign-out').parent().after('<li><a class="admin" href="a/">Admin</a></li>');
+                }
                 self.endLoader('Welcome!');
               },
               error: function() {
@@ -720,7 +723,9 @@ var Pontoon = (function () {
       $('#profile-menu').find('a').live("click.pontoon", function (e) {
         e.preventDefault();
         if ($(this).is(".sign-out")) {
-          window.location = 'logout/'; // Without this, Enter doesn't open the link
+          window.location = 'signout/'; // Without this, Enter doesn't open the link
+        } else if ($(this).is(".admin")) {
+          window.location = 'a/'; // Without this, Enter doesn't open the link
         } else if ($(this).is(".html")) {
           self.common.postMessage("HTML");
         } else {

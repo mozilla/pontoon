@@ -90,7 +90,9 @@
             <span> &#9652;</span>
           </div>
           <ul id="profile-menu" class="menu">
-            <li><a class="sign-out" href="{{ url('logout') }}">{{ _('Sign out') }}</a></li>
+            <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
+            {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin') }}">{{ _('Admin') }}</a></li>{% endif %}
+            <li class="horizontal-separator"></li>
             <li><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
             <li><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
             <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download as HTML') }}</a></li>

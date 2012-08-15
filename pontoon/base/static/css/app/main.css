@@ -194,12 +194,8 @@
   padding: 7px 0 4px 12px;
 }
 
-#pontoon #profile-menu li:first-child {
-  border-bottom: 1px solid #000000;
-}
-
-#pontoon #profile-menu li:nth-child(2) {
-  border-top: 1px solid #444444;
+#pontoon #profile-menu li.horizontal-separator {
+  padding: 0;
 }
 
 #pontoon ul.menu li:first-child.hover {

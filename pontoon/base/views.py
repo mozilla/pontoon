@@ -59,6 +59,40 @@ def translate(request, locale, url, template=None):
 
     return render(request, template, data)
 
+@mobile_template('{mobile/}admin.html')
+def admin(request, template=None):
+    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+        raise Http404
+
+    """Admin interface."""
+    log.debug("Admin interface.")
+
+    data = {
+        'projects': Project.objects.all()
+    }
+
+    return render(request, template, data)
+
+@mobile_template('{mobile/}admin_project.html')
+def admin_new(request, template=None):
+    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+        return HttpResponseNotFound()
+
+    """Admin interface: create a new project."""
+    log.debug("Admin interface: create a new project.")
+
+    return render(request, template)
+
+@mobile_template('{mobile/}admin_project.html')
+def admin_project(request, template=None):
+    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+        return HttpResponseNotFound()
+
+    """Admin interface: edit project."""
+    log.debug("Admin interface: edit project.")
+
+    return render(request, template)
+
 def check_url(request, template=None):
     """Check if URL exists."""
     log.debug("Check if URL exists.")
@@ -504,6 +538,7 @@ def verify(request, template=None):
     user = auth.authenticate(assertion=assertion, audience=get_audience(request))
     if user is not None:
         auth.login(request, user)
-        response_data = {'registered': True, 'browserid': verification}
+        response_data = {'registered': True, 'browserid': verification,
+            'manager': user.has_perm('base.can_manage')}
 
     return HttpResponse(json.dumps(response_data), mimetype='application/json')

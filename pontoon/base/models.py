@@ -30,6 +30,11 @@ class Project(models.Model):
     url = models.URLField(unique=True)
     locales = models.ManyToManyField(Locale)
 
+    class Meta:
+        permissions = (
+            ("can_manage", "Can manage projects"),
+        )
+
     def __unicode__(self):
         return self.name
 

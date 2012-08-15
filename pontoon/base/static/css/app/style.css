@@ -242,11 +242,11 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#444444', EndColorStr='#000000'); /* IE6–IE9 */
 }
 
-#intro.error {
+#intro.visible {
   display: table;
 }
 
-#intro.error .notification {
+#intro.visible .notification {
   text-align: center;
   visibility: visible;
 }
@@ -302,6 +302,10 @@ body {
 
 #pontoon #intro .project.select {
   float: left;
+}
+
+#pontoon #intro.admin form {
+  width: 512px; /* Must be same as #pontoon #intro input[type=text].url width + padding + border + margin */
 }
 
 #pontoon #intro input[type=text].url {
@@ -383,6 +387,21 @@ body {
 #pontoon #intro .project.select .menu ul li .project-url {
   float: right;
   color: #AEE000;
+}
+
+#pontoon #intro .project.select .add {
+  display: block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+#pontoon #intro .project.select .add:hover {
+  background: #444444;
+  color: #FFFFFF;
+
+  border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  -webkit-border-radius: 0 0 3px 3px;
 }
 
 #pontoon #intro .select {

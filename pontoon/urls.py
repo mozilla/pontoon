@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^browserid/$', 'pontoon.base.views.verify', name='browserid.verify'),
 
     # Logout
-    url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
+    url(r'^signout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='signout'),
 
     # 404 and 500
     url(r'^404/$', 'django.views.generic.simple.direct_to_template', {'template': '404.html'}),
