@@ -253,7 +253,7 @@ def load_entities(request, template=None):
         if source == 'svn':
             svn = request.GET['svn']
             project = svn.split("/")[-1]
-        elif source == 'project':
+        elif source == 'transifex':
             resource = request.GET['resource']
             project = request.GET['project']
         locale = request.GET['locale']
@@ -262,6 +262,7 @@ def load_entities(request, template=None):
     except MultiValueDictKeyError:
         raise Http404
 
+    log.debug("Source: " + source)
     log.debug("Project: " + project)
     log.debug("Locale: " + locale)
 
