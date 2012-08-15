@@ -62,7 +62,7 @@ DOMAIN_METHODS['messages'] = [
         'tower.management.commands.extract.extract_tower_template'),
     ('templates/**.html',
         'tower.management.commands.extract.extract_tower_template'),
-],
+]
 
 # # Use this if you have localizable HTML files:
 # DOMAIN_METHODS['lhtml'] = [
