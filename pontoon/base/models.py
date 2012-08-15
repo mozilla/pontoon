@@ -7,9 +7,9 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
 
     # Other fields here
-    transifex_username = models.CharField(max_length=20)
+    transifex_username = models.CharField(max_length=40)
     transifex_password = models.CharField(max_length=128)
-    svn_username = models.CharField(max_length=20)
+    svn_username = models.CharField(max_length=40)
     svn_password = models.CharField(max_length=128)
 
 def create_user_profile(sender, instance, created, **kwargs):
@@ -20,20 +20,39 @@ post_save.connect(create_user_profile, sender=User)
 
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=128)
 
     def __unicode__(self):
         return self.name
 
 class Project(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=128, unique=True)
     url = models.URLField(unique=True)
     locales = models.ManyToManyField(Locale)
+
+    # Campaign info
+    info_brief = models.TextField()
+    info_locales = models.TextField()
+    info_audience = models.TextField()
+    info_metrics = models.TextField()
+
+    # Repositories
+    svn = models.URLField(unique=True)
+    transifex_project = models.CharField(max_length=128)
+    transifex_resource = models.CharField(max_length=128)
 
     class Meta:
         permissions = (
             ("can_manage", "Can manage projects"),
         )
+
+    def __unicode__(self):
+        return self.name
+
+class Subpage(models.Model):
+    project = models.ForeignKey(Project)
+    name = models.CharField(max_length=128)
+    url = models.URLField()
 
     def __unicode__(self):
         return self.name
@@ -50,7 +69,7 @@ class Translation(models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
     string = models.TextField()
-    author = models.CharField(max_length=100)
+    author = models.CharField(max_length=128)
     date = models.DateTimeField()
 
     def __unicode__(self):
