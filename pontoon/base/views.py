@@ -97,14 +97,16 @@ def admin_project_edit(request, url, template=None):
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
         raise Http404
 
+    if url[-1] is not '/':
+        url += '/'
     try:
         project = Project.objects.get(url=url)
-        log.debug("Project: " + project.url)
-        form = ProjectForm(instance=project)
     except Project.DoesNotExist:
         log.debug("Project does not exist.")
         raise Http404
 
+    log.debug("Project: " + project.url)
+    form = ProjectForm(instance=project)
     data = {
         'subtitle': 'Edit project',
         'form': form
