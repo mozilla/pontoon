@@ -973,14 +973,16 @@ var Pontoon = (function () {
             ul = menu.find('ul'),
             val = $(this).val();
 
-        ul
-          .find('li').addClass('match').end()
-          .find('li:not(":containsi("' + val + '")")').removeClass('match');
+        if (val !== '') {
+          ul
+            .find('li').addClass('match').end()
+            .find('li:not(":containsi("' + val + '")")').removeClass('match');
 
-        if (ul.find('li.match').length === 0) {
-          menu.hide().parent().removeClass('opened');
-        } else {
-          menu.show().parent().addClass('opened');
+          if (ul.find('li.match').length === 0) {
+            menu.hide().parent().removeClass('opened');
+          } else {
+            menu.show().parent().addClass('opened');
+          }
         }
       });
 
