@@ -146,8 +146,18 @@
 
     // Admin
     } else if ($('#intro').is('.admin')) {
+      // Edit project if selected from the menu
       $('.project .menu li').live("click.pontoon", function (e) {
-        window.location = 'a/project/' + $(this).find('.project-url').html(); // Without this, Enter doesn't open the link
+        window.location = 'a/project/' + $(this).find('.project-url').html();
+      });
+
+      // Edit or add project if URL typed and Enter pressed
+      $('.url').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
+        var key = e.keyCode || e.which;
+        if (key === 13) { // Enter
+          window.location = 'a/project/' + $(this).val();
+          return false;
+        }
       });
 
     // Intro
