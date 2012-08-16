@@ -146,7 +146,9 @@
 
     // Admin
     } else if ($('#intro').is('.admin')) {
-      
+      $('.project .menu li').live("click.pontoon", function (e) {
+        window.location = 'a/project/' + $(this).find('.project-url').html(); // Without this, Enter doesn't open the link
+      });
 
     // Intro
     } else {

@@ -82,13 +82,13 @@ def admin_project_new(request, template=None):
         'subpage': 'Add project'
     }
 
-    """Admin interface: add a new project."""
-    log.debug("Admin interface: add a new project.")
+    """Admin interface: add project."""
+    log.debug("Admin interface: add project.")
 
     return render(request, template, data)
 
 @mobile_template('{mobile/}admin_project.html')
-def admin_project_edit(request, project, template=None):
+def admin_project_edit(request, url, template=None):
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
         return HttpResponseNotFound()
 
