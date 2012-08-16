@@ -1,13 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Pontoon &middot; %(subpage)s')|format(subpage=subpage) }}{% endblock %}
+{% block title %}{{ _('Pontoon &middot; %(subtitle)s')|format(subtitle=subtitle) }}{% endblock %}
+
+{% block class %}admin-form{% endblock %}
 
 {% block content %}
-<section id="intro" class="visible admin">
-  <div class="inner">
+<section id="intro" class="visible">
+  <form method="POST" action="{{ request.path }}">
 
-    <h1 id="title">{{ _('%(subpage)s')|format(subpage=subpage) }}</h1>
+    <h1 id="title">{{ _('%(subtitle)s')|format(subtitle=subtitle) }}</h1>
+    {{ csrf() }}
 
-  </div>
+    {% for field in form %}
+    {% if field.html_name == 'svn' %}
+    <h2>Repositories</h2>
+    {% elif field.html_name == 'info_brief' %}
+    <h2>General info</h2>
+    {% endif %}
+    <p>
+      {{ field.errors }}
+      {{ field.label_tag() }}
+      {{ field }}
+    </p>
+    {% endfor %}
+
+    <p><button class="button">Save</button></p>
+
+  </form>
 </section>
 {% endblock %}

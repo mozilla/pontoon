@@ -19,7 +19,7 @@
     {% endblock %}
   </head>
   
-  <body id="pontoon">
+  <body id="pontoon" class="{% block class %}{% endblock %}">
     {% block content %}{% endblock %}
 
     <!-- Javascript at the bottom for fast page loading -->

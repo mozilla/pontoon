@@ -2,8 +2,10 @@
 
 {% block title %}{{ _('Pontoon &middot; Admin') }}{% endblock %}
 
+{% block class %}admin{% endblock %}
+
 {% block content %}
-<section id="intro" class="visible admin">
+<section id="intro" class="visible">
   <div class="inner">
 
     <a href="{{ url('pontoon.admin') }}"><h1 id="title">{{ _('Admin') }}</h1></a>

@@ -225,6 +225,11 @@ body {
 	background: #EBEBEB;
 }
 
+body.admin-form {
+  overflow: auto;
+  background: #000000;
+}
+
 #intro {
   position: fixed;
   bottom: 0;
@@ -240,6 +245,11 @@ body {
   background-image: -webkit-linear-gradient(#444444, #000000); /* Chrome 10+, Saf6 */
   background-image: linear-gradient(top, #444444, #000000);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#444444', EndColorStr='#000000'); /* IE6–IE9 */
+}
+
+body.admin-form #intro {
+  overflow: auto;
+  position: relative;
 }
 
 #intro.visible {
@@ -293,6 +303,13 @@ body {
   margin-bottom: 10px;
 }
 
+#pontoon.admin-form #title {
+  display: block;
+  font-size: 50px;
+  letter-spacing: -1px;
+  text-align: left;
+}
+
 #intro form {
   width: 730px;
   height: 40px;
@@ -300,14 +317,58 @@ body {
   position: relative;
 }
 
-#pontoon #intro .project.select {
-  float: left;
-}
-
-#pontoon #intro.admin form {
+#pontoon.admin #intro form {
   width: 512px; /* Must be same as #pontoon #intro input[type=text].url width + padding + border + margin */
 }
 
+#pontoon.admin-form #intro form {
+  color: #AAAAAA;
+  font-size: 14px;
+  height: auto;
+  width: 620px;
+  padding: 100px 20px;
+}
+
+#pontoon.admin-form #intro p {
+  margin: 20px 0;
+}
+
+#pontoon.admin-form #intro h2 {
+  color: #EBEBEB;
+  font-family: Helvetica Neue;
+  font-size: 30px;
+  font-weight: 100;
+  letter-spacing: 1px;
+  margin-top: 70px;
+  text-align: left;
+}
+
+#pontoon.admin-form #intro label {
+  display: block;
+  text-align: left;
+}
+
+#pontoon.admin-form #intro input[type=text],
+#pontoon.admin-form #intro textarea {
+  display: block;
+  float: none;
+  margin-left: -1px;
+  width: 613px; /* Must be same as #pontoon.admin-form #intro form width - padding - margin-left */
+}
+
+#pontoon.admin-form #intro textarea {
+  height: 45px;
+}
+
+#pontoon.admin-form #intro .button {
+  display: block;
+  height: auto;
+  margin-top: 50px;
+}
+
+#pontoon #intro .project.select {
+  float: left;
+}
 #pontoon #intro input[type=text].url {
   padding: 7px 5px 3px;
   height: 21px;

@@ -21,7 +21,7 @@ from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
-from pontoon.base.models import Project, Entity, Locale, Translation
+from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm
 
 from funfactory.log import log_cef
 from mobility.decorators import mobile_template
@@ -68,36 +68,47 @@ def admin(request, template=None):
     log.debug("Admin interface.")
 
     data = {
-        'projects': Project.objects.all()
+        'projects': Project.objects.all(),
+        'form': ProjectForm()
     }
 
     return render(request, template, data)
 
 @mobile_template('{mobile/}admin_project.html')
 def admin_project_new(request, template=None):
-    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
-        return HttpResponseNotFound()
-
-    data = {
-        'subpage': 'Add project'
-    }
-
     """Admin interface: add project."""
     log.debug("Admin interface: add project.")
+
+    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+        raise Http404
+
+    data = {
+        'subtitle': 'Add project',
+        'form': ProjectForm()
+    }
 
     return render(request, template, data)
 
 @mobile_template('{mobile/}admin_project.html')
 def admin_project_edit(request, url, template=None):
-    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
-        return HttpResponseNotFound()
-
-    data = {
-        'subpage': 'Edit project'
-    }
-
     """Admin interface: edit project."""
     log.debug("Admin interface: edit project.")
+
+    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+        raise Http404
+
+    try:
+        project = Project.objects.get(url=url)
+        log.debug("Project: " + project.url)
+        form = ProjectForm(instance=project)
+    except Project.DoesNotExist:
+        log.debug("Project does not exist.")
+        raise Http404
+
+    data = {
+        'subtitle': 'Edit project',
+        'form': form
+    }
 
     return render(request, template, data)
 
