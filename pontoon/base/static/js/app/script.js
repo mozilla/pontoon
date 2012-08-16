@@ -144,6 +144,10 @@
         showError('Oops, locale not supported.');
       }
 
+    // Admin
+    } else if ($('#intro').is('.admin')) {
+      
+
     // Intro
     } else {
       if ($('.locale .menu .language.' + acceptLanguage).length === 0) { // Locale not on the list
