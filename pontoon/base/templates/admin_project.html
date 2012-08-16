@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Pontoon &middot; Admin') }}{% endblock %}
+{% block title %}{{ _('Pontoon &middot; %(subpage)s')|format(subpage=subpage) }}{% endblock %}
 
 {% block content %}
 <section id="intro" class="visible admin">
   <div class="inner">
 
-    <a href="/a"><h1 id="title">{{ _('Admin project') }}</h1></a>
+    <h1 id="title">{{ _('%(subpage)s')|format(subpage=subpage) }}</h1>
 
   </div>
 </section>

@@ -6,7 +6,7 @@
 <section id="intro" class="visible admin">
   <div class="inner">
 
-    <a href="/a"><h1 id="title">{{ _('Admin') }}</h1></a>
+    <a href="{{ url('pontoon.admin') }}"><h1 id="title">{{ _('Admin') }}</h1></a>
 
     <form>
       <!-- Project input/select -->
@@ -23,7 +23,7 @@
             {% endfor %}
           </ul>
           <div class="horizontal-separator"></div>
-          <a class="add" href="/a/project/">Add a new project</a>
+          <a class="add" href="{{ url('pontoon.admin.project.new') }}">Add a new project</a>
         </div>
       </div>
     </form>

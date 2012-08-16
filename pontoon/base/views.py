@@ -74,24 +74,32 @@ def admin(request, template=None):
     return render(request, template, data)
 
 @mobile_template('{mobile/}admin_project.html')
-def admin_new(request, template=None):
+def admin_project_new(request, template=None):
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
         return HttpResponseNotFound()
 
-    """Admin interface: create a new project."""
-    log.debug("Admin interface: create a new project.")
+    data = {
+        'subpage': 'Add project'
+    }
 
-    return render(request, template)
+    """Admin interface: add a new project."""
+    log.debug("Admin interface: add a new project.")
+
+    return render(request, template, data)
 
 @mobile_template('{mobile/}admin_project.html')
-def admin_project(request, template=None):
+def admin_project_edit(request, project, template=None):
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
         return HttpResponseNotFound()
+
+    data = {
+        'subpage': 'Edit project'
+    }
 
     """Admin interface: edit project."""
     log.debug("Admin interface: edit project.")
 
-    return render(request, template)
+    return render(request, template, data)
 
 def check_url(request, template=None):
     """Check if URL exists."""
