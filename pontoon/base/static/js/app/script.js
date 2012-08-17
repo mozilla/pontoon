@@ -146,6 +146,13 @@
 
     // Admin
     } else if ($('body').is('.admin')) {
+      // Unhover on add hover
+      $('.project .menu .add').hover(function() {
+        $('.project .menu ul li').removeClass('hover');
+      }, function() {
+
+      });
+
       // Edit project if selected from the menu
       $('.project .menu li').live("click.pontoon", function (e) {
         window.location = 'a/project/' + $(this).find('.project-url').html();
