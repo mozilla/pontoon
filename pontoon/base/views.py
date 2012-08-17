@@ -99,8 +99,6 @@ def admin_project(request, url=None, template=None):
         # Update existing project
         try:
             pk = request.POST['pk']
-            if url[-1] is not '/':
-                url += '/'
             form = ProjectForm(request.POST, instance=Project.objects.get(pk=pk))
             subtitle = 'Edit project'
 
