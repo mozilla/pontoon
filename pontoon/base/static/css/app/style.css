@@ -356,8 +356,26 @@ body.admin-form #intro {
   width: 613px; /* Must be same as #pontoon.admin-form #intro form width - padding - margin-left */
 }
 
+#pontoon.admin-form #intro .transifex input[type=text] {
+  float: left;
+  width: 300px; /* Half */
+}
+
+#pontoon.admin-form #intro .transifex input#id_transifex_project {
+  margin-right: 6px;
+}
+
 #pontoon.admin-form #intro textarea {
   height: 45px;
+}
+
+#pontoon.admin-form #intro .errorlist {
+  color: #F00038;
+  font-size: 12px;
+  list-style: none;
+  margin: 0;
+  text-align: right;
+  text-transform: uppercase;
 }
 
 #pontoon.admin-form #intro .button {
@@ -369,6 +387,7 @@ body.admin-form #intro {
 #pontoon #intro .project.select {
   float: left;
 }
+
 #pontoon #intro input[type=text].url {
   padding: 7px 5px 3px;
   height: 21px;

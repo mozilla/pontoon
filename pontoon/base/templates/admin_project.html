@@ -11,21 +11,55 @@
     <h1 id="title">{{ _('%(subtitle)s')|format(subtitle=subtitle) }}</h1>
     {{ csrf() }}
 
-    {% for field in form %}
-    {% if field.html_name == 'svn' %}
-    <h2>Repositories</h2>
-    {% elif field.html_name == 'info_brief' %}
-    <h2>General info</h2>
-    {% endif %}
     <p>
-      {{ field.errors }}
-      {{ field.label_tag() }}
-      {{ field }}
+        {{ form.name.label_tag() }}
+        {{ form.name }}
+        {{ form.name.errors }}
+    </p><p>
+        {{ form.url.label_tag() }}
+        {{ form.url }}
+        {{ form.url.errors }}
+    </p><p>
+        {{ form.locales.label_tag() }}
+        {{ form.locales }}
+        {{ form.locales.errors }}
     </p>
-    {% endfor %}
-
-    <p><button class="button">Save</button></p>
+        <h2>Repositories</h2>
+    <p>
+        {{ form.svn.label_tag() }}
+        {{ form.svn }}
+        {{ form.svn.errors }}
+    </p><p class="transifex">
+        <label for="id_transifex">Transifex</label>
+        {{ form.transifex_project }}
+        {{ form.transifex_resource }}
+        {{ form.transifex_project.errors }}
+        {{ form.transifex_resource.errors }}
+    </p>
+        <h2>General info</h2>
+    <p>
+        {{ form.info_brief.label_tag() }}
+        {{ form.info_brief }}
+        {{ form.info_brief.errors }}
+    </p><p>
+        {{ form.info_locales.label_tag() }}
+        {{ form.info_locales }}
+        {{ form.info_locales.errors }}
+    </p><p>
+        {{ form.info_audience.label_tag() }}
+        {{ form.info_audience }}
+        {{ form.info_audience.errors }}
+    </p><p>
+        {{ form.info_metrics.label_tag() }}
+        {{ form.info_metrics }}
+        {{ form.info_metrics.errors }}
+    </p><p>
+        <button class="button">Save</button>
+    </p>
 
   </form>
 </section>
+{% endblock %}
+
+{% block site_js %}
 {% endblock %}
