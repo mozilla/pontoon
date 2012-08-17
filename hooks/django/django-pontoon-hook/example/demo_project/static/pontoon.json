@@ -4,6 +4,5 @@
 	"locales": "Share what regions or locals the campaign is intended to reach, and what work was done during the design stage to account for or target regional and cultural differences.",
 	"audience": "Include the types of individuals and/or users your campaign targeting, the way that you want to engage or impact these individuals or groups, and the length of commitment (time) or level of engagement that you want to achieve. E.g. some projects will short or low levels of engagement, other will be more encompassing.",
 	"metrics": "Describe what success looks like and what measurement you will be using. Examples: Page views, Participants, Social Media mentions, Downloads."
-  },
-  "svn": "https://svn.mozilla.org/projects/l10n-misc/trunk/testpilot"
+  }
 }

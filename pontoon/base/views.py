@@ -64,6 +64,9 @@ def translate(request, locale, url, template=None):
             'audience': project.info_audience,
             'metrics': project.info_metrics
         }
+        data['svn'] = project.svn
+        data['transifex_project'] = project.transifex_project
+        data['transifex_resource'] = project.transifex_resource
     except Project.DoesNotExist:
         pass
 
@@ -155,7 +158,7 @@ def check_url(request, template=None):
     try:
         url = request.GET['url']
     except MultiValueDictKeyError:
-        raise Http404
+        return HttpResponse("error")
 
     log.debug(url)
 
@@ -231,16 +234,16 @@ def get_translation(request, template=None):
 
     try:
         original = request.GET['original']
-        project = request.GET['project']
+        url = request.GET['url']
         locale = request.GET['locale']
     except MultiValueDictKeyError:
-        raise Http404
+        return HttpResponse("error")
 
     log.debug("Entity: " + original)
-    log.debug("Project: " + project)
+    log.debug("URL: " + url)
     log.debug("Locale: " + locale)
 
-    p = Project.objects.filter(name=project)
+    p = Project.objects.filter(url=url)
     e = Entity.objects.filter(project=p, string=original)
     l = Locale.objects.get(code=locale)
 
@@ -260,17 +263,17 @@ def save_translation(request, template=None):
     try:
         original = request.GET['original']
         translation = request.GET['translation']
-        project = request.GET['project']
+        url = request.GET['url']
         locale = request.GET['locale']
     except MultiValueDictKeyError:
-        raise Http404
+        return HttpResponse("error")
 
     log.debug("Entity: " + original)
     log.debug("Translation: " + translation)
-    log.debug("Project: " + project)
+    log.debug("URL: " + url)
     log.debug("Locale: " + locale)
 
-    p = Project.objects.filter(name=project)
+    p = Project.objects.filter(url=url)
     e = Entity.objects.filter(project=p, string=original)
     l = Locale.objects.get(code=locale)
 
@@ -304,26 +307,22 @@ def load_entities(request, template=None):
     log.debug("Load all project entities and translations.")
 
     try:
-        source = request.GET['source']
-        if source == 'svn':
-            svn = request.GET['svn']
-            project = svn.split("/")[-1]
-        elif source == 'transifex':
-            resource = request.GET['resource']
-            project = request.GET['project']
-        locale = request.GET['locale']
-        project_url = request.GET['url']
         callback = str(request.GET.get('callback', '')) # JSONP
+        locale = request.GET['locale']
+        url = request.GET['url']
     except MultiValueDictKeyError:
-        raise Http404
+        return HttpResponse(callback + '("error");')
 
-    log.debug("Source: " + source)
-    log.debug("Project: " + project)
     log.debug("Locale: " + locale)
+    log.debug("URL: " + url)
 
     """Query DB by project name and locale or load data from SVN/Transifex."""
-    l = Locale.objects.get(code=locale)
-    p = Project.objects.filter(name=project)
+    try:
+        l = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist:
+        return HttpResponse(callback + '("error");')
+
+    p = Project.objects.filter(url=url)
     if len(p) > 0 and len(p[0].locales.filter(code=locale)) > 0:
         log.debug("Load data from DB.")
         entities = Entity.objects.filter(project=p)
@@ -346,9 +345,8 @@ def load_entities(request, template=None):
         log.debug(json.dumps(data, indent=4))
         return HttpResponse(callback + '(' + json.dumps(data, indent=4) + ');')
 
-    elif source == 'svn':
-        log.debug("Load data from SVN.")
-    elif source == 'transifex':
+    # TODO: move to a separate function, triggered from admin
+    else:
         log.debug("Load data from Transifex.")
         """Check if user authenticated to Transifex."""
         if project == 'testpilot':
@@ -383,7 +381,7 @@ def load_entities(request, template=None):
                             t.save()
                 else:
                     """Create a new project."""
-                    p = Project(name=project, url=project_url)
+                    p = Project(name=project, url=url)
                     p.save()
                     p.locales.add(l)
 
@@ -494,7 +492,7 @@ def save_to_transifex(request, template=None):
     try:
         data = json.loads(request.GET['data'])
     except MultiValueDictKeyError:
-        raise Http404
+        return HttpResponse("error")
 
     """Check if user authenticated to Transifex."""
     profile = request.user.get_profile()
@@ -515,7 +513,11 @@ def save_to_transifex(request, template=None):
     log.debug(json.dumps(payload, indent=4))
 
     """Make PUT request to Transifex API."""
-    response = _request('put', data['project'], data['resource'], data['locale'], username, password, payload)
+    try:
+        p = Project.objects.get(url=data['url'])
+    except Project.DoesNotExist:
+        return HttpResponse("error")
+    response = _request('put', p.transifex_project, p.transifex_resource, data['locale'], username, password, payload)
 
     """Save Transifex username and password."""
     if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
@@ -534,12 +536,12 @@ def commit_to_svn(request, template=None):
     log.debug("Commit translations to SVN.")
 
     if request.method != 'POST':
-        raise Http404
+        return HttpResponse("error")
 
     try:
         data = json.loads(request.POST['data'])
     except MultiValueDictKeyError:
-        raise Http404
+        return HttpResponse("error")
 
     """Check if user authenticated to SVN."""
     profile = request.user.get_profile()
@@ -549,9 +551,13 @@ def commit_to_svn(request, template=None):
         return HttpResponse("authenticate")
 
     locale = data['locale']
-    svn = data['svn']
     content = data['content']
-    project = svn.split("/")[-1]
+
+    try:
+        p = Project.objects.get(url=data['url'])
+    except Project.DoesNotExist:
+        return HttpResponse("error")
+    project = p.name
 
     client = pysvn.Client()
     client.set_default_username(username)

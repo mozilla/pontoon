@@ -107,6 +107,9 @@
             if (data === "invalid") {
               clearInterval(interval);
               showError('Oops, website could not be found.');
+            } else if (data === "error") {
+              clearInterval(interval);
+              showError('Oops, something went wrong.');
             }
           }
         });

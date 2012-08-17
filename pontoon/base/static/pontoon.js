@@ -11,8 +11,7 @@
           title: "",
           entities: [],
           pages: {},
-          hooks: false,
-          svn: ""
+          hooks: false
         },
         locale: {
           code: "",
@@ -21,10 +20,6 @@
         user: {
           name: "",
           email: ""
-        },
-        transifex: {
-          project: "",
-          resource: ""
         }
       },
       jqueryAppended = false,
@@ -62,10 +57,7 @@
           url: Pontoon.project.url,
           title: Pontoon.project.title,
           pages: Pontoon.project.pages,
-          hooks: Pontoon.project.hooks,
-          svn: Pontoon.project.svn,
-          name: Pontoon.transifex.project,
-          resource: Pontoon.transifex.resource
+          hooks: Pontoon.project.hooks
         });
 
         // Update UI and progress when saved
@@ -230,17 +222,6 @@
               url: Pontoon.project.url
             };
 
-        if (Pontoon.project.svn) {
-          params.svn = Pontoon.project.svn;
-          params.source = 'svn';
-        } else if (Pontoon.transifex) {
-          params.project = Pontoon.transifex.project;
-          params.resource = Pontoon.transifex.resource;
-          params.source = 'transifex';
-        } else {
-          // TODO: meta file error
-        }
-
         $.ajax({
           url: Pontoon.app.path + 'load/',
           data: params,
@@ -249,6 +230,10 @@
             postMessage("ERROR");
           },
           success: function(data) {
+            if (data === "error") {
+              postMessage("ERROR");
+              return;
+            }
             $('*').contents().each(function () {
               if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
                 var entity = {},
@@ -523,11 +508,6 @@
       if (meta.length > 0 && meta.attr('data-meta')) {
         $.getJSON(meta.data('meta')).success(function (data) {
           Pontoon.project.pages = data.pages; // Pages URLs
-          Pontoon.project.svn = data.svn; // Project SVN repository
-          if (data.transifex) {
-            Pontoon.transifex.project = data.transifex.project; // Transifex project
-            Pontoon.transifex.resource = data.transifex.resource; // Transifex resource
-          }
           Pontoon.project.title = document.title.split("-->")[1];
           Pontoon.project.hooks = true;
           loadEntities();

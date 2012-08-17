@@ -100,8 +100,7 @@ var Pontoon = (function () {
           });
         });
 
-        params.project = self.transifex.project;
-        params.resource = self.transifex.resource;
+        params.url = self.project.url;
 
         if (value) {
           params.auth = {
@@ -130,14 +129,15 @@ var Pontoon = (function () {
           },
           error: function() {
             self.endLoader('Oops, something went wrong.', 'error');
+            $('#transifex').hide();
           }
         });
 
       } else if (type === "svn") {
         self.startLoader('Comitting...');
 
-        params.svn = self.project.svn;
         params.content = JSON.stringify(getPO());
+        params.url = self.project.url;
 
         if (value) {
           params.auth = {
@@ -168,6 +168,7 @@ var Pontoon = (function () {
           },
           error: function() {
             self.endLoader('Oops, something went wrong.', 'error');
+            $('#svn').hide();
           }
         });
       }
@@ -381,8 +382,8 @@ var Pontoon = (function () {
         $.ajax({
           url: 'get/',
           data: {
-            project: self.transifex.project,
             locale: li.find(".language").attr("class").split(" ")[1],
+            url: self.project.url,
             original: original
           },
           success: function(data) {
@@ -600,13 +601,20 @@ var Pontoon = (function () {
         $.ajax({
           url: 'save/',
           data: {
-            project: self.transifex.project,
             locale: self.locale.code,
+            url: self.project.url,
             original: entity.original,
             translation: entity.translation
           },
           success: function(data) {
-            Pontoon.endLoader('Translation ' + data + '!');
+            if (data !== "error") {
+              self.endLoader('Translation ' + data + '!');
+            } else {
+              self.endLoader('Oops, something went wrong.', 'error');
+            }
+          },
+          error: function() {
+            self.endLoader('Oops, something went wrong.', 'error');
           }
         });
       }
@@ -749,17 +757,8 @@ var Pontoon = (function () {
           Pontoon.project.title = value.title;
           Pontoon.project.pages = value.pages;
           Pontoon.project.hooks = value.hooks;
-          Pontoon.project.svn = value.svn;
-          Pontoon.transifex.project = value.name;
-          Pontoon.transifex.resource = value.resource;
           Pontoon.attachHandlers();
           Pontoon.entityList();
-          if (!Pontoon.transifex.project) {
-            $('#profile-menu .transifex').parent().remove();
-          }
-          if (!Pontoon.project.svn) {
-            $('#profile-menu .svn').parent().remove();
-          }
           $("#spinner").fadeOut(function() {
             $("#main > header > .container").fadeIn();
           });
@@ -829,10 +828,6 @@ var Pontoon = (function () {
       this.user = {
         email: email,
         name: email.split("@")[0] // PO file
-      };
-      this.transifex = {
-        project: "",
-        resource: ""
       };
 
       // Sync user data

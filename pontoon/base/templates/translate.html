@@ -23,7 +23,7 @@
 
       <!-- General project info -->
       <div id="info" class="select">
-        <div class="selector {% if not info %}hidden{% endif %}"></div>
+        <div class="selector{% if not info %} hidden{% endif %}"></div>
         <aside class="menu">
           <section class="brief">
             <h2>{{ _('Campaign Brief') }}</h2>
@@ -93,8 +93,8 @@
             <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
             {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin') }}">{{ _('Admin') }}</a></li>{% endif %}
             <li class="horizontal-separator"></li>
-            <li><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
-            <li><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
+            <li{% if not svn %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
+            <li{% if not (transifex_project and transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
             <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download as HTML') }}</a></li>
             <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download as JSON') }}</a></li>
             <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download as PO') }}</a></li>
