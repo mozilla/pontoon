@@ -99,6 +99,7 @@ def admin_project_edit(request, url, template=None):
 
     if url[-1] is not '/':
         url += '/'
+
     try:
         project = Project.objects.get(url=url)
     except Project.DoesNotExist:
