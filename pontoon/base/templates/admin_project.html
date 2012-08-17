@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Pontoon &middot; %(subtitle)s')|format(subtitle=subtitle) }}{% endblock %}
+{% block title %}{{ _('Pontoon &middot; %(formtype)s project')|format(formtype=formtype) }}{% endblock %}
 
 {% block class %}admin-form{% endblock %}
 
@@ -8,8 +8,9 @@
 <section id="intro" class="visible">
   <form method="POST" action="{{ request.path }}">
 
-    <h1 id="title">{{ _('%(subtitle)s')|format(subtitle=subtitle) }}</h1>
-    {{ csrf() }}
+    <h1 id="title">{{ _('%(formtype)s project%(subtitle)s')|format(formtype=formtype, subtitle=subtitle) }}</h1>
+    <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+    <input type="hidden" value="{{ formtype }}" name="formtype">
 
     <p>
         {{ form.name.label_tag() }}

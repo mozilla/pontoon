@@ -82,27 +82,53 @@ def admin_project(request, url=None, template=None):
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
         raise Http404
 
-    if url is None:
-        log.debug("Project not specified. Adding a new one.")
-        subtitle = 'Add project'
-        form = ProjectForm()
-
-    else:
-        if url[-1] is not '/':
-            url += '/'
-
+    subtitle = ''
+    if request.method == 'POST':
         try:
-            log.debug("Project URL: " + url)
-            subtitle = 'Edit project'
-            form = ProjectForm(instance=Project.objects.get(url=url))
-        except Project.DoesNotExist:
-            log.debug("Project does not exist. Adding a new one.")
-            subtitle = 'Add project'
-            form = ProjectForm(initial={'url': url})
+            formtype = request.POST['formtype']
+        except MultiValueDictKeyError:
+            raise Http404
+
+        # Update existing project
+        if formtype == 'Edit':
+            if url[-1] is not '/':
+                url += '/'
+            form = ProjectForm(request.POST, instance=Project.objects.get(url=url))
+
+        # Add a new project
+        elif formtype == 'Add':
+            form = ProjectForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            subtitle = '. Saved.'
+        else:
+            subtitle = '. Error.'
+    else:
+        # If URL not specified, show add form
+        if url is None:
+            log.debug("Project not specified. Adding a new one.")
+            formtype = 'Add'
+            form = ProjectForm()
+
+        # If URL specified, show edit form or add form if not found
+        else:
+            if url[-1] is not '/':
+                url += '/'
+
+            try:
+                log.debug("Project URL: " + url)
+                formtype = 'Edit'
+                form = ProjectForm(instance=Project.objects.get(url=url))
+            except Project.DoesNotExist:
+                log.debug("Project does not exist. Adding a new one.")
+                formtype = 'Add'
+                form = ProjectForm(initial={'url': url})
 
     data = {
-        'subtitle': subtitle,
-        'form': form
+        'formtype': formtype,
+        'form': form,
+        'subtitle': subtitle
     }
 
     return render(request, template, data)
