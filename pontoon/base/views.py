@@ -75,41 +75,33 @@ def admin(request, template=None):
     return render(request, template, data)
 
 @mobile_template('{mobile/}admin_project.html')
-def admin_project_new(request, template=None):
-    """Admin interface: add project."""
-    log.debug("Admin interface: add project.")
+def admin_project(request, url=None, template=None):
+    """Admin interface: manage project."""
+    log.debug("Admin interface: manage project.")
 
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
         raise Http404
 
+    if url is None:
+        log.debug("Project not specified. Adding a new one.")
+        subtitle = 'Add project'
+        form = ProjectForm()
+
+    else:
+        if url[-1] is not '/':
+            url += '/'
+
+        try:
+            log.debug("Project URL: " + url)
+            subtitle = 'Edit project'
+            form = ProjectForm(instance=Project.objects.get(url=url))
+        except Project.DoesNotExist:
+            log.debug("Project does not exist. Adding a new one.")
+            subtitle = 'Add project'
+            form = ProjectForm(initial={'url': url})
+
     data = {
-        'subtitle': 'Add project',
-        'form': ProjectForm()
-    }
-
-    return render(request, template, data)
-
-@mobile_template('{mobile/}admin_project.html')
-def admin_project_edit(request, url, template=None):
-    """Admin interface: edit project."""
-    log.debug("Admin interface: edit project.")
-
-    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
-        raise Http404
-
-    if url[-1] is not '/':
-        url += '/'
-
-    try:
-        project = Project.objects.get(url=url)
-    except Project.DoesNotExist:
-        log.debug("Project does not exist.")
-        raise Http404
-
-    log.debug("Project: " + project.url)
-    form = ProjectForm(instance=project)
-    data = {
-        'subtitle': 'Edit project',
+        'subtitle': subtitle,
         'form': form
     }
 
