@@ -32,15 +32,15 @@ class Project(models.Model):
     locales = models.ManyToManyField(Locale)
 
     # Repositories
-    svn = models.URLField("SVN", unique=True)
-    transifex_project = models.CharField(max_length=128)
-    transifex_resource = models.CharField(max_length=128)
+    svn = models.URLField("SVN", unique=True, blank=True)
+    transifex_project = models.CharField(max_length=128, blank=True)
+    transifex_resource = models.CharField(max_length=128, blank=True)
 
     # Campaign info
-    info_brief = models.TextField("Campaign Brief")
-    info_locales = models.TextField("Intended Locales and Regions")
-    info_audience = models.TextField("Audience, Reach, and Impact")
-    info_metrics = models.TextField("Success Metrics")
+    info_brief = models.TextField("Campaign Brief", blank=True)
+    info_locales = models.TextField("Intended Locales and Regions", blank=True)
+    info_audience = models.TextField("Audience, Reach, and Impact", blank=True)
+    info_metrics = models.TextField("Success Metrics", blank=True)
 
     class Meta:
         permissions = (
