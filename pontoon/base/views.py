@@ -95,34 +95,31 @@ def admin_project(request, url=None, template=None):
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
         raise Http404
 
-    subtitle = ''
     if request.method == 'POST':
-        try:
-            formtype = request.POST['formtype']
-        except MultiValueDictKeyError:
-            raise Http404
-
         # Update existing project
-        if formtype == 'Edit':
+        try:
+            pk = request.POST['pk']
             if url[-1] is not '/':
                 url += '/'
-            form = ProjectForm(request.POST, instance=Project.objects.get(url=url))
+            form = ProjectForm(request.POST, instance=Project.objects.get(pk=pk))
+            subtitle = 'Edit project'
 
         # Add a new project
-        elif formtype == 'Add':
+        except MultiValueDictKeyError:
             form = ProjectForm(request.POST)
+            subtitle = 'Add project'
 
         if form.is_valid():
             form.save()
-            subtitle = '. Saved.'
+            subtitle += '. Saved.'
         else:
-            subtitle = '. Error.'
+            subtitle += '. Error.'
     else:
         # If URL not specified, show add form
         if url is None:
-            log.debug("Project not specified. Adding a new one.")
-            formtype = 'Add'
             form = ProjectForm()
+            subtitle = 'Add project'
+            log.debug("Project not specified. Adding a new one.")
 
         # If URL specified, show edit form or add form if not found
         else:
@@ -130,19 +127,26 @@ def admin_project(request, url=None, template=None):
                 url += '/'
 
             try:
+                project = Project.objects.get(url=url)
+                form = ProjectForm(instance=project)
+                subtitle = 'Edit project'
+                pk = project.pk
                 log.debug("Project URL: " + url)
-                formtype = 'Edit'
-                form = ProjectForm(instance=Project.objects.get(url=url))
             except Project.DoesNotExist:
-                log.debug("Project does not exist. Adding a new one.")
-                formtype = 'Add'
                 form = ProjectForm(initial={'url': url})
+                subtitle = 'Add project'
+                log.debug("Project does not exist. Adding a new one.")
 
     data = {
-        'formtype': formtype,
         'form': form,
         'subtitle': subtitle
     }
+
+    # Send pk to the template to read if the project is in edit or add mode
+    try:
+        data['pk'] = pk
+    except NameError:
+        pass
 
     return render(request, template, data)
 
