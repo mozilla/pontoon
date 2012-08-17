@@ -54,6 +54,19 @@ def translate(request, locale, url, template=None):
         'locales': Locale.objects.all()
     }
 
+    try:
+        if url[-1] is not '/':
+            url += '/'
+        project = Project.objects.get(url=url)
+        data['info'] = {
+            'brief': project.info_brief,
+            'locales': project.info_locales,
+            'audience': project.info_audience,
+            'metrics': project.info_metrics
+        }
+    except Project.DoesNotExist:
+        pass
+
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
         data['mt_apikey'] = settings.MICROSOFT_TRANSLATOR_API_KEY
 

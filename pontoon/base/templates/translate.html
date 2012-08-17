@@ -23,23 +23,23 @@
 
       <!-- General project info -->
       <div id="info" class="select">
-        <div class="selector"></div>
+        <div class="selector {% if not info %}hidden{% endif %}"></div>
         <aside class="menu">
           <section class="brief">
             <h2>{{ _('Campaign Brief') }}</h2>
-            <p></p>
+            <p>{% if info %}{{ info.brief }}{% endif %}</p>
           </section>
           <section class="locales">
             <h2>{{ _('Locales and Regions') }}</h2>
-            <p></p>
+            <p>{% if info %}{{ info.locales }}{% endif %}</p>
           </section>
           <section class="audience">
             <h2>{{ _('Audience, Reach, and Impact') }}</h2>
-            <p></p>
+            <p>{% if info %}{{ info.audience }}{% endif %}</p>
           </section>
           <section class="metrics">
             <h2>{{ _('Success Metrics') }}</h2>
-            <p></p>
+            <p>{% if info %}{{ info.metrics }}{% endif %}</p>
           </section>
         </aside>
       </div>

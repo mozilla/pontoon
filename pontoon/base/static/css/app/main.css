@@ -313,7 +313,6 @@
 }
 
 #pontoon #info .selector {
-  display: none;
   background: url('../../img/info.png') no-repeat;
   cursor: pointer;
   opacity: 0.5;

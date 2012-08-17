@@ -9,7 +9,6 @@
           win: window,
           url: window.location.href,
           title: "",
-          info: null,
           entities: [],
           pages: {},
           hooks: false,
@@ -62,7 +61,6 @@
         postMessage("RENDER", {
           url: Pontoon.project.url,
           title: Pontoon.project.title,
-          info: Pontoon.project.info,
           pages: Pontoon.project.pages,
           hooks: Pontoon.project.hooks,
           svn: Pontoon.project.svn,
@@ -525,7 +523,6 @@
       if (meta.length > 0 && meta.attr('data-meta')) {
         $.getJSON(meta.data('meta')).success(function (data) {
           Pontoon.project.pages = data.pages; // Pages URLs
-          Pontoon.project.info = data.info; // Campaign info
           Pontoon.project.svn = data.svn; // Project SVN repository
           if (data.transifex) {
             Pontoon.transifex.project = data.transifex.project; // Transifex project

@@ -647,19 +647,7 @@ var Pontoon = (function () {
      */
     attachHandlers: function () {
       var self = this,
-          info = self.project.info,
           pages = self.project.pages;
-
-      // General Project Info
-      if (info) {
-        $('#info')
-          .find('.selector').show().end()
-          .find('.menu')
-            .find('.brief p').html(info.brief).end()
-            .find('.locales p').html(info.locales).end()
-            .find('.audience p').html(info.audience).end()
-            .find('.metrics p').html(info.metrics);
-      }
 
       // Page selector
       if (pages && Object.keys(pages).length > 1) {
@@ -759,7 +747,6 @@ var Pontoon = (function () {
           var value = message.value;
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
-          Pontoon.project.info = value.info
           Pontoon.project.pages = value.pages;
           Pontoon.project.hooks = value.hooks;
           Pontoon.project.svn = value.svn;
@@ -831,7 +818,6 @@ var Pontoon = (function () {
         win: project,
         url: "",
         title: "",
-        info: null,
         entities: [],
         pages: {},
         hooks: false
