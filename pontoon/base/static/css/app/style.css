@@ -361,6 +361,16 @@ body.admin-form #intro {
   width: 300px; /* Half */
 }
 
+#pontoon.admin-form #intro .transifex label[for*=project] {
+  float: left;
+  width: 307px; /* Half */
+}
+
+#pontoon.admin-form #intro .transifex label[for*=resource] {
+  float: left;
+  width: 307px; /* Half */
+}
+
 #pontoon.admin-form #intro .subpages input[id*=name] {
   float: left;
   width: 200px;
@@ -382,6 +392,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .transifex input#id_transifex_project,
+#pontoon.admin-form #intro .transifex label[for*=project],
 #pontoon.admin-form #intro .subpages input[id*=name],
 #pontoon.admin-form #intro .subpages label[for*=name] {
   margin-right: 6px;

@@ -32,7 +32,8 @@
         {{ form.svn }}
         {{ form.svn.errors }}
     </p><p class="transifex clearfix">
-        <label for="id_transifex">Transifex</label>
+        {{ form.transifex_project.label_tag() }}
+        {{ form.transifex_resource.label_tag() }}
         {{ form.transifex_project }}
         {{ form.transifex_resource }}
         {{ form.transifex_project.errors }}
