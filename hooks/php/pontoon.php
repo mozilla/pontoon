@@ -63,15 +63,9 @@ class Pontoon
     }
 
     /**
-     * Prints out meta tag to the target project's header,
-     * telling the client that this is a Pontoon enhanced page
-     *
-     * Also inject javascript to solve iframe cross-domain policy problem
+     * Inject javascript to solve iframe cross-domain policy problem
      */
     static function header() {
-
-        echo '<meta name="Pontoon"/>'."\n";
-
         $url = $GLOBALS["path"] ? $GLOBALS["path"] : "http://localhost:8000/";
         echo '<script src="'.$url.'static/pontoon.js"></script>'."\n";
     }

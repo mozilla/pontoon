@@ -231,7 +231,11 @@
             if (data === "error") {
               postMessage("ERROR");
               return;
+            } else if (data === "guess") {
+              guessEntities();
+              return;
             }
+            Pontoon.project.hooks = true;
             $('*').contents().each(function () {
               if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
                 var entity = {},
@@ -501,16 +505,8 @@
           postMessage("SWITCH");
         });
 
-      // Determine if the current page is prepared for working with Pontoon
-      if ($('head > meta[name=Pontoon]').length > 0) {
-        Pontoon.project.title = document.title.split("-->")[1];
-        Pontoon.project.hooks = true;
-        loadEntities();
-      } else {
-        Pontoon.project.title = document.title;
-        guessEntities();
-      }
-
+      Pontoon.project.title = document.title.split("-->")[1] || document.title;        
+      loadEntities();
     });
   }
 
