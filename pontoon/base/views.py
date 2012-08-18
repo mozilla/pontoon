@@ -16,6 +16,7 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
@@ -98,20 +99,26 @@ def admin_project(request, url=None, template=None):
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
         raise Http404
 
+    SubpageInlineFormSet = inlineformset_factory(Project, Subpage, extra=1)
+
     if request.method == 'POST':
         # Update existing project
         try:
             pk = request.POST['pk']
-            form = ProjectForm(request.POST, instance=Project.objects.get(pk=pk))
+            project = Project.objects.get(pk=pk)
+            form = ProjectForm(request.POST, instance=project)
+            formset = SubpageInlineFormSet(request.POST, instance=project)
             subtitle = 'Edit project'
 
         # Add a new project
         except MultiValueDictKeyError:
             form = ProjectForm(request.POST)
+            formset = SubpageInlineFormSet(request.POST)
             subtitle = 'Add project'
 
-        if form.is_valid():
+        if form.is_valid() and formset.is_valid():
             form.save()
+            formset.save()
             subtitle += '. Saved.'
         else:
             subtitle += '. Error.'
@@ -119,6 +126,7 @@ def admin_project(request, url=None, template=None):
         # If URL not specified, show add form
         if url is None:
             form = ProjectForm()
+            formset = SubpageInlineFormSet()
             subtitle = 'Add project'
             log.debug("Project not specified. Adding a new one.")
 
@@ -130,16 +138,19 @@ def admin_project(request, url=None, template=None):
             try:
                 project = Project.objects.get(url=url)
                 form = ProjectForm(instance=project)
+                formset = SubpageInlineFormSet(instance=project)
                 subtitle = 'Edit project'
                 pk = project.pk
                 log.debug("Project URL: " + url)
             except Project.DoesNotExist:
                 form = ProjectForm(initial={'url': url})
+                formset = SubpageInlineFormSet()
                 subtitle = 'Add project'
                 log.debug("Project does not exist. Adding a new one.")
 
     data = {
         'form': form,
+        'formset': formset,
         'subtitle': subtitle
     }
 

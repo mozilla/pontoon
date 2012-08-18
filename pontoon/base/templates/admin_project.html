@@ -25,19 +25,35 @@
         {{ form.locales }}
         {{ form.locales.errors }}
     </p>
-        <h2>Repositories</h2>
+
+    <h2>Repositories</h2>
     <p>
         {{ form.svn.label_tag() }}
         {{ form.svn }}
         {{ form.svn.errors }}
-    </p><p class="transifex">
+    </p><p class="transifex clearfix">
         <label for="id_transifex">Transifex</label>
         {{ form.transifex_project }}
         {{ form.transifex_resource }}
         {{ form.transifex_project.errors }}
         {{ form.transifex_resource.errors }}
     </p>
-        <h2>General info</h2>
+
+    <h2>Subpages</h2>
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {{ form.id }}
+    <p class="subpages clearfix">
+        {{ form.name.label_tag() }}
+        {{ form.url.label_tag() }}
+        {{ form.name }}
+        {{ form.url }}
+        {{ form.name.errors }}
+        {{ form.url.errors }}
+    </p>
+    {% endfor %}
+
+    <h2>General info</h2>
     <p>
         {{ form.info_brief.label_tag() }}
         {{ form.info_brief }}

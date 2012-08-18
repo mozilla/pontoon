@@ -361,7 +361,29 @@ body.admin-form #intro {
   width: 300px; /* Half */
 }
 
-#pontoon.admin-form #intro .transifex input#id_transifex_project {
+#pontoon.admin-form #intro .subpages input[id*=name] {
+  float: left;
+  width: 200px;
+}
+
+#pontoon.admin-form #intro .subpages label[for*=name] {
+  float: left;
+  width: 207px;
+}
+
+#pontoon.admin-form #intro .subpages input[id*=url] {
+  float: left;
+  width: 400px;
+}
+
+#pontoon.admin-form #intro .subpages label[for*=url] {
+  float: left;
+  width: 407px;
+}
+
+#pontoon.admin-form #intro .transifex input#id_transifex_project,
+#pontoon.admin-form #intro .subpages input[id*=name],
+#pontoon.admin-form #intro .subpages label[for*=name] {
   margin-right: 6px;
 }
 
