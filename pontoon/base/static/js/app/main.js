@@ -654,22 +654,7 @@ var Pontoon = (function () {
      * Attach event handlers
      */
     attachHandlers: function () {
-      var self = this,
-          pages = self.project.pages;
-
-      // Page selector
-      if (pages && Object.keys(pages).length > 1) {
-        $('#pontoon .page')
-          .find('.selector .title').html(pages[self.project.url]).end()
-          .find('.menu').empty().end()
-          .show();
-          
-        for (var prop in pages) {
-          $('#pontoon .page .menu').append('<li>' +
-            '<a class="title" href="/locale/' + self.locale.code + '/url/' + escape(prop) + '">' + pages[prop] + '</a>' +
-          '</li>');
-        }
-      }
+      var self = this;
 
       // Open/close Pontoon UI
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
@@ -755,7 +740,6 @@ var Pontoon = (function () {
           var value = message.value;
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
-          Pontoon.project.pages = value.pages;
           Pontoon.project.hooks = value.hooks;
           Pontoon.attachHandlers();
           Pontoon.entityList();
@@ -818,7 +802,6 @@ var Pontoon = (function () {
         url: "",
         title: "",
         entities: [],
-        pages: {},
         hooks: false
       };
       this.locale = {

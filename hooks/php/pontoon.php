@@ -65,16 +65,12 @@ class Pontoon
     /**
      * Prints out meta tag to the target project's header,
      * telling the client that this is a Pontoon enhanced page
-     * with the url to JSON meta file with pages urls, campaign info
-     * and Transifex project and resource names.
      *
      * Also inject javascript to solve iframe cross-domain policy problem
      */
-    static function header($meta) {
+    static function header() {
 
-        echo '<meta name="Pontoon" '
-            .(($meta != NULL) ? 'data-meta="'.$meta.'" ' : '')
-            .'/>'."\n";
+        echo '<meta name="Pontoon"/>'."\n";
 
         $url = $GLOBALS["path"] ? $GLOBALS["path"] : "http://localhost:8000/";
         echo '<script src="'.$url.'static/pontoon.js"></script>'."\n";

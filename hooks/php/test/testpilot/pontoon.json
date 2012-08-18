@@ -1,8 +1,0 @@
-{
-  "pages": {
-	"http://localhost/pontoon/hooks/php/test/testpilot/": "Homepage",
-	"http://localhost/pontoon/hooks/php/test/testpilot/?page=testcases.php": "Test cases",
-	"http://localhost/pontoon/hooks/php/test/testpilot/?page=principles.php": "Guiding Principles",
-	"http://localhost/pontoon/hooks/php/test/testpilot/?page=privacy.php": "Privacy Policy"
-  }
-}

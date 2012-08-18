@@ -10,7 +10,6 @@
           url: window.location.href,
           title: "",
           entities: [],
-          pages: {},
           hooks: false
         },
         locale: {
@@ -56,7 +55,6 @@
         postMessage("RENDER", {
           url: Pontoon.project.url,
           title: Pontoon.project.title,
-          pages: Pontoon.project.pages,
           hooks: Pontoon.project.hooks
         });
 
@@ -504,14 +502,10 @@
         });
 
       // Determine if the current page is prepared for working with Pontoon
-      var meta = $('head > meta[name=Pontoon]');
-      if (meta.length > 0 && meta.attr('data-meta')) {
-        $.getJSON(meta.data('meta')).success(function (data) {
-          Pontoon.project.pages = data.pages; // Pages URLs
-          Pontoon.project.title = document.title.split("-->")[1];
-          Pontoon.project.hooks = true;
-          loadEntities();
-        });
+      if ($('head > meta[name=Pontoon]').length > 0) {
+        Pontoon.project.title = document.title.split("-->")[1];
+        Pontoon.project.hooks = true;
+        loadEntities();
       } else {
         Pontoon.project.title = document.title;
         guessEntities();

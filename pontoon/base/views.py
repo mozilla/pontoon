@@ -51,7 +51,7 @@ def translate(request, locale, url, template=None):
 
     data = {
         'locale_code': locale,
-        'project_url': url,
+        'project_url': url + request.build_absolute_uri().split(url)[1],
         'locales': Locale.objects.all()
     }
 
@@ -59,16 +59,28 @@ def translate(request, locale, url, template=None):
         if url[-1] is not '/':
             url += '/'
         project = Project.objects.get(url=url)
+
+        # Repositories
+        data['svn'] = project.svn
+        data['transifex_project'] = project.transifex_project
+        data['transifex_resource'] = project.transifex_resource
+
+        # Campaign info
         data['info'] = {
             'brief': project.info_brief,
             'locales': project.info_locales,
             'audience': project.info_audience,
             'metrics': project.info_metrics
         }
-        data['svn'] = project.svn
-        data['transifex_project'] = project.transifex_project
-        data['transifex_resource'] = project.transifex_resource
+
+        # Subpages
+        pages = Subpage.objects.filter(project=project)
+        data['pages'] = pages
+        data['current_page'] = pages.get(url=url).name
+
     except Project.DoesNotExist:
+        pass
+    except Subpage.DoesNotExist:
         pass
 
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
@@ -327,14 +339,21 @@ def load_entities(request, template=None):
     log.debug("Locale: " + locale)
     log.debug("URL: " + url)
 
-    """Query DB by project name and locale or load data from SVN/Transifex."""
+    """Query DB by project name and locale."""
     try:
         l = Locale.objects.get(code=locale)
     except Locale.DoesNotExist:
         return HttpResponse(callback + '("error");')
 
-    p = Project.objects.filter(url=url)
-    if len(p) > 0 and len(p[0].locales.filter(code=locale)) > 0:
+    try:
+        p = Project.objects.get(url=url)
+    except Project.DoesNotExist:
+        s = Subpage.objects.get(url=url)
+        p = s.project
+    except Subpage.DoesNotExist:
+        return HttpResponse(callback + '("error");')
+
+    if len(p.locales.filter(code=locale)) > 0:
         log.debug("Load data from DB.")
         entities = Entity.objects.filter(project=p)
 
@@ -356,8 +375,8 @@ def load_entities(request, template=None):
         log.debug(json.dumps(data, indent=4))
         return HttpResponse(callback + '(' + json.dumps(data, indent=4) + ');')
 
-    # TODO: move to a separate function, triggered from admin
     else:
+        """ TODO: move to a separate function, triggered from admin """
         log.debug("Load data from Transifex.")
         """Check if user authenticated to Transifex."""
         if project == 'testpilot':
