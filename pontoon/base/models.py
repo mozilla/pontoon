@@ -52,8 +52,8 @@ class Project(models.Model):
 
 class Subpage(models.Model):
     project = models.ForeignKey(Project)
-    name = models.CharField(max_length=128)
-    url = models.URLField("URL")
+    name = models.CharField(max_length=128, blank=True)
+    url = models.URLField("URL", blank=True)
 
     def __unicode__(self):
         return self.name
