@@ -339,8 +339,6 @@ def load_entities(request, template=None):
     log.debug("Locale: " + locale)
     log.debug("URL: " + url)
 
-    # Determine if the current page is prepared for working with Pontoon
-
     """Query DB by project URL and locale."""
     try:
         l = Locale.objects.get(code=locale)

@@ -26,22 +26,30 @@
       <div id="info" class="select">
         <div class="selector"></div>
         <aside class="menu">
+          {% if info.brief %}
           <section class="brief">
             <h2>{{ _('Campaign Brief') }}</h2>
-            <p>{% if info %}{{ info.brief }}{% endif %}</p>
+            <p>{{ info.brief }}</p>
           </section>
+          {% endif %}
+          {% if info.locales %}
           <section class="locales">
             <h2>{{ _('Locales and Regions') }}</h2>
-            <p>{% if info %}{{ info.locales }}{% endif %}</p>
+            <p>{{ info.locales }}</p>
           </section>
+          {% endif %}
+          {% if info.audience %}
           <section class="audience">
             <h2>{{ _('Audience, Reach, and Impact') }}</h2>
-            <p>{% if info %}{{ info.audience }}{% endif %}</p>
+            <p>{{ info.audience }}</p>
           </section>
+          {% endif %}
+          {% if info.metrics %}
           <section class="metrics">
             <h2>{{ _('Success Metrics') }}</h2>
-            <p>{% if info %}{{ info.metrics }}{% endif %}</p>
+            <p>{{ info.metrics }}</p>
           </section>
+          {% endif %}
         </aside>
       </div>
       {% endif %}
