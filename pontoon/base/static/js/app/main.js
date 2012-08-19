@@ -882,7 +882,7 @@ var Pontoon = (function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             url = $('.url:visible').val();
         if (url) {
-          window.location = '/locale/' + locale + '/url/' + escape(url) + '/';
+          window.location = '/locale/' + locale + '/url/' + escape(url) + (url[url.length-1] !== '/' ? '/' : '');
         } else {
           Pontoon.common.showError("Please enter the URL first.");
           $('.url:visible').focus();
