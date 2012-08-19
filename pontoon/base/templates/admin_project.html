@@ -6,7 +6,7 @@
 
 {% block content %}
 <section id="intro" class="visible">
-  <form method="POST" action="{{ request.path }}">
+  <form method="POST" action="{{ request.path }}" class="{{ subtitle.split(" ")[0].lower() }}">
 
     <h1 id="title">{{ _('%(subtitle)s')|format(subtitle=subtitle) }}</h1>
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
@@ -30,14 +30,18 @@
     <p class="svn clearfix">
         {{ form.svn.label_tag() }}
         {{ form.svn }}
+        {% if subtitle.split(" ")[0].lower() == "edit" %}
         <button title="{{ _('Update from SVN') }}" data-source="svn" class="button"><img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update from SVN') }}" /></button>
+        {% endif %}
         {{ form.svn.errors }}
     </p><p class="transifex clearfix">
         {{ form.transifex_project.label_tag() }}
         {{ form.transifex_resource.label_tag() }}
         {{ form.transifex_project }}
         {{ form.transifex_resource }}
+        {% if subtitle.split(" ")[0].lower() == "edit" %}
         <button title="{{ _('Update from Transifex') }}" data-source="transifex" class="button"><img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update from Transifex') }}" /></button>
+        {% endif %}
         {{ form.transifex_project.errors }}
         {{ form.transifex_resource.errors }}
     </p>
@@ -73,7 +77,7 @@
         {{ form.info_metrics.label_tag() }}
         {{ form.info_metrics }}
         {{ form.info_metrics.errors }}
-    </p><p>
+    </p><p class="controls">
         <button class="button">Save</button>
     </p>
 

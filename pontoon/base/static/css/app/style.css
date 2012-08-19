@@ -333,6 +333,10 @@ body.admin-form #intro {
   margin: 20px 0;
 }
 
+#pontoon.admin-form #intro p.controls {
+  margin-top: 70px;
+}
+
 #pontoon.admin-form #intro h2 {
   color: #EBEBEB;
   font-size: 30px;
@@ -355,17 +359,26 @@ body.admin-form #intro {
   width: 613px; /* Must be same as #pontoon.admin-form #intro form width - padding - margin-left */
 }
 
-#pontoon.admin-form #intro .svn input[type=text] {
+#pontoon.admin-form #intro .edit .svn input[type=text] {
   float: left;
   width: 575px;
 }
 
 #pontoon.admin-form #intro .transifex input[type=text] {
   float: left;
+  width: 300px;
+}
+
+#pontoon.admin-form #intro .edit .transifex input[type=text] {
   width: 281px;
 }
 
 #pontoon.admin-form #intro .transifex label {
+  float: left;
+  width: 307px;
+}
+
+#pontoon.admin-form #intro .edit .transifex label {
   float: left;
   width: 288px;
 }
