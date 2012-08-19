@@ -234,13 +234,19 @@
           dataType: 'jsonp',
           error: function(data) {
             postMessage("ERROR");
+            $('menu#context').remove();
           },
           success: function(data) {
             if (data === "error") {
               postMessage("ERROR");
+              $('menu#context').remove();
               return;
             } else if (data === "guess") {
               guessEntities();
+              return;
+            } else if (data === "empty") {
+              postMessage("ERROR", "Oops, project doesn't have any strings in the database.");
+              $('menu#context').remove();
               return;
             }
             Pontoon.project.hooks = true;

@@ -747,7 +747,9 @@ var Pontoon = (function () {
             $("#main > header > .container").fadeIn();
           });
         } else if (message.type === "ERROR") {
-          Pontoon.common.showError('Oops, something went wrong. Refresh to try again.');
+          var msg = message.value || 'Oops, something went wrong. Refresh to try again.';
+          Pontoon.common.showError(msg);
+          $("#progress, #switch, #drag").remove();
           $("#spinner").fadeOut(function() {
             $("#main > header > .container").fadeIn();
           });
