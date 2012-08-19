@@ -18,12 +18,14 @@
           <span class="handle">&#9662;</span>
         </div>
         <div class="menu">
+          {% if projects %}
           <div class="horizontal-separator"></div>
           <ul>
             {% for project in projects %}
             <li>{{ project.name }}<span class="project-url">{{ project.url }}</span></li>
             {% endfor %}
           </ul>
+          {% endif %}
           <div class="horizontal-separator"></div>
           <a class="add" href="{{ url('pontoon.admin.project.new') }}">Add a new project</a>
         </div>
