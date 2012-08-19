@@ -341,7 +341,7 @@ def load_entities(request, template=None):
 
     # Determine if the current page is prepared for working with Pontoon
 
-    """Query DB by project name and locale."""
+    """Query DB by project URL and locale."""
     try:
         l = Locale.objects.get(code=locale)
     except Locale.DoesNotExist:
@@ -356,6 +356,7 @@ def load_entities(request, template=None):
         s = Subpage.objects.get(url=url)
         p = s.project
     except Subpage.DoesNotExist:
+        log.debug("Project not found in the DB. Guessing entities.")
         return HttpResponse(callback + '("guess");')
 
     if len(p.locales.filter(code=locale)) > 0:

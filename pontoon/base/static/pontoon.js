@@ -175,6 +175,14 @@
           if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
             var entity = {},
                 parent = $(this).parent();
+
+            // If project uses hooks, but not available in the DB, remove <!--l10n--> comment nodes
+            parent.contents().each(function () {
+              if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
+                $(this).remove();
+              }
+            });
+
             entity.id = counter;
             counter++;
             entity.original = parent.html();
