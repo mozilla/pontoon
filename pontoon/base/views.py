@@ -348,14 +348,12 @@ def load_entities(request, template=None):
     try:
         p = Project.objects.get(url=url)
     except Project.DoesNotExist:
-        pass
-
-    try:
-        s = Subpage.objects.get(url=url)
-        p = s.project
-    except Subpage.DoesNotExist:
-        log.debug("Project not found in the DB. Guessing entities.")
-        return HttpResponse(callback + '("guess");')
+        try:
+            s = Subpage.objects.get(url=url)
+            p = s.project
+        except Subpage.DoesNotExist:
+            log.debug("Project not found in the DB. Guessing entities.")
+            return HttpResponse(callback + '("guess");')
 
     if len(p.locales.filter(code=locale)) > 0:
         log.debug("Load data from DB.")
