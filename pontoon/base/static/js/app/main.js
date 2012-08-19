@@ -628,7 +628,7 @@ var Pontoon = (function () {
      * text Loader text (e.g. Loading...)
      */
     startLoader: function (text) {
-      $('#loading').html(text).removeClass().addClass('loader').show();
+      $('#loading').empty().html(text).removeClass().addClass('loader').show();
     },
 
 
@@ -753,6 +753,7 @@ var Pontoon = (function () {
           $("#spinner").fadeOut(function() {
             $("#main > header > .container").fadeIn();
           });
+          Pontoon.attachHandlers();
         } else if (message.type === "SWITCH") {
           $("#switch").click();
         } else if (message.type === "HOVER") {
