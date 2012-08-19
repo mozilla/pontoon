@@ -280,7 +280,7 @@ var Pontoon = (function () {
       // Move uneditable entities to a separate list
       var uneditables = $(".entity.uneditable");
       if (uneditables.length > 0) {
-        list.find('.editables').after('<h3>Strings not found on the current page</h3><ul class="uneditables"></ul>');
+        list.find('.editables').after('<h2>Strings not found on the current page</h2><ul class="uneditables"></ul>');
         uneditables.appendTo("#entitylist ul.uneditables")
       }
 

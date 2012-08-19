@@ -274,6 +274,7 @@ body.admin-form #intro {
 #install p {
   color: #AAAAAA;
   font-size: 14px;
+  font-weight: 300;
 }
 
 #install code {
@@ -295,9 +296,8 @@ body.admin-form #intro {
   color: #AEEE00;
   display: inline-block;
   text-shadow: 3px 3px 3px #000000;
-  letter-spacing: -2px;
-  font-family: Helvetica Neue;
-  font-weight: 100;
+  letter-spacing: -7px;
+  font-weight: 300;
   text-align: center;
   font-size: 100px;
   margin-bottom: 10px;
@@ -306,7 +306,7 @@ body.admin-form #intro {
 #pontoon.admin-form #title {
   display: block;
   font-size: 50px;
-  letter-spacing: -1px;
+  letter-spacing: -3px;
   text-align: left;
 }
 
@@ -335,10 +335,9 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro h2 {
   color: #EBEBEB;
-  font-family: Helvetica Neue;
   font-size: 30px;
-  font-weight: 100;
-  letter-spacing: 1px;
+  font-weight: 300;
+  letter-spacing: -1px;
   margin-top: 70px;
   text-align: left;
 }
@@ -399,7 +398,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro textarea {
-  height: 45px;
+  height: 60px;
 }
 
 #pontoon.admin-form #intro .errorlist {
@@ -422,8 +421,8 @@ body.admin-form #intro {
 }
 
 #pontoon #intro input[type=text].url {
-  padding: 7px 5px 3px;
-  height: 21px;
+  padding: 2px 5px;
+  height: 27px;
   margin-left: 0;
   width: 500px;
   font-size: 20px;
@@ -596,7 +595,7 @@ body.admin-form #intro {
   margin: 0 auto;
   text-align: left;
   text-transform: uppercase;
-  font-weight: 100;
+  font-weight: 300;
   width: 730px; /* Must be same as #intro form */
 }
 
@@ -605,8 +604,9 @@ body.admin-form #intro {
 }
 
 #pontoon .links {
-  text-align: center;
+  font-weight: 300;
   margin: 10px 0;
+  text-align: center;
 }
 
 #pontoon .links li {
@@ -648,11 +648,11 @@ body.admin-form #intro {
 }
 
 #project-load p {
-  font-family: Helvetica Neue;
   font-size: 48px;
-  font-weight: 100;
-  letter-spacing: -2px;
-  text-shadow: 1px 1px 3px #000000;
+  font-weight: 300;
+  letter-spacing: -3px;
+  margin-bottom: 5px;
+  text-shadow: 1px 1px 3px #666666;
 }
 
 .unselectable * {

@@ -14,10 +14,62 @@
 
 /* COMMONS */
 
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../../fonts/OpenSans-Regular.eot');
+  src: local('Open Sans'),
+    local('OpenSans'),
+    url('../../fonts/OpenSans-Regular.eot') format('embedded-opentype'),
+    url('../../fonts/OpenSans-Regular.woff') format('woff'),
+    url('../../fonts/OpenSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: url('https://static.dev.anosrep.org/v/1112689d33/common/fonts/OpenSans-Light.eot');
+  src: local('Open Sans Light'),
+    local('OpenSans-Light'),
+    url('../../fonts/OpenSans-Light.eot') format('embedded-opentype'),
+    url('../../fonts/OpenSans-Light.woff') format('woff'),
+    url('../../fonts/OpenSans-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../../fonts/OpenSans-Bold.eot');
+  src: local('Open Sans Bold'),
+    local('OpenSans-Bold'),
+    url('../../fonts/OpenSans-Bold.eot') format('embedded-opentype'),
+    url('../../fonts/OpenSans-Bold.woff') format('woff'),
+    url('../../fonts/OpenSans-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../../fonts/OpenSans-Italic.eot');
+  src: local('Open Sans Italic'),
+    local('OpenSans-Italic'),
+    url('../../fonts/OpenSans-Italic.eot') format('embedded-opentype'),
+    url('../../fonts/OpenSans-Italic.woff') format('woff'),
+    url('../../fonts/OpenSans-Italic.ttf') format('truetype');
+}
+
+body, select, input, textarea, button {
+  font-family: "Open Sans", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+}
+
 #pontoon h2 {
   color: #888888;
   font-size: 14px;
-  font-weight: normal;
+  font-weight: 300;
   text-shadow: 1px 1px 1px #000000;
   text-transform: uppercase;
   padding-bottom: 2px;
@@ -45,7 +97,7 @@
 #pontoon textarea {
   background: #888888;
   border: 1px solid #000000;
-  padding: 6px 3px 4px;
+  padding: 5px 3px;
   width: 133px;
   float: left;
 
@@ -359,6 +411,7 @@
 }
 
 #pontoon .url {
+  height: 13px;
   margin-left: 5px;
 }
 
@@ -561,7 +614,6 @@
   background: url('../../img/cancel-active.png') no-repeat;
   float: right;
   height: 16px;
-  margin-top: -2px;
   width: 16px;
 }
 
@@ -571,6 +623,7 @@
 
 #pontoon .popup input[type=text],
 #pontoon .popup input[type=password] {
+  height: 13px;
   margin-bottom: 5px;
   width: 192px;
 
@@ -729,10 +782,7 @@
   cursor: auto;
 }
 
-#pontoon #entitylist > h3  {
-  color: #888888;
-  font-family: Helvetica Neue;
-  font-size: 12px;
+#pontoon #entitylist > h2  {
   font-weight: 300;
   margin: 0 11px -15px;
   text-shadow: 0 1px 0 #FFFFFF;
@@ -805,11 +855,10 @@
 #pontoon #entitylist .source .content > li header {
   overflow: hidden;
   height: 20px;
-  padding-top: 7px;
+  padding-top: 3px;
 }
 
 #pontoon #entitylist .source .content > li h3 {
-  font-family: Helvetica Neue;
   color: #333333;
   font-size: 14px;
   text-shadow: 0 1px 0 #FFFFFF;
@@ -817,13 +866,12 @@
 }
 
 #pontoon #entitylist .source .content p {
-  font-family: Helvetica Neue;
   color: #666666;
   font-size: 12px;
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: 0;
   text-shadow: 0 1px 0 #FFFFFF;
-  height: 73px;
+  height: 77px;
   overflow: auto;
 }
 
