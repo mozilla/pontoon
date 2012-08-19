@@ -27,15 +27,17 @@
     </p>
 
     <h2>Repositories</h2>
-    <p>
+    <p class="svn clearfix">
         {{ form.svn.label_tag() }}
         {{ form.svn }}
+        <button title="{{ _('Update from SVN') }}" data-source="svn" class="button"><img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update from SVN') }}" /></button>
         {{ form.svn.errors }}
     </p><p class="transifex clearfix">
         {{ form.transifex_project.label_tag() }}
         {{ form.transifex_resource.label_tag() }}
         {{ form.transifex_project }}
         {{ form.transifex_resource }}
+        <button title="{{ _('Update from Transifex') }}" data-source="transifex" class="button"><img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update from Transifex') }}" /></button>
         {{ form.transifex_project.errors }}
         {{ form.transifex_resource.errors }}
     </p>
@@ -77,7 +79,4 @@
 
   </form>
 </section>
-{% endblock %}
-
-{% block site_js %}
 {% endblock %}

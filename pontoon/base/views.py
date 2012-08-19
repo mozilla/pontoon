@@ -381,61 +381,69 @@ def load_entities(request, template=None):
             return HttpResponse(callback + '("empty");')
 
     else:
-        """ TODO: move to a separate function, triggered from admin """
-        log.debug("Load data from Transifex.")
-        """Check if user authenticated to Transifex."""
-        if project == 'testpilot':
-            username = 'pontoon'
-            password = 'mozilla'
-        else:
-            profile = request.user.get_profile()
-            username = profile.transifex_username
-            password = base64.decodestring(profile.transifex_password)
-        if not (password or username):
-            return HttpResponse(callback + '(authenticate);')
+        return HttpResponse(callback + '("error");')
 
+def update_from_transifex(request, template=None):
+    """Update all project locales from Transifex repository."""
+    log.debug("Update all project locales from Transifex repository.")
+
+    try:
+        pk = request.GET['pk']
+        transifex_project = request.GET['transifex_project']
+        transifex_resource = request.GET['transifex_resource']
+    except MultiValueDictKeyError:
+        return HttpResponse("error")
+
+    try:
+        p = Project.objects.get(pk=pk)
+    except Project.DoesNotExist:
+        return HttpResponse("error")
+
+    """Check if user authenticated to Transifex."""
+    if p.name == 'testpilot':
+        username = 'pontoon'
+        password = 'mozilla'
+    else:
+        profile = request.user.get_profile()
+        username = profile.transifex_username
+        password = base64.decodestring(profile.transifex_password)
+    if not (password or username):
+        return HttpResponse("authenticate")
+
+    for l in p.locales.all():
         """Make GET request to Transifex API."""
-        response = _request('get', project, resource, locale, username, password)
+        response = _request('get', transifex_project, transifex_resource,
+            l.code, username, password)
 
-        """Save Transifex data to DB."""
-        try:
-            if response.status_code == 200:
-                log.debug(response.content)
-                entities = json.loads(response.content)
-                p = Project.objects.filter(name=project)
-                if len(p) > 0:
-                    """Add locale and translations to the project."""
-                    p[0].locales.add(l)
+        """Save or update Transifex data to DB."""
+        if hasattr(response, 'status_code') and response.status_code == 200:
+            entities = json.loads(response.content)
 
-                    for entity in entities:
-                        e = Entity.objects.filter(project=p[0], string=entity["key"])
-                        translation = entity["translation"]
-                        if len(translation) > 0:
-                            t = Translation(entity=e[0], locale=l, string=translation, 
-                                author=entity["user"], date=datetime.datetime.now())
-                            t.save()
-                else:
-                    """Create a new project."""
-                    p = Project(name=project, url=url)
-                    p.save()
-                    p.locales.add(l)
+            for entity in entities:
+                try: # Update entity
+                    e = Entity.objects.get(project=p, string=entity["key"])
+                except Entity.DoesNotExist: # New entity
+                    e = Entity(project=p, string=entity["key"])
 
-                    for entity in entities:
-                        e = Entity(project=p, string=entity["key"])
-                        comment = entity["comment"]
-                        if len(comment) > 0:
-                            e.comment = comment
-                        e.save()
-                        translation = entity["translation"]
-                        if len(translation) > 0:
-                            t = Translation(entity=e, locale=l, string=translation, 
-                                author=entity["user"], date=datetime.datetime.now())
-                            t.save()
+                comment = entity["comment"]
+                if len(comment) > 0:
+                    e.comment = comment
+                e.save()
 
-                log.debug("Transifex data saved to DB.")
-            return HttpResponse(callback + '(' + response.content + ');')
-        except AttributeError:
-            return HttpResponse(callback + '(' + response + ');')
+                translation = entity["translation"]
+                if len(translation) > 0:
+                    try: # Update translation
+                        t = Translation.objects.get(entity=e, locale=l)
+                        t.string = translation
+                        t.author = entity["user"]
+                        t.date = datetime.datetime.now()
+                    except Translation.DoesNotExist: # New translation
+                        t = Translation(entity=e, locale=l, string=translation,
+                            author=entity["user"], date=datetime.datetime.now())
+                    t.save()
+
+            log.debug("Transifex data for " + l.name + " saved to DB.")
+    return HttpResponse("done")
 
 def _generate_po_content(data):
     """

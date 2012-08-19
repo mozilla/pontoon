@@ -355,19 +355,19 @@ body.admin-form #intro {
   width: 613px; /* Must be same as #pontoon.admin-form #intro form width - padding - margin-left */
 }
 
+#pontoon.admin-form #intro .svn input[type=text] {
+  float: left;
+  width: 575px;
+}
+
 #pontoon.admin-form #intro .transifex input[type=text] {
   float: left;
-  width: 300px; /* Half */
+  width: 281px;
 }
 
-#pontoon.admin-form #intro .transifex label[for*=project] {
+#pontoon.admin-form #intro .transifex label {
   float: left;
-  width: 307px; /* Half */
-}
-
-#pontoon.admin-form #intro .transifex label[for*=resource] {
-  float: left;
-  width: 307px; /* Half */
+  width: 288px;
 }
 
 #pontoon.admin-form #intro .subpages input[id*=name] {
@@ -413,7 +413,14 @@ body.admin-form #intro {
 #pontoon.admin-form #intro .button {
   display: block;
   height: auto;
-  margin-top: 50px;
+}
+
+#pontoon.admin-form #intro .svn .button,
+#pontoon.admin-form #intro .transifex .button {
+  float: left;
+  margin-left: 6px;
+  height: 32px;
+  width: 32px;
 }
 
 #pontoon #intro .project.select {

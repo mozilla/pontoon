@@ -172,7 +172,48 @@
 
     // Admin form
     } else if ($('body').is('.admin-form')) {
-      // TODO
+      $('.svn .button:not(".disabled"), .transifex .button:not(".disabled")').unbind('click.pontoon').bind('click.pontoon', function (e) {
+        e.preventDefault();
+        $(this).addClass('disabled');
+        var source = $(this).data('source'),
+            img = $(this).find('img');
+
+        function updateIcon(filename) {
+          img.attr('src', '/static/img/' + filename);
+        }
+        updateIcon('loader-light.gif');
+
+        params = {
+          source: source,
+          pk: $('input[name=pk]').val()
+        }
+        if (source === 'svn') {
+          params.svn = $('input[name=svn]').val();
+        } else if (source === 'transifex') {
+          params.transifex_project = $('input[name=transifex_project]').val();
+          params.transifex_resource = $('input[name=transifex_resource]').val();
+        }
+
+        $.ajax({
+          url: source + '/update/',
+          data: params,
+          success: function(data) {
+            if (data !== "error") {
+              updateIcon('ok.png');
+            } else {
+              updateIcon('error.png');
+            }
+          },
+          error: function() {
+            updateIcon('error.png');
+          }
+        }).complete(function() {
+          img.parent().removeClass('disabled');
+          setTimeout(function() {
+            updateIcon('update.png');
+          }, 5000);
+        });
+      });
 
     // Intro
     } else {
