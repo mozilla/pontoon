@@ -406,12 +406,13 @@ var Pontoon = (function () {
           li.find(".toolbar").show();
         } else {
           $.ajax({
-            url: 'http://transvision.mozfr.org/webservice.php',
+            url: 'http://transvision.mozfr.org/index.php',
             data: {
               recherche: li.find('.original-string .source-string').html(),
               locale: self.locale.code,
               whole_word: 'whole_word',
-              repo: 'beta'
+              repo: 'aurora',
+              json: 'true'
             },
             dataType: 'jsonp'
           }).error(function () {
