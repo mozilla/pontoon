@@ -329,11 +329,11 @@ body.admin-form #intro {
   padding: 100px 20px;
 }
 
-#pontoon.admin-form #intro p {
+#pontoon.admin-form #intro div {
   margin: 20px 0;
 }
 
-#pontoon.admin-form #intro p.controls {
+#pontoon.admin-form #intro div.controls {
   margin-top: 70px;
 }
 
@@ -418,9 +418,14 @@ body.admin-form #intro {
   color: #F00038;
   font-size: 12px;
   list-style: none;
-  margin: 0;
+  margin-top: 2px;
   text-align: right;
   text-transform: uppercase;
+}
+
+#pontoon.admin-form #intro .errorlist li {
+  display: inline;
+  margin-right: 5px;
 }
 
 #pontoon.admin-form #intro .button {

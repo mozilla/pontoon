@@ -12,74 +12,89 @@
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
     {% if pk %}<input type="hidden" value="{{ pk }}" name="pk">{% endif %}
 
-    <p>
+    <div>
         {{ form.name.label_tag() }}
         {{ form.name }}
         {{ form.name.errors }}
-    </p><p>
+    </div>
+    <div>
         {{ form.url.label_tag() }}
         {{ form.url }}
         {{ form.url.errors }}
-    </p><p>
+    </div>
+    <div>
         {{ form.locales.label_tag() }}
         {{ form.locales }}
         {{ form.locales.errors }}
-    </p>
+    </div>
 
     <h2>Repositories</h2>
-    <p class="svn clearfix">
+
+    <div class="svn clearfix">
         {{ form.svn.label_tag() }}
         {{ form.svn }}
         {% if subtitle.split(" ")[0].lower() == "edit" %}
-        <button title="{{ _('Update from SVN') }}" data-source="svn" class="button"><img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update from SVN') }}" /></button>
+        <button title="{{ _('Update all locales from SVN') }}" data-source="svn" class="button">
+            <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from SVN') }}" />
+        </button>
         {% endif %}
         {{ form.svn.errors }}
-    </p><p class="transifex clearfix">
+    </div>
+    <div class="transifex clearfix">
         {{ form.transifex_project.label_tag() }}
         {{ form.transifex_resource.label_tag() }}
         {{ form.transifex_project }}
         {{ form.transifex_resource }}
         {% if subtitle.split(" ")[0].lower() == "edit" %}
-        <button title="{{ _('Update from Transifex') }}" data-source="transifex" class="button"><img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update from Transifex') }}" /></button>
+        <button title="{{ _('Update all locales from Transifex') }}" data-source="transifex" class="button">
+            <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from Transifex') }}" />
+        </button>
         {% endif %}
         {{ form.transifex_project.errors }}
         {{ form.transifex_resource.errors }}
-    </p>
+    </div>
 
     <h2>Subpages</h2>
+
     {{ formset.management_form }}
     {% for form in formset %}
         {{ form.id }}
-    <p class="subpages clearfix">
+    <div class="subpages clearfix">
         {{ form.name.label_tag() }}
         {{ form.url.label_tag() }}
         {{ form.name }}
         {{ form.url }}
         {{ form.name.errors }}
         {{ form.url.errors }}
-    </p>
+    </div>
     {% endfor %}
 
     <h2>General info</h2>
-    <p>
+
+    <div>
         {{ form.info_brief.label_tag() }}
         {{ form.info_brief }}
         {{ form.info_brief.errors }}
-    </p><p>
+    </div>
+    <div>
         {{ form.info_locales.label_tag() }}
         {{ form.info_locales }}
         {{ form.info_locales.errors }}
-    </p><p>
+    </div>
+    <div>
         {{ form.info_audience.label_tag() }}
         {{ form.info_audience }}
         {{ form.info_audience.errors }}
-    </p><p>
+    </div>
+    <div>
         {{ form.info_metrics.label_tag() }}
         {{ form.info_metrics }}
         {{ form.info_metrics.errors }}
-    </p><p class="controls">
+    </div>
+
+    <div class="controls">
         <button class="button">Save</button>
-    </p>
+    </div>
 
   </form>
 </section>
