@@ -30,7 +30,7 @@
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 300;
-  src: url('https://static.dev.anosrep.org/v/1112689d33/common/fonts/OpenSans-Light.eot');
+  src: url('../../fonts/OpenSans-Light.eot');
   src: local('Open Sans Light'),
     local('OpenSans-Light'),
     url('../../fonts/OpenSans-Light.eot') format('embedded-opentype'),
