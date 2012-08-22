@@ -378,7 +378,6 @@ def load_entities(request, template=None):
             }
             data.append(obj)
 
-        log.debug(json.dumps(data, indent=4))
         if len(data) is not 0:
             return HttpResponse(callback + '(' + json.dumps(data, indent=4) + ');')
         else:
