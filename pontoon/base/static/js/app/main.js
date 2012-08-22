@@ -685,6 +685,9 @@ var Pontoon = (function () {
                 csrfmiddlewaretoken: $('#server').data('csrf')
               },
               success: function(data) {
+                $.get("csrf/", function(csrf_token) {
+                  $('#server').data('csrf', csrf_token);
+                });
                 self.user.email = data.browserid.email;
                 self.user.name = self.user.email.split("@")[0];
                 self.common.postMessage("USER", self.user);

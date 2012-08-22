@@ -654,3 +654,8 @@ def verify(request, template=None):
             'manager': user.has_perm('base.can_manage')}
 
     return HttpResponse(json.dumps(response_data), mimetype='application/json')
+
+def get_csrf(request, template=None):
+    """Get CSRF token."""
+    log.debug("Get CSRF token.")
+    return HttpResponse(request.csrf_token)

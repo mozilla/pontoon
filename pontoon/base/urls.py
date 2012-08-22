@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     url(r'^svn/$', views.commit_to_svn, name='pontoon.svn'),
     url(r'^transifex/$', views.save_to_transifex, name='pontoon.transifex'),
     url(r'^transifex/update/$', views.update_from_transifex, name='pontoon.update.transifex'),
+    url(r'^csrf/$', views.get_csrf, name='pontoon.csrf'),
 )
