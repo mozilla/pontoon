@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block class %}home{% endblock %}
+
 {% block content %}
 <!-- Server data -->
 <div id="server"
@@ -54,7 +56,9 @@
       </div>
     </form>
 
-    <p class="notification">...</p>
+    {% if error %}
+    <p class="notification">{{ error }}</p>
+    {% endif %}
 
     <nav>
       <ul class="links">

@@ -32,15 +32,21 @@ log = commonware.log.getLogger('playdoh')
 
 
 @mobile_template('{mobile/}home.html')
-def home(request, template=None):
-    """Main view."""
-    log.debug("Main view.")
+def home(request, error=None, template=None):
+    """Home view."""
+    log.debug("Home view.")
 
     data = {
         'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
         'locales': Locale.objects.all(),
         'projects': Project.objects.all()
     }
+
+    if 'error' in request.GET:
+        error = request.GET['error']
+
+    if error is not None:
+        data['error'] = error
 
     return render(request, template, data)
 
@@ -49,52 +55,73 @@ def translate(request, locale, url, template=None):
     """Translate view."""
     log.debug("Translate view.")
 
+    # Validate locale
+    log.debug("Locale: " + locale)
+    try:
+        l = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist:
+        return home(request, "Oops, locale is not supported.")
+
+    # Validate URL
+    url = url + request.build_absolute_uri().split(url)[1]
+    log.debug("URL: " + url)
+    if url.find('://localhost') == -1:
+        validate = URLValidator(verify_exists=True)
+        try:
+            validate(url)
+        except ValidationError, e:
+            log.debug(e)
+            return home(request, "Oops, website could not be found.")
+
     data = {
         'locale_code': locale,
-        'project_url': url + request.build_absolute_uri().split(url)[1],
+        'project_url': url,
         'locales': Locale.objects.all()
     }
-
-    try:
-        if url[-1] is not '/':
-            url += '/'
-        project = Project.objects.get(url=url)
-
-        # Repositories
-        data['svn'] = project.svn
-        data['transifex_project'] = project.transifex_project
-        data['transifex_resource'] = project.transifex_resource
-
-        # Campaign info
-        data['info'] = {
-            'brief': project.info_brief,
-            'locales': project.info_locales,
-            'audience': project.info_audience,
-            'metrics': project.info_metrics
-        }
-
-        # Subpages
-        pages = Subpage.objects.filter(project=project)
-        data['pages'] = pages
-        data['current_page'] = pages.get(url=url).name
-
-    except Project.DoesNotExist:
-        pass
-    except Subpage.DoesNotExist:
-        pass
 
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
         data['mt_apikey'] = settings.MICROSOFT_TRANSLATOR_API_KEY
 
-    return render(request, template, data)
+    try:
+        p = Project.objects.get(url=url)
+    except Project.DoesNotExist:
+        try:
+            s = Subpage.objects.get(url=url)
+            p = s.project
+        except Subpage.DoesNotExist:
+            return render(request, template, data)
+
+    # If project stored in the DB, add more data 
+    if len(p.locales.filter(code=locale)) > 0:
+        # Repositories
+        data['svn'] = p.svn
+        data['transifex_project'] = p.transifex_project
+        data['transifex_resource'] = p.transifex_resource
+
+        # Campaign info
+        data['info'] = {
+            'brief': p.info_brief,
+            'locales': p.info_locales,
+            'audience': p.info_audience,
+            'metrics': p.info_metrics
+        }
+
+        # Subpages
+        pages = Subpage.objects.filter(project=p)
+        data['pages'] = pages
+        data['current_page'] = pages.get(url=url).name
+
+        return render(request, template, data)
+    else:
+        return home(request, "Oops, locale is not supported for this website.")
 
 @mobile_template('{mobile/}admin.html')
 def admin(request, template=None):
-    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
-        raise Http404
-
     """Admin interface."""
     log.debug("Admin interface.")
+
+    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+        raise Http404
 
     data = {
         'projects': Project.objects.all(),
@@ -144,9 +171,6 @@ def admin_project(request, url=None, template=None):
 
         # If URL specified, show edit form or add form if not found
         else:
-            if url[-1] is not '/':
-                url += '/'
-
             try:
                 project = Project.objects.get(url=url)
                 form = ProjectForm(instance=project)
@@ -173,26 +197,6 @@ def admin_project(request, url=None, template=None):
         pass
 
     return render(request, template, data)
-
-def check_url(request, template=None):
-    """Check if URL exists."""
-    log.debug("Check if URL exists.")
-
-    try:
-        url = request.GET['url']
-    except MultiValueDictKeyError:
-        return HttpResponse("error")
-
-    log.debug(url)
-
-    validate = URLValidator(verify_exists=True)
-    try:
-        validate(url)
-        status = "valid"
-    except ValidationError, e:
-        log.debug(e)
-        status = "invalid"
-    return HttpResponse(status)
 
 def _request(type, project, resource, locale, username, password, payload=False):
     """

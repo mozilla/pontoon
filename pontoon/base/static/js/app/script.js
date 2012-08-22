@@ -3,73 +3,53 @@
 
   $(function() {
 
-    // Resizable
-	  var mouseMoveHandler = function(e) {
-	    var initial = e.data.initial,
-          u = Math.min(Math.max(initial.uHeight + (e.pageY - initial.offTop), initial.min), initial.max),
-          b = Math.min(Math.max(initial.bHeight - (e.pageY - initial.offTop), initial.min), initial.max);
-      initial.up.height(u);
-      initial.below.height(b);
+    /*** MAIN CODE ***/
 
-      $('#iframe-cover').height(initial.up.height()); // iframe fix
-    };
-    var mouseUpHandler = function(e) {
-      $(document)
-        .unbind('mousemove', mouseMoveHandler)
-        .unbind('mouseup', mouseUpHandler);
-
-      $('#iframe-cover').hide(); // iframe fix
-      if (e.data.initial.below.height() === 0) {
-        $('#main').removeClass('opened');
-        Pontoon.common.postMessage("MODE", "Advanced");
-      } else {
-        $('#main').addClass('opened');
-        Pontoon.common.postMessage("MODE", "Basic");
-      }      
-    };
-	  $('#drag').bind('mousedown', function(e) {
-      e.preventDefault();
-
-      var up = $('#source'),
-          below = $('#entitylist'),
-          data = {
-            up: up,
-            below: below,
-            uHeight: up.height(),
-            bHeight: below.height(),
-            offTop: e.pageY,
-            min: 0,
-            max: $(document).height()
-          };
-
-      // iframe fix: Prevent iframes from capturing the mousemove events during a drag
-      $('#iframe-cover').show().height(up.height());
-
-      $(document)
-        .bind('mousemove', { initial: data }, mouseMoveHandler)
-        .bind('mouseup', { initial: data }, mouseUpHandler);
-    });
+    var base = $('base').attr('href'),
+        l = window.location;
 
     // Resize iframe with window
     $(window).resize(function () {
       $('#source').height($(document).height() - $('#main').height());
     });
 
-    // Show error message
-    function showError(message) {
-      $('#project-load').hide();
-      $("#install").css('visibility', 'visible');
-      Pontoon.common.showError(message);
-      $('#intro').css('display', 'table').hide().fadeIn();
-    }
+    // Empty iframe if cached
+    $('#source').removeAttr("src");
 
-    // Validate URL
-    function checkURL() {
+    // Set Demo URL
+    $('#demo').attr('href', '/locale/de/url/' + l.protocol + '//' + l.hostname + '/pontoon/hooks/php/test/testpilot/');
+
+    // Set include script URL
+    $("#install code").html('&lt;script src="' + base + 'static/pontoon.js"&gt;&lt;/script&gt;');
+
+
+
+
+
+    /*** HOME ***/
+    if ($('body').is('.home')) {
+      var acceptLanguage = $('#server').data('accept-language');
+      if ($('.locale .menu .language.' + acceptLanguage).length === 0) { // Locale not on the list
+        acceptLanguage = $('.locale .menu .language').attr('class').split(' ')[1];
+      }
+
+      $('.locale .button .language').addClass(acceptLanguage).html($('.locale .menu .language.' + acceptLanguage).html());
+      $('#install').css('visibility', 'visible');
+      $('#project-load').hide();
+      $('#intro').css('display', 'table').hide().fadeIn(function() {});
+
+
+
+    /*** TRANSLATE ***/
+    } else if ($('body').is('.translate')) {
+      var url = $('#server').data('url'),
+          locale = $('#server').data('locale'),
+          escapedLocale = locale.replace(".", "\\.").replace("@", "\\@");
+
       // Initialize Pontoon only if project code supports it
       function receiveMessage(e) {
         // TODO: Check origin - hardcode Pontoon domain name
         if (JSON.parse(e.data).type === "SUPPORTED") {
-          // Show header and iframe with appropriate height
           $('#main').slideDown(function() {
             $('#source').show().height($(document).height() - $(this).height());
             $('#project-load').hide();
@@ -80,7 +60,8 @@
       }
       window.addEventListener("message", receiveMessage, false);
 
-      // Load project page into iframe
+      $('.url').val(url);
+      $('.locale .button .language').addClass(escapedLocale).html($('.locale .menu .language.' + escapedLocale).html());
       $('#source').attr('src', url);
 
       // Show error message if no callback for 5 seconds: Pontoon/iframe not supported, 404…
@@ -93,61 +74,60 @@
               }
             } else {
               clearInterval(interval);
-              showError('Oops, website is not supported by Pontoon. Check instructions below.');
+              window.location = '/?error=Oops, website is not supported by Pontoon.';
             }
           }, 100);
 
-      // If loading page fails, don't wait 5 seconds to trigger error (ignore localhost)
-      if (!url.split('://')[1] || url.split('://')[1].indexOf('localhost') !== 0) {
-        $.ajax({
-          url: base + 'checkurl/',
-          data: {url: url},
-          timeout: 4500,
-          success: function(data) {
-            if (data === "invalid") {
-              clearInterval(interval);
-              showError('Oops, website could not be found.');
-            } else if (data === "error") {
-              clearInterval(interval);
-              showError('Oops, something went wrong.');
-            }
-          }
-        });
-      }
-    }
+      // Resizable
+      var mouseMoveHandler = function(e) {
+        var initial = e.data.initial,
+            u = Math.min(Math.max(initial.uHeight + (e.pageY - initial.offTop), initial.min), initial.max),
+            b = Math.min(Math.max(initial.bHeight - (e.pageY - initial.offTop), initial.min), initial.max);
+        initial.up.height(u);
+        initial.below.height(b);
 
-    // MAIN CODE
+        $('#iframe-cover').height(initial.up.height()); // iframe fix
+      };
+      var mouseUpHandler = function(e) {
+        $(document)
+          .unbind('mousemove', mouseMoveHandler)
+          .unbind('mouseup', mouseUpHandler);
 
-    // Empty iframe if cached
-    $('#source').removeAttr("src");
+        $('#iframe-cover').hide(); // iframe fix
+        if (e.data.initial.below.height() === 0) {
+          $('#main').removeClass('opened');
+          Pontoon.common.postMessage("MODE", "Advanced");
+        } else {
+          $('#main').addClass('opened');
+          Pontoon.common.postMessage("MODE", "Basic");
+        }      
+      };
+      $('#drag').bind('mousedown', function(e) {
+        e.preventDefault();
 
-    // Check for params
-    var locale = $('#server').data('locale'),
-        url = $('#server').data('url'),
-        acceptLanguage = $('#server').data('accept-language'),
-        base = $('base').attr('href');
+        var up = $('#source'),
+            below = $('#entitylist'),
+            data = {
+              up: up,
+              below: below,
+              uHeight: up.height(),
+              bHeight: below.height(),
+              offTop: e.pageY,
+              min: 0,
+              max: $(document).height()
+            };
 
-    // Set Demo URL
-    var l = window.location;
-    $('#demo').attr('href', '/locale/de/url/' + l.protocol + '//' + l.hostname + '/pontoon/hooks/php/test/testpilot/');
+        // iframe fix: Prevent iframes from capturing the mousemove events during a drag
+        $('#iframe-cover').show().height(up.height());
 
-    // Set include script URL
-    $("#install code").html('&lt;script src="' + base + 'static/pontoon.js"&gt;&lt;/script&gt;');
+        $(document)
+          .bind('mousemove', { initial: data }, mouseMoveHandler)
+          .bind('mouseup', { initial: data }, mouseUpHandler);
+      });
 
-    // Translate
-    if (locale && url) {
-      $('.url').val(url);
-      // Set locale
-      var escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
-          escapedLocaleElement = $('.locale .menu .language.' + escapedLocale);
-      if (escapedLocaleElement.length) { // Locale on the list
-        $('.locale .button .language').addClass(escapedLocale).html(escapedLocaleElement.html());
-        checkURL();
-      } else {
-        showError('Oops, locale not supported.');
-      }
 
-    // Admin
+
+    /*** ADMIN */
     } else if ($('body').is('.admin')) {
       // Unhover on add hover
       $('.project .menu .add').hover(function() {
@@ -170,7 +150,9 @@
         }
       });
 
-    // Admin form
+
+
+    /*** ADMIN FORM ***/
     } else if ($('body').is('.admin-form')) {
       $('.svn .button:not(".disabled"), .transifex .button:not(".disabled")').unbind('click.pontoon').bind('click.pontoon', function (e) {
         e.preventDefault();
@@ -214,18 +196,7 @@
           }, 5000);
         });
       });
-
-    // Intro
-    } else {
-      if ($('.locale .menu .language.' + acceptLanguage).length === 0) { // Locale not on the list
-        acceptLanguage = $('.locale .menu .language').attr('class').split(' ')[1];
-      }
-      $('.locale .button .language').addClass(acceptLanguage).html($('.locale .menu .language.' + acceptLanguage).html());
-      $('#install').css('visibility', 'visible');
-      $('#project-load').hide();
-      $('#intro').css('display', 'table').hide().fadeIn(function() {});
     }
-
   });
 
 }(this.jQuery));
