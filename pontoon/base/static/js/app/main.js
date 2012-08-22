@@ -1021,6 +1021,10 @@ var Pontoon = (function () {
             popup.find('.button').click();
             return false;
           }
+          if (key === 27) { // Escape
+            popup.find('.cancel').click();
+            return false;
+          }
         }
       });
 
