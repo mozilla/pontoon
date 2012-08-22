@@ -97,7 +97,7 @@ body, select, input, textarea, button {
 #pontoon textarea {
   background: #888888;
   border: 1px solid #000000;
-  padding: 5px 3px;
+  padding: 3px;
   width: 133px;
   float: left;
 
@@ -412,7 +412,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon .url {
-  height: 13px;
+  height: 17px;
   margin-left: 5px;
 }
 
@@ -624,7 +624,6 @@ body, select, input, textarea, button {
 
 #pontoon .popup input[type=text],
 #pontoon .popup input[type=password] {
-  height: 13px;
   margin-bottom: 5px;
   width: 192px;
 
