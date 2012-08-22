@@ -112,7 +112,9 @@ var Pontoon = (function () {
 
         $.ajax({
           url: 'transifex/',
+          type: 'POST',
           data: {
+            csrfmiddlewaretoken: $('#server').data('csrf'),
             data: JSON.stringify(params)
           },
           success: function(data) {

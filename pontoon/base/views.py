@@ -536,8 +536,11 @@ def save_to_transifex(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
 
+    if request.method != 'POST':
+        return HttpResponse("error")
+
     try:
-        data = json.loads(request.GET['data'])
+        data = json.loads(request.POST['data'])
     except MultiValueDictKeyError:
         return HttpResponse("error")
 
