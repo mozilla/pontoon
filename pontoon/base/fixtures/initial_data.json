@@ -1,7 +1,7 @@
 [
     {
         "model": "base.locale",
-        "pk": 0,
+        "pk": 1,
         "fields": {
             "code": "af",
             "name": "Afrikaans"
@@ -9,7 +9,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 1,
+        "pk": 2,
         "fields": {
             "code": "af-ZA",
             "name": "Afrikaans"
@@ -17,7 +17,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 2,
+        "pk": 3,
         "fields": {
             "code": "ak",
             "name": "Akan"
@@ -25,7 +25,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 3,
+        "pk": 4,
         "fields": {
             "code": "sq",
             "name": "Albanian"
@@ -33,7 +33,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 4,
+        "pk": 5,
         "fields": {
             "code": "sq-AL",
             "name": "Albanian"
@@ -41,7 +41,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 5,
+        "pk": 6,
         "fields": {
             "code": "aln",
             "name": "Albanian Gheg"
@@ -49,7 +49,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 6,
+        "pk": 7,
         "fields": {
             "code": "am",
             "name": "Amharic"
@@ -57,7 +57,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 7,
+        "pk": 8,
         "fields": {
             "code": "am-ET",
             "name": "Amharic"
@@ -65,7 +65,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 8,
+        "pk": 9,
         "fields": {
             "code": "ar",
             "name": "Arabic"
@@ -73,7 +73,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 9,
+        "pk": 10,
         "fields": {
             "code": "ar-SA",
             "name": "Arabic"
@@ -81,7 +81,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 10,
+        "pk": 11,
         "fields": {
             "code": "an",
             "name": "Aragonese"
@@ -89,7 +89,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 11,
+        "pk": 12,
         "fields": {
             "code": "hy",
             "name": "Armenian"
@@ -97,7 +97,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 12,
+        "pk": 13,
         "fields": {
             "code": "hy-AM",
             "name": "Armenian"
@@ -105,7 +105,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 13,
+        "pk": 14,
         "fields": {
             "code": "as",
             "name": "Assamese"
@@ -113,7 +113,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 14,
+        "pk": 15,
         "fields": {
             "code": "as-IN",
             "name": "Assamese"
@@ -121,7 +121,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 15,
+        "pk": 16,
         "fields": {
             "code": "ast",
             "name": "Asturian"
@@ -129,7 +129,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 16,
+        "pk": 17,
         "fields": {
             "code": "az",
             "name": "Azerbaijani"
@@ -137,7 +137,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 17,
+        "pk": 18,
         "fields": {
             "code": "az-AZ",
             "name": "Azerbaijani"
@@ -145,7 +145,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 18,
+        "pk": 19,
         "fields": {
             "code": "bal",
             "name": "Balochi"
@@ -153,7 +153,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 19,
+        "pk": 20,
         "fields": {
             "code": "eu",
             "name": "Basque"
@@ -161,7 +161,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 20,
+        "pk": 21,
         "fields": {
             "code": "eu-ES",
             "name": "Basque"
@@ -169,7 +169,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 21,
+        "pk": 22,
         "fields": {
             "code": "be",
             "name": "Belarusian"
@@ -177,7 +177,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 22,
+        "pk": 23,
         "fields": {
             "code": "be-BY",
             "name": "Belarusian"
@@ -185,7 +185,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 23,
+        "pk": 24,
         "fields": {
             "code": "be@tarask",
             "name": "Belarusian"
@@ -193,7 +193,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 24,
+        "pk": 25,
         "fields": {
             "code": "bn",
             "name": "Bengali"
@@ -201,7 +201,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 25,
+        "pk": 26,
         "fields": {
             "code": "bn-BD",
             "name": "Bengali"
@@ -209,7 +209,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 26,
+        "pk": 27,
         "fields": {
             "code": "bn-IN",
             "name": "Bengali"
@@ -217,7 +217,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 27,
+        "pk": 28,
         "fields": {
             "code": "bs",
             "name": "Bosnian"
@@ -225,7 +225,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 28,
+        "pk": 29,
         "fields": {
             "code": "bs-BA",
             "name": "Bosnian"
@@ -233,7 +233,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 29,
+        "pk": 30,
         "fields": {
             "code": "br",
             "name": "Breton"
@@ -241,7 +241,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 30,
+        "pk": 31,
         "fields": {
             "code": "bg",
             "name": "Bulgarian"
@@ -249,7 +249,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 31,
+        "pk": 32,
         "fields": {
             "code": "bg-BG",
             "name": "Bulgarian"
@@ -257,7 +257,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 32,
+        "pk": 33,
         "fields": {
             "code": "my",
             "name": "Burmese"
@@ -265,7 +265,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 33,
+        "pk": 34,
         "fields": {
             "code": "my-MM",
             "name": "Burmese"
@@ -273,7 +273,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 34,
+        "pk": 35,
         "fields": {
             "code": "ca",
             "name": "Catalan"
@@ -281,7 +281,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 35,
+        "pk": 36,
         "fields": {
             "code": "ca-ES",
             "name": "Catalan"
@@ -289,7 +289,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 36,
+        "pk": 37,
         "fields": {
             "code": "ca@valencia",
             "name": "Catalan"
@@ -297,7 +297,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 37,
+        "pk": 38,
         "fields": {
             "code": "hne",
             "name": "Chhattisgarhi"
@@ -305,7 +305,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 38,
+        "pk": 39,
         "fields": {
             "code": "zh",
             "name": "Chinese"
@@ -313,7 +313,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 39,
+        "pk": 40,
         "fields": {
             "code": "zh-CN",
             "name": "Chinese"
@@ -321,7 +321,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 40,
+        "pk": 41,
         "fields": {
             "code": "zh-CN.GB2312",
             "name": "Chinese"
@@ -329,7 +329,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 41,
+        "pk": 42,
         "fields": {
             "code": "zh-HK",
             "name": "Chinese"
@@ -337,7 +337,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 42,
+        "pk": 43,
         "fields": {
             "code": "zh-TW",
             "name": "Chinese"
@@ -345,7 +345,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 43,
+        "pk": 44,
         "fields": {
             "code": "zh-TW.Big5",
             "name": "Chinese"
@@ -353,7 +353,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 44,
+        "pk": 45,
         "fields": {
             "code": "kw",
             "name": "Cornish"
@@ -361,7 +361,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 45,
+        "pk": 46,
         "fields": {
             "code": "crh",
             "name": "Crimean Turkish"
@@ -369,7 +369,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 46,
+        "pk": 47,
         "fields": {
             "code": "hr",
             "name": "Croatian"
@@ -377,7 +377,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 47,
+        "pk": 48,
         "fields": {
             "code": "hr-HR",
             "name": "Croatian"
@@ -385,7 +385,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 48,
+        "pk": 49,
         "fields": {
             "code": "cs",
             "name": "Czech"
@@ -393,7 +393,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 49,
+        "pk": 50,
         "fields": {
             "code": "cs-CZ",
             "name": "Czech"
@@ -401,7 +401,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 50,
+        "pk": 51,
         "fields": {
             "code": "da",
             "name": "Danish"
@@ -409,7 +409,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 51,
+        "pk": 52,
         "fields": {
             "code": "da-DK",
             "name": "Danish"
@@ -417,7 +417,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 52,
+        "pk": 53,
         "fields": {
             "code": "nl",
             "name": "Dutch"
@@ -425,7 +425,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 53,
+        "pk": 54,
         "fields": {
             "code": "nl-BE",
             "name": "Dutch"
@@ -433,7 +433,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 54,
+        "pk": 55,
         "fields": {
             "code": "nl-NL",
             "name": "Dutch"
@@ -441,7 +441,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 55,
+        "pk": 56,
         "fields": {
             "code": "dz",
             "name": "Dzongkha"
@@ -449,7 +449,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 56,
+        "pk": 57,
         "fields": {
             "code": "dz-BT",
             "name": "Dzongkha"
@@ -457,7 +457,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 57,
+        "pk": 58,
         "fields": {
             "code": "en",
             "name": "English"
@@ -465,7 +465,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 58,
+        "pk": 59,
         "fields": {
             "code": "en-AU",
             "name": "English"
@@ -473,7 +473,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 59,
+        "pk": 60,
         "fields": {
             "code": "en-CA",
             "name": "English"
@@ -481,7 +481,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 60,
+        "pk": 61,
         "fields": {
             "code": "en-IE",
             "name": "English"
@@ -489,7 +489,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 61,
+        "pk": 62,
         "fields": {
             "code": "en-ZA",
             "name": "English"
@@ -497,7 +497,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 62,
+        "pk": 63,
         "fields": {
             "code": "en-GB",
             "name": "English"
@@ -505,7 +505,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 63,
+        "pk": 64,
         "fields": {
             "code": "en-US",
             "name": "English"
@@ -513,7 +513,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 64,
+        "pk": 65,
         "fields": {
             "code": "eo",
             "name": "Esperanto"
@@ -521,7 +521,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 65,
+        "pk": 66,
         "fields": {
             "code": "et",
             "name": "Estonian"
@@ -529,7 +529,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 66,
+        "pk": 67,
         "fields": {
             "code": "et-EE",
             "name": "Estonian"
@@ -537,7 +537,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 67,
+        "pk": 68,
         "fields": {
             "code": "fo",
             "name": "Faroese"
@@ -545,7 +545,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 68,
+        "pk": 69,
         "fields": {
             "code": "fo-FO",
             "name": "Faroese"
@@ -553,7 +553,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 69,
+        "pk": 70,
         "fields": {
             "code": "fil",
             "name": "Filipino"
@@ -561,7 +561,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 70,
+        "pk": 71,
         "fields": {
             "code": "fi",
             "name": "Finnish"
@@ -569,7 +569,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 71,
+        "pk": 72,
         "fields": {
             "code": "fi-FI",
             "name": "Finnish"
@@ -577,7 +577,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 72,
+        "pk": 73,
         "fields": {
             "code": "frp",
             "name": "Franco-Provençal"
@@ -585,7 +585,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 73,
+        "pk": 74,
         "fields": {
             "code": "fr",
             "name": "French"
@@ -593,7 +593,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 74,
+        "pk": 75,
         "fields": {
             "code": "fr-CA",
             "name": "French"
@@ -601,7 +601,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 75,
+        "pk": 76,
         "fields": {
             "code": "fr-FR",
             "name": "French"
@@ -609,7 +609,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 76,
+        "pk": 77,
         "fields": {
             "code": "fr-CH",
             "name": "French"
@@ -617,7 +617,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 77,
+        "pk": 78,
         "fields": {
             "code": "fur",
             "name": "Friulian"
@@ -625,7 +625,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 78,
+        "pk": 79,
         "fields": {
             "code": "gd",
             "name": "Gaelic, Scottish"
@@ -633,7 +633,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 79,
+        "pk": 80,
         "fields": {
             "code": "gl",
             "name": "Galician"
@@ -641,7 +641,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 80,
+        "pk": 81,
         "fields": {
             "code": "gl-ES",
             "name": "Galician"
@@ -649,7 +649,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 81,
+        "pk": 82,
         "fields": {
             "code": "ka",
             "name": "Georgian"
@@ -657,7 +657,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 82,
+        "pk": 83,
         "fields": {
             "code": "ka-GE",
             "name": "Georgian"
@@ -665,7 +665,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 83,
+        "pk": 84,
         "fields": {
             "code": "de",
             "name": "German"
@@ -673,7 +673,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 84,
+        "pk": 85,
         "fields": {
             "code": "de-DE",
             "name": "German"
@@ -681,7 +681,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 85,
+        "pk": 86,
         "fields": {
             "code": "de-CH",
             "name": "German"
@@ -689,7 +689,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 86,
+        "pk": 87,
         "fields": {
             "code": "el",
             "name": "Greek"
@@ -697,7 +697,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 87,
+        "pk": 88,
         "fields": {
             "code": "el-GR",
             "name": "Greek"
@@ -705,7 +705,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 88,
+        "pk": 89,
         "fields": {
             "code": "gu",
             "name": "Gujarati"
@@ -713,7 +713,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 89,
+        "pk": 90,
         "fields": {
             "code": "gu-IN",
             "name": "Gujarati"
@@ -721,7 +721,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 90,
+        "pk": 91,
         "fields": {
             "code": "gun",
             "name": "Gun"
@@ -729,7 +729,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 91,
+        "pk": 92,
         "fields": {
             "code": "ht",
             "name": "Haitian"
@@ -737,7 +737,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 92,
+        "pk": 93,
         "fields": {
             "code": "ht-HT",
             "name": "Haitian"
@@ -745,7 +745,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 93,
+        "pk": 94,
         "fields": {
             "code": "ha",
             "name": "Hausa"
@@ -753,7 +753,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 94,
+        "pk": 95,
         "fields": {
             "code": "he",
             "name": "Hebrew"
@@ -761,7 +761,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 95,
+        "pk": 96,
         "fields": {
             "code": "he-IL",
             "name": "Hebrew"
@@ -769,7 +769,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 96,
+        "pk": 97,
         "fields": {
             "code": "hi",
             "name": "Hindi"
@@ -777,7 +777,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 97,
+        "pk": 98,
         "fields": {
             "code": "hi-IN",
             "name": "Hindi"
@@ -785,7 +785,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 98,
+        "pk": 99,
         "fields": {
             "code": "hu",
             "name": "Hungarian"
@@ -793,7 +793,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 99,
+        "pk": 100,
         "fields": {
             "code": "hu-HU",
             "name": "Hungarian"
@@ -801,7 +801,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 100,
+        "pk": 101,
         "fields": {
             "code": "is",
             "name": "Icelandic"
@@ -809,7 +809,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 101,
+        "pk": 102,
         "fields": {
             "code": "is-IS",
             "name": "Icelandic"
@@ -817,7 +817,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 102,
+        "pk": 103,
         "fields": {
             "code": "ig",
             "name": "Igbo"
@@ -825,7 +825,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 103,
+        "pk": 104,
         "fields": {
             "code": "ilo",
             "name": "Iloko"
@@ -833,7 +833,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 104,
+        "pk": 105,
         "fields": {
             "code": "id",
             "name": "Indonesian"
@@ -841,7 +841,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 105,
+        "pk": 106,
         "fields": {
             "code": "id-ID",
             "name": "Indonesian"
@@ -849,7 +849,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 106,
+        "pk": 107,
         "fields": {
             "code": "ia",
             "name": "Interlingua"
@@ -857,7 +857,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 107,
+        "pk": 108,
         "fields": {
             "code": "ga",
             "name": "Irish"
@@ -865,7 +865,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 108,
+        "pk": 109,
         "fields": {
             "code": "ga-IE",
             "name": "Irish"
@@ -873,7 +873,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 109,
+        "pk": 110,
         "fields": {
             "code": "it",
             "name": "Italian"
@@ -881,7 +881,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 110,
+        "pk": 111,
         "fields": {
             "code": "it-IT",
             "name": "Italian"
@@ -889,7 +889,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 111,
+        "pk": 112,
         "fields": {
             "code": "ja",
             "name": "Japanese"
@@ -897,7 +897,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 112,
+        "pk": 113,
         "fields": {
             "code": "ja-JP",
             "name": "Japanese"
@@ -905,7 +905,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 113,
+        "pk": 114,
         "fields": {
             "code": "jv",
             "name": "Javanese"
@@ -913,7 +913,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 114,
+        "pk": 115,
         "fields": {
             "code": "kn",
             "name": "Kannada"
@@ -921,7 +921,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 115,
+        "pk": 116,
         "fields": {
             "code": "kn-IN",
             "name": "Kannada"
@@ -929,7 +929,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 116,
+        "pk": 117,
         "fields": {
             "code": "ks",
             "name": "Kashmiri"
@@ -937,7 +937,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 117,
+        "pk": 118,
         "fields": {
             "code": "ks-IN",
             "name": "Kashmiri"
@@ -945,7 +945,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 118,
+        "pk": 119,
         "fields": {
             "code": "csb",
             "name": "Kashubian"
@@ -953,7 +953,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 119,
+        "pk": 120,
         "fields": {
             "code": "kk",
             "name": "Kazakh"
@@ -961,7 +961,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 120,
+        "pk": 121,
         "fields": {
             "code": "kk-KZ",
             "name": "Kazakh"
@@ -969,7 +969,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 121,
+        "pk": 122,
         "fields": {
             "code": "km",
             "name": "Khmer"
@@ -977,7 +977,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 122,
+        "pk": 123,
         "fields": {
             "code": "km-KH",
             "name": "Khmer"
@@ -985,7 +985,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 123,
+        "pk": 124,
         "fields": {
             "code": "rw",
             "name": "Kinyarwanda"
@@ -993,7 +993,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 124,
+        "pk": 125,
         "fields": {
             "code": "ky",
             "name": "Kirgyz"
@@ -1001,7 +1001,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 125,
+        "pk": 126,
         "fields": {
             "code": "tlh",
             "name": "Klingon"
@@ -1009,7 +1009,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 126,
+        "pk": 127,
         "fields": {
             "code": "ko",
             "name": "Korean"
@@ -1017,7 +1017,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 127,
+        "pk": 128,
         "fields": {
             "code": "ko-KR",
             "name": "Korean"
@@ -1025,7 +1025,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 128,
+        "pk": 129,
         "fields": {
             "code": "ku",
             "name": "Kurdish"
@@ -1033,7 +1033,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 129,
+        "pk": 130,
         "fields": {
             "code": "ku-IQ",
             "name": "Kurdish"
@@ -1041,7 +1041,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 130,
+        "pk": 131,
         "fields": {
             "code": "lo",
             "name": "Lao"
@@ -1049,7 +1049,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 131,
+        "pk": 132,
         "fields": {
             "code": "lo-LA",
             "name": "Lao"
@@ -1057,7 +1057,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 132,
+        "pk": 133,
         "fields": {
             "code": "la",
             "name": "Latin"
@@ -1065,7 +1065,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 133,
+        "pk": 134,
         "fields": {
             "code": "lv",
             "name": "Latvian"
@@ -1073,7 +1073,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 134,
+        "pk": 135,
         "fields": {
             "code": "lv-LV",
             "name": "Latvian"
@@ -1081,7 +1081,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 135,
+        "pk": 136,
         "fields": {
             "code": "li",
             "name": "Limburgian"
@@ -1089,7 +1089,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 136,
+        "pk": 137,
         "fields": {
             "code": "ln",
             "name": "Lingala"
@@ -1097,7 +1097,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 137,
+        "pk": 138,
         "fields": {
             "code": "lt",
             "name": "Lithuanian"
@@ -1105,7 +1105,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 138,
+        "pk": 139,
         "fields": {
             "code": "lt-LT",
             "name": "Lithuanian"
@@ -1113,7 +1113,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 139,
+        "pk": 140,
         "fields": {
             "code": "nds",
             "name": "Low German"
@@ -1121,7 +1121,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 140,
+        "pk": 141,
         "fields": {
             "code": "lb",
             "name": "Luxembourgish"
@@ -1129,7 +1129,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 141,
+        "pk": 142,
         "fields": {
             "code": "mk",
             "name": "Macedonian"
@@ -1137,7 +1137,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 142,
+        "pk": 143,
         "fields": {
             "code": "mk-MK",
             "name": "Macedonian"
@@ -1145,7 +1145,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 143,
+        "pk": 144,
         "fields": {
             "code": "mai",
             "name": "Maithili"
@@ -1153,7 +1153,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 144,
+        "pk": 145,
         "fields": {
             "code": "mg",
             "name": "Malagasy"
@@ -1161,7 +1161,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 145,
+        "pk": 146,
         "fields": {
             "code": "ms",
             "name": "Malay"
@@ -1169,7 +1169,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 146,
+        "pk": 147,
         "fields": {
             "code": "ml",
             "name": "Malayalam"
@@ -1177,7 +1177,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 147,
+        "pk": 148,
         "fields": {
             "code": "ml-IN",
             "name": "Malayalam"
@@ -1185,7 +1185,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 148,
+        "pk": 149,
         "fields": {
             "code": "ms-MY",
             "name": "Malay"
@@ -1193,7 +1193,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 149,
+        "pk": 150,
         "fields": {
             "code": "mt",
             "name": "Maltese"
@@ -1201,7 +1201,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 150,
+        "pk": 151,
         "fields": {
             "code": "mt-MT",
             "name": "Maltese"
@@ -1209,7 +1209,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 151,
+        "pk": 152,
         "fields": {
             "code": "mi",
             "name": "Maori"
@@ -1217,7 +1217,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 152,
+        "pk": 153,
         "fields": {
             "code": "arn",
             "name": "Mapudungun"
@@ -1225,7 +1225,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 153,
+        "pk": 154,
         "fields": {
             "code": "mr",
             "name": "Marathi"
@@ -1233,7 +1233,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 154,
+        "pk": 155,
         "fields": {
             "code": "mr-IN",
             "name": "Marathi"
@@ -1241,7 +1241,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 155,
+        "pk": 156,
         "fields": {
             "code": "mn",
             "name": "Mongolian"
@@ -1249,7 +1249,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 156,
+        "pk": 157,
         "fields": {
             "code": "mn-MN",
             "name": "Mongolian"
@@ -1257,7 +1257,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 157,
+        "pk": 158,
         "fields": {
             "code": "nah",
             "name": "Nahuatl"
@@ -1265,7 +1265,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 158,
+        "pk": 159,
         "fields": {
             "code": "nr",
             "name": "Ndebele, South"
@@ -1273,7 +1273,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 159,
+        "pk": 160,
         "fields": {
             "code": "nap",
             "name": "Neapolitan"
@@ -1281,7 +1281,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 160,
+        "pk": 161,
         "fields": {
             "code": "ne",
             "name": "Nepali"
@@ -1289,7 +1289,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 161,
+        "pk": 162,
         "fields": {
             "code": "ne-NP",
             "name": "Nepali"
@@ -1297,7 +1297,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 162,
+        "pk": 163,
         "fields": {
             "code": "se",
             "name": "Northern Sami"
@@ -1305,7 +1305,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 163,
+        "pk": 164,
         "fields": {
             "code": "nso",
             "name": "Northern Sotho"
@@ -1313,7 +1313,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 164,
+        "pk": 165,
         "fields": {
             "code": "no",
             "name": "Norwegian"
@@ -1321,7 +1321,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 165,
+        "pk": 166,
         "fields": {
             "code": "nb",
             "name": "Norwegian Bokmål"
@@ -1329,7 +1329,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 166,
+        "pk": 167,
         "fields": {
             "code": "nb-NO",
             "name": "Norwegian Bokmål"
@@ -1337,7 +1337,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 167,
+        "pk": 168,
         "fields": {
             "code": "no-NO",
             "name": "Norwegian"
@@ -1345,7 +1345,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 168,
+        "pk": 169,
         "fields": {
             "code": "nn",
             "name": "Norwegian Nynorsk"
@@ -1353,7 +1353,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 169,
+        "pk": 170,
         "fields": {
             "code": "nn-NO",
             "name": "Norwegian Nynorsk"
@@ -1361,7 +1361,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 170,
+        "pk": 171,
         "fields": {
             "code": "oc",
             "name": "Occitan"
@@ -1369,7 +1369,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 171,
+        "pk": 172,
         "fields": {
             "code": "or",
             "name": "Oriya"
@@ -1377,7 +1377,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 172,
+        "pk": 173,
         "fields": {
             "code": "or-IN",
             "name": "Oriya"
@@ -1385,7 +1385,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 173,
+        "pk": 174,
         "fields": {
             "code": "pa",
             "name": "Panjabi"
@@ -1393,7 +1393,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 174,
+        "pk": 175,
         "fields": {
             "code": "pa-IN",
             "name": "Panjabi"
@@ -1401,7 +1401,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 175,
+        "pk": 176,
         "fields": {
             "code": "pap",
             "name": "Papiamento"
@@ -1409,7 +1409,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 176,
+        "pk": 177,
         "fields": {
             "code": "fa",
             "name": "Persian"
@@ -1417,7 +1417,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 177,
+        "pk": 178,
         "fields": {
             "code": "fa-IR",
             "name": "Persian"
@@ -1425,7 +1425,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 178,
+        "pk": 179,
         "fields": {
             "code": "pms",
             "name": "Piemontese"
@@ -1433,7 +1433,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 179,
+        "pk": 180,
         "fields": {
             "code": "pl",
             "name": "Polish"
@@ -1441,7 +1441,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 180,
+        "pk": 181,
         "fields": {
             "code": "pl-PL",
             "name": "Polish"
@@ -1449,7 +1449,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 181,
+        "pk": 182,
         "fields": {
             "code": "pt",
             "name": "Portuguese"
@@ -1457,7 +1457,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 182,
+        "pk": 183,
         "fields": {
             "code": "pt-BR",
             "name": "Portuguese"
@@ -1465,7 +1465,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 183,
+        "pk": 184,
         "fields": {
             "code": "pt-PT",
             "name": "Portuguese"
@@ -1473,7 +1473,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 184,
+        "pk": 185,
         "fields": {
             "code": "ps",
             "name": "Pushto"
@@ -1481,7 +1481,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 185,
+        "pk": 186,
         "fields": {
             "code": "ro",
             "name": "Romanian"
@@ -1489,7 +1489,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 186,
+        "pk": 187,
         "fields": {
             "code": "ro-RO",
             "name": "Romanian"
@@ -1497,7 +1497,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 187,
+        "pk": 188,
         "fields": {
             "code": "rm",
             "name": "Romansh"
@@ -1505,7 +1505,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 188,
+        "pk": 189,
         "fields": {
             "code": "ru",
             "name": "Russian"
@@ -1513,7 +1513,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 189,
+        "pk": 190,
         "fields": {
             "code": "ru-RU",
             "name": "Russian"
@@ -1521,7 +1521,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 190,
+        "pk": 191,
         "fields": {
             "code": "sm",
             "name": "Samoan"
@@ -1529,7 +1529,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 191,
+        "pk": 192,
         "fields": {
             "code": "sc",
             "name": "Sardinian"
@@ -1537,7 +1537,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 192,
+        "pk": 193,
         "fields": {
             "code": "sco",
             "name": "Scots"
@@ -1545,7 +1545,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 193,
+        "pk": 194,
         "fields": {
             "code": "sr",
             "name": "Serbian"
@@ -1553,7 +1553,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 194,
+        "pk": 195,
         "fields": {
             "code": "sr@latin",
             "name": "Serbian"
@@ -1561,7 +1561,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 195,
+        "pk": 196,
         "fields": {
             "code": "sr-RS@latin",
             "name": "Serbian"
@@ -1569,7 +1569,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 196,
+        "pk": 197,
         "fields": {
             "code": "sr-RS",
             "name": "Serbian"
@@ -1577,7 +1577,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 197,
+        "pk": 198,
         "fields": {
             "code": "sn",
             "name": "Shona"
@@ -1585,7 +1585,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 198,
+        "pk": 199,
         "fields": {
             "code": "si",
             "name": "Sinhala"
@@ -1593,7 +1593,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 199,
+        "pk": 200,
         "fields": {
             "code": "si-LK",
             "name": "Sinhala"
@@ -1601,7 +1601,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 200,
+        "pk": 201,
         "fields": {
             "code": "sk",
             "name": "Slovak"
@@ -1609,7 +1609,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 201,
+        "pk": 202,
         "fields": {
             "code": "sk-SK",
             "name": "Slovak"
@@ -1617,7 +1617,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 202,
+        "pk": 203,
         "fields": {
             "code": "sl",
             "name": "Slovenian"
@@ -1625,7 +1625,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 203,
+        "pk": 204,
         "fields": {
             "code": "sl-SI",
             "name": "Slovenian"
@@ -1633,7 +1633,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 204,
+        "pk": 205,
         "fields": {
             "code": "so",
             "name": "Somali"
@@ -1641,7 +1641,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 205,
+        "pk": 206,
         "fields": {
             "code": "son",
             "name": "Songhay"
@@ -1649,7 +1649,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 206,
+        "pk": 207,
         "fields": {
             "code": "st",
             "name": "Sotho, Southern"
@@ -1657,7 +1657,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 207,
+        "pk": 208,
         "fields": {
             "code": "st-ZA",
             "name": "Sotho, Southern"
@@ -1665,7 +1665,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 208,
+        "pk": 209,
         "fields": {
             "code": "es-AR",
             "name": "Spanish"
@@ -1673,7 +1673,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 209,
+        "pk": 210,
         "fields": {
             "code": "es-BO",
             "name": "Spanish"
@@ -1681,7 +1681,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 210,
+        "pk": 211,
         "fields": {
             "code": "es",
             "name": "Spanish"
@@ -1689,7 +1689,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 211,
+        "pk": 212,
         "fields": {
             "code": "es-CL",
             "name": "Spanish"
@@ -1697,7 +1697,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 212,
+        "pk": 213,
         "fields": {
             "code": "es-CO",
             "name": "Spanish"
@@ -1705,7 +1705,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 213,
+        "pk": 214,
         "fields": {
             "code": "es-CR",
             "name": "Spanish"
@@ -1713,7 +1713,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 214,
+        "pk": 215,
         "fields": {
             "code": "es-DO",
             "name": "Spanish"
@@ -1721,7 +1721,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 215,
+        "pk": 216,
         "fields": {
             "code": "es-EC",
             "name": "Spanish"
@@ -1729,7 +1729,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 216,
+        "pk": 217,
         "fields": {
             "code": "es-SV",
             "name": "Spanish"
@@ -1737,7 +1737,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 217,
+        "pk": 218,
         "fields": {
             "code": "es-MX",
             "name": "Spanish"
@@ -1745,7 +1745,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 218,
+        "pk": 219,
         "fields": {
             "code": "es-NI",
             "name": "Spanish"
@@ -1753,7 +1753,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 219,
+        "pk": 220,
         "fields": {
             "code": "es-PA",
             "name": "Spanish"
@@ -1761,7 +1761,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 220,
+        "pk": 221,
         "fields": {
             "code": "es-PY",
             "name": "Spanish"
@@ -1769,7 +1769,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 221,
+        "pk": 222,
         "fields": {
             "code": "es-PE",
             "name": "Spanish"
@@ -1777,7 +1777,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 222,
+        "pk": 223,
         "fields": {
             "code": "es-PR",
             "name": "Spanish"
@@ -1785,7 +1785,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 223,
+        "pk": 224,
         "fields": {
             "code": "es-ES",
             "name": "Spanish"
@@ -1793,7 +1793,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 224,
+        "pk": 225,
         "fields": {
             "code": "es-UY",
             "name": "Spanish"
@@ -1801,7 +1801,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 225,
+        "pk": 226,
         "fields": {
             "code": "es-VE",
             "name": "Spanish"
@@ -1809,7 +1809,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 226,
+        "pk": 227,
         "fields": {
             "code": "su",
             "name": "Sundanese"
@@ -1817,7 +1817,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 227,
+        "pk": 228,
         "fields": {
             "code": "sw",
             "name": "Swahili"
@@ -1825,7 +1825,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 228,
+        "pk": 229,
         "fields": {
             "code": "sw-KE",
             "name": "Swahili"
@@ -1833,7 +1833,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 229,
+        "pk": 230,
         "fields": {
             "code": "sv",
             "name": "Swedish"
@@ -1841,7 +1841,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 230,
+        "pk": 231,
         "fields": {
             "code": "sv-FI",
             "name": "Swedish"
@@ -1849,7 +1849,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 231,
+        "pk": 232,
         "fields": {
             "code": "sv-SE",
             "name": "Swedish"
@@ -1857,7 +1857,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 232,
+        "pk": 233,
         "fields": {
             "code": "tl",
             "name": "Tagalog"
@@ -1865,7 +1865,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 233,
+        "pk": 234,
         "fields": {
             "code": "tl-PH",
             "name": "Tagalog"
@@ -1873,7 +1873,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 234,
+        "pk": 235,
         "fields": {
             "code": "tg",
             "name": "Tajik"
@@ -1881,7 +1881,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 235,
+        "pk": 236,
         "fields": {
             "code": "tg-TJ",
             "name": "Tajik"
@@ -1889,7 +1889,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 236,
+        "pk": 237,
         "fields": {
             "code": "ta",
             "name": "Tamil"
@@ -1897,7 +1897,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 237,
+        "pk": 238,
         "fields": {
             "code": "ta-IN",
             "name": "Tamil"
@@ -1905,7 +1905,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 238,
+        "pk": 239,
         "fields": {
             "code": "ta-LK",
             "name": "Tamil"
@@ -1913,7 +1913,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 239,
+        "pk": 240,
         "fields": {
             "code": "tt",
             "name": "Tatar"
@@ -1921,7 +1921,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 240,
+        "pk": 241,
         "fields": {
             "code": "te",
             "name": "Telugu"
@@ -1929,7 +1929,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 241,
+        "pk": 242,
         "fields": {
             "code": "te-IN",
             "name": "Telugu"
@@ -1937,7 +1937,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 242,
+        "pk": 243,
         "fields": {
             "code": "th",
             "name": "Thai"
@@ -1945,7 +1945,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 243,
+        "pk": 244,
         "fields": {
             "code": "th-TH",
             "name": "Thai"
@@ -1953,7 +1953,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 244,
+        "pk": 245,
         "fields": {
             "code": "bo",
             "name": "Tibetan"
@@ -1961,7 +1961,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 245,
+        "pk": 246,
         "fields": {
             "code": "bo-CN",
             "name": "Tibetan"
@@ -1969,7 +1969,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 246,
+        "pk": 247,
         "fields": {
             "code": "ti",
             "name": "Tigrinya"
@@ -1977,7 +1977,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 247,
+        "pk": 248,
         "fields": {
             "code": "to",
             "name": "Tongan"
@@ -1985,7 +1985,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 248,
+        "pk": 249,
         "fields": {
             "code": "tr",
             "name": "Turkish"
@@ -1993,7 +1993,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 249,
+        "pk": 250,
         "fields": {
             "code": "tr-TR",
             "name": "Turkish"
@@ -2001,7 +2001,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 250,
+        "pk": 251,
         "fields": {
             "code": "tk",
             "name": "Turkmen"
@@ -2009,7 +2009,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 251,
+        "pk": 252,
         "fields": {
             "code": "ug",
             "name": "Uighur"
@@ -2017,7 +2017,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 252,
+        "pk": 253,
         "fields": {
             "code": "uk",
             "name": "Ukrainian"
@@ -2025,7 +2025,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 253,
+        "pk": 254,
         "fields": {
             "code": "uk-UA",
             "name": "Ukrainian"
@@ -2033,7 +2033,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 254,
+        "pk": 255,
         "fields": {
             "code": "hsb",
             "name": "Upper Sorbian"
@@ -2041,7 +2041,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 255,
+        "pk": 256,
         "fields": {
             "code": "ur",
             "name": "Urdu"
@@ -2049,7 +2049,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 256,
+        "pk": 257,
         "fields": {
             "code": "ur-PK",
             "name": "Urdu"
@@ -2057,7 +2057,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 257,
+        "pk": 258,
         "fields": {
             "code": "uz",
             "name": "Uzbek"
@@ -2065,7 +2065,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 258,
+        "pk": 259,
         "fields": {
             "code": "ve",
             "name": "Venda"
@@ -2073,7 +2073,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 259,
+        "pk": 260,
         "fields": {
             "code": "vi",
             "name": "Vietnamese"
@@ -2081,7 +2081,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 260,
+        "pk": 261,
         "fields": {
             "code": "vi-VN",
             "name": "Vietnamese"
@@ -2089,7 +2089,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 261,
+        "pk": 262,
         "fields": {
             "code": "vls",
             "name": "Vlaams"
@@ -2097,7 +2097,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 262,
+        "pk": 263,
         "fields": {
             "code": "wa",
             "name": "Walloon"
@@ -2105,7 +2105,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 263,
+        "pk": 264,
         "fields": {
             "code": "cy",
             "name": "Welsh"
@@ -2113,7 +2113,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 264,
+        "pk": 265,
         "fields": {
             "code": "cy-GB",
             "name": "Welsh"
@@ -2121,7 +2121,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 265,
+        "pk": 266,
         "fields": {
             "code": "fy",
             "name": "Western Frisian"
@@ -2129,7 +2129,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 266,
+        "pk": 267,
         "fields": {
             "code": "fy-NL",
             "name": "Western Frisian"
@@ -2137,7 +2137,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 267,
+        "pk": 268,
         "fields": {
             "code": "wo",
             "name": "Wolof"
@@ -2145,7 +2145,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 268,
+        "pk": 269,
         "fields": {
             "code": "wo-SN",
             "name": "Wolof"
@@ -2153,7 +2153,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 269,
+        "pk": 270,
         "fields": {
             "code": "xh",
             "name": "Xhosa"
@@ -2161,7 +2161,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 270,
+        "pk": 271,
         "fields": {
             "code": "yi",
             "name": "Yiddish"
@@ -2169,7 +2169,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 271,
+        "pk": 272,
         "fields": {
             "code": "yo",
             "name": "Yoruba"
@@ -2177,7 +2177,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 272,
+        "pk": 273,
         "fields": {
             "code": "zu",
             "name": "Zulu"
@@ -2185,7 +2185,7 @@
     },
     {
         "model": "base.locale",
-        "pk": 273,
+        "pk": 274,
         "fields": {
             "code": "zu-ZA",
             "name": "Zulu"
