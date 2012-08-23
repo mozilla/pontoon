@@ -22,8 +22,33 @@
         {{ form.url }}
         {{ form.url.errors }}
     </div>
-    <div>
-        {{ form.locales.label_tag() }}
+    <div class="locales clearfix">
+        <div class="locale select">
+          <label for="available">Available locales<a class="choose-all" href="#choose-all">Choose all</a></label>
+          <div class="menu">
+            <input id="available" type="text" class="search">
+            <div class="horizontal-separator"></div>
+            <ul>
+              {% for locale in locales_available %}
+              <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
+              {% endfor %}
+              <li class="no-match">{{ _('No results match') }} "<span></span>"</li>
+            </ul>
+          </div>
+        </div>
+        <div class="locale select selected">
+          <label for="selected">Chosen locales<a class="remove-all" href="#remove-all">Remove all</a></label>
+          <div class="menu">
+            <input id="selected" type="text" class="search">
+            <div class="horizontal-separator"></div>
+            <ul>
+              {% for locale in locales_selected %}
+              <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
+              {% endfor %}
+              <li class="no-match">{{ _('No results match') }} "<span></span>"</li>
+            </ul>
+          </div>
+        </div>
         {{ form.locales }}
         {{ form.locales.errors }}
     </div>

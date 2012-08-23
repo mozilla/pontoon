@@ -132,9 +132,7 @@
       // Unhover on add hover
       $('.project .menu .add').hover(function() {
         $('.project .menu ul li').removeClass('hover');
-      }, function() {
-
-      });
+      }, function() {});
 
       // Edit project if selected from the menu
       $('.project .menu li').live("click.pontoon", function (e) {
@@ -154,6 +152,43 @@
 
     /*** ADMIN FORM ***/
     } else if ($('body').is('.admin-form')) {
+      // Submit form with Enter
+      $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
+        if ($('input[type=text]:not(".search"):focus').length > 0) {
+          var key = e.keyCode || e.which;
+          if (key === 13) { // Enter
+            $('form').submit();
+            return false;
+          }
+        }
+      });
+
+      // Update locales before submitting the form
+      $('form').submit('click.pontoon', function (e) {
+        var arr = [];
+        $("#selected").siblings('ul').find('li:not(".no-match")').each(function() {
+          arr.push($(this).data('id'));
+        });
+        $('#id_locales').val(arr);
+      });
+
+      // Choose locales
+      $('.locale.select li').live('click.pontoon', function (e) {
+        var target = $(this).parents('.locale.select').siblings('.locale.select').find('ul'),
+            clone = $(this).remove();
+        target.prepend(clone);
+      });
+
+      // Choose/remove all locales
+      $('.choose-all, .remove-all').live('click.pontoon', function (e) {
+        e.preventDefault();
+        var ls = $(this).parents('.locale.select'),
+            target = ls.siblings('.locale.select').find('ul'),
+            items = ls.find('li').remove();
+        target.prepend(items);
+      });
+
+      // Update from repository
       $('.svn .button:not(".disabled"), .transifex .button:not(".disabled")').unbind('click.pontoon').bind('click.pontoon', function (e) {
         e.preventDefault();
         $(this).addClass('disabled');

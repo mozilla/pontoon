@@ -476,9 +476,8 @@ body, select, input, textarea, button {
 }
 
 #pontoon .locale .code {
-  color: #AEE000;
+  color: #AEEE00;
   float: right;
-  font-size: 12px;
   padding: 0 4px 0 0;
 }
 

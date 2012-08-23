@@ -141,58 +141,69 @@ def admin_project(request, url=None, template=None):
     SubpageInlineFormSet = inlineformset_factory(Project, Subpage, extra=1)
 
     if request.method == 'POST':
+        log.debug(request.POST);
         # Update existing project
         try:
             pk = request.POST['pk']
             project = Project.objects.get(pk=pk)
             form = ProjectForm(request.POST, instance=project)
             formset = SubpageInlineFormSet(request.POST, instance=project)
+            locales_selected = project.locales.all()
+            locales_available = Locale.objects.exclude(pk__in=locales_selected)
             subtitle = 'Edit project'
+            if form.is_valid() and formset.is_valid():
+                form.save()
+                formset.save()
+                subtitle += '. Saved.'
+            else:
+                subtitle += '. Error.'
 
         # Add a new project
         except MultiValueDictKeyError:
             form = ProjectForm(request.POST)
             formset = SubpageInlineFormSet(request.POST)
+            locales_available = Locale.objects.all()
             subtitle = 'Add project'
 
-        if form.is_valid() and formset.is_valid():
-            form.save()
-            formset.save()
-            subtitle += '. Saved.'
-        else:
-            subtitle += '. Error.'
     else:
         # If URL not specified, show add form
         if url is None:
             form = ProjectForm()
             formset = SubpageInlineFormSet()
+            locales_available = Locale.objects.all()
             subtitle = 'Add project'
             log.debug("Project not specified. Adding a new one.")
 
         # If URL specified, show edit form or add form if not found
         else:
+            url = url + request.build_absolute_uri().split(url)[1]
             try:
                 project = Project.objects.get(url=url)
+                pk = project.pk
                 form = ProjectForm(instance=project)
                 formset = SubpageInlineFormSet(instance=project)
+                locales_selected = project.locales.all()
+                locales_available = Locale.objects.exclude(pk__in=locales_selected)
                 subtitle = 'Edit project'
-                pk = project.pk
                 log.debug("Project URL: " + url)
             except Project.DoesNotExist:
                 form = ProjectForm(initial={'url': url})
                 formset = SubpageInlineFormSet()
+                locales_available = Locale.objects.all()
                 subtitle = 'Add project'
                 log.debug("Project does not exist. Adding a new one.")
 
     data = {
         'form': form,
         'formset': formset,
+        'locales_available': locales_available,
         'subtitle': subtitle
     }
 
-    # Send pk to the template to read if the project is in edit or add mode
+    # Send selected locales and pk to the template (to distinguish between edit or add mode)
     try:
         data['pk'] = pk
+        data['locales_selected'] = locales_selected
     except NameError:
         pass
 

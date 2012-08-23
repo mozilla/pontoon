@@ -685,6 +685,7 @@ var Pontoon = (function () {
                 csrfmiddlewaretoken: $('#server').data('csrf')
               },
               success: function(data) {
+                // After AJAX-based authentication, CSRF token needs to be updated
                 $.get("csrf/", function(csrf_token) {
                   $('#server').data('csrf', csrf_token);
                 });
@@ -878,7 +879,7 @@ var Pontoon = (function () {
       });
 
       // Hide menus on click outside
-      $('html').live("click.pontoon", function () {
+      $('body:not(".admin-form")').live("click.pontoon", function () {
         $('.menu').hide();
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');

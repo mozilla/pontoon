@@ -329,11 +329,11 @@ body.admin-form #intro {
   padding: 100px 20px;
 }
 
-#pontoon.admin-form #intro div {
+#pontoon.admin-form #intro form > div {
   margin: 20px 0;
 }
 
-#pontoon.admin-form #intro div.controls {
+#pontoon.admin-form #intro form > div.controls {
   margin-top: 70px;
 }
 
@@ -355,8 +355,59 @@ body.admin-form #intro {
 #pontoon.admin-form #intro textarea {
   display: block;
   float: none;
+  height: 24px;
   margin-left: -1px;
   width: 613px; /* Must be same as #pontoon.admin-form #intro form width - padding - margin-left */
+}
+
+#pontoon.admin-form #intro .locale.select {
+  float: left;
+  margin-bottom: 2px;
+}
+
+#pontoon.admin-form #intro .locale.select.selected {
+  float: right;
+}
+
+#pontoon.admin-form #intro .locale.select label a {
+  float: right;
+  font-size: 12px;
+  padding-top: 2px;
+  text-transform: uppercase;
+  color: #AEEE00;
+}
+
+
+#pontoon.admin-form #intro .locale.select .menu {
+  border: 1px solid #000000;
+  display: block;
+  margin: 2px 0 0 -1px;
+  overflow: auto;
+  position: relative;
+  top: 0;
+  width: 295px;
+
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+#pontoon.admin-form #intro .locale.select .menu ul {
+  height: 170px;
+  max-height: none;
+}
+
+#pontoon.admin-form #intro .locale.select .menu .search {
+  background-position: 249px center;
+  width: 242px;
+}
+
+#pontoon.admin-form #intro #id_locales {
+  display: none;
 }
 
 #pontoon.admin-form #intro .edit .svn input[type=text] {
@@ -425,7 +476,7 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .errorlist li {
   display: inline;
-  margin-right: 5px;
+  margin-left: 5px;
 }
 
 #pontoon.admin-form #intro .button {
@@ -523,7 +574,7 @@ body.admin-form #intro {
 
 #pontoon #intro .project.select .menu ul li .project-url {
   float: right;
-  color: #AEE000;
+  color: #AEEE00;
 }
 
 #pontoon #intro .project.select .add {
@@ -597,8 +648,8 @@ body.admin-form #intro {
 }
 
 #pontoon #intro .select .menu .search {
-  background-position: 165px center;
-  width: 158px;
+  background-position: 164px center;
+  width: 157px;
   margin: 6px 12px;
 }
 
