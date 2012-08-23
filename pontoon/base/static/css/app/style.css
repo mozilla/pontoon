@@ -231,20 +231,14 @@ body.admin-form {
 }
 
 #intro {
-  position: fixed;
+  background: #222222;
   bottom: 0;
   display: none;
-  overflow: hidden;
-  width: 100%;
   height: 100%;
-  text-align: center;
-  
-  background-color: #111111;
-  background-image: -moz-linear-gradient(top, #444444, #000000); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #444444),color-stop(1, #000000)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#444444, #000000); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #444444, #000000);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#444444', EndColorStr='#000000'); /* IE6–IE9 */
+  overflow: hidden;
+  position: fixed;
+  text-align: center;  
+  width: 100%;
 }
 
 body.admin-form #intro {
@@ -391,9 +385,9 @@ body.admin-form #intro {
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
 
-  box-shadow: none;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
+  box-shadow: 0 0 5px #111111;
+  -moz-box-shadow: 0 0 5px #111111;
+  -webkit-box-shadow: 0 0 5px #111111;
 }
 
 #pontoon.admin-form #intro .locale.select .menu ul {
