@@ -6,7 +6,7 @@
 
 {% block content %}
 <section id="intro" class="visible">
-  <form method="POST" action="{{ request.path }}" class="{{ subtitle.split(" ")[0].lower() }}">
+  <form method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
 
     <h1 id="title">{{ _('%(subtitle)s')|format(subtitle=subtitle) }}</h1>
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
@@ -58,7 +58,7 @@
     <div class="svn clearfix">
         {{ form.svn.label_tag() }}
         {{ form.svn }}
-        {% if subtitle.split(" ")[0].lower() == "edit" %}
+        {% if pk %}
         <button title="{{ _('Update all locales from SVN') }}" data-source="svn" class="button">
             <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from SVN') }}" />
         </button>
@@ -70,7 +70,7 @@
         {{ form.transifex_resource.label_tag() }}
         {{ form.transifex_project }}
         {{ form.transifex_resource }}
-        {% if subtitle.split(" ")[0].lower() == "edit" %}
+        {% if pk %}
         <button title="{{ _('Update all locales from Transifex') }}" data-source="transifex" class="button">
             <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from Transifex') }}" />
         </button>
