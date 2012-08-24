@@ -2190,5 +2190,57 @@
             "code": "zu-ZA",
             "name": "Zulu"
         }
+    },
+    {
+        "model": "base.project",
+        "pk": 1,
+        "fields": {
+            "name": "testpilot",
+            "url": "http://localhost/pontoon/hooks/php/test/testpilot/",
+            "locales": [47, 74, 84, 180, 203],
+            "svn": "http://svn.mozilla.org/projects/l10n-misc/trunk/testpilot/",
+            "transifex_project": "testpilot",
+            "transifex_resource": "index",
+            "info_brief": "Please draft an overview of your campaign, including its purpose and goals. Anything you've provided WebDev, copywriters and/or designers is helpful.",
+            "info_locales": "Share what regions or locals the campaign is intended to reach, and what work was done during the design stage to account for or target regional and cultural differences.",
+            "info_audience": "Include the types of individuals and/or users your campaign targeting, the way that you want to engage or impact these individuals or groups, and the length of commitment (time) or level of engagement that you want to achieve. e.g. some projects will short or low levels of engagement, other will be more encompassing.",
+            "info_metrics": "Describe what success looks like and what measurement you will be using. Examples: Page views, Participants, Social Media mentions, Downloads."
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 1,
+        "fields": {
+            "project": 1,
+            "name": "Homepage",
+            "url": "http://localhost/pontoon/hooks/php/test/testpilot/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 2,
+        "fields": {
+            "project": 1,
+            "name": "Test Cases",
+            "url": "http://localhost/pontoon/hooks/php/test/testpilot/?page=testcases.php"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 3,
+        "fields": {
+            "project": 1,
+            "name": "Guiding Principles",
+            "url": "http://localhost/pontoon/hooks/php/test/testpilot/?page=principles.php"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 4,
+        "fields": {
+            "project": 1,
+            "name": "Privacy Policy",
+            "url": "http://localhost/pontoon/hooks/php/test/testpilot/?page=privacy.php"
+        }
     }
 ]
