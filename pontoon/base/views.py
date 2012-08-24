@@ -139,73 +139,62 @@ def admin_project(request, url=None, template=None):
         raise Http404
 
     SubpageInlineFormSet = inlineformset_factory(Project, Subpage, extra=1)
+    form = ProjectForm()
+    formset = SubpageInlineFormSet()
+    locales_selected = []
+    subtitle = 'Add project'
+    pk = None
 
     if request.method == 'POST':
+        locales_selected = Locale.objects.filter(pk__in=request.POST.getlist('locales'))
         # Update existing project
         try:
             pk = request.POST['pk']
             project = Project.objects.get(pk=pk)
             form = ProjectForm(request.POST, instance=project)
-            formset = SubpageInlineFormSet(request.POST, instance=project)
-            locales_selected = project.locales.all()
+            formset = SubpageInlineFormSet(request.POST, instance=project) # Needed if form invalid
             subtitle = 'Edit project'
 
         # Add a new project
         except MultiValueDictKeyError:
             form = ProjectForm(request.POST)
-            formset = SubpageInlineFormSet(request.POST)
-            locales_selected = Locale.objects.filter(pk__in=request.POST.getlist('locales'))
-            subtitle = 'Add project'
+            formset = SubpageInlineFormSet(request.POST) # Needed if form invalid
 
-        if form.is_valid() and formset.is_valid():
-            form.save()
-            formset.save()
-            subtitle = 'Edit project. Saved.'
-            url = url + request.build_absolute_uri().split(url)[1]
-            pk = Project.objects.get(url=url).pk
+        if form.is_valid():
+            project = form.save(commit=False)
+            formset = SubpageInlineFormSet(request.POST, instance=project)
+            if formset.is_valid():
+                project.save()
+                form.save_m2m() # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#the-save-method
+                formset.save()
+                subtitle += '. Saved.'
+                pk = Project.objects.get(url=url + request.build_absolute_uri().split(url)[1]).pk
+            else:
+                subtitle += '. Error.'
         else:
             subtitle += '. Error.'
 
-    else:
-        # If URL not specified, show add form
-        if url is None:
-            form = ProjectForm()
-            formset = SubpageInlineFormSet()
-            locales_selected = []
-            subtitle = 'Add project'
-            log.debug("Project not specified. Adding a new one.")
-
-        # If URL specified, show edit form or add form if not found
-        else:
-            url = url + request.build_absolute_uri().split(url)[1]
-            try:
-                project = Project.objects.get(url=url)
-                pk = project.pk
-                form = ProjectForm(instance=project)
-                formset = SubpageInlineFormSet(instance=project)
-                locales_selected = project.locales.all()
-                subtitle = 'Edit project'
-                log.debug("Project URL: " + url)
-            except Project.DoesNotExist:
-                form = ProjectForm(initial={'url': url})
-                formset = SubpageInlineFormSet()
-                locales_selected = []
-                subtitle = 'Add project'
-                log.debug("Project does not exist. Adding a new one.")
+    # If URL specified and found, show edit, otherwise show add form
+    elif url is not None:
+        url = url + request.build_absolute_uri().split(url)[1]
+        try:
+            project = Project.objects.get(url=url)
+            pk = project.pk
+            form = ProjectForm(instance=project)
+            formset = SubpageInlineFormSet(instance=project)
+            locales_selected = project.locales.all()
+            subtitle = 'Edit project'
+        except Project.DoesNotExist:
+            form = ProjectForm(initial={'url': url})
 
     data = {
         'form': form,
         'formset': formset,
-        'locales_available': Locale.objects.exclude(pk__in=locales_selected),
         'locales_selected': locales_selected,
-        'subtitle': subtitle
+        'locales_available': Locale.objects.exclude(pk__in=locales_selected),
+        'subtitle': subtitle,
+        'pk': pk
     }
-
-    # Set pk to distinguish between edit or add mode
-    try:
-        data['pk'] = pk
-    except NameError:
-        pass
 
     return render(request, template, data)
 
