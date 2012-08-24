@@ -354,6 +354,33 @@ body.admin-form #intro {
   width: 613px; /* Must be same as #pontoon.admin-form #intro form width - padding - margin-left */
 }
 
+#pontoon.admin-form #intro .button {
+  display: block;
+  float: right;
+  font-size: 14px;
+  height: auto;
+}
+
+#pontoon.admin-form #intro .controls .button {
+  padding: 3px;
+}
+
+#pontoon.admin-form #intro a {
+  color: #AEEE00;
+  float: right;
+}
+
+#pontoon.admin-form #intro .controls a {
+  margin: 6px;
+}
+
+#pontoon.admin-form #intro .svn .button,
+#pontoon.admin-form #intro .transifex .button {
+  margin-left: 6px;
+  height: 32px;
+  width: 32px;
+}
+
 #pontoon.admin-form #intro .locale.select {
   float: left;
   margin-bottom: 2px;
@@ -364,13 +391,10 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .locale.select label a {
-  float: right;
   font-size: 12px;
   padding-top: 2px;
   text-transform: uppercase;
-  color: #AEEE00;
 }
-
 
 #pontoon.admin-form #intro .locale.select .menu {
   border: 1px solid #000000;
@@ -390,14 +414,14 @@ body.admin-form #intro {
   -webkit-box-shadow: 0 0 5px #111111;
 }
 
-#pontoon.admin-form #intro .locale.select .menu ul {
-  height: 170px;
-  max-height: none;
-}
-
 #pontoon.admin-form #intro .locale.select .menu .search {
   background-position: 249px center;
   width: 242px;
+}
+
+#pontoon.admin-form #intro .locale.select .menu ul {
+  height: 170px;
+  max-height: none;
 }
 
 #pontoon.admin-form #intro #id_locales {
@@ -428,9 +452,17 @@ body.admin-form #intro {
   width: 288px;
 }
 
+#pontoon.admin-form #intro .subpages[data-count] {
+  display: none;
+}
+
 #pontoon.admin-form #intro .subpages input[id*=name] {
   float: left;
   width: 200px;
+}
+
+#pontoon.admin-form #intro .subpages input[id$=DELETE] {
+  display: none;
 }
 
 #pontoon.admin-form #intro .subpages label[for*=name] {
@@ -440,7 +472,7 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .subpages input[id*=url] {
   float: left;
-  width: 400px;
+  width: 362px;
 }
 
 #pontoon.admin-form #intro .subpages label[for*=url] {
@@ -471,19 +503,6 @@ body.admin-form #intro {
 #pontoon.admin-form #intro .errorlist li {
   display: inline;
   margin-left: 5px;
-}
-
-#pontoon.admin-form #intro .button {
-  display: block;
-  height: auto;
-}
-
-#pontoon.admin-form #intro .svn .button,
-#pontoon.admin-form #intro .transifex .button {
-  float: left;
-  margin-left: 6px;
-  height: 32px;
-  width: 32px;
 }
 
 #pontoon #intro .project.select {
@@ -650,10 +669,6 @@ body.admin-form #intro {
 #pontoon #intro .select .menu ul {
   max-height: 170px;
   margin-bottom: 6px;
-}
-
-#pontoon #intro .select .button .code {
-  padding: 2px;
 }
 
 #pontoon #intro .select .menu .code {

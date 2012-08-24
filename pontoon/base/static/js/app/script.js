@@ -136,14 +136,14 @@
 
       // Edit project if selected from the menu
       $('.project .menu li').live("click.pontoon", function (e) {
-        window.location = 'a/project/' + $(this).find('.project-url').html();
+        window.location = 'a/url/' + $(this).find('.project-url').html();
       });
 
       // Edit or add project if URL typed and Enter pressed
       $('.url').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         var key = e.keyCode || e.which;
         if (key === 13) { // Enter
-          window.location = 'a/project/' + $(this).val();
+          window.location = 'a/url/' + $(this).val();
           return false;
         }
       });
@@ -152,6 +152,28 @@
 
     /*** ADMIN FORM ***/
     } else if ($('body').is('.admin-form')) {
+      // Before submitting the form
+      $('form').submit(function (e) {
+        // Update locales
+        var arr = [];
+        $("#selected").siblings('ul').find('li:not(".no-match")').each(function() {
+          arr.push($(this).data('id'));
+        });
+        $('#id_locales').val(arr);
+
+        // Append slash to the URL
+        var url = $('#id_url').val();
+        if (url[url.length-1] !== '/') {
+          $('#id_url').val(url + '/');
+        }
+
+        // Update locales and URL
+        if (!$('form').attr('action').split('url/')[1]) {
+          var action = $('form').attr('action');
+          $('form').attr('action', action + $('#id_url').val());
+        }
+      });
+
       // Submit form with Enter
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         if ($('input[type=text]:not(".search"):focus').length > 0) {
@@ -161,15 +183,6 @@
             return false;
           }
         }
-      });
-
-      // Update locales before submitting the form
-      $('form').submit('click.pontoon', function (e) {
-        var arr = [];
-        $("#selected").siblings('ul').find('li:not(".no-match")').each(function() {
-          arr.push($(this).data('id'));
-        });
-        $('#id_locales').val(arr);
       });
 
       // Choose locales
@@ -230,6 +243,23 @@
             updateIcon('update.png');
           }, 5000);
         });
+      });
+
+      // Delete subpage
+      $('.delete-subpage').live('click.pontoon', function (e) {
+        e.preventDefault();
+        $(this).toggleClass("active");
+        $(this).next().prop("checked", !$(this).next().prop("checked"));
+      });
+
+      // Add subpahe
+      var count = $('.subpages:last').data('count');
+      $('.add-subpage').click(function(e) {
+        e.preventDefault();
+        var form = $('.subpages:last').html().replace(/__prefix__/g, count);
+        $(this).before('<div class="subpages clearfix">' + form + '</div>');
+        count++;
+        $('#id_subpage_set-TOTAL_FORMS').val(count);
       });
     }
   });

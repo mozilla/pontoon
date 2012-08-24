@@ -78,6 +78,7 @@ body, select, input, textarea, button {
 #pontoon a:link,
 #pontoon a:visited {
   color: #AAAAAA;
+  font-weight: 300;
   text-decoration: none;
 
   -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
@@ -127,14 +128,19 @@ body, select, input, textarea, button {
   transition: all 0.3s ease-out;  
 }
 
+#pontoon label {
+  font-weight: 300;
+}
+
 #pontoon .button {
   border: 1px solid #000000;
   color: #AAAAAA;
   cursor: pointer;
+  display: inline-block;
+  font-weight: 300;
+  height: 16px;
   padding: 5px 4px 2px;
   text-shadow: 1px 1px 2px #000000;
-  display: inline-block;
-  height: 16px;
   
   background-color: #444444;
   background-image: -moz-linear-gradient(top, #555555, #333333); /* FF3.6 */
@@ -163,7 +169,8 @@ body, select, input, textarea, button {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#444444'); /* IE6–IE9 */
 }
 
-#pontoon .button:active {
+#pontoon .button:active,
+#pontoon .button.active {
   background-color: #333333;
   background-image: -moz-linear-gradient(top, #444444, #222222); /* FF3.6 */
   background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #444444),color-stop(1, #222222)); /* Saf4+, Chrome */

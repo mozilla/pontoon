@@ -89,10 +89,27 @@
         {{ form.url.label_tag() }}
         {{ form.name }}
         {{ form.url }}
+        <button title="{{ _('Delete subpage') }}" class="button delete-subpage">
+            <img src="{{ static('img/cancel.png') }}" alt="{{ _('Delete subpage') }}" />
+        </button>
+        {{ form.DELETE }}
         {{ form.name.errors }}
         {{ form.url.errors }}
     </div>
     {% endfor %}
+    <a href="#add-subpage" class="add-subpage">Add more</a>
+    <div class="subpages clearfix" data-count="{{ formset.total_form_count() }}">
+        {{ formset.empty_form.name.label_tag() }}
+        {{ formset.empty_form.url.label_tag() }}
+        {{ formset.empty_form.name }}
+        {{ formset.empty_form.url }}
+        <button title="{{ _('Delete subpage') }}" class="button delete-subpage">
+            <img src="{{ static('img/cancel.png') }}" alt="{{ _('Delete subpage') }}" />
+        </button>
+        {{ formset.empty_form.DELETE }}
+        {{ formset.empty_form.name.errors }}
+        {{ formset.empty_form.url.errors }}
+    </div>
 
     <h2>General info</h2>
 
@@ -117,8 +134,9 @@
         {{ form.info_metrics.errors }}
     </div>
 
-    <div class="controls">
-        <button class="button">Save</button>
+    <div class="controls clearfix">
+        <button class="button">Save project</button>
+        <a href="{{ url('pontoon.admin') }}" class="cancel">Cancel</a>
     </div>
 
   </form>

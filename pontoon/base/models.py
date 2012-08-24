@@ -32,7 +32,7 @@ class Project(models.Model):
     locales = models.ManyToManyField(Locale)
 
     # Repositories
-    svn = models.URLField("SVN", unique=True, blank=True)
+    svn = models.URLField("SVN", blank=True)
     transifex_project = models.CharField(max_length=128, blank=True)
     transifex_resource = models.CharField(max_length=128, blank=True)
 
@@ -51,7 +51,7 @@ class Project(models.Model):
         return self.name
 
 class Subpage(models.Model):
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, null=True, blank=True)
     name = models.CharField(max_length=128, blank=True)
     url = models.URLField("URL", blank=True)
 
