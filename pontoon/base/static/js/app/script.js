@@ -163,11 +163,11 @@
 
         // Append slash to the URL
         var url = $('#id_url').val();
-        if (url[url.length-1] !== '/') {
+        if (url.length > 0 && url[url.length-1] !== '/') {
           $('#id_url').val(url + '/');
         }
 
-        // Update locales and URL
+        // Update form action
         if (!$('form').attr('action').split('url/')[1]) {
           var action = $('form').attr('action');
           $('form').attr('action', action + $('#id_url').val());
