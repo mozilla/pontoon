@@ -51,7 +51,7 @@ class Project(models.Model):
         return self.name
 
 class Subpage(models.Model):
-    project = models.ForeignKey(Project, null=True, blank=True)
+    project = models.ForeignKey(Project)
     name = models.CharField(max_length=128, blank=True)
     url = models.URLField("URL", blank=True)
 
