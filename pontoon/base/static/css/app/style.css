@@ -325,6 +325,7 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro form > div {
   margin: 20px 0;
+  text-align: right;
 }
 
 #pontoon.admin-form #intro form > div.controls {
@@ -371,7 +372,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .controls a {
-  margin: 6px;
+  margin: 7px;
 }
 
 #pontoon.admin-form #intro .svn .button,
@@ -493,10 +494,12 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .errorlist {
   color: #F00038;
+  display: inline-block;
   font-size: 12px;
+  line-height: 14px; /* Strange, but needed to keep controls in line when error occures */
   list-style: none;
+  margin-left: 0;
   margin-top: 2px;
-  text-align: right;
   text-transform: uppercase;
 }
 
