@@ -167,6 +167,7 @@ def admin_project(request, url=None, template=None):
                 project.save()
                 form.save_m2m() # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#the-save-method
                 formset.save()
+                formset = SubpageInlineFormSet(instance=project) # Properly displays formset, but removes errors (only usable if valid)
                 subtitle += '. Saved.'
                 pk = Project.objects.get(url=url + request.build_absolute_uri().split(url)[1]).pk
             else:

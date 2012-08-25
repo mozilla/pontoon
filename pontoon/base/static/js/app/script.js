@@ -251,8 +251,9 @@
         $(this).toggleClass("active");
         $(this).next().prop("checked", !$(this).next().prop("checked"));
       });
+      $('.subpages [checked]').prev().click();
 
-      // Add subpahe
+      // Add subpage
       var count = $('.subpages:last').data('count');
       $('.add-subpage').click(function(e) {
         e.preventDefault();
