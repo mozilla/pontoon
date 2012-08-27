@@ -161,7 +161,7 @@
         });
         $('#id_locales').val(arr);
 
-        // Append slash to the URL
+        // Append slash to the URL field
         var url = $('#id_url').val();
         if (url.length > 0 && url[url.length-1] !== '/') {
           $('#id_url').val(url + '/');
@@ -174,9 +174,18 @@
         }
       });
 
-      // Disable keydown event handlers
+      // Submit form with Enter
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
-        return false;
+        if ($('input[type=text]:not(".search"):focus').length > 0) {
+          var key = e.keyCode || e.which;
+          if (key === 13) { // Enter
+            // A short delay to allow digest of autocomplete before submit 
+            setTimeout(function() {
+              $('form').submit();
+            }, 1);
+            return false;
+          }
+        }
       });
 
       // Choose locales
