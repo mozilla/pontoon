@@ -174,6 +174,7 @@ def admin_project(request, url=None, template=None):
                 subtitle += '. Error.'
         else:
             subtitle += '. Error.'
+            # TODO: id formset items deleted, they get marked deleted by input box and JS, but after validating the form and posting still appear
 
     # If URL specified and found, show edit, otherwise show add form
     elif url is not None:

@@ -174,15 +174,9 @@
         }
       });
 
-      // Submit form with Enter
+      // Disable keydown event handlers
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
-        if ($('input[type=text]:not(".search"):focus').length > 0) {
-          var key = e.keyCode || e.which;
-          if (key === 13) { // Enter
-            $('form').submit();
-            return false;
-          }
-        }
+        return false;
       });
 
       // Choose locales
