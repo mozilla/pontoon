@@ -26,7 +26,7 @@
         <div class="locale select">
           <label for="available">Available locales<a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>
           <div class="menu">
-            <input id="available" type="text" class="search">
+            <input id="available" type="text" class="search" autocomplete="off">
             <div class="horizontal-separator"></div>
             <ul>
               {% for locale in locales_available %}
@@ -39,7 +39,7 @@
         <div class="locale select selected">
           <label for="selected">Chosen locales<a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
           <div class="menu">
-            <input id="selected" type="text" class="search">
+            <input id="selected" type="text" class="search" autocomplete="off">
             <div class="horizontal-separator"></div>
             <ul>
               {% for locale in locales_selected %}
