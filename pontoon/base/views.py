@@ -418,9 +418,39 @@ def update_from_svn(request, template=None):
 
     try:
         client.checkout(svn, './media/svn/' + p.name)
-        return HttpResponse("200")
     except pysvn.ClientError:
         return HttpResponse("error")
+
+    for l in p.locales.all():
+        """Save or update SVN data to DB."""
+        po = polib.pofile('./media/svn/' + p.name + '/locale/' + l.code + '/LC_MESSAGES/messages.po')
+        entities = [e for e in po if not e.obsolete]
+
+        for entity in entities:
+            try: # Update entity
+                e = Entity.objects.get(project=p, string=entity.msgid)
+            except Entity.DoesNotExist: # New entity
+                e = Entity(project=p, string=entity.msgid)
+
+            comment = entity.comment
+            if len(comment) > 0:
+                e.comment = comment
+            e.save()
+
+            translation = entity.msgstr
+            if len(translation) > 0:
+                try: # Update translation
+                    t = Translation.objects.get(entity=e, locale=l)
+                    t.string = translation
+                    t.author = po.metadata['Last-Translator']
+                    t.date = datetime.datetime.now()
+                except Translation.DoesNotExist: # New translation
+                    t = Translation(entity=e, locale=l, string=translation,
+                        author=po.metadata['Last-Translator'], date=datetime.datetime.now())
+                t.save()
+
+        log.debug("SVN data for " + l.name + " saved to DB.")
+    return HttpResponse("done")
 
 def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
@@ -599,7 +629,7 @@ def commit_to_svn(request, template=None):
     client.set_default_username(username)
     client.set_default_password(password)
 
-    f = open('./media/svn/' + project + '/' + locale +
+    f = open('./media/svn/' + project + '/locale/' + locale +
         '/LC_MESSAGES/messages.po', 'w')
     f.write(_generate_po_content(content))
     f.close()
@@ -611,7 +641,7 @@ def commit_to_svn(request, template=None):
         profile.save()
 
     try:
-        client.checkin(['./media/svn/' + project + '/' + locale],
+        client.checkin(['./media/svn/' + project + '/locale/' + locale],
             'Pontoon: update ' + locale + ' localization of ' + project + '')
         return HttpResponse("200")
     except pysvn.ClientError:
