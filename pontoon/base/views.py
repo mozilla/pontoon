@@ -388,6 +388,38 @@ def load_entities(request, template=None):
     else:
         return HttpResponse(callback + '("error");')
 
+def update_from_svn(request, template=None):
+    """Update all project locales from SVN repository."""
+    log.debug("Update all project locales from SVN repository.")
+
+    try:
+        pk = request.GET['pk']
+        svn = request.GET['svn']
+    except MultiValueDictKeyError:
+        return HttpResponse("error")
+
+    try:
+        p = Project.objects.get(pk=pk)
+    except Project.DoesNotExist:
+        return HttpResponse("error")
+
+    """Check if user authenticated to SVN."""
+    profile = request.user.get_profile()
+    username = profile.svn_username
+    password = base64.decodestring(profile.svn_password)
+    if not (username or password):
+        return HttpResponse("authenticate")
+
+    client = pysvn.Client()
+    client.set_default_username(username)
+    client.set_default_password(password)
+
+    try:
+        client.checkout(svn, './media/svn/' + p.name)
+        return HttpResponse("200")
+    except pysvn.ClientError:
+        return HttpResponse("error")
+
 def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
     log.debug("Update all project locales from Transifex repository.")
@@ -533,6 +565,57 @@ def download(request, template=None):
     return response
 
 @login_required(redirect_field_name='', login_url='/404')
+def commit_to_svn(request, template=None):
+    """Commit translations to SVN."""
+    log.debug("Commit translations to SVN.")
+
+    if request.method != 'POST':
+        return HttpResponse("error")
+
+    try:
+        data = json.loads(request.POST['data'])
+    except MultiValueDictKeyError:
+        return HttpResponse("error")
+
+    """Check if user authenticated to SVN."""
+    profile = request.user.get_profile()
+    username = data.get('auth', {}).get('username', profile.svn_username)
+    password = data.get('auth', {}).get('password', base64.decodestring(profile.svn_password))
+    if not (username or password):
+        return HttpResponse("authenticate")
+
+    locale = data['locale']
+    content = data['content']
+
+    try:
+        p = Project.objects.get(url=data['url'])
+    except Project.DoesNotExist:
+        return HttpResponse("error")
+    project = p.name
+
+    client = pysvn.Client()
+    client.set_default_username(username)
+    client.set_default_password(password)
+
+    f = open('./media/svn/' + project + '/' + locale +
+        '/LC_MESSAGES/messages.po', 'w')
+    f.write(_generate_po_content(content))
+    f.close()
+
+    """Save SVN username and password."""
+    if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
+        profile.svn_username = data['auth']['username']
+        profile.svn_password = base64.encodestring(data['auth']['password'])
+        profile.save()
+
+    try:
+        client.checkin(['./media/svn/' + project + '/' + locale],
+            'Pontoon: update ' + locale + ' localization of ' + project + '')
+        return HttpResponse("200")
+    except pysvn.ClientError:
+        return HttpResponse("error")
+
+@login_required(redirect_field_name='', login_url='/404')
 def save_to_transifex(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
@@ -580,57 +663,6 @@ def save_to_transifex(request, template=None):
         return HttpResponse(response.status_code)
     except AttributeError:
         return HttpResponse(response)
-
-@login_required(redirect_field_name='', login_url='/404')
-def commit_to_svn(request, template=None):
-    """Commit translations to SVN."""
-    log.debug("Commit translations to SVN.")
-
-    if request.method != 'POST':
-        return HttpResponse("error")
-
-    try:
-        data = json.loads(request.POST['data'])
-    except MultiValueDictKeyError:
-        return HttpResponse("error")
-
-    """Check if user authenticated to SVN."""
-    profile = request.user.get_profile()
-    username = data.get('auth', {}).get('username', profile.svn_username)
-    password = data.get('auth', {}).get('password', base64.decodestring(profile.svn_password))
-    if not (username or password):
-        return HttpResponse("authenticate")
-
-    locale = data['locale']
-    content = data['content']
-
-    try:
-        p = Project.objects.get(url=data['url'])
-    except Project.DoesNotExist:
-        return HttpResponse("error")
-    project = p.name
-
-    client = pysvn.Client()
-    client.set_default_username(username)
-    client.set_default_password(password)
-
-    f = open('./media/translations/' + project + '/' + locale +
-        '/LC_MESSAGES/messages.po', 'w')
-    f.write(_generate_po_content(content))
-    f.close()
-
-    """Save SVN username and password."""
-    if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
-        profile.svn_username = data['auth']['username']
-        profile.svn_password = base64.encodestring(data['auth']['password'])
-        profile.save()
-
-    try:
-        client.checkin(['./media/translations/' + project + '/' + locale],
-            'Pontoon: update ' + locale + ' localization of ' + project + '')
-        return HttpResponse("200")
-    except pysvn.ClientError:
-        return HttpResponse("error")
 
 def verify(request, template=None):
     """Verify BrowserID assertion, and return whether a user is registered."""
