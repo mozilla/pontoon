@@ -377,7 +377,6 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .svn .button,
 #pontoon.admin-form #intro .transifex .button {
-  margin-left: 6px;
   height: 32px;
   width: 32px;
 }
@@ -431,7 +430,7 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .edit .svn input[type=text] {
   float: left;
-  width: 575px;
+  width: 576px;
 }
 
 #pontoon.admin-form #intro .transifex input[type=text] {
@@ -439,7 +438,11 @@ body.admin-form #intro {
   width: 300px;
 }
 
-#pontoon.admin-form #intro .edit .transifex input[type=text] {
+#pontoon.admin-form #intro .edit .transifex input#id_transifex_project {
+  width: 282px;
+}
+
+#pontoon.admin-form #intro .edit .transifex input#id_transifex_resource {
   width: 281px;
 }
 
@@ -473,7 +476,7 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .subpages input[id*=url] {
   float: left;
-  width: 362px;
+  width: 363px;
 }
 
 #pontoon.admin-form #intro .subpages label[for*=url] {
