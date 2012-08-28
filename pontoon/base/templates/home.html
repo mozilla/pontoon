@@ -62,10 +62,12 @@
 
     <nav>
       <ul class="links">
-        <li><a id="demo" class="button" href="#" title="Demo">{{ _('Demo') }}</a></li>
-        <li><a href="https://wiki.mozilla.org/L10n:Pontoon" target="_blank" title="Learn">Wiki</a></li>
-        <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="Hack">GitHub</a></li>
-        <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="Follow">Twitter</a></li>
+        <li><a id="demo" class="button" href="#" title="{{ _('Demo') }}">{{ _('Demo') }}</a></li>
+        <li><a href="https://wiki.mozilla.org/L10n:Pontoon" target="_blank" title="{{ _('Learn') }}">Wiki</a></li>
+        <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="{{ _('Hack') }}">GitHub</a></li>
+        <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="{{ _('Follow') }}">Twitter</a></li>
+        {% if perms.base.can_manage %}<li><a href="{{ url('pontoon.admin') }}" title="{{ _('Admin') }}">{{ _('Admin') }}</a></li>{% endif %}
+        {% if user.is_authenticated() %}<li><a href="{{ url('signout') }}" title="{{ _('Sign out') }}">{{ _('Sign out') }}</a></li>{% endif %}
       </ul>
     </nav>
 
