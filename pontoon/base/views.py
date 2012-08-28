@@ -75,8 +75,7 @@ def translate(request, locale, url, template=None):
 
     data = {
         'locale_code': locale,
-        'project_url': url,
-        'locales': Locale.objects.all()
+        'project_url': url
     }
 
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
@@ -89,9 +88,11 @@ def translate(request, locale, url, template=None):
             s = Subpage.objects.get(url=url)
             p = s.project
         except Subpage.DoesNotExist:
+            # Project not stored in the DB
+            data['locales'] = Locale.objects.all()
             return render(request, template, data)
 
-    # If project stored in the DB, add more data 
+    # Project stored in the DB, add more data
     if len(p.locales.filter(code=locale)) > 0:
         # Repositories
         data['svn'] = p.svn
@@ -111,6 +112,7 @@ def translate(request, locale, url, template=None):
         data['pages'] = pages
         data['current_page'] = pages.get(url=url).name
 
+        data['locales'] = p.locales.all()
         return render(request, template, data)
     else:
         return home(request, "Oops, locale is not supported for this website.")
