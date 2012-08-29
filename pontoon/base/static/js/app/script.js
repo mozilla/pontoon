@@ -176,7 +176,7 @@
 
       // Submit form with Enter
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
-        if ($('input[type=text]:not(".search"):focus').length > 0) {
+        if ($('input[type=text]:not(".search, #id_transifex_username, #id_transifex_password"):focus').length > 0) {
           var key = e.keyCode || e.which;
           if (key === 13) { // Enter
             // A short delay to allow digest of autocomplete before submit 

@@ -195,7 +195,7 @@ def admin_project(request, url=None, template=None):
                     validate(url)
                     form = ProjectForm(initial={'url': url})
                 except ValidationError, e:
-                    log.debug(e)  
+                    log.debug(e)
             else:
                 form = ProjectForm(initial={'url': url})
 
