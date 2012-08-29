@@ -217,23 +217,34 @@
         updateIcon('loader-light.gif');
 
         params = {
-          source: source,
           pk: $('input[name=pk]').val()
         }
         if (source === 'svn') {
           params.svn = $('input[name=svn]').val();
         } else if (source === 'transifex') {
-          params.transifex_project = $('input[name=transifex_project]').val();
-          params.transifex_resource = $('input[name=transifex_resource]').val();
+          $('.transifex input').each(function() {
+            var val = $(this).val();
+            if (val) {
+              if ($(this).attr('name') === 'remember') {
+                params[$(this).attr('name')] = ($(this).is(':checked')) ? "on" : "off";
+              } else {
+                params[$(this).attr('name')] = val;
+              }
+            }
+          });
         }
 
         $.ajax({
           url: source + '/update/',
           data: params,
           success: function(data) {
-            if (data !== "error") {
+            if (data === "200") {
               updateIcon('ok.png');
-            } else {
+              $('.' + source).removeClass('popup');
+            } else if (data === "authenticate") {
+              updateIcon('update.png');
+              $('.' + source).addClass('popup');
+            } else if (data === "error"){
               updateIcon('error.png');
             }
           },

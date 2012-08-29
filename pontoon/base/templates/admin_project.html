@@ -66,6 +66,7 @@
         {{ form.svn.errors }}
     </div>
     <div class="transifex clearfix">
+        <p>Please sign in</p>
         {{ form.transifex_project.label_tag() }}
         {{ form.transifex_resource.label_tag() }}
         {{ form.transifex_project }}
@@ -74,6 +75,18 @@
         <button title="{{ _('Update all locales from Transifex') }}" data-source="transifex" class="button">
             <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from Transifex') }}" />
         </button>
+        <section>
+            <label for="id_transifex_username">Transifex username or email</label>
+            <label for="id_transifex_password">Transifex password</label>
+            <input id="id_transifex_username" name="transifex_username" type="text" />
+            <input id="id_transifex_password" name="transifex_password" type="password" />
+            <div class="bottom">
+                <label class="remember">
+                    <input name="remember" type="checkbox" />{{ _('Remember me') }}
+                </label>
+                <a class="new" target="_blank" href="https://www.transifex.net/plans/signup/free/">{{ _('New to Transifex?') }}</a>
+            </div>
+        </section>
         {% endif %}
         {{ form.transifex_project.errors }}
         {{ form.transifex_resource.errors }}

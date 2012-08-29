@@ -405,16 +405,7 @@ def update_from_svn(request, template=None):
     except Project.DoesNotExist:
         return HttpResponse("error")
 
-    """Check if user authenticated to SVN."""
-    profile = request.user.get_profile()
-    username = profile.svn_username
-    password = base64.decodestring(profile.svn_password)
-    if not (username or password):
-        return HttpResponse("authenticate")
-
     client = pysvn.Client()
-    client.set_default_username(username)
-    client.set_default_password(password)
 
     try:
         client.checkout(svn, './media/svn/' + p.name)
@@ -450,7 +441,7 @@ def update_from_svn(request, template=None):
                 t.save()
 
         log.debug("SVN data for " + l.name + " saved to DB.")
-    return HttpResponse("done")
+    return HttpResponse("200")
 
 def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
@@ -461,22 +452,21 @@ def update_from_transifex(request, template=None):
         transifex_project = request.GET['transifex_project']
         transifex_resource = request.GET['transifex_resource']
     except MultiValueDictKeyError:
+        log.debug("A")
         return HttpResponse("error")
 
     try:
         p = Project.objects.get(pk=pk)
     except Project.DoesNotExist:
+        log.debug("B")
         return HttpResponse("error")
 
     """Check if user authenticated to Transifex."""
-    if p.name == 'testpilot':
-        username = 'pontoon'
-        password = 'mozilla'
-    else:
-        profile = request.user.get_profile()
-        username = profile.transifex_username
-        password = base64.decodestring(profile.transifex_password)
-    if not (password or username):
+    profile = request.user.get_profile()
+    username = request.GET.get('transifex_username', profile.transifex_username)
+    password = request.GET.get('transifex_password', base64.decodestring(profile.transifex_password))
+
+    if (len(username) == 0 or len(password) == 0):
         return HttpResponse("authenticate")
 
     for l in p.locales.all():
@@ -512,7 +502,16 @@ def update_from_transifex(request, template=None):
                     t.save()
 
             log.debug("Transifex data for " + l.name + " saved to DB.")
-    return HttpResponse("done")
+        else:
+            return HttpResponse(response)
+
+    """Save Transifex username and password."""
+    if 'remember' in request.GET and request.GET['remember'] == "on":
+        profile.transifex_username = request.GET['transifex_username']
+        profile.transifex_password = base64.encodestring(request.GET['transifex_password'])
+        profile.save()
+
+    return HttpResponse(response.status_code)
 
 def _generate_po_content(data):
     """
@@ -613,7 +612,7 @@ def commit_to_svn(request, template=None):
     profile = request.user.get_profile()
     username = data.get('auth', {}).get('username', profile.svn_username)
     password = data.get('auth', {}).get('password', base64.decodestring(profile.svn_password))
-    if not (username or password):
+    if (len(username) == 0 or len(password) == 0):
         return HttpResponse("authenticate")
 
     locale = data['locale']
@@ -664,7 +663,7 @@ def save_to_transifex(request, template=None):
     profile = request.user.get_profile()
     username = data.get('auth', {}).get('username', profile.transifex_username)
     password = data.get('auth', {}).get('password', base64.decodestring(profile.transifex_password))
-    if not (username or password):
+    if (len(username) == 0 or len(password) == 0):
         return HttpResponse("authenticate")
 
     """Make PUT request to Transifex API."""
