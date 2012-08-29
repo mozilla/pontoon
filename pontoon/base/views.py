@@ -189,7 +189,15 @@ def admin_project(request, url=None, template=None):
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
         except Project.DoesNotExist:
-            form = ProjectForm(initial={'url': url})
+            if url.find('://localhost') == -1:
+                validate = URLValidator(verify_exists=True)
+                try:
+                    validate(url)
+                    form = ProjectForm(initial={'url': url})
+                except ValidationError, e:
+                    log.debug(e)  
+            else:
+                form = ProjectForm(initial={'url': url})
 
     data = {
         'form': form,
@@ -452,13 +460,11 @@ def update_from_transifex(request, template=None):
         transifex_project = request.GET['transifex_project']
         transifex_resource = request.GET['transifex_resource']
     except MultiValueDictKeyError:
-        log.debug("A")
         return HttpResponse("error")
 
     try:
         p = Project.objects.get(pk=pk)
     except Project.DoesNotExist:
-        log.debug("B")
         return HttpResponse("error")
 
     """Check if user authenticated to Transifex."""
