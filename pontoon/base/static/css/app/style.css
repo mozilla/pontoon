@@ -339,6 +339,7 @@ body.admin-form #intro {
   letter-spacing: -1px;
   margin-top: 70px;
   text-align: left;
+  text-transform: none;
 }
 
 #pontoon.admin-form #intro label {
@@ -393,11 +394,6 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .locale.select.selected {
   float: right;
-}
-
-#pontoon.admin-form #intro .locale.select label a {
-  font-size: 12px;
-  padding-top: 2px;
 }
 
 #pontoon.admin-form #intro .locale.select .menu,
