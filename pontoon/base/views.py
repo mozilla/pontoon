@@ -63,7 +63,7 @@ def translate(request, locale, url, template=None):
         return home(request, "Oops, locale is not supported.")
 
     # Validate URL
-    url = url + request.build_absolute_uri().split(url + '/')[1]
+    url = request.build_absolute_uri().split('/url/')[1]
     log.debug("URL: " + url)
     if url.find('://localhost') == -1:
         validate = URLValidator(verify_exists=True)
@@ -171,16 +171,16 @@ def admin_project(request, url=None, template=None):
                 formset.save()
                 formset = SubpageInlineFormSet(instance=project) # Properly displays formset, but removes errors (only usable if valid)
                 subtitle += '. Saved.'
-                pk = Project.objects.get(url=url + request.build_absolute_uri().split(url + '/')[1]).pk
+                pk = Project.objects.get(url=request.build_absolute_uri().split('/url/')[1]).pk
             else:
                 subtitle += '. Error.'
         else:
             subtitle += '. Error.'
-            # TODO: id formset items deleted, they get marked deleted by input box and JS, but after validating the form and posting still appear
+            # TODO: if formset items deleted, they get marked deleted by input box and JS, but after validating the form and posting still appear
 
     # If URL specified and found, show edit, otherwise show add form
     elif url is not None:
-        url = url + request.build_absolute_uri().split(url + '/')[1]
+        url = request.build_absolute_uri().split('/url/')[1]
         try:
             project = Project.objects.get(url=url)
             pk = project.pk
