@@ -18,7 +18,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
@@ -134,8 +134,8 @@ def admin(request, template=None):
 
 @mobile_template('{mobile/}admin_project.html')
 def admin_project(request, url=None, template=None):
-    """Admin interface: manage project."""
-    log.debug("Admin interface: manage project.")
+    """Admin interface: project."""
+    log.debug("Admin interface: project.")
 
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
         raise Http404
@@ -196,6 +196,7 @@ def admin_project(request, url=None, template=None):
                     form = ProjectForm(initial={'url': url})
                 except ValidationError, e:
                     log.debug(e)
+                    return redirect('pontoon.admin.project.new')
             else:
                 form = ProjectForm(initial={'url': url})
 
