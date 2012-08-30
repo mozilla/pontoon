@@ -262,10 +262,10 @@
       // Delete subpage
       $('.delete-subpage').live('click.pontoon', function (e) {
         e.preventDefault();
-        $(this).toggleClass("active");
-        $(this).next().prop("checked", !$(this).next().prop("checked"));
+        $(this).toggleClass('active');
+        $(this).next().prop('checked', !$(this).next().prop('checked'));
       });
-      $('.subpages [checked]').prev().click();
+      $('.subpages [checked]').click().prev().click();
 
       // Add subpage
       var count = $('.subpages:last').data('count');
