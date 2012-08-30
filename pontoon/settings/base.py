@@ -44,6 +44,11 @@ TEMPLATE_CONTEXT_PROCESSORS = list(TEMPLATE_CONTEXT_PROCESSORS) + [
     'django_browserid.context_processors.browserid_form',
 ]
 
+# Should robots.txt deny everything or disallow a calculated list of URLs we
+# don't want to be crawled?  Default is false, disallow everything.
+# Also see http://www.google.com/support/webmasters/bin/answer.py?answer=93710
+ENGAGE_ROBOTS = False
+
 # Always generate a CSRF token for anonymous users.
 ANON_ALWAYS = True
 
@@ -56,7 +61,7 @@ DOMAIN_METHODS['messages'] = [
         'tower.management.commands.extract.extract_tower_template'),
     ('templates/**.html',
         'tower.management.commands.extract.extract_tower_template'),
-],
+]
 
 # # Use this if you have localizable HTML files:
 # DOMAIN_METHODS['lhtml'] = [
