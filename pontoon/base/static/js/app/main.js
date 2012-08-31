@@ -695,7 +695,7 @@ var Pontoon = (function () {
                 $('#browserid').hide();
                 $('#profile').find('.author').html(self.user.email).end().show();
                 if (data.manager) {
-                  $('#profile-menu .sign-out').parent().after('<li><a class="admin" href="a/">Admin</a></li>');
+                  $('#profile-menu .sign-out').parent().after('<li><a class="admin" href="admin/">Admin</a></li>');
                 }
                 self.endLoader('Welcome!');
               },
@@ -713,7 +713,7 @@ var Pontoon = (function () {
         if ($(this).is(".sign-out")) {
           window.location = 'signout/'; // Without this, Enter doesn't open the link
         } else if ($(this).is(".admin")) {
-          window.location = 'a/'; // Without this, Enter doesn't open the link
+          window.location = 'admin/'; // Without this, Enter doesn't open the link
         } else if ($(this).is(".html")) {
           self.common.postMessage("HTML");
         } else {
@@ -890,7 +890,7 @@ var Pontoon = (function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             url = $('.url:visible').val();
         if (url) {
-          window.location = '/locale/' + locale + '/url/' + escape(url) + (url[url.length-1] !== '/' ? '/' : '');
+          window.location = '/locale/' + locale + '/site/' + escape(url) + (url[url.length-1] !== '/' ? '/' : '');
         } else {
           Pontoon.common.showError("Please enter the URL first.");
           $('.url:visible').focus();
