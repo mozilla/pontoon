@@ -13,6 +13,9 @@ urlpatterns = patterns('',
     # Main app:
     (r'', include('pontoon.base.urls')),
 
+    # Admin:
+    (r'', include('pontoon.administration.urls')),
+
     # BrowserID:
     url(r'^browserid/$', 'pontoon.base.views.verify', name='browserid.verify'),
 
@@ -26,7 +29,7 @@ urlpatterns = patterns('',
     # Favicon
     url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/img/favicon.ico'}),
 
-    # Uncomment the next line to enable the admin:
+    # Django admin
     (r'^admin/', include(admin.site.urls)),
 )
 
