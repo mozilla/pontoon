@@ -62,6 +62,11 @@
     url('../../fonts/OpenSans-Italic.ttf') format('truetype');
 }
 
+/* WebKit doesn't use the text color as placeholder color */
+::-webkit-input-placeholder {
+  color: #444444;
+}
+
 body, select, input, textarea, button {
   font-family: "Open Sans", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
 }
