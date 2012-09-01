@@ -4,3 +4,6 @@
 [submodule "vendor-local/src/pysvn"]
 	path = vendor-local/src/pysvn
 	url = git://github.com/Formulka/pysvn.git
+[submodule "hooks/django/django-pontoon-hook"]
+	path = hooks/django/django-pontoon-hook
+	url = git://github.com/rtnpro/django-pontoon-hook.git
