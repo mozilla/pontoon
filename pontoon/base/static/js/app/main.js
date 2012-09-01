@@ -703,6 +703,8 @@ var Pontoon = (function () {
                 self.endLoader('Oops, something went wrong.', 'error');
               }
             });
+          } else {
+            self.endLoader();
           }
         });
       });
