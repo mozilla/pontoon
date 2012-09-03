@@ -36,7 +36,7 @@
       $('.locale .button .language').addClass(acceptLanguage).html($('.locale .menu .language.' + acceptLanguage).html());
       $('#install').css('visibility', 'visible');
       $('#project-load').hide();
-      $('#intro').css('display', 'table').hide().fadeIn(function() {});
+      $('#intro').css('display', 'table').hide().fadeIn();
 
 
 
