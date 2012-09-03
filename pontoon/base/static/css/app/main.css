@@ -103,7 +103,7 @@ body, select, input, textarea, button {
 #pontoon textarea {
   background: #888888;
   border: 1px solid #000000;
-  padding: 3px;
+  padding: 4px 3px 2px;
   width: 133px;
   float: left;
 
