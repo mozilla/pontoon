@@ -650,9 +650,23 @@ body.admin-form #intro {
   padding: 2px 4px;
 }
 
+#pontoon #intro .project.select .menu ul li .project-name {
+  float: left;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 110px;
+}
+
 #pontoon #intro .project.select .menu ul li .project-url {
-  float: right;
   color: #AEEE00;
+  float: right;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 350px;
 }
 
 #pontoon #intro .project.select .add {

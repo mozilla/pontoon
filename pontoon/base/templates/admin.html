@@ -22,7 +22,7 @@
           <div class="horizontal-separator"></div>
           <ul>
             {% for project in projects %}
-            <li>{{ project.name }}<span class="project-url">{{ project.url }}</span></li>
+            <li class="clearfix"><span class="project-name">{{ project.name }}</span><span class="project-url">{{ project.url }}</span></li>
             {% endfor %}
           </ul>
           {% endif %}
