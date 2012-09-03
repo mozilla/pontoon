@@ -59,7 +59,7 @@ def translate(request, locale, url, template=None):
         return home(request, "Oops, locale is not supported.")
 
     # Validate URL
-    url = request.build_absolute_uri().split('/site/')[1]
+    url = request.build_absolute_uri().split('/project/')[1]
     log.debug("URL: " + url)
     if url.find('://localhost') == -1:
         validate = URLValidator(verify_exists=True)

@@ -17,7 +17,7 @@
     $('#source').removeAttr("src");
 
     // Set Demo URL
-    $('#demo').attr('href', '/locale/de/site/' + l.protocol + '//' + l.hostname + '/pontoon/hooks/php/test/testpilot/');
+    $('#demo').attr('href', '/locale/de/project/' + l.protocol + '//' + l.hostname + '/pontoon/hooks/php/test/testpilot/');
 
     // Set include script URL
     $("#install code").html('&lt;script src="' + base + 'static/pontoon.js"&gt;&lt;/script&gt;');
@@ -136,14 +136,14 @@
 
       // Edit project if selected from the menu
       $('.project .menu li').live("click.pontoon", function (e) {
-        window.location = 'admin/site/' + $(this).find('.project-url').html();
+        window.location = 'admin/project/' + $(this).find('.project-url').html();
       });
 
       // Edit or add project if URL typed and Enter pressed
       $('.url').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         var key = e.keyCode || e.which;
         if (key === 13) { // Enter
-          window.location = 'admin/site/' + $(this).val();
+          window.location = 'admin/project/' + $(this).val();
           return false;
         }
       });
@@ -168,7 +168,7 @@
         }
 
         // Update form action
-        if (!$('form').attr('action').split('site/')[1]) {
+        if (!$('form').attr('action').split('project/')[1]) {
           var action = $('form').attr('action');
           $('form').attr('action', action + $('#id_url').val());
         }

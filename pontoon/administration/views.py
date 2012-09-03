@@ -75,7 +75,7 @@ def admin_project(request, url=None, template=None):
                 formset.save()
                 formset = SubpageInlineFormSet(instance=project) # Properly displays formset, but removes errors (only usable if valid)
                 subtitle += '. Saved.'
-                pk = Project.objects.get(url=request.build_absolute_uri().split('/site/')[1]).pk
+                pk = Project.objects.get(url=request.build_absolute_uri().split('/project/')[1]).pk
             else:
                 subtitle += '. Error.'
         else:
@@ -83,7 +83,7 @@ def admin_project(request, url=None, template=None):
 
     # If URL specified and found, show edit, otherwise show add form
     elif url is not None:
-        url = request.build_absolute_uri().split('/site/')[1]
+        url = request.build_absolute_uri().split('/project/')[1]
         try:
             project = Project.objects.get(url=url)
             pk = project.pk
