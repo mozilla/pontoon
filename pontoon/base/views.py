@@ -20,6 +20,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation
+from session_csrf import anonymous_csrf_exempt
 
 from mobility.decorators import mobile_template
 
@@ -483,6 +484,7 @@ def save_to_transifex(request, template=None):
     except AttributeError:
         return HttpResponse(response)
 
+@anonymous_csrf_exempt
 def verify(request, template=None):
     """Verify BrowserID assertion, and return whether a user is registered."""
     log.debug("Verify BrowserID assertion.")
