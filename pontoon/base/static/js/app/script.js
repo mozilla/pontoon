@@ -136,7 +136,7 @@
 
       // Edit project if selected from the menu
       $('.project .menu li').live("click.pontoon", function (e) {
-        window.location = 'admin/project/' + $(this).find('.project-url').html();
+        window.location = 'admin/project/' + $(this).find('.project-name').html();
       });
 
       // Edit or add project if URL typed and Enter pressed
@@ -170,7 +170,7 @@
         // Update form action
         if (!$('form').attr('action').split('project/')[1]) {
           var action = $('form').attr('action');
-          $('form').attr('action', action + $('#id_url').val());
+          $('form').attr('action', action + $('#id_name').val() + '/');
         }
       });
 

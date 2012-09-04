@@ -37,7 +37,7 @@ def admin(request, template=None):
     return render(request, template, data)
 
 @mobile_template('{mobile/}admin_project.html')
-def admin_project(request, url=None, template=None):
+def admin_project(request, name=None, template=None):
     """Admin interface: project."""
     log.debug("Admin interface: project.")
 
@@ -75,33 +75,23 @@ def admin_project(request, url=None, template=None):
                 formset.save()
                 formset = SubpageInlineFormSet(instance=project) # Properly displays formset, but removes errors (only usable if valid)
                 subtitle += '. Saved.'
-                pk = Project.objects.get(url=request.build_absolute_uri().split('/project/')[1]).pk
+                pk = Project.objects.get(name=name).pk
             else:
                 subtitle += '. Error.'
         else:
             subtitle += '. Error.'
 
     # If URL specified and found, show edit, otherwise show add form
-    elif url is not None:
-        url = request.build_absolute_uri().split('/project/')[1]
+    elif name is not None:
         try:
-            project = Project.objects.get(url=url)
+            project = Project.objects.get(name=name)
             pk = project.pk
             form = ProjectForm(instance=project)
             formset = SubpageInlineFormSet(instance=project)
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
         except Project.DoesNotExist:
-            if url.find('://localhost') == -1:
-                validate = URLValidator(verify_exists=True)
-                try:
-                    validate(url)
-                    form = ProjectForm(initial={'url': url})
-                except ValidationError, e:
-                    log.debug(e)
-                    return redirect('pontoon.admin.project.new')
-            else:
-                form = ProjectForm(initial={'url': url})
+            form = ProjectForm(initial={'name': name})
 
     data = {
         'form': form,
