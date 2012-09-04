@@ -29,7 +29,7 @@ log = commonware.log.getLogger('playdoh')
 
 
 @mobile_template('{mobile/}home.html')
-def home(request, error=None, template=None):
+def home(request, error=None, locale=None, url=None, template=None):
     """Home view."""
     log.debug("Home view.")
 
@@ -45,6 +45,12 @@ def home(request, error=None, template=None):
     if error is not None:
         data['error'] = error
 
+    if locale is not None:
+        data['locale_code'] = locale
+
+    if url is not None:
+        data['project_url'] = url
+
     return render(request, template, data)
 
 @mobile_template('{mobile/}translate.html')
@@ -57,7 +63,7 @@ def translate(request, locale, url, template=None):
     try:
         l = Locale.objects.get(code=locale)
     except Locale.DoesNotExist:
-        return home(request, "Oops, locale is not supported.")
+        return home(request, "Oops, locale is not supported.", locale, url)
 
     # Validate URL
     url = request.build_absolute_uri().split('/project/')[1]
@@ -68,7 +74,7 @@ def translate(request, locale, url, template=None):
             validate(url)
         except ValidationError, e:
             log.debug(e)
-            return home(request, "Oops, website could not be found.")
+            return home(request, "Oops, website could not be found.", locale, url)
 
     data = {
         'locale_code': locale,
@@ -112,7 +118,7 @@ def translate(request, locale, url, template=None):
         data['locales'] = p.locales.all()
         return render(request, template, data)
     else:
-        return home(request, "Oops, locale is not supported for this website.")
+        return home(request, "Oops, locale is not supported for this website.", locale, url)
 
 def _request(type, project, resource, locale, username, password, payload=False):
     """

@@ -28,12 +28,13 @@
 
     /*** HOME ***/
     if ($('body').is('.home')) {
-      var acceptLanguage = $('#server').data('accept-language');
-      if ($('.locale .menu .language.' + acceptLanguage).length === 0) { // Locale not on the list
-        acceptLanguage = $('.locale .menu .language').attr('class').split(' ')[1];
+      var locale = $('#server').data('locale') || $('#server').data('accept-language');
+      if ($('.locale .menu .language.' + locale).length === 0) { // Locale not on the list
+        locale = $('.locale .menu .language').attr('class').split(' ')[1];
       }
 
-      $('.locale .button .language').addClass(acceptLanguage).html($('.locale .menu .language.' + acceptLanguage).html());
+      $('.url').val($('#server').data('url'));
+      $('.locale .button .language').addClass(locale).html($('.locale .menu .language.' + locale).html());
       $('#install').css('visibility', 'visible');
       $('#project-load').hide();
       $('#intro').css('display', 'table').hide().fadeIn();
