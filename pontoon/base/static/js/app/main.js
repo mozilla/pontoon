@@ -891,6 +891,8 @@ var Pontoon = (function () {
       $('.locale .confirm, .locale .menu li:not(".no-match")').unbind("click.pontoon").bind("click.pontoon", function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             url = $('.url:visible').val();
+
+        $('.locale .button .language').attr('class', 'language ' + locale).html($('.locale .menu .language.' + locale).html());
         if (url) {
           window.location = '/locale/' + locale + '/project/' + escape(url) + (url[url.length-1] !== '/' ? '/' : '');
         } else {
