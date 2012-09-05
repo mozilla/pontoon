@@ -575,10 +575,10 @@ body.admin-form #intro {
 }
 
 #pontoon #intro input[type=text].url {
-  padding: 2px 5px;
+  padding: 2px 30px 2px 5px;
   height: 27px;
   margin-left: 0;
-  width: 500px;
+  width: 475px;
   font-size: 20px;
   text-align: left;
 
