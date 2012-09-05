@@ -76,7 +76,8 @@ def translate_site(request, locale, template=None):
 
     data = {
         'locale_code': locale,
-        'project_url': url
+        'project_url': url,
+        'project': {}
     }
 
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
