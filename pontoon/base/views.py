@@ -40,9 +40,6 @@ def home(request, error=None, locale=None, url=None, template=None):
         'projects': Project.objects.all()
     }
 
-    if 'error' in request.GET:
-        error = request.GET['error']
-
     if error is not None:
         data['error'] = error
 
@@ -87,10 +84,16 @@ def translate_site(request, locale, template=None):
 
     try:
         p = Project.objects.get(url=url)
+        try:
+            s = Subpage.objects.get(url=url)
+            page = s.name
+        except Subpage.DoesNotExist:
+            page = None
     except Project.DoesNotExist:
         try:
             s = Subpage.objects.get(url=url)
             p = s.project
+            page = s.name
         except Subpage.DoesNotExist:
             # Project not stored in the DB
             data['locales'] = Locale.objects.all()
@@ -98,13 +101,18 @@ def translate_site(request, locale, template=None):
 
     # Project stored in the DB, add more data
     if len(p.locales.filter(code=locale)) > 0:
-        return HttpResponseRedirect(reverse('pontoon.translate.project', 
-            args=[locale, p.name]))
+        if page is None:
+            return HttpResponseRedirect(reverse('pontoon.translate.project',
+            kwargs={'locale': locale, 'project': p.name}))
+        else:
+            return HttpResponseRedirect(reverse('pontoon.translate.project.page',
+            kwargs={'locale': locale, 'project': p.name, 'page': page}))
+
     else:
         return home(request, "Oops, locale is not supported for this website.", locale, url)
 
 @mobile_template('{mobile/}translate.html')
-def translate_project(request, locale, project, template=None):
+def translate_project(request, locale, project, page=None, template=None):
     """Translate view: project."""
     log.debug("Translate view: project.")
 
@@ -130,7 +138,12 @@ def translate_project(request, locale, project, template=None):
     # Subpages
     pages = Subpage.objects.filter(project=p)
     data['pages'] = pages
-    # data['current_page'] = pages.get(url=url).name
+    if page is None:
+        if len(pages) > 0:
+            page = pages.filter(url=p.url)[0]
+    else:
+        data['project_url'] = pages.filter(name=page)[0].url
+    data['current_page'] = page
 
     data['locales'] = p.locales.all()
     return render(request, template, data)
