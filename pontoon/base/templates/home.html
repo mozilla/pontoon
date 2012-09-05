@@ -69,7 +69,7 @@
         <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="{{ _('Hack') }}">GitHub</a></li>
         <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="{{ _('Follow') }}">Twitter</a></li>
         {% if perms.base.can_manage %}<li><a href="{{ url('pontoon.admin') }}" title="{{ _('Admin') }}">{{ _('Admin') }}</a></li>{% endif %}
-        {% if user.is_authenticated() %}<li><a href="{{ url('signout') }}" title="{{ _('Sign out') }}">{{ _('Sign out') }}</a></li>{% endif %}
+        {% if user.is_authenticated() %}<li><a href="{{ url('signout') }}" title="{{ user.email }}">{{ _('Sign out') }}</a></li>{% endif %}
       </ul>
     </nav>
 
