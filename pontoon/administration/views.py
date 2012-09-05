@@ -6,6 +6,7 @@ import json
 import polib
 import pysvn
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.forms.models import inlineformset_factory
@@ -122,14 +123,14 @@ def update_from_svn(request, template=None):
     client = pysvn.Client()
 
     try:
-        client.checkout(svn, './media/svn/' + p.name)
+        client.checkout(svn, settings.MEDIA_ROOT + '/svn/' + p.name)
     except pysvn.ClientError, e:
         log.debug(str(e))
         return HttpResponse("error")
 
     for l in p.locales.all():
         """Save or update SVN data to DB."""
-        po = polib.pofile('./media/svn/' + p.name + '/locale/' + l.code + '/LC_MESSAGES/messages.po')
+        po = polib.pofile(settings.MEDIA_ROOT + '/svn/' + p.name + '/locale/' + l.code + '/LC_MESSAGES/messages.po')
         entities = [e for e in po if not e.obsolete]
 
         for entity in entities:

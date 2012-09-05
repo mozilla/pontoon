@@ -457,7 +457,7 @@ def commit_to_svn(request, template=None):
     client.set_default_username(username)
     client.set_default_password(password)
 
-    f = open('./media/svn/' + project + '/locale/' + locale +
+    f = open(settings.MEDIA_ROOT + '/svn/' + project + '/locale/' + locale +
         '/LC_MESSAGES/messages.po', 'w')
     f.write(_generate_po_content(content))
     f.close()
@@ -469,7 +469,7 @@ def commit_to_svn(request, template=None):
         profile.save()
 
     try:
-        client.checkin(['./media/svn/' + project + '/locale/' + locale],
+        client.checkin([settings.MEDIA_ROOT + '/svn/' + project + '/locale/' + locale],
             'Pontoon: update ' + locale + ' localization of ' + project + '')
         return HttpResponse("200")
     except pysvn.ClientError, e:
