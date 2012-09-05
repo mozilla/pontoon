@@ -8,7 +8,7 @@
      class="hidden"
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      {% if locale_code %}data-locale="{{ locale_code }}"{% endif %}
-     {% if project_url %}data-url="{{ project_url }}"{% endif %}
+     {% if project.url %}data-url="{{ project.url }}"{% endif %}
      {% if mt_apikey %}data-mt-apikey="{{ mt_apikey }}"{% endif %}>
 </div>
 
@@ -23,33 +23,33 @@
       <hr id="drag">
       <a id="logo" href="/">Pontoon</a>
 
-      {% if info %}
+      {% if project.info_brief or project.info_locales or project.info_audience or project.info_metrics %}
       <!-- General project info -->
       <div id="info" class="select">
         <div class="selector"></div>
         <aside class="menu">
-          {% if info.brief %}
+          {% if project.info_brief %}
           <section class="brief">
             <h2>{{ _('Campaign Brief') }}</h2>
-            <p>{{ info.brief }}</p>
+            <p>{{ project.info_brief }}</p>
           </section>
           {% endif %}
-          {% if info.locales %}
+          {% if project.info_locales %}
           <section class="locales">
             <h2>{{ _('Locales and Regions') }}</h2>
-            <p>{{ info.locales }}</p>
+            <p>{{ project.info_locales }}</p>
           </section>
           {% endif %}
-          {% if info.audience %}
+          {% if project.info_audience %}
           <section class="audience">
             <h2>{{ _('Audience, Reach, and Impact') }}</h2>
-            <p>{{ info.audience }}</p>
+            <p>{{ project.info_audience }}</p>
           </section>
           {% endif %}
-          {% if info.metrics %}
+          {% if project.info_metrics %}
           <section class="metrics">
             <h2>{{ _('Success Metrics') }}</h2>
-            <p>{{ info.metrics }}</p>
+            <p>{{ project.info_metrics }}</p>
           </section>
           {% endif %}
         </aside>
@@ -70,7 +70,7 @@
           <input type="text" class="search" autocomplete="off">
           <div class="horizontal-separator"></div>
           <ul>
-            {% for locale in locales %}
+            {% for locale in project.locales.all() %}
             <li><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
             {% endfor %}
             <li class="no-match">{{ _('No results match') }} "<span></span>"</li>
@@ -89,7 +89,7 @@
         </div>
         <ul class="menu">
           {% for page in pages %}
-          <li><a class="title" href="/locale/{{ locale_code }}/site/{{ page.url }}">{{ page.name }}</a></li>
+          <li><a class="title" href="/locale/{{ locale_code }}/project/{{ project.name }}/page/{{ page.name }}/">{{ page.name }}</a></li>
           {% endfor %}
         </ul>
       </div>
@@ -111,13 +111,13 @@
             <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
             {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin') }}">{{ _('Admin') }}</a></li>{% endif %}
             <li class="horizontal-separator"></li>
-            <li{% if not svn %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
-            <li{% if not (transifex_project and transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
+            <li{% if not project.svn %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
+            <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
             <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download as HTML') }}</a></li>
             <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download as JSON') }}</a></li>
             <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download as PO') }}</a></li>
           </ul>
-          {% if (transifex_project and transifex_resource) %}
+          {% if (project.transifex_project and project.transifex_resource) %}
           <aside id="transifex" class="popup">
             <h2>
               {{ _('Sign in to Transifex') }}
@@ -136,7 +136,7 @@
             </form>
           </aside>
           {% endif %}
-          {% if svn %}
+          {% if project.svn %}
           <aside id="svn" class="popup">
             <h2>
               {{ _('Sign in to Mozilla SVN') }}

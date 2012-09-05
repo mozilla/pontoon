@@ -245,7 +245,7 @@
               guessEntities();
               return;
             } else if (data === "empty") {
-              postMessage("ERROR", "Oops, project doesn't have any strings in the database. Please contact administrator.");
+              postMessage("ERROR", "Oops, project doesn't have any strings in the database.");
               $('menu#context').remove();
               return;
             }

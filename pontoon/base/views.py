@@ -76,7 +76,9 @@ def translate_site(request, locale, template=None):
 
     data = {
         'locale_code': locale,
-        'project_url': url
+        'project': {
+            'url': url
+        }
     }
 
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
@@ -96,7 +98,7 @@ def translate_site(request, locale, template=None):
             page = s.name
         except Subpage.DoesNotExist:
             # Project not stored in the DB
-            data['locales'] = Locale.objects.all()
+            data['project']['locales'] = Locale.objects.all()
             return render(request, template, data)
 
     # Project stored in the DB, add more data
@@ -116,36 +118,30 @@ def translate_project(request, locale, project, page=None, template=None):
     """Translate view: project."""
     log.debug("Translate view: project.")
 
-    p = Project.objects.get(name=project)
+    try:
+        p = Project.objects.get(name=project)
+    except Project.DoesNotExist:
+        raise Http404
+
     data = {
         'locale_code': locale,
-        'project_url': p.url
-    }
-
-    # Repositories
-    data['svn'] = p.svn
-    data['transifex_project'] = p.transifex_project
-    data['transifex_resource'] = p.transifex_resource
-
-    # Campaign info
-    data['info'] = {
-        'brief': p.info_brief,
-        'locales': p.info_locales,
-        'audience': p.info_audience,
-        'metrics': p.info_metrics
+        'project': p
     }
 
     # Subpages
     pages = Subpage.objects.filter(project=p)
-    data['pages'] = pages
-    if page is None:
-        if len(pages) > 0:
+    if len(pages) > 0:
+        if page is None:
             page = pages.filter(url=p.url)[0]
-    else:
-        data['project_url'] = pages.filter(name=page)[0].url
-    data['current_page'] = page
+        else:
+            try:
+                s = pages.get(name=page)
+                data['project_url'] = s.url
+            except Subpage.DoesNotExist:
+                return home(request, "Oops, subpage could not be found.", locale, p.url)
+        data['pages'] = pages
+        data['current_page'] = page
 
-    data['locales'] = p.locales.all()
     return render(request, template, data)
 
 def _request(type, project, resource, locale, username, password, payload=False):
