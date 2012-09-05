@@ -327,8 +327,9 @@ body, select, input, textarea, button {
 
 #pontoon > #main > header {
   font-size: 12px;
-  padding: 6px 0;
   height: 26px;
+  overflow: hidden;
+  padding: 6px 0;
   position: relative;
   z-index: 15; /* Must be higher than iframe-cover */
 
