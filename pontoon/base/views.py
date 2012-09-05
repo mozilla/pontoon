@@ -13,8 +13,9 @@ from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid import verify as browserid_verify
@@ -54,19 +55,12 @@ def home(request, error=None, locale=None, url=None, template=None):
     return render(request, template, data)
 
 @mobile_template('{mobile/}translate.html')
-def translate(request, locale, url, template=None):
-    """Translate view."""
-    log.debug("Translate view.")
-
-    # Validate locale
-    log.debug("Locale: " + locale)
-    try:
-        l = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist:
-        return home(request, "Oops, locale is not supported.", locale, url)
+def translate_site(request, locale, template=None):
+    """Translate view: site."""
+    log.debug("Translate view: site.")
 
     # Validate URL
-    url = request.build_absolute_uri().split('/project/')[1]
+    url = request.build_absolute_uri().split('/site/')[1]
     log.debug("URL: " + url)
     if url.find('://localhost') == -1:
         validate = URLValidator(verify_exists=True)
@@ -75,6 +69,13 @@ def translate(request, locale, url, template=None):
         except ValidationError, e:
             log.debug(e)
             return home(request, "Oops, website could not be found.", locale, url)
+
+    # Validate locale
+    log.debug("Locale: " + locale)
+    try:
+        l = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist:
+        return home(request, "Oops, locale is not supported.", locale, url)
 
     data = {
         'locale_code': locale,
@@ -97,28 +98,42 @@ def translate(request, locale, url, template=None):
 
     # Project stored in the DB, add more data
     if len(p.locales.filter(code=locale)) > 0:
-        # Repositories
-        data['svn'] = p.svn
-        data['transifex_project'] = p.transifex_project
-        data['transifex_resource'] = p.transifex_resource
-
-        # Campaign info
-        data['info'] = {
-            'brief': p.info_brief,
-            'locales': p.info_locales,
-            'audience': p.info_audience,
-            'metrics': p.info_metrics
-        }
-
-        # Subpages
-        pages = Subpage.objects.filter(project=p)
-        data['pages'] = pages
-        data['current_page'] = pages.get(url=url).name
-
-        data['locales'] = p.locales.all()
-        return render(request, template, data)
+        return HttpResponseRedirect(reverse('pontoon.translate.project', 
+            args=[locale, p.name]))
     else:
         return home(request, "Oops, locale is not supported for this website.", locale, url)
+
+@mobile_template('{mobile/}translate.html')
+def translate_project(request, locale, project, template=None):
+    """Translate view: project."""
+    log.debug("Translate view: project.")
+
+    p = Project.objects.get(name=project)
+    data = {
+        'locale_code': locale,
+        'project_url': p.url
+    }
+
+    # Repositories
+    data['svn'] = p.svn
+    data['transifex_project'] = p.transifex_project
+    data['transifex_resource'] = p.transifex_resource
+
+    # Campaign info
+    data['info'] = {
+        'brief': p.info_brief,
+        'locales': p.info_locales,
+        'audience': p.info_audience,
+        'metrics': p.info_metrics
+    }
+
+    # Subpages
+    pages = Subpage.objects.filter(project=p)
+    data['pages'] = pages
+    # data['current_page'] = pages.get(url=url).name
+
+    data['locales'] = p.locales.all()
+    return render(request, template, data)
 
 def _request(type, project, resource, locale, username, password, payload=False):
     """

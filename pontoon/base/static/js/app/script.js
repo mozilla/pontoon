@@ -16,9 +16,6 @@
     // Empty iframe if cached
     $('#source').removeAttr("src");
 
-    // Set Demo URL
-    $('#demo').attr('href', '/locale/de/project/' + l.protocol + '//' + l.hostname + '/pontoon/hooks/php/test/testpilot/');
-
     // Set include script URL
     $("#install code").html('&lt;script src="' + base + 'static/pontoon.js"&gt;&lt;/script&gt;');
 

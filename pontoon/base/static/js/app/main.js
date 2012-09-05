@@ -894,7 +894,7 @@ var Pontoon = (function () {
 
         $('.locale .button .language').attr('class', 'language ' + locale).html($('.locale .menu .language.' + locale).html());
         if (url) {
-          window.location = '/locale/' + locale + '/project/' + escape(url) + (url[url.length-1] !== '/' ? '/' : '');
+          window.location = '/locale/' + locale + '/site/' + escape(url) + (url[url.length-1] !== '/' ? '/' : '');
         } else {
           Pontoon.common.showError("Please enter the URL first.");
           $('.url:visible').focus();

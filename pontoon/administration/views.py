@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm
 from pontoon.base.views import _request
