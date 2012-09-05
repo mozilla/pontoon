@@ -116,10 +116,17 @@ def translate_project(request, locale, project, page=None, template=None):
     """Translate view: project."""
     log.debug("Translate view: project.")
 
+    # Validate locale
+    log.debug("Locale: " + locale)
+    try:
+        l = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist:
+        return home(request, "Oops, locale is not supported.")
+
     try:
         p = Project.objects.get(name=project)
     except Project.DoesNotExist:
-        raise Http404
+        return home(request, "Oops, project does not exist.", locale)
 
     data = {
         'locale_code': locale,
@@ -140,6 +147,9 @@ def translate_project(request, locale, project, page=None, template=None):
                 return home(request, "Oops, subpage could not be found.", locale, p.url)
         data['pages'] = pages
         data['current_page'] = page
+
+    if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
+        data['mt_apikey'] = settings.MICROSOFT_TRANSLATOR_API_KEY
 
     return render(request, template, data)
 
