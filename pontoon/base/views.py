@@ -462,7 +462,8 @@ def commit_to_svn(request, template=None):
         client.checkin(['./media/svn/' + project + '/locale/' + locale],
             'Pontoon: update ' + locale + ' localization of ' + project + '')
         return HttpResponse("200")
-    except pysvn.ClientError:
+    except pysvn.ClientError, e:
+        log.debug(str(e))
         return HttpResponse("error")
 
 @login_required(redirect_field_name='', login_url='/404')

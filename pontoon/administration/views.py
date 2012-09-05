@@ -123,7 +123,8 @@ def update_from_svn(request, template=None):
 
     try:
         client.checkout(svn, './media/svn/' + p.name)
-    except pysvn.ClientError:
+    except pysvn.ClientError, e:
+        log.debug(str(e))
         return HttpResponse("error")
 
     for l in p.locales.all():
