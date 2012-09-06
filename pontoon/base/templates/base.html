@@ -9,7 +9,7 @@
     <title>{% block title %}Pontoon{% endblock %}</title>
     <meta name="description" content="{{ _('Live web localization tool') }}">
     <meta name="author" content="Mozilla">
-    <base href="{{ settings.SITE_URL }}/{{ LANG }}/">  
+    <base href="{{ settings.SITE_URL }}/{% if LANG %}{{ LANG }}/{% endif %}">  
 
     {% block site_css %}
       {% compress css %}
