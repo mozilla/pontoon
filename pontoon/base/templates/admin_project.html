@@ -9,6 +9,7 @@
   <form method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
 
     <h1 id="title">{{ _('%(subtitle)s')|format(subtitle=subtitle) }}</h1>
+    {% if warning %}<h3 class="warning">{{ warning }}</h3>{% endif %}
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
     {% if pk %}<input type="hidden" value="{{ pk }}" name="pk">{% endif %}
 
@@ -60,7 +61,7 @@
         {{ form.svn }}
         {% if pk %}
         <button title="{{ _('Update all locales from SVN') }}" data-source="svn" class="button">
-            <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from SVN') }}" />
+            <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from Subversion') }}" />
         </button>
         {% endif %}
         {{ form.svn.errors }}
@@ -154,4 +155,5 @@
 
   </form>
 </section>
+
 {% endblock %}

@@ -337,9 +337,18 @@ body.admin-form #intro {
   font-size: 30px;
   font-weight: 300;
   letter-spacing: -1px;
+  margin-left: -2px;
   margin-top: 70px;
   text-align: left;
   text-transform: none;
+}
+
+#pontoon.admin-form #intro h3 {
+  color: #F00038;
+  font-weight: 300;
+  margin-left: -1px;
+  text-align: left;
+  text-transform: uppercase;
 }
 
 #pontoon.admin-form #intro label {
