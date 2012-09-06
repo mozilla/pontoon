@@ -319,10 +319,6 @@ body, select, input, textarea, button {
   position: fixed;
   bottom: 0;
   width: 100%;
-  
-  box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
 }
 
 #pontoon > #main > header {
@@ -339,9 +335,9 @@ body, select, input, textarea, button {
   background-image: linear-gradient(top, #333333, #111111);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#111111'); /* IE6–IE9 */
 
-  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
 }
 
 #pontoon > #main > header > .container {
