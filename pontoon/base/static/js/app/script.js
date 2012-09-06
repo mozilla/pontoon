@@ -166,10 +166,7 @@
         }
 
         // Update form action
-        if (!$('form').attr('action').split('project/')[1]) {
-          var action = $('form').attr('action');
-          $('form').attr('action', action + $('#id_name').val() + '/');
-        }
+        $('form').attr('action', $('form').attr('action').split('/project/')[0] + '/project/' + $('#id_name').val() + '/');
       });
 
       // Submit form with Enter
