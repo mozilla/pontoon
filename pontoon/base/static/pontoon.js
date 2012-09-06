@@ -2,7 +2,7 @@
 
   var Pontoon = {
         app: {
-          win: window.top,
+          win: window.opener || window.top,
           path: ""
         },
         project: {
@@ -484,7 +484,9 @@
 
       // Disable links
       $('a').click(function(e) {
-        e.preventDefault();
+        if (Pontoon.project.url.indexOf('gaiamobile.org') === -1) {
+          e.preventDefault();
+        }
       });
 
       // Prepare editable toolbar
@@ -574,7 +576,7 @@
   window.addEventListener("message", initizalize, false);
 
   // When loaded inside web client, notify it that project supports Pontoon
-  if (window !== window.top) {
+  if (window.opener || (window !== window.top)) {
     postMessage("SUPPORTED");
   }
 

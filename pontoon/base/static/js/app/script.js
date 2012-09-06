@@ -42,7 +42,8 @@
     } else if ($('body').is('.translate')) {
       var url = $('#server').data('url'),
           locale = $('#server').data('locale'),
-          escapedLocale = locale.replace(".", "\\.").replace("@", "\\@");
+          escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
+          projectWindow = null;
 
       // Initialize Pontoon only if project code supports it
       function receiveMessage(e) {
@@ -52,7 +53,7 @@
             $('#source').show().height($(document).height() - $(this).height());
             $('#project-load').hide();
           });
-          Pontoon.init(window, $('#source').get(0).contentWindow, locale);
+          Pontoon.init(window, projectWindow, locale);
           window.removeEventListener("message", receiveMessage, false);
         }
       }
@@ -60,7 +61,18 @@
 
       $('.url').val(url);
       $('.locale .button .language').addClass(escapedLocale).html($('.locale .menu .language.' + escapedLocale).html());
-      $('#source').attr('src', url);
+      if (url.indexOf('gaiamobile.org') === -1) {
+        $('#source').attr('src', url);
+        projectWindow = $('#source')[0].contentWindow;
+      } else {
+        $('#switch, #drag').remove();
+        $('#main').prepend($('#entitylist').remove()).toggleClass('opened');
+        $(window).resize(function () {
+          $('#entitylist').height($(document).height() - $('#main > header').outerHeight());
+        });
+        $("#entitylist").height($(document).height() - $('#main > header').outerHeight());
+        projectWindow = window.open(url, 'slide', 'width=320,height=480,personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+      }
 
       // Show error message if no callback for 5 seconds: Pontoon/iframe not supported, 404…
       var i = 0,

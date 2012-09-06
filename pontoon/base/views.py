@@ -59,7 +59,7 @@ def translate_site(request, locale, template=None):
     # Validate URL
     url = request.build_absolute_uri().split('/site/')[1]
     log.debug("URL: " + url)
-    if url.find('://localhost') == -1:
+    if url.find('://localhost') == -1 or url.find('gaiamobile.org') == -1:
         validate = URLValidator(verify_exists=True)
         try:
             validate(url)
