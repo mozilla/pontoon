@@ -93,7 +93,7 @@ class ProjectForm(ModelForm):
             self._errors["transifex_project"] = self.error_class([u"Both fields are required."])
             del cleaned_data["transifex_resource"]
         elif not transifex_project and not transifex_resource and not svn:
-            self._errors["svn"] = self.error_class([u"You either need to provide SVN repository URL..."])
+            self._errors["svn"] = self.error_class([u"You either need to provide Subversion URL..."])
             self._errors["transifex_project"] = self.error_class([u"...or Transifex project and resource."])
 
         # Always return the full collection of cleaned data.
