@@ -76,7 +76,7 @@ def admin_project(request, name=None, template=None):
                 formset.save()
                 formset = SubpageInlineFormSet(instance=project) # Properly displays formset, but removes errors (only usable if valid)
                 subtitle += '. Saved.'
-                pk = Project.objects.get(name=name).pk
+                pk = Project.objects.get(name=request.POST['name']).pk
             else:
                 subtitle += '. Error.'
         else:
