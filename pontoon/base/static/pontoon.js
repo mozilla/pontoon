@@ -161,12 +161,12 @@
         $('[data-l10n-id]').each(function () {
           var entity = {
             id: counter,
-            original: $(this).html()
+            original: ($(this).is('input')) ? $(this).attr('placeholder') : $(this).html()
           };
           counter++;
 
-          // Head entities cannot be edited in-place
-          if ($(this).parents('head').length === 0) {
+          // Head entities and input box placeholders cannot be edited in-place
+          if ($(this).parents('head').length === 0 && !$(this).is('input')) {
             entity.node = $(this);
             makeEditable(entity);
           }
