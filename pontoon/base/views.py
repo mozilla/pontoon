@@ -37,7 +37,7 @@ def home(request, error=None, locale=None, url=None, template=None):
     data = {
         'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
         'locales': Locale.objects.all(),
-        'projects': Project.objects.all()
+        'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
     }
 
     if error is not None:
@@ -59,7 +59,7 @@ def translate_site(request, locale, template=None):
     # Validate URL
     url = request.build_absolute_uri().split('/site/')[1]
     log.debug("URL: " + url)
-    if url.find('://localhost') == -1 or url.find('gaiamobile.org') == -1:
+    if url.find('://localhost') == -1 and url.find('gaiamobile.org') == -1:
         validate = URLValidator(verify_exists=True)
         try:
             validate(url)
@@ -125,7 +125,7 @@ def translate_project(request, locale, project, page=None, template=None):
         return home(request, "Oops, locale is not supported.")
 
     try:
-        p = Project.objects.get(name=project)
+        p = Project.objects.get(name=project, pk__in=Entity.objects.values('project'))
     except Project.DoesNotExist:
         return home(request, "Oops, project does not exist.", locale)
 
