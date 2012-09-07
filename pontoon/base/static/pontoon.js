@@ -244,10 +244,6 @@
             } else if (data === "guess") {
               guessEntities();
               return;
-            } else if (data === "empty") {
-              postMessage("ERROR", "Oops, project doesn't have any strings in the database.");
-              $('menu#context').remove();
-              return;
             }
             Pontoon.project.hooks = true;
             $('*').contents().each(function () {
