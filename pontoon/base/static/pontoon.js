@@ -153,6 +153,32 @@
 
 
       /**
+       * Extract entities from Gaia apps
+       */
+      function gaiamobileEntities() {
+        var counter = 0;
+
+        $('[data-l10n-id]').each(function () {
+          var entity = {
+            id: counter,
+            original: $(this).html()
+          };
+          counter++;
+
+          // Head entities cannot be edited in-place
+          if ($(this).parents('head').length === 0) {
+            entity.node = $(this);
+            makeEditable(entity);
+          }
+          Pontoon.project.entities.push(entity);
+        });
+
+        renderHandle();
+      }
+
+
+
+      /**
        * Extract entities from the document, not prepared for working with Pontoon
        * 
        * Create entity object from every non-empty text node
@@ -243,6 +269,9 @@
               return;
             } else if (data === "guess") {
               guessEntities();
+              return;
+            } else if (data == "") {
+              gaiamobileEntities();
               return;
             }
             Pontoon.project.hooks = true;
@@ -507,15 +536,17 @@
       });
 
       // Enable context menu
-      $('body')
-        .attr("contextmenu", "context")
-        .append(
-        '<menu type="context" id="context">' +
-          '<menuitem class="mode" label="Advanced mode" icon="' + Pontoon.app.path + 'static/img/logo-small.png' + '"></menuitem>' +
-        '</menu>')
-        .find("#context .mode").live("click", function() {
-          postMessage("SWITCH");
-        });
+      if (Pontoon.project.url.indexOf('gaiamobile.org') === -1) {
+        $('body')
+          .attr("contextmenu", "context")
+          .append(
+          '<menu type="context" id="context">' +
+            '<menuitem class="mode" label="Advanced mode" icon="' + Pontoon.app.path + 'static/img/logo-small.png' + '"></menuitem>' +
+          '</menu>')
+          .find("#context .mode").live("click", function() {
+            postMessage("SWITCH");
+          });
+      }
 
       Pontoon.project.title = document.title.split("-->")[1] || document.title;        
       loadEntities();
