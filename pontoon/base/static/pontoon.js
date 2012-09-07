@@ -363,7 +363,7 @@
             toolbar.removeClass('bottom').css('top', toolbarTop);
           } else{
             toolbar.addClass('bottom').css('top', top + $(newTarget).outerHeight());
-          };          
+          };
         }           
         var toolbarNode = toolbar.get(0);
         if (toolbarNode.I !== null) {
