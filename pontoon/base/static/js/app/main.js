@@ -268,7 +268,7 @@ var Pontoon = (function () {
             '<textarea>' + (this.translation || '') + '</textarea>' + 
             '<div class="toolbar">' + 
               '<a href="#save" class="save" title="Save translation"></a>' + 
-              '<a href="#cancel" class="cancel" title="Cancel and revert to original string"></a>' + 
+              '<a href="#cancel" class="cancel" title="Cancel"></a>' +
             '</div>' +
           '</div>' +
         '</div></li>', self.app.win);
