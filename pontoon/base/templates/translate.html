@@ -56,7 +56,22 @@
       </div>
       {% endif %}
 
-      <input class="url" type="text" placeholder="{{ _('Type URL and press Enter') }}" />
+      <!-- Project input/select -->
+      <div class="project select">
+        <input name="url" class="url" type="text" placeholder="{{ _('Type URL and press Enter') }}" autocomplete="off" />
+        {% if projects|length > 0 %}
+        <div class="button selector">
+          <span class="handle">&#9662;</span>
+        </div>
+        <div class="menu">
+          <ul>
+            {% for project in projects %}
+            <li class="clearfix"><span class="project-name">{{ project.name }}</span><span class="project-url">{{ project.url }}</span></li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
 
       <!-- Locale selector -->
       <div class="locale select">

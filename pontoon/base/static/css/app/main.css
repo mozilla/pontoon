@@ -419,9 +419,100 @@ body, select, input, textarea, button {
   border-bottom: 1px solid #444444;
 }
 
-#pontoon .url {
+#pontoon .project.select {
+  float: left;
+}
+
+#pontoon .project.select input[type=text].url {
   height: 17px;
   margin-left: 5px;
+  padding-right: 24px;
+}
+
+#pontoon .project.select .button {
+  height: 16px;
+  top: 3px;
+  right: 3px;
+  padding: 1px 5px 0;
+  position: absolute;
+
+  box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+  -moz-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+  -webkit-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+}
+
+#pontoon .project.select .button:active {
+  box-shadow: 0 1px #666666, 0 0 5px #000000 inset;
+  -moz-box-shadow: 0 1px #666666, 0 0 5px #000000 inset;
+  -webkit-box-shadow: 0 1px #666666, 0 0 5px #000000 inset;
+}
+
+#pontoon .project.select.opened .button {
+  border: 1px solid #000000;
+
+  background-color: #444444;
+  background-image: -moz-linear-gradient(top, #555555, #333333); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #555555),color-stop(1, #333333)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#555555, #333333); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #555555, #333333);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#555555', EndColorStr='#333333'); /* IE6–IE9 */
+
+  border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+
+  box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+  -moz-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+  -webkit-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
+}
+
+#pontoon .project.select .menu {
+  width: 510px;
+  bottom: 31px;
+}
+
+#pontoon .project.select .menu ul {
+  list-style: none;
+  margin: 6px 12px;
+  overflow: auto;
+}
+
+#pontoon .project.select .menu ul li {
+  padding: 2px 4px;
+}
+
+#pontoon .project.select .menu ul li .project-name {
+  float: left;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 110px;
+}
+
+#pontoon .project.select .menu ul li .project-url {
+  color: #AEEE00;
+  float: right;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 350px;
+}
+
+#pontoon .project.select .add {
+  display: block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+#pontoon .project.select .add:hover {
+  background: #444444;
+  color: #FFFFFF;
+
+  border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  -webkit-border-radius: 0 0 3px 3px;
 }
 
 #pontoon .locale {
@@ -451,7 +542,7 @@ body, select, input, textarea, button {
   width: 190px;
 }
 
-#pontoon .locale .menu ul {
+#pontoon .menu ul {
   max-height: 150px;
   overflow: auto;
   margin: 6px 12px 0;

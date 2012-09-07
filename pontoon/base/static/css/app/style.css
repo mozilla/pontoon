@@ -579,11 +579,19 @@ body.admin-form #intro {
   margin-left: 5px;
 }
 
+#pontoon #intro .select {
+  float: right;
+  display: inline;
+  margin-left: 0;
+  text-align: left;
+  font-size: 14px;
+}
+
 #pontoon #intro .project.select {
   float: left;
 }
 
-#pontoon #intro input[type=text].url {
+#pontoon #intro .project.select input[type=text].url {
   padding: 2px 30px 2px 5px;
   height: 27px;
   margin-left: 0;
@@ -596,13 +604,7 @@ body.admin-form #intro {
   -webkit-border-radius: 3px 3px 3px 3px;
 }
 
-#pontoon #intro .project.select.opened input[type=text].url {
-  border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
-}
-
-#pontoon #intro input[type=text].url:focus {
+#pontoon #intro .project.select input[type=text].url:focus {
   text-align: left;
   outline: none; /* Remove WebKit Glow */
 
@@ -611,12 +613,18 @@ body.admin-form #intro {
   -webkit-box-shadow: 0 0 5px 1px #AEEE00;
 }
 
-#pontoon #intro .project.select .button {
+#pontoon #intro .project.select.opened input[type=text].url {
+  border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
+}
+
+#pontoon #intro .project.select .button,
+#pontoon #intro .project.select.opened .button {
   height: 18px;
   top: 6px;
   right: 6px;
   padding: 1px 5px 0;
-  position: absolute;
 
   box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
   -moz-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
@@ -629,76 +637,12 @@ body.admin-form #intro {
   -webkit-box-shadow: 0 1px #666666, 0 0 5px #000000 inset;
 }
 
-#pontoon #intro .project.select.opened .button {
-  border-bottom: 1px solid #000000;
-
-  border-bottom-right-radius: 3px;
-  -moz-border-radius-bottomright: 3px;
-  -webkit-border-bottom-right-radius: 3px;
-
-  box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
-  -moz-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
-  -webkit-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
-}
-
 #pontoon #intro .project.select .menu {
   width: 510px;
 
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
-}
-
-#pontoon #intro .project.select .menu ul {
-  list-style: none;
-  margin: 6px 12px;
-  overflow: auto;
-}
-
-#pontoon #intro .project.select .menu ul li {
-  padding: 2px 4px;
-}
-
-#pontoon #intro .project.select .menu ul li .project-name {
-  float: left;
-  overflow: hidden;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 110px;
-}
-
-#pontoon #intro .project.select .menu ul li .project-url {
-  color: #AEEE00;
-  float: right;
-  overflow: hidden;
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 350px;
-}
-
-#pontoon #intro .project.select .add {
-  display: block;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-
-#pontoon #intro .project.select .add:hover {
-  background: #444444;
-  color: #FFFFFF;
-
-  border-radius: 0 0 3px 3px;
-  -moz-border-radius: 0 0 3px 3px;
-  -webkit-border-radius: 0 0 3px 3px;
-}
-
-#pontoon #intro .select {
-  float: right;
-  display: inline;
-  margin-left: 0;
-  text-align: left;
-  font-size: 14px;
 }
 
 #pontoon #intro .locale.select.opened {
