@@ -105,16 +105,12 @@ def translate_site(request, locale, template=None):
             return render(request, template, data)
 
     # Project stored in the DB, add more data
-    if len(p.locales.filter(code=locale)) > 0:
-        if page is None:
-            return HttpResponseRedirect(reverse('pontoon.translate.project',
-            kwargs={'locale': locale, 'project': p.name}))
-        else:
-            return HttpResponseRedirect(reverse('pontoon.translate.project.page',
-            kwargs={'locale': locale, 'project': p.name, 'page': page}))
-
+    if page is None:
+        return HttpResponseRedirect(reverse('pontoon.translate.project',
+        kwargs={'locale': locale, 'project': p.name}))
     else:
-        return home(request, "Oops, locale is not supported for this website.", locale, url)
+        return HttpResponseRedirect(reverse('pontoon.translate.project.page',
+        kwargs={'locale': locale, 'project': p.name, 'page': page}))
 
 @mobile_template('{mobile/}translate.html')
 def translate_project(request, locale, project, page=None, template=None):
