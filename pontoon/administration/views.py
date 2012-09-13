@@ -115,6 +115,9 @@ def update_from_svn(request, template=None):
     """Update all project locales from SVN repository."""
     log.debug("Update all project locales from SVN repository.")
 
+    if not request.is_ajax():
+        raise Http404
+
     try:
         pk = request.GET['pk']
         svn = request.GET['svn']
@@ -168,6 +171,9 @@ def update_from_svn(request, template=None):
 def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
     log.debug("Update all project locales from Transifex repository.")
+
+    if not request.is_ajax():
+        raise Http404
 
     try:
         pk = request.GET['pk']

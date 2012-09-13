@@ -224,6 +224,9 @@ def get_translation(request, template=None):
     """Get entity translation of a specified project and locale."""
     log.debug("Get entity translation of a specified project and locale.")
 
+    if not request.is_ajax():
+        raise Http404
+
     try:
         original = request.GET['original']
         url = request.GET['url']
@@ -251,6 +254,9 @@ def get_translation(request, template=None):
 def save_translation(request, template=None):
     """Save entity translation to the specified project and locale."""
     log.debug("Save entity translation to the specified project and locale.")
+
+    if not request.is_ajax():
+        raise Http404
 
     try:
         original = request.GET['original']
@@ -558,4 +564,8 @@ def verify(request, template=None):
 def get_csrf(request, template=None):
     """Get CSRF token."""
     log.debug("Get CSRF token.")
+
+    if not request.is_ajax():
+        raise Http404
+
     return HttpResponse(request.csrf_token)
