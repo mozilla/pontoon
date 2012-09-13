@@ -84,7 +84,7 @@
               }
             } else {
               clearInterval(interval);
-              window.location = '/error/Oops, website is not supported by Pontoon.';
+              window.location = '/error/Oops, website is not supported by Pontoon./';
             }
           }, 100);
 
