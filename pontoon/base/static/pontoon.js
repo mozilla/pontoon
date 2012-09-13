@@ -161,7 +161,7 @@
         $('[data-l10n-id]').each(function () {
           var entity = {
             id: counter,
-            original: ($(this).is('input')) ? $(this).attr('placeholder') : $(this).html()
+            original: ($(this).attr('placeholder')) ? $(this).attr('placeholder') : $(this).html()
           };
           counter++;
 
