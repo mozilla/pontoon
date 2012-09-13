@@ -87,12 +87,15 @@ def translate_site(request, locale, template=None):
     try:
         p = Project.objects.get(url=url)
         try:
+            # Select project and a subpage
             s = Subpage.objects.get(url=url)
             page = s.name
         except Subpage.DoesNotExist:
+            # Select project, subpage does not exist
             page = None
     except Project.DoesNotExist:
         try:
+            # Select subpage and its project
             s = Subpage.objects.get(url=url)
             p = s.project
             page = s.name
@@ -125,13 +128,14 @@ def translate_project(request, locale, project, page=None, template=None):
     except Locale.DoesNotExist:
         return home(request, "Oops, locale is not supported.")
 
+    # Validate project
     try:
         if project != 'gaiamobile':
             p = Project.objects.get(name=project, pk__in=Entity.objects.values('project'))
         else:
             p = Project.objects.get(name=project)
     except Project.DoesNotExist:
-        return home(request, "Oops, project does not exist.", locale)
+        return home(request, "Oops, project could not be found.", locale)
 
     data = {
         'locale_code': locale,
@@ -140,7 +144,7 @@ def translate_project(request, locale, project, page=None, template=None):
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
     }
 
-    # Subpages
+    # Validate subpages
     pages = Subpage.objects.filter(project=p)
     if len(pages) > 0:
         if page is None:
@@ -153,6 +157,10 @@ def translate_project(request, locale, project, page=None, template=None):
                 return home(request, "Oops, subpage could not be found.", locale, p.url)
         data['pages'] = pages
         data['current_page'] = page
+
+    # Validate project locales
+    if len(p.locales.filter(code=locale)) == 0:
+        return home(request, "Oops, locale is not supported for this website.", locale, data['project_url'])
 
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
         data['mt_apikey'] = settings.MICROSOFT_TRANSLATOR_API_KEY
