@@ -29,6 +29,9 @@ urlpatterns = patterns('',
     # Favicon
     url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/img/favicon.ico'}),
 
+    # Include script
+    url(r'^pontoon\.js$', 'django.views.generic.simple.redirect_to', {'url': '/static/js/pontoon.js'}),
+
     # Django admin
     (r'^a/', include(admin.site.urls)),
 )

@@ -18,48 +18,48 @@
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
-  src: url('../../fonts/OpenSans-Regular.eot');
+  src: url('../fonts/OpenSans-Regular.eot');
   src: local('Open Sans'),
     local('OpenSans'),
-    url('../../fonts/OpenSans-Regular.eot') format('embedded-opentype'),
-    url('../../fonts/OpenSans-Regular.woff') format('woff'),
-    url('../../fonts/OpenSans-Regular.ttf') format('truetype');
+    url('../fonts/OpenSans-Regular.eot') format('embedded-opentype'),
+    url('../fonts/OpenSans-Regular.woff') format('woff'),
+    url('../fonts/OpenSans-Regular.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 300;
-  src: url('../../fonts/OpenSans-Light.eot');
+  src: url('../fonts/OpenSans-Light.eot');
   src: local('Open Sans Light'),
     local('OpenSans-Light'),
-    url('../../fonts/OpenSans-Light.eot') format('embedded-opentype'),
-    url('../../fonts/OpenSans-Light.woff') format('woff'),
-    url('../../fonts/OpenSans-Light.ttf') format('truetype');
+    url('../fonts/OpenSans-Light.eot') format('embedded-opentype'),
+    url('../fonts/OpenSans-Light.woff') format('woff'),
+    url('../fonts/OpenSans-Light.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 700;
-  src: url('../../fonts/OpenSans-Bold.eot');
+  src: url('../fonts/OpenSans-Bold.eot');
   src: local('Open Sans Bold'),
     local('OpenSans-Bold'),
-    url('../../fonts/OpenSans-Bold.eot') format('embedded-opentype'),
-    url('../../fonts/OpenSans-Bold.woff') format('woff'),
-    url('../../fonts/OpenSans-Bold.ttf') format('truetype');
+    url('../fonts/OpenSans-Bold.eot') format('embedded-opentype'),
+    url('../fonts/OpenSans-Bold.woff') format('woff'),
+    url('../fonts/OpenSans-Bold.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Open Sans';
   font-style: italic;
   font-weight: 400;
-  src: url('../../fonts/OpenSans-Italic.eot');
+  src: url('../fonts/OpenSans-Italic.eot');
   src: local('Open Sans Italic'),
     local('OpenSans-Italic'),
-    url('../../fonts/OpenSans-Italic.eot') format('embedded-opentype'),
-    url('../../fonts/OpenSans-Italic.woff') format('woff'),
-    url('../../fonts/OpenSans-Italic.ttf') format('truetype');
+    url('../fonts/OpenSans-Italic.eot') format('embedded-opentype'),
+    url('../fonts/OpenSans-Italic.woff') format('woff'),
+    url('../fonts/OpenSans-Italic.ttf') format('truetype');
 }
 
 /* WebKit doesn't use the text color as placeholder color */
@@ -357,12 +357,12 @@ body, select, input, textarea, button {
 }
 
 #pontoon > #main > header .loader {
-  background: transparent url('../../img/loader-light.gif') right 4px no-repeat;
+  background: transparent url('../img/loader-light.gif') right 4px no-repeat;
   padding-right: 20px;
 }
 
 #pontoon #logo {
-  background: url('../../img/logo-small.png') no-repeat 7px 5px;
+  background: url('../img/logo-small.png') no-repeat 7px 5px;
   color: #AEEE00;
   float: left;
   padding: 6px 0 5px 30px;
@@ -374,7 +374,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #info .selector {
-  background: url('../../img/info.png') no-repeat;
+  background: url('../img/info.png') no-repeat;
   cursor: pointer;
   opacity: 0.5;
   height: 17px;
@@ -550,7 +550,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon .locale .menu .search {
-  background: url("../../img/search.png") no-repeat 145px center #888888;
+  background: url("../img/search.png") no-repeat 145px center #888888;
   float: none;
   width: 138px;
   padding-right: 24px;
@@ -710,14 +710,14 @@ body, select, input, textarea, button {
 }
 
 #pontoon .popup .cancel {
-  background: url('../../img/cancel-active.png') no-repeat;
+  background: url('../img/cancel-active.png') no-repeat;
   float: right;
   height: 16px;
   width: 16px;
 }
 
 #pontoon .popup .cancel:hover {
-  background-image: url('../../img/cancel.png');
+  background-image: url('../img/cancel.png');
 }
 
 #pontoon .popup input[type=text],
@@ -777,7 +777,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #switch {
-  background: url('../../img/arrow-up.png') no-repeat;
+  background: url('../img/arrow-up.png') no-repeat;
   float: right;
   height: 16px;
   width: 16px;
@@ -786,15 +786,15 @@ body, select, input, textarea, button {
 }
 
 #pontoon #switch:hover {
-  background: url('../../img/arrow-up-active.png') no-repeat;
+  background: url('../img/arrow-up-active.png') no-repeat;
 }
 
 #pontoon #main.opened #switch {
-  background: url('../../img/arrow-down.png') no-repeat;
+  background: url('../img/arrow-down.png') no-repeat;
 }
 
 #pontoon #main.opened #switch:hover {
-  background: url('../../img/arrow-down-active.png') no-repeat;
+  background: url('../img/arrow-down-active.png') no-repeat;
 }
 
 
@@ -979,7 +979,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist .source .content .original-string .comment {
-  background: transparent url('../../img/comment.png') 0 0 no-repeat;
+  background: transparent url('../img/comment.png') 0 0 no-repeat;
   height: 16px;
   width: 16px;
   float: left;
@@ -988,11 +988,11 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist .source .content .original-string .comment:hover {
-  background-image: url('../../img/comment-active.png');
+  background-image: url('../img/comment-active.png');
 }
 
 #pontoon #entitylist .source .content .prev {
-  background: transparent url('../../img/prev.png') 0 0 no-repeat;
+  background: transparent url('../img/prev.png') 0 0 no-repeat;
   height: 16px;
   width: 16px;
   float: left;
@@ -1000,11 +1000,11 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist .source .content .prev:hover {
-  background-image: url('../../img/prev-active.png');
+  background-image: url('../img/prev-active.png');
 }
 
 #pontoon #entitylist .source .content .next {
-  background: transparent url('../../img/next.png') 0 0 no-repeat;
+  background: transparent url('../img/next.png') 0 0 no-repeat;
   height: 16px;
   width: 16px;
   float: left;
@@ -1012,7 +1012,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist .source .content .next:hover {
-  background-image: url('../../img/next-active.png');
+  background-image: url('../img/next-active.png');
 }
 
 #pontoon #entitylist .source .content .other-locales .select {
@@ -1045,7 +1045,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist .source .content .loader {
-  background: transparent url('../../img/loader.gif') 0 0 no-repeat;
+  background: transparent url('../img/loader.gif') 0 0 no-repeat;
   height: 25px;
   padding: 10px 0 0 30px;
 }
@@ -1101,48 +1101,48 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist .extra .original-string {
-  background-image: url('../../img/original-string.png');
+  background-image: url('../img/original-string.png');
 }
 
 #pontoon #entitylist .extra .original-string.active,
 #pontoon #entitylist .extra .original-string:hover {
-  background-image: url('../../img/original-string-active.png');
+  background-image: url('../img/original-string-active.png');
 }
 
 #pontoon #entitylist .extra .other-users {
-  background-image: url('../../img/other-users.png');
+  background-image: url('../img/other-users.png');
 }
 
 #pontoon #entitylist .extra .other-users.active,
 #pontoon #entitylist .extra .other-users:hover {
-  background-image: url('../../img/other-users-active.png');
+  background-image: url('../img/other-users-active.png');
 }
 
 #pontoon #entitylist .extra .other-locales {
-  background-image: url('../../img/other-locales.png');
+  background-image: url('../img/other-locales.png');
 }
 
 #pontoon #entitylist .extra .other-locales.active,
 #pontoon #entitylist .extra .other-locales:hover {
-  background-image: url('../../img/other-locales-active.png');
+  background-image: url('../img/other-locales-active.png');
 }
 
 #pontoon #entitylist .extra .translation-memory {
-  background-image: url('../../img/translation-memory.png');
+  background-image: url('../img/translation-memory.png');
 }
 
 #pontoon #entitylist .extra .translation-memory.active,
 #pontoon #entitylist .extra .translation-memory:hover {
-  background-image: url('../../img/translation-memory-active.png');
+  background-image: url('../img/translation-memory-active.png');
 }
 
 #pontoon #entitylist .extra .machine-translation {
-  background-image: url('../../img/machine-translation.png');
+  background-image: url('../img/machine-translation.png');
 }
 
 #pontoon #entitylist .extra .machine-translation.active,
 #pontoon #entitylist .extra .machine-translation:hover {
-  background-image: url('../../img/machine-translation-active.png');
+  background-image: url('../img/machine-translation-active.png');
 }
 
 #pontoon #entitylist .toolbar {
@@ -1180,29 +1180,29 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist .toolbar a.copy {
-  background-image: url('../../img/copy.png');
+  background-image: url('../img/copy.png');
   margin-top: 39px;
 }
 
 #pontoon #entitylist .toolbar a.copy:hover,
 #pontoon #entitylist .toolbar a.copy:active {
-  background-image: url('../../img/copy-active.png');
+  background-image: url('../img/copy-active.png');
 }
 
 #pontoon #entitylist .toolbar a.save {
-  background-image: url('../../img/save.png');
+  background-image: url('../img/save.png');
 }
 
 #pontoon #entitylist .toolbar a.save:hover,
 #pontoon #entitylist .toolbar a.save:active {
-  background-image: url('../../img/save-active.png');
+  background-image: url('../img/save-active.png');
 }
 
 #pontoon #entitylist .toolbar a.cancel {
-  background-image: url('../../img/cancel.png');
+  background-image: url('../img/cancel.png');
 }
 
 #pontoon #entitylist .toolbar a.cancel:hover,
 #pontoon #entitylist .toolbar a.cancel:active {
-  background-image: url('../../img/cancel-active.png');
+  background-image: url('../img/cancel-active.png');
 }

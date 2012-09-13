@@ -16,11 +16,6 @@
     // Empty iframe if cached
     $('#source').removeAttr("src");
 
-    // Set include script URL
-    $("#install code").html('&lt;script src="' + base + 'static/pontoon.js"&gt;&lt;/script&gt;');
-
-
-
 
 
     /*** HOME ***/

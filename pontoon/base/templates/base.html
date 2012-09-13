@@ -13,8 +13,8 @@
 
     {% block site_css %}
       {% compress css %}
-      <link rel="stylesheet" href="{{ static('css/app/style.css') }}">
-      <link rel="stylesheet" href="{{ static('css/app/main.css') }}">
+      <link rel="stylesheet" href="{{ static('css/style.css') }}">
+      <link rel="stylesheet" href="{{ static('css/main.css') }}">
       {% endcompress %}
     {% endblock %}
   </head>
@@ -29,8 +29,8 @@
       <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ static('js/jquery-1.7.2.min.js') }}"%3E%3C/script%3E'))</script>      
 
       {% compress js %}
-      <script src="{{ static('js/app/script.js') }}"></script>
-      <script src="{{ static('js/app/main.js') }}"></script>
+      <script src="{{ static('js/script.js') }}"></script>
+      <script src="{{ static('js/main.js') }}"></script>
       {% endcompress %}
 
       {% block extend_js %}

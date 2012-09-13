@@ -504,7 +504,7 @@
       // Inject toolbar stylesheet
       $('<link>', {
         rel: 'stylesheet',
-        href: Pontoon.app.path + 'static/css/project/pontoon.css'
+        href: Pontoon.app.path + 'static/css/pontoon.css'
       }).appendTo('head');
 
       // Disable links
