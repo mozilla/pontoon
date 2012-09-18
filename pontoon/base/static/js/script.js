@@ -278,6 +278,16 @@
         count++;
         $('#id_subpage_set-TOTAL_FORMS').val(count);
       });
+
+      // Delete project
+      $('.delete-project').live('click.pontoon', function (e) {
+        e.preventDefault();
+        if ($(this).is('.clicked')) {
+          window.location = '/admin/delete/' + $('input[name=pk]').val();
+        } else {
+          $(this).addClass('clicked').html('Are you sure?');
+        }
+      });
     }
   });
 

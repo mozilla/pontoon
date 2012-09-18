@@ -149,6 +149,7 @@
     </div>
 
     <div class="controls clearfix">
+        {% if pk %}<button class="button delete-project">Delete project</button>{% endif %}
         <button class="button">Save project</button>
         <a href="{{ url('pontoon.admin') }}" class="cancel">Cancel</a>
     </div>

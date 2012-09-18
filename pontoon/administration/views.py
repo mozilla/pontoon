@@ -8,9 +8,10 @@ import pysvn
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
 from django.forms.models import inlineformset_factory
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm
@@ -38,9 +39,9 @@ def admin(request, template=None):
     return render(request, template, data)
 
 @mobile_template('{mobile/}admin_project.html')
-def admin_project(request, name=None, template=None):
-    """Admin interface: project."""
-    log.debug("Admin interface: project.")
+def manage_project(request, name=None, template=None):
+    """Admin interface: manage project."""
+    log.debug("Admin interface: manage project.")
 
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
         raise Http404
@@ -110,6 +111,13 @@ def admin_project(request, name=None, template=None):
     }
 
     return render(request, template, data)
+
+def delete_project(request, pk, template=None):
+    """Admin interface: delete project."""
+    log.debug("Admin interface: delete project.")
+
+    Project.objects.get(pk=pk).delete()
+    return HttpResponseRedirect(reverse('pontoon.admin'))
 
 def update_from_svn(request, template=None):
     """Update all project locales from SVN repository."""
