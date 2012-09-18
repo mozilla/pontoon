@@ -202,7 +202,7 @@
         e.preventDefault();
         var ls = $(this).parents('.locale.select'),
             target = ls.siblings('.locale.select').find('ul'),
-            items = ls.find('li').remove();
+            items = ls.find('li:visible:not(".no-match")').remove();
         target.prepend(items);
       });
 
