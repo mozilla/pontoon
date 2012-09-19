@@ -645,7 +645,7 @@ var Pontoon = (function () {
       $('.notification').html(text).addClass(type).show();
       setTimeout(function() {
         $('.notification').fadeOut(function() {
-          $(this).removeClass(type).empty();
+          $(this).attr('class', 'notification').empty();
         });
       }, 2000);
     },
