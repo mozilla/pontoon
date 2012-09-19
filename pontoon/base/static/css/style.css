@@ -275,7 +275,11 @@ body.admin-form #intro {
   background: #444444;
   color: #AAAAAA;
   border: 1px solid #000000;
-  padding: 5px 10px;
+  padding: 6px 10px 4px;
+
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
 
   box-shadow: 0 1px #333333, 1px 2px 2px #333333 inset;
   -moz-box-shadow: 0 1px #333333, 1px 2px 2px #333333 inset;
