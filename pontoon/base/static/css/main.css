@@ -681,6 +681,10 @@ body, select, input, textarea, button {
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
+
+  box-shadow: 0 0 5px #000000;
+  -moz-box-shadow: 0 0 5px #000000;
+  -webkit-box-shadow: 0 0 5px #000000;
 }
 
 #pontoon #main .notification.error {
