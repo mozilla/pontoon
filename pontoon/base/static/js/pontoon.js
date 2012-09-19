@@ -469,6 +469,7 @@
             entity.translation = '';
             sendData();
             postMessage("DELETE", entity.id);
+            $('.editableToolbar > .cancel').click();
           } else if (message.type === "CANCEL") {
             $('.editableToolbar > .cancel').click();
           } else if (message.type === "MODE") {
