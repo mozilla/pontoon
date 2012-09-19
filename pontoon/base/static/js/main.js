@@ -89,7 +89,7 @@ var Pontoon = (function () {
         download(params);
 
       } else if (type === "transifex") {
-        self.startLoader('Saving...');
+        self.startLoader();
 
         params.strings = [];
         $("#entitylist .translated").each(function() {
@@ -136,7 +136,7 @@ var Pontoon = (function () {
         });
 
       } else if (type === "svn") {
-        self.startLoader('Comitting...');
+        self.startLoader();
 
         params.content = JSON.stringify(getPO());
         params.url = self.project.url;
@@ -600,7 +600,7 @@ var Pontoon = (function () {
     saveToServer: function (entity) {
       var self = this;
       if (self.user.email && self.project.hooks) {
-        self.startLoader('');
+        self.startLoader();
         $.ajax({
           url: 'save/',
           data: {
@@ -626,27 +626,26 @@ var Pontoon = (function () {
 
 
     /**
-     * Display loader text to provide feedback about the background process
-     * 
-     * text Loader text (e.g. Loading...)
+     * Display loader to provide feedback about the background process
      */
-    startLoader: function (text) {
-      $('#loading').empty().html(text).removeClass().addClass('loader').show();
+    startLoader: function () {
+      $('#loading').removeClass().addClass('loader').show();
     },
 
 
 
     /**
-     * Remove loader text
+     * Remove loader
      * 
      * text End of operation text (e.g. Done!)
      * type [error]
      */
     endLoader: function (text, type) {
-      $('#loading').html(text).removeClass('loader').addClass(type);
+      $('#loading').removeClass('loader');
+      $('.notification').html(text).addClass(type).show();
       setTimeout(function() {
-        $('#loading').fadeOut(function() {
-          $(this).empty();
+        $('.notification').fadeOut(function() {
+          $(this).removeClass(type).empty();
         });
       }, 2000);
     },

@@ -657,20 +657,43 @@ body, select, input, textarea, button {
   float: left;
 }
 
-#pontoon #loading {
-  display: none;
-  color: #AEEE00;
+#pontoon #main #loading {
   float: left;
-  height: 12px;
-  font-weight: 100;
-  padding: 6px 0 5px 0;
+  height: 26px;
   margin-right: 5px;
-  text-transform: uppercase;
-  width: auto;
-  visibility: visible;
 }
 
-#pontoon #loading.error {
+#pontoon #main .notification {
+  border: 1px solid #000000;
+  bottom: 60px;
+  color: #AEEE00;
+  cursor: pointer;
+  display: none;
+  font-weight: 100;
+  padding: 10px;
+  position: absolute;
+  right: 30px;
+  text-transform: uppercase;
+  visibility: visible;
+  width: auto;
+
+  box-shadow: 0 0 3px #000000, 0 2px 1px -1px #666666 inset;
+  -moz-box-shadow: 0 0 3px #000000, 0 2px 1px -1px #666666 inset;
+  -webkit-box-shadow: 0 0 3px #000000, 0 2px 1px -1px #666666 inset;
+
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+
+  background-color: #444444;
+  background-image: -moz-linear-gradient(center top, #444444, #111111); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #444444),color-stop(1, #111111)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#444444, #111111); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #444444, #111111);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#444444', EndColorStr='#111111'); /* IE6–IE9 */
+}
+
+#pontoon #main .notification.error {
   color: #F00038;
 }
 
