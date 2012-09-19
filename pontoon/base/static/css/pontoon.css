@@ -55,15 +55,15 @@
 }
 
 .editableToolbar .edit {    
-  background-image: url('../../img/edit-active.png');
+  background-image: url('../img/edit-active.png');
 }
 
 .editableToolbar .save {
-  background-image: url('../../img/save-active.png');
+  background-image: url('../img/save-active.png');
   display: none;
 }
 
 .editableToolbar .cancel {
-  background-image: url('../../img/cancel-active.png');
+  background-image: url('../img/cancel-active.png');
   display: none;
 }
