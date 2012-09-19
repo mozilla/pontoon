@@ -342,6 +342,7 @@ body, select, input, textarea, button {
 
 #pontoon > #main > header > .container {
   display: none;
+  min-width: 800px;
 }
 
 #pontoon > #main > header #drag {
