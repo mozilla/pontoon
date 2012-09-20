@@ -119,6 +119,7 @@ var Pontoon = (function () {
           },
           success: function(data) {
             if (data === "authenticate") {
+              self.endLoader();
               $("#transifex").show();
             } else if (data === "200") {
               self.endLoader('Done!');
@@ -157,6 +158,7 @@ var Pontoon = (function () {
           },
           success: function(data) {
             if (data === "authenticate") {
+              self.endLoader();
               $("#svn").show();
             } else if (data === "200") {
               self.endLoader('Done!');
