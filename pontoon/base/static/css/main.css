@@ -464,6 +464,7 @@ body, select, input, textarea, button {
 #pontoon .project .selector {
   float: right;
   margin-left: -1px;
+  width: 7px;
 
   border-radius: 0 3px 3px 0;
   -moz-border-radius: 0 3px 3px 0;
