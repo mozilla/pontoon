@@ -660,24 +660,22 @@ body.admin-form #intro {
   -webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
 }
 
-#pontoon #intro .select.opened > .button {
-  border-color: #000000;
-
-  background-color: #444444;
-  background-image: -moz-linear-gradient(top, #555555, #333333); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #555555),color-stop(1, #333333)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#555555, #333333); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #555555, #333333);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#555555', EndColorStr='#333333'); /* IE6–IE9 */
-
-  box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
-  -moz-box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
-  -webkit-box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
+#pontoon #intro .select.opened > .confirm {
+  border-bottom-left-radius: 0;
+  -moz-border-radius-bottomleft: 0;
+  -webkit-border-bottom-left-radius: 0;
+}
+ 
+#pontoon #intro .select.opened > .selector {
+  border-bottom-right-radius: 0;
+  -moz-border-radius-bottomright: 0;
+  -webkit-border-bottom-right-radius: 0;
 }
  
 #pontoon #intro .select .button {
   height: 21px;
   padding: 8px 5px 2px;
+  width: 9px;
 }
 
 #pontoon #intro .select .confirm {
