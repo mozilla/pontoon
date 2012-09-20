@@ -358,7 +358,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon > #main > header .loader {
-  background: transparent url('../img/loader-light.gif') right 4px no-repeat;
+  background: transparent url('../img/loader-light.gif') right 5px no-repeat;
   padding-right: 20px;
 }
 
