@@ -192,7 +192,7 @@ body, select, input, textarea, button {
 #pontoon .select .popup {
   display: none;
   background: #333333;
-  bottom: 30px;
+  bottom: 31px;
   color: #AAAAAA;
   list-style: none;
   padding: 0;
@@ -401,7 +401,6 @@ body, select, input, textarea, button {
 
 #pontoon .project.select .menu {
   width: 510px;
-  bottom: 31px;
 }
 
 #pontoon .project.select .menu ul {
