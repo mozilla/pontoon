@@ -119,7 +119,7 @@
               bHeight: below.height(),
               offTop: e.pageY,
               min: 0,
-              max: $(document).height()
+              max: $(document).height() - $("#main header").outerHeight()
             };
 
         // iframe fix: Prevent iframes from capturing the mousemove events during a drag
