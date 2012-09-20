@@ -514,11 +514,16 @@ body, select, input, textarea, button {
 }
 
 #pontoon .locale .menu .search {
-  background: url("../img/search.png") no-repeat 145px center #888888;
+  background: url("../img/search.png") no-repeat 6px center #888888;
   float: none;
-  width: 138px;
-  padding-right: 24px;
+  width: 130px;
+  padding-left: 25px;
+  padding-right: 11px;
   margin: 9px 12px 6px;
+
+  border-radius: 13px 13px 13px 13px;
+  -moz-border-radius: 13px 13px 13px 13px;
+  -webkit-border-radius: 13px 13px 13px 13px
 
   box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
   -moz-box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
@@ -1008,6 +1013,10 @@ body, select, input, textarea, button {
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
+}
+
+#pontoon #entitylist .source .content .other-locales .menu ul {
+  margin-bottom: 6px;
 }
 
 #pontoon #entitylist .source .content .loader {

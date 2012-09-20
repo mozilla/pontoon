@@ -469,8 +469,11 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .locale.select .menu .search {
-  background-position: 249px center;
   width: 242px;
+
+  border-radius: 16px 16px 16px 16px;
+  -moz-border-radius: 16px 16px 16px 16px;
+  -webkit-border-radius: 16px 16px 16px 16px
 }
 
 #pontoon.admin-form #intro .locale.select .menu ul {
@@ -699,9 +702,12 @@ body.admin-form #intro {
 }
 
 #pontoon #intro .select .menu .search {
-  background-position: 164px center;
   width: 157px;
   margin: 6px 12px;
+
+  border-radius: 14px 14px 14px 14px;
+  -moz-border-radius: 14px 14px 14px 14px;
+  -webkit-border-radius: 14px 14px 14px 14px
 }
 
 #pontoon #intro .select .menu ul {
