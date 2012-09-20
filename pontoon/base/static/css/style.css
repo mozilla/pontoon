@@ -625,16 +625,12 @@ body.admin-form #intro {
 }
 
 #pontoon #intro .project.select input[type=text].url {
-  padding: 2px 30px 2px 5px;
+  padding: 2px 5px;
   height: 27px;
   margin-left: 0;
-  width: 475px;
+  width: 480px;
   font-size: 20px;
   text-align: left;
-
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
 }
 
 #pontoon #intro .project.select input[type=text].url:focus {
@@ -647,27 +643,9 @@ body.admin-form #intro {
 }
 
 #pontoon #intro .project.select.opened input[type=text].url {
-  border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
-}
-
-#pontoon #intro .project.select .button,
-#pontoon #intro .project.select.opened .button {
-  height: 18px;
-  top: 6px;
-  right: 6px;
-  padding: 1px 5px 0;
-
-  box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
-  -moz-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
-  -webkit-box-shadow: 0 1px #666666, 0 2px 1px -1px #666666 inset;
-}
-
-#pontoon #intro .project.select .button:active {
-  box-shadow: 0 1px #666666, 0 0 5px #000000 inset;
-  -moz-box-shadow: 0 1px #666666, 0 0 5px #000000 inset;
-  -webkit-box-shadow: 0 1px #666666, 0 0 5px #000000 inset;
+  border-radius: 3px 0 0 0;
+  -moz-border-radius: 3px 0 0 0;
+  -webkit-border-radius: 3px 0 0 0;
 }
 
 #pontoon #intro .project.select .menu {
