@@ -634,7 +634,7 @@ body, select, input, textarea, button {
 
 #pontoon #main .notification {
   background: rgba(0, 0, 0, 0.8);
-  bottom: 60px;
+  bottom: 50px;
   color: #AEEE00;
   cursor: pointer;
   display: none;

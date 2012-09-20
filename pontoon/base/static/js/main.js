@@ -119,7 +119,6 @@ var Pontoon = (function () {
           },
           success: function(data) {
             if (data === "authenticate") {
-              self.endLoader('Please sign in to Transifex.', 'error');
               $("#transifex").show();
             } else if (data === "200") {
               self.endLoader('Done!');
@@ -158,7 +157,6 @@ var Pontoon = (function () {
           },
           success: function(data) {
             if (data === "authenticate") {
-              self.endLoader('Please sign in to SVN.', 'error');
               $("#svn").show();
             } else if (data === "200") {
               self.endLoader('Done!');
@@ -642,7 +640,9 @@ var Pontoon = (function () {
      */
     endLoader: function (text, type) {
       $('#loading').removeClass('loader');
-      $('.notification').html(text).addClass(type).show();
+      if (text) {
+        $('.notification').html(text).addClass(type).show();
+      }
       setTimeout(function() {
         $('.notification').fadeOut(function() {
           $(this).attr('class', 'notification').empty();
