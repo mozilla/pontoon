@@ -120,12 +120,7 @@ body, select, input, textarea, button {
 #pontoon input[type=password]:focus,
 #pontoon textarea:focus {
   background: #FFFFFF;
-  border-color: #FFFFFF;
   outline: none; /* Remove WebKit Glow */
-
-  box-shadow: 0 0 2px 1px #AEEE00;
-  -moz-box-shadow: 0 0 2px 1px #AEEE00;
-  -webkit-box-shadow: 0 0 2px 1px #AEEE00;
 
   -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
   -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
@@ -532,11 +527,6 @@ body, select, input, textarea, button {
 
 #pontoon .locale .menu .search:focus {
   background-color: #FFFFFF;
-  outline: none; /* Remove WebKit Glow */
-
-  box-shadow: 0 0 2px 1px #AEEE00;
-  -moz-box-shadow: 0 0 2px 1px #AEEE00;
-  -webkit-box-shadow: 0 0 2px 1px #AEEE00;
 }
 
 #pontoon .locale .menu li {
@@ -717,15 +707,6 @@ body, select, input, textarea, button {
 
 #pontoon .popup input[type=password] {
     width: 140px;
-}
-
-#pontoon .popup input[type=text]:focus,
-#pontoon .popup input[type=password]:focus {
-  outline: none; /* Remove WebKit Glow */
-  
-  box-shadow: 0 0 2px 1px #AEEE00;
-  -moz-box-shadow: 0 0 2px 1px #AEEE00;
-  -webkit-box-shadow: 0 0 2px 1px #AEEE00;
 }
 
 #pontoon .popup .button {

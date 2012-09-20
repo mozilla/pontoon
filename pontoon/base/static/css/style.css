@@ -635,11 +635,6 @@ body.admin-form #intro {
 
 #pontoon #intro .project.select input[type=text].url:focus {
   text-align: left;
-  outline: none; /* Remove WebKit Glow */
-
-  box-shadow: 0 0 5px 1px #AEEE00;
-  -moz-box-shadow: 0 0 5px 1px #AEEE00;
-  -webkit-box-shadow: 0 0 5px 1px #AEEE00;
 }
 
 #pontoon #intro .project.select.opened input[type=text].url {
