@@ -469,6 +469,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .locale.select .menu .search {
+  background-position: 7px 8px;
   width: 242px;
 
   border-radius: 16px 16px 16px 16px;
@@ -700,8 +701,9 @@ body.admin-form #intro {
 }
 
 #pontoon #intro .select .menu .search {
-  width: 157px;
+  background-position: 7px 6px;
   margin: 6px 12px;
+  width: 157px;
 
   border-radius: 14px 14px 14px 14px;
   -moz-border-radius: 14px 14px 14px 14px;
