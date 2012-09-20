@@ -172,12 +172,12 @@ body, select, input, textarea, button {
 #pontoon .button:active,
 #pontoon .button.active,
 #pontoon .select.opened > .button.selector {
-  background-color: #333333;
-  background-image: -moz-linear-gradient(top, #444444, #222222); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #444444),color-stop(1, #222222)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#444444, #222222); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #444444, #222222);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#444444', EndColorStr='#222222'); /* IE6–IE9 */
+  background-color: #222222;
+  background-image: -moz-linear-gradient(top, #333333, #111111); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #333333),color-stop(1, #111111)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#333333, #111111); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #333333, #111111);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#111111'); /* IE6–IE9 */
 
   box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
   -moz-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
@@ -545,20 +545,20 @@ body, select, input, textarea, button {
   width: 100px;
   text-align: center;
 
-  box-shadow: 0 1px #333333;
-  -moz-box-shadow: 0 1px #333333;
-  -webkit-box-shadow: 0 1px #333333;
+  box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
+  -moz-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
+  -webkit-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
 
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
 
   background-color: #222222;
-  background-image: -moz-linear-gradient(center top, #333333, #000000); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #333333),color-stop(1, #000000)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#333333, #000000); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #333333, #000000);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#000000'); /* IE6–IE9 */
+  background-image: -moz-linear-gradient(center top, #333333, #111111); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #333333),color-stop(1, #111111)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#333333, #111111); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #333333, #111111);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#111111'); /* IE6–IE9 */
 }
 
 #pontoon #progress span {
