@@ -60,6 +60,7 @@ class Subpage(models.Model):
 
 class Entity(models.Model):
     project = models.ForeignKey(Project)
+    key = models.TextField(blank=True) # Needed for matching .properties files
     string = models.TextField()
     comment = models.TextField()
 

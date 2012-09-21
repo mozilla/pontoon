@@ -1,6 +1,7 @@
 
 import base64
 import commonware
+import ConfigParser
 import datetime
 import json
 import polib
@@ -22,6 +23,17 @@ from mobility.decorators import mobile_template
 
 log = commonware.log.getLogger('playdoh')
 
+
+class FakeSectionHead(object):
+    """Fake Section Head for parsing properties files."""
+    def __init__(self, fp):
+        self.fp = fp
+        self.sechead = '[asection]\n'
+    def readline(self):
+        if self.sechead:
+            try: return self.sechead
+            finally: self.sechead = None
+        else: return self.fp.readline()
 
 @mobile_template('{mobile/}admin.html')
 def admin(request, template=None):
@@ -167,15 +179,45 @@ def update_from_svn(request, template=None):
         log.debug(str(e))
         return HttpResponse("error")
 
-    for l in p.locales.all():
-        """Save or update SVN data to DB."""
-        po = polib.pofile(settings.MEDIA_ROOT + '/svn/' + p.name + '/locale/' + l.code + '/LC_MESSAGES/messages.po')
-        entities = [e for e in po if not e.obsolete]
-        for entity in entities:
-            _updateDB(project=p, locale=l, original=entity.msgid,
-                comment=entity.comment, translation=entity.msgstr,
-                author=po.metadata['Last-Translator'])
-        log.debug("SVN data for " + l.name + " saved to DB.")
+    if p.url.find('gaiamobile.org') == -1:
+        for l in p.locales.all():
+            """Save or update SVN data to DB."""
+            po = polib.pofile(settings.MEDIA_ROOT + '/svn/' + p.name + '/locale/' + l.code + '/LC_MESSAGES/messages.po')
+            entities = [e for e in po if not e.obsolete]
+            for entity in entities:
+                _updateDB(project=p, locale=l, original=entity.msgid,
+                    comment=entity.comment, translation=entity.msgstr,
+                    author=po.metadata['Last-Translator'])
+            log.debug("SVN data for " + l.name + " saved to DB.")
+    else:
+        cp = ConfigParser.ConfigParser()
+        cp.readfp(FakeSectionHead(open(settings.MEDIA_ROOT + '/svn/' +
+            p.name + '/' + p.name.split("_")[1] + '.en-US.properties')))
+
+        for k, v in dict(cp.items('asection')).iteritems():
+            try: # Update entity
+                e = Entity.objects.get(project=p, key=k, string=v)
+            except Entity.DoesNotExist: # New entity
+                e = Entity(project=p, key=k, string=v)
+            e.save()
+
+        for l in p.locales.all():
+            cp.readfp(FakeSectionHead(open(settings.MEDIA_ROOT + '/svn/' +
+                p.name + '/' + p.name.split("_")[1] + '.' + l.code + '.properties')))
+
+            for k, v in dict(cp.items('asection')).iteritems():
+                if len(v) > 0:
+                    e = Entity.objects.get(project=p, key=k)
+                    try: # Update translation
+                        t = Translation.objects.get(entity=e, locale=l)
+                        t.string = v
+                        t.date = datetime.datetime.now()
+                    except Translation.DoesNotExist: # New translation
+                        t = Translation(entity=e, locale=l,
+                            string=v, date=datetime.datetime.now())
+                    t.save()
+
+            log.debug("SVN data for " + l.name + " saved to DB.")
 
     return HttpResponse("200")
 
