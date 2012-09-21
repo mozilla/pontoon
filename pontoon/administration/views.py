@@ -37,7 +37,7 @@ def admin(request, template=None):
 
     return render(request, template, data)
 
-@mobile_template('{mobile/}admin_project.html')
+@mobile_template('{mobile/}project.html')
 def manage_project(request, name=None, template=None):
     """Admin interface: manage project."""
     log.debug("Admin interface: manage project.")
