@@ -1,7 +1,7 @@
-from django import forms
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
+from django.forms import ModelForm
 
 class UserProfile(models.Model):
     # This field is required.
@@ -76,12 +76,9 @@ class Translation(models.Model):
     def __unicode__(self):
         return self.string
 
-class ProjectForm(forms.ModelForm):
-    name = forms.RegexField(regex=r'^\w+$', error_message = "This value must contain only letters, numbers and underscores.")
-
+class ProjectForm(ModelForm):
     class Meta:
         model = Project
-        exclude = ('name',)
 
     def clean(self):
         cleaned_data = super(ProjectForm, self).clean()
