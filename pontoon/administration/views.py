@@ -33,7 +33,6 @@ def admin(request, template=None):
 
     data = {
         'projects': Project.objects.all(),
-        'form': ProjectForm()
     }
 
     return render(request, template, data)
