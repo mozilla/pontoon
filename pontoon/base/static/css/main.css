@@ -486,7 +486,7 @@ body, select, input, textarea, button {
 #pontoon .locale .menu .search {
   background: url("../img/search.png") no-repeat 6px center #888888;
   float: none;
-  width: 130px;
+  width: 128px;
   padding-left: 25px;
   padding-right: 11px;
   margin: 9px 12px 6px;
@@ -902,6 +902,7 @@ body, select, input, textarea, button {
   font-size: 14px;
   text-shadow: 0 1px 0 #FFFFFF;
   float: left;
+  width: auto;
 }
 
 #pontoon #entitylist .source .content p {
