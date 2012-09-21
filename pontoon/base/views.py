@@ -126,10 +126,7 @@ def translate_project(request, locale, project, page=None, template=None):
 
     # Validate project
     try:
-        if project != 'gaiamobile':
-            p = Project.objects.get(name=project, pk__in=Entity.objects.values('project'))
-        else:
-            p = Project.objects.get(name=project)
+        p = Project.objects.get(name=project, pk__in=Entity.objects.values('project'))
     except Project.DoesNotExist:
         return home(request, "Oops, project could not be found.", locale)
 
