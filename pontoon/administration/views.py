@@ -118,13 +118,13 @@ def delete_project(request, pk, template=None):
     Project.objects.get(pk=pk).delete()
     return HttpResponseRedirect(reverse('pontoon.admin'))
 
-def _updateDB(project, locale, entity, comment, translation, author):
+def _updateDB(project, locale, original, comment, translation, author):
     """Admin interface: save or update data in DB."""
 
     try: # Update entity
-        e = Entity.objects.get(project=project, string=entity)
+        e = Entity.objects.get(project=project, string=original)
     except Entity.DoesNotExist: # New entity
-        e = Entity(project=project, string=entity)
+        e = Entity(project=project, string=original)
 
     if len(comment) > 0:
         e.comment = comment
@@ -172,7 +172,7 @@ def update_from_svn(request, template=None):
         po = polib.pofile(settings.MEDIA_ROOT + '/svn/' + p.name + '/locale/' + l.code + '/LC_MESSAGES/messages.po')
         entities = [e for e in po if not e.obsolete]
         for entity in entities:
-            _updateDB(project=p, locale=l, entity=entity.msgid,
+            _updateDB(project=p, locale=l, original=entity.msgid,
                 comment=entity.comment, translation=entity.msgstr,
                 author=po.metadata['Last-Translator'])
         log.debug("SVN data for " + l.name + " saved to DB.")
@@ -215,7 +215,7 @@ def update_from_transifex(request, template=None):
         if hasattr(response, 'status_code') and response.status_code == 200:
             entities = json.loads(response.content)
             for entity in entities:
-                _updateDB(project=p, locale=l, entity=entity["key"],
+                _updateDB(project=p, locale=l, original=entity["key"],
                     comment=entity["comment"], translation=entity["translation"],
                     author=entity["user"])
             log.debug("Transifex data for " + l.name + " saved to DB.")
