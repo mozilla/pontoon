@@ -20,7 +20,7 @@
 
     /*** HOME ***/
     if ($('body').is('.home')) {
-      var locale = $('#server').data('locale') || $('#server').data('accept-language');
+      var locale = ($('#server').data('locale') || $('#server').data('accept-language')).toLowerCase();
       if ($('.locale .menu .language.' + locale).length === 0) { // Locale not on the list
         locale = $('.locale .menu .language').attr('class').split(' ')[1];
       }
