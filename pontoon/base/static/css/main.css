@@ -484,7 +484,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon .locale .menu .search {
-  background: url("../img/search.png") no-repeat 6px center #888888;
+  background: url("../img/search.png") no-repeat 6px 4px #888888;
   float: none;
   width: 128px;
   padding-left: 25px;
