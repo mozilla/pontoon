@@ -202,6 +202,7 @@ def update_from_svn(request, template=None):
             e.save()
 
         for l in p.locales.all():
+            cp = ConfigParser.ConfigParser()
             cp.readfp(FakeSectionHead(open(settings.MEDIA_ROOT + '/svn/' +
                 p.name + '/' + p.name.split("_")[1] + '.' + l.code + '.properties')))
 

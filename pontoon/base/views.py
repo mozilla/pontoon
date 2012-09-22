@@ -340,8 +340,9 @@ def load_entities(request, template=None):
                 translation = ""
 
             obj = {
-                "key": e.string,
+                "original": e.string,
                 "comment": e.comment,
+                "key": e.key,
                 "translation": translation
             }
             data.append(obj)

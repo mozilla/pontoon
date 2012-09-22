@@ -155,22 +155,55 @@
       /**
        * Extract entities from Gaia apps
        */
-      function gaiamobileEntities() {
+      function gaiamobileEntities(data) {
         var counter = 0;
+        Pontoon.project.hooks = true;
 
         $('[data-l10n-id]').each(function () {
-          var entity = {
-            id: counter,
-            original: ($(this).attr('placeholder')) ? $(this).attr('placeholder') : $(this).html()
-          };
-          counter++;
+          var entity = {},
+              parent = $(this);
 
-          // Head entities and input box placeholders cannot be edited in-place
-          if ($(this).parents('head').length === 0 && !$(this).is('input')) {
-            entity.node = $(this);
-            makeEditable(entity);
+          // Match strings in the document with DB data
+          $(data).each(function() {
+            if (this.key === parent.attr('data-l10n-id')) {
+              entity.id = counter;
+              counter++;
+              entity.original = this.original;
+              var translation = this.translation;
+              if (translation.length > 0) {
+                entity.translation = translation;
+                if (!parent.attr('placeholder')) {
+                  parent.html(translation);
+                } else {
+                  parent.attr('placeholder', translation);
+                }
+              }
+              this.pontoon = true;
+
+              // Head entities and input box placeholders cannot be edited in-place
+              if (parent.parents('head').length === 0 && !parent.is('input')) {
+                entity.node = parent;
+                makeEditable(entity);
+              }
+
+              Pontoon.project.entities.push(entity);
+            }
+          });
+        });
+
+        // Prepare unmatched DB entities to be displayed in Advanced mode
+        $(data).each(function() {
+          if(!this.pontoon) {
+            var entity = {};
+            entity.id = counter;
+            counter++;
+            entity.original = this.original;
+            var translation = this.translation;
+            if (translation.length > 0) {
+              entity.translation = translation;
+            }
+            Pontoon.project.entities.push(entity);
           }
-          Pontoon.project.entities.push(entity);
         });
 
         renderHandle();
@@ -270,8 +303,8 @@
             } else if (data === "guess") {
               guessEntities();
               return;
-            } else if (data == "") {
-              gaiamobileEntities();
+            } else if (Pontoon.project.url.indexOf('gaiamobile.org') !== -1) {
+              gaiamobileEntities(data);
               return;
             }
             Pontoon.project.hooks = true;
@@ -284,12 +317,12 @@
                 // Match strings in the document with DB data
                 $(data).each(function() {
                   // Renedered text could be different than source
-                  parent.after('<div id="pontoon-string" style="display: none">' + this.key + '</div>');
+                  parent.after('<div id="pontoon-string" style="display: none">' + this.original + '</div>');
 
                   if ($('#pontoon-string').html() === parent.html()) {
                     entity.id = counter;
                     counter++;
-                    entity.original = this.key;
+                    entity.original = this.original;
                     entity.comment = this.comment;
                     var translation = this.translation;
                     if (translation.length > 0) {
@@ -317,7 +350,7 @@
                 var entity = {};
                 entity.id = counter;
                 counter++;
-                entity.original = this.key;
+                entity.original = this.original;
                 entity.comment = this.comment;
                 var translation = this.translation;
                 if (translation.length > 0) {
