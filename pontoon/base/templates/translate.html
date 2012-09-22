@@ -82,8 +82,10 @@
           <span class="handle">&#9652;</span>
         </div>
         <div class="menu">
+          {% if project.locales.all()|length > 8 %}
           <input type="text" class="search" autocomplete="off">
           <div class="horizontal-separator"></div>
+          {% endif %}
           <ul>
             {% for locale in project.locales.all() %}
             <li><span class="language {{ locale.code|lower }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
