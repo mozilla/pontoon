@@ -1,0 +1,22 @@
+Metadata-Version: 1.0
+Name: silme
+Version: 0.8.1
+Summary: Python localization library 
+Home-page: http://hg.mozilla.org/l10n/silme/
+Author: Zbigniew Braniecki, Adrian Kalla
+Author-email: gandalf@mozilla.com
+License: MPL 1.1/GPL 2.0/LGPL 2.1
+Description: New library for localization written in Python.
+        
+Keywords: localization,l10n,l20n
+Platform: any
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
+Classifier: License :: OSI Approved :: Mozilla Public License 1.1 (MPL 1.1)
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 2.5
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Software Development :: Localization
