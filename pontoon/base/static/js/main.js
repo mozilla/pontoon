@@ -88,6 +88,10 @@ var Pontoon = (function () {
         params.content = JSON.stringify(getPO());
         download(params);
 
+      } else if (type === "properties") {
+        params.content = $('#server').data('id');
+        download(params);
+
       } else if (type === "transifex") {
         self.startLoader();
 

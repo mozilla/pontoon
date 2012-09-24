@@ -9,6 +9,7 @@
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      {% if locale_code %}data-locale="{{ locale_code }}"{% endif %}
      {% if project_url %}data-url="{{ project_url }}"{% endif %}
+     {% if project.id %}data-id="{{ project.id }}"{% endif %}
      {% if mt_apikey %}data-mt-apikey="{{ mt_apikey }}"{% endif %}>
 </div>
 
@@ -131,9 +132,10 @@
             <li class="horizontal-separator"></li>
             <li{% if not project.svn %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
             <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
-            <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download as HTML') }}</a></li>
-            <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download as JSON') }}</a></li>
-            <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download as PO') }}</a></li>
+            <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download .html') }}</a></li>
+            <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download .json') }}</a></li>
+            <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download .po') }}</a></li>
+            <li><a class="properties" href="{{ url('pontoon.download') }}">{{ _('Download .properties') }}</a></li>
           </ul>
           {% if (project.transifex_project and project.transifex_resource) %}
           <aside id="transifex" class="popup">

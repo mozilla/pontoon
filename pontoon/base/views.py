@@ -8,6 +8,7 @@ import pysvn
 import requests
 import traceback
 from hashlib import md5
+import silme.core, silme.format.properties
 
 from django.conf import settings
 from django.contrib import auth
@@ -351,6 +352,48 @@ def load_entities(request, template=None):
     else:
         return HttpResponse(callback + '("error");')
 
+def _generate_dot_properties(pid, locale):
+    """
+    Generate .properties file.
+
+    Args:
+        pid: project ID
+        locale: locale code
+    Returns:
+        A string for generated .properties file.
+    """
+
+    p = Project.objects.get(id=pid)
+    l = Locale.objects.get(code=locale)
+
+    path = settings.MEDIA_ROOT + '/svn/' + p.name + '/' + p.name.split("_")[1] + '.' + l.code + '.properties'
+    f = open(path)
+    content = f.read()
+    l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(content)
+
+    # TODO: loop transations, for each (uncomment and) update entity
+    for line in l10nobject:
+        if isinstance(line, silme.core.entity.Entity):
+            e = Entity.objects.get(project=p, key=line.id)
+            try:
+                t = Translation.objects.get(entity=e, locale=l)
+                line.set_value(t.string)
+            except Translation.DoesNotExist:
+                pass
+        elif isinstance(line, silme.core.structure.Comment):
+            # comments
+            # log.debug(line)
+
+    content = silme.format.properties.PropertiesFormatParser.dump_structure(l10nobject)
+    properties = unicode(content).encode('utf-8')
+
+    # TODO: open should be called only once
+    f = open(path, 'w')
+    f.write(properties)
+    f.close()
+
+    return properties
+
 def _generate_po_content(data):
     """
     Generate PO content from data JSON.
@@ -420,12 +463,15 @@ def download(request, template=None):
         raise Http404
 
     response = HttpResponse()
-    if type == 'json':
-        response['Content-Type'] = 'application/json'
-    elif type == 'html':
+    if type == 'html':
         response['Content-Type'] = 'text/html'
+    elif type == 'json':
+        response['Content-Type'] = 'application/json'
     elif type == 'po':
         content = _generate_po_content(content)
+        response['Content-Type'] = 'text/plain'
+    elif type == 'properties':
+        content = _generate_dot_properties(content, locale)
         response['Content-Type'] = 'text/plain'
 
     response.content = content
