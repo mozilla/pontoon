@@ -366,12 +366,11 @@ def _generate_dot_properties(pid, locale):
     p = Project.objects.get(id=pid)
     l = Locale.objects.get(code=locale)
 
-    path = settings.MEDIA_ROOT + '/svn/' + p.name + '/' + p.name.split("_")[1] + '.' + l.code + '.properties'
-    f = open(path)
+    path = settings.MEDIA_ROOT + '/svn/' + p.name + '/' + p.name.split("_")[1] + '.en-US.properties'
+    f = open(path, 'r')
     content = f.read()
     l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(content)
 
-    # TODO: loop transations, for each (uncomment and) update entity
     for line in l10nobject:
         if isinstance(line, silme.core.entity.Entity):
             e = Entity.objects.get(project=p, key=line.id)
@@ -379,15 +378,13 @@ def _generate_dot_properties(pid, locale):
                 t = Translation.objects.get(entity=e, locale=l)
                 line.set_value(t.string)
             except Translation.DoesNotExist:
-                pass
-        elif isinstance(line, silme.core.structure.Comment):
-            # comments
-            # log.debug(line)
+                line.id = '#TODO: ' + line.id
+                line.set_value(line.value)
 
     content = silme.format.properties.PropertiesFormatParser.dump_structure(l10nobject)
     properties = unicode(content).encode('utf-8')
 
-    # TODO: open should be called only once
+    path = settings.MEDIA_ROOT + '/svn/' + p.name + '/' + p.name.split("_")[1] + '.' + l.code + '.properties'
     f = open(path, 'w')
     f.write(properties)
     f.close()
