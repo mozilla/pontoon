@@ -227,18 +227,29 @@ def get_translation(request, template=None):
 
     try:
         original = request.GET['original']
-        url = request.GET['url']
+        pk = request.GET['pk']
         locale = request.GET['locale']
     except MultiValueDictKeyError:
         return HttpResponse("error")
 
     log.debug("Entity: " + original)
-    log.debug("URL: " + url)
+    log.debug("Project ID: " + pk)
     log.debug("Locale: " + locale)
 
-    p = Project.objects.filter(url=url)
-    e = Entity.objects.filter(project=p, string=original)
-    l = Locale.objects.get(code=locale)
+    try:
+        p = Project.objects.get(pk=pk)
+    except Project.DoesNotExist:
+        return HttpResponse("error")
+
+    try:
+        e = Entity.objects.get(project=p, string=original)
+    except Entity.DoesNotExist:
+        return HttpResponse("error")
+
+    try:
+        l = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist:
+        return HttpResponse("error")
 
     try:
         t = Translation.objects.get(entity=e, locale=l)
@@ -259,19 +270,30 @@ def update_translation(request, template=None):
     try:
         original = request.GET['original']
         translation = request.GET['translation']
-        url = request.GET['url']
+        pk = request.GET['pk']
         locale = request.GET['locale']
     except MultiValueDictKeyError:
         return HttpResponse("error")
 
     log.debug("Entity: " + original)
     log.debug("Translation: " + translation)
-    log.debug("URL: " + url)
+    log.debug("Project ID: " + pk)
     log.debug("Locale: " + locale)
 
-    p = Project.objects.filter(url=url)
-    e = Entity.objects.filter(project=p, string=original)
-    l = Locale.objects.get(code=locale)
+    try:
+        p = Project.objects.get(pk=pk)
+    except Project.DoesNotExist:
+        return HttpResponse("error")
+
+    try:
+        e = Entity.objects.get(project=p, string=original)
+    except Entity.DoesNotExist:
+        return HttpResponse("error")
+
+    try:
+        l = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist:
+        return HttpResponse("error")
 
     try:
         """Update existing translation."""
@@ -364,7 +386,7 @@ def _generate_dot_properties(pid, locale):
         A string for generated .properties file.
     """
 
-    p = Project.objects.get(id=pid)
+    p = Project.objects.get(pk=pid)
     l = Locale.objects.get(code=locale)
 
     path = settings.MEDIA_ROOT + '/svn/' + p.name + '/' + p.name.split("_")[1] + '.en-US.properties'

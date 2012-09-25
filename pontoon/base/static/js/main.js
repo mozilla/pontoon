@@ -389,7 +389,7 @@ var Pontoon = (function () {
           url: 'get/',
           data: {
             locale: li.find(".language").attr("class").split(" ")[1],
-            url: self.project.url,
+            pk: $('#server').data('id'),
             original: original
           },
           success: function(data) {
@@ -609,7 +609,7 @@ var Pontoon = (function () {
           url: 'update/',
           data: {
             locale: self.locale.code,
-            url: self.project.url,
+            pk: $('#server').data('id'),
             original: entity.original,
             translation: entity.translation
           },
