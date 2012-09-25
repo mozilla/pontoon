@@ -535,7 +535,7 @@ var Pontoon = (function () {
           if (source !== '') {
             self.common.postMessage("SAVE", source);
           } else {
-            self.common.postMessage("DELETE", entity.original);
+            self.common.postMessage("DELETE");
           }
         // Head entities cannot be edited in-place
         } else if (!entity.body) {

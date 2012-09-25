@@ -63,9 +63,15 @@
           var element = $(this).parent().get(0).target,
               entity = element.entity;
 
-          entity.translation = $($(element).clone()).html();
-          sendData();
-          postMessage("SAVE", entity.id);
+          if (entity.node.html() !== entity.original) {
+            entity.translation = $($(element).clone()).html();
+            sendData();
+            postMessage("SAVE", entity.id);
+          } else {
+            entity.translation = '';
+            sendData();
+            postMessage("DELETE", entity.id);
+          }
         });
 
         // Do not change anything when cancelled
@@ -498,7 +504,7 @@
             $('.editableToolbar > .save').click();
           } else if (message.type === "DELETE") {
             var entity = $('.editableToolbar').get(0).target.entity;
-            entity.node.html(message.value);
+            entity.node.html(entity.original);
             entity.translation = '';
             sendData();
             postMessage("DELETE", entity.id);
