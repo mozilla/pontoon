@@ -60,13 +60,12 @@ def translate_site(request, locale, template=None):
     # Validate URL
     url = request.build_absolute_uri().split('/site/')[1]
     log.debug("URL: " + url)
-    if url.find('://localhost') == -1 and url.find('gaiamobile.org') == -1:
-        validate = URLValidator()
-        try:
-            validate(url)
-        except ValidationError, e:
-            log.debug(e)
-            return home(request, "Oops, this is not a valid URL.", locale, url)
+    validate = URLValidator()
+    try:
+        validate(url)
+    except ValidationError, e:
+        log.debug(e)
+        return home(request, "Oops, this is not a valid URL.", locale, url)
 
     # Validate locale
     log.debug("Locale: " + locale)
