@@ -494,7 +494,7 @@ var Pontoon = (function () {
         } else if (!entity.body) {
           entity.translation = source;
           self.updateEntityUI(entity);
-          self.saveToServer(entity);
+          self.updateOnServer(entity);
         }
       });
 
@@ -542,12 +542,12 @@ var Pontoon = (function () {
           if (source !== '') {
             entity.translation = source;
             self.updateEntityUI(entity);
-            self.saveToServer(entity);
+            self.updateOnServer(entity);
           } else {
             entity.translation = '';
             entity.ui.removeClass('translated');
             self.updateProgress();
-            self.saveToServer(entity);
+            self.updateOnServer(entity);
           }
         }
       });
@@ -597,16 +597,16 @@ var Pontoon = (function () {
 
 
     /**
-     * Save entity translation to server
+     * Update entity translation on server
      * 
      * entity Entity
      */
-    saveToServer: function (entity) {
+    updateOnServer: function (entity) {
       var self = this;
       if (self.user.email && self.project.hooks) {
         self.startLoader();
         $.ajax({
-          url: 'save/',
+          url: 'update/',
           data: {
             locale: self.locale.code,
             url: self.project.url,
@@ -781,12 +781,12 @@ var Pontoon = (function () {
         } else if (message.type === "SAVE") {
           var entity = Pontoon.project.entities[message.value];
           Pontoon.updateEntityUI(entity);
-          Pontoon.saveToServer(entity);
+          Pontoon.updateOnServer(entity);
         } else if (message.type === "DELETE") {
           var entity = Pontoon.project.entities[message.value];
           entity.ui.removeClass('translated');
           Pontoon.updateProgress();
-          Pontoon.saveToServer(entity);
+          Pontoon.updateOnServer(entity);
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }

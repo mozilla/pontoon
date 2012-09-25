@@ -249,9 +249,9 @@ def get_translation(request, template=None):
         return HttpResponse("error")
 
 @login_required(redirect_field_name='', login_url='/404')
-def save_translation(request, template=None):
-    """Save entity translation to the specified project and locale."""
-    log.debug("Save entity translation to the specified project and locale.")
+def update_translation(request, template=None):
+    """Update entity translation for the specified project and locale."""
+    log.debug("Update entity translation for the specified project and locale.")
 
     if not request.is_ajax():
         raise Http404
@@ -276,14 +276,15 @@ def save_translation(request, template=None):
     try:
         """Update existing translation."""
         t = Translation.objects.get(entity=e[0], locale=l)
-        t.string = translation
-        t.save()
 
         if translation != '':
             log.debug("Translation updated.")
+            t.string = translation
+            t.save()
             return HttpResponse("updated")
         else:
             log.debug("Translation deleted.")
+            t.delete()
             return HttpResponse("deleted")
 
     except Translation.DoesNotExist:
