@@ -10,7 +10,7 @@
           url: window.location.href,
           title: "",
           entities: [],
-          hooks: false
+          pk: null
         },
         locale: {
           code: "",
@@ -54,8 +54,7 @@
         sendData();
         postMessage("RENDER", {
           url: Pontoon.project.url,
-          title: Pontoon.project.title,
-          hooks: Pontoon.project.hooks
+          title: Pontoon.project.title
         });
 
         // Update UI and progress when saved
@@ -163,7 +162,6 @@
        */
       function gaiamobileEntities(data) {
         var counter = 0;
-        Pontoon.project.hooks = true;
 
         $('[data-l10n-id]').each(function () {
           var entity = {},
@@ -313,7 +311,6 @@
               gaiamobileEntities(data);
               return;
             }
-            Pontoon.project.hooks = true;
             $('*').contents().each(function () {
               if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
                 var entity = {},
@@ -635,6 +632,7 @@
       if (message.type === "INITIALIZE") {
         Pontoon.locale = message.value.locale; // Set locale
         Pontoon.app.path = message.value.path; // Set domain
+        Pontoon.project.pk = message.value.pk; // Set project
         loadJquery();
         window.removeEventListener("message", initizalize, false);
       }

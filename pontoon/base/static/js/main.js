@@ -89,7 +89,7 @@ var Pontoon = (function () {
         download(params);
 
       } else if (type === "properties") {
-        params.content = $('#server').data('id');
+        params.content = self.project.pk;
         download(params);
 
       } else if (type === "transifex") {
@@ -389,7 +389,7 @@ var Pontoon = (function () {
           url: 'get/',
           data: {
             locale: li.find(".language").attr("class").split(" ")[1],
-            pk: $('#server').data('id'),
+            pk: self.project.pk,
             original: original
           },
           success: function(data) {
@@ -603,13 +603,13 @@ var Pontoon = (function () {
      */
     updateOnServer: function (entity) {
       var self = this;
-      if (self.user.email && self.project.hooks) {
+      if (self.user.email && self.project.pk) {
         self.startLoader();
         $.ajax({
           url: 'update/',
           data: {
             locale: self.locale.code,
-            pk: $('#server').data('id'),
+            pk: self.project.pk,
             original: entity.original,
             translation: entity.translation
           },
@@ -754,7 +754,6 @@ var Pontoon = (function () {
           var value = message.value;
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
-          Pontoon.project.hooks = value.hooks;
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $("#spinner").fadeOut(function() {
@@ -819,7 +818,7 @@ var Pontoon = (function () {
         url: "",
         title: "",
         entities: [],
-        hooks: false
+        pk: $('#server').data('id')
       };
       this.locale = {
         code: locale,
@@ -836,7 +835,8 @@ var Pontoon = (function () {
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
       self.common.postMessage("INITIALIZE", {
         locale: self.locale,
-        path: self.app.path
+        path: self.app.path,
+        pk: self.project.pk
       });
 
       // Wait for project code messages
