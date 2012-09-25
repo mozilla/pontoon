@@ -61,12 +61,12 @@ def translate_site(request, locale, template=None):
     url = request.build_absolute_uri().split('/site/')[1]
     log.debug("URL: " + url)
     if url.find('://localhost') == -1 and url.find('gaiamobile.org') == -1:
-        validate = URLValidator(verify_exists=True)
+        validate = URLValidator()
         try:
             validate(url)
         except ValidationError, e:
             log.debug(e)
-            return home(request, "Oops, website could not be found.", locale, url)
+            return home(request, "Oops, this is not a valid URL.", locale, url)
 
     # Validate locale
     log.debug("Locale: " + locale)
@@ -375,9 +375,9 @@ def load_entities(request, template=None):
     else:
         return HttpResponse(callback + '("error");')
 
-def _generate_dot_properties(pid, locale):
+def _generate_properties_content(pid, locale):
     """
-    Generate .properties file.
+    Generate .properties file content.
 
     Args:
         pid: project ID
@@ -416,7 +416,7 @@ def _generate_dot_properties(pid, locale):
 
 def _generate_po_content(data):
     """
-    Generate PO content from data JSON.
+    Generate .po file content from data JSON.
 
     Args:
         data: A JSON string
@@ -491,7 +491,7 @@ def download(request, template=None):
         content = _generate_po_content(content)
         response['Content-Type'] = 'text/plain'
     elif type == 'properties':
-        content = _generate_dot_properties(content, locale)
+        content = _generate_properties_content(content, locale)
         response['Content-Type'] = 'text/plain'
 
     response.content = content
