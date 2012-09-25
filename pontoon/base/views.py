@@ -297,7 +297,7 @@ def update_translation(request, template=None):
 
     try:
         """Update existing translation."""
-        t = Translation.objects.get(entity=e[0], locale=l)
+        t = Translation.objects.get(entity=e, locale=l)
 
         if translation != '':
             log.debug("Translation updated.")
@@ -312,7 +312,7 @@ def update_translation(request, template=None):
     except Translation.DoesNotExist:
         """Save new translation."""
         if translation != '':
-            t = Translation(entity=e[0], locale=l, string=translation, 
+            t = Translation(entity=e, locale=l, string=translation, 
                 author=request.user.email, date=datetime.datetime.now())
             t.save()
             log.debug("Translation saved.")
