@@ -12,7 +12,8 @@
           url: window.location.href,
           title: "",
           entities: [],
-          pk: null
+          pk: null,
+          type: 'gettext'
         },
         locale: {
           code: "",
@@ -56,7 +57,8 @@
         sendData();
         postMessage("RENDER", {
           url: Pontoon.project.url,
-          title: Pontoon.project.title
+          title: Pontoon.project.title,
+          type: Pontoon.project.type
         });
 
         // Update UI and progress when saved
@@ -213,6 +215,7 @@
           }
         });
 
+        Pontoon.project.type = 'webL10n'
         renderHandle();
       }
 

@@ -754,11 +754,15 @@ var Pontoon = (function () {
           var value = message.value;
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
+          Pontoon.project.type = value.type;
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $("#spinner").fadeOut(function() {
             $("#main > header > .container").fadeIn();
           });
+          if (Pontoon.project.type !== 'webL10n') {
+            $('#profile-menu .properties').parent().remove();
+          }
         } else if (message.type === "ERROR") {
           var msg = message.value || 'Oops, something went wrong. Refresh to try again.';
           Pontoon.common.showError(msg);
@@ -820,7 +824,8 @@ var Pontoon = (function () {
         url: "",
         title: "",
         entities: [],
-        pk: $('#server').data('id')
+        pk: $('#server').data('id'),
+        type: 'gettext'
       };
       this.locale = {
         code: locale,
