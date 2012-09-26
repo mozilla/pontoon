@@ -1,0 +1,40 @@
+Mercurial allows you to customize output of commands through
+templates. You can either pass in a template from the command
+line, via the --template option, or select an existing
+template-style (--style).
+
+You can customize output for any "log-like" command: log,
+outgoing, incoming, tip, parents, heads and glog.
+
+Four styles are packaged with Mercurial: default (the style used
+when no explicit preference is passed), compact, changelog,
+and xml.
+Usage::
+
+    $ hg log -r1 --style changelog
+
+A template is a piece of text, with markup to invoke variable
+expansion::
+
+    $ hg log -r1 --template "{node}\n"
+    b56ce7b07c52de7d5fd79fb89701ea538af65746
+
+Strings in curly braces are called keywords. The availability of
+keywords depends on the exact context of the templater. These
+keywords are usually available for templating a log-like command:
+
+.. keywordsmarker
+
+The "date" keyword does not produce human-readable output. If you
+want to use a date in your output, you can use a filter to process
+it. Filters are functions which return a string based on the input
+variable. Be sure to use the stringify filter first when you're
+applying a string-input filter to a list-like input variable.
+You can also use a chain of filters to get the desired output::
+
+   $ hg tip --template "{date|isodate}\n"
+   2008-08-21 18:22 +0000
+
+List of filters:
+
+.. filtersmarker

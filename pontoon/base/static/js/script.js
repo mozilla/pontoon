@@ -221,7 +221,7 @@
         params = {
           pk: $('input[name=pk]').val()
         }
-        if (source === 'svn') {
+        if (source === 'repository') {
           params.svn = $('input[name=svn]').val();
         } else if (source === 'transifex') {
           $('.transifex input').each(function() {

@@ -492,6 +492,10 @@ body.admin-form #intro {
   display: none;
 }
 
+#pontoon.admin-form #intro .checkbox {
+  margin: 0;
+}
+
 #pontoon.admin-form #intro .checkbox label {
   float: left;
   padding: 6px 0 0 16px;

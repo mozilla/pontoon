@@ -1,0 +1,55 @@
+{header}
+<title>{repo|escape}: searching for {query|escape}</title>
+</head>
+<body>
+
+<div class="container">
+<div class="menu">
+<div class="logo">
+<a href="{logourl}">
+<img src="{staticurl}{logoimg}" width=75 height=90 border=0 alt="mercurial"></a>
+</div>
+<ul>
+<li><a href="{url}shortlog{sessionvars%urlparameter}">log</a></li>
+<li><a href="{url}graph{sessionvars%urlparameter}">graph</a></li>
+<li><a href="{url}tags{sessionvars%urlparameter}">tags</a></li>
+<li><a href="{url}bookmarks{sessionvars%urlparameter}">bookmarks</a></li>
+<li><a href="{url}branches{sessionvars%urlparameter}">branches</a></li>
+<li><a href="{url}help{sessionvars%urlparameter}">help</a></li>
+</ul>
+</div>
+
+<div class="main">
+<h2><a href="{url}{sessionvars%urlparameter}">{repo|escape}</a></h2>
+<h3>searching for '{query|escape}'</h3>
+
+<form class="search" action="{url}log">
+{sessionvars%hiddenformentry}
+<p><input name="rev" id="search1" type="text" size="30"></p>
+<div id="hint">find changesets by author, revision,
+files, or words in the commit message</div>
+</form>
+
+<div class="navigate">
+<a href="{url}search/{lessvars%urlparameter}">less</a>
+<a href="{url}search/{morevars%urlparameter}">more</a>
+</div>
+
+<table class="bigtable">
+ <tr>
+  <th class="age">age</th>
+  <th class="author">author</th>
+  <th class="description">description</th>
+ </tr>
+{entries}
+</table>
+
+<div class="navigate">
+<a href="{url}search/{lessvars%urlparameter}">less</a>
+<a href="{url}search/{morevars%urlparameter}">more</a>
+</div>
+
+</div>
+</div>
+
+{footer}

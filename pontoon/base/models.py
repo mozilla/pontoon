@@ -32,7 +32,7 @@ class Project(models.Model):
     locales = models.ManyToManyField(Locale)
 
     # Repositories
-    svn = models.URLField("Subversion URL", blank=True)
+    svn = models.URLField("Repository URL (SVN or HG)", blank=True)
     transifex_project = models.CharField(max_length=128, blank=True)
     transifex_resource = models.CharField(max_length=128, blank=True)
 

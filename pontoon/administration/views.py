@@ -3,6 +3,7 @@ import base64
 import commonware
 import datetime
 import json
+import os
 import polib
 import pysvn
 import silme.core, silme.format.properties
@@ -18,6 +19,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm
 from pontoon.base.views import _request
 
+from mercurial import commands, hg, ui, error
 from mobility.decorators import mobile_template
 
 
@@ -153,16 +155,23 @@ def _updateDB(project, locale, original, comment, translation, author):
                 author=author, date=datetime.datetime.now())
         t.save()
 
-def update_from_svn(request, template=None):
-    """Update all project locales from SVN repository."""
-    log.debug("Update all project locales from SVN repository.")
+def update_from_repository(request, template=None):
+    """Update all project locales from repository.
+
+    TODO:
+        - Smarter HG/SVN distinction
+        - More robust paths (e.g. allow HG repos with .po files)
+        - Split function (update_entities, update_translations...)
+
+    """
+    log.debug("Update all project locales from repository.")
 
     if not request.is_ajax():
         raise Http404
 
     try:
         pk = request.GET['pk']
-        svn = request.GET['svn']
+        url = request.GET['svn']
     except MultiValueDictKeyError:
         return HttpResponse("error")
 
@@ -171,54 +180,78 @@ def update_from_svn(request, template=None):
     except Project.DoesNotExist:
         return HttpResponse("error")
 
-    client = pysvn.Client()
-    path = settings.MEDIA_ROOT + '/svn/' + p.name
+    if url.find('://hg') > 0:
+        """ Mercurial """
+        software = 'hg'
+        app = p.name.split("_")[1]
+        locales = [Locale.objects.get(code="en-US")]
+        locales.extend(p.locales.all())
 
-    try:
-        client.checkout(svn, path)
-    except pysvn.ClientError, e:
-        log.debug(str(e))
-        return HttpResponse("error")
+        for l in locales:
+            path = str(os.path.join(settings.MEDIA_ROOT, software, p.name, l.code))
+            url_locale = str(os.path.join(url, l.code))
+            try:
+                repo = hg.repository(ui.ui(), path)
+                commands.update(ui.ui(), repo)
+            except error.RepoError, e:
+                log.debug("Mercurial: " + str(e))
+                try:
+                    commands.clone(ui.ui(), url_locale, path)
+                except Exception, e:
+                    log.debug("Mercurial: " + str(e))
+                    return HttpResponse("error")
 
-    if p.url.find('gaiamobile.org') == -1:
+            """Save or update repository data to DB."""
+            path_file = os.path.join(path, 'apps', app) + '/' + app + '.properties'
+            try:
+                f = open(path_file)
+                l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
+                for line in l10nobject:
+                    if isinstance(line, silme.core.entity.Entity):
+                        if l.code == 'en-US':
+                            try: # Update entity
+                                e = Entity.objects.get(project=p, key=line.id, string=line.value)
+                            except Entity.DoesNotExist: # New entity
+                                e = Entity(project=p, key=line.id, string=line.value)
+                            e.save()
+                        else:
+                            e = Entity.objects.get(project=p, key=line.id)
+                            try: # Update translation
+                                t = Translation.objects.get(entity=e, locale=l)
+                                t.string = line.value
+                                t.date = datetime.datetime.now()
+                            except Translation.DoesNotExist: # New translation
+                                t = Translation(entity=e, locale=l,
+                                    string=line.value, date=datetime.datetime.now())
+                            t.save()
+                log.debug("Repository data for " + l.name + " saved to DB.")
+            except IOError, e:
+                log.debug(str(e))
+
+    elif url.find('://svn') > 0:
+        """ Subversion """
+        software = 'svn'
+        path = os.path.join(settings.MEDIA_ROOT, software, p.name)
+        client = pysvn.Client()
+        try:
+            client.checkout(url, path)
+        except pysvn.ClientError, e:
+            log.debug("Subversion: " + str(e))
+            return HttpResponse("error")
+
         for l in p.locales.all():
-            """Save or update SVN data to DB."""
+            """Save or update repository data to DB."""
             po = polib.pofile(settings.MEDIA_ROOT + '/svn/' + p.name + '/locale/' + l.code + '/LC_MESSAGES/messages.po')
             entities = [e for e in po if not e.obsolete]
             for entity in entities:
                 _updateDB(project=p, locale=l, original=entity.msgid,
                     comment=entity.comment, translation=entity.msgstr,
                     author=po.metadata['Last-Translator'])
-            log.debug("SVN data for " + l.name + " saved to DB.")
+            log.debug("Repository data for " + l.name + " saved to DB.")
+
     else:
-        pathO = path + '/' + p.name.split("_")[1] + '.en-US.properties'
-        l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(pathO).read())
-
-        for line in l10nobject:
-            if isinstance(line, silme.core.entity.Entity):
-                try: # Update entity
-                    e = Entity.objects.get(project=p, key=line.id, string=line.value)
-                except Entity.DoesNotExist: # New entity
-                    e = Entity(project=p, key=line.id, string=line.value)
-                e.save()
-
-        for l in p.locales.all():
-            pathL = path + '/' + p.name.split("_")[1] + '.' + l.code + '.properties'
-            l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(pathL).read())
-
-            for line in l10nobject:
-                if isinstance(line, silme.core.entity.Entity):
-                    e = Entity.objects.get(project=p, key=line.id)
-                    try: # Update translation
-                        t = Translation.objects.get(entity=e, locale=l)
-                        t.string = line.value
-                        t.date = datetime.datetime.now()
-                    except Translation.DoesNotExist: # New translation
-                        t = Translation(entity=e, locale=l,
-                            string=line.value, date=datetime.datetime.now())
-                    t.save()
-
-            log.debug("SVN data for " + l.name + " saved to DB.")
+        """ Not supported """
+        return HttpResponse("error")
 
     return HttpResponse("200")
 
