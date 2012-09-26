@@ -6,9 +6,9 @@ import json
 import polib
 import pysvn
 import requests
+import silme.core, silme.format.properties
 import traceback
 from hashlib import md5
-import silme.core, silme.format.properties
 
 from django.conf import settings
 from django.contrib import auth
@@ -389,9 +389,7 @@ def _generate_properties_content(pid, locale):
     l = Locale.objects.get(code=locale)
 
     path = settings.MEDIA_ROOT + '/svn/' + p.name + '/' + p.name.split("_")[1] + '.en-US.properties'
-    f = open(path, 'r')
-    content = f.read()
-    l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(content)
+    l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(path).read())
 
     for line in l10nobject:
         if isinstance(line, silme.core.entity.Entity):

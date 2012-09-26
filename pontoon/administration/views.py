@@ -1,11 +1,11 @@
 
 import base64
 import commonware
-import ConfigParser
 import datetime
 import json
 import polib
 import pysvn
+import silme.core, silme.format.properties
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -172,9 +172,10 @@ def update_from_svn(request, template=None):
         return HttpResponse("error")
 
     client = pysvn.Client()
+    path = settings.MEDIA_ROOT + '/svn/' + p.name
 
     try:
-        client.checkout(svn, settings.MEDIA_ROOT + '/svn/' + p.name)
+        client.checkout(svn, path)
     except pysvn.ClientError, e:
         log.debug(str(e))
         return HttpResponse("error")
@@ -190,32 +191,31 @@ def update_from_svn(request, template=None):
                     author=po.metadata['Last-Translator'])
             log.debug("SVN data for " + l.name + " saved to DB.")
     else:
-        cp = ConfigParser.ConfigParser()
-        cp.readfp(FakeSectionHead(open(settings.MEDIA_ROOT + '/svn/' +
-            p.name + '/' + p.name.split("_")[1] + '.en-US.properties')))
+        pathO = path + '/' + p.name.split("_")[1] + '.en-US.properties'
+        l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(pathO).read())
 
-        for k, v in dict(cp.items('asection')).iteritems():
-            try: # Update entity
-                e = Entity.objects.get(project=p, key=k, string=v)
-            except Entity.DoesNotExist: # New entity
-                e = Entity(project=p, key=k, string=v)
-            e.save()
+        for line in l10nobject:
+            if isinstance(line, silme.core.entity.Entity):
+                try: # Update entity
+                    e = Entity.objects.get(project=p, key=line.id, string=line.value)
+                except Entity.DoesNotExist: # New entity
+                    e = Entity(project=p, key=line.id, string=line.value)
+                e.save()
 
         for l in p.locales.all():
-            cp = ConfigParser.ConfigParser()
-            cp.readfp(FakeSectionHead(open(settings.MEDIA_ROOT + '/svn/' +
-                p.name + '/' + p.name.split("_")[1] + '.' + l.code + '.properties')))
+            pathL = path + '/' + p.name.split("_")[1] + '.' + l.code + '.properties'
+            l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(pathL).read())
 
-            for k, v in dict(cp.items('asection')).iteritems():
-                if len(v) > 0:
-                    e = Entity.objects.get(project=p, key=k)
+            for line in l10nobject:
+                if isinstance(line, silme.core.entity.Entity):
+                    e = Entity.objects.get(project=p, key=line.id)
                     try: # Update translation
                         t = Translation.objects.get(entity=e, locale=l)
-                        t.string = v
+                        t.string = line.value
                         t.date = datetime.datetime.now()
                     except Translation.DoesNotExist: # New translation
                         t = Translation(entity=e, locale=l,
-                            string=v, date=datetime.datetime.now())
+                            string=line.value, date=datetime.datetime.now())
                     t.save()
 
             log.debug("SVN data for " + l.name + " saved to DB.")

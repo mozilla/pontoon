@@ -160,9 +160,10 @@
 
 
       /**
-       * Extract entities from Gaia apps
+       * Extract entities from webL10n apps
+       * https://github.com/fabi1cazenave/webL10n
        */
-      function gaiamobileEntities(data) {
+      function webL10nEntities(data) {
         var counter = 0;
 
         $('[data-l10n-id]').each(function () {
@@ -310,7 +311,7 @@
               guessEntities();
               return;
             } else if (Pontoon.project.url.indexOf('gaiamobile.org') !== -1) {
-              gaiamobileEntities(data);
+              webL10nEntities(data);
               return;
             }
             $('*').contents().each(function () {
