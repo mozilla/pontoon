@@ -53,6 +53,16 @@
         {{ form.locales }}
         {{ form.locales.errors }}
     </div>
+    <div class="checkbox clearfix">
+        <label for="id_external">
+            {{ form.external }}{{ form.external.label }}
+        </label>
+    </div>
+    <div class="checkbox clearfix">
+        <label for="id_links">
+            {{ form.links }}{{ form.links.label }}
+        </label>
+    </div>
 
     <h2>Repositories</h2>
 

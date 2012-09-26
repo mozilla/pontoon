@@ -811,7 +811,9 @@ var Pontoon = (function () {
       // Build Pontoon object
       this.app = {
         win: app,
-        path: $('base').attr('href') // pontoon.css injection
+        path: $('base').attr('href'), // pontoon.css injection
+        external: $('#server').data('external'),
+        links: $('#server').data('links')
       };
       this.project = {
         win: project,
@@ -836,6 +838,8 @@ var Pontoon = (function () {
       self.common.postMessage("INITIALIZE", {
         locale: self.locale,
         path: self.app.path,
+        external: self.app.external,
+        links: self.app.links,
         pk: self.project.pk
       });
 

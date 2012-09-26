@@ -3,8 +3,10 @@
   var Pontoon = {
         app: {
           win: window.opener || window.top,
-          path: ""
-        },
+          path: "",
+          external: false,
+          links: false
+       },
         project: {
           win: window,
           url: window.location.href,
@@ -546,7 +548,7 @@
 
       // Disable links
       $('a').click(function(e) {
-        if (Pontoon.project.url.indexOf('gaiamobile.org') === -1) {
+        if (!Pontoon.app.links) {
           e.preventDefault();
         }
       });
@@ -573,7 +575,7 @@
       });
 
       // Enable context menu
-      if (Pontoon.project.url.indexOf('gaiamobile.org') === -1) {
+      if (!Pontoon.app.external) {
         $('body')
           .attr("contextmenu", "context")
           .append(
@@ -632,6 +634,8 @@
       if (message.type === "INITIALIZE") {
         Pontoon.locale = message.value.locale; // Set locale
         Pontoon.app.path = message.value.path; // Set domain
+        Pontoon.app.external = message.value.external; // Set external
+        Pontoon.app.links = message.value.links; // Set links
         Pontoon.project.pk = message.value.pk; // Set project
         loadJquery();
         window.removeEventListener("message", initizalize, false);

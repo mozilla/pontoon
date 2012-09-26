@@ -56,7 +56,7 @@
 
       $('.url').val(url);
       $('.locale .button .language').addClass(escapedLocale).html($('.locale .menu .language.' + escapedLocale).html());
-      if (url.indexOf('gaiamobile.org') === -1) {
+      if ($('#server').data('external') !== true) {
         $('#source').attr('src', url);
         projectWindow = $('#source')[0].contentWindow;
       } else {

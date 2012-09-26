@@ -492,6 +492,16 @@ body.admin-form #intro {
   display: none;
 }
 
+#pontoon.admin-form #intro .checkbox label {
+  float: left;
+  padding: 6px 0 0 16px;
+}
+
+#pontoon.admin-form #intro .checkbox label input {
+  float: left;
+  margin-left: -16px;
+}
+
 #pontoon.admin-form #intro .edit .svn input[type=text] {
   float: left;
   width: 576px;

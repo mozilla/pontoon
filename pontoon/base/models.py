@@ -42,6 +42,10 @@ class Project(models.Model):
     info_audience = models.TextField("Audience, Reach, and Impact", blank=True)
     info_metrics = models.TextField("Success Metrics", blank=True)
 
+    # User interface
+    external = models.BooleanField("Open project website in external window")
+    links = models.BooleanField("Enable links on the project website")
+
     class Meta:
         permissions = (
             ("can_manage", "Can manage projects"),
