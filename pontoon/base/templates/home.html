@@ -21,7 +21,6 @@
       <!-- Project input/select -->
       <div class="project select">
         <input name="url" class="url" type="text" placeholder="{{ _('Type URL and press Enter') }}" autocomplete="off" />
-        {% if projects|length > 0 %}
         <div class="button selector">
           <span class="handle">&#9662;</span>
         </div>
@@ -31,9 +30,11 @@
             {% for project in projects %}
             <li class="clearfix"><span class="project-name">{{ project.name }}</span><span class="project-url">{{ project.url }}</span></li>
             {% endfor %}
+            {% if projects|length == 0 %}
+            <li class="no-projects">{{ _('No projects available') }}</li>
+            {% endif %}
           </ul>
         </div>
-        {% endif %}
       </div>
 
       <!-- Locale selector -->
