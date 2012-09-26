@@ -310,7 +310,7 @@
             } else if (data === "guess") {
               guessEntities();
               return;
-            } else if (Pontoon.project.url.indexOf('gaiamobile.org') !== -1) {
+            } else if (data[0].key) {
               webL10nEntities(data);
               return;
             }
