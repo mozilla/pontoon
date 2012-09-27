@@ -171,7 +171,7 @@ def update_from_repository(request, template=None):
 
     try:
         pk = request.GET['pk']
-        url = request.GET['svn']
+        url = request.GET['repository']
     except MultiValueDictKeyError:
         return HttpResponse("error")
 

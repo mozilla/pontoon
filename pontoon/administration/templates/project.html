@@ -66,15 +66,15 @@
 
     <h2>Repositories</h2>
 
-    <div class="svn clearfix">
-        {{ form.svn.label_tag() }}
-        {{ form.svn }}
+    <div class="repository clearfix">
+        {{ form.repository.label_tag() }}
+        {{ form.repository }}
         {% if pk %}
-        <button title="{{ _('Update all locales from SVN') }}" data-source="repository" class="button">
-            <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from Subversion') }}" />
+        <button title="{{ _('Update all locales from repository') }}" data-source="repository" class="button">
+            <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from repository') }}" />
         </button>
         {% endif %}
-        {{ form.svn.errors }}
+        {{ form.repository.errors }}
     </div>
     <div class="transifex clearfix">
         <p>Please sign in</p>

@@ -207,7 +207,7 @@
       });
 
       // Update from repository
-      $('.svn .button:not(".disabled"), .transifex .button:not(".disabled")').unbind('click.pontoon').bind('click.pontoon', function (e) {
+      $('.repository .button:not(".disabled"), .transifex .button:not(".disabled")').unbind('click.pontoon').bind('click.pontoon', function (e) {
         e.preventDefault();
         $(this).addClass('disabled');
         var source = $(this).data('source'),
@@ -222,7 +222,7 @@
           pk: $('input[name=pk]').val()
         }
         if (source === 'repository') {
-          params.svn = $('input[name=svn]').val();
+          params.repository = $('input[name=repository]').val();
         } else if (source === 'transifex') {
           $('.transifex input').each(function() {
             var val = $(this).val();

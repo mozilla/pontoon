@@ -32,7 +32,7 @@ class Project(models.Model):
     locales = models.ManyToManyField(Locale)
 
     # Repositories
-    svn = models.URLField("Repository URL (SVN or HG)", blank=True)
+    repository = models.URLField("Repository URL (SVN or HG)", blank=True)
     transifex_project = models.CharField(max_length=128, blank=True)
     transifex_resource = models.CharField(max_length=128, blank=True)
 
@@ -87,7 +87,7 @@ class ProjectForm(ModelForm):
 
     def clean(self):
         cleaned_data = super(ProjectForm, self).clean()
-        svn = cleaned_data.get("svn")
+        repository = cleaned_data.get("repository")
         transifex_project = cleaned_data.get("transifex_project")
         transifex_resource = cleaned_data.get("transifex_resource")
 
@@ -99,8 +99,8 @@ class ProjectForm(ModelForm):
             self._errors["transifex_project"] = self.error_class([u"Both fields are required."])
             del cleaned_data["transifex_resource"]
 
-        elif not transifex_project and not transifex_resource and not svn:
-            self._errors["svn"] = self.error_class([u"You either need to provide Subversion URL..."])
+        elif not transifex_project and not transifex_resource and not repository:
+            self._errors["repository"] = self.error_class([u"You either need to provide repository URL..."])
             self._errors["transifex_project"] = self.error_class([u"...or Transifex project and resource."])
 
         return cleaned_data

@@ -388,7 +388,7 @@ def _generate_properties_content(pid, locale):
     p = Project.objects.get(pk=pid)
     l = Locale.objects.get(code=locale)
 
-    path = settings.MEDIA_ROOT + '/svn/' + p.name + '/' + p.name.split("_")[1] + '.en-US.properties'
+    path = settings.MEDIA_ROOT + '/hg/' + p.name + '/en-US/apps/' + p.name.split("_")[1] + '/' + p.name.split("_")[1] + '.properties'
     l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(path).read())
 
     for line in l10nobject:
@@ -404,7 +404,7 @@ def _generate_properties_content(pid, locale):
     content = silme.format.properties.PropertiesFormatParser.dump_structure(l10nobject)
     properties = unicode(content).encode('utf-8')
 
-    path = settings.MEDIA_ROOT + '/svn/' + p.name + '/' + p.name.split("_")[1] + '.' + l.code + '.properties'
+    path = settings.MEDIA_ROOT + '/hg/' + p.name + '/' + l.code + '/apps/' + p.name.split("_")[1] + '/' + p.name.split("_")[1] + '.properties'
     f = open(path, 'w')
     f.write(properties)
     f.close()
