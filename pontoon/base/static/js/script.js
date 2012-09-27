@@ -66,7 +66,7 @@
           $('#entitylist').height($(document).height() - $('#main > header').outerHeight());
         });
         $("#entitylist").height($(document).height() - $('#main > header').outerHeight());
-        projectWindow = window.open(url, 'slide', 'width=320,height=480,personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+        projectWindow = window.open(url, 'project', 'width=320,height=480,toolbar=1,resizable=1,scrollbars=1');
       }
 
       // Show error message if no callback for 5 seconds: Pontoon/iframe not supported, 404…
