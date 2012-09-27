@@ -132,7 +132,7 @@
             <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
             {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin') }}">{{ _('Admin') }}</a></li>{% endif %}
             <li class="horizontal-separator"></li>
-            <li{% if not project.repository %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
+            <li{% if not project.repository.find('svn') > 0 %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
             <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
             <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download .html') }}</a></li>
             <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download .json') }}</a></li>
@@ -158,7 +158,7 @@
             </form>
           </aside>
           {% endif %}
-          {% if project.repository %}
+          {% if project.repository.find('svn') > 0 %}
           <aside id="svn" class="popup">
             <h2>
               {{ _('Sign in to Mozilla SVN') }}
