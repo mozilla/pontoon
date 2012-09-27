@@ -243,6 +243,7 @@
             if (data === "200") {
               updateIcon('ok.png');
               $('.' + source).removeClass('popup');
+              $('.warning').fadeOut();
             } else if (data === "authenticate") {
               updateIcon('update.png');
               $('.' + source).addClass('popup');
