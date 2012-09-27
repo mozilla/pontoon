@@ -591,6 +591,9 @@ var Pontoon = (function () {
      */
     updateEntityUI: function (entity) {
       entity.ui.addClass('translated').find('textarea').val(entity.translation);
+      if (entity.translation === '') {
+        entity.ui.removeClass('translated');
+      }
       this.updateProgress();
     },
 
@@ -781,14 +784,9 @@ var Pontoon = (function () {
           Pontoon.project.entities[message.value].ui.addClass('active');
         } else if (message.type === "INACTIVE") {
           Pontoon.project.entities[message.value].ui.removeClass('active');
-        } else if (message.type === "SAVE") {
+        } else if (message.type === "UPDATE") {
           var entity = Pontoon.project.entities[message.value];
           Pontoon.updateEntityUI(entity);
-          Pontoon.updateOnServer(entity);
-        } else if (message.type === "DELETE") {
-          var entity = Pontoon.project.entities[message.value];
-          entity.ui.removeClass('translated');
-          Pontoon.updateProgress();
           Pontoon.updateOnServer(entity);
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);

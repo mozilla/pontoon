@@ -66,15 +66,9 @@
           var element = $(this).parent().get(0).target,
               entity = element.entity;
 
-          if (entity.node.html() !== entity.original) {
-            entity.translation = $($(element).clone()).html();
-            sendData();
-            postMessage("SAVE", entity.id);
-          } else {
-            entity.translation = '';
-            sendData();
-            postMessage("DELETE", entity.id);
-          }
+          entity.translation = (entity.node.html() !== entity.original) ? $($(element).clone()).html() : '';
+          sendData();
+          postMessage("UPDATE", entity.id);
         });
 
         // Do not change anything when cancelled
@@ -510,7 +504,7 @@
             entity.node.html(entity.original);
             entity.translation = '';
             sendData();
-            postMessage("DELETE", entity.id);
+            postMessage("UPDATE", entity.id);
             $('.editableToolbar > .cancel').click();
           } else if (message.type === "CANCEL") {
             $('.editableToolbar > .cancel').click();
