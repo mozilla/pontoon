@@ -2,6 +2,7 @@
 import base64
 import commonware
 import datetime
+import fnmatch
 import json
 import os
 import polib
@@ -156,14 +157,7 @@ def _updateDB(project, locale, original, comment, translation, author):
         t.save()
 
 def update_from_repository(request, template=None):
-    """Update all project locales from repository.
-
-    TODO:
-        - Smarter HG/SVN distinction
-        - More robust paths (e.g. allow HG repos with .po files)
-        - Split function (update_entities, update_translations...)
-
-    """
+    """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
 
     if not request.is_ajax():
@@ -171,7 +165,7 @@ def update_from_repository(request, template=None):
 
     try:
         pk = request.GET['pk']
-        url = request.GET['repository']
+        url_repository = request.GET['repository']
     except MultiValueDictKeyError:
         return HttpResponse("error")
 
@@ -180,19 +174,19 @@ def update_from_repository(request, template=None):
     except Project.DoesNotExist:
         return HttpResponse("error")
 
-    if url.find('://hg') > 0:
+    if url_repository.find('://hg') > 0:
         """ Mercurial """
         software = 'hg'
-        app = p.name.split("_")[1]
         locales = [Locale.objects.get(code="en-US")]
         locales.extend(p.locales.all())
 
         for l in locales:
             path = str(os.path.join(settings.MEDIA_ROOT, software, p.name, l.code))
-            url_locale = str(os.path.join(url, l.code))
+            url_locale = str(os.path.join(url_repository, l.code))
             try:
                 repo = hg.repository(ui.ui(), path)
                 commands.update(ui.ui(), repo)
+                log.debug("Repository for " + l.name + " updated.")
             except error.RepoError, e:
                 log.debug("Mercurial: " + str(e))
                 try:
@@ -202,20 +196,26 @@ def update_from_repository(request, template=None):
                     return HttpResponse("error")
 
             """Save or update repository data to DB."""
-            path_file = os.path.join(path, 'apps', app) + '/' + app + '.properties'
-            try:
-                f = open(path_file)
+            files = []
+            for root, dirnames, filenames in os.walk(path + '/apps'):
+              for filename in fnmatch.filter(filenames, '*.properties'):
+                  files.append(os.path.join(root, filename))
+
+            for file_path in files:
+                f = open(file_path)
                 l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
+                file_name = file_path.split('/')[-1]
+
                 for line in l10nobject:
                     if isinstance(line, silme.core.entity.Entity):
                         if l.code == 'en-US':
                             try: # Update entity
-                                e = Entity.objects.get(project=p, key=line.id, string=line.value)
+                                e = Entity.objects.get(project=p, key=line.id, source=file_name, string=line.value)
                             except Entity.DoesNotExist: # New entity
-                                e = Entity(project=p, key=line.id, string=line.value)
+                                e = Entity(project=p, key=line.id, source=file_name, string=line.value)
                             e.save()
                         else:
-                            e = Entity.objects.get(project=p, key=line.id)
+                            e = Entity.objects.get(project=p, key=line.id, source=file_name)
                             try: # Update translation
                                 t = Translation.objects.get(entity=e, locale=l)
                                 t.string = line.value
@@ -224,18 +224,15 @@ def update_from_repository(request, template=None):
                                 t = Translation(entity=e, locale=l,
                                     string=line.value, date=datetime.datetime.now())
                             t.save()
-                log.debug("Repository data for " + l.name + " saved to DB.")
-            except IOError, e:
-                log.debug(str(e))
 
-    elif url.find('://svn') > 0:
+    elif url_repository.find('://svn') > 0:
         """ Subversion """
         software = 'svn'
         path = os.path.join(settings.MEDIA_ROOT, software, p.name)
         client = pysvn.Client()
 
         try:
-            client.checkout(url, path)
+            client.checkout(url_repository, path)
         except pysvn.ClientError, e:
             log.debug("Subversion: " + str(e))
             return HttpResponse("error")

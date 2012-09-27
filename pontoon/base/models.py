@@ -65,6 +65,7 @@ class Subpage(models.Model):
 class Entity(models.Model):
     project = models.ForeignKey(Project)
     key = models.TextField(blank=True) # Needed for webL10n
+    source = models.TextField(blank=True) # Needed for webL10n
     string = models.TextField()
     comment = models.TextField()
 

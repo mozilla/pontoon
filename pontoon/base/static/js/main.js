@@ -89,7 +89,7 @@ var Pontoon = (function () {
         download(params);
 
       } else if (type === "properties") {
-        params.content = self.project.pk;
+        params.content = self.project.url;
         download(params);
 
       } else if (type === "transifex") {

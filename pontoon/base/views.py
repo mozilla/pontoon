@@ -375,7 +375,7 @@ def load_entities(request, template=None):
     else:
         return HttpResponse(callback + '("error");')
 
-def _generate_properties_content(pid, locale):
+def _generate_properties_content(url, locale):
     """
     Generate .properties file content.
 
@@ -386,15 +386,22 @@ def _generate_properties_content(pid, locale):
         A string for generated .properties file.
     """
 
-    p = Project.objects.get(pk=pid)
+    try:
+        s = Subpage.objects.get(url=url)
+    except Subpage.DoesNotExist:
+        log.debug('Subpage with this URL does not exist')
+        return "error"
+
+    subpage = s.name.lower()
+    p = s.project
     l = Locale.objects.get(code=locale)
 
-    path = os.path.join(settings.MEDIA_ROOT, 'hg', p.name, 'en-US', 'apps', p.name.split("_")[1]) + '/' + p.name.split("_")[1] + '.properties'
+    path = os.path.join(settings.MEDIA_ROOT, 'hg', p.name, 'en-US', 'apps', subpage, subpage + '.properties')
     l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(path).read())
 
     for line in l10nobject:
         if isinstance(line, silme.core.entity.Entity):
-            e = Entity.objects.get(project=p, key=line.id)
+            e = Entity.objects.get(project=p, key=line.id, source=subpage + '.properties')
             try:
                 t = Translation.objects.get(entity=e, locale=l)
                 line.set_value(t.string)
@@ -405,10 +412,17 @@ def _generate_properties_content(pid, locale):
     content = silme.format.properties.PropertiesFormatParser.dump_structure(l10nobject)
     properties = unicode(content).encode('utf-8')
 
-    path = os.path.join(settings.MEDIA_ROOT, 'hg', p.name, l.code, 'apps', p.name.split("_")[1]) + '/' + p.name.split("_")[1] + '.properties'
-    f = open(path, 'w')
-    f.write(properties)
-    f.close()
+    path = os.path.join(settings.MEDIA_ROOT, 'hg', p.name, l.code, 'apps', subpage, subpage + '.properties')
+    try:
+        f = open(path, 'w')
+    except IOError, e:
+        log.debug("File does not exist yet. Creating a new one.")
+        os.makedirs(os.path.join(settings.MEDIA_ROOT, 'hg', p.name, l.code, 'apps', subpage))
+        f = open(path, 'w')
+    finally:
+        f.write(properties)
+        f.close()
+        log.debug("File saved.")
 
     return properties
 
