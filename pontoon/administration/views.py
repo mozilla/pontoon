@@ -24,7 +24,7 @@ from mercurial import commands, hg, ui, error
 from mobility.decorators import mobile_template
 
 
-log = commonware.log.getLogger('playdoh')
+log = commonware.log.getLogger('pontoon')
 
 
 class FakeSectionHead(object):

@@ -28,7 +28,7 @@ from session_csrf import anonymous_csrf_exempt
 from mobility.decorators import mobile_template
 
 
-log = commonware.log.getLogger('playdoh')
+log = commonware.log.getLogger('pontoon')
 
 
 @mobile_template('{mobile/}home.html')
@@ -272,7 +272,8 @@ def update_translation(request, template=None):
         translation = request.GET['translation']
         pk = request.GET['pk']
         locale = request.GET['locale']
-    except MultiValueDictKeyError:
+    except MultiValueDictKeyError, e:
+        log.error(str(e))
         return HttpResponse("error")
 
     log.debug("Entity: " + original)
@@ -282,17 +283,20 @@ def update_translation(request, template=None):
 
     try:
         p = Project.objects.get(pk=pk)
-    except Project.DoesNotExist:
+    except Project.DoesNotExist, e:
+        log.error(str(e))
         return HttpResponse("error")
 
     try:
         e = Entity.objects.get(project=p, string=original)
-    except Entity.DoesNotExist:
+    except Entity.DoesNotExist, e:
+        log.error(str(e))
         return HttpResponse("error")
 
     try:
         l = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist:
+    except Locale.DoesNotExist, e:
+        log.error(str(e))
         return HttpResponse("error")
 
     try:
