@@ -2198,13 +2198,25 @@
             "name": "testpilot",
             "url": "http://localhost/pontoon/hooks/php/test/testpilot/",
             "locales": [47, 74, 84, 180, 203],
-            "repository": "http://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/testpilot/",
+            "repository": "https://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/testpilot/",
             "transifex_project": "testpilot",
             "transifex_resource": "index",
             "info_brief": "Please draft an overview of your campaign, including its purpose and goals. Anything you've provided WebDev, copywriters and/or designers is helpful.",
             "info_locales": "Share what regions or locals the campaign is intended to reach, and what work was done during the design stage to account for or target regional and cultural differences.",
             "info_audience": "Include the types of individuals and/or users your campaign targeting, the way that you want to engage or impact these individuals or groups, and the length of commitment (time) or level of engagement that you want to achieve. e.g. some projects will short or low levels of engagement, other will be more encompassing.",
             "info_metrics": "Describe what success looks like and what measurement you will be using. Examples: Page views, Participants, Social Media mentions, Downloads."
+        }
+    },
+    {
+        "model": "base.project",
+        "pk": 2,
+        "fields": {
+            "name": "gaia",
+            "url": "http://browser.gaiamobile.org:8080/",
+            "locales": [74, 84, 180, 183, 203],
+            "repository": "https://hg.mozilla.org/gaia-l10n/",
+            "external": "True",
+            "links": "True"
         }
     },
     {
@@ -2241,6 +2253,105 @@
             "project": 1,
             "name": "Privacy Policy",
             "url": "http://localhost/pontoon/hooks/php/test/testpilot/?page=privacy.php"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 5,
+        "fields": {
+            "project": 2,
+            "name": "Browser",
+            "url": "http://browser.gaiamobile.org:8080/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 6,
+        "fields": {
+            "project": 2,
+            "name": "Camera",
+            "url": "http://camera.gaiamobile.org:8080/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 7,
+        "fields": {
+            "project": 2,
+            "name": "Clock",
+            "url": "http://clock.gaiamobile.org:8080/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 8,
+        "fields": {
+            "project": 2,
+            "name": "Email",
+            "url": "http://email.gaiamobile.org:8080/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 9,
+        "fields": {
+            "project": 2,
+            "name": "FM",
+            "url": "http://fm.gaiamobile.org:8080/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 10,
+        "fields": {
+            "project": 2,
+            "name": "Gallery",
+            "url": "http://gallery.gaiamobile.org:8080/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 11,
+        "fields": {
+            "project": 2,
+            "name": "Music",
+            "url": "http://music.gaiamobile.org:8080/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 12,
+        "fields": {
+            "project": 2,
+            "name": "Settings",
+            "url": "http://settings.gaiamobile.org:8080/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 13,
+        "fields": {
+            "project": 2,
+            "name": "SMS",
+            "url": "http://sms.gaiamobile.org:8080/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 14,
+        "fields": {
+            "project": 2,
+            "name": "System",
+            "url": "http://system.gaiamobile.org:8080/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 15,
+        "fields": {
+            "project": 2,
+            "name": "Video",
+            "url": "http://video.gaiamobile.org:8080/"
         }
     }
 ]
