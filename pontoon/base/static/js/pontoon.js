@@ -324,7 +324,6 @@
 
                   if ($('#pontoon-string').html() === parent.html()) {
                     entity.id = counter;
-                    counter++;
                     entity.original = this.original;
                     entity.comment = this.comment;
                     var translation = this.translation;
@@ -332,7 +331,6 @@
                       entity.translation = translation;
                       parent.html(translation);
                     }
-                    this.pontoon = true;
 
                     // Head strings cannot be edited in-place
                     if ($(this).parents('head').length === 0) {
@@ -340,7 +338,12 @@
                       makeEditable(entity);
                     }
 
-                    Pontoon.project.entities.push(entity);
+                    // Do not save if duplicate
+                    if (!this.pontoon) {
+                      Pontoon.project.entities.push(entity);
+                      counter++;
+                      this.pontoon = true;
+                    }
                   }
                   $('#pontoon-string').remove();
                 });
