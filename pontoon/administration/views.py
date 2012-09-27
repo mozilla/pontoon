@@ -16,7 +16,7 @@ from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
-from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm
+from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request
 
 from mercurial import commands, hg, ui, error
@@ -233,6 +233,7 @@ def update_from_repository(request, template=None):
         software = 'svn'
         path = os.path.join(settings.MEDIA_ROOT, software, p.name)
         client = pysvn.Client()
+
         try:
             client.checkout(url, path)
         except pysvn.ClientError, e:
@@ -275,7 +276,7 @@ def update_from_transifex(request, template=None):
         return HttpResponse("error")
 
     """Check if user authenticated to Transifex."""
-    profile = request.user.get_profile()
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
     username = request.GET.get('transifex_username', profile.transifex_username)
     password = request.GET.get('transifex_password', base64.decodestring(profile.transifex_password))
 
