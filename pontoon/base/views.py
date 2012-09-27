@@ -21,7 +21,7 @@ from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
-from pontoon.base.models import Locale, Project, Subpage, Entity, Translation
+from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, UserProfile
 from session_csrf import anonymous_csrf_exempt
 
 from mobility.decorators import mobile_template
@@ -510,7 +510,8 @@ def commit_to_svn(request, template=None):
         return HttpResponse("error")
 
     """Check if user authenticated to SVN."""
-    profile = request.user.get_profile()
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
     username = data.get('auth', {}).get('username', profile.svn_username)
     password = data.get('auth', {}).get('password', base64.decodestring(profile.svn_password))
     if (len(username) == 0 or len(password) == 0):
@@ -562,7 +563,8 @@ def save_to_transifex(request, template=None):
         return HttpResponse("error")
 
     """Check if user authenticated to Transifex."""
-    profile = request.user.get_profile()
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
     username = data.get('auth', {}).get('username', profile.transifex_username)
     password = data.get('auth', {}).get('password', base64.decodestring(profile.transifex_password))
     if (len(username) == 0 or len(password) == 0):
