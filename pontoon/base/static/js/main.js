@@ -209,7 +209,7 @@ var Pontoon = (function () {
      */
     entityList: function () {
       var self = this,
-          list = $('#entitylist').append('<ul class="editables"></ul><h2>Strings not found on the current page</h2><ul class="uneditables"></ul>'),
+          list = $('#entitylist').append('<ul class="editables"></ul><h2>Not found on the current page</h2><ul class="uneditables"></ul>'),
           localeMenu = $('.locale .menu').html();
 
       // Render

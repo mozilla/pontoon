@@ -825,7 +825,8 @@ body, select, input, textarea, button {
   color: #666666;
   font-size: 18px;
   font-weight: 300;
-  margin: 10px 11px -15px;
+  margin: 20px 11px -15px;
+  text-align: center;
   text-shadow: none;
   text-transform: none;
 }
