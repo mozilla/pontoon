@@ -51,6 +51,30 @@
 
 
       /**
+       * Sync content of duplicate entities
+       *
+       * entity Entity object
+       * content Node content
+       *
+       * TODO: Advanced mode
+       */
+      function syncDuplicates(entity, content) {
+        var entities = Pontoon.project.entities,
+            duplicates = entity.duplicates;
+
+        if (!duplicates && entities[entity.master]) {
+          duplicates = entities[entity.master].duplicates;
+        }
+
+        $(duplicates).each(function() {
+          entities[this].node.html(content);
+          entities[this].translation = (entity.node.html() !== entity.original) ? content : '';
+        });
+      }
+
+
+
+      /**
        * Render main UI and handle events
        */
       function renderHandle() {
@@ -66,9 +90,9 @@
           var element = $(this).parent().get(0).target,
               entity = element.entity;
 
-          entity.translation = (entity.node.html() !== entity.original) ? $($(element).clone()).html() : '';
+          syncDuplicates(entity, $($(element).clone()).html());
           sendData();
-          postMessage("UPDATE", entity.id);
+          postMessage("UPDATE", entity.master || entity.id);
         });
 
         // Do not change anything when cancelled
@@ -311,6 +335,7 @@
               webL10nEntities(data);
               return;
             }
+            // TODO: this must be slow (for-for-DOM and double data loop)
             $('*').contents().each(function () {
               if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
                 var entity = {},
@@ -338,12 +363,21 @@
                       makeEditable(entity);
                     }
 
-                    // Do not save if duplicate
+                    // Save duplicates to master entity
                     if (!this.pontoon) {
-                      Pontoon.project.entities.push(entity);
-                      counter++;
-                      this.pontoon = true;
+                      this.pontoon = entity.id;
+                    } else {
+                      entity.master = this.pontoon;
+                      var masterEntity = Pontoon.project.entities[this.pontoon];
+                      if (masterEntity.duplicates) {
+                        masterEntity.duplicates.push(entity.id);
+                      } else {
+                        masterEntity.duplicates = [this.pontoon, entity.id];
+                      }
                     }
+
+                    Pontoon.project.entities.push(entity);
+                    counter++;
                   }
                   $('#pontoon-string').remove();
                 });
@@ -352,7 +386,7 @@
 
             // Prepare unmatched DB entities to be displayed in Advanced mode
             $(data).each(function() {
-              if(!this.pontoon) {
+              if(this.pontoon === undefined) {
                 var entity = {};
                 entity.id = counter;
                 counter++;

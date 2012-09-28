@@ -280,7 +280,9 @@ var Pontoon = (function () {
         li.get(0).entity = this;
         this.ui = li; /* HTML Element representing string in the main UI */
 
-        list.find('.editables').append(li);
+        if (!this.master) {
+          list.find('.editables').append(li);
+        }
       });
 
       // Move uneditable entities to a separate list
