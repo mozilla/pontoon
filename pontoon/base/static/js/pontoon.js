@@ -85,7 +85,7 @@
 
         // Update UI and progress when saved
         $(".editableToolbar > .save").click(function () {
-          var element = $(this).parent().get(0).target,
+          var element = $(this).parent()[0].target,
               entity = element.entity,
               content = $(element).html();
 
@@ -100,7 +100,7 @@
 
         // Do not change anything when cancelled
         $(".editableToolbar > .cancel").click(function () {
-          var element = $(this).parent().get(0).target,
+          var element = $(this).parent()[0].target,
               entity = element.entity;
 
           $(element).html(entity.translation || entity.original);
@@ -114,7 +114,7 @@
               cancel = toolbar.find(".cancel");
 
           if (save.is(":visible")) {
-            var target = toolbar.get(0).target,
+            var target = toolbar[0].target,
                 entity = target.entity,
                 id = entity.id,
                 next = id + 1,
@@ -160,16 +160,16 @@
        * entity Entity object
        */ 
       function makeEditable(entity) {
-        var node = entity.node.get(0);
+        var node = entity.node[0];
         entity.body = true;
         node.entity = entity; // Store entity reference to the node
         
         // Show/hide toolbar on entity hover
         entity.hover = function () {
-          showToolbar(this.node.get(0));
+          showToolbar(this.node[0]);
         };
         entity.unhover = function () {
-          hideToolbar(this.node.get(0));
+          hideToolbar(this.node[0]);
         };
 
         // Show/hide toolbar on node hover
@@ -417,11 +417,11 @@
        */
       function showToolbar(node) {
         if ($(node).is('.editableToolbar')) {
-          $(node).get(0).target.entity.hover();
+          $(node)[0].target.entity.hover();
           return true;
         } else {       
           var toolbar = $('.editableToolbar'),
-              curTarget = toolbar.get(0).target,
+              curTarget = toolbar[0].target,
               newTarget = node;
           if ($(curTarget).attr('contentEditable') === 'true') {
             return;
@@ -441,7 +441,7 @@
             toolbar.addClass('bottom').css('top', top + $(newTarget).outerHeight());
           };
         }           
-        var toolbarNode = toolbar.get(0);
+        var toolbarNode = toolbar[0];
         if (toolbarNode.I !== null) {
           clearTimeout(toolbarNode.I);
           toolbarNode.I = null;
@@ -467,7 +467,7 @@
         } else {
           var toolbar = $('.editableToolbar');
         }
-        var toolbarNode = toolbar.get(0),
+        var toolbarNode = toolbar[0],
             target = toolbarNode.target;
         if ($(target).attr('contentEditable') === 'true') {
           return;
@@ -476,8 +476,8 @@
           if (target) {
             target.blur();
             stopEditing();
-            if (target === toolbar.get(0).target) {
-              toolbar.get(0).target = null;
+            if (target === toolbar[0].target) {
+              toolbar[0].target = null;
               $(target).removeClass('hovered');
               postMessage("UNHOVER", target.entity.id);
               toolbar.hide();
@@ -487,7 +487,7 @@
             }
           }
         }
-        toolbar.get(0).I = setTimeout(hide, 50);
+        toolbar[0].I = setTimeout(hide, 50);
       }
 
 
@@ -499,7 +499,7 @@
         var toolbar = $('.editableToolbar');
         toolbar.children().show().end()
           .find('.edit').hide();
-        var target = toolbar.get(0).target;
+        var target = toolbar[0].target;
         $(target).attr('contentEditable', true);
         postMessage("ACTIVE", target.entity.id);
         target.focus();
@@ -514,7 +514,7 @@
         var toolbar = $('.editableToolbar');
         toolbar.children().hide().end()
           .find('.edit').show();
-        var target = toolbar.get(0).target;
+        var target = toolbar[0].target;
         if (!target) {
           return;
         }
@@ -537,10 +537,10 @@
           } else if (message.type === "EDIT") {
             $('.editableToolbar > .edit').click();
           } else if (message.type === "SAVE") {
-            $('.editableToolbar').get(0).target.entity.node.html(message.value);
+            $('.editableToolbar')[0].target.entity.node.html(message.value);
             $('.editableToolbar > .save').click();
           } else if (message.type === "DELETE") {
-            var entity = $('.editableToolbar').get(0).target.entity;
+            var entity = $('.editableToolbar')[0].target.entity;
             entity.node.html(entity.original);
             entity.translation = '';
             sendData();

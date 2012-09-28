@@ -277,7 +277,7 @@ var Pontoon = (function () {
           '</div>' +
         '</div></li>', self.app.win);
 
-        li.get(0).entity = this;
+        li[0].entity = this;
         this.ui = li; /* HTML Element representing string in the main UI */
 
         if (!this.master) {
@@ -329,7 +329,7 @@ var Pontoon = (function () {
       $("#main .extra .other-users").click(function () {
         var li = $(this).parents('.entity');
 
-        if (li.get(0).entity.suggestions) {
+        if (li[0].entity.suggestions) {
           li.find('.toolbar').show();
         }
       });
@@ -338,7 +338,7 @@ var Pontoon = (function () {
       $("#main .source").find(".prev, .next").click(function (e) {
         e.stopPropagation();
         var li = $(this).parents('.entity'),
-            suggestions = li.get(0).entity.suggestions,
+            suggestions = li[0].entity.suggestions,
             max = suggestions.length,
             ou = li.find(".other-users"),
             string = ou.find(".source-string"),
@@ -455,7 +455,7 @@ var Pontoon = (function () {
       $("#main .extra .machine-translation").click(function () {
         var li = $(this).parents('.entity'),
             loader = li.find(".content .machine-translation .loader"),
-            entity = li.get(0).entity,
+            entity = li[0].entity,
             mt = $('#server').data('mt-apikey');
         if (!mt) {
           loader.removeClass("loader").addClass("no").html("Machine translation not supported");
@@ -486,7 +486,7 @@ var Pontoon = (function () {
         e.stopPropagation();
         e.preventDefault();
         var li = $(this).parents('.entity'),
-            entity = li.get(0).entity,
+            entity = li[0].entity,
             source = self.doRender(li.find('.source .content .active .source-string').html());
 
         // Only if no other entity is being edited in-place
@@ -505,7 +505,7 @@ var Pontoon = (function () {
         var li = $(this).parents('.entity');
 
         // Only if no other entity is being edited in-place
-        if (!li.is('.hovered') && li.get(0).entity.body) {
+        if (!li.is('.hovered') && li[0].entity.body) {
           $(this).blur();
         }
       // Keyboard navigation in textarea
@@ -529,7 +529,7 @@ var Pontoon = (function () {
         e.stopPropagation();
         e.preventDefault();
         var li = $(this).parents('.entity'),
-            entity = li.get(0).entity,
+            entity = li[0].entity,
             source = li.find('.translation textarea').val();
 
         // Only if no other entity is being edited in-place
@@ -559,7 +559,7 @@ var Pontoon = (function () {
         e.stopPropagation();
         e.preventDefault();
         var li = $(this).parents('.entity'),
-            entity = li.get(0).entity,
+            entity = li[0].entity,
             textarea = li.find('.translation textarea');
 
         // Only if no other entity is being edited in-place
