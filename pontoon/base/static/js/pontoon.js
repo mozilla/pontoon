@@ -55,8 +55,6 @@
        *
        * entity Entity object
        * content Node content
-       *
-       * TODO: Advanced mode
        */
       function syncDuplicates(entity, content) {
         var entities = Pontoon.project.entities,
@@ -88,9 +86,14 @@
         // Update UI and progress when saved
         $(".editableToolbar > .save").click(function () {
           var element = $(this).parent().get(0).target,
-              entity = element.entity;
+              entity = element.entity,
+              content = $(element).html();
 
-          syncDuplicates(entity, $($(element).clone()).html());
+          if (!entity.duplicates && entity.master === undefined ) {
+            entity.translation = (entity.node.html() !== entity.original) ? content : '';
+          } else {
+            syncDuplicates(entity, content);
+          }
           sendData();
           postMessage("UPDATE", entity.master || entity.id);
         });
