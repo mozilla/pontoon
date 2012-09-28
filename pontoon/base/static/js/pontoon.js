@@ -312,74 +312,73 @@
        * Remove comment nodes
        */
       function loadEntitiesGettext(data) {
-// TODO: this must be slow (for-for-DOM and double data loop)
-var start = new Date().getTime();
-
-        var counter = 0,
-            l10n = {};
-
-        // Create object with l10n comment nodes
+        var counter = 0;
+        // TODO: this must be slow (for-for-DOM and double data loop)
         $('*').contents().each(function () {
           if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
-            var element = $(this).parent();
-            l10n[element.html()] = element;
-            l10n["pontoon"] = true;
-            element.remove();
+            var entity = {},
+                parent = $(this).parent();
+            $(this).remove();
+
+            // Match strings in the document with DB data
+            $(data).each(function() {
+              // Renedered text could be different than source
+              parent.after('<div id="pontoon-string" style="display: none">' + this.original + '</div>');
+
+              if ($('#pontoon-string').html() === parent.html()) {
+                entity.id = counter;
+                entity.original = this.original;
+                entity.comment = this.comment;
+                var translation = this.translation;
+                if (translation.length > 0) {
+                  entity.translation = translation;
+                  parent.html(translation);
+                }
+
+                // Head strings cannot be edited in-place
+                if ($(this).parents('head').length === 0) {
+                  entity.node = parent;
+                  makeEditable(entity);
+                }
+
+                // Save duplicates to master entity
+                if (!this.pontoon) {
+                  this.pontoon = entity.id;
+                } else {
+                  entity.master = this.pontoon;
+                  var masterEntity = Pontoon.project.entities[this.pontoon];
+                  if (masterEntity.duplicates) {
+                    masterEntity.duplicates.push(entity.id);
+                  } else {
+                    masterEntity.duplicates = [this.pontoon, entity.id];
+                  }
+                }
+
+                Pontoon.project.entities.push(entity);
+                counter++;
+              }
+              $('#pontoon-string').remove();
+            });
           }
         });
 
-        // Match strings in the document with DB data
+        // Prepare unmatched DB entities to be displayed in Advanced mode
         $(data).each(function() {
-          // Renedered text could be different than source
-          $('body').append('<div id="pontoon-string" style="display: none">' + this.original + '</div>');
-          var parent = l10n[$('#pontoon-string').html()],
-              translation = this.translation,
-              entity = {
-                id: counter,
-                original: this.original,
-                comment: this.comment
-              };
-
-          if (translation.length > 0) {
-            entity.translation = translation;
-            if (parent) {
-              parent.html(translation);
+          if(this.pontoon === undefined) {
+            var entity = {};
+            entity.id = counter;
+            counter++;
+            entity.original = this.original;
+            entity.comment = this.comment;
+            var translation = this.translation;
+            if (translation.length > 0) {
+              entity.translation = translation;
             }
+            Pontoon.project.entities.push(entity);
           }
-
-          // Head strings cannot be edited in-place
-          if (parent && parent.parents('head').length === 0) {
-            entity.node = parent;
-            makeEditable(entity);
-          }
-          $('#pontoon-string').remove();
-
-          Pontoon.project.entities.push(entity);
-          counter++;
         });
 
         renderHandle();
-
-/*
-            // Save duplicates to master entity
-            if (!this.pontoon) {
-              this.pontoon = entity.id;
-            } else {
-              entity.master = this.pontoon;
-              var masterEntity = Pontoon.project.entities[this.pontoon];
-              if (masterEntity.duplicates) {
-                masterEntity.duplicates.push(entity.id);
-              } else {
-                masterEntity.duplicates = [this.pontoon, entity.id];
-              }
-            }
-*/
-
-
-
-var end = new Date().getTime();
-var time = end - start;
-alert('Execution time: ' + time);
       }
 
 
