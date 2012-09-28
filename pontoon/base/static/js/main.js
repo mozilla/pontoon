@@ -209,7 +209,7 @@ var Pontoon = (function () {
      */
     entityList: function () {
       var self = this,
-          list = $('#entitylist').append('<ul class="editables"></ul>'),
+          list = $('#entitylist').append('<ul class="editables"></ul><h2>Strings not found on the current page</h2><ul class="uneditables"></ul>'),
           localeMenu = $('.locale .menu').html();
 
       // Render
@@ -281,15 +281,19 @@ var Pontoon = (function () {
         this.ui = li; /* HTML Element representing string in the main UI */
 
         if (!this.master) {
-          list.find('.editables').append(li);
+          if (this.body) {
+            list.find('.editables').append(li);
+          } else {
+            list.find('.uneditables').append(li);
+          }
         }
       });
 
       // Move uneditable entities to a separate list
-      var uneditables = $(".entity.uneditable");
-      if (uneditables.length > 0) {
-        list.find('.editables').after('<h2>Strings not found on the current page</h2><ul class="uneditables"></ul>');
-        uneditables.appendTo("#entitylist ul.uneditables")
+      if (list.find('.editables li').length === 0) {
+        list.find('.editables').remove();
+      } else if ($(".entity.uneditable").length === 0) {
+        list.find('.uneditables, h2').remove();
       }
 
       // Main entity list handlers

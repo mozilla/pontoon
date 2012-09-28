@@ -822,9 +822,12 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist > h2  {
+  color: #666666;
+  font-size: 18px;
   font-weight: 300;
-  margin: 0 11px -15px;
-  text-shadow: 0 1px 0 #FFFFFF;
+  margin: 10px 11px -15px;
+  text-shadow: none;
+  text-transform: none;
 }
 
 #pontoon #entitylist li .source,
