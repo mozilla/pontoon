@@ -186,7 +186,7 @@ def update_from_repository(request, template=None):
             try:
                 repo = hg.repository(ui.ui(), path)
                 commands.update(ui.ui(), repo)
-                log.debug("Repository for " + l.name + " updated.")
+                log.debug("Mercurial: Repository for " + l.name + " updated.")
             except error.RepoError, e:
                 log.debug("Mercurial: " + str(e))
                 try:
@@ -215,7 +215,13 @@ def update_from_repository(request, template=None):
                                 e = Entity(project=p, key=line.id, source=file_name, string=line.value)
                             e.save()
                         else:
-                            e = Entity.objects.get(project=p, key=line.id, source=file_name)
+                            try:
+                                e = Entity.objects.get(project=p, key=line.id, source=file_name)
+                            except Entity.DoesNotExist:
+                                log.debug("Outdated file: " + file_name)
+                                log.debug("Project: " + p)
+                                log.debug("Locale: " + l)
+                                break;
                             try: # Update translation
                                 t = Translation.objects.get(entity=e, locale=l)
                                 t.string = line.value
