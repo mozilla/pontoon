@@ -183,10 +183,71 @@
 
 
       /**
+       * Extract entities from the document, not prepared for working with Pontoon
+       *
+       * Create entity object from every non-empty text node
+       * Exclude nodes from special tags (e.g. <script>) and with translate=no attribute
+       * Skip nodes already included in parent nodes
+       * Add temporary pontoon-entity class to prevent duplicate entities when guessing
+       */
+      function loadEntitiesGuess() {
+        var counter = 0;
+
+        // <noscript> contents are not in the DOM
+        $('noscript').each(function() {
+          $("<div/>", {
+            class: "pontoon-noscript",
+            innerHTML: $(this).text()
+          }).appendTo("body");
+        });
+
+        $(':not("script, style, iframe, noscript, [translate=\"no\"]")').contents().each(function () {
+          if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
+            var entity = {},
+                parent = $(this).parent();
+
+            // If project uses hooks, but not available in the DB, remove <!--l10n--> comment nodes
+            parent.contents().each(function () {
+              if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
+                $(this).remove();
+              }
+            });
+
+            entity.id = counter;
+            counter++;
+            entity.original = parent.html();
+
+            // Head entities cannot be edited in-place
+            if ($(this).parents('head').length === 0) {
+              entity.node = parent;
+              makeEditable(entity);
+            }
+
+            // Remove entities from child nodes if parent node is entity
+            parent.find(".pontoon-entity").each(function() {
+              delete this.entity;
+              Pontoon.project.entities.pop();
+              entity.id--;
+              counter--;
+            });
+
+            Pontoon.project.entities.push(entity);
+            parent.addClass("pontoon-entity");
+          }
+        });
+
+        $(".pontoon-entity").removeClass("pontoon-entity");
+        $(".pontoon-noscript").remove();
+        renderHandle();
+      }
+
+
+
+      /**
        * Extract entities from webL10n apps
        * https://github.com/fabi1cazenave/webL10n
        */
-      function webL10nEntities(data) {
+      function loadEntitiesWebl10n(data) {
         var counter = 0;
 
         $('[data-l10n-id]').each(function () {
@@ -243,67 +304,6 @@
 
 
       /**
-       * Extract entities from the document, not prepared for working with Pontoon
-       * 
-       * Create entity object from every non-empty text node
-       * Exclude nodes from special tags (e.g. <script>) and with translate=no attribute
-       * Skip nodes already included in parent nodes
-       * Add temporary pontoon-entity class to prevent duplicate entities when guessing
-       */ 
-      function guessEntities() {
-        var counter = 0;
-
-        // <noscript> contents are not in the DOM
-        $('noscript').each(function() {
-          $("<div/>", {
-            class: "pontoon-noscript",
-            innerHTML: $(this).text()
-          }).appendTo("body");
-        });
-
-        $(':not("script, style, iframe, noscript, [translate=\"no\"]")').contents().each(function () {
-          if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
-            var entity = {},
-                parent = $(this).parent();
-
-            // If project uses hooks, but not available in the DB, remove <!--l10n--> comment nodes
-            parent.contents().each(function () {
-              if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
-                $(this).remove();
-              }
-            });
-
-            entity.id = counter;
-            counter++;
-            entity.original = parent.html();
-
-            // Head entities cannot be edited in-place
-            if ($(this).parents('head').length === 0) {
-              entity.node = parent;
-              makeEditable(entity);
-            }
-
-            // Remove entities from child nodes if parent node is entity
-            parent.find(".pontoon-entity").each(function() {
-              delete this.entity;
-              Pontoon.project.entities.pop();
-              entity.id--;
-              counter--;
-            });
-
-            Pontoon.project.entities.push(entity);
-            parent.addClass("pontoon-entity");
-          }
-        });
-
-        $(".pontoon-entity").removeClass("pontoon-entity");
-        $(".pontoon-noscript").remove();
-        renderHandle();
-      }
-
-
-
-      /**
        * Load data from DB: original string, translation, comment, suggestions...
        * Match with each string in the document, which is prepended with l10n comment nodes
        * Example: <!--l10n-->Hello World
@@ -311,9 +311,84 @@
        * Create entity objects
        * Remove comment nodes
        */
-      function loadEntities() {
+      function loadEntitiesGettext(data) {
+// TODO: this must be slow (for-for-DOM and double data loop)
+var start = new Date().getTime();
+
         var counter = 0,
-            params = {
+            l10n = {};
+
+        // Create object with l10n comment nodes
+        $('*').contents().each(function () {
+          if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
+            var element = $(this).parent();
+            l10n[element.html()] = element;
+            l10n["pontoon"] = true;
+            element.remove();
+          }
+        });
+
+        // Match strings in the document with DB data
+        $(data).each(function() {
+          // Renedered text could be different than source
+          $('body').append('<div id="pontoon-string" style="display: none">' + this.original + '</div>');
+          var parent = l10n[$('#pontoon-string').html()],
+              translation = this.translation,
+              entity = {
+                id: counter,
+                original: this.original,
+                comment: this.comment
+              };
+
+          if (translation.length > 0) {
+            entity.translation = translation;
+            if (parent) {
+              parent.html(translation);
+            }
+          }
+
+          // Head strings cannot be edited in-place
+          if (parent && parent.parents('head').length === 0) {
+            entity.node = parent;
+            makeEditable(entity);
+          }
+          $('#pontoon-string').remove();
+
+          Pontoon.project.entities.push(entity);
+          counter++;
+        });
+
+        renderHandle();
+
+/*
+            // Save duplicates to master entity
+            if (!this.pontoon) {
+              this.pontoon = entity.id;
+            } else {
+              entity.master = this.pontoon;
+              var masterEntity = Pontoon.project.entities[this.pontoon];
+              if (masterEntity.duplicates) {
+                masterEntity.duplicates.push(entity.id);
+              } else {
+                masterEntity.duplicates = [this.pontoon, entity.id];
+              }
+            }
+*/
+
+
+
+var end = new Date().getTime();
+var time = end - start;
+alert('Execution time: ' + time);
+      }
+
+
+
+      /**
+       * Select appropriate way of loading entities
+       */
+      function loadEntities() {
+        var params = {
               locale: Pontoon.locale.code,
               url: Pontoon.project.url
             };
@@ -332,78 +407,15 @@
               $('menu#context').remove();
               return;
             } else if (data === "guess") {
-              guessEntities();
+              loadEntitiesGuess();
               return;
             } else if (data[0].key) {
-              webL10nEntities(data);
+              loadEntitiesWebl10n(data);
+              return;
+            } else {
+              loadEntitiesGettext(data);
               return;
             }
-            // TODO: this must be slow (for-for-DOM and double data loop)
-            $('*').contents().each(function () {
-              if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
-                var entity = {},
-                    parent = $(this).parent();
-                $(this).remove();
-
-                // Match strings in the document with DB data
-                $(data).each(function() {
-                  // Renedered text could be different than source
-                  parent.after('<div id="pontoon-string" style="display: none">' + this.original + '</div>');
-
-                  if ($('#pontoon-string').html() === parent.html()) {
-                    entity.id = counter;
-                    entity.original = this.original;
-                    entity.comment = this.comment;
-                    var translation = this.translation;
-                    if (translation.length > 0) {
-                      entity.translation = translation;
-                      parent.html(translation);
-                    }
-
-                    // Head strings cannot be edited in-place
-                    if ($(this).parents('head').length === 0) {
-                      entity.node = parent;
-                      makeEditable(entity);
-                    }
-
-                    // Save duplicates to master entity
-                    if (!this.pontoon) {
-                      this.pontoon = entity.id;
-                    } else {
-                      entity.master = this.pontoon;
-                      var masterEntity = Pontoon.project.entities[this.pontoon];
-                      if (masterEntity.duplicates) {
-                        masterEntity.duplicates.push(entity.id);
-                      } else {
-                        masterEntity.duplicates = [this.pontoon, entity.id];
-                      }
-                    }
-
-                    Pontoon.project.entities.push(entity);
-                    counter++;
-                  }
-                  $('#pontoon-string').remove();
-                });
-              }
-            });
-
-            // Prepare unmatched DB entities to be displayed in Advanced mode
-            $(data).each(function() {
-              if(this.pontoon === undefined) {
-                var entity = {};
-                entity.id = counter;
-                counter++;
-                entity.original = this.original;
-                entity.comment = this.comment;
-                var translation = this.translation;
-                if (translation.length > 0) {
-                  entity.translation = translation;
-                }
-                Pontoon.project.entities.push(entity);
-              }
-            });
-
-            renderHandle();
           }
         });
       }
