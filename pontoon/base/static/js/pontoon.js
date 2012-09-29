@@ -200,7 +200,7 @@
 
             // Head entities cannot be edited in-place
             if ($(this).parents('head').length === 0) {
-              entity.node = parent;
+              entity.node = [parent];
               makeEditable(entity);
             }
 
