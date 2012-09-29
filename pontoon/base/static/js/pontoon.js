@@ -51,28 +51,6 @@
 
 
       /**
-       * Sync content of duplicate entities
-       *
-       * entity Entity object
-       * content Node content
-       */
-      function syncDuplicates(entity, content) {
-        var entities = Pontoon.project.entities,
-            duplicates = entity.duplicates;
-
-        if (!duplicates && entities[entity.master]) {
-          duplicates = entities[entity.master].duplicates;
-        }
-
-        $(duplicates).each(function() {
-          entities[this].node.html(content);
-          entities[this].translation = (entity.node.html() !== entity.original) ? content : '';
-        });
-      }
-
-
-
-      /**
        * Render main UI and handle events
        */
       function renderHandle() {
@@ -89,11 +67,10 @@
               entity = element.entity,
               content = $(element).html();
 
-          if (!entity.duplicates && entity.master === undefined ) {
-            entity.translation = (entity.node.html() !== entity.original) ? content : '';
-          } else {
-            syncDuplicates(entity, content);
-          }
+          entity.translation = (content !== entity.original) ? content : '';
+          $(entity.node).each(function() {
+            this.html(content);
+          });
           sendData();
           postMessage("UPDATE", entity.master || entity.id);
         });
@@ -160,24 +137,28 @@
        * entity Entity object
        */ 
       function makeEditable(entity) {
-        var node = entity.node[0];
         entity.body = true;
-        node.entity = entity; // Store entity reference to the node
-        
+        $(entity.node).each(function() {
+          this[0].entity = entity; // Store entity reference to the node
+
+          // Show/hide toolbar on node hover
+          if (!this.handlersAttached) {
+            this.hover(function () {
+              showToolbar(this);
+            }, function() {
+              hideToolbar(this);
+            });
+            this.handlersAttached = true;
+          }
+        });
+
         // Show/hide toolbar on entity hover
         entity.hover = function () {
-          showToolbar(this.node[0]);
+          showToolbar(this.node[0][0]);
         };
         entity.unhover = function () {
-          hideToolbar(this.node[0]);
+          hideToolbar(this.node[0][0]);
         };
-
-        // Show/hide toolbar on node hover
-        $(node).hover(function () {
-          showToolbar(this);
-        }, function() {
-          hideToolbar(this);
-        });
       }
 
 
@@ -320,7 +301,11 @@
           if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
             var element = $(this).parent();
             $(this).remove();
-            l10n[element.html()] = element;
+            if (!l10n[element.html()]) {
+              l10n[element.html()] = [element];
+            } else {
+              l10n[element.html()].push(element);
+            }
           }
         });
 
@@ -339,15 +324,19 @@
               };
 
           // Head strings cannot be edited in-place
-          if (parent) {
+          $(parent).each(function() {
             if (translation) {
-              parent.html(translation);
+              this.html(translation);
             }
-            if (parent.parents('head').length === 0) {
-              entity.node = parent;
+            if (this.parents('head').length === 0) {
+              if (!entity.node) {
+                entity.node = [this];
+              } else {
+                entity.node.push(this);
+              }
               makeEditable(entity);
             }
-          }
+          });
 
           $('#pontoon-string').remove();
           Pontoon.project.entities.push(entity);
@@ -404,9 +393,9 @@
        */
       function showToolbar(node) {
         if ($(node).is('.editableToolbar')) {
-          $(node)[0].target.entity.hover();
-          return true;
-        } else {       
+          showToolbar(node.target);
+          return;
+        } else {
           var toolbar = $('.editableToolbar'),
               curTarget = toolbar[0].target,
               newTarget = node;
@@ -416,6 +405,8 @@
           if (curTarget && curTarget !== newTarget) {
             hideToolbar(curTarget);
           }
+
+          // Toolbar position
           var left = newTarget.getBoundingClientRect().left + window.scrollX,
               top = newTarget.getBoundingClientRect().top + window.scrollY,
               toolbarTop = top - toolbar.outerHeight();
@@ -427,7 +418,8 @@
           } else{
             toolbar.addClass('bottom').css('top', top + $(newTarget).outerHeight());
           };
-        }           
+        }
+
         var toolbarNode = toolbar[0];
         if (toolbarNode.I !== null) {
           clearTimeout(toolbarNode.I);
@@ -524,11 +516,15 @@
           } else if (message.type === "EDIT") {
             $('.editableToolbar > .edit').click();
           } else if (message.type === "SAVE") {
-            $('.editableToolbar')[0].target.entity.node.html(message.value);
+            $($('.editableToolbar')[0].target.entity.node).each(function() {
+              this.html(message.value);
+            });
             $('.editableToolbar > .save').click();
           } else if (message.type === "DELETE") {
             var entity = $('.editableToolbar')[0].target.entity;
-            entity.node.html(entity.original);
+            $(entity.node).each(function() {
+              this.html(entity.original);
+            });
             entity.translation = '';
             sendData();
             postMessage("UPDATE", entity.id);

@@ -280,12 +280,10 @@ var Pontoon = (function () {
         li[0].entity = this;
         this.ui = li; /* HTML Element representing string in the main UI */
 
-        if (!this.master) {
-          if (this.body) {
-            list.find('.editables').append(li);
-          } else {
-            list.find('.uneditables').append(li);
-          }
+        if (this.body) {
+          list.find('.editables').append(li);
+        } else {
+          list.find('.uneditables').append(li);
         }
       });
 
