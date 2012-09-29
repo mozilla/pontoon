@@ -229,56 +229,53 @@
        * https://github.com/fabi1cazenave/webL10n
        */
       function loadEntitiesWebl10n(data) {
-        var counter = 0;
+        var counter = 0,
+            l10n = {};
 
+        // Create object of elements with data-l10n-id attributes
         $('[data-l10n-id]').each(function () {
-          var entity = {},
-              parent = $(this);
-
-          // Match strings in the document with DB data
-          $(data).each(function() {
-            if (this.key === parent.attr('data-l10n-id')) {
-              entity.id = counter;
-              counter++;
-              entity.original = this.original;
-              var translation = this.translation;
-              if (translation.length > 0) {
-                entity.translation = translation;
-                if (!parent.attr('placeholder')) {
-                  parent.html(translation);
-                } else {
-                  parent.attr('placeholder', translation);
-                }
-              }
-              this.pontoon = true;
-
-              // Head entities and input box placeholders cannot be edited in-place
-              if (parent.parents('head').length === 0 && !parent.is('input')) {
-                entity.node = [parent];
-                makeEditable(entity);
-              }
-
-              Pontoon.project.entities.push(entity);
-            }
-          });
-        });
-
-        // Prepare unmatched DB entities to be displayed in Advanced mode
-        $(data).each(function() {
-          if(!this.pontoon) {
-            var entity = {};
-            entity.id = counter;
-            counter++;
-            entity.original = this.original;
-            var translation = this.translation;
-            if (translation.length > 0) {
-              entity.translation = translation;
-            }
-            Pontoon.project.entities.push(entity);
+          var element = $(this),
+              key = $(this).data('l10n-id');
+          if (!l10n[key]) {
+            l10n[key] = [element];
+          } else {
+            l10n[key].push(element);
           }
         });
 
-        Pontoon.project.type = 'webL10n'
+        // Match elements with data-l10n-id attributes with DB data
+        $(data).each(function() {
+          var parent = l10n[this.key],
+              translation = this.translation,
+              entity = {
+                id: counter,
+                original: this.original,
+                translation: (translation.length > 0) ? translation : undefined
+              };
+
+          $(parent).each(function() {
+            if (translation.length > 0) {
+              if (!this.attr('placeholder')) {
+                this.html(translation);
+              } else {
+                this.attr('placeholder', translation);
+              }
+            }
+            if (this.parents('head').length === 0 && !this.is('input')) {
+              if (!entity.node) {
+                entity.node = [this];
+              } else {
+                entity.node.push(this);
+              }
+              makeEditable(entity);
+            }
+          });
+
+          Pontoon.project.entities.push(entity);
+          counter++;
+        });
+
+        Pontoon.project.type = 'webL10n';
         renderHandle();
       }
 
