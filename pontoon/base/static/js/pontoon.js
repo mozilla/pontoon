@@ -254,7 +254,7 @@
 
               // Head entities and input box placeholders cannot be edited in-place
               if (parent.parents('head').length === 0 && !parent.is('input')) {
-                entity.node = parent;
+                entity.node = [parent];
                 makeEditable(entity);
               }
 
