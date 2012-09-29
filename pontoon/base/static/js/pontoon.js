@@ -317,7 +317,7 @@
                 id: counter,
                 original: this.original,
                 comment: this.comment,
-                translation: translation || undefined
+                translation: (translation.length > 0) ? translation : undefined
               };
 
           // Head strings cannot be edited in-place
