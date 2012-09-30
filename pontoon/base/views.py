@@ -374,7 +374,7 @@ def _generate_properties_content(url, locale):
     l = Locale.objects.get(code=locale)
 
     path = os.path.join(settings.MEDIA_ROOT, 'hg', p.name, 'en-US', 'apps', subpage, subpage + '.properties')
-    l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(path).read())
+    l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(path).read().decode('utf-8'))
 
     for line in l10nobject:
         if isinstance(line, silme.core.entity.Entity):
