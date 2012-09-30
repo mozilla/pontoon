@@ -401,7 +401,7 @@ def _generate_properties_content(url, locale):
         f.close()
         log.debug("File saved.")
 
-    return properties
+    return (properties, subpage)
 
 def _generate_po_content(data):
     """
@@ -471,6 +471,7 @@ def download(request, template=None):
     except MultiValueDictKeyError:
         raise Http404
 
+    filename = locale
     response = HttpResponse()
     if type == 'html':
         response['Content-Type'] = 'text/html'
@@ -480,11 +481,11 @@ def download(request, template=None):
         content = _generate_po_content(content)
         response['Content-Type'] = 'text/plain'
     elif type == 'properties':
-        content = _generate_properties_content(content, locale)
+        content, filename = _generate_properties_content(content, locale)
         response['Content-Type'] = 'text/plain'
 
     response.content = content
-    response['Content-Disposition'] = 'attachment; filename=' + locale +\
+    response['Content-Disposition'] = 'attachment; filename=' + filename +\
             '.' + type
     return response
 
