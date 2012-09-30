@@ -118,6 +118,9 @@ def _get_entities(project, locale, page=None):
     log.debug("Load all project entities and translations.")
 
     entities = Entity.objects.filter(project=project)
+    if page != None and entities[0].source != '':
+        entities = entities.filter(source=page + '.properties')
+
     entities_array = []
     for e in entities:
         try:
