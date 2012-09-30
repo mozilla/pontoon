@@ -223,7 +223,7 @@ var Pontoon = (function () {
             '<li class="active original-string" title="Original string"></li>' + 
             '<li class="other-users" title="Suggestions from other users"></li>' + 
             '<li class="other-locales" title="Translations from other locales"></li>' + 
-            '<li class="translation-memory" title="Translation memory"></li>' + 
+            '<li class="translation-memory" title="Translation memory by Transvision"></li>' +
             '<li class="machine-translation" title="Machine translation by Microsoft Translator"></li>' + 
           '</ol>' +
           '<ol class="content">' + 
@@ -825,7 +825,7 @@ var Pontoon = (function () {
         win: project,
         url: "",
         title: "",
-        entities: [],
+        entities: $('#server').data('entities') || [],
         pk: $('#server').data('id'),
         type: 'gettext'
       };
@@ -847,6 +847,7 @@ var Pontoon = (function () {
         path: self.app.path,
         external: self.app.external,
         links: self.app.links,
+        entities: self.project.entities,
         pk: self.project.pk
       });
 

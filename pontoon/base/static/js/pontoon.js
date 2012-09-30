@@ -225,71 +225,47 @@
 
 
       /**
-       * Extract entities from webL10n apps
+       * Match entities and elements with data-l10n-id attribute
        * https://github.com/fabi1cazenave/webL10n
        */
-      function loadEntitiesWebl10n(data) {
-        var counter = 0,
-            l10n = {};
+      function loadEntitiesWebl10n() {
+        var counter = 0;
 
-        // Create object of elements with data-l10n-id attributes
-        $('[data-l10n-id]').each(function () {
-          var element = $(this),
-              key = $(this).data('l10n-id');
-          if (!l10n[key]) {
-            l10n[key] = [element];
-          } else {
-            l10n[key].push(element);
-          }
-        });
+        $(Pontoon.project.entities).each(function(i, entity) {
+          var translation = entity.translation;
+          entity.id = counter;
 
-        // Match elements with data-l10n-id attributes with DB data
-        $(data).each(function() {
-          var parent = l10n[this.key],
-              translation = this.translation,
-              entity = {
-                id: counter,
-                original: this.original,
-                translation: (translation.length > 0) ? translation : undefined
-              };
-
-          $(parent).each(function() {
-            if (translation.length > 0) {
-              if (!this.attr('placeholder')) {
-                this.html(translation);
+          $('[data-l10n-id="' + entity.key + '"]').each(function() {
+            if (translation) {
+              if (!$(this).attr('placeholder')) {
+                $(this).html(translation);
               } else {
-                this.attr('placeholder', translation);
+                $(this).attr('placeholder', translation);
               }
             }
-            if (this.parents('head').length === 0 && !this.is('input')) {
+            if ($(this).parents('head').length === 0 && !$(this).is('input')) {
               if (!entity.node) {
-                entity.node = [this];
+                entity.node = [$(this)];
               } else {
-                entity.node.push(this);
+                entity.node.push($(this));
               }
               makeEditable(entity);
             }
           });
 
-          Pontoon.project.entities.push(entity);
           counter++;
         });
 
-        Pontoon.project.type = 'webL10n';
         renderHandle();
       }
 
 
 
       /**
-       * Load data from DB: original string, translation, comment, suggestions...
-       * Match with each string in the document, which is prepended with l10n comment nodes
+       * Match entities and strings prepended with l10n comment nodes
        * Example: <!--l10n-->Hello World
-       *
-       * Create entity objects
-       * Remove comment nodes
        */
-      function loadEntitiesGettext(data) {
+      function loadEntitiesGettext() {
         var counter = 0,
             l10n = {};
 
@@ -307,18 +283,13 @@
         });
 
         // Match l10n comment nodes with DB data
-        $(data).each(function() {
+        $(Pontoon.project.entities).each(function(i, entity) {
           // Renedered text could be different than source
           $('body').append('<div id="pontoon-string" style="display: none">' + this.original + '</div>');
 
           var parent = l10n[$('#pontoon-string').html()],
-              translation = this.translation,
-              entity = {
-                id: counter,
-                original: this.original,
-                comment: this.comment,
-                translation: (translation.length > 0) ? translation : undefined
-              };
+              translation = this.translation;
+          entity.id = counter;
 
           // Head strings cannot be edited in-place
           $(parent).each(function() {
@@ -336,49 +307,10 @@
           });
 
           $('#pontoon-string').remove();
-          Pontoon.project.entities.push(entity);
           counter++;
         });
 
         renderHandle();
-      }
-
-
-
-      /**
-       * Select appropriate way of loading entities
-       */
-      function loadEntities() {
-        var params = {
-              locale: Pontoon.locale.code,
-              url: Pontoon.project.url
-            };
-
-        $.ajax({
-          url: Pontoon.app.path + 'load/',
-          data: params,
-          dataType: 'jsonp',
-          error: function(data) {
-            postMessage("ERROR");
-            $('menu#context').remove();
-          },
-          success: function(data) {
-            if (data === "error") {
-              postMessage("ERROR");
-              $('menu#context').remove();
-              return;
-            } else if (data === "guess") {
-              loadEntitiesGuess();
-              return;
-            } else if (data[0].key) {
-              loadEntitiesWebl10n(data);
-              return;
-            } else {
-              loadEntitiesGettext(data);
-              return;
-            }
-          }
-        });
       }
 
 
@@ -606,7 +538,29 @@
       }
 
       Pontoon.project.title = document.title.split("-->")[1] || document.title;        
-      loadEntities();
+
+      // Select appropriate way of loading entities
+      var entities = Pontoon.project.entities;
+      if (entities.length > 0) {
+        if (entities[0].key) {
+          var localized = false;
+          window.addEventListener("localized", function() {
+            localized = true;
+            loadEntitiesWebl10n();
+          }, false);
+          // Fallback: some apps don't seem to trigger the event
+          setTimeout(function() {
+            if (!localized) {
+              loadEntitiesWebl10n();
+            }
+          }, 1000);
+          Pontoon.project.type = 'webL10n';
+        } else {
+          loadEntitiesGettext();
+        }
+      } else {
+        loadEntitiesGuess();
+      }
     });
   }
 
@@ -654,6 +608,7 @@
         Pontoon.app.path = message.value.path; // Set domain
         Pontoon.app.external = message.value.external; // Set external
         Pontoon.app.links = message.value.links; // Set links
+        Pontoon.project.entities = message.value.entities; // Set entities
         Pontoon.project.pk = message.value.pk; // Set project
         loadJquery();
         window.removeEventListener("message", initizalize, false);

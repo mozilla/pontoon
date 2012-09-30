@@ -113,6 +113,28 @@ def translate_site(request, locale, template=None):
         return HttpResponseRedirect(reverse('pontoon.translate.project.page',
         kwargs={'locale': locale, 'project': p.name, 'page': page}))
 
+def _get_entities(project, locale, page=None):
+    """Load all project entities and translations."""
+    log.debug("Load all project entities and translations.")
+
+    entities = Entity.objects.filter(project=project)
+    entities_array = []
+    for e in entities:
+        try:
+            t = Translation.objects.get(entity=e, locale=locale)
+            translation = t.string
+        except Translation.DoesNotExist:
+            translation = ""
+
+        obj = {
+            "original": e.string,
+            "comment": e.comment,
+            "key": e.key,
+            "translation": translation
+        }
+        entities_array.append(obj)
+    return entities_array
+
 @mobile_template('{mobile/}translate.html')
 def translate_project(request, locale, project, page=None, template=None):
     """Translate view: project."""
@@ -138,23 +160,25 @@ def translate_project(request, locale, project, page=None, template=None):
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
     }
 
+    # Validate project locales
+    if len(p.locales.filter(code=locale)) == 0:
+        return home(request, "Oops, locale is not supported for this website.", locale, data['project_url'])
+
     # Validate subpages
     pages = Subpage.objects.filter(project=p)
     if len(pages) > 0:
         if page is None:
-            page = pages.filter(url=p.url)[0]
+            page = pages.filter(url=p.url)[0].name # If page exist, but not specified
         else:
             try:
-                s = pages.get(name=page)
-                data['project_url'] = s.url
+                data['project_url'] = pages.get(name=page).url
             except Subpage.DoesNotExist:
                 return home(request, "Oops, subpage could not be found.", locale, p.url)
         data['pages'] = pages
         data['current_page'] = page
 
-    # Validate project locales
-    if len(p.locales.filter(code=locale)) == 0:
-        return home(request, "Oops, locale is not supported for this website.", locale, data['project_url'])
+    # Get entities
+    data['entities'] = json.dumps(_get_entities(p, l, page))
 
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
         data['mt_apikey'] = settings.MICROSOFT_TRANSLATOR_API_KEY
@@ -324,60 +348,6 @@ def update_translation(request, template=None):
         else:
             log.debug("Translation not set.")
             return HttpResponse("not set")
-
-def load_entities(request, template=None):
-    """Load all project entities and translations."""
-    log.debug("Load all project entities and translations.")
-
-    try:
-        callback = str(request.GET.get('callback', '')) # JSONP
-        locale = request.GET['locale']
-        url = request.GET['url']
-    except MultiValueDictKeyError:
-        return HttpResponse(callback + '("error");')
-
-    log.debug("Locale: " + locale)
-    log.debug("URL: " + url)
-
-    """Query DB by project URL and locale."""
-    try:
-        l = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist:
-        return HttpResponse(callback + '("error");')
-
-    try:
-        p = Project.objects.get(url=url)
-    except Project.DoesNotExist:
-        try:
-            s = Subpage.objects.get(url=url)
-            p = s.project
-        except Subpage.DoesNotExist:
-            log.debug("Project not found in the DB. Guessing entities.")
-            return HttpResponse(callback + '("guess");')
-
-    if len(p.locales.filter(code=locale)) > 0:
-        log.debug("Load data from DB.")
-        entities = Entity.objects.filter(project=p)
-
-        data = []
-        for e in entities:
-            try:
-                t = Translation.objects.get(entity=e, locale=l)
-                translation = t.string
-            except Translation.DoesNotExist:
-                translation = ""
-
-            obj = {
-                "original": e.string,
-                "comment": e.comment,
-                "key": e.key,
-                "translation": translation
-            }
-            data.append(obj)
-
-        return HttpResponse(callback + '(' + json.dumps(data, indent=4) + ');')
-    else:
-        return HttpResponse(callback + '("error");')
 
 def _generate_properties_content(url, locale):
     """
