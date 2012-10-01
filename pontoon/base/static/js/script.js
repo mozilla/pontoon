@@ -79,7 +79,8 @@
               }
             } else {
               clearInterval(interval);
-              window.location = '/locale/' + escapedLocale + '/site/' + encodeURIComponent(url) + 'oops/';
+              var lang = $('html').attr('lang');
+              window.location = (lang ? '/' + lang : '') + '/locale/' + escapedLocale + '/site/' + encodeURIComponent(url) + 'oops/';
             }
           }, 100);
 
