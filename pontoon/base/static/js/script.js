@@ -79,7 +79,7 @@
               }
             } else {
               clearInterval(interval);
-              window.location = '/locale/' + escapedLocale + '/site/' + encodeURIComponent(url) + '/oops/';
+              window.location = '/locale/' + escapedLocale + '/site/' + encodeURIComponent(url) + 'oops/';
             }
           }, 100);
 
