@@ -218,9 +218,7 @@ def update_from_repository(request, template=None):
                             try:
                                 e = Entity.objects.get(project=p, key=line.id, source=file_name)
                             except Entity.DoesNotExist:
-                                log.debug("Outdated file: " + file_name)
-                                log.debug("Project: " + p)
-                                log.debug("Locale: " + l)
+                                log.debug("Line ID " + line.id + " in " + file_path + " is obsolete.")
                                 break;
                             try: # Update translation
                                 t = Translation.objects.get(entity=e, locale=l)
