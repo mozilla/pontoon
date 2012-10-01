@@ -81,6 +81,7 @@
               clearInterval(interval);
               var lang = $('html').attr('lang');
               window.location = (lang ? '/' + lang : '') + '/locale/' + escapedLocale + '/site/' + url + 'oops/';
+              projectWindow.close();
             }
           }, 100);
 
