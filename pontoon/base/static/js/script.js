@@ -80,7 +80,7 @@
             } else {
               clearInterval(interval);
               var lang = $('html').attr('lang');
-              window.location = (lang ? '/' + lang : '') + '/locale/' + escapedLocale + '/site/' + encodeURIComponent(url) + 'oops/';
+              window.location = (lang ? '/' + lang : '') + '/locale/' + escapedLocale + '/site/' + url + 'oops/';
             }
           }, 100);
 
