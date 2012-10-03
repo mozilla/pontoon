@@ -618,7 +618,8 @@ var Pontoon = (function () {
             locale: self.locale.code,
             pk: self.project.pk,
             original: entity.original,
-            translation: entity.translation
+            translation: entity.translation,
+            source: entity.source || undefined
           },
           success: function(data) {
             if (data !== "error") {

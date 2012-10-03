@@ -15,7 +15,7 @@ from hashlib import md5
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect, Http404
@@ -134,6 +134,7 @@ def _get_entities(project, locale, page=None):
             "original": e.string,
             "comment": e.comment,
             "key": e.key,
+            "source": e.source,
             "translation": translation
         }
         entities_array.append(obj)
@@ -320,6 +321,12 @@ def update_translation(request, template=None):
     except Entity.DoesNotExist, e:
         log.error(str(e))
         return HttpResponse("error")
+    except MultipleObjectsReturned:
+        try:
+            e = Entity.objects.get(project=p, source=request.GET['source'], string=original)
+        except MultiValueDictKeyError, e:
+            log.error(str(e))
+            return HttpResponse("error")
 
     try:
         l = Locale.objects.get(code=locale)
