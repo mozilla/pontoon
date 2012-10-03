@@ -2212,7 +2212,7 @@
         "pk": 2,
         "fields": {
             "name": "gaia",
-            "url": "http://browser.gaiamobile.org:8080/",
+            "url": "http://browser.gaia.informationisart.com/",
             "locales": [74, 84, 180, 183, 203],
             "repository": "https://hg.mozilla.org/gaia-l10n/",
             "external": "True",
@@ -2261,7 +2261,7 @@
         "fields": {
             "project": 2,
             "name": "Browser",
-            "url": "http://browser.gaiamobile.org:8080/"
+            "url": "http://browser.gaia.informationisart.com/"
         }
     },
     {
@@ -2270,7 +2270,7 @@
         "fields": {
             "project": 2,
             "name": "Camera",
-            "url": "http://camera.gaiamobile.org:8080/"
+            "url": "http://camera.gaia.informationisart.com/"
         }
     },
     {
@@ -2279,7 +2279,7 @@
         "fields": {
             "project": 2,
             "name": "Clock",
-            "url": "http://clock.gaiamobile.org:8080/"
+            "url": "http://clock.gaia.informationisart.com/"
         }
     },
     {
@@ -2288,7 +2288,7 @@
         "fields": {
             "project": 2,
             "name": "Email",
-            "url": "http://email.gaiamobile.org:8080/"
+            "url": "http://email.gaia.informationisart.com/"
         }
     },
     {
@@ -2297,7 +2297,7 @@
         "fields": {
             "project": 2,
             "name": "FM",
-            "url": "http://fm.gaiamobile.org:8080/"
+            "url": "http://fm.gaia.informationisart.com/"
         }
     },
     {
@@ -2306,7 +2306,7 @@
         "fields": {
             "project": 2,
             "name": "Gallery",
-            "url": "http://gallery.gaiamobile.org:8080/"
+            "url": "http://gallery.gaia.informationisart.com/"
         }
     },
     {
@@ -2315,7 +2315,7 @@
         "fields": {
             "project": 2,
             "name": "Music",
-            "url": "http://music.gaiamobile.org:8080/"
+            "url": "http://music.gaia.informationisart.com/"
         }
     },
     {
@@ -2324,7 +2324,7 @@
         "fields": {
             "project": 2,
             "name": "Settings",
-            "url": "http://settings.gaiamobile.org:8080/"
+            "url": "http://settings.gaia.informationisart.com/"
         }
     },
     {
@@ -2333,7 +2333,7 @@
         "fields": {
             "project": 2,
             "name": "SMS",
-            "url": "http://sms.gaiamobile.org:8080/"
+            "url": "http://sms.gaia.informationisart.com/"
         }
     },
     {
@@ -2342,7 +2342,7 @@
         "fields": {
             "project": 2,
             "name": "System",
-            "url": "http://system.gaiamobile.org:8080/"
+            "url": "http://system.gaia.informationisart.com/"
         }
     },
     {
@@ -2351,7 +2351,61 @@
         "fields": {
             "project": 2,
             "name": "Video",
-            "url": "http://video.gaiamobile.org:8080/"
+            "url": "http://video.gaia.informationisart.com/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 16,
+        "fields": {
+            "project": 2,
+            "name": "Calculator",
+            "url": "http://video.gaia.informationisart.com/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 17,
+        "fields": {
+            "project": 2,
+            "name": "Calendar",
+            "url": "http://calendar.gaia.informationisart.com/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 18,
+        "fields": {
+            "project": 2,
+            "name": "Dialer",
+            "url": "http://dialer.gaia.informationisart.com/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 19,
+        "fields": {
+            "project": 2,
+            "name": "Contacts",
+            "url": "http://contacts.gaia.informationisart.com/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 20,
+        "fields": {
+            "project": 2,
+            "name": "Cost Control",
+            "url": "http://costcontrol.gaia.informationisart.com/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 21,
+        "fields": {
+            "project": 2,
+            "name": "Feedback",
+            "url": "http://feedback.gaia.informationisart.com/"
         }
     }
 ]
