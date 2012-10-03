@@ -2,6 +2,7 @@
 import base64
 import commonware
 import datetime
+import fnmatch
 import json
 import os
 import polib
@@ -373,7 +374,13 @@ def _generate_properties_content(url, locale):
     p = s.project
     l = Locale.objects.get(code=locale)
 
-    path = os.path.join(settings.MEDIA_ROOT, 'hg', p.name, 'en-US', 'apps', subpage, subpage + '.properties')
+    original_path = os.path.join(settings.MEDIA_ROOT, 'hg', p.name, 'en-US')
+    path = []
+    for root, dirnames, filenames in os.walk(original_path):
+      for filename in fnmatch.filter(filenames, subpage + '.properties'):
+          path.append(os.path.join(root, filename))
+
+    path = path[0]
     l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(path).read().decode('utf-8'))
 
     for line in l10nobject:
@@ -389,12 +396,12 @@ def _generate_properties_content(url, locale):
     content = silme.format.properties.PropertiesFormatParser.dump_structure(l10nobject)
     properties = unicode(content).encode('utf-8')
 
-    path = os.path.join(settings.MEDIA_ROOT, 'hg', p.name, l.code, 'apps', subpage, subpage + '.properties')
+    path = path.replace('en-US', l.code, 1)
     try:
         f = open(path, 'w')
     except IOError, e:
         log.debug("File does not exist yet. Creating a new one.")
-        os.makedirs(os.path.join(settings.MEDIA_ROOT, 'hg', p.name, l.code, 'apps', subpage))
+        os.makedirs(os.path.dirname(path))
         f = open(path, 'w')
     finally:
         f.write(properties)
