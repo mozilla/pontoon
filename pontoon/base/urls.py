@@ -5,10 +5,14 @@ import views
 
 urlpatterns = patterns('',
     url(r'^$', views.home, name='pontoon.home'),
-    url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/site/(?P<url>.+)/oops/$',
+    url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/site/(?P<url>.+)/oops/support/$',
         views.home,
         kwargs={'error': 'Oops, website is not supported by Pontoon.'},
-        name='pontoon.error'),
+        name='pontoon.error.support'),
+    url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/site/(?P<url>.+)/oops/popup/$',
+        views.home,
+        kwargs={'error': 'Oops, looks like pop-ups are blocked.'},
+        name='pontoon.error.popup'),
 
     url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/site/',
         views.translate_site,

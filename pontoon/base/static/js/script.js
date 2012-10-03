@@ -79,9 +79,14 @@
               }
             } else {
               clearInterval(interval);
-              var lang = $('html').attr('lang');
-              window.location = (lang ? '/' + lang : '') + '/locale/' + escapedLocale + '/site/' + url + 'oops/';
-              projectWindow.close();
+              var lang = $('html').attr('lang'),
+                  errorLink = (lang ? '/' + lang : '') + '/locale/' + escapedLocale + '/site/' + url + 'oops/';
+              if (projectWindow) {
+                window.location = errorLink + 'support/';
+                projectWindow.close();
+              } else {
+                window.location = errorLink + 'popup/';
+              }
             }
           }, 100);
 
