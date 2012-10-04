@@ -170,7 +170,7 @@ def translate_project(request, locale, project, page=None, template=None):
         return home(request, "Oops, locale is not supported for this website.", locale, data['project_url'])
 
     # Validate subpages
-    pages = Subpage.objects.filter(project=p)
+    pages = Subpage.objects.filter(project=p).order_by('name')
     if len(pages) > 0:
         if page is None:
             page = pages.filter(url=p.url)[0].name # If page exist, but not specified
