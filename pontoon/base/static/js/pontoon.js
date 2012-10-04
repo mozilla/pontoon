@@ -2,7 +2,7 @@
 
   var Pontoon = {
         app: {
-          win: window.opener || window.top,
+          win: window.opener || ((window !== window.top) ? window.top : undefined),
           path: "",
           external: false,
           links: false
