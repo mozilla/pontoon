@@ -134,7 +134,7 @@ def _get_entities(project, locale, page=None):
             "original": e.string,
             "comment": e.comment,
             "key": e.key,
-            "source": e.source,
+            "pk": e.pk,
             "translation": translation
         }
         entities_array.append(obj)
@@ -297,36 +297,30 @@ def update_translation(request, template=None):
         raise Http404
 
     try:
-        original = request.GET['original']
+        entity = request.GET['entity']
         translation = request.GET['translation']
-        pk = request.GET['pk']
+        project = request.GET['project']
         locale = request.GET['locale']
     except MultiValueDictKeyError, e:
         log.error(str(e))
         return HttpResponse("error")
 
-    log.debug("Entity: " + original)
+    log.debug("Entity: " + entity)
     log.debug("Translation: " + translation)
-    log.debug("Project ID: " + pk)
+    log.debug("Project ID: " + project)
     log.debug("Locale: " + locale)
 
     try:
-        p = Project.objects.get(pk=pk)
+        p = Project.objects.get(pk=project)
     except Project.DoesNotExist, e:
         log.error(str(e))
         return HttpResponse("error")
 
     try:
-        e = Entity.objects.get(project=p, string=original)
+        e = Entity.objects.get(pk=entity)
     except Entity.DoesNotExist, e:
         log.error(str(e))
         return HttpResponse("error")
-    except MultipleObjectsReturned:
-        try:
-            e = Entity.objects.get(project=p, source=request.GET['source'], string=original)
-        except MultiValueDictKeyError, e:
-            log.error(str(e))
-            return HttpResponse("error")
 
     try:
         l = Locale.objects.get(code=locale)

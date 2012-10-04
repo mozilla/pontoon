@@ -616,10 +616,9 @@ var Pontoon = (function () {
           url: 'update/',
           data: {
             locale: self.locale.code,
-            pk: self.project.pk,
-            original: entity.original,
-            translation: entity.translation,
-            source: entity.source || undefined
+            project: self.project.pk,
+            entity: entity.pk,
+            translation: entity.translation
           },
           success: function(data) {
             if (data !== "error") {
