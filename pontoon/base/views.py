@@ -397,18 +397,6 @@ def _generate_properties_content(url, locale):
     content = silme.format.properties.PropertiesFormatParser.dump_structure(l10nobject)
     properties = unicode(content).encode('utf-8')
 
-    path = path.replace('en-US', l.code, 1)
-    try:
-        f = open(path, 'w')
-    except IOError, e:
-        log.debug("File does not exist yet. Creating a new one.")
-        os.makedirs(os.path.dirname(path))
-        f = open(path, 'w')
-    finally:
-        f.write(properties)
-        f.close()
-        log.debug("File saved.")
-
     return (properties, subpage)
 
 def _generate_po_content(data):
