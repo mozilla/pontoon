@@ -69,10 +69,10 @@
         projectWindow = window.open(url, 'project', 'width=320,height=480,toolbar=1,resizable=1,scrollbars=1');
       }
 
-      // Show error message if no callback for 5 seconds: Pontoon/iframe not supported, 404…
+      // Show error message if no callback for 30 seconds: Pontoon/iframe not supported, 404…
       var i = 0,
           interval = setInterval(function() {
-            if (i < 50) {
+            if (i < 300) {
               i++;
               if (Pontoon.app) { // Set in Pontoon.init() which is called on "supported"
                 clearInterval(interval);
