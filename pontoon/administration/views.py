@@ -27,17 +27,6 @@ from mobility.decorators import mobile_template
 log = commonware.log.getLogger('playdoh')
 
 
-class FakeSectionHead(object):
-    """Fake Section Head for parsing properties files."""
-    def __init__(self, fp):
-        self.fp = fp
-        self.sechead = '[asection]\n'
-    def readline(self):
-        if self.sechead:
-            try: return self.sechead
-            finally: self.sechead = None
-        else: return self.fp.readline()
-
 @mobile_template('{mobile/}admin.html')
 def admin(request, template=None):
     """Admin interface."""
