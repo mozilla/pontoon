@@ -2213,7 +2213,7 @@
         "fields": {
             "name": "testpilot",
             "url": "http://localhost/pontoon/hooks/php/test/testpilot/",
-            "locales": [47, 74, 84, 180, 203],
+            "locales": [47, 74, 85, 182, 205],
             "repository": "https://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/testpilot/",
             "transifex_project": "testpilot",
             "transifex_resource": "index",
@@ -2229,7 +2229,7 @@
         "fields": {
             "name": "gaia",
             "url": "http://browser.gaia.informationisart.com/",
-            "locales": [74, 84, 180, 183, 203],
+            "locales": [74, 85, 182, 185, 205],
             "repository": "https://hg.mozilla.org/gaia-l10n/",
             "external": "True",
             "links": "True"
