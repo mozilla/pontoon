@@ -217,6 +217,7 @@ def update_from_repository(request, template=None):
                                 t = Translation(entity=e, locale=l,
                                     string=line.value, date=datetime.datetime.now())
                             t.save()
+                log.debug(l.code.upper() + ": " + file_name + " saved to DB.")
 
     elif url_repository.find('://svn') > 0:
         """ Subversion """
