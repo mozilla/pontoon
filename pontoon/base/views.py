@@ -183,7 +183,9 @@ def translate_project(request, locale, project, page=None, template=None):
         data['current_page'] = page
 
     # Get entities
-    data['entities'] = json.dumps(_get_entities(p, l, page.lower().replace(" ", "")))
+    if page is not None:
+        page = page.lower().replace(" ", "")
+    data['entities'] = json.dumps(_get_entities(p, l, page))
 
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
         data['mt_apikey'] = settings.MICROSOFT_TRANSLATOR_API_KEY
