@@ -1,5 +1,6 @@
 
 import base64
+import ConfigParser
 import commonware
 import datetime
 import fnmatch
@@ -8,6 +9,7 @@ import os
 import polib
 import pysvn
 import silme.core, silme.format.properties
+import urllib2
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -163,7 +165,47 @@ def update_from_repository(request, template=None):
     except Project.DoesNotExist:
         return HttpResponse("error")
 
-    if url_repository.find('://hg') > 0:
+    fileName, fileExtension = os.path.splitext(url_repository)
+
+    if fileExtension == '.ini':
+        config = ConfigParser.ConfigParser()
+        try:
+            config.readfp(urllib2.urlopen(url_repository))
+        except Exception, e:
+            log.debug("INI: " + str(e))
+            return HttpResponse("error")
+        sections = config.sections()
+        sections.insert(0, sections.pop(sections.index('en')))
+        for section in sections:
+            for item in config.items(section):
+                if section == 'en':
+                    try: # Update entity
+                        e = Entity.objects.get(project=p, key=item[0], source=url_repository, string=item[1])
+                    except Entity.DoesNotExist: # New entity
+                        e = Entity(project=p, key=item[0], source=url_repository, string=item[1])
+                    e.save()
+                else:
+                    try:
+                        e = Entity.objects.get(project=p, key=item[0], source=url_repository)
+                    except Entity.DoesNotExist:
+                        log.debug("Line ID " + item[0] + " in " + url_repository + " is obsolete.")
+                        break;
+                    try:
+                        l = Locale.objects.get(code=section)
+                    except Locale.DoesNotExist:
+                        log.debug("Locale not supported: " + section)
+                        break;
+                    try: # Update translation
+                        t = Translation.objects.get(entity=e, locale=l)
+                        t.string = item[1]
+                        t.date = datetime.datetime.now()
+                    except Translation.DoesNotExist: # New translation
+                        t = Translation(entity=e, locale=l,
+                            string=item[1], date=datetime.datetime.now())
+                    t.save()
+            log.debug(section.upper() + ": saved to DB.")
+
+    elif url_repository.find('://hg') > 0:
         """ Mercurial """
         software = 'hg'
         locales = [Locale.objects.get(code="en-US")]
