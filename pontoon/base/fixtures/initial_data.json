@@ -2303,22 +2303,13 @@
         "pk": 8,
         "fields": {
             "project": 2,
-            "name": "Email",
-            "url": "http://email.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 9,
-        "fields": {
-            "project": 2,
             "name": "FM",
             "url": "http://fm.gaia.informationisart.com/"
         }
     },
     {
         "model": "base.subpage",
-        "pk": 10,
+        "pk": 9,
         "fields": {
             "project": 2,
             "name": "Gallery",
@@ -2327,7 +2318,7 @@
     },
     {
         "model": "base.subpage",
-        "pk": 11,
+        "pk": 10,
         "fields": {
             "project": 2,
             "name": "Music",
@@ -2336,16 +2327,7 @@
     },
     {
         "model": "base.subpage",
-        "pk": 12,
-        "fields": {
-            "project": 2,
-            "name": "Settings",
-            "url": "http://settings.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 13,
+        "pk": 11,
         "fields": {
             "project": 2,
             "name": "SMS",
@@ -2354,16 +2336,7 @@
     },
     {
         "model": "base.subpage",
-        "pk": 14,
-        "fields": {
-            "project": 2,
-            "name": "System",
-            "url": "http://system.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 15,
+        "pk": 12,
         "fields": {
             "project": 2,
             "name": "Video",
@@ -2372,16 +2345,7 @@
     },
     {
         "model": "base.subpage",
-        "pk": 16,
-        "fields": {
-            "project": 2,
-            "name": "Calendar",
-            "url": "http://calendar.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 17,
+        "pk": 13,
         "fields": {
             "project": 2,
             "name": "Dialer",
@@ -2390,29 +2354,11 @@
     },
     {
         "model": "base.subpage",
-        "pk": 18,
+        "pk": 14,
         "fields": {
             "project": 2,
             "name": "Contacts",
             "url": "http://contacts.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 19,
-        "fields": {
-            "project": 2,
-            "name": "Cost Control",
-            "url": "http://costcontrol.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 20,
-        "fields": {
-            "project": 2,
-            "name": "Feedback",
-            "url": "http://feedback.gaia.informationisart.com/"
         }
     }
 ]
