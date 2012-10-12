@@ -188,8 +188,8 @@ def update_from_repository(request, template=None):
                     try:
                         e = Entity.objects.get(project=p, key=item[0], source=url_repository)
                     except Entity.DoesNotExist:
-                        log.debug("Line ID " + item[0] + " in " + url_repository + " is obsolete.")
-                        break;
+                        log.debug("[" + section + "]: Line ID " + item[0] + " is obsolete.")
+                        continue;
                     try:
                         l = Locale.objects.get(code=section)
                     except Locale.DoesNotExist:
@@ -203,7 +203,7 @@ def update_from_repository(request, template=None):
                         t = Translation(entity=e, locale=l,
                             string=item[1], date=datetime.datetime.now())
                     t.save()
-            log.debug(section.upper() + ": saved to DB.")
+            log.debug(section + ": saved to DB.")
 
     elif url_repository.find('://hg') > 0:
         """ Mercurial """
