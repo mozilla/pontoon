@@ -463,23 +463,24 @@
           } else if (message.type === "MODE") {
             $("#context .mode").attr("label", message.value + " mode");
           } else if (message.type === "HTML") {
-            $.ajax(Pontoon.project.url).done(function(data) {
-              var response = data,
-                  index = data.toLowerCase().indexOf("<head"),
-                  start = response.substring(0, index);
-                  inner = $("html").clone();
-
-              // Remove Pontoon-content
-              inner
-                .find("link[href*='pontoon.css']").remove().end()
-                .find("script[src*='pontoon.js']").remove().end()
-                .find("script[src*='jquery.min.js']").remove().end()
-                .find(".editableToolbar").remove().end()
-                .find("[contenteditable]").removeAttr("contenteditable").end()
-                .find("body").removeAttr("contextmenu").end()
-                .find("menu#context").remove();
-
-              postMessage("HTML", start + inner.html() + "\n</html>");  
+            $.ajax({
+              url: Pontoon.project.url,
+              success: function(data) {
+                var response = data,
+                    index = data.toLowerCase().indexOf("<head"),
+                    start = response.substring(0, index);
+                    inner = $("html").clone();
+                // Remove Pontoon-content
+                inner
+                  .find("link[href*='pontoon.css']").remove().end()
+                  .find("script[src*='pontoon.js']").remove().end()
+                  .find("script[src*='jquery.min.js']").remove().end()
+                  .find(".editableToolbar").remove().end()
+                  .find("[contenteditable]").removeAttr("contenteditable").end()
+                  .find("body").removeAttr("contextmenu").end()
+                  .find("menu#context").remove();
+                postMessage("HTML", start + inner.html() + "\n</html>");
+              }
             });
           } else if (message.type === "USER") {
             Pontoon.user = message.value;
@@ -545,8 +546,10 @@
         if (entities[0].key) {
           var localized = false;
           window.addEventListener("localized", function() {
-            localized = true;
-            loadEntitiesWebl10n();
+            if (!localized) {
+              localized = true;
+              loadEntitiesWebl10n();
+            }
           }, false);
           // Fallback: some apps don't seem to trigger the event
           setTimeout(function() {
