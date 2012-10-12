@@ -370,8 +370,23 @@ def _generate_properties_content(url, locale):
     try:
         s = Subpage.objects.get(url=url)
     except Subpage.DoesNotExist:
-        log.debug('Subpage with this URL does not exist')
-        return ("error", "error")
+        log.debug('Subpage with this URL does not exist. Generate .properties file.')
+
+        content = '';
+        p = Project.objects.get(url=url)
+        l = Locale.objects.get(code=locale)
+        entities = Entity.objects.filter(project=p)
+
+        for e in entities:
+            content += e.key + ' = '
+            try:
+                t = Translation.objects.get(entity=e, locale=l)
+                content += t.string + '\n'
+            except Translation.DoesNotExist:
+                content += '\n'
+
+        properties = unicode(content).encode('utf-8')
+        return (properties, p.name + "_" + locale)
 
     subpage = s.name.lower().replace(" ", "")
     p = s.project
@@ -398,7 +413,6 @@ def _generate_properties_content(url, locale):
 
     content = silme.format.properties.PropertiesFormatParser.dump_structure(l10nobject)
     properties = unicode(content).encode('utf-8')
-
     return (properties, subpage)
 
 def _generate_po_content(data):
@@ -480,6 +494,9 @@ def download(request, template=None):
         response['Content-Type'] = 'text/plain'
     elif type == 'properties':
         content, filename = _generate_properties_content(content, locale)
+        response['Content-Type'] = 'text/plain'
+    elif type == 'ini':
+        content, filename = _generate_ini_content(content, locale)
         response['Content-Type'] = 'text/plain'
 
     response.content = content
