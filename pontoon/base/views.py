@@ -371,7 +371,7 @@ def _generate_properties_content(url, locale):
         s = Subpage.objects.get(url=url)
     except Subpage.DoesNotExist:
         log.debug('Subpage with this URL does not exist')
-        return "error"
+        return ("error", "error")
 
     subpage = s.name.lower().replace(" ", "")
     p = s.project
