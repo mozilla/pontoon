@@ -546,7 +546,7 @@
         if (entities[0].key) {
           var localized = false;
           window.addEventListener("localized", function() {
-            if (!localized) {
+            if (!localized && document.webL10n.getReadyState() === 'complete') {
               localized = true;
               loadEntitiesWebl10n();
             }
