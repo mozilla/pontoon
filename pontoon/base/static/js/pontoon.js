@@ -67,7 +67,7 @@
               entity = element.entity,
               content = $(element).html();
 
-          entity.translation = (content !== entity.original) ? content : '';
+          entity.translation = content;
           $(entity.node).each(function() {
             this.html(content);
           });
