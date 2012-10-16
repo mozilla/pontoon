@@ -403,6 +403,21 @@
 
 
       /**
+       * Select node contents
+       *
+       * node DOM node
+       */
+      function selectNodeContents(node) {
+        var range = document.createRange();
+        range.selectNodeContents(node);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+
+
+
+      /**
        * Enable editable mode
        */
       function startEditing() {
@@ -413,6 +428,7 @@
         $(target).attr('contentEditable', true);
         postMessage("ACTIVE", target.entity.id);
         target.focus();
+        selectNodeContents(target);
       }
 
 
