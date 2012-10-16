@@ -491,15 +491,7 @@ var Pontoon = (function () {
             entity = li[0].entity,
             source = self.doRender(li.find('.source .content .active .source-string').html());
 
-        // Only if no other entity is being edited in-place
-        if (li.is('.hovered')) {
-          self.common.postMessage("SAVE", source);
-        // Head entities cannot be edited in-place
-        } else if (!entity.body) {
-          entity.translation = source;
-          self.updateEntityUI(entity);
-          self.updateOnServer(entity);
-        }
+        entity.ui.find('textarea').val(source);
       });
 
       // Translate in textarea
