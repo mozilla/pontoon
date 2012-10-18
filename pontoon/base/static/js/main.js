@@ -8,6 +8,17 @@ var Pontoon = (function () {
 
 
     /*
+     * Get cookie
+     *
+     * sKey Cookie key
+     */
+    getCookie: function (sKey) {
+      return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+    },
+
+
+
+    /*
      * Save data in different formats
      *
      * type Data format
@@ -53,6 +64,7 @@ var Pontoon = (function () {
       // It is impossible to download files with AJAX
       function download(params) {
         params.csrfmiddlewaretoken = $('#server').data('csrf');
+        params.timestamp = new Date().getTime();
         var post = $('<form>', {
           method: 'post',
           action: 'download/'
@@ -65,7 +77,17 @@ var Pontoon = (function () {
           }).appendTo(post);
         }
         post.appendTo('body').submit().remove();
+
+        setInterval(function () {
+          console.log(self.getCookie('fileDownloadToken'));
+          if (self.getCookie('fileDownloadToken') === params.timestamp) {
+            console.log("finished");
+            self.endLoader();
+          }
+        }, 1000);
       }
+
+      self.startLoader();
 
       if (type === "html") {
         params.content = value;
@@ -93,8 +115,6 @@ var Pontoon = (function () {
         download(params);
 
       } else if (type === "transifex") {
-        self.startLoader();
-
         params.strings = [];
         $("#entitylist .translated").each(function() {
           var entity = $(this)[0].entity;
@@ -140,8 +160,6 @@ var Pontoon = (function () {
         });
 
       } else if (type === "svn") {
-        self.startLoader();
-
         params.content = JSON.stringify(getPO());
         params.url = self.project.url;
 

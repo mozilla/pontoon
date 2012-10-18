@@ -18,6 +18,9 @@ Pontoon uses [Playdoh][playdoh], which supports running web apps in virtual mach
 4. Run a virtual development environment from your working copy directory:
  * `cd pontoon`
  * `vagrant up`
+5. Install dependencies:
+ * `vagrant ssh`
+ * `sudo apt-get install python-svn mercurial`
 
 If you’re running it for the first time, `vagrant up` will take a few minutes to download base VM image, boot Ubuntu VM, install all the necessary packages and run initialization scripts.
 

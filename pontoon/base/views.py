@@ -480,6 +480,7 @@ def download(request, template=None):
         type = request.POST['type']
         content = request.POST['content']
         locale = request.POST['locale']
+        timestamp = request.POST['timestamp']
     except MultiValueDictKeyError:
         raise Http404
 
@@ -502,6 +503,17 @@ def download(request, template=None):
     response.content = content
     response['Content-Disposition'] = 'attachment; filename=' + filename +\
             '.' + type
+
+    log.debug(timestamp)
+
+    max_age = 24 * 60 * 60
+    expires = datetime.datetime.strftime(datetime.datetime.utcnow() + 
+        datetime.timedelta(seconds=max_age), "%a, %d-%b-%Y %H:%M:%S GMT")
+
+    response.set_cookie('fileDownloadToken', timestamp, max_age=max_age, 
+        expires=expires, domain=settings.SESSION_COOKIE_DOMAIN, 
+        secure=settings.SESSION_COOKIE_SECURE or None)
+
     return response
 
 @login_required(redirect_field_name='', login_url='/404')
