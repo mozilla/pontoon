@@ -222,9 +222,10 @@ def update_from_repository(request, template=None):
                 log.debug("Mercurial: " + str(e))
                 try:
                     commands.clone(ui.ui(), url_locale, path)
+                    log.debug("Mercurial: Repository for " + l.name + " cloned.")
                 except Exception, e:
                     log.debug("Mercurial: " + str(e))
-                    return HttpResponse("error")
+                    continue;
 
             """Save or update repository data to DB."""
             files = []
