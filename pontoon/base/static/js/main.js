@@ -416,7 +416,7 @@ var Pontoon = (function () {
           li.find(".toolbar").show();
         } else {
           $.ajax({
-            url: 'http://transvision.mozfr.org/index.php',
+            url: 'http://transvision.mozfr.org/',
             data: {
               recherche: li.find('.original-string .source-string').html(),
               locale: self.locale.code,
@@ -428,7 +428,7 @@ var Pontoon = (function () {
           }).error(function () {
             loader.removeClass("loader").addClass("no").html("Oops, something went wrong.");
           }).success(function (response) {
-            if (response !== null) {
+            if (response.length !== 0) {
               // Not supported in some browsers, but needed with current JSON output:
               // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/keys
               Object.keys = function (obj) {
