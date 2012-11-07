@@ -5,6 +5,12 @@
 {% block class %}admin-form{% endblock %}
 
 {% block content %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}>
+</div>
+
 <section id="intro" class="visible">
   <form method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
 

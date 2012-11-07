@@ -151,12 +151,12 @@ def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
 
-    if not request.is_ajax():
+    if request.method != 'POST':
         raise Http404
 
     try:
-        pk = request.GET['pk']
-        url_repository = request.GET['repository']
+        pk = request.POST['pk']
+        url_repository = request.POST['repository']
     except MultiValueDictKeyError:
         return HttpResponse("error")
 
@@ -294,13 +294,13 @@ def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
     log.debug("Update all project locales from Transifex repository.")
 
-    if not request.is_ajax():
+    if request.method != 'POST':
         raise Http404
 
     try:
-        pk = request.GET['pk']
-        transifex_project = request.GET['transifex_project']
-        transifex_resource = request.GET['transifex_resource']
+        pk = request.POST['pk']
+        transifex_project = request.POST['transifex_project']
+        transifex_resource = request.POST['transifex_resource']
     except MultiValueDictKeyError:
         return HttpResponse("error")
 
@@ -311,8 +311,8 @@ def update_from_transifex(request, template=None):
 
     """Check if user authenticated to Transifex."""
     profile, created = UserProfile.objects.get_or_create(user=request.user)
-    username = request.GET.get('transifex_username', profile.transifex_username)
-    password = request.GET.get('transifex_password', base64.decodestring(profile.transifex_password))
+    username = request.POST.get('transifex_username', profile.transifex_username)
+    password = request.POST.get('transifex_password', base64.decodestring(profile.transifex_password))
 
     if (len(username) == 0 or len(password) == 0):
         return HttpResponse("authenticate")
@@ -334,9 +334,9 @@ def update_from_transifex(request, template=None):
             return HttpResponse(response)
 
     """Save Transifex username and password."""
-    if 'remember' in request.GET and request.GET['remember'] == "on":
-        profile.transifex_username = request.GET['transifex_username']
-        profile.transifex_password = base64.encodestring(request.GET['transifex_password'])
+    if 'remember' in request.POST and request.POST['remember'] == "on":
+        profile.transifex_username = request.POST['transifex_username']
+        profile.transifex_password = base64.encodestring(request.POST['transifex_password'])
         profile.save()
 
     return HttpResponse(response.status_code)

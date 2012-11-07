@@ -226,7 +226,8 @@
         updateIcon('loader-light.gif');
 
         params = {
-          pk: $('input[name=pk]').val()
+          pk: $('input[name=pk]').val(),
+          csrfmiddlewaretoken: $('#server').data('csrf')
         }
         if (source === 'repository') {
           params.repository = $('input[name=repository]').val();
@@ -245,6 +246,7 @@
 
         $.ajax({
           url: '/admin/' + source + '/',
+          type: 'POST',
           data: params,
           success: function(data) {
             if (data === "200") {
