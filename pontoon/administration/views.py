@@ -211,9 +211,14 @@ def update_from_repository(request, template=None):
         locales = [Locale.objects.get(code="en-US")]
         locales.extend(p.locales.all())
 
+        project_path = os.path.join(settings.MEDIA_ROOT, software, p.name)
+        if not os.path.exists(project_path):
+            os.makedirs(project_path)
+
         for l in locales:
-            path = str(os.path.join(settings.MEDIA_ROOT, software, p.name, l.code))
+            path = str(os.path.join(project_path, l.code))
             url_locale = str(os.path.join(url_repository, l.code))
+
             try:
                 repo = hg.repository(ui.ui(), path)
                 commands.update(ui.ui(), repo)
