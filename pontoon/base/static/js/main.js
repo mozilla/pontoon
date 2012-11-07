@@ -606,7 +606,9 @@ var Pontoon = (function () {
         self.startLoader();
         $.ajax({
           url: 'update/',
+          type: 'POST',
           data: {
+            csrfmiddlewaretoken: $('#server').data('csrf'),
             locale: self.locale.code,
             project: self.project.pk,
             entity: entity.pk,

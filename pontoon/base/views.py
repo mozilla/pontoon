@@ -295,14 +295,14 @@ def update_translation(request, template=None):
     """Update entity translation for the specified project and locale."""
     log.debug("Update entity translation for the specified project and locale.")
 
-    if not request.is_ajax():
+    if request.method != 'POST':
         raise Http404
 
     try:
-        entity = request.GET['entity']
-        translation = request.GET['translation']
-        project = request.GET['project']
-        locale = request.GET['locale']
+        entity = request.POST['entity']
+        translation = request.POST['translation']
+        project = request.POST['project']
+        locale = request.POST['locale']
     except MultiValueDictKeyError, e:
         log.error(str(e))
         return HttpResponse("error")
