@@ -625,8 +625,6 @@ body, select, input, textarea, button {
 }
 
 #pontoon #browserid {
-  display: block;
-  float: left;
   cursor: pointer;
   margin-top: 1px;
 }

@@ -31,6 +31,36 @@
       $('#project-load').hide();
       $('#intro').css('display', 'table').hide().fadeIn();
 
+      // Authentication and profile menu
+      $("#browserid").click(function(e) {
+        // TODO: loader
+        e.preventDefault();
+        navigator.id.get(function(assertion) {
+          if (assertion) {
+            $.ajax({
+              url: 'browserid/',
+              type: 'POST',
+              data: {
+                assertion: assertion,
+                csrfmiddlewaretoken: $('#server').data('csrf')
+              },
+              success: function(data) {
+                $('#browserid').hide().parent().prev().removeClass('hidden').find('a').attr('title', data.browserid.email);
+                if (data.manager) {
+                  $('#admin').removeClass('hidden');
+                }
+                // TODO: end loader
+              },
+              error: function() {
+                // TODO: error message
+              }
+            });
+          } else {
+            // TODO: error message
+          }
+        });
+      });
+
 
 
     /*** TRANSLATE ***/

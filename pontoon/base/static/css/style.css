@@ -762,6 +762,10 @@ body.admin-form #intro {
   line-height: 14px;
 }
 
+#pontoon .links li.hidden {
+  display: none;
+}
+
 #pontoon .links li .button {
   -moz-transition: none;  /* FF3.7+ */
   -o-transition: none;  /* Opera 10.5 */

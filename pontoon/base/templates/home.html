@@ -69,8 +69,9 @@
         <li><a href="https://wiki.mozilla.org/L10n:Pontoon" target="_blank" title="{{ _('Learn') }}">Wiki</a></li>
         <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="{{ _('Hack') }}">GitHub</a></li>
         <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="{{ _('Follow') }}">Twitter</a></li>
-        {% if perms.base.can_manage %}<li><a href="{{ url('pontoon.admin') }}" title="{{ _('Admin') }}">{{ _('Admin') }}</a></li>{% endif %}
-        {% if user.is_authenticated() %}<li><a href="{{ url('signout') }}" title="{{ user.email }}">{{ _('Sign out') }}</a></li>{% endif %}
+        <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{{ url('pontoon.admin') }}" title="{{ _('Admin') }}">{{ _('Admin') }}</a></li>
+        <li{% if not user.is_authenticated() %} class="hidden"{% endif %}><a href="{{ url('signout') }}" title="{{ user.email }}">{{ _('Sign out') }}</a></li>
+        <li{% if user.is_authenticated() %} class="hidden"{% endif %}><a id="browserid" href="/" title="{{ _('Sign in with Persona') }}">{{ _('Sign in') }}</a></li>
       </ul>
     </nav>
 
@@ -87,4 +88,8 @@
 <!-- Project loading indicator -->
 {% include 'loader.html' %}
 
+{% endblock %}
+
+{% block extend_js %}
+<script src="https://login.persona.org/include.js"></script>
 {% endblock %}
