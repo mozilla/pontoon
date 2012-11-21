@@ -124,7 +124,7 @@
       <div class="right{% if user.is_authenticated() %} authenticated{% endif %}">
         <div class="notification"></div>
         <span id="loading"></span>
-        <img id="browserid" src="{{ static('img/plain_sign_in_blue.png') }}" alt="{{ _('Sign in using BrowserID') }}" />
+        <img id="browserid" src="{{ static('img/plain_sign_in_blue.png') }}" alt="{{ _('Sign in with Persona') }}" />
         <div id="profile" class="select">
           <div class="button selector">
             <span class="author">{{ user.email }}</span>
