@@ -49,6 +49,7 @@
                 if (data.manager) {
                   $('#admin').removeClass('hidden');
                 }
+                $('form').removeClass('hidden');
                 $('.notification').addClass('hidden');
                 $('#loading').hide();
               },
