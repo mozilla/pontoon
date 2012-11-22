@@ -782,9 +782,13 @@ body.admin-form #intro {
   display: none;
   height: 20px;
   position: absolute;
-  right: -20px;
+  left: -25px;
   top: -3px;
   width: 20px;
+}
+
+#pontoon.home #browserid {
+  vertical-align: top;
 }
 
 #source {

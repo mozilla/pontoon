@@ -633,7 +633,7 @@ body, select, input, textarea, button {
   display: none;
 }
 
-#pontoon #browserid:active {
+#pontoon #main #browserid:active {
   margin-top: 2px;
 }
 
