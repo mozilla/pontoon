@@ -49,14 +49,15 @@
                 if (data.manager) {
                   $('#admin').removeClass('hidden');
                 }
+                $('.notification').addClass('hidden');
                 // TODO: end loader
               },
               error: function() {
-                // TODO: error message
+                $('.notification').html('Oops, something went wrong.').removeClass('hidden');
               }
             });
           } else {
-            // TODO: error message
+            // TODO: end loader
           }
         });
       });

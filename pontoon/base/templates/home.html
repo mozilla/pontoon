@@ -59,9 +59,7 @@
       </div>
     </form>
 
-    {% if error %}
-    <p class="notification">{{ error }}</p>
-    {% endif %}
+    <p class="notification{% if not error %} hidden{% endif %}">{{ error }}</p>
 
     <nav>
       <ul class="links">
