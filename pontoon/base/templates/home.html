@@ -59,7 +59,7 @@
       </div>
     </form>
 
-    <p class="notification{% if not error %} hidden{% endif %}">{{ error }}</p>
+    <p class="notification{% if not error %} hidden{% endif %}{% if not user.is_authenticated() %} center{% endif %}">{{ error }}</p>
 
     <nav>
       <ul class="links">

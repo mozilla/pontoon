@@ -748,6 +748,10 @@ body.admin-form #intro {
   width: 730px; /* Must be same as #intro form */
 }
 
+#pontoon .notification.center {
+  text-align: center;
+}
+
 #pontoon .links {
   font-weight: 300;
   margin: 10px 0;
