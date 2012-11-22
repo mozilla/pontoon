@@ -83,6 +83,16 @@
           $(element).html(entity.translation || entity.original);
         });
 
+        // Prevent button click with space
+        $("button").unbind("keyup.pontoon").bind("keyup.pontoon", function (e) {
+          var key = e.keyCode || e.which;
+          if ($(".editableToolbar .save").is(":visible")) {
+            if (key === 32) {
+              e.preventDefault();
+            }
+          }
+        });
+
         // In-place keyboard shortcuts
         $("html").unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
           var key = e.keyCode || e.which,
