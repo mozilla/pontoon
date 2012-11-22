@@ -59,6 +59,10 @@ def translate_site(request, locale, template=None):
     """Translate view: site."""
     log.debug("Translate view: site.")
 
+    # Check if user authenticated
+    if not request.user.is_authenticated():
+        return home(request, "You need to sign in first.")
+
     # Validate URL
     url = request.build_absolute_uri().split('/site/')[1]
     log.debug("URL: " + url)
@@ -157,6 +161,10 @@ def translate_project(request, locale, project, page=None, template=None):
         p = Project.objects.get(name=project, pk__in=Entity.objects.values('project'))
     except Project.DoesNotExist:
         return home(request, "Oops, project could not be found.", locale)
+
+    # Check if user authenticated
+    if not (request.user.is_authenticated() or project == 'testpilot'):
+        return home(request, "You need to sign in first.")
 
     data = {
         'locale_code': locale,
