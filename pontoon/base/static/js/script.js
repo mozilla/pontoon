@@ -33,7 +33,7 @@
 
       // Authentication and profile menu
       $("#browserid").click(function(e) {
-        // TODO: loader
+        $('#loading').show();
         e.preventDefault();
         navigator.id.get(function(assertion) {
           if (assertion) {
@@ -50,14 +50,15 @@
                   $('#admin').removeClass('hidden');
                 }
                 $('.notification').addClass('hidden');
-                // TODO: end loader
+                $('#loading').hide();
               },
               error: function() {
                 $('.notification').html('Oops, something went wrong.').removeClass('hidden');
+                $('#loading').hide();
               }
             });
           } else {
-            // TODO: end loader
+            $('#loading').hide();
           }
         });
       });

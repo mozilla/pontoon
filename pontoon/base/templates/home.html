@@ -69,7 +69,7 @@
         <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="{{ _('Follow') }}">Twitter</a></li>
         <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{{ url('pontoon.admin') }}" title="{{ _('Admin') }}">{{ _('Admin') }}</a></li>
         <li{% if not user.is_authenticated() %} class="hidden"{% endif %}><a href="{{ url('signout') }}" title="{{ user.email }}">{{ _('Sign out') }}</a></li>
-        <li{% if user.is_authenticated() %} class="hidden"{% endif %}><a id="browserid" href="/" title="{{ _('Sign in with Persona') }}">{{ _('Sign in') }}</a></li>
+        <li class="signin{% if user.is_authenticated() %} hidden{% endif %}"><a id="browserid" href="/" title="{{ _('Sign in with Persona') }}">{{ _('Sign in') }}</a><span id="loading"></span></li>
       </ul>
     </nav>
 
