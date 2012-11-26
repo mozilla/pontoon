@@ -244,15 +244,18 @@
         var counter = 0;
 
         $(Pontoon.project.entities).each(function(i, entity) {
-          var translation = entity.translation;
+          var translation = entity.translation,
+              split = entity.key.split('.'),
+              key = split[0],
+              attribute = split[1];
           entity.id = counter;
 
-          $('[data-l10n-id="' + entity.key + '"]').each(function() {
+          $('[data-l10n-id="' + key + '"]').each(function() {
             if (translation) {
-              if (!$(this).attr('placeholder')) {
+              if (!attribute) {
                 $(this).html(translation);
               } else {
-                $(this).attr('placeholder', translation);
+                $(this).attr(attribute, translation);
               }
             }
             if ($(this).parents('head').length === 0 && !$(this).is('input')) {
