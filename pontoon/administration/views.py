@@ -221,6 +221,7 @@ def update_from_repository(request, template=None):
 
             try:
                 repo = hg.repository(ui.ui(), path)
+                commands.pull(ui.ui(), repo, source=url_locale)
                 commands.update(ui.ui(), repo)
                 log.debug("Mercurial: Repository for " + l.name + " updated.")
             except error.RepoError, e:
