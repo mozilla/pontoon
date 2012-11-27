@@ -14,7 +14,7 @@ urlpatterns = patterns('',
         kwargs={'error': 'Oops, looks like pop-ups are blocked.'},
         name='pontoon.error.popup'),
 
-    url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/site/',
+    url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/site/.+/$',
         views.translate_site,
         name='pontoon.translate.site'),
     url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/project/(?P<project>.+)/page/(?P<page>.+)/$',
