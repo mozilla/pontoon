@@ -64,7 +64,9 @@ def translate_site(request, locale, template=None):
         return home(request, "You need to sign in first.")
 
     # Validate URL
+    # build_absolute_uri() includes a query string
     url = request.build_absolute_uri().split('/site/')[1]
+    url = url.replace("%3A", ":").replace("%2F", "/")
     log.debug("URL: " + url)
     validate = URLValidator()
     try:
