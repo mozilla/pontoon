@@ -242,21 +242,22 @@ def update_from_repository(request, template=None):
             for file_path in files:
                 f = open(file_path)
                 l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
-                file_name = file_path.split('/')[-1]
+                short_path = file_path.split(l.code)[-1]
 
                 for line in l10nobject:
                     if isinstance(line, silme.core.entity.Entity):
                         if l.code == 'en-US':
                             try: # Update entity
-                                e = Entity.objects.get(project=p, key=line.id, source=file_name, string=line.value)
+                                e = Entity.objects.get(project=p, key=line.id, source=short_path)
+                                e.string = line.value
                             except Entity.DoesNotExist: # New entity
-                                e = Entity(project=p, key=line.id, source=file_name, string=line.value)
+                                e = Entity(project=p, key=line.id, source=short_path, string=line.value)
                             e.save()
                         else:
                             try:
-                                e = Entity.objects.get(project=p, key=line.id, source=file_name)
+                                e = Entity.objects.get(project=p, key=line.id, source=short_path)
                             except Entity.DoesNotExist:
-                                log.debug("Line ID " + line.id + " in " + file_path + " is obsolete.")
+                                log.debug("Line ID " + line.id + " in " + short_path + " is obsolete.")
                                 continue;
                             try: # Update translation
                                 t = Translation.objects.get(entity=e, locale=l)
@@ -266,7 +267,7 @@ def update_from_repository(request, template=None):
                                 t = Translation(entity=e, locale=l,
                                     string=line.value, date=datetime.datetime.now())
                             t.save()
-                log.debug(l.code.upper() + ": " + file_name + " saved to DB.")
+                log.debug(l.code.upper() + ": " + file_path + " saved to DB.")
 
     elif url_repository.find('://svn') > 0:
         """ Subversion """

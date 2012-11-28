@@ -126,7 +126,7 @@ def _get_entities(project, locale, page=None):
 
     entities = Entity.objects.filter(project=project)
     if page != None and entities[0].source != '':
-        entities = entities.filter(source=page + '.properties')
+        entities = entities.filter(source__endswith=page + '.properties')
 
     entities_array = []
     for e in entities:
@@ -413,7 +413,7 @@ def _generate_properties_content(url, locale):
 
     for line in l10nobject:
         if isinstance(line, silme.core.entity.Entity):
-            e = Entity.objects.get(project=p, key=line.id, source=subpage + '.properties')
+            e = Entity.objects.get(project=p, key=line.id, source__endswith=subpage + '.properties')
             try:
                 t = Translation.objects.get(entity=e, locale=l)
                 line.set_value(t.string)
