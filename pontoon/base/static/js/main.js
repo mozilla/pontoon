@@ -210,7 +210,36 @@ var Pontoon = (function () {
     entityList: function () {
       var self = this,
           list = $('#entitylist').append('<ul class="editables"></ul><h2>Not found on the current page</h2><ul class="uneditables"></ul>'),
-          localeMenu = $('.locale .menu').html();
+          localeMenu = $('.locale .menu').clone(),
+          locales = null;
+
+      // IE still doesn't have the Array.prototype.indexOf method
+      if(!Array.prototype.indexOf) {
+          Array.prototype.indexOf = function(needle) {
+              for(var i = 0; i < this.length; i++) {
+                  if(this[i] === needle) {
+                      return i;
+                  }
+              }
+              return -1;
+          };
+      }
+      // Show only supported locales
+      $('.project-url').each(function() {
+        if ($(this).html() === $('.url').val()) {
+          locales = $(this).siblings('.project-name').data('locales').split(',');
+          locales.pop();
+          return;
+        }
+      });
+      if (locales) {
+        localeMenu.find('.language').each(function() {
+          if (locales.indexOf($(this).attr('class').split(' ')[1]) === -1) {
+            $(this).parent().remove();
+          }
+        });
+      }
+      localeMenu = localeMenu.html();
 
       // Render
       $(self.project.entities).each(function () {
