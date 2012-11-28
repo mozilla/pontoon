@@ -87,3 +87,6 @@ ENGAGE_ROBOTS = True
 
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = ''
+
+# Google Analytics Key
+GOOGLE_ANALYTICS_KEY = ''
