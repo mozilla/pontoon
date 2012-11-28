@@ -82,6 +82,7 @@ def translate_site(request, locale, url, template=None):
 
     data = {
         'locale_code': locale,
+        'locales': Locale.objects.all(),
         'project_url': url,
         'project': {},
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
@@ -168,6 +169,7 @@ def translate_project(request, locale, project, page=None, template=None):
 
     data = {
         'locale_code': locale,
+        'locales': Locale.objects.all(),
         'project_url': p.url,
         'project': p,
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))

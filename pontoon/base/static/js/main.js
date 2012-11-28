@@ -933,8 +933,8 @@ var Pontoon = (function () {
       });
 
       // Add case insensitive :contains-like selector to jQuery (needed for locale search)
-      $.expr[':'].containsi = function(a,i,m){
-        return (a.textContent || a.innerText || '').toUpperCase().indexOf(m[3].toUpperCase())>=0;
+      $.expr[':'].containsi = function(a, i, m) {
+        return (a.textContent || a.innerText || '').toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
       };
 
       // Focus locale search
@@ -974,6 +974,26 @@ var Pontoon = (function () {
           } else {
             menu.show().parent().addClass('opened');
           }
+        }
+      });
+
+      // Show only locales available for the selected project
+      $('.locale .selector').live("click.pontoon", function () {
+        var menu = $(this).siblings('.menu'),
+            lis = menu.find('li:not(".no-match")').show(),
+            locales = null;
+        $('.project-url').each(function() {
+          if ($(this).html() === $('.url').val()) {
+            locales = $(this).siblings('.project-name').data('locales').split(',');
+            locales.pop();
+            return;
+          }
+        });
+        if (locales) {
+          lis.hide();
+          $(locales).each(function() {
+            menu.find('.language.' + this).parent().show();
+          });
         }
       });
 
