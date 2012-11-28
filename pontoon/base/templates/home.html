@@ -28,7 +28,10 @@
           <div class="horizontal-separator"></div>
           <ul>
             {% for project in projects %}
-            <li class="clearfix"><span class="project-name">{{ project.name }}</span><span class="project-url">{{ project.url }}</span></li>
+            <li class="clearfix">
+              <span class="project-name" data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}">{{ project.name }}</span>
+              <span class="project-url">{{ project.url }}</span>
+            </li>
             {% endfor %}
             {% if projects|length == 0 %}
             <li class="no-projects">{{ _('No projects available') }}</li>

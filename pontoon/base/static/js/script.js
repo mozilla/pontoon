@@ -31,6 +31,30 @@
       $('#project-load').hide();
       $('#intro').css('display', 'table').hide().fadeIn();
 
+      // Show only locales available for the selected project
+      $.extend($.expr[":"], {
+        exactly: function( element, index, details, collection ) {
+          return $(element).text() === details[3];
+        }
+      });
+      $('.locale .selector').live("click.pontoon", function () {
+        $('.locale .menu li').show();
+        var locales = null;
+        $('.project-url').each(function() {
+          if ($(this).html() === $('.url').val()) {
+            locales = $(this).siblings('.project-name').data('locales').split(',');
+            locales.pop();
+            return;
+          }
+        });
+        if (locales) {
+          $('.locale .menu li').hide();
+          $(locales).each(function() {
+            $('.locale .menu .language.' + this).parent().show();
+          });
+        }
+      });
+
       // Authentication and profile menu
       $("#browserid").click(function(e) {
         $('#loading').show();
