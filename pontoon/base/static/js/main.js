@@ -907,7 +907,7 @@ var Pontoon = (function () {
         if (url) {
           // The default configuration of Apache doesn't allow encoded slashes in URLs
           // https://github.com/mozilla/playdoh/issues/143
-          window.location = '/locale/' + locale + '/site/' + encodeURIComponent(encodeURIComponent(url)) + (url[url.length-1] !== '/' ? '/' : '');
+          window.location = '/locale/' + locale + '/site/' + encodeURIComponent(encodeURIComponent(url));
         } else {
           Pontoon.common.showError("Please enter the URL first.");
           $('.url:visible').focus();

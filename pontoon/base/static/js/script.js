@@ -113,7 +113,7 @@
             } else {
               clearInterval(interval);
               var lang = $('html').attr('lang'),
-                  errorLink = (lang ? '/' + lang : '') + '/locale/' + escapedLocale + '/site/' + url + 'oops/';
+                  errorLink = (lang ? '/' + lang : '') + '/locale/' + escapedLocale + '/site/' + url + (url[url.length-1] !== '/' ? '/' : '') + 'oops/';
               if (projectWindow) {
                 window.location = errorLink + 'support/';
                 projectWindow.close();
