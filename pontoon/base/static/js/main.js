@@ -229,6 +229,9 @@ var Pontoon = (function () {
         if ($(this).html() === $('.url').val()) {
           locales = $(this).siblings('.project-name').data('locales').split(',');
           locales.pop();
+          locales = $.grep(locales, function(value) {
+            return value != Pontoon.locale.code;
+          });
           return;
         }
       });
