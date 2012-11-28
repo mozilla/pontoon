@@ -137,14 +137,15 @@ def _updateDB(project, locale, original, comment, translation, author):
     e.save()
 
     if len(translation) > 0:
-        try: # Update translation
-            t = Translation.objects.get(entity=e, locale=locale)
+        translations = Translation.objects.filter(entity=e, locale=locale).order_by('date')
+        if len(translations) == 0: # New translation
+            t = Translation(entity=e, locale=locale, string=translation,
+                author=author, date=datetime.datetime.now())
+        else: # Update translation
+            t = translations.reverse()[0]
             t.string = translation
             t.author = author
             t.date = datetime.datetime.now()
-        except Translation.DoesNotExist: # New translation
-            t = Translation(entity=e, locale=locale, string=translation,
-                author=author, date=datetime.datetime.now())
         t.save()
 
 def update_from_repository(request, template=None):
@@ -195,13 +196,14 @@ def update_from_repository(request, template=None):
                     except Locale.DoesNotExist:
                         log.debug("Locale not supported: " + section)
                         break;
-                    try: # Update translation
-                        t = Translation.objects.get(entity=e, locale=l)
-                        t.string = item[1]
-                        t.date = datetime.datetime.now()
-                    except Translation.DoesNotExist: # New translation
+                    translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
+                    if len(translations) == 0: # New translation
                         t = Translation(entity=e, locale=l,
                             string=item[1], date=datetime.datetime.now())
+                    else: # Update translation
+                        t = translations.reverse()[0]
+                        t.string = item[1]
+                        t.date = datetime.datetime.now()
                     t.save()
             log.debug(section + ": saved to DB.")
 
@@ -259,13 +261,14 @@ def update_from_repository(request, template=None):
                             except Entity.DoesNotExist:
                                 log.debug("Line ID " + line.id + " in " + short_path + " is obsolete.")
                                 continue;
-                            try: # Update translation
-                                t = Translation.objects.get(entity=e, locale=l)
-                                t.string = line.value
-                                t.date = datetime.datetime.now()
-                            except Translation.DoesNotExist: # New translation
+                            translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
+                            if len(translations) == 0: # New translation
                                 t = Translation(entity=e, locale=l,
                                     string=line.value, date=datetime.datetime.now())
+                            else: # Update translation
+                                t = translations.reverse()[0]
+                                t.string = line.value
+                                t.date = datetime.datetime.now()
                             t.save()
                 log.debug(l.code.upper() + ": " + file_path + " saved to DB.")
 

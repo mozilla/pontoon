@@ -940,7 +940,7 @@ body, select, input, textarea, button {
   height: 16px;
   width: 16px;
   float: left;
-  margin: -7px 0 0 0;
+  margin: -2px 0 0 0;
 }
 
 #pontoon #entitylist .source .content .prev:hover {
@@ -952,7 +952,7 @@ body, select, input, textarea, button {
   height: 16px;
   width: 16px;
   float: left;
-  margin: -7px 5px 0 0;
+  margin: -2px 5px 0 0;
 }
 
 #pontoon #entitylist .source .content .next:hover {

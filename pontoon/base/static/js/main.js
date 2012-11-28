@@ -267,7 +267,7 @@ var Pontoon = (function () {
               '<header>' + 
                 (this.suggestions && this.suggestions.length > 1 ? '<a href="#prev" class="prev"></a><a href="#next" class="next"></a>' : '') + 
                 '<h3>Other users' + 
-                (this.suggestions ? ' (<span class="author">' + this.suggestions[0].author + '</span>)' : '') + 
+                (this.suggestions ? ' (<span class="author">' + self.doNotRender(this.suggestions[0].author) + '</span>)' : '') +
                 '</h3>' + 
               '</header>' + 
               (this.suggestions ? '<p data-id="0" class="source-string">' + this.suggestions[0].translation + '</p>' :
@@ -368,6 +368,7 @@ var Pontoon = (function () {
       // Navigate among suggestions from other users
       $("#main .source").find(".prev, .next").click(function (e) {
         e.stopPropagation();
+        e.preventDefault();
         var li = $(this).parents('.entity'),
             suggestions = li[0].entity.suggestions,
             max = suggestions.length,
@@ -388,7 +389,7 @@ var Pontoon = (function () {
           }
         }
 
-        ou.find(".author").html(suggestions[next].author);
+        ou.find(".author").html(self.doNotRender(suggestions[next].author));
         string
           .html(self.doNotRender(suggestions[next].translation))
           .data("id", next);
@@ -410,7 +411,6 @@ var Pontoon = (function () {
         e.stopPropagation();
         var li = $(this),
             entity = li.parents(".entity"),
-            original = entity[0].entity.original,
             p = li.parents('.select').next('p').show();
 
         p.addClass("loader").html('');
@@ -421,9 +421,8 @@ var Pontoon = (function () {
         $.ajax({
           url: 'get/',
           data: {
-            locale: li.find(".language").attr("class").split(" ")[1],
-            pk: self.project.pk,
-            original: original
+            entity: entity[0].entity.pk,
+            locale: li.find(".language").attr("class").split(" ")[1]
           },
           success: function(data) {
             if (data !== "error") {
@@ -639,7 +638,6 @@ var Pontoon = (function () {
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),
             locale: self.locale.code,
-            project: self.project.pk,
             entity: entity.pk,
             translation: entity.translation
           },

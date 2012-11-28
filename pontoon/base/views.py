@@ -129,11 +129,21 @@ def _get_entities(project, locale, page=None):
 
     entities_array = []
     for e in entities:
-        try:
-            t = Translation.objects.get(entity=e, locale=locale)
-            translation = t.string
-        except Translation.DoesNotExist:
+        suggestions = None
+        translations = Translation.objects.filter(entity=e, locale=locale).order_by('date')
+
+        if len(translations) == 0:
             translation = ""
+        else:
+            translation = translations.reverse()[0].string
+            if len(translations) > 1:
+                suggestions = []
+                for t in translations:
+                    o = {
+                        "author": t.author,
+                        "translation": t.string
+                    }
+                    suggestions.append(o)
 
         obj = {
             "original": e.string,
@@ -142,6 +152,9 @@ def _get_entities(project, locale, page=None):
             "pk": e.pk,
             "translation": translation
         }
+        if suggestions != None:
+            obj["suggestions"] = suggestions
+
         entities_array.append(obj)
     return entities_array
 
@@ -260,50 +273,46 @@ def _request(type, project, resource, locale, username, password, payload=False)
         return "error"
 
 def get_translation(request, template=None):
-    """Get entity translation of a specified project and locale."""
-    log.debug("Get entity translation of a specified project and locale.")
+    """Get entity translation for the specified locale."""
+    log.debug("Get entity translation for the specified locale.")
 
     if not request.is_ajax():
         raise Http404
 
     try:
-        original = request.GET['original']
-        pk = request.GET['pk']
+        entity = request.GET['entity']
         locale = request.GET['locale']
     except MultiValueDictKeyError:
         return HttpResponse("error")
 
-    log.debug("Entity: " + original)
-    log.debug("Project ID: " + pk)
+    log.debug("Entity: " + entity)
     log.debug("Locale: " + locale)
 
     try:
-        p = Project.objects.get(pk=pk)
-    except Project.DoesNotExist:
-        return HttpResponse("error")
-
-    try:
-        e = Entity.objects.get(project=p, string=original)
-    except Entity.DoesNotExist:
+        e = Entity.objects.get(pk=entity)
+    except Entity.DoesNotExist, e:
+        log.error(str(e))
         return HttpResponse("error")
 
     try:
         l = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist:
+    except Locale.DoesNotExist, e:
+        log.error(str(e))
         return HttpResponse("error")
 
-    try:
-        t = Translation.objects.get(entity=e, locale=l)
-        log.debug("Translation: " + t.string)
-        return HttpResponse(t.string)
-    except Translation.DoesNotExist:
+    translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
+    if len(translations) == 0:
         log.debug("Translation does not exist.")
         return HttpResponse("error")
+    else:
+        translation = translations.reverse()[0].string
+        log.debug("Translation: " + translation)
+        return HttpResponse(translation)
 
 @login_required(redirect_field_name='', login_url='/404')
 def update_translation(request, template=None):
-    """Update entity translation for the specified project and locale."""
-    log.debug("Update entity translation for the specified project and locale.")
+    """Update entity translation for the specified locale and author."""
+    log.debug("Update entity translation for the specified locale and author.")
 
     if request.method != 'POST':
         raise Http404
@@ -311,7 +320,6 @@ def update_translation(request, template=None):
     try:
         entity = request.POST['entity']
         translation = request.POST['translation']
-        project = request.POST['project']
         locale = request.POST['locale']
     except MultiValueDictKeyError, e:
         log.error(str(e))
@@ -319,14 +327,7 @@ def update_translation(request, template=None):
 
     log.debug("Entity: " + entity)
     log.debug("Translation: " + translation)
-    log.debug("Project ID: " + project)
     log.debug("Locale: " + locale)
-
-    try:
-        p = Project.objects.get(pk=project)
-    except Project.DoesNotExist, e:
-        log.error(str(e))
-        return HttpResponse("error")
 
     try:
         e = Entity.objects.get(pk=entity)
@@ -342,7 +343,7 @@ def update_translation(request, template=None):
 
     try:
         """Update existing translation."""
-        t = Translation.objects.get(entity=e, locale=l)
+        t = Translation.objects.get(entity=e, locale=l, author=request.user.email)
 
         if translation != '':
             log.debug("Translation updated.")
@@ -389,11 +390,11 @@ def _generate_properties_content(url, locale):
 
         for e in entities:
             content += e.key + ' = '
-            try:
-                t = Translation.objects.get(entity=e, locale=l)
-                content += t.string + '\n'
-            except Translation.DoesNotExist:
+            translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
+            if len(translations) == 0:
                 content += '\n'
+            else:
+                content += translations.reverse()[0].string + '\n'
 
         properties = unicode(content).encode('utf-8')
         return (properties, p.name + "_" + locale)
@@ -414,12 +415,12 @@ def _generate_properties_content(url, locale):
     for line in l10nobject:
         if isinstance(line, silme.core.entity.Entity):
             e = Entity.objects.get(project=p, key=line.id, source__endswith=subpage + '.properties')
-            try:
-                t = Translation.objects.get(entity=e, locale=l)
-                line.set_value(t.string)
-            except Translation.DoesNotExist:
+            translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
+            if len(translations) == 0:
                 line.id = '#TODO: ' + line.id
                 line.set_value(line.value)
+            else:
+                line.set_value(translations.reverse()[0].string)
 
     content = silme.format.properties.PropertiesFormatParser.dump_structure(l10nobject)
     properties = unicode(content).encode('utf-8')
