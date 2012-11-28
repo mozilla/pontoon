@@ -135,10 +135,11 @@ def _get_entities(project, locale, page=None):
         if len(translations) == 0:
             translation = ""
         else:
-            translation = translations.reverse()[0].string
+            first = translations.reverse()[0]
+            translation = first.string
             if len(translations) > 1:
                 suggestions = []
-                for t in translations:
+                for t in translations.exclude(id=first.id):
                     o = {
                         "author": t.author,
                         "translation": t.string
