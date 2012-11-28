@@ -970,7 +970,7 @@ body, select, input, textarea, button {
   margin-left: 0;
 }
 
-#pontoon #entitylist .source .content .other-locales h3:hover {
+#pontoon #entitylist .source .content .other-locales h3.active:hover {
   text-decoration: underline;
 }
 

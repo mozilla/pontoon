@@ -211,7 +211,7 @@ var Pontoon = (function () {
       var self = this,
           list = $('#entitylist').append('<ul class="editables"></ul><h2>Not found on the current page</h2><ul class="uneditables"></ul>'),
           localeMenu = $('.locale .menu').clone(),
-          locales = null;
+          otherLocales = null;
 
       // IE still doesn't have the Array.prototype.indexOf method
       if(!Array.prototype.indexOf) {
@@ -227,17 +227,17 @@ var Pontoon = (function () {
       // Show only supported locales
       $('.project-url').each(function() {
         if ($(this).html() === $('.url').val()) {
-          locales = $(this).siblings('.project-name').data('locales').split(',');
-          locales.pop();
-          locales = $.grep(locales, function(value) {
+          otherLocales = $(this).siblings('.project-name').data('locales').split(',');
+          otherLocales.pop();
+          otherLocales = $.grep(otherLocales, function(value) {
             return value != Pontoon.locale.code;
           });
           return;
         }
       });
-      if (locales) {
+      if (otherLocales) {
         localeMenu.find('.language').each(function() {
-          if (locales.indexOf($(this).attr('class').split(' ')[1]) === -1) {
+          if (otherLocales.indexOf($(this).attr('class').split(' ')[1]) === -1) {
             $(this).parent().remove();
           }
         });
@@ -278,14 +278,14 @@ var Pontoon = (function () {
             '</li>' + 
             '<li class="other-locales">' + 
               '<header class="locale select">' + 
-                '<h3 class="selector">' + 
-                  '<span class="language">Select locale</span>' + 
-                  '<span class="handle"> &#9662;</span>' + 
-                '</h3>' + 
-                '<div class="menu">' + localeMenu + '</div>' + 
-              '</header>' + 
-              '<p class="no">Get inspiration from other locales</p>' +
-            '</li>' + 
+                '<h3 class="selector' + (otherLocales.length > 0 ? ' active' : '') + '">' +
+                  (otherLocales.length > 0 ? '<span class="language">Select locale</span>' : '<span>Other locales</span>') +
+                  (otherLocales.length > 0 ? '<span class="handle"> &#9662;</span>' : '') +
+                '</h3>' +
+                (otherLocales.length > 0 ? '<div class="menu">' + localeMenu + '</div>' : '') +
+              '</header>' +
+              (otherLocales.length > 0 ? '<p class="no">Get inspiration from other locales</p>' : '<p class="no">No other locales available</p>') +
+            '</li>' +
             '<li class="translation-memory">' + 
               '<header><h3>Translation memory</h3></header>' + 
               '<p class="loader"></p>' + 
