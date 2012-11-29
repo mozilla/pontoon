@@ -794,6 +794,7 @@ body.admin-form #intro {
 #pontoon #browserid {
   vertical-align: top;
   cursor: pointer;
+  margin-top: 1px;
 }
 
 #source {
