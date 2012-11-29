@@ -62,12 +62,6 @@ def translate_site(request, locale, url, template=None):
     """Translate view: site."""
     log.debug("Translate view: site.")
 
-    # Check if user authenticated and has sufficient privileges
-    if not request.user.is_authenticated():
-        return home(request, "You need to sign in first.")
-    if not request.user.has_perm('base.can_localize'):
-        return home(request, "You don't have permission to localize.")
-
     # Validate URL
     url = url.replace("%3A", ":").replace("%2F", "/")
     log.debug("URL: " + url)
@@ -115,6 +109,13 @@ def translate_site(request, locale, url, template=None):
             # Project not stored in the DB
             data['project']['locales'] = Locale.objects.all()
             return render(request, template, data)
+
+    # Check if user authenticated and has sufficient privileges
+    if not p.name == 'testpilot':
+        if not request.user.is_authenticated():
+            return home(request, "You need to sign in first.")
+        if not request.user.has_perm('base.can_localize'):
+            return home(request, "You don't have permission to localize.")
 
     # Project stored in the DB, add more data
     if page is None:
