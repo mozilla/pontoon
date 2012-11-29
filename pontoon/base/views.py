@@ -487,7 +487,6 @@ def _generate_po_content(data):
         po.append(po_entry)
     return unicode(po).encode('utf-8')
 
-@login_required(redirect_field_name='', login_url='/404')
 def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations.")

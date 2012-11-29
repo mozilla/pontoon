@@ -708,43 +708,6 @@ var Pontoon = (function () {
         $('#main').toggleClass('opened');
       });
 
-      // Authentication and profile menu
-      $("#browserid").click(function() {
-        self.startLoader();
-        navigator.id.get(function(assertion) {
-          if (assertion) {
-            $.ajax({
-              url: 'browserid/',
-              type: 'POST',
-              data: {
-                assertion: assertion,
-                csrfmiddlewaretoken: $('#server').data('csrf')
-              },
-              success: function(data) {
-                // After AJAX-based authentication, CSRF token needs to be updated
-                $.get("csrf/", function(csrf_token) {
-                  $('#server').data('csrf', csrf_token);
-                });
-                self.user.email = data.browserid.email;
-                self.user.name = self.user.email.split("@")[0];
-                self.common.postMessage("USER", self.user);
-                $('#browserid').hide();
-                $('#profile').find('.author').html(self.user.email).end().show();
-                if (data.manager) {
-                  $('#profile-menu .sign-out').parent().after('<li><a class="admin" href="admin/">Admin</a></li>');
-                }
-                self.endLoader('Welcome!');
-              },
-              error: function() {
-                self.endLoader('Oops, something went wrong.', 'error');
-              }
-            });
-          } else {
-            self.endLoader();
-          }
-        });
-      });
-
       // Save menu
       $('#profile-menu').find('a').live("click.pontoon", function (e) {
         e.preventDefault();
@@ -858,8 +821,8 @@ var Pontoon = (function () {
         language: $("#main .language").contents()[0].nodeValue // PO file
       };
       this.user = {
-        email: email,
-        name: email.split("@")[0] // PO file
+        email: email || '',
+        name: email ? email.split("@")[0] : '' // PO file
       };
 
       // Sync user data

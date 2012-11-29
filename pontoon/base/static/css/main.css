@@ -624,26 +624,8 @@ body, select, input, textarea, button {
   color: #F00038;
 }
 
-#pontoon #browserid {
-  cursor: pointer;
-  margin-top: 1px;
-}
-
-#pontoon .authenticated #browserid {
-  display: none;
-}
-
-#pontoon #main #browserid:active {
-  margin-top: 2px;
-}
-
 #pontoon #profile {
-  display: none;
   float: left;
-}
-
-#pontoon .authenticated #profile {
-  display: block;
 }
 
 #pontoon #profile-menu {

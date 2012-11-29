@@ -122,21 +122,22 @@
       <div id="progress"><span></span></div>
       <span id="progress-value"></span>
               
-      <div class="right{% if user.is_authenticated() %} authenticated{% endif %}">
+      <div class="right">
         <div class="notification"></div>
         <span id="loading"></span>
-        <img id="browserid" src="{{ static('img/plain_sign_in_blue.png') }}" alt="{{ _('Sign in with Persona') }}" />
         <div id="profile" class="select">
           <div class="button selector">
-            <span class="author">{{ user.email }}</span>
+            <span class="author">{{ user.email|default('John Smith') }}</span>
             <span> &#9652;</span>
           </div>
           <ul id="profile-menu" class="menu">
+          {% if user.is_authenticated() or project.name != 'testpilot' %}
             <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
             {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin') }}">{{ _('Admin') }}</a></li>{% endif %}
             <li class="horizontal-separator"></li>
             <li{% if not (project.repository and project.repository.find('svn') > 0) %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
             <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
+          {% endif %}
             <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download .html') }}</a></li>
             <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download .json') }}</a></li>
             <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download .po') }}</a></li>

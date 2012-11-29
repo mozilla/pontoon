@@ -791,8 +791,9 @@ body.admin-form #intro {
   width: 20px;
 }
 
-#pontoon.home #browserid {
+#pontoon #browserid {
   vertical-align: top;
+  cursor: pointer;
 }
 
 #source {
