@@ -121,6 +121,9 @@ def delete_project(request, pk, template=None):
     """Admin interface: delete project."""
     log.debug("Admin interface: delete project.")
 
+    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+        raise Http404
+
     Project.objects.get(pk=pk).delete()
     return HttpResponseRedirect(reverse('pontoon.admin'))
 
@@ -151,6 +154,9 @@ def _updateDB(project, locale, original, comment, translation, author):
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
+
+    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+        raise Http404
 
     if request.method != 'POST':
         raise Http404
@@ -303,6 +309,9 @@ def update_from_repository(request, template=None):
 def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
     log.debug("Update all project locales from Transifex repository.")
+
+    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+        raise Http404
 
     if request.method != 'POST':
         raise Http404
