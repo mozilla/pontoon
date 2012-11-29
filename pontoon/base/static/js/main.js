@@ -977,10 +977,14 @@ var Pontoon = (function () {
         e.stopPropagation();
       }).live("keyup.pontoon", function(e) {
         var ul = $(this).siblings('ul'),
-            val = $(this).val();
+            val = $(this).val(),
+            // Only search a limited set
+            limited = ul.find('li.limited').length > 0 ? '.limited' : '';
+
         ul
-          .find('li').show().end()
-          .find('li:not(":containsi("' + val + '")")').hide();
+          .find('li' + limited).show().end()
+          .find('li' + limited + ':not(":containsi("' + val + '")")').hide();
+
         if (ul.find('li:not(".no-match"):visible').length === 0) {
           ul.find('.no-match').find('span').html(val).end().show();
         } else {
@@ -1022,11 +1026,12 @@ var Pontoon = (function () {
         if (locales) {
           lis.hide();
           $(locales).each(function() {
-            menu.find('.language.' + this).parent().show();
+            menu.find('.language.' + this).parent().addClass('limited').show();
           });
         } else {
-          $('.search').trigger('keyup');
+          menu.find('.limited').removeClass('limited');
         }
+        $('.search').trigger('keyup');
       });
 
       // Use arrow keys to move around menu, confirm with enter, close with escape
