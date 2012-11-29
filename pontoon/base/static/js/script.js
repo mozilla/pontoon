@@ -49,8 +49,12 @@
                 if (data.manager) {
                   $('#admin').removeClass('hidden');
                 }
-                $('form').removeClass('hidden');
-                $('.notification').addClass('hidden').removeClass('center');
+                if (data.localizer) {
+                  $('form').removeClass('hidden');
+                  $('.notification').addClass('hidden').removeClass('center');
+                } else {
+                  $('.notification').removeClass('hidden').html('You don\'t have permission to localize.');
+                }
                 $('#loading').hide();
               },
               error: function() {

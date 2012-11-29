@@ -43,6 +43,9 @@ def home(request, error=None, locale=None, url=None, template=None):
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
     }
 
+    if request.user.is_authenticated() and not request.user.has_perm('base.can_localize'):
+        error = "You don't have permission to localize."
+
     if error is not None:
         data['error'] = error
 
@@ -59,9 +62,11 @@ def translate_site(request, locale, url, template=None):
     """Translate view: site."""
     log.debug("Translate view: site.")
 
-    # Check if user authenticated
+    # Check if user authenticated and has sufficient privileges
     if not request.user.is_authenticated():
         return home(request, "You need to sign in first.")
+    if not request.user.has_perm('base.can_localize'):
+        return home(request, "You don't have permission to localize.")
 
     # Validate URL
     url = url.replace("%3A", ":").replace("%2F", "/")
@@ -177,9 +182,11 @@ def translate_project(request, locale, project, page=None, template=None):
     except Project.DoesNotExist:
         return home(request, "Oops, project could not be found.", locale)
 
-    # Check if user authenticated
+    # Check if user authenticated and has sufficient privileges
     if not (request.user.is_authenticated() or project == 'testpilot'):
         return home(request, "You need to sign in first.")
+    if not (request.user.has_perm('base.can_localize') or project == 'testpilot'):
+        return home(request, "You don't have permission to localize.")
 
     data = {
         'locale_code': locale,
@@ -639,7 +646,8 @@ def verify(request, template=None):
     if user is not None:
         auth.login(request, user)
         response_data = {'registered': True, 'browserid': verification,
-            'manager': user.has_perm('base.can_manage')}
+            'manager': user.has_perm('base.can_manage'),
+            'localizer': user.has_perm('base.can_localize')}
 
     return HttpResponse(json.dumps(response_data), mimetype='application/json')
 

@@ -49,6 +49,7 @@ class Project(models.Model):
     class Meta:
         permissions = (
             ("can_manage", "Can manage projects"),
+            ("can_localize", "Can localize projects"),
         )
 
     def __unicode__(self):
