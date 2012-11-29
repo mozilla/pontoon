@@ -50,7 +50,7 @@
                   $('#admin').removeClass('hidden');
                 }
                 $('form').removeClass('hidden');
-                $('.notification').addClass('hidden');
+                $('.notification').addClass('hidden').removeClass('center');
                 $('#loading').hide();
               },
               error: function() {
