@@ -900,20 +900,22 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist .source .content > li h3 {
-  color: #333333;
-  font-size: 14px;
+  color: #999999;
+  font-size: 12px;
+  font-weight: normal;
   text-shadow: 0 1px 0 #FFFFFF;
+  text-transform: uppercase;
   float: left;
   width: auto;
 }
 
 #pontoon #entitylist .source .content p {
-  color: #666666;
+  color: #333333;
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 0;
   text-shadow: 0 1px 0 #FFFFFF;
-  height: 77px;
+  height: 75px;
   overflow: auto;
 }
 
