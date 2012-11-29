@@ -1010,7 +1010,7 @@ var Pontoon = (function () {
       // Show only locales available for the selected project
       $('.locale .selector').live("click.pontoon", function () {
         var menu = $(this).siblings('.menu'),
-            lis = menu.find('li:not(".no-match")').show(),
+            lis = menu.find('li'),
             locales = null;
         $('.project-url').each(function() {
           if ($(this).html() === $('.url').val()) {
@@ -1024,6 +1024,8 @@ var Pontoon = (function () {
           $(locales).each(function() {
             menu.find('.language.' + this).parent().show();
           });
+        } else {
+          $('.search').trigger('keyup');
         }
       });
 
