@@ -895,7 +895,7 @@ body, select, input, textarea, button {
 
 #pontoon #entitylist .source .content > li header {
   overflow: hidden;
-  height: 20px;
+  height: 18px;
   padding-top: 3px;
 }
 
