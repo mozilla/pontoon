@@ -260,37 +260,6 @@ body.admin-form #intro {
   vertical-align: middle;
 }
 
-#install {
-  padding-top: 100px;
-}
-
-#install p {
-  color: #AAAAAA;
-  font-size: 14px;
-  font-weight: 300;
-}
-
-#install code {
-  color: #AAAAAA;
-  border: 1px solid #000000;
-  padding: 6px 10px 4px;
-
-  background-color: #222222;
-  background-image: -moz-linear-gradient(center top, #333333, #111111); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #333333),color-stop(1, #111111)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#333333, #111111); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #333333, #111111);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#111111'); /* IE6–IE9 */
-
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
-
-  box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
-  -moz-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
-  -webkit-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
-}
-
 #intro noscript p {
   text-transform: uppercase;
 }
