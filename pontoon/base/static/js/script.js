@@ -20,14 +20,14 @@
 
     /*** HOME ***/
     if ($('body').is('.home')) {
+      // Update URL and project values
       var locale = ($('#server').data('locale') || $('#server').data('accept-language')).toLowerCase();
       if ($('.locale .menu .language.' + locale).length === 0) { // Locale not on the list
         locale = $('.locale .menu .language').attr('class').split(' ')[1];
       }
-
       $('.url').val($('#server').data('url'));
       $('.locale .button .language').addClass(locale).html($('.locale .menu .language.' + locale).html());
-      $('#install').css('visibility', 'visible');
+
       $('#project-load').hide();
       $('#intro').css('display', 'table').hide().fadeIn();
 
