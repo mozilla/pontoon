@@ -271,16 +271,23 @@
         if (source === 'repository') {
           params.repository = $('input[name=repository]').val();
         } else if (source === 'transifex') {
-          $('.transifex input').each(function() {
-            var val = $(this).val();
-            if (val) {
-              if ($(this).attr('name') === 'remember') {
-                params[$(this).attr('name')] = ($(this).is(':checked')) ? "on" : "off";
-              } else {
-                params[$(this).attr('name')] = val;
+          if ($(this).parents('.popup').length === 0) {
+            project = $('.transifex input#id_transifex_project');
+            resource = $('.transifex input#id_transifex_resource');
+            params[project.attr('name')] = project.val();
+            params[resource.attr('name')] = resource.val();
+          } else {
+            $('.transifex input').each(function() {
+              var val = $(this).val();
+              if (val) {
+                if ($(this).attr('name') === 'remember') {
+                  params[$(this).attr('name')] = ($(this).is(':checked')) ? "on" : "off";
+                } else {
+                  params[$(this).attr('name')] = val;
+                }
               }
-            }
-          });
+            });
+          }
         }
 
         $.ajax({

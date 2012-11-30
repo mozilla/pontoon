@@ -127,10 +127,10 @@ def delete_project(request, pk, template=None):
     Project.objects.get(pk=pk).delete()
     return HttpResponseRedirect(reverse('pontoon.admin'))
 
-def _updateDB(project, locale, original, comment, translation, author):
-    """Admin interface: save or update data in DB."""
+def _save_entity(project, original, comment):
+    """Admin interface: save new or update existing entity in DB."""
 
-    try: # Update entity
+    try: # Update entity (comments-only)
         e = Entity.objects.get(project=project, string=original)
     except Entity.DoesNotExist: # New entity
         e = Entity(project=project, string=original)
@@ -139,17 +139,21 @@ def _updateDB(project, locale, original, comment, translation, author):
         e.comment = comment
     e.save()
 
-    if len(translation) > 0:
-        translations = Translation.objects.filter(entity=e, locale=locale).order_by('date')
-        if len(translations) == 0: # New translation
-            t = Translation(entity=e, locale=locale, string=translation,
-                author=author, date=datetime.datetime.now())
-        else: # Update translation
-            t = translations.reverse()[0]
-            t.string = translation
-            t.author = author
-            t.date = datetime.datetime.now()
-        t.save()
+def _save_translation(project, original, locale, translation, author):
+    """Admin interface: save new or update existing translation in DB."""
+
+    e = Entity.objects.get(project=project, string=original)
+    translations = Translation.objects.filter(entity=e, locale=locale).order_by('date')
+
+    if len(translations) == 0: # New translation
+        t = Translation(entity=e, locale=locale, string=translation,
+            author=author, date=datetime.datetime.now())
+    else: # Update translation
+        t = translations.reverse()[0]
+        t.string = translation
+        t.author = author
+        t.date = datetime.datetime.now()
+    t.save()
 
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
@@ -184,7 +188,8 @@ def update_from_repository(request, template=None):
             for item in config.items(section):
                 if section == 'en':
                     try: # Update entity
-                        e = Entity.objects.get(project=p, key=item[0], source=url_repository, string=item[1])
+                        e = Entity.objects.get(project=p, key=item[0], source=url_repository)
+                        e.string = item[1]
                     except Entity.DoesNotExist: # New entity
                         e = Entity(project=p, key=item[0], source=url_repository, string=item[1])
                     e.save()
@@ -292,9 +297,9 @@ def update_from_repository(request, template=None):
             po = polib.pofile(settings.MEDIA_ROOT + '/svn/' + p.name + '/locale/' + l.code + '/LC_MESSAGES/messages.po')
             entities = [e for e in po if not e.obsolete]
             for entity in entities:
-                _updateDB(project=p, locale=l, original=entity.msgid,
-                    comment=entity.comment, translation=entity.msgstr,
-                    author=po.metadata['Last-Translator'])
+                _save_entity(p, entity.msgid, entity.comment)
+                if len(entity.msgstr) > 0:
+                    _save_translation(p, entity.msgid, l, entity.msgstr, po.metadata['Last-Translator'])
             log.debug("Repository data for " + l.name + " saved to DB.")
 
     else:
@@ -342,9 +347,9 @@ def update_from_transifex(request, template=None):
         if hasattr(response, 'status_code') and response.status_code == 200:
             entities = json.loads(response.content)
             for entity in entities:
-                _updateDB(project=p, locale=l, original=entity["key"],
-                    comment=entity["comment"], translation=entity["translation"],
-                    author=entity["user"])
+                _save_entity(p, entity["key"], entity["comment"])
+                if len(entity["translation"]) > 0:
+                    _save_translation(p, entity["key"], l, entity["translation"], entity["user"])
             log.debug("Transifex data for " + l.name + " saved to DB.")
         else:
             return HttpResponse(response)
