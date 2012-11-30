@@ -13,9 +13,22 @@
 
 <!-- Frontpage -->
 <section id="intro">
+
   <div class="inner">
 
+    <nav>
+      <ul class="links">
+        <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon" target="_blank" title="{{ _('Localize') }}">How it works</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla" target="_blank" title="{{ _('Integrate') }}">Developers</a></li>
+        <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="{{ _('Hack') }}">GitHub</a></li>
+        <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="{{ _('Follow') }}">Twitter</a></li>
+        <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{{ url('pontoon.admin') }}" title="{{ _('Admin') }}">{{ _('Admin') }}</a></li>
+        <li id="signout"{% if not user.is_authenticated() %} class="hidden"{% endif %}><a href="{{ url('signout') }}" title="{{ user.email }}">{{ _('Sign out') }}</a></li>
+      </ul>
+    </nav>
+
     <a href="/"><h1 id="title">Pontoon</h1></a>
+    <h2 id="subtitle">Translate websites. In place.</h2>
 
     <form{% if not (user.is_authenticated() and user.has_perm('base.can_localize')) %} class="hidden"{% endif %}>
       <!-- Project input/select -->
@@ -64,18 +77,13 @@
 
     <p class="notification{% if not error %} hidden{% endif %}{% if not (user.is_authenticated() and user.has_perm('base.can_localize')) %} center{% endif %}">{{ error }}</p>
 
-    <nav>
-      <ul class="links">
-        <li><a id="demo" class="button" href="/locale/de/project/testpilot/" title="{{ _('Demo') }}">{{ _('Demo') }}</a></li>
-        <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon" target="_blank" title="{{ _('Localize') }}">How it works</a></li>
-        <li><a href="https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla" target="_blank" title="{{ _('Integrate') }}">Developers</a></li>
-        <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="{{ _('Hack') }}">GitHub</a></li>
-        <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="{{ _('Follow') }}">Twitter</a></li>
-        <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{{ url('pontoon.admin') }}" title="{{ _('Admin') }}">{{ _('Admin') }}</a></li>
-        <li{% if not user.is_authenticated() %} class="hidden"{% endif %}><a href="{{ url('signout') }}" title="{{ user.email }}">{{ _('Sign out') }}</a></li>
-        <li class="signin{% if user.is_authenticated() %} hidden{% endif %}"><span id="loading"></span><img id="browserid" src="{{ static('img/plain_sign_in_blue.png') }}" alt="{{ _('Sign in with Persona') }}" /></li>
-      </ul>
-    </nav>
+    {% if not user.is_authenticated() %}
+    <p id="action">
+      <a id="demo" href="/locale/de/project/testpilot/">{{ _('Try it out') }}</a>
+      <span id="loading" class="spacing">or</span>
+      <img id="browserid" src="{{ static('img/plain_sign_in_blue.png') }}" alt="{{ _('Sign in with Persona') }}" />
+    </p>
+    {% endif %}
 
   </div>
 </section>

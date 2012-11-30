@@ -260,6 +260,33 @@ body.admin-form #intro {
   vertical-align: middle;
 }
 
+.links {
+  left: 50%;
+  margin-left: -350px;
+  position: absolute;
+  top: 20px;
+  width: 700px;
+}
+
+.links li {
+  list-style: none;
+  display: inline;
+  margin: 0 20px;
+  font-size: 14px;
+  line-height: 14px;
+}
+
+.links li.hidden {
+  display: none;
+}
+
+.links li .button {
+  -moz-transition: none;  /* FF3.7+ */
+  -o-transition: none;  /* Opera 10.5 */
+  -webkit-transition: none;  /* Saf3.2+, Chrome */
+  transition: none;  
+}
+
 #intro noscript p {
   text-transform: uppercase;
 }
@@ -267,12 +294,13 @@ body.admin-form #intro {
 #title {
   color: #AEEE00;
   display: inline-block;
-  text-shadow: 3px 3px 3px #000000;
-  letter-spacing: -7px;
+  font-size: 108px;
   font-weight: 300;
-  text-align: center;
-  font-size: 100px;
+  letter-spacing: -4px;
+  line-height: 100%;
   margin-bottom: 10px;
+  text-align: center;
+  text-shadow: 0px 0px 15px #000000;
 }
 
 #pontoon.admin-form #title {
@@ -282,10 +310,49 @@ body.admin-form #intro {
   text-align: left;
 }
 
+#intro #subtitle {
+/*
+  color: #AEEE00;
+  display: inline-block;
+  text-shadow: 3px 3px 3px #000000;
+  letter-spacing: -4px;
+  font-weight: 300;
+  text-align: center;
+*/
+  text-transform: none;
+  font-size: 48px;
+  letter-spacing: -2px;
+  line-height: 100%;
+  text-shadow: 0px 0px 10px #000000;
+}
+
+#action {
+  color: #AAAAAA;
+  font-size: 14px;
+  font-weight: 300;
+  height: 35px;
+  margin-top: 50px;
+}
+
+#action #demo {
+  color: #AEEE00;
+}
+
+#action #loading {
+  display: inline-block;
+  height: 20px;
+  padding: 0 10px;
+  width: 20px;
+}
+
+#action #loading.loader {
+  background: transparent url('../img/loader-light.gif') center center no-repeat;
+}
+
 #intro form {
   width: 730px;
   height: 35px;
-  margin: 0 auto;
+  margin: 50px auto 0;
   position: relative;
 }
 
@@ -720,49 +787,10 @@ body.admin-form #intro {
   text-align: center;
 }
 
-#pontoon .links {
-  font-weight: 300;
-  margin: 10px 0;
-  text-align: center;
-}
-
-#pontoon .links li {
-  list-style: none;
-  display: inline;
-  margin: 0 20px;
-  font-size: 14px;
-  line-height: 14px;
-}
-
-#pontoon .links li.hidden {
-  display: none;
-}
-
-#pontoon .links li.signin {
-  position: relative;
-}
-
-#pontoon .links li .button {
-  -moz-transition: none;  /* FF3.7+ */
-  -o-transition: none;  /* Opera 10.5 */
-  -webkit-transition: none;  /* Saf3.2+, Chrome */
-  transition: none;  
-}
-
-#pontoon .links li #loading {
-  background: transparent url('../img/loader-light.gif') right 5px no-repeat;
-  display: none;
-  height: 20px;
-  position: absolute;
-  left: -25px;
-  top: -3px;
-  width: 20px;
-}
-
 #pontoon #browserid {
-  vertical-align: top;
   cursor: pointer;
-  margin-top: 1px;
+  margin-top: -1px;
+  vertical-align: middle;
 }
 
 #source {

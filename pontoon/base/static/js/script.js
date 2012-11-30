@@ -33,7 +33,7 @@
 
       // Authentication and profile menu
       $("#browserid").click(function(e) {
-        $('#loading').show();
+        $('#loading').toggleClass('loader').html('&nbsp;');
         e.preventDefault();
         navigator.id.get(function(assertion) {
           if (assertion) {
@@ -45,7 +45,8 @@
                 csrfmiddlewaretoken: $('#server').data('csrf')
               },
               success: function(data) {
-                $('#browserid').hide().parent().prev().removeClass('hidden').find('a').attr('title', data.browserid.email);
+                $('#action').remove();
+                $('#signout').removeClass('hidden').find('a').attr('title', data.browserid.email);
                 if (data.manager) {
                   $('#admin').removeClass('hidden');
                 }
@@ -55,15 +56,14 @@
                 } else {
                   $('.notification').removeClass('hidden').html('You don\'t have permission to localize.');
                 }
-                $('#loading').hide();
               },
               error: function() {
                 $('.notification').html('Oops, something went wrong.').removeClass('hidden');
-                $('#loading').hide();
+                $('#loading').toggleClass('loader').html('or');
               }
             });
           } else {
-            $('#loading').hide();
+            $('#loading').toggleClass('loader').html('or');
           }
         });
       });
