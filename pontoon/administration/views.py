@@ -175,7 +175,7 @@ def update_from_repository(request, template=None):
 
     fileName, fileExtension = os.path.splitext(url_repository)
 
-    if fileExtension == '.ini':
+    if fileExtension == '.ini': 
         config = ConfigParser.ConfigParser()
         try:
             config.readfp(urllib2.urlopen(url_repository))
