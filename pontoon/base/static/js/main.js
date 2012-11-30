@@ -278,13 +278,13 @@ var Pontoon = (function () {
             '</li>' + 
             '<li class="other-locales">' + 
               '<header class="locale select">' + 
-                '<h3 class="selector' + (otherLocales.length > 0 ? ' active' : '') + '">' +
-                  (otherLocales.length > 0 ? '<span class="language">Select locale</span>' : '<span>Other locales</span>') +
-                  (otherLocales.length > 0 ? '<span class="handle"> &#9662;</span>' : '') +
+                '<h3 class="selector' + (otherLocales && otherLocales.length > 0 ? ' active' : '') + '">' +
+                  (otherLocales && otherLocales.length > 0 ? '<span class="language">Select locale</span>' : '<span>Other locales</span>') +
+                  (otherLocales && otherLocales.length > 0 ? '<span class="handle"> &#9662;</span>' : '') +
                 '</h3>' +
-                (otherLocales.length > 0 ? '<div class="menu">' + localeMenu + '</div>' : '') +
+                (otherLocales && otherLocales.length > 0 ? '<div class="menu">' + localeMenu + '</div>' : '') +
               '</header>' +
-              (otherLocales.length > 0 ? '<p class="no">Get inspiration from other locales</p>' : '<p class="no">No other locales available</p>') +
+              (otherLocales && otherLocales.length > 0 ? '<p class="no">Get inspiration from other locales</p>' : '<p class="no">No other locales available</p>') +
             '</li>' +
             '<li class="translation-memory">' + 
               '<header><h3>Translation memory</h3></header>' + 
