@@ -8,6 +8,12 @@
 <section id="intro" class="visible">
   <div class="inner">
 
+    <nav>
+      <ul class="links">
+        <li><a href="{{ url('pontoon.home') }}" title="{{ _('Pontoon Home') }}">&larr; Home</a></li>
+      </ul>
+    </nav>
+
     <a href="{{ url('pontoon.admin') }}"><h1 id="title">{{ _('Admin') }}</h1></a>
 
     <form>
@@ -31,12 +37,6 @@
         </div>
       </div>
     </form>
-
-    <nav>
-      <ul class="links">
-        <li><a href="{{ url('pontoon.home') }}" title="{{ _('Pontoon Home') }}">&larr; Home</a></li>
-      </ul>
-    </nav>
 
   </div>
 </section>
