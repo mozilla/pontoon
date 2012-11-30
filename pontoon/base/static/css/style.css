@@ -706,35 +706,25 @@ body.admin-form #intro {
 }
 
 #pontoon #intro .project.select.opened input[type=text].url {
-  border-radius: 3px 0 0 0;
-  -moz-border-radius: 3px 0 0 0;
-  -webkit-border-radius: 3px 0 0 0;
+  border-radius: 0 0 0 3px;
+  -moz-border-radius: 0 0 0 3px;
+  -webkit-border-radius: 0 0 0 3px;
 }
 
 #pontoon #intro .project.select .menu {
   width: 510px;
-
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
-}
-
-#pontoon #intro .locale.select.opened {
-  box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
 }
 
 #pontoon #intro .select.opened > .confirm {
-  border-bottom-left-radius: 0;
-  -moz-border-radius-bottomleft: 0;
-  -webkit-border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  -moz-border-radius-topleft: 0;
+  -webkit-border-top-left-radius: 0;
 }
  
 #pontoon #intro .select.opened > .selector {
-  border-bottom-right-radius: 0;
-  -moz-border-radius-bottomright: 0;
-  -webkit-border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  -moz-border-radius-topright: 0;
+  -webkit-border-top-right-radius: 0;
 }
  
 #pontoon #intro .select .button {
@@ -749,19 +739,17 @@ body.admin-form #intro {
 
 #pontoon #intro .select .menu {
   border: 1px solid #000000;
-  border-top: none;
-  bottom: auto;
-  top: 32px;
   left: 0;
+  bottom: 32px;
   width: 210px;
 
-  border-radius: 0 0 3px 3px;
-  -moz-border-radius: 0 0 3px 3px;
-  -webkit-border-radius: 0 0 3px 3px;
+  border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
 
-  box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
 }
 
 #pontoon #intro .select .menu .search {

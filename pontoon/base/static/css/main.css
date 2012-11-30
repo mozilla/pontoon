@@ -442,9 +442,9 @@ body, select, input, textarea, button {
   background: #444444;
   color: #FFFFFF;
 
-  border-radius: 0 0 3px 3px;
-  -moz-border-radius: 0 0 3px 3px;
-  -webkit-border-radius: 0 0 3px 3px;
+  border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
 }
 
 #pontoon .locale {
