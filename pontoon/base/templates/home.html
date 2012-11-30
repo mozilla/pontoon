@@ -67,7 +67,8 @@
     <nav>
       <ul class="links">
         <li><a id="demo" class="button" href="/locale/de/project/testpilot/" title="{{ _('Demo') }}">{{ _('Demo') }}</a></li>
-        <li><a href="https://wiki.mozilla.org/L10n:Pontoon" target="_blank" title="{{ _('Learn') }}">Wiki</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon" target="_blank" title="{{ _('Localize') }}">Localizers</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla" target="_blank" title="{{ _('Integrate') }}">Developers</a></li>
         <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="{{ _('Hack') }}">GitHub</a></li>
         <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="{{ _('Follow') }}">Twitter</a></li>
         <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{{ url('pontoon.admin') }}" title="{{ _('Admin') }}">{{ _('Admin') }}</a></li>
