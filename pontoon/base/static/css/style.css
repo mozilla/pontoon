@@ -293,11 +293,14 @@ body.admin-form #intro {
   display: none;
 }
 
-.links li .button {
-  -moz-transition: none;  /* FF3.7+ */
-  -o-transition: none;  /* Opera 10.5 */
-  -webkit-transition: none;  /* Saf3.2+, Chrome */
-  transition: none;  
+#intro .links li a:link,
+#intro .links li a:visited {
+  color: #EBEBEB;
+}
+
+#intro .links li a:hover,
+#intro .links li a:active {
+  color: #AEEE00;
 }
 
 #intro noscript p {
