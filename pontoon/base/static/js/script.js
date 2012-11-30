@@ -185,6 +185,8 @@
 
       // Edit project if selected from the menu
       $('.project .menu li').live("click.pontoon", function (e) {
+        e.preventDefault();
+        $('.url').val($(this).find('.project-name').html());
         window.location = 'admin/project/' + $(this).find('.project-name').html();
       });
 

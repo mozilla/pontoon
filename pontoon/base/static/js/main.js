@@ -1015,7 +1015,8 @@ var Pontoon = (function () {
               Pontoon.updateSlider(menu.find('ul'));
             }
             if (menu.parent().is('.project')) {
-              $('.url').val($('.project .menu li.hover').find('.project-url').html());
+              var type = (!$('body').is('.admin')) ? '.project-url' : '.project-name';
+              $('.url').val($('.project .menu li.hover').find(type).html());
             }
             return false;
           }
@@ -1031,7 +1032,8 @@ var Pontoon = (function () {
               Pontoon.updateSlider(menu.find('ul'));
             }
             if (menu.parent().is('.project')) {
-              $('.url').val($('.project .menu li.hover').find('.project-url').html());
+              var type = (!$('body').is('.admin')) ? '.project-url' : '.project-name';
+              $('.url').val($('.project .menu li.hover').find(type).html());
             }
             return false;
           }
