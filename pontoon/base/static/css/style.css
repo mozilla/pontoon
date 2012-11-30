@@ -775,8 +775,12 @@ body.admin-form #intro {
 }
 
 #pontoon #intro .select .menu ul {
-  max-height: 170px;
+  max-height: 176px;
   margin-bottom: 6px;
+}
+
+#pontoon #intro .select .menu ul li {
+  line-height: 18px;
 }
 
 #pontoon #intro .select .menu .code {
