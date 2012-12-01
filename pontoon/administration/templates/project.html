@@ -12,6 +12,14 @@
 </div>
 
 <section id="intro" class="visible">
+
+  <nav>
+    <ul class="links">
+      <li><a href="{{ url('pontoon.home') }}" title="{{ _('Pontoon Home') }}">Home</a></li>
+      <li><a href="{{ url('pontoon.admin') }}" title="{{ _('Pontoon Admin') }}">Admin</a></li>
+    </ul>
+  </nav>
+
   <form method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
 
     <h1 id="title">{{ _('%(subtitle)s')|format(subtitle=subtitle) }}</h1>

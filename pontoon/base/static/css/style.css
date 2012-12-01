@@ -463,7 +463,7 @@ body.admin-form #intro {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#570013', EndColorStr='#240008'); /* IE6–IE9 */ 
 }
 
-#pontoon.admin-form #intro a {
+#pontoon.admin-form #intro form a {
   color: #AEEE00;
   float: right;
   text-transform: uppercase;
