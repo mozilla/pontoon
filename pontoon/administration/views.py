@@ -127,26 +127,29 @@ def delete_project(request, pk, template=None):
     Project.objects.get(pk=pk).delete()
     return HttpResponseRedirect(reverse('pontoon.admin'))
 
-def _save_entity(project, original, comment):
+def _save_entity(project, original, comment="", key="", source=""):
     """Admin interface: save new or update existing entity in DB."""
 
-    try: # Update entity (comments-only)
-        e = Entity.objects.get(project=project, string=original)
-    except Entity.DoesNotExist: # New entity
-        e = Entity(project=project, string=original)
+    try: # Update existing entity
+        if key is "":
+            e = Entity.objects.get(project=project, string=original)
+        else:
+            e = Entity.objects.get(project=project, key=key, source=source)
+            e.string = original
+    except Entity.DoesNotExist: # Add new entity
+        e = Entity(project=project, string=original, key=key, source=source)
 
     if len(comment) > 0:
         e.comment = comment
     e.save()
 
-def _save_translation(project, original, locale, translation, author):
+def _save_translation(entity, locale, translation, author=""):
     """Admin interface: save new or update existing translation in DB."""
 
-    e = Entity.objects.get(project=project, string=original)
-    translations = Translation.objects.filter(entity=e, locale=locale).order_by('date')
+    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
 
     if len(translations) == 0: # New translation
-        t = Translation(entity=e, locale=locale, string=translation,
+        t = Translation(entity=entity, locale=locale, string=translation,
             author=author, date=datetime.datetime.now())
     else: # Update translation
         t = translations.reverse()[0]
@@ -175,7 +178,7 @@ def update_from_repository(request, template=None):
 
     fileName, fileExtension = os.path.splitext(url_repository)
 
-    if fileExtension == '.ini': 
+    if fileExtension == '.ini':
         config = ConfigParser.ConfigParser()
         try:
             config.readfp(urllib2.urlopen(url_repository))
@@ -187,32 +190,19 @@ def update_from_repository(request, template=None):
         for section in sections:
             for item in config.items(section):
                 if section == 'en':
-                    try: # Update entity
-                        e = Entity.objects.get(project=p, key=item[0], source=url_repository)
-                        e.string = item[1]
-                    except Entity.DoesNotExist: # New entity
-                        e = Entity(project=p, key=item[0], source=url_repository, string=item[1])
-                    e.save()
+                    _save_entity(project=p, original=item[1], key=item[0], source=url_repository)
                 else:
-                    try:
-                        e = Entity.objects.get(project=p, key=item[0], source=url_repository)
-                    except Entity.DoesNotExist:
-                        log.debug("[" + section + "]: Line ID " + item[0] + " is obsolete.")
-                        continue;
                     try:
                         l = Locale.objects.get(code=section)
                     except Locale.DoesNotExist:
                         log.debug("Locale not supported: " + section)
                         break;
-                    translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
-                    if len(translations) == 0: # New translation
-                        t = Translation(entity=e, locale=l,
-                            string=item[1], date=datetime.datetime.now())
-                    else: # Update translation
-                        t = translations.reverse()[0]
-                        t.string = item[1]
-                        t.date = datetime.datetime.now()
-                    t.save()
+                    try:
+                        e = Entity.objects.get(project=p, key=item[0], source=url_repository)
+                        _save_translation(entity=e, locale=l, translation=item[1])
+                    except Entity.DoesNotExist:
+                        log.debug("[" + section + "]: Line ID " + item[0] + " is obsolete.")
+                        continue;
             log.debug(section + ": saved to DB.")
 
     elif url_repository.find('://hg') > 0:
@@ -257,27 +247,14 @@ def update_from_repository(request, template=None):
                 for line in l10nobject:
                     if isinstance(line, silme.core.entity.Entity):
                         if l.code == 'en-US':
-                            try: # Update entity
-                                e = Entity.objects.get(project=p, key=line.id, source=short_path)
-                                e.string = line.value
-                            except Entity.DoesNotExist: # New entity
-                                e = Entity(project=p, key=line.id, source=short_path, string=line.value)
-                            e.save()
+                            _save_entity(project=p, original=line.value, key=line.id, source=short_path)
                         else:
                             try:
                                 e = Entity.objects.get(project=p, key=line.id, source=short_path)
+                                _save_translation(entity=e, locale=l, translation=line.value)
                             except Entity.DoesNotExist:
                                 log.debug("Line ID " + line.id + " in " + short_path + " is obsolete.")
                                 continue;
-                            translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
-                            if len(translations) == 0: # New translation
-                                t = Translation(entity=e, locale=l,
-                                    string=line.value, date=datetime.datetime.now())
-                            else: # Update translation
-                                t = translations.reverse()[0]
-                                t.string = line.value
-                                t.date = datetime.datetime.now()
-                            t.save()
                 log.debug(l.code.upper() + ": " + file_path + " saved to DB.")
 
     elif url_repository.find('://svn') > 0:
@@ -299,7 +276,8 @@ def update_from_repository(request, template=None):
             for entity in entities:
                 _save_entity(p, entity.msgid, entity.comment)
                 if len(entity.msgstr) > 0:
-                    _save_translation(p, entity.msgid, l, entity.msgstr, po.metadata['Last-Translator'])
+                    e = Entity.objects.get(project=p, string=entity.msgid)
+                    _save_translation(entity=e, locale=l, translation=entity.msgstr, author=po.metadata['Last-Translator'])
             log.debug("Repository data for " + l.name + " saved to DB.")
 
     else:
@@ -349,7 +327,8 @@ def update_from_transifex(request, template=None):
             for entity in entities:
                 _save_entity(p, entity["key"], entity["comment"])
                 if len(entity["translation"]) > 0:
-                    _save_translation(p, entity["key"], l, entity["translation"], entity["user"])
+                    e = Entity.objects.get(project=p, string=entity["key"])
+                    _save_translation(entity=e, locale=l, translation=entity["translation"], author=entity["user"])
             log.debug("Transifex data for " + l.name + " saved to DB.")
         else:
             return HttpResponse(response)

@@ -65,10 +65,10 @@ class Subpage(models.Model):
 
 class Entity(models.Model):
     project = models.ForeignKey(Project)
+    string = models.TextField()
+    comment = models.TextField(blank=True)
     key = models.TextField(blank=True) # Needed for webL10n
     source = models.TextField(blank=True) # Needed for webL10n
-    string = models.TextField()
-    comment = models.TextField()
 
     def __unicode__(self):
         return self.string
