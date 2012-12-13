@@ -504,8 +504,9 @@
                 // Remove Pontoon-content
                 inner
                   .find("link[href*='pontoon.css']").remove().end()
-                  .find("script[src*='pontoon.js']").remove().end()
+                  .find("script[src*='pontoon']").remove().end()
                   .find("script[src*='jquery.min.js']").remove().end()
+                  .find(".pontoon-remove").remove().end()
                   .find(".editableToolbar").remove().end()
                   .find("[contenteditable]").removeAttr("contenteditable").end()
                   .find("body").removeAttr("contextmenu").end()
