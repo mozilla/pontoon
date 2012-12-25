@@ -6,7 +6,6 @@ import fnmatch
 import json
 import os
 import polib
-import pysvn
 import requests
 import silme.core, silme.format.properties
 import traceback
@@ -526,6 +525,7 @@ def download(request, template=None):
 @login_required(redirect_field_name='', login_url='/404')
 def commit_to_svn(request, template=None):
     """Commit translations to SVN."""
+    import pysvn
     log.debug("Commit translations to SVN.")
 
     if request.method != 'POST':
