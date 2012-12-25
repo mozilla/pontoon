@@ -7,7 +7,6 @@ import fnmatch
 import json
 import os
 import polib
-import pysvn
 import silme.core, silme.format.properties
 import urllib2
 
@@ -22,7 +21,6 @@ from django.utils.datastructures import MultiValueDictKeyError
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request
 
-from mercurial import commands, hg, ui, error
 from mobility.decorators import mobile_template
 
 
@@ -217,6 +215,7 @@ def update_from_repository(request, template=None):
 
     elif url_repository.find('://hg') > 0:
         """ Mercurial """
+        from mercurial import commands, hg, ui, error
         software = 'hg'
         locales = [Locale.objects.get(code="en-US")]
         locales.extend(p.locales.all())
@@ -282,6 +281,7 @@ def update_from_repository(request, template=None):
 
     elif url_repository.find('://svn') > 0:
         """ Subversion """
+        import pysvn
         software = 'svn'
         path = os.path.join(settings.MEDIA_ROOT, software, p.name)
         client = pysvn.Client()
