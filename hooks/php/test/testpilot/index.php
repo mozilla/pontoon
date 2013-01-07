@@ -30,8 +30,9 @@
 				</div>
 				
 				<?php
-					if (isset($_GET['page'])) {
-					    include $_GET['page'];
+					$page = $_GET['page'];
+					if (isset($page) && preg_match("#^[a-z0-9_.]+$#i", $page) && is_file($page)) {
+					    include $page;
 					} else {
 						include 'home.php';
 					}					
