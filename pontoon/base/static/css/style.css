@@ -788,6 +788,10 @@ body.admin-form #intro {
   text-align: center;
 }
 
+#pontoon .messages li {
+  list-style: none;
+}
+
 #pontoon #browserid {
   cursor: pointer;
   margin-top: -1px;

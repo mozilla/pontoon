@@ -74,6 +74,13 @@
     </form>
 
     <p class="notification{% if not error %} hidden{% endif %}{% if not (user.is_authenticated() and user.has_perm('base.can_localize')) %} center{% endif %}">{{ error }}</p>
+    {% if messages %}
+    <ul class="messages notification">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 
     {% if not user.is_authenticated() %}
     <p id="action">
