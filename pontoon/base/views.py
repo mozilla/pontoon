@@ -13,6 +13,7 @@ from hashlib import md5
 
 from django.conf import settings
 from django.contrib import auth
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
@@ -32,7 +33,7 @@ log = commonware.log.getLogger('playdoh')
 
 
 @mobile_template('{mobile/}home.html')
-def home(request, error=None, locale=None, url=None, template=None):
+def home(request, template=None):
     """Home view."""
     log.debug("Home view.")
 
@@ -43,10 +44,11 @@ def home(request, error=None, locale=None, url=None, template=None):
     }
 
     if request.user.is_authenticated() and not request.user.has_perm('base.can_localize'):
-        error = "You don't have permission to localize."
+        messages.error(request, "You don't have permission to localize.")
 
-    if error is not None:
-        data['error'] = error
+    translate_error = request.session.pop('translate_error', {})
+    locale = translate_error.get('locale')
+    url = translate_error.get('url')
 
     if locale is not None:
         data['locale_code'] = locale
@@ -65,18 +67,29 @@ def translate_site(request, locale, url, template=None):
     url = url.replace("%3A", ":").replace("%2F", "/")
     log.debug("URL: " + url)
     validate = URLValidator()
+
     try:
         validate(url)
     except ValidationError, e:
         log.debug(e)
-        return home(request, "Oops, this is not a valid URL.", locale, url)
+        request.session['translate_error'] = {
+            'locale': locale,
+            'url': url
+        }
+        messages.error(request, "Oops, this is not a valid URL.")
+        return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Validate locale
     log.debug("Locale: " + locale)
     try:
         l = Locale.objects.get(code=locale)
     except Locale.DoesNotExist:
-        return home(request, "Oops, locale is not supported.", locale, url)
+        messages.error(request, "Oops, locale is not supported.")
+        request.session['translate_error'] = {
+            'locale': locale,
+            'url': url
+        }
+        return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
         'locale_code': locale,
@@ -112,9 +125,11 @@ def translate_site(request, locale, url, template=None):
     # Check if user authenticated and has sufficient privileges
     if not p.name == 'testpilot':
         if not request.user.is_authenticated():
-            return home(request, "You need to sign in first.")
+            messages.error(request, "You need to sign in first.")
+            return HttpResponseRedirect(reverse('pontoon.home'))
         if not request.user.has_perm('base.can_localize'):
-            return home(request, "You don't have permission to localize.")
+            messages.error(request, "You don't have permission to localize.")
+            return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Project stored in the DB, add more data
     if page is None:
@@ -174,19 +189,24 @@ def translate_project(request, locale, project, page=None, template=None):
     try:
         l = Locale.objects.get(code=locale)
     except Locale.DoesNotExist:
-        return home(request, "Oops, locale is not supported.")
+        messages.error(request, "Oops, locale is not supported.")
+        return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Validate project
     try:
         p = Project.objects.get(name=project, pk__in=Entity.objects.values('project'))
     except Project.DoesNotExist:
-        return home(request, "Oops, project could not be found.", locale)
+        messages.error(request, "Oops, project could not be found.")
+        request.session['translate_error'] = {'locale': locale}
+        return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Check if user authenticated and has sufficient privileges
     if not (request.user.is_authenticated() or project == 'testpilot'):
-        return home(request, "You need to sign in first.")
+        messages.error(request, "You need to sign in first.")
+        return HttpResponseRedirect(reverse('pontoon.home'))
     if not (request.user.has_perm('base.can_localize') or project == 'testpilot'):
-        return home(request, "You don't have permission to localize.")
+        messages.error(request, "You don't have permission to localize.")
+        return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
         'locale_code': locale,
@@ -198,7 +218,12 @@ def translate_project(request, locale, project, page=None, template=None):
 
     # Validate project locales
     if len(p.locales.filter(code=locale)) == 0:
-        return home(request, "Oops, locale is not supported for this website.", locale, data['project_url'])
+        request.session['translate_error'] = {
+            'locale': locale,
+            'url': data['project_url']
+        }
+        messages.error(request, "Oops, locale is not supported for this website.")
+        return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Validate subpages
     pages = Subpage.objects.filter(project=p).order_by('name')
@@ -209,7 +234,12 @@ def translate_project(request, locale, project, page=None, template=None):
             try:
                 data['project_url'] = pages.get(name=page).url
             except Subpage.DoesNotExist:
-                return home(request, "Oops, subpage could not be found.", locale, p.url)
+                request.session['translate_error'] = {
+                    'locale': locale,
+                    'url': p.url
+                }
+                messages.error(request, "Oops, subpage could not be found.")
+                return HttpResponseRedirect(reverse('pontoon.home'))
         data['pages'] = pages
         data['current_page'] = page
 
