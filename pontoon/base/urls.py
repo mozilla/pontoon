@@ -5,7 +5,7 @@ import views
 
 urlpatterns = patterns('',
     url(r'^$', views.home, name='pontoon.home'),
-    
+
     url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/site/(?P<url>.+)/$',
         views.translate_site,
         name='pontoon.translate.site'),
