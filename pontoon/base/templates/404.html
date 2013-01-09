@@ -7,17 +7,18 @@
   <div class="inner">
 
     <a href="/"><h1 id="title">{{ _('Oops') }}</h1></a>
+    <h2 id="subtitle">{{ _('We couldn\'t find the page you\'re looking for.') }}</h2>
 
-    <ul class="notification error center">
-      <li>Sorry, we couldn't find the page you're looking for.</li>
-    </ul>
+    <p id="action">
+      <a id="link" href="/">{{ _('Go Home') }}</a>
+    </p>
 
     <nav>
       <ul class="links">
-        <li><a href="/" title="Home">{{ _('Home') }}</a></li>
-        <li><a href="https://wiki.mozilla.org/L10n:Pontoon" target="_blank" title="Learn">Wiki</a></li>
-        <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="Hack">GitHub</a></li>
-        <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="Follow">Twitter</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon" target="_blank" title="{{ _('Localize') }}">{{ _('How it works') }}</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla" target="_blank" title="{{ _('Integrate') }}">{{ _('Developers') }}</a></li>
+        <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="{{ _('Hack') }}">GitHub</a></li>
+        <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="{{ _('Follow') }}">Twitter</a></li>
       </ul>
     </nav>
 

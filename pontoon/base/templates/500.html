@@ -231,48 +231,48 @@
         font-family: 'Open Sans';
         font-style: normal;
         font-weight: 400;
-        src: url('../fonts/OpenSans-Regular.eot');
+        src: url('/static/fonts/OpenSans-Regular.eot');
         src: local('Open Sans'),
           local('OpenSans'),
-          url('../fonts/OpenSans-Regular.eot') format('embedded-opentype'),
-          url('../fonts/OpenSans-Regular.woff') format('woff'),
-          url('../fonts/OpenSans-Regular.ttf') format('truetype');
+          url('/static/fonts/OpenSans-Regular.eot') format('embedded-opentype'),
+          url('/static/fonts/OpenSans-Regular.woff') format('woff'),
+          url('/static/fonts/OpenSans-Regular.ttf') format('truetype');
       }
 
       @font-face {
         font-family: 'Open Sans';
         font-style: normal;
         font-weight: 300;
-        src: url('../fonts/OpenSans-Light.eot');
+        src: url('/static/fonts/OpenSans-Light.eot');
         src: local('Open Sans Light'),
           local('OpenSans-Light'),
-          url('../fonts/OpenSans-Light.eot') format('embedded-opentype'),
-          url('../fonts/OpenSans-Light.woff') format('woff'),
-          url('../fonts/OpenSans-Light.ttf') format('truetype');
+          url('/static/fonts/OpenSans-Light.eot') format('embedded-opentype'),
+          url('/static/fonts/OpenSans-Light.woff') format('woff'),
+          url('/static/fonts/OpenSans-Light.ttf') format('truetype');
       }
 
       @font-face {
         font-family: 'Open Sans';
         font-style: normal;
         font-weight: 700;
-        src: url('../fonts/OpenSans-Bold.eot');
+        src: url('/static/fonts/OpenSans-Bold.eot');
         src: local('Open Sans Bold'),
           local('OpenSans-Bold'),
-          url('../fonts/OpenSans-Bold.eot') format('embedded-opentype'),
-          url('../fonts/OpenSans-Bold.woff') format('woff'),
-          url('../fonts/OpenSans-Bold.ttf') format('truetype');
+          url('/static/fonts/OpenSans-Bold.eot') format('embedded-opentype'),
+          url('/static/fonts/OpenSans-Bold.woff') format('woff'),
+          url('/static/fonts/OpenSans-Bold.ttf') format('truetype');
       }
 
       @font-face {
         font-family: 'Open Sans';
         font-style: italic;
         font-weight: 400;
-        src: url('../fonts/OpenSans-Italic.eot');
+        src: url('/static/fonts/OpenSans-Italic.eot');
         src: local('Open Sans Italic'),
           local('OpenSans-Italic'),
-          url('../fonts/OpenSans-Italic.eot') format('embedded-opentype'),
-          url('../fonts/OpenSans-Italic.woff') format('woff'),
-          url('../fonts/OpenSans-Italic.ttf') format('truetype');
+          url('/static/fonts/OpenSans-Italic.eot') format('embedded-opentype'),
+          url('/static/fonts/OpenSans-Italic.woff') format('woff'),
+          url('/static/fonts/OpenSans-Italic.ttf') format('truetype');
       }
 
       body, select, input, textarea, button {
@@ -280,14 +280,20 @@
       }
 
       #intro {
-        background: #222222;
-        position: fixed;
         bottom: 0;
         display: table;
-        overflow: hidden;
-        width: 100%;
         height: 100%;
+        overflow: hidden;
+        position: fixed;
         text-align: center;
+        width: 100%;
+
+        background: #26173F;
+        background-image: url('/static/img/grain.png'); /* fallback */
+        background-image: url('/static/img/grain.png'), -webkit-gradient(linear, left top, left bottom, from(#26173F), to(#000000)); /* Saf4+, Chrome */
+        background-image: url('/static/img/grain.png'), -webkit-linear-gradient(top, #26173F, #000000); /* Chrome 10+, Saf5.1+ */
+        background-image: url('/static/img/grain.png'),    -moz-linear-gradient(top, #26173F, #000000); /* FF3.6+ */
+        background-image: url('/static/img/grain.png'),         linear-gradient(top, #26173F, #000000); /* W3C */
       }
 
       .inner {
@@ -299,23 +305,47 @@
         color: #AEEE00;
         display: inline-block;
         text-shadow: 3px 3px 3px #000000;
-        letter-spacing: -7px;
+        letter-spacing: -4px;
         font-weight: 300;
         text-align: center;
-        font-size: 100px;
-        margin-bottom: 10px;
+        font-size: 108px;
       }
 
-      .notification {
-        color: #F00038;
-        font-size: 13px;
-        font-weight: 100;
+      h2 {
+        color: #888888;
+        font-size: 14px;
+        font-weight: 300;
+        text-shadow: 1px 1px 1px #000000;
         text-transform: uppercase;
+        padding-bottom: 2px;
+      }
+
+      #subtitle {
+        color: #EBEBEB;
+        font-size: 48px;
+        letter-spacing: -2px;
+        text-shadow: 0px 0px 10px #000000;
+        text-transform: none;
+      }
+
+      #action {
+        color: #AAAAAA;
+        font-size: 14px;
+        font-weight: 300;
+        height: 35px;
+        margin-top: 50px;
+      }
+
+      #action a {
+        color: #AEEE00;
       }
 
       .links {
-        text-align: center;
-        margin: 10px 0;
+        left: 50%;
+        margin-left: -350px;
+        position: absolute;
+        top: 20px;
+        width: 700px;
       }
 
       .links li {
@@ -327,7 +357,7 @@
       }
 
       a:link, a:visited {
-        color: #AAAAAA;
+        color: #EBEBEB;
         text-decoration: none;
         font-weight: 300;
 
@@ -348,16 +378,19 @@
     <section id="intro">
       <div class="inner">
 
-        <a href="/"><h1 id="title">Oops</h1></a>
+        <a href="/"><h1 id="title">{{ _('Oops') }}</h1></a>
+        <h2 id="subtitle">{{ _('Something is wrong. We\'re going to fix it soon.') }}</h2>
 
-        <p class="notification">Sorry, something is wrong. We're going to fix it soon.</p>
+        <p id="action">
+          <a id="link" href="/">{{ _('Go Home') }}</a>
+        </p>
 
         <nav>
           <ul class="links">
-            <li><a href="/" title="Home">Home</a></li>
-            <li><a href="https://wiki.mozilla.org/L10n:Pontoon" target="_blank" title="Learn">Wiki</a></li>
-            <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="Hack">GitHub</a></li>
-            <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="Follow">Twitter</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon" target="_blank" title="{{ _('Localize') }}">{{ _('How it works') }}</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla" target="_blank" title="{{ _('Integrate') }}">{{ _('Developers') }}</a></li>
+            <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="{{ _('Hack') }}">GitHub</a></li>
+            <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="{{ _('Follow') }}">Twitter</a></li>
           </ul>
         </nav>
 
