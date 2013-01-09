@@ -58,6 +58,23 @@ def home(request, template=None):
 
     return render(request, template, data)
 
+
+def handle_error(request):
+    """
+    A view to handle errors during loading a website for translation
+    by Pontoon. This view is bound with a generic URL which can
+    be called from Pontoon's javascript with appropriate GET parameters
+    and the page will get redirected to the home page showing proper
+    error messages, url and locale.
+    """
+    messages.error(request, request.GET.get('error', ''))
+    request.session['translate_error'] = {
+        'locale': request.GET.get('locale'),
+        'url': request.GET.get('url')
+    }
+    return HttpResponseRedirect(reverse('pontoon.home'))
+
+
 @mobile_template('{mobile/}translate.html')
 def translate_site(request, locale, url, template=None):
     """Translate view: site."""

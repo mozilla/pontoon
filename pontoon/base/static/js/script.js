@@ -117,12 +117,12 @@
             } else {
               clearInterval(interval);
               var lang = $('html').attr('lang'),
-                  errorLink = (lang ? '/' + lang : '') + '/locale/' + escapedLocale + '/site/' + url + (url[url.length-1] !== '/' ? '/' : '') + 'oops/';
+                  errorLink = (lang ? '/' + lang : '') + '/translate/error/?locale=' + escapedLocale + '&url=' + url + (url[url.length-1] !== '/' ? '/' : '');
               if (projectWindow) {
-                window.location = errorLink + 'support/';
+                window.location = errorLink + '&error=' + "Oops, website is not supported by Pontoon.";
                 projectWindow.close();
               } else {
-                window.location = errorLink + 'popup/';
+                window.location = errorLink + '&error=' + 'Oops, looks like pop-ups are blocked.';
               }
             }
           }, 100);
