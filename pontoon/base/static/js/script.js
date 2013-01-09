@@ -54,11 +54,11 @@
                   $('form').removeClass('hidden');
                   $('.notification').addClass('hidden').removeClass('center');
                 } else {
-                  $('.notification').removeClass('hidden').html('You don\'t have permission to localize.');
+                  $('.notification').html('<li>You don\'t have permission to localize.</li>').removeClass('hidden');
                 }
               },
               error: function() {
-                $('.notification').html('Oops, something went wrong.').removeClass('hidden');
+                $('.notification').html('<li>Oops, something went wrong.</li>').removeClass('hidden');
                 $('#loading').toggleClass('loader').html('or');
               }
             });

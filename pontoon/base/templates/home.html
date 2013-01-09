@@ -73,15 +73,6 @@
       </div>
     </form>
 
-    <p class="notification{% if not error %} hidden{% endif %}{% if not (user.is_authenticated() and user.has_perm('base.can_localize')) %} center{% endif %}">{{ error }}</p>
-    {% if messages %}
-    <ul class="messages notification">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-
     {% if not user.is_authenticated() %}
     <p id="action">
       <a id="demo" href="/locale/de/project/testpilot/">{{ _('Try it out') }}</a>
@@ -89,6 +80,12 @@
       <img id="browserid" src="{{ static('img/plain_sign_in_blue.png') }}" alt="{{ _('Sign in with Persona') }}" />
     </p>
     {% endif %}
+
+    <ul class="notification{% if not messages %} hidden{% endif %}{% if not (user.is_authenticated() and user.has_perm('base.can_localize')) %} center{% endif %}">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
 
   </div>
 </section>

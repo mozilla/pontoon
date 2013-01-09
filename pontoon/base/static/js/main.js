@@ -1076,7 +1076,7 @@ var Pontoon = (function () {
          */
         showError: function(message) {
           $('.notification')
-            .html(message)
+            .html('<li>' + message + '</li>')
             .addClass('error')
             .css('visibility', 'visible').show();
         },
