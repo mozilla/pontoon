@@ -44,6 +44,7 @@ Local settings
 
 Django local settings file should be stored at `/pontoon/settings/local.py`. Copy contents from `/pontoon/settings/local.py-dist`.
  * `SITE_URL`: required for BrowserID, set if different from `http://127.0.0.1:8000`.
+ * `HMAC_KEYS`: set or uncomment if you need bcrypt, e.g. when running `./manage.py createsuperuser`.
  * `SESSION_COOKIE_SECURE = False`: uncomment if running a local development install without HTTPS to disable HTTPS-only cookies.
  * `MICROSOFT_TRANSLATOR_API_KEY`: set to a valid [Microsoft Translator API key][bdc] to use machine translation.
  * `GOOGLE_ANALYTICS_KEY`: set to a valid [Google Analytics key][ga] to use Google Analytics.
