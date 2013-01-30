@@ -688,15 +688,16 @@ def verify(request, template=None):
     if not verification:
         return HttpResponseForbidden()
 
-    response_data = {'registered': False, 'browserid': verification}
+    response = 'error'
     user = auth.authenticate(assertion=assertion, audience=get_audience(request))
     if user is not None:
         auth.login(request, user)
-        response_data = {'registered': True, 'browserid': verification,
+        response = {'browserid': verification,
             'manager': user.has_perm('base.can_manage'),
-            'localizer': user.has_perm('base.can_localize')}
+            'localizer': user.has_perm('base.can_localize')
+        }
 
-    return HttpResponse(json.dumps(response_data), mimetype='application/json')
+    return HttpResponse(json.dumps(response), mimetype='application/json')
 
 def get_csrf(request, template=None):
     """Get CSRF token."""
