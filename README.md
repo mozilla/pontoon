@@ -48,6 +48,7 @@ Django local settings file should be stored at `/pontoon/settings/local.py`. Cop
  * `SESSION_COOKIE_SECURE = False`: uncomment if running a local development install without HTTPS to disable HTTPS-only cookies.
  * `MICROSOFT_TRANSLATOR_API_KEY`: set to a valid [Microsoft Translator API key][bdc] to use machine translation.
  * `GOOGLE_ANALYTICS_KEY`: set to a valid [Google Analytics key][ga] to use Google Analytics.
+ * `MOZILLIANS_API_KEY`: set to a valid [Mozillians API key][mak] to grant permission to Mozilla localizers.
 
 Hooks
 --------------
@@ -89,6 +90,7 @@ This software is licensed under the [New BSD License][BSD]. For more information
 [fork]:  http://help.github.com/fork-a-repo/   "Fork A Repo"
 [bdc]: http://msdn.microsoft.com/en-us/library/hh454950   "MSDN"
 [ga]: https://www.google.com/analytics/   "Google Analytics"
+[mak]: https://wiki.mozilla.org/Mozillians/API-Specification   "Mozillians API Specification"
 [irc]:  https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon   "Mibbit"
 [issue]:  https://github.com/mathjazz/pontoon/issues   "Pontoon issues"
 [wiki]:  https://github.com/mathjazz/pontoon/wiki   "Pontoon wiki"

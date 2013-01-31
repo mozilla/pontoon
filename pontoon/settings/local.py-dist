@@ -90,3 +90,6 @@ MICROSOFT_TRANSLATOR_API_KEY = ''
 
 # Google Analytics Key
 GOOGLE_ANALYTICS_KEY = ''
+
+# Mozillians API Key
+MOZILLIANS_API_KEY = ''

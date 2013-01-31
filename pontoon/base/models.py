@@ -1,4 +1,7 @@
-from django.contrib.auth.models import User
+import requests
+
+from django.conf import settings
+from django.contrib.auth.models import User, Permission
 from django.db import models
 from django.db.models.signals import post_save
 from django.forms import ModelForm
@@ -13,9 +16,38 @@ class UserProfile(models.Model):
     svn_username = models.CharField(max_length=40)
     svn_password = models.CharField(max_length=128)
 
+# For every newly created user
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+
+        # Grant permission to Mozilla localizers
+        url = "https://mozillians.org/api/v1/users/"
+        payload = {
+            "app_name": "pontoon",
+            "app_key": settings.MOZILLIANS_API_KEY,
+            "groups": "l10n",
+            "format": "json",
+            "limit": 1000, # By default, limited to 20
+            "is_vouched": True
+        }
+
+        import logging
+        logger = logging.getLogger('playdoh')
+
+        try:
+            r = requests.get(url, params=payload)
+            logger.debug(instance.email)
+            email = instance.email
+
+            for l in r.json["objects"]:
+                logger.debug(l["email"])
+                if email == l["email"]:
+                    can_localize = Permission.objects.get(codename="can_localize")
+                    instance.user_permissions.add(can_localize)
+                    break
+        except Exception:
+            pass
 
 post_save.connect(create_user_profile, sender=User)
 
