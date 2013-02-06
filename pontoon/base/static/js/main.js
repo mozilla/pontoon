@@ -30,20 +30,30 @@ var Pontoon = (function () {
                 'username': self.user.name,
                 'user_email': self.user.email
             },
-            translations: {}
+            translations: []
         }
+
+        var msgid_index_dict = {};
 
         $(self.project.entities).each(function () {
           var msgid = this.original;
-          po.translations[msgid] = {
+          var index = msgid_index_dict.msgid;
+          if (index == undefined){
+            var data = {
+              msgid: msgid,
               fuzzy: false,
-              msgstr: this.translation,
+              msgstr: this.translation || "",
               occurrence: self.project.url,
-          };
+            }
+            msgid_index_dict[msgid] = po.translations.push(data) - 1;
+          }
+          else {
+            var data = po.translations[index];
+          }
 
           if (this.suggestions && !msgstr) {
-            po.translations[msgid].fuzzy = true,
-            po.translations[msgid].msgstr = this.suggestions[0].translation;
+            data.fuzzy = true,
+            data.msgstr = this.suggestions[0].translation;
           }
         });
 
