@@ -494,7 +494,7 @@ def _generate_po_content(data):
     po = polib.POFile()
     current_time = datetime.datetime.now()
     metadata = json_dict.get('metadata', {})
-    translations = json_dict.get('translations', {})
+    translations = json_dict.get('translations', [])
 
     # Add PO metadata
     po.metadata = {
@@ -523,13 +523,13 @@ def _generate_po_content(data):
     )
 
     # Append PO entries
-    for msgid in translations.keys():
+    for trans in translations:
         po_entry = polib.POEntry(
-                msgid=msgid,
-                msgstr=translations[msgid].get('msgstr', ''),
-                occurrences = [(translations[msgid].get('occurrence', ''), '')]
+                msgid=trans['msgid'],
+                msgstr=trans.get('msgstr', ''),
+                occurrences = [(trans.get('occurrence', ''), '')]
         )
-        if translations[msgid].get('fuzzy'):
+        if trans.get('fuzzy'):
             po_entry.flags.append('fuzzy')
         po.append(po_entry)
     return unicode(po).encode('utf-8')
