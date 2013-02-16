@@ -6,6 +6,7 @@ import datetime
 import fnmatch
 import json
 import os
+import shutil
 import polib
 import silme.core, silme.format.properties
 import urllib2
@@ -14,10 +15,13 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
+from django.contrib import messages
+from django.db import transaction
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
+from django.utils.translation import ugettext_lazy as _
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request
 
@@ -115,15 +119,38 @@ def manage_project(request, name=None, template=None):
 
     return render(request, template, data)
 
+
+@transaction.commit_manually
 def delete_project(request, pk, template=None):
     """Admin interface: delete project."""
-    log.debug("Admin interface: delete project.")
+    try:
+        log.debug("Admin interface: delete project.")
 
-    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
-        raise Http404
+        if not (request.user.is_authenticated() and request.user.has_perm(
+                'base.can_manage')):
+            raise Http404
 
-    Project.objects.get(pk=pk).delete()
-    return HttpResponseRedirect(reverse('pontoon.admin'))
+        project = Project.objects.get(pk=pk)
+        project.delete()
+        import re
+        m = re.search(r'://(?P<software>(?:hg)|(?:svn))', project.repository)
+        if m:
+            software = m.group('software')
+            project_path = os.path.join(
+                settings.MEDIA_ROOT, software, project.name)
+            if os.path.exists(project_path):
+                shutil.rmtree(project_path)
+        transaction.commit()
+        return HttpResponseRedirect(reverse('pontoon.admin'))
+    except Exception as e:
+        log.error("Admin interface: delete project error.\n%s"
+            % unicode(e), exc_info=True)
+        transaction.rollback()
+        messages.error(request,
+            _("There was an error during deleting this project."))
+        return HttpResponseRedirect(reverse('pontoon.admin.project',
+            args=[project.name]))
+
 
 def _save_entity(project, original, comment="", key="", source=""):
     """Admin interface: save new or update existing entity in DB."""
