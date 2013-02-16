@@ -19,11 +19,15 @@
       <li><a href="{{ url('pontoon.admin') }}" title="{{ _('Pontoon Admin') }}">Admin</a></li>
     </ul>
   </nav>
-
   <form method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
 
     <h1 id="title">{{ _('%(subtitle)s')|format(subtitle=subtitle) }}</h1>
     {% if warning %}<h3 class="warning">{{ warning }}</h3>{% endif %}
+    <ul class="notification{% if not messages %} hidden{% endif %}{% if not (user.is_authenticated() and user.has_perm('base.can_localize')) %} center{% endif %}">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %} style="text-align: left;">{{ message }}</li>
+        {% endfor %}
+    </ul>
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
     {% if pk %}<input type="hidden" value="{{ pk }}" name="pk">{% endif %}
 
