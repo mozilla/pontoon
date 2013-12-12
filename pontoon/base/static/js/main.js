@@ -643,6 +643,7 @@ var Pontoon = (function () {
      */
     updateOnServer: function (entity) {
       var self = this;
+      // Don't save if user not authenticated
       if (self.user.email && self.project.pk) {
         self.startLoader();
         $.ajax({
