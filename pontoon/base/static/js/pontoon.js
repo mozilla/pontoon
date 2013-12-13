@@ -440,7 +440,6 @@
         var target = toolbar[0].target;
         $(target).attr('contentEditable', true);
         postMessage("ACTIVE", target.entity.id);
-        target.focus();
         selectNodeContents(target);
       }
 
