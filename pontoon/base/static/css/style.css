@@ -551,7 +551,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .repository.authenticate .bottom label input {
-  margin-top: 1px;
+  margin-top: 0;
 }
 
 #pontoon.admin-form #intro .repository .type-wrapper .authentication-title,
@@ -586,7 +586,8 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .repository .type-wrapper .authentication-title {
   color: #F00038;
-  padding-top: 52px;
+  font-size: 12px;
+  padding-top: 54px;
   text-align: left;
   text-transform: uppercase;
 }
@@ -658,6 +659,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .edit section .bottom {
+  font-size: 12px;
   text-transform: uppercase;
 }
 
