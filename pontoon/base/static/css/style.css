@@ -394,6 +394,11 @@ body.admin-form #intro {
   text-transform: none;
 }
 
+#pontoon.admin-form #intro h2 .small {
+  color: #AAAAAA;
+  font-size: 0.7em;
+}
+
 #pontoon.admin-form #intro h3 {
   color: #F00038;
   font-weight: 300;
@@ -542,6 +547,7 @@ body.admin-form #intro {
 #pontoon.admin-form #intro .repository.authenticate .bottom label input {
   float: left;
   margin-left: -16px;
+  margin-top: 2px;
 }
 
 #pontoon.admin-form #intro .repository .type-wrapper .authentication-title,
