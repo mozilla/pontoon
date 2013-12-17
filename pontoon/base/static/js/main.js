@@ -903,7 +903,7 @@ var Pontoon = (function () {
       });
 
       // Confirm and select locale handlers
-      $('.locale .confirm, .locale .menu li:not(".no-match")').unbind("click.pontoon").bind("click.pontoon", function () {
+      $('.locale .confirm, body:not(".admin-form") .locale .menu li:not(".no-match")').unbind("click.pontoon").bind("click.pontoon", function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             url = $('.url:visible').val();
 
