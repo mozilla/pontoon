@@ -224,7 +224,11 @@
         }
 
         // Update form action
-        $('form').attr('action', $('form').attr('action').split('/project/')[0] + '/project/' + $('#id_name').val() + '/');
+        var name = $('#id_name').val();
+        if (name.length > 0) {
+          name += '/';
+        }
+        $('form').attr('action', $('form').attr('action').split('/project/')[0] + '/project/' + name);
       });
 
       // Submit form with Enter
