@@ -59,7 +59,6 @@ def manage_project(request, name=None, template=None):
     locales_selected = []
     subtitle = 'Add project'
     pk = None
-    warning = None
 
     if request.method == 'POST':
         locales_selected = Locale.objects.filter(pk__in=request.POST.getlist('locales'))
@@ -87,7 +86,8 @@ def manage_project(request, name=None, template=None):
                 subtitle += '. Saved.'
                 pk = project.pk
                 if len(Entity.objects.filter(project=project)) is 0:
-                    warning = 'Before localizing the project, you need to import strings from the repository.'
+                    messages.warning(request,
+                        _("Before localizing projects, you need to import strings from the repository."))
             else:
                 subtitle += '. Error.'
         else:
@@ -103,7 +103,8 @@ def manage_project(request, name=None, template=None):
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
             if len(Entity.objects.filter(project=project)) is 0:
-                warning = 'Before localizing the project, you need to import strings from the repository.'
+                messages.warning(request,
+                    _("Before localizing projects, you need to import strings from the repository."))
         except Project.DoesNotExist:
             form = ProjectForm(initial={'name': name})
 
@@ -114,8 +115,7 @@ def manage_project(request, name=None, template=None):
         'locales_available': Locale.objects.exclude(pk__in=locales_selected),
         'REPOSITORY_TYPE_CHOICES': Project.REPOSITORY_TYPE_CHOICES,
         'subtitle': subtitle,
-        'pk': pk,
-        'warning': warning
+        'pk': pk
     }
 
     return render(request, template, data)
