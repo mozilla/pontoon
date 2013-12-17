@@ -112,6 +112,7 @@ def manage_project(request, name=None, template=None):
         'formset': formset,
         'locales_selected': locales_selected,
         'locales_available': Locale.objects.exclude(pk__in=locales_selected),
+        'REPOSITORY_TYPE_CHOICES': Project.REPOSITORY_TYPE_CHOICES,
         'subtitle': subtitle,
         'pk': pk,
         'warning': warning

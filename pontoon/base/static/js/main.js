@@ -886,7 +886,7 @@ var Pontoon = (function () {
       $('.selector').live("click.pontoon", function (e) {
         if (!$(this).siblings('.menu').is(':visible')) {
           e.stopPropagation();
-          $('.menu, .popup').hide();
+          $('body:not(".admin-form") .menu, body:not(".admin-form") .popup').hide();
           $('.select').removeClass('opened');
           $('#iframe-cover').hide(); // iframe fix
           $(this).siblings('.menu').show().end()

@@ -206,7 +206,7 @@
 
 
 
-    /*** ADMIN FORM ***/
+    /*** ADMIN PROJECT ***/
     } else if ($('body').is('.admin-form')) {
       // Before submitting the form
       $('form').submit(function (e) {
@@ -257,8 +257,20 @@
         target.prepend(items);
       });
 
+      // Select repository type
+      $('body').live("click.pontoon", function () {
+        $('.repository .menu').hide();
+        $('.select').removeClass('opened');
+      });
+      $('.repository .type li').live("click.pontoon", function () {
+        var selected = $(this).html();
+        $(this).parents('.select').find('.title').html(selected);
+        $('#id_repository_type').val(selected);
+        $('.details-wrapper').attr('data-repository-type', selected.toLowerCase());
+      });
+
       // Update from repository
-      $('.repository .button:not(".disabled"), .transifex .button:not(".disabled")').unbind('click.pontoon').bind('click.pontoon', function (e) {
+      $('.repository .update:not(".disabled"), .transifex .update:not(".disabled")').unbind('click.pontoon').bind('click.pontoon', function (e) {
         e.preventDefault();
         $(this).addClass('disabled');
         var source = $(this).data('source'),
@@ -302,11 +314,11 @@
           success: function(data) {
             if (data === "200") {
               updateIcon('ok.png');
-              $('.' + source).removeClass('popup');
+              $('.repository').removeClass('authenticate');
               $('.warning').fadeOut();
             } else if (data === "authenticate") {
               updateIcon('update.png');
-              $('.' + source).addClass('popup');
+              $('.repository').addClass('authenticate');
             } else if (data === "error"){
               updateIcon('error.png');
             }

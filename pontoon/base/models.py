@@ -64,9 +64,16 @@ class Project(models.Model):
     locales = models.ManyToManyField(Locale)
 
     # Repositories
-    repository = models.URLField("Repository URL (SVN or HG)", blank=True)
-    transifex_project = models.CharField(max_length=128, blank=True)
-    transifex_resource = models.CharField(max_length=128, blank=True)
+    REPOSITORY_TYPE_CHOICES = (
+        ('File', 'File'),
+        ('HG', 'HG'),
+        ('SVN', 'SVN'),
+        ('Transifex', 'Transifex'),
+    )
+    repository_type = models.CharField("Type", max_length=20, blank=False, default='File', choices=REPOSITORY_TYPE_CHOICES)
+    repository = models.URLField("URL", blank=True)
+    transifex_project = models.CharField("Project", max_length=128, blank=True)
+    transifex_resource = models.CharField("Resource", max_length=128, blank=True)
 
     # Campaign info
     info_brief = models.TextField("Campaign Brief", blank=True)
@@ -122,19 +129,20 @@ class ProjectForm(ModelForm):
     def clean(self):
         cleaned_data = super(ProjectForm, self).clean()
         repository = cleaned_data.get("repository")
+        repository_type = cleaned_data.get("repository_type")
         transifex_project = cleaned_data.get("transifex_project")
         transifex_resource = cleaned_data.get("transifex_resource")
 
-        if transifex_project and not transifex_resource:
-            self._errors["transifex_resource"] = self.error_class([u"Both fields are required."])
-            del cleaned_data["transifex_project"]
+        if repository_type == 'Transifex':
+            if not transifex_project:
+                self._errors["repository"] = self.error_class([u"You need to provide Transifex project and resource."])
+                del cleaned_data["transifex_resource"]
 
-        elif not transifex_project and transifex_resource:
-            self._errors["transifex_project"] = self.error_class([u"Both fields are required."])
-            del cleaned_data["transifex_resource"]
+            if not transifex_resource:
+                self._errors["repository"] = self.error_class([u"You need to provide Transifex project and resource."])
+                del cleaned_data["transifex_project"]
 
-        elif not transifex_project and not transifex_resource and not repository:
-            self._errors["repository"] = self.error_class([u"You either need to provide repository URL..."])
-            self._errors["transifex_project"] = self.error_class([u"...or Transifex project and resource."])
+        elif not repository:
+            self._errors["repository"] = self.error_class([u"You need to provide a valid URL."])
 
         return cleaned_data

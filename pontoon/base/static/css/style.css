@@ -476,6 +476,10 @@ body.admin-form #intro {
   width: 32px;
 }
 
+#pontoon.admin-form #intro .authenticate .transifex .button {
+  margin-top: 37px;
+}
+
 #pontoon.admin-form #intro .locale.select {
   float: left;
   margin-bottom: 2px;
@@ -485,8 +489,7 @@ body.admin-form #intro {
   float: right;
 }
 
-#pontoon.admin-form #intro .locale.select .menu,
-#pontoon.admin-form #intro .popup {
+#pontoon.admin-form #intro .locale.select .menu {
   border: 1px solid #000000;
   display: inline-block;
   margin: 2px 0 0 -1px;
@@ -502,17 +505,6 @@ body.admin-form #intro {
   box-shadow: 0 0 5px #111111;
   -moz-box-shadow: 0 0 5px #111111;
   -webkit-box-shadow: 0 0 5px #111111;
-}
-
-#pontoon.admin-form #intro .popup {
-  background: #333333;
-  padding: 6px 12px;
-  width: 595px;
-}
-
-#pontoon.admin-form #intro .edit section .bottom {
-  font-size: 12px;
-  text-transform: uppercase;
 }
 
 #pontoon.admin-form #intro .locale.select .menu .search {
@@ -542,88 +534,130 @@ body.admin-form #intro {
   padding: 6px 0 0 16px;
 }
 
-#pontoon.admin-form #intro .checkbox label input {
+#pontoon.admin-form #intro .repository.authenticate .bottom label {
+  padding-left: 16px;
+}
+
+#pontoon.admin-form #intro .checkbox label input,
+#pontoon.admin-form #intro .repository.authenticate .bottom label input {
   float: left;
   margin-left: -16px;
 }
 
-#pontoon.admin-form #intro .edit .repository input[type=text] {
-  float: left;
-  width: 576px;
-}
-
-#pontoon.admin-form #intro .transifex input[type=text] {
-  float: left;
-  width: 300px;
-}
-
-#pontoon.admin-form #intro .edit .transifex input#id_transifex_project,
-#pontoon.admin-form #intro .edit .transifex input#id_transifex_username {
-  width: 282px;
-}
-
-#pontoon.admin-form #intro .edit .transifex input#id_transifex_resource,
-#pontoon.admin-form #intro .edit .transifex input#id_transifex_password {
-  width: 281px;
-}
-
-#pontoon.admin-form #intro .transifex label {
-  float: left;
-  width: 307px;
-}
-
-#pontoon.admin-form #intro .edit .transifex label {
-  float: left;
-  width: 288px;
-}
-
-#pontoon.admin-form #intro .transifex p {
-  color: #F00038;
+#pontoon.admin-form #intro .repository .type-wrapper .authentication-title,
+#pontoon.admin-form #intro .repository .transifex .authentication-form, 
+#pontoon.admin-form #intro .repository .transifex .bottom {
   display: none;
-  font-size: 12px;
-  text-transform: uppercase;
 }
 
-#pontoon.admin-form #intro .transifex.popup p {
+#pontoon.admin-form #intro .repository.authenticate .type-wrapper .authentication-title,
+#pontoon.admin-form #intro .repository.authenticate .transifex .authentication-form, 
+#pontoon.admin-form #intro .repository.authenticate .transifex .bottom {
   display: block;
 }
 
-#pontoon.admin-form #intro .transifex section {
+#pontoon.admin-form #intro .repository .type-wrapper {
+  float: left;
+  margin-right: 6px;
+}
+
+#pontoon.admin-form #intro .repository .type.select {
+  margin-left: -1px;
+}
+
+#pontoon.admin-form #intro .repository .type.select .selector {
+  height: 20px;
+  width: 196px;
+}
+
+#pontoon.admin-form #intro .repository .type.select .selector > span:nth-child(2) {
+  float: right;
+}
+
+#pontoon.admin-form #intro .repository .type-wrapper .authentication-title {
+  color: #F00038;
+  padding-top: 52px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+#pontoon.admin-form #intro .repository .details-wrapper {
+  float: left;
+  width: 407px;
+}
+
+#pontoon.admin-form #intro .repository .details-wrapper[data-repository-type="transifex"] .url {
   display: none;
 }
 
-#pontoon.admin-form #intro .transifex.popup section {
-  display: inline-block;
-  margin-top: 10px;
+#pontoon.admin-form #intro .repository .details-wrapper[data-repository-type="transifex"] .transifex {
+  display: block;
 }
 
-#pontoon.admin-form #intro .edit .transifex.popup input#id_transifex_project,
-#pontoon.admin-form #intro .edit .transifex.popup input#id_transifex_username {
-  width: 288px;
-  margin-right: 6px;
+#pontoon.admin-form #intro .repository input[type=text] {
+  width: 400px;
 }
 
-#pontoon.admin-form #intro .edit .transifex.popup input#id_transifex_resource {
-  width: 250px;
-}
-
-#pontoon.admin-form #intro .edit .transifex.popup input#id_transifex_password {
+#pontoon.admin-form #intro .edit .repository input[type=text] {
   float: left;
-  width: 287px;
+  width: 363px;
 }
 
-#pontoon.admin-form #intro .edit .transifex.popup label {
-  width: 294px;
-  margin-right: 6px;
+#pontoon.admin-form #intro .transifex {
+  display: none;
 }
 
-#pontoon.admin-form #intro .edit .transifex.popup label[for=id_transifex_resource],
-#pontoon.admin-form #intro .edit .transifex.popup label[for=id_transifex_password] {
-  width: 287px;
+#pontoon.admin-form #intro .transifex .authentication-form {
+  padding-top: 69px;
+  padding-bottom: 52px;
+}
+
+#pontoon.admin-form #intro .transifex input#id_transifex_project,
+#pontoon.admin-form #intro .edit .authenticate .transifex input#id_transifex_project,
+#pontoon.admin-form #intro .edit .transifex input#id_transifex_username {
+  float: left;
+  width: 193px;
+}
+
+#pontoon.admin-form #intro .transifex input#id_transifex_resource,
+#pontoon.admin-form #intro .edit .authenticate .transifex input#id_transifex_resource {
+  float: left;
+  width: 194px;
+}
+
+#pontoon.admin-form #intro .edit .transifex input#id_transifex_project,
+#pontoon.admin-form #intro .edit .transifex input#id_transifex_resource {
+  float: left;
+  width: 175px;
+}
+
+#pontoon.admin-form #intro .edit .transifex input#id_transifex_password,
+#pontoon.admin-form #intro .edit .authenticate .transifex .authentication-form label:nth-child(2) {
+  float: left;
+  width: 157px;
+}
+
+#pontoon.admin-form #intro .transifex label,
+#pontoon.admin-form #intro .edit .authenticate .transifex label  {
+  float: left;
+  width: 200px;
+}
+
+#pontoon.admin-form #intro .edit .transifex label {
+  width: 182px;
+}
+
+#pontoon.admin-form #intro .edit section .bottom {
+  text-transform: uppercase;
 }
 
 #pontoon.admin-form #intro .subpages[data-count] {
   display: none;
+}
+
+#pontoon.admin-form #intro .subpages label[for*=name] {
+  float: left;
+  width: 207px;
 }
 
 #pontoon.admin-form #intro .subpages input[id*=name] {
@@ -633,11 +667,6 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .subpages input[id$=DELETE] {
   display: none;
-}
-
-#pontoon.admin-form #intro .subpages label[for*=name] {
-  float: left;
-  width: 207px;
 }
 
 #pontoon.admin-form #intro .subpages input[id*=url] {
@@ -650,8 +679,11 @@ body.admin-form #intro {
   width: 407px;
 }
 
+#pontoon.admin-form #intro label[for=id_repository_type],
 #pontoon.admin-form #intro .transifex input#id_transifex_project,
+#pontoon.admin-form #intro .transifex input#id_transifex_username,
 #pontoon.admin-form #intro .transifex label[for*=project],
+#pontoon.admin-form #intro .transifex label[for*=username],
 #pontoon.admin-form #intro .subpages input[id*=name],
 #pontoon.admin-form #intro .subpages label[for*=name] {
   margin-right: 6px;

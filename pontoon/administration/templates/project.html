@@ -82,41 +82,62 @@
         </label>
     </div>
 
-    <h2>Repositories</h2>
+    <h2>Repository</h2>
 
     <div class="repository clearfix">
-        {{ form.repository.label_tag() }}
-        {{ form.repository }}
-        {% if pk %}
-        <button title="{{ _('Update all locales from repository') }}" data-source="repository" class="button">
-            <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from repository') }}" />
-        </button>
-        {% endif %}
-        {{ form.repository.errors }}
-    </div>
-    <div class="transifex clearfix">
-        <p>Please sign in</p>
-        {{ form.transifex_project.label_tag() }}
-        {{ form.transifex_resource.label_tag() }}
-        {{ form.transifex_project }}
-        {{ form.transifex_resource }}
-        {% if pk %}
-        <button title="{{ _('Update all locales from Transifex') }}" data-source="transifex" class="button">
-            <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from Transifex') }}" />
-        </button>
-        <section>
-            <label for="id_transifex_username">Transifex username or email</label>
-            <label for="id_transifex_password">Transifex password</label>
-            <input id="id_transifex_username" name="transifex_username" type="text" />
-            <input id="id_transifex_password" name="transifex_password" type="password" />
-            <div class="bottom">
-                <label class="remember">
-                    <input name="remember" type="checkbox" />{{ _('Remember me') }}
-                </label>
-                <a class="new" target="_blank" href="https://www.transifex.net/plans/signup/free/">{{ _('New to Transifex?') }}</a>
+        <section class="type-wrapper">
+            {{ form.repository_type.label_tag() }}
+            <div class="type select">
+              <div class="hidden">
+                {{ form.repository_type }}
+              </div>
+              <div class="button selector">
+                <span class="title">{{ form.repository_type.value() }}</span>
+                <span> &#9662;</span>
+              </div>
+              <ul class="menu">
+                {% for choice in REPOSITORY_TYPE_CHOICES %}
+                    <li>{{ choice[1] }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            <p class="authentication-title">Please sign in</p>
+        </section>
+        <section class="details-wrapper" data-repository-type="{{ form.repository_type.value()|lower }}">
+            <div class="url">
+                {{ form.repository.label_tag() }}
+                {{ form.repository }}
+                {% if pk %}
+                <button title="{{ _('Update all locales from repository') }}" data-source="repository" class="button update">
+                    <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from repository') }}" />
+                </button>
+                {% endif %}
+            </div>
+            <div class="transifex clearfix">
+                {{ form.transifex_project.label_tag() }}
+                {{ form.transifex_resource.label_tag() }}
+                {{ form.transifex_project }}
+                {{ form.transifex_resource }}
+                {% if pk %}
+                <button title="{{ _('Update all locales from Transifex') }}" data-source="transifex" class="button update">
+                    <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from Transifex') }}" />
+                </button>
+                <section class="authentication-form">
+                    <label for="id_transifex_username">Username or email</label>
+                    <label for="id_transifex_password">Password</label>
+                    <input id="id_transifex_username" name="transifex_username" type="text" />
+                    <input id="id_transifex_password" name="transifex_password" type="password" />
+                </section>
+                <div class="bottom">
+                    <label class="remember">
+                        <input name="remember" type="checkbox" />{{ _('Remember me') }}
+                    </label>
+                    <a class="new" target="_blank" href="http://www.transifex.com/signup/">{{ _('New to Transifex?') }}</a>
+                </div>
+                {% endif %}
             </div>
         </section>
-        {% endif %}
+        {{ form.repository.errors }}
         {{ form.transifex_project.errors }}
         {{ form.transifex_resource.errors }}
     </div>
