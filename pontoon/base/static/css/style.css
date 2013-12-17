@@ -404,6 +404,7 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro label {
   display: block;
+  padding-bottom: 3px;
   text-align: left;
 }
 
