@@ -483,7 +483,6 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .locale.select {
   float: left;
-  margin-bottom: 2px;
 }
 
 #pontoon.admin-form #intro .locale.select.selected {
@@ -493,7 +492,7 @@ body.admin-form #intro {
 #pontoon.admin-form #intro .locale.select .menu {
   border: 1px solid #000000;
   display: inline-block;
-  margin: 2px 0 0 -1px;
+  margin: 2px 0 -4px -1px;
   overflow: auto;
   position: relative;
   top: 0;
