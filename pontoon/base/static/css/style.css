@@ -483,7 +483,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .authenticate .transifex .button {
-  margin-top: 37px;
+  margin-top: 41px;
 }
 
 #pontoon.admin-form #intro .locale.select {
@@ -550,6 +550,10 @@ body.admin-form #intro {
   margin-top: 2px;
 }
 
+#pontoon.admin-form #intro .repository.authenticate .bottom label input {
+  margin-top: 1px;
+}
+
 #pontoon.admin-form #intro .repository .type-wrapper .authentication-title,
 #pontoon.admin-form #intro .repository .transifex .authentication-form,
 #pontoon.admin-form #intro .repository .transifex .bottom {
@@ -614,8 +618,8 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .transifex .authentication-form {
-  padding-top: 69px;
-  padding-bottom: 52px;
+  padding-top: 73px;
+  padding-bottom: 57px;
 }
 
 #pontoon.admin-form #intro .transifex input#id_transifex_project,
