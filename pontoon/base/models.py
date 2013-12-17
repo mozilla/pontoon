@@ -82,8 +82,8 @@ class Project(models.Model):
     info_metrics = models.TextField("Success Metrics", blank=True)
 
     # User interface
-    external = models.BooleanField("Open project website in external window")
-    links = models.BooleanField("Enable links on the project website")
+    external = models.BooleanField("Open project website in external window insted of iframe")
+    links = models.BooleanField("Keep links on the project website clickable")
 
     class Meta:
         permissions = (
