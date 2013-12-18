@@ -211,8 +211,8 @@ def _get_format(path):
     return full_paths, format
 
 def _get_source_directory(path):
-    """Get source directory path and name."""
-    log.debug("Get source directory path and name.")
+    """Get name and path of the source directory with original strings."""
+    log.debug("Get name and path of the source directory with original strings.")
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
