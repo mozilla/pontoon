@@ -348,72 +348,8 @@ def update_from_repository(request, template=None):
                             continue
                 log.debug("[" + section + "]: saved to DB.")
 
-    elif repository_type == 'hg':
+    elif repository_type in ('hg', 'svn'):
         """ Mercurial """
-        master_repository = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
-
-        one_locale_repository, source_directory, master_url, repository_path = is_one_locale_repository(repository_url, master_repository)
-
-        _update_vcs(repository_type, repository_url, repository_path)
-
-        # Get paths and format
-        if not one_locale_repository:
-            source_directory, source_directory_path = _get_source_directory(repository_path)
-            full_paths, format = _get_format(os.path.join(source_directory_path, source_directory))
-        else:
-            full_paths, format = _get_format(repository_path)
-
-            # Get possible remaining repos
-            for l in p.locales.all():
-                repository_url = os.path.join(master_url, l.code)
-                repository_path = os.path.join(master_repository, l.code)
-                _update_hg(repository_url, repository_path)
-
-        p.format = format
-        p.save()
-
-        if format == 'po':
-            # TODO
-            log.debug("Not implemented")
-            return HttpResponse("error")
-
-        elif format == 'properties':
-            locales = [Locale.objects.get(code=source_directory)]
-            locales.extend(p.locales.all())
-
-            for l in locales:
-                # Save or update repository data to DB.
-                locale_paths = _get_locale_paths(full_paths, source_directory, l.code)
-
-                for locale_path in locale_paths:
-                    try:
-                        f = open(locale_path)
-                        l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
-                        short_path = locale_path.split(l.code)[-1]
-
-                        for line in l10nobject:
-                            if isinstance(line, silme.core.entity.Entity):
-                                if l.code == source_directory:
-                                    _save_entity(project=p, original=line.value, key=line.id, source=short_path)
-                                else:
-                                    try:
-                                        e = Entity.objects.get(project=p, key=line.id, source=short_path)
-                                        _save_translation(entity=e, locale=l, translation=line.value)
-                                    except Entity.DoesNotExist:
-                                        # [Too verbose] log.debug("[" + l.code + "]: " + "line ID " + line.id + " in " + short_path + " is obsolete.")
-                                        continue
-                        log.debug("[" + l.code + "]: " + locale_path + " saved to DB.")
-                        f.close()
-                    except IOError:
-                        log.debug("[" + l.code + "]: " + locale_path + " doesn't exist. Skipping.")
-
-        elif format == 'ini':
-            # TODO
-            log.debug("Not implemented")
-            return HttpResponse("error")
-
-    elif repository_type == 'svn':
-        """ Subversion """
         master_repository = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
 
         one_locale_repository, source_directory, master_url, repository_path = is_one_locale_repository(repository_url, master_repository)
@@ -453,9 +389,34 @@ def update_from_repository(request, template=None):
                     log.debug("[" + l.code + "]: saved to DB.")
 
         elif format == 'properties':
-            # TODO
-            log.debug("Not implemented")
-            return HttpResponse("error")
+            locales = [Locale.objects.get(code=source_directory)]
+            locales.extend(p.locales.all())
+
+            for l in locales:
+                # Save or update repository data to DB.
+                locale_paths = _get_locale_paths(full_paths, source_directory, l.code)
+
+                for locale_path in locale_paths:
+                    try:
+                        f = open(locale_path)
+                        l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
+                        short_path = locale_path.split(l.code)[-1]
+
+                        for line in l10nobject:
+                            if isinstance(line, silme.core.entity.Entity):
+                                if l.code == source_directory:
+                                    _save_entity(project=p, original=line.value, key=line.id, source=short_path)
+                                else:
+                                    try:
+                                        e = Entity.objects.get(project=p, key=line.id, source=short_path)
+                                        _save_translation(entity=e, locale=l, translation=line.value)
+                                    except Entity.DoesNotExist:
+                                        # [Too verbose] log.debug("[" + l.code + "]: " + "line ID " + line.id + " in " + short_path + " is obsolete.")
+                                        continue
+                        log.debug("[" + l.code + "]: " + locale_path + " saved to DB.")
+                        f.close()
+                    except IOError:
+                        log.debug("[" + l.code + "]: " + locale_path + " doesn't exist. Skipping.")
 
         elif format == 'ini':
             # TODO
