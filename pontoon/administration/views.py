@@ -297,11 +297,20 @@ def _extract_ini(project, path):
         return HttpResponse("error")
 
     sections = config.sections()
-    sections.insert(0, sections.pop(sections.index('en')))
+
+    source_locale = None
+    for s in ('en', 'en-US', 'templates'):
+        if s in sections:
+            source_locale = s
+            break
+    if source_locale is None:
+        return HttpResponse("error")
+
+    sections.insert(0, sections.pop(sections.index(source_locale)))
 
     for section in sections:
         for item in config.items(section):
-            if section in ('en-US', 'en'):
+            if section == source_locale:
                 _save_entity(project=project, original=item[1], key=item[0], source=path)
             else:
                 try:
