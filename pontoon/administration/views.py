@@ -295,12 +295,13 @@ def _extract_ini(project, path):
     except Exception, e:
         log.debug("File: " + str(e))
         return HttpResponse("error")
+
     sections = config.sections()
     sections.insert(0, sections.pop(sections.index('en')))
 
     for section in sections:
         for item in config.items(section):
-            if section in ('en'):
+            if section in ('en-US', 'en'):
                 _save_entity(project=project, original=item[1], key=item[0], source=path)
             else:
                 try:
