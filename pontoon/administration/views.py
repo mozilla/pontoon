@@ -223,6 +223,21 @@ def _get_source_directory(path):
             for dirname in fnmatch.filter(dirnames, directory):
                 return dirname, root
 
+def is_one_locale_repository(repository_url, master_repository):
+    """Check if repository contains one or multiple locales."""
+
+    one_locale_repository = source_directory = master_url = False
+    repository_path = master_repository
+    last = os.path.basename(os.path.normpath(repository_url))
+
+    if last in ('templates', 'en-US', 'en'):
+        one_locale_repository = True
+        source_directory = last
+        master_url = os.path.dirname(os.path.normpath(repository_url)).replace(':/', '://')
+        repository_path = os.path.join(master_repository, source_directory)
+
+    return one_locale_repository, source_directory, master_url, repository_path
+
 def _update_hg(url, path):
     """Clone or update HG repository."""
     log.debug("Clone or update HG repository.")
@@ -317,17 +332,9 @@ def update_from_repository(request, template=None):
 
     elif repository_type == 'hg':
         """ Mercurial """
-        project_repository = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
+        master_repository = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
 
-        # Check if per-locale repository
-        one_locale_repository = False
-        source_directory = None
-        last = os.path.basename(os.path.normpath(repository_url))
-        if last in ('templates', 'en-US', 'en'):
-            one_locale_repository = True
-            source_directory = last
-            project_url = os.path.dirname(os.path.normpath(repository_url)).replace(':/', '://')
-            repository_path = os.path.join(project_repository, source_directory)
+        one_locale_repository, source_directory, master_url, repository_path = is_one_locale_repository(repository_url, master_repository)
 
         _update_hg(repository_url, repository_path)
 
@@ -340,8 +347,8 @@ def update_from_repository(request, template=None):
 
             # Get possible remaining repos
             for l in p.locales.all():
-                repository_url = os.path.join(project_url, l.code)
-                repository_path = os.path.join(project_repository, l.code)
+                repository_url = os.path.join(master_url, l.code)
+                repository_path = os.path.join(master_repository, l.code)
                 _update_hg(repository_url, repository_path)
 
         p.format = format
@@ -375,7 +382,7 @@ def update_from_repository(request, template=None):
                                         e = Entity.objects.get(project=p, key=line.id, source=short_path)
                                         _save_translation(entity=e, locale=l, translation=line.value)
                                     except Entity.DoesNotExist:
-                                        # log.debug("[" + l.code + "]: " + "line ID " + line.id + " in " + short_path + " is obsolete.")
+                                        # [Too verbose] log.debug("[" + l.code + "]: " + "line ID " + line.id + " in " + short_path + " is obsolete.")
                                         continue
                         log.debug("[" + l.code + "]: " + locale_path + " saved to DB.")
                         f.close()
