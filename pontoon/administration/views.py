@@ -278,6 +278,14 @@ def _update_svn(url, path):
     except pysvn.ClientError, e:
         log.debug("Subversion: " + str(e))
 
+def _update_vcs(type, url, path):
+    """Checkout or update repository with a given url to the path."""
+
+    if type == 'hg':
+        _update_hg(url, path)
+    if type == 'svn':
+        _update_svn(url, path)
+
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
@@ -346,7 +354,7 @@ def update_from_repository(request, template=None):
 
         one_locale_repository, source_directory, master_url, repository_path = is_one_locale_repository(repository_url, master_repository)
 
-        _update_hg(repository_url, repository_path)
+        _update_vcs(repository_type, repository_url, repository_path)
 
         # Get paths and format
         if not one_locale_repository:
@@ -410,7 +418,7 @@ def update_from_repository(request, template=None):
 
         one_locale_repository, source_directory, master_url, repository_path = is_one_locale_repository(repository_url, master_repository)
 
-        _update_svn(repository_url, repository_path)
+        _update_vcs(repository_type, repository_url, repository_path)
 
         # Get paths and format
         if not one_locale_repository:
