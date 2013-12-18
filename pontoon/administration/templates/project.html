@@ -76,12 +76,12 @@
                 {{ form.repository_type }}
               </div>
               <div class="button selector">
-                <span class="title">{{ form.repository_type.value() }}</span>
+                <span class="title"></span>
                 <span> &#9662;</span>
               </div>
               <ul class="menu">
                 {% for choice in REPOSITORY_TYPE_CHOICES %}
-                    <li>{{ choice[1] }}</li>
+                    <li data-type="{{ choice[0] }}">{{ choice[1] }}</li>
                 {% endfor %}
               </ul>
             </div>

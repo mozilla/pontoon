@@ -267,11 +267,14 @@
         $('.select').removeClass('opened');
       });
       $('.repository .type li').live("click.pontoon", function () {
-        var selected = $(this).html();
+        var selected = $(this).html(),
+            selected_lower = selected.toLowerCase();
         $(this).parents('.select').find('.title').html(selected);
-        $('#id_repository_type').val(selected);
-        $('.details-wrapper').attr('data-repository-type', selected.toLowerCase());
+        $('#id_repository_type').val(selected_lower);
+        $('.details-wrapper').attr('data-repository-type', selected_lower);
       });
+      // Show human-readable value
+      $('.repository .type li[data-type=' + $('#id_repository_type').val() + ']').click();
 
       // Update from repository
       $('.repository .update:not(".disabled"), .transifex .update:not(".disabled")').unbind('click.pontoon').bind('click.pontoon', function (e) {
@@ -291,6 +294,7 @@
         }
         if (source === 'repository') {
           params.repository = $('input[name=repository]').val();
+          params.repository_type = $('select[name=repository_type]').val();
         } else if (source === 'transifex') {
           if ($(this).parents('.popup').length === 0) {
             project = $('.transifex input#id_transifex_project');

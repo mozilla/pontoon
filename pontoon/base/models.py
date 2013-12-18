@@ -65,15 +65,23 @@ class Project(models.Model):
 
     # Repositories
     REPOSITORY_TYPE_CHOICES = (
-        ('File', 'File'),
-        ('HG', 'HG'),
-        ('SVN', 'SVN'),
-        ('Transifex', 'Transifex'),
+        ('file', 'File'),
+        ('hg', 'HG'),
+        ('svn', 'SVN'),
+        ('transifex', 'Transifex'),
     )
     repository_type = models.CharField("Type", max_length=20, blank=False, default='File', choices=REPOSITORY_TYPE_CHOICES)
     repository = models.URLField("URL", blank=True)
     transifex_project = models.CharField("Project", max_length=128, blank=True)
     transifex_resource = models.CharField("Resource", max_length=128, blank=True)
+
+    # Format
+    FORMAT_CHOICES = (
+        ('po', 'po'),
+        ('properties', 'properties'),
+        ('ini', 'ini'),
+    )
+    format = models.CharField("Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
 
     # Campaign info
     info_brief = models.TextField("Campaign Brief", blank=True)
