@@ -266,7 +266,17 @@ def _update_hg(url, path):
             log.debug("Mercurial: repository at " + url + " cloned.")
         except Exception, e:
             log.debug("Mercurial: " + str(e))
-            return
+
+def _update_svn(url, path):
+    """Checkout or update SVN repository."""
+    log.debug("Checkout or update SVN repository.")
+
+    import pysvn
+    client = pysvn.Client()
+    try:
+        client.checkout(url, path)
+    except pysvn.ClientError, e:
+        log.debug("Subversion: " + str(e))
 
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
@@ -398,13 +408,7 @@ def update_from_repository(request, template=None):
         """ Subversion """
         repository_path = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
 
-        import pysvn
-        client = pysvn.Client()
-        try:
-            client.checkout(repository_url, repository_path)
-        except pysvn.ClientError, e:
-            log.debug("Subversion: " + str(e))
-            return HttpResponse("error")
+        _update_svn(repository_url, repository_path)
 
         source_directory, source_directory_path = _get_source_directory(repository_path)
         full_paths, format = _get_format(os.path.join(source_directory_path, source_directory))
