@@ -223,7 +223,7 @@ def _get_source_directory(path):
             for dirname in fnmatch.filter(dirnames, directory):
                 return dirname, root
 
-def is_one_locale_repository(repository_url, master_repository):
+def _is_one_locale_repository(repository_url, master_repository):
     """Check if repository contains one or multiple locales."""
 
     one_locale_repository = source_directory = master_url = False
@@ -283,8 +283,77 @@ def _update_vcs(type, url, path):
 
     if type == 'hg':
         _update_hg(url, path)
-    if type == 'svn':
+    elif type == 'svn':
         _update_svn(url, path)
+
+def _extract_ini(project, path):
+    """Extract .ini file and save or update in DB."""
+
+    config = ConfigParser.ConfigParser()
+    try:
+        config.readfp(urllib2.urlopen(path))
+    except Exception, e:
+        log.debug("File: " + str(e))
+        return HttpResponse("error")
+    sections = config.sections()
+    sections.insert(0, sections.pop(sections.index('en')))
+
+    for section in sections:
+        for item in config.items(section):
+            if section in ('en'):
+                _save_entity(project=project, original=item[1], key=item[0], source=path)
+            else:
+                try:
+                    l = Locale.objects.get(code=section)
+                except Locale.DoesNotExist:
+                    log.debug("Locale not supported: " + section)
+                    break
+                try:
+                    e = Entity.objects.get(project=project, key=item[0], source=path)
+                    _save_translation(entity=e, locale=l, translation=item[1])
+                except Entity.DoesNotExist:
+                    log.debug("[" + section + "]: line ID " + item[0] + " is obsolete.")
+                    continue
+        log.debug("[" + section + "]: saved to DB.")
+
+def _extract_properties(project, locale, paths, source_directory):
+    """Extract .properties files from repository paths and save or update in DB."""
+
+    for path in paths:
+        try:
+            f = open(path)
+            l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
+            short_path = path.split(locale.code)[-1]
+
+            for line in l10nobject:
+                if isinstance(line, silme.core.entity.Entity):
+                    if locale.code == source_directory:
+                        _save_entity(project=project, original=line.value, key=line.id, source=short_path)
+                    else:
+                        try:
+                            e = Entity.objects.get(project=project, key=line.id, source=short_path)
+                            _save_translation(entity=e, locale=locale, translation=line.value)
+                        except Entity.DoesNotExist:
+                            # [Too verbose] log.debug("[" + l.code + "]: " + "line ID " + line.id + " in " + short_path + " is obsolete.")
+                            continue
+            log.debug("[" + locale.code + "]: " + path + " saved to DB.")
+            f.close()
+        except IOError:
+            log.debug("[" + locale.code + "]: " + path + " doesn't exist. Skipping.")
+
+def _extract_po(project, locale, paths):
+    """Extract .po (gettext) files from repository paths and save or update in DB."""
+
+    for path in paths:
+        po = polib.pofile(path)
+        entities = [e for e in po if not e.obsolete]
+
+        for entity in entities:
+            _save_entity(project, entity.msgid, entity.comment)
+            if len(entity.msgstr) > 0:
+                e = Entity.objects.get(project=project, string=entity.msgid)
+                _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
+        log.debug("[" + locale.code + "]: saved to DB.")
 
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
@@ -322,37 +391,14 @@ def update_from_repository(request, template=None):
             return HttpResponse("error")
 
         elif format == 'ini':
-            config = ConfigParser.ConfigParser()
-            try:
-                config.readfp(urllib2.urlopen(repository_url))
-            except Exception, e:
-                log.debug("File: " + str(e))
-                return HttpResponse("error")
-            sections = config.sections()
-            sections.insert(0, sections.pop(sections.index('en')))
-            for section in sections:
-                for item in config.items(section):
-                    if section == 'en':
-                        _save_entity(project=p, original=item[1], key=item[0], source=repository_url)
-                    else:
-                        try:
-                            l = Locale.objects.get(code=section)
-                        except Locale.DoesNotExist:
-                            log.debug("Locale not supported: " + section)
-                            break
-                        try:
-                            e = Entity.objects.get(project=p, key=item[0], source=repository_url)
-                            _save_translation(entity=e, locale=l, translation=item[1])
-                        except Entity.DoesNotExist:
-                            log.debug("[" + section + "]: line ID " + item[0] + " is obsolete.")
-                            continue
-                log.debug("[" + section + "]: saved to DB.")
+            _extract_ini(p, repository_url)
 
     elif repository_type in ('hg', 'svn'):
         """ Mercurial """
         master_repository = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
 
-        one_locale_repository, source_directory, master_url, repository_path = is_one_locale_repository(repository_url, master_repository)
+        # Check if repository contains one or multiple locales
+        one_locale_repository, source_directory, master_url, repository_path = _is_one_locale_repository(repository_url, master_repository)
 
         _update_vcs(repository_type, repository_url, repository_path)
 
@@ -373,55 +419,18 @@ def update_from_repository(request, template=None):
         p.save()
 
         if format == 'po':
-            for l in p.locales.all():
-                # Save or update repository data to DB.
-                locale_paths = _get_locale_paths(full_paths, source_directory, l.code)
-
-                for locale_path in locale_paths:
-                    po = polib.pofile(locale_path)
-
-                    entities = [e for e in po if not e.obsolete]
-                    for entity in entities:
-                        _save_entity(p, entity.msgid, entity.comment)
-                        if len(entity.msgstr) > 0:
-                            e = Entity.objects.get(project=p, string=entity.msgid)
-                            _save_translation(entity=e, locale=l, translation=entity.msgstr, author=po.metadata['Last-Translator'])
-                    log.debug("[" + l.code + "]: saved to DB.")
+            locales = p.locales.all()
+            for l in locales:
+                _extract_po(p, l, _get_locale_paths(full_paths, source_directory, l.code))
 
         elif format == 'properties':
             locales = [Locale.objects.get(code=source_directory)]
             locales.extend(p.locales.all())
-
             for l in locales:
-                # Save or update repository data to DB.
-                locale_paths = _get_locale_paths(full_paths, source_directory, l.code)
-
-                for locale_path in locale_paths:
-                    try:
-                        f = open(locale_path)
-                        l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
-                        short_path = locale_path.split(l.code)[-1]
-
-                        for line in l10nobject:
-                            if isinstance(line, silme.core.entity.Entity):
-                                if l.code == source_directory:
-                                    _save_entity(project=p, original=line.value, key=line.id, source=short_path)
-                                else:
-                                    try:
-                                        e = Entity.objects.get(project=p, key=line.id, source=short_path)
-                                        _save_translation(entity=e, locale=l, translation=line.value)
-                                    except Entity.DoesNotExist:
-                                        # [Too verbose] log.debug("[" + l.code + "]: " + "line ID " + line.id + " in " + short_path + " is obsolete.")
-                                        continue
-                        log.debug("[" + l.code + "]: " + locale_path + " saved to DB.")
-                        f.close()
-                    except IOError:
-                        log.debug("[" + l.code + "]: " + locale_path + " doesn't exist. Skipping.")
+                _extract_properties(p, l, _get_locale_paths(full_paths, source_directory, l.code), source_directory)
 
         elif format == 'ini':
-            # TODO
-            log.debug("Not implemented")
-            return HttpResponse("error")
+            _extract_ini()
 
     else:
         """ Not supported """
