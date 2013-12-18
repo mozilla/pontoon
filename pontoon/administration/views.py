@@ -406,12 +406,25 @@ def update_from_repository(request, template=None):
 
     elif repository_type == 'svn':
         """ Subversion """
-        repository_path = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
+        master_repository = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
+
+        one_locale_repository, source_directory, master_url, repository_path = is_one_locale_repository(repository_url, master_repository)
 
         _update_svn(repository_url, repository_path)
 
-        source_directory, source_directory_path = _get_source_directory(repository_path)
-        full_paths, format = _get_format(os.path.join(source_directory_path, source_directory))
+        # Get paths and format
+        if not one_locale_repository:
+            source_directory, source_directory_path = _get_source_directory(repository_path)
+            full_paths, format = _get_format(os.path.join(source_directory_path, source_directory))
+        else:
+            full_paths, format = _get_format(repository_path)
+
+            # Get possible remaining repos
+            for l in p.locales.all():
+                repository_url = os.path.join(master_url, l.code)
+                repository_path = os.path.join(master_repository, l.code)
+                _update_hg(repository_url, repository_path)
+
         p.format = format
         p.save()
 
