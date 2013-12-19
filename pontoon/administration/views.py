@@ -120,7 +120,6 @@ def manage_project(request, name=None, template=None):
 
     return render(request, template, data)
 
-
 @transaction.commit_manually
 def delete_project(request, pk, template=None):
     """Admin interface: delete project."""
@@ -151,7 +150,6 @@ def delete_project(request, pk, template=None):
             _("There was an error during deleting this project."))
         return HttpResponseRedirect(reverse('pontoon.admin.project',
             args=[project.name]))
-
 
 def _save_entity(project, original, comment="", key="", source=""):
     """Admin interface: save new or update existing entity in DB."""
