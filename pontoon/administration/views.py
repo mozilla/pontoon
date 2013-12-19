@@ -415,10 +415,9 @@ def update_from_repository(request, template=None):
             return HttpResponse("error")
 
         if format in ('po', 'pot'):
-            pass
-            """locales = p.locales.all()
+            locales = p.locales.all()
             for l in locales:
-                _extract_po(p, l, _get_locale_paths(source_paths, source_directory, l.code))"""
+                _extract_po(p, l, [file_path])
 
         elif format == 'properties':
             # TODO
