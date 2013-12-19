@@ -289,17 +289,13 @@ def _update_vcs(type, url, path):
     elif type == 'svn':
         _update_svn(url, path)
 
-def _extract_ini(repository_type, project, path):
+def _extract_ini(project, path):
     """Extract .ini file and save or update in DB."""
 
     config = ConfigParser.ConfigParser()
     try:
-        if repository_type == 'file':
-            config.readfp(urllib2.urlopen(path))
-        else:
-            f = open(path)
+        with open(path) as f:
             config.readfp(f)
-            f.close()
     except Exception, e:
         log.debug("INI ConfigParser: " + str(e))
         return HttpResponse("error")
@@ -394,16 +390,29 @@ def update_from_repository(request, template=None):
     except Project.DoesNotExist:
         return HttpResponse("error")
 
+    repository_path_master = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
+
     if repository_type == 'file':
-        fileName, fileExtension = os.path.splitext(repository_url)
-        format = fileExtension[1:]
+        file_name = repository_url.rstrip('/').rsplit('/', 1)[1]
+
+        temp, file_extension = os.path.splitext(file_name)
+        format = file_extension[1:].lower()
         p.format = format;
         p.save()
 
-        if format == 'po':
-            # TODO
-            log.debug("Not implemented")
-            return HttpResponse("error")
+        # Store file to server
+        u = urllib2.urlopen(repository_url)
+        file_path = os.path.join(repository_path_master, file_name)
+        if not os.path.exists(file_path):
+            os.makedirs(repository_path_master)
+        with open(file_path, 'w') as f:
+            f.write(u.read())
+
+        if format in ('po', 'pot'):
+            pass
+            """locales = p.locales.all()
+            for l in locales:
+                _extract_po(p, l, _get_locale_paths(source_paths, source_directory, l.code))"""
 
         elif format == 'properties':
             # TODO
@@ -411,13 +420,11 @@ def update_from_repository(request, template=None):
             return HttpResponse("error")
 
         elif format == 'ini':
-            # Return is needed in case an error occures
-            return _extract_ini(repository_type, p, repository_url)
+            # Return is needed for error handling
+            return _extract_ini(p, file_path)
 
     elif repository_type in ('hg', 'svn'):
         """ Mercurial """
-        repository_path_master = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
-
         # Update repository URL and path if one-locale repository
         source_directory, repository_url_master, repository_path = _is_one_locale_repository(repository_url, repository_path_master)
 
@@ -450,8 +457,8 @@ def update_from_repository(request, template=None):
                 _extract_properties(p, l, _get_locale_paths(source_paths, source_directory, l.code), source_directory)
 
         elif format == 'ini':
-            # Return is needed in case an error occures
-            return _extract_ini(repository_type, p, source_paths[0])
+            # Return is needed for error handling
+            return _extract_ini(p, source_paths[0])
 
     else:
         """ Not supported """
