@@ -335,7 +335,7 @@ def _extract_lang(project, locale, paths):
 
     for path in paths:
         lang = parse_lang(path, skip_untranslated=False, extract_comments=True)
-        log.debug(lang)
+
         for key, value in lang.items():
             _save_entity(project, key, value[0])
             if key is value[1]:
