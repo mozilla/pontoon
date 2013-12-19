@@ -219,7 +219,7 @@ def _get_source_directory(path):
         filenames = [f for f in filenames if not f[0] == '.']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for directory in ('templates', 'en-US', 'en'):
+        for directory in ('templates', 'en-US', 'en-GB', 'en'):
             for dirname in fnmatch.filter(dirnames, directory):
                 return dirname, root
 
@@ -233,7 +233,7 @@ def _is_one_locale_repository(repository_url, repository_path_master):
     repository_path = repository_path_master
     last = os.path.basename(os.path.normpath(repository_url))
 
-    if last in ('templates', 'en-US', 'en'):
+    if last in ('templates', 'en-US', 'en-GB', 'en'):
         source_directory = last
         repository_url_master = repository_url.rsplit(last, 1)[0]
         repository_path = os.path.join(repository_path_master, source_directory)
@@ -362,7 +362,7 @@ def _extract_ini(project, path):
     sections = config.sections()
 
     source_locale = None
-    for s in ('en', 'en-US', 'templates'):
+    for s in ('templates', 'en-US', 'en-GB', 'en'):
         if s in sections:
             source_locale = s
             break
