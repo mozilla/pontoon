@@ -420,9 +420,12 @@ def update_from_repository(request, template=None):
                 _extract_po(p, l, [file_path])
 
         elif format == 'properties':
-            # TODO
-            log.debug("Not implemented")
-            return HttpResponse("error")
+            # .properties format only stores translations, so the input file has to contain source (en-US) strings
+            source_directory = 'en-US'
+            locales = [Locale.objects.get(code=source_directory)]
+            locales.extend(p.locales.all())
+            for l in locales:
+                _extract_properties(p, l, [file_path], source_directory)
 
         elif format == 'ini':
             try:
