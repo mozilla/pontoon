@@ -224,6 +224,9 @@ def _get_source_directory(path):
             for dirname in fnmatch.filter(dirnames, directory):
                 return dirname, root
 
+        # INI Format
+        return '', path
+
 def _is_one_locale_repository(repository_url, repository_path_master):
     """Check if repository contains one or multiple locales."""
 
@@ -286,14 +289,19 @@ def _update_vcs(type, url, path):
     elif type == 'svn':
         _update_svn(url, path)
 
-def _extract_ini(project, path):
+def _extract_ini(repository_type, project, path):
     """Extract .ini file and save or update in DB."""
 
     config = ConfigParser.ConfigParser()
     try:
-        config.readfp(urllib2.urlopen(path))
+        if repository_type == 'file':
+            config.readfp(urllib2.urlopen(path))
+        else:
+            f = open(path)
+            config.readfp(f)
+            f.close()
     except Exception, e:
-        log.debug("File: " + str(e))
+        log.debug("INI ConfigParser: " + str(e))
         return HttpResponse("error")
 
     sections = config.sections()
@@ -325,6 +333,8 @@ def _extract_ini(project, path):
                     log.debug("[" + section + "]: line ID " + item[0] + " is obsolete.")
                     continue
         log.debug("[" + section + "]: saved to DB.")
+
+    return HttpResponse("200")
 
 def _extract_properties(project, locale, paths, source_directory):
     """Extract .properties files from repository paths and save or update in DB."""
@@ -401,7 +411,8 @@ def update_from_repository(request, template=None):
             return HttpResponse("error")
 
         elif format == 'ini':
-            _extract_ini(p, repository_url)
+            # Return is needed in case an error occures
+            return _extract_ini(repository_type, p, repository_url)
 
     elif repository_type in ('hg', 'svn'):
         """ Mercurial """
@@ -439,7 +450,8 @@ def update_from_repository(request, template=None):
                 _extract_properties(p, l, _get_locale_paths(source_paths, source_directory, l.code), source_directory)
 
         elif format == 'ini':
-            _extract_ini()
+            # Return is needed in case an error occures
+            return _extract_ini(repository_type, p, source_paths[0])
 
     else:
         """ Not supported """
