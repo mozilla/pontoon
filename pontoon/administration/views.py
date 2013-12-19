@@ -184,20 +184,20 @@ def _save_translation(entity, locale, translation, author=""):
         t.date = datetime.datetime.now()
     t.save()
 
-def _get_locale_paths(full_paths, source_directory, locale_code):
-    """Get absolute paths to locale files."""
+def _get_locale_paths(source_paths, source_directory, locale_code):
+    """Get paths to locale files."""
 
     locale_paths = []
-    for fp in full_paths:
-        locale_paths.append(fp.replace('/' + source_directory + '/', '/' + locale_code + '/').rstrip("t"))
+    for sp in source_paths:
+        locale_paths.append(sp.replace('/' + source_directory + '/', '/' + locale_code + '/').rstrip("t"))
     return locale_paths
 
-def _get_format(path):
-    """Get file format based on extensions and full paths to original files."""
-    log.debug("Get file format based on extensions and full paths to original files.")
+def _get_format_and_source_paths(path):
+    """Get file format based on extensions and paths to source files."""
+    log.debug("Get file format based on extensions and paths to source files.")
 
-    full_paths = []
-    format = ''
+    format = None
+    source_paths = []
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
         filenames = [f for f in filenames if not f[0] == '.']
@@ -205,14 +205,15 @@ def _get_format(path):
 
         for extension in ('pot', 'po', 'properties', 'ini'):
             for filename in fnmatch.filter(filenames, '*.' + extension):
-                format = 'po' if extension == 'pot' else extension
-                full_paths.append(os.path.join(root, filename))
+                if format is None:
+                    format = 'po' if extension == 'pot' else extension
+                source_paths.append(os.path.join(root, filename))
 
-    return full_paths, format
+    return format, source_paths
 
 def _get_source_directory(path):
-    """Get name and path of the source directory with original strings."""
-    log.debug("Get name and path of the source directory with original strings.")
+    """Get name and path of the directory with source strings."""
+    log.debug("Get name and path of the directory with source strings.")
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
@@ -223,20 +224,19 @@ def _get_source_directory(path):
             for dirname in fnmatch.filter(dirnames, directory):
                 return dirname, root
 
-def _is_one_locale_repository(repository_url, master_repository):
+def _is_one_locale_repository(repository_url, repository_path_master):
     """Check if repository contains one or multiple locales."""
 
-    one_locale_repository = source_directory = master_url = False
-    repository_path = master_repository
+    source_directory = repository_url_master = False
+    repository_path = repository_path_master
     last = os.path.basename(os.path.normpath(repository_url))
 
     if last in ('templates', 'en-US', 'en'):
-        one_locale_repository = True
         source_directory = last
-        master_url = os.path.dirname(os.path.normpath(repository_url)).replace(':/', '://')
-        repository_path = os.path.join(master_repository, source_directory)
+        repository_url_master = repository_url.rsplit(last, 1)[0]
+        repository_path = os.path.join(repository_path_master, source_directory)
 
-    return one_locale_repository, source_directory, master_url, repository_path
+    return source_directory, repository_url_master, repository_path
 
 def _update_hg(url, path):
     """Clone or update HG repository."""
@@ -405,25 +405,24 @@ def update_from_repository(request, template=None):
 
     elif repository_type in ('hg', 'svn'):
         """ Mercurial """
-        master_repository = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
+        repository_path_master = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
 
-        # Check if repository contains one or multiple locales
-        one_locale_repository, source_directory, master_url, repository_path = _is_one_locale_repository(repository_url, master_repository)
+        # Update repository URL and path if one-locale repository
+        source_directory, repository_url_master, repository_path = _is_one_locale_repository(repository_url, repository_path_master)
 
         _update_vcs(repository_type, repository_url, repository_path)
 
-        # Get paths and format
-        if not one_locale_repository:
+        # Get file format and paths to source files
+        if source_directory is False:
             source_directory, source_directory_path = _get_source_directory(repository_path)
-            full_paths, format = _get_format(os.path.join(source_directory_path, source_directory))
+            format, source_paths = _get_format_and_source_paths(os.path.join(source_directory_path, source_directory))
         else:
-            full_paths, format = _get_format(repository_path)
+            format, source_paths = _get_format_and_source_paths(repository_path)
 
-            # Get possible remaining repos
+            # Get remaining repositories if one-locale repository specified
             for l in p.locales.all():
-                repository_url = os.path.join(master_url, l.code)
-                repository_path = os.path.join(master_repository, l.code)
-                _update_hg(repository_url, repository_path)
+                _update_hg(os.path.join(repository_url_master, l.code),
+                    os.path.join(repository_path_master, l.code))
 
         p.format = format
         p.save()
@@ -431,13 +430,13 @@ def update_from_repository(request, template=None):
         if format == 'po':
             locales = p.locales.all()
             for l in locales:
-                _extract_po(p, l, _get_locale_paths(full_paths, source_directory, l.code))
+                _extract_po(p, l, _get_locale_paths(source_paths, source_directory, l.code))
 
         elif format == 'properties':
             locales = [Locale.objects.get(code=source_directory)]
             locales.extend(p.locales.all())
             for l in locales:
-                _extract_properties(p, l, _get_locale_paths(full_paths, source_directory, l.code), source_directory)
+                _extract_properties(p, l, _get_locale_paths(source_paths, source_directory, l.code), source_directory)
 
         elif format == 'ini':
             _extract_ini()
