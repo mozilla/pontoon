@@ -1,5 +1,6 @@
 
 import base64
+import codecs
 import ConfigParser
 import commonware
 import datetime
@@ -201,7 +202,7 @@ def _get_format_and_source_paths(path):
         filenames = [f for f in filenames if not f[0] == '.']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for extension in ('pot', 'po', 'properties', 'ini'):
+        for extension in ('pot', 'po', 'properties', 'ini', 'lang'):
             for filename in fnmatch.filter(filenames, '*.' + extension):
                 if format is None:
                     format = 'po' if extension == 'pot' else extension
@@ -287,8 +288,64 @@ def _update_vcs(type, url, path):
     elif type == 'svn':
         _update_svn(url, path)
 
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+def parse_lang(path, skip_untranslated=True, extract_comments=False):
+    """Parse a dotlang file and return a dict of translations."""
+    trans = {}
+
+    if not os.path.exists(path):
+        return trans
+
+    with codecs.open(path, 'r', 'utf-8', errors='replace') as lines:
+        source = None
+        comment = ''
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
+            if line[0] == '#':
+                comment = line.lstrip('#').strip()
+                continue
+
+            if line[0] == ';':
+                source = line[1:]
+
+            elif source:
+                for tag in ('{ok}', '{l10n-extra}'):
+                    if line.lower().endswith(tag):
+                        line = line[:-len(tag)]
+                line = line.strip()
+                if skip_untranslated and source == line:
+                    continue
+                if extract_comments:
+                    trans[source] = [comment, line]
+                    comment = ''
+                else:
+                    trans[source] = line
+
+    return trans
+
+def _extract_lang(project, locale, paths):
+    """Extract .lang files from paths and save or update in DB."""
+
+    for path in paths:
+        lang = parse_lang(path, skip_untranslated=False, extract_comments=True)
+        log.debug(lang)
+        for key, value in lang.items():
+            _save_entity(project, key, value[0])
+            if key is value[1]:
+                e = Entity.objects.get(project=project, string=key)
+                _save_translation(entity=e, locale=locale, translation=value[1])
+
+        log.debug("[" + locale.code + "]: saved to DB.")
+
 def _extract_ini(project, path):
-    """Extract .ini file and save or update in DB."""
+    """Extract .ini file from path and save or update in DB."""
 
     config = ConfigParser.ConfigParser()
     try:
@@ -333,7 +390,7 @@ def _extract_ini(project, path):
         log.debug("[" + section + "]: saved to DB.")
 
 def _extract_properties(project, locale, paths, source_directory):
-    """Extract .properties files from repository paths and save or update in DB."""
+    """Extract .properties files from paths and save or update in DB."""
 
     for path in paths:
         try:
@@ -358,7 +415,7 @@ def _extract_properties(project, locale, paths, source_directory):
             log.debug("[" + locale.code + "]: " + path + " doesn't exist. Skipping.")
 
 def _extract_po(project, locale, paths):
-    """Extract .po (gettext) files from repository paths and save or update in DB."""
+    """Extract .po (gettext) files from paths and save or update in DB."""
 
     for path in paths:
         po = polib.pofile(path)
@@ -431,6 +488,11 @@ def update_from_repository(request, template=None):
             except Exception, e:
                 os.remove(file_path)
                 return HttpResponse("error")
+
+        elif format == 'lang':
+            locales = p.locales.all()
+            for l in locales:
+                _extract_lang(p, l, [file_path])
 
     elif repository_type in ('hg', 'svn'):
         """ Mercurial """

@@ -80,6 +80,7 @@ class Project(models.Model):
         ('po', 'po'),
         ('properties', 'properties'),
         ('ini', 'ini'),
+        ('lang', 'lang'),
     )
     format = models.CharField("Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
 
