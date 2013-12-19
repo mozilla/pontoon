@@ -494,6 +494,10 @@ def update_from_repository(request, template=None):
             for l in locales:
                 _extract_lang(p, l, [file_path])
 
+        else:
+            """ Not supported """
+            return HttpResponse("error")
+
     elif repository_type in ('hg', 'svn'):
         """ Mercurial """
         # Update repository URL and path if one-locale repository
@@ -532,6 +536,10 @@ def update_from_repository(request, template=None):
                 _extract_ini(p, source_paths[0])
             except Exception, e:
                 return HttpResponse("error")
+
+        else:
+            """ Not supported """
+            return HttpResponse("error")
 
     else:
         """ Not supported """
