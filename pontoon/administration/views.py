@@ -537,6 +537,11 @@ def update_from_repository(request, template=None):
             except Exception, e:
                 return HttpResponse("error")
 
+        elif format == 'lang':
+            locales = p.locales.all()
+            for l in locales:
+                _extract_lang(p, l, _get_locale_paths(source_paths, source_directory, l.code))
+
         else:
             """ Not supported """
             return HttpResponse("error")
