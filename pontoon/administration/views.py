@@ -295,10 +295,14 @@ def _extract_ini(project, path):
     config = ConfigParser.ConfigParser()
     try:
         with open(path) as f:
-            config.readfp(f)
-    except Exception, e:
-        log.debug("INI ConfigParser: " + str(e))
-        return HttpResponse("error")
+            try:
+                config.readfp(f)
+            except Exception, e:
+                log.debug("INI ConfigParser: " + str(e))
+                raise Exception("error")
+    except IOError, e:
+        log.debug("IOError: " + str(e))
+        raise Exception("error")
 
     sections = config.sections()
 
@@ -308,7 +312,7 @@ def _extract_ini(project, path):
             source_locale = s
             break
     if source_locale is None:
-        return HttpResponse("error")
+        raise Exception("error")
 
     sections.insert(0, sections.pop(sections.index(source_locale)))
 
@@ -329,8 +333,6 @@ def _extract_ini(project, path):
                     log.debug("[" + section + "]: line ID " + item[0] + " is obsolete.")
                     continue
         log.debug("[" + section + "]: saved to DB.")
-
-    return HttpResponse("200")
 
 def _extract_properties(project, locale, paths, source_directory):
     """Extract .properties files from repository paths and save or update in DB."""
@@ -403,10 +405,14 @@ def update_from_repository(request, template=None):
         # Store file to server
         u = urllib2.urlopen(repository_url)
         file_path = os.path.join(repository_path_master, file_name)
-        if not os.path.exists(file_path):
+        if not os.path.exists(repository_path_master):
             os.makedirs(repository_path_master)
-        with open(file_path, 'w') as f:
-            f.write(u.read())
+        try:
+            with open(file_path, 'w') as f:
+                f.write(u.read())
+        except IOError, e:
+            log.debug("IOError: " + str(e))
+            return HttpResponse("error")
 
         if format in ('po', 'pot'):
             pass
@@ -420,8 +426,11 @@ def update_from_repository(request, template=None):
             return HttpResponse("error")
 
         elif format == 'ini':
-            # Return is needed for error handling
-            return _extract_ini(p, file_path)
+            try:
+                _extract_ini(p, file_path)
+            except Exception, e:
+                os.remove(file_path)
+                return HttpResponse("error")
 
     elif repository_type in ('hg', 'svn'):
         """ Mercurial """
@@ -457,8 +466,10 @@ def update_from_repository(request, template=None):
                 _extract_properties(p, l, _get_locale_paths(source_paths, source_directory, l.code), source_directory)
 
         elif format == 'ini':
-            # Return is needed for error handling
-            return _extract_ini(p, source_paths[0])
+            try:
+                _extract_ini(p, source_paths[0])
+            except Exception, e:
+                return HttpResponse("error")
 
     else:
         """ Not supported """
