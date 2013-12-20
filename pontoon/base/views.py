@@ -246,8 +246,16 @@ def translate_project(request, locale, project, page=None, template=None):
     pages = Subpage.objects.filter(project=p).order_by('name')
     if len(pages) > 0:
         if page is None:
-            # If page exist, but not specified in URL
-            page = pages.filter(url__startswith=p.url)[0].name
+            try:
+                # If page exist, but not specified in URL
+                page = pages.filter(url__startswith=p.url)[0].name
+            except IndexError:
+                request.session['translate_error'] = {
+                    'locale': locale,
+                    'url': p.url
+                }
+                messages.error(request, "Oops, project URL doesn't match any subpage.")
+                return HttpResponseRedirect(reverse('pontoon.home'))
         else:
             try:
                 data['project_url'] = pages.get(name=page).url
