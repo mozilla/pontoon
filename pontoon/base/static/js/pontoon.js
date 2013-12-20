@@ -13,7 +13,7 @@
           title: "",
           entities: [],
           pk: null,
-          type: null
+          format: null
         },
         locale: {
           code: "",
@@ -573,7 +573,7 @@
       // Select appropriate way of loading entities
       var entities = Pontoon.project.entities;
       if (entities.length > 0) {
-        if (Pontoon.project.type === 'properties') {
+        if (Pontoon.project.format === 'properties') {
           var localized = false;
           window.addEventListener("localized", function() {
             if (!localized && document.webL10n.getReadyState() === 'complete') {

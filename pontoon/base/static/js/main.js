@@ -764,7 +764,7 @@ var Pontoon = (function () {
           $("#spinner").fadeOut(function() {
             $("#main > header > .container").fadeIn();
           });
-          if (Pontoon.project.type !== 'properties') {
+          if (Pontoon.project.format !== 'properties') {
             $('#profile-menu .properties').parent().remove();
           }
         } else if (message.type === "ERROR") {
@@ -824,7 +824,7 @@ var Pontoon = (function () {
         title: "",
         entities: $('#server').data('entities') || [],
         pk: $('#server').data('id'),
-        type: $('#server').data('format')
+        format: $('#server').data('format')
       };
       this.locale = {
         code: locale,
