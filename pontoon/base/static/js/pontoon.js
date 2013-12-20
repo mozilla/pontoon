@@ -246,9 +246,6 @@
               original = entity.original;
           entity.id = counter;
 
-          // Renedered text could be different than source
-          $('body').append('<div id="pontoon-string" style="display: none">' + original + '</div>');
-
           $(':not("script, style, iframe, noscript, [translate=\"no\"]")').children().each(function () {
             if ($(this).html() === original) {
               if (translation) {
@@ -267,7 +264,6 @@
             }
           });
 
-          $('#pontoon-string').remove();
           counter++;
         });
 
