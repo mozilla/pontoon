@@ -246,7 +246,8 @@ def translate_project(request, locale, project, page=None, template=None):
     pages = Subpage.objects.filter(project=p).order_by('name')
     if len(pages) > 0:
         if page is None:
-            page = pages.filter(url=p.url)[0].name # If page exist, but not specified
+            # If page exist, but not specified in URL
+            page = pages.filter(url__startswith=p.url)[0].name
         else:
             try:
                 data['project_url'] = pages.get(name=page).url
