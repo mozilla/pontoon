@@ -845,7 +845,8 @@ var Pontoon = (function () {
         external: self.app.external,
         links: self.app.links,
         entities: self.project.entities,
-        pk: self.project.pk
+        pk: self.project.pk,
+        format: self.project.format
       });
 
       // Wait for project code messages

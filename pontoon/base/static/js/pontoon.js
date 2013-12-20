@@ -685,6 +685,7 @@
         Pontoon.app.links = message.value.links; // Set links
         Pontoon.project.entities = message.value.entities; // Set entities
         Pontoon.project.pk = message.value.pk; // Set project
+        Pontoon.project.format = message.value.format; // Set format
         loadJquery();
         window.removeEventListener("message", initizalize, false);
       }
