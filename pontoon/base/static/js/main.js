@@ -759,13 +759,12 @@ var Pontoon = (function () {
           var value = message.value;
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
-          Pontoon.project.type = value.type;
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $("#spinner").fadeOut(function() {
             $("#main > header > .container").fadeIn();
           });
-          if (Pontoon.project.type !== 'webL10n') {
+          if (Pontoon.project.type !== 'properties') {
             $('#profile-menu .properties').parent().remove();
           }
         } else if (message.type === "ERROR") {
@@ -825,7 +824,7 @@ var Pontoon = (function () {
         title: "",
         entities: $('#server').data('entities') || [],
         pk: $('#server').data('id'),
-        type: 'gettext'
+        type: $('#server').data('format')
       };
       this.locale = {
         code: locale,

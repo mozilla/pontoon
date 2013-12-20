@@ -13,7 +13,7 @@
           title: "",
           entities: [],
           pk: null,
-          type: 'gettext'
+          type: null
         },
         locale: {
           code: "",
@@ -57,8 +57,7 @@
         sendData();
         postMessage("RENDER", {
           url: Pontoon.project.url,
-          title: Pontoon.project.title,
-          type: Pontoon.project.type
+          title: Pontoon.project.title
         });
 
         // Update UI and progress when saved
@@ -574,7 +573,7 @@
       // Select appropriate way of loading entities
       var entities = Pontoon.project.entities;
       if (entities.length > 0) {
-        if (entities[0].key) {
+        if (Pontoon.project.type === 'properties') {
           var localized = false;
           window.addEventListener("localized", function() {
             if (!localized && document.webL10n.getReadyState() === 'complete') {
@@ -588,7 +587,6 @@
               loadEntitiesWebl10n();
             }
           }, 1000);
-          Pontoon.project.type = 'webL10n';
         } else {
           loadEntitiesGettext();
         }
