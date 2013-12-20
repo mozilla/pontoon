@@ -28,7 +28,10 @@
         {% endfor %}
     </ul>
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
-    {% if pk %}<input type="hidden" value="{{ pk }}" name="pk">{% endif %}
+    {% if pk %}
+      <input type="hidden" value="{{ pk }}" name="pk">
+      {{ form.format.as_hidden() }}
+    {% endif %}
 
     <div>
         {{ form.name.label_tag() }}
