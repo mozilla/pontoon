@@ -235,6 +235,47 @@
 
 
 
+      /*
+       * Match entities and elements with exact same contents
+       */
+      function loadEntitiesLang() {
+        var counter = 0;
+
+        $(Pontoon.project.entities).each(function(i, entity) {
+          var translation = entity.translation,
+              original = entity.original;
+          entity.id = counter;
+
+          // Renedered text could be different than source
+          $('body').append('<div id="pontoon-string" style="display: none">' + original + '</div>');
+
+          $(':not("script, style, iframe, noscript, [translate=\"no\"]")').children().each(function () {
+            if ($(this).html() === original) {
+              if (translation) {
+                $(this).html(translation);
+              }
+
+              // Head entities cannot be edited in-place
+              if ($(this).parents('head').length === 0) {
+                if (!entity.node) {
+                  entity.node = [$(this)];
+                } else {
+                  entity.node.push($(this));
+                }
+                makeEditable(entity);
+              }
+            }
+          });
+
+          $('#pontoon-string').remove();
+          counter++;
+        });
+
+        renderHandle();
+      }
+
+
+
       /**
        * Match entities and elements with data-l10n-id attribute
        * https://github.com/fabi1cazenave/webL10n
@@ -587,6 +628,8 @@
               loadEntitiesWebl10n();
             }
           }, 1000);
+        } else if (Pontoon.project.format === 'lang') {
+          loadEntitiesLang();
         } else {
           loadEntitiesGettext();
         }
