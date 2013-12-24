@@ -24,6 +24,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request, _parse_lang
+from pontoon.administration.utils import update_from_vcs
 
 from mobility.decorators import mobile_template
 
@@ -462,7 +463,7 @@ def update_from_repository(request, template=None):
         # Update repository URL and path if one-locale repository
         source_directory, repository_url_master, repository_path = _is_one_locale_repository(repository_url, repository_path_master)
 
-        _update_vcs(repository_type, repository_url, repository_path)
+        update_from_vcs(repository_type, repository_url, repository_path)
 
         # Get file format and paths to source files
         if source_directory is False:
@@ -473,7 +474,8 @@ def update_from_repository(request, template=None):
 
             # Get remaining repositories if one-locale repository specified
             for l in p.locales.all():
-                _update_vcs(repository_type, os.path.join(repository_url_master, l.code),
+                update_from_vcs(
+                    repository_type, os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
 
         p.format = format
