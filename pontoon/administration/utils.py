@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import
 import pysvn
-import mercurial
+from mercurial import commands, hg, ui, error
 import os
 import commonware
 
@@ -43,19 +43,19 @@ class PullFromHg(PullFromRepository):
             os.makedirs(target)
 
         # Doesn't work with unicode type
-        url = str(url)
-        path = str(path)
+        url = str(source)
+        path = str(target)
 
         try:
-            repo = mercurial.hg.repository(ui.ui(), path)
-            mercurial.commands.pull(mercurial.ui.ui(), repo, source=source)
-            mercurial.commands.update(mercurial.ui.ui(), repo)
-            #log.debug("Mercurial: Repository for " + l.name + " updated.")
-        except mercurial.error.RepoError, e:
+            repo = hg.repository(ui.ui(), path)
+            commands.pull(ui.ui(), repo, source=url)
+            commands.update(ui.ui(), repo)
+            log.debug("Mercurial: repository at " + url + " updated.")
+        except error.RepoError, e:
             log.debug("Mercurial: " + str(e))
             try:
-                mercurial.commands.clone(mercurial.ui.ui(), source, target)
-                #log.debug("Mercurial: Repository for " + l.name + " cloned.")
+                commands.clone(ui.ui(), url, path)
+                log.debug("Mercurial: repository at " + url + " cloned.")
             except Exception, e:
                 log.debug("Mercurial: " + str(e))
                 raise PullFromRepositoryException(unicode(e))
@@ -75,6 +75,7 @@ class PullFromSvn(PullFromRepository):
         target = target or self.target
         client = pysvn.Client()
         client.callback_conflict_resolver = self.conflict_resolution_callback
+        client.callback_ssl_server_trust_prompt = self.ssl_server_trust_prompt
         try:
             client.checkout(source, target)
         except pysvn.ClientError, e:
@@ -85,11 +86,21 @@ class PullFromSvn(PullFromRepository):
     def conflict_resolution_callback(conflict_description):
         return pysvn.wc_conflict_choice.theirs_full, None, False
 
+    @staticmethod
+    def ssl_server_trust_prompt(trust_dict):
+        return True, 2, False
+
 
 def update_from_vcs(repo_type, url, path):
     if repo_type == 'hg':
-        obj = PullFromHg(url, path)
-        obj.pull()
+        try:
+            obj = PullFromHg(url, path)
+            obj.pull()
+        except PullFromRepositoryException as e:
+            log.debug('Mercurial PullError for %s: %s' % (url, e))
     elif repo_type == 'svn':
-        obj = PullFromSvn(url, path)
-        obj.pull()
+        try:
+            obj = PullFromSvn(url, path)
+            obj.pull()
+        except PullFromRepositoryException as e:
+            log.debug('SVN PullError for %s: %s' % (url, e))

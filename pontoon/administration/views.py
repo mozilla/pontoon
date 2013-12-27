@@ -377,15 +377,19 @@ def _extract_po(project, locale, paths):
     """Extract .po (gettext) files from paths and save or update in DB."""
 
     for path in paths:
-        po = polib.pofile(path)
-        entities = [e for e in po if not e.obsolete]
+        try:
+            log.debug(path)
+            po = polib.pofile(path)
+            entities = [e for e in po if not e.obsolete]
 
-        for entity in entities:
-            _save_entity(project, entity.msgid, entity.comment)
-            if len(entity.msgstr) > 0:
-                e = Entity.objects.get(project=project, string=entity.msgid)
-                _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
-        log.debug("[" + locale.code + "]: saved to DB.")
+            for entity in entities:
+                _save_entity(project, entity.msgid, entity.comment)
+                if len(entity.msgstr) > 0:
+                    e = Entity.objects.get(project=project, string=entity.msgid)
+                    _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
+            log.debug("[" + locale.code + "]: saved to DB.")
+        except Exception as e:
+            log.critical('PoExtractError for %s: %s' % (path, e))
 
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
