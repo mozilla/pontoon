@@ -23,8 +23,8 @@ from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
-from pontoon.base.views import _request, _parse_lang
-from pontoon.administration.utils import update_from_vcs
+from pontoon.base.views import _request, _parse_langt
+from pontoon.administration.utils.vcs import update_from_vcs
 
 from mobility.decorators import mobile_template
 
