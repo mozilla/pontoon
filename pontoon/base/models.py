@@ -60,7 +60,7 @@ class Locale(models.Model):
 
 class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    url = models.URLField("URL", unique=True)
+    url = models.URLField("URL", unique=False)
     locales = models.ManyToManyField(Locale)
 
     # Repositories
