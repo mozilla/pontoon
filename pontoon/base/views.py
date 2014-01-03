@@ -569,9 +569,6 @@ def download(request, template=None):
     elif type == 'properties':
         content, filename = _generate_properties_content(content, locale)
         response['Content-Type'] = 'text/plain'
-    elif type == 'ini':
-        content, filename = _generate_ini_content(content, locale)
-        response['Content-Type'] = 'text/plain'
 
     response.content = content
     response['Content-Disposition'] = 'attachment; filename=' + filename +\
