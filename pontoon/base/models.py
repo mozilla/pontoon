@@ -72,6 +72,7 @@ class Project(models.Model):
     )
     repository_type = models.CharField("Type", max_length=20, blank=False, default='File', choices=REPOSITORY_TYPE_CHOICES)
     repository = models.URLField("URL", blank=True)
+    repository_path = models.TextField(blank=True)
     transifex_project = models.CharField("Project", max_length=128, blank=True)
     transifex_resource = models.CharField("Resource", max_length=128, blank=True)
 

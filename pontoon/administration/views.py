@@ -454,7 +454,8 @@ def update_from_repository(request, template=None):
 
         temp, file_extension = os.path.splitext(file_name)
         format = file_extension[1:].lower()
-        p.format = format;
+        p.format = format
+        p.repository_path = repository_path_master
         p.save()
 
         # Store file to server
@@ -518,6 +519,7 @@ def update_from_repository(request, template=None):
                     os.path.join(repository_path_master, l.code))
 
         p.format = format
+        p.repository_path = repository_path
         p.save()
 
         if format == 'po':
