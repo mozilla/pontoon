@@ -942,6 +942,17 @@ var Pontoon = (function () {
       // Project menu handler
       $('.project .menu li').live("click.pontoon", function () {
         $('.url').val($(this).find('.project-url').html());
+
+        // Fallback if selected locale not available for the selected project
+        var locales = getProjectLocales(),
+            menu = $('.locale .menu:first'),
+            confirm = menu.siblings('.confirm'),
+            selected = confirm.find('.code').html();
+
+        if (locales.indexOf(selected) === -1) {
+          var firstLocale = menu.find('.language.' + locales[0])[0].outerHTML;
+          confirm.html(firstLocale);
+        }
       });
 
       // Menu hover
