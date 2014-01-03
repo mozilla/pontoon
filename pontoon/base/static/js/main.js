@@ -223,7 +223,7 @@ var Pontoon = (function () {
           localeMenu = $('.locale .menu').clone(),
           otherLocales = null;
 
-      // IE still doesn't have the Array.prototype.indexOf method
+      // IE <= 8 doesn't have the Array.prototype.indexOf method
       if(!Array.prototype.indexOf) {
           Array.prototype.indexOf = function(needle) {
               for(var i = 0; i < this.length; i++) {
@@ -941,11 +941,6 @@ var Pontoon = (function () {
         return (a.textContent || a.innerText || '').toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
       };
 
-      // Focus locale search
-      $('.locale .selector').live('click.pontoon', function() {
-        $('.search:visible').focus();
-      });
-
       // Search locales
       $('.search').live("click.pontoon", function (e) {
         e.stopPropagation();
@@ -1007,6 +1002,7 @@ var Pontoon = (function () {
             menu.find('.language.' + this).parent().addClass('limited').show();
           });
         }
+        $('.search:visible').focus();
         $('.search').trigger('keyup');
       });
 
