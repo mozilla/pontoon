@@ -89,6 +89,7 @@ var Pontoon = (function () {
           delete this.hover;
           delete this.unhover;
           delete this.id;
+          delete this.pk;
           delete this.body;
         });
         params.content = JSON.stringify(entities, null, "\t");
