@@ -515,7 +515,7 @@ def update_from_repository(request, template=None):
 
             # Get remaining repositories if one-locale repository specified
             for l in p.locales.all():
-                _update_hg(os.path.join(repository_url_master, l.code),
+                _update_vcs(repository_type, os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
 
         p.format = format
