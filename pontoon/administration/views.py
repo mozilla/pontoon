@@ -223,8 +223,8 @@ def _get_source_directory(path):
             for dirname in fnmatch.filter(dirnames, directory):
                 return dirname, root
 
-        # INI Format
-        return '', path
+    # INI Format
+    return '', path
 
 def _is_one_locale_repository(repository_url, repository_path_master):
     """Check if repository contains one or multiple locales."""
