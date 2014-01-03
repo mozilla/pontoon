@@ -882,6 +882,20 @@ var Pontoon = (function () {
      * Common functions used in both, client specific code and Pontoon library
      */
     common: (function () {
+      function getProjectLocales() {
+        var locales = null;
+
+        $('.project-url').each(function() {
+          if ($(this).html() === $('.url').val()) {
+            locales = $(this).siblings('.project-name').data('locales').split(',');
+            locales.pop();
+            return;
+          }
+        });
+
+        return locales;
+      }
+
       // Show/hide menu on click
       $('.selector').live("click.pontoon", function (e) {
         if (!$(this).siblings('.menu').is(':visible')) {
@@ -986,15 +1000,9 @@ var Pontoon = (function () {
 
       // Show only locales available for the selected project
       $('.locale .selector').live("click.pontoon", function () {
-        var menu = $(this).siblings('.menu'),
-            locales = null;
-        $('.project-url').each(function() {
-          if ($(this).html() === $('.url').val()) {
-            locales = $(this).siblings('.project-name').data('locales').split(',');
-            locales.pop();
-            return;
-          }
-        });
+        var locales = getProjectLocales(),
+            menu = $(this).siblings('.menu');
+
         menu.find('.limited').removeClass('limited');
         if (locales) {
           menu.find('li').hide();
@@ -1002,6 +1010,7 @@ var Pontoon = (function () {
             menu.find('.language.' + this).parent().addClass('limited').show();
           });
         }
+
         $('.search:visible').focus();
         $('.search').trigger('keyup');
       });
