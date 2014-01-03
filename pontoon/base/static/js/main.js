@@ -946,6 +946,9 @@ var Pontoon = (function () {
         $('.url').val($(this).find('.project-url').html());
 
         // Fallback if selected locale not available for the selected project
+        if ($('body').is('.admin')) {
+          return false;
+        }
         var locales = getProjectLocales(),
             menu = $('.locale .menu:first'),
             confirm = menu.siblings('.confirm'),
