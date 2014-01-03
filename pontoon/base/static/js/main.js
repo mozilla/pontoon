@@ -968,6 +968,10 @@ var Pontoon = (function () {
 
       // Search projects
       $('.url').live("keyup.pontoon", function(e) {
+        var key = e.keyCode || e.which;
+        if (key === 13) { // Enter
+          return false; // Do not open menu if URL present and enter pressed
+        }
         var menu = $(this).siblings('.menu'),
             ul = menu.find('ul'),
             val = $(this).val();
