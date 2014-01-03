@@ -992,7 +992,6 @@ var Pontoon = (function () {
       // Show only locales available for the selected project
       $('.locale .selector').live("click.pontoon", function () {
         var menu = $(this).siblings('.menu'),
-            lis = menu.find('li'),
             locales = null;
         $('.project-url').each(function() {
           if ($(this).html() === $('.url').val()) {
@@ -1001,13 +1000,12 @@ var Pontoon = (function () {
             return;
           }
         });
+        menu.find('.limited').removeClass('limited');
         if (locales) {
-          lis.hide();
+          menu.find('li').hide();
           $(locales).each(function() {
             menu.find('.language.' + this).parent().addClass('limited').show();
           });
-        } else {
-          menu.find('.limited').removeClass('limited');
         }
         $('.search').trigger('keyup');
       });
