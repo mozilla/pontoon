@@ -465,7 +465,7 @@ def update_from_repository(request, template=None):
             os.makedirs(repository_path_master)
         try:
             with open(file_path, 'w') as f:
-                f.write(u.read())
+                f.write(u.read().decode("utf-8-sig").encode("utf-8"))
         except IOError, e:
             log.debug("IOError: " + str(e))
             return HttpResponse("error")
