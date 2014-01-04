@@ -610,9 +610,12 @@ def commit_to_svn(request, template=None):
     client.set_default_username(username)
     client.set_default_password(password)
 
-    f = open(os.path.join(settings.MEDIA_ROOT, 'svn', project, 'locale', locale, 'LC_MESSAGES', 'messages.po'), 'w')
-    f.write(_generate_po_content(content))
-    f.close()
+    try:
+        f = open(os.path.join(settings.MEDIA_ROOT, 'svn', project, 'locale', locale, 'LC_MESSAGES', 'messages.po'), 'w')
+        f.write(_generate_po_content(content))
+        f.close()
+    except IOError:
+        log.debug("[" + locale + "]: File doesn't exist.")
 
     """Save SVN username and password."""
     if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
