@@ -45,6 +45,7 @@ def create_user_profile(sender, instance, created, **kwargs):
                 if email == l["email"]:
                     can_localize = Permission.objects.get(codename="can_localize")
                     instance.user_permissions.add(can_localize)
+                    instance.first_name = l["full_name"]
                     break
         except Exception:
             pass
