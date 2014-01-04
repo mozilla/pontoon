@@ -17,6 +17,7 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     '%s.base' % PROJECT_MODULE,
     '%s.administration' % PROJECT_MODULE,
     'django.contrib.admin', 
+    'south',
 ]
 
 LOCALE_PATHS = (
