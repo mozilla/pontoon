@@ -1,2 +1,7 @@
 -r ../vendor/src/funfactory/funfactory/requirements/prod.txt
+
 mercurial
+polib
+silme
+pysvn
+south
