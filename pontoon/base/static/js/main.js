@@ -51,7 +51,7 @@ var Pontoon = (function () {
             var data = po.translations[index];
           }
 
-          if (this.suggestions && !msgstr) {
+          if (this.suggestions && !data.msgstr) {
             data.fuzzy = true,
             data.msgstr = this.suggestions[0].translation;
           }
