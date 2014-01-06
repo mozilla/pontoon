@@ -575,6 +575,21 @@ def download(request, template=None):
             '.' + type
     return response
 
+def _get_locale_repository_path(path, locale):
+    """Get path to locale directory."""
+    log.debug("Get path to locale directory.")
+
+    for root, dirnames, filenames in os.walk(path):
+        # Ignore hidden files and folders
+        filenames = [f for f in filenames if not f[0] == '.']
+        dirnames[:] = [d for d in dirnames if not d[0] == '.']
+
+        for dirname in fnmatch.filter(dirnames, locale):
+            return root
+
+    # Fallback to project's repository_path
+    return path
+
 @login_required(redirect_field_name='', login_url='/404')
 def commit_to_svn(request, template=None):
     """Commit translations to SVN."""
@@ -617,6 +632,8 @@ def commit_to_svn(request, template=None):
     except IOError:
         log.debug("[" + locale + "]: File doesn't exist.")
 
+    locale_repository_path = _get_locale_repository_path(p.repository_path, locale)
+
     """Save SVN username and password."""
     if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
         profile.svn_username = data['auth']['username']
@@ -624,7 +641,7 @@ def commit_to_svn(request, template=None):
         profile.save()
 
     try:
-        client.checkin([os.path.join(settings.MEDIA_ROOT, 'svn', project, 'locale', locale)],
+        client.checkin([locale_repository_path],
             'Pontoon: update ' + locale + ' localization of ' + project + '')
         return HttpResponse("200")
     except pysvn.ClientError, e:
