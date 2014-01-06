@@ -590,6 +590,20 @@ def _get_locale_repository_path(path, locale):
     # Fallback to project's repository_path
     return path
 
+def _get_locale_paths(path, format):
+    """Get paths to locale files."""
+
+    locale_paths = []
+    for root, dirnames, filenames in os.walk(path):
+        # Ignore hidden files and folders
+        filenames = [f for f in filenames if not f[0] == '.']
+        dirnames[:] = [d for d in dirnames if not d[0] == '.']
+
+        for filename in fnmatch.filter(filenames, '*.' + format):
+            locale_paths.append(os.path.join(root, filename))
+
+    return locale_paths
+
 @login_required(redirect_field_name='', login_url='/404')
 def commit_to_svn(request, template=None):
     """Commit translations to SVN."""
@@ -621,24 +635,26 @@ def commit_to_svn(request, template=None):
         return HttpResponse("error")
     project = p.name
 
-    client = pysvn.Client()
-    client.set_default_username(username)
-    client.set_default_password(password)
-
-    try:
-        f = open(os.path.join(settings.MEDIA_ROOT, 'svn', project, 'locale', locale, 'LC_MESSAGES', 'messages.po'), 'w')
-        f.write(_generate_po_content(content))
-        f.close()
-    except IOError:
-        log.debug("[" + locale + "]: File doesn't exist.")
-
     locale_repository_path = _get_locale_repository_path(p.repository_path, locale)
+    locale_paths = _get_locale_paths(locale_repository_path, p.format)
+
+    for path in locale_paths:
+        try:
+            f = open(path, 'w')
+            f.write(_generate_po_content(content))
+            f.close()
+        except IOError:
+            log.debug("[" + path + "]: Path doesn't exist.")
 
     """Save SVN username and password."""
     if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
         profile.svn_username = data['auth']['username']
         profile.svn_password = base64.encodestring(data['auth']['password'])
         profile.save()
+
+    client = pysvn.Client()
+    client.set_default_username(username)
+    client.set_default_password(password)
 
     try:
         client.checkin([locale_repository_path],
