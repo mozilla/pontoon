@@ -576,6 +576,18 @@ def download(request, template=None):
             '.' + type
     return response
 
+def _serialize_lang(lang):
+    """Serialize lang object into .lang file contents."""
+    content = ''
+
+    for key, value in lang.items():
+        if value[0] != '':
+            content += '#' + value[0] + '\n'
+        content += ';' + key + '\n'
+        content += value[1] + '\n\n'
+
+    return content
+
 def _parse_lang(path, skip_untranslated=False, extract_comments=True):
     """Parse a dotlang file and return a dict of translations."""
     trans = {}
@@ -701,8 +713,19 @@ def commit_to_svn(request, template=None):
         return HttpResponse("error")
 
     elif p.format == 'lang':
-        # TODO
-        return HttpResponse("error")
+        for path in locale_paths:
+            lang = _parse_lang(path)
+
+            for entity in entities:
+                original = entity['original']
+                translation = entity['translation']
+                if original in lang and translation != '':
+                    lang[original][1] = translation
+
+            with codecs.open(path, 'w', 'utf-8', errors='replace') as f:
+                content = _serialize_lang(lang)
+                f.write(content)
+            log.debug("File updated: " + path)
 
     """Save SVN username and password."""
     if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
