@@ -295,7 +295,7 @@ def _extract_lang(project, locale, paths):
 
         for key, value in lang.items():
             _save_entity(project, key, value[0])
-            if key is value[1]:
+            if key != value[1]:
                 e = Entity.objects.get(project=project, string=key)
                 _save_translation(entity=e, locale=locale, translation=value[1])
 
