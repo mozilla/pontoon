@@ -147,7 +147,10 @@
         </label>
     </div>
 
-    <h2>Subpages <span class="small">(optional)</span></h2>
+    <h2>Subpages
+        <span class="small">(optional)</span>
+        <a href="#add-subpage" class="add-subpage">Add more</a>
+    </h2>
 
     {{ formset.management_form }}
     {% for form in formset %}
@@ -165,7 +168,6 @@
         {{ form.url.errors }}
     </div>
     {% endfor %}
-    <a href="#add-subpage" class="add-subpage">Add more</a>
     <div class="subpages clearfix" data-count="{{ formset.total_form_count() }}">
         {{ formset.empty_form.name.label_tag() }}
         {{ formset.empty_form.url.label_tag() }}

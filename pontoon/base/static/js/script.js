@@ -355,7 +355,7 @@
       $('.add-subpage').click(function(e) {
         e.preventDefault();
         var form = $('.subpages:last').html().replace(/__prefix__/g, count);
-        $(this).before('<div class="subpages clearfix">' + form + '</div>');
+        $('.subpages:last').before('<div class="subpages clearfix">' + form + '</div>');
         count++;
         $('#id_subpage_set-TOTAL_FORMS').val(count);
       });

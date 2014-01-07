@@ -472,6 +472,11 @@ body.admin-form #intro {
   text-transform: uppercase;
 }
 
+#pontoon.admin-form #intro form a.add-subpage {
+  font-size: 14px;
+  margin-top: 17px;
+}
+
 #pontoon.admin-form #intro .controls a {
   margin: 7px;
 }
