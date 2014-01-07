@@ -585,7 +585,7 @@ def _get_locale_repository_path(path, locale):
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
         for dirname in fnmatch.filter(dirnames, locale):
-            return root
+            return os.path.join(root, dirname)
 
     # Fallback to project's repository_path
     return path
