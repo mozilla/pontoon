@@ -638,13 +638,26 @@ def commit_to_svn(request, template=None):
     locale_repository_path = _get_locale_repository_path(p.repository_path, locale)
     locale_paths = _get_locale_paths(locale_repository_path, p.format)
 
-    for path in locale_paths:
-        try:
-            f = open(path, 'w')
+    if p.format == 'po':
+        for path in locale_paths:
+            try:
+                f = open(path, 'w')
+            except IOError:
+                log.debug("[" + path + "]: Path doesn't exist.")
             f.write(_generate_po_content(content))
             f.close()
-        except IOError:
-            log.debug("[" + path + "]: Path doesn't exist.")
+
+    elif p.format == 'properties':
+        # TODO
+        pass
+
+    elif p.format == 'ini':
+        # TODO
+        pass
+
+    elif p.format == 'lang':
+        # TODO
+        pass
 
     """Save SVN username and password."""
     if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
