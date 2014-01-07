@@ -448,7 +448,7 @@ def _generate_properties_content(url, locale):
     except Subpage.DoesNotExist:
         log.debug('Subpage with this URL does not exist. Generate .properties file.')
 
-        content = '';
+        content = ''
         p = Project.objects.get(url=url)
         l = Locale.objects.get(code=locale)
         entities = Entity.objects.filter(project=p)
@@ -576,7 +576,7 @@ def download(request, template=None):
             '.' + type
     return response
 
-def _parse_lang(path, skip_untranslated=True, extract_comments=False):
+def _parse_lang(path, skip_untranslated=False, extract_comments=True):
     """Parse a dotlang file and return a dict of translations."""
     trans = {}
 
@@ -690,6 +690,7 @@ def commit_to_svn(request, template=None):
                         entry.flags.remove('fuzzy')
 
             po.save()
+            log.debug("File updated: " + path)
 
     elif p.format == 'properties':
         # TODO

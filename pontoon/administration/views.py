@@ -291,7 +291,7 @@ def _extract_lang(project, locale, paths):
     """Extract .lang files from paths and save or update in DB."""
 
     for path in paths:
-        lang = _parse_lang(path, skip_untranslated=False, extract_comments=True)
+        lang = _parse_lang(path)
 
         for key, value in lang.items():
             _save_entity(project, key, value[0])
