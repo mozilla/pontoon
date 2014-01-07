@@ -1,5 +1,6 @@
 
 import base64
+import codecs
 import commonware
 import datetime
 import fnmatch
@@ -575,6 +576,44 @@ def download(request, template=None):
             '.' + type
     return response
 
+def _parse_lang(path, skip_untranslated=True, extract_comments=False):
+    """Parse a dotlang file and return a dict of translations."""
+    trans = {}
+
+    if not os.path.exists(path):
+        return trans
+
+    with codecs.open(path, 'r', 'utf-8', errors='replace') as lines:
+        source = None
+        comment = ''
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
+            if line[0] == '#':
+                comment = line.lstrip('#').strip()
+                continue
+
+            if line[0] == ';':
+                source = line[1:]
+
+            elif source:
+                for tag in ('{ok}', '{l10n-extra}'):
+                    if line.lower().endswith(tag):
+                        line = line[:-len(tag)]
+                line = line.strip()
+                if skip_untranslated and source == line:
+                    continue
+                if extract_comments:
+                    trans[source] = [comment, line]
+                    comment = ''
+                else:
+                    trans[source] = line
+
+    return trans
+
 def _get_locale_repository_path(path, locale):
     """Get path to locale directory."""
     log.debug("Get path to locale directory.")
@@ -654,15 +693,15 @@ def commit_to_svn(request, template=None):
 
     elif p.format == 'properties':
         # TODO
-        pass
+        return HttpResponse("error")
 
     elif p.format == 'ini':
         # TODO
-        pass
+        return HttpResponse("error")
 
     elif p.format == 'lang':
         # TODO
-        pass
+        return HttpResponse("error")
 
     """Save SVN username and password."""
     if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:

@@ -1,6 +1,5 @@
 
 import base64
-import codecs
 import ConfigParser
 import commonware
 import datetime
@@ -24,7 +23,7 @@ from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
-from pontoon.base.views import _request
+from pontoon.base.views import _request, _parse_lang
 
 from mobility.decorators import mobile_template
 
@@ -288,53 +287,11 @@ def _update_vcs(type, url, path):
     elif type == 'svn':
         _update_svn(url, path)
 
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-def parse_lang(path, skip_untranslated=True, extract_comments=False):
-    """Parse a dotlang file and return a dict of translations."""
-    trans = {}
-
-    if not os.path.exists(path):
-        return trans
-
-    with codecs.open(path, 'r', 'utf-8', errors='replace') as lines:
-        source = None
-        comment = ''
-
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-
-            if line[0] == '#':
-                comment = line.lstrip('#').strip()
-                continue
-
-            if line[0] == ';':
-                source = line[1:]
-
-            elif source:
-                for tag in ('{ok}', '{l10n-extra}'):
-                    if line.lower().endswith(tag):
-                        line = line[:-len(tag)]
-                line = line.strip()
-                if skip_untranslated and source == line:
-                    continue
-                if extract_comments:
-                    trans[source] = [comment, line]
-                    comment = ''
-                else:
-                    trans[source] = line
-
-    return trans
-
 def _extract_lang(project, locale, paths):
     """Extract .lang files from paths and save or update in DB."""
 
     for path in paths:
-        lang = parse_lang(path, skip_untranslated=False, extract_comments=True)
+        lang = _parse_lang(path, skip_untranslated=False, extract_comments=True)
 
         for key, value in lang.items():
             _save_entity(project, key, value[0])
