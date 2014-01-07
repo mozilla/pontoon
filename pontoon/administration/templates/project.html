@@ -157,7 +157,7 @@
         {{ form.url.label_tag() }}
         {{ form.name }}
         {{ form.url }}
-        <button title="{{ _('Delete subpage') }}" class="button delete-subpage">
+        <button title="{{ _('Delete subpage') }}" class="button delete-subpage" tabindex="-1">
             <img src="{{ static('img/cancel.png') }}" alt="{{ _('Delete subpage') }}" />
         </button>
         {{ form.DELETE }}
@@ -171,7 +171,7 @@
         {{ formset.empty_form.url.label_tag() }}
         {{ formset.empty_form.name }}
         {{ formset.empty_form.url }}
-        <button title="{{ _('Delete subpage') }}" class="button delete-subpage">
+        <button title="{{ _('Delete subpage') }}" class="button delete-subpage" tabindex="-1">
             <img src="{{ static('img/cancel.png') }}" alt="{{ _('Delete subpage') }}" />
         </button>
         {{ formset.empty_form.DELETE }}
