@@ -627,7 +627,7 @@ def commit_to_svn(request, template=None):
         return HttpResponse("authenticate")
 
     locale = data['locale']
-    content = data['content']
+    entities = data['entities']
 
     try:
         p = Project.objects.get(url=data['url'])
@@ -640,12 +640,17 @@ def commit_to_svn(request, template=None):
 
     if p.format == 'po':
         for path in locale_paths:
-            try:
-                f = open(path, 'w')
-            except IOError:
-                log.debug("[" + path + "]: Path doesn't exist.")
-            f.write(_generate_po_content(content))
-            f.close()
+            po = polib.pofile(path)
+            valid_entries = [e for e in po if not e.obsolete]
+
+            for entity in entities:
+                entry = po.find(entity['original'])
+                if entry:
+                    entry.msgstr = entity['translation']
+                    if 'fuzzy' in entry.flags:
+                        entry.flags.remove('fuzzy')
+
+            po.save()
 
     elif p.format == 'properties':
         # TODO

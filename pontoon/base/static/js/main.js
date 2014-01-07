@@ -21,6 +21,21 @@ var Pontoon = (function () {
             locale: this.locale.code
           };
 
+      function strip(entities) {
+        // Deep copy: http://api.jquery.com/jQuery.extend
+        var e = $.extend(true, [], entities);
+        $(e).each(function () {
+          delete this.ui;
+          delete this.hover;
+          delete this.unhover;
+          delete this.id;
+          delete this.pk;
+          delete this.key;
+          delete this.body;
+        });
+        return e;
+      }
+
       // Generate PO file object
       function getPO() {
         var po = {
@@ -82,17 +97,7 @@ var Pontoon = (function () {
         download(params);
 
       } else if (type === "json") {
-        // Deep copy: http://api.jquery.com/jQuery.extend
-        var entities = $.extend(true, [], this.project.entities);
-        $(entities).each(function () {
-          delete this.ui;
-          delete this.hover;
-          delete this.unhover;
-          delete this.id;
-          delete this.pk;
-          delete this.key;
-          delete this.body;
-        });
+        var entities = strip(this.project.entities);
         params.content = JSON.stringify(entities, null, "\t");
         download(params);
 
@@ -154,7 +159,7 @@ var Pontoon = (function () {
       } else if (type === "svn") {
         self.startLoader();
 
-        params.content = JSON.stringify(getPO());
+        params.entities = strip(this.project.entities);
         params.url = self.project.url;
 
         if (value) {
