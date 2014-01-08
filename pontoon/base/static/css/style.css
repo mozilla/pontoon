@@ -832,8 +832,9 @@ body.admin-form #intro {
 
 #pontoon .notification {
   color: #F00038;
+  line-height: 17px;
   margin: 5px auto 0;
-  min-height: 16px;
+  min-height: 17px;
   text-align: left;
   text-transform: uppercase;
   font-weight: 300;
