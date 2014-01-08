@@ -353,7 +353,11 @@ def _extract_properties(project, locale, paths, source_locale):
         try:
             f = open(path)
             l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
-            short_path = path.split(locale.code)[-1]
+
+            locale_code = locale.code
+            if 'templates' in path:
+                locale_code = 'templates'
+            short_path = path.split(locale_code)[-1]
 
             for line in l10nobject:
                 if isinstance(line, silme.core.entity.Entity):
@@ -491,8 +495,11 @@ def update_from_repository(request, template=None):
                 source_locale = source_directory
             locales = [Locale.objects.get(code=source_locale)]
             locales.extend(p.locales.all())
-            for l in locales:
-                _extract_properties(p, l, _get_locale_paths(source_paths, source_directory, l.code), source_locale)
+            for index, l in enumerate(locales):
+                locale_code = l.code
+                if index == 0:
+                    locale_code = source_directory
+                _extract_properties(p, l, _get_locale_paths(source_paths, source_directory, locale_code), source_locale)
 
         elif format == 'ini':
             try:
