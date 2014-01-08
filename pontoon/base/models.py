@@ -40,12 +40,14 @@ def create_user_profile(sender, instance, created, **kwargs):
             logger.debug(instance.email)
             email = instance.email
 
-            for l in r.json["objects"]:
+            for l in r.json()["objects"]:
                 logger.debug(l["email"])
                 if email == l["email"]:
+                    logger.debug(l["full_name"])
                     can_localize = Permission.objects.get(codename="can_localize")
                     instance.user_permissions.add(can_localize)
                     instance.first_name = l["full_name"]
+                    instance.save()
                     break
         except Exception:
             pass
