@@ -132,14 +132,11 @@ def delete_project(request, pk, template=None):
 
         project = Project.objects.get(pk=pk)
         project.delete()
-        import re
-        m = re.search(r'://(?P<software>(?:hg)|(?:svn))', project.repository)
-        if m:
-            software = m.group('software')
-            project_path = os.path.join(
-                settings.MEDIA_ROOT, software, project.name)
-            if os.path.exists(project_path):
-                shutil.rmtree(project_path)
+
+        path = project.repository_path
+        if os.path.exists(path):
+            shutil.rmtree(path)
+
         transaction.commit()
         return HttpResponseRedirect(reverse('pontoon.admin'))
     except Exception as e:
