@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request, _parse_lang
 from pontoon.administration.utils.vcs import update_from_vcs
+from celery.task import task
 
 from mobility.decorators import mobile_template
 
@@ -396,7 +397,7 @@ class UpdateFromRepositoryException(Exception):
     pass
 
 
-def update_from_repository_task(
+def _update_from_repository(
         project, repository_type, repository_url, repository_path_master):
     if repository_type == 'file':
         file_name = repository_url.rstrip('/').rsplit('/', 1)[1]
@@ -510,6 +511,21 @@ def update_from_repository_task(
         raise UpdateFromRepositoryException("Not supported")
 
 
+@task()
+def task_update_from_repository():
+    for project in Project.objects.all():
+        try:
+            repository_type = project.repository_type
+            repository_url = project.repository
+            repository_path_master = os.path.join(
+                settings.MEDIA_ROOT, repository_type, project.name)
+            _update_from_repository(
+                project, repository_type, repository_url,
+                repository_path_master)
+        except Exception as e:
+            logger.debug('UpdateFromRepositoryTaskError: %s' % unicode(e))
+
+
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
@@ -531,7 +547,7 @@ def update_from_repository(request, template=None):
 
     repository_path_master = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
     try:
-        update_from_repository_task(
+        _update_from_repository(
             p, repository_type, repository_url, repository_path_master)
     except UpdateFromRepositoryException as e:
         return HttpResponse('error')
