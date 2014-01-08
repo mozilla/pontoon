@@ -14,7 +14,7 @@ Pontoon uses [Playdoh][playdoh], which supports running web apps in virtual mach
 2. Install [Vagrant][vagrant] to easily customize and access our VM:
  * `gem install vagrant` (requires [Ruby][ruby] and [gem][gem], but most modern *NIX systems already have them)
 3. Clone Pontoon or your [fork][fork]:
- * `git clone --recursive git://github.com/mathjazz/pontoon.git` 
+ * `git clone --recursive https://github.com/mathjazz/pontoon.git`
 4. Run a virtual development environment from your working copy directory:
  * `cd pontoon`
  * `vagrant up`
