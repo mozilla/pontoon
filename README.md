@@ -32,8 +32,11 @@ You can edit files in your working copy directory (`/pontoon`) locally and they 
  * `vagrant up`
 2. Enter VM:
  * `vagrant ssh`
-3. Run the development web server (in VM):
  * `cd pontoon`
+3. Run the development web server (in VM):
+ * `python manage.py syncdb` [only on first use]
+ * `python manage.py migrate` [only on first use]
+ * `python manage.py createsuperuser` [only on first use]
  * `python manage.py runserver 0.0.0.0:8000`
 4. Point your web browser to [http://localhost:8000](http://localhost:8000).
 
