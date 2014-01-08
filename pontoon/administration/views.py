@@ -346,7 +346,7 @@ def _extract_ini(project, path):
                     continue
         log.debug("[" + section + "]: saved to DB.")
 
-def _extract_properties(project, locale, paths, source_directory):
+def _extract_properties(project, locale, paths, source_locale):
     """Extract .properties files from paths and save or update in DB."""
 
     for path in paths:
@@ -357,7 +357,7 @@ def _extract_properties(project, locale, paths, source_directory):
 
             for line in l10nobject:
                 if isinstance(line, silme.core.entity.Entity):
-                    if locale.code == source_directory:
+                    if locale.code == source_locale:
                         _save_entity(project=project, original=line.value, key=line.id, source=short_path)
                     else:
                         try:
@@ -434,11 +434,11 @@ def update_from_repository(request, template=None):
 
         elif format == 'properties':
             # .properties format only stores translations, so the input file has to contain source (en-US) strings
-            source_directory = 'en-US'
-            locales = [Locale.objects.get(code=source_directory)]
+            source_locale = 'en-US'
+            locales = [Locale.objects.get(code=source_locale)]
             locales.extend(p.locales.all())
             for l in locales:
-                _extract_properties(p, l, [file_path], source_directory)
+                _extract_properties(p, l, [file_path], source_locale)
 
         elif format == 'ini':
             try:
@@ -485,10 +485,14 @@ def update_from_repository(request, template=None):
                 _extract_po(p, l, _get_locale_paths(source_paths, source_directory, l.code))
 
         elif format == 'properties':
-            locales = [Locale.objects.get(code=source_directory)]
+            if source_directory == 'templates':
+                source_locale = 'en-US'
+            else:
+                source_locale = source_directory
+            locales = [Locale.objects.get(code=source_locale)]
             locales.extend(p.locales.all())
             for l in locales:
-                _extract_properties(p, l, _get_locale_paths(source_paths, source_directory, l.code), source_directory)
+                _extract_properties(p, l, _get_locale_paths(source_paths, source_directory, l.code), source_locale)
 
         elif format == 'ini':
             try:
