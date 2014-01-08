@@ -1,7 +1,9 @@
 -r ../vendor/src/funfactory/funfactory/requirements/prod.txt
 
-mercurial
-polib
-silme
-pysvn
 south
+polib
+mercurial
+
+# Not available in PyPI
+-e svn+http://guest:guest@pysvn.tigris.org/svn/pysvn/tags/pysvn/Extension/1.7.8/#egg=pysvn
+-e hg+http://hg.mozilla.org/l10n/silme#egg=silme
