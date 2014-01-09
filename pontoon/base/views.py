@@ -10,6 +10,7 @@ import polib
 import requests
 import silme.core, silme.format.properties
 import traceback
+import urllib
 from hashlib import md5
 
 from django.conf import settings
@@ -82,7 +83,9 @@ def translate_site(request, locale, url, template=None):
     log.debug("Translate view: site.")
 
     # Validate URL
-    url = url.replace("%3A", ":").replace("%2F", "/")
+    # The default configuration of Apache doesn't allow encoded slashes in URLs
+    # https://github.com/mozilla/playdoh/issues/143
+    url = urllib.unquote(url)
     log.debug("URL: " + url)
     validate = URLValidator()
 
