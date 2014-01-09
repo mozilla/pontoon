@@ -681,7 +681,7 @@ def commit_to_svn(request, template=None):
     entities = data['entities']
 
     try:
-        p = Project.objects.get(url=data['url'])
+        p = Project.objects.get(pk=data['pk'])
     except Project.DoesNotExist:
         return HttpResponse("error")
     project = p.name

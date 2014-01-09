@@ -160,7 +160,7 @@ var Pontoon = (function () {
         self.startLoader();
 
         params.entities = strip(this.project.entities);
-        params.url = self.project.url;
+        params.pk = self.project.pk;
 
         if (value) {
           params.auth = {
