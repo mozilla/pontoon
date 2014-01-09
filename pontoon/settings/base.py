@@ -39,8 +39,8 @@ AUTHENTICATION_BACKENDS = [
 
 SITE_URL = 'http://127.0.0.1:8000'
 LOGIN_URL = '/'
-LOGIN_REDIRECT_URL = 'examples.home'
-LOGIN_REDIRECT_URL_FAILURE = 'examples.home'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL_FAILURE = '/'
 
 TEMPLATE_CONTEXT_PROCESSORS = list(TEMPLATE_CONTEXT_PROCESSORS) + [
     'django_browserid.context_processors.browserid',
