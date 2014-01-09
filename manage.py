@@ -1,9 +1,13 @@
 #!/usr/bin/env python
+
+
+
+
 import os
 import sys
 
 # Edit this if necessary or override the variable in your environment.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pontoon.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
 
 # Add a temporary path so that we can import the funfactory
 tmp_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
