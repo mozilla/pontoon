@@ -3,6 +3,7 @@
 south
 polib
 mercurial
+configparser
 
 # Not available in PyPI
 -e svn+http://guest:guest@pysvn.tigris.org/svn/pysvn/tags/pysvn/Extension/1.7.8/#egg=pysvn
