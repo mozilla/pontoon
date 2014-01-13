@@ -30,7 +30,6 @@ var Pontoon = (function () {
           delete this.unhover;
           delete this.id;
           delete this.pk;
-          delete this.key;
           delete this.body;
         });
         return e;
