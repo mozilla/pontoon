@@ -681,16 +681,20 @@ def commit_to_svn(request, template=None):
     if (len(username) == 0 or len(password) == 0):
         return HttpResponse("authenticate")
 
-    locale = data['locale']
-    entities = data['entities']
+    try:
+        locale = Locale.objects.get(code=data['locale'])
+    except Locale.DoesNotExist:
+        return HttpResponse("error")
 
     try:
         p = Project.objects.get(pk=data['pk'])
     except Project.DoesNotExist:
         return HttpResponse("error")
-    project = p.name
 
-    locale_repository_path = _get_locale_repository_path(p.repository_path, locale)
+    project = p.name
+    entities = Entity.objects.filter(project=p)
+
+    locale_repository_path = _get_locale_repository_path(p.repository_path, locale.code)
     locale_paths = _get_locale_paths(locale_repository_path, p.format)
 
     if p.format == 'po':
@@ -699,9 +703,12 @@ def commit_to_svn(request, template=None):
             valid_entries = [e for e in po if not e.obsolete]
 
             for entity in entities:
-                entry = po.find(entity['original'])
+                entry = po.find(entity.string)
                 if entry:
-                    entry.msgstr = entity['translation']
+                    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
+                    if len(translations) > 0:
+                        entry.msgstr = translations.reverse()[0].string
+
                     if 'fuzzy' in entry.flags:
                         entry.flags.remove('fuzzy')
 
@@ -715,8 +722,13 @@ def commit_to_svn(request, template=None):
                 l10nobject = format_parser.get_structure(f.read())
 
                 for entity in entities:
-                    key = entity['key']
-                    translation = entity['translation']
+                    key = entity.key
+                    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
+                    if len(translations) == 0:
+                        translation = ''
+                    else:
+                        translation = translations.reverse()[0].string
+
                     try:
                         l10nobject.modify_entity(key, translation)
                     except KeyError:
@@ -737,12 +749,16 @@ def commit_to_svn(request, template=None):
         with codecs.open(locale_paths[0], 'r+', 'utf-8', errors='replace') as f:
             try:
                 config.read_file(f)
-                if config.has_section(locale):
+                if config.has_section(locale.code):
 
                     for entity in entities:
-                        key = entity['key']
-                        translation = entity['translation']
-                        config.set(locale, key, translation)
+                        key = entity.key
+                        translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
+                        if len(translations) == 0:
+                            translation = ''
+                        else:
+                            translation = translations.reverse()[0].string
+                        config.set(locale.code, key, translation)
 
                     # Erase file and then write, otherwise content gets appended
                     f.seek(0)
@@ -763,10 +779,10 @@ def commit_to_svn(request, template=None):
             lang = _parse_lang(path)
 
             for entity in entities:
-                original = entity['original']
-                translation = entity['translation']
-                if original in lang and translation != '':
-                    lang[original][1] = translation
+                original = entity.string
+                translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
+                if original in lang and len(translations) > 0:
+                    lang[original][1] = translations.reverse()[0].string
 
             with codecs.open(path, 'w', 'utf-8', errors='replace') as f:
                 content = _serialize_lang(lang)
@@ -785,8 +801,8 @@ def commit_to_svn(request, template=None):
 
     try:
         client.checkin([locale_repository_path],
-            'Pontoon: update ' + locale + ' localization of ' + project)
-        log.debug('Commited ' + locale + ' localization of ' + project)
+            'Pontoon: update ' + locale.code + ' localization of ' + project)
+        log.debug('Commited ' + locale.code + ' localization of ' + project)
         return HttpResponse("200")
     except pysvn.ClientError, e:
         log.debug(str(e))

@@ -158,7 +158,6 @@ var Pontoon = (function () {
       } else if (type === "svn") {
         self.startLoader();
 
-        params.entities = strip(this.project.entities);
         params.pk = self.project.pk;
 
         if (value) {
