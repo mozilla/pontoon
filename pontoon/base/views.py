@@ -1,5 +1,6 @@
 
 import base64
+import configparser
 import codecs
 import commonware
 import datetime
@@ -712,8 +713,30 @@ def commit_to_svn(request, template=None):
         return HttpResponse("error")
 
     elif p.format == 'ini':
-        # TODO
-        return HttpResponse("error")
+        config = configparser.ConfigParser()
+        with codecs.open(locale_paths[0], 'r+', 'utf-8', errors='replace') as f:
+            try:
+                config.read_file(f)
+                if config.has_section(locale):
+
+                    for entity in entities:
+                        key = entity['key']
+                        translation = entity['translation']
+                        config.set(locale, key, translation)
+
+                    # Erase file and then write, otherwise content gets appended
+                    f.seek(0)
+                    f.truncate()
+                    config.write(f)
+                    log.debug("File updated: " + locale_paths[0])
+
+                else:
+                    log.debug("Locale not available in the source file.")
+                    raise Exception("error")
+
+            except Exception, e:
+                log.debug("INI configparser: " + str(e))
+                raise Exception("error")
 
     elif p.format == 'lang':
         for path in locale_paths:
