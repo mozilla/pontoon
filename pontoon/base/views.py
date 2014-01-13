@@ -728,8 +728,8 @@ def commit_to_svn(request, template=None):
                 # Erase file and then write, otherwise content gets appended
                 f.seek(0)
                 f.truncate()
-                string = format_parser.dump_structure(l10nobject)
-                f.write(string)
+                content = format_parser.dump_structure(l10nobject)
+                f.write(content + '\n')
                 log.debug("File updated: " + locale_paths[0])
 
     elif p.format == 'ini':
@@ -785,7 +785,8 @@ def commit_to_svn(request, template=None):
 
     try:
         client.checkin([locale_repository_path],
-            'Pontoon: update ' + locale + ' localization of ' + project + '')
+            'Pontoon: update ' + locale + ' localization of ' + project)
+        log.debug('Commited ' + locale + ' localization of ' + project)
         return HttpResponse("200")
     except pysvn.ClientError, e:
         log.debug(str(e))
