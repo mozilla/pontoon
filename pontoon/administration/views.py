@@ -1,6 +1,7 @@
 
 import base64
-import ConfigParser
+import codecs
+import configparser
 import commonware
 import datetime
 import fnmatch
@@ -301,17 +302,13 @@ def _extract_lang(project, locale, paths):
 def _extract_ini(project, path):
     """Extract .ini file from path and save or update in DB."""
 
-    config = ConfigParser.ConfigParser()
-    try:
-        with open(path) as f:
-            try:
-                config.readfp(f)
-            except Exception, e:
-                log.debug("INI ConfigParser: " + str(e))
-                raise Exception("error")
-    except IOError, e:
-        log.debug("IOError: " + str(e))
-        raise Exception("error")
+    config = configparser.ConfigParser()
+    with codecs.open(path, 'r', 'utf-8') as f:
+        try:
+            config.read_file(f)
+        except Exception, e:
+            log.debug("INI configparser: " + str(e))
+            raise Exception("error")
 
     sections = config.sections()
 
