@@ -1,0 +1,12 @@
+MANIFEST.in
+README.rst
+configparser.py
+configparser.rst
+configparser_helpers.py
+setup.cfg
+setup.py
+configparser.egg-info/PKG-INFO
+configparser.egg-info/SOURCES.txt
+configparser.egg-info/dependency_links.txt
+configparser.egg-info/top_level.txt
+configparser.egg-info/zip-safe
