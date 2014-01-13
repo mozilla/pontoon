@@ -709,8 +709,28 @@ def commit_to_svn(request, template=None):
             log.debug("File updated: " + path)
 
     elif p.format == 'properties':
-        # TODO
-        return HttpResponse("error")
+        for path in locale_paths:
+            with codecs.open(path, 'r+', 'utf-8') as f:
+                format_parser = silme.format.properties.PropertiesFormatParser
+                l10nobject = format_parser.get_structure(f.read())
+
+                for entity in entities:
+                    key = entity['key']
+                    translation = entity['translation']
+                    try:
+                        l10nobject.modify_entity(key, translation)
+                    except KeyError:
+                        # Only add new keys if translation available
+                        if translation != '':
+                            new_entity = silme.core.entity.Entity(key, translation)
+                            l10nobject.add_entity(new_entity)
+
+                # Erase file and then write, otherwise content gets appended
+                f.seek(0)
+                f.truncate()
+                string = format_parser.dump_structure(l10nobject)
+                f.write(string)
+                log.debug("File updated: " + locale_paths[0])
 
     elif p.format == 'ini':
         config = configparser.ConfigParser()
