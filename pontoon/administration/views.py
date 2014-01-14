@@ -29,7 +29,7 @@ from pontoon.base.views import _request, _parse_lang
 from mobility.decorators import mobile_template
 
 
-log = commonware.log.getLogger('playdoh')
+log = commonware.log.getLogger('pontoon')
 
 
 @mobile_template('{mobile/}admin.html')

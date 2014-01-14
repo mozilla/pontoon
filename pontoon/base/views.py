@@ -32,7 +32,7 @@ from session_csrf import anonymous_csrf_exempt
 from mobility.decorators import mobile_template
 
 
-log = commonware.log.getLogger('playdoh')
+log = commonware.log.getLogger('pontoon')
 
 
 @mobile_template('{mobile/}home.html')

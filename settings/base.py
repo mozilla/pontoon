@@ -78,7 +78,7 @@ DOMAIN_METHODS['messages'] = [
 #    ('media/js/**.js', 'javascript'),
 # ]
 
-LOGGING = dict(loggers=dict(playdoh = {'level': logging.DEBUG}))
+LOGGING = dict(loggers=dict(pontoon = {'level': logging.DEBUG}))
 
 # Required for storing additional information about users
 AUTH_PROFILE_MODULE = 'base.UserProfile'
