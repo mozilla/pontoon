@@ -3,16 +3,16 @@
 
 # TODO: Make this rely on things that are not straight-up exec.
 class playdoh {
-    file { "$PROJ_DIR/pontoon/settings/local.py":
+    file { "$PROJ_DIR/settings/local.py":
         ensure => file,
-        source => "$PROJ_DIR/pontoon/settings/local.py-dist",
+        source => "$PROJ_DIR/settings/local.py-dist",
         replace => false;
     }
 
     exec { "create_mysql_database":
         command => "mysql -uroot -B -e'CREATE DATABASE $DB_NAME CHARACTER SET utf8;'",
         unless  => "mysql -uroot -B --skip-column-names -e 'show databases' | /bin/grep '$DB_NAME'",
-        require => File["$PROJ_DIR/pontoon/settings/local.py"]
+        require => File["$PROJ_DIR/settings/local.py"]
     }
 
     exec { "grant_mysql_database":
