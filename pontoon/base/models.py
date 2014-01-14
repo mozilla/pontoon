@@ -40,7 +40,7 @@ def create_user_profile(sender, instance, created, **kwargs):
             logger.debug(instance.email)
             email = instance.email
 
-            for l in r.json()["objects"]:
+            for l in r.json["objects"]:
                 logger.debug(l["email"])
                 if email == l["email"]:
                     logger.debug(l["full_name"])
