@@ -33,7 +33,7 @@ def create_user_profile(sender, instance, created, **kwargs):
         }
 
         import logging
-        logger = logging.getLogger('playdoh')
+        logger = logging.getLogger('pontoon')
 
         try:
             r = requests.get(url, params=payload)
