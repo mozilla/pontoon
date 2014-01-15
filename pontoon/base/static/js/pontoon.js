@@ -134,7 +134,7 @@
               $(target).removeClass("hovered");
               postMessage("HOVER", id);
               entities[next].hover();
-              $(".editableToolbar > .edit").click();
+              $('.editableToolbar > .edit').click();
             }
           }
         });
@@ -509,7 +509,7 @@
           } else if (message.type === "UNHOVER") {
             Pontoon.project.entities[message.value].unhover();
           } else if (message.type === "EDIT") {
-            $('.editableToolbar > .edit').click();
+            startEditing();
           } else if (message.type === "SAVE") {
             $($('.editableToolbar')[0].target.entity.node).each(function() {
               this.html(message.value);
@@ -585,6 +585,7 @@
       })
       .find('.edit').click(function () {
         startEditing();
+        toolbar[0].target.focus();
         return false;
       }).end()
       .find('.save, .cancel').click(function () {
