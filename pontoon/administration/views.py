@@ -285,7 +285,7 @@ def _update_vcs(type, url, path):
     elif type == 'svn':
         _update_svn(url, path)
 
-def _parse_lang(path, skip_untranslated=False, extract_comments=True):
+def _parse_lang(path):
     """Parse a dotlang file and return a dict of translations."""
     trans = {}
 
@@ -313,13 +313,8 @@ def _parse_lang(path, skip_untranslated=False, extract_comments=True):
                     if line.lower().endswith(tag):
                         line = line[:-len(tag)]
                 line = line.strip()
-                if skip_untranslated and source == line:
-                    continue
-                if extract_comments:
-                    trans[source] = [comment, line]
-                    comment = ''
-                else:
-                    trans[source] = line
+                trans[source] = [comment, line]
+                comment = ''
 
     return trans
 
