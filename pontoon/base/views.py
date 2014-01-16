@@ -580,18 +580,6 @@ def download(request, template=None):
             '.' + type
     return response
 
-def _serialize_lang(lang):
-    """Serialize lang object into .lang file contents."""
-    content = ''
-
-    for key, value in lang.items():
-        if value[0] != '':
-            content += '#' + value[0] + '\n'
-        content += ';' + key + '\n'
-        content += value[1] + '\n\n'
-
-    return content
-
 def _parse_lang(path, skip_untranslated=False, extract_comments=True):
     """Parse a dotlang file and return a dict of translations."""
     trans = {}
@@ -776,18 +764,39 @@ def commit_to_svn(request, template=None):
 
     elif p.format == 'lang':
         for path in locale_paths:
-            lang = _parse_lang(path)
+            with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
+                content = []
+                translation = None
 
-            for entity in entities:
-                original = entity.string
-                translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
-                if original in lang and len(translations) > 0:
-                    lang[original][1] = translations.reverse()[0].string
+                for line in lines:
+                    if translation:
+                        # Keep newlines and white spaces in line if present
+                        trans_line = line.replace(line.strip(), translation)
+                        content.append(trans_line)
+                        translation = None
+                        continue
 
-            with codecs.open(path, 'w', 'utf-8', errors='replace') as f:
-                content = _serialize_lang(lang)
-                f.write(content)
-            log.debug("File updated: " + path)
+                    content.append(line)
+                    line = line.strip()
+
+                    if not line:
+                        continue
+
+                    if line[0] == ';':
+                        original = line[1:].strip()
+                        entity = Entity.objects.get(project=p, string=original)
+                        translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
+
+                        if len(translations) == 0:
+                            translation = original
+                        else:
+                            translation = translations.reverse()[0].string
+
+                # Erase file and then write, otherwise content gets appended
+                lines.seek(0)
+                lines.truncate()
+                lines.writelines(content)
+                log.debug("File updated: " + path)
 
     """Save SVN username and password."""
     if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
