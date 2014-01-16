@@ -131,7 +131,7 @@
                 });
               }
               cancel.click();
-              $(target).removeClass("hovered");
+              $(target).removeClass('pontoon-hovered');
               postMessage("HOVER", id);
               entities[next].hover();
               $('.editableToolbar > .edit').click();
@@ -408,7 +408,7 @@
         if (newTarget) {
           toolbarNode.target = newTarget;
         }
-        $(newTarget).addClass('hovered');
+        $(newTarget).addClass('pontoon-hovered');
         postMessage("HOVER", newTarget.entity.id);
         toolbar.show();
       }
@@ -437,11 +437,11 @@
             stopEditing();
             if (target === toolbar[0].target) {
               toolbar[0].target = null;
-              $(target).removeClass('hovered');
+              $(target).removeClass('pontoon-hovered');
               postMessage("UNHOVER", target.entity.id);
               toolbar.hide();
             } else {
-              $(target).removeClass('hovered');
+              $(target).removeClass('pontoon-hovered');
               postMessage("UNHOVER", target.entity.id);
             }
           }
