@@ -301,7 +301,7 @@ def _parse_lang(path):
             if not line:
                 continue
 
-            if line[0] == '#':
+            if line[0] == '#' and line[1] != '#':
                 comment = line.lstrip('#').strip()
                 continue
 
