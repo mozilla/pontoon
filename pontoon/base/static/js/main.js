@@ -240,15 +240,9 @@ var Pontoon = (function () {
           };
       }
       // Show only supported locales
-      $('.project-url').each(function() {
-        if ($('.url').val().indexOf($(this).html()) !== -1) {
-          otherLocales = $(this).siblings('.project-name').data('locales').split(',');
-          otherLocales.pop();
-          otherLocales = $.grep(otherLocales, function(value) {
-            return value != Pontoon.locale.code;
-          });
-          return false;
-        }
+      otherLocales = self.common.getSelectedProjectLocales();
+      otherLocales = $.grep(otherLocales, function(value) {
+        return value != self.locale.code;
       });
       if (otherLocales) {
         localeMenu.find('.language').each(function() {
