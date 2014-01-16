@@ -408,7 +408,11 @@
         if (newTarget) {
           toolbarNode.target = newTarget;
         }
-        $(newTarget).addClass('pontoon-hovered');
+        $(newTarget)
+          .addClass('pontoon-hovered')
+          // Prevent converting white-spaces at the beginning or
+          // in the end of the node to &nbsp; and <br>
+          .css('white-space', 'pre-wrap');
         postMessage("HOVER", newTarget.entity.id);
         toolbar.show();
       }
