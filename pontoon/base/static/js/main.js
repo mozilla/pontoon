@@ -247,7 +247,7 @@ var Pontoon = (function () {
           otherLocales = $.grep(otherLocales, function(value) {
             return value != Pontoon.locale.code;
           });
-          return;
+          return false;
         }
       });
       if (otherLocales) {
