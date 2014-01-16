@@ -580,44 +580,6 @@ def download(request, template=None):
             '.' + type
     return response
 
-def _parse_lang(path, skip_untranslated=False, extract_comments=True):
-    """Parse a dotlang file and return a dict of translations."""
-    trans = {}
-
-    if not os.path.exists(path):
-        return trans
-
-    with codecs.open(path, 'r', 'utf-8', errors='replace') as lines:
-        source = None
-        comment = ''
-
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-
-            if line[0] == '#':
-                comment = line.lstrip('#').strip()
-                continue
-
-            if line[0] == ';':
-                source = line[1:]
-
-            elif source:
-                for tag in ('{ok}', '{l10n-extra}'):
-                    if line.lower().endswith(tag):
-                        line = line[:-len(tag)]
-                line = line.strip()
-                if skip_untranslated and source == line:
-                    continue
-                if extract_comments:
-                    trans[source] = [comment, line]
-                    comment = ''
-                else:
-                    trans[source] = line
-
-    return trans
-
 def _get_locale_repository_path(path, locale):
     """Get path to locale directory."""
     log.debug("Get path to locale directory.")
