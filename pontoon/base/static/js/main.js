@@ -1099,7 +1099,7 @@ var Pontoon = (function () {
             if ($('.url').val().indexOf($(this).html()) !== -1) {
               locales = $(this).siblings('.project-name').data('locales').split(',');
               locales.pop();
-              return;
+              return false;
             }
           });
 
