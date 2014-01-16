@@ -887,20 +887,6 @@ var Pontoon = (function () {
      * Common functions used in both, client specific code and Pontoon library
      */
     common: (function () {
-      function getProjectLocales() {
-        var locales = null;
-
-        $('.project-url').each(function() {
-          if ($('.url').val().indexOf($(this).html()) !== -1) {
-            locales = $(this).siblings('.project-name').data('locales').split(',');
-            locales.pop();
-            return;
-          }
-        });
-
-        return locales;
-      }
-
       // Show/hide menu on click
       $('.selector').live("click.pontoon", function (e) {
         if (!$(this).siblings('.menu').is(':visible')) {
@@ -952,7 +938,7 @@ var Pontoon = (function () {
         if ($('body').is('.admin')) {
           return false;
         }
-        var locales = getProjectLocales(),
+        var locales = Pontoon.common.getSelectedProjectLocales(),
             menu = $('.locale .menu:first'),
             confirm = menu.siblings('.confirm'),
             selected = confirm.find('.code').html();
@@ -1019,7 +1005,7 @@ var Pontoon = (function () {
 
       // Show only locales available for the selected project
       $('.locale .selector').live("click.pontoon", function () {
-        var locales = getProjectLocales(),
+        var locales = Pontoon.common.getSelectedProjectLocales(),
             menu = $(this).siblings('.menu');
 
         menu.find('.limited').removeClass('limited');
@@ -1106,6 +1092,25 @@ var Pontoon = (function () {
       });
 
       return {
+        /*
+         * Get locales, available for selected project
+         *
+         * message Error message to be displayed
+         */
+        getSelectedProjectLocales: function() {
+          var locales = null;
+
+          $('.project-url').each(function() {
+            // Do not check equality, because we need to support subpages
+            if ($('.url').val().indexOf($(this).html()) !== -1) {
+              locales = $(this).siblings('.project-name').data('locales').split(',');
+              locales.pop();
+              return;
+            }
+          });
+
+          return locales;
+        },
         /*
          * Show error message
          *
