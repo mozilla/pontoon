@@ -241,7 +241,7 @@ var Pontoon = (function () {
       }
       // Show only supported locales
       $('.project-url').each(function() {
-        if ($(this).html() === $('.url').val()) {
+        if ($('.url').val().indexOf($(this).html()) !== -1) {
           otherLocales = $(this).siblings('.project-name').data('locales').split(',');
           otherLocales.pop();
           otherLocales = $.grep(otherLocales, function(value) {
@@ -891,7 +891,7 @@ var Pontoon = (function () {
         var locales = null;
 
         $('.project-url').each(function() {
-          if ($(this).html() === $('.url').val()) {
+          if ($('.url').val().indexOf($(this).html()) !== -1) {
             locales = $(this).siblings('.project-name').data('locales').split(',');
             locales.pop();
             return;
