@@ -61,7 +61,7 @@
         });
 
         // Update UI and progress when saved
-        $(".editableToolbar > .save").click(function () {
+        $(".pontoon-editable-toolbar > .save").click(function () {
           var element = $(this).parent()[0].target,
               entity = element.entity,
               content = $(element).html();
@@ -75,7 +75,7 @@
         });
 
         // Do not change anything when cancelled
-        $(".editableToolbar > .cancel").click(function () {
+        $(".pontoon-editable-toolbar > .cancel").click(function () {
           var element = $(this).parent()[0].target,
               entity = element.entity;
 
@@ -85,7 +85,7 @@
         // Prevent button click with space
         $("button").unbind("keyup.pontoon").bind("keyup.pontoon", function (e) {
           var key = e.keyCode || e.which;
-          if ($(".editableToolbar .save").is(":visible")) {
+          if ($(".pontoon-editable-toolbar .save").is(":visible")) {
             if (key === 32) {
               e.preventDefault();
             }
@@ -95,7 +95,7 @@
         // In-place keyboard shortcuts
         $("html").unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
           var key = e.keyCode || e.which,
-              toolbar = $(".editableToolbar"),
+              toolbar = $(".pontoon-editable-toolbar"),
               save = toolbar.find(".save"),
               cancel = toolbar.find(".cancel");
 
@@ -134,7 +134,7 @@
               $(target).removeClass('pontoon-hovered');
               postMessage("HOVER", id);
               entities[next].hover();
-              $('.editableToolbar > .edit').click();
+              $('.pontoon-editable-toolbar > .edit').click();
             }
           }
         });
@@ -372,11 +372,11 @@
        * node DOM node
        */
       function showToolbar(node) {
-        if ($(node).is('.editableToolbar')) {
+        if ($(node).is('.pontoon-editable-toolbar')) {
           showToolbar(node.target);
           return;
         } else {
-          var toolbar = $('.editableToolbar'),
+          var toolbar = $('.pontoon-editable-toolbar'),
               curTarget = toolbar[0].target,
               newTarget = node;
           if ($(curTarget).attr('contentEditable') === 'true') {
@@ -421,10 +421,10 @@
        * node DOM node
        */
       function hideToolbar(node) {
-        if ($(node).is('.editableToolbar')) {
+        if ($(node).is('.pontoon-editable-toolbar')) {
           var toolbar = $(node);
         } else {
-          var toolbar = $('.editableToolbar');
+          var toolbar = $('.pontoon-editable-toolbar');
         }
         var toolbarNode = toolbar[0],
             target = toolbarNode.target;
@@ -470,7 +470,7 @@
        * Enable editable mode
        */
       function startEditing() {
-        var toolbar = $('.editableToolbar');
+        var toolbar = $('.pontoon-editable-toolbar');
         toolbar.children().show().end()
           .find('.edit').hide();
         var target = toolbar[0].target;
@@ -485,7 +485,7 @@
        * Disable editable mode
        */
       function stopEditing() {
-        var toolbar = $('.editableToolbar');
+        var toolbar = $('.pontoon-editable-toolbar');
         toolbar.children().hide().end()
           .find('.edit').show();
         var target = toolbar[0].target;
@@ -511,21 +511,21 @@
           } else if (message.type === "EDIT") {
             startEditing();
           } else if (message.type === "SAVE") {
-            $($('.editableToolbar')[0].target.entity.node).each(function() {
+            $($('.pontoon-editable-toolbar')[0].target.entity.node).each(function() {
               this.html(message.value);
             });
-            $('.editableToolbar > .save').click();
+            $('.pontoon-editable-toolbar > .save').click();
           } else if (message.type === "DELETE") {
-            var entity = $('.editableToolbar')[0].target.entity;
+            var entity = $('.pontoon-editable-toolbar')[0].target.entity;
             $(entity.node).each(function() {
               this.html(entity.original);
             });
             entity.translation = '';
             sendData();
             postMessage("UPDATE", entity.id);
-            $('.editableToolbar > .cancel').click();
+            $('.pontoon-editable-toolbar > .cancel').click();
           } else if (message.type === "CANCEL") {
-            $('.editableToolbar > .cancel').click();
+            $('.pontoon-editable-toolbar > .cancel').click();
           } else if (message.type === "MODE") {
             $("#context .mode").attr("label", message.value + " mode");
           } else if (message.type === "HTML") {
@@ -542,7 +542,7 @@
                   .find("script[src*='pontoon']").remove().end()
                   .find("script[src*='jquery.min.js']").remove().end()
                   .find(".pontoon-remove").remove().end()
-                  .find(".editableToolbar").remove().end()
+                  .find(".pontoon-editable-toolbar").remove().end()
                   .find("[contenteditable]").removeAttr("contenteditable").end()
                   .find("body").removeAttr("contextmenu").end()
                   .find("menu#context").remove();
@@ -573,7 +573,7 @@
 
       // Prepare editable toolbar
       var toolbar = $(
-        "<div class='editableToolbar'>" +
+        "<div class='pontoon-editable-toolbar'>" +
           "<a href='#' class='edit'></a>" +
           "<a href='#' class='save'></a>" +
           "<a href='#' class='cancel'></a>" +

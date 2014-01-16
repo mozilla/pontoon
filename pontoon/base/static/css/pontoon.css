@@ -4,7 +4,7 @@
   box-shadow: 0 0 5px #444444;
 }
 
-.editableToolbar {
+.pontoon-editable-toolbar {
   background-color: #EBEBEB;
   position: absolute;
   top: 0;
@@ -20,7 +20,7 @@
   -webkit-border-radius: 3px 3px 0 0;
 }
 
-.editableToolbar.bottom {
+.pontoon-editable-toolbar.bottom {
   border-top: none;
   border-bottom: 1px solid #AAAAAA;
 
@@ -29,13 +29,13 @@
   -webkit-border-radius: 0 0 3px 3px;
 }
 
-.editableToolbar:hover + * {
+.pontoon-editable-toolbar:hover + * {
   -moz-box-shadow: 0 0 5px #444444;
   -webkit-box-shadow: 0 0 5px #444444;
   box-shadow: 0 0 5px #444444;
 }
 
-.editableToolbar a {
+.pontoon-editable-toolbar a {
   background: transparent none 0 0 no-repeat;
   display: block;
   width: 16px;
@@ -44,16 +44,16 @@
   margin: 2px;
 }
 
-.editableToolbar .edit {    
+.pontoon-editable-toolbar .edit {
   background-image: url('../img/edit-active.png');
 }
 
-.editableToolbar .save {
+.pontoon-editable-toolbar .save {
   background-image: url('../img/save-active.png');
   display: none;
 }
 
-.editableToolbar .cancel {
+.pontoon-editable-toolbar .cancel {
   background-image: url('../img/cancel-active.png');
   display: none;
 }
