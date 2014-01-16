@@ -4,16 +4,6 @@
   box-shadow: 0 0 5px #444444;
 }
 
-.editableText {
-  min-height: 20px;
-}
-
-.editableText:hover {
-  -moz-box-shadow: 0 0 5px #444444;
-  -webkit-box-shadow: 0 0 5px #444444;
-  box-shadow: 0 0 5px #444444;
-}
-
 .editableToolbar {
   background-color: #EBEBEB;
   position: absolute;
