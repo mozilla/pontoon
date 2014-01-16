@@ -784,9 +784,14 @@ def commit_to_svn(request, template=None):
 
                     if line[0] == ';':
                         original = line[1:].strip()
-                        entity = Entity.objects.get(project=p, string=original)
-                        translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
 
+                        try:
+                            entity = Entity.objects.get(project=p, string=original)
+                        except Entity.DoesNotExist, e:
+                            log.error(path + ": Entity with string \"" + original + "\" does not exist in " + project)
+                            continue
+
+                        translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
                         if len(translations) == 0:
                             translation = original
                         else:
