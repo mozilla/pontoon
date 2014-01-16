@@ -955,12 +955,12 @@ var Pontoon = (function () {
       };
 
       // Search locales
-      $('.search').live("click.pontoon", function (e) {
+      $('.search').click(function (e) {
         e.stopPropagation();
-      }).live("keyup.pontoon", function(e) {
+      }).keyup(function(e) {
         var ul = $(this).siblings('ul'),
             val = $(this).val(),
-            // Only search a limited set
+            // Only search a limited set if defined
             limited = ul.find('li.limited').length > 0 ? '.limited' : '';
 
         ul
