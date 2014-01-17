@@ -410,6 +410,9 @@
         }
         $(newTarget)
           .addClass('pontoon-hovered')
+          .dblclick(function() {
+            $('.pontoon-editable-toolbar > .edit').click();
+          })
           // Prevent converting white-spaces at the beginning or
           // in the end of the node to &nbsp; and <br>
           .css('white-space', 'pre-wrap');
