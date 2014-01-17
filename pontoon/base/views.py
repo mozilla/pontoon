@@ -410,31 +410,43 @@ def update_translation(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    try:
-        """Update existing translation."""
-        t = Translation.objects.get(entity=e, locale=l, author=request.user.email)
+    translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
 
+    # No translation saved yet
+    if len(translations) == 0:
         if translation != '':
-            log.debug("Translation updated.")
-            t.string = translation
-            t.save()
-            return HttpResponse("updated")
-        else:
-            log.debug("Translation deleted.")
-            t.delete()
-            return HttpResponse("deleted")
-
-    except Translation.DoesNotExist:
-        """Save new translation."""
-        if translation != '':
-            t = Translation(entity=e, locale=l, string=translation, 
+            t = Translation(entity=e, locale=l, string=translation,
                 author=request.user.email, date=datetime.datetime.now())
             t.save()
             log.debug("Translation saved.")
             return HttpResponse("saved")
+
         else:
             log.debug("Translation not set.")
             return HttpResponse("not set")
+
+    # Translations exist
+    else:
+        if translation == '':
+            translations.delete()
+            log.debug("Translation deleted.")
+            return HttpResponse("deleted")
+
+        else:
+            # Translation by author exist
+            try:
+                t = translations.get(entity=e, locale=l, author=request.user.email)
+                t.string = translation
+                t.date = datetime.datetime.now()
+
+            # Translation by author doesn't exist
+            except Translation.DoesNotExist:
+                t = Translation(entity=e, locale=l, string=translation,
+                    author=request.user.email, date=datetime.datetime.now())
+
+            t.save()
+            log.debug("Translation updated.")
+            return HttpResponse("updated")
 
 def _generate_properties_content(url, locale):
     """
