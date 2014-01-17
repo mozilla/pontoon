@@ -327,8 +327,11 @@ def _extract_lang(project, locale, paths):
         for key, value in lang.items():
             _save_entity(project, key, value[0])
             if key != value[1]:
-                e = Entity.objects.get(project=project, string=key)
-                _save_translation(entity=e, locale=locale, translation=value[1])
+                try:
+                    e = Entity.objects.get(project=project, string=key)
+                    _save_translation(entity=e, locale=locale, translation=value[1])
+                except Entity.DoesNotExist:
+                    continue
 
         log.debug("[" + locale.code + "]: saved to DB.")
 
@@ -412,8 +415,11 @@ def _extract_po(project, locale, paths):
         for entity in entities:
             _save_entity(project, entity.msgid, entity.comment)
             if len(entity.msgstr) > 0:
-                e = Entity.objects.get(project=project, string=entity.msgid)
-                _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
+                try:
+                    e = Entity.objects.get(project=project, string=entity.msgid)
+                    _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
+                except Entity.DoesNotExist:
+                    continue
         log.debug("[" + locale.code + "]: saved to DB.")
 
 def update_from_repository(request, template=None):
