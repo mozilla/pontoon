@@ -41,7 +41,7 @@ def home(request, template=None):
     log.debug("Home view.")
 
     data = {
-        'accept_language': request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
+        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '').split(',')[0],
         'locales': Locale.objects.all(),
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
     }
