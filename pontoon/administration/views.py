@@ -185,7 +185,11 @@ def _get_locale_paths(source_paths, source_directory, locale_code):
 
     locale_paths = []
     for sp in source_paths:
-        locale_paths.append(sp.replace('/' + source_directory + '/', '/' + locale_code + '/').rstrip("t"))
+        if source_directory == locale_code:
+            path = sp
+        else:
+            path = sp.replace('/' + source_directory + '/', '/' + locale_code + '/').rstrip("t")
+        locale_paths.append(path)
     return locale_paths
 
 def _get_format_and_source_paths(path):
@@ -318,20 +322,72 @@ def _parse_lang(path):
 
     return trans
 
-def _extract_lang(project, locale, paths):
+def _extract_po(project, locale, paths, source_locale):
+    """Extract .po (gettext) files from paths and save or update in DB."""
+
+    for path in paths:
+        log.debug(path)
+        po = polib.pofile(path)
+        entities = [e for e in po if not e.obsolete]
+
+        if locale.code == source_locale:
+            for entity in entities:
+                _save_entity(project, entity.msgid, entity.comment)
+        else:
+            for entity in entities:
+                if len(entity.msgstr) > 0:
+                    try:
+                        e = Entity.objects.get(project=project, string=entity.msgid)
+                        _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
+                    except Entity.DoesNotExist:
+                        continue
+        log.debug("[" + locale.code + "]: saved to DB.")
+
+def _extract_properties(project, locale, paths, source_locale):
+    """Extract .properties files from paths and save or update in DB."""
+
+    for path in paths:
+        try:
+            f = open(path)
+            l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
+
+            locale_code = locale.code
+            if 'templates' in path:
+                locale_code = 'templates'
+            short_path = path.split(locale_code)[-1]
+
+            for line in l10nobject:
+                if isinstance(line, silme.core.entity.Entity):
+                    if locale.code == source_locale:
+                        _save_entity(project=project, original=line.value, key=line.id, source=short_path)
+                    else:
+                        try:
+                            e = Entity.objects.get(project=project, key=line.id, source=short_path)
+                            _save_translation(entity=e, locale=locale, translation=line.value)
+                        except Entity.DoesNotExist:
+                            continue
+            log.debug("[" + locale.code + "]: " + path + " saved to DB.")
+            f.close()
+        except IOError:
+            log.debug("[" + locale.code + "]: " + path + " doesn't exist. Skipping.")
+
+def _extract_lang(project, locale, paths, source_locale):
     """Extract .lang files from paths and save or update in DB."""
 
     for path in paths:
         lang = _parse_lang(path)
 
-        for key, value in lang.items():
-            _save_entity(project, key, value[0])
-            if key != value[1]:
-                try:
-                    e = Entity.objects.get(project=project, string=key)
-                    _save_translation(entity=e, locale=locale, translation=value[1])
-                except Entity.DoesNotExist:
-                    continue
+        if locale.code == source_locale:
+            for key, value in lang.items():
+                _save_entity(project, key, value[0])
+        else:
+            for key, value in lang.items():
+                if key != value[1]:
+                    try:
+                        e = Entity.objects.get(project=project, string=key)
+                        _save_translation(entity=e, locale=locale, translation=value[1])
+                    except Entity.DoesNotExist:
+                        continue
 
         log.debug("[" + locale.code + "]: saved to DB.")
 
@@ -356,6 +412,7 @@ def _extract_ini(project, path):
     if source_locale is None:
         raise Exception("error")
 
+    # Move source locale to the top, so we save entities first, then translations
     sections.insert(0, sections.pop(sections.index(source_locale)))
 
     for section in sections:
@@ -375,52 +432,6 @@ def _extract_ini(project, path):
                     log.debug("[" + section + "]: line ID " + item[0] + " is obsolete.")
                     continue
         log.debug("[" + section + "]: saved to DB.")
-
-def _extract_properties(project, locale, paths, source_locale):
-    """Extract .properties files from paths and save or update in DB."""
-
-    for path in paths:
-        try:
-            f = open(path)
-            l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
-
-            locale_code = locale.code
-            if 'templates' in path:
-                locale_code = 'templates'
-            short_path = path.split(locale_code)[-1]
-
-            for line in l10nobject:
-                if isinstance(line, silme.core.entity.Entity):
-                    if locale.code == source_locale:
-                        _save_entity(project=project, original=line.value, key=line.id, source=short_path)
-                    else:
-                        try:
-                            e = Entity.objects.get(project=project, key=line.id, source=short_path)
-                            _save_translation(entity=e, locale=locale, translation=line.value)
-                        except Entity.DoesNotExist:
-                            # [Too verbose] log.debug("[" + l.code + "]: " + "line ID " + line.id + " in " + short_path + " is obsolete.")
-                            continue
-            log.debug("[" + locale.code + "]: " + path + " saved to DB.")
-            f.close()
-        except IOError:
-            log.debug("[" + locale.code + "]: " + path + " doesn't exist. Skipping.")
-
-def _extract_po(project, locale, paths):
-    """Extract .po (gettext) files from paths and save or update in DB."""
-
-    for path in paths:
-        po = polib.pofile(path)
-        entities = [e for e in po if not e.obsolete]
-
-        for entity in entities:
-            _save_entity(project, entity.msgid, entity.comment)
-            if len(entity.msgstr) > 0:
-                try:
-                    e = Entity.objects.get(project=project, string=entity.msgid)
-                    _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
-                except Entity.DoesNotExist:
-                    continue
-        log.debug("[" + locale.code + "]: saved to DB.")
 
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
@@ -448,6 +459,8 @@ def update_from_repository(request, template=None):
 
         temp, file_extension = os.path.splitext(file_name)
         format = file_extension[1:].lower()
+        if format == 'pot':
+            format = 'po'
         p.format = format
         p.repository_path = repository_path_master
         p.save()
@@ -464,18 +477,18 @@ def update_from_repository(request, template=None):
             log.debug("IOError: " + str(e))
             return HttpResponse("error")
 
-        if format in ('po', 'pot'):
-            locales = p.locales.all()
-            for l in locales:
-                _extract_po(p, l, [file_path])
-
-        elif format == 'properties':
-            # .properties format only stores translations, so the input file has to contain source (en-US) strings
+        if format in ('po', 'properties', 'lang'):
             source_locale = 'en-US'
             locales = [Locale.objects.get(code=source_locale)]
             locales.extend(p.locales.all())
+
             for l in locales:
-                _extract_properties(p, l, [file_path], source_locale)
+                if format == 'po':
+                    _extract_po(p, l, [file_path], source_locale)
+                elif format == 'properties':
+                    _extract_properties(p, l, [file_path], source_locale)
+                elif format == 'lang':
+                    _extract_lang(p, l, [file_path], source_locale)
 
         elif format == 'ini':
             try:
@@ -483,11 +496,6 @@ def update_from_repository(request, template=None):
             except Exception, e:
                 os.remove(file_path)
                 return HttpResponse("error")
-
-        elif format == 'lang':
-            locales = p.locales.all()
-            for l in locales:
-                _extract_lang(p, l, [file_path])
 
         else:
             """ Not supported """
@@ -516,34 +524,34 @@ def update_from_repository(request, template=None):
         p.repository_path = repository_path
         p.save()
 
-        if format == 'po':
-            locales = p.locales.all()
-            for l in locales:
-                _extract_po(p, l, _get_locale_paths(source_paths, source_directory, l.code))
-
-        elif format == 'properties':
+        if format in ('po', 'properties', 'lang'):
+            # Extend project locales array with source locale
             if source_directory == 'templates':
                 source_locale = 'en-US'
             else:
                 source_locale = source_directory
             locales = [Locale.objects.get(code=source_locale)]
             locales.extend(p.locales.all())
+
             for index, l in enumerate(locales):
+                # source_directory could also be called templates
                 locale_code = l.code
                 if index == 0:
                     locale_code = source_directory
-                _extract_properties(p, l, _get_locale_paths(source_paths, source_directory, locale_code), source_locale)
+                locale_paths = _get_locale_paths(source_paths, source_directory, locale_code)
+
+                if format == 'po':
+                    _extract_po(p, l, locale_paths, source_locale)
+                elif format == 'properties':
+                    _extract_properties(p, l, locale_paths, source_locale)
+                elif format == 'lang':
+                   _extract_lang(p, l, locale_paths, source_locale)
 
         elif format == 'ini':
             try:
                 _extract_ini(p, source_paths[0])
             except Exception, e:
                 return HttpResponse("error")
-
-        elif format == 'lang':
-            locales = p.locales.all()
-            for l in locales:
-                _extract_lang(p, l, _get_locale_paths(source_paths, source_directory, l.code))
 
         else:
             """ Not supported """
