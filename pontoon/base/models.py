@@ -32,23 +32,23 @@ def create_user_profile(sender, instance, created, **kwargs):
             "is_vouched": True
         }
 
-        import logging
-        logger = logging.getLogger('pontoon')
+        import commonware
+        log = commonware.log.getLogger('pontoon')
 
+        log.debug(instance.email)
         try:
             r = requests.get(url, params=payload)
-            logger.debug(instance.email)
             email = instance.email
-
             for l in r.json["objects"]:
-                logger.debug(l["email"])
                 if email == l["email"]:
-                    logger.debug(l["full_name"])
                     can_localize = Permission.objects.get(codename="can_localize")
                     instance.user_permissions.add(can_localize)
-                    instance.first_name = l["full_name"]
+                    log.debug("Permission can_localize set.")
+
+                    # Fallback if profile does not allow accessing data
+                    instance.first_name = l.get("full_name", email)
                     instance.save()
-                    break
+                    break;
         except Exception:
             pass
 
