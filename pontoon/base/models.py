@@ -39,7 +39,7 @@ def create_user_profile(sender, instance, created, **kwargs):
         try:
             r = requests.get(url, params=payload)
             email = instance.email
-            for l in r.json["objects"]:
+            for l in r.json()["objects"]:
                 if email == l["email"]:
                     can_localize = Permission.objects.get(codename="can_localize")
                     instance.user_permissions.add(can_localize)

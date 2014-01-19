@@ -43,7 +43,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
 
 TEMPLATE_CONTEXT_PROCESSORS = list(TEMPLATE_CONTEXT_PROCESSORS) + [
-    'django_browserid.context_processors.browserid_form',
+    'django_browserid.context_processors.browserid',
 ]
 
 # Should robots.txt deny everything or disallow a calculated list of URLs we
