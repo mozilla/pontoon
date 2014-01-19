@@ -32,7 +32,7 @@ def create_user_profile(sender, instance, created, **kwargs):
             "is_vouched": True
         }
 
-        import commonware
+        import commonware.log
         log = commonware.log.getLogger('pontoon')
 
         log.debug(instance.email)
@@ -50,6 +50,7 @@ def create_user_profile(sender, instance, created, **kwargs):
                     instance.save()
                     break;
         except Exception:
+            log.debug("Is your MOZILLIANS_API_KEY set?")
             pass
 
 post_save.connect(create_user_profile, sender=User)
