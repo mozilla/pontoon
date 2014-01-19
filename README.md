@@ -76,7 +76,7 @@ To only update Playdoh submodules, do:
 
 Get involved
 ------------
-* File an [issue][issue]
+* File a [bug][bug]
 * Read more on the [Wiki][wiki]
 * Join #pontoon on [IRC][irc]
 * Follow us on [Twitter][twitter]
@@ -96,7 +96,7 @@ This software is licensed under the [New BSD License][BSD]. For more information
 [ga]: https://www.google.com/analytics/   "Google Analytics"
 [mak]: https://wiki.mozilla.org/Mozillians/API-Specification   "Mozillians API Specification"
 [irc]:  https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon   "Mibbit"
-[issue]:  https://github.com/mathjazz/pontoon/issues   "Pontoon issues"
+[bug]:  https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all   "Pontoon bugs"
 [wiki]:  https://github.com/mathjazz/pontoon/wiki   "Pontoon wiki"
 [twitter]:  https://twitter.com/#!/mozillapontoon   "Pontoon on Twitter"
 [BSD]: http://creativecommons.org/licenses/BSD/
