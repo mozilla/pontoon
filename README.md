@@ -1,8 +1,6 @@
 Pontoon
 =======
-Pontoon is a live website localization tool. Instead of extracting original strings and then merging translated strings back, Pontoon can turn any website into editable mode using the [contentEditable attribute][contentEditable].
-
-This enables localizers to translate websites in-place with context and spatial limitations right in front of them. A full list of extracted strings is also available, to help with strings that are hard to reach, e.g. error messages and the `<title>` tag.
+Pontoon enables localizers to translate websites in-place with context and spatial limitations right in front of them. A full list of extracted strings is also available, to help with strings that are hard to reach, e.g. error messages and the `<title>` tag.
 
 To enable localization of your site with Pontoon, simply include the script located at `/static/pontoon.js` to overcome cross frame scripting, and Pontoon will autodetect strings. Or, to make the best out of Pontoon, fully prepare your site with hooks that will mark strings for localization and include all the neccessary tags.
 
@@ -85,7 +83,6 @@ License
 -------
 This software is licensed under the [New BSD License][BSD]. For more information, read the file ``LICENSE``.
 
-[contentEditable]:  https://developer.mozilla.org/en/DOM/element.contentEditable   "Element.contentEditable - MDN"
 [playdoh]:  https://github.com/mozilla/playdoh   "Playdoh"
 [virtualbox]:  https://www.virtualbox.org/wiki/Downloads   "VirtualBox Download"
 [vagrant]:  http://vagrantup.com/docs/getting-started/index.html   "Vagrant: Getting Started"
