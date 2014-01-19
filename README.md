@@ -67,12 +67,12 @@ Updates
 -------
 To sync your repository with upstream changes, just update the code using git:
 
-`git pull && git submodule sync --quiet && git submodule update --init --recursive`
+* `git pull && git submodule sync --quiet && git submodule update --init --recursive`
 
 To only update Playdoh submodules, do:
 
-`git submodule foreach git pull origin master`
-`git commit -am "Updating Playdoh submodules"`
+* `git submodule foreach git pull origin master`
+* `git commit -am "Updating Playdoh submodules"`
 
 Get involved
 ------------
