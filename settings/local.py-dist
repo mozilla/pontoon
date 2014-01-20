@@ -9,7 +9,7 @@ from . import base
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'playdoh_app',
+        'NAME': 'pontoon',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '',
@@ -51,7 +51,7 @@ DEV = True
 # Playdoh ships with Bcrypt+HMAC by default because it's the most secure.
 # To use bcrypt, fill in a secret HMAC key. It cannot be blank.
 HMAC_KEYS = {
-    #'2012-06-06': 'some secret',
+    '2014-01-20': 'some secret',
 }
 
 from django_sha2 import get_password_hashers
@@ -83,7 +83,7 @@ ENGAGE_ROBOTS = True
 
 # Uncomment this line if you are running a local development install without
 # HTTPS to disable HTTPS-only cookies.
-#SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = ''
