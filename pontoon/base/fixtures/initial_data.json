@@ -2230,8 +2230,9 @@
         "fields": {
             "name": "gaia",
             "url": "http://browser.gaia.informationisart.com/",
-            "locales": [4,9,14,20,26,35,40,43,49,53,65,66,74,79,80,84,87,92,95,98,99,105,109,110,112,127,147,172,174,180,183,186,189,203,211,232,241,249,256,264,267,275,276],
-            "repository": "https://hg.mozilla.org/gaia-l10n/",
+            "locales": [85, 182, 185, 213],
+            "repository_type": "hg",
+            "repository": "https://hg.mozilla.org/gaia-l10n/en-US/",
             "external": "True",
             "links": "True"
         }
