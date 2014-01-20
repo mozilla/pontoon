@@ -29,22 +29,13 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set up P
  * `./manage.py runserver`
 7. Finally, point your web browser to [http://localhost:8000](http://localhost:8000).
 
-To work with SVN, [pysvn](http://pysvn.tigris.org/project_downloads.html) is required.
+To try Pontoon with the included testpilot project, [pysvn](http://pysvn.tigris.org/project_downloads.html) is required and `/pontoon/hooks/` folder has to be linked to or placed in your web server's document root.
 
 Local settings
 --------------
  * `MICROSOFT_TRANSLATOR_API_KEY`: set to a valid [Microsoft Translator API key](http://msdn.microsoft.com/en-us/library/hh454950) to use machine translation.
  * `GOOGLE_ANALYTICS_KEY`: set to a valid [Google Analytics key](https://www.google.com/analytics/) to use Google Analytics.
  * `MOZILLIANS_API_KEY`: set to a valid [Mozillians API key](https://wiki.mozilla.org/Mozillians/API-Specification) to grant permission to Mozilla localizers.
-
-Hooks
---------------
-To use PHP hooks:
- * Link `/hooks/` to your web server's document root.
- * Store Pontoon application path in the $path variable in `/hooks/php/local-settings.php` if different from `http://localhost:8000`.
-
-To extract strings, run:
- * `xgettext -L PHP --keyword=_w --from-code=UTF-8 --output=messages.pot *.php`
 
 Updates
 -------
