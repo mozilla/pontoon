@@ -83,9 +83,6 @@ def update_site(env, debug):
         ]
 
     commands += [
-        (CHDIR, os.path.join(here, 'vendor')),
-        (EXEC,  GIT_PULL % vendor_branch),
-        (EXEC,  GIT_SUBMODULE),
         (CHDIR, os.path.join(here)),
         (EXEC, './manage.py migrate'),
         (EXEC, './manage.py collectstatic --noinput'),
