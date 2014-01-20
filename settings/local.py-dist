@@ -85,6 +85,10 @@ ENGAGE_ROBOTS = True
 # HTTPS to disable HTTPS-only cookies.
 SESSION_COOKIE_SECURE = False
 
+# In production: if behind a load balancer, make request.is_secure()
+# and consequently django-browserid work again (bug 961545)
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_SSL', 'On')
+
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = ''
 
