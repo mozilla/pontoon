@@ -87,8 +87,8 @@ def update_site(env, debug):
         (EXEC,  GIT_PULL % vendor_branch),
         (EXEC,  GIT_SUBMODULE),
         (CHDIR, os.path.join(here)),
-        (EXEC, 'python2.6 manage.py migrate'),
-        (EXEC, 'python2.6 manage.py collectstatic --noinput'),
+        (EXEC, './manage.py migrate'),
+        (EXEC, './manage.py collectstatic --noinput'),
         # un-comment if you haven't moved to django-compressor yet
         #(EXEC, 'python2.6 manage.py compress_assets'),
     ]
