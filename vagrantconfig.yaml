@@ -1,5 +1,0 @@
-# Default config for Vagrant
-
-# Don't change this; use vagrantconfig_local.yaml to override these
-# settings instead.
-nfs: false
