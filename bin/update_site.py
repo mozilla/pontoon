@@ -24,9 +24,9 @@ VENDOR  = 1
 
 ENV_BRANCH = {
     # 'environment': [PROJECT_BRANCH, VENDOR_BRANCH],
-    'dev':   ['base',   'master'],
+    'dev':   ['master',   'master'],
     'stage': ['master', 'master'],
-    'prod':  ['prod',   'master'],
+    'prod':  ['master',   'master'],
 }
 
 # The URL of the SVN repository with the localization files (*.po). If you set
