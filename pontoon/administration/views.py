@@ -23,7 +23,6 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
-from pontoon.administration.utils.vcs import update_from_vcs
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request
 
