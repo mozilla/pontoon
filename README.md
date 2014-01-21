@@ -8,9 +8,8 @@ Installation
 ------------
 Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set up Ponton, you can either use their official [documentation](http://playdoh.readthedocs.org/en/latest/) or follow the steps below.
 
-1. Create a database
- * `mysql -u root`
- * `CREATE DATABASE pontoon CHARACTER SET utf8;`
+1. Create the database:
+ * `mysql -u root -e 'CREATE DATABASE pontoon CHARACTER SET utf8;'`
 2. Clone this repository or your [fork](http://help.github.com/fork-a-repo/):
  * `git clone --recursive https://github.com/mathjazz/pontoon.git`
  * `cd pontoon`
