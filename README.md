@@ -41,11 +41,6 @@ To sync your repository with upstream changes, just update the code using git:
 
 * `git pull && git submodule sync --quiet && git submodule update --init --recursive`
 
-To update submodules with upstream changes:
-
-* `git submodule foreach git pull origin master`
-* `git commit -am "Updating submodules with upstream changes"`
-
 Get involved
 ------------
 * File a [bug](https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all)
