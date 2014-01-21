@@ -26,14 +26,11 @@ from django.utils.translation import ugettext_lazy as _
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request
 
-from mobility.decorators import mobile_template
-
 
 log = commonware.log.getLogger('pontoon')
 
 
-@mobile_template('{mobile/}admin.html')
-def admin(request, template=None):
+def admin(request, template='admin.html'):
     """Admin interface."""
     log.debug("Admin interface.")
 
@@ -46,8 +43,7 @@ def admin(request, template=None):
 
     return render(request, template, data)
 
-@mobile_template('{mobile/}project.html')
-def manage_project(request, name=None, template=None):
+def manage_project(request, name=None, template='project.html'):
     """Admin interface: manage project."""
     log.debug("Admin interface: manage project.")
 

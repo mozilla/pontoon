@@ -29,14 +29,11 @@ from django_browserid import get_audience
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, UserProfile
 from session_csrf import anonymous_csrf_exempt
 
-from mobility.decorators import mobile_template
-
 
 log = commonware.log.getLogger('pontoon')
 
 
-@mobile_template('{mobile/}home.html')
-def home(request, template=None):
+def home(request, template='home.html'):
     """Home view."""
     log.debug("Home view.")
 
@@ -61,7 +58,6 @@ def home(request, template=None):
 
     return render(request, template, data)
 
-
 def handle_error(request):
     """
     A view to handle errors during loading a website for translation
@@ -77,9 +73,7 @@ def handle_error(request):
     }
     return HttpResponseRedirect(reverse('pontoon.home'))
 
-
-@mobile_template('{mobile/}translate.html')
-def translate_site(request, locale, url, template=None):
+def translate_site(request, locale, url, template='translate.html'):
     """Translate view: site."""
     log.debug("Translate view: site.")
 
@@ -201,8 +195,7 @@ def _get_entities(project, locale, page=None):
         entities_array.append(obj)
     return entities_array
 
-@mobile_template('{mobile/}translate.html')
-def translate_project(request, locale, project, page=None, template=None):
+def translate_project(request, locale, project, page=None, template='translate.html'):
     """Translate view: project."""
     log.debug("Translate view: project.")
 
