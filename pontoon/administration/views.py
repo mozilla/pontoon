@@ -12,7 +12,6 @@ import polib
 import silme.core, silme.format.properties
 import urllib2
 
-from celery.task import task
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -527,19 +526,6 @@ def update_from_repository(request, template=None):
         return HttpResponse('error')
 
     return HttpResponse("200")
-
-@task()
-def task_update_from_repository():
-    for project in Project.objects.all():
-        try:
-            repository_type = project.repository_type
-            repository_url = project.repository
-            repository_path_master = project.repository_path
-            _update_from_repository(
-                project, repository_type, repository_url,
-                repository_path_master)
-        except Exception as e:
-            log.debug('UpdateFromRepositoryTaskError: %s' % unicode(e))
 
 def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
