@@ -25,7 +25,7 @@ from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
 
-from pontoon.administration.utils.vcs import update_from_vcs
+from pontoon.administration.utils.vcs import update_from_vcs, PullFromRepositoryException
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request
 
@@ -387,9 +387,6 @@ def _extract_ini(project, path):
                     continue
         log.debug("[" + section + "]: saved to DB.")
 
-class UpdateFromRepositoryException(Exception):
-    pass
-
 def _update_from_repository(
         project, repository_type, repository_url, repository_path_master):
 
@@ -414,7 +411,7 @@ def _update_from_repository(
                 f.write(u.read().decode("utf-8-sig").encode("utf-8"))
         except IOError, e:
             log.debug("IOError: " + str(e))
-            raise UpdateFromRepositoryException(unicode(e))
+            raise PullFromRepositoryException(unicode(e))
 
         if format in ('po', 'properties', 'lang'):
             source_locale = 'en-US'
@@ -434,11 +431,11 @@ def _update_from_repository(
                 _extract_ini(project, file_path)
             except Exception, e:
                 os.remove(file_path)
-                raise UpdateFromRepositoryException(unicode(e))
+                raise PullFromRepositoryException(unicode(e))
 
         else:
             """ Not supported """
-            raise UpdateFromRepositoryException("Not supported")
+            raise PullFromRepositoryException("Not supported")
 
     elif repository_type in ('hg', 'svn'):
         """ Mercurial """
@@ -491,15 +488,15 @@ def _update_from_repository(
             try:
                 _extract_ini(project, source_paths[0])
             except Exception, e:
-                raise UpdateFromRepositoryException(unicode(e))
+                raise PullFromRepositoryException(unicode(e))
 
         else:
             """ Not supported """
-            raise UpdateFromRepositoryException("Not supported")
+            raise PullFromRepositoryException("Not supported")
 
     else:
         """ Not supported """
-        raise UpdateFromRepositoryException("Not supported")
+        raise PullFromRepositoryException("Not supported")
 
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
@@ -524,7 +521,7 @@ def update_from_repository(request, template=None):
     try:
         _update_from_repository(
             p, repository_type, repository_url, repository_path_master)
-    except UpdateFromRepositoryException as e:
+    except PullFromRepositoryException as e:
         return HttpResponse('error')
     except Exception as e:
         return HttpResponse('error')
