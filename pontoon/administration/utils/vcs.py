@@ -103,4 +103,4 @@ def update_from_vcs(repo_type, url, path):
             obj = PullFromSvn(url, path)
             obj.pull()
         except PullFromRepositoryException as e:
-            log.debug('SVN PullError for %s: %s' % (url, e))
+            log.debug('Subversion PullError for %s: %s' % (url, e))
