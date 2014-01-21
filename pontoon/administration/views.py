@@ -23,6 +23,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
+from pontoon.administration.utils.vcs import update_from_vcs
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request
 
@@ -322,22 +323,25 @@ def _extract_po(project, locale, paths, source_locale):
     """Extract .po (gettext) files from paths and save or update in DB."""
 
     for path in paths:
-        log.debug(path)
-        po = polib.pofile(path)
-        entities = [e for e in po if not e.obsolete]
+        try:
+            log.debug(path)
+            po = polib.pofile(path)
+            entities = [e for e in po if not e.obsolete]
 
-        if locale.code == source_locale:
-            for entity in entities:
-                _save_entity(project, entity.msgid, entity.comment)
-        else:
-            for entity in entities:
-                if len(entity.msgstr) > 0:
-                    try:
-                        e = Entity.objects.get(project=project, string=entity.msgid)
-                        _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
-                    except Entity.DoesNotExist:
-                        continue
-        log.debug("[" + locale.code + "]: saved to DB.")
+            if locale.code == source_locale:
+                for entity in entities:
+                    _save_entity(project, entity.msgid, entity.comment)
+            else:
+                for entity in entities:
+                    if len(entity.msgstr) > 0:
+                        try:
+                            e = Entity.objects.get(project=project, string=entity.msgid)
+                            _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
+                        except Entity.DoesNotExist:
+                            continue
+            log.debug("[" + locale.code + "]: saved to DB.")
+        except Exception as e:
+            log.critical('PoExtractError for %s: %s' % (path, e))
 
 def _extract_properties(project, locale, paths, source_locale):
     """Extract .properties files from paths and save or update in DB."""
