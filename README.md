@@ -35,7 +35,7 @@ To use SVN, pysvn is required, which cannot be installed using pip. Binary kits 
  * `cd Source`
  * `python setup.py configure`
  * `make`
- * `cp -R pysvn pontoon/env/lib/python2.7/site-packages/`
+ * `cp -R pysvn pontoon/env/lib/python2.X/site-packages/`
 
 Local settings
 --------------
