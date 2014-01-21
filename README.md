@@ -10,7 +10,7 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set up P
 
 1. Create a database
  * `mysql -u root`
- * `CREATE DATABASE pontoon;`
+ * `CREATE DATABASE pontoon CHARACTER SET utf8;`
 2. Clone this repository or your [fork](http://help.github.com/fork-a-repo/):
  * `git clone --recursive https://github.com/mathjazz/pontoon.git`
  * `cd pontoon`
