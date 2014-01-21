@@ -17,9 +17,8 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set up P
  * `virtualenv --no-site-packages env`
  * `source env/bin/activate`
  * `pip install -r requirements/compiled.txt -r requirements/prod.txt`
-4. Configure the settings:
+4. Configure the [settings](#local-settings):
  * `cp settings/local.py-dist settings/local.py`
- * `nano settings/local.py`
 5. Sync the database, run [migrations](http://south.readthedocs.org/) and create a super user:
  * `./manage.py syncdb --noinput`
  * `./manage.py migrate`
