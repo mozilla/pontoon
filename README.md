@@ -27,7 +27,15 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set up P
  * `./manage.py runserver`
 7. Finally, point your web browser to [http://localhost:8000](http://localhost:8000).
 
-To try Pontoon with the included testpilot project, [pysvn](http://pysvn.tigris.org/project_downloads.html) is required and `/pontoon/hooks/` folder has to be linked to or placed in your web server's document root.
+To try Pontoon with the included testpilot project, `/pontoon/hooks/` folder has to be linked to your web server's document root.
+
+To use SVN, pysvn is required, which cannot be installed using pip. Binary kits are available, or you can follow the steps below to install from source:
+
+ * Download and untar the latest [source kit](http://pysvn.tigris.org/project_downloads.html) under pysvn Extension.
+ * `cd Source`
+ * `python setup.py configure`
+ * `make`
+ * `cp -R pysvn pontoon/env/lib/python2.7/site-packages/`
 
 Local settings
 --------------
