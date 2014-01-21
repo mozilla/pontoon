@@ -23,6 +23,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
+from pontoon.administration.utils.vcs import update_from_vcs
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request
 
@@ -237,54 +238,6 @@ def _is_one_locale_repository(repository_url, repository_path_master):
 
     return source_directory, repository_url_master, repository_path
 
-def _update_hg(url, path):
-    """Clone or update HG repository."""
-    log.debug("Clone or update HG repository.")
-
-    # Folders need to be manually created
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-    # Doesn't work with unicode type
-    url = str(url)
-    path = str(path)
-
-    # First try updaiting the repo
-    from mercurial import commands, hg, ui, error
-    try:
-        repo = hg.repository(ui.ui(), path)
-        commands.pull(ui.ui(), repo, source=url)
-        commands.update(ui.ui(), repo)
-        log.debug("Mercurial: repository at " + url + " updated.")
-
-    # If it doesn't exist, clone it
-    except error.RepoError, e:
-        log.debug("Mercurial: " + str(e))
-        try:
-            commands.clone(ui.ui(), url, path)
-            log.debug("Mercurial: repository at " + url + " cloned.")
-        except Exception, e:
-            log.debug("Mercurial: " + str(e))
-
-def _update_svn(url, path):
-    """Checkout or update SVN repository."""
-    log.debug("Checkout or update SVN repository.")
-
-    import pysvn
-    client = pysvn.Client()
-    try:
-        client.checkout(url, path)
-    except pysvn.ClientError, e:
-        log.debug("Subversion: " + str(e))
-
-def _update_vcs(type, url, path):
-    """Checkout or update repository with a given url to the path."""
-
-    if type == 'hg':
-        _update_hg(url, path)
-    elif type == 'svn':
-        _update_svn(url, path)
-
 def _parse_lang(path):
     """Parse a dotlang file and return a dict of translations."""
     trans = {}
@@ -432,6 +385,120 @@ def _extract_ini(project, path):
                     continue
         log.debug("[" + section + "]: saved to DB.")
 
+class UpdateFromRepositoryException(Exception):
+    pass
+
+def _update_from_repository(
+        project, repository_type, repository_url, repository_path_master):
+
+    if repository_type == 'file':
+        file_name = repository_url.rstrip('/').rsplit('/', 1)[1]
+
+        temp, file_extension = os.path.splitext(file_name)
+        format = file_extension[1:].lower()
+        if format == 'pot':
+            format = 'po'
+        project.format = format
+        project.repository_path = repository_path_master
+        project.save()
+
+        # Store file to server
+        u = urllib2.urlopen(repository_url)
+        file_path = os.path.join(repository_path_master, file_name)
+        if not os.path.exists(repository_path_master):
+            os.makedirs(repository_path_master)
+        try:
+            with open(file_path, 'w') as f:
+                f.write(u.read().decode("utf-8-sig").encode("utf-8"))
+        except IOError, e:
+            log.debug("IOError: " + str(e))
+            raise UpdateFromRepositoryException(unicode(e))
+
+        if format in ('po', 'properties', 'lang'):
+            source_locale = 'en-US'
+            locales = [Locale.objects.get(code=source_locale)]
+            locales.extend(project.locales.all())
+
+            for l in locales:
+                if format == 'po':
+                    _extract_po(project, l, [file_path], source_locale)
+                elif format == 'properties':
+                    _extract_properties(project, l, [file_path], source_locale)
+                elif format == 'lang':
+                    _extract_lang(project, l, [file_path], source_locale)
+
+        elif format == 'ini':
+            try:
+                _extract_ini(project, file_path)
+            except Exception, e:
+                os.remove(file_path)
+                raise UpdateFromRepositoryException(unicode(e))
+
+        else:
+            """ Not supported """
+            raise UpdateFromRepositoryException("Not supported")
+
+    elif repository_type in ('hg', 'svn'):
+        """ Mercurial """
+        # Update repository URL and path if one-locale repository
+        source_directory, repository_url_master, repository_path = _is_one_locale_repository(repository_url, repository_path_master)
+
+        update_from_vcs(repository_type, repository_url, repository_path)
+
+        # Get file format and paths to source files
+        if source_directory is False:
+            source_directory, source_directory_path = _get_source_directory(repository_path)
+            format, source_paths = _get_format_and_source_paths(os.path.join(source_directory_path, source_directory))
+        else:
+            format, source_paths = _get_format_and_source_paths(repository_path)
+
+            # Get remaining repositories if one-locale repository specified
+            for l in project.locales.all():
+                update_from_vcs(
+                    repository_type, os.path.join(repository_url_master, l.code),
+                    os.path.join(repository_path_master, l.code))
+
+        project.format = format
+        project.repository_path = repository_path
+        project.save()
+
+        if format in ('po', 'properties', 'lang'):
+            # Extend project locales array with source locale
+            if source_directory == 'templates':
+                source_locale = 'en-US'
+            else:
+                source_locale = source_directory
+            locales = [Locale.objects.get(code=source_locale)]
+            locales.extend(project.locales.all())
+
+            for index, l in enumerate(locales):
+                # source_directory could also be called templates
+                locale_code = l.code
+                if index == 0:
+                    locale_code = source_directory
+                locale_paths = _get_locale_paths(source_paths, source_directory, locale_code)
+
+                if format == 'po':
+                    _extract_po(project, l, locale_paths, source_locale)
+                elif format == 'properties':
+                    _extract_properties(project, l, locale_paths, source_locale)
+                elif format == 'lang':
+                   _extract_lang(project, l, locale_paths, source_locale)
+
+        elif format == 'ini':
+            try:
+                _extract_ini(project, source_paths[0])
+            except Exception, e:
+                raise UpdateFromRepositoryException(unicode(e))
+
+        else:
+            """ Not supported """
+            raise UpdateFromRepositoryException("Not supported")
+
+    else:
+        """ Not supported """
+        raise UpdateFromRepositoryException("Not supported")
+
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
@@ -452,113 +519,13 @@ def update_from_repository(request, template=None):
         return HttpResponse("error")
 
     repository_path_master = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
-
-    if repository_type == 'file':
-        file_name = repository_url.rstrip('/').rsplit('/', 1)[1]
-
-        temp, file_extension = os.path.splitext(file_name)
-        format = file_extension[1:].lower()
-        if format == 'pot':
-            format = 'po'
-        p.format = format
-        p.repository_path = repository_path_master
-        p.save()
-
-        # Store file to server
-        u = urllib2.urlopen(repository_url)
-        file_path = os.path.join(repository_path_master, file_name)
-        if not os.path.exists(repository_path_master):
-            os.makedirs(repository_path_master)
-        try:
-            with open(file_path, 'w') as f:
-                f.write(u.read().decode("utf-8-sig").encode("utf-8"))
-        except IOError, e:
-            log.debug("IOError: " + str(e))
-            return HttpResponse("error")
-
-        if format in ('po', 'properties', 'lang'):
-            source_locale = 'en-US'
-            locales = [Locale.objects.get(code=source_locale)]
-            locales.extend(p.locales.all())
-
-            for l in locales:
-                if format == 'po':
-                    _extract_po(p, l, [file_path], source_locale)
-                elif format == 'properties':
-                    _extract_properties(p, l, [file_path], source_locale)
-                elif format == 'lang':
-                    _extract_lang(p, l, [file_path], source_locale)
-
-        elif format == 'ini':
-            try:
-                _extract_ini(p, file_path)
-            except Exception, e:
-                os.remove(file_path)
-                return HttpResponse("error")
-
-        else:
-            """ Not supported """
-            return HttpResponse("error")
-
-    elif repository_type in ('hg', 'svn'):
-        """ Mercurial """
-        # Update repository URL and path if one-locale repository
-        source_directory, repository_url_master, repository_path = _is_one_locale_repository(repository_url, repository_path_master)
-
-        _update_vcs(repository_type, repository_url, repository_path)
-
-        # Get file format and paths to source files
-        if source_directory is False:
-            source_directory, source_directory_path = _get_source_directory(repository_path)
-            format, source_paths = _get_format_and_source_paths(os.path.join(source_directory_path, source_directory))
-        else:
-            format, source_paths = _get_format_and_source_paths(repository_path)
-
-            # Get remaining repositories if one-locale repository specified
-            for l in p.locales.all():
-                _update_vcs(repository_type, os.path.join(repository_url_master, l.code),
-                    os.path.join(repository_path_master, l.code))
-
-        p.format = format
-        p.repository_path = repository_path
-        p.save()
-
-        if format in ('po', 'properties', 'lang'):
-            # Extend project locales array with source locale
-            if source_directory == 'templates':
-                source_locale = 'en-US'
-            else:
-                source_locale = source_directory
-            locales = [Locale.objects.get(code=source_locale)]
-            locales.extend(p.locales.all())
-
-            for index, l in enumerate(locales):
-                # source_directory could also be called templates
-                locale_code = l.code
-                if index == 0:
-                    locale_code = source_directory
-                locale_paths = _get_locale_paths(source_paths, source_directory, locale_code)
-
-                if format == 'po':
-                    _extract_po(p, l, locale_paths, source_locale)
-                elif format == 'properties':
-                    _extract_properties(p, l, locale_paths, source_locale)
-                elif format == 'lang':
-                   _extract_lang(p, l, locale_paths, source_locale)
-
-        elif format == 'ini':
-            try:
-                _extract_ini(p, source_paths[0])
-            except Exception, e:
-                return HttpResponse("error")
-
-        else:
-            """ Not supported """
-            return HttpResponse("error")
-
-    else:
-        """ Not supported """
-        return HttpResponse("error")
+    try:
+        _update_from_repository(
+            p, repository_type, repository_url, repository_path_master)
+    except UpdateFromRepositoryException as e:
+        return HttpResponse('error')
+    except Exception as e:
+        return HttpResponse('error')
 
     return HttpResponse("200")
 
