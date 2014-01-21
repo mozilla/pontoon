@@ -12,6 +12,7 @@ import polib
 import silme.core, silme.format.properties
 import urllib2
 
+from celery.task import task
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -23,6 +24,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
+
 from pontoon.administration.utils.vcs import update_from_vcs
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
 from pontoon.base.views import _request
@@ -528,6 +530,19 @@ def update_from_repository(request, template=None):
         return HttpResponse('error')
 
     return HttpResponse("200")
+
+@task()
+def task_update_from_repository():
+    for project in Project.objects.all():
+        try:
+            repository_type = project.repository_type
+            repository_url = project.repository
+            repository_path_master = project.repository_path
+            _update_from_repository(
+                project, repository_type, repository_url,
+                repository_path_master)
+        except Exception as e:
+            log.debug('UpdateFromRepositoryTaskError: %s' % unicode(e))
 
 def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
