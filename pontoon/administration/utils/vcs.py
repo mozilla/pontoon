@@ -4,7 +4,7 @@ from __future__ import absolute_import
 import pysvn
 from mercurial import commands, hg, ui, error
 import os
-import commonware
+import commonware.log
 
 
 log = commonware.log.getLogger('pontoon')
