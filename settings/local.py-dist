@@ -67,9 +67,9 @@ ENGAGE_ROBOTS = True
 # CELERY_ALWAYS_EAGER = False  # required to activate celeryd
 # BROKER_HOST = 'localhost'
 # BROKER_PORT = 5672
-# BROKER_USER = 'playdoh'
-# BROKER_PASSWORD = 'playdoh'
-# BROKER_VHOST = 'playdoh'
+# BROKER_USER = 'pontoon'
+# BROKER_PASSWORD = 'pontoon'
+# BROKER_VHOST = 'pontoon'
 # CELERY_RESULT_BACKEND = 'amqp'
 
 ## Log settings
