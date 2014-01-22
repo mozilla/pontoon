@@ -58,6 +58,7 @@ def home(request, template='home.html'):
 
     return render(request, template, data)
 
+
 def handle_error(request):
     """
     A view to handle errors during loading a website for translation
@@ -72,6 +73,7 @@ def handle_error(request):
         'url': request.GET.get('url')
     }
     return HttpResponseRedirect(reverse('pontoon.home'))
+
 
 def translate_site(request, locale, url, template='translate.html'):
     """Translate view: site."""
@@ -155,6 +157,7 @@ def translate_site(request, locale, url, template='translate.html'):
         return HttpResponseRedirect(reverse('pontoon.translate.project.page',
         kwargs={'locale': locale, 'project': p.name, 'page': page}))
 
+
 def _get_entities(project, locale, page=None):
     """Load all project entities and translations."""
     log.debug("Load all project entities and translations.")
@@ -194,6 +197,7 @@ def _get_entities(project, locale, page=None):
 
         entities_array.append(obj)
     return entities_array
+
 
 def translate_project(request, locale, project, page=None, template='translate.html'):
     """Translate view: project."""
@@ -277,6 +281,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
 
     return render(request, template, data)
 
+
 def _request(type, project, resource, locale, username, password, payload=False):
     """
     Make request to Transifex server.
@@ -334,6 +339,7 @@ def _request(type, project, resource, locale, username, password, payload=False)
         log.debug('Generic exception: ' + traceback.format_exc())
         return "error"
 
+
 def get_translation(request, template=None):
     """Get entity translation for the specified locale."""
     log.debug("Get entity translation for the specified locale.")
@@ -370,6 +376,7 @@ def get_translation(request, template=None):
         translation = translations.reverse()[0].string
         log.debug("Translation: " + translation)
         return HttpResponse(translation)
+
 
 @login_required(redirect_field_name='', login_url='/404')
 def update_translation(request, template=None):
@@ -441,6 +448,7 @@ def update_translation(request, template=None):
             log.debug("Translation updated.")
             return HttpResponse("updated")
 
+
 def _generate_properties_content(url, locale):
     """
     Generate .properties file content.
@@ -500,6 +508,7 @@ def _generate_properties_content(url, locale):
     properties = unicode(content).encode('utf-8')
     return (properties, subpage)
 
+
 def _generate_po_content(data):
     """
     Generate .po file content from data JSON.
@@ -553,6 +562,7 @@ def _generate_po_content(data):
         po.append(po_entry)
     return unicode(po).encode('utf-8')
 
+
 def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations.")
@@ -585,6 +595,7 @@ def download(request, template=None):
             '.' + type
     return response
 
+
 def _get_locale_repository_path(path, locale):
     """Get path to locale directory."""
     log.debug("Get path to locale directory.")
@@ -600,6 +611,7 @@ def _get_locale_repository_path(path, locale):
     # Fallback to project's repository_path
     return path
 
+
 def _get_locale_paths(path, format):
     """Get paths to locale files."""
 
@@ -613,6 +625,7 @@ def _get_locale_paths(path, format):
             locale_paths.append(os.path.join(root, filename))
 
     return locale_paths
+
 
 @login_required(redirect_field_name='', login_url='/404')
 def commit_to_svn(request, template=None):
@@ -789,6 +802,7 @@ def commit_to_svn(request, template=None):
         log.debug(str(e))
         return HttpResponse("error")
 
+
 @login_required(redirect_field_name='', login_url='/404')
 def save_to_transifex(request, template=None):
     """Save translations to Transifex."""
@@ -839,6 +853,7 @@ def save_to_transifex(request, template=None):
     except AttributeError:
         return HttpResponse(response)
 
+
 @anonymous_csrf_exempt
 def verify(request, template=None):
     """Verify BrowserID assertion, and return whether a user is registered."""
@@ -865,6 +880,7 @@ def verify(request, template=None):
         }
 
     return HttpResponse(json.dumps(response), mimetype='application/json')
+
 
 def get_csrf(request, template=None):
     """Get CSRF token."""

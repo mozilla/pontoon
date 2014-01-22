@@ -45,6 +45,7 @@ def admin(request, template='admin.html'):
 
     return render(request, template, data)
 
+
 def manage_project(request, name=None, template='project.html'):
     """Admin interface: manage project."""
     log.debug("Admin interface: manage project.")
@@ -119,6 +120,7 @@ def manage_project(request, name=None, template='project.html'):
 
     return render(request, template, data)
 
+
 @transaction.commit_manually
 def delete_project(request, pk, template=None):
     """Admin interface: delete project."""
@@ -147,6 +149,7 @@ def delete_project(request, pk, template=None):
         return HttpResponseRedirect(reverse('pontoon.admin.project',
             args=[project.name]))
 
+
 def _save_entity(project, original, comment="", key="", source=""):
     """Admin interface: save new or update existing entity in DB."""
 
@@ -163,6 +166,7 @@ def _save_entity(project, original, comment="", key="", source=""):
         e.comment = comment
     e.save()
 
+
 def _save_translation(entity, locale, translation, author=""):
     """Admin interface: save new or update existing translation in DB."""
 
@@ -178,6 +182,7 @@ def _save_translation(entity, locale, translation, author=""):
         t.date = datetime.datetime.now()
     t.save()
 
+
 def _get_locale_paths(source_paths, source_directory, locale_code):
     """Get paths to locale files."""
 
@@ -189,6 +194,7 @@ def _get_locale_paths(source_paths, source_directory, locale_code):
             path = sp.replace('/' + source_directory + '/', '/' + locale_code + '/').rstrip("t")
         locale_paths.append(path)
     return locale_paths
+
 
 def _get_format_and_source_paths(path):
     """Get file format based on extensions and paths to source files."""
@@ -209,6 +215,7 @@ def _get_format_and_source_paths(path):
 
     return format, source_paths
 
+
 def _get_source_directory(path):
     """Get name and path of the directory with source strings."""
     log.debug("Get name and path of the directory with source strings.")
@@ -225,6 +232,7 @@ def _get_source_directory(path):
     # INI Format
     return '', path
 
+
 def _is_one_locale_repository(repository_url, repository_path_master):
     """Check if repository contains one or multiple locales."""
 
@@ -238,6 +246,7 @@ def _is_one_locale_repository(repository_url, repository_path_master):
         repository_path = os.path.join(repository_path_master, source_directory)
 
     return source_directory, repository_url_master, repository_path
+
 
 def _parse_lang(path):
     """Parse a dotlang file and return a dict of translations."""
@@ -272,6 +281,7 @@ def _parse_lang(path):
 
     return trans
 
+
 def _extract_po(project, locale, paths, source_locale):
     """Extract .po (gettext) files from paths and save or update in DB."""
 
@@ -295,6 +305,7 @@ def _extract_po(project, locale, paths, source_locale):
             log.debug("[" + locale.code + "]: saved to DB.")
         except Exception as e:
             log.critical('PoExtractError for %s: %s' % (path, e))
+
 
 def _extract_properties(project, locale, paths, source_locale):
     """Extract .properties files from paths and save or update in DB."""
@@ -324,6 +335,7 @@ def _extract_properties(project, locale, paths, source_locale):
         except IOError:
             log.debug("[" + locale.code + "]: " + path + " doesn't exist. Skipping.")
 
+
 def _extract_lang(project, locale, paths, source_locale):
     """Extract .lang files from paths and save or update in DB."""
 
@@ -343,6 +355,7 @@ def _extract_lang(project, locale, paths, source_locale):
                         continue
 
         log.debug("[" + locale.code + "]: saved to DB.")
+
 
 def _extract_ini(project, path):
     """Extract .ini file from path and save or update in DB."""
@@ -385,6 +398,7 @@ def _extract_ini(project, path):
                     log.debug("[" + section + "]: line ID " + item[0] + " is obsolete.")
                     continue
         log.debug("[" + section + "]: saved to DB.")
+
 
 def _update_from_repository(
         project, repository_type, repository_url, repository_path_master):
@@ -497,6 +511,7 @@ def _update_from_repository(
         """ Not supported """
         raise PullFromRepositoryException("Not supported")
 
+
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
@@ -526,6 +541,7 @@ def update_from_repository(request, template=None):
         return HttpResponse('error')
 
     return HttpResponse("200")
+
 
 def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
