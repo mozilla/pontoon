@@ -1,5 +1,7 @@
 
 import os
+import datetime
+
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from pontoon.administration.views import _update_from_repository
@@ -19,6 +21,8 @@ class Command(BaseCommand):
                 _update_from_repository(
                     project, repository_type, repository_url,
                     repository_path_master)
-                self.stdout.write('Successfully updated project "%s"' % project)
+                now = datetime.datetime.now()
+                self.stdout.write('[%s]: Successfully updated project "%s"\n' % (now, project))
             except Exception as e:
-                raise CommandError('UpdateProjectsFromRepositoryError: %s' % unicode(e))
+                now = datetime.datetime.now()
+                raise CommandError('[%s]: UpdateProjectsFromRepositoryError: %s\n' % (now, unicode(e)))
