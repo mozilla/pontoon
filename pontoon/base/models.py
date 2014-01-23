@@ -150,21 +150,21 @@ class ProjectForm(ModelForm):
 
     def clean(self):
         cleaned_data = super(ProjectForm, self).clean()
-        repository = cleaned_data.get("repository")
+        repository_url = cleaned_data.get("repository_url")
         repository_type = cleaned_data.get("repository_type")
         transifex_project = cleaned_data.get("transifex_project")
         transifex_resource = cleaned_data.get("transifex_resource")
 
         if repository_type == 'Transifex':
             if not transifex_project:
-                self._errors["repository"] = self.error_class([u"You need to provide Transifex project and resource."])
+                self._errors["repository_url"] = self.error_class([u"You need to provide Transifex project and resource."])
                 del cleaned_data["transifex_resource"]
 
             if not transifex_resource:
-                self._errors["repository"] = self.error_class([u"You need to provide Transifex project and resource."])
+                self._errors["repository_url"] = self.error_class([u"You need to provide Transifex project and resource."])
                 del cleaned_data["transifex_project"]
 
-        elif not repository:
-            self._errors["repository"] = self.error_class([u"You need to provide a valid URL."])
+        elif not repository_url:
+            self._errors["repository_url"] = self.error_class([u"You need to provide a valid URL."])
 
         return cleaned_data
