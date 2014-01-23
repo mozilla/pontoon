@@ -2223,19 +2223,6 @@
         }
     },
     {
-        "model": "base.project",
-        "pk": 2,
-        "fields": {
-            "name": "gaia",
-            "url": "http://browser.gaia.informationisart.com/",
-            "locales": [85, 182, 185, 213],
-            "repository_type": "hg",
-            "repository": "https://hg.mozilla.org/gaia-l10n/en-US/",
-            "external": "True",
-            "links": "True"
-        }
-    },
-    {
         "model": "base.subpage",
         "pk": 1,
         "fields": {
@@ -2269,96 +2256,6 @@
             "project": 1,
             "name": "Privacy Policy",
             "url": "http://localhost/pontoon/hooks/php/test/testpilot/?page=privacy.php"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 5,
-        "fields": {
-            "project": 2,
-            "name": "Browser",
-            "url": "http://browser.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 6,
-        "fields": {
-            "project": 2,
-            "name": "Camera",
-            "url": "http://camera.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 7,
-        "fields": {
-            "project": 2,
-            "name": "Clock",
-            "url": "http://clock.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 8,
-        "fields": {
-            "project": 2,
-            "name": "FM",
-            "url": "http://fm.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 9,
-        "fields": {
-            "project": 2,
-            "name": "Gallery",
-            "url": "http://gallery.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 10,
-        "fields": {
-            "project": 2,
-            "name": "Music",
-            "url": "http://music.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 11,
-        "fields": {
-            "project": 2,
-            "name": "SMS",
-            "url": "http://sms.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 12,
-        "fields": {
-            "project": 2,
-            "name": "Video",
-            "url": "http://video.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 13,
-        "fields": {
-            "project": 2,
-            "name": "Dialer",
-            "url": "http://dialer.gaia.informationisart.com/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 14,
-        "fields": {
-            "project": 2,
-            "name": "Contacts",
-            "url": "http://contacts.gaia.informationisart.com/"
         }
     }
 ]
