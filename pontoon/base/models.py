@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.forms import ModelForm
 
+
 class UserProfile(models.Model):
     # This field is required.
     user = models.OneToOneField(User)
@@ -15,6 +16,7 @@ class UserProfile(models.Model):
     transifex_password = models.CharField(max_length=128, blank=True)
     svn_username = models.CharField(max_length=40, blank=True)
     svn_password = models.CharField(max_length=128, blank=True)
+
 
 # For every newly created user
 def create_user_profile(sender, instance, created, **kwargs):
@@ -55,12 +57,14 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 post_save.connect(create_user_profile, sender=User)
 
+
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
 
     def __unicode__(self):
         return self.name
+
 
 class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
@@ -108,6 +112,7 @@ class Project(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class Subpage(models.Model):
     project = models.ForeignKey(Project)
     name = models.CharField(max_length=128)
@@ -115,6 +120,7 @@ class Subpage(models.Model):
 
     def __unicode__(self):
         return self.name
+
 
 class Entity(models.Model):
     project = models.ForeignKey(Project)
@@ -126,6 +132,7 @@ class Entity(models.Model):
     def __unicode__(self):
         return self.string
 
+
 class Translation(models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
@@ -135,6 +142,7 @@ class Translation(models.Model):
 
     def __unicode__(self):
         return self.string
+
 
 class ProjectForm(ModelForm):
     class Meta:
