@@ -811,7 +811,7 @@ def commit_to_svn(request, template=None):
         return HttpResponse("error")
 
     """Save SVN username and password."""
-    if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
+    if data.get('auth', {}).get('remember', {}) == 1:
         if profile.svn_username != username:
             profile.svn_username = username
         if base64.decodestring(profile.svn_password) != password:
@@ -862,7 +862,7 @@ def save_to_transifex(request, template=None):
     response = _request('put', p.transifex_project, p.transifex_resource, data['locale'], username, password, payload)
 
     """Save Transifex username and password."""
-    if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
+    if data.get('auth', {}).get('remember', {}) == 1:
         profile.transifex_username = data['auth']['username']
         profile.transifex_password = base64.encodestring(data['auth']['password'])
         profile.save()
