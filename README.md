@@ -6,36 +6,41 @@ To enable localization of your site with Pontoon, include a script to overcome c
 
 Installation
 ------------
-Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set up Ponton, you can either use their official [documentation](http://playdoh.readthedocs.org/en/latest/) or follow the steps below.
+Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set it up, you can either use Playdoh's official [documentation](http://playdoh.readthedocs.org/en/latest/) or follow the steps below.
 
-1. Create the database:
- * `mysql -u root -e 'CREATE DATABASE pontoon CHARACTER SET utf8;'`
-2. Clone this repository or your [fork](http://help.github.com/fork-a-repo/):
+1. Clone this repository or your [fork](http://help.github.com/fork-a-repo/):
  * `git clone --recursive https://github.com/mathjazz/pontoon.git`
  * `cd pontoon`
-3. Create and set up the [virtual environment](http://www.virtualenv.org/en/latest/index.html):
+2. Create and set up the [virtual environment](http://www.virtualenv.org/en/latest/index.html):
  * `virtualenv --no-site-packages env`
  * `source env/bin/activate`
  * `pip install -r requirements/compiled.txt -r requirements/prod.txt`
-4. Configure the [settings](#local-settings):
+3. Configure the [settings](#local-settings):
  * `cp settings/local.py-dist settings/local.py`
-5. Sync the database, run [migrations](http://south.readthedocs.org/) and create a super user:
- * `./manage.py syncdb --noinput`
- * `./manage.py migrate`
- * `./manage.py createsuperuser`
-6. Run the development server:
+4. Set up the database:
+ * `mysql -u root -e 'CREATE DATABASE pontoon CHARACTER SET utf8;'`
+ * `./manage.py syncdb --noinput && ./manage.py migrate`
+5. Run the development server:
  * `./manage.py runserver`
-7. Finally, point your web browser to [http://localhost:8000](http://localhost:8000).
 
-To try Pontoon with the included testpilot project, `/pontoon/hooks/` folder has to be linked to your web server's document root.
+And that's it, just point your web browser to [http://localhost:8000](http://localhost:8000) and Pontoon's homepage should apear.
 
-To use SVN, pysvn is required, which cannot be installed using pip. Binary kits are available, or you can follow the steps below to install from source:
+Test project
+------------
+It gets much more exciting if you add at least one project, so you can try how the localization with Pontoon actually works. We created a simple website in PHP that uses SVN repository for storing localization files. Here's how you set it up:
 
+1. Move or link main Pontoon project folder (`pontoon/`) to your web server's document root, which should be capable of running PHP.
+2. Install [pysvn](http://pysvn.tigris.org/project_downloads.html) to work with the SVN repository. Binaries are available for most popular platforms, but you can also install it from source:
  * Download and untar the latest [source kit](http://pysvn.tigris.org/project_downloads.html) under pysvn Extension.
  * `cd Source`
  * `python setup.py configure`
  * `make`
  * `cp -R pysvn pontoon/env/lib/python2.X/site-packages/`
+3. Run project from localization files stored in SVN repository:
+ * `./manage.py update_projects`
+
+You can also add your own project at [http://localhost:8000/admin/](http://localhost:8000/admin/), but you need an admin account for that:
+ * `./manage.py createsuperuser`
 
 Local settings
 --------------
