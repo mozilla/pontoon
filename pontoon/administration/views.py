@@ -522,7 +522,7 @@ def update_from_repository(request, template=None):
     try:
         pk = request.POST['pk']
         repository_type = request.POST['repository_type']
-        repository_url = request.POST['repository']
+        repository_url = request.POST['repository_url']
     except MultiValueDictKeyError:
         return HttpResponse("error")
 

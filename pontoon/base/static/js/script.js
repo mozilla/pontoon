@@ -293,7 +293,7 @@
           csrfmiddlewaretoken: $('#server').data('csrf')
         }
         if (source === 'repository') {
-          params.repository = $('input[name=repository]').val();
+          params.repository_url = $('input[name=repository_url]').val();
           params.repository_type = $('select[name=repository_type]').val();
         } else if (source === 'transifex') {
           if ($(this).parents('.popup').length === 0) {

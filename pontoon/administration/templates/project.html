@@ -93,8 +93,8 @@
         </section>
         <section class="details-wrapper" data-repository-type="{{ form.repository_type.value()|lower }}">
             <div class="repo">
-                {{ form.repository.label_tag() }}
-                {{ form.repository }}
+                {{ form.repository_url.label_tag() }}
+                {{ form.repository_url }}
                 {% if pk %}
                 <button title="{{ _('Update all locales from repository') }}" data-source="repository" class="button update">
                     <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from repository') }}" />
@@ -125,7 +125,7 @@
                 {% endif %}
             </div>
         </section>
-        {{ form.repository.errors }}
+        {{ form.repository_url.errors }}
         {{ form.transifex_project.errors }}
         {{ form.transifex_resource.errors }}
     </div>

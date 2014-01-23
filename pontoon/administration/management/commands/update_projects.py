@@ -14,7 +14,7 @@ class Command(BaseCommand):
         for project in Project.objects.all():
             try:
                 repository_type = project.repository_type
-                repository_url = project.repository
+                repository_url = project.repository_url
                 repository_path_master = os.path.join(settings.MEDIA_ROOT,
                     repository_type, project.name)
 
