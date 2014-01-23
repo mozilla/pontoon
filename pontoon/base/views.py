@@ -641,14 +641,6 @@ def commit_to_svn(request, template=None):
     except MultiValueDictKeyError:
         return HttpResponse("error")
 
-    """Check if user authenticated to SVN."""
-    profile, created = UserProfile.objects.get_or_create(user=request.user)
-
-    username = data.get('auth', {}).get('username', profile.svn_username)
-    password = data.get('auth', {}).get('password', base64.decodestring(profile.svn_password))
-    if (len(username) == 0 or len(password) == 0):
-        return HttpResponse("authenticate")
-
     try:
         locale = Locale.objects.get(code=data['locale'])
     except Locale.DoesNotExist:
@@ -783,24 +775,51 @@ def commit_to_svn(request, template=None):
                 lines.writelines(content)
                 log.debug("File updated: " + path)
 
-    """Save SVN username and password."""
-    if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
-        profile.svn_username = data['auth']['username']
-        profile.svn_password = base64.encodestring(data['auth']['password'])
-        profile.save()
-
     client = pysvn.Client()
-    client.set_default_username(username)
-    client.set_default_password(password)
+    client.exception_style = 1
+
+    """Check if user authenticated to SVN."""
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    username = data.get('auth', {}).get('username', profile.svn_username)
+    password = data.get('auth', {}).get('password', base64.decodestring(profile.svn_password))
+
+    if len(username) > 0 and len(password) > 0:
+        def get_login(realm, user, may_save):
+            return True, username, password, False
+
+        client.callback_get_login = get_login
 
     try:
         client.checkin([locale_repository_path],
             'Pontoon: update ' + locale.code + ' localization of ' + project)
         log.debug('Commited ' + locale.code + ' localization of ' + project)
-        return HttpResponse("200")
+
     except pysvn.ClientError, e:
         log.debug(str(e))
+        if len(e.args) == 1:
+            if "callback_get_login" in str(e):
+                log.debug('Subversion CommitError for %s: please authenticate' % locale_repository_path)
+                return HttpResponse("authenticate")
+        else:
+            for message, code in e.args[1]:
+                log.debug('Code: ' + str(code) + ' Message: ' + message)
+                if 215000 < code < 220004:
+                    log.debug('Subversion CommitError for %s: authentication failed' % locale_repository_path)
+                    return HttpResponse("authenticate")
+
+        log.debug('Subversion CommitError for %s: %s' % (locale_repository_path, e))
         return HttpResponse("error")
+
+    """Save SVN username and password."""
+    if 'auth' in data and 'remember' in data['auth'] and data['auth']['remember'] == 1:
+        if profile.svn_username != username:
+            profile.svn_username = username
+        if base64.decodestring(profile.svn_password) != password:
+            profile.svn_password = base64.encodestring(password)
+        profile.save()
+        log.debug("SVN username and password saved.")
+
+    return HttpResponse("200")
 
 
 @login_required(redirect_field_name='', login_url='/404')
