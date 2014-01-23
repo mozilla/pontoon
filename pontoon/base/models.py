@@ -11,10 +11,10 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
 
     # Other fields here
-    transifex_username = models.CharField(max_length=40)
-    transifex_password = models.CharField(max_length=128)
-    svn_username = models.CharField(max_length=40)
-    svn_password = models.CharField(max_length=128)
+    transifex_username = models.CharField(max_length=40, blank=True)
+    transifex_password = models.CharField(max_length=128, blank=True)
+    svn_username = models.CharField(max_length=40, blank=True)
+    svn_password = models.CharField(max_length=128, blank=True)
 
 # For every newly created user
 def create_user_profile(sender, instance, created, **kwargs):
