@@ -176,12 +176,29 @@ var Pontoon = (function () {
             data: JSON.stringify(params)
           },
           success: function(data) {
-            if (data === "authenticate") {
-              self.endLoader();
+            if (data.type === "authenticate") {
+              self.endLoader(data.message);
               $("#svn").show();
+
+              // Move notification up
+              var temp = $('.notification').css('bottom');
+              $('.notification').css('bottom', '+=' + $('#svn').outerHeight());
+              setTimeout(function() {
+                $('.notification').css('bottom', temp);
+              }, 2000);
+
+            } else if (data === "authenticate") {
+              self.endLoader();
+              $('#svn').show();
+
             } else if (data === "200") {
               self.endLoader('Done!');
               $('#svn').hide();
+
+            } else if (data.type === "error") {
+              self.endLoader(data.message, 'error');
+              $('#svn').hide();
+
             } else if (data === 'error') {
               self.endLoader('Oops, something went wrong.', 'error');
               $('#svn').hide();

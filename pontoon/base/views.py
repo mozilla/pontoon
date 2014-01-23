@@ -634,21 +634,25 @@ def commit_to_svn(request, template=None):
     log.debug("Commit translations to SVN.")
 
     if request.method != 'POST':
+        log.error("Only POST method supported")
         return HttpResponse("error")
 
     try:
         data = json.loads(request.POST['data'])
-    except MultiValueDictKeyError:
+    except MultiValueDictKeyError as e:
+        log.error(e)
         return HttpResponse("error")
 
     try:
         locale = Locale.objects.get(code=data['locale'])
-    except Locale.DoesNotExist:
+    except Locale.DoesNotExist as e:
+        log.error(e)
         return HttpResponse("error")
 
     try:
         p = Project.objects.get(pk=data['pk'])
-    except Project.DoesNotExist:
+    except Project.DoesNotExist as e:
+        log.error(e)
         return HttpResponse("error")
 
     project = p.name
@@ -792,23 +796,29 @@ def commit_to_svn(request, template=None):
     try:
         client.checkin([locale_repository_path],
             'Pontoon: update ' + locale.code + ' localization of ' + project)
-        log.debug('Commited ' + locale.code + ' localization of ' + project)
+        log.info('Commited ' + locale.code + ' localization of ' + project)
 
     except pysvn.ClientError, e:
         log.debug(str(e))
         if len(e.args) == 1:
             if "callback_get_login" in str(e):
-                log.debug('Subversion CommitError for %s: please authenticate' % locale_repository_path)
+                log.error('Subversion CommitError for %s: please authenticate' % locale_repository_path)
                 return HttpResponse("authenticate")
         else:
             for message, code in e.args[1]:
                 log.debug('Code: ' + str(code) + ' Message: ' + message)
                 if 215000 < code < 220004:
-                    log.debug('Subversion CommitError for %s: authentication failed' % locale_repository_path)
-                    return HttpResponse("authenticate")
+                    log.error('Subversion CommitError for %s: authentication failed' % locale_repository_path)
+                    return HttpResponse(json.dumps({
+                        'type': 'authenticate',
+                        'message': 'Authentication failed.'
+                    }), mimetype='application/json')
 
-        log.debug('Subversion CommitError for %s: %s' % (locale_repository_path, e))
-        return HttpResponse("error")
+        log.error('Subversion CommitError for %s: %s' % (locale_repository_path, e))
+        return HttpResponse(json.dumps({
+            'type': 'error',
+            'message': str(e)
+        }), mimetype='application/json')
 
     """Save SVN username and password."""
     if data.get('auth', {}).get('remember', {}) == 1:
@@ -817,7 +827,7 @@ def commit_to_svn(request, template=None):
         if base64.decodestring(profile.svn_password) != password:
             profile.svn_password = base64.encodestring(password)
         profile.save()
-        log.debug("SVN username and password saved.")
+        log.info("SVN username and password saved.")
 
     return HttpResponse("200")
 
