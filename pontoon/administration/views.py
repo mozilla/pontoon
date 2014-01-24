@@ -570,7 +570,7 @@ def update_from_transifex(request, template=None):
     username = request.POST.get('transifex_username', profile.transifex_username)
     password = request.POST.get('transifex_password', base64.decodestring(profile.transifex_password))
 
-    if (len(username) == 0 or len(password) == 0):
+    if len(username) == 0 or len(password) == 0:
         return HttpResponse("authenticate")
 
     for l in p.locales.all():

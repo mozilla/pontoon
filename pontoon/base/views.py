@@ -855,7 +855,7 @@ def save_to_transifex(request, template=None):
 
     username = data.get('auth', {}).get('username', profile.transifex_username)
     password = data.get('auth', {}).get('password', base64.decodestring(profile.transifex_password))
-    if (len(username) == 0 or len(password) == 0):
+    if len(username) == 0 or len(password) == 0:
         return HttpResponse("authenticate")
 
     """Make PUT request to Transifex API."""
