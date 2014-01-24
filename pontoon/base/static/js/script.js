@@ -3,18 +3,6 @@
 
   $(function() {
 
-    /*** MAIN CODE ***/
-
-    // Resize iframe with window
-    $(window).resize(function () {
-      $('#source').height($(document).height() - $('#main').height());
-    });
-
-    // Empty iframe if cached
-    $('#source').removeAttr("src");
-
-
-
     /*** HOME ***/
     if ($('body').is('.home')) {
       // Update URL and project values
@@ -78,6 +66,14 @@
           locale = $('#server').data('locale'),
           escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
           projectWindow = null;
+
+      // Resize iframe with window
+      $(window).resize(function () {
+        $('#source').height($(document).height() - $('#main').height());
+      });
+
+      // Empty iframe if cached
+      $('#source').removeAttr("src");
 
       // Initialize Pontoon only if project code supports it
       function receiveMessage(e) {
