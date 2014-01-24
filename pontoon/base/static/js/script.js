@@ -5,9 +5,6 @@
 
     /*** MAIN CODE ***/
 
-    var base = $('base').attr('href'),
-        l = window.location;
-
     // Resize iframe with window
     $(window).resize(function () {
       $('#source').height($(document).height() - $('#main').height());
