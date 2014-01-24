@@ -28,9 +28,9 @@ def create_user_profile(sender, instance, created, **kwargs):
         payload = {
             "app_name": "pontoon",
             "app_key": settings.MOZILLIANS_API_KEY,
-            "groups": "l10n",
+            "groups": "l10n,localization",
             "format": "json",
-            "limit": 1000, # By default, limited to 20
+            "limit": 2000, # By default, limited to 20
             "is_vouched": True
         }
 
