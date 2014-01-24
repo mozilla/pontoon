@@ -1,10 +1,11 @@
 import requests
 
-from django.conf import settings
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.forms import ModelForm
+
+from pontoon.base.utils.permissions import can_localize
 
 
 class UserProfile(models.Model):
@@ -22,38 +23,7 @@ class UserProfile(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
-
-        # Grant permission to Mozilla localizers
-        url = "https://mozillians.org/api/v1/users/"
-        payload = {
-            "app_name": "pontoon",
-            "app_key": settings.MOZILLIANS_API_KEY,
-            "groups": "l10n,localization",
-            "format": "json",
-            "limit": 2000, # By default, limited to 20
-            "is_vouched": True
-        }
-
-        import commonware.log
-        log = commonware.log.getLogger('pontoon')
-
-        log.debug(instance.email)
-        try:
-            r = requests.get(url, params=payload)
-            email = instance.email
-            for l in r.json()["objects"]:
-                if email == l["email"]:
-                    can_localize = Permission.objects.get(codename="can_localize")
-                    instance.user_permissions.add(can_localize)
-                    log.debug("Permission can_localize set.")
-
-                    # Fallback if profile does not allow accessing data
-                    instance.first_name = l.get("full_name", email)
-                    instance.save()
-                    break;
-        except Exception:
-            log.debug("Is your MOZILLIANS_API_KEY set?")
-            pass
+        can_localize(instance)
 
 post_save.connect(create_user_profile, sender=User)
 
