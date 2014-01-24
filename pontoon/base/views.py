@@ -630,8 +630,13 @@ def _get_locale_paths(path, format):
 @login_required(redirect_field_name='', login_url='/404')
 def commit_to_svn(request, template=None):
     """Commit translations to SVN."""
-    import pysvn
     log.debug("Commit translations to SVN.")
+
+    try:
+        import pysvn
+    except ImportError as e:
+        log.error(e)
+        return HttpResponse("error")
 
     if request.method != 'POST':
         log.error("Only POST method supported")
