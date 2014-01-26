@@ -18,6 +18,7 @@ from django.conf import settings
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
@@ -27,6 +28,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, UserProfile
+from pontoon.base.utils.permissions import can_localize
 from session_csrf import anonymous_csrf_exempt
 
 
@@ -906,8 +908,15 @@ def verify(request, template=None):
 
     response = 'error'
     user = auth.authenticate(assertion=assertion, audience=get_audience(request))
+
     if user is not None:
         auth.login(request, user)
+
+        # Check for permission to localize if not granted on every login
+        if not user.has_perm('base.can_localize'):
+            user = User.objects.get(username=user)
+            can_localize(user)
+
         response = {'browserid': verification,
             'manager': user.has_perm('base.can_manage'),
             'localizer': user.has_perm('base.can_localize')

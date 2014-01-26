@@ -22,11 +22,10 @@ def can_localize(user):
         "is_vouched": True
     }
 
-    log.debug(user.email)
-
     try:
         r = requests.get(url, params=payload)
         email = user.email
+        log.debug(email)
 
         for l in r.json()["objects"]:
             if email == l["email"]:
