@@ -23,19 +23,19 @@ def can_localize(user):
     }
 
     try:
-        r = requests.get(url, params=payload)
+        mozillians = requests.get(url, params=payload)
         email = user.email
         log.debug(email)
 
-        for l in r.json()["objects"]:
-            if email == l["email"]:
+        for mozillian in mozillians.json()["objects"]:
+            if email == mozillian["email"]:
 
                 can_localize = Permission.objects.get(codename="can_localize")
                 user.user_permissions.add(can_localize)
                 log.debug("Permission can_localize set.")
 
                 # Fallback if profile does not allow accessing data
-                user.first_name = l.get("full_name", email)
+                user.first_name = mozillian.get("full_name", email)
                 user.save()
                 break;
 
