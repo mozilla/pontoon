@@ -9,7 +9,7 @@ from django.contrib.auth.models import Permission
 log = commonware.log.getLogger('pontoon')
 
 
-def can_localize(user):
+def add_can_localize(user):
 
     # Grant permission to Mozilla localizers
     url = "https://mozillians.org/api/v1/users/"

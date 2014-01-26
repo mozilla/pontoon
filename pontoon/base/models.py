@@ -5,8 +5,6 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.forms import ModelForm
 
-from pontoon.base.utils.permissions import can_localize
-
 
 class UserProfile(models.Model):
     # This field is required.
