@@ -135,7 +135,7 @@ def delete_project(request, pk, template=None):
         project = Project.objects.get(pk=pk)
         project.delete()
 
-        path = project.repository_path
+        path = os.path.join(settings.MEDIA_ROOT, project.repository_type, project.name)
         if os.path.exists(path):
             shutil.rmtree(path)
 
