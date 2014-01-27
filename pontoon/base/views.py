@@ -383,7 +383,7 @@ def get_translation(request, template=None):
         return HttpResponse(translation)
 
 
-@login_required(redirect_field_name='', login_url='/404')
+@login_required(redirect_field_name='', login_url='/403')
 def update_translation(request, template=None):
     """Update entity translation for the specified locale and author."""
     log.debug("Update entity translation for the specified locale and author.")
@@ -680,7 +680,7 @@ def download(request, template=None):
     return response
 
 
-@login_required(redirect_field_name='', login_url='/404')
+@login_required(redirect_field_name='', login_url='/403')
 def commit_to_svn(request, template=None):
     """Commit translations to SVN."""
     log.debug("Commit translations to SVN.")
@@ -771,7 +771,7 @@ def commit_to_svn(request, template=None):
     return HttpResponse("200")
 
 
-@login_required(redirect_field_name='', login_url='/404')
+@login_required(redirect_field_name='', login_url='/403')
 def save_to_transifex(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")

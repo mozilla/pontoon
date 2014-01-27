@@ -37,7 +37,7 @@ def admin(request, template='admin.html'):
     log.debug("Admin interface.")
 
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
-        raise Http404
+        return HttpResponseRedirect(reverse('403'))
 
     data = {
         'projects': Project.objects.all(),
@@ -51,7 +51,7 @@ def manage_project(request, name=None, template='project.html'):
     log.debug("Admin interface: manage project.")
 
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
-        raise Http404
+        return HttpResponseRedirect(reverse('403'))
 
     SubpageInlineFormSet = inlineformset_factory(Project, Subpage, extra=1)
     form = ProjectForm()
@@ -129,7 +129,7 @@ def delete_project(request, pk, template=None):
 
         if not (request.user.is_authenticated() and request.user.has_perm(
                 'base.can_manage')):
-            raise Http404
+            return HttpResponseRedirect(reverse('403'))
 
         project = Project.objects.get(pk=pk)
         project.delete()
@@ -517,7 +517,7 @@ def update_from_repository(request, template=None):
     log.debug("Update all project locales from repository.")
 
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')) or request.method != 'POST':
-        raise Http404
+        return HttpResponseRedirect(reverse('403'))
 
     try:
         pk = request.POST['pk']
@@ -548,7 +548,7 @@ def update_from_transifex(request, template=None):
     log.debug("Update all project locales from Transifex repository.")
 
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
-        raise Http404
+        return HttpResponseRedirect(reverse('403'))
 
     if request.method != 'POST':
         raise Http404

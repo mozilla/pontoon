@@ -24,9 +24,10 @@ urlpatterns = patterns('',
     # Logout
     url(r'^signout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='signout'),
 
-    # 404 and 500
-    url(r'^404/$', TemplateView.as_view(template_name='404.html')),
-    url(r'^500/$', TemplateView.as_view(template_name='500.html')),
+    # Error pages
+    url(r'^403/$', TemplateView.as_view(template_name='403.html'), name='403'),
+    url(r'^404/$', TemplateView.as_view(template_name='404.html'), name='404'),
+    url(r'^500/$', TemplateView.as_view(template_name='500.html'), name='500'),
 
     # Favicon
     url(r'^favicon\.ico$', RedirectView.as_view(url='/static/img/favicon.ico')),

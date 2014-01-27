@@ -7,7 +7,7 @@
   <div class="inner">
 
     <a href="/"><h1 id="title">{{ _('Oops') }}</h1></a>
-    <h2 id="subtitle">{{ _('We couldn\'t find the page you\'re looking for.') }}</h2>
+    <h2 id="subtitle">{% block subtitle %}{{ _('We couldn\'t find the page you\'re looking for.') }}{% endblock %}</h2>
 
     <p id="action">
       <a id="link" href="/">{{ _('Go Home') }}</a>
