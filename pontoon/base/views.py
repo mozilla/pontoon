@@ -225,12 +225,13 @@ def translate_project(request, locale, project, page=None, template='translate.h
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Check if user authenticated and has sufficient privileges
-    if not (request.user.is_authenticated() or project == 'testpilot'):
-        messages.error(request, "You need to sign in first.")
-        return HttpResponseRedirect(reverse('pontoon.home'))
-    if not (request.user.has_perm('base.can_localize') or project == 'testpilot'):
-        messages.error(request, "You don't have permission to localize.")
-        return HttpResponseRedirect(reverse('pontoon.home'))
+    if not p.name == 'testpilot':
+        if not request.user.is_authenticated():
+            messages.error(request, "You need to sign in first.")
+            return HttpResponseRedirect(reverse('pontoon.home'))
+        if not request.user.has_perm('base.can_localize'):
+            messages.error(request, "You don't have permission to localize.")
+            return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
         'locale_code': locale,
