@@ -36,7 +36,7 @@ def admin(request, template='admin.html'):
     """Admin interface."""
     log.debug("Admin interface.")
 
-    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+    if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
 
     data = {
@@ -50,7 +50,7 @@ def manage_project(request, name=None, template='project.html'):
     """Admin interface: manage project."""
     log.debug("Admin interface: manage project.")
 
-    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+    if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
 
     SubpageInlineFormSet = inlineformset_factory(Project, Subpage, extra=1)
@@ -127,8 +127,7 @@ def delete_project(request, pk, template=None):
     try:
         log.debug("Admin interface: delete project.")
 
-        if not (request.user.is_authenticated() and request.user.has_perm(
-                'base.can_manage')):
+        if not request.user.has_perm('base.can_manage'):
             return render(request, '403.html', status=403)
 
         project = Project.objects.get(pk=pk)
@@ -516,7 +515,7 @@ def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
 
-    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')) or request.method != 'POST':
+    if not request.user.has_perm('base.can_manage') or request.method != 'POST':
         return render(request, '403.html', status=403)
 
     try:
@@ -547,7 +546,7 @@ def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
     log.debug("Update all project locales from Transifex repository.")
 
-    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+    if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
 
     if request.method != 'POST':
