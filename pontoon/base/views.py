@@ -27,7 +27,6 @@ from django.core.validators import URLValidator
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
-from django.views.decorators.http import require_POST
 
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
@@ -384,11 +383,13 @@ def get_translation(request, template=None):
         return HttpResponse(translation)
 
 
-@require_POST
 @login_required(redirect_field_name='', login_url='/404')
 def update_translation(request, template=None):
     """Update entity translation for the specified locale and author."""
     log.debug("Update entity translation for the specified locale and author.")
+
+    if request.method != 'POST':
+        raise Http404
 
     try:
         entity = request.POST['entity']
@@ -649,10 +650,12 @@ def _generate_zip(pk, locale):
     return s.getvalue()
 
 
-@require_POST
 def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations.")
+
+    if request.method != 'POST':
+        raise Http404
 
     try:
         type = request.POST['type']
@@ -677,7 +680,6 @@ def download(request, template=None):
     return response
 
 
-@require_POST
 @login_required(redirect_field_name='', login_url='/404')
 def commit_to_svn(request, template=None):
     """Commit translations to SVN."""
@@ -688,6 +690,10 @@ def commit_to_svn(request, template=None):
     except ImportError as e:
         log.error(e)
         return HttpResponse("error")
+
+    if request.method != 'POST':
+        log.error("Only POST method supported")
+        raise Http404
 
     try:
         data = json.loads(request.POST['data'])
@@ -765,11 +771,13 @@ def commit_to_svn(request, template=None):
     return HttpResponse("200")
 
 
-@require_POST
 @login_required(redirect_field_name='', login_url='/404')
 def save_to_transifex(request, template=None):
     """Save translations to Transifex."""
     log.debug("Save to Transifex.")
+
+    if request.method != 'POST':
+        raise Http404
 
     try:
         data = json.loads(request.POST['data'])
@@ -814,11 +822,13 @@ def save_to_transifex(request, template=None):
         return HttpResponse(response)
 
 
-@require_POST
 @anonymous_csrf_exempt
 def verify(request, template=None):
     """Verify BrowserID assertion, and return whether a user is registered."""
     log.debug("Verify BrowserID assertion.")
+
+    if request.method != 'POST':
+        raise Http404
 
     assertion = request.POST['assertion']
     if assertion is None:

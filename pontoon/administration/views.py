@@ -23,7 +23,6 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
-from django.views.decorators.http import require_POST
 
 from pontoon.administration.utils.vcs import update_from_vcs, PullFromRepositoryException
 from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
@@ -513,12 +512,11 @@ def _update_from_repository(
         raise PullFromRepositoryException("Not supported")
 
 
-@require_POST
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
 
-    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+    if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')) or request.method != 'POST':
         raise Http404
 
     try:
@@ -545,12 +543,14 @@ def update_from_repository(request, template=None):
     return HttpResponse("200")
 
 
-@require_POST
 def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
     log.debug("Update all project locales from Transifex repository.")
 
     if not (request.user.is_authenticated() and request.user.has_perm('base.can_manage')):
+        raise Http404
+
+    if request.method != 'POST':
         raise Http404
 
     try:
