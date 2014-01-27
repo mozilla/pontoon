@@ -515,7 +515,7 @@ def _update_files(p, locale, locale_repository_path):
             with codecs.open(path, 'r+', 'utf-8') as f:
                 l10nobject = format_parser.get_structure(f.read())
 
-                short_path = path.split(locale.code)[-1]
+                short_path = '/' + path.split('/' + locale.code + '/')[-1]
                 entities = entities.filter(source=short_path)
                 for entity in entities:
                     key = entity.key

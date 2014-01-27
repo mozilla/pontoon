@@ -319,7 +319,7 @@ def _extract_properties(project, locale, paths, source_locale):
             locale_code = locale.code
             if 'templates' in path:
                 locale_code = 'templates'
-            short_path = path.split(locale_code)[-1]
+            short_path = '/' + path.split('/' + locale_code + '/')[-1]
 
             for line in l10nobject:
                 if isinstance(line, silme.core.entity.Entity):
