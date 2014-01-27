@@ -139,10 +139,11 @@
             <li{% if not (project.repository_type and project.repository_type == 'svn') %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
             <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
           {% endif %}
+            {% if project.repository_path %}
+            <li><a class="zip" href="{{ url('pontoon.download') }}">{{ _('Download .zip') }}</a></li>
+            {% endif %}
             <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download .html') }}</a></li>
             <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download .json') }}</a></li>
-            <li><a class="po" href="{{ url('pontoon.download') }}">{{ _('Download .po') }}</a></li>
-            {% if project.id %}<li><a class="properties" href="{{ url('pontoon.download') }}">{{ _('Download .properties') }}</a></li>{% endif %}
           </ul>
           {% if (project.transifex_project and project.transifex_resource) %}
           <aside id="transifex" class="popup">

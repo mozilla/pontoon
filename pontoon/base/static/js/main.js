@@ -35,45 +35,6 @@ var Pontoon = (function () {
         return e;
       }
 
-      // Generate PO file object
-      function getPO() {
-        var po = {
-            metadata: {
-                'project_title': self.project.title,
-                'locale_language': self.locale.language,
-                'username': self.user.name,
-                'user_email': self.user.email
-            },
-            translations: []
-        }
-
-        var msgid_index_dict = {};
-
-        $(self.project.entities).each(function () {
-          var msgid = this.original;
-          var index = msgid_index_dict.msgid;
-          if (index == undefined){
-            var data = {
-              msgid: msgid,
-              fuzzy: false,
-              msgstr: this.translation || "",
-              occurrence: self.project.url,
-            }
-            msgid_index_dict[msgid] = po.translations.push(data) - 1;
-          }
-          else {
-            var data = po.translations[index];
-          }
-
-          if (this.suggestions && !data.msgstr) {
-            data.fuzzy = true,
-            data.msgstr = this.suggestions[0].translation;
-          }
-        });
-
-        return po;
-      }
-
       // It is impossible to download files with AJAX
       function download(params) {
         params.csrfmiddlewaretoken = $('#server').data('csrf');
@@ -100,12 +61,8 @@ var Pontoon = (function () {
         params.content = JSON.stringify(entities, null, "\t");
         download(params);
 
-      } else if (type === "po") {
-        params.content = JSON.stringify(getPO());
-        download(params);
-
-      } else if (type === "properties") {
-        params.content = self.project.url;
+      } else if (type === "zip") {
+        params.content = self.project.pk;
         download(params);
 
       } else if (type === "transifex") {

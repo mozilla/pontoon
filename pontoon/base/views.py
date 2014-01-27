@@ -10,8 +10,10 @@ import os
 import polib
 import requests
 import silme.core, silme.format.properties
+import StringIO
 import traceback
 import urllib
+import zipfile
 from hashlib import md5
 
 from django.conf import settings
@@ -451,151 +453,6 @@ def update_translation(request, template=None):
             return HttpResponse("updated")
 
 
-def _generate_properties_content(url, locale):
-    """
-    Generate .properties file content.
-
-    Args:
-        pid: project ID
-        locale: locale code
-    Returns:
-        A string for generated .properties file.
-    """
-
-    try:
-        s = Subpage.objects.get(url=url)
-    except Subpage.DoesNotExist:
-        log.debug('Subpage with this URL does not exist. Generate .properties file.')
-
-        content = ''
-        p = Project.objects.get(url=url)
-        l = Locale.objects.get(code=locale)
-        entities = Entity.objects.filter(project=p)
-
-        for e in entities:
-            content += e.key + ' = '
-            translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
-            if len(translations) == 0:
-                content += '\n'
-            else:
-                content += translations.reverse()[0].string + '\n'
-
-        properties = unicode(content).encode('utf-8')
-        return (properties, p.name + "_" + locale)
-
-    subpage = s.name.lower().replace(" ", "")
-    p = s.project
-    l = Locale.objects.get(code=locale)
-
-    original_path = os.path.join(settings.MEDIA_ROOT, 'hg', p.name, 'en-US')
-    path = []
-    for root, dirnames, filenames in os.walk(original_path):
-      for filename in fnmatch.filter(filenames, subpage + '.properties'):
-          path.append(os.path.join(root, filename))
-
-    path = path[0]
-    l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(open(path).read().decode('utf-8'))
-
-    for line in l10nobject:
-        if isinstance(line, silme.core.entity.Entity):
-            e = Entity.objects.get(project=p, key=line.id, source__endswith=subpage + '.properties')
-            translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
-            if len(translations) == 0:
-                line.id = '#TODO: ' + line.id
-                line.set_value(line.value)
-            else:
-                line.set_value(translations.reverse()[0].string)
-
-    content = silme.format.properties.PropertiesFormatParser.dump_structure(l10nobject)
-    properties = unicode(content).encode('utf-8')
-    return (properties, subpage)
-
-
-def _generate_po_content(data):
-    """
-    Generate .po file content from data JSON.
-
-    Args:
-        data: A JSON string
-    Returns:
-        A string for generated PO content.
-    """
-    json_dict = json.loads(data)
-    po = polib.POFile()
-    current_time = datetime.datetime.now()
-    metadata = json_dict.get('metadata', {})
-    translations = json_dict.get('translations', [])
-
-    # Add PO metadata
-    po.metadata = {
-        'Project-Id-Version': '1.0',
-        'POT-Creation-Date': current_time,
-        'PO-Revision-Date': current_time,
-        'Last-Translator': '%s <%s>' % (json_dict['metadata'].get('username'),
-            json_dict['metadata'].get('user_email')),
-        'Language-Team': json_dict['metadata'].get('locale_language'),
-        'MIME-Version': '1.0',
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Transfer-Encoding': '8bit'
-    }
-
-    # Add PO header
-    po.header = (
-            "%(project_title)s language file (%(locale_language)s)\n"
-            "This is distributed under the same license as the website.\n"
-            "%(username)s <%(user_email)s>, %(year)s\n" % {
-                'project_title': metadata.get('project_title'),
-                'locale_language': metadata.get('locale_language'),
-                'username': metadata.get('username'),
-                'user_email': metadata.get('user_email'),
-                'year': current_time.year
-             }
-    )
-
-    # Append PO entries
-    for trans in translations:
-        po_entry = polib.POEntry(
-                msgid=trans['msgid'],
-                msgstr=trans.get('msgstr', ''),
-                occurrences = [(trans.get('occurrence', ''), '')]
-        )
-        if trans.get('fuzzy'):
-            po_entry.flags.append('fuzzy')
-        po.append(po_entry)
-    return unicode(po).encode('utf-8')
-
-
-@require_POST
-def download(request, template=None):
-    """Download translations in appropriate form."""
-    log.debug("Download translations.")
-
-    try:
-        type = request.POST['type']
-        content = request.POST['content']
-        locale = request.POST['locale']
-    except MultiValueDictKeyError:
-        raise Http404
-
-    filename = locale
-    response = HttpResponse()
-    if type == 'html':
-        response['Content-Type'] = 'text/html'
-    elif type == 'json':
-        response['Content-Type'] = 'application/json'
-    elif type == 'po':
-        content = _generate_po_content(content)
-        response['Content-Type'] = 'text/plain'
-    elif type == 'properties':
-        content, filename = _generate_properties_content(content, locale)
-        response['Content-Type'] = 'text/plain'
-
-    response.content = content
-    response['Content-Disposition'] = 'attachment; filename=' + filename +\
-            '.' + type
-    return response
-
-
 def _get_locale_repository_path(path, locale):
     """Get path to locale directory."""
     log.debug("Get path to locale directory.")
@@ -627,40 +484,8 @@ def _get_locale_paths(path, format):
     return locale_paths
 
 
-@require_POST
-@login_required(redirect_field_name='', login_url='/404')
-def commit_to_svn(request, template=None):
-    """Commit translations to SVN."""
-    log.debug("Commit translations to SVN.")
-
-    try:
-        import pysvn
-    except ImportError as e:
-        log.error(e)
-        return HttpResponse("error")
-
-    try:
-        data = json.loads(request.POST['data'])
-    except MultiValueDictKeyError as e:
-        log.error(e)
-        return HttpResponse("error")
-
-    try:
-        locale = Locale.objects.get(code=data['locale'])
-    except Locale.DoesNotExist as e:
-        log.error(e)
-        return HttpResponse("error")
-
-    try:
-        p = Project.objects.get(pk=data['pk'])
-    except Project.DoesNotExist as e:
-        log.error(e)
-        return HttpResponse("error")
-
-    project = p.name
+def _update_files(p, locale, locale_repository_path):
     entities = Entity.objects.filter(project=p)
-
-    locale_repository_path = _get_locale_repository_path(p.repository_path, locale.code)
     locale_paths = _get_locale_paths(locale_repository_path, p.format)
 
     if p.format == 'po':
@@ -766,7 +591,7 @@ def commit_to_svn(request, template=None):
                         try:
                             entity = Entity.objects.get(project=p, string=original)
                         except Entity.DoesNotExist, e:
-                            log.error(path + ": Entity with string \"" + original + "\" does not exist in " + project)
+                            log.error(path + ": Entity with string \"" + original + "\" does not exist in " + p.name)
                             continue
 
                         translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
@@ -780,6 +605,106 @@ def commit_to_svn(request, template=None):
                 lines.truncate()
                 lines.writelines(content)
                 log.debug("File updated: " + path)
+
+
+def _generate_zip(pk, locale):
+    """
+    Generate .zip file of all project files for the specified locale.
+
+    Args:
+        pk: Primary key of the project
+        locale: Locale code
+    Returns:
+        A string for generated ZIP content.
+    """
+
+    try:
+        p = Project.objects.get(pk=pk)
+    except Project.DoesNotExist as e:
+        log.error(e)
+
+    try:
+        locale = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist as e:
+        log.error(e)
+
+    path = _get_locale_repository_path(p.repository_path, locale.code)
+    _update_files(p, locale, path)
+
+    s = StringIO.StringIO()
+    zf = zipfile.ZipFile(s, "w")
+
+    for root, dirs, files in os.walk(path):
+        for f in files:
+            file_path = os.path.join(root, f)
+            zip_path = os.path.relpath(file_path, os.path.join(path, '..'))
+            zf.write(file_path, zip_path)
+
+    zf.close()
+    return s.getvalue()
+
+@require_POST
+def download(request, template=None):
+    """Download translations in appropriate form."""
+    log.debug("Download translations.")
+
+    try:
+        type = request.POST['type']
+        content = request.POST['content']
+        locale = request.POST['locale']
+    except MultiValueDictKeyError:
+        raise Http404
+
+    filename = locale
+    response = HttpResponse()
+    if type == 'html':
+        response['Content-Type'] = 'text/html'
+    elif type == 'json':
+        response['Content-Type'] = 'application/json'
+    elif type == 'zip':
+        content = _generate_zip(content, locale)
+        response['Content-Type'] = 'application/x-zip-compressed'
+
+    response.content = content
+    response['Content-Disposition'] = 'attachment; filename=' + filename +\
+            '.' + type
+    return response
+
+
+@require_POST
+@login_required(redirect_field_name='', login_url='/404')
+def commit_to_svn(request, template=None):
+    """Commit translations to SVN."""
+    log.debug("Commit translations to SVN.")
+
+    try:
+        import pysvn
+    except ImportError as e:
+        log.error(e)
+        return HttpResponse("error")
+
+    try:
+        data = json.loads(request.POST['data'])
+    except MultiValueDictKeyError as e:
+        log.error(e)
+        return HttpResponse("error")
+
+    try:
+        locale = Locale.objects.get(code=data['locale'])
+    except Locale.DoesNotExist as e:
+        log.error(e)
+        return HttpResponse("error")
+
+    try:
+        p = Project.objects.get(pk=data['pk'])
+    except Project.DoesNotExist as e:
+        log.error(e)
+        return HttpResponse("error")
+
+    project = p.name
+    locale_repository_path = _get_locale_repository_path(p.repository_path, locale.code)
+
+    _update_files(p, locale, locale_repository_path)
 
     client = pysvn.Client()
     client.exception_style = 1
