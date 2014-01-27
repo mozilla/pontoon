@@ -511,8 +511,8 @@ def _update_files(p, locale, locale_repository_path):
 
     elif p.format == 'properties':
         for path in locale_paths:
+            format_parser = silme.format.properties.PropertiesFormatParser
             with codecs.open(path, 'r+', 'utf-8') as f:
-                format_parser = silme.format.properties.PropertiesFormatParser
                 l10nobject = format_parser.get_structure(f.read())
 
                 short_path = path.split(locale.code)[-1]
@@ -537,7 +537,7 @@ def _update_files(p, locale, locale_repository_path):
                 f.seek(0)
                 f.truncate()
                 content = format_parser.dump_structure(l10nobject)
-                f.write(content + '\n')
+                f.write(content)
                 log.debug("File updated: " + locale_paths[0])
 
     elif p.format == 'ini':
