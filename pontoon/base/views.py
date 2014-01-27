@@ -453,9 +453,12 @@ def update_translation(request, template=None):
             return HttpResponse("updated")
 
 
-def _get_locale_repository_path(path, locale):
+def _get_locale_repository_path(project, locale):
     """Get path to locale directory."""
     log.debug("Get path to locale directory.")
+
+    path = os.path.join(
+        settings.MEDIA_ROOT, project.repository_type, project.name)
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
@@ -628,7 +631,7 @@ def _generate_zip(pk, locale):
     except Locale.DoesNotExist as e:
         log.error(e)
 
-    path = _get_locale_repository_path(p.repository_path, locale.code)
+    path = _get_locale_repository_path(p, locale.code)
     _update_files(p, locale, path)
 
     s = StringIO.StringIO()
@@ -702,7 +705,7 @@ def commit_to_svn(request, template=None):
         return HttpResponse("error")
 
     project = p.name
-    locale_repository_path = _get_locale_repository_path(p.repository_path, locale.code)
+    locale_repository_path = _get_locale_repository_path(p, locale.code)
 
     _update_files(p, locale, locale_repository_path)
 
