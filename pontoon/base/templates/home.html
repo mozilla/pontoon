@@ -82,9 +82,9 @@
     {% endif %}
 
     <ul class="notification{% if not messages %} hidden{% endif %}{% if not (user.is_authenticated() and user.has_perm('base.can_localize')) %} center{% endif %}">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
     </ul>
 
   </div>
@@ -96,5 +96,9 @@
 {% endblock %}
 
 {% block extend_js %}
+  {% compress js %}
+  <script src="{{ static('js/home.js') }}"></script>
+  {% endcompress %}
+
 <script src="https://login.persona.org/include.js"></script>
 {% endblock %}

@@ -41,3 +41,9 @@
   </div>
 </section>
 {% endblock %}
+
+{% block extend_js %}
+  {% compress js %}
+  <script src="{{ static('js/admin.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

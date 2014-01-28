@@ -215,3 +215,9 @@
 </section>
 
 {% endblock %}
+
+{% block extend_js %}
+  {% compress js %}
+  <script src="{{ static('js/project.js') }}"></script>
+  {% endcompress %}
+{% endblock %}
