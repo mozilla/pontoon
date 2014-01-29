@@ -651,6 +651,7 @@ def _generate_zip(pk, locale):
     return s.getvalue()
 
 
+@anonymous_csrf_exempt
 def download(request, template=None):
     """Download translations in appropriate form."""
     log.debug("Download translations.")
