@@ -435,7 +435,7 @@ var Pontoon = (function () {
               json: 'true'
             },
             dataType: 'jsonp'
-          }).error(function () {
+          }).error(function() {
             loader.removeClass("loader").addClass("no").html("Oops, something went wrong.");
           }).success(function (response) {
             if (response.length !== 0) {
@@ -467,27 +467,26 @@ var Pontoon = (function () {
       $("#main .extra .machine-translation").click(function () {
         var li = $(this).parents('.entity'),
             loader = li.find(".content .machine-translation .loader"),
-            entity = li[0].entity,
-            mt = $('#server').data('mt-apikey');
-        if (!mt) {
-          loader.removeClass("loader").addClass("no").html("Machine translation not supported");
-        } else if (loader.length === 0) {
+            entity = li[0].entity;
+
+        if (loader.length === 0) {
           li.find(".toolbar").show();
         } else {
           $.ajax({
-            url: "http://api.microsofttranslator.com/V2/Ajax.svc/Translate",
-            dataType: 'jsonp',
-            jsonp: "oncomplete",
-            crossDomain: true,
+            url: 'mt/',
             data: {
-              appId: mt,
               text: entity.original,
-              from: "en",
-              to: self.locale.code,
-              contentType: "text/html"
+              locale: self.locale.code
             }
-          }).success(function(t) {
-            loader.removeClass("loader").addClass("source-string").html(self.doNotRender(t));
+          }).error(function() {
+            loader.removeClass("loader").addClass("no").html("Oops, something went wrong.");
+          }).success(function(data) {
+            if (data.translation) {
+              loader.removeClass("loader").addClass("source-string").html(self.doNotRender(data.translation));
+            } else {
+              var error = (data === "apikey") ? "Machine translation not supported" : "Oops, something went wrong.";
+              loader.removeClass("loader").addClass("no").html(error);
+            }
             li.find(".toolbar").show();
           });
         }

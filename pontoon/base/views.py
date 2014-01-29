@@ -122,9 +122,6 @@ def translate_site(request, locale, url, template='translate.html'):
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
     }
 
-    if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
-        data['mt_apikey'] = settings.MICROSOFT_TRANSLATOR_API_KEY
-
     try:
         p = Project.objects.get(url=url)
         try:
@@ -281,9 +278,6 @@ def translate_project(request, locale, project, page=None, template='translate.h
     if page is not None:
         page = page.lower().replace(" ", "")
     data['entities'] = json.dumps(_get_entities(p, l, page))
-
-    if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
-        data['mt_apikey'] = settings.MICROSOFT_TRANSLATOR_API_KEY
 
     return render(request, template, data)
 
@@ -453,6 +447,51 @@ def update_translation(request, template=None):
             t.save()
             log.debug("Translation updated.")
             return HttpResponse("updated")
+
+
+@login_required(redirect_field_name='', login_url='/403')
+def machine_translation(request):
+    """Get translation from machine translation service."""
+    log.debug("Get translation from machine translation service.")
+
+    try:
+        text = request.GET['text']
+        to = request.GET['locale']
+    except MultiValueDictKeyError, e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
+        api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
+    else:
+        log.error("MICROSOFT_TRANSLATOR_API_KEY not set")
+        return HttpResponse("apikey")
+
+    url = "http://api.microsofttranslator.com/V2/Http.svc/Translate"
+    payload = {
+        "appId": api_key,
+        "text": text,
+        "from": "en",
+        "to": to,
+        "contentType": "text/html",
+    }
+
+    try:
+        r = requests.get(url, params=payload)
+
+        # Parse XML response
+        import xml.etree.ElementTree as ET
+        root = ET.fromstring(r.content)
+        translation = root.text
+
+        # Using JSON to distinguish from "error" if such translation returned
+        return HttpResponse(json.dumps({
+            'translation': translation
+        }), mimetype='application/json')
+
+    except Exception as e:
+        log.error(e)
+        return HttpResponse("error")
 
 
 def _get_locale_repository_path(project, locale):
