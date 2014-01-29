@@ -149,7 +149,7 @@ var Pontoon = (function () {
               $('#svn').hide();
 
             } else if (data.type === "error") {
-              self.endLoader(data.message, 'error');
+              self.endLoader(data.message, 'error', true);
               $('#svn').hide();
 
             } else if (data === 'error') {
@@ -641,6 +641,17 @@ var Pontoon = (function () {
 
 
     /**
+     * Close notification
+     */
+    closeNotification: function () {
+      $('.notification').fadeOut(function() {
+        $(this).attr('class', 'notification').empty();
+      });
+    },
+
+
+
+    /**
      * Display loader to provide feedback about the background process
      */
     startLoader: function () {
@@ -653,18 +664,21 @@ var Pontoon = (function () {
      * Remove loader
      * 
      * text End of operation text (e.g. Done!)
-     * type [error]
+     * type Notification type (e.g. error)
+     * persist Do not close
      */
-    endLoader: function (text, type) {
+    endLoader: function (text, type, persist) {
       $('#loading').removeClass('loader');
       if (text) {
-        $('.notification').html(text).addClass(type).show();
-      }
-      setTimeout(function() {
-        $('.notification').fadeOut(function() {
-          $(this).attr('class', 'notification').empty();
+        $('.notification').html(text).addClass(type).show().click(function() {
+          Pontoon.closeNotification();
         });
-      }, 2000);
+      }
+      if (!persist) {
+        setTimeout(function() {
+          Pontoon.closeNotification();
+        }, 2000);
+      }
     },
 
 
