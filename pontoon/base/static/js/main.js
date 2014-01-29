@@ -144,10 +144,6 @@ var Pontoon = (function () {
                 $('.notification').css('bottom', temp);
               }, 2000);
 
-            } else if (data === "authenticate") {
-              self.endLoader();
-              $('#svn').show();
-
             } else if (data === "200") {
               self.endLoader('Done!');
               $('#svn').hide();

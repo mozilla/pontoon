@@ -729,10 +729,8 @@ def commit_to_svn(request, template=None):
     password = data.get('auth', {}).get('password', base64.decodestring(profile.svn_password))
 
     if len(username) > 0 and len(password) > 0:
-        def get_login(realm, user, may_save):
-            return True, username, password, False
-
-        client.callback_get_login = get_login
+        client.set_default_username(username)
+        client.set_default_password(password)
 
     try:
         client.checkin([locale_repository_path],
@@ -741,19 +739,12 @@ def commit_to_svn(request, template=None):
 
     except pysvn.ClientError, e:
         log.debug(str(e))
-        if len(e.args) == 1:
-            if "callback_get_login" in str(e):
-                log.error('Subversion CommitError for %s: please authenticate' % locale_repository_path)
-                return HttpResponse("authenticate")
-        else:
-            for message, code in e.args[1]:
-                log.debug('Code: ' + str(code) + ' Message: ' + message)
-                if 215000 < code < 220004:
-                    log.error('Subversion CommitError for %s: authentication failed' % locale_repository_path)
-                    return HttpResponse(json.dumps({
-                        'type': 'authenticate',
-                        'message': 'Authentication failed.'
-                    }), mimetype='application/json')
+        if "callback_get_login" in str(e):
+            log.error('Subversion CommitError for %s: please authenticate' % locale_repository_path)
+            return HttpResponse(json.dumps({
+                'type': 'authenticate',
+                'message': 'Authentication failed.'
+            }), mimetype='application/json')
 
         log.error('Subversion CommitError for %s: %s' % (locale_repository_path, e))
         return HttpResponse(json.dumps({
