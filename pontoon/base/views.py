@@ -251,7 +251,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Validate subpages
-    pages = Subpage.objects.filter(project=p).order_by('name')
+    pages = Subpage.objects.filter(project=p)
     if len(pages) > 0:
         if page is None:
             try:
