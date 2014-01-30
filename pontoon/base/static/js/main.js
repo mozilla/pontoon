@@ -428,7 +428,7 @@ var Pontoon = (function () {
           li.find(".toolbar").show();
         } else {
           $.ajax({
-            url: 'tm/',
+            url: 'translation-memory/',
             data: {
               text: entity.original,
               locale: self.locale.code
@@ -457,7 +457,7 @@ var Pontoon = (function () {
           li.find(".toolbar").show();
         } else {
           $.ajax({
-            url: 'mt/',
+            url: 'machine-translation/',
             data: {
               text: entity.original,
               locale: self.locale.code
