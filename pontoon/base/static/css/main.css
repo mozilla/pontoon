@@ -107,10 +107,6 @@ body, select, input, textarea, button {
   width: 133px;
   float: left;
 
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
-
   box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
   -moz-box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
   -webkit-box-shadow: 0 1px #333333, 0 1px 2px #444444 inset;
@@ -152,10 +148,6 @@ body, select, input, textarea, button {
   box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
   -moz-box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
   -webkit-box-shadow: 0 1px #333333, 0 2px 1px -1px #666666 inset;
-
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
 }
 
 #pontoon .button:hover {
@@ -201,10 +193,6 @@ body, select, input, textarea, button {
   width: 150px;
   z-index: 20; /* Must be higher than iframe-cover */
 
-  border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
-
   box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 0 -3px 3px rgba(0, 0, 0, 0.5);
@@ -228,12 +216,6 @@ body, select, input, textarea, button {
 
 #pontoon #profile-menu li.horizontal-separator {
   padding: 0;
-}
-
-#pontoon ul.menu li:first-child.hover {
-  border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
 }
 
 #pontoon .menu li a:link,
@@ -393,10 +375,6 @@ body, select, input, textarea, button {
   margin-left: 5px;
   position: relative;
   z-index: 1;
-
-  border-radius: 3px 0 0 3px;
-  -moz-border-radius: 3px 0 0 3px;
-  -webkit-border-radius: 3px 0 0 3px;
 }
 
 #pontoon .project.select .menu {
@@ -441,10 +419,6 @@ body, select, input, textarea, button {
 #pontoon .project.select .add:hover {
   background: #444444;
   color: #FFFFFF;
-
-  border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
 }
 
 #pontoon .locale {
@@ -454,10 +428,6 @@ body, select, input, textarea, button {
 
 #pontoon .locale .confirm {
   float: left;
-
-  border-radius: 3px 0 0 3px;
-  -moz-border-radius: 3px 0 0 3px;
-  -webkit-border-radius: 3px 0 0 3px;
 }
 
 #pontoon .locale .selector,
@@ -465,10 +435,6 @@ body, select, input, textarea, button {
   float: right;
   margin-left: -1px;
   width: 7px;
-
-  border-radius: 0 3px 3px 0;
-  -moz-border-radius: 0 3px 3px 0;
-  -webkit-border-radius: 0 3px 3px 0;
 }
 
 #pontoon .locale .menu {
@@ -490,10 +456,6 @@ body, select, input, textarea, button {
   padding-left: 25px;
   padding-right: 11px;
   margin: 9px 12px 6px;
-
-  border-radius: 13px 13px 13px 13px;
-  -moz-border-radius: 13px 13px 13px 13px;
-  -webkit-border-radius: 13px 13px 13px 13px
 
   box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
   -moz-box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
@@ -549,10 +511,6 @@ body, select, input, textarea, button {
   -moz-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
   -webkit-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
 
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
-
   background-color: #222222;
   background-image: -moz-linear-gradient(center top, #333333, #111111); /* FF3.6 */
   background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #333333),color-stop(1, #111111)); /* Saf4+, Chrome */
@@ -566,10 +524,6 @@ body, select, input, textarea, button {
   float: left;
   height: 100%;
   width: 0%;
-  
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
 
   background-color: #AEEE00;
   background-image: -moz-linear-gradient(center top, #AEEE00, #405700); /* FF3.6 */
@@ -610,10 +564,6 @@ body, select, input, textarea, button {
   text-transform: uppercase;
   visibility: visible;
   width: auto;
-
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
 
   box-shadow: 0 0 5px #000000;
   -moz-box-shadow: 0 0 5px #000000;
@@ -737,10 +687,6 @@ body, select, input, textarea, button {
   border-left: 1px solid #CCCCCC;
   border-right: 1px solid #CCCCCC;
   text-align: left;
-
-  border-radius: 5px 5px 5px 5px;
-  -moz-border-radius: 5px 5px 5px 5px;
-  -webkit-border-radius: 5px 5px 5px 5px;
 }
 
 #pontoon #entitylist > ul > li {
@@ -755,24 +701,6 @@ body, select, input, textarea, button {
   background-image: -webkit-linear-gradient(#F7F7F7, #E8E8E8); /* Chrome 10+, Saf6 */
   background-image: linear-gradient(top, #F7F7F7, #E8E8E8);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#F7F7F7', EndColorStr='#E8E8E8'); /* IE6–IE9 */
-}
-
-#pontoon #entitylist > ul > li:first-child {
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-  -moz-border-radius-topleft: 5px;
-  -moz-border-radius-topright: 5px;
-  -webkit-border-top-left-radius: 5px;
-  -webkit-border-top-right-radius: 5px;
-}
-
-#pontoon #entitylist > ul > li:last-child {
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-  -moz-border-radius-bottomleft: 5px;
-  -moz-border-radius-bottomright: 5px;
-  -webkit-border-bottom-left-radius: 5px;
-  -webkit-border-bottom-right-radius: 5px;
 }
 
 #pontoon #entitylist > ul > li:hover {
@@ -830,10 +758,6 @@ body, select, input, textarea, button {
   height: 73px;
   border: 1px solid #CCCCCC;
   padding: 5px;
-
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
 
   box-shadow: 0 1px #FFFFFF, 0 1px 3px -1px #CCCCCC inset;
   -moz-box-shadow: 0 1px #FFFFFF, 0 1px 3px -1px #CCCCCC inset;
@@ -963,10 +887,6 @@ body, select, input, textarea, button {
   left: auto;
   top: 25px;
 
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
-
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.5);
@@ -1016,20 +936,8 @@ body, select, input, textarea, button {
   border-top: none;
 }
 
-#pontoon #entitylist > ul > li:first-child .extra li:first-child {
-  border-radius: 5px 0 0 0;
-  -moz-border-radius: 5px 0 0 0;
-  -webkit-border-radius: 5px 0 0 0;
-}
-
 #pontoon #entitylist .extra li:last-child {
   border-bottom: none;
-}
-
-#pontoon #entitylist > ul > li:last-child .extra li:last-child {
-  border-radius: 0 0 0 5px;
-  -moz-border-radius: 0 0 0 5px;
-  -webkit-border-radius: 0 0 0 5px;
 }
 
 #pontoon #entitylist .extra .original-string {
@@ -1094,10 +1002,6 @@ body, select, input, textarea, button {
   display: block;
   height: 24px;
   width: 24px;
-
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
 
   -moz-transition: none;  /* FF3.7+ */
   -o-transition: none;  /* Opera 10.5 */

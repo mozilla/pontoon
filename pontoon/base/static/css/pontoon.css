@@ -14,19 +14,11 @@
   border-top: 1px solid #AAAAAA;
   border-left: 1px solid #AAAAAA;
   border-right: 1px solid #AAAAAA;
-
-  border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
 }
 
 .pontoon-editable-toolbar.bottom {
   border-top: none;
   border-bottom: 1px solid #AAAAAA;
-
-  border-radius: 0 0 3px 3px;
-  -moz-border-radius: 0 0 3px 3px;
-  -webkit-border-radius: 0 0 3px 3px;
 }
 
 .pontoon-editable-toolbar:hover + * {

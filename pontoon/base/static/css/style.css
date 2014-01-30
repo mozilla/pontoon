@@ -508,10 +508,6 @@ body.admin-form #intro {
   top: 0;
   width: 295px;
 
-  border-radius: 3px 3px 3px 3px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
-
   box-shadow: 0 0 5px #111111;
   -moz-box-shadow: 0 0 5px #111111;
   -webkit-box-shadow: 0 0 5px #111111;
@@ -520,10 +516,6 @@ body.admin-form #intro {
 #pontoon.admin-form #intro .locale.select .menu .search {
   background-position: 7px 8px;
   width: 233px;
-
-  border-radius: 16px 16px 16px 16px;
-  -moz-border-radius: 16px 16px 16px 16px;
-  -webkit-border-radius: 16px 16px 16px 16px
 }
 
 #pontoon.admin-form #intro .locale.select .menu ul {
@@ -583,10 +575,6 @@ body.admin-form #intro {
 #pontoon.admin-form #intro .repository .type.select .selector {
   height: 20px;
   width: 196px;
-}
-
-#pontoon.admin-form #intro .repository .type.select.opened .selector {
-  border-top-left-radius: 0;
 }
 
 #pontoon.admin-form #intro .repository .type.select .selector > span:nth-child(2) {
@@ -760,26 +748,8 @@ body.admin-form #intro {
   text-align: left;
 }
 
-#pontoon #intro .project.select.opened input[type=text].url {
-  border-radius: 0 0 0 3px;
-  -moz-border-radius: 0 0 0 3px;
-  -webkit-border-radius: 0 0 0 3px;
-}
-
 #pontoon #intro .project.select .menu {
   width: 510px;
-}
-
-#pontoon #intro .select.opened > .confirm {
-  border-top-left-radius: 0;
-  -moz-border-radius-topleft: 0;
-  -webkit-border-top-left-radius: 0;
-}
- 
-#pontoon #intro .select.opened > .selector {
-  border-top-right-radius: 0;
-  -moz-border-radius-topright: 0;
-  -webkit-border-top-right-radius: 0;
 }
  
 #pontoon #intro .select .button {
@@ -798,10 +768,6 @@ body.admin-form #intro {
   bottom: 32px;
   width: 210px;
 
-  border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
-
   box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
@@ -811,10 +777,6 @@ body.admin-form #intro {
   background-position: 7px 6px;
   margin: 6px 12px;
   width: 148px;
-
-  border-radius: 14px 14px 14px 14px;
-  -moz-border-radius: 14px 14px 14px 14px;
-  -webkit-border-radius: 14px 14px 14px 14px
 }
 
 #pontoon #intro .select .menu ul {
