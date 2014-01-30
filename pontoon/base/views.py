@@ -450,6 +450,47 @@ def update_translation(request, template=None):
 
 
 @login_required(redirect_field_name='', login_url='/403')
+def translation_memory(request):
+    """Get translation from translation memory service."""
+    log.debug("Get translation from translation memory service.")
+
+    try:
+        text = request.GET['text']
+        locale = request.GET['locale']
+    except MultiValueDictKeyError, e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    url = "http://transvision.mozfr.org/"
+    payload = {
+        "recherche": text,
+        "sourcelocale": "en-US",
+        "locale": locale,
+        "perfect_match": "perfect_match",
+        "repo": "aurora",
+        "json": True,
+    }
+
+    try:
+        r = requests.get(url, params=payload)
+
+        if r.text != '[]':
+            translation = r.json().itervalues().next().itervalues().next()
+
+            # Use JSON to distinguish from "error" if such translation returned
+            return HttpResponse(json.dumps({
+                'translation': translation
+            }), mimetype='application/json')
+
+        else:
+            return HttpResponse("no")
+
+    except Exception as e:
+        log.error(e)
+        return HttpResponse("error")
+
+
+@login_required(redirect_field_name='', login_url='/403')
 def machine_translation(request):
     """Get translation from machine translation service."""
     log.debug("Get translation from machine translation service.")
@@ -484,7 +525,7 @@ def machine_translation(request):
         root = ET.fromstring(r.content)
         translation = root.text
 
-        # Using JSON to distinguish from "error" if such translation returned
+        # Use JSON to distinguish from "error" if such translation returned
         return HttpResponse(json.dumps({
             'translation': translation
         }), mimetype='application/json')

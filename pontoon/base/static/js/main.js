@@ -421,43 +421,27 @@ var Pontoon = (function () {
       // Translation memory
       $("#main .extra .translation-memory").click(function () {
         var li = $(this).parents('.entity'),
-            loader = li.find(".content .translation-memory .loader");
+            loader = li.find(".content .translation-memory .loader"),
+            entity = li[0].entity;
+
         if (loader.length === 0) {
           li.find(".toolbar").show();
         } else {
           $.ajax({
-            url: 'http://transvision.mozfr.org/',
+            url: 'tm/',
             data: {
-              recherche: li.find('.original-string .source-string').html(),
-              locale: self.locale.code,
-              whole_word: 'whole_word',
-              repo: 'aurora',
-              json: 'true'
-            },
-            dataType: 'jsonp'
+              text: entity.original,
+              locale: self.locale.code
+            }
           }).error(function() {
             loader.removeClass("loader").addClass("no").html("Oops, something went wrong.");
-          }).success(function (response) {
-            if (response.length !== 0) {
-              // Not supported in some browsers, but needed with current JSON output:
-              // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/keys
-              Object.keys = function (obj) {
-                var array = [],
-                    prop;
-                for (prop in obj) {
-                  if (obj.hasOwnProperty(prop)) {
-                    array.push(prop);
-                  }
-                }
-                return array;
-              };
-
-              var first = response[Object.keys(response)[0]],
-                  translation = first[Object.keys(first)[0]];
-              loader.removeClass("loader").addClass("source-string").html(self.doNotRender(translation));
+          }).success(function(data) {
+            if (data.translation) {
+              loader.removeClass("loader").addClass("source-string").html(self.doNotRender(data.translation));
               li.find(".toolbar").show();
             } else {
-              loader.removeClass("loader").addClass("no").html("No translations yet");
+              var error = (data === "no") ? "No translations found." : "Oops, something went wrong.";
+              loader.removeClass("loader").addClass("no").html(error);
             }
           });
         }
@@ -483,11 +467,11 @@ var Pontoon = (function () {
           }).success(function(data) {
             if (data.translation) {
               loader.removeClass("loader").addClass("source-string").html(self.doNotRender(data.translation));
+              li.find(".toolbar").show();
             } else {
-              var error = (data === "apikey") ? "Machine translation not supported" : "Oops, something went wrong.";
+              var error = (data === "apikey") ? "Machine translation not supported." : "Oops, something went wrong.";
               loader.removeClass("loader").addClass("no").html(error);
             }
-            li.find(".toolbar").show();
           });
         }
       });

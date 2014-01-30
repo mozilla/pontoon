@@ -18,6 +18,7 @@ urlpatterns = patterns('',
 
     url(r'^get/', views.get_translation, name='pontoon.get'),
     url(r'^update/', views.update_translation, name='pontoon.update'),
+    url(r'^tm/$', views.translation_memory, name='pontoon.tm'),
     url(r'^mt/$', views.machine_translation, name='pontoon.mt'),
     url(r'^download/', views.download, name='pontoon.download'),
     url(r'^svn/$', views.commit_to_svn, name='pontoon.svn'),
