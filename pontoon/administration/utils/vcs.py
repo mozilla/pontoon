@@ -1,8 +1,6 @@
 # -*- coding: utf8 -*-
 
 from __future__ import absolute_import
-import pysvn
-from mercurial import commands, hg, ui, error
 import os
 import commonware.log
 
@@ -33,6 +31,7 @@ class PullFromHg(PullFromRepository):
     VCS = 'hg'
 
     def pull(self, source=None, target=None):
+        from mercurial import commands, hg, ui, error
         log.debug("Clone or update HG repository.")
 
         source = source or self.source
@@ -70,6 +69,7 @@ class PullFromSvn(PullFromRepository):
     VCS = 'svn'
     
     def pull(self, source=None, target=None):
+        import pysvn
         log.debug("Checkout or update SVN repository.")
         source = source or self.source
         target = target or self.target
@@ -84,6 +84,7 @@ class PullFromSvn(PullFromRepository):
 
     @staticmethod
     def conflict_resolution_callback(conflict_description):
+        import pysvn
         return pysvn.wc_conflict_choice.theirs_full, None, False
 
     @staticmethod
