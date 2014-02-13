@@ -410,7 +410,7 @@
         }
         $(newTarget)
           .addClass('pontoon-hovered')
-          .dblclick(function() {
+          .unbind("dblclick").bind("dblclick", function() {
             $('.pontoon-editable-toolbar > .edit').click();
           })
           // Prevent converting white-spaces at the beginning or
@@ -453,7 +453,7 @@
             }
           }
         }
-        toolbar[0].I = setTimeout(hide, 50);
+        toolbar[0].I = setTimeout(hide, 5);
       }
 
 
@@ -558,6 +558,13 @@
             });
           } else if (message.type === "USER") {
             Pontoon.user = message.value;
+          } else if (message.type === "RESIZE") {
+            var toolbar = $('.pontoon-editable-toolbar'),
+                node = toolbar[0].target;
+            if (node) {
+              left = node.getBoundingClientRect().left + window.scrollX;
+              toolbar.css('left', left);
+            }
           }
         }
       }

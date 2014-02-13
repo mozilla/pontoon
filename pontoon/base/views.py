@@ -183,6 +183,7 @@ def _get_entities(project, locale, page=None):
                 for t in translations.exclude(id=first.id):
                     o = {
                         "author": t.author,
+                        "date": t.date.strftime("%b %d, %Y %H:%M"),
                         "translation": t.string
                     }
                     suggestions.append(o)
@@ -340,9 +341,9 @@ def _request(type, project, resource, locale, username, password, payload=False)
         return "error"
 
 
-def get_translation(request, template=None):
-    """Get entity translation for the specified locale."""
-    log.debug("Get entity translation for the specified locale.")
+def get_translations_from_other_locales(request, template=None):
+    """Get entity translations for all but specified locale."""
+    log.debug("Get entity translation for all but specified locale.")
 
     if not request.is_ajax():
         raise Http404
@@ -350,32 +351,47 @@ def get_translation(request, template=None):
     try:
         entity = request.GET['entity']
         locale = request.GET['locale']
-    except MultiValueDictKeyError:
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
         return HttpResponse("error")
 
     log.debug("Entity: " + entity)
     log.debug("Locale: " + locale)
 
     try:
-        e = Entity.objects.get(pk=entity)
-    except Entity.DoesNotExist, e:
+        entity = Entity.objects.get(pk=entity)
+    except Entity.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
 
     try:
-        l = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist, e:
+        locale = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
 
-    translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
-    if len(translations) == 0:
-        log.debug("Translation does not exist.")
+    payload = []
+    translations = Translation.objects.filter(entity=entity)
+
+    for l in entity.project.locales.all().exclude(code=locale.code):
+        translation = translations.filter(locale=l).order_by('date')
+
+        if len(translation) != 0:
+            t = translation.reverse()[0]
+            payload.append({
+                "locale": {
+                    "code": t.locale.code,
+                    "name": t.locale.name
+                },
+                "translation": t.string
+            })
+
+    if len(payload) == 0:
+        log.debug("Translations do not exist.")
         return HttpResponse("error")
     else:
-        translation = translations.reverse()[0].string
-        log.debug("Translation: " + translation)
-        return HttpResponse(translation)
+        return HttpResponse(json.dumps(payload, indent=4),
+            mimetype='application/json')
 
 
 @login_required(redirect_field_name='', login_url='/403')
@@ -519,6 +535,7 @@ def machine_translation(request):
 
     try:
         r = requests.get(url, params=payload)
+        log.debug(r.content)
 
         # Parse XML response
         import xml.etree.ElementTree as ET

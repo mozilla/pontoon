@@ -14,24 +14,96 @@
      {% if project.external %}data-external="{{ project.external|lower }}"{% endif %}
      {% if project.links %}data-links="{{ project.links|lower }}"{% endif %}
      {% if entities %}data-entities="{{ entities }}"{% endif %}
+     {% if user.email %}data-email="{{ user.email }}"{% endif %}
+     {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}
      >
 </div>
 
-<!-- Main UI -->
-<aside id="main">
+<!-- Main toolbar -->
+<header>
+  <!-- Loading Main UI spinner -->
+  <span id="spinner" class="loader"></span>
 
-  <header>
-    <!-- Loading Main UI spinner -->
-    <span id="spinner" class="loader"></span>
+  <div class="container">
+    <button id="switch"></button>
 
-    <div class="container">
-      <hr id="drag">
+    <!-- Project input/select -->
+    <div class="project select">
+      {% if projects|length > 0 %}
+      <div class="button selector">
+        <span class="title" data-url="{{ project.url }}">{{ project.name }}</span>
+      </div>
+      {% endif %}
+      <div class="menu">
+        <input type="text" class="search" autocomplete="off">
+        <ul>
+          {% for project in projects %}
+          <li class="clearfix">
+            <span class="project-name" data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}">{{ project.name }}</span>
+            <span class="project-url">{{ project.url }}</span>
+          </li>
+          {% endfor %}
+          <li class="no-match">{{ _('No results') }}</li>
+        </ul>
+      </div>
+    </div>
+
+    {% if pages %}
+    <!-- Page selector -->
+    <div class="page select">
+      <div class="button selector">
+        <span class="title">{{ current_page }}</span>
+      </div>
+      <div class="menu">
+        <input type="text" class="search" autocomplete="off">
+        <ul>
+          {% for page in pages %}
+          <li>{{ page.name }}</li>
+          {% endfor %}
+          <li class="no-match">{{ _('No results') }}</li>
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Locale selector -->
+    <div class="locale select">
+      <div class="button selector">
+        <span class="language"></span>
+      </div>
+      <div class="menu">
+        <input type="text" class="search" autocomplete="off">
+        <ul>
+          {% for locale in locales %}
+          <li><span class="language {{ locale.code|lower }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
+          {% endfor %}
+          <li class="no-match">{{ _('No results') }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Locale selector -->
+    <div class="go select">
+      <a id="go" href="#">Go</a>
+    </div>
+
+    <!-- Progress indicator -->
+    <div id="progress">
+      <span class="graph"></span>
+      <span class="number"></span>
+    </div>
+
+    <div class="right">
+      <div class="notification"></div>
+      <span id="loading"></span>
+
       <a id="logo" href="/">Pontoon</a>
 
       {% if project.info_brief or project.info_locales or project.info_audience or project.info_metrics %}
       <!-- General project info -->
       <div id="info" class="select">
-        <div class="selector"></div>
+        <div class="button selector">
+        </div>
         <aside class="menu">
           {% if project.info_brief %}
           <section class="brief">
@@ -61,136 +133,128 @@
       </div>
       {% endif %}
 
-      <!-- Project input/select -->
-      <div class="project select">
-        <input name="url" class="url" type="text" placeholder="{{ _('Type URL and press Enter') }}" autocomplete="off" />
-        {% if projects|length > 0 %}
+      <!-- Profile -->
+      <div id="profile" class="select">
         <div class="button selector">
-          <span class="handle">&#9652;</span>
         </div>
-        <div class="menu">
-          <ul>
-            {% for project in projects %}
-            <li class="clearfix">
-              <span class="project-name" data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}">{{ project.name }}</span>
-              <span class="project-url">{{ project.url }}</span>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
+        <ul id="profile-menu" class="menu">
+        {% if user.is_authenticated() or project.name != 'testpilot' %}
+          <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
+          {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin') }}">{{ _('Admin') }}</a></li>{% endif %}
+          <li class="horizontal-separator"></li>
+          <li{% if not (project.repository_type and project.repository_type == 'svn') %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
+          <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
+        {% endif %}
+          {% if project.repository_path %}
+          <li><a class="zip" href="{{ url('pontoon.download') }}">{{ _('Download .zip') }}</a></li>
+          {% endif %}
+          <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download .html') }}</a></li>
+          <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download .json') }}</a></li>
+        </ul>
+        {% if (project.transifex_project and project.transifex_resource) %}
+        <aside id="transifex" class="popup">
+          <h2>
+            {{ _('Sign in to Transifex') }}
+            <a class="cancel" href="#"></a>
+          </h2>
+          <form>
+            <input name="username" type="text" placeholder="Email or Username" />
+            <input name="password" type="password" placeholder="Password" />
+            <span class="button">{{ _('Sign in') }}</span>
+            <div class="bottom">
+              <label class="remember">
+                <input name="remember" type="checkbox" />{{ _('Remember me') }}
+              </label>
+              <a class="new" target="_blank" href="https://www.transifex.net/plans/signup/free/">{{ _('New to Transifex?') }}</a>
+            </div>
+          </form>
+        </aside>
+        {% endif %}
+        {% if project.repository_type and project.repository_type == 'svn' %}
+        <aside id="svn" class="popup">
+          <h2>
+            {{ _('Sign in to Mozilla SVN') }}
+            <a class="cancel" href="#"></a>
+          </h2>
+          <form>
+            <input name="username" type="text" placeholder="Email" />
+            <input name="password" type="password" placeholder="Password" />
+            <span class="button">{{ _('Sign in') }}</span>
+            <div class="bottom">
+              <label class="remember">
+                <input name="remember" type="checkbox" />{{ _('Remember me') }}
+              </label>
+              <a class="new" target="_blank" href="https://l10n.mozilla.org/">{{ _('New to Mozilla?') }}</a>
+            </div>
+          </form>
+        </aside>
         {% endif %}
       </div>
-
-      <!-- Locale selector -->
-      <div class="locale select">
-        <div class="button confirm">
-          <span class="language"></span>
-        </div>
-        <div class="button selector">
-          <span class="handle">&#9652;</span>
-        </div>
-        <div class="menu">
-          <input type="text" class="search" autocomplete="off">
-          <div class="horizontal-separator"></div>
-          <ul>
-            {% for locale in locales %}
-            <li><span class="language {{ locale.code|lower }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
-            {% endfor %}
-            <li class="no-match">{{ _('No results match') }} "<span></span>"</li>
-          </ul>
-        </div>
-      </div>
-      
-      <span class="vertical-separator"></span>
-
-      {% if pages %}
-      <!-- Page selector -->
-      <div class="page select">
-        <div class="button selector">
-          <span class="title">{{ current_page }}</span>
-          <span> &#9652;</span>
-        </div>
-        <ul class="menu">
-          {% for page in pages %}
-          <li><a class="title" href="/locale/{{ locale_code }}/project/{{ project.name }}/page/{{ page.name }}/">{{ page.name }}</a></li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
-
-      <!-- Progress indicator -->
-      <div id="progress"><span></span></div>
-      <span id="progress-value"></span>
-              
-      <div class="right">
-        <div class="notification"></div>
-        <span id="loading"></span>
-        <div id="profile" class="select">
-          <div class="button selector">
-            <span class="author">{{ user.email }}</span>
-            <span> &#9652;</span>
-          </div>
-          <ul id="profile-menu" class="menu">
-          {% if user.is_authenticated() or project.name != 'testpilot' %}
-            <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
-            {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin') }}">{{ _('Admin') }}</a></li>{% endif %}
-            <li class="horizontal-separator"></li>
-            <li{% if not (project.repository_type and project.repository_type == 'svn') %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
-            <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
-          {% endif %}
-            {% if project.repository_path %}
-            <li><a class="zip" href="{{ url('pontoon.download') }}">{{ _('Download .zip') }}</a></li>
-            {% endif %}
-            <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download .html') }}</a></li>
-            <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download .json') }}</a></li>
-          </ul>
-          {% if (project.transifex_project and project.transifex_resource) %}
-          <aside id="transifex" class="popup">
-            <h2>
-              {{ _('Sign in to Transifex') }}
-              <a class="cancel" href="#"></a>
-            </h2>
-            <form>
-              <input name="username" type="text" placeholder="Email or Username" />
-              <input name="password" type="password" placeholder="Password" />
-              <span class="button">{{ _('Sign in') }}</span>
-              <div class="bottom">
-                <label class="remember">
-                  <input name="remember" type="checkbox" />{{ _('Remember me') }}
-                </label>
-                <a class="new" target="_blank" href="https://www.transifex.net/plans/signup/free/">{{ _('New to Transifex?') }}</a>
-              </div>
-            </form>
-          </aside>
-          {% endif %}
-          {% if project.repository_type and project.repository_type == 'svn' %}
-          <aside id="svn" class="popup">
-            <h2>
-              {{ _('Sign in to Mozilla SVN') }}
-              <a class="cancel" href="#"></a>
-            </h2>
-            <form>
-              <input name="username" type="text" placeholder="Email" />
-              <input name="password" type="password" placeholder="Password" />
-              <span class="button">{{ _('Sign in') }}</span>
-              <div class="bottom">
-                <label class="remember">
-                  <input name="remember" type="checkbox" />{{ _('Remember me') }}
-                </label>
-                <a class="new" target="_blank" href="https://l10n.mozilla.org/">{{ _('New to Mozilla?') }}</a>
-              </div>
-            </form>
-          </aside>
-          {% endif %}
-        </div>
-        <button id="switch"></button>
-      </div>
-
     </div>
-  </header>
 
+  </div>
+</header>
+
+<aside id="sidebar">
   <!-- Strings placeholder -->
   <div id="entitylist"></div>
+
+  <!-- Translation editor -->
+  <div id="editor">
+    <div id="topbar" class="clearfix">
+      <a href="#back">Back to list</a>
+      <a href="#next">Next</a>
+      <a href="#previous">Previous</a>
+    </div>
+
+    <div id="source-pane">
+      <p id="original"></p>
+      <p id="comment"></p>
+    </div>
+
+    <textarea id="translation" placeholder="Enter translation"></textarea>
+
+    <menu>
+      <div id="translation-length">
+        <span class="current-length"></span>|<span class="original-length"></span>
+      </div>
+      <button id="copy">Copy</button>
+      <button id="clear">Clear</button>
+      <button id="cancel">Cancel</button>
+      <button id="save">Save</button>
+    </menu>
+
+    <div id="helpers">
+      <nav>
+        <ul>
+          <li class="active"><a href="#suggestions">Suggestions</a></li>
+          <li><a href="#history">History</a></li>
+          <li><a href="#other-locales">Other locales</a></li>
+        </ul>
+      </nav>
+
+      <section id="suggestions">
+        <ul>
+          <li class="machine-translation">
+            <a href="http://www.bing.com/translator" target="_blank" title="Visit Bing Translator">Bing Translator</a>
+            <p class="translation"></p>
+          </li>
+          <li class="translation-memory">
+            <a href="http://transvision.mozfr.org/" target="_blank" title="Visit Transvision">Transvision</a>
+            <p class="translation"></p>
+          </li>
+        </ul>
+      </section>
+
+      <section id="history">
+        <ul></ul>
+      </section>
+
+      <section id="other-locales">
+        <ul></ul>
+      </section>
+    </div>
+  </div>
 </aside>
 
 <!-- Website placeholder + iframe fix: prevent iframes from capturing the mousemove events during a drag -->

@@ -168,6 +168,157 @@ var Pontoon = (function () {
 
 
     /*
+     * Get translations to other locales for given entity
+     *
+     * entity Entity
+     */
+    getOtherLocales: function (entity) {
+      var self = this,
+          list = $('#other-locales ul').empty();
+
+      $.ajax({
+        url: 'other-locales/',
+        data: {
+          entity: entity.pk,
+          locale: self.locale.code
+        },
+        success: function(data) {
+          if (data !== "error") {
+            $.each(data, function() {
+              list.append('<li title="Click to copy">' +
+                '<span>' + this.locale.name + '<span class="stress">' + this.locale.code + '</span></span>' +
+                '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
+              '</li>');
+            });
+          } else {
+            list.append('<li class="disabled"><p>No translations available.</p></li>');
+          }
+        }
+      });
+    },
+
+
+
+    /*
+     * Get history of translations for given entity
+     *
+     * entity Entity
+     */
+    getHistory: function (entity) {
+      var self = this,
+          list = $('#history ul').empty();
+
+      if (entity.suggestions) {
+        $.each(entity.suggestions, function() {
+          list.append('<li title="Click to copy">' +
+            '<span>' + self.doNotRender(this.author) + '<span class="stress">' + this.date + '</span></span>' +
+            '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
+          '</li>');
+        });
+      } else {
+        list.append('<li class="disabled"><p>No translations available.</p<</li>');
+      }
+    },
+
+
+
+    /*
+     * Get suggestions from machine translation and translation memory
+     *
+     * original Original string
+     */
+    getSuggestions: function (original) {
+      var self = this,
+          mt = $('#suggestions .machine-translation .translation')
+            .empty()
+            .addClass('loader'),
+          tm = $('#suggestions .translation-memory .translation')
+            .empty()
+            .addClass('loader');
+      $('#suggestions li')
+        .removeClass('disabled')
+        .parent().removeAttr('title');
+
+      // Machine translation
+      $.ajax({
+        url: 'machine-translation/',
+        data: {
+          text: original,
+          locale: self.locale.code
+        }
+
+      }).error(function() {
+        mt.removeClass("loader").html("Oops, something went wrong.").parent().addClass('disabled');
+
+      }).success(function(data) {
+        mt.removeClass("loader");
+        if (data.translation) {
+          mt.html(self.doNotRender(data.translation)).parent().attr('title', 'Click to copy');
+        } else {
+          var error = (data === "apikey") ? "Machine translation not supported." : "Oops, something went wrong.";
+          mt.html(error).parent().addClass('disabled');
+        }
+      });
+
+      // Translation memory
+      $.ajax({
+        url: 'translation-memory/',
+        data: {
+          text: original,
+          locale: self.locale.code
+        }
+
+      }).error(function() {
+        tm.removeClass("loader").html("Oops, something went wrong.").parent().addClass('disabled');
+
+      }).success(function(data) {
+        tm.removeClass("loader");
+        if (data.translation) {
+          tm.html(self.doNotRender(data.translation)).parent().attr('title', 'Click to copy');
+        } else {
+          var error = (data === "no") ? "No translations available." : "Oops, something went wrong.";
+          tm.html(error).parent().addClass('disabled');
+        }
+      });
+    },
+
+
+
+    /*
+     * Open translation editor in the main UI
+     *
+     * entity Entity
+     */
+    openEditor: function (entity) {
+      $('#original').html(this.doNotRender(entity.original));
+      $('#comment').html(entity.comment);
+      $('#translation').val(entity.translation);
+
+      var original = entity.original.length,
+          translation = entity.translation.length;
+
+      $('#translation-length')
+        .find('.original-length').html(original).end()
+        .find('.current-length').html(translation);
+
+      this.getSuggestions(entity.original);
+      $("#helpers nav a:first").click();
+      $("#editor")[0].entity = entity;
+
+      // Open advanced features by default if project requests them
+      if (!this.app.external) {
+        $("#entitylist")
+          .css('left', -$('#sidebar').width()/2);
+
+        $("#editor")
+          .addClass('active')
+          .css('left', 0);
+      }
+    },
+
+
+
+    /*
      * Do not render HTML tags
      *
      * string HTML snippet that has to be displayed as code instead of rendered
@@ -189,104 +340,51 @@ var Pontoon = (function () {
 
 
 
-    /**
-     * Build source - translation pairs
+    /*
+     * Render list of entities to translate
      */
     entityList: function () {
       var self = this,
-          list = $('#entitylist').append('<ul class="editables"></ul><h2>Not found on the current page</h2><ul class="uneditables"></ul>'),
-          localeMenu = $('.locale .menu').clone(),
-          otherLocales = null;
+          list = $('#entitylist').append(
+            '<input id="search" type="search" placeholder="Search text to translate">' +
+            '<div class="wrapper">' +
+              '<ul class="editables"></ul>' +
+              '<h2 id="not-on-page">Not on the current page</h2>' +
+              '<ul class="uneditables"></ul>' +
+              '<h3 class="no-match"><div>ఠ_ఠ</div>No results.</h3>' +
+            '</div>');
 
-      // IE <= 8 doesn't have the Array.prototype.indexOf method
-      if(!Array.prototype.indexOf) {
-          Array.prototype.indexOf = function(needle) {
-              for(var i = 0; i < this.length; i++) {
-                  if(this[i] === needle) {
-                      return i;
-                  }
-              }
-              return -1;
-          };
-      }
-      // Show only supported locales
-      otherLocales = self.common.getSelectedProjectLocales();
-      otherLocales = $.grep(otherLocales, function(value) {
-        return value != self.locale.code;
+      // Search entities
+      $('#search').keyup(function(e) {
+        var ul = $('#entitylist .wrapper > ul'),
+            val = $(this).val();
+
+        ul
+          .find('li').show().end()
+          .find('.source-string' + ':not(":containsi("' + val + '")")').parent().hide();
+
+        if ($('.uneditables li:visible').length === 0) {
+          $('#not-on-page').hide();
+        } else {
+          $('#not-on-page').show();
+        }
+
+        if (ul.find('li:visible').length === 0) {
+          $('#entitylist .no-match').show();
+        } else {
+          $('#entitylist .no-match').hide();
+        }
       });
-      if (otherLocales) {
-        localeMenu.find('.language').each(function() {
-          if (otherLocales.indexOf($(this).attr('class').split(' ')[1]) === -1) {
-            $(this).parent().remove();
-          }
-        });
-      }
-      localeMenu = localeMenu.html();
 
       // Render
       $(self.project.entities).each(function () {
         var li = $('<li class="entity' + 
           // append classes to translated and uneditable entities
-          (this.translation ? ' translated' : '') + 
-          (!this.body ? ' uneditable' : '') + '">' + 
-        '<div class="source">' + 
-          '<ol class="extra">' + 
-            '<li class="active original-string" title="Original string"></li>' + 
-            '<li class="other-users" title="Suggestions from other users"></li>' + 
-            '<li class="other-locales" title="Translations from other locales"></li>' + 
-            '<li class="translation-memory" title="Translation memory by Transvision"></li>' +
-            '<li class="machine-translation" title="Machine translation by Microsoft Translator"></li>' + 
-          '</ol>' +
-          '<ol class="content">' + 
-            '<li class="active original-string">' + 
-              '<header>' + 
-                (this.comment ? '<span class="comment" title="' + this.comment + '"></span>' : '') + 
-                '<h3>Original string</h3>' + 
-              '</header>' + 
-              '<p class="source-string">' + self.doNotRender(this.original) + '</p>' + 
-            '</li>' + 
-            '<li class="other-users">' + 
-              '<header>' + 
-                (this.suggestions && this.suggestions.length > 1 ? '<a href="#prev" class="prev"></a><a href="#next" class="next"></a>' : '') + 
-                '<h3>Other users' + 
-                (this.suggestions ? ' (<span class="author">' + self.doNotRender(this.suggestions[0].author) + '</span>)' : '') +
-                '</h3>' + 
-              '</header>' + 
-              (this.suggestions ? '<p data-id="0" class="source-string">' + this.suggestions[0].translation + '</p>' :
-               '<p class="no">No suggestions yet</p>') + 
-            '</li>' + 
-            '<li class="other-locales">' + 
-              '<header class="locale select">' + 
-                '<h3 class="selector' + (otherLocales && otherLocales.length > 0 ? ' active' : '') + '">' +
-                  (otherLocales && otherLocales.length > 0 ? '<span class="language">Select locale</span>' : '<span>Other locales</span>') +
-                  (otherLocales && otherLocales.length > 0 ? '<span class="handle"> &#9662;</span>' : '') +
-                '</h3>' +
-                (otherLocales && otherLocales.length > 0 ? '<div class="menu">' + localeMenu + '</div>' : '') +
-              '</header>' +
-              (otherLocales && otherLocales.length > 0 ? '<p class="no">Get inspiration from other locales</p>' : '<p class="no">No other locales available</p>') +
-            '</li>' +
-            '<li class="translation-memory">' + 
-              '<header><h3>Translation memory</h3></header>' + 
-              '<p class="loader"></p>' + 
-            '</li>' + 
-            '<li class="machine-translation">' + 
-              '<header><h3>Machine translation</h3></header>' + 
-              '<p class="loader"></p>' + 
-            '</li>' + 
-          '</ol>' +
-          '<div class="toolbar">' + 
-            '<a href="#copy" class="copy" title="Copy source to translation"></a>' + 
-          '</div>' +
-        '</div>' +
-        '<div class="translation">' + 
-          '<div class="translation-wrapper">' +
-            '<textarea>' + (this.translation || '') + '</textarea>' + 
-            '<div class="toolbar">' + 
-              '<a href="#save" class="save" title="Save translation"></a>' + 
-              '<a href="#cancel" class="cancel" title="Cancel"></a>' +
-            '</div>' +
-          '</div>' +
-        '</div></li>', self.app.win);
+          (this.translation ? ' translated' : '') +
+          (!this.body ? ' uneditable' : '') + '">' +
+          '<span class="status"></span>' +
+          '<p class="source-string">' + self.doNotRender(this.original) + '</p>' +
+        '</li>', self.app.win);
 
         li[0].entity = this;
         this.ui = li; /* HTML Element representing string in the main UI */
@@ -305,229 +403,145 @@ var Pontoon = (function () {
         list.find('.uneditables, h2').remove();
       }
 
-      // Main entity list handlers
-      $("#main .entity:not('.uneditable')").hover(function () {
+      // Hover editable entities on the page
+      $("#entitylist .entity:not('.uneditable')").hover(function () {
         self.common.postMessage("HOVER", this.entity.id);
       }, function () {
         self.common.postMessage("UNHOVER", this.entity.id);
-      }).click(function () {
-        self.common.postMessage("EDIT");
       });
 
-      // Source menu
-      $("#main .extra li").click(function (e) {
-        e.stopPropagation();
-        var t = $(this),
-            li = t.parents('.entity');
-        t.parents(".extra").find("li").removeClass("active").end()
+      // Open entity editor on click
+      $("#entitylist .entity").click(function () {
+        var entity = this.entity;
+        self.openEditor(entity);
 
-          .siblings(".toolbar").hide()
-          .siblings(".content")
-            .find("li.active").removeClass("active").end()
-            .find("li." + t.attr("class")).addClass("active");
-
-        t.addClass("active");
-
-        if (li.find(".content > li:visible p.source-string").length > 0) {
-          li.find('.toolbar').show();
+        if ($(this).is(':not(".uneditable")')) {
+          self.common.postMessage("EDIT");
         }
       });
 
-      // Original string
-      $("#main .extra .original-string").click(function () {
-        $(this).parents('.entity').find('.toolbar').show();
-      });
+      self.updateProgress();
+      self.editor();
+    },
 
-      // Other users
-      $("#main .extra .other-users").click(function () {
-        var li = $(this).parents('.entity');
 
-        if (li[0].entity.suggestions) {
-          li.find('.toolbar').show();
-        }
-      });
 
-      // Navigate among suggestions from other users
-      $("#main .source").find(".prev, .next").click(function (e) {
+    /*
+     * Render editor for advanced translation features
+     */
+    editor: function () {
+      var self = this;
+
+      // Top bar
+      $("#topbar > a").click(function (e) {
         e.stopPropagation();
         e.preventDefault();
-        var li = $(this).parents('.entity'),
-            suggestions = li[0].entity.suggestions,
-            max = suggestions.length,
-            ou = li.find(".other-users"),
-            string = ou.find(".source-string"),
-            id = string.data("id"),
-            next = 0,
-            cls = $(this).attr("class");
 
-        if (cls === "prev") {
-          next = max - 1;
-          if (id > 0) {
-            next = id - 1;
-          }
-        } else if (cls === "next") {
-          if (id < max - 1) {
-            next = id + 1;
-          }
+        var sec = $(this).attr('href').substr(1),
+            entity = $('#editor')[0].entity;
+
+        switch (sec) {
+          case "back":
+            $("#cancel").click();
+            break;
+
+          case "previous":
+            var prev = $("#editor")[0].entity.ui.prev();
+            if (prev.length === 0) {
+              prev = $('#entitylist ul > li:last');
+            }
+            prev.click();
+            break;
+
+          case "next":
+            var next = $("#editor")[0].entity.ui.next();
+            if (next.length === 0) {
+              next = $('#entitylist ul > li:first');
+            }
+            next.click();
+            break;
         }
-
-        ou.find(".author").html(self.doNotRender(suggestions[next].author));
-        string
-          .html(self.doNotRender(suggestions[next].translation))
-          .data("id", next);
-      });
-
-      // Other locales
-      $("#main .source .other-locales .selector").click(function (e) {
-        e.stopPropagation();
-        $('#main header .container .menu:visible').siblings('.selector').click();
-        if ($(this).siblings(".menu").is(":visible")) {
-          $("#main .source .other-locales .menu").hide();
-        } else {
-          $("#main .source .other-locales .menu").hide();
-          $(this).siblings('.menu').show();
-        }
-        $('.search:visible').focus();
-      });
-      $("#main .source .other-locales .select .menu li").click(function (e) {
-        e.stopPropagation();
-        var li = $(this),
-            entity = li.parents(".entity"),
-            p = li.parents('.select').next('p').show();
-
-        p.addClass("loader").html('');
-        li.parents('.menu').siblings('.selector')
-          .find('.language').attr('class', li.find('.language').attr('class')).html(li.find('.language').contents()[0].nodeValue).end().end()
-        .hide();
-
-        $.ajax({
-          url: 'get/',
-          data: {
-            entity: entity[0].entity.pk,
-            locale: li.find(".language").attr("class").split(" ")[1]
-          },
-          success: function(data) {
-            if (data !== "error") {
-              p.removeClass("loader no").addClass("source-string").html(self.doNotRender(data));
-              entity.find('.toolbar').show();
-            } else {
-              p.removeClass("loader").addClass("no").html('No translations yet');
-              entity.find('.toolbar').hide();
-            }
-          }
-        });
-      });
-
-      // Translation memory
-      $("#main .extra .translation-memory").click(function () {
-        var li = $(this).parents('.entity'),
-            loader = li.find(".content .translation-memory .loader"),
-            entity = li[0].entity;
-
-        if (loader.length === 0) {
-          li.find(".toolbar").show();
-        } else {
-          $.ajax({
-            url: 'translation-memory/',
-            data: {
-              text: entity.original,
-              locale: self.locale.code
-            }
-          }).error(function() {
-            loader.removeClass("loader").addClass("no").html("Oops, something went wrong.");
-          }).success(function(data) {
-            if (data.translation) {
-              loader.removeClass("loader").addClass("source-string").html(self.doNotRender(data.translation));
-              li.find(".toolbar").show();
-            } else {
-              var error = (data === "no") ? "No translations found." : "Oops, something went wrong.";
-              loader.removeClass("loader").addClass("no").html(error);
-            }
-          });
-        }
-      });
-
-      // Machine translations
-      $("#main .extra .machine-translation").click(function () {
-        var li = $(this).parents('.entity'),
-            loader = li.find(".content .machine-translation .loader"),
-            entity = li[0].entity;
-
-        if (loader.length === 0) {
-          li.find(".toolbar").show();
-        } else {
-          $.ajax({
-            url: 'machine-translation/',
-            data: {
-              text: entity.original,
-              locale: self.locale.code
-            }
-          }).error(function() {
-            loader.removeClass("loader").addClass("no").html("Oops, something went wrong.");
-          }).success(function(data) {
-            if (data.translation) {
-              loader.removeClass("loader").addClass("source-string").html(self.doNotRender(data.translation));
-              li.find(".toolbar").show();
-            } else {
-              var error = (data === "apikey") ? "Machine translation not supported." : "Oops, something went wrong.";
-              loader.removeClass("loader").addClass("no").html(error);
-            }
-          });
-        }
-      });
-
-      // Copy source to translation
-      $("#main .source .copy").click(function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        var li = $(this).parents('.entity'),
-            entity = li[0].entity,
-            source = self.doRender(li.find('.source .content .active .source-string').html());
-
-        entity.ui.find('textarea').val(source);
       });
 
       // Translate in textarea
-      $("#main .translation textarea").focus(function (e) {
-        var li = $(this).parents('.entity');
+      $("#translation").unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
+        var key = e.keyCode || e.which;
 
-        // Only if no other entity is being edited in-place
-        if (!li.is('.hovered') && li[0].entity.body) {
-          $(this).blur();
-        }
-      // Keyboard navigation in textarea
-      }).unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
-        var key = e.keyCode || e.which,
-            li = $(this).parents('.entity');
-
-        if (key === 13) { // Enter: confirm translation
-          li.find('.save').click();
+        // Enter: save translation
+        if (key === 13) {
+          $('#save').click();
           return false;
         }
 
-        if (key === 27) { // Esc: status quo
-          li.find('.cancel').click();
+        // Esc: cancel
+        if (key === 27) {
+          $('#cancel').click();
           return false;
+        }
+
+      // Update length (keydown is triggered too early)
+      }).unbind("input propertychange").bind("input propertychange", function (e) {
+        var length = $('#translation').val().length;
+        $('#translation-length .current-length').html(length);
+      });
+
+      // Copy source to translation
+      $("#copy").click(function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        var original = $('#original').html(),
+            source = self.doRender(original);
+        $('#translation').val(source).focus();
+      });
+
+      // Clear translation area
+      $("#clear").click(function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        $('#translation').val('').focus();
+        $('#translation-length .current-length').html('0');
+      });
+
+      // Do not change anything when cancelled
+      $("#cancel").click(function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        $("#entitylist")
+          .css('left', 0);
+
+        $("#editor")
+          .removeClass('active')
+          .css('left', $('#sidebar').width());
+
+        var entity = $("#editor")[0].entity;
+        if (entity.body) {
+          self.common.postMessage("CANCEL");
+          self.common.postMessage("UNHOVER", entity.id);
         }
       });
 
       // Save translation
-      $("#main .translation .save").click(function (e) {
+      $("#save").click(function (e) {
         e.stopPropagation();
         e.preventDefault();
-        var li = $(this).parents('.entity'),
-            entity = li[0].entity,
-            source = li.find('.translation textarea').val();
 
-        // Only if no other entity is being edited in-place
-        if (li.is('.hovered')) {
+        var entity = $('#editor')[0].entity,
+            source = $('#translation').val();
+
+        // Update translation in the website
+        if (entity.body) {
           if (source !== '') {
             self.common.postMessage("SAVE", source);
           } else {
             self.common.postMessage("DELETE");
           }
-        // Head entities cannot be edited in-place
-        } else if (!entity.body) {
+          self.common.postMessage("UNHOVER", entity.id);
+
+        // Some entities cannot be edited in-place
+        } else {
           if (source !== '') {
             entity.translation = source;
             self.updateEntityUI(entity);
@@ -541,45 +555,76 @@ var Pontoon = (function () {
         }
       });
 
-      // Do not change anything when cancelled
-      $("#main .translation .cancel").click(function (e) {
+      // Helpers navigation
+      $("#helpers nav a").click(function (e) {
         e.stopPropagation();
         e.preventDefault();
-        var li = $(this).parents('.entity'),
-            entity = li[0].entity,
-            textarea = li.find('.translation textarea');
 
-        // Only if no other entity is being edited in-place
-        if (li.is('.hovered')) {
-          textarea.val(entity.translation || entity.orignal);
-          self.common.postMessage("CANCEL", entity.id);
+        $("#helpers nav li").removeClass('active');
+        $(this).parent().addClass('active');
+
+        var sec = $(this).attr('href').substr(1),
+            entity = $('#editor')[0].entity;
+
+        switch (sec) {
+          case "history":
+            self.getHistory(entity);
+            break;
+
+          case "other-locales":
+            self.getOtherLocales(entity);
+            break;
         }
+
+        $("#helpers > section").hide();
+        $("#helpers > section#" + sec).show();
       });
 
-      this.updateProgress();
+      // Copy helpers result to translation
+      $("#helpers li:not('.disabled')").live("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        var translation = $(this).find('.translation').html(),
+            source = self.doRender(translation);
+        $('#translation').val(source).focus();
+      });
+
+      // Restore clickable links
+      $("#helpers li > a").live("click", function (e) {
+        e.stopPropagation();
+      });
     },
 
 
 
-    /**
+    /*
      * Update progress indicator and value
      */
     updateProgress: function () {
       var all = $("#entitylist .entity").length,
-          translated = $("#entitylist .entity.translated").length;
-      $('#progress span').width(Math.round(translated * 100 / all) + '%');
-      $('#progress-value').html(translated + '/' + all);
+          translated = $("#entitylist .entity.translated").length,
+          percent = Math.round(translated * 100 / all);
+
+      $('#progress .graph').width(percent + '%');
+      $('#progress .number').html(translated + '/' + all);
+
+      if (percent > 50) {
+        $('#progress .number').addClass('left');
+      } else {
+        $('#progress .number').removeClass('left');
+      }
     },
 
 
 
-    /**
+    /*
      * Update entity in the main UI
      * 
      * entity Entity
      */
     updateEntityUI: function (entity) {
-      entity.ui.addClass('translated').find('textarea').val(entity.translation);
+      entity.ui.addClass('translated');
       if (entity.translation === '') {
         entity.ui.removeClass('translated');
       }
@@ -588,7 +633,7 @@ var Pontoon = (function () {
 
 
 
-    /**
+    /*
      * Update entity translation on server
      * 
      * entity Entity
@@ -623,7 +668,7 @@ var Pontoon = (function () {
 
 
 
-    /**
+    /*
      * Close notification
      */
     closeNotification: function () {
@@ -634,7 +679,7 @@ var Pontoon = (function () {
 
 
 
-    /**
+    /*
      * Display loader to provide feedback about the background process
      */
     startLoader: function () {
@@ -643,7 +688,7 @@ var Pontoon = (function () {
 
 
 
-    /**
+    /*
      * Remove loader
      * 
      * text End of operation text (e.g. Done!)
@@ -666,7 +711,7 @@ var Pontoon = (function () {
 
 
 
-    /**
+    /*
      * Attach event handlers
      */
     attachHandlers: function () {
@@ -674,15 +719,18 @@ var Pontoon = (function () {
 
       // Open/close Pontoon UI
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
-        if ($('#main').is('.opened')) {
-          $('#entitylist').height(0);
+        if ($(this).is('.opened')) {
+          $('#sidebar').hide();
+          $('#source').css('margin-left', 0);
           self.common.postMessage("MODE", "Advanced");
         } else {
-          $('#entitylist').height(300);
+          $('#sidebar').show();
+          $('#source').css('margin-left', $('#sidebar').width());
           self.common.postMessage("MODE", "Basic");
         }
-        $('#source').height($(document).height() - $('#main').height());
-        $('#main').toggleClass('opened');
+        $('#source').width($(window).width() - $('#sidebar:visible').width());
+        self.common.postMessage("RESIZE");
+        $(this).toggleClass('opened');
       });
 
       // Save menu
@@ -712,7 +760,7 @@ var Pontoon = (function () {
 
 
 
-    /**
+    /*
      * Handle messages from project code
      */
     receiveMessage: function (e) {
@@ -728,7 +776,7 @@ var Pontoon = (function () {
           Pontoon.attachHandlers();
           Pontoon.entityList();
           $("#spinner").fadeOut(function() {
-            $("#main > header > .container").fadeIn();
+            $("#pontoon > header > .container").fadeIn();
           });
           if (Pontoon.project.format !== 'properties') {
             $('#profile-menu .properties').parent().remove();
@@ -738,7 +786,7 @@ var Pontoon = (function () {
           Pontoon.common.showError(msg);
           $("#progress, #switch, #drag").remove();
           $("#spinner").fadeOut(function() {
-            $("#main > header > .container").fadeIn();
+            $("#pontoon > header > .container").fadeIn();
           });
           Pontoon.attachHandlers();
         } else if (message.type === "SWITCH") {
@@ -748,9 +796,15 @@ var Pontoon = (function () {
         } else if (message.type === "UNHOVER") {
           Pontoon.project.entities[message.value].ui.removeClass('hovered');
         } else if (message.type === "ACTIVE") {
-          Pontoon.project.entities[message.value].ui.addClass('active');
+          if ($('#editor').is(':not(".active")')) {
+            var entity = Pontoon.project.entities[message.value];
+            Pontoon.openEditor(entity);
+          }
         } else if (message.type === "INACTIVE") {
-          Pontoon.project.entities[message.value].ui.removeClass('active');
+          if ($('#editor').is('.active')) {
+            $('#cancel').click();
+            $('#editor')[0].entity.ui.removeClass('hovered');
+          }
         } else if (message.type === "UPDATE") {
           var entity = Pontoon.project.entities[message.value];
           Pontoon.updateEntityUI(entity);
@@ -763,7 +817,7 @@ var Pontoon = (function () {
 
 
 
-    /**
+    /*
      * Initialize Pontoon
      *
      * app Pontoon window object
@@ -771,8 +825,7 @@ var Pontoon = (function () {
      * locale ISO 639-1 language code of the language website is localized to
      */
     init: function (app, project, locale) {
-      var self = this,
-          email = $("#profile .author").html();
+      var self = this;
       if (!project) {
         throw "Website handler required";
       }
@@ -794,11 +847,11 @@ var Pontoon = (function () {
       };
       this.locale = {
         code: locale,
-        language: $("#main .language").contents()[0].nodeValue // PO file
+        language: $("#pontoon > header .language").contents()[0].nodeValue // PO file
       };
       this.user = {
-        email: email || '',
-        name: email ? email.split("@")[0] : '' // PO file
+        email: $('#server').data('email') || '',
+        name: $('#server').data('name') || '' // PO file
       };
 
       // Sync user data
@@ -821,7 +874,7 @@ var Pontoon = (function () {
 
 
 
-    /**
+    /*
      * Update slider position in the menu
      * 
      * menu Menu element
@@ -844,7 +897,7 @@ var Pontoon = (function () {
 
 
 
-    /**
+    /*
      * Common functions used in both, client specific code and Pontoon library
      */
     common: (function () {
@@ -858,6 +911,7 @@ var Pontoon = (function () {
           $(this).siblings('.menu').show().end()
                  .parents('.select').addClass('opened');
           $('#iframe-cover').show().height($('#source').height()); // iframe fix
+          $('.search:visible').focus().trigger('keyup');
         }
       });
 
@@ -866,48 +920,6 @@ var Pontoon = (function () {
         $('.menu').hide();
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
-      });
-
-      // Confirm and select locale handlers
-      $('.locale .confirm, body:not(".admin-form") .locale .menu li:not(".no-match")').unbind("click.pontoon").bind("click.pontoon", function () {
-        var locale = $(this).find('.language').attr('class').split(' ')[1],
-            url = $('.url:visible').val();
-
-        $('.locale .button .language').attr('class', 'language ' + locale).html($('.locale .menu .language.' + locale).html());
-        if (url) {
-          // The default configuration of Apache doesn't allow encoded slashes in URLs
-          // https://github.com/mozilla/playdoh/issues/143
-          window.location = '/locale/' + locale + '/site/' + encodeURIComponent(encodeURIComponent(url));
-        } else {
-          Pontoon.common.showError("Please enter the URL first.");
-          $('.url:visible').focus();
-        }
-      });
-      $('.url').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
-        var key = e.keyCode || e.which;
-        if (key === 13) { // Enter
-          $('.locale .confirm:visible').click();
-          return false;
-        }
-      });
-
-      // Project menu handler
-      $('.project .menu li').live("click.pontoon", function () {
-        $('.url').val($(this).find('.project-url').html());
-
-        // Fallback if selected locale not available for the selected project
-        if ($('body').is('.admin')) {
-          return false;
-        }
-        var locales = Pontoon.common.getSelectedProjectLocales(),
-            menu = $('.locale .menu:first'),
-            confirm = menu.siblings('.confirm'),
-            selected = confirm.find('.code').html();
-
-        if (locales.indexOf(selected) === -1) {
-          var firstLocale = menu.find('.language.' + locales[0])[0].outerHTML;
-          confirm.html(firstLocale);
-        }
       });
 
       // Menu hover
@@ -921,7 +933,77 @@ var Pontoon = (function () {
         return (a.textContent || a.innerText || '').toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
       };
 
-      // Search locales
+      // Project menu handler
+      $('.project .menu li:not(".no-match")').live("click.pontoon", function () {
+        var name = $(this).find('.project-name').html(),
+            url = $(this).find('.project-url').html();
+
+        $('.project .button .title')
+          .html(name)
+          .data('url', url);
+
+        if ($('body').is('.admin')) {
+          return false;
+        }
+
+        // Fallback if selected locale not available for the selected project
+        var locales = Pontoon.common.getSelectedProjectLocales(),
+            menu = $('.locale .menu'),
+            button = menu.siblings('.button'),
+            selected = button.find('.code').html();
+
+        if (locales.indexOf(selected) === -1) {
+          var firstLocale = menu.find('.language.' + locales[0])[0].outerHTML;
+          button.html(firstLocale);
+        }
+      });
+
+      // Page menu handler
+      $('.page .menu li:not(".no-match")').click(function () {
+        var title = $(this).html();
+        $('.page .button .title').html(title);
+      });
+
+      // Locale menu handler
+      $('body:not(".admin-form") .locale .menu li:not(".no-match")').click(function () {
+        var locale = $(this).find('.language').attr('class').split(' ')[1],
+            language = $('.locale .menu .language.' + locale).html();
+
+        $('.locale .button .language')
+          .attr('class', 'language ' + locale)
+          .html(language);
+      });
+
+      // Confirm project (page) and locale selection
+      $('#go').click(function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var locale = $('.locale .button .language').attr('class').split(' ')[1],
+            url = $('.project .button .title').data('url');
+
+        // The default configuration of Apache doesn't allow encoded slashes in URLs
+        // https://github.com/mozilla/playdoh/issues/143
+        window.location = '/locale/' + locale + '/site/' + encodeURIComponent(encodeURIComponent(url));
+      });
+
+      // Show only locales available for the selected project
+      $('.locale .selector').live("click.pontoon", function () {
+        var locales = Pontoon.common.getSelectedProjectLocales(),
+            menu = $(this).siblings('.menu');
+
+        menu.find('.limited').removeClass('limited');
+        if (locales) {
+          menu.find('li').hide();
+          $(locales).each(function() {
+            menu.find('.language.' + this).parent().addClass('limited').show();
+          });
+        }
+
+        $('.search:visible').focus().trigger('keyup');
+      });
+
+      // Project, page and locale search
       $('.search').click(function (e) {
         e.stopPropagation();
       }).keyup(function(e) {
@@ -939,46 +1021,6 @@ var Pontoon = (function () {
         } else {
           ul.find('.no-match').hide();
         }
-      });
-
-      // Search projects
-      $('.url').live("keyup.pontoon", function(e) {
-        var key = e.keyCode || e.which;
-        if (key === 13) { // Enter
-          return false; // Do not open menu if URL present and enter pressed
-        }
-        var menu = $(this).siblings('.menu'),
-            ul = menu.find('ul'),
-            val = $(this).val();
-
-        if (val !== '') {
-          ul
-            .find('li').addClass('match').end()
-            .find('li:not(":containsi("' + val + '")")').removeClass('match');
-
-          if (ul.find('li.match').length === 0) {
-            menu.hide().parent().removeClass('opened');
-          } else {
-            menu.show().parent().addClass('opened');
-          }
-        }
-      });
-
-      // Show only locales available for the selected project
-      $('.locale .selector').live("click.pontoon", function () {
-        var locales = Pontoon.common.getSelectedProjectLocales(),
-            menu = $(this).siblings('.menu');
-
-        menu.find('.limited').removeClass('limited');
-        if (locales) {
-          menu.find('li').hide();
-          $(locales).each(function() {
-            menu.find('.language.' + this).parent().addClass('limited').show();
-          });
-        }
-
-        $('.search:visible').focus();
-        $('.search').trigger('keyup');
       });
 
       // Use arrow keys to move around menu, confirm with enter, close with escape
@@ -1055,16 +1097,13 @@ var Pontoon = (function () {
       return {
         /*
          * Get locales, available for selected project
-         *
-         * message Error message to be displayed
          */
         getSelectedProjectLocales: function() {
           var locales = null;
 
-          $('.project-url').each(function() {
-            // Do not check equality, because we need to support subpages
-            if ($('.url').val().indexOf($(this).html()) !== -1) {
-              locales = $(this).siblings('.project-name').data('locales').split(',');
+          $('.project-name').each(function() {
+            if ($('.project .button .title').html() === $(this).html()) {
+              locales = $(this).data('locales').split(',');
               locales.pop();
               return false;
             }

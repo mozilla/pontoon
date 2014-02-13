@@ -220,9 +220,14 @@ button {  width: auto; overflow: visible; }
     Author: Matjaž Horvat
  */
 
+html {
+  height: 100%;
+}
+
 body {
-	overflow: hidden;
-	background: #DBDBDB;
+  background: #DBDBDB;
+  height: 100%;
+  overflow: hidden;
 }
 
 body.admin-form {
@@ -417,7 +422,6 @@ body.admin-form #intro {
 #pontoon.admin-form #intro input[type=password],
 #pontoon.admin-form #intro textarea {
   display: block;
-  float: none;
   height: 24px;
   margin-left: -1px;
   width: 613px; /* Must be same as #pontoon.admin-form #intro form width - padding - margin-left */
@@ -831,25 +835,26 @@ body.admin-form #intro {
 
 #source {
   display: none;
-  width: 100%;
   height: 0;
+  padding: 60px 0 0 0;
+  width: 100%;
 }
 
 #iframe-cover {
   display: none;
   position: absolute;
-  width: 100%;
   top: 0;
+  width: 100%;
   z-index: 10; /* Must be lower than locale-list */
 }
 
 #project-load {
   display: table;
+  height: 100%;
   overflow: hidden;
   position: fixed;
   text-align: center;
   width: 100%;
-  height: 100%;
 }
 
 #project-load p {

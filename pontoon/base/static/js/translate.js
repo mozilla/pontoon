@@ -2,12 +2,21 @@ $(function() {
 
   var url = $('#server').data('url'),
       locale = $('#server').data('locale'),
+      advanced = $('#server').data('external'),
       escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
       projectWindow = null;
 
+  // Open advanced features by default if project requests them
+  if (advanced) {
+    $('#sidebar').addClass('advanced');
+    $('#switch').addClass('opened');
+  }
+
   // Resize iframe with window
   $(window).resize(function () {
-    $('#source').height($(document).height() - $('#main').height());
+    $('#source').width($(window).width() - $('#sidebar:visible').width())
+                .height($(window).height() - $('#pontoon > header').outerHeight());
+    Pontoon.common.postMessage("RESIZE");
   });
 
   // Empty iframe if cached
@@ -17,8 +26,10 @@ $(function() {
   function receiveMessage(e) {
     // TODO: Check origin - hardcode Pontoon domain name
     if (JSON.parse(e.data).type === "SUPPORTED") {
-      $('#main').slideDown(function() {
-        $('#source').show().height($(document).height() - $(this).height());
+      $('#pontoon > header').slideDown(function() {
+        $('#source').show().width($(window).width() - $('#sidebar:visible').width())
+                           .height($(window).height() - $(this).outerHeight())
+                           .css('margin-left', $('#sidebar:visible').width());
         $('#project-load').hide();
       });
       Pontoon.init(window, projectWindow, locale);
@@ -29,18 +40,8 @@ $(function() {
 
   $('.url').val(url);
   $('.locale .button .language').addClass(escapedLocale).html($('.locale .menu .language.' + escapedLocale).html());
-  if ($('#server').data('external') !== true) {
-    $('#source').attr('src', url);
-    projectWindow = $('#source')[0].contentWindow;
-  } else {
-    $('#switch, #drag').remove();
-    $('#main').prepend($('#entitylist').remove()).toggleClass('opened');
-    $(window).resize(function () {
-      $('#entitylist').height($(document).height() - $('#main > header').outerHeight());
-    });
-    $("#entitylist").height($(document).height() - $('#main > header').outerHeight());
-    projectWindow = window.open(url, 'project', 'width=320,height=480,toolbar=1,resizable=1,scrollbars=1');
-  }
+  $('#source').attr('src', url);
+  projectWindow = $('#source')[0].contentWindow;
 
   // Show error message if no callback for 30 seconds: Pontoon/iframe not supported, 404…
   var i = 0,
@@ -79,19 +80,21 @@ $(function() {
       .unbind('mouseup', mouseUpHandler);
 
     $('#iframe-cover').hide(); // iframe fix
+    /*
     if (e.data.initial.below.height() === 0) {
       $('#main').removeClass('opened');
       Pontoon.common.postMessage("MODE", "Advanced");
     } else {
       $('#main').addClass('opened');
       Pontoon.common.postMessage("MODE", "Basic");
-    }      
+    }
+    */
   };
   $('#drag').bind('mousedown', function(e) {
     e.preventDefault();
 
     var up = $('#source'),
-        below = $('#entitylist'),
+        below = $('#sidebar'),
         data = {
           up: up,
           below: below,
@@ -99,7 +102,7 @@ $(function() {
           bHeight: below.height(),
           offTop: e.pageY,
           min: 0,
-          max: $(document).height() - $("#main header").outerHeight()
+          max: $(document).height() - $("#pontoon > header").outerHeight()
         };
 
     // iframe fix: Prevent iframes from capturing the mousemove events during a drag
