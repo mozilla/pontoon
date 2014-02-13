@@ -905,3 +905,9 @@ body.admin-form #intro {
   -o-user-select: none;
   user-select: none;
 }
+
+.center-gravatar {
+    margin-top:-3px;
+    vertical-align: middle;
+    margin-right: 0.3em;
+}
