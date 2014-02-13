@@ -915,6 +915,45 @@ var Pontoon = (function () {
         }
       });
 
+      // Show only locales available for the selected project
+      $('.locale .selector').live("click.pontoon", function () {
+        var locales = Pontoon.common.getSelectedProjectLocales(),
+            menu = $(this).siblings('.menu');
+
+        menu.find('.limited').removeClass('limited');
+        if (locales) {
+          menu.find('li').hide();
+          $(locales).each(function() {
+            menu.find('.language.' + this).parent().addClass('limited').show();
+          });
+        }
+      });
+
+      // Show only pages available for the selected project
+      $('.page .selector').live("click.pontoon", function () {
+        var pages = Pontoon.common.getSelectedProjectPages(),
+            menu = $(this).siblings('.menu').find('ul');
+
+        if (pages) {
+          menu.find('li:not(".no-match")').remove();
+          $(pages.reverse()).each(function() {
+            menu.prepend('<li>' + this + '</li>');
+          });
+        }
+      });
+
+      // Confirm project (page) and locale selection
+      $('#go').click(function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var locale = $('.locale .selector .language').attr('class').split(' ')[1],
+            url = $('.project .selector .title').data('url');
+
+        // https://github.com/mozilla/playdoh/issues/143#issuecomment-10768865
+        window.location = '/locale/' + locale + '/site/' + encodeURIComponent(encodeURIComponent(url));
+      });
+
       // Hide menus on click outside
       $('body:not(".admin-form")').live("click.pontoon", function () {
         $('.menu').hide();
@@ -928,17 +967,12 @@ var Pontoon = (function () {
         $(this).toggleClass('hover');
       });
 
-      // Add case insensitive :contains-like selector to jQuery (needed for locale search)
-      $.expr[':'].containsi = function(a, i, m) {
-        return (a.textContent || a.innerText || '').toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-      };
-
       // Project menu handler
       $('.project .menu li:not(".no-match")').live("click.pontoon", function () {
         var name = $(this).find('.project-name').html(),
             url = $(this).find('.project-url').html();
 
-        $('.project .button .title')
+        $('.project .selector .title')
           .html(name)
           .data('url', url);
 
@@ -949,19 +983,28 @@ var Pontoon = (function () {
         // Fallback if selected locale not available for the selected project
         var locales = Pontoon.common.getSelectedProjectLocales(),
             menu = $('.locale .menu'),
-            button = menu.siblings('.button'),
-            selected = button.find('.code').html();
+            selector = menu.siblings('.selector'),
+            selected = selector.find('.code').html();
 
         if (locales.indexOf(selected) === -1) {
-          var firstLocale = menu.find('.language.' + locales[0])[0].outerHTML;
-          button.html(firstLocale);
+          var defaultLocale = menu.find('.language.' + locales[0])[0].outerHTML;
+          selector.html(defaultLocale);
+        }
+
+        // Fallback if selected page not available for the selected project
+        var defaultPage = Pontoon.common.getSelectedProjectPages()[0];
+        if (defaultPage) {
+        $('.page .selector .title').html(defaultPage);
+          $('header .page').show().find('.selector .title').html(defaultPage);
+        } else {
+          $('header .page').hide();
         }
       });
 
       // Page menu handler
-      $('.page .menu li:not(".no-match")').click(function () {
+      $('.page .menu li:not(".no-match")').live("click", function () {
         var title = $(this).html();
-        $('.page .button .title').html(title);
+        $('.page .selector .title').html(title);
       });
 
       // Locale menu handler
@@ -969,39 +1012,15 @@ var Pontoon = (function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             language = $('.locale .menu .language.' + locale).html();
 
-        $('.locale .button .language')
+        $('.locale .selector .language')
           .attr('class', 'language ' + locale)
           .html(language);
       });
 
-      // Confirm project (page) and locale selection
-      $('#go').click(function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        var locale = $('.locale .button .language').attr('class').split(' ')[1],
-            url = $('.project .button .title').data('url');
-
-        // The default configuration of Apache doesn't allow encoded slashes in URLs
-        // https://github.com/mozilla/playdoh/issues/143
-        window.location = '/locale/' + locale + '/site/' + encodeURIComponent(encodeURIComponent(url));
-      });
-
-      // Show only locales available for the selected project
-      $('.locale .selector').live("click.pontoon", function () {
-        var locales = Pontoon.common.getSelectedProjectLocales(),
-            menu = $(this).siblings('.menu');
-
-        menu.find('.limited').removeClass('limited');
-        if (locales) {
-          menu.find('li').hide();
-          $(locales).each(function() {
-            menu.find('.language.' + this).parent().addClass('limited').show();
-          });
-        }
-
-        $('.search:visible').focus().trigger('keyup');
-      });
+      // Add case insensitive :contains-like selector to jQuery (needed for locale search)
+      $.expr[':'].containsi = function(a, i, m) {
+        return (a.textContent || a.innerText || '').toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+      };
 
       // Project, page and locale search
       $('.search').click(function (e) {
@@ -1095,6 +1114,22 @@ var Pontoon = (function () {
       });
 
       return {
+        /*
+         * Get pages, available for selected project
+         */
+        getSelectedProjectPages: function() {
+          var pages = null;
+
+          $('.project-name').each(function() {
+            if ($('.project .button .title').html() === $(this).html()) {
+              pages = $(this).data('pages').split(',');
+              pages.pop();
+              return false;
+            }
+          });
+
+          return pages;
+        },
         /*
          * Get locales, available for selected project
          */

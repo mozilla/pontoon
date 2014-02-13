@@ -234,6 +234,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
     data = {
         'locale_code': locale,
         'locales': Locale.objects.all(),
+        'pages': Subpage.objects.all(),
         'project_url': p.url,
         'project': p,
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
@@ -272,7 +273,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
                 }
                 messages.error(request, "Oops, subpage could not be found.")
                 return HttpResponseRedirect(reverse('pontoon.home'))
-        data['pages'] = pages
+        data['project_pages'] = pages
         data['current_page'] = page
 
     # Get entities

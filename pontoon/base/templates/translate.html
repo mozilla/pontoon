@@ -39,7 +39,9 @@
         <ul>
           {% for project in projects %}
           <li class="clearfix">
-            <span class="project-name" data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}">{{ project.name }}</span>
+            <span class="project-name"
+              data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
+              data-pages="{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}">{{ project.name }}</span>
             <span class="project-url">{{ project.url }}</span>
           </li>
           {% endfor %}
@@ -48,7 +50,7 @@
       </div>
     </div>
 
-    {% if pages %}
+    {% if project_pages %}
     <!-- Page selector -->
     <div class="page select">
       <div class="button selector">
@@ -57,7 +59,7 @@
       <div class="menu">
         <input type="text" class="search" autocomplete="off">
         <ul>
-          {% for page in pages %}
+          {% for page in project_pages %}
           <li>{{ page.name }}</li>
           {% endfor %}
           <li class="no-match">{{ _('No results') }}</li>
