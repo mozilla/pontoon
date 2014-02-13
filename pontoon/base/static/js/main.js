@@ -942,16 +942,20 @@ var Pontoon = (function () {
         }
       });
 
-      // Confirm project (page) and locale selection
+      // Open selected project (page) and locale combination
       $('#go').click(function (e) {
         e.preventDefault();
         e.stopPropagation();
 
         var locale = $('.locale .selector .language').attr('class').split(' ')[1],
-            url = $('.project .selector .title').data('url');
+            project = $('.project .selector .title').html(),
+            page = $('.page .selector .title').html(),
+            loc = '/locale/' + locale + '/project/' + project;
 
-        // https://github.com/mozilla/playdoh/issues/143#issuecomment-10768865
-        window.location = '/locale/' + locale + '/site/' + encodeURIComponent(encodeURIComponent(url));
+        if (page) {
+          loc += '/page/' + page;
+        }
+        window.location = loc;
       });
 
       // Hide menus on click outside
