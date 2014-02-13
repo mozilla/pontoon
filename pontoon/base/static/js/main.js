@@ -209,7 +209,7 @@ var Pontoon = (function () {
           list = $('#history ul').empty();
 
       if (entity.suggestions) {
-        $.each(entity.suggestions, function() {
+        $.each(entity.suggestions.reverse(), function() {
           list.append('<li title="Click to copy">' +
             '<span>' + self.doNotRender(this.author) + '<span class="stress">' + this.date + '</span></span>' +
             '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
