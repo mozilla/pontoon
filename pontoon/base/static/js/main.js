@@ -917,7 +917,7 @@ var Pontoon = (function () {
 
       // Show only locales available for the selected project
       $('.locale .selector').live("click.pontoon", function () {
-        var locales = Pontoon.common.getSelectedProjectLocales(),
+        var locales = Pontoon.common.getProjectResources('locales'),
             menu = $(this).siblings('.menu');
 
         menu.find('.limited').removeClass('limited');
@@ -931,7 +931,7 @@ var Pontoon = (function () {
 
       // Show only pages available for the selected project
       $('.page .selector').live("click.pontoon", function () {
-        var pages = Pontoon.common.getSelectedProjectPages(),
+        var pages = Pontoon.common.getProjectResources('pages'),
             menu = $(this).siblings('.menu').find('ul');
 
         if (pages) {
@@ -981,7 +981,7 @@ var Pontoon = (function () {
         }
 
         // Fallback if selected locale not available for the selected project
-        var locales = Pontoon.common.getSelectedProjectLocales(),
+        var locales = Pontoon.common.getProjectResources('locales'),
             menu = $('.locale .menu'),
             selector = menu.siblings('.selector'),
             selected = selector.find('.code').html();
@@ -992,7 +992,7 @@ var Pontoon = (function () {
         }
 
         // Fallback if selected page not available for the selected project
-        var defaultPage = Pontoon.common.getSelectedProjectPages()[0];
+        var defaultPage = Pontoon.common.getProjectResources('pages')[0];
         if (defaultPage) {
         $('.page .selector .title').html(defaultPage);
           $('header .page').show().find('.selector .title').html(defaultPage);
@@ -1115,36 +1115,22 @@ var Pontoon = (function () {
 
       return {
         /*
-         * Get pages, available for selected project
+         * Get resources available for selected project
+         *
+         * resourceType locales or pages
          */
-        getSelectedProjectPages: function() {
-          var pages = null;
+        getProjectResources: function(resourceType) {
+          var resources = null;
 
           $('.project-name').each(function() {
             if ($('.project .button .title').html() === $(this).html()) {
-              pages = $(this).data('pages').split(',');
-              pages.pop();
+              resources = $(this).data(resourceType).split(',');
+              resources.pop();
               return false;
             }
           });
 
-          return pages;
-        },
-        /*
-         * Get locales, available for selected project
-         */
-        getSelectedProjectLocales: function() {
-          var locales = null;
-
-          $('.project-name').each(function() {
-            if ($('.project .button .title').html() === $(this).html()) {
-              locales = $(this).data('locales').split(',');
-              locales.pop();
-              return false;
-            }
-          });
-
-          return locales;
+          return resources;
         },
         /*
          * Show error message
