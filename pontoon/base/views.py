@@ -14,7 +14,7 @@ import StringIO
 import traceback
 import urllib
 import zipfile
-from hashlib import md5
+import hashlib
 
 from django.conf import settings
 from django.contrib import messages
@@ -205,6 +205,12 @@ def translate_project(request, locale, project, page=None, template='translate.h
     """Translate view: project."""
     log.debug("Translate view: project.")
 
+    grav_email = request.user.email
+    size = 17
+
+    gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(grav_email.lower()).hexdigest() + "?"
+    gravatar_url += urllib.urlencode({'s': str(size)})
+
     # Validate locale
     log.debug("Locale: " + locale)
     try:
@@ -273,6 +279,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
                 return HttpResponseRedirect(reverse('pontoon.home'))
         data['pages'] = pages
         data['current_page'] = page
+        data['gravatar_url'] = gravatar_url
 
     # Get entities
     if page is not None:
