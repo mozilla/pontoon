@@ -493,6 +493,7 @@ var Pontoon = (function () {
         var original = $('#original').html(),
             source = self.doRender(original);
         $('#translation').val(source).focus();
+        $('#translation-length .current-length').html(source.length);
       });
 
       // Clear translation area
@@ -588,6 +589,7 @@ var Pontoon = (function () {
         var translation = $(this).find('.translation').html(),
             source = self.doRender(translation);
         $('#translation').val(source).focus();
+        $('#translation-length .current-length').html(source.length);
       });
 
       // Restore clickable links
