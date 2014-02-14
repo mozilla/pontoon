@@ -628,6 +628,12 @@ body, select, input, textarea, button {
   float: left;
 }
 
+#pontoon #profile .center-gravatar {
+  margin-top:-3px;
+  vertical-align: middle;
+  margin-right: 0.3em;
+}
+
 #pontoon #profile-menu {
   display: none;
   right: 0;
