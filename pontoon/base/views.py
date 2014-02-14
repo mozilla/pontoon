@@ -877,7 +877,7 @@ def save_to_transifex(request, template=None):
     for entity in data.get('strings'):
         obj = {
             # Identify translation strings using hashes
-            "source_entity_hash": md5(':'.join([entity['original'], '']).encode('utf-8')).hexdigest(),
+            "source_entity_hash": hashlib.md5(':'.join([entity['original'], '']).encode('utf-8')).hexdigest(),
             "translation": entity['translation']
         }
         payload.append(obj)
