@@ -609,7 +609,7 @@ var Pontoon = (function () {
           percent = Math.round(translated * 100 / all);
 
       $('#progress .graph').width(percent + '%');
-      $('#progress .number').html(translated + '/' + all);
+      $('#progress .number').html(translated + '|' + all);
 
       if (percent > 50) {
         $('#progress .number').addClass('left');
