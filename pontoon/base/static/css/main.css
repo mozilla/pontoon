@@ -643,7 +643,7 @@ body, select, input, textarea, button {
 /* ENTITY LIST */
 
 #pontoon #sidebar {
-  background: #272A2F;
+  background: #3F4752;
   border-right: 1px solid #5E6475;
   bottom: 0;
   display: none;
@@ -678,7 +678,8 @@ body, select, input, textarea, button {
 }
 
 #pontoon #search {
-  background: url('../img/search.png') 6px 13px no-repeat #333942;
+  background: url('../img/search.png') 6px 13px no-repeat #4D5967;
+  border-bottom: 1px solid #5E6475;
   color: #FFFFFF;
   float: none;
   font-size: 16px;
@@ -702,7 +703,7 @@ body, select, input, textarea, button {
   bottom: 0px;
   overflow-y: auto;
   position: absolute;
-  top: 43px;
+  top: 44px;
   width: 100%;
 }
 
@@ -714,8 +715,8 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist > .wrapper > ul > li {
-  background-color: #4d5967;
-  border-bottom: 1px solid #5e6475;
+  background: #3f4752;
+  border-bottom: 1px solid #4e5361;
   color: #FFFFFF;
   cursor: pointer;
   line-height: 2em;
@@ -726,12 +727,12 @@ body, select, input, textarea, button {
 #pontoon #entitylist > .wrapper > ul > li:hover,
 #pontoon #entitylist > .wrapper > ul > li.hovered,
 #pontoon #entitylist > .wrapper > ul > li.active {
-  background: #3f4752;
-  border-bottom: 1px solid #4e5361;
+  background-color: #4d5967;
+  border-bottom: 1px solid #5e6475;
 }
 
 #pontoon #entitylist > .wrapper > ul > li:hover {
-  background: url('../img/right.png') no-repeat center right 8px #3f4752;
+  background: url('../img/right.png') no-repeat center right 8px #4d5967;
 }
 
 #pontoon #entitylist > .wrapper > ul > li > .status {
@@ -814,7 +815,8 @@ body, select, input, textarea, button {
 }
 
 #pontoon #topbar {
-  background: #333942;
+  background: #4D5967;
+  border-bottom: 1px solid #5E6475;
   line-height: 23px;
   padding: 10px ;
   text-transform: uppercase;
@@ -845,7 +847,12 @@ body, select, input, textarea, button {
 }
 
 #pontoon #topbar a {
+  color: #CCCCCC;
   float: right;
+}
+
+#pontoon #topbar a:hover {
+  color: #7BC876;
 }
 
 #pontoon #source-pane {
@@ -979,7 +986,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #helpers > section ul li:not(.disabled):hover {
-  background: #272A2F;
+  background: #4D5967;
 }
 
 #pontoon #helpers > section ul li.disabled {
