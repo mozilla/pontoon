@@ -351,10 +351,6 @@ body, select, input, textarea, button {
   overflow: auto;
 }
 
-#pontoon .project.select .menu ul li {
-  padding: 2px 4px;
-}
-
 #pontoon .project.select .menu ul li .project-name {
   float: left;
   overflow: hidden;
@@ -402,6 +398,10 @@ body, select, input, textarea, button {
   position: relative;
 }
 
+#pontoon > header > .container > .select > .menu li {
+  padding: 2px 4px;
+}
+
 #pontoon .menu .search {
   background: url("../img/search.png") no-repeat 3px 3px transparent;
   border-bottom: 1px solid #525A65;
@@ -415,10 +415,6 @@ body, select, input, textarea, button {
 
 #pontoon .menu .search:focus {
   background-color: transparent;
-}
-
-#pontoon .locale .menu li {
-  padding-left: 4px;
 }
 
 #pontoon .locale .code {
