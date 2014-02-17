@@ -728,7 +728,7 @@ body, select, input, textarea, button {
 #pontoon #entitylist > .wrapper > ul > li.hovered,
 #pontoon #entitylist > .wrapper > ul > li.active {
   background-color: #4d5967;
-  border-bottom: 1px solid #5e6475;
+  border-color: 1px solid #5e6475;
 }
 
 #pontoon #entitylist > .wrapper > ul > li:hover {
@@ -987,6 +987,7 @@ body, select, input, textarea, button {
 
 #pontoon #helpers > section ul li:not(.disabled):hover {
   background: #4D5967;
+  border-color: #5E6475;
 }
 
 #pontoon #helpers > section ul li.disabled {
