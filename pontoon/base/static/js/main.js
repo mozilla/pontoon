@@ -917,20 +917,17 @@ var Pontoon = (function () {
         }
       });
 
-      // Show only locales available for the selected project
-      $('.locale .selector').live("click.pontoon", function () {
-        var locales = Pontoon.common.getProjectResources('locales'),
-            menu = $(this).siblings('.menu');
+      // Hide menus on click outside
+      $('body:not(".admin-form")').live("click.pontoon", function () {
+        $('.menu').hide();
+        $('#iframe-cover').hide(); // iframe fix
+        $('.select').removeClass('opened');
+      });
 
-        menu.find('.limited').removeClass('limited');
-        if (locales) {
-          menu.find('li').hide();
-          $(locales).each(function() {
-            menu.find('.language.' + this).parent().addClass('limited').show();
-          });
-        }
-
-        $('.search:visible').trigger("keyup");
+      // Menu hover
+      $('.menu li').live('hover', function () {
+        $('.menu li.hover').removeClass('hover');
+        $(this).toggleClass('hover');
       });
 
       // Show only pages available for the selected project
@@ -942,6 +939,22 @@ var Pontoon = (function () {
           menu.find('li:not(".no-match")').remove();
           $(pages.reverse()).each(function() {
             menu.prepend('<li>' + this + '</li>');
+          });
+        }
+
+        $('.search:visible').trigger("keyup");
+      });
+
+      // Show only locales available for the selected project
+      $('.locale .selector').live("click.pontoon", function () {
+        var locales = Pontoon.common.getProjectResources('locales'),
+            menu = $(this).siblings('.menu');
+
+        menu.find('.limited').removeClass('limited');
+        if (locales) {
+          menu.find('li').hide();
+          $(locales).each(function() {
+            menu.find('.language.' + this).parent().addClass('limited').show();
           });
         }
 
@@ -962,19 +975,6 @@ var Pontoon = (function () {
           loc += '/page/' + page;
         }
         window.location = loc;
-      });
-
-      // Hide menus on click outside
-      $('body:not(".admin-form")').live("click.pontoon", function () {
-        $('.menu').hide();
-        $('#iframe-cover').hide(); // iframe fix
-        $('.select').removeClass('opened');
-      });
-
-      // Menu hover
-      $('.menu li').live('hover', function () {
-        $('.menu li.hover').removeClass('hover');
-        $(this).toggleClass('hover');
       });
 
       // Project menu handler
