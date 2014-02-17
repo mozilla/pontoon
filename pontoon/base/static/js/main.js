@@ -168,7 +168,7 @@ var Pontoon = (function () {
 
 
     /*
-     * Get translations to other locales for given entity
+     * Get translations to other locales of given entity
      *
      * entity Entity
      */
@@ -200,7 +200,7 @@ var Pontoon = (function () {
 
 
     /*
-     * Get history of translations for given entity
+     * Get history of translations of given entity
      *
      * entity Entity
      */
@@ -208,16 +208,25 @@ var Pontoon = (function () {
       var self = this,
           list = $('#history ul').empty();
 
-      if (entity.suggestions) {
-        $.each(entity.suggestions.reverse(), function() {
-          list.append('<li title="Click to copy">' +
-            '<span>' + self.doNotRender(this.author) + '<span class="stress">' + this.date + '</span></span>' +
-            '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
-          '</li>');
-        });
-      } else {
-        list.append('<li class="disabled"><p>No translations available.</p<</li>');
-      }
+      $.ajax({
+        url: 'get-history/',
+        data: {
+          entity: entity.pk,
+          locale: self.locale.code
+        },
+        success: function(data) {
+          if (data !== "error") {
+            $.each(data, function() {
+              list.append('<li title="Click to copy">' +
+                '<span>' + self.doNotRender(this.author) + '<span class="stress">' + this.date + '</span></span>' +
+                '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
+              '</li>');
+            });
+          } else {
+            list.append('<li class="disabled"><p>No translations available.</p<</li>');
+          }
+        }
+      });
     },
 
 
