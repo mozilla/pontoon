@@ -913,7 +913,7 @@ var Pontoon = (function () {
           $(this).siblings('.menu').show().end()
                  .parents('.select').addClass('opened');
           $('#iframe-cover').show().height($('#source').height()); // iframe fix
-          $('.search:visible').focus().trigger('keyup');
+          $('.search:visible').focus();
         }
       });
 
@@ -929,6 +929,8 @@ var Pontoon = (function () {
             menu.find('.language.' + this).parent().addClass('limited').show();
           });
         }
+
+        $('.search:visible').trigger("keyup");
       });
 
       // Show only pages available for the selected project
@@ -942,6 +944,8 @@ var Pontoon = (function () {
             menu.prepend('<li>' + this + '</li>');
           });
         }
+
+        $('.search:visible').trigger("keyup");
       });
 
       // Open selected project (page) and locale combination
