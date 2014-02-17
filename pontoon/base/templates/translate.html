@@ -50,10 +50,9 @@
       </div>
     </div>
 
-    {% if project_pages %}
     <!-- Page selector -->
     <div class="page select">
-      <div class="button selector">
+      <div class="button selector{% if not project_pages %} hidden{% endif %}">
         <span class="title">{{ current_page }}</span>
       </div>
       <div class="menu">
@@ -66,7 +65,6 @@
         </ul>
       </div>
     </div>
-    {% endif %}
 
     <!-- Locale selector -->
     <div class="locale select">

@@ -267,6 +267,10 @@ body, select, input, textarea, button {
   padding: 10px 20px 10px 40px;
 }
 
+#pontoon > header .select .button.hidden {
+  display: none;
+}
+
 #pontoon > header > .container > .select > .button:before,
 #go:before {
   content: "";
