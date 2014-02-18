@@ -6,12 +6,6 @@ $(function() {
       escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
       projectWindow = null;
 
-  // Open advanced features by default if project requests them
-  if (advanced) {
-    $('#sidebar').addClass('advanced');
-    $('#switch').addClass('opened');
-  }
-
   // Resize iframe with window
   $(window).resize(function () {
     $('#source').width($(window).width() - $('#sidebar:visible').width())
@@ -24,14 +18,23 @@ $(function() {
 
   // Initialize Pontoon only if project code supports it
   function receiveMessage(e) {
+
     // TODO: Check origin - hardcode Pontoon domain name
     if (JSON.parse(e.data).type === "SUPPORTED") {
       $('#pontoon > header').slideDown(function() {
+
+        // Open advanced features by default if project requests them
+        if (advanced) {
+          $('#sidebar').addClass('advanced');
+          $('#switch').addClass('opened');
+        }
+
         $('#source').show().width($(window).width() - $('#sidebar:visible').width())
                            .height($(window).height() - $(this).outerHeight())
                            .css('margin-left', $('#sidebar:visible').width());
         $('#project-load').hide();
       });
+
       Pontoon.init(window, projectWindow, locale);
       window.removeEventListener("message", receiveMessage, false);
     }

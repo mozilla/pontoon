@@ -893,6 +893,7 @@ body, select, input, textarea, button {
 
 #pontoon #translation-length {
   color: #AAAAAA;
+  display: none;
   float: left;
   line-height: 22px;
   padding: 10px 0;

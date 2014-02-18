@@ -307,6 +307,7 @@ var Pontoon = (function () {
           translation = entity.translation.length;
 
       $('#translation-length')
+        .show() // Needed if advanced features opened by default
         .find('.original-length').html(original).end()
         .find('.current-length').html(translation);
 
@@ -431,6 +432,11 @@ var Pontoon = (function () {
 
       self.updateProgress();
       self.editor();
+
+      // If advanced features opened by default, open first entity in the editor
+      if (this.app.external) {
+        $("#entitylist .entity:first").mouseover().click();
+      }
     },
 
 
