@@ -493,25 +493,22 @@ body, select, input, textarea, button {
 
 #pontoon > header .notification {
   background: rgba(0, 0, 0, 0.8);
-  color: #AEEE00;
+  border-radius: 3px;
+  color: #7BC876;
   cursor: pointer;
   display: none;
   font-weight: 100;
   padding: 10px;
   position: absolute;
-  right: 200px;
+  right: 15px;
   text-transform: uppercase;
-  top: 5px;
+  top: 70px;
   visibility: visible;
   width: auto;
-
-  box-shadow: 0 0 5px #000000;
-  -moz-box-shadow: 0 0 5px #000000;
-  -webkit-box-shadow: 0 0 5px #000000;
 }
 
 #pontoon > header .notification.error {
-  color: #F00038;
+  color: #FD5F60;
 }
 
 #pontoon #logo {
