@@ -41,7 +41,7 @@
           <li class="clearfix">
             <span class="project-name"
               data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
-              data-pages="{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}">{{ project.name }}</span>
+              data-pages="{% if pages %}{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}{% endif %}">{{ project.name }}</span>
             <span class="project-url">{{ project.url }}</span>
           </li>
           {% endfor %}
