@@ -59,7 +59,6 @@ $(function() {
           var lang = $('html').attr('lang'),
               errorLink = (lang ? '/' + lang : '') + '/translate/error/?locale=' + escapedLocale + '&url=' + url + (url[url.length-1] !== '/' ? '/' : '');
           window.location = errorLink + '&error=' + "Oops, website is not supported by Pontoon.";
-          projectWindow.close();
         }
       }, 100);
 
