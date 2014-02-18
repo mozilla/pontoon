@@ -327,8 +327,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon .horizontal-separator {
-  border-top: 1px solid #000000;
-  border-bottom: 1px solid #444444;
+  border-top: 1px solid #525A65;
 }
 
 #pontoon .project.select input[type=text].url {
@@ -533,8 +532,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #info .menu section {
-  border-top: 1px solid #444444;
-  border-bottom: 1px solid #000000;
+  border-top: 1px solid #525A65;
   padding: 10px 20px;
 }
 
