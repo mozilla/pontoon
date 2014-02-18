@@ -692,11 +692,11 @@ body, select, input, textarea, button {
 }
 
 #pontoon #search:-moz-placeholder {
-  color: #888888;
+  color: #AAAAAA;
 }
 
 #pontoon #search::-webkit-input-placeholder {
-  color: #888888;
+  color: #AAAAAA;
 }
 
 #pontoon #entitylist > .wrapper {
@@ -868,7 +868,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #comment {
-  color: #888888;
+  color: #AAAAAA;
   font-size: 12px;
   font-style: italic;
   margin-top: 5px;
@@ -897,7 +897,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #translation-length {
-  color: #888888;
+  color: #AAAAAA;
   float: left;
   line-height: 22px;
   padding: 10px 0;
@@ -1015,6 +1015,6 @@ body, select, input, textarea, button {
 }
 
 #pontoon #helpers > section ul li.disabled p {
-  color: #888888;
+  color: #AAAAAA;
   font-style: italic;
 }
