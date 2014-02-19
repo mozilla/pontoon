@@ -11,9 +11,6 @@ $(function() {
     Pontoon.common.postMessage("RESIZE");
   });
 
-  // Empty iframe if cached
-  $('#source').removeAttr("src");
-
   // Initialize Pontoon only if project code supports it
   function receiveMessage(e) {
 
