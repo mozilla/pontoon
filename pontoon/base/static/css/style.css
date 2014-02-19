@@ -845,9 +845,10 @@ body.admin-form #intro {
 }
 
 #iframe-cover {
+  bottom: 0;
   display: none;
   position: absolute;
-  top: 0;
+  top: 60px;
   width: 100%;
   z-index: 10; /* Must be lower than locale-list */
 }

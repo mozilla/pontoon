@@ -229,13 +229,6 @@ body, select, input, textarea, button {
   min-width: 800px;
 }
 
-#pontoon > header #drag {
-  border: none;
-  cursor: ns-resize;
-  height: 6px;
-  margin: -6px 0 0;
-}
-
 #pontoon > header #spinner {
   display: inline-block;
   height: 60px;
@@ -639,7 +632,6 @@ body, select, input, textarea, button {
 
 #pontoon #sidebar {
   background: #3F4752;
-  border-right: 1px solid #5E6475;
   bottom: 0;
   display: none;
   overflow: hidden;
@@ -656,15 +648,29 @@ body, select, input, textarea, button {
   width: 900px;
 }
 
-#pontoon #entitylist {
+#pontoon #sidebar #drag {
+  background: #272A2F;
+  cursor: ew-resize;
   height: 100%;
   position: absolute;
-  width: 100%;
+  right: 0;
+  width: 6px;
+}
 
-  -moz-transition: left 0.2s ease-out;  /* FF3.7+ */
-  -o-transition: left 0.2s ease-out;  /* Opera 10.5 */
-  -webkit-transition: left 0.2s ease-out;  /* Saf3.2+, Chrome */
-  transition: left 0.2s ease-out;
+#pontoon #sidebar #drag:hover {
+  background: #7BC876;
+}
+
+#pontoon #entitylist {
+  height: 100%;
+  left: 0;
+  right: 6px;
+  position: absolute;
+
+  -moz-transition: all 0.2s ease-out;  /* FF3.7+ */
+  -o-transition: all 0.2s ease-out;  /* Opera 10.5 */
+  -webkit-transition: all 0.2s ease-out;  /* Saf3.2+, Chrome */
+  transition: all 0.2s ease-out;
 }
 
 #pontoon .advanced #entitylist,
@@ -784,18 +790,19 @@ body, select, input, textarea, button {
   background: #3F4752;
   bottom: 0;
   color: #FFFFFF;
+  display: none;
   left: 450px;
   line-height: 22px;
   overflow-y: scroll;
   padding: 0;
   position: absolute;
+  right: -444px;
   top: 0;
-  width: 100%;
 
-  -moz-transition: left 0.2s ease-out;  /* FF3.7+ */
-  -o-transition: left 0.2s ease-out;  /* Opera 10.5 */
-  -webkit-transition: left 0.2s ease-out;  /* Saf3.2+, Chrome */
-  transition: left 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;  /* FF3.7+ */
+  -o-transition: all 0.2s ease-out;  /* Opera 10.5 */
+  -webkit-transition: all 0.2s ease-out;  /* Saf3.2+, Chrome */
+  transition: all 0.2s ease-out;
 }
 
 #pontoon .advanced #editor {

@@ -320,9 +320,13 @@ var Pontoon = (function () {
         $("#entitylist")
           .css('left', -$('#sidebar').width()/2);
 
-        $("#editor")
-          .addClass('active')
-          .css('left', 0);
+        // Without callback there's no CSS transition
+        $("#editor").show(0, function() {
+          $(this)
+            .addClass('active')
+            .css('left', 0)
+            .css('right', $('#drag').width());
+        });
       }
     },
 
@@ -530,7 +534,13 @@ var Pontoon = (function () {
 
         $("#editor")
           .removeClass('active')
-          .css('left', $('#sidebar').width());
+          .css('left', $('#sidebar').width())
+          .css('right', $('#drag').width() - $('#sidebar').width());
+
+        // Wait for CSS transition to finish
+        setTimeout(function() {
+          $("#editor").hide();
+        }, 200);
 
         var entity = $("#editor")[0].entity;
         if (entity.body) {
@@ -738,14 +748,14 @@ var Pontoon = (function () {
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
         if ($(this).is('.opened')) {
           $('#sidebar').hide();
-          $('#source').css('margin-left', 0);
+          $('#source, #iframe-cover').css('margin-left', 0);
           self.common.postMessage("MODE", "Advanced");
         } else {
           $('#sidebar').show();
-          $('#source').css('margin-left', $('#sidebar').width());
+          $('#source, #iframe-cover').css('margin-left', $('#sidebar').width());
           self.common.postMessage("MODE", "Basic");
         }
-        $('#source').width($(window).width() - $('#sidebar:visible').width());
+        $('#source, #iframe-cover').width($(window).width() - $('#sidebar:visible').width());
         self.common.postMessage("RESIZE");
         $(this).toggleClass('opened');
       });
@@ -927,7 +937,7 @@ var Pontoon = (function () {
           $('#iframe-cover').hide(); // iframe fix
           $(this).siblings('.menu').show().end()
                  .parents('.select').addClass('opened');
-          $('#iframe-cover').show().height($('#source').height()); // iframe fix
+          $('#iframe-cover').show(); // iframe fix
           $('.search:visible').focus();
         }
       });

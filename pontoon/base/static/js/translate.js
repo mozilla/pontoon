@@ -65,46 +65,39 @@ $(function() {
   // Resizable
   var mouseMoveHandler = function(e) {
     var initial = e.data.initial,
-        u = Math.min(Math.max(initial.uHeight + (e.pageY - initial.offTop), initial.min), initial.max),
-        b = Math.min(Math.max(initial.bHeight - (e.pageY - initial.offTop), initial.min), initial.max);
-    initial.up.height(u);
-    initial.below.height(b);
+        left = Math.min(Math.max(initial.leftWidth + (e.pageX - initial.position), initial.leftMin), initial.leftMax),
+        right = Math.min(Math.max(initial.rightWidth - (e.pageX - initial.position), 0), initial.leftMax - initial.leftMin);
 
-    $('#iframe-cover').height(initial.up.height()); // iframe fix
+    initial.left.width(left);
+    initial.right.width(right).css('margin-left', left);
+
+    $('#iframe-cover').width(right).css('margin-left', left); // iframe fix
   };
+
   var mouseUpHandler = function(e) {
     $(document)
       .unbind('mousemove', mouseMoveHandler)
       .unbind('mouseup', mouseUpHandler);
 
     $('#iframe-cover').hide(); // iframe fix
-    /*
-    if (e.data.initial.below.height() === 0) {
-      $('#main').removeClass('opened');
-      Pontoon.common.postMessage("MODE", "Advanced");
-    } else {
-      $('#main').addClass('opened');
-      Pontoon.common.postMessage("MODE", "Basic");
-    }
-    */
   };
+
   $('#drag').bind('mousedown', function(e) {
     e.preventDefault();
 
-    var up = $('#source'),
-        below = $('#sidebar'),
+    var left = $('#sidebar'),
+        right = $('#source'),
         data = {
-          up: up,
-          below: below,
-          uHeight: up.height(),
-          bHeight: below.height(),
-          offTop: e.pageY,
-          min: 0,
-          max: $(document).height() - $("#pontoon > header").outerHeight()
+          left: left,
+          right: right,
+          leftWidth: left.width(),
+          rightWidth: right.width(),
+          leftMin: 450,
+          leftMax: $(window).width(),
+          position: e.pageX
         };
 
-    // iframe fix: Prevent iframes from capturing the mousemove events during a drag
-    $('#iframe-cover').show().height(up.height());
+    $('#iframe-cover').show().width(right.width()); // iframe fix
 
     $(document)
       .bind('mousemove', { initial: data }, mouseMoveHandler)
