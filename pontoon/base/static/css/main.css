@@ -717,7 +717,6 @@ body, select, input, textarea, button {
 
 #pontoon #entitylist > .wrapper > ul > li {
   background: #3f4752;
-  border-bottom: 1px solid #4e5361;
   color: #FFFFFF;
   cursor: pointer;
   line-height: 2em;
@@ -729,7 +728,6 @@ body, select, input, textarea, button {
 #pontoon #entitylist > .wrapper > ul > li.hovered,
 #pontoon #entitylist > .wrapper > ul > li.active {
   background-color: #4d5967;
-  border-color: 1px solid #5e6475;
 }
 
 #pontoon #entitylist > .wrapper > ul > li:hover {
