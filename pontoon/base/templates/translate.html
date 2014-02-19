@@ -69,7 +69,8 @@
     <!-- Locale selector -->
     <div class="locale select">
       <div class="button selector">
-        <span class="language"></span>
+        <span class="language {{ locale_code }}">{{ locales.get(code=locale_code) }}<span class="code">{{ locale_code }}</span>
+        </span>
       </div>
       <div class="menu">
         <input type="text" class="search" autocomplete="off">

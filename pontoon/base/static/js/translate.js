@@ -41,8 +41,6 @@ $(function() {
   }
   window.addEventListener("message", receiveMessage, false);
 
-  $('.url').val(url);
-  $('.locale .button .language').addClass(escapedLocale).html($('.locale .menu .language.' + escapedLocale).html());
   $('#source').attr('src', url);
   projectWindow = $('#source')[0].contentWindow;
 
