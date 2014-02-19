@@ -849,9 +849,8 @@ var Pontoon = (function () {
      *
      * app Pontoon window object
      * project Website window object
-     * locale ISO 639-1 language code of the language website is localized to
      */
-    init: function (app, project, locale) {
+    init: function (app, project) {
       var self = this;
       if (!project) {
         throw "Website handler required";
@@ -873,7 +872,7 @@ var Pontoon = (function () {
         format: $('#server').data('format')
       };
       this.locale = {
-        code: locale,
+        code: $('#server').data('locale'),
         language: $("#pontoon > header .language").contents()[0].nodeValue // PO file
       };
       this.user = {

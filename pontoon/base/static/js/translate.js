@@ -35,7 +35,7 @@ $(function() {
         $('#project-load').hide();
       });
 
-      Pontoon.init(window, projectWindow, locale);
+      Pontoon.init(window, projectWindow);
       window.removeEventListener("message", receiveMessage, false);
     }
   }
