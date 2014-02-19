@@ -1,9 +1,7 @@
 $(function() {
 
   var url = $('#server').data('url'),
-      locale = $('#server').data('locale'),
       advanced = $('#server').data('external'),
-      escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
       projectWindow = null;
 
   // Resize iframe with window
@@ -55,6 +53,8 @@ $(function() {
         } else {
           clearInterval(interval);
           var lang = $('html').attr('lang'),
+              locale = $('#server').data('locale'),
+              escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
               errorLink = (lang ? '/' + lang : '') + '/translate/error/?locale=' + escapedLocale + '&url=' + url + (url[url.length-1] !== '/' ? '/' : '');
           window.location = errorLink + '&error=' + "Oops, website is not supported by Pontoon.";
         }
