@@ -1,32 +1,41 @@
 $(function() {
 
-  var url = $('#server').data('url'),
-      advanced = $('#server').data('external'),
-      projectWindow = null;
+  function mouseUpHandler() {
+    $(document)
+      .unbind('mousemove', mouseMoveHandler)
+      .unbind('mouseup', mouseUpHandler);
 
-  // Resize iframe with window
-  $(window).resize(function () {
+    $('#iframe-cover').hide(); // iframe fix
+  };
+
+  function mouseMoveHandler(e) {
+    var initial = e.data.initial,
+        left = Math.min(Math.max(initial.leftWidth + (e.pageX - initial.position), initial.leftMin), initial.leftMax),
+        right = Math.min(Math.max(initial.rightWidth - (e.pageX - initial.position), 0), initial.leftMax - initial.leftMin);
+
+    initial.left.width(left);
+    initial.right.width(right).css('margin-left', left);
+
+    $('#iframe-cover').width(right).css('margin-left', left); // iframe fix
+  };
+
+  function resizeIframe() {
     $('#source').width($(window).width() - $('#sidebar:visible').width())
-                .height($(window).height() - $('#pontoon > header').outerHeight());
-    Pontoon.common.postMessage("RESIZE");
-  });
+      .height($(window).height() - $('#pontoon > header').outerHeight());
+  }
 
-  // Initialize Pontoon only if project code supports it
   function receiveMessage(e) {
-
     // TODO: Check origin - hardcode Pontoon domain name
     if (JSON.parse(e.data).type === "SUPPORTED") {
-      $('#pontoon > header').slideDown(function() {
 
-        // Open advanced features by default if project requests them
+      $('#pontoon > header').slideDown(function() {
         if (advanced) {
           $('#sidebar').addClass('advanced');
           $('#switch').addClass('opened');
         }
 
-        $('#source').show().width($(window).width() - $('#sidebar:visible').width())
-                           .height($(window).height() - $(this).outerHeight())
-                           .css('margin-left', $('#sidebar:visible').width());
+        $('#source').show().css('margin-left', $('#sidebar:visible').width());
+        resizeIframe();
         $('#project-load').hide();
       });
 
@@ -34,10 +43,14 @@ $(function() {
       window.removeEventListener("message", receiveMessage, false);
     }
   }
-  window.addEventListener("message", receiveMessage, false);
 
+  var url = $('#server').data('url'),
+      advanced = $('#server').data('external');
+
+  // Initialize Pontoon if project code supports it
   $('#source').attr('src', url);
   projectWindow = $('#source')[0].contentWindow;
+  window.addEventListener("message", receiveMessage, false);
 
   // Show error message if no callback for 30 seconds: Pontoon/iframe not supported, 404…
   var i = 0,
@@ -57,26 +70,13 @@ $(function() {
         }
       }, 100);
 
-  // Resizable
-  var mouseMoveHandler = function(e) {
-    var initial = e.data.initial,
-        left = Math.min(Math.max(initial.leftWidth + (e.pageX - initial.position), initial.leftMin), initial.leftMax),
-        right = Math.min(Math.max(initial.rightWidth - (e.pageX - initial.position), 0), initial.leftMax - initial.leftMin);
+  // Resize iframe with window
+  $(window).resize(function () {
+    resizeIframe();
+    Pontoon.common.postMessage("RESIZE");
+  });
 
-    initial.left.width(left);
-    initial.right.width(right).css('margin-left', left);
-
-    $('#iframe-cover').width(right).css('margin-left', left); // iframe fix
-  };
-
-  var mouseUpHandler = function(e) {
-    $(document)
-      .unbind('mousemove', mouseMoveHandler)
-      .unbind('mouseup', mouseUpHandler);
-
-    $('#iframe-cover').hide(); // iframe fix
-  };
-
+  // Resize sidebar and iframe
   $('#drag').bind('mousedown', function(e) {
     e.preventDefault();
 
@@ -98,5 +98,4 @@ $(function() {
       .bind('mousemove', { initial: data }, mouseMoveHandler)
       .bind('mouseup', { initial: data }, mouseUpHandler);
   });
-
 });
