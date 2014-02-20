@@ -321,7 +321,7 @@ var Pontoon = (function () {
           .css('left', -$('#sidebar').width()/2);
 
         $("#editor")
-          .addClass('active')
+          .addClass('opened')
           .css('left', 0);
       }
     },
@@ -529,7 +529,7 @@ var Pontoon = (function () {
           .css('left', 0);
 
         $("#editor")
-          .removeClass('active')
+          .removeClass('opened')
           .css('left', $('#sidebar').width());
 
         var entity = $("#editor")[0].entity;
@@ -813,12 +813,12 @@ var Pontoon = (function () {
         } else if (message.type === "UNHOVER") {
           Pontoon.project.entities[message.value].ui.removeClass('hovered');
         } else if (message.type === "ACTIVE") {
-          if ($('#editor').is(':not(".active")')) {
+          if ($('#editor').is(':not(".opened")')) {
             var entity = Pontoon.project.entities[message.value];
             Pontoon.openEditor(entity);
           }
         } else if (message.type === "INACTIVE") {
-          if ($('#editor').is('.active')) {
+          if ($('#editor').is('.opened')) {
             $('#cancel').click();
             $('#editor')[0].entity.ui.removeClass('hovered');
           }

@@ -6,7 +6,7 @@ $(function() {
       .unbind('mouseup', mouseUpHandler);
 
     $('#iframe-cover').hide(); // iframe fix
-    $('#editor:not(".active")').css('left', $('#sidebar').width()).show();
+    $('#editor:not(".opened")').css('left', $('#sidebar').width()).show();
   };
 
   function mouseMoveHandler(e) {
@@ -30,9 +30,9 @@ $(function() {
     if (JSON.parse(e.data).type === "SUPPORTED") {
 
       $('#pontoon > header').slideDown(function() {
-        if (advanced) {
+        if ($('#server').data('external')) {
           $('#sidebar').addClass('advanced');
-          $('#switch').addClass('opened');
+          $('#switch, #editor').addClass('opened');
         }
 
         $('#source').show().css('margin-left', $('#sidebar:visible').width());
@@ -45,12 +45,10 @@ $(function() {
     }
   }
 
-  var url = $('#server').data('url'),
-      advanced = $('#server').data('external');
-
   // Initialize Pontoon if project code supports it
+  var url = $('#server').data('url');
   $('#source').attr('src', url);
-  projectWindow = $('#source')[0].contentWindow;
+  var projectWindow = $('#source')[0].contentWindow;
   window.addEventListener("message", receiveMessage, false);
 
   // Show error message if no callback for 30 seconds: Pontoon/iframe not supported, 404…
@@ -94,7 +92,7 @@ $(function() {
         };
 
     $('#iframe-cover').show().width(right.width()); // iframe fix
-    $('#editor:not(".active")').hide();
+    $('#editor:not(".opened")').hide();
 
     $(document)
       .bind('mousemove', { initial: data }, mouseMoveHandler)
