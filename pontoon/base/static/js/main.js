@@ -320,13 +320,9 @@ var Pontoon = (function () {
         $("#entitylist")
           .css('left', -$('#sidebar').width()/2);
 
-        // Without callback there's no CSS transition
-        $("#editor").show(0, function() {
-          $(this)
-            .addClass('active')
-            .css('left', 0)
-            .css('right', 0);
-        });
+        $("#editor")
+          .addClass('active')
+          .css('left', 0);
       }
     },
 
@@ -534,13 +530,7 @@ var Pontoon = (function () {
 
         $("#editor")
           .removeClass('active')
-          .css('left', $('#sidebar').width())
-          .css('right', -$('#sidebar').width());
-
-        // Wait for CSS transition to finish
-        setTimeout(function() {
-          $("#editor").hide();
-        }, 200);
+          .css('left', $('#sidebar').width());
 
         var entity = $("#editor")[0].entity;
         if (entity.body) {

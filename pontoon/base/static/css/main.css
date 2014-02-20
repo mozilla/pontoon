@@ -658,10 +658,10 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist {
-  height: 100%;
   left: 0;
-  right: 0;
+  height: 100%;
   position: absolute;
+  width: 100%;
 
   -moz-transition: all 0.2s ease-out;  /* FF3.7+ */
   -o-transition: all 0.2s ease-out;  /* Opera 10.5 */
@@ -784,14 +784,13 @@ body, select, input, textarea, button {
   background: #3F4752;
   bottom: 0;
   color: #FFFFFF;
-  display: none;
   left: 450px;
   line-height: 22px;
   overflow-y: scroll;
   padding: 0;
   position: absolute;
-  right: -450px;
   top: 0;
+  width: 100%;
 
   -moz-transition: all 0.2s ease-out;  /* FF3.7+ */
   -o-transition: all 0.2s ease-out;  /* Opera 10.5 */

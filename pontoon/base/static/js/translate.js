@@ -6,6 +6,7 @@ $(function() {
       .unbind('mouseup', mouseUpHandler);
 
     $('#iframe-cover').hide(); // iframe fix
+    $('#editor:not(".active")').show();
   };
 
   function mouseMoveHandler(e) {
@@ -93,6 +94,7 @@ $(function() {
         };
 
     $('#iframe-cover').show().width(right.width()); // iframe fix
+    $('#editor:not(".active")').hide();
 
     $(document)
       .bind('mousemove', { initial: data }, mouseMoveHandler)
