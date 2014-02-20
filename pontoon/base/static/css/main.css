@@ -855,7 +855,7 @@ body, select, input, textarea, button {
   background: #3F4752;
   border-bottom: 1px solid #CCCCCC;
   height: 20%;
-  min-height: 150px;
+  min-height: 100px;
   overflow: auto;
   padding: 10px;
 
@@ -876,7 +876,7 @@ body, select, input, textarea, button {
   font-size: 13px;
   height: 20%;
   line-height: 22px;
-  min-height: 150px;
+  min-height: 100px;
   overflow: auto;
   padding: 10px;
   width: 100%;
