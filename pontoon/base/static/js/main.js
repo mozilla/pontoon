@@ -325,7 +325,7 @@ var Pontoon = (function () {
           $(this)
             .addClass('active')
             .css('left', 0)
-            .css('right', $('#drag').width());
+            .css('right', 0);
         });
       }
     },
@@ -535,7 +535,7 @@ var Pontoon = (function () {
         $("#editor")
           .removeClass('active')
           .css('left', $('#sidebar').width())
-          .css('right', $('#drag').width() - $('#sidebar').width());
+          .css('right', -$('#sidebar').width());
 
         // Wait for CSS transition to finish
         setTimeout(function() {

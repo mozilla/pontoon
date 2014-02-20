@@ -632,6 +632,7 @@ body, select, input, textarea, button {
 
 #pontoon #sidebar {
   background: #3F4752;
+  border-right: 1px solid #5E6475;
   bottom: 0;
   display: none;
   overflow: hidden;
@@ -649,22 +650,17 @@ body, select, input, textarea, button {
 }
 
 #pontoon #sidebar #drag {
-  background: #272A2F;
   cursor: ew-resize;
   height: 100%;
   position: absolute;
   right: 0;
-  width: 6px;
-}
-
-#pontoon #sidebar #drag:hover {
-  background: #7BC876;
+  width: 7px;
 }
 
 #pontoon #entitylist {
   height: 100%;
   left: 0;
-  right: 6px;
+  right: 0;
   position: absolute;
 
   -moz-transition: all 0.2s ease-out;  /* FF3.7+ */
@@ -794,7 +790,7 @@ body, select, input, textarea, button {
   overflow-y: scroll;
   padding: 0;
   position: absolute;
-  right: -444px;
+  right: -450px;
   top: 0;
 
   -moz-transition: all 0.2s ease-out;  /* FF3.7+ */
