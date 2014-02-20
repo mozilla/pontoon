@@ -441,7 +441,6 @@
         function hide() {
           if (target) {
             target.blur();
-            stopEditing();
             if (target === toolbar[0].target) {
               toolbar[0].target = null;
               $(target).removeClass('pontoon-hovered');
