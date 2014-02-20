@@ -453,7 +453,9 @@ var Pontoon = (function () {
         e.preventDefault();
 
         var sec = $(this).attr('href').substr(1),
-            entity = $('#editor')[0].entity;
+            entity = $('#editor')[0].entity,
+            entitySelector = '#entitylist .entity',
+            index = entity.ui.index(entitySelector);
 
         switch (sec) {
           case "back":
@@ -461,7 +463,7 @@ var Pontoon = (function () {
             break;
 
           case "previous":
-            var prev = entity.ui.prev();
+            var prev = $(entitySelector).eq(index - 1);
             if (prev.length === 0) {
               prev = $('#entitylist ul > li:last');
             }
@@ -470,7 +472,7 @@ var Pontoon = (function () {
             break;
 
           case "next":
-            var next = entity.ui.next();
+            var next = $(entitySelector).eq(index + 1);
             if (next.length === 0) {
               next = $('#entitylist ul > li:first');
             }
