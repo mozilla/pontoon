@@ -461,19 +461,19 @@ var Pontoon = (function () {
             break;
 
           case "previous":
-            var prev = $("#editor")[0].entity.ui.prev();
+            var prev = entity.ui.prev();
             if (prev.length === 0) {
               prev = $('#entitylist ul > li:last');
             }
-            prev.click();
+            prev.mouseover().click();
             break;
 
           case "next":
-            var next = $("#editor")[0].entity.ui.next();
+            var next = entity.ui.next();
             if (next.length === 0) {
               next = $('#entitylist ul > li:first');
             }
-            next.click();
+            next.mouseover().click();
             break;
         }
       });
