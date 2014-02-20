@@ -818,7 +818,7 @@ var Pontoon = (function () {
             Pontoon.openEditor(entity);
           }
         } else if (message.type === "INACTIVE") {
-          if ($('#editor').is('.opened')) {
+          if ($("#sidebar:not('.advanced') #editor").is('.opened')) {
             $('#cancel').click();
             $('#editor')[0].entity.ui.removeClass('hovered');
           }
