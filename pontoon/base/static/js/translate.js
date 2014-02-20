@@ -86,7 +86,7 @@ $(function() {
           right: right,
           leftWidth: left.width(),
           rightWidth: right.width(),
-          leftMin: 450,
+          leftMin: $('#server').data('external') ? 900 : 450,
           leftMax: $(window).width(),
           position: e.pageX
         };

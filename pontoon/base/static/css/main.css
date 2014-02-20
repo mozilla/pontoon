@@ -800,6 +800,7 @@ body, select, input, textarea, button {
 
 #pontoon .advanced #editor {
   border-left: 1px solid #5E6475;
+  left: 50%;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
