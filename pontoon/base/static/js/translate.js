@@ -6,7 +6,7 @@ $(function() {
       .unbind('mouseup', mouseUpHandler);
 
     $('#iframe-cover').hide(); // iframe fix
-    $('#editor:not(".active")').show();
+    $('#editor:not(".active")').css('left', $('#sidebar').width()).show();
   };
 
   function mouseMoveHandler(e) {
