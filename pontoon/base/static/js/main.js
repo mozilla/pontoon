@@ -813,7 +813,7 @@ var Pontoon = (function () {
         } else if (message.type === "UNHOVER") {
           Pontoon.project.entities[message.value].ui.removeClass('hovered');
         } else if (message.type === "ACTIVE") {
-          if ($('#editor').is(':not(".opened")')) {
+          if ($('#switch').is('.opened')) {
             var entity = Pontoon.project.entities[message.value];
             Pontoon.openEditor(entity);
           }
