@@ -465,7 +465,8 @@ var Pontoon = (function () {
             if (prev.length === 0) {
               prev = $('#entitylist ul > li:last');
             }
-            prev.mouseover().click();
+            var entity = prev[0].entity;
+            self.openEditor(entity);
             break;
 
           case "next":
@@ -473,7 +474,8 @@ var Pontoon = (function () {
             if (next.length === 0) {
               next = $('#entitylist ul > li:first');
             }
-            next.mouseover().click();
+            var entity = next[0].entity;
+            self.openEditor(entity);
             break;
         }
       });
