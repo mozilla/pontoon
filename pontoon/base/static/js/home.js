@@ -10,7 +10,7 @@ $(function() {
   var locale = $('#server').data('locale');
   if (locale) {
     locale = locale.toLowerCase();
-    $('.locale .button .language').addClass(locale).html($('.locale .menu .language.' + locale).html());
+    $('.locale .language.' + locale).parents('li').click();
   }
 
   $('#project-load').hide();
