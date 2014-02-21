@@ -999,6 +999,12 @@ var Pontoon = (function () {
             page = $('.page .selector .title').html(),
             loc = '/locale/' + locale + '/project/' + project;
 
+        // On homepage, show error if no project selected
+        if (!locale) {
+          Pontoon.common.showError("Oops, no project selected.");
+          return;
+        }
+
         if (page) {
           loc += '/page/' + page;
         }
