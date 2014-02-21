@@ -30,7 +30,7 @@
     <!-- Project input/select -->
     <div class="project select">
       {% if projects|length > 0 %}
-      <div class="button selector">
+      <div class="button breadcrumbs selector">
         <span class="title" data-url="{{ project.url }}">{{ project.name }}</span>
       </div>
       {% endif %}
@@ -51,8 +51,8 @@
     </div>
 
     <!-- Page selector -->
-    <div class="page select">
-      <div class="button selector{% if not project_pages %} hidden{% endif %}">
+    <div class="page select{% if not project_pages %} hidden{% endif %}">
+      <div class="button breadcrumbs selector">
         <span class="title">{{ current_page }}</span>
       </div>
       <div class="menu">
@@ -68,7 +68,7 @@
 
     <!-- Locale selector -->
     <div class="locale select">
-      <div class="button selector">
+      <div class="button breadcrumbs selector">
         <span class="language {{ locale_code }}">{{ locales.get(code=locale_code) }}<span class="code">{{ locale_code }}</span>
         </span>
       </div>
@@ -83,7 +83,7 @@
       </div>
     </div>
 
-    <!-- Locale selector -->
+    <!-- Go -->
     <div class="go select">
       <a id="go" href="#">Go</a>
     </div>

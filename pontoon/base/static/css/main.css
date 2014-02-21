@@ -160,8 +160,12 @@ body, select, input, textarea, button {
 
 #pontoon .menu li {
   font-weight: 300;
-  padding: 2px 0 2px 12px;
+  padding: 2px 4px;
   text-shadow: 1px 1px 2px #000000;
+}
+
+#pontoon #profile-menu li {
+  padding: 2px 0 2px 12px;
 }
 
 #pontoon .menu li.hover {
@@ -247,11 +251,11 @@ body, select, input, textarea, button {
   border: none;
 }
 
-#pontoon > header .select {
+#pontoon .select {
   float: left;
 }
 
-#pontoon > header .select .button,
+#pontoon .select .button.breadcrumbs,
 #pontoon #go {
   background: #3f4752;
   font-size: 16px;
@@ -260,11 +264,11 @@ body, select, input, textarea, button {
   padding: 10px 20px 10px 40px;
 }
 
-#pontoon > header .select .button.hidden {
-  display: none;
+#pontoon .select.hidden {
+  display: none!important;
 }
 
-#pontoon > header > .container > .select > .button:before,
+#pontoon .select > .button.breadcrumbs:before,
 #go:before {
   content: "";
   border-top: 20px solid transparent;
@@ -275,7 +279,7 @@ body, select, input, textarea, button {
   top: 10px;
 }
 
-#pontoon > header > .container > .select > .button:after {
+#pontoon .select > .button.breadcrumbs:after {
   content: "";
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
@@ -286,28 +290,28 @@ body, select, input, textarea, button {
   z-index: 1;
 }
 
-#pontoon > header > .container > .project.select > .button {
+#pontoon .project.select > .button.breadcrumbs {
   border-radius: 3px 0 0 3px;
   padding-left: 20px;
 }
 
-#pontoon > header > .container > .project.select > .button:before {
+#pontoon .project.select > .button.breadcrumbs:before {
   display: none;
 }
 
-#pontoon > header > .container > .select > .button:hover {
+#pontoon .select > .button.breadcrumbs:hover {
   background: #4d5967;
 }
 
-#pontoon > header > .container > .select > .button:hover:after {
+#pontoon .select > .button.breadcrumbs:hover:after {
   border-left-color: #4d5967;
 }
 
-#pontoon > header > .container > .select.opened > .button {
+#pontoon .select.opened > .button.breadcrumbs {
   background: #272A2F;
 }
 
-#pontoon > header > .container > .select.opened > .button:after {
+#pontoon .select.opened > .button.breadcrumbs:after {
   border-left-color: #272A2F;
 }
 
@@ -333,7 +337,6 @@ body, select, input, textarea, button {
 
 #pontoon .project.select .menu ul {
   list-style: none;
-  margin: 6px 12px;
   overflow: auto;
 }
 
@@ -380,12 +383,8 @@ body, select, input, textarea, button {
 #pontoon .menu ul {
   max-height: 150px;
   overflow: auto;
-  margin: 6px 12px 0;
+  margin: 6px 12px;
   position: relative;
-}
-
-#pontoon > header > .container > .select > .menu li {
-  padding: 2px 4px;
 }
 
 #pontoon .menu .search {

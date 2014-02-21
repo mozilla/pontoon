@@ -240,6 +240,7 @@ body.admin-form {
 }
 
 #intro {
+  background: #272A2F;
   bottom: 0;
   display: none;
   height: 100%;
@@ -247,13 +248,6 @@ body.admin-form {
   position: fixed;
   text-align: center;  
   width: 100%;
-
-  background: #26173F;
-  background-image: url('../img/grain.png'); /* fallback */
-  background-image: url('../img/grain.png'), -webkit-gradient(linear, left top, left bottom, from(#26173F), to(#000000)); /* Saf4+, Chrome */
-  background-image: url('../img/grain.png'), -webkit-linear-gradient(top, #26173F, #000000); /* Chrome 10+, Saf5.1+ */
-  background-image: url('../img/grain.png'),    -moz-linear-gradient(top, #26173F, #000000); /* FF3.6+ */
-  background-image: url('../img/grain.png'),         linear-gradient(top, #26173F, #000000); /* W3C */
 }
 
 body.admin-form #intro {
@@ -282,7 +276,7 @@ body.admin-form #intro {
   vertical-align: middle;
 }
 
-.links {
+#intro nav {
   left: 50%;
   margin-left: -350px;
   position: absolute;
@@ -316,7 +310,7 @@ body.admin-form #intro {
   text-transform: uppercase;
 }
 
-#title {
+#pontoon #title a {
   color: #7BC876;
   display: inline-block;
   font-size: 108px;
@@ -366,7 +360,7 @@ body.admin-form #intro {
 
 #intro form {
   width: 730px;
-  height: 35px;
+  height: 60px;
   margin: 50px auto 0;
   position: relative;
 }
@@ -731,69 +725,48 @@ body.admin-form #intro {
   margin-left: 5px;
 }
 
+#pontoon #intro .select.opened > .button.breadcrumbs {
+  background: #4d5967;
+}
+
+#pontoon #intro .select.opened > .button.breadcrumbs:after {
+  border-left-color: #4d5967;
+}
+
+#pontoon #intro .project.select.opened > .button.breadcrumbs {
+  border-radius: 0;
+}
+
 #pontoon #intro .select {
-  float: right;
-  display: inline;
+  display: inline-block;
+  float: none;
   margin-left: 0;
   text-align: left;
   font-size: 14px;
 }
 
-#pontoon #intro .project.select {
-  float: left;
+#pontoon #intro .select .search {
+  border-color: #272A2F;
 }
 
-#pontoon #intro .project.select input[type=text].url {
-  padding: 2px 5px;
-  height: 27px;
-  margin-left: 0;
-  width: 480px;
-  font-size: 20px;
-  text-align: left;
-}
-
-#pontoon #intro .project.select input[type=text].url:focus {
-  text-align: left;
+#pontoon #intro .select .menu {
+  background: #4d5967;
+  border-radius: 0;
+  bottom: 50px;
+  top: auto;
 }
 
 #pontoon #intro .project.select .menu {
   width: 510px;
 }
- 
-#pontoon #intro .select .button {
-  height: 21px;
-  padding: 8px 5px 2px;
-  width: 9px;
-}
-
-#pontoon #intro .select .confirm {
-  width: 180px;
-}
-
-#pontoon #intro .select .menu {
-  border: 1px solid #000000;
-  left: 0;
-  bottom: 32px;
-  width: 210px;
-
-  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
-}
-
-#pontoon #intro .select .menu .search {
-  background-position: 7px 6px;
-  margin: 6px 12px;
-  width: 148px;
-}
 
 #pontoon #intro .select .menu ul {
-  max-height: 176px;
+  max-height: 170px;
   margin-bottom: 6px;
 }
 
 #pontoon #intro .select .menu ul li {
-  line-height: 18px;
+  color: #EBEBEB;
 }
 
 #pontoon #intro .select .menu .code {
@@ -805,7 +778,6 @@ body.admin-form #intro {
   line-height: 17px;
   margin: 5px auto 0;
   min-height: 17px;
-  text-align: left;
   text-transform: uppercase;
   font-weight: 300;
   width: 730px; /* Must be same as #intro form */

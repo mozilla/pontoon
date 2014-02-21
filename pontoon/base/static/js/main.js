@@ -1022,9 +1022,9 @@ var Pontoon = (function () {
         var defaultPage = Pontoon.common.getProjectResources('pages')[0];
         if (defaultPage) {
           $('.page .selector .title').html(defaultPage);
-          $('header .page .selector').removeClass("hidden").find('.title').html(defaultPage);
+          $('header .page').removeClass("hidden").find('.selector .title').html(defaultPage);
         } else {
-          $('header .page .selector').addClass("hidden");
+          $('header .page').addClass("hidden");
         }
 
         // Fallback if selected locale not available for the selected project
