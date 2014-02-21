@@ -1,13 +1,17 @@
 $(function() {
 
+  // Update project if already set
+  var url = $('#server').data('url');
+  if (url) {
+    $('.project-url:contains("' + url + '")').parents('li').click();
+  }
+
   // Update locale if already set
   var locale = $('#server').data('locale');
   if (locale) {
     locale = locale.toLowerCase();
     $('.locale .button .language').addClass(locale).html($('.locale .menu .language.' + locale).html());
   }
-
-  $('.url').val($('#server').data('url'));
 
   $('#project-load').hide();
   $('#intro').css('display', 'table').hide().fadeIn();
