@@ -252,7 +252,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon > header .select .button,
-#go {
+#pontoon #go {
   background: #3f4752;
   font-size: 16px;
   height: 20px;
@@ -321,12 +321,6 @@ body, select, input, textarea, button {
 
 #pontoon .horizontal-separator {
   border-top: 1px solid #525A65;
-}
-
-#pontoon .project.select input[type=text].url {
-  margin-left: 5px;
-  position: relative;
-  z-index: 1;
 }
 
 #pontoon .project.select .menu {
