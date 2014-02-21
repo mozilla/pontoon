@@ -514,6 +514,21 @@
             Pontoon.project.entities[message.value].hover();
           } else if (message.type === "UNHOVER") {
             Pontoon.project.entities[message.value].unhover();
+          } else if (message.type === "NAVIGATE") {
+            // Stop editing old entity
+            var target = $('.pontoon-editable-toolbar')[0].target;
+            if (target) {
+              var entity = target.entity;
+              $(target).attr('contentEditable', false);
+              $(target).html(entity.translation || entity.original);
+              hideToolbar(target);
+            }
+            // Start editing new entity
+            var entity = Pontoon.project.entities[message.value];
+            if (entity.body) {
+              entity.hover();
+              startEditing();
+            }
           } else if (message.type === "EDIT") {
             startEditing();
           } else if (message.type === "SAVE") {

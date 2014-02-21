@@ -467,8 +467,13 @@ var Pontoon = (function () {
             if (prev.length === 0) {
               prev = $('#entitylist ul > li:last');
             }
-            var entity = prev[0].entity;
-            self.openEditor(entity);
+            var newEntity = prev[0].entity;
+            if (newEntity.body || entity.body) {
+              self.common.postMessage("NAVIGATE", newEntity.id);
+            }
+            if (!newEntity.body) {
+              self.openEditor(newEntity);
+            }
             break;
 
           case "next":
@@ -476,8 +481,13 @@ var Pontoon = (function () {
             if (next.length === 0) {
               next = $('#entitylist ul > li:first');
             }
-            var entity = next[0].entity;
-            self.openEditor(entity);
+            var newEntity = next[0].entity;
+            if (newEntity.body || entity.body) {
+              self.common.postMessage("NAVIGATE", newEntity.id);
+            }
+            if (!newEntity.body) {
+              self.openEditor(newEntity);
+            }
             break;
         }
       });
