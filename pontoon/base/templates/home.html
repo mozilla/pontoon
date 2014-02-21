@@ -6,7 +6,6 @@
 <!-- Server data -->
 <div id="server"
      class="hidden"
-     {% if accept_language %}data-accept-language="{{ accept_language }}"{% endif %}
      {% if locale_code %}data-locale="{{ locale_code }}"{% endif %}
      {% if project_url %}data-url="{{ project_url }}"{% endif %}>
 </div>
@@ -36,7 +35,7 @@
       <div class="project select">
         {% if projects|length > 0 %}
         <div class="button breadcrumbs selector">
-          <span class="title" data-url="">Select a website</span>
+          <span class="title" data-url="">Select website</span>
         </div>
         {% endif %}
         <div class="menu">
@@ -58,7 +57,7 @@
       <!-- Locale selector -->
       <div class="locale select">
         <div class="button breadcrumbs selector">
-          <span class="language"><span class="code"></span>
+          <span class="language">Select language<span class="code"></span>
           </span>
         </div>
         <div class="menu">

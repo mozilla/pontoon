@@ -1,12 +1,13 @@
 $(function() {
 
-  // Update URL and project values
-  var locale = ($('#server').data('locale') || $('#server').data('accept-language')).toLowerCase();
-  if ($('.locale .menu .language.' + locale).length === 0) { // Locale not on the list
-    locale = $('.locale .menu .language').attr('class').split(' ')[1];
+  // Update locale if already set
+  var locale = $('#server').data('locale');
+  if (locale) {
+    locale = locale.toLowerCase();
+    $('.locale .button .language').addClass(locale).html($('.locale .menu .language.' + locale).html());
   }
+
   $('.url').val($('#server').data('url'));
-  $('.locale .button .language').addClass(locale).html($('.locale .menu .language.' + locale).html());
 
   $('#project-load').hide();
   $('#intro').css('display', 'table').hide().fadeIn();
