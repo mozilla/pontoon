@@ -527,22 +527,16 @@ body, select, input, textarea, button {
   border-bottom: none;
 }
 
-#pontoon #profile .button {
-  background: url("../img/user_icon&24.png") no-repeat center center;
-}
-
-#pontoon #profile .center-gravatar {
-  margin-top:-3px;
-  vertical-align: middle;
-  margin-right: 0.3em;
-}
-
-#pontoon #info .button,
-#pontoon #profile .button {
+#pontoon #info .button {
   height: 24px;
   margin: 0px;
   padding: 18px 5px;
   width: 24px;
+}
+
+#pontoon #profile .button {
+  margin: 0;
+  padding: 10px 5px;
 }
 
 #pontoon #info .menu,

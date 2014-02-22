@@ -193,12 +193,6 @@ def translate_project(request, locale, project, page=None, template='translate.h
     """Translate view: project."""
     log.debug("Translate view: project.")
 
-    grav_email = request.user.email
-    size = 17
-
-    gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(grav_email.lower()).hexdigest() + "?"
-    gravatar_url += urllib.urlencode({'s': str(size)})
-
     # Validate locale
     log.debug("Locale: " + locale)
     try:
@@ -232,6 +226,14 @@ def translate_project(request, locale, project, page=None, template='translate.h
         'project': p,
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
     }
+
+    # Get profile image from Gravatar
+    if request.user.is_authenticated():
+        email = request.user.email
+        size = 40
+        gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
+        gravatar_url += urllib.urlencode({'s':str(size)})
+        data['gravatar_url'] = gravatar_url
 
     # Validate project locales
     if len(p.locales.filter(code=locale)) == 0:
@@ -268,7 +270,6 @@ def translate_project(request, locale, project, page=None, template='translate.h
                 return HttpResponseRedirect(reverse('pontoon.home'))
         data['project_pages'] = pages
         data['current_page'] = page
-        data['gravatar_url'] = gravatar_url
 
     # Get entities
     if page is not None:
