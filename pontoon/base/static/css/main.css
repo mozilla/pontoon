@@ -531,6 +531,12 @@ body, select, input, textarea, button {
   background: url("../img/user_icon&24.png") no-repeat center center;
 }
 
+#pontoon #profile .center-gravatar {
+  margin-top:-3px;
+  vertical-align: middle;
+  margin-right: 0.3em;
+}
+
 #pontoon #info .button,
 #pontoon #profile .button {
   height: 24px;

@@ -14,7 +14,7 @@ import StringIO
 import traceback
 import urllib
 import zipfile
-from hashlib import md5
+import hashlib
 
 from django.conf import settings
 from django.contrib import messages
@@ -193,6 +193,12 @@ def translate_project(request, locale, project, page=None, template='translate.h
     """Translate view: project."""
     log.debug("Translate view: project.")
 
+    grav_email = request.user.email
+    size = 17
+
+    gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(grav_email.lower()).hexdigest() + "?"
+    gravatar_url += urllib.urlencode({'s': str(size)})
+
     # Validate locale
     log.debug("Locale: " + locale)
     try:
@@ -262,6 +268,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
                 return HttpResponseRedirect(reverse('pontoon.home'))
         data['project_pages'] = pages
         data['current_page'] = page
+        data['gravatar_url'] = gravatar_url
 
     # Get entities
     if page is not None:
@@ -926,7 +933,7 @@ def save_to_transifex(request, template=None):
     for entity in data.get('strings'):
         obj = {
             # Identify translation strings using hashes
-            "source_entity_hash": md5(':'.join([entity['original'], '']).encode('utf-8')).hexdigest(),
+            "source_entity_hash": hashlib.md5(':'.join([entity['original'], '']).encode('utf-8')).hexdigest(),
             "translation": entity['translation']
         }
         payload.append(obj)

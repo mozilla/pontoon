@@ -137,6 +137,7 @@
       <!-- Profile -->
       <div id="profile" class="select">
         <div class="button selector">
+          <img src="{{ gravatar_url }}" class="center-gravatar">
         </div>
         <ul id="profile-menu" class="menu">
         {% if user.is_authenticated() or project.name != 'Testpilot' %}
