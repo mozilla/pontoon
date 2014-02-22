@@ -14,26 +14,30 @@
       </ul>
     </nav>
 
-    <a href="{{ url('pontoon.admin') }}"><h1 id="title">{{ _('Admin') }}</h1></a>
+    <h1 id="title"><a href="{{ url('pontoon.admin') }}">{{ _('Admin') }}</a></h1>
     <h2 id="subtitle">Don't mess it up. Please.</h2>
 
     <form>
       <!-- Project input/select -->
       <div class="project select">
-        <input name="url" class="url" type="text" placeholder="{{ _('Select a project or add a new one') }}" autocomplete="off" />
-        <div class="button selector">
-          <span class="handle">&#9662;</span>
+        {% if projects|length > 0 %}
+        <div class="button breadcrumbs selector">
+          <span class="title" data-url="">Select website</span>
         </div>
+        {% endif %}
         <div class="menu">
-          <a class="add" href="{{ url('pontoon.admin.project.new') }}">Add a new project</a>
-          {% if projects %}
-          <div class="horizontal-separator"></div>
+          <input type="text" class="search" autocomplete="off">
           <ul>
             {% for project in projects %}
-            <li class="clearfix"><span class="project-name">{{ project.name }}</span><span class="project-url">{{ project.url }}</span></li>
+            <li class="clearfix">
+              <span class="project-name"
+                data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
+                data-pages="{% if pages %}{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}{% endif %}">{{ project.name }}</span>
+              <span class="project-url">{{ project.url }}</span>
+            </li>
             {% endfor %}
+            <li class="no-match">{{ _('No results') }}</li>
           </ul>
-          {% endif %}
         </div>
       </div>
     </form>
