@@ -253,13 +253,6 @@ body.admin-form {
 body.admin-form #intro {
   overflow: auto;
   position: relative;
-
-  background: #10091A;
-  background-image: url('../img/grain.png'); /* fallback */
-  background-image: url('../img/grain.png'), -webkit-gradient(linear, left top, left bottom, from(#10091A), to(#000000)); /* Saf4+, Chrome */
-  background-image: url('../img/grain.png'), -webkit-linear-gradient(top, #10091A, #000000); /* Chrome 10+, Saf5.1+ */
-  background-image: url('../img/grain.png'),    -moz-linear-gradient(top, #10091A, #000000); /* FF3.6+ */
-  background-image: url('../img/grain.png'),         linear-gradient(top, #10091A, #000000); /* W3C */
 }
 
 #intro.visible {
