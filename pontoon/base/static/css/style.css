@@ -419,11 +419,13 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .button {
+  background: #888888;
+  border: none;
   display: block;
   float: right;
   font-size: 14px;
-  height: 32px;
-  width: 32px;
+  height: 31px;
+  width: 31px;
 }
 
 #pontoon.admin-form #intro .controls .button {
@@ -476,12 +478,6 @@ body.admin-form #intro {
   margin: 7px;
 }
 
-#pontoon.admin-form #intro .repository .button,
-#pontoon.admin-form #intro .transifex .button {
-  height: 32px;
-  width: 32px;
-}
-
 #pontoon.admin-form #intro .authenticate .transifex .button {
   margin-top: 41px;
 }
@@ -509,7 +505,8 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .locale.select .menu .search {
-  background-position: 7px 8px;
+  background-position: 4px 6px;
+  margin-left: 13px;
   width: 233px;
 }
 
@@ -568,7 +565,8 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .repository .type.select .selector {
-  height: 20px;
+  height: 24px;
+  line-height: 24px;
   width: 196px;
 }
 
