@@ -142,7 +142,7 @@ def translate_site(request, locale, url, template='translate.html'):
             return render(request, template, data)
 
     # Check if user authenticated and has sufficient privileges
-    if not p.name == 'testpilot':
+    if not p.name == 'Testpilot':
         if not request.user.is_authenticated():
             messages.error(request, "You need to sign in first.")
             return HttpResponseRedirect(reverse('pontoon.home'))
@@ -210,7 +210,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Check if user authenticated and has sufficient privileges
-    if not p.name == 'testpilot':
+    if not p.name == 'Testpilot':
         if not request.user.is_authenticated():
             messages.error(request, "You need to sign in first.")
             return HttpResponseRedirect(reverse('pontoon.home'))
