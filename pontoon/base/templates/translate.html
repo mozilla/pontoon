@@ -139,7 +139,7 @@
         <div class="button selector">
         </div>
         <ul id="profile-menu" class="menu">
-        {% if user.is_authenticated() or project.name != 'testpilot' %}
+        {% if user.is_authenticated() or project.name != 'Testpilot' %}
           <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
           {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin') }}">{{ _('Admin') }}</a></li>{% endif %}
           <li class="horizontal-separator"></li>
