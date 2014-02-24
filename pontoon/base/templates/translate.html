@@ -98,7 +98,7 @@
       <div class="notification"></div>
       <span id="loading"></span>
 
-      <a id="logo" href="/">Pontoon</a>
+      <a id="logo" href="/"></a>
 
       {% if project.info_brief or project.info_locales or project.info_audience or project.info_metrics %}
       <!-- General project info -->
@@ -137,7 +137,8 @@
       <!-- Profile -->
       <div id="profile" class="select">
         <div class="button selector">
-          <img src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/user_icon&24.png') }}{%endif %}" class="center-gravatar">
+          <img src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/user_icon&24.png') }}{%endif %}">
+          <span class="title">{% if user.first_name %}{{ user.first_name }}{% elif user.email %}{{ user.email }}{% endif %}</span>
         </div>
         <ul id="profile-menu" class="menu">
         {% if user.is_authenticated() or project.name != 'Testpilot' %}

@@ -231,7 +231,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
     # Get profile image from Gravatar
     if request.user.is_authenticated():
         email = request.user.email
-        size = 40
+        size = 60
 
         gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
         gravatar_url += urllib.urlencode({'s':str(size)})

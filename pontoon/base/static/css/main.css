@@ -467,10 +467,6 @@ body, select, input, textarea, button {
   right: auto;
 }
 
-#pontoon .right {
-  padding-right: 5px;
-}
-
 #pontoon > header #loading {
   float: left;
   height: 60px;
@@ -498,12 +494,12 @@ body, select, input, textarea, button {
 }
 
 #pontoon #logo {
-  color: #FFFFFF;
+  background: url("../img/home_icon&24.png") no-repeat center center;
   float: left;
-  font-size: 23px;
-  font-weight: 600;
-  letter-spacing: -1px;
-  padding: 16px 5px;
+  height: 24px;
+  margin: 0px;
+  padding: 18px 5px;
+  width: 24px;
 }
 
 #pontoon #info .button {
@@ -529,14 +525,21 @@ body, select, input, textarea, button {
 
 #pontoon #info .button {
   height: 24px;
-  margin: 0px;
+  margin: 0;
   padding: 18px 5px;
   width: 24px;
 }
 
 #pontoon #profile .button {
+  height: 60px;
   margin: 0;
-  padding: 10px 5px;
+  padding: 0 0 0 5px;
+}
+
+#pontoon #profile .button .title {
+  float: right;
+  margin: 20px 10px;
+  font-size: 16px;
 }
 
 #pontoon #info .menu,
