@@ -1054,6 +1054,7 @@ var Pontoon = (function () {
       // Locale menu handler
       $('body:not(".admin-form") .locale .menu li:not(".no-match")').click(function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
+            locale = locale.replace( /(:|\.|\[|@|\])/g, "\\$1" ), // Escape special characters in CSS notation
             language = $('.locale .menu .language.' + locale).html();
 
         $('.locale .selector .language')
