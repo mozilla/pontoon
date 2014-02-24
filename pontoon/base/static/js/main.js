@@ -770,7 +770,7 @@ var Pontoon = (function () {
         if ($(this).is(".sign-out")) {
           window.location = 'signout/'; // Without this, Enter doesn't open the link
         } else if ($(this).is(".admin")) {
-          window.location = 'admin/'; // Without this, Enter doesn't open the link
+          window.location = $(this).attr('href'); // Without this, Enter doesn't open the link
         } else if ($(this).is(".html")) {
           self.common.postMessage("HTML");
         } else {
