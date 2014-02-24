@@ -26,6 +26,7 @@ from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect, Http404
 from django.shortcuts import render
+from django.templatetags.static import static
 from django.utils.datastructures import MultiValueDictKeyError
 
 from django_browserid import verify as browserid_verify
@@ -231,8 +232,13 @@ def translate_project(request, locale, project, page=None, template='translate.h
     if request.user.is_authenticated():
         email = request.user.email
         size = 40
+
         gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
         gravatar_url += urllib.urlencode({'s':str(size)})
+        if settings.SITE_URL != 'http://localhost:8000':
+            default = settings.SITE_URL + static('img/user_icon&24.png')
+            gravatar_url += urllib.urlencode({'d':default})
+
         data['gravatar_url'] = gravatar_url
 
     # Validate project locales
