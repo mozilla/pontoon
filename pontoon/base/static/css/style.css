@@ -400,7 +400,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro h3 {
-  color: #F00038;
+  color: #FD5F60;
   font-weight: 300;
   margin-left: -1px;
   text-align: left;
@@ -441,12 +441,12 @@ body.admin-form #intro {
 #pontoon.admin-form #intro .controls .button.delete-project {
   float: left;
 
-  background-color: #F00038;
-  background-image: -moz-linear-gradient(top, #F00038, #3D000D); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #F00038),color-stop(1, #3D000D)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#F00038, #3D000D); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #F00038, #3D000D);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#F00038', EndColorStr='#3D000D'); /* IE6–IE9 */ 
+  background-color: #FD5F60;
+  background-image: -moz-linear-gradient(top, #FD5F60, #3D000D); /* FF3.6 */
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #FD5F60),color-stop(1, #3D000D)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#FD5F60, #3D000D); /* Chrome 10+, Saf6 */
+  background-image: linear-gradient(top, #FD5F60, #3D000D);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#FD5F60', EndColorStr='#3D000D'); /* IE6–IE9 */
 }
 
 #pontoon.admin-form #intro .controls .button.delete-project:hover {
@@ -584,7 +584,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .repository .type-wrapper .authentication-title {
-  color: #F00038;
+  color: #FD5F60;
   font-size: 12px;
   padding-top: 54px;
   text-align: left;
@@ -705,7 +705,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .errorlist {
-  color: #F00038;
+  color: #FD5F60;
   display: inline-block;
   font-size: 12px;
   line-height: 14px; /* Strange, but needed to keep controls in line when error occures */
@@ -775,7 +775,7 @@ body.admin-form #intro {
 }
 
 #pontoon .notification {
-  color: #F00038;
+  color: #FD5F60;
   line-height: 17px;
   margin: 5px auto 0;
   min-height: 17px;
