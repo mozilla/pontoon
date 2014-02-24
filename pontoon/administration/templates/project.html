@@ -182,27 +182,11 @@
         {{ formset.empty_form.url.errors }}
     </div>
 
-    <h2>General info <span class="small">(optional)</span></h2>
+    <h2>Project info <span class="small">(optional)</span></h2>
 
     <div>
-        {{ form.info_brief.label_tag() }}
         {{ form.info_brief }}
         {{ form.info_brief.errors }}
-    </div>
-    <div>
-        {{ form.info_locales.label_tag() }}
-        {{ form.info_locales }}
-        {{ form.info_locales.errors }}
-    </div>
-    <div>
-        {{ form.info_audience.label_tag() }}
-        {{ form.info_audience }}
-        {{ form.info_audience.errors }}
-    </div>
-    <div>
-        {{ form.info_metrics.label_tag() }}
-        {{ form.info_metrics }}
-        {{ form.info_metrics.errors }}
     </div>
 
     <div class="controls clearfix">

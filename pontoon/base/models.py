@@ -60,11 +60,8 @@ class Project(models.Model):
     )
     format = models.CharField("Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
 
-    # Campaign info
-    info_brief = models.TextField("Campaign Brief", blank=True)
-    info_locales = models.TextField("Intended Locales and Regions", blank=True)
-    info_audience = models.TextField("Audience, Reach, and Impact", blank=True)
-    info_metrics = models.TextField("Success Metrics", blank=True)
+    # Project info
+    info_brief = models.TextField("Project info", blank=True)
 
     # User interface
     external = models.BooleanField("Open project website in external window insted of iframe")

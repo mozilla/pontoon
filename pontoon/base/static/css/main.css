@@ -504,6 +504,10 @@ body, select, input, textarea, button {
 
 #pontoon #info .button {
   background: url("../img/info_icon&24.png") no-repeat center center;
+  height: 24px;
+  margin: 0;
+  padding: 18px 5px;
+  width: 24px;
 }
 
 #pontoon #info .menu {
@@ -511,23 +515,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #info .menu section {
-  border-top: 1px solid #525A65;
   padding: 10px 20px;
-}
-
-#pontoon #info .menu section:first-child {
-  border-top: none;
-}
-
-#pontoon #info .menu section:last-child {
-  border-bottom: none;
-}
-
-#pontoon #info .button {
-  height: 24px;
-  margin: 0;
-  padding: 18px 5px;
-  width: 24px;
 }
 
 #pontoon #profile .button {

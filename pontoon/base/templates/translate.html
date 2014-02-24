@@ -100,36 +100,16 @@
 
       <a id="logo" href="/"></a>
 
-      {% if project.info_brief or project.info_locales or project.info_audience or project.info_metrics %}
-      <!-- General project info -->
+      {% if project.info_brief %}
+      <!-- Project info -->
       <div id="info" class="select">
         <div class="button selector">
         </div>
         <aside class="menu">
-          {% if project.info_brief %}
-          <section class="brief">
-            <h2>{{ _('Campaign Brief') }}</h2>
+          <section>
+            <h2>{{ _('Project info') }}</h2>
             <p>{{ project.info_brief }}</p>
           </section>
-          {% endif %}
-          {% if project.info_locales %}
-          <section class="locales">
-            <h2>{{ _('Locales and Regions') }}</h2>
-            <p>{{ project.info_locales }}</p>
-          </section>
-          {% endif %}
-          {% if project.info_audience %}
-          <section class="audience">
-            <h2>{{ _('Audience, Reach, and Impact') }}</h2>
-            <p>{{ project.info_audience }}</p>
-          </section>
-          {% endif %}
-          {% if project.info_metrics %}
-          <section class="metrics">
-            <h2>{{ _('Success Metrics') }}</h2>
-            <p>{{ project.info_metrics }}</p>
-          </section>
-          {% endif %}
         </aside>
       </div>
       {% endif %}
