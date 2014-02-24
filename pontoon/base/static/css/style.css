@@ -720,6 +720,12 @@ body.admin-form #intro {
   margin-left: 5px;
 }
 
+#pontoon #intro .select > .button.breadcrumbs {
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 #pontoon #intro .select.opened > .button.breadcrumbs {
   background: #4d5967;
 }
