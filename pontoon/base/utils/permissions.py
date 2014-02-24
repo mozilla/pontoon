@@ -16,7 +16,7 @@ def add_can_localize(user):
     payload = {
         "app_name": "pontoon",
         "app_key": settings.MOZILLIANS_API_KEY,
-        "groups": "l10n,localization",
+        "groups": "localization",
         "format": "json",
         "limit": 2000, # By default, limited to 20
         "is_vouched": True
