@@ -285,9 +285,9 @@ var Pontoon = (function () {
             var error = "Oops, something went wrong.";
 
             if (data === "apikey") {
-              error = "Machine translation not supported.";
+              error = "Oops, machine translation not supported.";
             } else if (data === "not-supported") {
-              error = "Target language not supported.";
+              error = "Oops, target language not supported.";
               self.locale.notSupported = true;
             }
 
