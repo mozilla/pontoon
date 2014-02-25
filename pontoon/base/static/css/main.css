@@ -211,6 +211,7 @@ body, select, input, textarea, button {
 
 #pontoon .right {
   float: right;
+  padding-right: 5px;
 }
 
 
@@ -520,12 +521,11 @@ body, select, input, textarea, button {
 
 #pontoon #profile .button {
   height: 60px;
-  margin: 0;
-  padding: 0 0 0 5px;
+  padding: 0 5px;
 }
 
 #pontoon #profile .button .title {
-  float: right;
+  float: left;
   margin: 20px 10px;
   font-size: 16px;
 }

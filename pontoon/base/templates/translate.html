@@ -98,27 +98,12 @@
       <div class="notification"></div>
       <span id="loading"></span>
 
-      <a id="logo" href="/"></a>
-
-      {% if project.info_brief %}
-      <!-- Project info -->
-      <div id="info" class="select">
-        <div class="button selector">
-        </div>
-        <aside class="menu">
-          <section>
-            <h2>{{ _('Project info') }}</h2>
-            <p>{{ project.info_brief }}</p>
-          </section>
-        </aside>
-      </div>
-      {% endif %}
-
       <!-- Profile -->
       <div id="profile" class="select">
         <div class="button selector">
+          {% if user.first_name %}<span class="title">{{ user.first_name }}</span>
+          {% elif user.email %}<span class="title">{{ user.email }}</span>{% endif %}
           <img src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/user_icon&24.png') }}{%endif %}">
-          <span class="title">{% if user.first_name %}{{ user.first_name }}{% elif user.email %}{{ user.email }}{% endif %}</span>
         </div>
         <ul id="profile-menu" class="menu">
         {% if user.is_authenticated() or project.name != 'Testpilot' %}
@@ -173,6 +158,22 @@
         </aside>
         {% endif %}
       </div>
+
+      {% if project.info_brief %}
+      <!-- Project info -->
+      <div id="info" class="select">
+        <div class="button selector">
+        </div>
+        <aside class="menu">
+          <section>
+            <h2>{{ _('Project info') }}</h2>
+            <p>{{ project.info_brief }}</p>
+          </section>
+        </aside>
+      </div>
+      {% endif %}
+
+      <a id="logo" href="/"></a>
     </div>
 
   </div>
