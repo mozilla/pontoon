@@ -1,0 +1,50 @@
+[
+    {
+        "model": "base.project",
+        "pk": 1,
+        "fields": {
+            "name": "Testpilot",
+            "url": "https://pontoon-dev.mozillalabs.com/pontoon/hooks/php/test/testpilot/",
+            "locales": [47, 74, 85, 182, 205],
+            "repository_type": "svn",
+            "repository_url": "https://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/testpilot/",
+            "info_brief": "Please draft an overview of your campaign, including its purpose and goals. Anything you've provided WebDev, copywriters and/or designers is helpful."
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 1,
+        "fields": {
+            "project": 1,
+            "name": "Homepage",
+            "url": "https://pontoon-dev.mozillalabs.com/pontoon/hooks/php/test/testpilot/"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 2,
+        "fields": {
+            "project": 1,
+            "name": "Test Cases",
+            "url": "https://pontoon-dev.mozillalabs.com/pontoon/hooks/php/test/testpilot/?page=testcases.php"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 3,
+        "fields": {
+            "project": 1,
+            "name": "Guiding Principles",
+            "url": "https://pontoon-dev.mozillalabs.com/pontoon/hooks/php/test/testpilot/?page=principles.php"
+        }
+    },
+    {
+        "model": "base.subpage",
+        "pk": 4,
+        "fields": {
+            "project": 1,
+            "name": "Privacy Policy",
+            "url": "https://pontoon-dev.mozillalabs.com/pontoon/hooks/php/test/testpilot/?page=privacy.php"
+        }
+    }
+]
