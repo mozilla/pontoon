@@ -249,14 +249,23 @@ var Pontoon = (function () {
       if (self.locale.notSupported) {
         mt.html("Oops, target language not supported.")
           .parent().addClass('disabled');
+
       } else {
         mt.empty()
-          .addClass('loader')
+          .addClass('loader');
+
+        // On first run, check if target language supported
+        var check = false;
+        if (self.locale.notSupported === undefined) {
+          check = true;
+        }
+
         $.ajax({
           url: 'machine-translation/',
           data: {
             text: original,
-            locale: self.locale.code
+            locale: self.locale.code,
+            check: check
           }
 
         }).error(function() {
@@ -265,18 +274,23 @@ var Pontoon = (function () {
             .parent().addClass('disabled');
 
         }).success(function(data) {
+          self.locale.notSupported = false;
           mt.removeClass("loader");
+
           if (data.translation) {
             mt.html(self.doNotRender(data.translation))
               .parent().attr('title', 'Click to copy');
+
           } else {
             var error = "Oops, something went wrong.";
+
             if (data === "apikey") {
               error = "Machine translation not supported.";
             } else if (data === "not-supported") {
               error = "Target language not supported.";
               self.locale.notSupported = true;
             }
+
             mt.html(error)
               .parent().addClass('disabled');
           }
