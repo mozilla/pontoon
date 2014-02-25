@@ -518,7 +518,6 @@ def update_translation(request, template=None):
             return HttpResponse("updated")
 
 
-@login_required(redirect_field_name='', login_url='/403')
 def translation_memory(request):
     """Get translation from translation memory service."""
     log.debug("Get translation from translation memory service.")
@@ -559,7 +558,6 @@ def translation_memory(request):
         return HttpResponse("error")
 
 
-@login_required(redirect_field_name='', login_url='/403')
 def machine_translation(request):
     """Get translation from machine translation service."""
     log.debug("Get translation from machine translation service.")
