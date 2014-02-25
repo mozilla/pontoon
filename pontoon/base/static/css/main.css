@@ -536,6 +536,12 @@ body, select, input, textarea, button {
   right: 0;
 }
 
+#pontoon #profile-menu {
+  min-width: 150px;
+  padding-top: 10px;
+  width: 100%;
+}
+
 #pontoon .select#profile .popup {
   padding: 12px 12px 4px;
   right: 0;
