@@ -353,7 +353,7 @@ var Pontoon = (function () {
     /*
      * Render list of entities to translate
      */
-    entityList: function () {
+    renderEntityList: function () {
       var self = this,
           list = $('#entitylist').append(
             '<input id="search" type="search" placeholder="Search text to translate">' +
@@ -429,22 +429,14 @@ var Pontoon = (function () {
           self.common.postMessage("EDIT");
         }
       });
-
-      self.updateProgress();
-      self.editor();
-
-      // If advanced features opened by default, open first entity in the editor
-      if (this.app.external) {
-        $("#entitylist .entity:first").mouseover().click();
-      }
     },
 
 
 
     /*
-     * Render editor for advanced translation features
+     * Attach event handlers to editor elements
      */
-    editor: function () {
+    attachEditorHandlers: function () {
       var self = this;
 
       // Top bar
@@ -743,9 +735,9 @@ var Pontoon = (function () {
 
 
     /*
-     * Attach event handlers
+     * Attach event handlers to main toolbar elements
      */
-    attachHandlers: function () {
+    attachMainHandlers: function () {
       var self = this;
 
       // Open/close Pontoon UI
@@ -804,14 +796,17 @@ var Pontoon = (function () {
           var value = message.value;
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
-          Pontoon.attachHandlers();
-          Pontoon.entityList();
+          Pontoon.attachMainHandlers();
+          Pontoon.renderEntityList();
+          Pontoon.updateProgress();
+          Pontoon.attachEditorHandlers();
+          // If advanced features opened by default, open first entity in the editor
+          if (Pontoon.app.external) {
+            $("#entitylist .entity:first").mouseover().click();
+          }
           $("#spinner").fadeOut(function() {
             $("#pontoon > header > .container").fadeIn();
           });
-          if (Pontoon.project.format !== 'properties') {
-            $('#profile-menu .properties').parent().remove();
-          }
         } else if (message.type === "ERROR") {
           var msg = message.value || 'Oops, something went wrong. Refresh to try again.';
           Pontoon.common.showError(msg);
@@ -819,7 +814,7 @@ var Pontoon = (function () {
           $("#spinner").fadeOut(function() {
             $("#pontoon > header > .container").fadeIn();
           });
-          Pontoon.attachHandlers();
+          Pontoon.attachMainHandlers();
         } else if (message.type === "SWITCH") {
           $("#switch").click();
         } else if (message.type === "HOVER") {
