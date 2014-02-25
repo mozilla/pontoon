@@ -1,7 +1,5 @@
 var Pontoon = (function () {
 
-  'use strict';
-
   /* public  */
   return {
 
@@ -238,36 +236,52 @@ var Pontoon = (function () {
      */
     getSuggestions: function (original) {
       var self = this,
-          mt = $('#suggestions .machine-translation .translation')
-            .empty()
-            .addClass('loader'),
+          mt = $('#suggestions .machine-translation .translation'),
           tm = $('#suggestions .translation-memory .translation')
             .empty()
             .addClass('loader');
+
       $('#suggestions li')
         .removeClass('disabled')
         .parent().removeAttr('title');
 
       // Machine translation
-      $.ajax({
-        url: 'machine-translation/',
-        data: {
-          text: original,
-          locale: self.locale.code
-        }
+      if (self.locale.notSupported) {
+        mt.html("Oops, target language not supported.")
+          .parent().addClass('disabled');
+      } else {
+        mt.empty()
+          .addClass('loader')
+        $.ajax({
+          url: 'machine-translation/',
+          data: {
+            text: original,
+            locale: self.locale.code
+          }
 
-      }).error(function() {
-        mt.removeClass("loader").html("Oops, something went wrong.").parent().addClass('disabled');
+        }).error(function() {
+          mt.removeClass("loader")
+            .html("Oops, something went wrong.")
+            .parent().addClass('disabled');
 
-      }).success(function(data) {
-        mt.removeClass("loader");
-        if (data.translation) {
-          mt.html(self.doNotRender(data.translation)).parent().attr('title', 'Click to copy');
-        } else {
-          var error = (data === "apikey") ? "Machine translation not supported." : "Oops, something went wrong.";
-          mt.html(error).parent().addClass('disabled');
-        }
-      });
+        }).success(function(data) {
+          mt.removeClass("loader");
+          if (data.translation) {
+            mt.html(self.doNotRender(data.translation))
+              .parent().attr('title', 'Click to copy');
+          } else {
+            var error = "Oops, something went wrong.";
+            if (data === "apikey") {
+              error = "Machine translation not supported.";
+            } else if (data === "not-supported") {
+              error = "Target language not supported.";
+              self.locale.notSupported = true;
+            }
+            mt.html(error)
+              .parent().addClass('disabled');
+          }
+        });
+      }
 
       // Translation memory
       $.ajax({
@@ -278,15 +292,21 @@ var Pontoon = (function () {
         }
 
       }).error(function() {
-        tm.removeClass("loader").html("Oops, something went wrong.").parent().addClass('disabled');
+        tm.removeClass("loader")
+          .html("Oops, something went wrong.")
+          .parent().addClass('disabled');
 
       }).success(function(data) {
         tm.removeClass("loader");
         if (data.translation) {
-          tm.html(self.doNotRender(data.translation)).parent().attr('title', 'Click to copy');
+          tm.html(self.doNotRender(data.translation))
+          .parent().attr('title', 'Click to copy');
         } else {
-          var error = (data === "no") ? "No translations available." : "Oops, something went wrong.";
-          tm.html(error).parent().addClass('disabled');
+          var error = (data === "no") ?
+            "No translations available." :
+            "Oops, something went wrong.";
+          tm.html(error)
+            .parent().addClass('disabled');
         }
       });
     },
