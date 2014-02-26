@@ -169,16 +169,16 @@ def _save_entity(project, original, comment="", key="", source=""):
 def _save_translation(entity, locale, translation):
     """Admin interface: save new or update existing translation in DB."""
 
-    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
-
-    if len(translations) == 0: # New translation
-        t = Translation(entity=entity, locale=locale, string=translation,
-            date=datetime.datetime.now(), reviewed=True)
-    else: # Update translation
-        t = translations.reverse()[0]
+    # Update translation
+    try:
+        t = Translation.objects.get(entity=entity, locale=locale, reviewed=True)
         t.string = translation
         t.date = datetime.datetime.now()
-        t.reviewed = True
+
+    # New translation
+    except Translation.DoesNotExist:
+        t = Translation(entity=entity, locale=locale, string=translation,
+            date=datetime.datetime.now(), reviewed=True)
     t.save()
 
 
