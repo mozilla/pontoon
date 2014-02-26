@@ -170,13 +170,12 @@ def _get_entities(project, locale, page=None):
 
     entities_array = []
     for e in entities:
-        translations = Translation.objects.filter(entity=e, locale=locale).order_by('date')
-
-        if len(translations) == 0:
+        try:
+            t = Translation.objects.get(
+                entity=e, locale=locale, reviewed=True)
+            translation = t.string
+        except Translation.DoesNotExist:
             translation = ""
-        else:
-            first = translations.reverse()[0]
-            translation = first.string
 
         obj = {
             "original": e.string,
@@ -373,13 +372,11 @@ def get_translations_from_other_locales(request, template=None):
         return HttpResponse("error")
 
     payload = []
-    translations = Translation.objects.filter(entity=entity)
+    translations = Translation.objects.filter(entity=entity, reviewed=True)
 
     for l in entity.project.locales.all().exclude(code=locale.code):
-        translation = translations.filter(locale=l).order_by('date')
-
-        if len(translation) != 0:
-            t = translation.reverse()[0]
+        try:
+            t = translations.get(locale=l)
             payload.append({
                 "locale": {
                     "code": t.locale.code,
@@ -387,6 +384,8 @@ def get_translations_from_other_locales(request, template=None):
                 },
                 "translation": t.string
             })
+        except Translation.DoesNotExist:
+            pass
 
     if len(payload) == 0:
         log.debug("Translations do not exist.")
@@ -425,15 +424,16 @@ def get_translation_history(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date').reverse()
+    translations = Translation.objects \
+        .filter(entity=entity, locale=locale, reviewed=False) \
+        .order_by('date') \
+        .reverse()
 
-    if len(translations) > 1:
-        first = translations[0].id
+    if len(translations) > 0:
         payload = []
-
-        for t in translations.exclude(id=first):
+        for t in translations:
             o = {
-                "user": t.user.email,
+                "user": getattr(t.user, 'email', ''), # Empty for imported
                 "date": t.date.strftime("%b %d, %Y %H:%M"),
                 "translation": t.string
             }
@@ -443,7 +443,7 @@ def get_translation_history(request, template=None):
             mimetype='application/json')
 
     else:
-        log.debug("Translations do not exist.")
+        log.debug("Additional translations do not exist.")
         return HttpResponse("error")
 
 
@@ -457,14 +457,14 @@ def update_translation(request, template=None):
 
     try:
         entity = request.POST['entity']
-        translation = request.POST['translation']
+        string = request.POST['translation']
         locale = request.POST['locale']
     except MultiValueDictKeyError, e:
         log.error(str(e))
         return HttpResponse("error")
 
     log.debug("Entity: " + entity)
-    log.debug("Translation: " + translation)
+    log.debug("Translation: " + string)
     log.debug("Locale: " + locale)
 
     try:
@@ -479,43 +479,37 @@ def update_translation(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
-
-    # No translation saved yet
-    if len(translations) == 0:
-        if translation != '':
-            t = Translation(entity=e, locale=l, string=translation,
-                user=request.user, date=datetime.datetime.now())
-            t.save()
-            log.debug("Translation saved.")
-            return HttpResponse("saved")
-
-        else:
-            log.debug("Translation not set.")
-            return HttpResponse("not set")
-
     # Translations exist
-    else:
-        if translation == '':
-            translations.delete()
+    try:
+        t = Translation.objects.get(entity=e, locale=l, reviewed=True)
+        if string == '':
+            t.delete()
             log.debug("Translation deleted.")
             return HttpResponse("deleted")
 
         else:
-            # Translation by user exist
-            try:
-                t = translations.get(entity=e, locale=l, user=request.user)
-                t.string = translation
-                t.date = datetime.datetime.now()
-
-            # Translation by user doesn't exist
-            except Translation.DoesNotExist:
-                t = Translation(entity=e, locale=l, string=translation,
-                    user=request.user, date=datetime.datetime.now())
-
+            t.reviewed = False # Mark existing translation as unreviewed
+            t.save()
+            t = Translation(
+                entity=e, locale=l, user=request.user, string=string,
+                date=datetime.datetime.now(), reviewed=True)
             t.save()
             log.debug("Translation updated.")
             return HttpResponse("updated")
+
+    # No translation saved yet
+    except Translation.DoesNotExist:
+        if string == '':
+            log.debug("Translation not set.")
+            return HttpResponse("not set")
+
+        else:
+            t = Translation(
+                entity=e, locale=l, user=request.user, string=string,
+                date=datetime.datetime.now(), reviewed=True)
+            t.save()
+            log.debug("Translation saved.")
+            return HttpResponse("saved")
 
 
 def translation_memory(request):
@@ -679,9 +673,12 @@ def _update_files(p, locale, locale_repository_path):
             for entity in entities:
                 entry = po.find(entity.string)
                 if entry:
-                    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
-                    if len(translations) > 0:
-                        entry.msgstr = translations.reverse()[0].string
+                    try:
+                        t = Translation.objects.get(
+                            entity=entity, locale=locale, reviewed=True)
+                        entry.msgstr = t.string
+                    except Translation.DoesNotExist:
+                        pass
 
                     if 'fuzzy' in entry.flags:
                         entry.flags.remove('fuzzy')
@@ -699,11 +696,12 @@ def _update_files(p, locale, locale_repository_path):
                 entities_with_path = entities.filter(source=short_path)
                 for entity in entities_with_path:
                     key = entity.key
-                    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
-                    if len(translations) == 0:
+                    try:
+                        t = Translation.objects.get(
+                            entity=entity, locale=locale, reviewed=True)
+                        translation = t.string
+                    except Translation.DoesNotExist:
                         translation = ''
-                    else:
-                        translation = translations.reverse()[0].string
 
                     try:
                         l10nobject.modify_entity(key, translation)
@@ -729,11 +727,13 @@ def _update_files(p, locale, locale_repository_path):
 
                     for entity in entities:
                         key = entity.key
-                        translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
-                        if len(translations) == 0:
+                        try:
+                            t = Translation.objects.get(
+                                entity=entity, locale=locale, reviewed=True)
+                            translation = t.string
+                        except Translation.DoesNotExist:
                             translation = ''
-                        else:
-                            translation = translations.reverse()[0].string
+
                         config.set(locale.code, key, translation)
 
                     # Erase file and then write, otherwise content gets appended
@@ -779,11 +779,12 @@ def _update_files(p, locale, locale_repository_path):
                             log.error(path + ": Entity with string \"" + original + "\" does not exist in " + p.name)
                             continue
 
-                        translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
-                        if len(translations) == 0:
+                        try:
+                            t = Translation.objects.get(
+                                entity=entity, locale=locale, reviewed=True)
+                            translation = t.string
+                        except Translation.DoesNotExist:
                             translation = original
-                        else:
-                            translation = translations.reverse()[0].string
 
                 # Erase file and then write, otherwise content gets appended
                 lines.seek(0)
