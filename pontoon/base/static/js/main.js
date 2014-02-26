@@ -216,7 +216,7 @@ var Pontoon = (function () {
           if (data !== "error") {
             $.each(data, function() {
               list.append('<li title="Click to copy">' +
-                '<span>' + self.doNotRender(this.author) + '<span class="stress">' + this.date + '</span></span>' +
+                '<span>' + self.doNotRender(this.user) + '<span class="stress">' + this.date + '</span></span>' +
                 '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
               '</li>');
             });
@@ -600,7 +600,6 @@ var Pontoon = (function () {
         } else {
           if (source !== '') {
             entity.translation = source;
-            self.updateEntityUI(entity);
             self.updateOnServer(entity);
           } else {
             entity.translation = '';
@@ -712,6 +711,7 @@ var Pontoon = (function () {
           success: function(data) {
             if (data !== "error") {
               self.endLoader('Translation ' + data + '!');
+              Pontoon.updateEntityUI(entity);
             } else {
               self.endLoader('Oops, something went wrong.', 'error');
             }
@@ -867,7 +867,6 @@ var Pontoon = (function () {
           }
         } else if (message.type === "UPDATE") {
           var entity = Pontoon.project.entities[message.value];
-          Pontoon.updateEntityUI(entity);
           Pontoon.updateOnServer(entity);
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);

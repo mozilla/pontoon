@@ -433,7 +433,7 @@ def get_translation_history(request, template=None):
 
         for t in translations.exclude(id=first):
             o = {
-                "author": t.author,
+                "user": t.user.email,
                 "date": t.date.strftime("%b %d, %Y %H:%M"),
                 "translation": t.string
             }
@@ -449,9 +449,10 @@ def get_translation_history(request, template=None):
 
 @login_required(redirect_field_name='', login_url='/403')
 def update_translation(request, template=None):
-    """Update entity translation for the specified locale and author."""
-    log.debug("Update entity translation for the specified locale and author.")
+    """Update entity translation for the specified locale and user."""
+    log.debug("Update entity translation for the specified locale and user.")
 
+    attachment
     if request.method != 'POST':
         raise Http404
 
@@ -485,7 +486,7 @@ def update_translation(request, template=None):
     if len(translations) == 0:
         if translation != '':
             t = Translation(entity=e, locale=l, string=translation,
-                author=request.user.email, date=datetime.datetime.now())
+                user=request.user, date=datetime.datetime.now())
             t.save()
             log.debug("Translation saved.")
             return HttpResponse("saved")
@@ -502,16 +503,16 @@ def update_translation(request, template=None):
             return HttpResponse("deleted")
 
         else:
-            # Translation by author exist
+            # Translation by user exist
             try:
-                t = translations.get(entity=e, locale=l, author=request.user.email)
+                t = translations.get(entity=e, locale=l, user=request.user)
                 t.string = translation
                 t.date = datetime.datetime.now()
 
-            # Translation by author doesn't exist
+            # Translation by user doesn't exist
             except Translation.DoesNotExist:
                 t = Translation(entity=e, locale=l, string=translation,
-                    author=request.user.email, date=datetime.datetime.now())
+                    user=request.user, date=datetime.datetime.now())
 
             t.save()
             log.debug("Translation updated.")

@@ -166,18 +166,17 @@ def _save_entity(project, original, comment="", key="", source=""):
     e.save()
 
 
-def _save_translation(entity, locale, translation, author=""):
+def _save_translation(entity, locale, translation):
     """Admin interface: save new or update existing translation in DB."""
 
     translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
 
     if len(translations) == 0: # New translation
         t = Translation(entity=entity, locale=locale, string=translation,
-            author=author, date=datetime.datetime.now())
+            date=datetime.datetime.now())
     else: # Update translation
         t = translations.reverse()[0]
         t.string = translation
-        t.author = author
         t.date = datetime.datetime.now()
     t.save()
 
@@ -298,7 +297,7 @@ def _extract_po(project, locale, paths, source_locale):
                     if len(entity.msgstr) > 0:
                         try:
                             e = Entity.objects.get(project=project, string=entity.msgid)
-                            _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
+                            _save_translation(entity=e, locale=locale, translation=entity.msgstr)
                         except Entity.DoesNotExist:
                             continue
             log.debug("[" + locale.code + "]: saved to DB.")
@@ -584,7 +583,7 @@ def update_from_transifex(request, template=None):
                 _save_entity(p, entity["key"], entity["comment"])
                 if len(entity["translation"]) > 0:
                     e = Entity.objects.get(project=p, string=entity["key"])
-                    _save_translation(entity=e, locale=l, translation=entity["translation"], author=entity["user"])
+                    _save_translation(entity=e, locale=l, translation=entity["translation"])
             log.debug("Transifex data for " + l.name + " saved to DB.")
         else:
             return HttpResponse(response)

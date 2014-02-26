@@ -100,8 +100,9 @@ class Entity(models.Model):
 class Translation(models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
+    user = models.ForeignKey(User, null=True, blank=True)
+
     string = models.TextField()
-    author = models.CharField(max_length=128)
     date = models.DateTimeField()
 
     def __unicode__(self):
