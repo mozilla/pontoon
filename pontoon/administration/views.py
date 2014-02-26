@@ -173,11 +173,12 @@ def _save_translation(entity, locale, translation):
 
     if len(translations) == 0: # New translation
         t = Translation(entity=entity, locale=locale, string=translation,
-            date=datetime.datetime.now())
+            date=datetime.datetime.now(), reviewed=True)
     else: # Update translation
         t = translations.reverse()[0]
         t.string = translation
         t.date = datetime.datetime.now()
+        t.reviewed = True
     t.save()
 
 

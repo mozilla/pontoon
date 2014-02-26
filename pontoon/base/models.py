@@ -101,9 +101,9 @@ class Translation(models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
     user = models.ForeignKey(User, null=True, blank=True)
-
     string = models.TextField()
     date = models.DateTimeField()
+    reviewed = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.string
