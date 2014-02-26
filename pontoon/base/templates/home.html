@@ -86,7 +86,7 @@
     </p>
     {% endif %}
 
-    <ul class="notification{% if not messages %} hidden{% endif %}{% if not (user.is_authenticated() and user.has_perm('base.can_localize')) %} center{% endif %}">
+    <ul class="notification{% if not messages %} hidden{% endif %}">
       {% for message in messages %}
       <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
       {% endfor %}
