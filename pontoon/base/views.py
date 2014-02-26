@@ -48,9 +48,6 @@ def home(request, template='home.html'):
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
     }
 
-    if request.user.is_authenticated() and not request.user.has_perm('base.can_localize'):
-        messages.error(request, "You don't have permission to localize.")
-
     translate_error = request.session.pop('translate_error', {})
     locale = translate_error.get('locale')
     url = translate_error.get('url')
@@ -147,9 +144,6 @@ def translate_site(request, locale, url, template='translate.html'):
         if not request.user.is_authenticated():
             messages.error(request, "You need to sign in first.")
             return HttpResponseRedirect(reverse('pontoon.home'))
-        if not request.user.has_perm('base.can_localize'):
-            messages.error(request, "You don't have permission to localize.")
-            return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Project stored in the DB, add more data
     if page is None:
@@ -213,9 +207,6 @@ def translate_project(request, locale, project, page=None, template='translate.h
     if not p.name == 'Testpilot':
         if not request.user.is_authenticated():
             messages.error(request, "You need to sign in first.")
-            return HttpResponseRedirect(reverse('pontoon.home'))
-        if not request.user.has_perm('base.can_localize'):
-            messages.error(request, "You don't have permission to localize.")
             return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
@@ -1021,9 +1012,9 @@ def verify(request, template=None):
             user = User.objects.get(username=user)
             add_can_localize(user)
 
-        response = {'browserid': verification,
+        response = {
+            'browserid': verification,
             'manager': user.has_perm('base.can_manage'),
-            'localizer': user.has_perm('base.can_localize')
         }
 
     return HttpResponse(json.dumps(response), mimetype='application/json')

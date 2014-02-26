@@ -29,7 +29,7 @@
     <h1 id="title"><a href="/">Pontoon</a></h1>
     <h2 id="subtitle">Translate websites. In place.</h2>
 
-    <form class="clearfix{% if not (user.is_authenticated() and user.has_perm('base.can_localize')) %} hidden{% endif %}">
+    <form class="clearfix{% if not user.is_authenticated() %} hidden{% endif %}">
 
       <!-- Project input/select -->
       <div class="project select">
