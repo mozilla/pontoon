@@ -169,17 +169,21 @@ def _save_entity(project, original, comment="", key="", source=""):
 def _save_translation(entity, locale, translation):
     """Admin interface: save new or update existing translation in DB."""
 
-    # Update translation
+    # Update existing translation if different from repository
     try:
-        t = Translation.objects.get(entity=entity, locale=locale, reviewed=True)
-        t.string = translation
-        t.date = datetime.datetime.now()
+        t = Translation.objects.get(
+            entity=entity, locale=locale, reviewed=True)
+        if t.string != translation:
+            t.user = None
+            t.string = translation
+            t.date = datetime.datetime.now()
+            t.save()
 
-    # New translation
+    # Save new translation if it doesn's exist yet
     except Translation.DoesNotExist:
         t = Translation(entity=entity, locale=locale, string=translation,
             date=datetime.datetime.now(), reviewed=True)
-    t.save()
+        t.save()
 
 
 def _get_locale_paths(source_paths, source_directory, locale_code):
