@@ -452,7 +452,6 @@ def update_translation(request, template=None):
     """Update entity translation for the specified locale and user."""
     log.debug("Update entity translation for the specified locale and user.")
 
-    attachment
     if request.method != 'POST':
         raise Http404
 
