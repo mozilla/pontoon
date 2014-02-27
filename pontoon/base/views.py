@@ -165,7 +165,8 @@ def _get_translation(entity, locale):
             t = translations.get(reviewed=True)
             return t.string
         except Translation.DoesNotExist:
-            return translations.order_by("date").reverse()[0]
+            latest = translations.order_by("date").reverse()[0]
+            return latest.string
     else:
         return ''
 
