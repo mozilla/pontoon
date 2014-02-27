@@ -591,22 +591,14 @@ var Pontoon = (function () {
         if (entity.body) {
           if (source !== '') {
             self.common.postMessage("SAVE", source);
+            self.common.postMessage("UNHOVER", entity.id);
           } else {
-            self.common.postMessage("DELETE");
+            self.endLoader('Empty translations cannot be submitted.', 'error');
           }
-          self.common.postMessage("UNHOVER", entity.id);
 
         // Some entities cannot be edited in-place
         } else {
-          if (source !== '') {
-            entity.translation = source;
-            self.updateOnServer(entity);
-          } else {
-            entity.translation = '';
-            entity.ui.removeClass('translated');
-            self.updateProgress();
-            self.updateOnServer(entity);
-          }
+          self.updateOnServer(entity, source);
         }
       });
 
@@ -693,8 +685,9 @@ var Pontoon = (function () {
      * Update entity translation on server
      * 
      * entity Entity
+     * translation Translation
      */
-    updateOnServer: function (entity) {
+    updateOnServer: function (entity, translation) {
       var self = this;
       // Don't save if user not authenticated
       if (self.user.email && self.project.pk) {
@@ -706,14 +699,17 @@ var Pontoon = (function () {
             csrfmiddlewaretoken: $('#server').data('csrf'),
             locale: self.locale.code,
             entity: entity.pk,
-            translation: entity.translation
+            translation: translation
           },
           success: function(data) {
-            if (data !== "error") {
-              self.endLoader('Translation ' + data + '!');
-              Pontoon.updateEntityUI(entity);
-            } else {
+            if (data === "saved" || data === "updated") {
+              self.endLoader('Translation ' + data + '.');
+              entity.translation = translation;
+              self.updateEntityUI(entity);
+            } else if (data === "error") {
               self.endLoader('Oops, something went wrong.', 'error');
+            } else {
+              self.endLoader(data, 'error');
             }
           },
           error: function() {
@@ -867,7 +863,7 @@ var Pontoon = (function () {
           }
         } else if (message.type === "UPDATE") {
           var entity = Pontoon.project.entities[message.value];
-          Pontoon.updateOnServer(entity);
+          Pontoon.updateOnServer(entity, entity.translation);
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }

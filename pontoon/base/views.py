@@ -447,6 +447,18 @@ def get_translation_history(request, template=None):
         return HttpResponse("error")
 
 
+def _unset_reviewed(translations):
+    """Unset reviewed attribute for given translations."""
+    log.debug("Unset reviewed attribute for given translations.")
+
+    try:
+        t = translations.get(reviewed=True)
+        t.reviewed = False
+        t.save()
+    except Translation.DoesNotExist:
+        pass
+
+
 @login_required(redirect_field_name='', login_url='/403')
 def update_translation(request, template=None):
     """Update entity translation for the specified locale and user."""
@@ -479,36 +491,39 @@ def update_translation(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    # Translations exist
-    try:
-        t = Translation.objects.get(entity=e, locale=l, reviewed=True)
-        if string == '':
-            t.delete()
-            log.debug("Translation deleted.")
-            return HttpResponse("deleted")
+    can_localize = request.user.has_perm('base.can_localize')
 
-        else:
-            t.reviewed = False # Mark existing translation as unreviewed
-            t.save()
+    if string == '':
+        return HttpResponse("Empty translations cannot be submitted.")
+    else:
+        translations = Translation.objects.filter(entity=e, locale=l)
+
+        # Translations exist
+        if len(translations) > 0:
+            for t in translations:
+                if t.string == string:
+                    if can_localize:
+                        _unset_reviewed(translations)
+                        t.reviewed = True
+                        t.save()
+                        return HttpResponse("updated")
+                    else:
+                        return HttpResponse("Same translation already exist.")
+
+            if can_localize:
+                _unset_reviewed(translations)
             t = Translation(
                 entity=e, locale=l, user=request.user, string=string,
-                date=datetime.datetime.now(), reviewed=True)
+                date=datetime.datetime.now(), reviewed=can_localize)
             t.save()
-            log.debug("Translation updated.")
             return HttpResponse("updated")
 
-    # No translation saved yet
-    except Translation.DoesNotExist:
-        if string == '':
-            log.debug("Translation not set.")
-            return HttpResponse("not set")
-
+        # No translations saved yet
         else:
             t = Translation(
                 entity=e, locale=l, user=request.user, string=string,
-                date=datetime.datetime.now(), reviewed=True)
+                date=datetime.datetime.now(), reviewed=can_localize)
             t.save()
-            log.debug("Translation saved.")
             return HttpResponse("saved")
 
 
