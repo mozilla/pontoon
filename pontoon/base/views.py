@@ -869,6 +869,9 @@ def commit_to_svn(request, template=None):
     """Commit translations to SVN."""
     log.debug("Commit translations to SVN.")
 
+    if not request.user.has_perm('base.can_localize'):
+        return render(request, '403.html', status=403)
+
     try:
         import pysvn
     except ImportError as e:
