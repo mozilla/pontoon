@@ -67,7 +67,7 @@ var Pontoon = (function () {
         self.startLoader();
 
         params.strings = [];
-        $("#entitylist .translated").each(function() {
+        $("#entitylist .reviewed").each(function() {
           var entity = $(this)[0].entity;
           params.strings.push({
             original: entity.original,
@@ -423,8 +423,8 @@ var Pontoon = (function () {
       // Render
       $(self.project.entities).each(function () {
         var li = $('<li class="entity' + 
-          // append classes to translated and uneditable entities
-          (this.translation ? ' translated' : '') +
+          // append classes to translated, reviewed and uneditable entities
+          (this.reviewed ? ' reviewed' : (this.translation ? ' translated' : '')) +
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status"></span>' +
           '<p class="source-string">' + self.doNotRender(this.original) + '</p>' +
@@ -673,9 +673,11 @@ var Pontoon = (function () {
      * entity Entity
      */
     updateEntityUI: function (entity) {
-      entity.ui.addClass('translated');
-      if (entity.translation === '') {
-        entity.ui.removeClass('translated');
+      entity.ui.removeClass('translated reviewed');
+      if (entity.reviewed) {
+        entity.ui.addClass('reviewed');
+      } else if (entity.translation !== '') {
+        entity.ui.addClass('translated');
       }
       this.updateProgress();
     },
@@ -703,9 +705,10 @@ var Pontoon = (function () {
             translation: translation
           },
           success: function(data) {
-            if (data === "saved" || data === "updated") {
-              self.endLoader('Translation ' + data + '.');
+            if (data.type) {
+              self.endLoader('Translation ' + data.type + '.');
               entity.translation = translation;
+              entity.reviewed = data.reviewed;
               self.updateEntityUI(entity);
             } else if (data === "error") {
               self.endLoader('Oops, something went wrong.', 'error');

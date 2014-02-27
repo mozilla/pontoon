@@ -508,7 +508,10 @@ def update_translation(request, template=None):
                         _unset_reviewed(translations)
                         t.reviewed = True
                         t.save()
-                        return HttpResponse("updated")
+                        return HttpResponse(json.dumps({
+                            'type': 'updated',
+                            'reviewed': can_localize,
+                        }), mimetype='application/json')
                     else:
                         return HttpResponse("Same translation already exist.")
 
@@ -518,7 +521,10 @@ def update_translation(request, template=None):
                 entity=e, locale=l, user=request.user, string=string,
                 date=datetime.datetime.now(), reviewed=can_localize)
             t.save()
-            return HttpResponse("updated")
+            return HttpResponse(json.dumps({
+                'type': 'updated',
+                'reviewed': can_localize,
+            }), mimetype='application/json')
 
         # No translations saved yet
         else:
@@ -526,7 +532,10 @@ def update_translation(request, template=None):
                 entity=e, locale=l, user=request.user, string=string,
                 date=datetime.datetime.now(), reviewed=can_localize)
             t.save()
-            return HttpResponse("saved")
+            return HttpResponse(json.dumps({
+                'type': 'saved',
+                'reviewed': can_localize,
+            }), mimetype='application/json')
 
 
 def translation_memory(request):
