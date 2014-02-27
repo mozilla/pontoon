@@ -154,6 +154,22 @@ def translate_site(request, locale, url, template='translate.html'):
         kwargs={'locale': locale, 'project': p.name, 'page': page}))
 
 
+def _get_translation(entity, locale):
+    """Get translation of given entity to given locale."""
+    log.debug("Get translation of given entity to given locale.")
+
+    translations = Translation.objects.filter(entity=entity, locale=locale)
+
+    if len(translations) > 0:
+        try:
+            t = translations.get(reviewed=True)
+            return t.string
+        except Translation.DoesNotExist:
+            return translations.order_by("date").reverse()[0]
+    else:
+        return ""
+
+
 def _get_entities(project, locale, page=None):
     """Load all project entities and translations."""
     log.debug("Load all project entities and translations.")
@@ -164,12 +180,7 @@ def _get_entities(project, locale, page=None):
 
     entities_array = []
     for e in entities:
-        try:
-            t = Translation.objects.get(
-                entity=e, locale=locale, reviewed=True)
-            translation = t.string
-        except Translation.DoesNotExist:
-            translation = ""
+        translation = _get_translation(entity=e, locale=locale)
 
         obj = {
             "original": e.string,
