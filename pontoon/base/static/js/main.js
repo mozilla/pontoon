@@ -198,38 +198,6 @@ var Pontoon = (function () {
 
 
     /*
-     * Get history of translations of given entity
-     *
-     * entity Entity
-     */
-    getHistory: function (entity) {
-      var self = this,
-          list = $('#history ul').empty();
-
-      $.ajax({
-        url: 'get-history/',
-        data: {
-          entity: entity.pk,
-          locale: self.locale.code
-        },
-        success: function(data) {
-          if (data !== "error") {
-            $.each(data, function() {
-              list.append('<li title="Click to copy">' +
-                '<span>' + self.doNotRender(this.user) + '<span class="stress">' + this.date + '</span></span>' +
-                '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
-              '</li>');
-            });
-          } else {
-            list.append('<li class="disabled"><p>No translations available.</p<</li>');
-          }
-        }
-      });
-    },
-
-
-
-    /*
      * Get suggestions from machine translation and translation memory
      *
      * original Original string
@@ -321,6 +289,38 @@ var Pontoon = (function () {
             "Oops, something went wrong.";
           tm.html(error)
             .parent().addClass('disabled');
+        }
+      });
+    },
+
+
+
+    /*
+     * Get history of translations of given entity
+     *
+     * entity Entity
+     */
+    getHistory: function (entity) {
+      var self = this,
+          list = $('#history ul').empty();
+
+      $.ajax({
+        url: 'get-history/',
+        data: {
+          entity: entity.pk,
+          locale: self.locale.code
+        },
+        success: function(data) {
+          if (data !== "error") {
+            $.each(data, function() {
+              list.append('<li title="Click to copy">' +
+                '<span>' + self.doNotRender(this.user) + '<span class="stress">' + this.date + '</span></span>' +
+                '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
+              '</li>');
+            });
+          } else {
+            list.append('<li class="disabled"><p>No translations available.</p<</li>');
+          }
         }
       });
     },
