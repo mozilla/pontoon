@@ -167,7 +167,7 @@ def _get_translation(entity, locale):
         except Translation.DoesNotExist:
             return translations.order_by("date").reverse()[0]
     else:
-        return ""
+        return ''
 
 
 def _get_entities(project, locale, page=None):
@@ -688,12 +688,10 @@ def _update_files(p, locale, locale_repository_path):
             for entity in entities:
                 entry = po.find(entity.string)
                 if entry:
-                    try:
-                        t = Translation.objects.get(
-                            entity=entity, locale=locale, reviewed=True)
-                        entry.msgstr = t.string
-                    except Translation.DoesNotExist:
-                        pass
+                    translation = _get_translation(
+                        entity=entity, locale=locale)
+                    if translation != '':
+                        entry.msgstr = translation
 
                     if 'fuzzy' in entry.flags:
                         entry.flags.remove('fuzzy')
@@ -711,12 +709,8 @@ def _update_files(p, locale, locale_repository_path):
                 entities_with_path = entities.filter(source=short_path)
                 for entity in entities_with_path:
                     key = entity.key
-                    try:
-                        t = Translation.objects.get(
-                            entity=entity, locale=locale, reviewed=True)
-                        translation = t.string
-                    except Translation.DoesNotExist:
-                        translation = ''
+                    translation = _get_translation(
+                        entity=entity, locale=locale)
 
                     try:
                         l10nobject.modify_entity(key, translation)
@@ -742,12 +736,8 @@ def _update_files(p, locale, locale_repository_path):
 
                     for entity in entities:
                         key = entity.key
-                        try:
-                            t = Translation.objects.get(
-                                entity=entity, locale=locale, reviewed=True)
-                            translation = t.string
-                        except Translation.DoesNotExist:
-                            translation = ''
+                        translation = _get_translation(
+                            entity=entity, locale=locale)
 
                         config.set(locale.code, key, translation)
 
@@ -794,11 +784,9 @@ def _update_files(p, locale, locale_repository_path):
                             log.error(path + ": Entity with string \"" + original + "\" does not exist in " + p.name)
                             continue
 
-                        try:
-                            t = Translation.objects.get(
-                                entity=entity, locale=locale, reviewed=True)
-                            translation = t.string
-                        except Translation.DoesNotExist:
+                        translation = _get_translation(
+                            entity=entity, locale=locale)
+                        if translation != '':
                             translation = original
 
                 # Erase file and then write, otherwise content gets appended
