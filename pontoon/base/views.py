@@ -374,20 +374,18 @@ def get_translations_from_other_locales(request, template=None):
         return HttpResponse("error")
 
     payload = []
-    translations = Translation.objects.filter(entity=entity, reviewed=True)
+    locales = entity.project.locales.all().exclude(code=locale.code)
 
-    for l in entity.project.locales.all().exclude(code=locale.code):
-        try:
-            t = translations.get(locale=l)
+    for l in locales:
+        translation = _get_translation(entity=entity, locale=l)
+        if translation != "":
             payload.append({
                 "locale": {
-                    "code": t.locale.code,
-                    "name": t.locale.name
+                    "code": l.code,
+                    "name": l.name
                 },
-                "translation": t.string
+                "translation": translation
             })
-        except Translation.DoesNotExist:
-            pass
 
     if len(payload) == 0:
         log.debug("Translations do not exist.")
