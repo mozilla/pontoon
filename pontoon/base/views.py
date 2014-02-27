@@ -168,7 +168,7 @@ def _get_translation(entity, locale):
             latest = translations.order_by("date").reverse()[0]
             return latest
     else:
-        return Translation(string="", reviewed=False)
+        return Translation()
 
 
 def _get_entities(project, locale, page=None):
@@ -189,6 +189,7 @@ def _get_entities(project, locale, page=None):
             "key": e.key,
             "pk": e.pk,
             "translation": translation.string,
+            "reviewed": translation.reviewed,
         }
 
         entities_array.append(obj)
