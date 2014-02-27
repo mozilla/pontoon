@@ -163,12 +163,12 @@ def _get_translation(entity, locale):
     if len(translations) > 0:
         try:
             t = translations.get(reviewed=True)
-            return t.string
+            return t
         except Translation.DoesNotExist:
             latest = translations.order_by("date").reverse()[0]
-            return latest.string
+            return latest
     else:
-        return ''
+        return Translation(string="", reviewed=False)
 
 
 def _get_entities(project, locale, page=None):
@@ -188,7 +188,7 @@ def _get_entities(project, locale, page=None):
             "comment": e.comment,
             "key": e.key,
             "pk": e.pk,
-            "translation": translation
+            "translation": translation.string,
         }
 
         entities_array.append(obj)
@@ -378,7 +378,7 @@ def get_translations_from_other_locales(request, template=None):
     locales = entity.project.locales.all().exclude(code=locale.code)
 
     for l in locales:
-        translation = _get_translation(entity=entity, locale=l)
+        translation = _get_translation(entity=entity, locale=l).string
         if translation != "":
             payload.append({
                 "locale": {
@@ -690,7 +690,7 @@ def _update_files(p, locale, locale_repository_path):
                 entry = po.find(entity.string)
                 if entry:
                     translation = _get_translation(
-                        entity=entity, locale=locale)
+                        entity=entity, locale=locale).string
                     if translation != '':
                         entry.msgstr = translation
 
@@ -711,7 +711,7 @@ def _update_files(p, locale, locale_repository_path):
                 for entity in entities_with_path:
                     key = entity.key
                     translation = _get_translation(
-                        entity=entity, locale=locale)
+                        entity=entity, locale=locale).string
 
                     try:
                         l10nobject.modify_entity(key, translation)
@@ -738,7 +738,7 @@ def _update_files(p, locale, locale_repository_path):
                     for entity in entities:
                         key = entity.key
                         translation = _get_translation(
-                            entity=entity, locale=locale)
+                            entity=entity, locale=locale).string
 
                         config.set(locale.code, key, translation)
 
@@ -786,7 +786,7 @@ def _update_files(p, locale, locale_repository_path):
                             continue
 
                         translation = _get_translation(
-                            entity=entity, locale=locale)
+                            entity=entity, locale=locale).string
                         if translation != '':
                             translation = original
 
