@@ -416,7 +416,7 @@ def get_translation_history(request, template=None):
         return HttpResponse("error")
 
     translations = Translation.objects \
-        .filter(entity=entity, locale=locale, reviewed=False) \
+        .filter(entity=entity, locale=locale) \
         .order_by('date') \
         .reverse()
 
@@ -434,7 +434,7 @@ def get_translation_history(request, template=None):
             mimetype='application/json')
 
     else:
-        log.debug("Additional translations do not exist.")
+        log.debug("Translations do not exist.")
         return HttpResponse("error")
 
 
