@@ -443,7 +443,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #progress .graph {
-  background: #7BC876;
+  background: #C1E3BF;
   float: left;
   height: 100%;
   width: 0%;
@@ -452,6 +452,10 @@ body, select, input, textarea, button {
   -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
   -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
   transition: all 0.3s ease-out;  
+}
+
+#pontoon #progress .graph.reviewed {
+  background: #7BC876;
 }
 
 #pontoon #progress .number {
@@ -731,7 +735,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist > .wrapper > ul > li.translated > .status {
-  border-color: #34e0b0;
+  border-color: #7BC876;
 }
 
 #pontoon #entitylist > .wrapper > ul > li.reviewed > .status {

@@ -653,12 +653,15 @@ var Pontoon = (function () {
     updateProgress: function () {
       var all = $("#entitylist .entity").length,
           translated = $("#entitylist .entity.translated").length,
-          percent = Math.round(translated * 100 / all);
+          reviewed = $("#entitylist .entity.reviewed").length,
+          percentTranslated = Math.round(translated * 100 / all),
+          percentReviewed = Math.round(reviewed * 100 / all);
 
-      $('#progress .graph').width(percent + '%');
-      $('#progress .number').html(translated + '|' + all);
+      $('#progress .translated').width(percentTranslated + '%');
+      $('#progress .reviewed').width(percentReviewed + '%');
+      $('#progress .number').html(reviewed + '|' + all);
 
-      if (percent > 50) {
+      if (percentTranslated + percentReviewed > 50) {
         $('#progress .number').addClass('left');
       } else {
         $('#progress .number').removeClass('left');
