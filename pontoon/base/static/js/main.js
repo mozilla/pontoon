@@ -457,10 +457,11 @@ var Pontoon = (function () {
       // Open entity editor on click
       $("#entitylist .entity").click(function () {
         var entity = this.entity;
-        self.openEditor(entity);
 
         if ($(this).is(':not(".uneditable")')) {
           self.common.postMessage("EDIT");
+        } else {
+          self.openEditor(entity);
         }
       });
     },
