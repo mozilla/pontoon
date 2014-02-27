@@ -234,14 +234,14 @@ var Pontoon = (function () {
      *
      * original Original string
      */
-    getSuggestions: function (original) {
+    getMachinery: function (original) {
       var self = this,
-          mt = $('#suggestions .machine-translation .translation'),
-          tm = $('#suggestions .translation-memory .translation')
+          mt = $('#machinery .machine-translation .translation'),
+          tm = $('#machinery .translation-memory .translation')
             .empty()
             .addClass('loader');
 
-      $('#suggestions li')
+      $('#machinery li')
         .removeClass('disabled')
         .parent().removeAttr('title');
 
@@ -615,8 +615,8 @@ var Pontoon = (function () {
             entity = $('#editor')[0].entity;
 
         switch (sec) {
-          case "suggestions":
-            self.getSuggestions(entity.original);
+          case "machinery":
+            self.getMachinery(entity.original);
             break;
 
           case "other-locales":
