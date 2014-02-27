@@ -345,7 +345,7 @@ var Pontoon = (function () {
         .find('.original-length').html(original).end()
         .find('.current-length').html(translation);
 
-      this.getSuggestions(entity.original);
+      this.getHistory(entity);
       $("#helpers nav a:first").click();
       $("#editor")[0].entity = entity;
 
@@ -614,8 +614,8 @@ var Pontoon = (function () {
             entity = $('#editor')[0].entity;
 
         switch (sec) {
-          case "history":
-            self.getHistory(entity);
+          case "suggestions":
+            self.getSuggestions(entity.original);
             break;
 
           case "other-locales":
