@@ -688,13 +688,12 @@ var Pontoon = (function () {
               $('#save').click();
 
             } else if (data.type === "deleted") {
-              var item = button.parents('li');
-              item.fadeOut(function() {
-                $(this).remove();
-              });
+              var item = button.parents('li'),
+                  index = item.index();
+              item.remove();
 
               // Active translation deleted
-              if (item.index() === 0) {
+              if (index === 0) {
                 var next = $('#history li[data-id="' + data.next + '"]');
 
                 // Make newest alternative translation active
