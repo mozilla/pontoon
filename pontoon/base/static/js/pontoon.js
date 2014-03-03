@@ -537,15 +537,16 @@
             });
             $('.pontoon-editable-toolbar > .save').click();
           } else if (message.type === "DELETE") {
-            var entity = $('.pontoon-editable-toolbar')[0].target.entity;
+            var target = $('.pontoon-editable-toolbar')[0].target,
+                entity = target.entity;
             $(entity.node).each(function() {
               this.html(entity.original);
             });
+            selectNodeContents(target);
             entity.reviewed = false;
             entity.translation = '';
             sendData();
             postMessage("DELETE", entity.id);
-            $('.pontoon-editable-toolbar > .cancel').click();
           } else if (message.type === "CANCEL") {
             $('.pontoon-editable-toolbar > .cancel').click();
           } else if (message.type === "MODE") {
