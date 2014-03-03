@@ -712,6 +712,10 @@ var Pontoon = (function () {
                     self.updateEntityUI(entity);
                     self.endLoader('Translation deleted');
                   }
+                  $('#history ul')
+                    .append('<li class="disabled">' +
+                              '<p>No translations available.</p>' +
+                            '</li>');
                 }
               }
             } else {
