@@ -443,7 +443,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #progress .graph {
-  background: #7BC876;
+  background: #C1E3BF;
   float: left;
   height: 100%;
   width: 0%;
@@ -452,6 +452,10 @@ body, select, input, textarea, button {
   -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
   -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
   transition: all 0.3s ease-out;  
+}
+
+#pontoon #progress .graph.reviewed {
+  background: #7BC876;
 }
 
 #pontoon #progress .number {
@@ -721,17 +725,22 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist > .wrapper > ul > li > .status {
-  background: none repeat scroll 0% 0% #FD5F60;
-  border-radius: 5px;
-  height: 10px;
+  border: 2px solid #FD5F60;
+  border-radius: 6px;
+  height: 8px;
   left: 6px;
   position: absolute;
-  top: 16px;
-  width: 10px;
+  top: 15px;
+  width: 8px;
 }
 
 #pontoon #entitylist > .wrapper > ul > li.translated > .status {
-  background: none repeat scroll 0% 0% #7BC876;
+  border-color: #7BC876;
+}
+
+#pontoon #entitylist > .wrapper > ul > li.reviewed > .status {
+  background: #7BC876;
+  border-color: #7BC876;
 }
 
 #pontoon #entitylist > .wrapper > ul > li p {
@@ -744,7 +753,7 @@ body, select, input, textarea, button {
 #pontoon #entitylist h2  {
   background: #272A2F;
   color: #AAAAAA;
-  padding: 30px 6px 10px;
+  padding: 10px 6px;
   text-shadow: none;
 }
 
@@ -968,7 +977,7 @@ body, select, input, textarea, button {
 #pontoon #helpers > section ul li {
   border-bottom: 1px solid #525a65;
   cursor: pointer;
-  padding: 30px 10px 20px;
+  padding: 5px 10px 20px;
 }
 
 #pontoon #helpers > section ul li:not(.disabled):hover {
@@ -981,15 +990,63 @@ body, select, input, textarea, button {
 }
 
 #pontoon #helpers > section ul li > a:link,
-#pontoon #helpers > section ul li > span {
+#pontoon #helpers > section ul li > header {
   color: #AAAAAA;
-  float: right;
+  display: block;
   font-size: 11px;
-  margin-top: -27px;
+  padding-bottom: 5px;
+  text-align: right;
   text-transform: uppercase;
 }
 
-#pontoon #helpers > section ul li span.stress {
+#pontoon #helpers > section ul li > header .info {
+  float: left;
+}
+
+#pontoon #helpers > section ul li > header .toolbar {
+  float: right;
+}
+
+#pontoon #helpers > section ul li > header button {
+  background: no-repeat transparent;
+  border: none;
+  display: none;
+  height: 16px;
+  opacity: 0.5;
+  vertical-align: bottom;
+  width: 16px;
+}
+
+#pontoon #helpers > section ul li > header.localizer button {
+  display: inline-block;
+}
+
+#pontoon #helpers > section ul li > header button:hover {
+  opacity: 1;
+}
+
+#pontoon #helpers > section ul li > header button.approve {
+  background-image: url('../img/star_fav_empty_icon&16.png');
+  margin-right: 10px;
+}
+
+#pontoon #helpers > section ul li.approved > header button.approve {
+  background-image: url('../img/star_fav_icon&16.png');
+}
+
+#pontoon #helpers > section ul li.approved > header button.approve:hover {
+  opacity: 0.5;
+}
+
+#pontoon #helpers > section ul li > header button.delete {
+  background-image: url('../img/trash_icon&16.png');
+}
+
+#pontoon #helpers > section ul li > header.own button.delete {
+  display: inline-block;
+}
+
+#pontoon #helpers > section ul li .stress {
   color: #7BC876;
   padding-left: 3px;
 }

@@ -48,9 +48,6 @@ def home(request, template='home.html'):
         'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
     }
 
-    if request.user.is_authenticated() and not request.user.has_perm('base.can_localize'):
-        messages.error(request, "You don't have permission to localize.")
-
     translate_error = request.session.pop('translate_error', {})
     locale = translate_error.get('locale')
     url = translate_error.get('url')
@@ -147,9 +144,6 @@ def translate_site(request, locale, url, template='translate.html'):
         if not request.user.is_authenticated():
             messages.error(request, "You need to sign in first.")
             return HttpResponseRedirect(reverse('pontoon.home'))
-        if not request.user.has_perm('base.can_localize'):
-            messages.error(request, "You don't have permission to localize.")
-            return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Project stored in the DB, add more data
     if page is None:
@@ -158,6 +152,23 @@ def translate_site(request, locale, url, template='translate.html'):
     else:
         return HttpResponseRedirect(reverse('pontoon.translate.project.page',
         kwargs={'locale': locale, 'project': p.name, 'page': page}))
+
+
+def _get_translation(entity, locale):
+    """Get translation of given entity to given locale."""
+    log.debug("Get translation of given entity to given locale.")
+
+    translations = Translation.objects.filter(entity=entity, locale=locale)
+
+    if len(translations) > 0:
+        try:
+            t = translations.get(reviewed=True)
+            return t
+        except Translation.DoesNotExist:
+            latest = translations.order_by("date").reverse()[0]
+            return latest
+    else:
+        return Translation()
 
 
 def _get_entities(project, locale, page=None):
@@ -170,20 +181,15 @@ def _get_entities(project, locale, page=None):
 
     entities_array = []
     for e in entities:
-        translations = Translation.objects.filter(entity=e, locale=locale).order_by('date')
-
-        if len(translations) == 0:
-            translation = ""
-        else:
-            first = translations.reverse()[0]
-            translation = first.string
+        translation = _get_translation(entity=e, locale=locale)
 
         obj = {
             "original": e.string,
             "comment": e.comment,
             "key": e.key,
             "pk": e.pk,
-            "translation": translation
+            "translation": translation.string,
+            "reviewed": translation.reviewed,
         }
 
         entities_array.append(obj)
@@ -214,9 +220,6 @@ def translate_project(request, locale, project, page=None, template='translate.h
     if not p.name == 'Testpilot':
         if not request.user.is_authenticated():
             messages.error(request, "You need to sign in first.")
-            return HttpResponseRedirect(reverse('pontoon.home'))
-        if not request.user.has_perm('base.can_localize'):
-            messages.error(request, "You don't have permission to localize.")
             return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
@@ -373,19 +376,17 @@ def get_translations_from_other_locales(request, template=None):
         return HttpResponse("error")
 
     payload = []
-    translations = Translation.objects.filter(entity=entity)
+    locales = entity.project.locales.all().exclude(code=locale.code)
 
-    for l in entity.project.locales.all().exclude(code=locale.code):
-        translation = translations.filter(locale=l).order_by('date')
-
-        if len(translation) != 0:
-            t = translation.reverse()[0]
+    for l in locales:
+        translation = _get_translation(entity=entity, locale=l).string
+        if translation != "":
             payload.append({
                 "locale": {
-                    "code": t.locale.code,
-                    "name": t.locale.name
+                    "code": l.code,
+                    "name": l.name
                 },
-                "translation": t.string
+                "translation": translation
             })
 
     if len(payload) == 0:
@@ -425,17 +426,21 @@ def get_translation_history(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date').reverse()
+    translations = Translation.objects \
+        .filter(entity=entity, locale=locale) \
+        .order_by('date') \
+        .reverse() \
+        .order_by('reviewed')
 
-    if len(translations) > 1:
-        first = translations[0].id
+    if len(translations) > 0:
         payload = []
-
-        for t in translations.exclude(id=first):
+        for t in translations:
             o = {
-                "author": t.author,
+                "id": t.id,
+                "user": getattr(t.user, 'email', ''), # Empty for imported
+                "translation": t.string,
                 "date": t.date.strftime("%b %d, %Y %H:%M"),
-                "translation": t.string
+                "reviewed": t.reviewed,
             }
             payload.append(o)
 
@@ -447,24 +452,116 @@ def get_translation_history(request, template=None):
         return HttpResponse("error")
 
 
+def _disapprove_translations(translations):
+    """Unset reviewed attribute for given translations."""
+    log.debug("Unset reviewed attribute for given translations.")
+
+    try:
+        t = translations.get(reviewed=True)
+        t.reviewed = False
+        t.save()
+    except Translation.DoesNotExist:
+        pass
+
+
+def approve_translation(request, template=None):
+    """Approve given translation."""
+    log.debug("Approve given translation.")
+
+    if not request.user.has_perm('base.can_localize'):
+        return render(request, '403.html', status=403)
+
+    if not request.is_ajax():
+        raise Http404
+
+    try:
+        t = request.POST['translation']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    log.debug("Translation: " + t)
+
+    try:
+        translation = Translation.objects.get(pk=t)
+    except Translation.DoesNotExist as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    entity = translation.entity
+    locale = translation.locale
+
+    translations = Translation.objects.filter(entity=entity, locale=locale)
+    _disapprove_translations(translations)
+
+    translation.reviewed = True
+    translation.save()
+
+    return HttpResponse(json.dumps({
+        'type': 'approved',
+    }), mimetype='application/json')
+
+
+def delete_translation(request, template=None):
+    """Delete given translation."""
+    log.debug("Delete given translation.")
+
+    if not request.is_ajax():
+        raise Http404
+
+    try:
+        t = request.POST['translation']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    log.debug("Translation: " + t)
+
+    try:
+        translation = Translation.objects.get(pk=t)
+    except Translation.DoesNotExist as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    # Non-privileged users can only delete own non-reviewed translations
+    if not request.user.has_perm('base.can_localize'):
+        if translation.user == request.user:
+            if translation.reviewed == True:
+                return HttpResponse("error")
+
+        else:
+            return render(request, '403.html', status=403)
+
+    entity = translation.entity
+    locale = translation.locale
+
+    translation.delete()
+    next = _get_translation(entity=entity, locale=locale)
+
+    return HttpResponse(json.dumps({
+        'type': 'deleted',
+        'next': next.id,
+    }), mimetype='application/json')
+
+
 @login_required(redirect_field_name='', login_url='/403')
 def update_translation(request, template=None):
-    """Update entity translation for the specified locale and author."""
-    log.debug("Update entity translation for the specified locale and author.")
+    """Update entity translation for the specified locale and user."""
+    log.debug("Update entity translation for the specified locale and user.")
 
     if request.method != 'POST':
         raise Http404
 
     try:
         entity = request.POST['entity']
-        translation = request.POST['translation']
+        string = request.POST['translation']
         locale = request.POST['locale']
     except MultiValueDictKeyError, e:
         log.error(str(e))
         return HttpResponse("error")
 
     log.debug("Entity: " + entity)
-    log.debug("Translation: " + translation)
+    log.debug("Translation: " + string)
     log.debug("Locale: " + locale)
 
     try:
@@ -479,43 +576,49 @@ def update_translation(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    translations = Translation.objects.filter(entity=e, locale=l).order_by('date')
+    can_localize = request.user.has_perm('base.can_localize')
 
-    # No translation saved yet
-    if len(translations) == 0:
-        if translation != '':
-            t = Translation(entity=e, locale=l, string=translation,
-                author=request.user.email, date=datetime.datetime.now())
-            t.save()
-            log.debug("Translation saved.")
-            return HttpResponse("saved")
-
-        else:
-            log.debug("Translation not set.")
-            return HttpResponse("not set")
-
-    # Translations exist
+    if string == '':
+        return HttpResponse("Empty translations cannot be submitted.")
     else:
-        if translation == '':
-            translations.delete()
-            log.debug("Translation deleted.")
-            return HttpResponse("deleted")
+        translations = Translation.objects.filter(entity=e, locale=l)
 
-        else:
-            # Translation by author exist
-            try:
-                t = translations.get(entity=e, locale=l, author=request.user.email)
-                t.string = translation
-                t.date = datetime.datetime.now()
+        # Translations exist
+        if len(translations) > 0:
+            for t in translations:
+                if t.string == string:
+                    if can_localize:
+                        _disapprove_translations(translations)
+                        t.reviewed = True
+                        t.save()
+                        return HttpResponse(json.dumps({
+                            'type': 'updated',
+                            'reviewed': can_localize,
+                        }), mimetype='application/json')
+                    else:
+                        return HttpResponse("Same translation already exist.")
 
-            # Translation by author doesn't exist
-            except Translation.DoesNotExist:
-                t = Translation(entity=e, locale=l, string=translation,
-                    author=request.user.email, date=datetime.datetime.now())
-
+            if can_localize:
+                _disapprove_translations(translations)
+            t = Translation(
+                entity=e, locale=l, user=request.user, string=string,
+                date=datetime.datetime.now(), reviewed=can_localize)
             t.save()
-            log.debug("Translation updated.")
-            return HttpResponse("updated")
+            return HttpResponse(json.dumps({
+                'type': 'updated',
+                'reviewed': can_localize,
+            }), mimetype='application/json')
+
+        # No translations saved yet
+        else:
+            t = Translation(
+                entity=e, locale=l, user=request.user, string=string,
+                date=datetime.datetime.now(), reviewed=can_localize)
+            t.save()
+            return HttpResponse(json.dumps({
+                'type': 'saved',
+                'reviewed': can_localize,
+            }), mimetype='application/json')
 
 
 def translation_memory(request):
@@ -679,9 +782,10 @@ def _update_files(p, locale, locale_repository_path):
             for entity in entities:
                 entry = po.find(entity.string)
                 if entry:
-                    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
-                    if len(translations) > 0:
-                        entry.msgstr = translations.reverse()[0].string
+                    translation = _get_translation(
+                        entity=entity, locale=locale).string
+                    if translation != '':
+                        entry.msgstr = translation
 
                     if 'fuzzy' in entry.flags:
                         entry.flags.remove('fuzzy')
@@ -699,11 +803,8 @@ def _update_files(p, locale, locale_repository_path):
                 entities_with_path = entities.filter(source=short_path)
                 for entity in entities_with_path:
                     key = entity.key
-                    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
-                    if len(translations) == 0:
-                        translation = ''
-                    else:
-                        translation = translations.reverse()[0].string
+                    translation = _get_translation(
+                        entity=entity, locale=locale).string
 
                     try:
                         l10nobject.modify_entity(key, translation)
@@ -729,11 +830,9 @@ def _update_files(p, locale, locale_repository_path):
 
                     for entity in entities:
                         key = entity.key
-                        translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
-                        if len(translations) == 0:
-                            translation = ''
-                        else:
-                            translation = translations.reverse()[0].string
+                        translation = _get_translation(
+                            entity=entity, locale=locale).string
+
                         config.set(locale.code, key, translation)
 
                     # Erase file and then write, otherwise content gets appended
@@ -779,11 +878,10 @@ def _update_files(p, locale, locale_repository_path):
                             log.error(path + ": Entity with string \"" + original + "\" does not exist in " + p.name)
                             continue
 
-                        translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
-                        if len(translations) == 0:
+                        translation = _get_translation(
+                            entity=entity, locale=locale).string
+                        if translation != '':
                             translation = original
-                        else:
-                            translation = translations.reverse()[0].string
 
                 # Erase file and then write, otherwise content gets appended
                 lines.seek(0)
@@ -864,6 +962,9 @@ def download(request, template=None):
 def commit_to_svn(request, template=None):
     """Commit translations to SVN."""
     log.debug("Commit translations to SVN.")
+
+    if not request.user.has_perm('base.can_localize'):
+        return render(request, '403.html', status=403)
 
     try:
         import pysvn
@@ -1020,9 +1121,9 @@ def verify(request, template=None):
             user = User.objects.get(username=user)
             add_can_localize(user)
 
-        response = {'browserid': verification,
+        response = {
+            'browserid': verification,
             'manager': user.has_perm('base.can_manage'),
-            'localizer': user.has_perm('base.can_localize')
         }
 
     return HttpResponse(json.dumps(response), mimetype='application/json')

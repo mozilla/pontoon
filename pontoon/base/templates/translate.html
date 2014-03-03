@@ -16,6 +16,8 @@
      {% if entities %}data-entities="{{ entities }}"{% endif %}
      {% if user.email %}data-email="{{ user.email }}"{% endif %}
      {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}
+     {% if perms.base.can_localize %}data-localizer="true"{% endif %}
+     {% if perms.base.can_manage %}data-manager="true"{% endif %}
      >
 </div>
 
@@ -90,7 +92,8 @@
 
     <!-- Progress indicator -->
     <div id="progress">
-      <span class="graph"></span>
+      <span class="graph reviewed"></span>
+      <span class="graph translated"></span>
       <span class="number"></span>
     </div>
 
@@ -110,7 +113,9 @@
           <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
           {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin.project', project.name) }}">{{ _('Admin') }}</a></li>{% endif %}
           <li class="horizontal-separator"></li>
+          {% if perms.base.can_localize %}
           <li{% if not (project.repository_type and project.repository_type == 'svn') %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
+          {% endif %}
           <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
         {% endif %}
           {% if project.repository_path %}
@@ -211,13 +216,17 @@
     <div id="helpers">
       <nav>
         <ul>
-          <li class="active"><a href="#suggestions">Suggestions</a></li>
-          <li><a href="#history">History</a></li>
+          <li class="active"><a href="#history">History</a></li>
+          <li><a href="#machinery">Machinery</a></li>
           <li><a href="#other-locales">Other locales</a></li>
         </ul>
       </nav>
 
-      <section id="suggestions">
+      <section id="history">
+        <ul></ul>
+      </section>
+
+      <section id="machinery">
         <ul>
           <li class="machine-translation">
             <a href="http://www.bing.com/translator" target="_blank" title="Visit Bing Translator">Bing Translator</a>
@@ -228,10 +237,6 @@
             <p class="translation"></p>
           </li>
         </ul>
-      </section>
-
-      <section id="history">
-        <ul></ul>
       </section>
 
       <section id="other-locales">

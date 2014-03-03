@@ -541,9 +541,10 @@
             $(entity.node).each(function() {
               this.html(entity.original);
             });
+            entity.reviewed = false;
             entity.translation = '';
             sendData();
-            postMessage("UPDATE", entity.id);
+            postMessage("DELETE", entity.id);
             $('.pontoon-editable-toolbar > .cancel').click();
           } else if (message.type === "CANCEL") {
             $('.pontoon-editable-toolbar > .cancel').click();

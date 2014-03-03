@@ -166,20 +166,24 @@ def _save_entity(project, original, comment="", key="", source=""):
     e.save()
 
 
-def _save_translation(entity, locale, translation, author=""):
+def _save_translation(entity, locale, translation):
     """Admin interface: save new or update existing translation in DB."""
 
-    translations = Translation.objects.filter(entity=entity, locale=locale).order_by('date')
+    # Update existing translation if different from repository
+    try:
+        t = Translation.objects.get(
+            entity=entity, locale=locale, reviewed=True)
+        if t.string != translation:
+            t.user = None
+            t.string = translation
+            t.date = datetime.datetime.now()
+            t.save()
 
-    if len(translations) == 0: # New translation
+    # Save new translation if it doesn's exist yet
+    except Translation.DoesNotExist:
         t = Translation(entity=entity, locale=locale, string=translation,
-            author=author, date=datetime.datetime.now())
-    else: # Update translation
-        t = translations.reverse()[0]
-        t.string = translation
-        t.author = author
-        t.date = datetime.datetime.now()
-    t.save()
+            date=datetime.datetime.now(), reviewed=True)
+        t.save()
 
 
 def _get_locale_paths(source_paths, source_directory, locale_code):
@@ -298,7 +302,7 @@ def _extract_po(project, locale, paths, source_locale):
                     if len(entity.msgstr) > 0:
                         try:
                             e = Entity.objects.get(project=project, string=entity.msgid)
-                            _save_translation(entity=e, locale=locale, translation=entity.msgstr, author=po.metadata['Last-Translator'])
+                            _save_translation(entity=e, locale=locale, translation=entity.msgstr)
                         except Entity.DoesNotExist:
                             continue
             log.debug("[" + locale.code + "]: saved to DB.")
@@ -515,8 +519,11 @@ def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
 
-    if not request.user.has_perm('base.can_manage') or request.method != 'POST':
+    if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
+
+    if request.method != 'POST':
+        raise Http404
 
     try:
         pk = request.POST['pk']
@@ -584,7 +591,7 @@ def update_from_transifex(request, template=None):
                 _save_entity(p, entity["key"], entity["comment"])
                 if len(entity["translation"]) > 0:
                     e = Entity.objects.get(project=p, string=entity["key"])
-                    _save_translation(entity=e, locale=l, translation=entity["translation"], author=entity["user"])
+                    _save_translation(entity=e, locale=l, translation=entity["translation"])
             log.debug("Transifex data for " + l.name + " saved to DB.")
         else:
             return HttpResponse(response)
