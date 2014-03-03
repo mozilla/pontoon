@@ -429,15 +429,18 @@ def get_translation_history(request, template=None):
     translations = Translation.objects \
         .filter(entity=entity, locale=locale) \
         .order_by('date') \
-        .reverse()
+        .reverse() \
+        .order_by('reviewed')
 
     if len(translations) > 0:
         payload = []
         for t in translations:
             o = {
+                "id": t.id,
                 "user": getattr(t.user, 'email', ''), # Empty for imported
+                "translation": t.string,
                 "date": t.date.strftime("%b %d, %Y %H:%M"),
-                "translation": t.string
+                "reviewed": t.reviewed,
             }
             payload.append(o)
 
@@ -459,6 +462,74 @@ def _unset_reviewed(translations):
         t.save()
     except Translation.DoesNotExist:
         pass
+
+
+def approve_translation(request, template=None):
+    """Approve given translation."""
+    log.debug("Approve given translation.")
+
+    if not request.is_ajax():
+        raise Http404
+
+    try:
+        t = request.POST['translation']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    log.debug("Translation: " + t)
+
+    try:
+        translation = Translation.objects.get(pk=t)
+    except Translation.DoesNotExist as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    entity = translation.entity
+    locale = translation.locale
+
+    translations = Translation.objects.filter(entity=entity, locale=locale)
+    _unset_reviewed(translations)
+
+    translation.reviewed = True
+    translation.save()
+
+    return HttpResponse(json.dumps({
+        'type': 'approved',
+    }), mimetype='application/json')
+
+
+def delete_translation(request, template=None):
+    """Delete given translation."""
+    log.debug("Delete given translation.")
+
+    if not request.is_ajax():
+        raise Http404
+
+    try:
+        t = request.POST['translation']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    log.debug("Translation: " + t)
+
+    try:
+        translation = Translation.objects.get(pk=t)
+    except Translation.DoesNotExist as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    entity = translation.entity
+    locale = translation.locale
+
+    translation.delete()
+    next = _get_translation(entity=entity, locale=locale)
+
+    return HttpResponse(json.dumps({
+        'type': 'deleted',
+        'next': next.id,
+    }), mimetype='application/json')
 
 
 @login_required(redirect_field_name='', login_url='/403')

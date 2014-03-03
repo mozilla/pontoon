@@ -184,7 +184,7 @@ var Pontoon = (function () {
           if (data !== "error") {
             $.each(data, function() {
               list.append('<li title="Click to copy">' +
-                '<span>' + this.locale.name + '<span class="stress">' + this.locale.code + '</span></span>' +
+                '<header>' + this.locale.name + '<span class="stress">' + this.locale.code + '</span></header>' +
                 '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
               '</li>');
             });
@@ -313,13 +313,29 @@ var Pontoon = (function () {
         success: function(data) {
           if (data !== "error") {
             $.each(data, function() {
-              list.append('<li title="Click to copy">' +
-                '<span>' + self.doNotRender(this.user) + '<span class="stress">' + this.date + '</span></span>' +
-                '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
-              '</li>');
+              list.append(
+                '<li data-id="' + this.id + '" ' +
+                (this.reviewed ? ' class="approved"' : '') +
+                'title="Click to copy">' +
+                  '<header class="clearfix">' +
+                    '<div class="info">' +
+                      (this.user || "Imported") +
+                      '<span class="stress">' + this.date + '</span>' +
+                    '</div>' +
+                    '<menu class="toolbar">' +
+                      '<button class="approve" title="' +
+                      (this.reviewed ? 'Disapprove' : 'Approve') +
+                      '"></button>' +
+                      '<button class="delete" title="Delete"></button>' +
+                    '</menu>' +
+                  '</header>' +
+                  '<p class="translation">' +
+                    self.doNotRender(this.translation) +
+                  '</p>' +
+                '</li>');
             });
           } else {
-            list.append('<li class="disabled"><p>No translations available.</p<</li>');
+            list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
         }
       });
@@ -643,6 +659,70 @@ var Pontoon = (function () {
       $("#helpers li > a").live("click", function (e) {
         e.stopPropagation();
       });
+
+      // Approve and delete translations
+      $("#history menu button").live("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        var button = $(this);
+        if (button.is('.approve') && button.parents('li.approved').length > 0) {
+          self.endLoader('Translation already approved');
+          return;
+        }
+
+        $.ajax({
+          url: $(this).attr('class') + '-translation/',
+          type: 'POST',
+          data: {
+            csrfmiddlewaretoken: $('#server').data('csrf'),
+            translation: $(this).parents('li').data('id')
+          },
+          success: function(data) {
+            if (data.type === "approved") {
+              button.parents('li')
+                .addClass('approved').click()
+                .siblings().removeClass('approved');
+              $('#save').click();
+
+            } else if (data.type === "deleted") {
+              var item = button.parents('li');
+              item.fadeOut(function() {
+                $(this).remove();
+              });
+
+              // Active translation deleted
+              if (item.index() === 0) {
+                var next = $('#history li[data-id="' + data.next + '"]');
+
+                // Make newest alternative translation active
+                if (next.length > 0) {
+                  next.click();
+                  $('#save').click();
+
+                // No alternative translation available
+                } else {
+                  var entity = $('#editor')[0].entity;
+                  if (entity.body) {
+                    self.common.postMessage("DELETE");
+                    self.common.postMessage("UNHOVER", entity.id);
+                  } else {
+                    entity.reviewed = false;
+                    entity.translation = "";
+                    self.updateEntityUI(entity);
+                    self.endLoader('Translation deleted');
+                  }
+                }
+              }
+            } else {
+              self.endLoader('Oops, something went wrong.', 'error');
+            }
+          },
+          error: function() {
+            self.endLoader('Oops, something went wrong.', 'error');
+          }
+        });
+      });
     },
 
 
@@ -871,6 +951,10 @@ var Pontoon = (function () {
         } else if (message.type === "UPDATE") {
           var entity = Pontoon.project.entities[message.value];
           Pontoon.updateOnServer(entity, entity.translation);
+        } else if (message.type === "DELETE") {
+          var entity = Pontoon.project.entities[message.value];
+          Pontoon.updateEntityUI(entity);
+          Pontoon.endLoader('Translation deleted');
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }

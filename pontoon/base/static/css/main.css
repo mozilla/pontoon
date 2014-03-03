@@ -977,7 +977,7 @@ body, select, input, textarea, button {
 #pontoon #helpers > section ul li {
   border-bottom: 1px solid #525a65;
   cursor: pointer;
-  padding: 30px 10px 20px;
+  padding: 5px 10px 20px;
 }
 
 #pontoon #helpers > section ul li:not(.disabled):hover {
@@ -990,15 +990,49 @@ body, select, input, textarea, button {
 }
 
 #pontoon #helpers > section ul li > a:link,
-#pontoon #helpers > section ul li > span {
+#pontoon #helpers > section ul li > header {
   color: #AAAAAA;
-  float: right;
+  display: block;
   font-size: 11px;
-  margin-top: -27px;
+  padding-bottom: 5px;
+  text-align: right;
   text-transform: uppercase;
 }
 
-#pontoon #helpers > section ul li span.stress {
+#pontoon #helpers > section ul li > header .info {
+  float: left;
+}
+
+#pontoon #helpers > section ul li > header .toolbar {
+  float: right;
+}
+
+#pontoon #helpers > section ul li > header button {
+  background: no-repeat transparent;
+  border: none;
+  height: 16px;
+  opacity: 0.5;
+  width: 16px;
+}
+
+#pontoon #helpers > section ul li > header button:hover {
+  opacity: 1;
+}
+
+#pontoon #helpers > section ul li > header button.approve {
+  background-image: url('../img/star_fav_empty_icon&16.png');
+  margin-right: 10px;
+}
+
+#pontoon #helpers > section ul li.approved > header button.approve {
+  background-image: url('../img/star_fav_icon&16.png');
+}
+
+#pontoon #helpers > section ul li > header button.delete {
+  background-image: url('../img/trash_icon&16.png');
+}
+
+#pontoon #helpers > section ul li .stress {
   color: #7BC876;
   padding-left: 3px;
 }
