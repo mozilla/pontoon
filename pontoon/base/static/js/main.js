@@ -328,7 +328,7 @@ var Pontoon = (function () {
                     '</div>' +
                     '<menu class="toolbar">' +
                       '<button class="approve" title="' +
-                      (this.reviewed ? 'Disapprove' : 'Approve') +
+                      (this.reviewed ? '' : 'Approve') +
                       '"></button>' +
                       '<button class="delete" title="Delete"></button>' +
                     '</menu>' +
@@ -671,7 +671,6 @@ var Pontoon = (function () {
 
         var button = $(this);
         if (button.is('.approve') && button.parents('li.approved').length > 0) {
-          self.endLoader('Translation already approved');
           return;
         }
 

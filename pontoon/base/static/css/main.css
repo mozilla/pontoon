@@ -1034,6 +1034,10 @@ body, select, input, textarea, button {
   background-image: url('../img/star_fav_icon&16.png');
 }
 
+#pontoon #helpers > section ul li.approved > header button.approve:hover {
+  opacity: 0.5;
+}
+
 #pontoon #helpers > section ul li > header button.delete {
   background-image: url('../img/trash_icon&16.png');
 }
