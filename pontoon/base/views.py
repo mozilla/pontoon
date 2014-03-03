@@ -523,9 +523,14 @@ def delete_translation(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    if translation.user != request.user and \
-       not request.user.has_perm('base.can_localize'):
-        return render(request, '403.html', status=403)
+    # Non-privileged users can only delete own non-reviewed translations
+    if not request.user.has_perm('base.can_localize'):
+        if translation.user == request.user:
+            if translation.reviewed == True:
+                return HttpResponse("error")
+
+        else:
+            return render(request, '403.html', status=403)
 
     entity = translation.entity
     locale = translation.locale
