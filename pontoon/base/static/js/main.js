@@ -506,7 +506,7 @@ var Pontoon = (function () {
 
         switch (sec) {
           case "back":
-            $("#cancel").click();
+            $('#cancel').click();
             break;
 
           case "previous":
@@ -582,7 +582,7 @@ var Pontoon = (function () {
       });
 
       // Do not change anything when cancelled
-      $("#cancel").click(function (e) {
+      $('#cancel').click(function (e) {
         e.stopPropagation();
         e.preventDefault();
 
