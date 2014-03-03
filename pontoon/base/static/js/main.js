@@ -355,7 +355,7 @@ var Pontoon = (function () {
     openEditor: function (entity) {
       $('#original').html(this.doNotRender(entity.original));
       $('#comment').html(entity.comment);
-      $('#translation').val(entity.translation);
+      $('#translation').val(entity.translation).focus();
 
       var original = entity.original.length,
           translation = entity.translation.length;
