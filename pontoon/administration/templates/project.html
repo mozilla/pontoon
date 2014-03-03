@@ -44,7 +44,6 @@
           <label for="available">Available locales<a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>
           <div class="menu">
             <input id="available" type="text" class="search" autocomplete="off">
-            <div class="horizontal-separator"></div>
             <ul>
               {% for locale in locales_available %}
               <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
@@ -57,7 +56,6 @@
           <label for="selected">Chosen locales<a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
           <div class="menu">
             <input id="selected" type="text" class="search" autocomplete="off">
-            <div class="horizontal-separator"></div>
             <ul>
               {% for locale in locales_selected %}
               <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
