@@ -612,7 +612,6 @@ var Pontoon = (function () {
         if (entity.body) {
           if (source !== '') {
             self.common.postMessage("SAVE", source);
-            self.common.postMessage("UNHOVER", entity.id);
           } else {
             self.endLoader('Empty translations cannot be submitted.', 'error');
           }
@@ -708,7 +707,6 @@ var Pontoon = (function () {
                   var entity = $('#editor')[0].entity;
                   if (entity.body) {
                     self.common.postMessage("DELETE");
-                    self.common.postMessage("UNHOVER", entity.id);
                   } else {
                     entity.reviewed = false;
                     entity.translation = "";
