@@ -1021,10 +1021,7 @@ body, select, input, textarea, button {
 #pontoon #helpers > section ul li.approved > header button.approve {
   background-image: url('../img/star_fav_icon&16.png');
   display: inline-block;
-}
-
-#pontoon #helpers > section ul li.approved > header button.approve:hover {
-  opacity: 0.5;
+  opacity: 1;
 }
 
 #pontoon #helpers > section ul li > header button.delete {
