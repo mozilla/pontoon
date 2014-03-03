@@ -703,6 +703,7 @@ var Pontoon = (function () {
 
                 // No alternative translation available
                 } else {
+                  $('#translation').val('').focus();
                   var entity = $('#editor')[0].entity;
                   if (entity.body) {
                     self.common.postMessage("DELETE");
