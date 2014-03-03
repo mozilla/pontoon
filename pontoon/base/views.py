@@ -428,9 +428,7 @@ def get_translation_history(request, template=None):
 
     translations = Translation.objects \
         .filter(entity=entity, locale=locale) \
-        .order_by('date') \
-        .reverse() \
-        .order_by('reviewed')
+        .order_by('-reviewed', '-date')
 
     if len(translations) > 0:
         payload = []
