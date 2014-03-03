@@ -789,7 +789,7 @@ var Pontoon = (function () {
           },
           success: function(data) {
             if (data.type) {
-              self.endLoader('Translation ' + data.type + '.');
+              self.endLoader('Translation ' + data.type);
               entity.translation = translation;
               entity.reviewed = data.reviewed;
               self.updateEntityUI(entity);
