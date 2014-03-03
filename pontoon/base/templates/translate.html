@@ -16,6 +16,8 @@
      {% if entities %}data-entities="{{ entities }}"{% endif %}
      {% if user.email %}data-email="{{ user.email }}"{% endif %}
      {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}
+     {% if perms.base.can_localize %}data-localizer="true"{% endif %}
+     {% if perms.base.can_manage %}data-manager="true"{% endif %}
      >
 </div>
 

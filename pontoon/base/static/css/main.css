@@ -1000,10 +1000,19 @@ body, select, input, textarea, button {
 }
 
 #pontoon #helpers > section ul li > header .info {
+  float: right;
+}
+
+#pontoon #helpers > section ul li > header.localizer .info {
   float: left;
 }
 
 #pontoon #helpers > section ul li > header .toolbar {
+  display: none;
+}
+
+#pontoon #helpers > section ul li > header.localizer .toolbar {
+  display: block;
   float: right;
 }
 

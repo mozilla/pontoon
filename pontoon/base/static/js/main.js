@@ -317,7 +317,8 @@ var Pontoon = (function () {
                 '<li data-id="' + this.id + '" ' +
                 (this.reviewed ? ' class="approved"' : '') +
                 'title="Click to copy">' +
-                  '<header class="clearfix">' +
+                  '<header class="clearfix' +
+                  ((self.user.localizer) ? ' localizer' : '') + '">' +
                     '<div class="info">' +
                       (this.user || "Imported") +
                       '<span class="stress">' + this.date + '</span>' +
@@ -996,7 +997,9 @@ var Pontoon = (function () {
       };
       this.user = {
         email: $('#server').data('email') || '',
-        name: $('#server').data('name') || '' // PO file
+        name: $('#server').data('name') || '',
+        localizer: $('#server').data('localizer'),
+        manager: $('#server').data('manager')
       };
 
       // Sync user data
