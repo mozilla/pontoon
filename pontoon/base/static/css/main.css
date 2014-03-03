@@ -1000,28 +1000,25 @@ body, select, input, textarea, button {
 }
 
 #pontoon #helpers > section ul li > header .info {
-  float: right;
-}
-
-#pontoon #helpers > section ul li > header.localizer .info {
   float: left;
 }
 
 #pontoon #helpers > section ul li > header .toolbar {
-  display: none;
-}
-
-#pontoon #helpers > section ul li > header.localizer .toolbar {
-  display: block;
   float: right;
 }
 
 #pontoon #helpers > section ul li > header button {
   background: no-repeat transparent;
   border: none;
+  display: none;
   height: 16px;
   opacity: 0.5;
+  vertical-align: bottom;
   width: 16px;
+}
+
+#pontoon #helpers > section ul li > header.localizer button {
+  display: inline-block;
 }
 
 #pontoon #helpers > section ul li > header button:hover {
@@ -1039,6 +1036,10 @@ body, select, input, textarea, button {
 
 #pontoon #helpers > section ul li > header button.delete {
   background-image: url('../img/trash_icon&16.png');
+}
+
+#pontoon #helpers > section ul li > header.own button.delete {
+  display: inline-block;
 }
 
 #pontoon #helpers > section ul li .stress {

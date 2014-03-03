@@ -318,7 +318,9 @@ var Pontoon = (function () {
                 (this.reviewed ? ' class="approved"' : '') +
                 'title="Click to copy">' +
                   '<header class="clearfix' +
-                  ((self.user.localizer) ? ' localizer' : '') + '">' +
+                    ((self.user.localizer) ? ' localizer' :
+                      ((self.user.email === this.user) ? ' own' : '')) +
+                    '">' +
                     '<div class="info">' +
                       (this.user || "Imported") +
                       '<span class="stress">' + this.date + '</span>' +

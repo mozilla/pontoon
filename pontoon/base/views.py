@@ -506,9 +506,6 @@ def delete_translation(request, template=None):
     """Delete given translation."""
     log.debug("Delete given translation.")
 
-    if not request.user.has_perm('base.can_localize'):
-        return render(request, '403.html', status=403)
-
     if not request.is_ajax():
         raise Http404
 
@@ -525,6 +522,10 @@ def delete_translation(request, template=None):
     except Translation.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
+
+    if translation.user != request.user and \
+       not request.user.has_perm('base.can_localize'):
+        return render(request, '403.html', status=403)
 
     entity = translation.entity
     locale = translation.locale
