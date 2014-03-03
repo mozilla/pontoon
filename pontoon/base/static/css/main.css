@@ -725,13 +725,13 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist > .wrapper > ul > li > .status {
-  border: 1px solid #FD5F60;
+  border: 2px solid #FD5F60;
   border-radius: 6px;
-  height: 9px;
+  height: 8px;
   left: 6px;
   position: absolute;
   top: 15px;
-  width: 9px;
+  width: 8px;
 }
 
 #pontoon #entitylist > .wrapper > ul > li.translated > .status {
