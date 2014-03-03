@@ -796,6 +796,9 @@ var Pontoon = (function () {
               entity.translation = translation;
               entity.reviewed = data.reviewed;
               self.updateEntityUI(entity);
+              if (!entity.body) {
+                $('#cancel').click();
+              }
             } else if (data === "error") {
               self.endLoader('Oops, something went wrong.', 'error');
             } else {
