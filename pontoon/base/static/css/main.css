@@ -333,7 +333,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon .project.select .search {
-  width: 448px;
+  width: 450px;
 }
 
 #pontoon .project.select .menu ul {
@@ -396,7 +396,7 @@ body, select, input, textarea, button {
   margin: 9px 12px 6px;
   padding-left: 25px;
   padding-right: 11px;
-  width: 198px;
+  width: 200px;
 }
 
 #pontoon .menu .search:focus {

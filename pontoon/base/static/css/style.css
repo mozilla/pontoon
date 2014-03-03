@@ -510,8 +510,8 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .locale.select .menu .search {
   background-position: 4px 6px;
-  margin-left: 13px;
-  width: 233px;
+  margin-left: 12px;
+  width: 235px;
 }
 
 #pontoon.admin-form #intro .locale.select .menu ul {
@@ -755,6 +755,10 @@ body.admin-form #intro {
   border-radius: 0;
   bottom: 50px;
   top: auto;
+}
+
+#pontoon #intro .project.select .search {
+  width: 454px;
 }
 
 #pontoon #intro .project.select .menu {
