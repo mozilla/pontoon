@@ -746,6 +746,10 @@ body.admin-form #intro {
   font-size: 14px;
 }
 
+#pontoon.admin #intro .select {
+  text-align: center;
+}
+
 #pontoon #intro .select .search {
   border-color: #272A2F;
 }
