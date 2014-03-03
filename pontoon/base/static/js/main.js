@@ -601,7 +601,7 @@ var Pontoon = (function () {
       });
 
       // Save translation
-      $("#save").click(function (e) {
+      $('#save').click(function (e) {
         e.stopPropagation();
         e.preventDefault();
 
