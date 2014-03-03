@@ -747,7 +747,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #entitylist .no-match  {
-  color: #AAAAAA;
+  color: #FFFFFF;
   display: none;
   font-size: 28px;
   font-weight: 300;
