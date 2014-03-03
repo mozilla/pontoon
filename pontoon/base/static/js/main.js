@@ -666,13 +666,13 @@ var Pontoon = (function () {
 
       // Approve and delete translations
       $("#history menu button").live("click", function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-
         var button = $(this);
         if (button.is('.approve') && button.parents('li.approved').length > 0) {
           return;
         }
+
+        e.stopPropagation();
+        e.preventDefault();
 
         $.ajax({
           url: $(this).attr('class') + '-translation/',

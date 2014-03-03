@@ -1027,11 +1027,11 @@ body, select, input, textarea, button {
 
 #pontoon #helpers > section ul li > header button.approve {
   background-image: url('../img/star_fav_empty_icon&16.png');
-  margin-right: 10px;
 }
 
 #pontoon #helpers > section ul li.approved > header button.approve {
   background-image: url('../img/star_fav_icon&16.png');
+  display: inline-block;
 }
 
 #pontoon #helpers > section ul li.approved > header button.approve:hover {
@@ -1040,6 +1040,7 @@ body, select, input, textarea, button {
 
 #pontoon #helpers > section ul li > header button.delete {
   background-image: url('../img/trash_icon&16.png');
+  margin-left: 10px;
 }
 
 #pontoon #helpers > section ul li > header.own button.delete {
