@@ -519,8 +519,11 @@ def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
 
-    if not request.user.has_perm('base.can_manage') or request.method != 'POST':
+    if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
+
+    if request.method != 'POST':
+        raise Http404
 
     try:
         pk = request.POST['pk']
