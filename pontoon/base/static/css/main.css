@@ -1018,6 +1018,10 @@ body, select, input, textarea, button {
   background-image: url('../img/star_fav_empty_icon&16.png');
 }
 
+#pontoon #helpers > section ul li > header button.approve:hover {
+  background-image: url('../img/star_fav_icon&16.png');
+}
+
 #pontoon #helpers > section ul li.approved > header button.approve {
   background-image: url('../img/star_fav_icon&16.png');
   display: inline-block;
