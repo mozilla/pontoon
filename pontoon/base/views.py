@@ -452,7 +452,7 @@ def get_translation_history(request, template=None):
         return HttpResponse("error")
 
 
-def _unset_reviewed(translations):
+def _disapprove_translations(translations):
     """Unset reviewed attribute for given translations."""
     log.debug("Unset reviewed attribute for given translations.")
 
@@ -489,7 +489,7 @@ def approve_translation(request, template=None):
     locale = translation.locale
 
     translations = Translation.objects.filter(entity=entity, locale=locale)
-    _unset_reviewed(translations)
+    _disapprove_translations(translations)
 
     translation.reviewed = True
     translation.save()
@@ -576,7 +576,7 @@ def update_translation(request, template=None):
             for t in translations:
                 if t.string == string:
                     if can_localize:
-                        _unset_reviewed(translations)
+                        _disapprove_translations(translations)
                         t.reviewed = True
                         t.save()
                         return HttpResponse(json.dumps({
@@ -587,7 +587,7 @@ def update_translation(request, template=None):
                         return HttpResponse("Same translation already exist.")
 
             if can_localize:
-                _unset_reviewed(translations)
+                _disapprove_translations(translations)
             t = Translation(
                 entity=e, locale=l, user=request.user, string=string,
                 date=datetime.datetime.now(), reviewed=can_localize)
