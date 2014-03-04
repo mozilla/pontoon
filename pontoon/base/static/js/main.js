@@ -586,6 +586,14 @@ var Pontoon = (function () {
         e.stopPropagation();
         e.preventDefault();
 
+        var entity = $("#editor")[0].entity;
+
+        // Save entity if dirty - cannot be automatically synced with backend
+        if (entity.dirty) {
+          entity.dirty = false;
+          $('#save').click();
+        }
+
         $("#entitylist")
           .css('left', 0);
 
@@ -593,7 +601,6 @@ var Pontoon = (function () {
           .removeClass('opened')
           .css('left', $('#sidebar').width());
 
-        var entity = $("#editor")[0].entity;
         if (entity.body) {
           self.common.postMessage("CANCEL");
           self.common.postMessage("UNHOVER", entity.id);
@@ -694,17 +701,18 @@ var Pontoon = (function () {
 
               // Active translation deleted
               if (index === 0) {
-                var next = $('#history li[data-id="' + data.next + '"]');
+                var entity = $('#editor')[0].entity,
+                    next = $('#history li[data-id="' + data.next + '"]');
 
                 // Make newest alternative translation active
                 if (next.length > 0) {
                   next.click();
-                  $('#save').click();
+                  entity.dirty = true;
 
                 // No alternative translation available
                 } else {
+                  entity.dirty = false;
                   $('#translation').val('').focus();
-                  var entity = $('#editor')[0].entity;
                   if (entity.body) {
                     self.common.postMessage("DELETE");
                   } else {
