@@ -709,7 +709,7 @@ var Pontoon = (function () {
                   next.click();
                   entity.dirty = true;
 
-                // No alternative translation available
+                // Last translation deleted, no alternative available
                 } else {
                   entity.dirty = false;
                   $('#translation').val('').focus();

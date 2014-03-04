@@ -536,6 +536,10 @@ def delete_translation(request, template=None):
     translation.delete()
     next = _get_translation(entity=entity, locale=locale)
 
+    if next.id != None and request.user.has_perm('base.can_localize'):
+        next.reviewed = True
+        next.save()
+
     return HttpResponse(json.dumps({
         'type': 'deleted',
         'next': next.id,
