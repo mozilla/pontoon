@@ -640,15 +640,22 @@ var Pontoon = (function () {
         $(this).parent().addClass('active');
 
         var sec = $(this).attr('href').substr(1),
-            entity = $('#editor')[0].entity;
+            editor = $('#editor')[0],
+            entity = editor.entity;
 
         switch (sec) {
           case "machinery":
-            self.getMachinery(entity.original);
+            if (editor.machinery != entity.id) {
+              self.getMachinery(entity.original);
+              editor.machinery = entity.id;
+            }
             break;
 
           case "other-locales":
-            self.getOtherLocales(entity);
+            if (editor.otherLocales != entity.id) {
+              self.getOtherLocales(entity);
+              editor.otherLocales = entity.id;
+            }
             break;
         }
 
