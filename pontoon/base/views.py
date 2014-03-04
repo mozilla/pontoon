@@ -554,7 +554,7 @@ def update_translation(request, template=None):
     """Update entity translation for the specified locale and user."""
     log.debug("Update entity translation for the specified locale and user.")
 
-    if request.method != 'POST':
+    if not request.is_ajax() and request.method != 'POST':
         raise Http404
 
     try:
