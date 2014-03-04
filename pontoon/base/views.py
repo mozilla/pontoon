@@ -430,12 +430,16 @@ def get_translation_history(request, template=None):
         .filter(entity=entity, locale=locale) \
         .order_by('-reviewed', '-date')
 
+    user = ''
+    if entity.project.name == 'Testpilot':
+        user = 'Anonymous'
+
     if len(translations) > 0:
         payload = []
         for t in translations:
             o = {
                 "id": t.id,
-                "user": getattr(t.user, 'email', ''), # Empty for imported
+                "user": getattr(t.user, 'email', user), # Empty for imported
                 "translation": t.string,
                 "date": t.date.strftime("%b %d, %Y %H:%M"),
                 "reviewed": t.reviewed,
@@ -546,7 +550,6 @@ def delete_translation(request, template=None):
     }), mimetype='application/json')
 
 
-@login_required(redirect_field_name='', login_url='/403')
 def update_translation(request, template=None):
     """Update entity translation for the specified locale and user."""
     log.debug("Update entity translation for the specified locale and user.")
@@ -578,6 +581,14 @@ def update_translation(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
+    user = request.user
+    if not request.user.is_authenticated():
+        if e.project.name != 'Testpilot':
+            log.error("Not authenticated.")
+            return HttpResponse("error")
+        else:
+            user = None
+
     can_localize = request.user.has_perm('base.can_localize')
 
     if string == '':
@@ -603,7 +614,7 @@ def update_translation(request, template=None):
             if can_localize:
                 _disapprove_translations(translations)
             t = Translation(
-                entity=e, locale=l, user=request.user, string=string,
+                entity=e, locale=l, user=user, string=string,
                 date=datetime.datetime.now(), reviewed=can_localize)
             t.save()
             return HttpResponse(json.dumps({
@@ -614,7 +625,7 @@ def update_translation(request, template=None):
         # No translations saved yet
         else:
             t = Translation(
-                entity=e, locale=l, user=request.user, string=string,
+                entity=e, locale=l, user=user, string=string,
                 date=datetime.datetime.now(), reviewed=can_localize)
             t.save()
             return HttpResponse(json.dumps({

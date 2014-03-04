@@ -789,37 +789,35 @@ var Pontoon = (function () {
     updateOnServer: function (entity, translation) {
       var self = this;
       // Don't save if user not authenticated
-      if (self.user.email && self.project.pk) {
-        self.startLoader();
-        $.ajax({
-          url: 'update/',
-          type: 'POST',
-          data: {
-            csrfmiddlewaretoken: $('#server').data('csrf'),
-            locale: self.locale.code,
-            entity: entity.pk,
-            translation: translation
-          },
-          success: function(data) {
-            if (data.type) {
-              self.endLoader('Translation ' + data.type);
-              entity.translation = translation;
-              entity.reviewed = data.reviewed;
-              self.updateEntityUI(entity);
-              if (!entity.body) {
-                $('#cancel').click();
-              }
-            } else if (data === "error") {
-              self.endLoader('Oops, something went wrong.', 'error');
-            } else {
-              self.endLoader(data, 'error');
+      self.startLoader();
+      $.ajax({
+        url: 'update/',
+        type: 'POST',
+        data: {
+          csrfmiddlewaretoken: $('#server').data('csrf'),
+          locale: self.locale.code,
+          entity: entity.pk,
+          translation: translation
+        },
+        success: function(data) {
+          if (data.type) {
+            self.endLoader('Translation ' + data.type);
+            entity.translation = translation;
+            entity.reviewed = data.reviewed;
+            self.updateEntityUI(entity);
+            if (!entity.body) {
+              $('#cancel').click();
             }
-          },
-          error: function() {
+          } else if (data === "error") {
             self.endLoader('Oops, something went wrong.', 'error');
+          } else {
+            self.endLoader(data, 'error');
           }
-        });
-      }
+        },
+        error: function() {
+          self.endLoader('Oops, something went wrong.', 'error');
+        }
+      });
     },
 
 
