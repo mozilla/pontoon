@@ -2216,7 +2216,7 @@
             "locales": [47, 74, 85, 182, 205],
             "repository_type": "svn",
             "repository_url": "https://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/testpilot/",
-            "info_brief": "This is a demo website, used for demonstration purposes only. You can translate on the website itself by double clicking on page elements. Access to advanced features like translation memory and machine translation is available through the menu on the left."
+            "info_brief": "This is a demo website, used for demonstration purposes only. You can translate on the website itself by double clicking on page elements. Access to advanced features like translation memory and machine translation is available by clicking on the menu icon on the left."
         }
     },
     {
