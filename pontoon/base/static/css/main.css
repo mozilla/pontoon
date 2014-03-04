@@ -505,6 +505,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #info .menu {
+  line-height: 18px;
   width: 400px;
 }
 

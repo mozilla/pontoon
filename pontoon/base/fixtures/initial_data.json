@@ -2216,7 +2216,7 @@
             "locales": [47, 74, 85, 182, 205],
             "repository_type": "svn",
             "repository_url": "https://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/testpilot/",
-            "info_brief": "Please draft an overview of your campaign, including its purpose and goals. Anything you've provided WebDev, copywriters and/or designers is helpful."
+            "info_brief": "This is a demo website, used for demonstration purposes only. You can translate on the website itself by double clicking on page elements. Access to advanced features like translation memory and machine translation is available through the menu on the left."
         }
     },
     {
