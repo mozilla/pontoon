@@ -954,7 +954,6 @@ var Pontoon = (function () {
         } else if (message.type === "INACTIVE") {
           if (!Pontoon.app.external && $("#editor").is('.opened')) {
             $('#cancel').click();
-            $('#editor')[0].entity.ui.removeClass('hovered');
           }
         } else if (message.type === "UPDATE") {
           var entity = Pontoon.project.entities[message.value];
