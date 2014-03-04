@@ -805,7 +805,7 @@ var Pontoon = (function () {
             entity.translation = translation;
             entity.reviewed = data.reviewed;
             self.updateEntityUI(entity);
-            if (!entity.body) {
+            if (!entity.body  && !self.app.external) {
               $('#cancel').click();
             }
           } else if (data === "error") {
