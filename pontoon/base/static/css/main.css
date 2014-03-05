@@ -175,6 +175,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #profile-menu li.horizontal-separator {
+  margin: 5px 0;
   padding: 0;
 }
 
