@@ -464,7 +464,6 @@ body, select, input, textarea, button {
 #pontoon > header #loading {
   float: left;
   height: 60px;
-  margin-right: 10px;
 }
 
 #pontoon > header .notification {
