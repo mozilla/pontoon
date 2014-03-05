@@ -572,8 +572,6 @@
                 postMessage("HTML", start + inner.html() + "\n</html>");
               }
             });
-          } else if (message.type === "USER") {
-            Pontoon.user = message.value;
           } else if (message.type === "RESIZE") {
             var toolbar = $('.pontoon-editable-toolbar'),
                 node = toolbar[0].target;
@@ -713,6 +711,7 @@
         Pontoon.project.entities = message.value.entities; // Set entities
         Pontoon.project.pk = message.value.pk; // Set project
         Pontoon.project.format = message.value.format; // Set format
+        Pontoon.user = message.value.user; // Set user
         loadJquery();
         window.removeEventListener("message", initizalize, false);
       }

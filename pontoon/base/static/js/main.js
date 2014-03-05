@@ -1020,9 +1020,6 @@ var Pontoon = (function () {
         manager: $('#server').data('manager')
       };
 
-      // Sync user data
-      self.common.postMessage("USER", self.user);
-
       // Activate project code: pontoon.js (iframe cross-domain policy solution)
       self.common.postMessage("INITIALIZE", {
         locale: self.locale,
@@ -1031,7 +1028,8 @@ var Pontoon = (function () {
         links: self.app.links,
         entities: self.project.entities,
         pk: self.project.pk,
-        format: self.project.format
+        format: self.project.format,
+        user: self.user
       });
 
       // Wait for project code messages
