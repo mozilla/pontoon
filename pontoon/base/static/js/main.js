@@ -623,7 +623,7 @@ var Pontoon = (function () {
         }
 
         // Update translation, including in-place if possible
-        if (entity.body) {
+        if (entity.body && (self.user.localizer || !entity.reviewed)) {
           self.common.postMessage("SAVE", source);
         } else {
           self.updateOnServer(entity, source);
@@ -809,12 +809,10 @@ var Pontoon = (function () {
         success: function(data) {
           if (data.type) {
             self.endLoader('Translation ' + data.type);
-            entity.translation = translation;
+            entity.translation = data.translation;
             entity.reviewed = data.reviewed;
             self.updateEntityUI(entity);
-            if (!entity.body  && !self.app.external) {
-              $('#cancel').click();
-            }
+            $('#cancel').click();
           } else if (data === "error") {
             self.endLoader('Oops, something went wrong.', 'error');
           } else {

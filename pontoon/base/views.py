@@ -589,37 +589,46 @@ def update_translation(request, template=None):
         else:
             user = None
 
-    can_localize = request.user.has_perm('base.can_localize')
-
     if string == '':
         return HttpResponse("Empty translations cannot be submitted.")
     else:
+        can_localize = request.user.has_perm('base.can_localize')
         translations = Translation.objects.filter(entity=e, locale=l)
 
         # Translations exist
         if len(translations) > 0:
+            # Same translation exist
             for t in translations:
                 if t.string == string:
+                    # If added by privileged user, approve it
                     if can_localize:
                         _disapprove_translations(translations)
                         t.reviewed = True
                         t.save()
+
                         return HttpResponse(json.dumps({
                             'type': 'updated',
                             'reviewed': can_localize,
+                            'translation': t.string,
                         }), mimetype='application/json')
                     else:
                         return HttpResponse("Same translation already exist.")
 
+            # Different translation added
             if can_localize:
                 _disapprove_translations(translations)
+
             t = Translation(
                 entity=e, locale=l, user=user, string=string,
                 date=datetime.datetime.now(), reviewed=can_localize)
             t.save()
+
+            active = _get_translation(entity=e, locale=l)
+
             return HttpResponse(json.dumps({
-                'type': 'updated',
-                'reviewed': can_localize,
+                'type': 'added',
+                'reviewed': active.reviewed,
+                'translation': active.string,
             }), mimetype='application/json')
 
         # No translations saved yet
@@ -628,9 +637,11 @@ def update_translation(request, template=None):
                 entity=e, locale=l, user=user, string=string,
                 date=datetime.datetime.now(), reviewed=can_localize)
             t.save()
+
             return HttpResponse(json.dumps({
                 'type': 'saved',
                 'reviewed': can_localize,
+                'translation': t.string,
             }), mimetype='application/json')
 
 
