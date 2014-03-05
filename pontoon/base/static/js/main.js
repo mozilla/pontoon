@@ -797,7 +797,6 @@ var Pontoon = (function () {
      */
     updateOnServer: function (entity, translation) {
       var self = this;
-      // Don't save if user not authenticated
       self.startLoader();
       $.ajax({
         url: 'update/',
