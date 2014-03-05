@@ -501,7 +501,7 @@ body.admin-form #intro {
   overflow: auto;
   position: relative;
   top: 0;
-  width: 295px;
+  width: 271px;
 
   box-shadow: 0 0 5px #111111;
   -moz-box-shadow: 0 0 5px #111111;
@@ -510,8 +510,8 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .locale.select .menu .search {
   background-position: 4px 6px;
-  margin-left: 12px;
-  width: 235px;
+  margin-left: 0;
+  width: 234px;
 }
 
 #pontoon.admin-form #intro .locale.select .menu ul {
@@ -762,7 +762,7 @@ body.admin-form #intro {
 }
 
 #pontoon #intro .project.select .search {
-  width: 454px;
+  width: 478px;
 }
 
 #pontoon #intro .project.select .menu {

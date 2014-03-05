@@ -151,7 +151,7 @@ body, select, input, textarea, button {
   display: none;
   list-style: none;
   margin-left: 0;
-  padding: 0px 0px 5px;
+  padding: 10px 12px;
   position: absolute;
   top: 60px;
   width: 150px;
@@ -368,13 +368,13 @@ body, select, input, textarea, button {
 
 #pontoon .locale .menu,
 #pontoon .page .menu {
-  width: 260px;
+  width: 236px;
 }
 
 #pontoon .menu ul {
   max-height: 150px;
   overflow: auto;
-  margin: 6px 12px;
+  margin: 0;
   position: relative;
 }
 
@@ -383,7 +383,7 @@ body, select, input, textarea, button {
   border-bottom: 1px solid #525A65;
   color: #FFFFFF;
   float: none;
-  margin: 9px 12px 6px;
+  margin-bottom: 10px;
   padding-left: 25px;
   padding-right: 11px;
   width: 200px;
@@ -504,13 +504,13 @@ body, select, input, textarea, button {
   width: 24px;
 }
 
-#pontoon #info .menu {
-  line-height: 18px;
-  width: 400px;
+#pontoon #info h2 {
+  margin-bottom: 5px;
 }
 
-#pontoon #info .menu section {
-  padding: 10px 20px;
+#pontoon #info .menu {
+  line-height: 18px;
+  width: 360px;
 }
 
 #pontoon #profile > .button {
@@ -532,12 +532,12 @@ body, select, input, textarea, button {
 
 #pontoon #profile-menu {
   min-width: 150px;
-  padding-top: 10px;
+  padding-left: 0;
+  padding-right: 0;
   width: 100%;
 }
 
 #pontoon .select#profile .popup {
-  padding: 12px;
   right: 0;
   width: 200px;
 }
