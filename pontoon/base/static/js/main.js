@@ -551,7 +551,7 @@ var Pontoon = (function () {
 
         // Esc: cancel
         if (key === 27) {
-          if (!Pontoon.app.external) {
+          if (!self.app.external) {
             $('#cancel').click();
           }
           return false;
