@@ -969,8 +969,8 @@ var Pontoon = (function () {
             $('#cancel').click();
           }
         } else if (message.type === "UPDATE") {
-          var entity = Pontoon.project.entities[message.value];
-          Pontoon.updateOnServer(entity, entity.translation);
+          var entity = Pontoon.project.entities[message.value.id];
+          Pontoon.updateOnServer(entity, message.value.content);
         } else if (message.type === "DELETE") {
           var entity = Pontoon.project.entities[message.value];
           Pontoon.updateEntityUI(entity);

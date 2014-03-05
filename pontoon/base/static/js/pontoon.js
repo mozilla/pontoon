@@ -66,12 +66,18 @@
               entity = element.entity,
               content = $(element).html();
 
-          entity.translation = content;
-          $(entity.node).each(function() {
-            this.html(content);
+          if (Pontoon.user.localizer || !entity.reviewed) {
+            entity.translation = content;
+            $(entity.node).each(function() {
+              this.html(content);
+            });
+            sendData();
+          }
+
+          postMessage("UPDATE", {
+            id: entity.id,
+            content: content
           });
-          sendData();
-          postMessage("UPDATE", entity.id);
         });
 
         // Do not change anything when cancelled
