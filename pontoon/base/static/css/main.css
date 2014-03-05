@@ -75,7 +75,6 @@ body, select, input, textarea, button {
   color: #888888;
   font-size: 14px;
   font-weight: 300;
-  text-shadow: 1px 1px 1px #000000;
   text-transform: uppercase;
   padding-bottom: 2px;
 }
@@ -742,7 +741,6 @@ body, select, input, textarea, button {
   background: #272A2F;
   color: #AAAAAA;
   padding: 10px 6px;
-  text-shadow: none;
 }
 
 #pontoon #entitylist .no-match  {
