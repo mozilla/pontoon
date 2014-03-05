@@ -812,7 +812,9 @@ var Pontoon = (function () {
             entity.translation = data.translation;
             entity.reviewed = data.reviewed;
             self.updateEntityUI(entity);
-            $('#cancel').click();
+            if (!Pontoon.app.external && $("#editor").is('.opened')) {
+              $('#cancel').click();
+            }
           } else if (data === "error") {
             self.endLoader('Oops, something went wrong.', 'error');
           } else {
