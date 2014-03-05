@@ -310,7 +310,6 @@ body.admin-form #intro {
   font-weight: 300;
   letter-spacing: -4px;
   text-align: center;
-  text-shadow: 0px 0px 15px #000000;
 }
 
 #pontoon #title a {
@@ -328,7 +327,6 @@ body.admin-form #intro {
   color: #EBEBEB;
   font-size: 48px;
   letter-spacing: -2px;
-  text-shadow: 0px 0px 10px #000000;
   text-transform: none;
 }
 
@@ -848,7 +846,6 @@ body.admin-form #intro {
   font-weight: 300;
   letter-spacing: -3px;
   margin-bottom: 5px;
-  text-shadow: 1px 1px 3px #666666;
 }
 
 .unselectable * {
