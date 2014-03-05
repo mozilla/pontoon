@@ -617,15 +617,14 @@ var Pontoon = (function () {
         var entity = $('#editor')[0].entity,
             source = $('#translation').val();
 
-        // Update translation in the website
-        if (entity.body) {
-          if (source !== '') {
-            self.common.postMessage("SAVE", source);
-          } else {
-            self.endLoader('Empty translations cannot be submitted.', 'error');
-          }
+        if (source === '') {
+          self.endLoader('Empty translations cannot be submitted.', 'error');
+          return;
+        }
 
-        // Some entities cannot be edited in-place
+        // Update translation, including in-place if possible
+        if (entity.body) {
+          self.common.postMessage("SAVE", source);
         } else {
           self.updateOnServer(entity, source);
         }
