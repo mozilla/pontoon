@@ -512,7 +512,7 @@ body, select, input, textarea, button {
   padding: 10px 20px;
 }
 
-#pontoon #profile .button {
+#pontoon #profile > .button {
   height: 60px;
   padding: 0 5px;
 }
@@ -536,9 +536,13 @@ body, select, input, textarea, button {
 }
 
 #pontoon .select#profile .popup {
-  padding: 12px 12px 4px;
+  padding: 12px;
   right: 0;
   width: 200px;
+}
+
+#pontoon .popup h2 {
+  margin-bottom: 5px;
 }
 
 #pontoon .popup .cancel {
@@ -554,35 +558,30 @@ body, select, input, textarea, button {
 
 #pontoon .popup input[type=text],
 #pontoon .popup input[type=password] {
-  margin-bottom: 5px;
-  width: 192px;
-
-  box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
-  -moz-box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
-  -webkit-box-shadow: 0 1px #555555, 0 1px 2px #444444 inset;
+  background: transparent;
+  border-bottom: 1px solid #525A65;
+  color: #FFFFFF;
+  margin-bottom: 7px;
+  padding: 3px 0;
+  width: 200px;
 }
 
 #pontoon .popup input[type=password] {
-    width: 140px;
+    width: 135px;
 }
 
 #pontoon .popup .button {
+  background: #7BC876;
+  border-radius: 3px;
+  color: #272A2F;
   float: right;
-
-  box-shadow: 0 1px #555555, 0 2px 1px -1px #666666 inset;
-  -moz-box-shadow: 0 1px #555555, 0 2px 1px -1px #666666 inset;
-  -webkit-box-shadow: 0 1px #555555, 0 2px 1px -1px #666666 inset;
-}
-
-#pontoon .popup .button:active {
-  box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
-  -moz-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
-  -webkit-box-shadow: 0 1px #333333, 0 0 5px #000000 inset;
+  font-weight: 400;
+  text-transform: uppercase;
 }
 
 #pontoon .popup .remember {
   float: left;
-  padding: 6px 0 0 16px;
+  padding: 6px 0 0 14px;
 }
 
 #pontoon .popup .remember input {

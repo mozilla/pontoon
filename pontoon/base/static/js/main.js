@@ -136,11 +136,11 @@ var Pontoon = (function () {
               $("#svn").show();
 
               // Move notification up
-              var temp = $('.notification').css('bottom');
-              $('.notification').css('bottom', '+=' + $('#svn').outerHeight());
+              var temp = $('.notification').css('top');
+              $('.notification').css('top', '+=' + $('#svn').outerHeight());
               setTimeout(function() {
-                $('.notification').css('bottom', temp);
-              }, 2000);
+                $('.notification').css('top', temp);
+              }, 2400); // Wait for close + fadeout
 
             } else if (data === "200") {
               self.endLoader('Done!');
