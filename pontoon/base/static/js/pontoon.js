@@ -71,7 +71,7 @@
             this.html(content);
           });
           sendData();
-          postMessage("UPDATE", entity.master || entity.id);
+          postMessage("UPDATE", entity.id);
         });
 
         // Do not change anything when cancelled
