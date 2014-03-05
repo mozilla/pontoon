@@ -86,6 +86,7 @@
               entity = element.entity;
 
           $(element).html(entity.translation || entity.original);
+          postMessage("INACTIVE", entity.id);
         });
 
         // Prevent button click with space
@@ -505,7 +506,6 @@
           return;
         }
         $(target).attr('contentEditable', false);
-        postMessage("INACTIVE", target.entity.id);
       }
 
 
