@@ -707,6 +707,7 @@ var Pontoon = (function () {
               var item = button.parents('li'),
                   index = item.index();
               item.remove();
+              self.endLoader('Translation deleted');
 
               // Active translation deleted
               if (index === 0) {
@@ -728,7 +729,6 @@ var Pontoon = (function () {
                     entity.reviewed = false;
                     entity.translation = "";
                     self.updateEntityUI(entity);
-                    self.endLoader('Translation deleted');
                   }
                   $('#history ul')
                     .append('<li class="disabled">' +
@@ -976,7 +976,6 @@ var Pontoon = (function () {
         } else if (message.type === "DELETE") {
           var entity = Pontoon.project.entities[message.value];
           Pontoon.updateEntityUI(entity);
-          Pontoon.endLoader('Translation deleted');
         } else if (message.type === "HTML") {
           Pontoon.save("html", message.value);
         }
