@@ -72,6 +72,8 @@
               this.html(content);
             });
             sendData();
+          } else {
+            $(element).html(entity.translation);
           }
 
           postMessage("UPDATE", {
