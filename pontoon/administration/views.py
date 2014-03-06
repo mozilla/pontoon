@@ -172,7 +172,7 @@ def _save_translation(entity, locale, translation):
     # Update existing translation if different from repository
     try:
         t = Translation.objects.get(
-            entity=entity, locale=locale, reviewed=True)
+            entity=entity, locale=locale, approved=True)
         if t.string != translation:
             t.user = None
             t.string = translation
@@ -182,7 +182,7 @@ def _save_translation(entity, locale, translation):
     # Save new translation if it doesn's exist yet
     except Translation.DoesNotExist:
         t = Translation(entity=entity, locale=locale, string=translation,
-            date=datetime.datetime.now(), reviewed=True)
+            date=datetime.datetime.now(), approved=True)
         t.save()
 
 

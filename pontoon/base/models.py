@@ -103,7 +103,7 @@ class Translation(models.Model):
     user = models.ForeignKey(User, null=True, blank=True)
     string = models.TextField()
     date = models.DateTimeField()
-    reviewed = models.BooleanField(default=False)
+    approved = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.string

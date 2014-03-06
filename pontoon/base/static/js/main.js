@@ -67,7 +67,7 @@ var Pontoon = (function () {
         self.startLoader();
 
         params.strings = [];
-        $("#entitylist .reviewed").each(function() {
+        $("#entitylist .approved").each(function() {
           var entity = $(this)[0].entity;
           params.strings.push({
             original: entity.original,
@@ -315,11 +315,11 @@ var Pontoon = (function () {
             $.each(data, function() {
               list.append(
                 '<li data-id="' + this.id + '" ' +
-                (this.reviewed ? ' class="approved"' : '') +
+                (this.approved ? ' class="approved"' : '') +
                 'title="Click to copy">' +
                   '<header class="clearfix' +
                     ((self.user.localizer) ? ' localizer' :
-                      ((self.user.email === this.user && !this.reviewed) ?
+                      ((self.user.email === this.user && !this.approved) ?
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
@@ -328,7 +328,7 @@ var Pontoon = (function () {
                     '</div>' +
                     '<menu class="toolbar">' +
                       '<button class="approve" title="' +
-                      (this.reviewed ? '' : 'Approve') +
+                      (this.approved ? '' : 'Approve') +
                       '"></button>' +
                       '<button class="delete" title="Delete"></button>' +
                     '</menu>' +
@@ -443,8 +443,8 @@ var Pontoon = (function () {
       // Render
       $(self.project.entities).each(function () {
         var li = $('<li class="entity' + 
-          // append classes to translated, reviewed and uneditable entities
-          (this.reviewed ? ' reviewed' : (this.translation ? ' translated' : '')) +
+          // append classes to translated, approved and uneditable entities
+          (this.approved ? ' approved' : (this.translation ? ' translated' : '')) +
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status"></span>' +
           '<p class="source-string">' + self.doNotRender(this.original) + '</p>' +
@@ -623,7 +623,7 @@ var Pontoon = (function () {
         }
 
         // Update translation, including in-place if possible
-        if (entity.body && (self.user.localizer || !entity.reviewed)) {
+        if (entity.body && (self.user.localizer || !entity.approved)) {
           self.common.postMessage("SAVE", source);
         } else {
           self.updateOnServer(entity, source);
@@ -725,7 +725,7 @@ var Pontoon = (function () {
                   if (entity.body) {
                     self.common.postMessage("DELETE");
                   } else {
-                    entity.reviewed = false;
+                    entity.approved = false;
                     entity.translation = "";
                     self.updateEntityUI(entity);
                   }
@@ -754,15 +754,15 @@ var Pontoon = (function () {
     updateProgress: function () {
       var all = $("#entitylist .entity").length,
           translated = $("#entitylist .entity.translated").length,
-          reviewed = $("#entitylist .entity.reviewed").length,
+          approved = $("#entitylist .entity.approved").length,
           percentTranslated = Math.round(translated * 100 / all),
-          percentReviewed = Math.round(reviewed * 100 / all);
+          percentApproved = Math.round(approved * 100 / all);
 
       $('#progress .translated').width(percentTranslated + '%');
-      $('#progress .reviewed').width(percentReviewed + '%');
-      $('#progress .number').html(reviewed + '|' + all);
+      $('#progress .approved').width(percentApproved + '%');
+      $('#progress .number').html(approved + '|' + all);
 
-      if (percentTranslated + percentReviewed > 50) {
+      if (percentTranslated + percentApproved > 50) {
         $('#progress .number').addClass('left');
       } else {
         $('#progress .number').removeClass('left');
@@ -777,9 +777,9 @@ var Pontoon = (function () {
      * entity Entity
      */
     updateEntityUI: function (entity) {
-      entity.ui.removeClass('translated reviewed');
-      if (entity.reviewed) {
-        entity.ui.addClass('reviewed');
+      entity.ui.removeClass('translated approved');
+      if (entity.approved) {
+        entity.ui.addClass('approved');
       } else if (entity.translation !== '') {
         entity.ui.addClass('translated');
       }
@@ -810,7 +810,7 @@ var Pontoon = (function () {
           if (data.type) {
             self.endLoader('Translation ' + data.type);
             entity.translation = data.translation;
-            entity.reviewed = data.reviewed;
+            entity.approved = data.approved;
             self.updateEntityUI(entity);
             if (!Pontoon.app.external && $("#editor").is('.opened')) {
               $('#cancel').click();

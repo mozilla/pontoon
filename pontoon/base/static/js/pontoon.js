@@ -66,7 +66,7 @@
               entity = element.entity,
               content = $(element).html();
 
-          if (Pontoon.user.localizer || !entity.reviewed) {
+          if (Pontoon.user.localizer || !entity.approved) {
             entity.translation = content;
             $(entity.node).each(function() {
               this.html(content);
@@ -549,7 +549,7 @@
               this.html(entity.original);
             });
             selectNodeContents(target);
-            entity.reviewed = false;
+            entity.approved = false;
             entity.translation = '';
             sendData();
             postMessage("DELETE", entity.id);

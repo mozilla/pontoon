@@ -162,7 +162,7 @@ def _get_translation(entity, locale):
 
     if len(translations) > 0:
         try:
-            t = translations.get(reviewed=True)
+            t = translations.get(approved=True)
             return t
         except Translation.DoesNotExist:
             latest = translations.order_by("date").reverse()[0]
@@ -189,7 +189,7 @@ def _get_entities(project, locale, page=None):
             "key": e.key,
             "pk": e.pk,
             "translation": translation.string,
-            "reviewed": translation.reviewed,
+            "approved": translation.approved,
         }
 
         entities_array.append(obj)
@@ -428,7 +428,7 @@ def get_translation_history(request, template=None):
 
     translations = Translation.objects \
         .filter(entity=entity, locale=locale) \
-        .order_by('-reviewed', '-date')
+        .order_by('-approved', '-date')
 
     user = ''
     if entity.project.name == 'Testpilot':
@@ -442,7 +442,7 @@ def get_translation_history(request, template=None):
                 "user": getattr(t.user, 'email', user), # Empty for imported
                 "translation": t.string,
                 "date": t.date.strftime("%b %d, %Y %H:%M"),
-                "reviewed": t.reviewed,
+                "approved": t.approved,
             }
             payload.append(o)
 
@@ -454,13 +454,13 @@ def get_translation_history(request, template=None):
         return HttpResponse("error")
 
 
-def _disapprove_translations(translations):
-    """Unset reviewed attribute for given translations."""
-    log.debug("Unset reviewed attribute for given translations.")
+def _unset_approved(translations):
+    """Unset approved attribute for given translations."""
+    log.debug("Unset approved attribute for given translations.")
 
     try:
-        t = translations.get(reviewed=True)
-        t.reviewed = False
+        t = translations.get(approved=True)
+        t.approved = False
         t.save()
     except Translation.DoesNotExist:
         pass
@@ -494,9 +494,9 @@ def approve_translation(request, template=None):
     locale = translation.locale
 
     translations = Translation.objects.filter(entity=entity, locale=locale)
-    _disapprove_translations(translations)
+    _unset_approved(translations)
 
-    translation.reviewed = True
+    translation.approved = True
     translation.save()
 
     return HttpResponse(json.dumps({
@@ -525,10 +525,10 @@ def delete_translation(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    # Non-privileged users can only delete own non-reviewed translations
+    # Non-privileged users can only delete own non-approved translations
     if not request.user.has_perm('base.can_localize'):
         if translation.user == request.user:
-            if translation.reviewed == True:
+            if translation.approved == True:
                 return HttpResponse("error")
 
         else:
@@ -541,7 +541,7 @@ def delete_translation(request, template=None):
     next = _get_translation(entity=entity, locale=locale)
 
     if next.id != None and request.user.has_perm('base.can_localize'):
-        next.reviewed = True
+        next.approved = True
         next.save()
 
     return HttpResponse(json.dumps({
@@ -602,13 +602,13 @@ def update_translation(request, template=None):
                 if t.string == string:
                     # If added by privileged user, approve it
                     if can_localize:
-                        _disapprove_translations(translations)
-                        t.reviewed = True
+                        _unset_approved(translations)
+                        t.approved = True
                         t.save()
 
                         return HttpResponse(json.dumps({
                             'type': 'updated',
-                            'reviewed': can_localize,
+                            'approved': can_localize,
                             'translation': t.string,
                         }), mimetype='application/json')
                     else:
@@ -616,18 +616,18 @@ def update_translation(request, template=None):
 
             # Different translation added
             if can_localize:
-                _disapprove_translations(translations)
+                _unset_approved(translations)
 
             t = Translation(
                 entity=e, locale=l, user=user, string=string,
-                date=datetime.datetime.now(), reviewed=can_localize)
+                date=datetime.datetime.now(), approved=can_localize)
             t.save()
 
             active = _get_translation(entity=e, locale=l)
 
             return HttpResponse(json.dumps({
                 'type': 'added',
-                'reviewed': active.reviewed,
+                'approved': active.approved,
                 'translation': active.string,
             }), mimetype='application/json')
 
@@ -635,12 +635,12 @@ def update_translation(request, template=None):
         else:
             t = Translation(
                 entity=e, locale=l, user=user, string=string,
-                date=datetime.datetime.now(), reviewed=can_localize)
+                date=datetime.datetime.now(), approved=can_localize)
             t.save()
 
             return HttpResponse(json.dumps({
                 'type': 'saved',
-                'reviewed': can_localize,
+                'approved': can_localize,
                 'translation': t.string,
             }), mimetype='application/json')
 

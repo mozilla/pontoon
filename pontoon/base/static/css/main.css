@@ -442,7 +442,7 @@ body, select, input, textarea, button {
   transition: all 0.3s ease-out;  
 }
 
-#pontoon #progress .graph.reviewed {
+#pontoon #progress .graph.approved {
   background: #7BC876;
 }
 
@@ -725,7 +725,7 @@ body, select, input, textarea, button {
   border-color: #7BC876;
 }
 
-#pontoon #entitylist > .wrapper > ul > li.reviewed > .status {
+#pontoon #entitylist > .wrapper > ul > li.approved > .status {
   background: #7BC876;
   border-color: #7BC876;
 }
