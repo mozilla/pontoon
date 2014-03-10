@@ -1065,13 +1065,12 @@ var Pontoon = (function () {
      * menu Menu element
      */
     updateSlider: function (menu) {
-      var hovered = menu.find('li.hover');
-
-      var maxHeight = menu.height();
-      var visibleTop = menu.scrollTop();
-      var visibleBottom = visibleTop + maxHeight;
-      var hoveredTop = visibleTop + hovered.position().top;
-      var hoveredBottom = hoveredTop + hovered.outerHeight();
+      var hovered = menu.find('li.hover'),
+          maxHeight = menu.height(),
+          visibleTop = menu.scrollTop(),
+          visibleBottom = visibleTop + maxHeight,
+          hoveredTop = visibleTop + hovered.position().top,
+          hoveredBottom = hoveredTop + hovered.outerHeight();
 
       if (hoveredBottom >= visibleBottom) {
         menu.scrollTop(Math.max(hoveredBottom - maxHeight, 0));
