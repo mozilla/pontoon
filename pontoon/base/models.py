@@ -43,12 +43,16 @@ class Project(models.Model):
         ('svn', 'SVN'),
         ('transifex', 'Transifex'),
     )
-    repository_type = models.CharField("Type", max_length=20, blank=False, default='File', choices=REPOSITORY_TYPE_CHOICES)
+    repository_type = models.CharField(
+        "Type", max_length=20, blank=False, default='File',
+        choices=REPOSITORY_TYPE_CHOICES)
     repository_url = models.URLField("URL", blank=True)
     # Includes source directory in one-locale repositories
     repository_path = models.TextField(blank=True)
-    transifex_project = models.CharField("Project", max_length=128, blank=True)
-    transifex_resource = models.CharField("Resource", max_length=128, blank=True)
+    transifex_project = models.CharField(
+        "Project", max_length=128, blank=True)
+    transifex_resource = models.CharField(
+        "Resource", max_length=128, blank=True)
 
     # Format
     FORMAT_CHOICES = (
@@ -57,7 +61,8 @@ class Project(models.Model):
         ('ini', 'ini'),
         ('lang', 'lang'),
     )
-    format = models.CharField("Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
+    format = models.CharField(
+        "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
 
     # Project info
     info_brief = models.TextField("Project info", blank=True)
@@ -92,8 +97,8 @@ class Entity(models.Model):
     project = models.ForeignKey(Project)
     string = models.TextField()
     comment = models.TextField(blank=True)
-    key = models.TextField(blank=True) # Needed for webL10n
-    source = models.TextField(blank=True) # Needed for webL10n
+    key = models.TextField(blank=True)  # Needed for webL10n
+    source = models.TextField(blank=True)  # Needed for webL10n
 
     def __unicode__(self):
         return self.string
@@ -124,14 +129,17 @@ class ProjectForm(ModelForm):
 
         if repository_type == 'Transifex':
             if not transifex_project:
-                self._errors["repository_url"] = self.error_class([u"You need to provide Transifex project and resource."])
+                self._errors["repository_url"] = self.error_class(
+                    [u"You need to provide Transifex project and resource."])
                 del cleaned_data["transifex_resource"]
 
             if not transifex_resource:
-                self._errors["repository_url"] = self.error_class([u"You need to provide Transifex project and resource."])
+                self._errors["repository_url"] = self.error_class(
+                    [u"You need to provide Transifex project and resource."])
                 del cleaned_data["transifex_project"]
 
         elif not repository_url:
-            self._errors["repository_url"] = self.error_class([u"You need to provide a valid URL."])
+            self._errors["repository_url"] = self.error_class(
+                [u"You need to provide a valid URL."])
 
         return cleaned_data
