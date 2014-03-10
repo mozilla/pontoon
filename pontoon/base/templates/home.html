@@ -7,7 +7,7 @@
 <div id="server"
      class="hidden"
      {% if locale_code %}data-locale="{{ locale_code }}"{% endif %}
-     {% if project_url %}data-url="{{ project_url }}"{% endif %}>
+     {% if project %}data-project="{{ project }}"{% endif %}>
 </div>
 
 <!-- Frontpage -->
@@ -44,6 +44,7 @@
             {% for project in projects %}
             <li class="clearfix">
               <span class="project-name"
+                data-id={{ project.id }}
                 data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
                 data-pages="{% if pages %}{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}{% endif %}">{{ project.name }}</span>
               <span class="project-url">{{ project.url }}</span>

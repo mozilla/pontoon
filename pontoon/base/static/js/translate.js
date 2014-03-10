@@ -64,7 +64,8 @@ $(function() {
           var lang = $('html').attr('lang'),
               locale = $('#server').data('locale'),
               escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
-              errorLink = (lang ? '/' + lang : '') + '/translate/error/?locale=' + escapedLocale + '&url=' + url + (url[url.length-1] !== '/' ? '/' : '');
+              project = $('#server').data('id'),
+              errorLink = (lang ? '/' + lang : '') + '/translate/error/?locale=' + escapedLocale + '&project=' + project;
           window.location = errorLink + '&error=' + "Oops, website is not supported by Pontoon.";
         }
       }, 100);

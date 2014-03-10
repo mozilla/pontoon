@@ -50,13 +50,13 @@ def home(request, template='home.html'):
 
     translate_error = request.session.pop('translate_error', {})
     locale = translate_error.get('locale')
-    url = translate_error.get('url')
+    project = translate_error.get('project')
 
     if locale is not None:
         data['locale_code'] = locale
 
-    if url is not None:
-        data['project_url'] = url
+    if project is not None:
+        data['project'] = project
 
     return render(request, template, data)
 
@@ -72,7 +72,7 @@ def handle_error(request):
     messages.error(request, request.GET.get('error', ''))
     request.session['translate_error'] = {
         'locale': request.GET.get('locale'),
-        'url': request.GET.get('url')
+        'project': request.GET.get('project')
     }
     return HttpResponseRedirect(reverse('pontoon.home'))
 
@@ -94,7 +94,6 @@ def translate_site(request, locale, url, template='translate.html'):
         log.debug(e)
         request.session['translate_error'] = {
             'locale': locale,
-            'url': url
         }
         messages.error(request, "Oops, this is not a valid URL.")
         return HttpResponseRedirect(reverse('pontoon.home'))
@@ -107,7 +106,6 @@ def translate_site(request, locale, url, template='translate.html'):
         messages.error(request, "Oops, locale is not supported.")
         request.session['translate_error'] = {
             'locale': locale,
-            'url': url
         }
         return HttpResponseRedirect(reverse('pontoon.home'))
 
@@ -213,7 +211,9 @@ def translate_project(request, locale, project, page=None, template='translate.h
         p = Project.objects.get(name=project, pk__in=Entity.objects.values('project'))
     except Project.DoesNotExist:
         messages.error(request, "Oops, project could not be found.")
-        request.session['translate_error'] = {'locale': locale}
+        request.session['translate_error'] = {
+            'locale': locale,
+        }
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Check if user authenticated and has sufficient privileges
@@ -248,9 +248,9 @@ def translate_project(request, locale, project, page=None, template='translate.h
     if len(p.locales.filter(code=locale)) == 0:
         request.session['translate_error'] = {
             'locale': locale,
-            'url': data['project_url']
+            'project': p.id,
         }
-        messages.error(request, "Oops, locale is not supported for this website.")
+        messages.error(request, "Oops, locale is not supported for this project.")
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Validate subpages
@@ -263,7 +263,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
             except IndexError:
                 request.session['translate_error'] = {
                     'locale': locale,
-                    'url': p.url
+                    'project': p.id,
                 }
                 messages.error(request, "Oops, project URL doesn't match any subpage.")
                 return HttpResponseRedirect(reverse('pontoon.home'))
@@ -273,7 +273,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
             except Subpage.DoesNotExist:
                 request.session['translate_error'] = {
                     'locale': locale,
-                    'url': p.url
+                    'project': p.id,
                 }
                 messages.error(request, "Oops, subpage could not be found.")
                 return HttpResponseRedirect(reverse('pontoon.home'))

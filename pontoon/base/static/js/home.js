@@ -1,9 +1,9 @@
 $(function() {
 
   // Update project if already set
-  var url = $('#server').data('url');
-  if (url) {
-    $('.project-url:contains("' + url + '")').parents('li').click();
+  var project = $('#server').data('project');
+  if (project) {
+    $('.project-name[data-id="' + project + '"]').parents('li').click();
   }
 
   // Update locale if already set
