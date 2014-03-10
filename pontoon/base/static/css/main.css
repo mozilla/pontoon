@@ -245,10 +245,10 @@ body, select, input, textarea, button {
 }
 
 #pontoon #switch {
-  background: url('../img/align_just_icon&24.png') 17px 18px no-repeat transparent;
+  background: url('../img/align_just_icon&24.png') 7px 18px no-repeat transparent;
   float: left;
   height: 60px;
-  width: 50px;
+  width: 30px;
   border: none;
 }
 
@@ -425,7 +425,7 @@ body, select, input, textarea, button {
   border: 1px solid #7BC876;
   float: left;
   height: 28px;
-  margin: 15px 20px 15px 10px;
+  margin: 15px 20px 15px 0;
   position: relative;
   width: 180px;
   text-align: center;
