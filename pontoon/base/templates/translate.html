@@ -249,9 +249,11 @@
   <div id="drag" draggable="true"></div>
 </aside>
 
+{% if project.url %}
 <!-- Website placeholder + iframe fix: prevent iframes from capturing the mousemove events during a drag -->
 <iframe id="source"></iframe>
 <div id="iframe-cover"></div>
+{% endif %}
 
 <!-- Project loading indicator -->
 {% include 'loader.html' %}

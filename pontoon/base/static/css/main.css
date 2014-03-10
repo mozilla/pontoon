@@ -139,6 +139,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon .select {
+  float: left;
   position: relative;
 }
 
@@ -247,12 +248,12 @@ body, select, input, textarea, button {
   background: url('../img/align_just_icon&24.png') 17px 18px no-repeat transparent;
   float: left;
   height: 60px;
-  width: 60px;
+  width: 50px;
   border: none;
 }
 
-#pontoon .select {
-  float: left;
+#pontoon > header .project.select {
+  margin-left: 10px;
 }
 
 #pontoon .select .button.breadcrumbs,

@@ -45,8 +45,23 @@ $(function() {
     }
   }
 
-  // Initialize Pontoon if project code supports it
   var url = $('#server').data('url');
+
+  // Initialize Pontoon for projects without in-place translation support
+  if (!url) {
+    $('#pontoon > header').slideDown(function() {
+      $('#sidebar')
+        .addClass('advanced')
+        .css('width', '100%');
+      $('#switch, #drag').remove();
+      $('#editor').addClass('opened');
+      $('#project-load').hide();
+    });
+
+    return Pontoon.init(window);
+  }
+
+  // Initialize Pontoon for projects with in-place translation support
   $('#source').attr('src', url);
   var projectWindow = $('#source')[0].contentWindow;
   window.addEventListener("message", receiveMessage, false);
