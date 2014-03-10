@@ -34,7 +34,6 @@ class Locale(models.Model):
 
 class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    url = models.URLField("URL", unique=True)
     locales = models.ManyToManyField(Locale)
 
     # Repositories
@@ -63,9 +62,12 @@ class Project(models.Model):
     # Project info
     info_brief = models.TextField("Project info", blank=True)
 
-    # User interface
-    external = models.BooleanField("Open project website in external window insted of iframe")
-    links = models.BooleanField("Keep links on the project website clickable")
+    # Website for in-place localization
+    url = models.URLField("URL", blank=True)
+    external = models.BooleanField(
+        "Open project website in external window insted of iframe")
+    links = models.BooleanField(
+        "Keep links on the project website clickable")
 
     class Meta:
         permissions = (
