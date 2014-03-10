@@ -816,6 +816,8 @@ var Pontoon = (function () {
             if (self.project.win && !self.app.external &&
                 $("#editor").is('.opened')) {
               $('#cancel').click();
+            } else if (!self.project.win || self.app.external) {
+              $('#next').click();
             }
           } else if (data === "error") {
             self.endLoader('Oops, something went wrong.', 'error');
@@ -939,7 +941,7 @@ var Pontoon = (function () {
       });
 
       // If advanced features opened by default, open first entity in the editor
-      if (!this.project.win || self.app.external) {
+      if (!self.project.win || self.app.external) {
         $("#entitylist .entity:first").mouseover().click();
       }
     },

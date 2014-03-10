@@ -806,23 +806,23 @@ body, select, input, textarea, button {
   box-sizing: border-box;
 }
 
-#pontoon #topbar a[href="#back"] {
+#pontoon #topbar a#back {
   background: url('../img/left.png') no-repeat -5px 3px transparent;
   float: left;
   padding-left: 15px;
 }
 
-#pontoon .advanced #topbar a[href="#back"] {
+#pontoon .advanced #topbar a#back {
   display: none;
 }
 
-#pontoon #topbar a[href="#previous"] {
+#pontoon #topbar a#previous {
   background: url('../img/up.png') no-repeat 0 3px transparent;
   padding-left: 20px;
   padding-right: 30px;
 }
 
-#pontoon #topbar a[href="#next"] {
+#pontoon #topbar a#next {
   background: url('../img/down.png') no-repeat 0 3px transparent;
   padding-left: 20px;
 }
