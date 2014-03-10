@@ -18,7 +18,7 @@ def add_can_localize(user):
         "app_key": settings.MOZILLIANS_API_KEY,
         "groups": "localization",
         "format": "json",
-        "limit": 2000, # By default, limited to 20
+        "limit": 2000,  # By default, limited to 20
         "is_vouched": True
     }
 
@@ -37,7 +37,7 @@ def add_can_localize(user):
                 # Fallback if profile does not allow accessing data
                 user.first_name = mozillian.get("full_name", email)
                 user.save()
-                break;
+                break
 
     except Exception as e:
         log.debug(e)

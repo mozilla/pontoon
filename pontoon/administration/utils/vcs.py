@@ -67,7 +67,7 @@ class PullFromHg(PullFromRepository):
 class PullFromSvn(PullFromRepository):
 
     VCS = 'svn'
-    
+
     def pull(self, source=None, target=None):
         import pysvn
         log.debug("Checkout or update SVN repository.")
