@@ -11,7 +11,9 @@ patch()
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
+
     # Main app:
     (r'', include('pontoon.base.urls')),
 
@@ -22,7 +24,8 @@ urlpatterns = patterns('',
     url(r'^browserid/$', 'pontoon.base.views.verify', name='browserid.verify'),
 
     # Logout
-    url(r'^signout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='signout'),
+    url(r'^signout/$', 'django.contrib.auth.views.logout', {'next_page': '/'},
+        name='signout'),
 
     # Error pages
     url(r'^403/$', TemplateView.as_view(template_name='403.html')),
@@ -30,10 +33,12 @@ urlpatterns = patterns('',
     url(r'^500/$', TemplateView.as_view(template_name='500.html')),
 
     # Favicon
-    url(r'^favicon\.ico$', RedirectView.as_view(url='/static/img/favicon.ico')),
+    url(r'^favicon\.ico$',
+        RedirectView.as_view(url='/static/img/favicon.ico')),
 
     # Include script
-    url(r'^pontoon\.js$', RedirectView.as_view(url='/static/js/pontoon.js')),
+    url(r'^pontoon\.js$',
+        RedirectView.as_view(url='/static/js/pontoon.js')),
 
     # Django admin
     (r'^a/', include(admin.site.urls)),
