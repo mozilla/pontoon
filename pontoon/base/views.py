@@ -154,7 +154,6 @@ def translate_site(request, locale, url, template='translate.html'):
 
 def _get_translation(entity, locale):
     """Get translation of given entity to given locale."""
-    log.debug("Get translation of given entity to given locale.")
 
     translations = Translation.objects.filter(entity=entity, locale=locale)
 
