@@ -369,6 +369,9 @@ var Pontoon = (function () {
       $("#helpers nav a:first").click();
       $("#editor")[0].entity = entity;
 
+      $("#entitylist .hovered").removeClass('hovered');
+      entity.ui.addClass('hovered');
+
       // Open advanced features by default if project requests them
       if (this.project.win && !this.app.external) {
         $("#entitylist")
@@ -598,7 +601,8 @@ var Pontoon = (function () {
         }
 
         $("#entitylist")
-          .css('left', 0);
+          .css('left', 0)
+          .find('.hovered').removeClass('hovered');
 
         $("#editor")
           .removeClass('opened')
