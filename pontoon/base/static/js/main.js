@@ -500,7 +500,7 @@ var Pontoon = (function () {
         e.stopPropagation();
         e.preventDefault();
 
-        var sec = $(this).attr('href').substr(1),
+        var sec = $(this).attr('id'),
             entity = $('#editor')[0].entity,
             entitySelector = '#entitylist .entity',
             index = entity.ui.index(entitySelector);
