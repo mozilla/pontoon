@@ -1151,7 +1151,7 @@ var Pontoon = (function () {
 
         var locale = $('.locale .selector .language').attr('class').split(' ')[1],
             project = $('.project .selector .title').html(),
-            page = $('.page .selector .title').html(),
+            page = $('.page .selector .title:visible').html(),
             loc = '/locale/' + locale + '/project/' + project;
 
         // On homepage, show error if no project selected
