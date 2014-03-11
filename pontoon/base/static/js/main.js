@@ -1044,12 +1044,12 @@ var Pontoon = (function () {
       // (iframe cross-domain policy solution)
       if (project) {
         self.common.postMessage("INITIALIZE", {
-          locale: self.locale,
           path: self.app.path,
           links: self.app.links,
           entities: self.project.entities,
           pk: self.project.pk,
           format: self.project.format,
+          locale: self.locale,
           user: self.user
         });
 

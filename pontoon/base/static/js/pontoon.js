@@ -1,28 +1,6 @@
 (function () {
 
-  var Pontoon = {
-        app: {
-          win: window.opener || ((window !== window.top) ? window.top : undefined),
-          path: "",
-          links: false
-        },
-        project: {
-          win: window,
-          url: window.location.href,
-          title: "",
-          entities: [],
-          pk: null,
-          format: null
-        },
-        locale: {
-          code: "",
-          language: ""
-        },
-        user: {
-          name: "",
-          email: ""
-        }
-      },
+  var appWindow = window.opener || ((window !== window.top) ? window.top : undefined),
       jqueryAppended = false,
       script = document.createElement('script');
 
@@ -639,8 +617,6 @@
           postMessage("SWITCH");
         });
 
-      Pontoon.project.title = document.title.split("-->")[1] || document.title;        
-
       // Select appropriate way of loading entities
       var entities = Pontoon.project.entities;
       if (entities.length > 0) {
@@ -678,7 +654,7 @@
     * targetOrigin specifies what the origin of otherWindow must be
   */
   function postMessage(messageType, messageValue, otherWindow, targetOrigin) {
-    var otherWindow = otherWindow || Pontoon.app.win,
+    var otherWindow = otherWindow || appWindow,
         targetOrigin = targetOrigin || "*", // TODO: hardcode Pontoon domain name
         message = {
           type: messageType,
@@ -706,16 +682,27 @@
   // Wait for main code trigger
   function initizalize(e) {
     // Prevent execution of any code if page not loaded in Pontoon iframe
-    if (e.source === Pontoon.app.win) { // TODO: hardcode Pontoon domain name
+    if (e.source === appWindow) { // TODO: hardcode Pontoon domain name
       var message = JSON.parse(e.data);
       if (message.type === "INITIALIZE") {
-        Pontoon.locale = message.value.locale; // Set locale
-        Pontoon.app.path = message.value.path; // Set domain
-        Pontoon.app.links = message.value.links; // Set links
-        Pontoon.project.entities = message.value.entities; // Set entities
-        Pontoon.project.pk = message.value.pk; // Set project
-        Pontoon.project.format = message.value.format; // Set format
-        Pontoon.user = message.value.user; // Set user
+        Pontoon = {
+          app: {
+            win: appWindow,
+            path: message.value.path,
+            links: message.value.links
+          },
+          project: {
+            win: window,
+            url: window.location.href,
+            title: document.title.split("-->")[1] || document.title,
+            entities: message.value.entities,
+            pk: message.value.pk,
+            format: message.value.format
+          },
+          locale: message.value.locale,
+          user: message.value.user
+        };
+
         loadJquery();
         window.removeEventListener("message", initizalize, false);
       }
