@@ -26,34 +26,35 @@ $(function() {
   }
 
   function receiveMessage(e) {
-    // TODO: Check origin - hardcode Pontoon domain name
-    if (JSON.parse(e.data).type === "SUPPORTED") {
+    if (e.source === projectWindow) {
+      if (JSON.parse(e.data).type === "SUPPORTED") {
 
-      $('#pontoon > header').slideDown(function() {
-        var websiteWidth = $('#server').data('width');
+        $('#pontoon > header').slideDown(function() {
+          var websiteWidth = $('#server').data('width');
 
-        if (websiteWidth) {
-          var windowWidth = $(window).width(),
-              sidebarWidth = windowWidth - websiteWidth;
+          if (websiteWidth) {
+            var windowWidth = $(window).width(),
+                sidebarWidth = windowWidth - websiteWidth;
 
-          if (sidebarWidth >= 900) {
-            $('#sidebar').addClass('advanced').width(sidebarWidth);
-            $('#switch, #editor').addClass('opened');
+            if (sidebarWidth >= 900) {
+              $('#sidebar').addClass('advanced').width(sidebarWidth);
+              $('#switch, #editor').addClass('opened');
 
-          } else if (sidebarWidth >= 450) {
-            $('#sidebar').show().width(sidebarWidth);
-            $('#switch').addClass('opened');
-            $('#editor').css('left', sidebarWidth);
+            } else if (sidebarWidth >= 450) {
+              $('#sidebar').show().width(sidebarWidth);
+              $('#switch').addClass('opened');
+              $('#editor').css('left', sidebarWidth);
+            }
           }
-        }
 
-        $('#source').show().css('margin-left', $('#sidebar:visible').width());
-        resizeIframe();
-        $('#project-load').hide();
-      });
+          $('#source').show().css('margin-left', $('#sidebar:visible').width());
+          resizeIframe();
+          $('#project-load').hide();
+        });
 
-      Pontoon.init(window, projectWindow);
-      window.removeEventListener("message", receiveMessage, false);
+        Pontoon.init(window, projectWindow);
+        window.removeEventListener("message", receiveMessage, false);
+      }
     }
   }
 
