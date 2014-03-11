@@ -720,7 +720,7 @@
   */
   function postMessage(messageType, messageValue, otherWindow, targetOrigin) {
     var otherWindow = otherWindow || appWindow,
-        targetOrigin = targetOrigin || "*", // TODO: hardcode Pontoon domain name
+        targetOrigin = targetOrigin || Pontoon.app.path,
         message = {
           type: messageType,
           value: messageValue
@@ -734,7 +734,7 @@
 
   // When loaded inside web client, notify it that project supports Pontoon
   if (window.opener || (window !== window.top)) {
-    postMessage("SUPPORTED");
+    postMessage("SUPPORTED", null, null, "*");
   }
 
   window.addEventListener("message", initizalize, false);

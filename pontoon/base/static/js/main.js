@@ -1080,7 +1080,7 @@ var Pontoon = (function () {
           format: self.project.format,
           locale: self.locale,
           user: self.user
-        });
+        }, null, $('#server').data('url'));
 
         // Wait for project code messages
         window.addEventListener("message", self.receiveMessage, false);
@@ -1392,7 +1392,7 @@ var Pontoon = (function () {
             return false;
           }
           var otherWindow = otherWindow || Pontoon.project.win,
-              targetOrigin = targetOrigin || "*",
+              targetOrigin = targetOrigin || Pontoon.project.url,
               message = {
                 type: messageType,
                 value: messageValue
