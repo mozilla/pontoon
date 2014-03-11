@@ -5,7 +5,7 @@
           win: window.opener || ((window !== window.top) ? window.top : undefined),
           path: "",
           links: false
-       },
+        },
         project: {
           win: window,
           url: window.location.href,
