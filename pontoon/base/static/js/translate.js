@@ -30,9 +30,21 @@ $(function() {
     if (JSON.parse(e.data).type === "SUPPORTED") {
 
       $('#pontoon > header').slideDown(function() {
-        if ($('#server').data('width')) {
-          $('#sidebar').addClass('advanced');
-          $('#switch, #editor').addClass('opened');
+        var websiteWidth = $('#server').data('width');
+
+        if (websiteWidth) {
+          var windowWidth = $(window).width(),
+              sidebarWidth = windowWidth - websiteWidth;
+
+          if (sidebarWidth >= 900) {
+            $('#sidebar').addClass('advanced').width(sidebarWidth);
+            $('#switch, #editor').addClass('opened');
+
+          } else if (sidebarWidth >= 450) {
+            $('#sidebar').show().width(sidebarWidth);
+            $('#switch').addClass('opened');
+            $('#editor').css('left', sidebarWidth);
+          }
         }
 
         $('#source').show().css('margin-left', $('#sidebar:visible').width());
@@ -102,7 +114,7 @@ $(function() {
           right: right,
           leftWidth: left.width(),
           rightWidth: right.width(),
-          leftMin: $('#server').data('width') ? 900 : 450,
+          leftMin: ($('#server').data('width') && ($(window).width() - $('#server').data('width')) >= 900) ? 900 : 450,
           leftMax: $(window).width(),
           position: e.pageX
         };

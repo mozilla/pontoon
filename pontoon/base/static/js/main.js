@@ -1015,7 +1015,10 @@ var Pontoon = (function () {
       this.app = {
         win: app,
         path: $('base').attr('href'), // pontoon.css injection
-        width: $('#server').data('width'),
+        width: (
+          $('#server').data('width') &&
+          ($(window).width() - $('#server').data('width')) >= 900) ?
+          $('#server').data('width') : false,
         links: $('#server').data('links')
       };
       this.project = {
@@ -1028,7 +1031,7 @@ var Pontoon = (function () {
       };
       this.locale = {
         code: $('#server').data('locale'),
-        language: $("#pontoon > header .language").contents()[0].nodeValue // PO file
+        language: $("#pontoon > header .language").contents()[0].nodeValue
       };
       this.user = {
         email: $('#server').data('email') || '',
