@@ -1,9 +1,5 @@
 (function () {
 
-  var appWindow = window.opener || ((window !== window.top) ? window.top : undefined),
-      jqueryAppended = false,
-      script = document.createElement('script');
-
   // Main code
   function jqueryLoaded() {
     $(function() {
@@ -645,24 +641,6 @@
     });
   }
 
-  /*
-    * window.postMessage improved
-    *
-    * messageType data type to be sent to the other window
-    * messageValue data value to be sent to the other window
-    * otherWindow reference to another window
-    * targetOrigin specifies what the origin of otherWindow must be
-  */
-  function postMessage(messageType, messageValue, otherWindow, targetOrigin) {
-    var otherWindow = otherWindow || appWindow,
-        targetOrigin = targetOrigin || "*", // TODO: hardcode Pontoon domain name
-        message = {
-          type: messageType,
-          value: messageValue
-        }
-    otherWindow.postMessage(JSON.stringify(message), targetOrigin);
-  }
-
   // Load jQuery if not loaded yet
   function loadJquery() {
     if (!window.jQuery) {
@@ -708,11 +686,33 @@
       }
     }
   }
-  window.addEventListener("message", initizalize, false);
+
+  /*
+    * window.postMessage improved
+    *
+    * messageType data type to be sent to the other window
+    * messageValue data value to be sent to the other window
+    * otherWindow reference to another window
+    * targetOrigin specifies what the origin of otherWindow must be
+  */
+  function postMessage(messageType, messageValue, otherWindow, targetOrigin) {
+    var otherWindow = otherWindow || appWindow,
+        targetOrigin = targetOrigin || "*", // TODO: hardcode Pontoon domain name
+        message = {
+          type: messageType,
+          value: messageValue
+        }
+    otherWindow.postMessage(JSON.stringify(message), targetOrigin);
+  }
+
+  var appWindow = window.opener || ((window !== window.top) ? window.top : undefined),
+      jqueryAppended = false,
+      script = document.createElement('script');
 
   // When loaded inside web client, notify it that project supports Pontoon
   if (window.opener || (window !== window.top)) {
     postMessage("SUPPORTED");
   }
 
+  window.addEventListener("message", initizalize, false);
 })();
