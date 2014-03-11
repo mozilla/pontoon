@@ -634,7 +634,7 @@
         '<menu type="context" id="context">' +
           '<menuitem class="mode" label="Advanced mode" icon="' + Pontoon.app.path + 'static/img/logo-small.png' + '"></menuitem>' +
         '</menu>')
-        .find("#context .mode").live("click", function() {
+        .find("#context .mode").click(function() {
           postMessage("SWITCH");
         });
 

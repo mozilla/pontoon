@@ -903,7 +903,7 @@ var Pontoon = (function () {
       });
 
       // Profile menu
-      $('#profile-menu').find('a').live("click.pontoon", function (e) {
+      $('#profile-menu').find('a').click(function (e) {
         e.preventDefault();
         if ($(this).is(".sign-out")) {
           window.location = 'signout/'; // Without this, Enter doesn't open the link
@@ -917,10 +917,10 @@ var Pontoon = (function () {
       });
 
       // Transifex and SVN authentication
-      $('.popup').find('.cancel').live("click.pontoon", function (e) {
+      $('.popup').find('.cancel').click(function (e) {
         e.preventDefault();
         $('.popup').hide();
-      }).end().find('.button').live("click.pontoon", function (e) {
+      }).end().find('.button').click(function (e) {
         e.preventDefault();
         var type = $(this).parents('.popup').attr('id');
         self.save(type, $('#' + type + ' form').serializeArray());
@@ -1124,7 +1124,7 @@ var Pontoon = (function () {
      */
     common: (function () {
       // Show/hide menu on click
-      $('.selector').live("click.pontoon", function (e) {
+      $('.selector').click(function (e) {
         if (!$(this).siblings('.menu').is(':visible')) {
           e.stopPropagation();
           $('body:not(".admin-form") .menu, body:not(".admin-form") .popup').hide();
@@ -1138,7 +1138,7 @@ var Pontoon = (function () {
       });
 
       // Hide menus on click outside
-      $('body:not(".admin-form")').live("click.pontoon", function () {
+      $('body:not(".admin-form")').click(function () {
         $('.menu').hide();
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
@@ -1151,7 +1151,7 @@ var Pontoon = (function () {
       });
 
       // Show only pages available for the selected project
-      $('.page .selector').live("click.pontoon", function () {
+      $('.page .selector').click(function () {
         var pages = Pontoon.common.getProjectResources('pages'),
             menu = $(this).siblings('.menu').find('ul');
 
@@ -1166,7 +1166,7 @@ var Pontoon = (function () {
       });
 
       // Show only locales available for the selected project
-      $('.locale .selector').live("click.pontoon", function () {
+      $('.locale .selector').click(function () {
         var locales = Pontoon.common.getProjectResources('locales'),
             menu = $(this).siblings('.menu');
 
@@ -1204,7 +1204,7 @@ var Pontoon = (function () {
       });
 
       // Project menu handler
-      $('.project .menu li:not(".no-match")').live("click.pontoon", function () {
+      $('.project .menu li:not(".no-match")').click(function () {
         var name = $(this).find('.project-name').html(),
             url = $(this).find('.project-url').html();
 
@@ -1238,7 +1238,7 @@ var Pontoon = (function () {
       });
 
       // Page menu handler
-      $('.page .menu li:not(".no-match")').live("click", function () {
+      $('.page .menu li:not(".no-match")').live("click.pontoon", function () {
         var title = $(this).html();
         $('.page .selector .title').html(title);
       });
