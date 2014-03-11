@@ -734,7 +734,7 @@
 
   // When loaded inside web client, notify it that project supports Pontoon
   if (window.opener || (window !== window.top)) {
-    postMessage("SUPPORTED", null, null, "*");
+    postMessage("READY", null, null, "*");
   }
 
   window.addEventListener("message", initizalize, false);

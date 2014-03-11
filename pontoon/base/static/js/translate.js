@@ -27,7 +27,7 @@ $(function() {
 
   function receiveMessage(e) {
     if (e.source === projectWindow) {
-      if (JSON.parse(e.data).type === "SUPPORTED") {
+      if (JSON.parse(e.data).type === "READY") {
 
         $('#pontoon > header').slideDown(function() {
           var websiteWidth = $('#server').data('width');
