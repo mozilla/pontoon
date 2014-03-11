@@ -963,7 +963,10 @@ var Pontoon = (function () {
 
         case "DATA":
           // Deep copy: http://api.jquery.com/jQuery.extend
-          Pontoon.project.entities = $.extend(true, Pontoon.project.entities, message.value.entities);
+          Pontoon.project.entities = $.extend(
+            true,
+            Pontoon.project.entities,
+            message.value.entities);
           break;
 
         case "RENDER":

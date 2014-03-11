@@ -525,7 +525,8 @@
             break;
 
           case "SAVE":
-            $($('.pontoon-editable-toolbar')[0].target.entity.node).each(function() {
+            var node = $('.pontoon-editable-toolbar')[0].target.entity.node;
+            $(node).each(function() {
               this.html(message.value);
             });
             $('.pontoon-editable-toolbar > .save').click();
