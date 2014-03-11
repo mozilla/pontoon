@@ -30,7 +30,7 @@ $(function() {
     if (JSON.parse(e.data).type === "SUPPORTED") {
 
       $('#pontoon > header').slideDown(function() {
-        if ($('#server').data('external')) {
+        if ($('#server').data('width')) {
           $('#sidebar').addClass('advanced');
           $('#switch, #editor').addClass('opened');
         }
@@ -102,7 +102,7 @@ $(function() {
           right: right,
           leftWidth: left.width(),
           rightWidth: right.width(),
-          leftMin: $('#server').data('external') ? 900 : 450,
+          leftMin: $('#server').data('width') ? 900 : 450,
           leftMax: $(window).width(),
           position: e.pageX
         };

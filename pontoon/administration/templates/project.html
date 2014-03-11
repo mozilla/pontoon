@@ -130,15 +130,15 @@
 
     <h2>Website</h2>
 
-    <div>
+    <div class="clearfix">
         {{ form.url.label_tag() }}
         {{ form.url }}
         {{ form.url.errors }}
     </div>
-    <div class="checkbox clearfix">
-        <label for="id_external">
-            {{ form.external }}{{ form.external.label }}
-        </label>
+    <div class="clearfix">
+        {{ form.width.label_tag() }}
+        {{ form.width }}
+        {{ form.width.errors }}
     </div>
     <div class="checkbox clearfix">
         <label for="id_links">

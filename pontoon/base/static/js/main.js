@@ -373,7 +373,7 @@ var Pontoon = (function () {
       entity.ui.addClass('hovered');
 
       // Open advanced features by default if project requests them
-      if (this.project.win && !this.app.external) {
+      if (this.project.win && !this.app.width) {
         $("#entitylist")
           .css('left', -$('#sidebar').width()/2);
 
@@ -555,7 +555,7 @@ var Pontoon = (function () {
 
         // Esc: cancel
         if (key === 27) {
-          if (self.project.win && !self.app.external) {
+          if (self.project.win && !self.app.width) {
             $('#cancel').click();
           }
           return false;
@@ -817,10 +817,10 @@ var Pontoon = (function () {
             entity.translation = data.translation;
             entity.approved = data.approved;
             self.updateEntityUI(entity);
-            if (self.project.win && !self.app.external &&
+            if (self.project.win && !self.app.width &&
                 $("#editor").is('.opened')) {
               $('#cancel').click();
-            } else if (!self.project.win || self.app.external) {
+            } else if (!self.project.win || self.app.width) {
               $('#next').click();
             }
           } else if (data === "error") {
@@ -945,7 +945,7 @@ var Pontoon = (function () {
       });
 
       // If advanced features opened by default, open first entity in the editor
-      if (!self.project.win || self.app.external) {
+      if (!self.project.win || self.app.width) {
         $("#entitylist .entity:first").mouseover().click();
       }
     },
@@ -985,7 +985,7 @@ var Pontoon = (function () {
             Pontoon.openEditor(entity);
           }
         } else if (message.type === "INACTIVE") {
-          if (!Pontoon.app.external && $("#editor").is('.opened')) {
+          if (!Pontoon.app.width && $("#editor").is('.opened')) {
             $('#cancel').click();
           }
         } else if (message.type === "UPDATE") {
@@ -1015,7 +1015,7 @@ var Pontoon = (function () {
       this.app = {
         win: app,
         path: $('base').attr('href'), // pontoon.css injection
-        external: $('#server').data('external'),
+        width: $('#server').data('width'),
         links: $('#server').data('links')
       };
       this.project = {
@@ -1043,7 +1043,6 @@ var Pontoon = (function () {
         self.common.postMessage("INITIALIZE", {
           locale: self.locale,
           path: self.app.path,
-          external: self.app.external,
           links: self.app.links,
           entities: self.project.entities,
           pk: self.project.pk,
