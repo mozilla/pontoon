@@ -489,13 +489,21 @@
        * Handle messages from project code
        */
       function receiveMessage(e) {
-        if (e.source === Pontoon.app.win) { // TODO: hardcode Pontoon domain name
+        // TODO: hardcode Pontoon domain name
+        if (e.source === Pontoon.app.win) {
           var message = JSON.parse(e.data);
-          if (message.type === "HOVER") {
+
+          switch (message.type) {
+
+          case "HOVER":
             Pontoon.project.entities[message.value].hover();
-          } else if (message.type === "UNHOVER") {
+            break;
+
+          case "UNHOVER":
             Pontoon.project.entities[message.value].unhover();
-          } else if (message.type === "NAVIGATE") {
+            break;
+
+          case "NAVIGATE":
             // Stop editing old entity
             var target = $('.pontoon-editable-toolbar')[0].target;
             if (target) {
@@ -510,14 +518,20 @@
               entity.hover();
               startEditing();
             }
-          } else if (message.type === "EDIT") {
+            break;
+
+          case "EDIT":
             startEditing();
-          } else if (message.type === "SAVE") {
+            break;
+
+          case "SAVE":
             $($('.pontoon-editable-toolbar')[0].target.entity.node).each(function() {
               this.html(message.value);
             });
             $('.pontoon-editable-toolbar > .save').click();
-          } else if (message.type === "DELETE") {
+            break;
+
+          case "DELETE":
             var target = $('.pontoon-editable-toolbar')[0].target,
                 entity = target.entity;
             $(entity.node).each(function() {
@@ -528,11 +542,17 @@
             entity.translation = '';
             sendData();
             postMessage("DELETE", entity.id);
-          } else if (message.type === "CANCEL") {
+            break;
+
+          case "CANCEL":
             $('.pontoon-editable-toolbar > .cancel').click();
-          } else if (message.type === "MODE") {
+            break;
+
+          case "MODE":
             $("#context .mode").attr("label", message.value + " mode");
-          } else if (message.type === "HTML") {
+            break;
+
+          case "HTML":
             $.ajax({
               url: Pontoon.project.url,
               success: function(data) {
@@ -553,13 +573,17 @@
                 postMessage("HTML", start + inner.html() + "\n</html>");
               }
             });
-          } else if (message.type === "RESIZE") {
+            break;
+
+          case "RESIZE":
             var toolbar = $('.pontoon-editable-toolbar'),
                 node = toolbar[0].target;
             if (node) {
               left = node.getBoundingClientRect().left + window.scrollX;
               toolbar.css('left', left);
             }
+            break;
+
           }
         }
       }

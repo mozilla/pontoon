@@ -955,47 +955,74 @@ var Pontoon = (function () {
      * Handle messages from project code
      */
     receiveMessage: function (e) {
+      // TODO: hardcode Pontoon domain name
       if (e.source === Pontoon.project.win) {
         var message = JSON.parse(e.data);
-        if (message.type === "DATA") {
+
+        switch (message.type) {
+
+        case "DATA":
           // Deep copy: http://api.jquery.com/jQuery.extend
           Pontoon.project.entities = $.extend(true, Pontoon.project.entities, message.value.entities);
-        } else if (message.type === "RENDER") {
+          break;
+
+        case "RENDER":
           var value = message.value;
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
           Pontoon.createUI();
-        } else if (message.type === "ERROR") {
-          var msg = message.value || 'Oops, something went wrong. Refresh to try again.';
+          break;
+
+        case "ERROR":
+          var msg = message.value ||
+              'Oops, something went wrong. Refresh to try again.';
           Pontoon.common.showError(msg);
           $("#progress, #switch, #drag").remove();
           $("#spinner").fadeOut(function() {
             $("#pontoon > header > .container").fadeIn();
           });
           Pontoon.attachMainHandlers();
-        } else if (message.type === "SWITCH") {
+          break;
+
+        case "SWITCH":
           $("#switch").click();
-        } else if (message.type === "HOVER") {
+          break;
+
+        case "HOVER":
           Pontoon.project.entities[message.value].ui.addClass('hovered');
-        } else if (message.type === "UNHOVER") {
+          break;
+
+        case "UNHOVER":
           Pontoon.project.entities[message.value].ui.removeClass('hovered');
-        } else if (message.type === "ACTIVE") {
+          break;
+
+        case "ACTIVE":
           if ($('#switch').is('.opened')) {
             var entity = Pontoon.project.entities[message.value];
             Pontoon.openEditor(entity);
           }
-        } else if (message.type === "INACTIVE") {
+          break;
+
+        case "INACTIVE":
           if (!Pontoon.project.width && $("#editor").is('.opened')) {
             $('#cancel').click();
           }
-        } else if (message.type === "UPDATE") {
+          break;
+
+        case "UPDATE":
           var entity = Pontoon.project.entities[message.value.id];
           Pontoon.updateOnServer(entity, message.value.content);
-        } else if (message.type === "DELETE") {
+          break;
+
+        case "DELETE":
           var entity = Pontoon.project.entities[message.value];
           Pontoon.updateEntityUI(entity);
-        } else if (message.type === "HTML") {
+          break;
+
+        case "HTML":
           Pontoon.save("html", message.value);
+          break;
+
         }
       }
     },
