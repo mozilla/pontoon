@@ -373,7 +373,7 @@ var Pontoon = (function () {
       entity.ui.addClass('hovered');
 
       // Open advanced features by default if project requests them
-      if (this.project.win && !this.app.width) {
+      if (this.project.win && !this.project.width) {
         $("#entitylist")
           .css('left', -$('#sidebar').width()/2);
 
@@ -555,7 +555,7 @@ var Pontoon = (function () {
 
         // Esc: cancel
         if (key === 27) {
-          if (self.project.win && !self.app.width) {
+          if (self.project.win && !self.project.width) {
             $('#cancel').click();
           }
           return false;
@@ -817,10 +817,10 @@ var Pontoon = (function () {
             entity.translation = data.translation;
             entity.approved = data.approved;
             self.updateEntityUI(entity);
-            if (self.project.win && !self.app.width &&
+            if (self.project.win && !self.project.width &&
                 $("#editor").is('.opened')) {
               $('#cancel').click();
-            } else if (!self.project.win || self.app.width) {
+            } else if (!self.project.win || self.project.width) {
               $('#next').click();
             }
           } else if (data === "error") {
@@ -945,7 +945,7 @@ var Pontoon = (function () {
       });
 
       // If advanced features opened by default, open first entity in the editor
-      if (!self.project.win || self.app.width) {
+      if (!self.project.win || self.project.width) {
         $("#entitylist .entity:first").mouseover().click();
       }
     },
@@ -985,7 +985,7 @@ var Pontoon = (function () {
             Pontoon.openEditor(entity);
           }
         } else if (message.type === "INACTIVE") {
-          if (!Pontoon.app.width && $("#editor").is('.opened')) {
+          if (!Pontoon.project.width && $("#editor").is('.opened')) {
             $('#cancel').click();
           }
         } else if (message.type === "UPDATE") {
@@ -1014,12 +1014,7 @@ var Pontoon = (function () {
       // Build Pontoon object
       this.app = {
         win: app,
-        path: $('base').attr('href'), // pontoon.css injection
-        width: (
-          $('#server').data('width') &&
-          ($(window).width() - $('#server').data('width')) >= 900) ?
-          $('#server').data('width') : false,
-        links: $('#server').data('links')
+        path: $('base').attr('href') // pontoon.css injection
       };
       this.project = {
         win: project,
@@ -1027,7 +1022,12 @@ var Pontoon = (function () {
         title: "",
         entities: $('#server').data('entities') || [],
         pk: $('#server').data('id'),
-        format: $('#server').data('format')
+        format: $('#server').data('format'),
+        width: (
+          $('#server').data('width') &&
+          ($(window).width() - $('#server').data('width')) >= 900) ?
+          $('#server').data('width') : false,
+        links: $('#server').data('links')
       };
       this.locale = {
         code: $('#server').data('locale'),
@@ -1045,7 +1045,7 @@ var Pontoon = (function () {
       if (project) {
         self.common.postMessage("INITIALIZE", {
           path: self.app.path,
-          links: self.app.links,
+          links: self.project.links,
           entities: self.project.entities,
           pk: self.project.pk,
           format: self.project.format,

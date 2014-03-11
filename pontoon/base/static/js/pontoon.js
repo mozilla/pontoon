@@ -575,7 +575,7 @@
 
       // Disable links
       $('a').click(function(e) {
-        if (!Pontoon.app.links) {
+        if (!Pontoon.project.links) {
           e.preventDefault();
         }
       });
@@ -667,7 +667,6 @@
           app: {
             win: appWindow,
             path: message.value.path,
-            links: message.value.links
           },
           project: {
             win: window,
@@ -675,7 +674,8 @@
             title: document.title.split("-->")[1] || document.title,
             entities: message.value.entities,
             pk: message.value.pk,
-            format: message.value.format
+            format: message.value.format,
+            links: message.value.links
           },
           locale: message.value.locale,
           user: message.value.user
