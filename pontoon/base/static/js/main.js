@@ -955,7 +955,6 @@ var Pontoon = (function () {
      * Handle messages from project code
      */
     receiveMessage: function (e) {
-      // TODO: hardcode Pontoon domain name
       if (e.source === Pontoon.project.win) {
         var message = JSON.parse(e.data);
 

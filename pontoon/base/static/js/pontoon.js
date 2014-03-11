@@ -489,7 +489,6 @@
        * Handle messages from project code
        */
       function receiveMessage(e) {
-        // TODO: hardcode Pontoon domain name
         if (e.source === Pontoon.app.win) {
           var message = JSON.parse(e.data);
 
@@ -684,8 +683,7 @@
 
   // Wait for main code trigger
   function initizalize(e) {
-    // Prevent execution of any code if page not loaded in Pontoon iframe
-    if (e.source === appWindow) { // TODO: hardcode Pontoon domain name
+    if (e.source === appWindow) {
       var message = JSON.parse(e.data);
       if (message.type === "INITIALIZE") {
         Pontoon = {
