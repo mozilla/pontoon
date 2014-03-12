@@ -39,6 +39,11 @@
         {{ form.name }}
         {{ form.name.errors }}
     </div>
+    <div class="clearfix">
+        {{ form.slug.label_tag() }}
+        {{ form.slug }}
+        {{ form.slug.errors }}
+    </div>
     <div class="locales clearfix">
         <div class="locale select">
           <label for="available">Available locales<a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>

@@ -21,6 +21,7 @@ from django.db import transaction
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
+from django.template.defaultfilters import slugify
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
 
@@ -44,6 +45,29 @@ def admin(request, template='admin.html'):
     }
 
     return render(request, template, data)
+
+
+def get_slug(request):
+    """Convert project name to slug."""
+    log.debug("Convert project name to slug.")
+
+    if not request.user.has_perm('base.can_manage'):
+        return HttpResponse("error")
+
+    if not request.is_ajax():
+        return HttpResponse("error")
+
+    try:
+        name = request.GET['name']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    log.debug("Name: " + name)
+
+    slug = slugify(name)
+    log.debug("Slug: " + slug)
+    return HttpResponse(slug)
 
 
 def manage_project(request, name=None, template='project.html'):

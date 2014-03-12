@@ -34,6 +34,7 @@ class Locale(models.Model):
 
 class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
+    slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale)
 
     # Repositories

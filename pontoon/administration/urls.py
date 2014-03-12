@@ -16,4 +16,6 @@ urlpatterns = patterns(
         name='pontoon.admin.repository.update'),
     url(r'^transifex/$', views.update_from_transifex,
         name='pontoon.admin.transifex.update'),
+    url(r'^get-slug/$', views.get_slug,
+        name='pontoon.admin.get_slug'),
 )

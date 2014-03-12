@@ -37,6 +37,27 @@ $(function() {
     }
   });
 
+  // Suggest slugified name for new projects
+  $('#id_name').blur(function() {
+    if ($('input[name=pk]').length > 0) {
+      return;
+    }
+    $('#id_slug').attr('placeholder', 'Retrieving...');
+    $.ajax({
+      url: '/admin/get-slug/',
+      data: {
+        name: $('#id_name').val()
+      },
+      success: function(data) {
+        var value = (data === "error") ? "" : data;
+        $('#id_slug').val(value);
+      },
+      error: function() {
+        $('#id_slug').attr('placeholder', '');
+      }
+    });
+  });
+
   // Choose locales
   $('.locale.select li').live('click.pontoon', function (e) {
     var target = $(this).parents('.locale.select').siblings('.locale.select').find('ul'),
