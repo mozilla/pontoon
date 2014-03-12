@@ -417,7 +417,7 @@ body.admin-form #intro {
   display: block;
   height: 24px;
   margin-left: -1px;
-  width: 613px; /* Must be same as #pontoon.admin-form #intro form width - padding - margin-left */
+  width: 615px; /* Must be same as #pontoon.admin-form #intro form width - padding - margin-left */
 }
 
 #pontoon.admin-form #intro .button {
@@ -493,17 +493,12 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .locale.select .menu {
-  border: 1px solid #000000;
   display: inline-block;
   margin: 2px 0 -4px -1px;
   overflow: auto;
   position: relative;
   top: 0;
   width: 271px;
-
-  box-shadow: 0 0 5px #111111;
-  -moz-box-shadow: 0 0 5px #111111;
-  -webkit-box-shadow: 0 0 5px #111111;
 }
 
 #pontoon.admin-form #intro .locale.select .menu .search {
@@ -567,9 +562,11 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .repository .type.select .selector {
+  color: #444444;
+  font-weight: 400;
   height: 24px;
   line-height: 24px;
-  width: 196px;
+  width: 198px;
 }
 
 #pontoon.admin-form #intro .repository .type.select .selector > span:nth-child(2) {
@@ -591,7 +588,7 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .repository .details-wrapper {
   float: left;
-  width: 407px;
+  width: 409px;
 }
 
 #pontoon.admin-form #intro .repository .details-wrapper[data-repository-type="transifex"] .repo {
@@ -606,9 +603,10 @@ body.admin-form #intro {
   width: 400px;
 }
 
-#pontoon.admin-form #intro .edit .repository input[type=text] {
+#pontoon.admin-form #intro .edit .repository input[type=text],
+#pontoon.admin-form #intro .subpages input[id*=url] {
   float: left;
-  width: 363px;
+  width: 368px;
 }
 
 #pontoon.admin-form #intro .transifex {
@@ -666,7 +664,7 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .subpages label[for*=name] {
   float: left;
-  width: 207px;
+  width: 205px;
 }
 
 #pontoon.admin-form #intro .subpages input[id*=name] {
@@ -676,11 +674,6 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .subpages input[id$=DELETE] {
   display: none;
-}
-
-#pontoon.admin-form #intro .subpages input[id*=url] {
-  float: left;
-  width: 363px;
 }
 
 #pontoon.admin-form #intro .subpages label[for*=url] {
