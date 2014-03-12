@@ -9,7 +9,8 @@ import json
 import os
 import polib
 import requests
-import silme.core, silme.format.properties
+import silme.core
+import silme.format.properties
 import StringIO
 import traceback
 import urllib
@@ -163,11 +164,13 @@ def translate_site(request, locale, url, template='translate.html'):
 
     # Project stored in the DB, add more data
     if page is None:
-        return HttpResponseRedirect(reverse('pontoon.translate.project',
-        kwargs={'locale': locale, 'slug': p.slug}))
+        return HttpResponseRedirect(reverse(
+            'pontoon.translate.project',
+            kwargs={'locale': locale, 'slug': p.slug}))
     else:
-        return HttpResponseRedirect(reverse('pontoon.translate.project.page',
-        kwargs={'locale': locale, 'slug': p.slug, 'page': page}))
+        return HttpResponseRedirect(reverse(
+            'pontoon.translate.project.page',
+            kwargs={'locale': locale, 'slug': p.slug, 'page': page}))
 
 
 def _get_translation(entity, locale):
@@ -191,7 +194,7 @@ def _get_entities(project, locale, page=None):
     log.debug("Load all project entities and translations.")
 
     entities = Entity.objects.filter(project=project)
-    if page != None and entities[0].source != '':
+    if page is not None and entities[0].source != '':
         entities = entities.filter(source__endswith=page + '.properties')
 
     entities_array = []
@@ -211,7 +214,7 @@ def _get_entities(project, locale, page=None):
     return entities_array
 
 
-def translate_project(request, locale, slug, page=None, 
+def translate_project(request, locale, slug, page=None,
                       template='translate.html'):
     """Translate view: project."""
     log.debug("Translate view: project.")
@@ -258,10 +261,10 @@ def translate_project(request, locale, slug, page=None,
 
         gravatar_url = "http://www.gravatar.com/avatar/" + \
             hashlib.md5(email.lower()).hexdigest() + "?"
-        gravatar_url += urllib.urlencode({'s':str(size)})
+        gravatar_url += urllib.urlencode({'s': str(size)})
         if settings.SITE_URL != 'http://localhost:8000':
             default = settings.SITE_URL + static('img/user_icon&24.png')
-            gravatar_url += urllib.urlencode({'d':default})
+            gravatar_url += urllib.urlencode({'d': default})
 
         data['gravatar_url'] = gravatar_url
 
@@ -311,7 +314,7 @@ def translate_project(request, locale, slug, page=None,
     return render(request, template, data)
 
 
-def _request(type, project, resource, locale, 
+def _request(type, project, resource, locale,
              username, password, payload=False):
     """
     Make request to Transifex server.
@@ -327,7 +330,8 @@ def _request(type, project, resource, locale,
     Returns:
         A server response or error message.
     """
-    url = os.path.join('https://www.transifex.com/api/2/project/', project, 
+    url = os.path.join(
+        'https://www.transifex.com/api/2/project/', project,
         'resource', resource, 'translation', locale, 'strings')
 
     try:
@@ -335,8 +339,8 @@ def _request(type, project, resource, locale,
             r = requests.get(
                 url + '?details', auth=(username, password), timeout=10)
         elif type == 'put':
-            r = requests.put(url, auth=(username, password), timeout=10, 
-                             data=json.dumps(payload), 
+            r = requests.put(url, auth=(username, password), timeout=10,
+                             data=json.dumps(payload),
                              headers={'content-type': 'application/json'})
         log.debug(r.status_code)
         if r.status_code == 401:
@@ -420,8 +424,8 @@ def get_translations_from_other_locales(request, template=None):
         log.debug("Translations do not exist.")
         return HttpResponse("error")
     else:
-        return HttpResponse(json.dumps(payload, indent=4),
-            mimetype='application/json')
+        return HttpResponse(
+            json.dumps(payload, indent=4), mimetype='application/json')
 
 
 def get_translation_history(request, template=None):
@@ -466,15 +470,15 @@ def get_translation_history(request, template=None):
         for t in translations:
             o = {
                 "id": t.id,
-                "user": getattr(t.user, 'email', user), # Empty for imported
+                "user": getattr(t.user, 'email', user),  # Empty for imported
                 "translation": t.string,
                 "date": t.date.strftime("%b %d, %Y %H:%M"),
                 "approved": t.approved,
             }
             payload.append(o)
 
-        return HttpResponse(json.dumps(payload, indent=4),
-            mimetype='application/json')
+        return HttpResponse(
+            json.dumps(payload, indent=4), mimetype='application/json')
 
     else:
         log.debug("Translations do not exist.")
@@ -555,7 +559,7 @@ def delete_translation(request, template=None):
     # Non-privileged users can only delete own non-approved translations
     if not request.user.has_perm('base.can_localize'):
         if translation.user == request.user:
-            if translation.approved == True:
+            if translation.approved is True:
                 return HttpResponse("error")
 
         else:
@@ -567,7 +571,7 @@ def delete_translation(request, template=None):
     translation.delete()
     next = _get_translation(entity=entity, locale=locale)
 
-    if next.id != None and request.user.has_perm('base.can_localize'):
+    if next.id is not None and request.user.has_perm('base.can_localize'):
         next.approved = True
         next.save()
 
@@ -1009,8 +1013,8 @@ def download(request, template=None):
         response['Content-Type'] = 'application/x-zip-compressed'
 
     response.content = content
-    response['Content-Disposition'] = 'attachment; filename=' + filename +\
-            '.' + type
+    response['Content-Disposition'] =
+    'attachment; filename=' + filename + '.' + type
     return response
 
 
@@ -1069,7 +1073,8 @@ def commit_to_svn(request, template=None):
         client.set_default_password(password)
 
     try:
-        client.checkin([locale_repository_path],
+        client.checkin(
+            [locale_repository_path],
             'Pontoon: update ' + locale.code + ' localization of ' + project)
         log.info('Commited ' + locale.code + ' localization of ' + project)
 
@@ -1121,7 +1126,7 @@ def save_to_transifex(request, template=None):
     username = data.get('auth', {}) \
                    .get('username', profile.transifex_username)
     password = data.get('auth', {}) \
-                   .get('password', 
+                   .get('password',
                         base64.decodestring(profile.transifex_password))
     if len(username) == 0 or len(password) == 0:
         return HttpResponse("authenticate")
@@ -1132,9 +1137,8 @@ def save_to_transifex(request, template=None):
         obj = {
             # Identify translation strings using hashes
             "source_entity_hash": hashlib.md5(
-                ':'.join([entity['original'], '']) \
-                   .encode('utf-8')) \
-                   .hexdigest(),
+                ':'.join([entity['original'], ''])
+                   .encode('utf-8')).hexdigest(),
             "translation": entity['translation']
         }
         payload.append(obj)
@@ -1145,7 +1149,7 @@ def save_to_transifex(request, template=None):
         p = Project.objects.get(url=data['url'])
     except Project.DoesNotExist:
         return HttpResponse("error")
-    response = _request('put', p.transifex_project, p.transifex_resource, 
+    response = _request('put', p.transifex_project, p.transifex_resource,
                         data['locale'], username, password, payload)
 
     """Save Transifex username and password."""
