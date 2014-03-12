@@ -9,7 +9,8 @@ import json
 import os
 import shutil
 import polib
-import silme.core, silme.format.properties
+import silme.core
+import silme.format.properties
 import urllib2
 
 from django.conf import settings
@@ -128,7 +129,8 @@ def manage_project(request, slug=None, template='project.html'):
                 subtitle += '. Saved.'
                 pk = project.pk
                 if len(Entity.objects.filter(project=project)) is 0:
-                    messages.warning(request,
+                    messages.warning(
+                        request,
                         _("Before localizing projects, \
                            you need to import strings from the repository."))
             else:
@@ -146,7 +148,8 @@ def manage_project(request, slug=None, template='project.html'):
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
             if len(Entity.objects.filter(project=project)) is 0:
-                messages.warning(request,
+                messages.warning(
+                    request,
                     _("Before localizing projects, \
                        you need to import strings from the repository."))
         except Project.DoesNotExist:
@@ -185,25 +188,31 @@ def delete_project(request, pk, template=None):
         transaction.commit()
         return HttpResponseRedirect(reverse('pontoon.admin'))
     except Exception as e:
-        log.error("Admin interface: delete project error.\n%s"
+        log.error(
+            "Admin interface: delete project error.\n%s"
             % unicode(e), exc_info=True)
         transaction.rollback()
-        messages.error(request,
+        messages.error(
+            request,
             _("There was an error during deleting this project."))
-        return HttpResponseRedirect(reverse('pontoon.admin.project',
+        return HttpResponseRedirect(reverse(
+            'pontoon.admin.project',
             args=[project.slug]))
 
 
 def _save_entity(project, original, comment="", key="", source=""):
     """Admin interface: save new or update existing entity in DB."""
 
-    try: # Update existing entity
+    # Update existing entity
+    try:
         if key is "":
             e = Entity.objects.get(project=project, string=original)
         else:
             e = Entity.objects.get(project=project, key=key, source=source)
             e.string = original
-    except Entity.DoesNotExist: # Add new entity
+
+    # Add new entity
+    except Entity.DoesNotExist:
         e = Entity(project=project, string=original, key=key, source=source)
 
     if len(comment) > 0:
@@ -226,7 +235,8 @@ def _save_translation(entity, locale, translation):
 
     # Save new translation if it doesn's exist yet
     except Translation.DoesNotExist:
-        t = Translation(entity=entity, locale=locale, string=translation,
+        t = Translation(
+            entity=entity, locale=locale, string=translation,
             date=datetime.datetime.now(), approved=True)
         t.save()
 
@@ -367,8 +377,8 @@ def _extract_properties(project, locale, paths, source_locale):
     for path in paths:
         try:
             f = open(path)
-            l10nobject = silme.format.properties. \
-                         PropertiesFormatParser.get_structure(f.read())
+            l10nobject = silme.format.properties \
+                .PropertiesFormatParser.get_structure(f.read())
 
             locale_code = locale.code
             if 'templates' in path:
@@ -576,8 +586,8 @@ def _update_from_repository(
                     _extract_properties(
                         project, l, locale_paths, source_locale)
                 elif format == 'lang':
-                   _extract_lang(
-                    project, l, locale_paths, source_locale)
+                    _extract_lang(
+                        project, l, locale_paths, source_locale)
 
         elif format == 'ini':
             try:
@@ -664,7 +674,7 @@ def update_from_transifex(request, template=None):
     for l in p.locales.all():
         """Make GET request to Transifex API."""
         response = _request('get', transifex_project, transifex_resource,
-            l.code, username, password)
+                            l.code, username, password)
 
         """Save or update Transifex data to DB."""
         if hasattr(response, 'status_code') and response.status_code == 200:
