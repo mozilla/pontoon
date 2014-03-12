@@ -103,7 +103,7 @@ $(function() {
 
     params = {
       pk: $('input[name=pk]').val(),
-      csrfmiddlewaretoken: $('#server').data('csrf')
+      csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
     }
     if (source === 'repository') {
       params.repository_url = $('input[name=repository_url]').val();

@@ -5,12 +5,6 @@
 {% block class %}admin-form{% endblock %}
 
 {% block content %}
-<!-- Server data -->
-<div id="server"
-     class="hidden"
-     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}>
-</div>
-
 <section id="intro" class="visible">
 
   <nav>
@@ -29,9 +23,9 @@
     </ul>
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
     {% if pk %}
-      <input type="hidden" value="{{ pk }}" name="pk">
-      {{ form.format.as_hidden() }}
-      {{ form.repository_path.as_hidden() }}
+    <input type="hidden" value="{{ pk }}" name="pk">
+    {{ form.format.as_hidden() }}
+    {{ form.repository_path.as_hidden() }}
     {% endif %}
 
     <div class="clearfix">
