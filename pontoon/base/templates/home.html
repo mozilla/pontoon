@@ -35,7 +35,7 @@
       <div class="project select">
         {% if projects|length > 0 %}
         <div class="button breadcrumbs selector">
-          <span class="title" data-url="">Select website</span>
+          <span class="title">Select website</span>
         </div>
         {% endif %}
         <div class="menu">
@@ -45,6 +45,7 @@
             <li class="clearfix">
               <span class="project-name"
                 data-id={{ project.id }}
+                data-slug={{ project.slug }}
                 data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
                 data-pages="{% if pages %}{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}{% endif %}">{{ project.name }}</span>
               <span class="project-url">{{ project.url }}</span>

@@ -70,7 +70,7 @@ def get_slug(request):
     return HttpResponse(slug)
 
 
-def manage_project(request, name=None, template='project.html'):
+def manage_project(request, slug=None, template='project.html'):
     """Admin interface: manage project."""
     log.debug("Admin interface: manage project.")
 
@@ -118,9 +118,9 @@ def manage_project(request, name=None, template='project.html'):
             subtitle += '. Error.'
 
     # If URL specified and found, show edit, otherwise show add form
-    elif name is not None:
+    elif slug is not None:
         try:
-            project = Project.objects.get(name=name)
+            project = Project.objects.get(slug=slug)
             pk = project.pk
             form = ProjectForm(instance=project)
             formset = SubpageInlineFormSet(instance=project)
@@ -130,7 +130,7 @@ def manage_project(request, name=None, template='project.html'):
                 messages.warning(request,
                     _("Before localizing projects, you need to import strings from the repository."))
         except Project.DoesNotExist:
-            form = ProjectForm(initial={'name': name})
+            form = ProjectForm(initial={'slug': slug})
 
     data = {
         'form': form,

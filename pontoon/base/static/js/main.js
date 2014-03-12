@@ -1186,7 +1186,7 @@ var Pontoon = (function () {
         e.stopPropagation();
 
         var locale = $('.locale .selector .language').attr('class').split(' ')[1],
-            project = $('.project .selector .title').html(),
+            project = $('.project .selector .title').data('slug'),
             page = $('.page .selector .title:visible').html(),
             loc = '/locale/' + locale + '/project/' + project;
 
@@ -1205,11 +1205,11 @@ var Pontoon = (function () {
       // Project menu handler
       $('.project .menu li:not(".no-match")').click(function () {
         var name = $(this).find('.project-name').html(),
-            url = $(this).find('.project-url').html();
+            slug = $(this).find('.project-name').data('slug');
 
         $('.project .selector .title')
           .html(name)
-          .data('url', url);
+          .data('slug', slug);
 
         if ($('body').is('.admin')) {
           return false;

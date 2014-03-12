@@ -193,7 +193,7 @@ def _get_entities(project, locale, page=None):
     return entities_array
 
 
-def translate_project(request, locale, project, page=None, template='translate.html'):
+def translate_project(request, locale, slug, page=None, template='translate.html'):
     """Translate view: project."""
     log.debug("Translate view: project.")
 
@@ -207,7 +207,7 @@ def translate_project(request, locale, project, page=None, template='translate.h
 
     # Validate project
     try:
-        p = Project.objects.get(name=project, pk__in=Entity.objects.values('project'))
+        p = Project.objects.get(slug=slug, pk__in=Entity.objects.values('project'))
     except Project.DoesNotExist:
         messages.error(request, "Oops, project could not be found.")
         request.session['translate_error'] = {
