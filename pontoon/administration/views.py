@@ -25,8 +25,21 @@ from django.template.defaultfilters import slugify
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
 
-from pontoon.administration.utils.vcs import update_from_vcs, PullFromRepositoryException
-from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, ProjectForm, UserProfile
+from pontoon.administration.utils.vcs import (
+    PullFromRepositoryException,
+    update_from_vcs,
+)
+
+from pontoon.base.models import (
+    Entity,
+    Locale,
+    Project,
+    ProjectForm,
+    Subpage,
+    Translation,
+    UserProfile,
+)
+
 from pontoon.base.views import _request
 
 
@@ -85,33 +98,39 @@ def manage_project(request, slug=None, template='project.html'):
     pk = None
 
     if request.method == 'POST':
-        locales_selected = Locale.objects.filter(pk__in=request.POST.getlist('locales'))
+        locales_selected = Locale.objects.filter(
+            pk__in=request.POST.getlist('locales'))
         # Update existing project
         try:
             pk = request.POST['pk']
             project = Project.objects.get(pk=pk)
             form = ProjectForm(request.POST, instance=project)
-            formset = SubpageInlineFormSet(request.POST, instance=project) # Needed if form invalid
+            # Needed if form invalid
+            formset = SubpageInlineFormSet(request.POST, instance=project)
             subtitle = 'Edit project'
 
         # Add a new project
         except MultiValueDictKeyError:
             form = ProjectForm(request.POST)
-            formset = SubpageInlineFormSet(request.POST) # Needed if form invalid
+            # Needed if form invalid
+            formset = SubpageInlineFormSet(request.POST)
 
         if form.is_valid():
             project = form.save(commit=False)
             formset = SubpageInlineFormSet(request.POST, instance=project)
             if formset.is_valid():
                 project.save()
-                form.save_m2m() # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#the-save-method
+                # http://bit.ly/1glKN50
+                form.save_m2m()
                 formset.save()
-                formset = SubpageInlineFormSet(instance=project) # Properly displays formset, but removes errors (only usable if valid)
+                # Properly displays formset, but removes errors (if valid only)
+                formset = SubpageInlineFormSet(instance=project)
                 subtitle += '. Saved.'
                 pk = project.pk
                 if len(Entity.objects.filter(project=project)) is 0:
                     messages.warning(request,
-                        _("Before localizing projects, you need to import strings from the repository."))
+                        _("Before localizing projects, \
+                           you need to import strings from the repository."))
             else:
                 subtitle += '. Error.'
         else:
@@ -128,7 +147,8 @@ def manage_project(request, slug=None, template='project.html'):
             subtitle = 'Edit project'
             if len(Entity.objects.filter(project=project)) is 0:
                 messages.warning(request,
-                    _("Before localizing projects, you need to import strings from the repository."))
+                    _("Before localizing projects, \
+                       you need to import strings from the repository."))
         except Project.DoesNotExist:
             form = ProjectForm(initial={'slug': slug})
 
@@ -219,7 +239,8 @@ def _get_locale_paths(source_paths, source_directory, locale_code):
         if source_directory == locale_code:
             path = sp
         else:
-            path = sp.replace('/' + source_directory + '/', '/' + locale_code + '/').rstrip("t")
+            path = sp.replace('/' + source_directory + '/',
+                              '/' + locale_code + '/').rstrip("t")
         locale_paths.append(path)
     return locale_paths
 
@@ -271,7 +292,8 @@ def _is_one_locale_repository(repository_url, repository_path_master):
     if last in ('templates', 'en-US', 'en-GB', 'en'):
         source_directory = last
         repository_url_master = repository_url.rsplit(last, 1)[0]
-        repository_path = os.path.join(repository_path_master, source_directory)
+        repository_path = os.path.join(
+            repository_path_master, source_directory)
 
     return source_directory, repository_url_master, repository_path
 
@@ -326,8 +348,12 @@ def _extract_po(project, locale, paths, source_locale):
                 for entity in entities:
                     if len(entity.msgstr) > 0:
                         try:
-                            e = Entity.objects.get(project=project, string=entity.msgid)
-                            _save_translation(entity=e, locale=locale, translation=entity.msgstr)
+                            e = Entity.objects.get(
+                                project=project, string=entity.msgid)
+                            _save_translation(
+                                entity=e,
+                                locale=locale,
+                                translation=entity.msgstr)
                         except Entity.DoesNotExist:
                             continue
             log.debug("[" + locale.code + "]: saved to DB.")
@@ -341,7 +367,8 @@ def _extract_properties(project, locale, paths, source_locale):
     for path in paths:
         try:
             f = open(path)
-            l10nobject = silme.format.properties.PropertiesFormatParser.get_structure(f.read())
+            l10nobject = silme.format.properties. \
+                         PropertiesFormatParser.get_structure(f.read())
 
             locale_code = locale.code
             if 'templates' in path:
@@ -351,17 +378,25 @@ def _extract_properties(project, locale, paths, source_locale):
             for line in l10nobject:
                 if isinstance(line, silme.core.entity.Entity):
                     if locale.code == source_locale:
-                        _save_entity(project=project, original=line.value, key=line.id, source=short_path)
+                        _save_entity(project=project, original=line.value,
+                                     key=line.id, source=short_path)
                     else:
                         try:
-                            e = Entity.objects.get(project=project, key=line.id, source=short_path)
-                            _save_translation(entity=e, locale=locale, translation=line.value)
+                            e = Entity.objects.get(
+                                project=project,
+                                key=line.id,
+                                source=short_path)
+                            _save_translation(
+                                entity=e,
+                                locale=locale,
+                                translation=line.value)
                         except Entity.DoesNotExist:
                             continue
             log.debug("[" + locale.code + "]: " + path + " saved to DB.")
             f.close()
         except IOError:
-            log.debug("[" + locale.code + "]: " + path + " doesn't exist. Skipping.")
+            log.debug("[" + locale.code + "]: " +
+                      path + " doesn't exist. Skipping.")
 
 
 def _extract_lang(project, locale, paths, source_locale):
@@ -378,7 +413,8 @@ def _extract_lang(project, locale, paths, source_locale):
                 if key != value[1]:
                     try:
                         e = Entity.objects.get(project=project, string=key)
-                        _save_translation(entity=e, locale=locale, translation=value[1])
+                        _save_translation(
+                            entity=e, locale=locale, translation=value[1])
                     except Entity.DoesNotExist:
                         continue
 
@@ -406,13 +442,17 @@ def _extract_ini(project, path):
     if source_locale is None:
         raise Exception("error")
 
-    # Move source locale to the top, so we save entities first, then translations
+    # Move source locale on top, so we save entities first, then translations
     sections.insert(0, sections.pop(sections.index(source_locale)))
 
     for section in sections:
         for item in config.items(section):
             if section == source_locale:
-                _save_entity(project=project, original=item[1], key=item[0], source=path)
+                _save_entity(
+                    project=project,
+                    original=item[1],
+                    key=item[0],
+                    source=path)
             else:
                 try:
                     l = Locale.objects.get(code=section)
@@ -420,10 +460,13 @@ def _extract_ini(project, path):
                     log.debug("Locale not supported: " + section)
                     break
                 try:
-                    e = Entity.objects.get(project=project, key=item[0], source=path)
-                    _save_translation(entity=e, locale=l, translation=item[1])
+                    e = Entity.objects.get(
+                        project=project, key=item[0], source=path)
+                    _save_translation(
+                        entity=e, locale=l, translation=item[1])
                 except Entity.DoesNotExist:
-                    log.debug("[" + section + "]: line ID " + item[0] + " is obsolete.")
+                    log.debug("[" + section + "]: line ID " +
+                              item[0] + " is obsolete.")
                     continue
         log.debug("[" + section + "]: saved to DB.")
 
@@ -481,21 +524,27 @@ def _update_from_repository(
     elif repository_type in ('git', 'hg', 'svn'):
         """ Mercurial """
         # Update repository URL and path if one-locale repository
-        source_directory, repository_url_master, repository_path = _is_one_locale_repository(repository_url, repository_path_master)
+        source_directory, repository_url_master, repository_path = \
+            _is_one_locale_repository(repository_url, repository_path_master)
 
         update_from_vcs(repository_type, repository_url, repository_path)
 
         # Get file format and paths to source files
         if source_directory is False:
-            source_directory, source_directory_path = _get_source_directory(repository_path)
-            format, source_paths = _get_format_and_source_paths(os.path.join(source_directory_path, source_directory))
+            source_directory, source_directory_path = \
+                _get_source_directory(repository_path)
+            format, source_paths = \
+                _get_format_and_source_paths(
+                    os.path.join(source_directory_path, source_directory))
         else:
-            format, source_paths = _get_format_and_source_paths(repository_path)
+            format, source_paths = \
+                _get_format_and_source_paths(repository_path)
 
             # Get remaining repositories if one-locale repository specified
             for l in project.locales.all():
                 update_from_vcs(
-                    repository_type, os.path.join(repository_url_master, l.code),
+                    repository_type,
+                    os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
 
         project.format = format
@@ -516,14 +565,19 @@ def _update_from_repository(
                 locale_code = l.code
                 if index == 0:
                     locale_code = source_directory
-                locale_paths = _get_locale_paths(source_paths, source_directory, locale_code)
+                locale_paths = \
+                    _get_locale_paths(
+                        source_paths, source_directory, locale_code)
 
                 if format == 'po':
-                    _extract_po(project, l, locale_paths, source_locale)
+                    _extract_po(
+                        project, l, locale_paths, source_locale)
                 elif format == 'properties':
-                    _extract_properties(project, l, locale_paths, source_locale)
+                    _extract_properties(
+                        project, l, locale_paths, source_locale)
                 elif format == 'lang':
-                   _extract_lang(project, l, locale_paths, source_locale)
+                   _extract_lang(
+                    project, l, locale_paths, source_locale)
 
         elif format == 'ini':
             try:
@@ -599,8 +653,10 @@ def update_from_transifex(request, template=None):
 
     """Check if user authenticated to Transifex."""
     profile, created = UserProfile.objects.get_or_create(user=request.user)
-    username = request.POST.get('transifex_username', profile.transifex_username)
-    password = request.POST.get('transifex_password', base64.decodestring(profile.transifex_password))
+    username = request.POST.get(
+        'transifex_username', profile.transifex_username)
+    password = request.POST.get(
+        'transifex_password', base64.decodestring(profile.transifex_password))
 
     if len(username) == 0 or len(password) == 0:
         return HttpResponse("authenticate")
@@ -617,7 +673,8 @@ def update_from_transifex(request, template=None):
                 _save_entity(p, entity["key"], entity["comment"])
                 if len(entity["translation"]) > 0:
                     e = Entity.objects.get(project=p, string=entity["key"])
-                    _save_translation(entity=e, locale=l, translation=entity["translation"])
+                    _save_translation(
+                        entity=e, locale=l, translation=entity["translation"])
             log.debug("Transifex data for " + l.name + " saved to DB.")
         else:
             return HttpResponse(response)
@@ -625,7 +682,8 @@ def update_from_transifex(request, template=None):
     """Save Transifex username and password."""
     if 'remember' in request.POST and request.POST['remember'] == "on":
         profile.transifex_username = request.POST['transifex_username']
-        profile.transifex_password = base64.encodestring(request.POST['transifex_password'])
+        profile.transifex_password = base64.encodestring(
+            request.POST['transifex_password'])
         profile.save()
 
     return HttpResponse(response.status_code)

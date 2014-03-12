@@ -24,14 +24,30 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect, Http404
+
+from django.http import (
+    Http404,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+)
+
 from django.shortcuts import render
 from django.templatetags.static import static
 from django.utils.datastructures import MultiValueDictKeyError
-
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
-from pontoon.base.models import Locale, Project, Subpage, Entity, Translation, UserProfile
+
+from pontoon.base.models import (
+    Locale,
+    Project,
+    Subpage,
+    Entity,
+    Translation,
+    UserProfile
+)
+
 from pontoon.base.utils.permissions import add_can_localize
 from session_csrf import anonymous_csrf_exempt
 
@@ -45,7 +61,8 @@ def home(request, template='home.html'):
 
     data = {
         'locales': Locale.objects.all(),
-        'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
+        'projects': Project.objects.filter(
+            pk__in=Entity.objects.values('project'))
     }
 
     translate_error = request.session.pop('translate_error', {})
@@ -82,7 +99,7 @@ def translate_site(request, locale, url, template='translate.html'):
     log.debug("Translate view: site.")
 
     # Validate URL
-    # The default configuration of Apache doesn't allow encoded slashes in URLs
+    # Default configuration of Apache doesn't allow encoded slashes in URLs
     # https://github.com/mozilla/playdoh/issues/143
     url = urllib.unquote(url)
     log.debug("URL: " + url)
@@ -114,7 +131,8 @@ def translate_site(request, locale, url, template='translate.html'):
         'locales': Locale.objects.all(),
         'project_url': url,
         'project': {},
-        'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
+        'projects': Project.objects.filter(
+            pk__in=Entity.objects.values('project'))
     }
 
     try:
@@ -193,7 +211,8 @@ def _get_entities(project, locale, page=None):
     return entities_array
 
 
-def translate_project(request, locale, slug, page=None, template='translate.html'):
+def translate_project(request, locale, slug, page=None, 
+                      template='translate.html'):
     """Translate view: project."""
     log.debug("Translate view: project.")
 
@@ -207,7 +226,8 @@ def translate_project(request, locale, slug, page=None, template='translate.html
 
     # Validate project
     try:
-        p = Project.objects.get(slug=slug, pk__in=Entity.objects.values('project'))
+        p = Project.objects.get(
+            slug=slug, pk__in=Entity.objects.values('project'))
     except Project.DoesNotExist:
         messages.error(request, "Oops, project could not be found.")
         request.session['translate_error'] = {
@@ -227,7 +247,8 @@ def translate_project(request, locale, slug, page=None, template='translate.html
         'pages': Subpage.objects.all(),
         'project_url': p.url,
         'project': p,
-        'projects': Project.objects.filter(pk__in=Entity.objects.values('project'))
+        'projects': Project.objects.filter(
+            pk__in=Entity.objects.values('project'))
     }
 
     # Get profile image from Gravatar
@@ -235,7 +256,8 @@ def translate_project(request, locale, slug, page=None, template='translate.html
         email = request.user.email
         size = 60
 
-        gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
+        gravatar_url = "http://www.gravatar.com/avatar/" + \
+            hashlib.md5(email.lower()).hexdigest() + "?"
         gravatar_url += urllib.urlencode({'s':str(size)})
         if settings.SITE_URL != 'http://localhost:8000':
             default = settings.SITE_URL + static('img/user_icon&24.png')
@@ -249,7 +271,8 @@ def translate_project(request, locale, slug, page=None, template='translate.html
             'locale': locale,
             'project': p.slug,
         }
-        messages.error(request, "Oops, locale is not supported for this project.")
+        messages.error(
+            request, "Oops, locale is not supported for this project.")
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Validate subpages
@@ -264,7 +287,8 @@ def translate_project(request, locale, slug, page=None, template='translate.html
                     'locale': locale,
                     'project': p.slug,
                 }
-                messages.error(request, "Oops, project URL doesn't match any subpage.")
+                messages.error(
+                    request, "Oops, project URL doesn't match any subpage.")
                 return HttpResponseRedirect(reverse('pontoon.home'))
         else:
             try:
@@ -287,7 +311,8 @@ def translate_project(request, locale, slug, page=None, template='translate.html
     return render(request, template, data)
 
 
-def _request(type, project, resource, locale, username, password, payload=False):
+def _request(type, project, resource, locale, 
+             username, password, payload=False):
     """
     Make request to Transifex server.
 
@@ -302,14 +327,17 @@ def _request(type, project, resource, locale, username, password, payload=False)
     Returns:
         A server response or error message.
     """
-    url = os.path.join('https://www.transifex.com/api/2/project/', project, 'resource', resource, 'translation', locale, 'strings')
+    url = os.path.join('https://www.transifex.com/api/2/project/', project, 
+        'resource', resource, 'translation', locale, 'strings')
 
     try:
         if type == 'get':
-            r = requests.get(url + '?details', auth=(username, password), timeout=10)
+            r = requests.get(
+                url + '?details', auth=(username, password), timeout=10)
         elif type == 'put':
             r = requests.put(url, auth=(username, password), timeout=10, 
-                data=json.dumps(payload), headers={'content-type': 'application/json'})
+                             data=json.dumps(payload), 
+                             headers={'content-type': 'application/json'})
         log.debug(r.status_code)
         if r.status_code == 401:
             return "authenticate"
@@ -671,7 +699,7 @@ def translation_memory(request):
         if r.text != '[]':
             translation = r.json().itervalues().next().itervalues().next()
 
-            # Use JSON to distinguish from "error" if such translation returned
+            # Use JSON to distinguish from error if such translation returned
             return HttpResponse(json.dumps({
                 'translation': translation
             }), mimetype='application/json')
@@ -834,7 +862,8 @@ def _update_files(p, locale, locale_repository_path):
                     except KeyError:
                         # Only add new keys if translation available
                         if translation != '':
-                            new_entity = silme.core.entity.Entity(key, translation)
+                            new_entity = silme.core.entity.Entity(
+                                key, translation)
                             l10nobject.add_entity(new_entity)
 
                 # Erase file and then write, otherwise content gets appended
@@ -846,7 +875,8 @@ def _update_files(p, locale, locale_repository_path):
 
     elif p.format == 'ini':
         config = configparser.ConfigParser()
-        with codecs.open(locale_paths[0], 'r+', 'utf-8', errors='replace') as f:
+        with codecs.open(
+                locale_paths[0], 'r+', 'utf-8', errors='replace') as f:
             try:
                 config.read_file(f)
                 if config.has_section(locale.code):
@@ -858,7 +888,7 @@ def _update_files(p, locale, locale_repository_path):
 
                         config.set(locale.code, key, translation)
 
-                    # Erase file and then write, otherwise content gets appended
+                    # Erase and then write, otherwise content gets appended
                     f.seek(0)
                     f.truncate()
                     config.write(f)
@@ -896,9 +926,12 @@ def _update_files(p, locale, locale_repository_path):
                         original = line[1:].strip()
 
                         try:
-                            entity = Entity.objects.get(project=p, string=original)
+                            entity = Entity.objects.get(
+                                project=p, string=original)
                         except Entity.DoesNotExist, e:
-                            log.error(path + ": Entity with string \"" + original + "\" does not exist in " + p.name)
+                            log.error(path + ": \
+                                      Entity with string \"" + original +
+                                      "\" does not exist in " + p.name)
                             continue
 
                         translation = _get_translation(
@@ -1028,7 +1061,8 @@ def commit_to_svn(request, template=None):
     """Check if user authenticated to SVN."""
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     username = data.get('auth', {}).get('username', profile.svn_username)
-    password = data.get('auth', {}).get('password', base64.decodestring(profile.svn_password))
+    password = data.get('auth', {}).get(
+        'password', base64.decodestring(profile.svn_password))
 
     if len(username) > 0 and len(password) > 0:
         client.set_default_username(username)
@@ -1042,13 +1076,15 @@ def commit_to_svn(request, template=None):
     except pysvn.ClientError, e:
         log.debug(str(e))
         if "callback_get_login" in str(e):
-            log.error('Subversion CommitError for %s: please authenticate' % locale_repository_path)
+            log.error('Subversion CommitError for %s: please authenticate' %
+                      locale_repository_path)
             return HttpResponse(json.dumps({
                 'type': 'authenticate',
                 'message': 'Authentication failed.'
             }), mimetype='application/json')
 
-        log.error('Subversion CommitError for %s: %s' % (locale_repository_path, e))
+        log.error('Subversion CommitError for %s: %s' %
+                  (locale_repository_path, e))
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': str(e)
@@ -1082,8 +1118,11 @@ def save_to_transifex(request, template=None):
     """Check if user authenticated to Transifex."""
     profile, created = UserProfile.objects.get_or_create(user=request.user)
 
-    username = data.get('auth', {}).get('username', profile.transifex_username)
-    password = data.get('auth', {}).get('password', base64.decodestring(profile.transifex_password))
+    username = data.get('auth', {}) \
+                   .get('username', profile.transifex_username)
+    password = data.get('auth', {}) \
+                   .get('password', 
+                        base64.decodestring(profile.transifex_password))
     if len(username) == 0 or len(password) == 0:
         return HttpResponse("authenticate")
 
@@ -1092,7 +1131,10 @@ def save_to_transifex(request, template=None):
     for entity in data.get('strings'):
         obj = {
             # Identify translation strings using hashes
-            "source_entity_hash": hashlib.md5(':'.join([entity['original'], '']).encode('utf-8')).hexdigest(),
+            "source_entity_hash": hashlib.md5(
+                ':'.join([entity['original'], '']) \
+                   .encode('utf-8')) \
+                   .hexdigest(),
             "translation": entity['translation']
         }
         payload.append(obj)
@@ -1103,12 +1145,14 @@ def save_to_transifex(request, template=None):
         p = Project.objects.get(url=data['url'])
     except Project.DoesNotExist:
         return HttpResponse("error")
-    response = _request('put', p.transifex_project, p.transifex_resource, data['locale'], username, password, payload)
+    response = _request('put', p.transifex_project, p.transifex_resource, 
+                        data['locale'], username, password, payload)
 
     """Save Transifex username and password."""
     if data.get('auth', {}).get('remember', {}) == 1:
         profile.transifex_username = data['auth']['username']
-        profile.transifex_password = base64.encodestring(data['auth']['password'])
+        profile.transifex_password = base64.encodestring(
+            data['auth']['password'])
         profile.save()
 
     try:
