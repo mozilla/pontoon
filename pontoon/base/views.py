@@ -764,7 +764,7 @@ def _get_locale_repository_path(project, locale):
     log.debug("Get path to locale directory.")
 
     path = os.path.join(
-        settings.MEDIA_ROOT, project.repository_type, project.name)
+        settings.MEDIA_ROOT, project.repository_type, project.slug)
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders

@@ -157,7 +157,8 @@ def delete_project(request, pk, template=None):
         project = Project.objects.get(pk=pk)
         project.delete()
 
-        path = os.path.join(settings.MEDIA_ROOT, project.repository_type, project.name)
+        path = os.path.join(
+            settings.MEDIA_ROOT, project.repository_type, project.slug)
         if os.path.exists(path):
             shutil.rmtree(path)
 
@@ -561,7 +562,8 @@ def update_from_repository(request, template=None):
     except Project.DoesNotExist:
         return HttpResponse("error")
 
-    repository_path_master = os.path.join(settings.MEDIA_ROOT, repository_type, p.name)
+    repository_path_master = os.path.join(
+        settings.MEDIA_ROOT, repository_type, p.slug)
     try:
         _update_from_repository(
             p, repository_type, repository_url, repository_path_master)
