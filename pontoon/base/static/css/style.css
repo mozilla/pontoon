@@ -441,6 +441,7 @@ body.admin-form #intro {
 
 #pontoon.admin-form #intro .controls .button.delete-project {
   background: #FF0A43;
+  color: #FFFFFF;
   float: left;
 }
 
