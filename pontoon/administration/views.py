@@ -171,7 +171,7 @@ def delete_project(request, pk, template=None):
         messages.error(request,
             _("There was an error during deleting this project."))
         return HttpResponseRedirect(reverse('pontoon.admin.project',
-            args=[project.name]))
+            args=[project.slug]))
 
 
 def _save_entity(project, original, comment="", key="", source=""):

@@ -146,10 +146,10 @@ def translate_site(request, locale, url, template='translate.html'):
     # Project stored in the DB, add more data
     if page is None:
         return HttpResponseRedirect(reverse('pontoon.translate.project',
-        kwargs={'locale': locale, 'project': p.name}))
+        kwargs={'locale': locale, 'slug': p.slug}))
     else:
         return HttpResponseRedirect(reverse('pontoon.translate.project.page',
-        kwargs={'locale': locale, 'project': p.name, 'page': page}))
+        kwargs={'locale': locale, 'slug': p.slug, 'page': page}))
 
 
 def _get_translation(entity, locale):
