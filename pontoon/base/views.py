@@ -247,7 +247,7 @@ def translate_project(request, locale, slug, page=None, template='translate.html
     if len(p.locales.filter(code=locale)) == 0:
         request.session['translate_error'] = {
             'locale': locale,
-            'project': p.id,
+            'project': p.slug,
         }
         messages.error(request, "Oops, locale is not supported for this project.")
         return HttpResponseRedirect(reverse('pontoon.home'))
@@ -262,7 +262,7 @@ def translate_project(request, locale, slug, page=None, template='translate.html
             except IndexError:
                 request.session['translate_error'] = {
                     'locale': locale,
-                    'project': p.id,
+                    'project': p.slug,
                 }
                 messages.error(request, "Oops, project URL doesn't match any subpage.")
                 return HttpResponseRedirect(reverse('pontoon.home'))
@@ -272,7 +272,7 @@ def translate_project(request, locale, slug, page=None, template='translate.html
             except Subpage.DoesNotExist:
                 request.session['translate_error'] = {
                     'locale': locale,
-                    'project': p.id,
+                    'project': p.slug,
                 }
                 messages.error(request, "Oops, subpage could not be found.")
                 return HttpResponseRedirect(reverse('pontoon.home'))

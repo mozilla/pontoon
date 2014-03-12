@@ -92,7 +92,7 @@ $(function() {
           var lang = $('html').attr('lang'),
               locale = $('#server').data('locale'),
               escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
-              project = $('#server').data('id'),
+              project = $('#server').data('slug'),
               errorLink = (lang ? '/' + lang : '') + '/translate/error/?locale=' + escapedLocale + '&project=' + project;
           window.location = errorLink + '&error=' + "Oops, website is not supported by Pontoon.";
         }
