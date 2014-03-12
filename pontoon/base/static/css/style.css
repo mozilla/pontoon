@@ -431,38 +431,17 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .controls .button {
-  padding: 3px;
-  height: auto;
+  background: #7BC876;
+  border-radius: 3px;
+  color: #272A2F;
+  font-weight: 400;
+  text-transform: uppercase;
   width: auto;
 }
 
 #pontoon.admin-form #intro .controls .button.delete-project {
+  background: #FF0A43;
   float: left;
-
-  background-color: #FD5F60;
-  background-image: -moz-linear-gradient(top, #FD5F60, #3D000D); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #FD5F60),color-stop(1, #3D000D)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#FD5F60, #3D000D); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #FD5F60, #3D000D);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#FD5F60', EndColorStr='#3D000D'); /* IE6–IE9 */
-}
-
-#pontoon.admin-form #intro .controls .button.delete-project:hover {
-  background-color: #FF0A43;
-  background-image: -moz-linear-gradient(top, #FF0A43, #570013); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #FF0A43),color-stop(1, #570013)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#FF0A43, #570013); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #FF0A43, #570013);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#FF0A43', EndColorStr='#570013'); /* IE6–IE9 */ 
-}
-
-#pontoon.admin-form #intro .controls .button.delete-project:active {
-  background-color: #570013;
-  background-image: -moz-linear-gradient(top, #570013, #240008); /* FF3.6 */
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #570013),color-stop(1, #240008)); /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(#570013, #240008); /* Chrome 10+, Saf6 */
-  background-image: linear-gradient(top, #570013, #240008);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#570013', EndColorStr='#240008'); /* IE6–IE9 */ 
 }
 
 #pontoon.admin-form #intro form a {
@@ -477,7 +456,7 @@ body.admin-form #intro {
 }
 
 #pontoon.admin-form #intro .controls a {
-  margin: 7px;
+  margin: 9px;
 }
 
 #pontoon.admin-form #intro .authenticate .transifex .button {
