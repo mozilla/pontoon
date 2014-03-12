@@ -477,7 +477,7 @@ def _update_from_repository(
             """ Not supported """
             raise PullFromRepositoryException("Not supported")
 
-    elif repository_type in ('hg', 'svn'):
+    elif repository_type in ('git', 'hg', 'svn'):
         """ Mercurial """
         # Update repository URL and path if one-locale repository
         source_directory, repository_url_master, repository_path = _is_one_locale_repository(repository_url, repository_path_master)

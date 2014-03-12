@@ -26,6 +26,35 @@ class PullFromRepository(object):
         raise NotImplementedError
 
 
+class PullFromGit(PullFromRepository):
+
+    VCS = 'git'
+
+    def pull(self, source=None, target=None):
+        from git import Repo
+        log.debug("Clone or update Git repository.")
+
+        source = source or self.source
+        target = target or self.target
+
+        try:
+            repo = Repo(target)
+            repo.remotes.origin.pull()
+            log.debug("Git: repository at " + source + " updated.")
+        except Exception, e:
+            log.debug("Git: " + str(e))
+            try:
+                Repo.clone_from(source, target)
+                log.debug("Git: repository at " + source + " cloned.")
+            except Exception, e:
+                log.debug("Git: " + str(e))
+                raise PullFromRepositoryException(unicode(e))
+
+    @staticmethod
+    def conflict_resolution_callback(*args, **kwargs):
+        pass
+
+
 class PullFromHg(PullFromRepository):
 
     VCS = 'hg'
@@ -71,11 +100,14 @@ class PullFromSvn(PullFromRepository):
     def pull(self, source=None, target=None):
         import pysvn
         log.debug("Checkout or update SVN repository.")
+
         source = source or self.source
         target = target or self.target
+
         client = pysvn.Client()
         client.callback_conflict_resolver = self.conflict_resolution_callback
         client.callback_ssl_server_trust_prompt = self.ssl_server_trust_prompt
+
         try:
             client.checkout(source, target)
         except pysvn.ClientError, e:
@@ -93,7 +125,13 @@ class PullFromSvn(PullFromRepository):
 
 
 def update_from_vcs(repo_type, url, path):
-    if repo_type == 'hg':
+    if repo_type == 'git':
+        try:
+            obj = PullFromGit(url, path)
+            obj.pull()
+        except PullFromRepositoryException as e:
+            log.debug('Git PullError for %s: %s' % (url, e))
+    elif repo_type == 'hg':
         try:
             obj = PullFromHg(url, path)
             obj.pull()

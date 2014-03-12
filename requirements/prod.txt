@@ -4,6 +4,7 @@ south
 polib
 mercurial
 configparser
+GitPython==0.3.2.RC1
 
 # Not available in PyPI
 -e hg+http://hg.mozilla.org/l10n/silme#egg=silme

@@ -1,0 +1,12 @@
+Metadata-Version: 1.1
+Name: gitdb
+Version: 0.5.4
+Summary: Git Object Database
+Home-page: https://github.com/gitpython-developers/gitdb
+Author: Sebastian Thiel
+Author-email: byronimo@gmail.com
+License: BSD License
+Description: GitDB is a pure-Python git object database
+Platform: UNKNOWN
+Requires: async (>=0.6.1)
+Requires: smmap (>=0.8.0)

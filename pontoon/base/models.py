@@ -40,6 +40,7 @@ class Project(models.Model):
     # Repositories
     REPOSITORY_TYPE_CHOICES = (
         ('file', 'File'),
+        ('git', 'Git'),
         ('hg', 'HG'),
         ('svn', 'SVN'),
         ('transifex', 'Transifex'),
