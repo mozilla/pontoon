@@ -1013,8 +1013,8 @@ def download(request, template=None):
         response['Content-Type'] = 'application/x-zip-compressed'
 
     response.content = content
-    response['Content-Disposition'] =
-    'attachment; filename=' + filename + '.' + type
+    response['Content-Disposition'] = \
+        'attachment; filename=' + filename + '.' + type
     return response
 
 
