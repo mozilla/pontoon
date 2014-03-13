@@ -314,13 +314,13 @@ def translate_project(request, locale, slug, page=None,
     return render(request, template, data)
 
 
-def _request(type, project, resource, locale,
+def _request(method, project, resource, locale,
              username, password, payload=False):
     """
     Make request to Transifex server.
 
     Args:
-        type: Request type
+        method: Request method
         project: Transifex project name
         resource: Transifex resource name
         locale: Locale code
@@ -335,10 +335,10 @@ def _request(type, project, resource, locale,
         'resource', resource, 'translation', locale, 'strings')
 
     try:
-        if type == 'get':
+        if method == 'get':
             r = requests.get(
                 url + '?details', auth=(username, password), timeout=10)
-        elif type == 'put':
+        elif method == 'put':
             r = requests.put(url, auth=(username, password), timeout=10,
                              data=json.dumps(payload),
                              headers={'content-type': 'application/json'})
@@ -996,7 +996,7 @@ def download(request, template=None):
         raise Http404
 
     try:
-        type = request.POST['type']
+        format = request.POST['type']
         content = request.POST['content']
         locale = request.POST['locale']
     except MultiValueDictKeyError:
@@ -1004,17 +1004,17 @@ def download(request, template=None):
 
     filename = locale
     response = HttpResponse()
-    if type == 'html':
+    if format == 'html':
         response['Content-Type'] = 'text/html'
-    elif type == 'json':
+    elif format == 'json':
         response['Content-Type'] = 'application/json'
-    elif type == 'zip':
+    elif format == 'zip':
         content = _generate_zip(content, locale)
         response['Content-Type'] = 'application/x-zip-compressed'
 
     response.content = content
     response['Content-Disposition'] = \
-        'attachment; filename=' + filename + '.' + type
+        'attachment; filename=' + filename + '.' + format
     return response
 
 
