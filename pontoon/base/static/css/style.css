@@ -381,6 +381,10 @@ body.admin-form #intro {
   margin-top: 70px;
 }
 
+#pontoon.admin-form #intro form > div.subpages.delete {
+  opacity: 0.3;
+}
+
 #pontoon.admin-form #intro h2 {
   color: #EBEBEB;
   font-size: 30px;

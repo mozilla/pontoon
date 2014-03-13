@@ -158,7 +158,7 @@ $(function() {
   // Delete subpage
   $('.delete-subpage').live('click.pontoon', function (e) {
     e.preventDefault();
-    $(this).toggleClass('active');
+    $(this).parent().toggleClass('delete');
     $(this).next().prop('checked', !$(this).next().prop('checked'));
   });
   $('.subpages [checked]').click().prev().click();
