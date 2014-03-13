@@ -14,9 +14,7 @@ import silme.format.properties
 import urllib2
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
-from django.core.validators import URLValidator
 from django.contrib import messages
 from django.db import transaction
 from django.forms.models import inlineformset_factory
@@ -66,9 +64,11 @@ def get_slug(request):
     log.debug("Convert project name to slug.")
 
     if not request.user.has_perm('base.can_manage'):
+        log.error("Insufficient privileges.")
         return HttpResponse("error")
 
     if not request.is_ajax():
+        log.error("Non-AJAX request")
         return HttpResponse("error")
 
     try:
@@ -450,6 +450,7 @@ def _extract_ini(project, path):
             source_locale = s
             break
     if source_locale is None:
+        log.error("Unable to detect source locale")
         raise Exception("error")
 
     # Move source locale on top, so we save entities first, then translations
@@ -528,7 +529,7 @@ def _update_from_repository(
                 raise PullFromRepositoryException(unicode(e))
 
         else:
-            """ Not supported """
+            log.error("Format not supported")
             raise PullFromRepositoryException("Not supported")
 
     elif repository_type in ('git', 'hg', 'svn'):
@@ -596,11 +597,11 @@ def _update_from_repository(
                 raise PullFromRepositoryException(unicode(e))
 
         else:
-            """ Not supported """
+            log.error("Format not supported")
             raise PullFromRepositoryException("Not supported")
 
     else:
-        """ Not supported """
+        log.error("Repository type not supported")
         raise PullFromRepositoryException("Not supported")
 
 
@@ -612,18 +613,21 @@ def update_from_repository(request, template=None):
         return render(request, '403.html', status=403)
 
     if request.method != 'POST':
+        log.error("Non-POST request")
         raise Http404
 
     try:
         pk = request.POST['pk']
         repository_type = request.POST['repository_type']
         repository_url = request.POST['repository_url']
-    except MultiValueDictKeyError:
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
         return HttpResponse("error")
 
     try:
         p = Project.objects.get(pk=pk)
-    except Project.DoesNotExist:
+    except Project.DoesNotExist as e:
+        log.error(str(e))
         return HttpResponse("error")
 
     repository_path_master = os.path.join(
@@ -632,8 +636,10 @@ def update_from_repository(request, template=None):
         _update_from_repository(
             p, repository_type, repository_url, repository_path_master)
     except PullFromRepositoryException as e:
+        log.error("PullFromRepositoryException: " + str(e))
         return HttpResponse('error')
     except Exception as e:
+        log.error("Exception: " + str(e))
         return HttpResponse('error')
 
     return HttpResponse("200")
@@ -647,18 +653,21 @@ def update_from_transifex(request, template=None):
         return render(request, '403.html', status=403)
 
     if request.method != 'POST':
+        log.error("Non-POST request")
         raise Http404
 
     try:
         pk = request.POST['pk']
         transifex_project = request.POST['transifex_project']
         transifex_resource = request.POST['transifex_resource']
-    except MultiValueDictKeyError:
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
         return HttpResponse("error")
 
     try:
         p = Project.objects.get(pk=pk)
-    except Project.DoesNotExist:
+    except Project.DoesNotExist as e:
+        log.error(str(e))
         return HttpResponse("error")
 
     """Check if user authenticated to Transifex."""

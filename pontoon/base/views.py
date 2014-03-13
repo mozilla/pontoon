@@ -22,7 +22,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError, MultipleObjectsReturned
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
 
@@ -108,7 +108,7 @@ def translate_site(request, locale, url, template='translate.html'):
 
     try:
         validate(url)
-    except ValidationError, e:
+    except ValidationError as e:
         log.debug(e)
         request.session['translate_error'] = {
             'locale': locale,
@@ -346,30 +346,31 @@ def _request(method, project, resource, locale,
         if r.status_code == 401:
             return "authenticate"
         elif r.status_code != 200:
+            log.debug("Response not 200")
             return "error"
         return r
     # Network problem (DNS failure, refused connection, etc.)
-    except requests.exceptions.ConnectionError, e:
+    except requests.exceptions.ConnectionError as e:
         log.debug('ConnectionError: ' + str(e))
         return "error"
     # Invalid HTTP response
-    except requests.exceptions.HTTPError, e:
+    except requests.exceptions.HTTPError as e:
         log.debug('HTTPError: ' + str(e))
         return "error"
     # A valid URL is required
-    except requests.exceptions.URLRequired, e:
+    except requests.exceptionsURLRequired as e:
         log.debug('URLRequired: ' + str(e))
         return "error"
     # Request times out
-    except requests.exceptions.Timeout, e:
+    except requests.exceptions.Timeout as e:
         log.debug('Timeout: ' + str(e))
         return "error"
     # Request exceeds the number of maximum redirections
-    except requests.exceptions.TooManyRedirects, e:
+    except requests.exceptions.TooManyRedirects as e:
         log.debug('TooManyRedirects: ' + str(e))
         return "error"
     # Ambiguous exception occurres
-    except requests.exceptions.RequestException, e:
+    except requests.exceptions.RequestException as e:
         log.debug('RequestException: ' + str(e))
         return "error"
     except Exception:
@@ -382,6 +383,7 @@ def get_translations_from_other_locales(request, template=None):
     log.debug("Get entity translation for all but specified locale.")
 
     if not request.is_ajax():
+        log.error("Non-AJAX request")
         raise Http404
 
     try:
@@ -421,7 +423,7 @@ def get_translations_from_other_locales(request, template=None):
             })
 
     if len(payload) == 0:
-        log.debug("Translations do not exist.")
+        log.debug("Translations do not exist")
         return HttpResponse("error")
     else:
         return HttpResponse(
@@ -433,6 +435,7 @@ def get_translation_history(request, template=None):
     log.debug("Get history of translations of given entity to given locale.")
 
     if not request.is_ajax():
+        log.error("Non-AJAX request")
         raise Http404
 
     try:
@@ -481,7 +484,7 @@ def get_translation_history(request, template=None):
             json.dumps(payload, indent=4), mimetype='application/json')
 
     else:
-        log.debug("Translations do not exist.")
+        log.debug("Translations do not exist")
         return HttpResponse("error")
 
 
@@ -505,6 +508,7 @@ def approve_translation(request, template=None):
         return render(request, '403.html', status=403)
 
     if not request.is_ajax():
+        log.error("Non-AJAX request")
         raise Http404
 
     try:
@@ -540,6 +544,7 @@ def delete_translation(request, template=None):
     log.debug("Delete given translation.")
 
     if not request.is_ajax():
+        log.error("Non-AJAX request")
         raise Http404
 
     try:
@@ -560,6 +565,8 @@ def delete_translation(request, template=None):
     if not request.user.has_perm('base.can_localize'):
         if translation.user == request.user:
             if translation.approved is True:
+                log.error(
+                    "Non-privileged users cannot delete approved translation")
                 return HttpResponse("error")
 
         else:
@@ -585,14 +592,19 @@ def update_translation(request, template=None):
     """Update entity translation for the specified locale and user."""
     log.debug("Update entity translation for the specified locale and user.")
 
-    if not request.is_ajax() and request.method != 'POST':
+    if not request.is_ajax():
+        log.error("Non-AJAX request")
+        raise Http404
+
+    if request.method != 'POST':
+        log.error("Non-POST request")
         raise Http404
 
     try:
         entity = request.POST['entity']
         string = request.POST['translation']
         locale = request.POST['locale']
-    except MultiValueDictKeyError, e:
+    except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
 
@@ -602,20 +614,20 @@ def update_translation(request, template=None):
 
     try:
         e = Entity.objects.get(pk=entity)
-    except Entity.DoesNotExist, e:
+    except Entity.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
 
     try:
         l = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist, e:
+    except Locale.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
 
     user = request.user
     if not request.user.is_authenticated():
         if e.project.name != 'Testpilot':
-            log.error("Not authenticated.")
+            log.error("Not authenticated")
             return HttpResponse("error")
         else:
             user = None
@@ -683,7 +695,7 @@ def translation_memory(request):
     try:
         text = request.GET['text']
         locale = request.GET['locale']
-    except MultiValueDictKeyError, e:
+    except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
 
@@ -724,7 +736,7 @@ def machine_translation(request):
         text = request.GET['text']
         to = request.GET['locale']
         check = request.GET['check']
-    except MultiValueDictKeyError, e:
+    except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
 
@@ -899,10 +911,10 @@ def _update_files(p, locale, locale_repository_path):
                     log.debug("File updated: " + locale_paths[0])
 
                 else:
-                    log.debug("Locale not available in the source file.")
+                    log.debug("Locale not available in the source file")
                     raise Exception("error")
 
-            except Exception, e:
+            except Exception as e:
                 log.debug("INI configparser: " + str(e))
                 raise Exception("error")
 
@@ -932,7 +944,7 @@ def _update_files(p, locale, locale_repository_path):
                         try:
                             entity = Entity.objects.get(
                                 project=p, string=original)
-                        except Entity.DoesNotExist, e:
+                        except Entity.DoesNotExist as e:
                             log.error(path + ": \
                                       Entity with string \"" + original +
                                       "\" does not exist in " + p.name)
@@ -993,13 +1005,15 @@ def download(request, template=None):
     log.debug("Download translations.")
 
     if request.method != 'POST':
+        log.error("Non-POST request")
         raise Http404
 
     try:
         format = request.POST['type']
         content = request.POST['content']
         locale = request.POST['locale']
-    except MultiValueDictKeyError:
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
         raise Http404
 
     filename = locale
@@ -1033,7 +1047,7 @@ def commit_to_svn(request, template=None):
         return HttpResponse("error")
 
     if request.method != 'POST':
-        log.error("Only POST method supported")
+        log.error("Non-POST request")
         raise Http404
 
     try:
@@ -1078,7 +1092,7 @@ def commit_to_svn(request, template=None):
             'Pontoon: update ' + locale.code + ' localization of ' + project)
         log.info('Commited ' + locale.code + ' localization of ' + project)
 
-    except pysvn.ClientError, e:
+    except pysvn.ClientError as e:
         log.debug(str(e))
         if "callback_get_login" in str(e):
             log.error('Subversion CommitError for %s: please authenticate' %
@@ -1113,11 +1127,13 @@ def save_to_transifex(request, template=None):
     log.debug("Save to Transifex.")
 
     if request.method != 'POST':
+        log.error("Non-POST request")
         raise Http404
 
     try:
         data = json.loads(request.POST['data'])
-    except MultiValueDictKeyError:
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
         return HttpResponse("error")
 
     """Check if user authenticated to Transifex."""
@@ -1147,7 +1163,8 @@ def save_to_transifex(request, template=None):
     """Make PUT request to Transifex API."""
     try:
         p = Project.objects.get(url=data['url'])
-    except Project.DoesNotExist:
+    except Project.DoesNotExist as e:
+        log.error(str(e))
         return HttpResponse("error")
     response = _request('put', p.transifex_project, p.transifex_resource,
                         data['locale'], username, password, payload)
@@ -1171,6 +1188,7 @@ def verify(request, template=None):
     log.debug("Verify BrowserID assertion.")
 
     if request.method != 'POST':
+        log.error("Non-POST request")
         raise Http404
 
     assertion = request.POST['assertion']
@@ -1181,7 +1199,7 @@ def verify(request, template=None):
     if not verification:
         return HttpResponseForbidden()
 
-    response = 'error'
+    response = "error"
     user = authenticate(assertion=assertion, audience=get_audience(request))
 
     if user is not None:
@@ -1205,6 +1223,7 @@ def get_csrf(request, template=None):
     log.debug("Get CSRF token.")
 
     if not request.is_ajax():
+        log.error("Non-AJAX request")
         raise Http404
 
     return HttpResponse(request.csrf_token)
