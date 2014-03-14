@@ -45,12 +45,17 @@ class Project(models.Model):
         ('svn', 'SVN'),
         ('transifex', 'Transifex'),
     )
+
     repository_type = models.CharField(
         "Type", max_length=20, blank=False, default='File',
         choices=REPOSITORY_TYPE_CHOICES)
-    repository_url = models.URLField("URL", blank=True)
+
+    # URLField does not take git@github.com:user/project.git URLs
+    repository_url = models.CharField("URL", max_length=2000, blank=True)
+
     # Includes source directory in one-locale repositories
     repository_path = models.TextField(blank=True)
+
     transifex_project = models.CharField(
         "Project", max_length=128, blank=True)
     transifex_resource = models.CharField(
