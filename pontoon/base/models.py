@@ -103,6 +103,7 @@ class Subpage(models.Model):
 class Entity(models.Model):
     project = models.ForeignKey(Project)
     string = models.TextField()
+    string_plural = models.TextField(blank=True)
     comment = models.TextField(blank=True)
     key = models.TextField(blank=True)  # Needed for webL10n
     source = models.TextField(blank=True)  # Needed for webL10n
@@ -116,6 +117,8 @@ class Translation(models.Model):
     locale = models.ForeignKey(Locale)
     user = models.ForeignKey(User, null=True, blank=True)
     string = models.TextField()
+    # 0=zero, 1=one, 2=two, 3=few, 4=many, 5=other, null=no plural forms
+    plural_form = models.SmallIntegerField(null=True, blank=True)
     date = models.DateTimeField()
     approved = models.BooleanField(default=False)
 

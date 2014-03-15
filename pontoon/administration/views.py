@@ -200,27 +200,30 @@ def delete_project(request, pk, template=None):
             args=[project.slug]))
 
 
-def _save_entity(project, original, comment="", key="", source=""):
+def _save_entity(project, original, plural="", comment="", key="", source=""):
     """Admin interface: save new or update existing entity in DB."""
 
     # Update existing entity
     try:
         if key is "":
-            e = Entity.objects.get(project=project, string=original)
+            e = Entity.objects.get(
+                project=project, string=original, string_plural=plural)
         else:
             e = Entity.objects.get(project=project, key=key, source=source)
             e.string = original
+            e.string_plural = plural
 
     # Add new entity
     except Entity.DoesNotExist:
-        e = Entity(project=project, string=original, key=key, source=source)
+        e = Entity(project=project, string=original, string_plural=plural,
+                   key=key, source=source)
 
     if len(comment) > 0:
         e.comment = comment
     e.save()
 
 
-def _save_translation(entity, locale, translation):
+def _save_translation(entity, locale, translation, plural_form=None):
     """Admin interface: save new or update existing translation in DB."""
 
     # Update existing translation if different from repository
@@ -230,6 +233,7 @@ def _save_translation(entity, locale, translation):
         if t.string != translation:
             t.user = None
             t.string = translation
+            t.plural_form = plural_form
             t.date = datetime.datetime.now()
             t.save()
 
@@ -237,7 +241,8 @@ def _save_translation(entity, locale, translation):
     except Translation.DoesNotExist:
         t = Translation(
             entity=entity, locale=locale, string=translation,
-            date=datetime.datetime.now(), approved=True)
+            plural_form=plural_form, date=datetime.datetime.now(),
+            approved=True)
         t.save()
 
 
@@ -353,9 +358,11 @@ def _extract_po(project, locale, paths, source_locale):
 
             if locale.code == source_locale:
                 for entity in entities:
-                    _save_entity(project, entity.msgid, entity.comment)
+                    _save_entity(project, entity.msgid,
+                                 entity.msgid_plural, entity.comment)
             else:
                 for entity in entities:
+                    # Entities without plurals
                     if len(entity.msgstr) > 0:
                         try:
                             e = Entity.objects.get(
@@ -366,6 +373,21 @@ def _extract_po(project, locale, paths, source_locale):
                                 translation=entity.msgstr)
                         except Entity.DoesNotExist:
                             continue
+
+                    # Pluralized entities
+                    elif len(entity.msgstr_plural) > 0:
+                        try:
+                            e = Entity.objects.get(
+                                project=project, string=entity.msgid)
+                            for i, val in enumerate(entity.msgstr_plural):
+                                _save_translation(
+                                    entity=e,
+                                    locale=locale,
+                                    translation=entity.msgstr_plural[val],
+                                    plural_form=i)
+                        except Entity.DoesNotExist:
+                            continue
+
             log.debug("[" + locale.code + "]: saved to DB.")
         except Exception as e:
             log.critical('PoExtractError for %s: %s' % (path, e))
@@ -417,7 +439,7 @@ def _extract_lang(project, locale, paths, source_locale):
 
         if locale.code == source_locale:
             for key, value in lang.items():
-                _save_entity(project, key, value[0])
+                _save_entity(project, key, "", value[0])
         else:
             for key, value in lang.items():
                 if key != value[1]:
@@ -689,7 +711,7 @@ def update_from_transifex(request, template=None):
         if hasattr(response, 'status_code') and response.status_code == 200:
             entities = json.loads(response.content)
             for entity in entities:
-                _save_entity(p, entity["key"], entity["comment"])
+                _save_entity(p, entity["key"], "", entity["comment"])
                 if len(entity["translation"]) > 0:
                     e = Entity.objects.get(project=p, string=entity["key"])
                     _save_translation(
