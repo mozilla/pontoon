@@ -203,6 +203,7 @@ def _get_entities(project, locale, page=None):
 
         obj = {
             "original": e.string,
+            "original_plural": e.string_plural,
             "comment": e.comment,
             "key": e.key,
             "pk": e.pk,

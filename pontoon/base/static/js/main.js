@@ -354,8 +354,18 @@ var Pontoon = (function () {
      */
     openEditor: function (entity) {
       $('#original').html(this.doNotRender(entity.original));
-      $('#comment').html(entity.comment);
       $('#translation').val(entity.translation);
+
+      $('#comment').hide();
+      if (entity.comment) {
+        $('#comment').html(entity.comment).show();
+      }
+
+      $('#source-pane').removeClass('pluralized');
+      if (entity.original_plural) {
+        $('#original-plural').html(this.doNotRender(entity.original_plural));
+        $('#source-pane').addClass('pluralized');
+      }
 
       var original = entity.original.length,
           translation = entity.translation.length;

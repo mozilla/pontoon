@@ -842,17 +842,45 @@ body, select, input, textarea, button {
   height: 20%;
   min-height: 100px;
   overflow: auto;
+}
+
+#pontoon #comment {
+  color: #AAAAAA;
+  display: none;
+  font-size: 12px;
+  font-style: italic;
+  margin-bottom: 5px;
+}
+
+#pontoon #source-pane > div {
   padding: 10px;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
-#pontoon #comment {
+#pontoon #source-pane h2 {
   color: #AAAAAA;
-  font-size: 12px;
-  font-style: italic;
-  margin-top: 5px;
+  font-size: 11px;
+  line-height: 11px;
+}
+
+#pontoon #source-pane h2,
+#pontoon #source-pane .plural {
+  display: none;
+}
+
+#pontoon #source-pane.pluralized h2,
+#pontoon #source-pane.pluralized .plural {
+  display: block;
+}
+
+#pontoon #source-pane.pluralized > div {
+  height: 50%;
+}
+
+#pontoon #source-pane.pluralized .singular {
+  border-bottom: 1px solid #525A65;
 }
 
 #pontoon #editor textarea {
