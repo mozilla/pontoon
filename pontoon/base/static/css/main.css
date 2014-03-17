@@ -884,6 +884,39 @@ body, select, input, textarea, button {
   border-bottom: 1px solid #525A65;
 }
 
+#pontoon #editor nav ul {
+  display: table;
+  width: 100%;
+}
+
+#pontoon #editor nav li {
+  background: #4D5967;
+  border-bottom: 1px solid #5E6475;
+  border-right: 1px solid #5E6475;
+  display: table-cell;
+  text-align: center;
+}
+
+#pontoon #editor nav li:last-child {
+  border-right: none;
+}
+
+#pontoon #editor nav li.active {
+  background: #3F4752;
+  border-bottom: none;
+}
+
+#pontoon #editor nav li:hover {
+  background: #3F4752;
+}
+
+#pontoon #editor nav li a {
+  color: #CCCCCC;
+  display: block;
+  padding: 10px;
+  text-transform: uppercase;
+}
+
 #pontoon #plural-tabs {
   display: none;
 }
@@ -949,39 +982,6 @@ body, select, input, textarea, button {
 
 #pontoon #helpers {
   background: #3F4752;
-}
-
-#pontoon #editor nav ul {
-  display: table;
-  width: 100%;
-}
-
-#pontoon #editor nav li {
-  background: #4D5967;
-  border-bottom: 1px solid #5E6475;
-  border-right: 1px solid #5E6475;
-  display: table-cell;
-  text-align: center;
-}
-
-#pontoon #editor nav li:last-child {
-  border-right: none;
-}
-
-#pontoon #editor nav li.active {
-  background: #3F4752;
-  border-bottom: none;
-}
-
-#pontoon #editor nav li:hover {
-  background: #3F4752;
-}
-
-#pontoon #editor nav li a {
-  color: #CCCCCC;
-  display: block;
-  padding: 10px;
-  text-transform: uppercase;
 }
 
 #pontoon #helpers > section {
