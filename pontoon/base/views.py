@@ -207,8 +207,10 @@ def _get_entities(project, locale, page=None):
             "comment": e.comment,
             "key": e.key,
             "pk": e.pk,
-            "translation": translation.string,
-            "approved": translation.approved,
+            "translation": {
+                "string": translation.string,
+                "approved": translation.approved,
+            },
         }
 
         entities_array.append(obj)
