@@ -838,7 +838,7 @@ body, select, input, textarea, button {
 
 #pontoon #source-pane {
   background: #3F4752;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid #5E6475;
   height: 20%;
   min-height: 100px;
   overflow: auto;
@@ -882,6 +882,10 @@ body, select, input, textarea, button {
 
 #pontoon #source-pane.pluralized .singular {
   border-bottom: 1px solid #525A65;
+}
+
+#pontoon #plural-tabs {
+  display: none;
 }
 
 #pontoon #editor textarea {
@@ -947,12 +951,12 @@ body, select, input, textarea, button {
   background: #3F4752;
 }
 
-#pontoon #helpers nav ul {
+#pontoon #editor nav ul {
   display: table;
   width: 100%;
 }
 
-#pontoon #helpers nav li {
+#pontoon #editor nav li {
   background: #4D5967;
   border-bottom: 1px solid #5E6475;
   border-right: 1px solid #5E6475;
@@ -960,20 +964,20 @@ body, select, input, textarea, button {
   text-align: center;
 }
 
-#pontoon #helpers nav li:last-child {
+#pontoon #editor nav li:last-child {
   border-right: none;
 }
 
-#pontoon #helpers nav li.active {
+#pontoon #editor nav li.active {
   background: #3F4752;
   border-bottom: none;
 }
 
-#pontoon #helpers nav li:hover {
+#pontoon #editor nav li:hover {
   background: #3F4752;
 }
 
-#pontoon #helpers nav li a {
+#pontoon #editor nav li a {
   color: #CCCCCC;
   display: block;
   padding: 10px;
