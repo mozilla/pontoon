@@ -853,6 +853,7 @@ body, select, input, textarea, button {
 }
 
 #pontoon #source-pane > div {
+  overflow: auto;
   padding: 10px;
 
   -moz-box-sizing: border-box;
