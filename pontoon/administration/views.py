@@ -228,12 +228,11 @@ def _save_translation(entity, locale, translation, plural_form=None):
 
     # Update existing translation if different from repository
     try:
-        t = Translation.objects.get(
-            entity=entity, locale=locale, approved=True)
+        t = Translation.objects.get(entity=entity, locale=locale,
+                                    plural_form=plural_form, approved=True)
         if t.string != translation:
-            t.user = None
             t.string = translation
-            t.plural_form = plural_form
+            t.user = None
             t.date = datetime.datetime.now()
             t.save()
 
