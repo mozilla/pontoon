@@ -362,9 +362,11 @@ var Pontoon = (function () {
       }
 
       $('#source-pane').removeClass('pluralized');
+      $('#plural-tabs li').css('display', 'none');
       if (entity.original_plural) {
         $('#original-plural').html(this.doNotRender(entity.original_plural));
         $('#source-pane').addClass('pluralized');
+        $('#plural-tabs li').css('display', 'table-cell');
       }
 
       var original = entity.original.length,

@@ -917,10 +917,6 @@ body, select, input, textarea, button {
   text-transform: uppercase;
 }
 
-#pontoon #plural-tabs {
-  display: none;
-}
-
 #pontoon #editor textarea {
   background: #FFFFFF;
   display: block;
