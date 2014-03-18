@@ -353,6 +353,8 @@ var Pontoon = (function () {
      * entity Entity
      */
     openEditor: function (entity) {
+      $("#editor")[0].entity = entity;
+
       $('#original').html(this.doNotRender(entity.original));
       $('#translation').val(entity.translation[0].string);
 
@@ -368,6 +370,7 @@ var Pontoon = (function () {
         $('#source-pane').addClass('pluralized');
         var nplurals = entity.translation.length;
         $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
+        $('#plural-tabs li:first a').click();
       }
 
       var original = entity.original.length,
@@ -380,7 +383,6 @@ var Pontoon = (function () {
 
       this.getHistory(entity);
       $("#helpers nav a:first").click();
-      $("#editor")[0].entity = entity;
 
       $("#entitylist .hovered").removeClass('hovered');
       entity.ui.addClass('hovered');
