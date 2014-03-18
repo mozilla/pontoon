@@ -378,12 +378,12 @@ def _extract_po(project, locale, paths, source_locale):
                         try:
                             e = Entity.objects.get(
                                 project=project, string=entity.msgid)
-                            for i, val in enumerate(entity.msgstr_plural):
+                            for k in entity.msgstr_plural:
                                 _save_translation(
                                     entity=e,
                                     locale=locale,
-                                    translation=entity.msgstr_plural[val],
-                                    plural_form=i)
+                                    translation=entity.msgstr_plural[k],
+                                    plural_form=k)
                         except Entity.DoesNotExist:
                             continue
 
