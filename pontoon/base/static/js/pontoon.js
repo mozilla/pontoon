@@ -39,14 +39,14 @@
               entity = element.entity,
               content = $(element).html();
 
-          if (Pontoon.user.localizer || !entity.translation.approved) {
-            entity.translation.string = content;
+          if (Pontoon.user.localizer || !entity.translation[0].approved) {
+            entity.translation[0].string = content;
             $(entity.node).each(function() {
               this.html(content);
             });
             sendData();
           } else {
-            $(element).html(entity.translation.string);
+            $(element).html(entity.translation[0].string);
           }
 
           postMessage("UPDATE", {
@@ -60,7 +60,7 @@
           var element = $(this).parent()[0].target,
               entity = element.entity;
 
-          $(element).html(entity.translation.string || entity.original);
+          $(element).html(entity.translation[0].string || entity.original);
           postMessage("INACTIVE", entity.id);
         });
 
@@ -224,7 +224,7 @@
         var counter = 0;
 
         $(Pontoon.project.entities).each(function(i, entity) {
-          var translation = entity.translation.string,
+          var translation = entity.translation[0].string,
               original = entity.original;
           entity.id = counter;
 
@@ -262,7 +262,7 @@
         var counter = 0;
 
         $(Pontoon.project.entities).each(function(i, entity) {
-          var translation = entity.translation.string,
+          var translation = entity.translation[0].string,
               split = entity.key.split('.'),
               key = split[0],
               attribute = split[1];
@@ -321,7 +321,7 @@
           $('body').append('<div id="pontoon-string" style="display: none">' + this.original + '</div>');
 
           var parent = l10n[$('#pontoon-string').html()],
-              translation = this.translation.string;
+              translation = this.translation[0].string;
           entity.id = counter;
 
           // Head strings cannot be edited in-place
@@ -508,7 +508,7 @@
             if (target) {
               var entity = target.entity;
               $(target).attr('contentEditable', false);
-              $(target).html(entity.translation.string || entity.original);
+              $(target).html(entity.translation[0].string || entity.original);
               hideToolbar(target);
             }
             // Start editing new entity
@@ -538,8 +538,8 @@
               this.html(entity.original);
             });
             selectNodeContents(target);
-            entity.translation.approved = false;
-            entity.translation.string = '';
+            entity.translation[0].approved = false;
+            entity.translation[0].string = '';
             sendData();
             postMessage("DELETE", entity.id);
             break;

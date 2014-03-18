@@ -173,10 +173,11 @@ def translate_site(request, locale, url, template='translate.html'):
             kwargs={'locale': locale, 'slug': p.slug, 'page': page}))
 
 
-def _get_translation(entity, locale):
-    """Get translation of given entity to given locale."""
+def _get_translation(entity, locale, plural_form=None):
+    """Get translation of a given entity to a given locale in a given form."""
 
-    translations = Translation.objects.filter(entity=entity, locale=locale)
+    translations = Translation.objects.filter(
+        entity=entity, locale=locale, plural_form=plural_form)
 
     if len(translations) > 0:
         try:
@@ -199,7 +200,28 @@ def _get_entities(project, locale, page=None):
 
     entities_array = []
     for e in entities:
-        translation = _get_translation(entity=e, locale=locale)
+        translation_array = []
+
+        # Entities without plurals
+        if e.string_plural == "":
+            translation = _get_translation(entity=e, locale=locale)
+            translation_array.append({
+                "string": translation.string,
+                "approved": translation.approved,
+            })
+
+        # Pluralized entities
+        else:
+            for i in range(0, 6):
+                translation = _get_translation(
+                    entity=e, locale=locale, plural_form=i)
+                if translation.id is not None:
+                    translation_array.append({
+                        "string": translation.string,
+                        "approved": translation.approved,
+                    })
+                else:
+                    break
 
         obj = {
             "original": e.string,
@@ -207,10 +229,7 @@ def _get_entities(project, locale, page=None):
             "comment": e.comment,
             "key": e.key,
             "pk": e.pk,
-            "translation": {
-                "string": translation.string,
-                "approved": translation.approved,
-            },
+            "translation": translation_array,
         }
 
         entities_array.append(obj)

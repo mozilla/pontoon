@@ -71,7 +71,7 @@ var Pontoon = (function () {
           var entity = $(this)[0].entity;
           params.strings.push({
             original: entity.original,
-            translation: entity.translation.string
+            translation: entity.translation[0].string
           });
         });
 
@@ -354,7 +354,7 @@ var Pontoon = (function () {
      */
     openEditor: function (entity) {
       $('#original').html(this.doNotRender(entity.original));
-      $('#translation').val(entity.translation.string);
+      $('#translation').val(entity.translation[0].string);
 
       $('#comment').hide();
       if (entity.comment) {
@@ -366,11 +366,12 @@ var Pontoon = (function () {
       if (entity.original_plural) {
         $('#original-plural').html(this.doNotRender(entity.original_plural));
         $('#source-pane').addClass('pluralized');
-        $('#plural-tabs li').css('display', 'table-cell');
+        var nplurals = entity.translation.length;
+        $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
       }
 
       var original = entity.original.length,
-          translation = entity.translation.string.length;
+          translation = entity.translation[0].string.length;
 
       $('#translation-length')
         .show() // Needed if advanced features opened by default
@@ -460,7 +461,7 @@ var Pontoon = (function () {
       $(self.project.entities).each(function () {
         var li = $('<li class="entity' + 
           // append classes to translated, approved and uneditable entities
-          (this.translation.approved ? ' approved' : (this.translation.string ? ' translated' : '')) +
+          (this.translation[0].approved ? ' approved' : (this.translation[0].string ? ' translated' : '')) +
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status"></span>' +
           '<p class="source-string">' + self.doNotRender(this.original) + '</p>' +
@@ -555,6 +556,22 @@ var Pontoon = (function () {
         }
       });
 
+      // Plurals navigation
+      $("#plural-tabs a").click(function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        $("#plural-tabs li").removeClass('active');
+        $(this).parent().addClass('active');
+
+        var i = $(this).parent().index(),
+            editor = $('#editor')[0],
+            entity = editor.entity,
+            source = entity.translation[i].string;
+
+        $('#translation').val(source).focus();
+      });
+
       // Translate in textarea
       $('#translation').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
         var key = e.keyCode || e.which;
@@ -641,7 +658,7 @@ var Pontoon = (function () {
 
         // Update translation, including in-place if possible
         if (entity.body && (self.user.localizer ||
-            !entity.translation.approved)) {
+            !entity.translation[0].approved)) {
           self.common.postMessage("SAVE", source);
         } else {
           self.updateOnServer(entity, source);
@@ -743,8 +760,8 @@ var Pontoon = (function () {
                   if (entity.body) {
                     self.common.postMessage("DELETE");
                   } else {
-                    entity.translation.string = "";
-                    entity.translation.approved = false;
+                    entity.translation[0].string = "";
+                    entity.translation[0].approved = false;
                     self.updateEntityUI(entity);
                   }
                   $('#history ul')
@@ -796,9 +813,9 @@ var Pontoon = (function () {
      */
     updateEntityUI: function (entity) {
       entity.ui.removeClass('translated approved');
-      if (entity.translation.approved) {
+      if (entity.translation[0].approved) {
         entity.ui.addClass('approved');
-      } else if (entity.translation.string !== '') {
+      } else if (entity.translation[0].string !== '') {
         entity.ui.addClass('translated');
       }
       this.updateProgress();
@@ -827,8 +844,8 @@ var Pontoon = (function () {
         success: function(data) {
           if (data.type) {
             self.endLoader('Translation ' + data.type);
-            entity.translation.string = data.translation;
-            entity.translation.approved = data.approved;
+            entity.translation[0].string = data.translation;
+            entity.translation[0].approved = data.approved;
             self.updateEntityUI(entity);
             if (self.project.win && !self.project.width &&
                 $("#editor").is('.opened')) {
