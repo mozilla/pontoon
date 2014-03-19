@@ -821,9 +821,22 @@ var Pontoon = (function () {
      */
     updateEntityUI: function (entity) {
       entity.ui.removeClass('translated approved');
-      if (entity.translation[0].approved) {
+
+      var translation = entity.translation,
+          approved = translated = 0;
+
+      for (i=0; i<translation.length; i++) {
+        if (entity.translation[i].approved) {
+          approved++;
+        }
+        if (entity.translation[i].string !== '') {
+          translated++;
+        }
+      }
+
+      if (i === approved) {
         entity.ui.addClass('approved');
-      } else if (entity.translation[0].string !== '') {
+      } else if (i === translated) {
         entity.ui.addClass('translated');
       }
       this.updateProgress();
