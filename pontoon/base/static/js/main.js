@@ -655,7 +655,8 @@ var Pontoon = (function () {
         e.preventDefault();
 
         var entity = $('#editor')[0].entity,
-            source = $('#translation').val();
+            source = $('#translation').val(),
+            plural_form = $('#plural-tabs li.active:visible').index();
 
         if (source === '') {
           self.endLoader('Empty translations cannot be submitted.', 'error');
@@ -663,8 +664,9 @@ var Pontoon = (function () {
         }
 
         // Update translation, including in-place if possible
+        plural_form = (plural_form === -1) ? 0 : plural_form;
         if (entity.body && (self.user.localizer ||
-            !entity.translation[0].approved)) {
+            !entity.translation[plural_form].approved)) {
           self.common.postMessage("SAVE", source);
         } else {
           self.updateOnServer(entity, source);
