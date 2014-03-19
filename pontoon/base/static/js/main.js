@@ -573,6 +573,9 @@ var Pontoon = (function () {
             source = entity.translation[i].string;
 
         $('#translation').val(source).focus();
+
+        self.getHistory(entity);
+        $("#helpers nav a:first").click();
       });
 
       // Translate in textarea
