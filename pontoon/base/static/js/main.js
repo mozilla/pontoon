@@ -366,12 +366,17 @@ var Pontoon = (function () {
 
       $('#source-pane').removeClass('pluralized');
       $('#plural-tabs li').css('display', 'none');
+
       if (entity.original_plural) {
         $('#original-plural').html(this.doNotRender(entity.original_plural));
         $('#source-pane').addClass('pluralized');
         var nplurals = entity.translation.length;
         $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
         $('#plural-tabs li:first a').click();
+
+      } else {
+        this.getHistory(entity);
+        $("#helpers nav a:first").click();
       }
 
       var original = entity.original.length,
@@ -381,9 +386,6 @@ var Pontoon = (function () {
         .show() // Needed if advanced features opened by default
         .find('.original-length').html(original).end()
         .find('.current-length').html(translation);
-
-      this.getHistory(entity);
-      $("#helpers nav a:first").click();
 
       $("#entitylist .hovered").removeClass('hovered');
       entity.ui.addClass('hovered');
