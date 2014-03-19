@@ -853,7 +853,8 @@ var Pontoon = (function () {
      * translation Translation
      */
     updateOnServer: function (entity, translation) {
-      var self = this;
+      var self = this,
+          plural_form = $('#plural-tabs li.active:visible').index();
       self.startLoader();
       $.ajax({
         url: 'update/',
@@ -862,13 +863,15 @@ var Pontoon = (function () {
           csrfmiddlewaretoken: $('#server').data('csrf'),
           locale: self.locale.code,
           entity: entity.pk,
-          translation: translation
+          translation: translation,
+          plural_form: plural_form
         },
         success: function(data) {
           if (data.type) {
             self.endLoader('Translation ' + data.type);
-            entity.translation[0].string = data.translation;
-            entity.translation[0].approved = data.approved;
+            plural_form = (plural_form === -1) ? 0 : plural_form;
+            entity.translation[plural_form].string = data.translation;
+            entity.translation[plural_form].approved = data.approved;
             self.updateEntityUI(entity);
             if (self.project.win && !self.project.width &&
                 $("#editor").is('.opened')) {

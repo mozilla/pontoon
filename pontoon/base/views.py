@@ -628,6 +628,7 @@ def update_translation(request, template=None):
         entity = request.POST['entity']
         string = request.POST['translation']
         locale = request.POST['locale']
+        plural_form = request.POST['plural_form']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
@@ -648,6 +649,9 @@ def update_translation(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
+    if plural_form == "-1":
+        plural_form = None
+
     user = request.user
     if not request.user.is_authenticated():
         if e.project.name != 'Testpilot':
@@ -660,7 +664,8 @@ def update_translation(request, template=None):
         return HttpResponse("Empty translations cannot be submitted.")
     else:
         can_localize = request.user.has_perm('base.can_localize')
-        translations = Translation.objects.filter(entity=e, locale=l)
+        translations = Translation.objects.filter(
+            entity=e, locale=l, plural_form=plural_form)
 
         # Translations exist
         if len(translations) > 0:
@@ -687,10 +692,12 @@ def update_translation(request, template=None):
 
             t = Translation(
                 entity=e, locale=l, user=user, string=string,
-                date=datetime.datetime.now(), approved=can_localize)
+                plural_form=plural_form, date=datetime.datetime.now(),
+                approved=can_localize)
             t.save()
 
-            active = _get_translation(entity=e, locale=l)
+            active = _get_translation(
+                entity=e, locale=l, plural_form=plural_form)
 
             return HttpResponse(json.dumps({
                 'type': 'added',
@@ -702,7 +709,8 @@ def update_translation(request, template=None):
         else:
             t = Translation(
                 entity=e, locale=l, user=user, string=string,
-                date=datetime.datetime.now(), approved=can_localize)
+                plural_form=plural_form, date=datetime.datetime.now(),
+                approved=can_localize)
             t.save()
 
             return HttpResponse(json.dumps({
