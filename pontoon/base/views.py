@@ -463,6 +463,7 @@ def get_translation_history(request, template=None):
     try:
         entity = request.GET['entity']
         locale = request.GET['locale']
+        plural_form = request.GET['plural_form']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
@@ -482,9 +483,10 @@ def get_translation_history(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    translations = Translation.objects \
-        .filter(entity=entity, locale=locale) \
-        .order_by('-approved', '-date')
+    translations = Translation.objects.filter(entity=entity, locale=locale)
+    if plural_form != "-1":
+        translations = translations.filter(plural_form=plural_form)
+    translations = translations.order_by('-approved', '-date')
 
     user = ''
     if entity.project.name == 'Testpilot':

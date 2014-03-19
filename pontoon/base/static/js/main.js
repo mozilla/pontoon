@@ -308,7 +308,8 @@ var Pontoon = (function () {
         url: 'get-history/',
         data: {
           entity: entity.pk,
-          locale: self.locale.code
+          locale: self.locale.code,
+          plural_form: $('#plural-tabs li.active:visible').index()
         },
         success: function(data) {
           if (data !== "error") {
