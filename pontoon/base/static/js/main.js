@@ -426,6 +426,34 @@ var Pontoon = (function () {
 
 
     /*
+     * Get entity status ('translated' or 'approved' or '')
+     *
+     * entity Entity
+     */
+    getEntityStatus: function (entity) {
+      var translation = entity.translation,
+          approved = translated = 0;
+
+      for (i=0; i<translation.length; i++) {
+        if (entity.translation[i].approved) {
+          approved++;
+        }
+        if (entity.translation[i].string !== '') {
+          translated++;
+        }
+      }
+
+      if (i === approved) {
+        return 'approved';
+      } else if (i === translated) {
+        return 'translated';
+      }
+      return '';
+    },
+
+
+
+    /*
      * Render list of entities to translate
      */
     renderEntityList: function () {
@@ -825,23 +853,9 @@ var Pontoon = (function () {
     updateEntityUI: function (entity) {
       entity.ui.removeClass('translated approved');
 
-      var translation = entity.translation,
-          approved = translated = 0;
+      var status = this.getEntityStatus(entity);
+      entity.ui.addClass(status);
 
-      for (i=0; i<translation.length; i++) {
-        if (entity.translation[i].approved) {
-          approved++;
-        }
-        if (entity.translation[i].string !== '') {
-          translated++;
-        }
-      }
-
-      if (i === approved) {
-        entity.ui.addClass('approved');
-      } else if (i === translated) {
-        entity.ui.addClass('translated');
-      }
       this.updateProgress();
     },
 
