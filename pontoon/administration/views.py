@@ -223,15 +223,15 @@ def _save_entity(project, original, plural="", comment="", key="", source=""):
     e.save()
 
 
-def _save_translation(entity, locale, translation, plural_form=None):
+def _save_translation(entity, locale, string, plural_form=None):
     """Admin interface: save new or update existing translation in DB."""
 
     # Update existing translation if different from repository
     try:
         t = Translation.objects.get(entity=entity, locale=locale,
                                     plural_form=plural_form, approved=True)
-        if t.string != translation:
-            t.string = translation
+        if t.string != string:
+            t.string = string
             t.user = None
             t.date = datetime.datetime.now()
             t.save()
@@ -239,7 +239,7 @@ def _save_translation(entity, locale, translation, plural_form=None):
     # Save new translation if it doesn's exist yet
     except Translation.DoesNotExist:
         t = Translation(
-            entity=entity, locale=locale, string=translation,
+            entity=entity, locale=locale, string=string,
             plural_form=plural_form, date=datetime.datetime.now(),
             approved=True)
         t.save()
@@ -369,7 +369,7 @@ def _extract_po(project, locale, paths, source_locale):
                             _save_translation(
                                 entity=e,
                                 locale=locale,
-                                translation=entity.msgstr)
+                                string=entity.msgstr)
                         except Entity.DoesNotExist:
                             continue
 
@@ -382,7 +382,7 @@ def _extract_po(project, locale, paths, source_locale):
                                 _save_translation(
                                     entity=e,
                                     locale=locale,
-                                    translation=entity.msgstr_plural[k],
+                                    string=entity.msgstr_plural[k],
                                     plural_form=k)
                         except Entity.DoesNotExist:
                             continue
@@ -420,7 +420,7 @@ def _extract_properties(project, locale, paths, source_locale):
                             _save_translation(
                                 entity=e,
                                 locale=locale,
-                                translation=line.value)
+                                string=line.value)
                         except Entity.DoesNotExist:
                             continue
             log.debug("[" + locale.code + "]: " + path + " saved to DB.")
@@ -445,7 +445,7 @@ def _extract_lang(project, locale, paths, source_locale):
                     try:
                         e = Entity.objects.get(project=project, string=key)
                         _save_translation(
-                            entity=e, locale=locale, translation=value[1])
+                            entity=e, locale=locale, string=value[1])
                     except Entity.DoesNotExist:
                         continue
 
@@ -495,7 +495,7 @@ def _extract_ini(project, path):
                     e = Entity.objects.get(
                         project=project, key=item[0], source=path)
                     _save_translation(
-                        entity=e, locale=l, translation=item[1])
+                        entity=e, locale=l, string=item[1])
                 except Entity.DoesNotExist:
                     log.debug("[" + section + "]: line ID " +
                               item[0] + " is obsolete.")
@@ -714,7 +714,7 @@ def update_from_transifex(request, template=None):
                 if len(entity["translation"]) > 0:
                     e = Entity.objects.get(project=p, string=entity["key"])
                     _save_translation(
-                        entity=e, locale=l, translation=entity["translation"])
+                        entity=e, locale=l, string=entity["translation"])
             log.debug("Transifex data for " + l.name + " saved to DB.")
         else:
             return HttpResponse(response)
