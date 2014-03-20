@@ -492,9 +492,9 @@ var Pontoon = (function () {
 
       // Render
       $(self.project.entities).each(function () {
-        var li = $('<li class="entity' + 
-          // append classes to translated, approved and uneditable entities
-          (this.translation[0].approved ? ' approved' : (this.translation[0].string ? ' translated' : '')) +
+        var status = self.getEntityStatus(this),
+            li = $('<li class="entity' +
+          (status ? ' ' + status : '') +
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status"></span>' +
           '<p class="source-string">' + self.doNotRender(this.original) + '</p>' +
