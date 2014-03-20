@@ -800,7 +800,7 @@ var Pontoon = (function () {
                 } else {
                   entity.dirty = false;
                   $('#translation').val('').focus();
-                  if (entity.body) {
+                  if (entity.body && plural_form === 0) {
                     self.common.postMessage("DELETE");
                   } else {
                     entity.translation[plural_form].string = "";
