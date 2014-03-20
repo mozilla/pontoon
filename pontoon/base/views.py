@@ -551,8 +551,10 @@ def approve_translation(request, template=None):
 
     entity = translation.entity
     locale = translation.locale
+    plural_form = translation.plural_form
 
-    translations = Translation.objects.filter(entity=entity, locale=locale)
+    translations = Translation.objects.filter(
+        entity=entity, locale=locale, plural_form=plural_form)
     _unset_approved(translations)
 
     translation.approved = True
