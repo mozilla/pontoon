@@ -888,11 +888,17 @@ var Pontoon = (function () {
         success: function(data) {
           if (data.type) {
             self.endLoader('Translation ' + data.type);
-            plural_form = (plural_form === -1) ? 0 : plural_form;
-            entity.translation[plural_form].string = data.translation;
-            entity.translation[plural_form].approved = data.approved;
+            var pf = (plural_form === -1) ? 0 : plural_form;
+            entity.translation[pf].string = data.translation;
+            entity.translation[pf].approved = data.approved;
             self.updateEntityUI(entity);
-            if (self.project.win && !self.project.width &&
+            if (plural_form !== -1 && $("#editor").is('.opened')) {
+              var next = $('#plural-tabs li').eq(plural_form + 1).find('a');
+              if (next.length === 0) {
+                next = $('#plural-tabs li:first a');
+              }
+              next.click();
+            } else if (self.project.win && !self.project.width &&
                 $("#editor").is('.opened')) {
               $('#cancel').click();
             } else if (!self.project.win || self.project.width) {
