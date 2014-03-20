@@ -799,8 +799,10 @@ var Pontoon = (function () {
                   if (entity.body) {
                     self.common.postMessage("DELETE");
                   } else {
-                    entity.translation[0].string = "";
-                    entity.translation[0].approved = false;
+                    var plural_form = $('#plural-tabs li.active:visible').index();
+                    plural_form = (plural_form === -1) ? 0 : plural_form;
+                    entity.translation[plural_form].string = "";
+                    entity.translation[plural_form].approved = false;
                     self.updateEntityUI(entity);
                   }
                   $('#history ul')

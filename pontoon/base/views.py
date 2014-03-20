@@ -600,9 +600,11 @@ def delete_translation(request, template=None):
 
     entity = translation.entity
     locale = translation.locale
+    plural_form = translation.plural_form
 
     translation.delete()
-    next = _get_translation(entity=entity, locale=locale)
+    next = _get_translation(
+        entity=entity, locale=locale, plural_form=plural_form)
 
     if next.id is not None and request.user.has_perm('base.can_localize'):
         next.approved = True
