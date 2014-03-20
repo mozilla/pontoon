@@ -200,22 +200,23 @@ def delete_project(request, pk, template=None):
             args=[project.slug]))
 
 
-def _save_entity(project, original, plural="", comment="", key="", source=""):
+def _save_entity(project, string, string_plural="",
+                 comment="", key="", source=""):
     """Admin interface: save new or update existing entity in DB."""
 
     # Update existing entity
     try:
         if key is "":
             e = Entity.objects.get(
-                project=project, string=original, string_plural=plural)
+                project=project, string=string, string_plural=string_plural)
         else:
             e = Entity.objects.get(project=project, key=key, source=source)
-            e.string = original
-            e.string_plural = plural
+            e.string = string
+            e.string_plural = string_plural
 
     # Add new entity
     except Entity.DoesNotExist:
-        e = Entity(project=project, string=original, string_plural=plural,
+        e = Entity(project=project, string=string, string_plural=string_plural,
                    key=key, source=source)
 
     if len(comment) > 0:
@@ -357,8 +358,9 @@ def _extract_po(project, locale, paths, source_locale):
 
             if locale.code == source_locale:
                 for entity in entities:
-                    _save_entity(project, entity.msgid,
-                                 entity.msgid_plural, entity.comment)
+                    _save_entity(project=project, string=entity.msgid,
+                                 string_plural=entity.msgid_plural,
+                                 comment=entity.comment)
             else:
                 for entity in entities:
                     # Entities without plurals
@@ -409,7 +411,7 @@ def _extract_properties(project, locale, paths, source_locale):
             for line in l10nobject:
                 if isinstance(line, silme.core.entity.Entity):
                     if locale.code == source_locale:
-                        _save_entity(project=project, original=line.value,
+                        _save_entity(project=project, string=line.value,
                                      key=line.id, source=short_path)
                     else:
                         try:
@@ -438,7 +440,7 @@ def _extract_lang(project, locale, paths, source_locale):
 
         if locale.code == source_locale:
             for key, value in lang.items():
-                _save_entity(project, key, "", value[0])
+                _save_entity(project=project, string=key, comment=value[0])
         else:
             for key, value in lang.items():
                 if key != value[1]:
@@ -480,11 +482,8 @@ def _extract_ini(project, path):
     for section in sections:
         for item in config.items(section):
             if section == source_locale:
-                _save_entity(
-                    project=project,
-                    original=item[1],
-                    key=item[0],
-                    source=path)
+                _save_entity(project=project, string=item[1],
+                             key=item[0], source=path)
             else:
                 try:
                     l = Locale.objects.get(code=section)
@@ -710,7 +709,8 @@ def update_from_transifex(request, template=None):
         if hasattr(response, 'status_code') and response.status_code == 200:
             entities = json.loads(response.content)
             for entity in entities:
-                _save_entity(p, entity["key"], "", entity["comment"])
+                _save_entity(project=p, string=entity["key"],
+                             comment=entity["comment"])
                 if len(entity["translation"]) > 0:
                     e = Entity.objects.get(project=p, string=entity["key"])
                     _save_translation(
