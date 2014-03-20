@@ -785,11 +785,15 @@ var Pontoon = (function () {
               // Active translation deleted
               if (index === 0) {
                 var entity = $('#editor')[0].entity,
-                    next = $('#history li[data-id="' + data.next + '"]');
+                    next = $('#history li[data-id="' + data.next + '"]'),
+                    plural_form = $('#plural-tabs li.active:visible').index();
+                plural_form = (plural_form === -1) ? 0 : plural_form;
 
                 // Make newest alternative translation active
                 if (next.length > 0) {
                   next.click();
+                  entity.translation[plural_form].string =
+                    next.find('.translation').html();
                   entity.dirty = true;
 
                 // Last translation deleted, no alternative available
@@ -799,8 +803,6 @@ var Pontoon = (function () {
                   if (entity.body) {
                     self.common.postMessage("DELETE");
                   } else {
-                    var plural_form = $('#plural-tabs li.active:visible').index();
-                    plural_form = (plural_form === -1) ? 0 : plural_form;
                     entity.translation[plural_form].string = "";
                     entity.translation[plural_form].approved = false;
                     self.updateEntityUI(entity);
