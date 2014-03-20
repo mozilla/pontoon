@@ -215,13 +215,10 @@ def _get_entities(project, locale, page=None):
             for i in range(0, 6):
                 translation = _get_translation(
                     entity=e, locale=locale, plural_form=i)
-                if translation.id is not None:
-                    translation_array.append({
-                        "string": translation.string,
-                        "approved": translation.approved,
-                    })
-                else:
-                    break
+                translation_array.append({
+                    "string": translation.string,
+                    "approved": translation.approved,
+                })
 
         obj = {
             "original": e.string,
