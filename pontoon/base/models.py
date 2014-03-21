@@ -27,6 +27,8 @@ post_save.connect(create_user_profile, sender=User)
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
+    nplurals = models.SmallIntegerField(null=True, blank=True)
+    plural_rule = models.CharField(max_length=128, blank=True)
 
     def __unicode__(self):
         return self.name
