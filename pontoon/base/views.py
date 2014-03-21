@@ -882,13 +882,23 @@ def _update_files(p, locale, locale_repository_path):
             for entity in entities:
                 entry = po.find(entity.string)
                 if entry:
-                    translation = _get_translation(
-                        entity=entity, locale=locale).string
-                    if translation != '':
-                        entry.msgstr = translation
+                    if not entry.msgid_plural:
+                        translation = _get_translation(
+                            entity=entity, locale=locale).string
+                        if translation != '':
+                            entry.msgstr = translation
+                            if 'fuzzy' in entry.flags:
+                                entry.flags.remove('fuzzy')
 
-                    if 'fuzzy' in entry.flags:
-                        entry.flags.remove('fuzzy')
+                    else:
+                        for i in range(0, locale.nplurals or 1):
+                            translation = _get_translation(
+                                entity=entity, locale=locale,
+                                plural_form=i).string
+                            if translation != '':
+                                entry.msgstr_plural[unicode(i)] = translation
+                                if 'fuzzy' in entry.flags:
+                                    entry.flags.remove('fuzzy')
 
             po.save()
             log.debug("File updated: " + path)
