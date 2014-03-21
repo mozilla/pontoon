@@ -371,9 +371,10 @@ var Pontoon = (function () {
         $('#original-plural').html(this.doNotRender(entity.original_plural));
         $('#source-pane').addClass('pluralized');
         var nplurals = entity.translation.length;
-        $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
-        $('#plural-tabs li:first a').click();
-
+        if (nplurals.length > 1) {
+          $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
+          $('#plural-tabs li:first a').click();
+        }
       } else {
         this.getHistory(entity);
         $("#helpers nav a:first").click();
