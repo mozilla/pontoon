@@ -212,7 +212,7 @@ def _get_entities(project, locale, page=None):
 
         # Pluralized entities
         else:
-            for i in range(0, 6):
+            for i in range(0, locale.nplurals or 1):
                 translation = _get_translation(
                     entity=e, locale=locale, plural_form=i)
                 translation_array.append({
