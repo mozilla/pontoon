@@ -877,6 +877,10 @@ def _update_files(p, locale, locale_repository_path):
     if p.format == 'po':
         for path in locale_paths:
             po = polib.pofile(path)
+            if locale.nplurals:
+                po.metadata['Plural-Forms'] = 'nplurals=%s; plural=%s;' \
+                % (str(locale.nplurals), locale.plural_rule)
+
             valid_entries = [e for e in po if not e.obsolete]
 
             for entity in entities:
