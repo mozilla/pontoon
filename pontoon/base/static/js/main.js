@@ -1160,10 +1160,7 @@ var Pontoon = (function () {
           $('#server').data('width') : false,
         links: $('#server').data('links')
       };
-      this.locale = {
-        code: $('#server').data('locale'),
-        language: $("#pontoon > header .language").contents()[0].nodeValue
-      };
+      this.locale = $('#server').data('locale');
       this.user = {
         email: $('#server').data('email') || '',
         name: $('#server').data('name') || '',

@@ -128,7 +128,12 @@ def translate_site(request, locale, url, template='translate.html'):
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
-        'locale_code': locale,
+        'locale': json.dumps({
+            'code': l.code,
+            'name': l.name,
+            'nplurals': l.nplurals,
+            'plural_rule': l.plural_rule,
+        }),
         'locales': Locale.objects.all(),
         'project_url': url,
         'project': {},
@@ -264,7 +269,12 @@ def translate_project(request, locale, slug, page=None,
             return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
-        'locale_code': locale,
+        'locale': json.dumps({
+            'code': l.code,
+            'name': l.name,
+            'nplurals': l.nplurals,
+            'plural_rule': l.plural_rule,
+        }),
         'locales': Locale.objects.all(),
         'pages': Subpage.objects.all(),
         'project_url': p.url,

@@ -7,7 +7,7 @@
 <div id="server"
      class="hidden"
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
-     {% if locale_code %}data-locale="{{ locale_code }}"{% endif %}
+     {% if locale %}data-locale="{{ locale }}"{% endif %}
      {% if project_url %}data-url="{{ project_url }}"{% endif %}
      {% if project.id %}data-id="{{ project.id }}"{% endif %}
      {% if project.format %}data-format="{{ project.format }}"{% endif %}
@@ -72,7 +72,7 @@
     <!-- Locale selector -->
     <div class="locale select">
       <div class="button breadcrumbs selector">
-        <span class="language {{ locale_code }}">{{ locales.get(code=locale_code) }}<span class="code">{{ locale_code }}</span>
+        <span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span>
         </span>
       </div>
       <div class="menu">
