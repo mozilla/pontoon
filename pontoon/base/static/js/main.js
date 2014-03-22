@@ -371,7 +371,7 @@ var Pontoon = (function () {
         $('#original-plural').html(this.doNotRender(entity.original_plural));
         $('#source-pane').addClass('pluralized');
         var nplurals = entity.translation.length;
-        if (nplurals.length > 1) {
+        if (nplurals > 1) {
           $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
           $('#plural-tabs li:first a').click();
         }
