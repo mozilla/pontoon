@@ -877,20 +877,21 @@ def _update_files(p, locale, locale_repository_path):
     if p.format == 'po':
         for path in locale_paths:
             po = polib.pofile(path)
-            if locale.nplurals:
-                po.metadata['Plural-Forms'] = 'nplurals=%s; plural=%s;' \
-                % (str(locale.nplurals), locale.plural_rule)
-
             valid_entries = [e for e in po if not e.obsolete]
+            date = datetime.datetime(1, 1, 1)
+            newest = Translation()
 
             for entity in entities:
                 entry = po.find(entity.string)
                 if entry:
                     if not entry.msgid_plural:
                         translation = _get_translation(
-                            entity=entity, locale=locale).string
-                        if translation != '':
-                            entry.msgstr = translation
+                            entity=entity, locale=locale)
+                        if translation.string != '':
+                            entry.msgstr = translation.string
+                            if translation.date > date:
+                                date = translation.date
+                                newest = translation
                             if 'fuzzy' in entry.flags:
                                 entry.flags.remove('fuzzy')
 
@@ -899,16 +900,32 @@ def _update_files(p, locale, locale_repository_path):
                             if i < (locale.nplurals or 1):
                                 translation = _get_translation(
                                     entity=entity, locale=locale,
-                                    plural_form=i).string
-                                if translation != '':
+                                    plural_form=i)
+                                if translation.string != '':
                                     entry.msgstr_plural[unicode(i)] = \
-                                        translation
+                                        translation.string
+                                    if translation.date > date:
+                                        date = translation.date
+                                        newest = translation
                                     if 'fuzzy' in entry.flags:
                                         entry.flags.remove('fuzzy')
                             # Remove obsolete plural forms if exist
                             else:
                                 if unicode(i) in entry.msgstr_plural:
                                     del entry.msgstr_plural[unicode(i)]
+
+            # Update PO metadata
+            if newest.id:
+                po.metadata['PO-Revision-Date'] = newest.date
+                if newest.user:
+                    po.metadata['Last-Translator'] = '%s <%s>' \
+                        % (newest.user.first_name, newest.user.email)
+            po.metadata['Language'] = locale.code
+            po.metadata['X-Generator'] = 'Pontoon'
+
+            if locale.nplurals:
+                po.metadata['Plural-Forms'] = 'nplurals=%s; plural=%s;' \
+                    % (str(locale.nplurals), locale.plural_rule)
 
             po.save()
             log.debug("File updated: " + path)
