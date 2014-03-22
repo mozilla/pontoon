@@ -347,7 +347,7 @@ def _parse_lang(path):
     return trans
 
 
-def _extract_po(project, locale, paths, source_locale):
+def _extract_po(project, locale, paths, source_locale, translations=True):
     """Extract .po (gettext) files from paths and save or update in DB."""
 
     for path in paths:
@@ -361,7 +361,7 @@ def _extract_po(project, locale, paths, source_locale):
                     _save_entity(project=project, string=entity.msgid,
                                  string_plural=entity.msgid_plural,
                                  comment=entity.comment)
-            else:
+            elif translations:
                 for entity in entities:
                     # Entities without plurals
                     if len(entity.msgstr) > 0:
@@ -394,7 +394,8 @@ def _extract_po(project, locale, paths, source_locale):
             log.critical('PoExtractError for %s: %s' % (path, e))
 
 
-def _extract_properties(project, locale, paths, source_locale):
+def _extract_properties(project, locale, paths,
+                        source_locale, translations=True):
     """Extract .properties files from paths and save or update in DB."""
 
     for path in paths:
@@ -413,7 +414,7 @@ def _extract_properties(project, locale, paths, source_locale):
                     if locale.code == source_locale:
                         _save_entity(project=project, string=line.value,
                                      key=line.id, source=short_path)
-                    else:
+                    elif translations:
                         try:
                             e = Entity.objects.get(
                                 project=project,
@@ -432,7 +433,7 @@ def _extract_properties(project, locale, paths, source_locale):
                       path + " doesn't exist. Skipping.")
 
 
-def _extract_lang(project, locale, paths, source_locale):
+def _extract_lang(project, locale, paths, source_locale, translations=True):
     """Extract .lang files from paths and save or update in DB."""
 
     for path in paths:
@@ -441,7 +442,7 @@ def _extract_lang(project, locale, paths, source_locale):
         if locale.code == source_locale:
             for key, value in lang.items():
                 _save_entity(project=project, string=key, comment=value[0])
-        else:
+        elif translations:
             for key, value in lang.items():
                 if key != value[1]:
                     try:
@@ -535,11 +536,14 @@ def _update_from_repository(
 
             for l in locales:
                 if format == 'po':
-                    _extract_po(project, l, [file_path], source_locale)
+                    _extract_po(
+                        project, l, [file_path], source_locale, False)
                 elif format == 'properties':
-                    _extract_properties(project, l, [file_path], source_locale)
+                    _extract_properties(
+                        project, l, [file_path], source_locale, False)
                 elif format == 'lang':
-                    _extract_lang(project, l, [file_path], source_locale)
+                    _extract_lang(
+                        project, l, [file_path], source_locale, False)
 
         elif format == 'ini':
             try:
