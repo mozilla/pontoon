@@ -895,14 +895,20 @@ def _update_files(p, locale, locale_repository_path):
                                 entry.flags.remove('fuzzy')
 
                     else:
-                        for i in range(0, locale.nplurals or 1):
-                            translation = _get_translation(
-                                entity=entity, locale=locale,
-                                plural_form=i).string
-                            if translation != '':
-                                entry.msgstr_plural[unicode(i)] = translation
-                                if 'fuzzy' in entry.flags:
-                                    entry.flags.remove('fuzzy')
+                        for i in range(0, 6):
+                            if i < (locale.nplurals or 1):
+                                translation = _get_translation(
+                                    entity=entity, locale=locale,
+                                    plural_form=i).string
+                                if translation != '':
+                                    entry.msgstr_plural[unicode(i)] = \
+                                        translation
+                                    if 'fuzzy' in entry.flags:
+                                        entry.flags.remove('fuzzy')
+                            # Remove obsolete plural forms if exist
+                            else:
+                                if unicode(i) in entry.msgstr_plural:
+                                    del entry.msgstr_plural[unicode(i)]
 
             po.save()
             log.debug("File updated: " + path)
