@@ -4,6 +4,7 @@
         "pk": 1,
         "fields": {
             "name": "Testpilot",
+            "slug": "testpilot",
             "url": "https://pontoon.mozillalabs.com/pontoon/hooks/php/test/testpilot/",
             "locales": [47, 74, 85, 182, 205],
             "repository_type": "svn",

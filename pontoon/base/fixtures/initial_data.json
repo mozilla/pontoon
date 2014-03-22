@@ -2472,6 +2472,7 @@
         "pk": 1,
         "fields": {
             "name": "Testpilot",
+            "slug": "testpilot",
             "url": "http://localhost/pontoon/hooks/php/test/testpilot/",
             "locales": [47, 74, 85, 182, 205],
             "repository_type": "svn",
