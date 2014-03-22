@@ -370,7 +370,7 @@ var Pontoon = (function () {
       if (entity.original_plural) {
         $('#original-plural').html(this.doNotRender(entity.original_plural));
         $('#source-pane').addClass('pluralized');
-        var nplurals = entity.translation.length;
+        var nplurals = this.locale.nplurals;
         if (nplurals > 1) {
           $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
           $('#plural-tabs li:first a').click();
@@ -545,10 +545,13 @@ var Pontoon = (function () {
     getOriginal: function () {
       var entity = $('#editor')[0].entity,
           original = entity.original,
+          nplurals = this.locale.nplurals,
           plural_form = $('#plural-tabs li.active:visible').index();
 
-      if (entity.translation.length === 2 && plural_form === 1) {
+      if (nplurals === 2 && plural_form === 1) {
         original = entity.original_plural;
+      } else if (nplurals > 2) {
+        //
       }
 
       return original;
