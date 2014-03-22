@@ -380,7 +380,7 @@ var Pontoon = (function () {
         $("#helpers nav a:first").click();
       }
 
-      var original = entity.original.length,
+      var original = this.getOriginal().length,
           translation = entity.translation[0].string.length;
 
       $('#translation-length')
@@ -540,6 +540,23 @@ var Pontoon = (function () {
 
 
     /*
+     * Get original string form the editor (singular or plural)
+     */
+    getOriginal: function () {
+      var entity = $('#editor')[0].entity,
+          original = entity.original,
+          plural_form = $('#plural-tabs li.active:visible').index();
+
+      if (entity.translation.length === 2 && plural_form === 1) {
+        original = entity.original_plural;
+      }
+
+      return original;
+    },
+
+
+
+    /*
      * Attach event handlers to editor elements
      */
     attachEditorHandlers: function () {
@@ -601,10 +618,13 @@ var Pontoon = (function () {
         var i = $(this).parent().index(),
             editor = $('#editor')[0],
             entity = editor.entity,
+            original = self.getOriginal(),
             source = entity.translation[i].string;
 
         $('#translation').val(source).focus();
-        $('#translation-length .current-length').html(source.length);
+        $('#translation-length')
+          .find('.original-length').html(original.length).end()
+          .find('.current-length').html(source.length);
 
         self.getHistory(entity);
         $("#helpers nav a:first").click();
@@ -639,7 +659,7 @@ var Pontoon = (function () {
         e.stopPropagation();
         e.preventDefault();
 
-        var original = $('#original').html(),
+        var original = self.getOriginal(),
             source = self.doRender(original);
         $('#translation').val(source).focus();
         $('#translation-length .current-length').html(source.length);
@@ -720,7 +740,7 @@ var Pontoon = (function () {
         switch (sec) {
           case "machinery":
             if (editor.machinery != entity.id) {
-              self.getMachinery(entity.original);
+              self.getMachinery(self.getOriginal());
               editor.machinery = entity.id;
             }
             break;
