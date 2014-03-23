@@ -546,12 +546,14 @@ var Pontoon = (function () {
       var entity = $('#editor')[0].entity,
           original = entity.original,
           nplurals = this.locale.nplurals,
+          plural_rule = this.locale.plural_rule,
           plural_form = $('#plural-tabs li.active:visible').index();
 
-      if (nplurals === 2 && plural_form === 1) {
+      if ((nplurals === 2 && plural_form === 1) ||
+          (nplurals > 2 &&
+           plural_form !== -1 &&
+           plural_form !== eval(plural_rule.replace("n", 1)))) {
         original = entity.original_plural;
-      } else if (nplurals > 2) {
-        //
       }
 
       return original;
