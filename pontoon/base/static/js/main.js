@@ -297,9 +297,15 @@ var Pontoon = (function () {
 
     /*
      * Get currently selected plural form
+     *
+     * normalize If true, return 0 instead of -1 for non-pluralized entities
      */
-    getPluralForm: function () {
-      return $('#plural-tabs li.active:visible').index();
+    getPluralForm: function (normalize) {
+      var plural_form = $('#plural-tabs li.active:visible').index();
+      if (normalize && plural_form === -1) {
+        plural_form = 0;
+      }
+      return plural_form;
     },
 
 
@@ -722,7 +728,7 @@ var Pontoon = (function () {
 
         var entity = $('#editor')[0].entity,
             source = $('#translation').val(),
-            plural_form = self.getPluralForm();
+            plural_form = self.getPluralForm(true);
 
         if (source === '') {
           self.endLoader('Empty translations cannot be submitted.', 'error');
@@ -730,7 +736,6 @@ var Pontoon = (function () {
         }
 
         // Update translation, including in-place if possible
-        plural_form = (plural_form === -1) ? 0 : plural_form;
         if (entity.body && (self.user.localizer ||
             !entity.translation[plural_form].approved)) {
           self.common.postMessage("SAVE", source);
@@ -821,8 +826,7 @@ var Pontoon = (function () {
               if (index === 0) {
                 var entity = $('#editor')[0].entity,
                     next = $('#history li[data-id="' + data.next + '"]'),
-                    plural_form = self.getPluralForm();
-                plural_form = (plural_form === -1) ? 0 : plural_form;
+                    plural_form = self.getPluralForm(true);
 
                 // Make newest alternative translation active
                 if (next.length > 0) {
@@ -923,7 +927,7 @@ var Pontoon = (function () {
         success: function(data) {
           if (data.type) {
             self.endLoader('Translation ' + data.type);
-            var pf = (plural_form === -1) ? 0 : plural_form;
+            var pf = self.getPluralForm(true);
             entity.translation[pf].string = data.translation;
             entity.translation[pf].approved = data.approved;
             self.updateEntityUI(entity);
