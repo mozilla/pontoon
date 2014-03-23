@@ -296,6 +296,15 @@ var Pontoon = (function () {
 
 
     /*
+     * Get currently selected plural form
+     */
+    getPluralForm: function () {
+      return $('#plural-tabs li.active:visible').index();
+    },
+
+
+
+    /*
      * Get history of translations of given entity
      *
      * entity Entity
@@ -309,7 +318,7 @@ var Pontoon = (function () {
         data: {
           entity: entity.pk,
           locale: self.locale.code,
-          plural_form: $('#plural-tabs li.active:visible').index()
+          plural_form: self.getPluralForm()
         },
         success: function(data) {
           if (data !== "error") {
@@ -547,7 +556,7 @@ var Pontoon = (function () {
           original = entity.original,
           nplurals = this.locale.nplurals,
           plural_rule = this.locale.plural_rule,
-          plural_form = $('#plural-tabs li.active:visible').index();
+          plural_form = this.getPluralForm();
 
       if ((nplurals === 2 && plural_form === 1) ||
           (nplurals > 2 &&
@@ -713,7 +722,7 @@ var Pontoon = (function () {
 
         var entity = $('#editor')[0].entity,
             source = $('#translation').val(),
-            plural_form = $('#plural-tabs li.active:visible').index();
+            plural_form = self.getPluralForm();
 
         if (source === '') {
           self.endLoader('Empty translations cannot be submitted.', 'error');
@@ -812,7 +821,7 @@ var Pontoon = (function () {
               if (index === 0) {
                 var entity = $('#editor')[0].entity,
                     next = $('#history li[data-id="' + data.next + '"]'),
-                    plural_form = $('#plural-tabs li.active:visible').index();
+                    plural_form = self.getPluralForm();
                 plural_form = (plural_form === -1) ? 0 : plural_form;
 
                 // Make newest alternative translation active
@@ -899,7 +908,7 @@ var Pontoon = (function () {
      */
     updateOnServer: function (entity, translation) {
       var self = this,
-          plural_form = $('#plural-tabs li.active:visible').index();
+          plural_form = self.getPluralForm();
       self.startLoader();
       $.ajax({
         url: 'update/',
