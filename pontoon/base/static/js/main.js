@@ -301,11 +301,11 @@ var Pontoon = (function () {
      * normalize If true, return 0 instead of -1 for non-pluralized entities
      */
     getPluralForm: function (normalize) {
-      var plural_form = $('#plural-tabs li.active:visible').index();
-      if (normalize && plural_form === -1) {
-        plural_form = 0;
+      var pluralForm = $('#plural-tabs li.active:visible').index();
+      if (normalize && pluralForm === -1) {
+        pluralForm = 0;
       }
-      return plural_form;
+      return pluralForm;
     },
 
 
@@ -561,12 +561,12 @@ var Pontoon = (function () {
       var original = '',
           nplurals = this.locale.nplurals,
           plural_rule = this.locale.plural_rule,
-          plural_form = this.getPluralForm();
+          pluralForm = this.getPluralForm();
 
-      if ((nplurals === 2 && plural_form === 1) ||
+      if ((nplurals === 2 && pluralForm === 1) ||
           (nplurals > 2 &&
-           plural_form !== -1 &&
-           plural_form !== eval(plural_rule.replace("n", 1)))) {
+           pluralForm !== -1 &&
+           pluralForm !== eval(plural_rule.replace("n", 1)))) {
         original = '_plural';
       }
 
@@ -728,7 +728,7 @@ var Pontoon = (function () {
 
         var entity = $('#editor')[0].entity,
             source = $('#translation').val(),
-            plural_form = self.getPluralForm(true);
+            pluralForm = self.getPluralForm(true);
 
         if (source === '') {
           self.endLoader('Empty translations cannot be submitted.', 'error');
@@ -737,7 +737,7 @@ var Pontoon = (function () {
 
         // Update translation, including in-place if possible
         if (entity.body && (self.user.localizer ||
-            !entity.translation[plural_form].approved)) {
+            !entity.translation[pluralForm].approved)) {
           self.common.postMessage("SAVE", source);
         } else {
           self.updateOnServer(entity, source);
@@ -826,12 +826,12 @@ var Pontoon = (function () {
               if (index === 0) {
                 var entity = $('#editor')[0].entity,
                     next = $('#history li[data-id="' + data.next + '"]'),
-                    plural_form = self.getPluralForm(true);
+                    pluralForm = self.getPluralForm(true);
 
                 // Make newest alternative translation active
                 if (next.length > 0) {
                   next.click();
-                  entity.translation[plural_form].string =
+                  entity.translation[pluralForm].string =
                     next.find('.translation').html();
                   entity.dirty = true;
 
@@ -839,11 +839,11 @@ var Pontoon = (function () {
                 } else {
                   entity.dirty = false;
                   $('#translation').val('').focus();
-                  if (entity.body && plural_form === 0) {
+                  if (entity.body && pluralForm === 0) {
                     self.common.postMessage("DELETE");
                   } else {
-                    entity.translation[plural_form].string = "";
-                    entity.translation[plural_form].approved = false;
+                    entity.translation[pluralForm].string = "";
+                    entity.translation[pluralForm].approved = false;
                     self.updateEntityUI(entity);
                   }
                   $('#history ul')
@@ -912,7 +912,7 @@ var Pontoon = (function () {
      */
     updateOnServer: function (entity, translation) {
       var self = this,
-          plural_form = self.getPluralForm();
+          pluralForm = self.getPluralForm();
       self.startLoader();
       $.ajax({
         url: 'update/',
@@ -922,7 +922,7 @@ var Pontoon = (function () {
           locale: self.locale.code,
           entity: entity.pk,
           translation: translation,
-          plural_form: plural_form
+          plural_form: pluralForm
         },
         success: function(data) {
           if (data.type) {
@@ -931,9 +931,9 @@ var Pontoon = (function () {
             entity.translation[pf].string = data.translation;
             entity.translation[pf].approved = data.approved;
             self.updateEntityUI(entity);
-            if (plural_form !== -1 && $("#editor").is('.opened')) {
+            if (pluralForm !== -1 && $("#editor").is('.opened')) {
               var next = $('#plural-tabs li:visible')
-                .eq(plural_form + 1).find('a');
+                .eq(pluralForm + 1).find('a');
               if (next.length === 0) {
                 next = $('#plural-tabs li:first a');
               }
