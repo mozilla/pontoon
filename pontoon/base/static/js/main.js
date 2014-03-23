@@ -395,7 +395,7 @@ var Pontoon = (function () {
         $("#helpers nav a:first").click();
       }
 
-      var original = this.getOriginal().length,
+      var original = entity['original' + this.isPluralized()].length,
           translation = entity.translation[0].string.length;
 
       $('#translation-length')
@@ -555,11 +555,10 @@ var Pontoon = (function () {
 
 
     /*
-     * Get original string form the editor (singular or plural)
+     * Is original string pluralized
      */
-    getOriginal: function () {
-      var entity = $('#editor')[0].entity,
-          original = entity.original,
+    isPluralized: function () {
+      var original = '',
           nplurals = this.locale.nplurals,
           plural_rule = this.locale.plural_rule,
           plural_form = this.getPluralForm();
@@ -568,7 +567,7 @@ var Pontoon = (function () {
           (nplurals > 2 &&
            plural_form !== -1 &&
            plural_form !== eval(plural_rule.replace("n", 1)))) {
-        original = entity.original_plural;
+        original = '_plural';
       }
 
       return original;
@@ -638,7 +637,7 @@ var Pontoon = (function () {
         var i = $(this).parent().index(),
             editor = $('#editor')[0],
             entity = editor.entity,
-            original = self.getOriginal(),
+            original = entity['original' + self.isPluralized()],
             source = entity.translation[i].string;
 
         $('#translation').val(source).focus();
@@ -679,7 +678,8 @@ var Pontoon = (function () {
         e.stopPropagation();
         e.preventDefault();
 
-        var original = self.getOriginal(),
+        var entity = $('#editor')[0].entity,
+            original = entity['original' + self.isPluralized()],
             source = self.doRender(original);
         $('#translation').val(source).focus();
         $('#translation-length .current-length').html(source.length);
@@ -759,7 +759,7 @@ var Pontoon = (function () {
         switch (sec) {
           case "machinery":
             if (editor.machinery != entity.id) {
-              self.getMachinery(self.getOriginal());
+              self.getMachinery(entity['original' + self.isPluralized()]);
               editor.machinery = entity.id;
             }
             break;
