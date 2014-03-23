@@ -932,7 +932,8 @@ var Pontoon = (function () {
             entity.translation[pf].approved = data.approved;
             self.updateEntityUI(entity);
             if (plural_form !== -1 && $("#editor").is('.opened')) {
-              var next = $('#plural-tabs li').eq(plural_form + 1).find('a');
+              var next = $('#plural-tabs li:visible')
+                .eq(plural_form + 1).find('a');
               if (next.length === 0) {
                 next = $('#plural-tabs li:first a');
               }
