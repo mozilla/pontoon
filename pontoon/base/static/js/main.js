@@ -758,16 +758,16 @@ var Pontoon = (function () {
 
         switch (sec) {
           case "machinery":
-            if (editor.machinery != entity.id) {
+            if (editor.machinery !== entity.id + self.isPluralized()) {
               self.getMachinery(entity['original' + self.isPluralized()]);
-              editor.machinery = entity.id;
+              editor.machinery = entity.id + self.isPluralized();
             }
             break;
 
           case "other-locales":
-            if (editor.otherLocales != entity.id) {
+            if (editor.otherLocales !== entity.id + self.isPluralized()) {
               self.getOtherLocales(entity);
-              editor.otherLocales = entity.id;
+              editor.otherLocales = entity.id + self.isPluralized();
             }
             break;
         }
