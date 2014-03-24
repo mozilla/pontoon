@@ -32,8 +32,53 @@
   border: none;
 }
 
+#pontoon .select {
+  float: left;
+}
+
 #pontoon > header .project.select {
   margin-left: 10px;
+}
+
+#pontoon .select > .button.breadcrumbs {
+  width: auto;
+}
+
+#pontoon .select.opened > .button.breadcrumbs {
+  background: #272A2F;
+}
+
+#pontoon .select.opened > .button.breadcrumbs:after {
+  border-left-color: #272A2F;
+}
+
+#pontoon .select .search {
+  border-color: #525A65;
+}
+
+#pontoon .project.select .search {
+  width: 450px;
+}
+
+#pontoon .select .menu,
+#pontoon .select .popup {
+  background: #272A2F;
+  border-radius: 0 0 5px 5px;
+  bottom: auto;
+  top: 60px;
+}
+
+#pontoon .project.select .menu {
+  width: 510px;
+}
+
+#pontoon .menu ul {
+  max-height: 150px;
+  margin: 0;
+}
+
+#pontoon .menu ul li {
+  color: #AAAAAA;
 }
 
 #pontoon .page .menu .progress {

@@ -357,16 +357,11 @@ button {
 }
 
 #pontoon .select {
-  float: left;
-  position: relative;
-}
-
-#pontoon #intro .select {
   display: inline-block;
-  float: none;
-  margin-left: 0;
-  text-align: left;
   font-size: 14px;
+  margin-left: 0;
+  position: relative;
+  text-align: left;
 }
 
 #pontoon .select.hidden {
@@ -375,24 +370,16 @@ button {
 
 #pontoon .select .menu,
 #pontoon .select .popup {
-  background: #272A2F;
-  border-radius: 0 0 5px 5px;
+  background: #4d5967;
+  bottom: 50px;
   color: #AAAAAA;
   display: none;
   list-style: none;
   margin-left: 0;
   padding: 10px 12px;
   position: absolute;
-  top: 60px;
   width: 150px;
   z-index: 20; /* Must be higher than iframe-cover */
-}
-
-#pontoon #intro .select .menu {
-  background: #4d5967;
-  border-radius: 0;
-  bottom: 50px;
-  top: auto;
 }
 
 #pontoon .select > .button.breadcrumbs,
@@ -401,13 +388,14 @@ button {
   font-size: 16px;
   height: 20px;
   margin: 10px 10px 10px 0px;
+  overflow: hidden;
   padding: 10px 20px 10px 40px;
+  text-overflow: ellipsis;
+  width: 200px;
 }
 
-#pontoon #intro .select > .button.breadcrumbs {
-  width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+#pontoon #go {
+  width: auto;
 }
 
 #pontoon .select > .button.breadcrumbs:before,
@@ -450,22 +438,14 @@ button {
 }
 
 #pontoon .select.opened > .button.breadcrumbs {
-  background: #272A2F;
-}
-
-#pontoon #intro .select.opened > .button.breadcrumbs {
   background: #4d5967;
 }
 
-#pontoon #intro .project.select.opened > .button.breadcrumbs {
+#pontoon .project.select.opened > .button.breadcrumbs {
   border-radius: 0;
 }
 
 #pontoon .select.opened > .button.breadcrumbs:after {
-  border-left-color: #272A2F;
-}
-
-#pontoon #intro .select.opened > .button.breadcrumbs:after {
   border-left-color: #4d5967;
 }
 
@@ -486,37 +466,16 @@ button {
 }
 
 #pontoon .project.select .menu {
-  width: 510px;
-}
-
-#pontoon #intro .project.select .menu {
   width: 490px;
 }
 
-#pontoon #intro .select .search {
-  border-color: #272A2F;
-}
-
 #pontoon .project.select .search {
-  width: 450px;
-}
-
-#pontoon #intro .project.select .search {
   width: 454px;
 }
 
 #pontoon .project.select .menu ul {
   list-style: none;
   overflow: auto;
-}
-
-#pontoon #intro .select .menu ul {
-  max-height: 170px;
-  margin-bottom: 6px;
-}
-
-#pontoon #intro .select .menu ul li {
-  color: #EBEBEB;
 }
 
 #pontoon .project.select .menu ul li .project-name {
@@ -549,13 +508,14 @@ button {
 }
 
 #pontoon .menu ul {
-  max-height: 150px;
+  max-height: 170px;
   overflow: auto;
-  margin: 0;
+  margin: 0 0 6px 0;
   position: relative;
 }
 
 #pontoon .menu li {
+  color: #EBEBEB;
   font-weight: 300;
   padding: 2px 4px;
 }
@@ -599,7 +559,7 @@ button {
 
 #pontoon .menu .search {
   background: url("../img/search.png") no-repeat 3px 3px transparent;
-  border-bottom: 1px solid #525A65;
+  border-bottom: 1px solid #272A2F;
   color: #FFFFFF;
   float: none;
   margin-bottom: 10px;
