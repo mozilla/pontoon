@@ -500,15 +500,7 @@ var Pontoon = (function () {
      */
     renderEntityList: function () {
       var self = this,
-          list = $('#entitylist').append(
-            '<input id="search" type="search" placeholder="Search text to translate">' +
-            '<div class="wrapper">' +
-              '<ul class="editables"></ul>' +
-              ((self.project.win) ?
-                '<h2 id="not-on-page">Not on the current page</h2>' : '') +
-              '<ul class="uneditables"></ul>' +
-              '<h3 class="no-match"><div>ఠ_ఠ</div>No results.</h3>' +
-            '</div>');
+          list = $('#entitylist');
 
       // Search entities
       $('#search').keyup(function(e) {

@@ -187,7 +187,37 @@
 
 <aside id="sidebar">
   <!-- Strings placeholder -->
-  <div id="entitylist"></div>
+  <div id="entitylist">
+    <div class="search-wrapper clearfix">
+      <input id="search" type="search" placeholder="Search text to translate">
+      <div id="filter" class="select">
+        <div class="button selector"></div>
+        <ul class="menu">
+          <li class="all">All</li>
+          <li class="horizontal-separator"></li>
+          <li class="untranslated">Untranslated</li>
+          <li class="translated">Translated</li>
+          <li class="translated-by-me">Translated by me</li>
+          <li class="horizontal-separator"></li>
+          <li class="unapproved">Unapproved</li>
+          <li class="approved">Approved</li>
+          {% if perms.base.can_localize %}
+          <li class="approved-by-me">Approved by me</li>
+          {% endif %}
+          <li class="horizontal-separator"></li>
+          <li class="custom">Custom filter...</li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrapper">
+      <ul class="editables"></ul>
+      {% if project.url %}
+      <h2 id="not-on-page">Not on the current page</h2>
+      {% endif %}
+      <ul class="uneditables"></ul>
+      <h3 class="no-match"><div>ఠ_ఠ</div>No results.</h3>
+    </div>
+  </div>
 
   <!-- Translation editor -->
   <div id="editor">

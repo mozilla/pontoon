@@ -81,6 +81,12 @@
   color: #AAAAAA;
 }
 
+#pontoon .menu li.horizontal-separator {
+  border-top: 1px solid #525A65;
+  margin: 5px 0;
+  padding: 0;
+}
+
 #pontoon .page .menu .progress {
   float: right;
   font-size: 10px;
@@ -203,14 +209,8 @@
   width: 100%;
 }
 
-#pontoon #profile-menu li {
+#pontoon #profile-menu li:not(.horizontal-separator) {
   padding: 2px 0 2px 12px;
-}
-
-#pontoon #profile-menu li.horizontal-separator {
-  border-top: 1px solid #525A65;
-  margin: 5px 0;
-  padding: 0;
 }
 
 #pontoon .select#profile .popup {
@@ -333,14 +333,17 @@
   width: 50%;
 }
 
+#pontoon .search-wrapper {
+  border-bottom: 1px solid #5E6475;
+  position: relative;
+}
+
 #pontoon #search {
   background: url('../img/search.png') 6px 13px no-repeat #4D5967;
-  border-bottom: 1px solid #5E6475;
   color: #FFFFFF;
-  float: none;
   font-size: 16px;
   font-weight: 300;
-  padding: 10px 10px 10px 30px;
+  padding: 10px 50px 10px 30px;
   width: 100%;
 
   -moz-box-sizing: border-box;
@@ -353,6 +356,20 @@
 
 #pontoon #search::-webkit-input-placeholder {
   color: #AAAAAA;
+}
+
+#pontoon #filter .button {
+  background: url('../img/filter.png') center center no-repeat #272A2F;
+  height: 43px;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  width: 43px;
+}
+
+#pontoon #filter .menu {
+  right: 0;
+  top: 43px;
 }
 
 #pontoon #entitylist > .wrapper {
