@@ -278,6 +278,10 @@
 
 {% endblock %}
 
+{% block extend_css %}
+  <link rel="stylesheet" href="{{ static('css/translate.css') }}">
+{% endblock %}
+
 {% block extend_js %}
   {% compress js %}
   <script src="{{ static('js/translate.js') }}"></script>
