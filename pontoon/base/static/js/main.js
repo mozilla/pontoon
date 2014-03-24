@@ -385,8 +385,34 @@ var Pontoon = (function () {
       if (entity.original_plural) {
         $('#original-plural').html(this.doNotRender(entity.original_plural));
         $('#source-pane').addClass('pluralized');
+
         var nplurals = this.locale.nplurals;
         if (nplurals > 1) {
+
+          // Get example number for each plural form based on locale plural rule
+          if (!this.locale.examples) {
+            var examples = this.locale.examples = {},
+                rule = null,
+                n = 0;
+
+            if (nplurals === 2) {
+              examples[0] = 1;
+              examples[1] = 2;
+            } else {
+              while (Object.keys(examples).length < nplurals) {
+                rule = eval(this.locale.plural_rule);
+                if (!examples[rule]) {
+                  examples[rule] = n;
+                }
+                n++;
+              }
+            }
+
+            $('#plural-tabs li a span').each(function(i) {
+              $(this).html("[" + examples[i] + "]");
+              return i < nplurals-1;
+            });
+          }
           $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
           $('#plural-tabs li:first a').click();
         }
