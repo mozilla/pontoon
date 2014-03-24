@@ -1,0 +1,354 @@
+body {
+  overflow: auto;
+}
+
+body #intro {
+  overflow: auto;
+  position: relative;
+}
+
+#pontoon #title {
+  display: block;
+  font-size: 50px;
+  letter-spacing: -3px;
+  text-align: left;
+}
+
+#pontoon #intro form {
+  color: #AAAAAA;
+  font-size: 14px;
+  height: auto;
+  width: 620px;
+  padding: 100px 20px;
+}
+
+#pontoon #intro form > div {
+  margin: 20px 0;
+  text-align: right;
+}
+
+#pontoon #intro form > div.controls {
+  margin-top: 70px;
+}
+
+#pontoon #intro form > div.subpages.delete {
+  opacity: 0.3;
+}
+
+#pontoon #intro h2 {
+  color: #EBEBEB;
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  margin-left: -2px;
+  margin-top: 70px;
+  text-align: left;
+  text-transform: none;
+}
+
+#pontoon #intro h2 .small {
+  color: #AAAAAA;
+  font-size: 0.7em;
+}
+
+#pontoon #intro h3 {
+  color: #FD5F60;
+  font-weight: 300;
+  margin-left: -1px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+#pontoon #intro label {
+  display: block;
+  padding-bottom: 3px;
+  text-align: left;
+}
+
+#pontoon #intro input[type=text],
+#pontoon #intro input[type=password],
+#pontoon #intro textarea {
+  display: block;
+  height: 24px;
+  margin-left: -1px;
+  width: 615px; /* Must be same as #pontoon #intro form width - padding - margin-left */
+}
+
+#pontoon #intro .button {
+  background: #888888;
+  border: none;
+  display: block;
+  float: right;
+  font-size: 14px;
+  height: 31px;
+  width: 31px;
+}
+
+#pontoon #intro .controls .button {
+  background: #7BC876;
+  border-radius: 3px;
+  color: #272A2F;
+  font-weight: 400;
+  text-transform: uppercase;
+  width: auto;
+}
+
+#pontoon #intro .controls .button.delete-project {
+  background: #FF0A43;
+  color: #FFFFFF;
+  float: left;
+}
+
+#pontoon #intro form a {
+  color: #7BC876;
+  float: right;
+  text-transform: uppercase;
+}
+
+#pontoon #intro form a.add-subpage {
+  font-size: 14px;
+  margin-top: 17px;
+}
+
+#pontoon #intro .controls a {
+  margin: 9px;
+}
+
+#pontoon #intro .authenticate .transifex .button {
+  margin-top: 41px;
+}
+
+#pontoon #intro .locale.select {
+  float: left;
+}
+
+#pontoon #intro .locale.select.selected {
+  float: right;
+}
+
+#pontoon #intro .locale.select .menu {
+  display: inline-block;
+  margin: 2px 0 -4px -1px;
+  overflow: auto;
+  position: relative;
+  top: 0;
+  width: 271px;
+}
+
+#pontoon #intro .locale.select .menu .search {
+  background-position: 4px 6px;
+  margin-left: 0;
+  width: 234px;
+}
+
+#pontoon #intro .locale.select .menu ul {
+  height: 176px;
+  max-height: none;
+}
+
+#pontoon #intro #id_locales {
+  display: none;
+}
+
+#pontoon #intro .checkbox {
+  margin: 0;
+}
+
+#pontoon #intro .checkbox label {
+  float: left;
+  padding: 6px 0 0 16px;
+}
+
+#pontoon #intro .repository.authenticate .bottom label {
+  padding-left: 16px;
+}
+
+#pontoon #intro .checkbox label input,
+#pontoon #intro .repository.authenticate .bottom label input {
+  float: left;
+  margin-left: -16px;
+  margin-top: 2px;
+}
+
+#pontoon #intro .repository.authenticate .bottom label input {
+  margin-top: 0;
+}
+
+#pontoon #intro .repository .type-wrapper .authentication-title,
+#pontoon #intro .repository .transifex .authentication-form,
+#pontoon #intro .repository .transifex .bottom {
+  display: none;
+}
+
+#pontoon #intro .repository.authenticate .type-wrapper .authentication-title,
+#pontoon #intro .repository.authenticate .transifex .authentication-form,
+#pontoon #intro .repository.authenticate .transifex .bottom {
+  display: block;
+}
+
+#pontoon #intro .repository .type-wrapper {
+  float: left;
+  margin-right: 6px;
+}
+
+#pontoon #intro .repository .type.select {
+  margin-left: -1px;
+}
+
+#pontoon #intro .repository .type.select .selector {
+  color: #444444;
+  font-weight: 400;
+  height: 24px;
+  line-height: 24px;
+  width: 198px;
+}
+
+#pontoon #intro .repository .type.select .selector > span:nth-child(2) {
+  float: right;
+}
+
+#pontoon #intro .repository .type.select .menu {
+  bottom: 31px;
+  width: 206px;
+}
+
+#pontoon #intro .repository .type-wrapper .authentication-title {
+  color: #FD5F60;
+  font-size: 12px;
+  padding-top: 54px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+#pontoon #intro .repository .details-wrapper {
+  float: left;
+  width: 409px;
+}
+
+#pontoon #intro .repository .details-wrapper[data-repository-type="transifex"] .repo {
+  display: none;
+}
+
+#pontoon #intro .repository .details-wrapper[data-repository-type="transifex"] .transifex {
+  display: block;
+}
+
+#pontoon #intro .repository input[type=text] {
+  width: 400px;
+}
+
+#pontoon #intro .edit .repository input[type=text],
+#pontoon #intro .subpages input[id*=url] {
+  float: left;
+  width: 368px;
+}
+
+#pontoon #intro .transifex {
+  display: none;
+}
+
+#pontoon #intro .transifex .authentication-form {
+  padding-top: 73px;
+  padding-bottom: 57px;
+}
+
+#pontoon #intro .transifex input#id_transifex_project,
+#pontoon #intro .edit .authenticate .transifex input#id_transifex_project,
+#pontoon #intro .edit .transifex input#id_transifex_username {
+  float: left;
+  width: 193px;
+}
+
+#pontoon #intro .transifex input#id_transifex_resource,
+#pontoon #intro .edit .authenticate .transifex input#id_transifex_resource {
+  float: left;
+  width: 194px;
+}
+
+#pontoon #intro .edit .transifex input#id_transifex_project,
+#pontoon #intro .edit .transifex input#id_transifex_resource {
+  float: left;
+  width: 175px;
+}
+
+#pontoon #intro .edit .transifex input#id_transifex_password,
+#pontoon #intro .edit .authenticate .transifex .authentication-form label:nth-child(2) {
+  float: left;
+  width: 157px;
+}
+
+#pontoon #intro .transifex label,
+#pontoon #intro .edit .authenticate .transifex label  {
+  float: left;
+  width: 200px;
+}
+
+#pontoon #intro .edit .transifex label {
+  width: 182px;
+}
+
+#pontoon #intro .edit section .bottom {
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+#pontoon #intro .subpages[data-count] {
+  display: none;
+}
+
+#pontoon #intro .subpages label[for*=name] {
+  float: left;
+  width: 205px;
+}
+
+#pontoon #intro .subpages input[id*=name] {
+  float: left;
+  width: 200px;
+}
+
+#pontoon #intro .subpages input[id$=DELETE] {
+  display: none;
+}
+
+#pontoon #intro .subpages label[for*=url] {
+  float: left;
+  width: 407px;
+}
+
+#pontoon #intro label[for=id_repository_type],
+#pontoon #intro .transifex input#id_transifex_project,
+#pontoon #intro .transifex input#id_transifex_username,
+#pontoon #intro .transifex label[for*=project],
+#pontoon #intro .transifex label[for*=username],
+#pontoon #intro .subpages input[id*=name],
+#pontoon #intro .subpages label[for*=name] {
+  margin-right: 6px;
+}
+
+#pontoon #intro textarea {
+  height: 60px;
+}
+
+#pontoon #intro .errorlist {
+  color: #FD5F60;
+  display: inline-block;
+  font-size: 12px;
+  line-height: 14px; /* Strange, but needed to keep controls in line when error occures */
+  list-style: none;
+  margin-left: 0;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+#pontoon #intro .errorlist li {
+  display: inline;
+  margin-left: 5px;
+}
+
+#pontoon .notification {
+  width: auto;
+}
+
+#pontoon .notification li {
+  text-align: left;
+}

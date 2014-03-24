@@ -2,7 +2,7 @@
 
 {% block title %}{{ _('Pontoon &middot; %(subtitle)s')|format(subtitle=subtitle) }}{% endblock %}
 
-{% block class %}admin-form{% endblock %}
+{% block class %}admin-project{% endblock %}
 
 {% block content %}
 <section id="intro" class="visible">
@@ -195,6 +195,10 @@
   </form>
 </section>
 
+{% endblock %}
+
+{% block extend_css %}
+  <link rel="stylesheet" href="{{ static('css/project.css') }}">
 {% endblock %}
 
 {% block extend_js %}

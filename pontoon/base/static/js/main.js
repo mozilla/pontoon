@@ -1270,7 +1270,7 @@ var Pontoon = (function () {
       $('.selector').click(function (e) {
         if (!$(this).siblings('.menu').is(':visible')) {
           e.stopPropagation();
-          $('body:not(".admin-form") .menu, body:not(".admin-form") .popup').hide();
+          $('body:not(".admin-project") .menu, body:not(".admin-project") .popup').hide();
           $('.select').removeClass('opened');
           $('#iframe-cover').hide(); // iframe fix
           $(this).siblings('.menu').show().end()
@@ -1281,7 +1281,7 @@ var Pontoon = (function () {
       });
 
       // Hide menus on click outside
-      $('body:not(".admin-form")').click(function () {
+      $('body:not(".admin-project")').click(function () {
         $('.menu').hide();
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
@@ -1387,7 +1387,7 @@ var Pontoon = (function () {
       });
 
       // Locale menu handler
-      $('body:not(".admin-form") .locale .menu li:not(".no-match")').click(function () {
+      $('body:not(".admin-project") .locale .menu li:not(".no-match")').click(function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             locale = locale.replace( /(:|\.|\[|@|\])/g, "\\$1" ), // Escape special characters in CSS notation
             language = $('.locale .menu .language.' + locale).html();
