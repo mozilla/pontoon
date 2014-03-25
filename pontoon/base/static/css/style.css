@@ -528,12 +528,6 @@ button {
 
 #pontoon .menu li a:link,
 #pontoon .menu li a:visited {
-  height: 100%;
-  width: 100%;
-  display: block;
-  margin: -8px -12px -4px ;
-  padding: 8px 0 4px 12px;
-
   -moz-transition: none;  /* FF3.7+ */
   -o-transition: none;  /* Opera 10.5 */
   -webkit-transition: none;  /* Saf3.2+, Chrome */

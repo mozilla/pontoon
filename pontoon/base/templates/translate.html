@@ -109,22 +109,24 @@
           {% elif user.email %}<span class="title">{{ user.email }}</span>{% endif %}
           <img src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/user_icon&24.png') }}{%endif %}">
         </div>
-        <ul id="profile-menu" class="menu">
-        {% if user.is_authenticated() or project.name != 'Testpilot' %}
-          <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
-          {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin.project', project.slug) }}">{{ _('Admin') }}</a></li>{% endif %}
-          <li class="horizontal-separator"></li>
-          {% if perms.base.can_localize %}
-          <li{% if not (project.repository_type and project.repository_type == 'svn') %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
+        <div class="menu">
+          <ul>
+          {% if user.is_authenticated() or project.name != 'Testpilot' %}
+            <li><a class="sign-out" href="{{ url('signout') }}">{{ _('Sign out') }}</a></li>
+            {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin.project', project.slug) }}">{{ _('Admin') }}</a></li>{% endif %}
+            <li class="horizontal-separator"></li>
+            {% if perms.base.can_localize %}
+            <li{% if not (project.repository_type and project.repository_type == 'svn') %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">{{ _('Commit to SVN') }}</a></li>
+            {% endif %}
+            <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
           {% endif %}
-          <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">{{ _('Save to Transifex') }}</a></li>
-        {% endif %}
-          {% if project.repository_path %}
-          <li><a class="zip" href="{{ url('pontoon.download') }}">{{ _('Download .zip') }}</a></li>
-          {% endif %}
-          <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download .html') }}</a></li>
-          <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download .json') }}</a></li>
-        </ul>
+            {% if project.repository_path %}
+            <li><a class="zip" href="{{ url('pontoon.download') }}">{{ _('Download .zip') }}</a></li>
+            {% endif %}
+            <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download .html') }}</a></li>
+            <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download .json') }}</a></li>
+          </ul>
+        </div>
         {% if (project.transifex_project and project.transifex_resource) %}
         <aside id="transifex" class="popup">
           <h2>
@@ -192,21 +194,23 @@
       <input id="search" type="search" placeholder="Search text to translate">
       <div id="filter" class="select">
         <div class="button selector"></div>
-        <ul class="menu">
-          <li class="all">All</li>
-          <li class="horizontal-separator"></li>
-          <li class="untranslated">Untranslated</li>
-          <li class="translated">Translated</li>
-          <li class="translated-by-me">Translated by me</li>
-          <li class="horizontal-separator"></li>
-          <li class="unapproved">Unapproved</li>
-          <li class="approved">Approved</li>
-          {% if perms.base.can_localize %}
-          <li class="approved-by-me">Approved by me</li>
-          {% endif %}
-          <li class="horizontal-separator"></li>
-          <li class="custom">Custom filter...</li>
-        </ul>
+        <div class="menu">
+          <ul>
+            <li class="all">All</li>
+            <li class="horizontal-separator"></li>
+            <li class="untranslated">Untranslated</li>
+            <li class="translated">Translated</li>
+            <li class="translated-by-me">Translated by me</li>
+            <li class="horizontal-separator"></li>
+            <li class="unapproved">Unapproved</li>
+            <li class="approved">Approved</li>
+            {% if perms.base.can_localize %}
+            <li class="approved-by-me">Approved by me</li>
+            {% endif %}
+            <li class="horizontal-separator"></li>
+            <li class="custom">Custom filter...</li>
+          </ul>
+        </div>
       </div>
     </div>
     <div class="wrapper">
