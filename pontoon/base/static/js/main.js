@@ -564,6 +564,7 @@ var Pontoon = (function () {
         }
 
         $('#search').trigger("keyup");
+        $('#filter .title').html($(this).text());
       });
 
       // Render
