@@ -200,13 +200,8 @@
             <li class="horizontal-separator"></li>
             <li class="untranslated">Untranslated</li>
             <li class="translated">Translated</li>
-            <li class="translated-by-me">Translated by me</li>
-            <li class="horizontal-separator"></li>
             <li class="unapproved">Unapproved</li>
             <li class="approved">Approved</li>
-            {% if perms.base.can_localize %}
-            <li class="approved-by-me">Approved by me</li>
-            {% endif %}
             <li class="horizontal-separator"></li>
             <li class="custom">Custom filter...</li>
           </ul>

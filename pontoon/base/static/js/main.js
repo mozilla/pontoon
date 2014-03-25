@@ -505,11 +505,14 @@ var Pontoon = (function () {
       // Search entities
       $('#search').keyup(function(e) {
         var ul = $('#entitylist .wrapper > ul'),
-            val = $(this).val();
+            val = $(this).val(),
+            // Only search a limited set if defined
+            limited = ul.find('li.limited').length > 0 ? '.limited' : '';
 
         ul
-          .find('li').show().end()
-          .find('.source-string' + ':not(":containsi("' + val + '")")').parent().hide();
+          .find('li' + limited).show()
+            .find('.source-string' + ':not(":containsi("' + val + '")")')
+          .parent().hide();
 
         if ($('.uneditables li:visible').length === 0) {
           $('#not-on-page').hide();
@@ -522,6 +525,45 @@ var Pontoon = (function () {
         } else {
           $('#entitylist .no-match').hide();
         }
+      });
+
+      // Filter entities
+      $('#filter li:not(".horizontal-separator")').click(function() {
+        var list = $("#entitylist"),
+            type = $(this).attr('class').split(' ')[0];
+
+        list.find('.limited').removeClass('limited').end()
+          .find('.entity').hide();
+
+        switch (type) {
+
+        case "untranslated":
+          list.find('.entity:not(".approved, .translated")')
+            .addClass('limited').show();
+          break;
+
+        case "translated":
+          list.find('.entity.approved, .entity.translated')
+            .addClass('limited').show();
+          break;
+
+        case "unapproved":
+          list.find('.entity.translated:not(".approved")')
+            .addClass('limited').show();
+          break;
+
+        case "approved":
+          list.find('.entity.approved')
+            .addClass('limited').show();
+          break;
+
+        default: // all
+          list.find('.entity').show();
+          break;
+
+        }
+
+        $('#search').trigger("keyup");
       });
 
       // Render
