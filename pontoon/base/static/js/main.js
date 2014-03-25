@@ -505,12 +505,10 @@ var Pontoon = (function () {
       // Search entities
       $('#search').keyup(function(e) {
         var ul = $('#entitylist .wrapper > ul'),
-            val = $(this).val(),
-            // Only search a limited set if defined
-            limited = ul.find('li.limited').length > 0 ? '.limited' : '';
+            val = $(this).val();
 
         ul
-          .find('li' + limited).show()
+          .find('.limited').show()
             .find('.source-string' + ':not(":containsi("' + val + '")")')
           .parent().hide();
 
@@ -532,28 +530,23 @@ var Pontoon = (function () {
         var list = $("#entitylist"),
             type = $(this).attr('class').split(' ')[0];
 
-        list.find('.limited').removeClass('limited').end()
-          .find('.entity').hide();
+        list.find('.entity').addClass('limited').show();
 
         switch (type) {
 
         case "untranslated":
-          list.find('.entity:not(".approved, .translated")')
-            .addClass('limited').show();
+          list.find('.entity.approved, .entity.translated')
+            .removeClass('limited').hide();
           break;
 
         case "translated":
-          list.find('.entity.translated')
-            .addClass('limited').show();
+          list.find('.entity:not(".translated")')
+            .removeClass('limited').hide();
           break;
 
         case "approved":
-          list.find('.entity.approved')
-            .addClass('limited').show();
-          break;
-
-        default: // all
-          list.find('.entity').show();
+          list.find('.entity:not(".approved")')
+            .removeClass('limited').hide();
           break;
 
         }
@@ -566,7 +559,7 @@ var Pontoon = (function () {
       // Render
       $(self.project.entities).each(function () {
         var status = self.getEntityStatus(this),
-            li = $('<li class="entity' +
+            li = $('<li class="entity limited' +
           (status ? ' ' + status : '') +
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status"></span>' +
