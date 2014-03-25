@@ -543,12 +543,7 @@ var Pontoon = (function () {
           break;
 
         case "translated":
-          list.find('.entity.approved, .entity.translated')
-            .addClass('limited').show();
-          break;
-
-        case "unapproved":
-          list.find('.entity.translated:not(".approved")')
+          list.find('.entity.translated')
             .addClass('limited').show();
           break;
 
@@ -565,6 +560,7 @@ var Pontoon = (function () {
 
         $('#search').trigger("keyup");
         $('#filter .title').html($(this).text());
+        $('#filter .button').attr('class', 'button selector ' + type);
       });
 
       // Render

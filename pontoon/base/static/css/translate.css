@@ -88,7 +88,7 @@
   padding: 0;
 }
 
-#pontoon ul li .status {
+#pontoon .status {
   border: 2px solid #FD5F60;
   border-radius: 6px;
   height: 8px;
@@ -98,11 +98,11 @@
   width: 8px;
 }
 
-#pontoon ul li.translated .status {
+#pontoon .translated .status {
   border-color: #7BC876;
 }
 
-#pontoon ul li.approved .status {
+#pontoon .approved .status {
   background: #7BC876;
   border-color: #7BC876;
 }
@@ -376,13 +376,17 @@
 }
 
 #pontoon #filter .button {
-  background: url('../img/filter.png') 13px center no-repeat transparent;
   height: 43px;
-  opacity: 0.5;
   padding: 0;
   position: absolute;
   left: 0;
   width: 43px;
+}
+
+#pontoon #filter .button.all,
+#pontoon #filter .button.custom {
+  background: url('../img/filter.png') 13px center no-repeat transparent;
+  opacity: 0.5;
 }
 
 #pontoon #filter.opened .button,
@@ -421,8 +425,8 @@
   top: 5px;
 }
 
-#pontoon #filter .menu li.all .status,
-#pontoon #filter .menu li.custom .status {
+#pontoon #filter .all .status,
+#pontoon #filter .custom .status {
   display: none;
 }
 
