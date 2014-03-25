@@ -354,16 +354,23 @@
 }
 
 #pontoon #filter .button {
-  background: url('../img/filter.png') center center no-repeat #272A2F;
-  height: 44px;
+  background: url('../img/filter.png') center center no-repeat transparent;
+  height: 43px;
+  opacity: 0.5;
   padding: 0;
   position: absolute;
   right: 0;
-  width: 44px;
+  width: 43px;
+}
+
+#pontoon #filter.opened .button,
+#pontoon #filter .button:hover {
+  background-color: #272A2F;
+  opacity: 1;
 }
 
 #pontoon #filter .menu {
-  top: 44px;
+  top: 43px;
 }
 
 #pontoon #entitylist > .wrapper {
