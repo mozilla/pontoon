@@ -25,10 +25,10 @@
 }
 
 #pontoon #switch {
-  background: url('../img/align_just_icon&24.png') 7px 18px no-repeat transparent;
+  background: url('../img/align_just_icon&24.png') 10px 18px no-repeat transparent;
   float: left;
   height: 60px;
-  width: 30px;
+  width: 33px;
   border: none;
 }
 
@@ -198,8 +198,7 @@
 }
 
 #pontoon #info .menu,
-#pontoon #profile .menu,
-#pontoon #filter .menu {
+#pontoon #profile .menu {
   right: 0;
 }
 
@@ -334,11 +333,11 @@
 }
 
 #pontoon #search {
-  background: url('../img/search.png') 6px 13px no-repeat #4D5967;
+  background: url('../img/search.png') center right 10px no-repeat #4D5967;
   color: #FFFFFF;
   font-size: 16px;
   font-weight: 300;
-  padding: 10px 50px 10px 30px;
+  padding: 10px 30px 10px 43px;
   width: 100%;
 
   -moz-box-sizing: border-box;
@@ -353,13 +352,17 @@
   color: #AAAAAA;
 }
 
+#pontoon #filter {
+  position: static;
+}
+
 #pontoon #filter .button {
-  background: url('../img/filter.png') center center no-repeat transparent;
+  background: url('../img/filter.png') 13px center no-repeat transparent;
   height: 43px;
   opacity: 0.5;
   padding: 0;
   position: absolute;
-  right: 0;
+  left: 0;
   width: 43px;
 }
 
@@ -370,6 +373,7 @@
 }
 
 #pontoon #filter .menu {
+  left: 0;
   top: 43px;
 }
 
@@ -393,7 +397,7 @@
   color: #FFFFFF;
   cursor: pointer;
   line-height: 2em;
-  padding: 10px 25px;
+  padding: 10px 25px 10px 43px;
   position: relative;
 }
 
@@ -411,7 +415,7 @@
   border: 2px solid #FD5F60;
   border-radius: 6px;
   height: 8px;
-  left: 6px;
+  left: 16px;
   position: absolute;
   top: 15px;
   width: 8px;
