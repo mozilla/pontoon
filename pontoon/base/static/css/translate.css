@@ -355,15 +355,15 @@
 
 #pontoon #filter .button {
   background: url('../img/filter.png') center center no-repeat #272A2F;
-  height: 43px;
+  height: 44px;
   padding: 0;
   position: absolute;
   right: 0;
-  width: 43px;
+  width: 44px;
 }
 
 #pontoon #filter .menu {
-  top: 43px;
+  top: 44px;
 }
 
 #pontoon #entitylist > .wrapper {
