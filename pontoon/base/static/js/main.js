@@ -610,37 +610,39 @@ var Pontoon = (function () {
             index = entity.ui.index(entitySelector);
 
         switch (sec) {
-          case "back":
-            $('#cancel').click();
-            break;
 
-          case "previous":
-            var prev = $(entitySelector).eq(index - 1);
-            if (prev.length === 0) {
-              prev = $('#entitylist ul > li:last');
-            }
-            var newEntity = prev[0].entity;
-            if (newEntity.body || entity.body) {
-              self.common.postMessage("NAVIGATE", newEntity.id);
-            }
-            if (!newEntity.body) {
-              self.openEditor(newEntity);
-            }
-            break;
+        case "back":
+          $('#cancel').click();
+          break;
 
-          case "next":
-            var next = $(entitySelector).eq(index + 1);
-            if (next.length === 0) {
-              next = $('#entitylist ul > li:first');
-            }
-            var newEntity = next[0].entity;
-            if (newEntity.body || entity.body) {
-              self.common.postMessage("NAVIGATE", newEntity.id);
-            }
-            if (!newEntity.body) {
-              self.openEditor(newEntity);
-            }
-            break;
+        case "previous":
+          var prev = $(entitySelector).eq(index - 1);
+          if (prev.length === 0) {
+            prev = $('#entitylist ul > li:last');
+          }
+          var newEntity = prev[0].entity;
+          if (newEntity.body || entity.body) {
+            self.common.postMessage("NAVIGATE", newEntity.id);
+          }
+          if (!newEntity.body) {
+            self.openEditor(newEntity);
+          }
+          break;
+
+        case "next":
+          var next = $(entitySelector).eq(index + 1);
+          if (next.length === 0) {
+            next = $('#entitylist ul > li:first');
+          }
+          var newEntity = next[0].entity;
+          if (newEntity.body || entity.body) {
+            self.common.postMessage("NAVIGATE", newEntity.id);
+          }
+          if (!newEntity.body) {
+            self.openEditor(newEntity);
+          }
+          break;
+
         }
       });
 
@@ -775,19 +777,21 @@ var Pontoon = (function () {
             entity = editor.entity;
 
         switch (sec) {
-          case "machinery":
-            if (editor.machinery !== entity.id + self.isPluralized()) {
-              self.getMachinery(entity['original' + self.isPluralized()]);
-              editor.machinery = entity.id + self.isPluralized();
-            }
-            break;
 
-          case "other-locales":
-            if (editor.otherLocales !== entity.id + self.isPluralized()) {
-              self.getOtherLocales(entity);
-              editor.otherLocales = entity.id + self.isPluralized();
-            }
-            break;
+        case "machinery":
+          if (editor.machinery !== entity.id + self.isPluralized()) {
+            self.getMachinery(entity['original' + self.isPluralized()]);
+            editor.machinery = entity.id + self.isPluralized();
+          }
+          break;
+
+        case "other-locales":
+          if (editor.otherLocales !== entity.id + self.isPluralized()) {
+            self.getOtherLocales(entity);
+            editor.otherLocales = entity.id + self.isPluralized();
+          }
+          break;
+
         }
 
         $("#helpers > section").hide();
