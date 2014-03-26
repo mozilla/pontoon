@@ -678,6 +678,7 @@
   bottom: 0;
   display: none;
   left: 0;
+  min-height: 90px;
   padding: 10px;
   position: absolute;
   text-align: left;
