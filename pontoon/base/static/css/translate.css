@@ -703,9 +703,14 @@
   color: #FD5F60;
 }
 
+#pontoon #warning ul {
+  float: left;
+}
+
 #pontoon #warning #save-anyway {
-  float: right;
-  margin-top: 10px;
+  bottom: 10px;
+  position: absolute;
+  right: 10px;
 }
 
 #pontoon #translation-length {
