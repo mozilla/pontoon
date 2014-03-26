@@ -421,6 +421,8 @@ var Pontoon = (function () {
         $("#helpers nav a:first").click();
       }
 
+      $('#warning .close').click();
+
       var original = entity['original' + this.isPluralized()].length,
           translation = entity.translation[0].string.length;
 
@@ -731,7 +733,7 @@ var Pontoon = (function () {
         e.preventDefault();
 
         $('#warning')
-          .find('p').empty().end()
+          .find('ul').empty().end()
         .hide();
       });
 
