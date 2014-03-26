@@ -1020,6 +1020,7 @@ var Pontoon = (function () {
 
           } else if (data.warnings) {
             self.endLoader();
+            $('#warning ul').empty();
             $(data.warnings).each(function() {
               $('#warning ul').append('<li>' + this + '</li>');
             });
