@@ -669,7 +669,43 @@
   background: #272A2F;
   border-bottom: 1px solid #5E6475;
   padding: 10px;
+  position: relative;
   text-align: right;
+}
+
+#pontoon #warning {
+  background: #272A2F;
+  bottom: 0;
+  display: none;
+  left: 0;
+  padding: 10px;
+  position: absolute;
+  text-align: left;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#pontoon #warning .close {
+  color: #AAAAAA;
+  float: right;
+  font-size: 24px;
+  font-weight: 100;
+  margin-top: -1px;
+}
+
+#pontoon #warning .close:hover {
+  color: #FFFFFF;
+}
+
+#pontoon #warning h2 {
+  color: #FD5F60;
+}
+
+#pontoon #warning #save-anyway {
+  float: right;
+  margin-top: 10px;
 }
 
 #pontoon #translation-length {
@@ -680,7 +716,7 @@
   padding: 10px 0;
 }
 
-#pontoon #editor > menu > button {
+#pontoon #editor > menu button {
   background: transparent;
   border: none;
   color: #EBEBEB;
@@ -692,7 +728,7 @@
   display: none;
 }
 
-#pontoon #editor > menu > button#save {
+#pontoon #editor > menu button[id^="save"] {
   background: #7bc876;
   border-radius: 3px;
   color: #272A2F;
@@ -701,11 +737,11 @@
   padding: 10px 20px;
 }
 
-#pontoon #editor > menu > button:hover {
+#pontoon #editor > menu button:hover {
   color: #7BC876;
 }
 
-#pontoon #editor > menu > button#save:hover {
+#pontoon #editor > menu button[id^="save"]:hover {
   color: #EBEBEB;
 }
 

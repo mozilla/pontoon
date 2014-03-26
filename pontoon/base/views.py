@@ -51,6 +51,7 @@ from pontoon.base.models import (
 
 from pontoon.base.utils.permissions import add_can_localize
 from session_csrf import anonymous_csrf_exempt
+from translate.filters import checks
 
 
 log = commonware.log.getLogger('pontoon')
@@ -625,6 +626,16 @@ def delete_translation(request, template=None):
     }), mimetype='application/json')
 
 
+def _quality_check(original, string):
+    """Check for obvious errors like blanks and missing interpunction."""
+
+    warnings = checks.runtests(original, string)
+    if warnings:
+        return HttpResponse(json.dumps({
+            'warnings': warnings.keys(),
+        }), mimetype='application/json')
+
+
 def update_translation(request, template=None):
     """Update entity translation for the specified locale and user."""
     log.debug("Update entity translation for the specified locale and user.")
@@ -664,6 +675,9 @@ def update_translation(request, template=None):
 
     if plural_form == "-1":
         plural_form = None
+        original = e.string
+    else:
+        original = e.string_plural
 
     user = request.user
     if not request.user.is_authenticated():
@@ -687,6 +701,10 @@ def update_translation(request, template=None):
                 if t.string == string:
                     # If added by privileged user, approve it
                     if can_localize:
+                        warnings = _quality_check(original, string)
+                        if warnings:
+                            return warnings
+
                         _unset_approved(translations)
                         t.approved = True
                         t.save()
@@ -700,6 +718,10 @@ def update_translation(request, template=None):
                         return HttpResponse("Same translation already exist.")
 
             # Different translation added
+            warnings = _quality_check(original, string)
+            if warnings:
+                return warnings
+
             if can_localize:
                 _unset_approved(translations)
 
@@ -720,6 +742,10 @@ def update_translation(request, template=None):
 
         # No translations saved yet
         else:
+            warnings = _quality_check(original, string)
+            if warnings:
+                return warnings
+
             t = Translation(
                 entity=e, locale=l, user=user, string=string,
                 plural_form=plural_form, date=datetime.datetime.now(),

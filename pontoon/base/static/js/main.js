@@ -725,6 +725,16 @@ var Pontoon = (function () {
         $('#translation-length .current-length').html(length);
       });
 
+      // Close warning box
+      $('#warning .close').click(function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        $('#warning')
+          .find('p').empty().end()
+        .hide();
+      });
+
       // Copy source to translation
       $("#copy").click(function (e) {
         e.stopPropagation();
@@ -967,7 +977,9 @@ var Pontoon = (function () {
     updateOnServer: function (entity, translation) {
       var self = this,
           pluralForm = self.getPluralForm();
+
       self.startLoader();
+
       $.ajax({
         url: 'update/',
         type: 'POST',
@@ -981,25 +993,39 @@ var Pontoon = (function () {
         success: function(data) {
           if (data.type) {
             self.endLoader('Translation ' + data.type);
+
             var pf = self.getPluralForm(true);
             entity.translation[pf].string = data.translation;
             entity.translation[pf].approved = data.approved;
+
             self.updateEntityUI(entity);
+
             if (pluralForm !== -1 && $("#editor").is('.opened')) {
               var next = $('#plural-tabs li:visible')
                 .eq(pluralForm + 1).find('a');
+
               if (next.length === 0) {
                 next = $('#plural-tabs li:first a');
               }
               next.click();
+
             } else if (self.project.win && !self.project.width &&
                 $("#editor").is('.opened')) {
               $('#cancel').click();
+
             } else if (!self.project.win || self.project.width) {
               $('#next').click();
             }
+
+          } else if (data.warnings) {
+            self.endLoader();
+            $('#warning')
+              .find('p').append(data.warnings.join(', ')).end()
+            .show();
+
           } else if (data === "error") {
             self.endLoader('Oops, something went wrong.', 'error');
+
           } else {
             self.endLoader(data, 'error');
           }
