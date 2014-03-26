@@ -725,6 +725,9 @@ var Pontoon = (function () {
       }).unbind("input propertychange").bind("input propertychange", function (e) {
         var length = $('#translation').val().length;
         $('#translation-length .current-length').html(length);
+
+        // Close warning
+        $('#warning:visible .close').click();
       });
 
       // Close warning box
