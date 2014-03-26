@@ -653,6 +653,7 @@ def update_translation(request, template=None):
         string = request.POST['translation']
         locale = request.POST['locale']
         plural_form = request.POST['plural_form']
+        original = request.POST['original']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
@@ -675,9 +676,6 @@ def update_translation(request, template=None):
 
     if plural_form == "-1":
         plural_form = None
-        original = e.string
-    else:
-        original = e.string_plural
 
     user = request.user
     if not request.user.is_authenticated():

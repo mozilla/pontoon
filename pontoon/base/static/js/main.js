@@ -988,7 +988,8 @@ var Pontoon = (function () {
           locale: self.locale.code,
           entity: entity.pk,
           translation: translation,
-          plural_form: pluralForm
+          plural_form: pluralForm,
+          original: entity['original' + self.isPluralized()]
         },
         success: function(data) {
           if (data.type) {
