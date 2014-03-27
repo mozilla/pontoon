@@ -1,12 +1,30 @@
 $(function() {
 
-  function mouseUpHandler() {
+  function mouseUpHandler(e) {
     $(document)
       .unbind('mousemove', mouseMoveHandler)
       .unbind('mouseup', mouseUpHandler);
 
     $('#iframe-cover').hide(); // iframe fix
     $('#editor:not(".opened")').css('left', $('#sidebar').width()).show();
+
+    var initial = e.data.initial,
+        advanced = Pontoon.app.advanced;
+    if (initial.advanced !== advanced) {
+
+      // On switch to 2-column view, populate editor if empty
+      if (advanced) {
+        if (!$('#editor')[0].entity) {
+          $("#entitylist .entity:first").mouseover().click();
+        }
+
+      // On switch to 1-column view, open editor if needed
+      } else {
+        if ($('#entitylist .entity.hovered').length) {
+          Pontoon.openEditor($('#editor')[0].entity);
+        }
+      }
+    }
   };
 
   function mouseMoveHandler(e) {
@@ -137,7 +155,8 @@ $(function() {
           rightWidth: right.width(),
           leftMin: 450,
           leftMax: $(window).width(),
-          position: e.pageX
+          position: e.pageX,
+          advanced: Pontoon.app.advanced
         };
 
     $('#iframe-cover').show().width(right.width()); // iframe fix
