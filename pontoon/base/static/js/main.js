@@ -726,7 +726,7 @@ var Pontoon = (function () {
         var length = $('#translation').val().length;
         $('#translation-length .current-length').html(length);
 
-        // Close warning
+        // Close warning box if translation changed
         $('#warning:visible .close').click();
       });
 
@@ -789,7 +789,7 @@ var Pontoon = (function () {
       });
 
       // Save translation
-      $('#save').click(function (e) {
+      $('[id^="save"]').click(function (e) {
         e.stopPropagation();
         e.preventDefault();
 
@@ -994,7 +994,8 @@ var Pontoon = (function () {
           entity: entity.pk,
           translation: translation,
           plural_form: pluralForm,
-          original: entity['original' + self.isPluralized()]
+          original: entity['original' + self.isPluralized()],
+          ignore_check: $('#warning').is(':visible')
         },
         success: function(data) {
           if (data.type) {

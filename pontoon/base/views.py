@@ -626,14 +626,15 @@ def delete_translation(request, template=None):
     }), mimetype='application/json')
 
 
-def _quality_check(original, string):
+def _quality_check(original, string, ignore):
     """Check for obvious errors like blanks and missing interpunction."""
 
-    warnings = checks.runtests(original, string)
-    if warnings:
-        return HttpResponse(json.dumps({
-            'warnings': warnings.keys(),
-        }), mimetype='application/json')
+    if not ignore:
+        warnings = checks.runtests(original, string)
+        if warnings:
+            return HttpResponse(json.dumps({
+                'warnings': warnings.keys(),
+            }), mimetype='application/json')
 
 
 def update_translation(request, template=None):
@@ -654,6 +655,7 @@ def update_translation(request, template=None):
         locale = request.POST['locale']
         plural_form = request.POST['plural_form']
         original = request.POST['original']
+        ignore_check = request.POST['ignore_check']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
@@ -677,6 +679,8 @@ def update_translation(request, template=None):
     if plural_form == "-1":
         plural_form = None
 
+    ignore = True if ignore_check == 'true' else False
+
     user = request.user
     if not request.user.is_authenticated():
         if e.project.name != 'Testpilot':
@@ -699,7 +703,7 @@ def update_translation(request, template=None):
                 if t.string == string:
                     # If added by privileged user, approve it
                     if can_localize:
-                        warnings = _quality_check(original, string)
+                        warnings = _quality_check(original, string, ignore)
                         if warnings:
                             return warnings
 
@@ -716,7 +720,7 @@ def update_translation(request, template=None):
                         return HttpResponse("Same translation already exist.")
 
             # Different translation added
-            warnings = _quality_check(original, string)
+            warnings = _quality_check(original, string, ignore)
             if warnings:
                 return warnings
 
@@ -740,7 +744,7 @@ def update_translation(request, template=None):
 
         # No translations saved yet
         else:
-            warnings = _quality_check(original, string)
+            warnings = _quality_check(original, string, ignore)
             if warnings:
                 return warnings
 
