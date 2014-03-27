@@ -1009,6 +1009,7 @@ var Pontoon = (function () {
 
             self.updateEntityUI(entity);
 
+            // Go to next plural form
             if (pluralForm !== -1 && $("#editor").is('.opened')) {
               var next = $('#plural-tabs li:visible')
                 .eq(pluralForm + 1).find('a');
@@ -1018,10 +1019,12 @@ var Pontoon = (function () {
               }
               next.click();
 
+            // Go to entity list
             } else if (self.project.win && !self.project.width &&
                 $("#editor").is('.opened')) {
               $('#cancel').click();
 
+            // Go to next entity
             } else if (!self.project.win || self.project.width) {
               $('#next').click();
             }
