@@ -434,8 +434,8 @@ var Pontoon = (function () {
       $("#entitylist .hovered").removeClass('hovered');
       entity.ui.addClass('hovered');
 
-      // Open sidebar by default if project requests it
-      if (this.project.win && !this.project.width) {
+      // Switch editor and entitylist in 1-column layout
+      if (!this.app.advanced) {
         $("#entitylist")
           .css('left', -$('#sidebar').width()/2);
 
@@ -716,7 +716,7 @@ var Pontoon = (function () {
 
         // Esc: cancel
         if (key === 27) {
-          if (self.project.win && !self.project.width) {
+          if (!self.app.advanced) {
             $('#cancel').click();
           }
           return false;
@@ -1020,12 +1020,11 @@ var Pontoon = (function () {
               next.click();
 
             // Go to entity list
-            } else if (self.project.win && !self.project.width &&
-                $("#editor").is('.opened')) {
+            } else if (!self.app.advanced && $("#editor").is('.opened')) {
               $('#cancel').click();
 
             // Go to next entity
-            } else if (!self.project.win || self.project.width) {
+            } else {
               $('#next').click();
             }
 
@@ -1159,8 +1158,8 @@ var Pontoon = (function () {
         $("#pontoon > header > .container").fadeIn();
       });
 
-      // If sidebar opened by default, open first entity in the editor
-      if (!self.project.win || self.project.width) {
+      // If 2-column layout opened by default, open first entity in the editor
+      if (self.app.advanced) {
         $("#entitylist .entity:first").mouseover().click();
       }
     },
@@ -1221,7 +1220,7 @@ var Pontoon = (function () {
           break;
 
         case "INACTIVE":
-          if (!Pontoon.project.width && $("#editor").is('.opened')) {
+          if (!Pontoon.app.advanced && $("#editor").is('.opened')) {
             $('#cancel').click();
           }
           break;
