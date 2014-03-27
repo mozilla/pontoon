@@ -79,7 +79,8 @@ class Project(models.Model):
     # Website for in-place localization
     url = models.URLField("URL", blank=True)
     width = models.PositiveIntegerField(
-        "Default website (iframe) width in pixels", null=True, blank=True)
+        "Default website (iframe) width in pixels. If set, \
+        sidebar will be opened by default.", null=True, blank=True)
     links = models.BooleanField(
         "Keep links on the project website clickable")
 
