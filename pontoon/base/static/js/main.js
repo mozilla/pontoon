@@ -427,14 +427,14 @@ var Pontoon = (function () {
           translation = entity.translation[0].string.length;
 
       $('#translation-length')
-        .show() // Needed if advanced features opened by default
+        .show() // Needed if sidebar opened by default
         .find('.original-length').html(original).end()
         .find('.current-length').html(translation);
 
       $("#entitylist .hovered").removeClass('hovered');
       entity.ui.addClass('hovered');
 
-      // Open advanced features by default if project requests them
+      // Open sidebar by default if project requests it
       if (this.project.win && !this.project.width) {
         $("#entitylist")
           .css('left', -$('#sidebar').width()/2);
@@ -1159,7 +1159,7 @@ var Pontoon = (function () {
         $("#pontoon > header > .container").fadeIn();
       });
 
-      // If advanced features opened by default, open first entity in the editor
+      // If sidebar opened by default, open first entity in the editor
       if (!self.project.win || self.project.width) {
         $("#entitylist .entity:first").mouseover().click();
       }
