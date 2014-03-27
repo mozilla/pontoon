@@ -18,12 +18,14 @@ $(function() {
     initial.right.width(right).css('margin-left', left);
 
     if (initial.left.width() >= 900) {
+      Pontoon.app.advanced = true;
       initial.left.addClass('advanced');
       $('#editor')
         .addClass('opened')
         .removeAttr('style')
         .show();
     } else {
+      Pontoon.app.advanced = false;
       initial.left.removeClass('advanced').show();
       $('#editor')
         .removeClass('opened')
@@ -42,32 +44,32 @@ $(function() {
   function receiveMessage(e) {
     if (e.source === projectWindow) {
       if (JSON.parse(e.data).type === "READY") {
-
-        $('#pontoon > header').slideDown(function() {
-          var websiteWidth = $('#server').data('width');
-
-          if (websiteWidth) {
-            var windowWidth = $(window).width(),
-                sidebarWidth = windowWidth - websiteWidth;
-
-            if (sidebarWidth >= 900) {
-              $('#sidebar').addClass('advanced').width(sidebarWidth);
-              $('#switch, #editor').addClass('opened');
-
-            } else if (sidebarWidth >= 450) {
-              $('#sidebar').show().width(sidebarWidth);
-              $('#switch').addClass('opened');
-              $('#editor').css('left', sidebarWidth);
-            }
-          }
-
-          $('#source').show().css('margin-left', $('#sidebar:visible').width());
-          resizeIframe();
-          $('#project-load').hide();
-        });
-
-        Pontoon.init(window, projectWindow);
         window.removeEventListener("message", receiveMessage, false);
+        $('#pontoon > header').show();
+
+        var advanced = false,
+            websiteWidth = $('#server').data('width');
+
+        if (websiteWidth) {
+          var windowWidth = $(window).width(),
+              sidebarWidth = windowWidth - websiteWidth;
+
+          if (sidebarWidth >= 900) {
+            advanced = true;
+            $('#sidebar').addClass('advanced').width(sidebarWidth);
+            $('#switch, #editor').addClass('opened');
+
+          } else if (sidebarWidth >= 450) {
+            $('#sidebar').show().width(sidebarWidth);
+            $('#switch').addClass('opened');
+            $('#editor').css('left', sidebarWidth);
+          }
+        }
+
+        $('#source').show().css('margin-left', $('#sidebar:visible').width());
+        resizeIframe();
+        $('#project-load').hide();
+        Pontoon.init(window, advanced, projectWindow);
       }
     }
   }
@@ -85,7 +87,7 @@ $(function() {
       $('#project-load').hide();
     });
 
-    return Pontoon.init(window);
+    return Pontoon.init(window, true);
   }
 
   // Initialize Pontoon for projects with in-place translation support

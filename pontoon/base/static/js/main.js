@@ -1250,14 +1250,16 @@ var Pontoon = (function () {
      * Initialize Pontoon
      *
      * app Pontoon window object
+     * advanced Is advanced (2-column) mode on?
      * project Website window object
      */
-    init: function (app, project) {
+    init: function (app, advanced, project) {
       var self = this;
 
       // Build Pontoon object
       this.app = {
         win: app,
+        advanced: advanced,
         path: $('base').attr('href') // pontoon.css injection
       };
       this.project = {
