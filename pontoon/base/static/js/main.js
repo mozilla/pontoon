@@ -794,21 +794,14 @@ var Pontoon = (function () {
         e.preventDefault();
 
         var entity = $('#editor')[0].entity,
-            source = $('#translation').val(),
-            pluralForm = self.getPluralForm(true);
+            source = $('#translation').val();
 
         if (source === '') {
           self.endLoader('Empty translations cannot be submitted.', 'error');
           return;
         }
 
-        // Update translation, including in-place if possible
-        if (entity.body && (self.user.localizer ||
-            !entity.translation[pluralForm].approved)) {
-          self.common.postMessage("SAVE", source);
-        } else {
-          self.updateOnServer(entity, source);
-        }
+        self.updateOnServer(entity, source);
       });
 
       // Helpers navigation
@@ -980,8 +973,9 @@ var Pontoon = (function () {
      * 
      * entity Entity
      * translation Translation
+     * inplace Was translation submitted in-place?
      */
-    updateOnServer: function (entity, translation) {
+    updateOnServer: function (entity, translation, inplace) {
       var self = this,
           pluralForm = self.getPluralForm();
 
@@ -1008,6 +1002,12 @@ var Pontoon = (function () {
             entity.translation[pf].approved = data.approved;
 
             self.updateEntityUI(entity);
+
+            // Update translation, including in-place if possible
+            if (!inplace && entity.body && (self.user.localizer ||
+                !entity.translation[pf].approved)) {
+              self.common.postMessage("SAVE", translation);
+            }
 
             // Go to next plural form
             if (pluralForm !== -1 && $("#editor").is('.opened')) {
@@ -1228,7 +1228,7 @@ var Pontoon = (function () {
 
         case "UPDATE":
           var entity = Pontoon.project.entities[message.value.id];
-          Pontoon.updateOnServer(entity, message.value.content);
+          Pontoon.updateOnServer(entity, message.value.content, true);
           break;
 
         case "DELETE":
