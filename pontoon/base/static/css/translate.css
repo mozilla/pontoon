@@ -706,6 +706,7 @@
 
 #pontoon #warning ul {
   float: left;
+  list-style: disc;
 }
 
 #pontoon #warning #save-anyway {
