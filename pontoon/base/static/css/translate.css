@@ -665,6 +665,10 @@
   box-sizing: border-box;
 }
 
+#pontoon #plural-tabs ul li {
+  display: none;
+}
+
 #pontoon #editor > menu {
   background: #272A2F;
   border-bottom: 1px solid #5E6475;
