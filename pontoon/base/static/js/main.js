@@ -789,7 +789,7 @@ var Pontoon = (function () {
       });
 
       // Save translation
-      $('[id^="save"]').click(function (e) {
+      $('#save, #save-anyway').click(function (e) {
         e.stopPropagation();
         e.preventDefault();
 
