@@ -17,6 +17,7 @@ $(function() {
     initial.left.width(left);
     initial.right.width(right).css('margin-left', left);
 
+    // Sidebar resized over 2-column breakpoint
     if (initial.left.width() >= 900) {
       Pontoon.app.advanced = true;
       initial.left.addClass('advanced');
@@ -24,6 +25,8 @@ $(function() {
         .addClass('opened')
         .removeAttr('style')
         .show();
+
+    // Sidebar resized below 2-column breakpoint
     } else {
       Pontoon.app.advanced = false;
       initial.left.removeClass('advanced').show();
@@ -37,7 +40,8 @@ $(function() {
   };
 
   function resizeIframe() {
-    $('#source').width($(window).width() - $('#sidebar:visible').width())
+    $('#source')
+      .width($(window).width() - $('#sidebar:visible').width())
       .height($(window).height() - $('#pontoon > header').outerHeight());
   }
 
