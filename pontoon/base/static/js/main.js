@@ -421,7 +421,7 @@ var Pontoon = (function () {
         $("#helpers nav a:first").click();
       }
 
-      $('#warning .close').click();
+      $('#warning:visible .cancel').click();
 
       var original = entity['original' + this.isPluralized()].length,
           translation = entity.translation[0].string.length;
@@ -727,11 +727,11 @@ var Pontoon = (function () {
         $('#translation-length .current-length').html(length);
 
         // Close warning box if translation changed
-        $('#warning:visible .close').click();
+        $('#warning:visible .cancel').click();
       });
 
       // Close warning box
-      $('#warning .close').click(function (e) {
+      $('#warning .cancel').click(function (e) {
         e.stopPropagation();
         e.preventDefault();
 
@@ -1113,7 +1113,7 @@ var Pontoon = (function () {
       });
 
       // Profile menu
-      $('#profile .menu').find('a').click(function (e) {
+      $('#profile .menu a').click(function (e) {
         e.preventDefault();
         if ($(this).is(".sign-out")) {
           window.location = 'signout/'; // Without this, Enter doesn't open the link

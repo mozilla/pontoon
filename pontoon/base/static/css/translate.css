@@ -236,14 +236,13 @@
 }
 
 #pontoon .popup .cancel {
-  background: url('../img/cancel-active.png') no-repeat;
   float: right;
-  height: 16px;
-  width: 16px;
+  font-size: 22px;
+  margin-top: -5px;
 }
 
 #pontoon .popup .cancel:hover {
-  background-image: url('../img/cancel.png');
+  color: #FFFFFF;
 }
 
 #pontoon .popup input[type=text],
@@ -257,7 +256,7 @@
 }
 
 #pontoon .popup input[type=password] {
-    width: 135px;
+    width: 120px;
 }
 
 #pontoon .popup .button {
@@ -266,6 +265,7 @@
   color: #272A2F;
   float: right;
   font-weight: 400;
+  padding: 5px 10px;
   text-transform: uppercase;
 }
 
@@ -688,7 +688,7 @@
   box-sizing: border-box;
 }
 
-#pontoon #warning .close {
+#pontoon #warning .cancel {
   color: #AAAAAA;
   float: right;
   font-size: 24px;
@@ -696,7 +696,7 @@
   margin-top: -1px;
 }
 
-#pontoon #warning .close:hover {
+#pontoon #warning .cancel:hover {
   color: #FFFFFF;
 }
 
