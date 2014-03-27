@@ -632,8 +632,60 @@ def _quality_check(original, string, ignore):
     if not ignore:
         warnings = checks.runtests(original, string)
         if warnings:
+
+            # https://github.com/translate/pootle/
+            check_names = {
+                'accelerators': _(u"Accelerators"),
+                'acronyms': _(u"Acronyms"),
+                'blank': _(u"Blank"),
+                'brackets': _(u"Brackets"),
+                'compendiumconflicts': _(u"Compendium conflict"),
+                'credits': _(u"Translator credits"),
+                'doublequoting': _(u"Double quotes"),
+                'doublespacing': _(u"Double spaces"),
+                'doublewords': _(u"Repeated word"),
+                'emails': _(u"E-mail"),
+                'endpunc': _(u"Ending punctuation"),
+                'endwhitespace': _(u"Ending whitespace"),
+                'escapes': _(u"Escapes"),
+                'filepaths': _(u"File paths"),
+                'functions': _(u"Functions"),
+                'gconf': _(u"GConf values"),
+                'kdecomments': _(u"Old KDE comment"),
+                'long': _(u"Long"),
+                'musttranslatewords': _(u"Must translate words"),
+                'newlines': _(u"Newlines"),
+                'nplurals': _(u"Number of plurals"),
+                'notranslatewords': _(u"Don't translate words"),
+                'numbers': _(u"Numbers"),
+                'options': _(u"Options"),
+                'printf': _(u"printf()"),
+                'puncspacing': _(u"Punctuation spacing"),
+                'purepunc': _(u"Pure punctuation"),
+                'sentencecount': _(u"Number of sentences"),
+                'short': _(u"Short"),
+                'simplecaps': _(u"Simple capitalization"),
+                'simpleplurals': _(u"Simple plural(s)"),
+                'singlequoting': _(u"Single quotes"),
+                'startcaps': _(u"Starting capitalization"),
+                'startpunc': _(u"Starting punctuation"),
+                'startwhitespace': _(u"Starting whitespace"),
+                'tabs': _(u"Tabs"),
+                'unchanged': _(u"Unchanged"),
+                'untranslated': _(u"Untranslated"),
+                'urls': _(u"URLs"),
+                'validchars': _(u"Valid characters"),
+                'variables': _(u"Placeholders"),
+                'xmltags': _(u"XML tags"),
+            }
+
+            warnings_array = []
+            for key in warnings.keys():
+                warning = check_names.get(key, key)
+                warnings_array.append(warning)
+
             return HttpResponse(json.dumps({
-                'warnings': warnings.keys(),
+                'warnings': warnings_array,
             }), mimetype='application/json')
 
 
