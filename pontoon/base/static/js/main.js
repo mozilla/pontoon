@@ -991,7 +991,7 @@ var Pontoon = (function () {
           translation: translation,
           plural_form: pluralForm,
           original: entity['original' + self.isPluralized()],
-          ignore_check: $('#warning').is(':visible')
+          ignore_check: inplace || $('#warning').is(':visible')
         },
         success: function(data) {
           if (data.type) {
