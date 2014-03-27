@@ -1113,7 +1113,7 @@ var Pontoon = (function () {
       });
 
       // Profile menu
-      $('#profile-menu').find('a').click(function (e) {
+      $('#profile .menu').find('a').click(function (e) {
         e.preventDefault();
         if ($(this).is(".sign-out")) {
           window.location = 'signout/'; // Without this, Enter doesn't open the link
