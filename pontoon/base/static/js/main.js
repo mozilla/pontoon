@@ -699,6 +699,7 @@ var Pontoon = (function () {
           .find('.original-length').html(original.length).end()
           .find('.current-length').html(source.length);
 
+        $('#warning:visible .cancel').click();
         self.getHistory(entity);
         $("#helpers nav a:first").click();
       });
@@ -726,7 +727,6 @@ var Pontoon = (function () {
         var length = $('#translation').val().length;
         $('#translation-length .current-length').html(length);
 
-        // Close warning box if translation changed
         $('#warning:visible .cancel').click();
       });
 
@@ -854,6 +854,8 @@ var Pontoon = (function () {
             source = self.doRender(translation);
         $('#translation').val(source).focus();
         $('#translation-length .current-length').html(source.length);
+
+        $('#warning:visible .cancel').click();
       });
 
       // Restore clickable links
