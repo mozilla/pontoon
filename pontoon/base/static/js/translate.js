@@ -17,6 +17,20 @@ $(function() {
     initial.left.width(left);
     initial.right.width(right).css('margin-left', left);
 
+    if (initial.left.width() >= 900) {
+      initial.left.addClass('advanced');
+      $('#editor')
+        .addClass('opened')
+        .removeAttr('style')
+        .show();
+    } else {
+      initial.left.removeClass('advanced').show();
+      $('#editor')
+        .removeClass('opened')
+        .css('left', $('#sidebar').width())
+        .hide();
+    }
+
     $('#iframe-cover').width(right).css('margin-left', left); // iframe fix
   };
 
@@ -115,7 +129,7 @@ $(function() {
           right: right,
           leftWidth: left.width(),
           rightWidth: right.width(),
-          leftMin: ($('#server').data('width') && ($(window).width() - $('#server').data('width')) >= 900) ? 900 : 450,
+          leftMin: 450,
           leftMax: $(window).width(),
           position: e.pageX
         };
