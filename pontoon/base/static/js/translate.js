@@ -14,7 +14,7 @@ $(function() {
 
       // On switch to 2-column view, populate editor if empty
       if (advanced) {
-        if (!$('#editor')[0].entity) {
+        if (!$('#editor')[0].entity || !$('#entitylist .entity.hovered').length) {
           $("#entitylist .entity:first").mouseover().click();
         }
 
