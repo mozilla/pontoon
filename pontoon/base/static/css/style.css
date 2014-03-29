@@ -421,7 +421,6 @@ button {
 }
 
 #pontoon .project.select > .button.breadcrumbs {
-  border-radius: 3px 0 0 3px;
   padding-left: 20px;
 }
 
@@ -441,16 +440,11 @@ button {
   background: #4d5967;
 }
 
-#pontoon .project.select.opened > .button.breadcrumbs {
-  border-radius: 0;
-}
-
 #pontoon .select.opened > .button.breadcrumbs:after {
   border-left-color: #4d5967;
 }
 
 #pontoon #go {
-  border-radius: 0 3px 3px 0;
   color: #FFFFFF;
   float: left;
 

@@ -63,7 +63,6 @@
 #pontoon .select .menu,
 #pontoon .select .popup {
   background: #272A2F;
-  border-radius: 0 0 5px 5px;
   bottom: auto;
   top: 60px;
 }
@@ -161,7 +160,6 @@
 
 #pontoon > header .notification {
   background: rgba(0, 0, 0, 0.8);
-  border-radius: 3px;
   color: #7BC876;
   cursor: pointer;
   display: none;
