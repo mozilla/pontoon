@@ -123,7 +123,9 @@
             {% if project.repository_path %}
             <li><a class="zip" href="{{ url('pontoon.download') }}">{{ _('Download .zip') }}</a></li>
             {% endif %}
+            {% if project.url %}
             <li><a class="html" href="{{ url('pontoon.download') }}">{{ _('Download .html') }}</a></li>
+            {% endif %}
             <li><a class="json" href="{{ url('pontoon.download') }}">{{ _('Download .json') }}</a></li>
           </ul>
         </div>
