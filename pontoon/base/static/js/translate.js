@@ -36,22 +36,27 @@ $(function() {
     initial.right.width(right).css('margin-left', left);
 
     // Sidebar resized over 2-column breakpoint
-    if (initial.left.width() >= 900) {
-      Pontoon.app.advanced = true;
-      initial.left.addClass('advanced');
-      $('#editor')
-        .addClass('opened')
-        .removeAttr('style')
-        .show();
+    if (left >= 900) {
+      if (!Pontoon.app.advanced) {
+        Pontoon.app.advanced = true;
+        initial.left.addClass('advanced');
+        $('#editor')
+          .addClass('opened')
+          .removeAttr('style')
+          .show();
+        $('#entitylist').removeAttr('style');
+      }
 
     // Sidebar resized below 2-column breakpoint
     } else {
-      Pontoon.app.advanced = false;
-      initial.left.removeClass('advanced').show();
-      $('#editor')
-        .removeClass('opened')
-        .css('left', $('#sidebar').width())
-        .hide();
+      if (Pontoon.app.advanced) {
+        Pontoon.app.advanced = false;
+        initial.left.removeClass('advanced').show();
+        $('#editor')
+          .removeClass('opened')
+          .css('left', $('#sidebar').width())
+          .hide();
+      }
     }
 
     $('#iframe-cover').width(right).css('margin-left', left); // iframe fix
