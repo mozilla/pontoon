@@ -200,6 +200,10 @@
   margin-bottom: 5px;
 }
 
+#pontoon #info p {
+  font-weight: 300;
+}
+
 #pontoon #info .menu {
   line-height: 18px;
   width: 360px;
