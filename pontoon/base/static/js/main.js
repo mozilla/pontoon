@@ -1491,7 +1491,7 @@ var Pontoon = (function () {
         }
       });
 
-      // Use arrow keys to move around menu, confirm with enter, close with escape
+      // Use arrow keys to move around menu, confirm/close eith Enter/Esc
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         if ($('.menu').is(':visible')) {
           var key = e.keyCode || e.which,
@@ -1499,34 +1499,42 @@ var Pontoon = (function () {
               hovered = menu.find('li.hover');
 
           if (key === 38) { // Up arrow
-            if (hovered.length === 0 || menu.find('li:visible:first').is('.hover')) {
+            if (hovered.length === 0 ||
+                menu.find('li:visible:first').is('.hover')) {
               menu.find('li.hover').removeClass('hover');
               menu.find('li:visible:last').addClass('hover');
             } else {
-              menu.find('li.hover').removeClass('hover').prevAll(':visible:not(".horizontal-separator"):first').addClass('hover');
+              menu.find('li.hover').removeClass('hover')
+                .prevAll(':visible:not(".horizontal-separator"):first')
+                  .addClass('hover');
             }
             if (menu.parent().is('.locale')) {
               Pontoon.updateSlider(menu.find('ul'));
             }
             if (menu.parent().is('.project')) {
-              var type = (!$('body').is('.admin')) ? '.project-url' : '.project-name';
+              var type = (!$('body').is('.admin')) ?
+                '.project-url' : '.project-name';
               $('.url').val($('.project .menu li.hover').find(type).html());
             }
             return false;
           }
 
           if (key === 40) { // Down arrow
-            if (hovered.length === 0 || menu.find('li:visible:last').is('.hover')) {
+            if (hovered.length === 0 ||
+                menu.find('li:visible:last').is('.hover')) {
               menu.find('li.hover').removeClass('hover');
               menu.find('li:visible:first').addClass('hover');
             } else {
-              menu.find('li.hover').removeClass('hover').nextAll(':visible:not(".horizontal-separator"):first').addClass('hover');
+              menu.find('li.hover').removeClass('hover')
+                .nextAll(':visible:not(".horizontal-separator"):first')
+                  .addClass('hover');
             }
             if (menu.parent().is('.locale')) {
               Pontoon.updateSlider(menu.find('ul'));
             }
             if (menu.parent().is('.project')) {
-              var type = (!$('body').is('.admin')) ? '.project-url' : '.project-name';
+              var type = (!$('body').is('.admin')) ?
+                '.project-url' : '.project-name';
               $('.url').val($('.project .menu li.hover').find(type).html());
             }
             return false;
