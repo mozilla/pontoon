@@ -131,7 +131,7 @@ class Entity(models.Model):
             'original_plural': self.string_plural,
             'comment': self.comment,
             'key': self.key,
-            'source': eval(self.source),
+            'source': eval(self.source) if self.source else '',
         }
 
 
