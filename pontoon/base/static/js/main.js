@@ -1498,12 +1498,12 @@ var Pontoon = (function () {
               menu = $('.menu:visible'),
               hovered = menu.find('li.hover');
 
-          if (key === 38) { // up arrow
+          if (key === 38) { // Up arrow
             if (hovered.length === 0 || menu.find('li:visible:first').is('.hover')) {
               menu.find('li.hover').removeClass('hover');
               menu.find('li:visible:last').addClass('hover');
             } else {
-              menu.find('li.hover').removeClass('hover').prev(':visible').addClass('hover');
+              menu.find('li.hover').removeClass('hover').prevAll(':visible:not(".horizontal-separator"):first').addClass('hover');
             }
             if (menu.parent().is('.locale')) {
               Pontoon.updateSlider(menu.find('ul'));
@@ -1515,12 +1515,12 @@ var Pontoon = (function () {
             return false;
           }
 
-          if (key === 40) { // down arrow
+          if (key === 40) { // Down arrow
             if (hovered.length === 0 || menu.find('li:visible:last').is('.hover')) {
               menu.find('li.hover').removeClass('hover');
               menu.find('li:visible:first').addClass('hover');
             } else {
-              menu.find('li.hover').removeClass('hover').next(':visible').addClass('hover');
+              menu.find('li.hover').removeClass('hover').nextAll(':visible:not(".horizontal-separator"):first').addClass('hover');
             }
             if (menu.parent().is('.locale')) {
               Pontoon.updateSlider(menu.find('ul'));
