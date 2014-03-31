@@ -1,4 +1,6 @@
 
+import json
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
@@ -32,6 +34,14 @@ class Locale(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def stringify(self):
+        return json.dumps({
+            'code': self.code,
+            'name': self.name,
+            'nplurals': self.nplurals,
+            'plural_rule': self.plural_rule,
+        })
 
 
 class Project(models.Model):

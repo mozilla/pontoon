@@ -130,12 +130,6 @@ def translate_site(request, locale, url, template='translate.html'):
 
     data = {
         'locale': l,
-        'locale_json': json.dumps({
-            'code': l.code,
-            'name': l.name,
-            'nplurals': l.nplurals,
-            'plural_rule': l.plural_rule,
-        }),
         'locales': Locale.objects.all(),
         'project_url': url,
         'project': {},
@@ -272,12 +266,6 @@ def translate_project(request, locale, slug, page=None,
 
     data = {
         'locale': l,
-        'locale_json': json.dumps({
-            'code': l.code,
-            'name': l.name,
-            'nplurals': l.nplurals,
-            'plural_rule': l.plural_rule,
-        }),
         'locales': Locale.objects.all(),
         'pages': Subpage.objects.all(),
         'project_url': p.url,
