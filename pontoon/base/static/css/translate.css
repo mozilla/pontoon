@@ -587,6 +587,10 @@
   margin-bottom: 5px;
 }
 
+#pontoon #comment span {
+  display: block;
+}
+
 #pontoon #source-pane > div {
   overflow: auto;
   padding: 10px;

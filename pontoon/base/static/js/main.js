@@ -374,9 +374,14 @@ var Pontoon = (function () {
       $('#original').html(this.doNotRender(entity.original));
       $('#translation').val(entity.translation[0].string);
 
-      $('#comment').hide();
+      $('#comment').empty().hide();
       if (entity.comment) {
         $('#comment').html(entity.comment).show();
+      }
+      if (entity.source) {
+        $.each(entity.source, function() {
+          $('#comment').append('<span>' + this.join(':') + '</span>').show();
+        });
       }
 
       $('#source-pane').removeClass('pluralized');
