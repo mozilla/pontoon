@@ -1345,7 +1345,7 @@ var Pontoon = (function () {
           $(this).siblings('.menu').show().end()
                  .parents('.select').addClass('opened');
           $('#iframe-cover').show(); // iframe fix
-          $('.search:visible').focus();
+          $('body:not(".admin-project") .search:visible').focus();
         }
       });
 
