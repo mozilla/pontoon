@@ -345,10 +345,10 @@ body #intro {
   margin-left: 5px;
 }
 
-#pontoon .notification {
+#pontoon #intro .notification {
   width: auto;
 }
 
-#pontoon .notification li {
+#pontoon #intro .notification li {
   text-align: left;
 }
