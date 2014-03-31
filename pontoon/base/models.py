@@ -124,6 +124,16 @@ class Entity(models.Model):
     def __unicode__(self):
         return self.string
 
+    def serialize(self):
+        return {
+            'pk': self.pk,
+            'original': self.string,
+            'original_plural': self.string_plural,
+            'comment': self.comment,
+            'key': self.key,
+            'source': eval(self.source),
+        }
+
 
 class Translation(models.Model):
     entity = models.ForeignKey(Entity)

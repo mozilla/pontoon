@@ -221,14 +221,8 @@ def _get_entities(project, locale, page=None):
                     "approved": translation.approved,
                 })
 
-        obj = {
-            "original": e.string,
-            "original_plural": e.string_plural,
-            "comment": e.comment,
-            "key": e.key,
-            "pk": e.pk,
-            "translation": translation_array,
-        }
+        obj = e.serialize()
+        obj["translation"] = translation_array
 
         entities_array.append(obj)
     return entities_array
