@@ -360,7 +360,8 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
                 for entity in entities:
                     _save_entity(project=project, string=entity.msgid,
                                  string_plural=entity.msgid_plural,
-                                 comment=entity.comment)
+                                 comment=entity.comment,
+                                 source=entity.occurrences)
             elif translations:
                 for entity in entities:
                     # Entities without plurals

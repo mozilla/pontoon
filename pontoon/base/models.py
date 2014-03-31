@@ -119,7 +119,7 @@ class Entity(models.Model):
     string_plural = models.TextField(blank=True)
     comment = models.TextField(blank=True)
     key = models.TextField(blank=True)  # Needed for webL10n
-    source = models.TextField(blank=True)  # Needed for webL10n
+    source = models.TextField(blank=True)
 
     def __unicode__(self):
         return self.string
