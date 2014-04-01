@@ -527,6 +527,7 @@
 }
 
 #pontoon #editor p {
+  text-align: left;
   white-space: normal;
 }
 
@@ -789,6 +790,7 @@
   border-bottom: 1px solid #525a65;
   cursor: pointer;
   padding: 5px 10px 20px;
+  text-align: right;
 }
 
 #pontoon #helpers > section ul li:not(.disabled):hover {
@@ -805,9 +807,13 @@
   color: #AAAAAA;
   display: block;
   font-size: 11px;
-  padding-bottom: 5px;
-  text-align: right;
+  font-weight: 300;
+  padding: 1px 0 5px;
   text-transform: uppercase;
+}
+
+#pontoon #helpers > section ul li > a:link {
+  display: inline-block;
 }
 
 #pontoon #helpers > section ul li > header .info {
