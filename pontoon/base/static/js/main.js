@@ -205,9 +205,14 @@ var Pontoon = (function () {
     getMachinery: function (original) {
       var self = this,
           mt = $('#machinery .machine-translation .translation'),
-          amagama = $('#machinery .amagama .translation')
-            .empty()
-            .addClass('loader'),
+          amagama = $('#machinery .amagama')
+            .find('.stress')
+              .empty()
+              .removeAttr('title')
+              .end()
+            .find('.translation')
+              .empty()
+              .addClass('loader'),
           transvision = $('#machinery .transvision .translation')
             .empty()
             .addClass('loader');
@@ -286,6 +291,11 @@ var Pontoon = (function () {
         if (data.translation) {
           amagama.html(self.doNotRender(data.translation.target))
           .parent().attr('title', 'Click to copy');
+          // Show Levenshtein distance and translation source
+          var quality = data.translation.quality;
+          amagama.prev().find('.stress')
+            .html(Math.round(quality * 100) / 100 + '%')
+            .attr('title', data.translation.source);
         } else {
           var error = (data === "no") ?
             "No translations available." :
