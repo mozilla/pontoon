@@ -294,7 +294,7 @@ var Pontoon = (function () {
           // Show Levenshtein distance and translation source
           var quality = data.translation.quality;
           amagama.prev().find('.stress')
-            .html(Math.round(quality * 100) / 100 + '%')
+            .html(Math.round(quality) + '%')
             .attr('title', data.translation.source);
         } else {
           var error = (data === "no") ?
