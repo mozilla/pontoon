@@ -125,13 +125,18 @@ class Entity(models.Model):
         return self.string
 
     def serialize(self):
+        try:
+            source = eval(self.source)
+        except SyntaxError:
+            source = self.source
+
         return {
             'pk': self.pk,
             'original': self.string,
             'original_plural': self.string_plural,
             'comment': self.comment,
             'key': self.key,
-            'source': eval(self.source) if self.source else '',
+            'source': source,
         }
 
 

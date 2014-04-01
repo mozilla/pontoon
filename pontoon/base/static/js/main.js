@@ -380,9 +380,13 @@ var Pontoon = (function () {
       }
       if (entity.source) {
         $('#metadata').append('<a href="#" class="details">More details</a>').show();
-        $.each(entity.source, function() {
-          $('#metadata').append('<span>#: ' + this.join(':') + '</span>');
-        });
+        if (typeof(entity.source) === 'object') {
+          $.each(entity.source, function() {
+            $('#metadata').append('<span>#: ' + this.join(':') + '</span>');
+          });
+        } else {
+          $('#metadata').append('<span>' + entity.source + '</span>');
+        }
       }
 
       $('#source-pane').removeClass('pluralized');
