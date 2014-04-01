@@ -374,13 +374,14 @@ var Pontoon = (function () {
       $('#original').html(this.doNotRender(entity.original));
       $('#translation').val(entity.translation[0].string);
 
-      $('#comment').empty().hide();
+      $('#metadata').empty().hide();
       if (entity.comment) {
-        $('#comment').html(entity.comment).show();
+        $('#metadata').html('<span id="comment">' + entity.comment + '</span>').show();
       }
       if (entity.source) {
+        $('#metadata').append('<a href="#" class="details">More details</a>').show();
         $.each(entity.source, function() {
-          $('#comment').append('<span>' + this.join(':') + '</span>').show();
+          $('#metadata').append('<span>#: ' + this.join(':') + '</span>');
         });
       }
 
@@ -682,6 +683,21 @@ var Pontoon = (function () {
           }
           break;
 
+        }
+      });
+
+      // Show/hide more source string metadata
+      $("#metadata a.details").live("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        var details = $("#metadata span:not('#comment')");
+        if ($(this).is(':contains("Less")')) {
+          $(this).html('More details');
+          details.css('display', 'none');
+        } else {
+          $(this).html('Less details');
+          details.css('display', 'block');
         }
       });
 

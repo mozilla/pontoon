@@ -579,7 +579,7 @@
   overflow: auto;
 }
 
-#pontoon #comment {
+#pontoon #metadata {
   color: #AAAAAA;
   display: none;
   font-size: 12px;
@@ -587,8 +587,17 @@
   margin-bottom: 5px;
 }
 
-#pontoon #comment span {
-  display: block;
+#pontoon #metadata span {
+  display: none;
+}
+
+#pontoon #metadata #comment {
+  display: inline;
+  padding-right: 4px;
+}
+
+#pontoon #metadata .details {
+  color: #7BC876;
 }
 
 #pontoon #source-pane > div {
