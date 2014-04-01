@@ -116,8 +116,8 @@
 #pontoon #progress {
   border: 1px solid #7BC876;
   float: left;
-  height: 28px;
-  margin: 15px 20px 15px 0;
+  height: 38px;
+  margin: 10px 20px 10px 0;
   position: relative;
   width: 180px;
   text-align: center;
@@ -141,10 +141,11 @@
 
 #pontoon #progress .number {
   color: #FFFFFF;
-  right: 5px;
   font-size: 14px;
   line-height: 30px;
   position: absolute;
+  right: 5px;
+  top: 5px;
 }
 
 #pontoon #progress .number.left {
