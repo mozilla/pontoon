@@ -795,46 +795,6 @@ def update_translation(request, template=None):
             }), mimetype='application/json')
 
 
-def translation_memory(request):
-    """Get translation from translation memory service."""
-    log.debug("Get translation from translation memory service.")
-
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    url = "http://transvision.mozfr.org/"
-    payload = {
-        "recherche": text,
-        "sourcelocale": "en-US",
-        "locale": locale,
-        "perfect_match": "perfect_match",
-        "repo": "aurora",
-        "json": True,
-    }
-
-    try:
-        r = requests.get(url, params=payload)
-
-        if r.text != '[]':
-            translation = r.json().itervalues().next().itervalues().next()
-
-            # Use JSON to distinguish from error if such translation returned
-            return HttpResponse(json.dumps({
-                'translation': translation
-            }), mimetype='application/json')
-
-        else:
-            return HttpResponse("no")
-
-    except Exception as e:
-        log.error(e)
-        return HttpResponse("error")
-
-
 def machine_translation(request):
     """Get translation from machine translation service."""
     log.debug("Get translation from machine translation service.")
@@ -904,6 +864,79 @@ def machine_translation(request):
         return HttpResponse(json.dumps({
             'translation': translation
         }), mimetype='application/json')
+
+    except Exception as e:
+        log.error(e)
+        return HttpResponse("error")
+
+
+def amagama(request):
+    """Get open source translations from amaGama service."""
+    log.debug("Get open source translations from amaGama service.")
+
+    try:
+        text = request.GET['text']
+        locale = request.GET['locale']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    text = urllib.quote(text)
+    url = "http://amagama.locamotion.org/tmserver/en/%s/unit/%s" \
+          % (locale, text)
+
+    try:
+        r = requests.get(url)
+
+        if r.text != '[]':
+            translation = r.json()[0]
+
+            return HttpResponse(json.dumps({
+                'translation': translation
+            }), mimetype='application/json')
+
+        else:
+            return HttpResponse("no")
+
+    except Exception as e:
+        log.error(e)
+        return HttpResponse("error")
+
+
+def transvision(request):
+    """Get Mozilla translations from Transvision service."""
+    log.debug("Get Mozilla translations from Transvision service.")
+
+    try:
+        text = request.GET['text']
+        locale = request.GET['locale']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    url = "http://transvision.mozfr.org/"
+    payload = {
+        "recherche": text,
+        "sourcelocale": "en-US",
+        "locale": locale,
+        "perfect_match": "perfect_match",
+        "repo": "aurora",
+        "json": True,
+    }
+
+    try:
+        r = requests.get(url, params=payload)
+
+        if r.text != '[]':
+            translation = r.json().itervalues().next().itervalues().next()
+
+            # Use JSON to distinguish from error if such translation returned
+            return HttpResponse(json.dumps({
+                'translation': translation
+            }), mimetype='application/json')
+
+        else:
+            return HttpResponse("no")
 
     except Exception as e:
         log.error(e)

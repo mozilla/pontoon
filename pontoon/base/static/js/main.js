@@ -205,7 +205,10 @@ var Pontoon = (function () {
     getMachinery: function (original) {
       var self = this,
           mt = $('#machinery .machine-translation .translation'),
-          tm = $('#machinery .translation-memory .translation')
+          amagama = $('#machinery .amagama .translation')
+            .empty()
+            .addClass('loader'),
+          transvision = $('#machinery .transvision .translation')
             .empty()
             .addClass('loader');
 
@@ -265,29 +268,57 @@ var Pontoon = (function () {
         });
       }
 
-      // Translation memory
+      // amaGama
       $.ajax({
-        url: 'translation-memory/',
+        url: 'amagama/',
         data: {
           text: original,
           locale: self.locale.code
         }
 
       }).error(function() {
-        tm.removeClass("loader")
+        amagama.removeClass("loader")
           .html("Oops, something went wrong.")
           .parent().addClass('disabled');
 
       }).success(function(data) {
-        tm.removeClass("loader");
+        amagama.removeClass("loader");
         if (data.translation) {
-          tm.html(self.doNotRender(data.translation))
+          amagama.html(self.doNotRender(data.translation.target))
           .parent().attr('title', 'Click to copy');
         } else {
           var error = (data === "no") ?
             "No translations available." :
             "Oops, something went wrong.";
-          tm.html(error)
+          amagama.html(error)
+            .parent().addClass('disabled');
+        }
+      });
+
+
+      // Transvision
+      $.ajax({
+        url: 'transvision/',
+        data: {
+          text: original,
+          locale: self.locale.code
+        }
+
+      }).error(function() {
+        transvision.removeClass("loader")
+          .html("Oops, something went wrong.")
+          .parent().addClass('disabled');
+
+      }).success(function(data) {
+        transvision.removeClass("loader");
+        if (data.translation) {
+          transvision.html(self.doNotRender(data.translation))
+          .parent().attr('title', 'Click to copy');
+        } else {
+          var error = (data === "no") ?
+            "No translations available." :
+            "Oops, something went wrong.";
+          transvision.html(error)
             .parent().addClass('disabled');
         }
       });
