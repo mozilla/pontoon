@@ -148,7 +148,7 @@ $(function() {
   });
 
   // Resize sidebar and iframe
-  $('#drag').bind('mousedown', function(e) {
+  $('#drag').bind('mousedown', function (e) {
     e.preventDefault();
 
     var left = $('#sidebar'),

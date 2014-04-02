@@ -1205,6 +1205,54 @@ var Pontoon = (function () {
         var type = $(this).parents('.popup').attr('id');
         self.save(type, $('#' + type + ' form').serializeArray());
       });
+
+      function mouseMoveHandler(e) {
+        var initial = e.data.initial,
+            left = Math.min(Math.max(initial.leftWidth + (e.pageX - initial.position), initial.leftMin), initial.leftMax),
+            right = Math.min(Math.max(initial.rightWidth - (e.pageX - initial.position), 0), initial.leftMax - initial.leftMin);
+
+        initial.left.width(left);
+        initial.right.width(right).css('left', left);
+      }
+
+      function mouseUpHandler(e) {
+        var initial = e.data.initial;
+
+        initial.left.css('translation-property', initial.leftTP);
+        initial.right.css('translation-property', initial.rightTP);
+
+        $(document)
+          .unbind('mousemove', mouseMoveHandler)
+          .unbind('mouseup', mouseUpHandler);
+      }
+
+      // Resize entity list and editor by dragging
+      $('#drag-1').bind('mousedown', function (e) {
+        e.preventDefault();
+
+        var left = $('#entitylist'),
+            right = $('#editor'),
+            data = {
+              left: left,
+              right: right,
+              leftWidth: left.width(),
+              rightWidth: right.width(),
+              leftTP: left.css('transition-property'),
+              rightTP: right.css('transition-property'),
+              leftMin: 250,
+              leftMax: $('#sidebar').width(),
+              position: e.pageX
+            };
+
+        left.css('transition-property', 'none');
+        right.css('transition-property', 'none');
+
+        $(document)
+          .bind('mousemove', { initial: data }, mouseMoveHandler)
+          .bind('mouseup', { initial: data }, mouseUpHandler);
+      });
+
+
     },
 
 

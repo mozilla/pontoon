@@ -324,24 +324,31 @@
   width: 700px;
 }
 
-#pontoon #sidebar #drag {
+#pontoon #sidebar [id^="drag"] {
   cursor: ew-resize;
+  display: none;
   height: 100%;
   position: absolute;
+  width: 6px;
+}
+
+#pontoon #sidebar #drag,
+#pontoon #sidebar.advanced #drag-1 {
+  display: block;
   right: 0;
-  width: 7px;
+}
+
+#pontoon #sidebar.advanced #drag-1 {
+  right: -3px;
+  z-index: 5;
 }
 
 #pontoon #entitylist {
   left: 0;
   height: 100%;
   position: absolute;
-  width: 100%;
-
-  -moz-transition: all 0.2s ease-out;  /* FF3.7+ */
-  -o-transition: all 0.2s ease-out;  /* Opera 10.5 */
-  -webkit-transition: all 0.2s ease-out;  /* Saf3.2+, Chrome */
   transition: all 0.2s ease-out;
+  width: 100%;
 }
 
 #pontoon .advanced #entitylist,
@@ -510,12 +517,8 @@
   padding: 0;
   position: absolute;
   top: 0;
-  width: 100%;
-
-  -moz-transition: all 0.2s ease-out;  /* FF3.7+ */
-  -o-transition: all 0.2s ease-out;  /* Opera 10.5 */
-  -webkit-transition: all 0.2s ease-out;  /* Saf3.2+, Chrome */
   transition: all 0.2s ease-out;
+  width: 100%;
 }
 
 #pontoon .advanced #editor {
