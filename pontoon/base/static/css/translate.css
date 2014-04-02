@@ -690,6 +690,10 @@
   display: none;
 }
 
+#pontoon #plural-tabs ul li a span {
+  color: #7BC876;
+}
+
 #pontoon #editor > menu {
   background: #272A2F;
   border-bottom: 1px solid #5E6475;

@@ -460,7 +460,7 @@ var Pontoon = (function () {
             }
 
             $('#plural-tabs li a span').each(function(i) {
-              $(this).html("[" + examples[i] + "]");
+              $(this).html(examples[i]);
               return i < nplurals-1;
             });
           }
