@@ -1235,8 +1235,8 @@ var Pontoon = (function () {
             data = {
               left: left,
               right: right,
-              leftWidth: left.width(),
-              rightWidth: right.width(),
+              leftWidth: left.outerWidth(),
+              rightWidth: right.outerWidth(),
               leftTP: left.css('transition-property'),
               rightTP: right.css('transition-property'),
               leftMin: 250,
