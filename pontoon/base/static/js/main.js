@@ -1208,8 +1208,10 @@ var Pontoon = (function () {
 
       function mouseMoveHandler(e) {
         var initial = e.data.initial,
-            left = Math.min(Math.max(initial.leftWidth + (e.pageX - initial.position), initial.leftMin), initial.leftMax),
-            right = Math.min(Math.max(initial.rightWidth - (e.pageX - initial.position), 0), initial.leftMax - initial.leftMin);
+            left = Math.min(Math.max(initial.leftWidth + e.pageX - initial.position, initial.leftMin),
+                   initial.leftWidth + initial.rightWidth - initial.rightMin),
+            right = Math.min(Math.max(initial.rightWidth - e.pageX + initial.position, initial.rightMin),
+                    initial.leftWidth + initial.rightWidth - initial.leftMin);
 
         initial.left.width(left);
         initial.right.width(right).css('left', left);
@@ -1233,7 +1235,7 @@ var Pontoon = (function () {
               leftWidth: left.outerWidth(),
               rightWidth: right.outerWidth(),
               leftMin: 250,
-              leftMax: $('#sidebar').width(),
+              rightMin: 350,
               position: e.pageX
             };
 
