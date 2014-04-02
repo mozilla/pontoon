@@ -524,11 +524,12 @@
             break;
 
           case "SAVE":
-            var node = $('.pontoon-editable-toolbar')[0].target.entity.node;
-            $(node).each(function() {
+            var entity = $('.pontoon-editable-toolbar')[0].target.entity;
+            entity.translation[0].string = message.value;
+            $(entity.node).each(function() {
               this.html(message.value);
             });
-            $('.pontoon-editable-toolbar > .save').click();
+            stopEditing();
             break;
 
           case "DELETE":
