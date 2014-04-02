@@ -36,7 +36,7 @@ $(function() {
     initial.right.width(right).css('margin-left', left);
 
     // Sidebar resized over 2-column breakpoint
-    if (left >= 900) {
+    if (left >= 700) {
       if (!Pontoon.app.advanced) {
         Pontoon.app.advanced = true;
         initial.left.addClass('advanced');
@@ -81,12 +81,12 @@ $(function() {
           var windowWidth = $(window).width(),
               sidebarWidth = windowWidth - websiteWidth;
 
-          if (sidebarWidth >= 900) {
+          if (sidebarWidth >= 700) {
             advanced = true;
             $('#sidebar').addClass('advanced').width(sidebarWidth);
             $('#switch, #editor').addClass('opened');
 
-          } else if (sidebarWidth >= 450) {
+          } else if (sidebarWidth >= 350) {
             $('#sidebar').show().width(sidebarWidth);
             $('#switch').addClass('opened');
             $('#editor').css('left', sidebarWidth);
@@ -158,7 +158,7 @@ $(function() {
           right: right,
           leftWidth: left.width(),
           rightWidth: right.width(),
-          leftMin: 450,
+          leftMin: 350,
           leftMax: $(window).width(),
           position: e.pageX,
           advanced: Pontoon.app.advanced

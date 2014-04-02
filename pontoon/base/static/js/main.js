@@ -1336,7 +1336,7 @@ var Pontoon = (function () {
         format: $('#server').data('format'),
         width: (
           $('#server').data('width') &&
-          ($(window).width() - $('#server').data('width')) >= 900) ?
+          ($(window).width() - $('#server').data('width')) >= 700) ?
           $('#server').data('width') : false,
         links: $('#server').data('links')
       };

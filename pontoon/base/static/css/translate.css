@@ -313,7 +313,7 @@
   overflow: hidden;
   position: fixed;
   top: 60px;
-  width: 450px;
+  width: 350px;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -321,7 +321,7 @@
 
 #pontoon #sidebar.advanced {
   display: block;
-  width: 900px;
+  width: 700px;
 }
 
 #pontoon #sidebar #drag {
@@ -505,7 +505,7 @@
   background: #3F4752;
   bottom: 0;
   color: #FFFFFF;
-  left: 450px;
+  left: 350px;
   line-height: 22px;
   padding: 0;
   position: absolute;
@@ -749,14 +749,14 @@
   display: none;
   float: left;
   line-height: 22px;
-  padding: 10px 0;
+  padding: 9px 0;
 }
 
 #pontoon #editor > menu button {
   background: transparent;
   border: none;
   color: #EBEBEB;
-  padding: 10px;
+  padding: 10px 5px;
   text-transform: uppercase;
 }
 
@@ -770,7 +770,7 @@
   color: #272A2F;
   font-weight: 600;
   margin-left: 10px;
-  padding: 10px 20px;
+  padding: 10px 15px;
 }
 
 #pontoon #editor > menu button:hover {
