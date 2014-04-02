@@ -37,14 +37,13 @@ $(function() {
 
     // Sidebar resized over 2-column breakpoint
     if (left >= 700) {
+      $('#entitylist, #editor').removeAttr('style');
       if (!Pontoon.app.advanced) {
         Pontoon.app.advanced = true;
         initial.left.addClass('advanced');
         $('#editor')
           .addClass('opened')
-          .removeAttr('style')
           .show();
-        $('#entitylist').removeAttr('style');
       }
 
     // Sidebar resized below 2-column breakpoint
