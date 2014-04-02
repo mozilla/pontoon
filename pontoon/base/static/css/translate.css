@@ -555,7 +555,7 @@
 #pontoon #topbar a#previous {
   background: url('../img/up.png') no-repeat 0 3px transparent;
   padding-left: 20px;
-  padding-right: 30px;
+  margin-right: 30px;
 }
 
 #pontoon #topbar a#next {
