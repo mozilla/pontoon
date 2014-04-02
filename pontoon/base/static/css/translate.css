@@ -601,6 +601,11 @@
   color: #7BC876;
 }
 
+#pontoon #source-pane.pluralized #metadata .details {
+  float: right;
+  margin-top: -1px;
+}
+
 #pontoon #source-pane > div {
   overflow: auto;
   padding: 10px;
