@@ -86,7 +86,7 @@ $(function() {
             $('#sidebar').addClass('advanced').width(sidebarWidth);
             $('#switch, #editor').addClass('opened');
 
-          } else if (sidebarWidth >= 350) {
+          } else {
             $('#sidebar').show().width(sidebarWidth);
             $('#switch').addClass('opened');
             $('#editor').css('left', sidebarWidth);
