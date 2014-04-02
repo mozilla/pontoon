@@ -329,7 +329,7 @@
   display: none;
   height: 100%;
   position: absolute;
-  width: 6px;
+  width: 7px;
 }
 
 #pontoon #sidebar #drag,
@@ -339,7 +339,7 @@
 }
 
 #pontoon #sidebar.advanced #drag-1 {
-  right: -3px;
+  left: -4px;
   z-index: 5;
 }
 
