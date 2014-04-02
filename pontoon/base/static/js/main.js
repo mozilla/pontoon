@@ -1216,11 +1216,6 @@ var Pontoon = (function () {
       }
 
       function mouseUpHandler(e) {
-        var initial = e.data.initial;
-
-        initial.left.css('translation-property', initial.leftTP);
-        initial.right.css('translation-property', initial.rightTP);
-
         $(document)
           .unbind('mousemove', mouseMoveHandler)
           .unbind('mouseup', mouseUpHandler);
@@ -1237,8 +1232,6 @@ var Pontoon = (function () {
               right: right,
               leftWidth: left.outerWidth(),
               rightWidth: right.outerWidth(),
-              leftTP: left.css('transition-property'),
-              rightTP: right.css('transition-property'),
               leftMin: 250,
               leftMax: $('#sidebar').width(),
               position: e.pageX
