@@ -507,7 +507,6 @@
   color: #FFFFFF;
   left: 450px;
   line-height: 22px;
-  overflow-y: scroll;
   padding: 0;
   position: absolute;
   top: 0;
@@ -775,11 +774,19 @@
 
 #pontoon #helpers {
   background: #3F4752;
+  height: calc(60% - 106px);
+  position: relative;
 }
 
 #pontoon #helpers > section {
+  bottom: 0;
   display: none;
+  left: 0;
+  overflow-y: auto;
   padding-top: 25px;
+  position: absolute;
+  right: 0;
+  top: 43px;
 }
 
 #pontoon #helpers > section ul {
