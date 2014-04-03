@@ -412,9 +412,7 @@ var Pontoon = (function () {
     openEditor: function (entity) {
       $("#editor")[0].entity = entity;
 
-      $('#original').html(this.doNotRender(entity.original));
-      $('#translation').val(entity.translation[0].string);
-
+      // Metadata: comments, sources
       $('#metadata').empty().hide();
       if (entity.comment) {
         $('#metadata').html('<span id="comment">' + entity.comment + '</span>').show();
@@ -430,11 +428,12 @@ var Pontoon = (function () {
         }
       }
 
+      // Original string and plurals
+      $('#original').html(this.doNotRender(entity.original));
       $('#source-pane').removeClass('pluralized');
       $('#plural-tabs li').css('display', 'none');
 
       if (entity.original_plural) {
-        $('#original-plural').html(this.doNotRender(entity.original_plural));
         $('#source-pane').addClass('pluralized');
 
         var nplurals = this.locale.nplurals;
@@ -472,8 +471,11 @@ var Pontoon = (function () {
         $("#helpers nav a:first").click();
       }
 
+      // Translation area
+      $('#translation').val(entity.translation[0].string);
       $('#warning:visible .cancel').click();
 
+      // Length
       var original = entity['original' + this.isPluralized()].length,
           translation = entity.translation[0].string.length;
 
@@ -482,6 +484,7 @@ var Pontoon = (function () {
         .find('.original-length').html(original).end()
         .find('.current-length').html(translation);
 
+      // Update entity list
       $("#entitylist .hovered").removeClass('hovered');
       entity.ui.addClass('hovered');
 
@@ -758,7 +761,11 @@ var Pontoon = (function () {
             editor = $('#editor')[0],
             entity = editor.entity,
             original = entity['original' + self.isPluralized()],
+            title = !self.isPluralized() ? "Singular" : "Plural",
             source = entity.translation[i].string;
+
+        $('#source-pane h2').html(title).show();
+        $('#original').html(self.doNotRender(original));
 
         $('#translation').val(source).focus();
         $('#translation-length')

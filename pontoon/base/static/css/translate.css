@@ -577,6 +577,7 @@
   height: 20%;
   min-height: 100px;
   overflow: auto;
+  padding: 10px;
 }
 
 #pontoon #metadata {
@@ -605,36 +606,15 @@
   margin-top: -1px;
 }
 
-#pontoon #source-pane > div {
-  overflow: auto;
-  padding: 10px;
-
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
 #pontoon #source-pane h2 {
   color: #AAAAAA;
+  display: none;
   font-size: 11px;
   line-height: 11px;
 }
 
-#pontoon #source-pane h2,
-#pontoon #source-pane .plural {
-  display: none;
-}
-
-#pontoon #source-pane.pluralized h2,
-#pontoon #source-pane.pluralized .plural {
+#pontoon #source-pane.pluralized h2 {
   display: block;
-}
-
-#pontoon #source-pane.pluralized > div {
-  height: 50%;
-}
-
-#pontoon #source-pane.pluralized .singular {
-  border-bottom: 1px solid #525A65;
 }
 
 #pontoon #editor nav ul {
