@@ -287,14 +287,6 @@
   margin-top: 6px;
 }
 
-#pontoon > header.opened #switch {
-  background: url('../img/arrow-down.png') no-repeat;
-}
-
-#pontoon > header.opened #switch:hover {
-  background: url('../img/arrow-down-active.png') no-repeat;
-}
-
 
 
 

@@ -29,15 +29,15 @@
 }
 
 .pontoon-editable-toolbar .edit {
-  background-image: url('../img/edit-active.png');
+  background-image: url('../img/edit.png');
 }
 
 .pontoon-editable-toolbar .save {
-  background-image: url('../img/save-active.png');
+  background-image: url('../img/save.png');
   display: none;
 }
 
 .pontoon-editable-toolbar .cancel {
-  background-image: url('../img/cancel-active.png');
+  background-image: url('../img/cancel.png');
   display: none;
 }
