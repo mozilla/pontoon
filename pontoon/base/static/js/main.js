@@ -949,39 +949,43 @@ var Pontoon = (function () {
             } else if (data.type === "deleted") {
               var item = button.parents('li'),
                   index = item.index();
-              item.remove();
-              self.endLoader('Translation deleted');
+              item
+                .addClass('delete')
+                .bind('transitionend', function() {
+                  $(this).remove();
+                  self.endLoader('Translation deleted');
 
-              // Active translation deleted
-              if (index === 0) {
-                var entity = $('#editor')[0].entity,
-                    next = $('#history li[data-id="' + data.next + '"]'),
-                    pluralForm = self.getPluralForm(true);
+                  // Active translation deleted
+                  if (index === 0) {
+                    var entity = $('#editor')[0].entity,
+                        next = $('#history li[data-id="' + data.next + '"]'),
+                        pluralForm = self.getPluralForm(true);
 
-                // Make newest alternative translation active
-                if (next.length > 0) {
-                  next.click();
-                  entity.translation[pluralForm].string =
-                    next.find('.translation').html();
-                  entity.dirty = true;
+                    // Make newest alternative translation active
+                    if (next.length > 0) {
+                      next.click();
+                      entity.translation[pluralForm].string =
+                        next.find('.translation').html();
+                      entity.dirty = true;
 
-                // Last translation deleted, no alternative available
-                } else {
-                  entity.dirty = false;
-                  $('#translation').val('').focus();
-                  if (entity.body && pluralForm === 0) {
-                    self.common.postMessage("DELETE");
-                  } else {
-                    entity.translation[pluralForm].string = "";
-                    entity.translation[pluralForm].approved = false;
-                    self.updateEntityUI(entity);
+                    // Last translation deleted, no alternative available
+                    } else {
+                      entity.dirty = false;
+                      $('#translation').val('').focus();
+                      if (entity.body && pluralForm === 0) {
+                        self.common.postMessage("DELETE");
+                      } else {
+                        entity.translation[pluralForm].string = "";
+                        entity.translation[pluralForm].approved = false;
+                        self.updateEntityUI(entity);
+                      }
+                      $('#history ul')
+                        .append('<li class="disabled">' +
+                                  '<p>No translations available.</p>' +
+                                '</li>');
+                    }
                   }
-                  $('#history ul')
-                    .append('<li class="disabled">' +
-                              '<p>No translations available.</p>' +
-                            '</li>');
-                }
-              }
+                });
             } else {
               self.endLoader('Oops, something went wrong.', 'error');
             }

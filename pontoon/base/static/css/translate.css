@@ -807,6 +807,11 @@
   cursor: pointer;
   padding: 5px 10px 20px;
   text-align: right;
+  transition: all 0.2s ease-out;
+}
+
+#pontoon #helpers > section ul li.delete {
+  transform: scale(0);
 }
 
 #pontoon #helpers > section ul li:not(.disabled):hover {
