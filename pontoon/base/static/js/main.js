@@ -211,22 +211,26 @@ var Pontoon = (function () {
         requests--;
         if (requests === 0) {
           $('#helpers li.active a').removeClass('loading');
+          if (ul.find('li').length === 0) {
+            ul.append('<li class="disabled">' +
+              '<p>No translations available.</p>' +
+            '</li>');
+          }
         }
       }
 
       function append(data) {
-        ul.append(
-          '<li title="Click to copy">' +
-            '<header>' +
-              '<span class="stress" title="' + (data.original || '') + '">' +
-                (data.quality || '') +
-              '</span>' +
-              '<a href="' + data.url + '" target="_blank"' +
-                'title="' + data.title + '">' + data.source + '</a>' +
-            '</header>' +
-            '<p class="translation">' + self.doNotRender(data.translation) +
-            '</p>' +
-          '</li>');
+        ul.append('<li title="Click to copy">' +
+          '<header>' +
+            '<span class="stress" title="' + (data.original || '') + '">' +
+              (data.quality || '') +
+            '</span>' +
+            '<a href="' + data.url + '" target="_blank"' +
+              'title="' + data.title + '">' + data.source + '</a>' +
+          '</header>' +
+          '<p class="translation">' + self.doNotRender(data.translation) +
+          '</p>' +
+        '</li>');
       }
 
       $('#helpers li.active a').addClass('loading');
