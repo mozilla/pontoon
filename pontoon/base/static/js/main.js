@@ -207,6 +207,13 @@ var Pontoon = (function () {
           ul = $('#machinery ul').empty(),
           requests = 0;
 
+      function complete() {
+        requests--;
+        if (requests === 0) {
+          $('#helpers li.active a').removeClass('loading');
+        }
+      }
+
       $('#helpers li.active a').addClass('loading');
 
       // Machine translation
@@ -239,12 +246,7 @@ var Pontoon = (function () {
           } else if (data === "not-supported") {
             self.locale.notSupported = true;
           }
-        }).complete(function() {
-          requests--;
-          if (requests === 0) {
-            $('#helpers li.active a').removeClass('loading');
-          }
-        });
+        }).complete(complete);
       }
 
       // amaGama
@@ -272,12 +274,7 @@ var Pontoon = (function () {
               '</p>' +
             '</li>');
         }
-      }).complete(function() {
-        requests--;
-        if (requests === 0) {
-          $('#helpers li.active a').removeClass('loading');
-        }
-      });
+      }).complete(complete);
 
       // Transvision
       requests++;
@@ -302,12 +299,7 @@ var Pontoon = (function () {
               '</p>' +
             '</li>');
         }
-      }).complete(function() {
-        requests--;
-        if (requests === 0) {
-          $('#helpers li.active a').removeClass('loading');
-        }
-      });
+      }).complete(complete);
     },
 
 
