@@ -214,6 +214,21 @@ var Pontoon = (function () {
         }
       }
 
+      function append(data) {
+        ul.append(
+          '<li title="Click to copy">' +
+            '<header>' +
+              '<span class="stress" title="' + (data.original || '') + '">' +
+                (data.quality || '') +
+              '</span>' +
+              '<a href="' + data.url + '" target="_blank"' +
+                'title="' + data.title + '">' + data.source + '</a>' +
+            '</header>' +
+            '<p class="translation">' + self.doNotRender(data.translation) +
+            '</p>' +
+          '</li>');
+      }
+
       $('#helpers li.active a').addClass('loading');
 
       // Machine translation
@@ -231,18 +246,12 @@ var Pontoon = (function () {
         }).success(function(data) {
           self.locale.notSupported = false;
           if (data.translation) {
-            ul.append(
-              '<li title="Click to copy">' +
-                '<header>' +
-                  '<span class="stress" title=""></span>' +
-                  '<a href="http://www.bing.com/translator" target="_blank"' +
-                    'title="Visit Bing Translator">Machine Translation</a>' +
-                '</header>' +
-                '<p class="translation">' +
-                  self.doNotRender(data.translation) +
-                '</p>' +
-              '</li>');
-
+            append({
+              url: 'http://www.bing.com/translator',
+              title: 'Visit Bing Translator',
+              source: 'Machine Translation',
+              translation: data.translation
+            });
           } else if (data === "not-supported") {
             self.locale.notSupported = true;
           }
@@ -260,19 +269,14 @@ var Pontoon = (function () {
 
       }).success(function(data) {
         if (data.translation) {
-          var quality = data.translation.quality;
-          ul.append(
-            '<li title="Click to copy">' +
-              '<header>' +
-                '<span class="stress" title="' + data.translation.source + '">' +
-                  Math.round(quality) + '%</span>' +
-                '<a href="http://amagama.translatehouse.org/" target="_blank"' +
-                  'title="Visit amaGama">Open Source Translations</a>' +
-              '</header>' +
-              '<p class="translation">' +
-                self.doNotRender(data.translation.target) +
-              '</p>' +
-            '</li>');
+          append({
+            original: data.translation.source,
+            quality: Math.round(data.translation.quality) + '%',
+            url: 'http://amagama.translatehouse.org/',
+            title: 'Visit amaGama',
+            source: 'Open Source Translations',
+            translation: data.translation.target
+          });
         }
       }).complete(complete);
 
@@ -287,17 +291,14 @@ var Pontoon = (function () {
 
       }).success(function(data) {
         if (data.translation) {
-          ul.append(
-            '<li title="Click to copy">' +
-              '<header>' +
-                '<span class="stress" title="' + original + '">100%</span>' +
-                '<a href="http://transvision.mozfr.org/" target="_blank"' +
-                  'title="Visit Transvision">Mozilla Translations</a>' +
-              '</header>' +
-              '<p class="translation">' +
-                self.doNotRender(data.translation) +
-              '</p>' +
-            '</li>');
+          append({
+            original: original,
+            quality: '100%',
+            url: 'http://transvision.mozfr.org/',
+            title: 'Visit Transvision',
+            source: 'Mozilla Translations',
+            translation: data.translation
+          });
         }
       }).complete(complete);
     },
