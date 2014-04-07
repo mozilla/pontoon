@@ -642,6 +642,15 @@
   text-transform: uppercase;
 }
 
+#pontoon #editor nav li a.loading {
+  background: transparent url('../img/loader-light.gif') center center no-repeat;
+  transition: none;
+}
+
+#pontoon #editor nav li a.loading span {
+  visibility: hidden;
+}
+
 #pontoon #editor textarea {
   background: #FFFFFF;
   display: block;
@@ -795,7 +804,6 @@
   cursor: default;
 }
 
-#pontoon #helpers > section ul li > a:link,
 #pontoon #helpers > section ul li > header {
   color: #AAAAAA;
   display: block;
@@ -803,10 +811,6 @@
   font-weight: 300;
   padding: 1px 0 5px;
   text-transform: uppercase;
-}
-
-#pontoon #helpers > section ul li > a:link {
-  display: inline-block;
 }
 
 #pontoon #helpers > section ul li > header .info {
@@ -858,12 +862,12 @@
   display: inline-block;
 }
 
-#pontoon #helpers > section ul li .stress {
+#pontoon #helpers > section ul li > header .stress {
   color: #7BC876;
   padding-left: 3px;
 }
 
-#pontoon #helpers > section#machinery ul li .stress {
+#pontoon #helpers > section#machinery ul li > header .stress {
   padding-right: 3px;
 }
 

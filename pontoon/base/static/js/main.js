@@ -204,10 +204,14 @@ var Pontoon = (function () {
      */
     getMachinery: function (original) {
       var self = this,
-          ul = $('#machinery ul').empty();
+          ul = $('#machinery ul').empty(),
+          requests = 0;
+
+      $('#helpers li.active a').addClass('loading');
 
       // Machine translation
       if (!self.locale.notSupported) {
+        requests++;
         $.ajax({
           url: 'machine-translation/',
           data: {
@@ -235,10 +239,16 @@ var Pontoon = (function () {
           } else if (data === "not-supported") {
             self.locale.notSupported = true;
           }
+        }).complete(function() {
+          requests--;
+          if (requests === 0) {
+            $('#helpers li.active a').removeClass('loading');
+          }
         });
       }
 
       // amaGama
+      requests++;
       $.ajax({
         url: 'amagama/',
         data: {
@@ -262,9 +272,15 @@ var Pontoon = (function () {
               '</p>' +
             '</li>');
         }
+      }).complete(function() {
+        requests--;
+        if (requests === 0) {
+          $('#helpers li.active a').removeClass('loading');
+        }
       });
 
       // Transvision
+      requests++;
       $.ajax({
         url: 'transvision/',
         data: {
@@ -285,6 +301,11 @@ var Pontoon = (function () {
                 self.doNotRender(data.translation) +
               '</p>' +
             '</li>');
+        }
+      }).complete(function() {
+        requests--;
+        if (requests === 0) {
+          $('#helpers li.active a').removeClass('loading');
         }
       });
     },
