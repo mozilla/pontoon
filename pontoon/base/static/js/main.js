@@ -272,14 +272,16 @@ var Pontoon = (function () {
         }
 
       }).success(function(data) {
-        if (data.translation) {
-          append({
-            original: data.translation.source,
-            quality: Math.round(data.translation.quality) + '%',
-            url: 'http://amagama.translatehouse.org/',
-            title: 'Visit amaGama',
-            source: 'Open Source Translations',
-            translation: data.translation.target
+        if (data.translations) {
+          $.each(data.translations, function() {
+            append({
+              original: this.source,
+              quality: Math.round(this.quality) + '%',
+              url: 'http://amagama.translatehouse.org/',
+              title: 'Visit amaGama',
+              source: 'Open Source Translations',
+              translation: this.target
+            });
           });
         }
       }).complete(complete);

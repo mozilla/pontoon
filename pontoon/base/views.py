@@ -882,17 +882,18 @@ def amagama(request):
         return HttpResponse("error")
 
     text = urllib.quote(text)
-    url = "http://amagama.locamotion.org/tmserver/en/%s/unit/%s" \
-          % (locale, text)
+    url = "http://amagama.locamotion.org/tmserver" \
+          "/en/%s/unit/%s?max_candidates=%s" \
+          % (locale, text, 5)
 
     try:
         r = requests.get(url)
 
         if r.text != '[]':
-            translation = r.json()[0]
+            translations = r.json()
 
             return HttpResponse(json.dumps({
-                'translation': translation
+                'translations': translations
             }), mimetype='application/json')
 
         else:
