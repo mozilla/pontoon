@@ -204,71 +204,36 @@ var Pontoon = (function () {
      */
     getMachinery: function (original) {
       var self = this,
-          mt = $('#machinery .machine-translation .translation'),
-          amagama = $('#machinery .amagama')
-            .find('.stress')
-              .empty()
-              .removeAttr('title')
-              .end()
-            .find('.translation')
-              .empty()
-              .addClass('loader'),
-          transvision = $('#machinery .transvision .translation')
-            .empty()
-            .addClass('loader');
-
-      $('#machinery li')
-        .removeClass('disabled')
-        .parent().removeAttr('title');
+          ul = $('#machinery ul').empty();
 
       // Machine translation
-      if (self.locale.notSupported) {
-        mt.html("Oops, target language not supported.")
-          .parent().addClass('disabled');
-
-      } else {
-        mt.empty()
-          .addClass('loader');
-
-        // On first run, check if target language supported
-        var check = false;
-        if (self.locale.notSupported === undefined) {
-          check = true;
-        }
-
+      if (!self.locale.notSupported) {
         $.ajax({
           url: 'machine-translation/',
           data: {
             text: original,
             locale: self.locale.code,
-            check: check
+            // On first run, check if target language supported
+            check: (self.locale.notSupported === undefined) ? true : false
           }
-
-        }).error(function() {
-          mt.removeClass("loader")
-            .html("Oops, something went wrong.")
-            .parent().addClass('disabled');
 
         }).success(function(data) {
           self.locale.notSupported = false;
-          mt.removeClass("loader");
-
           if (data.translation) {
-            mt.html(self.doNotRender(data.translation))
-              .parent().attr('title', 'Click to copy');
+            ul.append(
+              '<li title="Click to copy">' +
+                '<header>' +
+                  '<span class="stress" title=""></span>' +
+                  '<a href="http://www.bing.com/translator" target="_blank"' +
+                    'title="Visit Bing Translator">Machine Translation</a>' +
+                '</header>' +
+                '<p class="translation">' +
+                  self.doNotRender(data.translation) +
+                '</p>' +
+              '</li>');
 
-          } else {
-            var error = "Oops, something went wrong.";
-
-            if (data === "apikey") {
-              error = "Oops, machine translation not supported.";
-            } else if (data === "not-supported") {
-              error = "Oops, target language not supported.";
-              self.locale.notSupported = true;
-            }
-
-            mt.html(error)
-              .parent().addClass('disabled');
+          } else if (data === "not-supported") {
+            self.locale.notSupported = true;
           }
         });
       }
@@ -281,30 +246,23 @@ var Pontoon = (function () {
           locale: self.locale.code
         }
 
-      }).error(function() {
-        amagama.removeClass("loader")
-          .html("Oops, something went wrong.")
-          .parent().addClass('disabled');
-
       }).success(function(data) {
-        amagama.removeClass("loader");
         if (data.translation) {
-          amagama.html(self.doNotRender(data.translation.target))
-          .parent().attr('title', 'Click to copy');
-          // Show Levenshtein distance and translation source
           var quality = data.translation.quality;
-          amagama.prev().find('.stress')
-            .html(Math.round(quality) + '%')
-            .attr('title', data.translation.source);
-        } else {
-          var error = (data === "no") ?
-            "No translations available." :
-            "Oops, something went wrong.";
-          amagama.html(error)
-            .parent().addClass('disabled');
+          ul.append(
+            '<li title="Click to copy">' +
+              '<header>' +
+                '<span class="stress" title="' + data.translation.source + '">' +
+                  Math.round(quality) + '%</span>' +
+                '<a href="http://amagama.translatehouse.org/" target="_blank"' +
+                  'title="Visit amaGama">Open Source Translations</a>' +
+              '</header>' +
+              '<p class="translation">' +
+                self.doNotRender(data.translation.target) +
+              '</p>' +
+            '</li>');
         }
       });
-
 
       // Transvision
       $.ajax({
@@ -314,22 +272,19 @@ var Pontoon = (function () {
           locale: self.locale.code
         }
 
-      }).error(function() {
-        transvision.removeClass("loader")
-          .html("Oops, something went wrong.")
-          .parent().addClass('disabled');
-
       }).success(function(data) {
-        transvision.removeClass("loader");
         if (data.translation) {
-          transvision.html(self.doNotRender(data.translation))
-          .parent().attr('title', 'Click to copy');
-        } else {
-          var error = (data === "no") ?
-            "No translations available." :
-            "Oops, something went wrong.";
-          transvision.html(error)
-            .parent().addClass('disabled');
+          ul.append(
+            '<li title="Click to copy">' +
+              '<header>' +
+                '<span class="stress" title="' + original + '">100%</span>' +
+                '<a href="http://transvision.mozfr.org/" target="_blank"' +
+                  'title="Visit Transvision">Mozilla Translations</a>' +
+              '</header>' +
+              '<p class="translation">' +
+                self.doNotRender(data.translation) +
+              '</p>' +
+            '</li>');
         }
       });
     },

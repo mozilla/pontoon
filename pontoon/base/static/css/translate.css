@@ -863,10 +863,8 @@
   padding-left: 3px;
 }
 
-#pontoon #helpers > section ul li p.loader {
-  background: transparent url('../img/loader-light.gif') 0 0 no-repeat;
-  height: 12px;
-  padding: 10px 0 0 30px;
+#pontoon #helpers > section#machinery ul li .stress {
+  padding-right: 3px;
 }
 
 #pontoon #helpers > section ul li.disabled p {
