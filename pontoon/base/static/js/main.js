@@ -262,6 +262,31 @@ var Pontoon = (function () {
         }).complete(complete);
       }
 
+      // Microsoft Terminology
+      requests++;
+      $.ajax({
+        url: 'microsoft-terminology/',
+        data: {
+          text: original,
+          locale: self.locale.code
+        }
+
+      }).success(function(data) {
+        if (data.translations) {
+          $.each(data.translations, function() {
+            append({
+              original: this.source,
+              quality: Math.round(this.quality) + '%',
+              url: 'http://www.microsoft.com/Language/',
+              title: 'Visit Microsoft Terminology Service API. \
+                      © 2014 Microsoft Corporation. All rights reserved.',
+              source: 'Microsoft Terminology',
+              translation: this.target
+            });
+          });
+        }
+      }).complete(complete);
+
       // amaGama
       requests++;
       $.ajax({

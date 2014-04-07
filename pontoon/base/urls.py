@@ -38,6 +38,8 @@ urlpatterns = patterns(
         name='pontoon.delete_translation'),
     url(r'^machine-translation/$', views.machine_translation,
         name='pontoon.machine_translation'),
+    url(r'^microsoft-terminology/$', views.microsoft_terminology,
+        name='pontoon.microsoft_terminology'),
     url(r'^amagama/$', views.amagama,
         name='pontoon.amagama'),
     url(r'^transvision/$', views.transvision,

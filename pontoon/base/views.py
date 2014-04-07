@@ -51,6 +51,7 @@ from pontoon.base.models import (
 
 from pontoon.base.utils.permissions import add_can_localize
 from session_csrf import anonymous_csrf_exempt
+from suds.client import Client, WebFault
 from translate.filters import checks
 
 
@@ -866,6 +867,55 @@ def machine_translation(request):
         }), mimetype='application/json')
 
     except Exception as e:
+        log.error(e)
+        return HttpResponse("error")
+
+
+def microsoft_terminology(request):
+    """Get translations from Microsoft Terminology Service."""
+    log.debug("Get translations from Microsoft Terminology Service.")
+
+    try:
+        text = request.GET['text']
+        locale = request.GET['locale']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    url = 'http://api.terminology.microsoft.com/Terminology.svc?singleWsdl'
+    client = Client(url)
+
+    sources = client.factory.create('ns0:TranslationSources')
+    sources["TranslationSource"] = ['Terms', 'UiStrings']
+
+    payload = {
+        'text': text,
+        'from': 'en-US',
+        'to': locale,
+        'sources': sources,
+        'maxTranslations': 5
+    }
+
+    try:
+        r = client.service.GetTranslations(**payload)
+
+        translations = []
+        if len(r) != 0:
+            for translation in r.Match:
+                translations.append({
+                    'source': translation.OriginalText,
+                    'target': translation.Translations[0][0].TranslatedText,
+                    'quality': translation.ConfidenceLevel,
+                })
+
+            return HttpResponse(json.dumps({
+                'translations': translations
+            }), mimetype='application/json')
+
+        else:
+            return HttpResponse("no")
+
+    except WebFault as e:
         log.error(e)
         return HttpResponse("error")
 
