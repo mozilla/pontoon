@@ -802,7 +802,7 @@ def machine_translation(request):
 
     try:
         text = request.GET['text']
-        to = request.GET['locale']
+        locale = request.GET['locale']
         check = request.GET['check']
     except MultiValueDictKeyError as e:
         log.error(str(e))
@@ -814,42 +814,20 @@ def machine_translation(request):
         log.error("MICROSOFT_TRANSLATOR_API_KEY not set")
         return HttpResponse("apikey")
 
-    import xml.etree.ElementTree as ET
-    base = "http://api.microsofttranslator.com/V2/Http.svc/"
-
     # On first run, check if target language supported
     if check == "true":
-        url = base + "GetLanguagesForTranslate"
-        payload = {
-            "appId": api_key,
-        }
+        languages = settings.MICROSOFT_TRANSLATOR_LOCALES
 
-        try:
-            r = requests.get(url, params=payload)
-            log.debug(r.content)
+        if locale not in languages:
+            log.debug("Locale not supported.")
+            return HttpResponse("not-supported")
 
-            # Parse XML response
-            root = ET.fromstring(r.content)
-            supported = False
-            for child in root:
-                if to == child.text:
-                    supported = True
-                    break
-
-            if not supported:
-                log.debug("Locale not supported.")
-                return HttpResponse("not-supported")
-
-        except Exception as e:
-            log.error(e)
-            return HttpResponse("error")
-
-    url = base + "Translate"
+    url = "http://api.microsofttranslator.com/V2/Http.svc/Translate"
     payload = {
         "appId": api_key,
         "text": text,
         "from": "en",
-        "to": to,
+        "to": locale,
         "contentType": "text/html",
     }
 
@@ -858,6 +836,7 @@ def machine_translation(request):
         log.debug(r.content)
 
         # Parse XML response
+        import xml.etree.ElementTree as ET
         root = ET.fromstring(r.content)
         translation = root.text
 

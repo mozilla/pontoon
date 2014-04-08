@@ -83,6 +83,14 @@ LOGGING = dict(loggers=dict(pontoon = {'level': logging.DEBUG}))
 # Required for storing additional information about users
 AUTH_PROFILE_MODULE = 'base.UserProfile'
 
+# Microsoft Translator Locales
+MICROSOFT_TRANSLATOR_LOCALES = [
+    'ar', 'bg', 'ca', 'zh-CHS', 'zh-CHT', 'cs', 'da', 'nl', 'en', 'et', 'fi',
+    'fr', 'de', 'el', 'ht', 'he', 'hi', 'mww', 'hu', 'id', 'it', 'ja', 'tlh',
+    'tlh-Qaak', 'ko', 'lv', 'lt', 'ms', 'mt', 'no', 'fa', 'pl', 'pt', 'ro',
+    'ru', 'sk', 'sl', 'es', 'sv', 'th', 'tr', 'uk', 'ur', 'vi', 'cy'
+]
+
 # Microsoft Terminology Service API Locales
 MICROSOFT_TERMINOLOGY_LOCALES = [
     'af-za', 'am-et', 'ar-cl', 'ar-eg', 'ar-sa', 'as-in', 'az-latn-az',
