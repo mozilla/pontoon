@@ -814,13 +814,28 @@ def machine_translation(request):
         log.error("MICROSOFT_TRANSLATOR_API_KEY not set")
         return HttpResponse("apikey")
 
+    obj = {}
+
     # On first run, check if target language supported
     if check == "true":
+        supported = False
         languages = settings.MICROSOFT_TRANSLATOR_LOCALES
 
-        if locale not in languages:
+        if locale in languages:
+            supported = True
+
+        else:
+            for lang in languages:
+                if lang.startswith(locale.split("-")[0]):  # Neutral locales
+                    supported = True
+                    locale = lang
+                    break
+
+        if not supported:
             log.debug("Locale not supported.")
             return HttpResponse("not-supported")
+
+        obj['locale'] = locale
 
     url = "http://api.microsofttranslator.com/V2/Http.svc/Translate"
     payload = {
@@ -839,11 +854,9 @@ def machine_translation(request):
         import xml.etree.ElementTree as ET
         root = ET.fromstring(r.content)
         translation = root.text
+        obj['translation'] = translation
 
-        # Use JSON to distinguish from "error" if such translation returned
-        return HttpResponse(json.dumps({
-            'translation': translation
-        }), mimetype='application/json')
+        return HttpResponse(json.dumps(obj), mimetype='application/json')
 
     except Exception as e:
         log.error(e)

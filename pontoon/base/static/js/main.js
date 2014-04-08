@@ -238,17 +238,30 @@ var Pontoon = (function () {
       // Machine translation
       if (self.locale.MT !== false) {
         requests++;
+
+        // On first run, check if target locale supported
+        if (self.locale.MT === undefined) {
+          var locale = self.locale.code,
+              check = true;
+
+        // Use MT locale, Pontoon's might not be supported
+        } else {
+          var locale = self.locale.MT,
+              check = false;
+        }
+
         $.ajax({
           url: 'machine-translation/',
           data: {
             text: original,
-            locale: self.locale.code,
-            // On first run, check if target locale supported
-            check: (self.locale.MT === undefined) ? true : false
+            locale: locale,
+            check: check
           }
 
         }).success(function(data) {
-          self.locale.MT = true;
+          if (data.locale) {
+            self.locale.MT = data.locale;
+          }
           if (data.translation) {
             append({
               url: 'http://www.bing.com/translator',
@@ -271,7 +284,7 @@ var Pontoon = (function () {
           var locale = self.locale.code,
               check = true;
 
-        // Use Microsoft Terminology locale, provided might not be supported
+        // Use Microsoft Terminology locale, Pontoon's might not be supported
         } else {
           var locale = self.locale.msTerminology,
               check = false;
@@ -295,8 +308,8 @@ var Pontoon = (function () {
                 original: this.source,
                 quality: Math.round(this.quality) + '%',
                 url: 'http://www.microsoft.com/Language/',
-                title: 'Visit Microsoft Terminology Service API. \
-                        © 2014 Microsoft Corporation. All rights reserved.',
+                title: 'Visit Microsoft Terminology Service API. ' +
+                       '© 2014 Microsoft Corporation. \nAll rights reserved.',
                 source: 'Microsoft Terminology',
                 translation: this.target
               });
