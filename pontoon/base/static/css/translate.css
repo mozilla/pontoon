@@ -570,6 +570,9 @@
   min-height: 100px;
   overflow: auto;
   padding: 10px;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #pontoon #metadata {
@@ -763,8 +766,12 @@
 
 #pontoon #helpers {
   background: #3F4752;
-  height: calc(60% - 106px);
+  height: calc(60% - 104px);
   position: relative;
+}
+
+#source-pane.pluralized ~ #helpers {
+  height: calc(60% - 147px);
 }
 
 #pontoon #helpers > section {
