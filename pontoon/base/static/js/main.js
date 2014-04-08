@@ -236,31 +236,23 @@ var Pontoon = (function () {
       $('#helpers li.active a').addClass('loading');
 
       // Machine translation
-      if (self.locale.MT !== false) {
+      if (self.locale.mt !== false) {
         requests++;
-
-        // On first run, check if target locale supported
-        if (self.locale.MT === undefined) {
-          var locale = self.locale.code,
-              check = true;
-
-        // Use MT locale, Pontoon's might not be supported
-        } else {
-          var locale = self.locale.MT,
-              check = false;
-        }
 
         $.ajax({
           url: 'machine-translation/',
           data: {
             text: original,
-            locale: locale,
-            check: check
+            // On first run, check if target locale supported
+            check: (self.locale.mt === undefined) ? true : false,
+            // Use MT locale, Pontoon's might not be supported
+            locale: (self.locale.mt === undefined) ?
+                    self.locale.code : self.locale.mt
           }
 
         }).success(function(data) {
           if (data.locale) {
-            self.locale.MT = data.locale;
+            self.locale.mt = data.locale;
           }
           if (data.translation) {
             append({
@@ -270,7 +262,7 @@ var Pontoon = (function () {
               translation: data.translation
             });
           } else if (data === "not-supported") {
-            self.locale.MT = false;
+            self.locale.mt = false;
           }
         }).complete(complete);
       }
@@ -279,23 +271,15 @@ var Pontoon = (function () {
       if (self.locale.msTerminology !== false) {
         requests++;
 
-        // On first run, check if target locale supported
-        if (self.locale.msTerminology === undefined) {
-          var locale = self.locale.code,
-              check = true;
-
-        // Use Microsoft Terminology locale, Pontoon's might not be supported
-        } else {
-          var locale = self.locale.msTerminology,
-              check = false;
-        }
-
         $.ajax({
           url: 'microsoft-terminology/',
           data: {
             text: original,
-            locale: locale,
-            check: check
+            // On first run, check if target locale supported
+            check: (self.locale.msTerminology === undefined) ? true : false,
+            // Use Microsoft Terminology locale, Pontoon's might not be supported
+            locale: (self.locale.msTerminology === undefined) ?
+                    self.locale.code : self.locale.msTerminology
           }
 
         }).success(function(data) {
