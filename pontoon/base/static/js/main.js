@@ -236,19 +236,19 @@ var Pontoon = (function () {
       $('#helpers li.active a').addClass('loading');
 
       // Machine translation
-      if (!self.locale.notSupported) {
+      if (self.locale.MT !== false) {
         requests++;
         $.ajax({
           url: 'machine-translation/',
           data: {
             text: original,
             locale: self.locale.code,
-            // On first run, check if target language supported
-            check: (self.locale.notSupported === undefined) ? true : false
+            // On first run, check if target locale supported
+            check: (self.locale.MT === undefined) ? true : false
           }
 
         }).success(function(data) {
-          self.locale.notSupported = false;
+          self.locale.MT = true;
           if (data.translation) {
             append({
               url: 'http://www.bing.com/translator',
@@ -257,35 +257,55 @@ var Pontoon = (function () {
               translation: data.translation
             });
           } else if (data === "not-supported") {
-            self.locale.notSupported = true;
+            self.locale.MT = false;
           }
         }).complete(complete);
       }
 
       // Microsoft Terminology
-      requests++;
-      $.ajax({
-        url: 'microsoft-terminology/',
-        data: {
-          text: original,
-          locale: self.locale.code
+      if (self.locale.msTerminology !== false) {
+        requests++;
+
+        // On first run, check if target locale supported
+        if (self.locale.msTerminology === undefined) {
+          var locale = self.locale.code,
+              check = true;
+
+        // Use Microsoft Terminology locale, provided might not be supported
+        } else {
+          var locale = self.locale.msTerminology,
+              check = false;
         }
 
-      }).success(function(data) {
-        if (data.translations) {
-          $.each(data.translations, function() {
-            append({
-              original: this.source,
-              quality: Math.round(this.quality) + '%',
-              url: 'http://www.microsoft.com/Language/',
-              title: 'Visit Microsoft Terminology Service API. \
-                      © 2014 Microsoft Corporation. All rights reserved.',
-              source: 'Microsoft Terminology',
-              translation: this.target
+        $.ajax({
+          url: 'microsoft-terminology/',
+          data: {
+            text: original,
+            locale: locale,
+            check: check
+          }
+
+        }).success(function(data) {
+          if (data.locale) {
+            self.locale.msTerminology = data.locale;
+          }
+          if (data.translations) {
+            $.each(data.translations, function() {
+              append({
+                original: this.source,
+                quality: Math.round(this.quality) + '%',
+                url: 'http://www.microsoft.com/Language/',
+                title: 'Visit Microsoft Terminology Service API. \
+                        © 2014 Microsoft Corporation. All rights reserved.',
+                source: 'Microsoft Terminology',
+                translation: this.target
+              });
             });
-          });
-        }
-      }).complete(complete);
+          } else if (data === "not-supported") {
+            self.locale.msTerminology = false;
+          }
+        }).complete(complete);
+      }
 
       // amaGama
       requests++;

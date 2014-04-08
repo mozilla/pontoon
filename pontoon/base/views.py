@@ -878,12 +878,51 @@ def microsoft_terminology(request):
     try:
         text = request.GET['text']
         locale = request.GET['locale']
+        check = request.GET['check']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
 
+    obj = {}
+    locale = locale.lower()
     url = 'http://api.terminology.microsoft.com/Terminology.svc?singleWsdl'
     client = Client(url)
+
+    # On first run, check if target language supported
+    if check == "true":
+        try:
+            r = client.service.GetLanguages()
+            supported = False
+            languages = []
+            for language in r.Language:
+                languages.append(language.Code)
+
+            if locale in languages:
+                supported = True
+
+            else:
+                if "-" not in locale:
+                    temp = locale + "-" + locale
+                    if temp in languages:
+                        supported = True
+                        locale = temp
+
+                    else:
+                        for l in languages:
+                            if l.startswith(locale):
+                                supported = True
+                                locale = l
+                                break
+
+            if not supported:
+                log.debug("Locale not supported.")
+                return HttpResponse("not-supported")
+
+            obj['locale'] = locale
+
+        except WebFault as e:
+            log.error(e)
+            return HttpResponse("error")
 
     sources = client.factory.create('ns0:TranslationSources')
     sources["TranslationSource"] = ['Terms', 'UiStrings']
@@ -898,8 +937,8 @@ def microsoft_terminology(request):
 
     try:
         r = client.service.GetTranslations(**payload)
-
         translations = []
+
         if len(r) != 0:
             for translation in r.Match:
                 translations.append({
@@ -908,12 +947,9 @@ def microsoft_terminology(request):
                     'quality': translation.ConfidenceLevel,
                 })
 
-            return HttpResponse(json.dumps({
-                'translations': translations
-            }), mimetype='application/json')
+            obj['translations'] = translations
 
-        else:
-            return HttpResponse("no")
+        return HttpResponse(json.dumps(obj), mimetype='application/json')
 
     except WebFault as e:
         log.error(e)
