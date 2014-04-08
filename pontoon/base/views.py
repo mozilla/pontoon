@@ -890,39 +890,30 @@ def microsoft_terminology(request):
 
     # On first run, check if target language supported
     if check == "true":
-        try:
-            r = client.service.GetLanguages()
-            supported = False
-            languages = []
-            for language in r.Language:
-                languages.append(language.Code)
+        supported = False
+        languages = settings.MICROSOFT_TERMINOLOGY_LOCALES
 
-            if locale in languages:
+        if locale in languages:
+            supported = True
+
+        elif "-" not in locale:
+            temp = locale + "-" + locale  # Try e.g. "de-de"
+            if temp in languages:
                 supported = True
+                locale = temp
 
             else:
-                if "-" not in locale:
-                    temp = locale + "-" + locale
-                    if temp in languages:
+                for lang in languages:
+                    if lang.startswith(locale):  # Try e.g. "de-XY"
                         supported = True
-                        locale = temp
+                        locale = lang
+                        break
 
-                    else:
-                        for l in languages:
-                            if l.startswith(locale):
-                                supported = True
-                                locale = l
-                                break
+        if not supported:
+            log.debug("Locale not supported.")
+            return HttpResponse("not-supported")
 
-            if not supported:
-                log.debug("Locale not supported.")
-                return HttpResponse("not-supported")
-
-            obj['locale'] = locale
-
-        except WebFault as e:
-            log.error(e)
-            return HttpResponse("error")
+        obj['locale'] = locale
 
     sources = client.factory.create('ns0:TranslationSources')
     sources["TranslationSource"] = ['Terms', 'UiStrings']
