@@ -883,7 +883,7 @@ def microsoft_terminology(request):
 
             else:
                 for lang in languages:
-                    if lang.startswith(locale):  # Try e.g. "de-XY"
+                    if lang.startswith(locale + "-"):  # Try e.g. "de-XY"
                         supported = True
                         locale = lang
                         break
