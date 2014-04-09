@@ -97,6 +97,8 @@ def manage_project(request, slug=None, template='project.html'):
     locales_selected = []
     subtitle = 'Add project'
     pk = None
+    message = 'Before localizing projects, \
+               you need to import strings from the repository.'
 
     if request.method == 'POST':
         locales_selected = Locale.objects.filter(
@@ -129,10 +131,7 @@ def manage_project(request, slug=None, template='project.html'):
                 subtitle += '. Saved.'
                 pk = project.pk
                 if len(Entity.objects.filter(project=project)) is 0:
-                    messages.warning(
-                        request,
-                        "Before localizing projects, \
-                         you need to import strings from the repository.")
+                    messages.warning(request, message)
             else:
                 subtitle += '. Error.'
         else:
@@ -148,10 +147,7 @@ def manage_project(request, slug=None, template='project.html'):
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
             if len(Entity.objects.filter(project=project)) is 0:
-                messages.warning(
-                    request,
-                    "Before localizing projects, \
-                     you need to import strings from the repository.")
+                messages.warning(request, message)
         except Project.DoesNotExist:
             form = ProjectForm(initial={'slug': slug})
 
@@ -162,8 +158,11 @@ def manage_project(request, slug=None, template='project.html'):
         'locales_available': Locale.objects.exclude(pk__in=locales_selected),
         'REPOSITORY_TYPE_CHOICES': Project.REPOSITORY_TYPE_CHOICES,
         'subtitle': subtitle,
-        'pk': pk
+        'pk': pk,
     }
+
+    if len(Entity.objects.filter(project=project)) is not 0:
+        data['ready'] = True
 
     return render(request, template, data)
 

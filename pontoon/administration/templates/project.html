@@ -11,6 +11,9 @@
     <ul class="links">
       <li><a href="{{ url('pontoon.home') }}" title="Pontoon Home">Home</a></li>
       <li><a href="{{ url('pontoon.admin') }}" title="Pontoon Admin">Admin</a></li>
+      {% if ready %}
+      <li><a href="{{ url('pontoon.translate.project', locales_selected[0].code, form.slug.value()) }}" title="Translate project">Translate</a></li>
+      {% endif %}
     </ul>
   </nav>
   <form method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
