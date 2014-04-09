@@ -292,8 +292,8 @@ var Pontoon = (function () {
                 original: this.source,
                 quality: Math.round(this.quality) + '%',
                 url: 'http://www.microsoft.com/Language/',
-                title: 'Visit Microsoft Terminology Service API. ' +
-                       '© 2014 Microsoft Corporation. \nAll rights reserved.',
+                title: 'Visit Microsoft Terminology Service API.\n' +
+                       '© 2014 Microsoft Corporation. All rights reserved.',
                 source: 'Microsoft Terminology',
                 translation: this.target
               });
