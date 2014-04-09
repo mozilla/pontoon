@@ -14,6 +14,10 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
 
+    # Locale redirect for compatibility with old (i18n ready) URL scheme
+    (r'^en-US/$', RedirectView.as_view(url='/')),
+    (r'^en-US/(?P<url>.+)$', RedirectView.as_view(url="/%(url)s")),
+
     # Main app:
     (r'', include('pontoon.base.urls')),
 
