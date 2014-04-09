@@ -411,6 +411,10 @@
 #pontoon #filter .menu {
   left: 0;
   top: 43px;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #pontoon #filter .menu li {
