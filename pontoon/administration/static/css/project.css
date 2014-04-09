@@ -142,8 +142,7 @@ body #intro {
 }
 
 #pontoon #intro .locale.select .menu ul {
-  height: 176px;
-  max-height: none;
+  height: 170px;
 }
 
 #pontoon #intro #id_locales {
