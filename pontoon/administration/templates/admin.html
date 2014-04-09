@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Pontoon &middot; Admin') }}{% endblock %}
+{% block title %}Pontoon &middot; Admin{% endblock %}
 
 {% block class %}admin{% endblock %}
 
@@ -10,11 +10,11 @@
 
     <nav>
       <ul class="links">
-        <li><a href="{{ url('pontoon.home') }}" title="{{ _('Pontoon Home') }}">Home</a></li>
+        <li><a href="{{ url('pontoon.home') }}" title="Pontoon Home">Home</a></li>
       </ul>
     </nav>
 
-    <h1 id="title"><a href="{{ url('pontoon.admin') }}">{{ _('Admin') }}</a></h1>
+    <h1 id="title"><a href="{{ url('pontoon.admin') }}">Admin</a></h1>
     <h2 id="subtitle">Don't mess it up. Please.</h2>
 
     <form>
@@ -31,13 +31,13 @@
             {% for project in projects %}
             <li class="clearfix">
               <span class="project-name"
-                data-slug={{ project.slug }}
+                data-slug="{{ project.slug }}"
                 data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
                 data-pages="{% if pages %}{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}{% endif %}">{{ project.name }}</span>
               <span class="project-url">{{ project.url }}</span>
             </li>
             {% endfor %}
-            <li class="no-match">{{ _('No results') }}</li>
+            <li class="no-match">No results</li>
           </ul>
         </div>
       </div>

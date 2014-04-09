@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Pontoon &middot; %(subtitle)s')|format(subtitle=subtitle) }}{% endblock %}
+{% block title %}Pontoon &middot; {{'%(subtitle)s' | format(subtitle=subtitle) }}{% endblock %}
 
 {% block class %}admin-project{% endblock %}
 
@@ -9,13 +9,13 @@
 
   <nav>
     <ul class="links">
-      <li><a href="{{ url('pontoon.home') }}" title="{{ _('Pontoon Home') }}">Home</a></li>
-      <li><a href="{{ url('pontoon.admin') }}" title="{{ _('Pontoon Admin') }}">Admin</a></li>
+      <li><a href="{{ url('pontoon.home') }}" title="Pontoon Home">Home</a></li>
+      <li><a href="{{ url('pontoon.admin') }}" title="Pontoon Admin">Admin</a></li>
     </ul>
   </nav>
   <form method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
 
-    <h1 id="title">{{ _('%(subtitle)s')|format(subtitle=subtitle) }}</h1>
+    <h1 id="title">{{ '%(subtitle)s' | format(subtitle=subtitle) }}</h1>
     <ul class="notification{% if not messages %} hidden{% endif %}">
         {% for message in messages %}
         <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
@@ -47,7 +47,7 @@
               {% for locale in locales_available %}
               <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
               {% endfor %}
-              <li class="no-match">{{ _('No results match') }} "<span></span>"</li>
+              <li class="no-match">No results match "<span></span>"</li>
             </ul>
           </div>
         </div>
@@ -59,7 +59,7 @@
               {% for locale in locales_selected %}
               <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
               {% endfor %}
-              <li class="no-match">{{ _('No results match') }} "<span></span>"</li>
+              <li class="no-match">No results match "<span></span>"</li>
             </ul>
           </div>
         </div>
@@ -93,8 +93,8 @@
                 {{ form.repository_url.label_tag() }}
                 {{ form.repository_url }}
                 {% if pk %}
-                <button title="{{ _('Update all locales from repository') }}" data-source="repository" class="button update">
-                    <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from repository') }}" />
+                <button title="Update all locales from repository" data-source="repository" class="button update">
+                    <img class="update" src="{{ static('img/update.png') }}" alt="Update all locales from repository" />
                 </button>
                 {% endif %}
             </div>
@@ -104,8 +104,8 @@
                 {{ form.transifex_project }}
                 {{ form.transifex_resource }}
                 {% if pk %}
-                <button title="{{ _('Update all locales from Transifex') }}" data-source="transifex" class="button update">
-                    <img class="update" src="{{ static('img/update.png') }}" alt="{{ _('Update all locales from Transifex') }}" />
+                <button title="Update all locales from Transifex" data-source="transifex" class="button update">
+                    <img class="update" src="{{ static('img/update.png') }}" alt="Update all locales from Transifex" />
                 </button>
                 <section class="authentication-form">
                     <label for="id_transifex_username">Username or email</label>
@@ -115,9 +115,9 @@
                 </section>
                 <div class="bottom">
                     <label class="remember">
-                        <input name="remember" type="checkbox" />{{ _('Remember me') }}
+                        <input name="remember" type="checkbox" />Remember me
                     </label>
-                    <a class="new" target="_blank" href="http://www.transifex.com/signup/">{{ _('New to Transifex?') }}</a>
+                    <a class="new" target="_blank" href="http://www.transifex.com/signup/">New to Transifex?</a>
                 </div>
                 {% endif %}
             </div>
@@ -158,8 +158,8 @@
         {{ form.url.label_tag() }}
         {{ form.name }}
         {{ form.url }}
-        <button title="{{ _('Delete subpage') }}" class="button delete-subpage" tabindex="-1">
-            <img src="{{ static('img/cancel.png') }}" alt="{{ _('Delete subpage') }}" />
+        <button title="Delete subpage" class="button delete-subpage" tabindex="-1">
+            <img src="{{ static('img/cancel.png') }}" alt="Delete subpage" />
         </button>
         {{ form.DELETE }}
         {{ form.name.errors }}
@@ -171,8 +171,8 @@
         {{ formset.empty_form.url.label_tag() }}
         {{ formset.empty_form.name }}
         {{ formset.empty_form.url }}
-        <button title="{{ _('Delete subpage') }}" class="button delete-subpage" tabindex="-1">
-            <img src="{{ static('img/cancel.png') }}" alt="{{ _('Delete subpage') }}" />
+        <button title="Delete subpage" class="button delete-subpage" tabindex="-1">
+            <img src="{{ static('img/cancel.png') }}" alt="Delete subpage" />
         </button>
         {{ formset.empty_form.DELETE }}
         {{ formset.empty_form.name.errors }}

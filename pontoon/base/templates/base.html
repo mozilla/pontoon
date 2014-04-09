@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
  
     <title>{% block title %}Pontoon{% endblock %}</title>
-    <meta name="description" content="{{ _('Live web localization tool') }}">
+    <meta name="description" content="Live web localization tool">
     <meta name="author" content="Mozilla">
-    <base href="{{ settings.SITE_URL }}/{% if LANG %}{{ LANG }}/{% endif %}">  
+    <base href="{{ settings.SITE_URL }}/">
 
     {% block site_css %}
       {% compress css %}

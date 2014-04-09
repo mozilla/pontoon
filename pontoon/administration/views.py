@@ -131,8 +131,8 @@ def manage_project(request, slug=None, template='project.html'):
                 if len(Entity.objects.filter(project=project)) is 0:
                     messages.warning(
                         request,
-                        _("Before localizing projects, \
-                           you need to import strings from the repository."))
+                        "Before localizing projects, \
+                         you need to import strings from the repository.")
             else:
                 subtitle += '. Error.'
         else:
@@ -150,8 +150,8 @@ def manage_project(request, slug=None, template='project.html'):
             if len(Entity.objects.filter(project=project)) is 0:
                 messages.warning(
                     request,
-                    _("Before localizing projects, \
-                       you need to import strings from the repository."))
+                    "Before localizing projects, \
+                     you need to import strings from the repository.")
         except Project.DoesNotExist:
             form = ProjectForm(initial={'slug': slug})
 
@@ -194,7 +194,7 @@ def delete_project(request, pk, template=None):
         transaction.rollback()
         messages.error(
             request,
-            _("There was an error during deleting this project."))
+            "There was an error during deleting this project.")
         return HttpResponseRedirect(reverse(
             'pontoon.admin.project',
             args=[project.slug]))

@@ -24,6 +24,11 @@ LOCALE_PATHS = (
     os.path.join(ROOT, PROJECT_MODULE, 'locale'),
 )
 
+# Remove LocaleURLMiddleware since we are not localing our website
+MIDDLEWARE_CLASSES = filter(
+    lambda x: x != 'funfactory.middleware.LocaleURLMiddleware',
+    MIDDLEWARE_CLASSES)
+
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:
 JINGO_EXCLUDE_APPS = [
