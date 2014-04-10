@@ -575,27 +575,37 @@ var Pontoon = (function () {
       var self = this,
           list = $('#entitylist');
 
+      var delay = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+          clearTimeout(timer);
+          timer = setTimeout(callback, ms);
+        };
+      })();
+
       // Search entities
-      $('#search').keyup(function(e) {
-        var ul = $('#entitylist .wrapper > ul'),
-            val = $(this).val();
+      $('#search').keyup(function (e) {
+        delay(function () {
+          var ul = $('#entitylist .wrapper > ul'),
+              val = $('#search').val();
 
-        ul
-          .find('.limited').show()
-            .find('.source-string' + ':not(":containsi("' + val + '")")')
-          .parent().hide();
+          ul
+            .find('.limited').show()
+              .find('.source-string' + ':not(":containsi("' + val + '")")')
+            .parent().hide();
 
-        if ($('.uneditables li:visible').length === 0) {
-          $('#not-on-page').hide();
-        } else {
-          $('#not-on-page').show();
-        }
+          if ($('.uneditables li:visible').length === 0) {
+            $('#not-on-page').hide();
+          } else {
+            $('#not-on-page').show();
+          }
 
-        if (ul.find('li:visible').length === 0) {
-          $('#entitylist .no-match').show();
-        } else {
-          $('#entitylist .no-match').hide();
-        }
+          if (ul.find('li:visible').length === 0) {
+            $('#entitylist .no-match').show();
+          } else {
+            $('#entitylist .no-match').hide();
+          }
+        }, 200);
       });
 
       // Filter entities
