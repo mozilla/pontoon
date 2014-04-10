@@ -886,3 +886,7 @@
   color: #AAAAAA;
   font-style: italic;
 }
+
+#pontoon #helpers > section ul li p.original {
+  color: #AAAAAA;
+}

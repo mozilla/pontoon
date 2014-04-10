@@ -222,12 +222,11 @@ var Pontoon = (function () {
       function append(data) {
         ul.append('<li title="Click to copy">' +
           '<header>' +
-            '<span class="stress" title="' + (data.original || '') + '">' +
-              (data.quality || '') +
-            '</span>' +
+            '<span class="stress">' + (data.quality || '') + '</span>' +
             '<a href="' + data.url + '" target="_blank"' +
               'title="' + data.title + '">' + data.source + '</a>' +
           '</header>' +
+          '<p class="original">' + (data.original || '') + '</p>' +
           '<p class="translation">' + self.doNotRender(data.translation) +
           '</p>' +
         '</li>');
