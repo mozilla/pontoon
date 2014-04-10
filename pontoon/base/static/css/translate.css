@@ -649,13 +649,13 @@
   text-transform: uppercase;
 }
 
-#pontoon #editor nav li a.loading {
-  background: transparent url('../img/loader-light.gif') center center no-repeat;
-  transition: none;
+#pontoon #editor nav li a[href='#machinery'] span {
+  margin: 0 -10px;
+  padding: 0 20px;
 }
 
 #pontoon #editor nav li a.loading span {
-  visibility: hidden;
+  background: transparent url('../img/loader-light.gif') center right no-repeat;
 }
 
 #pontoon #editor textarea {
