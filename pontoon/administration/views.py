@@ -97,6 +97,7 @@ def manage_project(request, slug=None, template='project.html'):
     locales_selected = []
     subtitle = 'Add project'
     pk = None
+    project = None
     message = 'Before localizing projects, \
                you need to import strings from the repository.'
 
