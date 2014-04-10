@@ -294,7 +294,7 @@ var Pontoon = (function () {
                 url: 'http://www.microsoft.com/Language/',
                 title: 'Visit Microsoft Terminology Service API.\n' +
                        '© 2014 Microsoft Corporation. All rights reserved.',
-                source: 'Microsoft Terminology',
+                source: 'Microsoft',
                 translation: this.target
               });
             });
@@ -321,7 +321,7 @@ var Pontoon = (function () {
               quality: Math.round(this.quality) + '%',
               url: 'http://amagama.translatehouse.org/',
               title: 'Visit amaGama',
-              source: 'Open Source Translations',
+              source: 'Open Source',
               translation: this.target
             });
           });
@@ -344,7 +344,7 @@ var Pontoon = (function () {
             quality: '100%',
             url: 'http://transvision.mozfr.org/',
             title: 'Visit Transvision',
-            source: 'Mozilla Translations',
+            source: 'Mozilla',
             translation: data.translation
           });
         }
