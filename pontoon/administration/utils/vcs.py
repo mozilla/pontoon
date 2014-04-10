@@ -31,20 +31,20 @@ class PullFromGit(PullFromRepository):
     VCS = 'git'
 
     def pull(self, source=None, target=None):
-        from git import Repo
+        import git
         log.debug("Clone or update Git repository.")
 
         source = source or self.source
         target = target or self.target
 
         try:
-            repo = Repo(target)
+            repo = git.Repo(target)
             repo.remotes.origin.pull()
             log.debug("Git: repository at " + source + " updated.")
         except Exception, e:
             log.debug("Git: " + str(e))
             try:
-                Repo.clone_from(source, target)
+                git.Git().clone(source, target)
                 log.debug("Git: repository at " + source + " cloned.")
             except Exception, e:
                 log.debug("Git: " + str(e))
