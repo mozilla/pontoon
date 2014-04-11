@@ -40,6 +40,8 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 
+from pontoon.administration.utils.vcs import commit_to_vcs
+
 from pontoon.base.models import (
     Locale,
     Project,
@@ -1287,12 +1289,6 @@ def commit_to_svn(request, template=None):
     if not request.user.has_perm('base.can_localize'):
         return render(request, '403.html', status=403)
 
-    try:
-        import pysvn
-    except ImportError as e:
-        log.error(e)
-        return HttpResponse("error")
-
     if request.method != 'POST':
         log.error("Non-POST request")
         raise Http404
@@ -1320,41 +1316,17 @@ def commit_to_svn(request, template=None):
 
     _update_files(p, locale, locale_repository_path)
 
-    client = pysvn.Client()
-    client.exception_style = 1
-
     """Check if user authenticated to SVN."""
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     username = data.get('auth', {}).get('username', profile.svn_username)
     password = data.get('auth', {}).get(
         'password', base64.decodestring(profile.svn_password))
 
-    if len(username) > 0 and len(password) > 0:
-        client.set_default_username(username)
-        client.set_default_password(password)
+    r = commit_to_vcs('svn', locale_repository_path, project, locale.name,
+                  username, password)
 
-    try:
-        client.checkin(
-            [locale_repository_path],
-            'Pontoon: update ' + locale.code + ' localization of ' + project)
-        log.info('Commited ' + locale.code + ' localization of ' + project)
-
-    except pysvn.ClientError as e:
-        log.debug(str(e))
-        if "callback_get_login" in str(e):
-            log.error('Subversion CommitError for %s: please authenticate' %
-                      locale_repository_path)
-            return HttpResponse(json.dumps({
-                'type': 'authenticate',
-                'message': 'Authentication failed.'
-            }), mimetype='application/json')
-
-        log.error('Subversion CommitError for %s: %s' %
-                  (locale_repository_path, e))
-        return HttpResponse(json.dumps({
-            'type': 'error',
-            'message': str(e)
-        }), mimetype='application/json')
+    if r is not None:
+        return HttpResponse(json.dumps(r), mimetype='application/json')
 
     """Save SVN username and password."""
     if data.get('auth', {}).get('remember', {}) == 1:

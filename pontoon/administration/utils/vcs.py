@@ -124,6 +124,66 @@ class PullFromSvn(PullFromRepository):
         return True, 2, False
 
 
+class CommitToRepositoryException(Exception):
+    pass
+
+
+class CommitToRepository(object):
+
+    def __init__(self, path, project, locale, username, password):
+        self.path = path
+        self.project = project
+        self.locale = locale
+        self.username = username
+        self.password = password
+
+    def commit(self, path=None, project=None, locale=None,
+               username=None, password=None):
+        raise NotImplementedError
+
+
+class CommitToSvn(CommitToRepository):
+
+    VCS = 'svn'
+
+    def commit(self, path=None, project=None, locale=None,
+               username=None, password=None):
+        try:
+            import pysvn
+        except ImportError as e:
+            raise CommitToRepositoryException("SVN module not available")
+        log.debug("Commit to SVN repository.")
+
+        path = path or self.path
+        project = project or self.project
+        locale = locale or self.locale
+        username = username or self.username
+        password = password or self.password
+
+        client = pysvn.Client()
+        client.exception_style = 1
+
+        if len(username) > 0 and len(password) > 0:
+            client.set_default_username(username)
+            client.set_default_password(password)
+
+        try:
+            client.checkin([path], 'Pontoon: update %s localization of %s' %
+                           (locale, project))
+            log.info('Commited %s localization of %s' % (locale, project))
+
+        except pysvn.ClientError as e:
+            log.debug(str(e))
+            if "callback_get_login" in str(e):
+                log.error('Subversion CommitError for %s: authenticate' % path)
+                return {
+                    'type': 'authenticate',
+                    'message': 'Authentication failed.'
+                }
+
+            raise CommitToRepositoryException(str(e))
+
+
 def update_from_vcs(repo_type, url, path):
     if repo_type == 'git':
         try:
@@ -143,3 +203,16 @@ def update_from_vcs(repo_type, url, path):
             obj.pull()
         except PullFromRepositoryException as e:
             log.debug('Subversion PullError for %s: %s' % (url, e))
+
+
+def commit_to_vcs(repo_type, path, project, locale, username, password):
+    if repo_type == 'svn':
+        try:
+            obj = CommitToSvn(path, project, locale, username, password)
+            return obj.commit()
+        except CommitToRepositoryException as e:
+            log.debug('Subversion CommitError for %s: %s' % (path, e))
+            return {
+                'type': 'error',
+                'message': str(e)
+            }

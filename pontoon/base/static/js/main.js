@@ -150,7 +150,7 @@ var Pontoon = (function () {
               self.endLoader(data.message, 'error', true);
               $('#svn').hide();
 
-            } else if (data === 'error') {
+            } else {
               self.endLoader('Oops, something went wrong.', 'error');
               $('#svn').hide();
             }
