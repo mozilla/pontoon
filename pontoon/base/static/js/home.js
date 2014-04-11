@@ -1,7 +1,8 @@
 $(function() {
 
   // Update project if already set
-  var project = $('#server').data('project');
+  var project = $('#server').data('project'),
+      spin = 'fa fa-refresh fa-spin';
   if (project) {
     $('.project-name[data-slug="' + project + '"]').parents('li').click();
   }
@@ -18,7 +19,7 @@ $(function() {
 
   // Authentication and profile menu
   $("#browserid").click(function(e) {
-    $('#loading').toggleClass('loader').html('&nbsp;');
+    $('#loading').toggleClass(spin).empty();
     e.preventDefault();
     navigator.id.get(function(assertion) {
       if (assertion) {
@@ -40,16 +41,16 @@ $(function() {
               $('.notification').addClass('hidden');
             } else {
               $('.notification').html('<li>Oops, something went wrong.</li>').removeClass('hidden');
-              $('#loading').toggleClass('loader').html('or');
+              $('#loading').toggleClass(spin).html('or');
             }
           },
           error: function() {
             $('.notification').html('<li>Oops, something went wrong.</li>').removeClass('hidden');
-            $('#loading').toggleClass('loader').html('or');
+            $('#loading').toggleClass(spin).html('or');
           }
         });
       } else {
-        $('#loading').toggleClass('loader').html('or');
+        $('#loading').toggleClass(spin).html('or');
       }
     });
   });

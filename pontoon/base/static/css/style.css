@@ -665,13 +665,8 @@ button {
 
 #action #loading {
   display: inline-block;
-  height: 20px;
   padding: 0 10px;
   width: 20px;
-}
-
-#action #loading.loader {
-  background: transparent url('../img/loader-light.gif') center center no-repeat;
 }
 
 #intro form {
