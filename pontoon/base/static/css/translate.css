@@ -86,22 +86,36 @@
 }
 
 #pontoon .status {
-  border: 2px solid #FD5F60;
-  border-radius: 6px;
-  height: 8px;
+  font-size: 16px;
   left: 16px;
   position: absolute;
-  top: 15px;
-  width: 8px;
+  top: 13px;
 }
 
-#pontoon .translated .status {
-  border-color: #7BC876;
+#pontoon .status:before {
+  color: #FD5F60;
+  content: "";
 }
 
-#pontoon .approved .status {
-  background: #7BC876;
-  border-color: #7BC876;
+#pontoon .translated .status:before {
+  color: #FFFFFF;
+  content: "";
+}
+
+#pontoon .approved .status:before {
+  color: #7BC876;
+  content: "";
+}
+
+#pontoon .all .status {
+  top: 11px;
+  left: 14px;
+}
+
+#pontoon .all .status:before {
+  color: #AAAAAA;
+  content: "";
+  font-size: 21px;
 }
 
 #pontoon .page .menu .progress {
@@ -122,7 +136,7 @@
 }
 
 #pontoon #progress .graph {
-  background: #C1E3BF;
+  background: #FFFFFF;
   float: left;
   height: 100%;
   transition: all 0.2s ease-out;
@@ -406,16 +420,9 @@
   width: 43px;
 }
 
-#pontoon #filter .button.all,
-#pontoon #filter .button.custom {
-  background: url('../img/filter.png') 13px center no-repeat transparent;
-  opacity: 0.5;
-}
-
 #pontoon #filter.opened .button,
 #pontoon #filter .button:hover {
   background-color: #272A2F;
-  opacity: 1;
   width: 100%;
 }
 
@@ -442,19 +449,19 @@
   box-sizing: border-box;
 }
 
-#pontoon #filter .menu li {
-  padding-left: 30px;
+#pontoon #filter .menu li:not(.horizontal-separator) {
+  padding: 4px 0 4px 30px;
   position: relative;
 }
 
 #pontoon #filter .menu li .status {
   left: 4px;
-  top: 5px;
+  top: 4px;
 }
 
-#pontoon #filter .all .status,
-#pontoon #filter .custom .status {
-  display: none;
+#pontoon #filter .menu li.all .status {
+  left: 2px;
+  top: 2px;
 }
 
 #pontoon #entitylist > .wrapper {
