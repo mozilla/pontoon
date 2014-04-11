@@ -646,6 +646,7 @@ var Pontoon = (function () {
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status"></span>' +
           '<p class="source-string">' + self.doNotRender(this.original) + '</p>' +
+          '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
         '</li>', self.app.win);
 
         li[0].entity = this;

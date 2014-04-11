@@ -486,8 +486,14 @@
   background-color: #4d5967;
 }
 
-#pontoon #entitylist > .wrapper > ul > li:hover {
-  background: url('../img/right.png') no-repeat center right 8px #4d5967;
+#pontoon #entitylist > .wrapper > ul > li .arrow {
+  display: none;
+  float: right;
+  margin: -17px -18px;
+}
+
+#pontoon #entitylist > .wrapper > ul > li:hover .arrow {
+  display: block;
 }
 
 #pontoon #entitylist > .wrapper > ul > li p {
@@ -561,10 +567,13 @@
   box-sizing: border-box;
 }
 
+#pontoon #topbar a {
+  color: #CCCCCC;
+  float: right;
+}
+
 #pontoon #topbar a#back {
-  background: url('../img/left.png') no-repeat -5px 3px transparent;
   float: left;
-  padding-left: 15px;
 }
 
 #pontoon .advanced #topbar a#back {
@@ -572,23 +581,15 @@
 }
 
 #pontoon #topbar a#previous {
-  background: url('../img/up.png') no-repeat 0 3px transparent;
-  padding-left: 20px;
   margin-right: 30px;
-}
-
-#pontoon #topbar a#next {
-  background: url('../img/down.png') no-repeat 0 3px transparent;
-  padding-left: 20px;
-}
-
-#pontoon #topbar a {
-  color: #CCCCCC;
-  float: right;
 }
 
 #pontoon #topbar a:hover {
   color: #7BC876;
+}
+
+#pontoon #topbar a span {
+  padding-right: 5px;
 }
 
 #pontoon #source-pane {
