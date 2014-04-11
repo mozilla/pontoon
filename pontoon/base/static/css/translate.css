@@ -14,14 +14,10 @@
   min-width: 800px;
 }
 
-#pontoon > header #spinner {
-  display: inline-block;
-  height: 60px;
-}
-
 #pontoon > header .loader {
-  background: transparent url('../img/loader-light.gif') right 22px no-repeat;
-  padding-left: 30px;
+  color: #FFFFFF;
+  display: inline-block;
+  margin: 23px 16px;
 }
 
 #pontoon #switch {
@@ -154,7 +150,11 @@
 
 #pontoon > header #loading {
   float: left;
-  height: 60px;
+  display: none;
+}
+
+#pontoon > header #loading.loader {
+  display: inline-block;
 }
 
 #pontoon > header .notification {
@@ -673,13 +673,18 @@
   text-transform: uppercase;
 }
 
-#pontoon #editor nav li a[href='#machinery'] span {
-  margin: 0 -10px;
-  padding: 0 20px;
+#pontoon #editor nav li a[href='#machinery'] span:first-child {
+  margin-right: -10px;
+  padding: 0 18px;
 }
 
-#pontoon #editor nav li a.loading span {
-  background: transparent url('../img/loader-light.gif') center right no-repeat;
+#pontoon #editor nav li a[href='#machinery'] span:last-child {
+  vertical-align: 0;
+  visibility: hidden;
+}
+
+#pontoon #editor nav li a[href='#machinery'].loading span:last-child {
+  visibility: visible;
 }
 
 #pontoon #editor textarea {

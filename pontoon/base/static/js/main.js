@@ -1169,7 +1169,7 @@ var Pontoon = (function () {
      * Display loader to provide feedback about the background process
      */
     startLoader: function () {
-      $('#loading').removeClass().addClass('loader').show();
+      $('#loading').addClass('loader').show();
     },
 
 
