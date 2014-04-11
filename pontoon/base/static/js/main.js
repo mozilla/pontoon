@@ -574,6 +574,7 @@ var Pontoon = (function () {
       var self = this,
           list = $('#entitylist');
 
+      // Trigger event with a delay (e.g. to prevent UI blocking)
       var delay = (function () {
         var timer = 0;
         return function (callback, ms) {
@@ -582,28 +583,32 @@ var Pontoon = (function () {
         };
       })();
 
+      function searchEntities() {
+        var ul = $('#entitylist .wrapper > ul'),
+            val = $('#search').val();
+
+        ul
+          .find('.limited').show()
+            .find('.source-string' + ':not(":containsi("' + val + '")")')
+          .parent().hide();
+
+        if ($('.uneditables li:visible').length === 0) {
+          $('#not-on-page').hide();
+        } else {
+          $('#not-on-page').show();
+        }
+
+        if (ul.find('li:visible').length === 0) {
+          $('#entitylist .no-match').show();
+        } else {
+          $('#entitylist .no-match').hide();
+        }
+      }
+
       // Search entities
       $('#search').keyup(function (e) {
         delay(function () {
-          var ul = $('#entitylist .wrapper > ul'),
-              val = $('#search').val();
-
-          ul
-            .find('.limited').show()
-              .find('.source-string' + ':not(":containsi("' + val + '")")')
-            .parent().hide();
-
-          if ($('.uneditables li:visible').length === 0) {
-            $('#not-on-page').hide();
-          } else {
-            $('#not-on-page').show();
-          }
-
-          if (ul.find('li:visible').length === 0) {
-            $('#entitylist .no-match').show();
-          } else {
-            $('#entitylist .no-match').hide();
-          }
+          searchEntities();
         }, 200);
       });
 
@@ -633,7 +638,7 @@ var Pontoon = (function () {
 
         }
 
-        $('#search').trigger("keyup");
+        searchEntities();
         $('#filter .title').html($(this).text());
         $('#filter .button').attr('class', 'button selector ' + type);
       });
