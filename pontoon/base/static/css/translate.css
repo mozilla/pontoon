@@ -27,7 +27,7 @@
   float: left;
   height: 60px;
   padding: 0 0 0 10px; /* All values neede to prevent jumping on click */
-  width: 33px;
+  width: 35px;
 }
 
 #pontoon .select {
