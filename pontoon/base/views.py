@@ -1312,9 +1312,10 @@ def commit_to_repository(request, template=None):
         return HttpResponse("error")
 
     project = p.name
-    locale_repository_path = _get_locale_repository_path(p, locale.code)
+    path = _get_locale_repository_path(p, locale.code)
+    message = 'Pontoon: update %s localization of %s' % (locale.code, project)
 
-    _update_files(p, locale, locale_repository_path)
+    _update_files(p, locale, path)
 
     """Check if user authenticated to SVN."""
     profile, created = UserProfile.objects.get_or_create(user=request.user)
@@ -1322,8 +1323,8 @@ def commit_to_repository(request, template=None):
     password = data.get('auth', {}).get(
         'password', base64.decodestring(profile.svn_password))
 
-    r = commit_to_vcs(p.repository_type, locale_repository_path, project,
-                      locale.name, username, password)
+    r = commit_to_vcs(p.repository_type, path, message,
+                      username, password)
 
     if r is not None:
         return HttpResponse(json.dumps(r), mimetype='application/json')

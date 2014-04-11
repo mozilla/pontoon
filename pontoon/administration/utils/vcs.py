@@ -130,15 +130,13 @@ class CommitToRepositoryException(Exception):
 
 class CommitToRepository(object):
 
-    def __init__(self, path, project, locale, username, password):
+    def __init__(self, path, message, username, password):
         self.path = path
-        self.project = project
-        self.locale = locale
+        self.message = message
         self.username = username
         self.password = password
 
-    def commit(self, path=None, project=None, locale=None,
-               username=None, password=None):
+    def commit(self, path=None, message=None, username=None, password=None):
         raise NotImplementedError
 
 
@@ -146,8 +144,7 @@ class CommitToSvn(CommitToRepository):
 
     VCS = 'svn'
 
-    def commit(self, path=None, project=None, locale=None,
-               username=None, password=None):
+    def commit(self, path=None, message=None, username=None, password=None):
         try:
             import pysvn
         except ImportError as e:
@@ -155,8 +152,7 @@ class CommitToSvn(CommitToRepository):
         log.debug("Commit to SVN repository.")
 
         path = path or self.path
-        project = project or self.project
-        locale = locale or self.locale
+        message = message or self.message
         username = username or self.username
         password = password or self.password
 
@@ -168,9 +164,8 @@ class CommitToSvn(CommitToRepository):
             client.set_default_password(password)
 
         try:
-            client.checkin([path], 'Pontoon: update %s localization of %s' %
-                           (locale, project))
-            log.info('Commited %s localization of %s' % (locale, project))
+            client.checkin([path], message)
+            log.info(message)
 
         except pysvn.ClientError as e:
             log.debug(str(e))
@@ -191,12 +186,14 @@ def update_from_vcs(repo_type, url, path):
             obj.pull()
         except PullFromRepositoryException as e:
             log.debug('Git PullError for %s: %s' % (url, e))
+
     elif repo_type == 'hg':
         try:
             obj = PullFromHg(url, path)
             obj.pull()
         except PullFromRepositoryException as e:
             log.debug('Mercurial PullError for %s: %s' % (url, e))
+
     elif repo_type == 'svn':
         try:
             obj = PullFromSvn(url, path)
@@ -205,10 +202,10 @@ def update_from_vcs(repo_type, url, path):
             log.debug('Subversion PullError for %s: %s' % (url, e))
 
 
-def commit_to_vcs(repo_type, path, project, locale, username, password):
+def commit_to_vcs(repo_type, path, message, username, password):
     if repo_type == 'svn':
         try:
-            obj = CommitToSvn(path, project, locale, username, password)
+            obj = CommitToSvn(path, message, username, password)
             return obj.commit()
         except CommitToRepositoryException as e:
             log.debug('Subversion CommitError for %s: %s' % (path, e))
