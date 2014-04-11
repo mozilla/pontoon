@@ -188,7 +188,9 @@
 }
 
 #pontoon #profile .button img {
-  padding-right: 5px;
+  border-radius: 24px;
+  border: 2px solid #FFF;
+  margin: 6px 5px 0 0;
 }
 
 #pontoon #profile .button .icon {

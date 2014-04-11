@@ -272,7 +272,7 @@ def translate_project(request, locale, slug, page=None,
     # Get profile image from Gravatar
     if request.user.is_authenticated():
         email = request.user.email
-        size = 60
+        size = 44
 
         gravatar_url = "http://www.gravatar.com/avatar/" + \
             hashlib.md5(email.lower()).hexdigest() + "?"
