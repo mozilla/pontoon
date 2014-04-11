@@ -97,7 +97,7 @@
                 {{ form.repository_url }}
                 {% if pk %}
                 <button title="Update all locales from repository" data-source="repository" class="button update">
-                    <img class="update" src="{{ static('img/update.png') }}" alt="Update all locales from repository" />
+                    <span class="fa fa-refresh"></span>
                 </button>
                 {% endif %}
             </div>
@@ -108,7 +108,7 @@
                 {{ form.transifex_resource }}
                 {% if pk %}
                 <button title="Update all locales from Transifex" data-source="transifex" class="button update">
-                    <img class="update" src="{{ static('img/update.png') }}" alt="Update all locales from Transifex" />
+                    <span class="fa fa-refresh"></span>
                 </button>
                 <section class="authentication-form">
                     <label for="id_transifex_username">Username or email</label>

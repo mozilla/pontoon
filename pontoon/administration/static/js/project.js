@@ -94,12 +94,7 @@ $(function() {
     e.preventDefault();
     $(this).addClass('disabled');
     var source = $(this).data('source'),
-        img = $(this).find('img');
-
-    function updateIcon(filename) {
-      img.attr('src', '/static/img/' + filename);
-    }
-    updateIcon('loader-light.gif');
+        icon = $(this).find('span').attr('class', 'fa fa-refresh fa-spin');
 
     params = {
       pk: $('input[name=pk]').val(),
@@ -134,23 +129,23 @@ $(function() {
       data: params,
       success: function(data) {
         if (data === "200") {
-          updateIcon('ok.png');
+          icon.attr('class', 'fa fa-check');
           $('.repository').removeClass('authenticate');
           $('.warning').fadeOut();
         } else if (data === "authenticate") {
-          updateIcon('update.png');
+          icon.attr('class', 'fa fa-refresh');
           $('.repository').addClass('authenticate');
         } else if (data === "error"){
-          updateIcon('error.png');
+          icon.attr('class', 'fa fa-warning');
         }
       },
       error: function() {
-        updateIcon('error.png');
+        icon.attr('class', 'fa fa-warning');
       }
     }).complete(function() {
-      img.parent().removeClass('disabled');
+      icon.parent().removeClass('disabled');
       setTimeout(function() {
-        updateIcon('update.png');
+        icon.attr('class', 'fa fa-refresh');
       }, 5000);
     });
   });

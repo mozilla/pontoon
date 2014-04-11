@@ -232,6 +232,11 @@ body #intro {
   display: block;
 }
 
+#pontoon #intro .repository .details-wrapper .button.update {
+  color: #444444;
+  padding: 0;
+}
+
 #pontoon #intro .repository input[type=text] {
   width: 400px;
 }
