@@ -25,11 +25,13 @@
 }
 
 #pontoon #switch {
-  background: url('../img/align_just_icon&24.png') 10px 18px no-repeat transparent;
+  background: transparent;
+  border: none;
+  color: #FFFFFF;
   float: left;
   height: 60px;
+  padding: 0 0 0 10px; /* All values neede to prevent jumping on click */
   width: 33px;
-  border: none;
 }
 
 #pontoon .select {
@@ -175,20 +177,14 @@
 }
 
 #pontoon #logo {
-  background: url("../img/home_icon&24.png") no-repeat center center;
-  float: left;
   height: 24px;
-  margin: 0px;
   padding: 18px 5px;
-  width: 24px;
 }
 
 #pontoon #info .button {
-  background: url("../img/info_icon&24.png") no-repeat center center;
+  font-size: 1.6em;
   height: 24px;
-  margin: 0;
-  padding: 18px 5px;
-  width: 24px;
+  padding: 20px 5px;
 }
 
 #pontoon #info h2 {
@@ -206,7 +202,7 @@
 
 #pontoon #profile > .button {
   height: 60px;
-  padding: 0 5px;
+  padding: 0;
 }
 
 #pontoon #profile .button .title {
@@ -215,8 +211,17 @@
   font-size: 16px;
 }
 
-#pontoon #info .menu,
-#pontoon #profile .menu {
+#pontoon #profile .button img {
+  padding-right: 5px;
+}
+
+#pontoon #profile .button .icon {
+  font-size: 1.58em;
+  height: 24px;
+  padding: 20px 5px;
+}
+
+#pontoon .right .menu {
   right: 0;
 }
 
