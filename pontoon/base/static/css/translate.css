@@ -875,23 +875,19 @@
 #pontoon #helpers > section ul li > header button {
   background: no-repeat transparent;
   border: none;
-  color: #FFFFFF;
+  color: #AAAAAA;
   display: none;
   font-size: 1.8em;
   height: 22px;
-  opacity: 0.5;
   padding: 0;
   vertical-align: bottom;
   width: 22px;
 }
 
 #pontoon #helpers > section ul li > header.localizer button,
-#pontoon #helpers > section ul li > header.own button.delete {
+#pontoon #helpers > section ul li > header.own button.delete,
+#pontoon #helpers > section ul li.approved > header button.approve {
   display: inline-block;
-}
-
-#pontoon #helpers > section ul li > header button:hover {
-  opacity: 1;
 }
 
 #pontoon #helpers > section ul li > header button.approve:before {
@@ -900,20 +896,17 @@
 
 #pontoon #helpers > section ul li > header button.approve:hover:before,
 #pontoon #helpers > section ul li.approved > header button.approve:before {
+  color: #7BC876;
   content: "";
-}
-
-#pontoon #helpers > section ul li.approved > header button.approve {
-  display: inline-block;
-  opacity: 1;
 }
 
 #pontoon #helpers > section ul li > header button.delete:before {
   content: "";
+  margin-left: 5px;
 }
 
-#pontoon #helpers > section ul li > header button.delete {
-  margin-left: 5px;
+#pontoon #helpers > section ul li > header button.delete:hover:before {
+  color: #FD5F60;
 }
 
 #pontoon #helpers > section ul li > header .stress {
