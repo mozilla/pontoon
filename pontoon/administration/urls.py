@@ -21,7 +21,7 @@ urlpatterns = patterns(
     url(r'^delete/(?P<pk>\d+)/$', views.delete_project,
         name='pontoon.admin.project.delete'),
 
-    # Update from SVN
+    # Update from repository
     url(r'^repository/$', views.update_from_repository,
         name='pontoon.admin.repository.update'),
 

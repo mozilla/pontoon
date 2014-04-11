@@ -117,7 +117,7 @@
             {% if perms.base.can_manage %}<li><a class="admin" href="{{ url('pontoon.admin.project', project.slug) }}">Admin</a></li>{% endif %}
             <li class="horizontal-separator"></li>
             {% if perms.base.can_localize %}
-            <li{% if not (project.repository_type and project.repository_type == 'svn') %} class="hidden"{% endif %}><a class="svn" href="{{ url('pontoon.svn') }}">Commit to SVN</a></li>
+            <li{% if not (project.repository_type in ('git', 'hg', 'svn')) %} class="hidden"{% endif %}><a class="repository" href="{{ url('pontoon.commit_to_repository') }}">Commit to repository</a></li>
             {% endif %}
             <li{% if not (project.transifex_project and project.transifex_resource) %} class="hidden"{% endif %}><a class="transifex" href="{{ url('pontoon.transifex') }}">Save to Transifex</a></li>
           {% endif %}
@@ -149,10 +149,10 @@
           </form>
         </aside>
         {% endif %}
-        {% if project.repository_type and project.repository_type == 'svn' %}
-        <aside id="svn" class="popup">
+        {% if project.repository_type in ('git', 'hg', 'svn') %}
+        <aside id="repository" class="popup">
           <h2>
-            Sign in to Mozilla SVN
+            Sign in to repository
             <a class="cancel" href="#">&times;</a>
           </h2>
           <form>

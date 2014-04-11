@@ -1282,9 +1282,9 @@ def download(request, template=None):
 
 
 @login_required(redirect_field_name='', login_url='/403')
-def commit_to_svn(request, template=None):
-    """Commit translations to SVN."""
-    log.debug("Commit translations to SVN.")
+def commit_to_repository(request, template=None):
+    """Commit translations to repository."""
+    log.debug("Commit translations to repository.")
 
     if not request.user.has_perm('base.can_localize'):
         return render(request, '403.html', status=403)
@@ -1322,8 +1322,8 @@ def commit_to_svn(request, template=None):
     password = data.get('auth', {}).get(
         'password', base64.decodestring(profile.svn_password))
 
-    r = commit_to_vcs('svn', locale_repository_path, project, locale.name,
-                  username, password)
+    r = commit_to_vcs(p.repository_type, locale_repository_path, project,
+                      locale.name, username, password)
 
     if r is not None:
         return HttpResponse(json.dumps(r), mimetype='application/json')
@@ -1337,7 +1337,7 @@ def commit_to_svn(request, template=None):
         profile.save()
         log.info("SVN username and password saved.")
 
-    return HttpResponse("200")
+    return HttpResponse("ok")
 
 
 @login_required(redirect_field_name='', login_url='/403')

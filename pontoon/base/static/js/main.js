@@ -110,7 +110,7 @@ var Pontoon = (function () {
           }
         });
 
-      } else if (type === "svn") {
+      } else if (type === "repository") {
         self.startLoader();
 
         params.pk = self.project.pk;
@@ -124,7 +124,7 @@ var Pontoon = (function () {
         }
 
         $.ajax({
-          url: 'svn/',
+          url: 'commit-to-repository/',
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),
@@ -133,31 +133,31 @@ var Pontoon = (function () {
           success: function(data) {
             if (data.type === "authenticate") {
               self.endLoader(data.message);
-              $("#svn").show();
+              $("#repository").show();
 
               // Move notification up
               var temp = $('.notification').css('top');
-              $('.notification').css('top', '+=' + $('#svn').outerHeight());
+              $('.notification').css('top', '+=' + $('#repository').outerHeight());
               setTimeout(function() {
                 $('.notification').css('top', temp);
               }, 2400); // Wait for close + fadeout
 
-            } else if (data === "200") {
+            } else if (data === "ok") {
               self.endLoader('Done!');
-              $('#svn').hide();
+              $('#repository').hide();
 
             } else if (data.type === "error") {
               self.endLoader(data.message, 'error', true);
-              $('#svn').hide();
+              $('#repository').hide();
 
             } else {
               self.endLoader('Oops, something went wrong.', 'error');
-              $('#svn').hide();
+              $('#repository').hide();
             }
           },
           error: function() {
             self.endLoader('Oops, something went wrong.', 'error');
-            $('#svn').hide();
+            $('#repository').hide();
           }
         });
       }
@@ -1239,7 +1239,7 @@ var Pontoon = (function () {
         }
       });
 
-      // Transifex and SVN authentication
+      // Transifex and repository authentication
       $('.popup').find('.cancel').click(function (e) {
         e.preventDefault();
         $('.popup').hide();
