@@ -967,7 +967,7 @@ var Pontoon = (function () {
         e.preventDefault();
 
         $.ajax({
-          url: $(this).attr('class') + '-translation/',
+          url: $(this).attr('class').split(' ')[0] + '-translation/',
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),
