@@ -163,8 +163,9 @@
 }
 
 #pontoon > header #loading {
-  float: left;
   display: none;
+  float: left;
+  margin-right: 5px;
 }
 
 #pontoon > header #loading.loader {
