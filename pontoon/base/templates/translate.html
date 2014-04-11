@@ -170,19 +170,25 @@
         {% endif %}
       </div>
 
-      {% if project.info_brief %}
-      <!-- Project info -->
       <div id="info" class="select">
         <div class="button selector fa fa-info-circle fa-2x">
         </div>
         <aside class="menu">
+          <!-- Keyboard shortcuts -->
+          <section id="hotkeys">
+            <h2>Keyboard shortcuts</h2>
+            <p><span>Save translation</span><span>Enter</span></p>
+            <p><span>Cancel translation</span><span>Esc</span></p>
+          </section>
+          {% if project.info_brief %}
+          <!-- Project info -->
           <section>
             <h2>Project info</h2>
             <p>{{ project.info_brief }}</p>
           </section>
+          {% endif %}
         </aside>
       </div>
-      {% endif %}
 
       <a id="logo" class="fa fa-home fa-2x" href="/"></a>
     </div>

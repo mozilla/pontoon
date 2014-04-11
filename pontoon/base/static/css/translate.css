@@ -176,30 +176,6 @@
   color: #FD5F60;
 }
 
-#pontoon #logo {
-  height: 24px;
-  padding: 18px 5px;
-}
-
-#pontoon #info .button {
-  font-size: 1.6em;
-  height: 24px;
-  padding: 20px 5px;
-}
-
-#pontoon #info h2 {
-  margin-bottom: 5px;
-}
-
-#pontoon #info p {
-  font-weight: 300;
-}
-
-#pontoon #info .menu {
-  line-height: 18px;
-  width: 360px;
-}
-
 #pontoon #profile > .button {
   height: 60px;
   padding: 0;
@@ -221,10 +197,6 @@
   padding: 20px 5px;
 }
 
-#pontoon .right .menu {
-  right: 0;
-}
-
 #pontoon #profile .menu ul,
 #pontoon #filter .menu ul {
   max-height: none;
@@ -235,8 +207,52 @@
   width: 200px;
 }
 
-#pontoon .popup h2 {
+#pontoon #info .button {
+  font-size: 1.6em;
+  height: 24px;
+  padding: 20px 5px;
+}
+
+#pontoon #info #hotkeys span:nth-child(2) {
+  float: right;
+}
+
+#pontoon > header .select aside.menu {
+  line-height: 18px;
+  width: 360px;
+}
+
+#pontoon > header .select aside.menu section {
+  padding: 10px 4px;
+}
+
+#pontoon > header .select aside.menu section:last-child {
+  border-top: 1px solid #525A65;
+  padding-bottom: 0;
+}
+
+/* Must follow last-child to remove border if only one section visible */
+#pontoon > header .select aside.menu section:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+#pontoon > header aside h2 {
   margin-bottom: 5px;
+}
+
+#pontoon > header aside p {
+  font-weight: 300;
+  padding: 2px 0;
+}
+
+#pontoon #logo {
+  height: 24px;
+  padding: 18px 5px;
+}
+
+#pontoon .right .menu {
+  right: 0;
 }
 
 #pontoon .popup .cancel {
