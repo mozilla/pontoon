@@ -400,10 +400,10 @@ var Pontoon = (function () {
                       '<span class="stress">' + this.date + '</span>' +
                     '</div>' +
                     '<menu class="toolbar">' +
-                      '<button class="approve" title="' +
+                      '<button class="approve fa" title="' +
                       (this.approved ? '' : 'Approve') +
                       '"></button>' +
-                      '<button class="delete" title="Delete"></button>' +
+                      '<button class="delete fa" title="Delete"></button>' +
                     '</menu>' +
                   '</header>' +
                   '<p class="translation">' +

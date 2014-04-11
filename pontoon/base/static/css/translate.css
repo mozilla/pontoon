@@ -865,14 +865,18 @@
 #pontoon #helpers > section ul li > header button {
   background: no-repeat transparent;
   border: none;
+  color: #FFFFFF;
   display: none;
-  height: 16px;
+  font-size: 1.8em;
+  height: 22px;
   opacity: 0.5;
+  padding: 0;
   vertical-align: bottom;
-  width: 16px;
+  width: 22px;
 }
 
-#pontoon #helpers > section ul li > header.localizer button {
+#pontoon #helpers > section ul li > header.localizer button,
+#pontoon #helpers > section ul li > header.own button.delete {
   display: inline-block;
 }
 
@@ -880,27 +884,26 @@
   opacity: 1;
 }
 
-#pontoon #helpers > section ul li > header button.approve {
-  background-image: url('../img/star_fav_empty_icon&16.png');
+#pontoon #helpers > section ul li > header button.approve:before {
+  content: "";
 }
 
-#pontoon #helpers > section ul li > header button.approve:hover {
-  background-image: url('../img/star_fav_icon&16.png');
+#pontoon #helpers > section ul li > header button.approve:hover:before,
+#pontoon #helpers > section ul li.approved > header button.approve:before {
+  content: "";
 }
 
 #pontoon #helpers > section ul li.approved > header button.approve {
-  background-image: url('../img/star_fav_icon&16.png');
   display: inline-block;
   opacity: 1;
 }
 
-#pontoon #helpers > section ul li > header button.delete {
-  background-image: url('../img/trash_icon&16.png');
-  margin-left: 10px;
+#pontoon #helpers > section ul li > header button.delete:before {
+  content: "";
 }
 
-#pontoon #helpers > section ul li > header.own button.delete {
-  display: inline-block;
+#pontoon #helpers > section ul li > header button.delete {
+  margin-left: 5px;
 }
 
 #pontoon #helpers > section ul li > header .stress {
