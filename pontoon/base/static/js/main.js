@@ -210,7 +210,7 @@ var Pontoon = (function () {
       function complete() {
         requests--;
         if (requests === 0) {
-          $('#helpers li.active a').removeClass('loading');
+          $('#helpers li a[href="#machinery"]').removeClass('loading');
           if (ul.find('li').length === 0) {
             ul.append('<li class="disabled">' +
               '<p>No translations available.</p>' +
