@@ -1201,7 +1201,7 @@ def _update_files(p, locale, locale_repository_path):
 
                         translation = _get_translation(
                             entity=entity, locale=locale).string
-                        if translation != '':
+                        if translation == '':
                             translation = original
 
                 # Erase file and then write, otherwise content gets appended
