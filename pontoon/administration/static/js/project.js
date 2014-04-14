@@ -16,11 +16,11 @@ $(function() {
     }
 
     // Update form action
-    var name = $('#id_name').val();
-    if (name.length > 0) {
-      name += '/';
+    var slug = $('#id_slug').val();
+    if (slug.length > 0) {
+      slug += '/';
     }
-    $('form').attr('action', $('form').attr('action').split('/project/')[0] + '/project/' + name);
+    $('form').attr('action', $('form').attr('action').split('/project/')[0] + '/project/' + slug);
   });
 
   // Submit form with Enter
