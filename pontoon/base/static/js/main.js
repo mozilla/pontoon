@@ -1226,12 +1226,12 @@ var Pontoon = (function () {
       });
 
       // Profile menu
-      $('#profile .menu a').click(function (e) {
+      $('#profile .menu li').click(function (e) {
         e.preventDefault();
         if ($(this).is(".sign-out")) {
-          window.location = 'signout/'; // Without this, Enter doesn't open the link
+          window.location = 'signout/';
         } else if ($(this).is(".admin")) {
-          window.location = $(this).attr('href'); // Without this, Enter doesn't open the link
+          window.location = $(this).data('url');
         } else if ($(this).is(".html")) {
           self.common.postMessage("HTML");
         } else {
