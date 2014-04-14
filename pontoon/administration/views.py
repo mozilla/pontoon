@@ -354,41 +354,42 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
         try:
             log.debug(path)
             po = polib.pofile(path)
-            entities = [e for e in po if not e.obsolete]
 
             if locale.code == source_locale:
-                for entity in entities:
-                    _save_entity(project=project, string=entity.msgid,
-                                 string_plural=entity.msgid_plural,
-                                 comment=entity.comment,
-                                 source=entity.occurrences)
+                for entry in po:
+                    if not entry.obsolete:
+                        _save_entity(project=project, string=entry.msgid,
+                                     string_plural=entry.msgid_plural,
+                                     comment=entry.comment,
+                                     source=entry.occurrences)
             elif translations:
-                for entity in entities:
-                    # Entities without plurals
-                    if len(entity.msgstr) > 0:
-                        try:
-                            e = Entity.objects.get(
-                                project=project, string=entity.msgid)
-                            _save_translation(
-                                entity=e,
-                                locale=locale,
-                                string=entity.msgstr)
-                        except Entity.DoesNotExist:
-                            continue
-
-                    # Pluralized entities
-                    elif len(entity.msgstr_plural) > 0:
-                        try:
-                            e = Entity.objects.get(
-                                project=project, string=entity.msgid)
-                            for k in entity.msgstr_plural:
+                for entry in po:
+                    if not entry.obsolete:
+                        # Entities without plurals
+                        if len(entry.msgstr) > 0:
+                            try:
+                                e = Entity.objects.get(
+                                    project=project, string=entry.msgid)
                                 _save_translation(
                                     entity=e,
                                     locale=locale,
-                                    string=entity.msgstr_plural[k],
-                                    plural_form=k)
-                        except Entity.DoesNotExist:
-                            continue
+                                    string=entry.msgstr)
+                            except Entity.DoesNotExist:
+                                continue
+
+                        # Pluralized entities
+                        elif len(entry.msgstr_plural) > 0:
+                            try:
+                                e = Entity.objects.get(
+                                    project=project, string=entry.msgid)
+                                for k in entry.msgstr_plural:
+                                    _save_translation(
+                                        entity=e,
+                                        locale=locale,
+                                        string=entry.msgstr_plural[k],
+                                        plural_form=k)
+                            except Entity.DoesNotExist:
+                                continue
 
             log.debug("[" + locale.code + "]: saved to DB.")
         except Exception as e:
