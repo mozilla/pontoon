@@ -140,9 +140,28 @@ class CommitToRepository(object):
         raise NotImplementedError
 
 
-class CommitToSvn(CommitToRepository):
+class CommitToGit(CommitToRepository):
 
-    VCS = 'svn'
+    def commit(self, path=None, message=None, username=None, password=None):
+        import git
+        log.debug("Commit to Git repository.")
+
+        path = path or self.path
+        message = message or self.message
+        username = username or self.username
+        password = password or self.password
+
+        repo = git.Repo(path)
+
+        try:
+            repo.git.commit(a=True, m=message)
+            repo.git.push()
+
+        except git.errors.GitCommandError as e:
+            raise CommitToRepositoryException(str(e))
+
+
+class CommitToSvn(CommitToRepository):
 
     def commit(self, path=None, message=None, username=None, password=None):
         try:
@@ -203,7 +222,17 @@ def update_from_vcs(repo_type, url, path):
 
 
 def commit_to_vcs(repo_type, path, message, username, password):
-    if repo_type == 'svn':
+    if repo_type == 'git':
+        try:
+            obj = CommitToGit(path, message, username, password)
+            return obj.commit()
+        except CommitToRepositoryException as e:
+            log.debug('Git CommitError for %s: %s' % (path, e))
+            return {
+                'type': 'error',
+                'message': str(e)
+            }
+    elif repo_type == 'svn':
         try:
             obj = CommitToSvn(path, message, username, password)
             return obj.commit()
