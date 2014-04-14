@@ -156,9 +156,11 @@ class CommitToGit(CommitToRepository):
 
         try:
             repo = git.Repo(path)
-            repo.git.commit(a=True, m=message, author=author)
-            repo.git.push()
-            log.info(message)
+            if repo.is_dirty:
+                repo.git.commit(a=True, m=message, author=author)
+                repo.git.push()
+                log.info(message)
+            log.info("Nothing to commit")
 
         except git.errors.GitCommandError as e:
             raise CommitToRepositoryException(str(e))
