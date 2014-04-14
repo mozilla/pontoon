@@ -147,7 +147,7 @@ var Pontoon = (function () {
               $('#repository').hide();
 
             } else if (data.type === "error") {
-              self.endLoader(data.message, 'error', true);
+              self.endLoader(self.doNotRender(data.message), 'error', true);
               $('#repository').hide();
 
             } else {
