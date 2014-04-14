@@ -231,7 +231,12 @@
 }
 
 #pontoon #info #hotkeys span:nth-child(2) {
+  background: #3F4752;
+  border: 1px solid #5E6475;
+  border-radius: 2px;
   float: right;
+  margin-top: -1px;
+  padding: 0 4px;
 }
 
 #pontoon > header .select aside.menu {
@@ -261,7 +266,7 @@
 #pontoon > header aside p {
   color: #CCCCCC;
   font-weight: 300;
-  padding: 2px 0;
+  padding: 4px 0;
 }
 
 #pontoon #home {
