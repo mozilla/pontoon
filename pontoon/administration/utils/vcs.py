@@ -1,8 +1,11 @@
 # -*- coding: utf8 -*-
 
 from __future__ import absolute_import
+import base64
 import os
 import commonware.log
+
+from pontoon.base.models import UserProfile
 
 
 log = commonware.log.getLogger('pontoon')
@@ -130,26 +133,26 @@ class CommitToRepositoryException(Exception):
 
 class CommitToRepository(object):
 
-    def __init__(self, path, message, username, password):
+    def __init__(self, path, message, user, data):
         self.path = path
         self.message = message
-        self.username = username
-        self.password = password
+        self.user = user
+        self.data = data
 
-    def commit(self, path=None, message=None, username=None, password=None):
+    def commit(self, path=None, message=None, user=None, data=None):
         raise NotImplementedError
 
 
 class CommitToGit(CommitToRepository):
 
-    def commit(self, path=None, message=None, username=None, password=None):
+    def commit(self, path=None, message=None, user=None, data=None):
         import git
         log.debug("Commit to Git repository.")
 
         path = path or self.path
         message = message or self.message
-        username = username or self.username
-        password = password or self.password
+        user = user or self.user
+        data = data or self.data
 
         repo = git.Repo(path)
 
@@ -163,7 +166,7 @@ class CommitToGit(CommitToRepository):
 
 class CommitToSvn(CommitToRepository):
 
-    def commit(self, path=None, message=None, username=None, password=None):
+    def commit(self, path=None, message=None, user=None, data=None):
         try:
             import pysvn
         except ImportError as e:
@@ -172,11 +175,17 @@ class CommitToSvn(CommitToRepository):
 
         path = path or self.path
         message = message or self.message
-        username = username or self.username
-        password = password or self.password
+        user = user or self.user
+        data = data or self.data
 
         client = pysvn.Client()
         client.exception_style = 1
+
+        # Check if user authenticated
+        profile, created = UserProfile.objects.get_or_create(user=user)
+        username = data.get('auth', {}).get('username', profile.svn_username)
+        password = data.get('auth', {}).get(
+            'password', base64.decodestring(profile.svn_password))
 
         if len(username) > 0 and len(password) > 0:
             client.set_default_username(username)
@@ -185,6 +194,15 @@ class CommitToSvn(CommitToRepository):
         try:
             client.checkin([path], message)
             log.info(message)
+
+            # Save username and password
+            if data.get('auth', {}).get('remember', {}) == 1:
+                if profile.svn_username != username:
+                    profile.svn_username = username
+                if base64.decodestring(profile.svn_password) != password:
+                    profile.svn_password = base64.encodestring(password)
+                profile.save()
+                log.info("Username and password saved.")
 
         except pysvn.ClientError as e:
             log.debug(str(e))
@@ -221,10 +239,10 @@ def update_from_vcs(repo_type, url, path):
             log.debug('Subversion PullError for %s: %s' % (url, e))
 
 
-def commit_to_vcs(repo_type, path, message, username, password):
+def commit_to_vcs(repo_type, path, message, user, data):
     if repo_type == 'git':
         try:
-            obj = CommitToGit(path, message, username, password)
+            obj = CommitToGit(path, message, user, data)
             return obj.commit()
         except CommitToRepositoryException as e:
             log.debug('Git CommitError for %s: %s' % (path, e))
@@ -234,7 +252,7 @@ def commit_to_vcs(repo_type, path, message, username, password):
             }
     elif repo_type == 'svn':
         try:
-            obj = CommitToSvn(path, message, username, password)
+            obj = CommitToSvn(path, message, user, data)
             return obj.commit()
         except CommitToRepositoryException as e:
             log.debug('Subversion CommitError for %s: %s' % (path, e))

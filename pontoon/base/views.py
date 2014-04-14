@@ -1317,26 +1317,10 @@ def commit_to_repository(request, template=None):
 
     _update_files(p, locale, path)
 
-    """Check if user authenticated to SVN."""
-    profile, created = UserProfile.objects.get_or_create(user=request.user)
-    username = data.get('auth', {}).get('username', profile.svn_username)
-    password = data.get('auth', {}).get(
-        'password', base64.decodestring(profile.svn_password))
-
-    r = commit_to_vcs(p.repository_type, path, message,
-                      username, password)
+    r = commit_to_vcs(p.repository_type, path, message, request.user, data)
 
     if r is not None:
         return HttpResponse(json.dumps(r), mimetype='application/json')
-
-    """Save SVN username and password."""
-    if data.get('auth', {}).get('remember', {}) == 1:
-        if profile.svn_username != username:
-            profile.svn_username = username
-        if base64.decodestring(profile.svn_password) != password:
-            profile.svn_password = base64.encodestring(password)
-        profile.save()
-        log.info("SVN username and password saved.")
 
     return HttpResponse("ok")
 
