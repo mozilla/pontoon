@@ -5,8 +5,6 @@ import base64
 import os
 import commonware.log
 
-from pontoon.base.models import UserProfile
-
 
 log = commonware.log.getLogger('pontoon')
 
@@ -156,13 +154,50 @@ class CommitToGit(CommitToRepository):
         strings = [user.first_name, '<%s>' % user.email]
         author = ' '.join(filter(None, strings)) #  Only if not empty
 
-        repo = git.Repo(path)
-
         try:
+            repo = git.Repo(path)
             repo.git.commit(a=True, m=message, author=author)
             repo.git.push()
+            log.info(message)
 
         except git.errors.GitCommandError as e:
+            raise CommitToRepositoryException(str(e))
+
+
+class CommitToHg(CommitToRepository):
+
+    def commit(self, path=None, message=None, user=None):
+        from mercurial import commands, hg, ui, error
+        log.debug("Commit to Mercurial repository.")
+
+        path = path or self.path
+        message = message or self.message
+        user = user or self.user
+
+        strings = [user.first_name, '<%s>' % user.email]
+        author = ' '.join(filter(None, strings)) #  Only if not empty
+
+        # For some reason default push path is not set properly
+        import configparser, codecs
+        config = configparser.ConfigParser()
+
+        with codecs.open(os.path.join(path, '.hg/hgrc'), 'r', 'utf-8') as f:
+            try:
+                config.read_file(f)
+            except Exception as e:
+                raise CommitToRepositoryException(str(e))
+
+        default_path = config.get('paths', 'default')
+
+        try:
+            u = ui.ui()
+            u.setconfig('paths', 'default', default_path)
+            repo = hg.repository(u, path)
+            commands.commit(u, repo, message=message, user=author)
+            commands.push(u, repo)
+            log.info(message)
+
+        except Exception as e:
             raise CommitToRepositoryException(str(e))
 
 
@@ -184,6 +219,7 @@ class CommitToSvn(CommitToRepository):
         client.exception_style = 1
 
         # Check if user authenticated
+        from pontoon.base.models import UserProfile
         profile, created = UserProfile.objects.get_or_create(user=user)
         username = data.get('auth', {}).get('username', profile.svn_username)
         password = data.get('auth', {}).get(
@@ -248,6 +284,17 @@ def commit_to_vcs(repo_type, path, message, user, data):
             return obj.commit()
         except CommitToRepositoryException as e:
             log.debug('Git CommitError for %s: %s' % (path, e))
+            return {
+                'type': 'error',
+                'message': str(e)
+            }
+
+    elif repo_type == 'hg':
+        try:
+            obj = CommitToHg(path, message, user, data)
+            return obj.commit()
+        except CommitToRepositoryException as e:
+            log.debug('Mercurial CommitError for %s: %s' % (path, e))
             return {
                 'type': 'error',
                 'message': str(e)
