@@ -145,19 +145,21 @@ class CommitToRepository(object):
 
 class CommitToGit(CommitToRepository):
 
-    def commit(self, path=None, message=None, user=None, data=None):
+    def commit(self, path=None, message=None, user=None):
         import git
         log.debug("Commit to Git repository.")
 
         path = path or self.path
         message = message or self.message
         user = user or self.user
-        data = data or self.data
+
+        strings = [user.first_name, '<%s>' % user.email]
+        author = ' '.join(filter(None, strings)) #  Only if not empty
 
         repo = git.Repo(path)
 
         try:
-            repo.git.commit(a=True, m=message)
+            repo.git.commit(a=True, m=message, author=author)
             repo.git.push()
 
         except git.errors.GitCommandError as e:
@@ -250,6 +252,7 @@ def commit_to_vcs(repo_type, path, message, user, data):
                 'type': 'error',
                 'message': str(e)
             }
+
     elif repo_type == 'svn':
         try:
             obj = CommitToSvn(path, message, user, data)
