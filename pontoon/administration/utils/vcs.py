@@ -39,7 +39,7 @@ class PullFromGit(PullFromRepository):
 
         try:
             repo = git.Repo(target)
-            repo.remotes.origin.pull()
+            repo.git.pull()
             log.debug("Git: repository at " + source + " updated.")
         except Exception, e:
             log.debug("Git: " + str(e))
