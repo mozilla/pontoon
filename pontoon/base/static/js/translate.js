@@ -131,12 +131,10 @@ $(function() {
           }
         } else {
           clearInterval(interval);
-          var lang = $('html').attr('lang'),
-              locale = $('#server').data('locale'),
-              escapedLocale = locale.replace(".", "\\.").replace("@", "\\@"),
+          var locale = $('#server').data('locale').code.replace(".", "\\.").replace("@", "\\@"),
               project = $('#server').data('slug'),
-              errorLink = (lang ? '/' + lang : '') + '/translate/error/?locale=' + escapedLocale + '&project=' + project;
-          window.location = errorLink + '&error=' + "Oops, website is not supported by Pontoon.";
+              error = 'Oops, website is not supported by Pontoon.';
+          window.location = '/translate/error/?locale=' + locale + '&project=' + project + '&error=' + error;
         }
       }, 100);
 
