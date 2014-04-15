@@ -276,7 +276,7 @@ def translate_project(request, locale, slug, page=None,
         email = request.user.email
         size = 44
 
-        gravatar_url = "http://www.gravatar.com/avatar/" + \
+        gravatar_url = "//www.gravatar.com/avatar/" + \
             hashlib.md5(email.lower()).hexdigest() + "?"
         gravatar_url += urllib.urlencode({'s': str(size)})
         if settings.SITE_URL != 'http://localhost:8000':
