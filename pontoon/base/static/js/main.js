@@ -1164,9 +1164,7 @@ var Pontoon = (function () {
      * Close notification
      */
     closeNotification: function () {
-      $('.notification').fadeOut(function() {
-        $(this).attr('class', 'notification').empty();
-      });
+      $('.notification').fadeOut();
     },
 
 
@@ -1190,8 +1188,12 @@ var Pontoon = (function () {
     endLoader: function (text, type, persist) {
       $('#loading').removeClass('loader');
       if (text) {
-        $('.notification').html(text).addClass(type).show().click(function() {
-          Pontoon.closeNotification();
+        $('.notification')
+          .html(text)
+          .removeClass().addClass('notification ' + type)
+          .show()
+          .click(function() {
+            Pontoon.closeNotification();
         });
       }
       if (!persist) {
