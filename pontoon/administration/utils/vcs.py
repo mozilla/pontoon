@@ -29,8 +29,6 @@ class PullFromRepository(object):
 
 class PullFromGit(PullFromRepository):
 
-    VCS = 'git'
-
     def pull(self, source=None, target=None):
         import git
         log.debug("Clone or update Git repository.")
@@ -57,8 +55,6 @@ class PullFromGit(PullFromRepository):
 
 
 class PullFromHg(PullFromRepository):
-
-    VCS = 'hg'
 
     def pull(self, source=None, target=None):
         from mercurial import commands, hg, ui, error
@@ -95,8 +91,6 @@ class PullFromHg(PullFromRepository):
 
 
 class PullFromSvn(PullFromRepository):
-
-    VCS = 'svn'
 
     def pull(self, source=None, target=None):
         import pysvn
