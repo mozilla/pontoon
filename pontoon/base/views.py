@@ -1111,9 +1111,9 @@ def _update_files(p, locale, locale_repository_path):
 
     elif p.format == 'properties':
         for path in locale_paths:
-            format_parser = silme.format.properties.PropertiesFormatParser
+            parser = silme.format.properties.PropertiesFormatParser
             with codecs.open(path, 'r+', 'utf-8') as f:
-                l10nobject = format_parser.get_structure(f.read())
+                structure = parser.get_structure(f.read())
 
                 short_path = '/' + path.split('/' + locale.code + '/')[-1]
                 entities_with_path = entities.filter(source=short_path)
@@ -1123,18 +1123,26 @@ def _update_files(p, locale, locale_repository_path):
                         entity=entity, locale=locale).string
 
                     try:
-                        l10nobject.modify_entity(key, translation)
+                        if translation != '':
+                            structure.modify_entity(key, translation)
+                        else:
+                            structure.remove_entity(key)
                     except KeyError:
                         # Only add new keys if translation available
                         if translation != '':
                             new_entity = silme.core.entity.Entity(
                                 key, translation)
-                            l10nobject.add_entity(new_entity)
+                            structure.add_string('\n')
+                            structure.add_entity(new_entity)
+
+                # Make sure there is a new line at the end of file
+                if len(structure) > 0 and type(structure[-1]) != unicode:
+                    structure.add_string('\n')
 
                 # Erase file and then write, otherwise content gets appended
                 f.seek(0)
                 f.truncate()
-                content = format_parser.dump_structure(l10nobject)
+                content = parser.dump_structure(structure)
                 f.write(content)
                 log.debug("File updated: " + locale_paths[0])
 
