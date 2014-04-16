@@ -18,7 +18,7 @@ class Command(BaseCommand):
                 repository_type = project.repository_type
                 repository_url = project.repository_url
                 repository_path_master = os.path.join(
-                    settings.MEDIA_ROOT, repository_type, project.name)
+                    settings.MEDIA_ROOT, repository_type, project.slug)
 
                 _update_from_repository(
                     project, repository_type, repository_url,
