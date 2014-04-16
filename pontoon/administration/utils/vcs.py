@@ -154,7 +154,8 @@ class CommitToGit(CommitToRepository):
                 repo.git.commit(a=True, m=message, author=author)
                 repo.git.push()
                 log.info(message)
-            log.info("Nothing to commit")
+            else:
+                log.info("Nothing to commit")
 
         except git.errors.GitCommandError as e:
             raise CommitToRepositoryException(str(e))
