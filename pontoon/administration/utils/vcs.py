@@ -145,8 +145,11 @@ class CommitToGit(CommitToRepository):
         message = message or self.message
         user = user or self.user
 
-        strings = [user.first_name, '<%s>' % user.email]
-        author = ' '.join(filter(None, strings)) #  Only if not empty
+        # Set commit author
+        name = user.first_name
+        if not name:
+            name = user.email.split('@')[0]
+        author = ' '.join([name, '<%s>' % user.email])
 
         try:
             repo = git.Repo(path)
