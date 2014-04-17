@@ -1126,7 +1126,16 @@ def _update_files(p, locale, locale_repository_path):
                         if translation != '':
                             structure.modify_entity(key, translation)
                         else:
+                            # Remove entity and following newline
+                            pos = structure.entity_pos(key)
                             structure.remove_entity(key)
+                            line = structure[pos]
+
+                            if type(line) == unicode and line.startswith('\n'):
+                                line = line[len('\n'):]
+                                structure[pos] = line
+                                if len(line) is 0:
+                                    structure.remove_element(pos)
                     except KeyError:
                         # Only add new keys if translation available
                         if translation != '':
