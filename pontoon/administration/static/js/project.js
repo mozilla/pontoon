@@ -132,6 +132,7 @@ $(function() {
           icon.attr('class', 'fa fa-check');
           $('.repository').removeClass('authenticate');
           $('.warning').fadeOut();
+          $('.links .translate').removeClass('hidden');
         } else if (data === "authenticate") {
           icon.attr('class', 'fa fa-refresh');
           $('.repository').addClass('authenticate');
