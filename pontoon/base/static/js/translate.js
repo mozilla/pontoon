@@ -121,10 +121,10 @@ $(function() {
   var projectWindow = $('#source')[0].contentWindow;
   window.addEventListener("message", receiveMessage, false);
 
-  // Show error message if no callback for 30 seconds: Pontoon/iframe not supported, 404…
+  // Show error message if no callback for 10 seconds: Pontoon/iframe not supported, 404…
   var i = 0,
       interval = setInterval(function() {
-        if (i < 300) {
+        if (i < 100) {
           i++;
           if (Pontoon.app) { // Set in Pontoon.init() which is called on "supported"
             clearInterval(interval);
