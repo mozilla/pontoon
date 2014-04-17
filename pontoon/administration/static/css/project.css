@@ -199,7 +199,7 @@ body #intro {
   font-weight: 400;
   height: 24px;
   line-height: 24px;
-  width: 198px;
+  width: 199px;
 }
 
 #pontoon #intro .repository .type.select .selector > span:nth-child(2) {
@@ -208,7 +208,7 @@ body #intro {
 
 #pontoon #intro .repository .type.select .menu {
   bottom: 31px;
-  width: 182px;
+  width: 183px;
 }
 
 #pontoon #intro .repository .type-wrapper .authentication-title {
@@ -221,7 +221,7 @@ body #intro {
 
 #pontoon #intro .repository .details-wrapper {
   float: left;
-  width: 409px;
+  width: 408px;
 }
 
 #pontoon #intro .repository .details-wrapper[data-repository-type="transifex"] .repo {
@@ -238,13 +238,13 @@ body #intro {
 }
 
 #pontoon #intro .repository input[type=text] {
-  width: 400px;
+  width: 403px;
 }
 
 #pontoon #intro .edit .repository input[type=text],
 #pontoon #intro .subpages input[id*=url] {
   float: left;
-  width: 368px;
+  width: 367px;
 }
 
 #pontoon #intro .transifex {
@@ -260,19 +260,19 @@ body #intro {
 #pontoon #intro .edit .authenticate .transifex input#id_transifex_project,
 #pontoon #intro .edit .transifex input#id_transifex_username {
   float: left;
-  width: 193px;
+  width: 196px;
 }
 
 #pontoon #intro .transifex input#id_transifex_resource,
 #pontoon #intro .edit .authenticate .transifex input#id_transifex_resource {
   float: left;
-  width: 194px;
+  width: 196px;
 }
 
 #pontoon #intro .edit .transifex input#id_transifex_project,
 #pontoon #intro .edit .transifex input#id_transifex_resource {
   float: left;
-  width: 175px;
+  width: 178px;
 }
 
 #pontoon #intro .edit .transifex input#id_transifex_password,
@@ -307,7 +307,7 @@ body #intro {
 
 #pontoon #intro .subpages input[id*=name] {
   float: left;
-  width: 200px;
+  width: 201px;
 }
 
 #pontoon #intro .subpages input[id$=DELETE] {
