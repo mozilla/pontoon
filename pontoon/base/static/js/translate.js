@@ -67,6 +67,52 @@ $(function() {
       .height($(window).height() - $('#pontoon > header').outerHeight());
   }
 
+  function attachResizeHandlers() {
+    // Resize iframe with window
+    $(window).resize(function () {
+      resizeIframe();
+      Pontoon.common.postMessage("RESIZE");
+    });
+
+    // Resize sidebar and iframe
+    $('#drag').bind('mousedown', function (e) {
+      e.preventDefault();
+
+      var left = $('#sidebar'),
+          right = $('#source'),
+          data = {
+            left: left,
+            right: right,
+            leftWidth: left.width(),
+            rightWidth: right.width(),
+            leftMin: 350,
+            leftMax: $(window).width(),
+            position: e.pageX,
+            advanced: Pontoon.app.advanced
+          };
+
+      $('#iframe-cover').show().width(right.width()); // iframe fix
+      $('#editor:not(".opened")').hide();
+
+      $(document)
+        .bind('mousemove', { initial: data }, mouseMoveHandler)
+        .bind('mouseup', { initial: data }, mouseUpHandler);
+    });
+  }
+
+  function initializeWithoutWebsite() {
+    $('#pontoon > header').slideDown(function() {
+      $('#sidebar')
+        .addClass('advanced')
+        .css('width', '100%');
+      $('#switch, #drag').remove();
+      $('#editor').addClass('opened');
+      $('#project-load').hide();
+    });
+
+    Pontoon.init(window, true);
+  }
+
   function receiveMessage(e) {
     if (e.source === projectWindow) {
       if (JSON.parse(e.data).type === "READY") {
@@ -104,16 +150,7 @@ $(function() {
 
   // Initialize Pontoon for projects without in-place translation support
   if (!url) {
-    $('#pontoon > header').slideDown(function() {
-      $('#sidebar')
-        .addClass('advanced')
-        .css('width', '100%');
-      $('#switch, #drag').remove();
-      $('#editor').addClass('opened');
-      $('#project-load').hide();
-    });
-
-    return Pontoon.init(window, true);
+    return initializeWithoutWebsite();
   }
 
   // Initialize Pontoon for projects with in-place translation support
@@ -121,51 +158,21 @@ $(function() {
   var projectWindow = $('#source')[0].contentWindow;
   window.addEventListener("message", receiveMessage, false);
 
-  // Show error message if no callback for 10 seconds: Pontoon/iframe not supported, 404…
   var i = 0,
       interval = setInterval(function() {
         if (i < 100) {
           i++;
-          if (Pontoon.app) { // Set in Pontoon.init() which is called on "supported"
+          // Set in Pontoon.init(), which is called on READY
+          if (Pontoon.app) {
             clearInterval(interval);
+            return attachResizeHandlers();
           }
         } else {
+          // If no READY call in 10 seconds
           clearInterval(interval);
-          var locale = $('#server').data('locale').code.replace(".", "\\.").replace("@", "\\@"),
-              project = $('#server').data('slug'),
-              error = 'Oops, website is not supported by Pontoon.';
-          window.location = '/translate/error/?locale=' + locale + '&project=' + project + '&error=' + error;
+          $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
+          window.removeEventListener("message", receiveMessage, false);
+          return initializeWithoutWebsite();
         }
       }, 100);
-
-  // Resize iframe with window
-  $(window).resize(function () {
-    resizeIframe();
-    Pontoon.common.postMessage("RESIZE");
-  });
-
-  // Resize sidebar and iframe
-  $('#drag').bind('mousedown', function (e) {
-    e.preventDefault();
-
-    var left = $('#sidebar'),
-        right = $('#source'),
-        data = {
-          left: left,
-          right: right,
-          leftWidth: left.width(),
-          rightWidth: right.width(),
-          leftMin: 350,
-          leftMax: $(window).width(),
-          position: e.pageX,
-          advanced: Pontoon.app.advanced
-        };
-
-    $('#iframe-cover').show().width(right.width()); // iframe fix
-    $('#editor:not(".opened")').hide();
-
-    $(document)
-      .bind('mousemove', { initial: data }, mouseMoveHandler)
-      .bind('mouseup', { initial: data }, mouseUpHandler);
-  });
 });
