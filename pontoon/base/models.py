@@ -149,6 +149,7 @@ class Translation(models.Model):
     plural_form = models.SmallIntegerField(null=True, blank=True)
     date = models.DateTimeField()
     approved = models.BooleanField(default=False)
+    fuzzy = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.string

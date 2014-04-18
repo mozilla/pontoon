@@ -224,17 +224,21 @@ def _save_entity(project, string, string_plural="",
     e.save()
 
 
-def _save_translation(entity, locale, string, plural_form=None):
+def _save_translation(entity, locale, string, plural_form=None, fuzzy=False):
     """Admin interface: save new or update existing translation in DB."""
+
+    approved = not fuzzy
 
     # Update existing translation if different from repository
     try:
         t = Translation.objects.get(entity=entity, locale=locale,
                                     plural_form=plural_form, approved=True)
-        if t.string != string:
+        if t.string != string or t.fuzzy != fuzzy:
             t.string = string
             t.user = None
             t.date = datetime.datetime.now()
+            t.approved = approved
+            t.fuzzy = fuzzy
             t.save()
 
     # Save new translation if it doesn's exist yet
@@ -242,7 +246,7 @@ def _save_translation(entity, locale, string, plural_form=None):
         t = Translation(
             entity=entity, locale=locale, string=string,
             plural_form=plural_form, date=datetime.datetime.now(),
-            approved=True)
+            approved=approved, fuzzy=fuzzy)
         t.save()
 
 
@@ -363,7 +367,7 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
                                      comment=entry.comment,
                                      source=entry.occurrences)
             elif translations:
-                for entry in po:
+                for entry in (po.translated_entries() + po.fuzzy_entries()):
                     if not entry.obsolete:
                         # Entities without plurals
                         if len(entry.msgstr) > 0:
@@ -373,7 +377,9 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
                                 _save_translation(
                                     entity=e,
                                     locale=locale,
-                                    string=entry.msgstr)
+                                    string=entry.msgstr,
+                                    fuzzy='fuzzy' in entry.flags)
+
                             except Entity.DoesNotExist:
                                 continue
 
@@ -387,7 +393,9 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
                                         entity=e,
                                         locale=locale,
                                         string=entry.msgstr_plural[k],
-                                        plural_form=k)
+                                        plural_form=k,
+                                        fuzzy='fuzzy' in entry.flags)
+
                             except Entity.DoesNotExist:
                                 continue
 
