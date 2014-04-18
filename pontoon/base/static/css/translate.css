@@ -102,6 +102,12 @@
   content: "";
 }
 
+#pontoon .fuzzy .status:before {
+  color: #FED271;
+  content: "";
+  margin-left: -1px;
+}
+
 #pontoon .approved .status:before {
   color: #7BC876;
   content: "";

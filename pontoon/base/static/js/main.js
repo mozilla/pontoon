@@ -540,17 +540,20 @@ var Pontoon = (function () {
 
 
     /*
-     * Get entity status ('translated' or 'approved' or '')
+     * Get entity status: 'translated', 'approved', 'fuzzy', ''
      *
      * entity Entity
      */
     getEntityStatus: function (entity) {
       var translation = entity.translation,
-          approved = translated = 0;
+          approved = translated = fuzzy = 0;
 
       for (i=0; i<translation.length; i++) {
         if (entity.translation[i].approved) {
           approved++;
+        }
+        if (entity.translation[i].fuzzy) {
+          fuzzy++;
         }
         if (entity.translation[i].string !== '') {
           translated++;
@@ -559,6 +562,8 @@ var Pontoon = (function () {
 
       if (i === approved) {
         return 'approved';
+      } else if (i === fuzzy) {
+        return 'fuzzy';
       } else if (i === translated) {
         return 'translated';
       }

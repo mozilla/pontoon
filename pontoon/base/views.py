@@ -212,6 +212,7 @@ def _get_entities(project, locale, page=None):
             translation_array.append({
                 "string": translation.string,
                 "approved": translation.approved,
+                "fuzzy": translation.fuzzy,
             })
 
         # Pluralized entities
@@ -222,6 +223,7 @@ def _get_entities(project, locale, page=None):
                 translation_array.append({
                     "string": translation.string,
                     "approved": translation.approved,
+                    "fuzzy": translation.fuzzy,
                 })
 
         obj = e.serialize()
