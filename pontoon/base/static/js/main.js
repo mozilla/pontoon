@@ -631,6 +631,11 @@ var Pontoon = (function () {
             .removeClass('limited').hide();
           break;
 
+        case "fuzzy":
+          list.find('.entity:not(".fuzzy")')
+            .removeClass('limited').hide();
+          break;
+
         case "translated":
           list.find('.entity:not(".translated")')
             .removeClass('limited').hide();
