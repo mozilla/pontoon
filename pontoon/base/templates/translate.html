@@ -124,13 +124,14 @@
               {% if perms.base.can_localize %}
                 {% if project.repository_type in ('git', 'hg', 'svn') %}
                 <li class="repository">Commit to repository</li>
+                <li class="horizontal-separator"></li>
                 {% endif %}
 
                 {% if project.transifex_project and project.transifex_resource %}
                 <li class="transifex">Save to Transifex</li>
+                <li class="horizontal-separator"></li>
                 {% endif %}
 
-                <li class="horizontal-separator"></li>
               {% endif %}
             {% endif %}
 
