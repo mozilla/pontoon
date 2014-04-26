@@ -428,7 +428,7 @@ var Pontoon = (function () {
     openEditor: function (entity) {
       $("#editor")[0].entity = entity;
 
-      // Metadata: comments, sources
+      // Metadata: comments, sources, keys
       $('#metadata').empty().hide();
       if (entity.comment) {
         $('#metadata').html('<span id="comment">' + entity.comment + '</span>').show();
@@ -442,6 +442,9 @@ var Pontoon = (function () {
         } else {
           $('#metadata').append('<span>' + entity.source + '</span>');
         }
+      }
+      if (entity.key) {
+        $('#metadata').append('<span>Key: ' + entity.key + '</span>');
       }
 
       // Original string and plurals
