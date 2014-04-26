@@ -730,76 +730,73 @@ def update_translation(request, template=None):
         else:
             user = None
 
-    if string == '':
-        return HttpResponse("Empty translations cannot be submitted.")
-    else:
-        can_localize = request.user.has_perm('base.can_localize')
-        translations = Translation.objects.filter(
+    can_localize = request.user.has_perm('base.can_localize')
+    translations = Translation.objects.filter(
+        entity=e, locale=l, plural_form=plural_form)
+
+    # Translations exist
+    if len(translations) > 0:
+        # Same translation exist
+        for t in translations:
+            if t.string == string:
+                # If added by privileged user, approve it
+                if can_localize:
+                    warnings = _quality_check(original, string, ignore)
+                    if warnings:
+                        return warnings
+
+                    _unset_approved(translations)
+                    t.approved = True
+                    t.save()
+
+                    return HttpResponse(json.dumps({
+                        'type': 'updated',
+                        'approved': can_localize,
+                        'translation': t.string,
+                    }), mimetype='application/json')
+                else:
+                    return HttpResponse("Same translation already exist.")
+
+        # Different translation added
+        warnings = _quality_check(original, string, ignore)
+        if warnings:
+            return warnings
+
+        if can_localize:
+            _unset_approved(translations)
+
+        t = Translation(
+            entity=e, locale=l, user=user, string=string,
+            plural_form=plural_form, date=datetime.datetime.now(),
+            approved=can_localize)
+        t.save()
+
+        active = _get_translation(
             entity=e, locale=l, plural_form=plural_form)
 
-        # Translations exist
-        if len(translations) > 0:
-            # Same translation exist
-            for t in translations:
-                if t.string == string:
-                    # If added by privileged user, approve it
-                    if can_localize:
-                        warnings = _quality_check(original, string, ignore)
-                        if warnings:
-                            return warnings
+        return HttpResponse(json.dumps({
+            'type': 'added',
+            'approved': active.approved,
+            'translation': active.string,
+        }), mimetype='application/json')
 
-                        _unset_approved(translations)
-                        t.approved = True
-                        t.save()
+    # No translations saved yet
+    else:
+        warnings = _quality_check(original, string, ignore)
+        if warnings:
+            return warnings
 
-                        return HttpResponse(json.dumps({
-                            'type': 'updated',
-                            'approved': can_localize,
-                            'translation': t.string,
-                        }), mimetype='application/json')
-                    else:
-                        return HttpResponse("Same translation already exist.")
+        t = Translation(
+            entity=e, locale=l, user=user, string=string,
+            plural_form=plural_form, date=datetime.datetime.now(),
+            approved=can_localize)
+        t.save()
 
-            # Different translation added
-            warnings = _quality_check(original, string, ignore)
-            if warnings:
-                return warnings
-
-            if can_localize:
-                _unset_approved(translations)
-
-            t = Translation(
-                entity=e, locale=l, user=user, string=string,
-                plural_form=plural_form, date=datetime.datetime.now(),
-                approved=can_localize)
-            t.save()
-
-            active = _get_translation(
-                entity=e, locale=l, plural_form=plural_form)
-
-            return HttpResponse(json.dumps({
-                'type': 'added',
-                'approved': active.approved,
-                'translation': active.string,
-            }), mimetype='application/json')
-
-        # No translations saved yet
-        else:
-            warnings = _quality_check(original, string, ignore)
-            if warnings:
-                return warnings
-
-            t = Translation(
-                entity=e, locale=l, user=user, string=string,
-                plural_form=plural_form, date=datetime.datetime.now(),
-                approved=can_localize)
-            t.save()
-
-            return HttpResponse(json.dumps({
-                'type': 'saved',
-                'approved': can_localize,
-                'translation': t.string,
-            }), mimetype='application/json')
+        return HttpResponse(json.dumps({
+            'type': 'saved',
+            'approved': can_localize,
+            'translation': t.string,
+        }), mimetype='application/json')
 
 
 def machine_translation(request):
