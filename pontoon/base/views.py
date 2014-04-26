@@ -199,8 +199,10 @@ def _get_entities(project, locale, page=None):
     log.debug("Load all project entities and translations.")
 
     entities = Entity.objects.filter(project=project)
+
+    # Firefox OS Hack
     if page is not None and entities[0].source != '':
-        entities = entities.filter(source__endswith=page + '.properties')
+        entities = entities.filter(source__contains='/' + page + '/')
 
     entities_array = []
     for e in entities:
@@ -327,7 +329,7 @@ def translate_project(request, locale, slug, page=None,
 
     # Get entities
     if page is not None:
-        page = page.lower().replace(" ", "")
+        page = page.lower().replace(" ", "").replace(".", "")
     data['entities'] = json.dumps(_get_entities(p, l, page))
 
     return render(request, template, data)
