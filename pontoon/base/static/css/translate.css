@@ -518,6 +518,7 @@
 }
 
 #pontoon #entitylist > .wrapper > ul > li p {
+  height: 22px;
   line-height: 22px;
   overflow: hidden;
   text-overflow: ellipsis;
