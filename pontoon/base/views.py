@@ -1277,20 +1277,28 @@ def download(request, template=None):
 
     try:
         format = request.POST['type']
-        content = request.POST['content']
         locale = request.POST['locale']
+        project = request.POST['project']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         raise Http404
 
-    filename = locale
+    if format in ('html', 'json'):
+        try:
+            content = request.POST['content']
+        except MultiValueDictKeyError as e:
+            log.error(str(e))
+            raise Http404
+
+    p = Project.objects.get(pk=project)
+    filename = '%s-%s' % (p.slug, locale)
     response = HttpResponse()
     if format == 'html':
         response['Content-Type'] = 'text/html'
     elif format == 'json':
         response['Content-Type'] = 'application/json'
     elif format == 'zip':
-        content = _generate_zip(content, locale)
+        content = _generate_zip(project, locale)
         response['Content-Type'] = 'application/x-zip-compressed'
 
     response.content = content

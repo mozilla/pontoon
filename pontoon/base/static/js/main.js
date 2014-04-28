@@ -16,7 +16,8 @@ var Pontoon = (function () {
       var self = this,
           params = {
             type: type,
-            locale: this.locale.code
+            locale: this.locale.code,
+            project: this.project.pk
           };
 
       function strip(entities) {
@@ -60,7 +61,6 @@ var Pontoon = (function () {
         download(params);
 
       } else if (type === "zip") {
-        params.content = self.project.pk;
         download(params);
 
       } else if (type === "transifex") {
