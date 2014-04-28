@@ -631,7 +631,6 @@
   display: none;
   font-size: 12px;
   font-style: italic;
-  margin-bottom: 5px;
 }
 
 #pontoon #metadata span {
@@ -645,11 +644,7 @@
 
 #pontoon #metadata .details {
   color: #7BC876;
-}
-
-#pontoon #source-pane.pluralized #metadata .details {
   float: right;
-  margin-top: -1px;
 }
 
 #pontoon #source-pane h2 {
@@ -657,6 +652,7 @@
   display: none;
   font-size: 11px;
   line-height: 11px;
+  margin-top: 6px;
 }
 
 #pontoon #source-pane.pluralized h2 {
