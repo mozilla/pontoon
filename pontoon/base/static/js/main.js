@@ -751,7 +751,7 @@ var Pontoon = (function () {
         case "previous":
           var prev = $(entitySelector).eq(index - 1);
           if (prev.length === 0) {
-            prev = $('#entitylist .wrapper ul > li:last');
+            prev = $(entitySelector + ':last');
           }
           var newEntity = prev[0].entity;
           if (newEntity.body || entity.body) {
@@ -765,7 +765,7 @@ var Pontoon = (function () {
         case "next":
           var next = $(entitySelector).eq(index + 1);
           if (next.length === 0) {
-            next = $('#entitylist .wrapper ul > li:first');
+            next = $(entitySelector + ':first');
           }
           var newEntity = next[0].entity;
           if (newEntity.body || entity.body) {
