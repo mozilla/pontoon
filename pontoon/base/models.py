@@ -107,7 +107,7 @@ class Project(models.Model):
 class Subpage(models.Model):
     project = models.ForeignKey(Project)
     name = models.CharField(max_length=128)
-    url = models.URLField("URL")
+    url = models.URLField("URL", blank=True)  # Firefox OS Hack
 
     def __unicode__(self):
         return self.name
