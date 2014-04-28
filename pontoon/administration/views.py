@@ -358,26 +358,29 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
         try:
             log.debug(path)
             po = polib.pofile(path)
+            escape = polib.escape
 
             if locale.code == source_locale:
                 for entry in po:
                     if not entry.obsolete:
-                        _save_entity(project=project, string=entry.msgid,
-                                     string_plural=entry.msgid_plural,
+                        _save_entity(project=project,
+                                     string=escape(entry.msgid),
+                                     string_plural=escape(entry.msgid_plural),
                                      comment=entry.comment,
                                      source=entry.occurrences)
             elif translations:
                 for entry in (po.translated_entries() + po.fuzzy_entries()):
                     if not entry.obsolete:
+
                         # Entities without plurals
-                        if len(entry.msgstr) > 0:
+                        if len(escape(entry.msgstr)) > 0:
                             try:
-                                e = Entity.objects.get(
-                                    project=project, string=entry.msgid)
+                                e = Entity.objects.get(project=project,
+                                    string=escape(entry.msgid))
                                 _save_translation(
                                     entity=e,
                                     locale=locale,
-                                    string=entry.msgstr,
+                                    string=escape(entry.msgstr),
                                     fuzzy='fuzzy' in entry.flags)
 
                             except Entity.DoesNotExist:
@@ -386,13 +389,13 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
                         # Pluralized entities
                         elif len(entry.msgstr_plural) > 0:
                             try:
-                                e = Entity.objects.get(
-                                    project=project, string=entry.msgid)
+                                e = Entity.objects.get(project=project,
+                                    string=escape(entry.msgid))
                                 for k in entry.msgstr_plural:
                                     _save_translation(
                                         entity=e,
                                         locale=locale,
-                                        string=entry.msgstr_plural[k],
+                                        string=escape(entry.msgstr_plural[k]),
                                         plural_form=k,
                                         fuzzy='fuzzy' in entry.flags)
 

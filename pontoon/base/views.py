@@ -1062,13 +1062,13 @@ def _update_files(p, locale, locale_repository_path):
             newest = Translation()
 
             for entity in entities:
-                entry = po.find(entity.string)
+                entry = po.find(polib.unescape(entity.string))
                 if entry:
                     if not entry.msgid_plural:
                         translation = _get_translation(
                             entity=entity, locale=locale)
                         if translation.string != '':
-                            entry.msgstr = translation.string
+                            entry.msgstr = polib.unescape(translation.string)
                             if translation.date > date:
                                 date = translation.date
                                 newest = translation
@@ -1083,7 +1083,7 @@ def _update_files(p, locale, locale_repository_path):
                                     plural_form=i)
                                 if translation.string != '':
                                     entry.msgstr_plural[unicode(i)] = \
-                                        translation.string
+                                        polib.unescape(translation.string)
                                     if translation.date > date:
                                         date = translation.date
                                         newest = translation
