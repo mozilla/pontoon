@@ -739,7 +739,7 @@ var Pontoon = (function () {
 
         var sec = $(this).attr('id'),
             entity = $('#editor')[0].entity,
-            entitySelector = '#entitylist .entity',
+            entitySelector = '#entitylist .entity:visible',
             index = entity.ui.index(entitySelector);
 
         switch (sec) {
