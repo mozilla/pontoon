@@ -1076,15 +1076,17 @@ var Pontoon = (function () {
 
 
     /*
-     * Update entity in the main UI
+     * Update entity in the entity list
      * 
      * entity Entity
      */
     updateEntityUI: function (entity) {
       entity.ui.removeClass('translated approved');
 
-      var status = this.getEntityStatus(entity);
+      var status = this.getEntityStatus(entity),
+          translation = entity.translation[0].string;
       entity.ui.addClass(status);
+      entity.ui.find('.translation-string').html(translation);
 
       this.updateProgress();
     },
