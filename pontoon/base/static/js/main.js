@@ -597,7 +597,7 @@ var Pontoon = (function () {
 
         ul
           .find('.limited').show()
-            .find('.source-string' + ':not(":containsi("' + val + '")")')
+            .find('.string-wrapper' + ':not(":containsi("' + val + '")")')
           .parent().hide();
 
         if ($('.uneditables li:visible').length === 0) {
@@ -663,7 +663,13 @@ var Pontoon = (function () {
           (status ? ' ' + status : '') +
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status fa"></span>' +
-          '<p class="source-string">' + self.doNotRender(this.original) + '</p>' +
+          '<p class="string-wrapper">' +
+            '<span class="source-string">' +
+              self.doNotRender(this.original) +
+            '</span><span class="translation-string">' +
+              self.doNotRender(this.translation[0].string) +
+            '</span>' +
+          '</p>' +
           '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
         '</li>', self.app.win);
 

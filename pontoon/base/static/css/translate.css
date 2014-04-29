@@ -520,9 +520,20 @@
 #pontoon #entitylist > .wrapper > ul > li p {
   height: 22px;
   line-height: 22px;
+}
+
+#pontoon #entitylist > .wrapper > ul > li p span {
+  display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  width: 49%;
+}
+
+#pontoon #entitylist > .wrapper > ul > li p span.translation-string {
+  color: #AAAAAA;
+  font-style: italic;
+  margin-left: 2%;
 }
 
 #pontoon #entitylist h2  {
