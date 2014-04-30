@@ -318,7 +318,7 @@
         // Match l10n comment nodes with DB data
         $(Pontoon.project.entities).each(function(i, entity) {
           // Renedered text could be different than source
-          $('body').append('<div id="pontoon-string" style="display: none">' + this.original + '</div>');
+          $('body').append('<div id="pontoon-string">' + this.original + '</div>');
 
           var parent = l10n[$('#pontoon-string').html()],
               translation = this.translation[0].string;
