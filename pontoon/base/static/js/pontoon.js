@@ -591,7 +591,6 @@
 
       // Wait for main code messages
       window.addEventListener("message", receiveMessage, false);
-      console.log(Pontoon.app.path);
       // Inject toolbar stylesheet
       $('<style>', {
         id: 'pontoon-stylesheet',
