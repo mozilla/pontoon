@@ -630,7 +630,7 @@ var Pontoon = (function () {
         switch (type) {
 
         case "untranslated":
-          list.find('.entity.approved, .entity.translated')
+          list.find('.entity.approved, .entity.translated, .entity.fuzzy')
             .removeClass('limited').hide();
           break;
 
