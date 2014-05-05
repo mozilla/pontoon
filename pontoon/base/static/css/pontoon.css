@@ -2,6 +2,13 @@
   outline: 1px dashed #000000;
 }
 
+/* Prevent converting white-spaces at the beginning or
+ * at the end of the node to &nbsp; and <br>
+ */
+.pontoon-hovered[contenteditable=true] {
+  white-space: pre-wrap;
+}
+
 .pontoon-editable-toolbar {
   background-color: #EBEBEB;
   position: absolute;
