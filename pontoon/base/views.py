@@ -1073,7 +1073,8 @@ def _update_files(p, locale, locale_repository_path):
                             if translation.date > date:
                                 date = translation.date
                                 newest = translation
-                            if 'fuzzy' in entry.flags:
+                            if ('fuzzy' in entry.flags and
+                               not translation.fuzzy):
                                 entry.flags.remove('fuzzy')
 
                     else:
@@ -1088,7 +1089,8 @@ def _update_files(p, locale, locale_repository_path):
                                     if translation.date > date:
                                         date = translation.date
                                         newest = translation
-                                    if 'fuzzy' in entry.flags:
+                                    if ('fuzzy' in entry.flags and
+                                       not translation.fuzzy):
                                         entry.flags.remove('fuzzy')
                             # Remove obsolete plural forms if exist
                             else:
