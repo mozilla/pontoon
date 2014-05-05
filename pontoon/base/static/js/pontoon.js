@@ -226,7 +226,7 @@
 
         $(':not("script, style, iframe, noscript, [translate=\"no\"]")')
           .children().each(function() {
-            elements[$(this).html()] = {
+            elements[$.trim($(this).html())] = {
               node: $(this),
               body: !$(this).parents('head').length
             }
