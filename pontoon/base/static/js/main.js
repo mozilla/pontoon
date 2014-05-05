@@ -1086,7 +1086,8 @@ var Pontoon = (function () {
       var status = this.getEntityStatus(entity),
           translation = entity.translation[0].string;
       entity.ui.addClass(status);
-      entity.ui.find('.translation-string').html(translation);
+      entity.ui.find('.translation-string')
+          .html(this.doNotRender(translation));
 
       this.updateProgress();
     },
