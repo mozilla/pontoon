@@ -18,6 +18,7 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set it u
 3. Configure the [settings](#local-settings):
  * `cp settings/local.py-dist settings/local.py`
 4. Set up the database:
+ * `mysql.server start`
  * `mysql -u root -e 'CREATE DATABASE pontoon CHARACTER SET utf8;'`
  * `./manage.py syncdb --noinput && ./manage.py migrate`
  * `mysql -u root pontoon -e 'ALTER TABLE base_entity MODIFY string LONGTEXT COLLATE utf8_bin;'`
