@@ -14,7 +14,6 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set it u
 2. Create and set up the [virtual environment](http://www.virtualenv.org/en/latest/index.html):
  * `virtualenv --no-site-packages env`
  * `source env/bin/activate`
- * [Mac users](https://bugzilla.mozilla.org/show_bug.cgi?id=1005443): `export ARCHFLAGS="-Wno-error=unused-command-line-argument-hard-error-in-future"`
  * `pip install -r requirements/compiled.txt -r requirements/prod.txt`
 3. Configure the [settings](#local-settings):
  * `cp settings/local.py-dist settings/local.py`
@@ -22,16 +21,13 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set it u
  * `mysql.server start`
  * `mysql -u root -e 'CREATE DATABASE pontoon CHARACTER SET utf8;'`
  * `./manage.py syncdb --noinput && ./manage.py migrate`
-
-__Mac users__ : _In case of a_ `ValueError: expected only letters, got 'utf-8'`
-
-_Run :_ `export LC_CTYPE=en_US` _before running_ `./manage.py syncdb --noinput && ./manage.py migrate`
-
  * `mysql -u root pontoon -e 'ALTER TABLE base_entity MODIFY string LONGTEXT COLLATE utf8_bin;'`
 5. Run the development server:
  * `./manage.py runserver`
 
 And that's it, just point your web browser to [http://localhost:8000](http://localhost:8000) and Pontoon's homepage should apear.
+
+__Mac users__: please see workarounds in case you run into issues with [installing requirements](/../../issues/16) or [syncing database](/../../issues/18).
 
 Test project
 ------------
