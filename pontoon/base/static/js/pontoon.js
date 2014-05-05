@@ -563,7 +563,7 @@
                     inner = $("html").clone();
                 // Remove Pontoon-content
                 inner
-                  .find("#pontoon-stylesheet").remove().end()
+                  .find("link[href*='pontoon.css']").remove().end()
                   .find("script[src*='pontoon']").remove().end()
                   .find("script[src*='jquery.min.js']").remove().end()
                   .find(".pontoon-remove").remove().end()
@@ -592,53 +592,9 @@
       // Wait for main code messages
       window.addEventListener("message", receiveMessage, false);
       // Inject toolbar stylesheet
-      $('<style>', {
-        id: 'pontoon-stylesheet',
-        type: 'text/css',
-        text: ' \
-          .pontoon-hovered { \
-            outline: 1px dashed #000000; \
-          } \
-          \
-          .pontoon-editable-toolbar { \
-            background-color: #EBEBEB; \
-            position: absolute; \
-            top: 0; \
-            left: 0; \
-            z-index: 999999999; \
-            display: none; \
-            border-top: 1px dashed #000000; \
-            border-left: 1px dashed #000000; \
-            border-right: 1px dashed #000000; \
-          } \
-          \
-          .pontoon-editable-toolbar.bottom { \
-            border-top: none; \
-            border-bottom: 1px dashed #000000; \
-          } \
-          \
-          .pontoon-editable-toolbar a { \
-            background: transparent none 0 0 no-repeat; \
-            display: block; \
-            width: 16px; \
-            height: 16px; \
-            float: left; \
-            margin: 2px; \
-          } \
-          .pontoon-editable-toolbar .edit { \
-            background-image: url(' + Pontoon.app.path + 'static/img/edit.png); \
-          } \
-          \
-          .pontoon-editable-toolbar .save { \
-            background-image: url(' + Pontoon.app.path + 'static/img/save.png); \
-            display: none; \
-          } \
-          \
-          .pontoon-editable-toolbar .cancel { \
-            background-image: url(' + Pontoon.app.path + 'static/img/cancel.png); \
-            display: none; \
-          } \
-        '
+      $('<link>', {
+        rel: 'stylesheet',
+        href: Pontoon.app.path + 'static/css/pontoon.css'
       }).appendTo('head');
 
       // Disable links
