@@ -14,6 +14,7 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set it u
 2. Create and set up the [virtual environment](http://www.virtualenv.org/en/latest/index.html):
  * `virtualenv --no-site-packages env`
  * `source env/bin/activate`
+ * [Mac users](https://bugzilla.mozilla.org/show_bug.cgi?id=1005443): `export ARCHFLAGS="-Wno-error=unused-command-line-argument-hard-error-in-future"`
  * `pip install -r requirements/compiled.txt -r requirements/prod.txt`
 3. Configure the [settings](#local-settings):
  * `cp settings/local.py-dist settings/local.py`
