@@ -37,6 +37,7 @@ from django.http import (
 from django.shortcuts import render
 from django.templatetags.static import static
 from django.utils.datastructures import MultiValueDictKeyError
+from django.utils.encoding import smart_text
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 
@@ -1066,7 +1067,7 @@ def _update_files(p, locale, locale_repository_path):
             newest = Translation()
 
             for entity in entities:
-                entry = po.find(polib.unescape(entity.string))
+                entry = po.find(polib.unescape(smart_text(entity.string)))
                 if entry:
                     if not entry.msgid_plural:
                         translation = _get_translation(
