@@ -1036,8 +1036,7 @@ def _get_locale_repository_path(project, locale):
         for dirname in fnmatch.filter(dirnames, locale.replace('-', '_')):
             return os.path.join(root, dirname)
 
-    # Fallback to project's repository_path
-    return path
+    log.debug("Locale repository path not found.")
 
 
 def _get_locale_paths(path, format):
@@ -1236,29 +1235,24 @@ def _update_files(p, locale, locale_repository_path):
                 log.debug("File updated: " + path)
 
 
-def _generate_zip(pk, locale):
+def _generate_zip(project, locale, path):
     """
     Generate .zip file of all project files for the specified locale.
 
     Args:
-        pk: Primary key of the project
+        project: Project
         locale: Locale code
+        path: Locale repository path
     Returns:
         A string for generated ZIP content.
     """
-
-    try:
-        p = Project.objects.get(pk=pk)
-    except Project.DoesNotExist as e:
-        log.error(e)
 
     try:
         locale = Locale.objects.get(code=locale)
     except Locale.DoesNotExist as e:
         log.error(e)
 
-    path = _get_locale_repository_path(p, locale.code)
-    _update_files(p, locale, path)
+    _update_files(project, locale, path)
 
     s = StringIO.StringIO()
     zf = zipfile.ZipFile(s, "w")
@@ -1296,16 +1290,28 @@ def download(request, template=None):
         except MultiValueDictKeyError as e:
             log.error(str(e))
             raise Http404
+    try:
+        p = Project.objects.get(pk=project)
+    except Project.DoesNotExist as e:
+        log.error(e)
+        raise Http404
 
-    p = Project.objects.get(pk=project)
     filename = '%s-%s' % (p.slug, locale)
     response = HttpResponse()
+
     if format == 'html':
         response['Content-Type'] = 'text/html'
+
     elif format == 'json':
         response['Content-Type'] = 'application/json'
+
     elif format == 'zip':
-        content = _generate_zip(project, locale)
+        path = _get_locale_repository_path(p, locale)
+
+        if not path:
+            raise Http404
+
+        content = _generate_zip(p, locale, path)
         response['Content-Type'] = 'application/x-zip-compressed'
 
     response.content = content
@@ -1346,6 +1352,13 @@ def commit_to_repository(request, template=None):
 
     project = p.name
     path = _get_locale_repository_path(p, locale.code)
+
+    if not path:
+        return HttpResponse(json.dumps({
+            'type': 'error',
+            'message': 'Sorry, repository path not found.',
+        }), mimetype='application/json')
+
     message = 'Pontoon: update %s localization of %s' % (locale.code, project)
 
     _update_files(p, locale, path)
