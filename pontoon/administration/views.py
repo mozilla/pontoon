@@ -255,12 +255,28 @@ def _get_locale_paths(source_paths, source_directory, locale_code):
 
     locale_paths = []
     for sp in source_paths:
+
+        # Also include paths to source files
         if source_directory == locale_code:
             path = sp
+            locale_paths.append(path)
+
         else:
             path = sp.replace('/' + source_directory + '/',
-                              '/' + locale_code + '/').rstrip("t")
-        locale_paths.append(path)
+                              '/' + locale_code + '/', 1).rstrip("t")
+
+            # Only include if path exists
+            if os.path.exists(path):
+                locale_paths.append(path)
+
+            # Also check for locale variants with underscore, e.g. de_AT
+            elif locale_code.find('-') != -1:
+                path = path.replace('/' + locale_code + '/',
+                                  '/' + locale_code.replace('-', '_') + '/', 1)
+
+                if os.path.exists(path):
+                    locale_paths.append(path)
+
     return locale_paths
 
 

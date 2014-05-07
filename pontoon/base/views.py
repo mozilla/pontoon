@@ -1032,6 +1032,10 @@ def _get_locale_repository_path(project, locale):
         for dirname in fnmatch.filter(dirnames, locale):
             return os.path.join(root, dirname)
 
+        # Also check for locale variants with underscore, e.g. de_AT
+        for dirname in fnmatch.filter(dirnames, locale.replace('-', '_')):
+            return os.path.join(root, dirname)
+
     # Fallback to project's repository_path
     return path
 
