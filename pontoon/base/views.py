@@ -955,7 +955,12 @@ def amagama(request):
         log.error(str(e))
         return HttpResponse("error")
 
-    text = urllib.quote(text)
+    try:
+        text = urllib.quote(text.encode('utf-8'))
+    except KeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
     url = "http://amagama.locamotion.org/tmserver" \
           "/en/%s/unit/%s?max_candidates=%s" \
           % (locale, text, 5)
