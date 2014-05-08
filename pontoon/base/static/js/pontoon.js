@@ -662,9 +662,6 @@
             }
           }, 1000);
 
-        } else if (Pontoon.project.format === 'lang') {
-          loadEntitiesMatch();
-
         } else {
           var hooks = false;
 
