@@ -376,7 +376,11 @@ var Pontoon = (function () {
       var self = this,
           list = $('#history ul').empty();
 
-      $.ajax({
+      if (self.XHRgetHistory) {
+        self.XHRgetHistory.abort();
+      }
+
+      self.XHRgetHistory = $.ajax({
         url: 'get-history/',
         data: {
           entity: entity.pk,
