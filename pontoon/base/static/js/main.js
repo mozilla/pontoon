@@ -836,6 +836,11 @@ var Pontoon = (function () {
       $('#translation').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
         var key = e.which;
 
+        // Prevent triggering unnecessary events
+        if (!$("#editor").is('.opened')) {
+          return false;
+        }
+
         // Enter: save translation
         if (key === 13 && !e.shiftKey) {
           $('#save').click();
