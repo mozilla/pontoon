@@ -836,7 +836,7 @@ var Pontoon = (function () {
       $('#translation').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
         var key = e.which;
 
-        // Prevent triggering unnecessary events
+        // Prevent triggering unnecessary events in 1-column layout
         if (!$("#editor").is('.opened')) {
           return false;
         }
@@ -895,11 +895,12 @@ var Pontoon = (function () {
       });
 
       // Do not change anything when cancelled
-      $('#cancel').click(function (e) {
+      $('#cancel').click(function (e, data) {
         e.stopPropagation();
         e.preventDefault();
 
-        var entity = $("#editor")[0].entity;
+        var entity = $("#editor")[0].entity
+            data = data || {};
 
         // Save entity if dirty - cannot be automatically synced with backend
         if (entity.dirty) {
@@ -915,7 +916,8 @@ var Pontoon = (function () {
           .removeClass('opened')
           .css('left', $('#sidebar').width());
 
-        if (entity.body) {
+        // Only if editable and not already handled inplace
+        if (entity.body && !data.inplace) {
           self.common.postMessage("CANCEL");
           self.common.postMessage("UNHOVER", entity.id);
         }
@@ -1405,7 +1407,7 @@ var Pontoon = (function () {
 
         case "INACTIVE":
           if (!Pontoon.app.advanced && $("#editor").is('.opened')) {
-            $('#cancel').click();
+            $('#cancel').trigger('click', [{inplace: true}]);
           }
           break;
 
