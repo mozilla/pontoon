@@ -220,7 +220,7 @@
       /*
        * Match entities and elements with exact same contents
        */
-      function loadEntitiesLang() {
+      function loadEntitiesMatch() {
         var counter = 0,
             elements = {};
 
@@ -307,7 +307,7 @@
        * Match entities and strings prepended with l10n comment nodes
        * Example: <!--l10n-->Hello World
        */
-      function loadEntitiesGettext() {
+      function loadEntitiesHooks() {
         var counter = 0,
             l10n = {};
 
@@ -646,6 +646,7 @@
       // Select appropriate way of loading entities
       var entities = Pontoon.project.entities;
       if (entities.length > 0) {
+
         if (Pontoon.project.format === 'properties') {
           var localized = false;
           window.addEventListener("localized", function() {
@@ -660,10 +661,31 @@
               loadEntitiesWebl10n();
             }
           }, 1000);
+
         } else if (Pontoon.project.format === 'lang') {
-          loadEntitiesLang();
+          loadEntitiesMatch();
+
         } else {
-          loadEntitiesGettext();
+          var hooks = false;
+
+          // Detect hooks
+          $("*").contents().filter(function () {
+            return this.nodeType == 8;
+          }).each(function (i, e) {
+            if (e.nodeValue.indexOf('l10n') !== -1) {
+              hooks = true;
+              return;
+            }
+          });
+
+          // If available, use hooks to detect translatable nodes
+          if (hooks) {
+            loadEntitiesHooks();
+
+          // Otherwise match nodes against entities
+          } else {
+            loadEntitiesMatch();
+          }
         }
       } else {
         loadEntitiesGuess();
