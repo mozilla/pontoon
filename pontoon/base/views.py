@@ -749,6 +749,7 @@ def update_translation(request, template=None):
 
                     _unset_approved(translations)
                     t.approved = True
+                    t.fuzzy = False
                     t.save()
 
                     return HttpResponse(json.dumps({
