@@ -1139,8 +1139,12 @@ var Pontoon = (function () {
               self.common.postMessage("SAVE", translation);
             }
 
+            // Quit
+            if (!$("#editor").is('.opened')) {
+              return;
+
             // Go to next plural form
-            if (pluralForm !== -1 && $("#editor").is('.opened')) {
+            } else if (pluralForm !== -1 && $("#editor").is('.opened')) {
               var next = $('#plural-tabs li:visible')
                 .eq(pluralForm + 1).find('a');
 
