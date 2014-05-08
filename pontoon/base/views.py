@@ -1182,7 +1182,7 @@ def _update_files(p, locale, locale_repository_path):
                 f.truncate()
                 content = parser.dump_structure(structure)
                 f.write(content)
-                log.debug("File updated: " + locale_paths[0])
+            log.debug("File updated: " + path)
 
     elif p.format == 'ini':
         config = configparser.ConfigParser()
