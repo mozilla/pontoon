@@ -401,7 +401,7 @@
         }
         $(newTarget)
           .addClass('pontoon-hovered')
-          .unbind("dblclick").bind("dblclick", function() {
+          .unbind("dblclick.pontoon").bind("dblclick.pontoon", function() {
             $('.pontoon-editable-toolbar > .edit').click();
           });
         postMessage("HOVER", newTarget.entity.id);
@@ -486,7 +486,9 @@
         if (!target) {
           return;
         }
-        $(target).attr('contentEditable', false);
+        $(target)
+          .attr('contentEditable', false)
+          .unbind("dblclick.pontoon");
       }
 
 
