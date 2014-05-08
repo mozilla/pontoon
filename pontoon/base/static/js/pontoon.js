@@ -264,46 +264,6 @@
 
 
       /**
-       * Match entities and elements with data-l10n-id attribute
-       * https://github.com/fabi1cazenave/webL10n
-       */
-      function loadEntitiesWebl10n() {
-        var counter = 0;
-
-        $(Pontoon.project.entities).each(function(i, entity) {
-          var translation = entity.translation[0].string,
-              split = entity.key.split('.'),
-              key = split[0],
-              attribute = split[1];
-          entity.id = counter;
-
-          $('[data-l10n-id="' + key + '"]').each(function() {
-            if (translation) {
-              if (!attribute) {
-                $(this).html(translation);
-              } else {
-                $(this).attr(attribute, translation);
-              }
-            }
-            if ($(this).parents('head').length === 0 && !$(this).is('input')) {
-              if (!entity.node) {
-                entity.node = [$(this)];
-              } else {
-                entity.node.push($(this));
-              }
-              makeEditable(entity);
-            }
-          });
-
-          counter++;
-        });
-
-        renderHandle();
-      }
-
-
-
-      /**
        * Match entities and strings prepended with l10n comment nodes
        * Example: <!--l10n-->Hello World
        */
@@ -349,6 +309,46 @@
           });
 
           $('#pontoon-string').remove();
+          counter++;
+        });
+
+        renderHandle();
+      }
+
+
+
+      /**
+       * Match entities and elements with data-l10n-id attribute
+       * https://github.com/fabi1cazenave/webL10n
+       */
+      function loadEntitiesWebl10n() {
+        var counter = 0;
+
+        $(Pontoon.project.entities).each(function(i, entity) {
+          var translation = entity.translation[0].string,
+              split = entity.key.split('.'),
+              key = split[0],
+              attribute = split[1];
+          entity.id = counter;
+
+          $('[data-l10n-id="' + key + '"]').each(function() {
+            if (translation) {
+              if (!attribute) {
+                $(this).html(translation);
+              } else {
+                $(this).attr(attribute, translation);
+              }
+            }
+            if ($(this).parents('head').length === 0 && !$(this).is('input')) {
+              if (!entity.node) {
+                entity.node = [$(this)];
+              } else {
+                entity.node.push($(this));
+              }
+              makeEditable(entity);
+            }
+          });
+
           counter++;
         });
 
