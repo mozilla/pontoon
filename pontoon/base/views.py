@@ -758,6 +758,21 @@ def update_translation(request, template=None):
                         'translation': t.string,
                     }), mimetype='application/json')
                 else:
+                    # Non-priviliged users can unfuzzy existing translations
+                    if t.fuzzy:
+                        warnings = _quality_check(original, string, ignore)
+                        if warnings:
+                            return warnings
+
+                        t.fuzzy = False
+                        t.save()
+
+                        return HttpResponse(json.dumps({
+                            'type': 'updated',
+                            'approved': can_localize,
+                            'translation': t.string,
+                        }), mimetype='application/json')
+
                     return HttpResponse("Same translation already exist.")
 
         # Different translation added
