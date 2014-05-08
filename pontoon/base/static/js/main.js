@@ -837,7 +837,7 @@ var Pontoon = (function () {
         var key = e.keyCode || e.which;
 
         // Enter: save translation
-        if (key === 13) {
+        if (key === 13 && !e.shiftKey) {
           $('#save').click();
           return false;
         }

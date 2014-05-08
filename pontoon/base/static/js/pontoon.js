@@ -88,7 +88,7 @@
                 next = id + 1,
                 entities = Pontoon.project.entities;
 
-            if (key === 13) { // Enter: confirm translation
+            if (key === 13 && !e.shiftKey) { // Enter: confirm translation
               save.click();
               hideToolbar(target);
               return false;
