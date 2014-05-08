@@ -66,7 +66,7 @@
 
         // Prevent button click with space
         $("button").unbind("keyup.pontoon").bind("keyup.pontoon", function (e) {
-          var key = e.keyCode || e.which;
+          var key = e.which;
           if ($(".pontoon-editable-toolbar .save").is(":visible")) {
             if (key === 32) {
               e.preventDefault();
@@ -76,7 +76,7 @@
 
         // In-place keyboard shortcuts
         $("html").unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
-          var key = e.keyCode || e.which,
+          var key = e.which,
               toolbar = $(".pontoon-editable-toolbar"),
               save = toolbar.find(".save"),
               cancel = toolbar.find(".cancel");

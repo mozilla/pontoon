@@ -834,7 +834,7 @@ var Pontoon = (function () {
 
       // Translate in textarea
       $('#translation').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
-        var key = e.keyCode || e.which;
+        var key = e.which;
 
         // Enter: save translation
         if (key === 13 && !e.shiftKey) {
@@ -1669,7 +1669,7 @@ var Pontoon = (function () {
       // Use arrow keys to move around menu, confirm/close eith Enter/Esc
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         if ($('.menu').is(':visible')) {
-          var key = e.keyCode || e.which,
+          var key = e.which,
               menu = $('.menu:visible'),
               hovered = menu.find('li.hover');
 
@@ -1731,7 +1731,7 @@ var Pontoon = (function () {
           }
         }
         if ($('.popup').is(':visible')) {
-          var key = e.keyCode || e.which,
+          var key = e.which,
               popup = $('.popup:visible');
 
           if (key === 13) { // Enter
