@@ -1092,7 +1092,7 @@ var Pontoon = (function () {
      * entity Entity
      */
     updateEntityUI: function (entity) {
-      entity.ui.removeClass('translated approved');
+      entity.ui.removeClass('translated approved fuzzy');
 
       var status = this.getEntityStatus(entity),
           translation = entity.translation[0].string;
