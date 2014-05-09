@@ -1058,7 +1058,7 @@ def _get_locale_repository_path(project, locale):
         for dirname in fnmatch.filter(dirnames, locale.replace('-', '_')):
             return os.path.join(root, dirname)
 
-    log.debug("Locale repository path not found.")
+    log.error("Locale repository path not found.")
 
 
 def _get_locale_paths(path, format):
@@ -1331,7 +1331,7 @@ def download(request, template=None):
         path = _get_locale_repository_path(p, locale)
 
         if not path:
-            raise Http404
+            path = os.path.join(settings.MEDIA_ROOT, p.repository_type, p.slug)
 
         content = _generate_zip(p, locale, path)
         response['Content-Type'] = 'application/x-zip-compressed'
