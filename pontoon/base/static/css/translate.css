@@ -240,12 +240,19 @@
   padding: 20px 5px;
 }
 
-#pontoon #info #hotkeys span:nth-child(2) {
+#pontoon #info #hotkeys table {
+  width: 100%;
+}
+
+#pontoon #info #hotkeys td:first-child {
+  height: 26px;
+  width: 60%;
+}
+
+#pontoon #info #hotkeys span {
   background: #3F4752;
   border: 1px solid #5E6475;
   border-radius: 2px;
-  float: right;
-  margin-top: -1px;
   padding: 0 4px;
 }
 
