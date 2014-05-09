@@ -934,6 +934,10 @@
   padding-left: 3px;
 }
 
+#pontoon #helpers > section ul li > p {
+  min-height: 22px;
+}
+
 #pontoon #helpers > section#machinery ul li > header .stress {
   padding-right: 3px;
 }
