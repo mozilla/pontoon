@@ -847,11 +847,35 @@ var Pontoon = (function () {
           return false;
         }
 
-        // Esc: cancel
+        // Esc: cancel translation and return to entity list
         if (key === 27) {
           if (!self.app.advanced) {
             $('#cancel').click();
           }
+          return false;
+        }
+
+        // Alt + C: copy from source
+        if (e.altKey && key === 67) {
+          $('#copy').click();
+          return false;
+        }
+
+        // Alt + Backspace: clear translation
+        if (e.altKey && key === 8) {
+          $('#clear').click();
+          return false;
+        }
+
+        // Alt + Down: go to next string
+        if (e.altKey && key === 40) {
+          $('#next').click();
+          return false;
+        }
+
+        // Alt + Up: go to previous string
+        if (e.altKey && key === 38) {
+          $('#previous').click();
           return false;
         }
 
