@@ -1070,14 +1070,17 @@ var Pontoon = (function () {
       var all = $("#entitylist .entity").length,
           translated = $("#entitylist .entity.translated").length,
           approved = $("#entitylist .entity.approved").length,
+          fuzzy = $("#entitylist .entity.fuzzy").length,
           percentTranslated = Math.round(translated * 100 / all),
-          percentApproved = Math.round(approved * 100 / all);
+          percentApproved = Math.round(approved * 100 / all),
+          percentFuzzy = Math.round(fuzzy * 100 / all);
 
       $('#progress .translated').width(percentTranslated + '%');
       $('#progress .approved').width(percentApproved + '%');
+      $('#progress .fuzzy').width(percentFuzzy + '%');
       $('#progress .number').html(approved + '|' + all);
 
-      if (percentTranslated + percentApproved > 50) {
+      if (percentTranslated + percentApproved + percentFuzzy> 50) {
         $('#progress .number').addClass('left');
       } else {
         $('#progress .number').removeClass('left');

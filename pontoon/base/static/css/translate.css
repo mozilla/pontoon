@@ -153,6 +153,10 @@
   background: #7BC876;
 }
 
+#pontoon #progress .graph.fuzzy {
+  background: #FED271;
+}
+
 #pontoon #progress .number {
   color: #FFFFFF;
   font-size: 14px;
