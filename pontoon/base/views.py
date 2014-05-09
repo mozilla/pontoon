@@ -1381,7 +1381,10 @@ def commit_to_repository(request, template=None):
             'message': 'Sorry, repository path not found.',
         }), mimetype='application/json')
 
-    message = 'Pontoon: update %s localization of %s' % (locale.code, project)
+    name = request.user.email if not request.user.first_name else '%s (%s)' \
+        % (request.user.first_name, request.user.email)
+    message = 'Pontoon: Update %s (%s) localization of %s on behalf of %s.' \
+        % (locale.name, locale.code, project, name)
 
     _update_files(p, locale, path)
 
