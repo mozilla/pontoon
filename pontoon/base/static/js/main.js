@@ -1118,6 +1118,17 @@ var Pontoon = (function () {
 
       self.startLoader();
 
+      function gotoEntityListOrNextEntity() {
+        // Go to entity list
+        if (!self.app.advanced && $("#editor").is('.opened')) {
+          $('#cancel').click();
+
+        // Go to next entity
+        } else {
+          $('#next').click();
+        }
+      }
+
       $.ajax({
         url: 'update/',
         type: 'POST',
@@ -1156,17 +1167,14 @@ var Pontoon = (function () {
                 .eq(pluralForm + 1).find('a');
 
               if (next.length === 0) {
-                next = $('#plural-tabs li:first a');
+                gotoEntityListOrNextEntity();
+              } else {
+                next.click();
               }
-              next.click();
 
-            // Go to entity list
-            } else if (!self.app.advanced && $("#editor").is('.opened')) {
-              $('#cancel').click();
-
-            // Go to next entity
+            // Go to entity list or next entity
             } else {
-              $('#next').click();
+              gotoEntityListOrNextEntity();
             }
 
           } else if (data.warnings) {
