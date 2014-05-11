@@ -1039,6 +1039,31 @@ def transvision(request):
         return HttpResponse("error")
 
 
+def _create_missing_files(project, locale, locale_repository_path):
+    """Create missing files."""
+    log.debug("Create missing files.")
+
+    entities_project = Entity.objects.filter(project=project)
+    translations = Translation.objects.filter(
+        entity__in=entities_project, locale=locale)
+
+    entities_pks = translations.values("entity").distinct()
+    entities = Entity.objects.filter(pk__in=entities_pks)
+
+    sources = entities.values_list("source").distinct()
+
+    for source in sources:
+        path = locale_repository_path + source[0]
+        if not os.path.exists(path):
+
+            basedir = os.path.dirname(path)
+            if not os.path.exists(basedir):
+                os.makedirs(basedir)
+
+            open(path, 'a').close()
+            log.debug('File created: %s' % path)
+
+
 def _get_locale_repository_path(project, locale):
     """Get path to locale directory."""
     log.debug("Get path to locale directory.")
@@ -1139,6 +1164,8 @@ def _update_files(p, locale, locale_repository_path):
             log.debug("File updated: " + path)
 
     elif p.format == 'properties':
+        _create_missing_files(p, locale, locale_repository_path)
+
         for path in locale_paths:
             parser = silme.format.properties.PropertiesFormatParser
             with codecs.open(path, 'r+', 'utf-8') as f:
