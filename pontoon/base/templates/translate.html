@@ -136,7 +136,7 @@
               {% endif %}
             {% endif %}
 
-            {% if project.repository_path %}
+            {% if project.repository_path and project.repository_type != 'file' %}
             <li class="zip">Download .zip</li>
             {% endif %}
 

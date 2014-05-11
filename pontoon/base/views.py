@@ -1331,7 +1331,7 @@ def download(request, template=None):
         path = _get_locale_repository_path(p, locale)
 
         if not path:
-            path = os.path.join(settings.MEDIA_ROOT, p.repository_type, p.slug)
+            raise Http404
 
         content = _generate_zip(p, locale, path)
         response['Content-Type'] = 'application/x-zip-compressed'
