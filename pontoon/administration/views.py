@@ -430,7 +430,7 @@ def _extract_properties(project, locale, paths,
     for path in paths:
         try:
             f = open(path)
-            l10nobject = silme.format.properties \
+            structure = silme.format.properties \
                 .PropertiesFormatParser.get_structure(f.read())
 
             locale_code = locale.code
@@ -438,21 +438,21 @@ def _extract_properties(project, locale, paths,
                 locale_code = 'templates'
             short_path = '/' + path.split('/' + locale_code + '/')[-1]
 
-            for line in l10nobject:
-                if isinstance(line, silme.core.entity.Entity):
+            for obj in structure:
+                if isinstance(obj, silme.core.entity.Entity):
                     if locale.code == source_locale:
-                        _save_entity(project=project, string=line.value,
-                                     key=line.id, source=short_path)
+                        _save_entity(project=project, string=obj.value,
+                                     key=obj.id, source=short_path)
                     elif translations:
                         try:
                             e = Entity.objects.get(
                                 project=project,
-                                key=line.id,
+                                key=obj.id,
                                 source=short_path)
                             _save_translation(
                                 entity=e,
                                 locale=locale,
-                                string=line.value)
+                                string=obj.value)
                         except Entity.DoesNotExist:
                             continue
             log.debug("[" + locale.code + "]: " + path + " saved to DB.")
