@@ -1103,9 +1103,9 @@ def _get_locale_paths(path, format):
 
 def _update_files(p, locale, locale_repository_path):
     entities = Entity.objects.filter(project=p)
-    locale_paths = _get_locale_paths(locale_repository_path, p.format)
 
     if p.format == 'po':
+        locale_paths = _get_locale_paths(locale_repository_path, p.format)
         for path in locale_paths:
             po = polib.pofile(path)
             valid_entries = [e for e in po if not e.obsolete]
@@ -1165,6 +1165,7 @@ def _update_files(p, locale, locale_repository_path):
 
     elif p.format == 'properties':
         _create_missing_files(p, locale, locale_repository_path)
+        locale_paths = _get_locale_paths(locale_repository_path, p.format)
 
         for path in locale_paths:
             parser = silme.format.properties.PropertiesFormatParser
@@ -1212,7 +1213,9 @@ def _update_files(p, locale, locale_repository_path):
             log.debug("File updated: " + path)
 
     elif p.format == 'ini':
+        locale_paths = _get_locale_paths(locale_repository_path, p.format)
         config = configparser.ConfigParser()
+
         with codecs.open(
                 locale_paths[0], 'r+', 'utf-8', errors='replace') as f:
             try:
@@ -1241,6 +1244,8 @@ def _update_files(p, locale, locale_repository_path):
                 raise Exception("error")
 
     elif p.format == 'lang':
+        locale_paths = _get_locale_paths(locale_repository_path, p.format)
+
         for path in locale_paths:
             with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
                 content = []
