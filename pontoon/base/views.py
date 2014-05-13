@@ -1041,49 +1041,6 @@ def transvision(request):
         return HttpResponse("error")
 
 
-def _create_locale_paths(project, locale, locale_repository_path):
-    """Create locale paths from source and return them."""
-    log.debug("Create locale paths from source and return them.")
-
-    # Remove all non-hidden files and folders in locale repository
-    items = os.listdir(locale_repository_path)
-    items = [i for i in items if not i[0] == '.']
-    for item in items:
-        path = os.path.join(locale_repository_path, item)
-        log.debug(path)
-        try:
-            shutil.rmtree(path)
-        except OSError:
-            os.remove(path)
-        except Exception as e:
-            log.error(e)
-
-    # Get short paths to translated files only
-    entities_project = Entity.objects.filter(project=project)
-    translations = Translation.objects.filter(
-        entity__in=entities_project, locale=locale)
-
-    entities_pks = translations.values("entity").distinct()
-    entities_translated = Entity.objects.filter(pk__in=entities_pks)
-    short_paths = entities_translated.values_list("source").distinct()
-
-    locale_paths = []
-    for short in short_paths:
-        path = locale_repository_path + short[0]
-        locale_paths.append(path)
-
-        # Create folders and copy files from source
-        basedir = os.path.dirname(path)
-        if not os.path.exists(basedir):
-            os.makedirs(basedir)
-        source_dir, source_path = get_source_directory(project.repository_path)
-        shutil.copy(source_path + short[0], path)
-
-        log.debug('File copied from source: %s' % path)
-
-    return locale_paths
-
-
 def _get_locale_repository_path(project, locale):
     """Get path to locale directory."""
     log.debug("Get path to locale directory.")
@@ -1185,15 +1142,44 @@ def _update_files(p, locale, locale_repository_path):
             log.debug("File updated: " + path)
 
     elif p.format == 'properties':
-        locale_paths = _create_locale_paths(p, locale, locale_repository_path)
+        # Remove all non-hidden files and folders in locale repository
+        items = os.listdir(locale_repository_path)
+        items = [i for i in items if not i[0] == '.']
+        for item in items:
+            path = os.path.join(locale_repository_path, item)
+            log.debug(path)
+            try:
+                shutil.rmtree(path)
+            except OSError:
+                os.remove(path)
+            except Exception as e:
+                log.error(e)
 
-        for path in locale_paths:
-            parser = silme.format.properties.PropertiesFormatParser
+        parser = silme.format.properties.PropertiesFormatParser
+        source_dir, source_path = get_source_directory(p.repository_path)
+
+        # Get short paths to translated files only
+        entities_project = Entity.objects.filter(project=p)
+        translations = Translation.objects.filter(
+            entity__in=entities_project, locale=locale)
+
+        entities_pks = translations.values("entity").distinct()
+        entities_translated = Entity.objects.filter(pk__in=entities_pks)
+        short_paths = entities_translated.values_list("source").distinct()
+
+        for short in short_paths:
+            path = locale_repository_path + short[0]
+
+            # Create folders and copy files from source
+            basedir = os.path.dirname(path)
+            if not os.path.exists(basedir):
+                os.makedirs(basedir)
+            shutil.copy(source_path + short[0], path)
+
             with codecs.open(path, 'r+', 'utf-8') as f:
                 structure = parser.get_structure(f.read())
+                entities_with_path = entities.filter(source=short[0])
 
-                short_path = '/' + path.split('/' + locale.code + '/')[-1]
-                entities_with_path = entities.filter(source=short_path)
                 for entity in entities_with_path:
                     key = entity.key
                     translation = _get_translation(
@@ -1224,6 +1210,7 @@ def _update_files(p, locale, locale_repository_path):
                 f.truncate()
                 content = parser.dump_structure(structure)
                 f.write(content)
+
             log.debug("File updated: " + path)
 
     elif p.format == 'ini':
