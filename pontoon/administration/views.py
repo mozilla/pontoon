@@ -39,8 +39,6 @@ from pontoon.base.models import (
     UserProfile,
 )
 
-from pontoon.base.views import _request
-
 
 log = commonware.log.getLogger('pontoon')
 
@@ -300,7 +298,7 @@ def _get_format_and_source_paths(path):
     return format, source_paths
 
 
-def _get_source_directory(path):
+def get_source_directory(path):
     """Get name and path of the directory with source strings."""
     log.debug("Get name and path of the directory with source strings.")
 
@@ -596,7 +594,7 @@ def _update_from_repository(
         # Get file format and paths to source files
         if source_directory is False:
             source_directory, source_directory_path = \
-                _get_source_directory(repository_path)
+                get_source_directory(repository_path)
             format, source_paths = \
                 _get_format_and_source_paths(
                     os.path.join(source_directory_path, source_directory))
@@ -701,6 +699,8 @@ def update_from_repository(request, template=None):
 def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
     log.debug("Update all project locales from Transifex repository.")
+
+    from pontoon.base.views import _request
 
     if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)

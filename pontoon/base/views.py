@@ -9,6 +9,7 @@ import json
 import os
 import polib
 import requests
+import shutil
 import silme.core
 import silme.format.properties
 import StringIO
@@ -42,6 +43,7 @@ from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 
 from pontoon.administration.utils.vcs import commit_to_vcs
+from pontoon.administration.views import get_source_directory
 
 from pontoon.base.models import (
     Locale,
@@ -1039,29 +1041,47 @@ def transvision(request):
         return HttpResponse("error")
 
 
-def _create_missing_files(project, locale, locale_repository_path):
-    """Create missing files."""
-    log.debug("Create missing files.")
+def _create_locale_paths(project, locale, locale_repository_path):
+    """Create locale paths from source and return them."""
+    log.debug("Create locale paths from source and return them.")
 
+    # Remove all non-hidden files and folders in locale repository
+    items = os.listdir(locale_repository_path)
+    items = [i for i in items if not i[0] == '.']
+    for item in items:
+        path = os.path.join(locale_repository_path, item)
+        log.debug(path)
+        try:
+            shutil.rmtree(path)
+        except OSError:
+            os.remove(path)
+        except Exception as e:
+            log.error(e)
+
+    # Get short paths to translated files only
     entities_project = Entity.objects.filter(project=project)
     translations = Translation.objects.filter(
         entity__in=entities_project, locale=locale)
 
     entities_pks = translations.values("entity").distinct()
-    entities = Entity.objects.filter(pk__in=entities_pks)
+    entities_translated = Entity.objects.filter(pk__in=entities_pks)
+    short_paths = entities_translated.values_list("source").distinct()
 
-    sources = entities.values_list("source").distinct()
+    locale_paths = []
+    for short in short_paths:
+        path = locale_repository_path + short[0]
+        locale_paths.append(path)
 
-    for source in sources:
-        path = locale_repository_path + source[0]
-        if not os.path.exists(path):
+        # Create folders and copy files from source
+        basedir = os.path.dirname(path)
+        if not os.path.exists(basedir):
+            os.makedirs(basedir)
+        source_dir, source_path = get_source_directory(project.repository_path)
+        shutil.copy(source_path + short[0], path)
 
-            basedir = os.path.dirname(path)
-            if not os.path.exists(basedir):
-                os.makedirs(basedir)
+        log.debug('File copied from source: %s' % path)
 
-            open(path, 'a').close()
-            log.debug('File created: %s' % path)
+    return locale_paths
 
 
 def _get_locale_repository_path(project, locale):
@@ -1106,6 +1126,7 @@ def _update_files(p, locale, locale_repository_path):
 
     if p.format == 'po':
         locale_paths = _get_locale_paths(locale_repository_path, p.format)
+
         for path in locale_paths:
             po = polib.pofile(path)
             valid_entries = [e for e in po if not e.obsolete]
@@ -1164,8 +1185,7 @@ def _update_files(p, locale, locale_repository_path):
             log.debug("File updated: " + path)
 
     elif p.format == 'properties':
-        _create_missing_files(p, locale, locale_repository_path)
-        locale_paths = _get_locale_paths(locale_repository_path, p.format)
+        locale_paths = _create_locale_paths(p, locale, locale_repository_path)
 
         for path in locale_paths:
             parser = silme.format.properties.PropertiesFormatParser
@@ -1181,9 +1201,10 @@ def _update_files(p, locale, locale_repository_path):
 
                     try:
                         if translation != '':
+                            # Modify translated entities
                             structure.modify_entity(key, translation)
                         else:
-                            # Remove entity and following newline
+                            # Remove untranslated and following newline
                             pos = structure.entity_pos(key)
                             structure.remove_entity(key)
                             line = structure[pos]
@@ -1193,17 +1214,10 @@ def _update_files(p, locale, locale_repository_path):
                                 structure[pos] = line
                                 if len(line) is 0:
                                     structure.remove_element(pos)
-                    except KeyError:
-                        # Only add new keys if translation available
-                        if translation != '':
-                            new_entity = silme.core.entity.Entity(
-                                key, translation)
-                            structure.add_string('\n')
-                            structure.add_entity(new_entity)
 
-                # Make sure there is a new line at the end of file
-                if len(structure) > 0 and type(structure[-1]) != unicode:
-                    structure.add_string('\n')
+                    # Obsolete entities
+                    except KeyError as e:
+                        pass
 
                 # Erase file and then write, otherwise content gets appended
                 f.seek(0)
