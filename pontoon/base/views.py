@@ -1183,12 +1183,13 @@ def _update_files(p, locale, locale_repository_path):
                 for entity in entities_with_path:
                     key = entity.key
                     translation = _get_translation(
-                        entity=entity, locale=locale).string
+                        entity=entity, locale=locale)
 
                     try:
-                        if translation != '':
+                        if (translation.string != '' or
+                                translation.pk is not None):
                             # Modify translated entities
-                            structure.modify_entity(key, translation)
+                            structure.modify_entity(key, translation.string)
                         else:
                             # Remove untranslated and following newline
                             pos = structure.entity_pos(key)
