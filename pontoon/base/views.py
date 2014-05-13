@@ -437,14 +437,14 @@ def get_translations_from_other_locales(request, template=None):
     locales = entity.project.locales.all().exclude(code=locale.code)
 
     for l in locales:
-        translation = _get_translation(entity=entity, locale=l).string
-        if translation != "":
+        translation = _get_translation(entity=entity, locale=l)
+        if translation.string != "" or hasattr(translation, 'pk'):
             payload.append({
                 "locale": {
                     "code": l.code,
                     "name": l.name
                 },
-                "translation": translation
+                "translation": translation.string
             })
 
     if len(payload) == 0:
