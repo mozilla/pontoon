@@ -207,10 +207,14 @@ def _save_entity(project, string, string_plural="",
         if key is "":
             e = Entity.objects.get(
                 project=project, string=string, string_plural=string_plural)
+
         else:
             e = Entity.objects.get(project=project, key=key, source=source)
             e.string = string
             e.string_plural = string_plural
+
+        # Set obsolete attribute for all entities to False
+        e.obsolete = False;
 
     # Add new entity
     except Entity.DoesNotExist:
@@ -219,6 +223,7 @@ def _save_entity(project, string, string_plural="",
 
     if len(comment) > 0:
         e.comment = comment
+
     e.save()
 
 
@@ -532,6 +537,9 @@ def _extract_ini(project, path):
 
 def _update_from_repository(
         project, repository_type, repository_url, repository_path_master):
+
+    # Mark all existing project entities as obsolete
+    Entity.objects.filter(project=project).update(obsolete=True)
 
     if repository_type == 'file':
         file_name = repository_url.rstrip('/').rsplit('/', 1)[1]

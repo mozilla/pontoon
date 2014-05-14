@@ -120,6 +120,7 @@ class Entity(models.Model):
     comment = models.TextField(blank=True)
     key = models.TextField(blank=True)  # Needed for webL10n
     source = models.TextField(blank=True)
+    obsolete = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.string

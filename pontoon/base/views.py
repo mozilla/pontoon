@@ -201,7 +201,7 @@ def _get_entities(project, locale, page=None):
     """Load all project entities and translations."""
     log.debug("Load all project entities and translations.")
 
-    entities = Entity.objects.filter(project=project)
+    entities = Entity.objects.filter(project=project, obsolete=False)
 
     # Firefox OS Hack
     if 'gaia-l10n' in project.repository_url:
@@ -1079,7 +1079,7 @@ def _get_locale_paths(path, format):
 
 
 def _update_files(p, locale, locale_repository_path):
-    entities = Entity.objects.filter(project=p)
+    entities = Entity.objects.filter(project=p, obsolete=False)
 
     if p.format == 'po':
         locale_paths = _get_locale_paths(locale_repository_path, p.format)
