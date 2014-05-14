@@ -21,7 +21,7 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set it u
  * `mysql.server start`
  * `mysql -u root -e 'CREATE DATABASE pontoon CHARACTER SET utf8;'`
  * `./manage.py syncdb --noinput && ./manage.py migrate`
- * `mysql -u root pontoon -e 'ALTER TABLE base_entity MODIFY string LONGTEXT COLLATE utf8_bin;'`
+ * `mysql -u root pontoon -e 'ALTER TABLE base_entity CONVERT TO CHARACTER SET utf8 COLLATE utf8_bin;'`
 5. Run the development server:
  * `./manage.py runserver`
 
