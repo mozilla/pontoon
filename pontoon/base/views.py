@@ -1158,10 +1158,8 @@ def _update_files(p, locale, locale_repository_path):
         source_dir, source_path = get_source_directory(p.repository_path)
 
         # Get short paths to translated files only
-        entities_project = Entity.objects.filter(project=p)
         translations = Translation.objects.filter(
-            entity__in=entities_project, locale=locale)
-
+            entity__in=entities, locale=locale)
         entities_pks = translations.values("entity").distinct()
         entities_translated = Entity.objects.filter(pk__in=entities_pks)
         short_paths = entities_translated.values_list("source").distinct()
@@ -1175,7 +1173,7 @@ def _update_files(p, locale, locale_repository_path):
                 os.makedirs(basedir)
             try:
                 shutil.copy(source_path + short[0], path)
-            # Obsolete entities
+            # Obsolete files
             except Exception as e:
                 log.debug(e)
                 continue
