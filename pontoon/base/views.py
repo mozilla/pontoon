@@ -1147,7 +1147,6 @@ def _update_files(p, locale, locale_repository_path):
         items = [i for i in items if not i[0] == '.']
         for item in items:
             path = os.path.join(locale_repository_path, item)
-            log.debug(path)
             try:
                 shutil.rmtree(path)
             except OSError:
@@ -1174,7 +1173,12 @@ def _update_files(p, locale, locale_repository_path):
             basedir = os.path.dirname(path)
             if not os.path.exists(basedir):
                 os.makedirs(basedir)
-            shutil.copy(source_path + short[0], path)
+            try:
+                shutil.copy(source_path + short[0], path)
+            # Obsolete entities
+            except Exception as e:
+                log.debug(e)
+                continue
 
             with codecs.open(path, 'r+', 'utf-8') as f:
                 structure = parser.get_structure(f.read())
