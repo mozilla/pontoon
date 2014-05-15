@@ -1412,7 +1412,6 @@ def commit_to_repository(request, template=None):
         log.error(e)
         return HttpResponse("error")
 
-    project = p.name
     path = _get_locale_repository_path(p, locale.code)
 
     if not path:
@@ -1424,7 +1423,7 @@ def commit_to_repository(request, template=None):
     name = request.user.email if not request.user.first_name else '%s (%s)' \
         % (request.user.first_name, request.user.email)
     message = 'Pontoon: Update %s (%s) localization of %s on behalf of %s.' \
-        % (locale.name, locale.code, project, name)
+        % (locale.name, locale.code, p.name, name)
 
     _update_files(p, locale, path)
 
