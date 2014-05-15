@@ -68,6 +68,8 @@ def home(request, template='home.html'):
     log.debug("Home view.")
 
     data = {
+        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '') \
+            .split(',')[0],
         'locales': Locale.objects.all(),
         'projects': Project.objects.filter(
             pk__in=Entity.objects.values('project'))
@@ -270,6 +272,8 @@ def translate_project(request, locale, slug, page=None,
             return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
+        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '') \
+            .split(',')[0],
         'locale': l,
         'locales': Locale.objects.all(),
         'pages': Subpage.objects.all(),

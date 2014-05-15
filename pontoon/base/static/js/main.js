@@ -1659,7 +1659,8 @@ var Pontoon = (function () {
         var defaultPage = Pontoon.common.getProjectResources('pages')[0];
         if (defaultPage) {
           $('.page .selector .title').html(defaultPage);
-          $('header .page').removeClass("hidden").find('.selector .title').html(defaultPage);
+          $('header .page').removeClass("hidden")
+            .find('.selector .title').html(defaultPage);
         } else {
           $('header .page').addClass("hidden");
         }
@@ -1668,10 +1669,13 @@ var Pontoon = (function () {
         var locales = Pontoon.common.getProjectResources('locales'),
             menu = $('.locale .menu'),
             selector = menu.siblings('.selector'),
-            selected = selector.find('.code').html();
+            selected = selector.find('.code').html(),
+            accept = $('#server').data('accept-language').toLowerCase();
 
         if (locales.indexOf(selected) === -1) {
-          var defaultLocale = menu.find('.language.' + locales[0])[0].outerHTML;
+          var code = (locales.indexOf(accept) !== -1) ? accept : locales[0];
+          var defaultLocale =
+            menu.find('.language.' + code)[0].outerHTML;
           selector.html(defaultLocale);
         }
       });
