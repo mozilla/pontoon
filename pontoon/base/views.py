@@ -1407,7 +1407,7 @@ def commit_to_repository(request, template=None):
         return HttpResponse("error")
 
     try:
-        p = Project.objects.get(pk=data['pk'])
+        p = Project.objects.get(pk=data['project'])
     except Project.DoesNotExist as e:
         log.error(e)
         return HttpResponse("error")

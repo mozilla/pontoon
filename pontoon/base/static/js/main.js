@@ -113,8 +113,6 @@ var Pontoon = (function () {
       } else if (type === "repository") {
         self.startLoader();
 
-        params.pk = self.project.pk;
-
         if (value) {
           params.auth = {
             username: value[0].value,
