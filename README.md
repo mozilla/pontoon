@@ -25,6 +25,18 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set it u
 5. Run the development server:
  * `./manage.py runserver`
 
+__Setting Up Admin priviliges:__
+* Run `./manage.py shell`
+
+```python
+from django.contrib.auth.models import User
+
+u = User.objects.all()[0]
+u.is_staff = True
+u.is_superuser = True
+u.save()
+```
+
 And that's it, just point your web browser to [http://localhost:8000](http://localhost:8000) and Pontoon's homepage should apear.
 
 __Mac users__: please see workarounds in case you run into issues with [installing requirements](/../../issues/16) or [syncing database](/../../issues/18).
