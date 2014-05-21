@@ -24,10 +24,7 @@ from django.template.defaultfilters import slugify
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import ugettext_lazy as _
 
-from pontoon.administration.utils.vcs import (
-    PullFromRepositoryException,
-    update_from_vcs,
-)
+from pontoon.administration.utils.vcs import update_from_vcs
 
 from pontoon.base.models import (
     Entity,
@@ -571,7 +568,7 @@ def update_and_extract(
                 f.write(u.read().decode("utf-8-sig").encode("utf-8"))
         except IOError, e:
             log.debug("IOError: " + str(e))
-            raise PullFromRepositoryException(unicode(e))
+            raise Exception(unicode(e))
 
         # Extract file data and store to DB
         source_locale = 'en-US'
@@ -598,11 +595,11 @@ def update_and_extract(
                 _extract_ini(project, file_path)
             except Exception, e:
                 os.remove(file_path)
-                raise PullFromRepositoryException(unicode(e))
+                raise Exception(unicode(e))
 
         else:
             log.error("Format not supported")
-            raise PullFromRepositoryException("Not supported")
+            raise Exception("Not supported")
 
     elif repository_type in ('git', 'hg', 'svn'):
 
@@ -643,6 +640,8 @@ def update_and_extract(
         locales = [Locale.objects.get(code=source_locale)]
         locales.extend(project.locales.all())
 
+        format = 'bla'
+
         if format == 'po':
             for index, l in enumerate(locales):
                 locale_paths = _get_locale_paths(
@@ -665,15 +664,15 @@ def update_and_extract(
             try:
                 _extract_ini(project, source_paths[0])
             except Exception, e:
-                raise PullFromRepositoryException(unicode(e))
+                raise Exception(unicode(e))
 
         else:
             log.error("Format not supported")
-            raise PullFromRepositoryException("Not supported")
+            raise Exception("Not supported")
 
     else:
         log.error("Repository type not supported")
-        raise PullFromRepositoryException("Not supported")
+        raise Exception("Not supported")
 
 
 def update_from_repository(request, template=None):
@@ -707,9 +706,6 @@ def update_from_repository(request, template=None):
     try:
         update_and_extract(
             p, repository_type, repository_url, repository_path_master)
-    except PullFromRepositoryException as e:
-        log.error("PullFromRepositoryException: " + str(e))
-        return HttpResponse('error')
     except Exception as e:
         log.error("Exception: " + str(e))
         return HttpResponse('error')

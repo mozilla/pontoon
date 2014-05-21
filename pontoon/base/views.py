@@ -42,10 +42,7 @@ from django.utils.encoding import smart_text
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 
-from pontoon.administration.utils.vcs import (
-    PullFromRepositoryException,
-    commit_to_vcs,
-)
+from pontoon.administration.utils.vcs import commit_to_vcs
 
 from pontoon.administration.views import (
     get_source_directory,
@@ -1477,9 +1474,6 @@ def update_from_repository(request, template=None):
     try:
         update_and_extract(
             p, p.repository_type, p.repository_url, repository_path_master)
-    except PullFromRepositoryException as e:
-        log.error("PullFromRepositoryException: " + str(e))
-        return HttpResponse('error')
     except Exception as e:
         log.error("Exception: " + str(e))
         return HttpResponse('error')
