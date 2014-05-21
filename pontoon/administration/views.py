@@ -495,7 +495,7 @@ def _extract_ini(project, path):
     with codecs.open(path, 'r', 'utf-8') as f:
         try:
             config.read_file(f)
-        except Exception, e:
+        except Exception as e:
             log.debug("INI configparser: " + str(e))
             raise Exception("error")
 
@@ -566,7 +566,7 @@ def update_and_extract(
         try:
             with open(file_path, 'w') as f:
                 f.write(u.read().decode("utf-8-sig").encode("utf-8"))
-        except IOError, e:
+        except IOError as e:
             log.debug("IOError: " + str(e))
             raise Exception(unicode(e))
 
@@ -593,7 +593,7 @@ def update_and_extract(
         elif format == 'ini':
             try:
                 _extract_ini(project, file_path)
-            except Exception, e:
+            except Exception as e:
                 os.remove(file_path)
                 raise Exception(unicode(e))
 
@@ -661,7 +661,7 @@ def update_and_extract(
         elif format == 'ini':
             try:
                 _extract_ini(project, source_paths[0])
-            except Exception, e:
+            except Exception as e:
                 raise Exception(unicode(e))
 
         else:
