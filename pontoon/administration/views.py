@@ -535,7 +535,7 @@ def _extract_ini(project, path):
         log.debug("[" + section + "]: saved to DB.")
 
 
-def _update_from_repository(
+def update_and_extract(
         project, repository_type, repository_url, repository_path_master):
 
     # Mark all existing project entities as obsolete
@@ -692,7 +692,7 @@ def update_from_repository(request, template=None):
     repository_path_master = os.path.join(
         settings.MEDIA_ROOT, repository_type, p.slug)
     try:
-        _update_from_repository(
+        update_and_extract(
             p, repository_type, repository_url, repository_path_master)
     except PullFromRepositoryException as e:
         log.error("PullFromRepositoryException: " + str(e))

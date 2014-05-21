@@ -49,7 +49,7 @@ from pontoon.administration.utils.vcs import (
 
 from pontoon.administration.views import (
     get_source_directory,
-    _update_from_repository,
+    update_and_extract,
 )
 
 from pontoon.base.models import (
@@ -1474,7 +1474,7 @@ def update_from_repository(request, template=None):
     repository_path_master = os.path.join(
         settings.MEDIA_ROOT, p.repository_type, p.slug)
     try:
-        _update_from_repository(
+        update_and_extract(
             p, p.repository_type, p.repository_url, repository_path_master)
     except PullFromRepositoryException as e:
         log.error("PullFromRepositoryException: " + str(e))
