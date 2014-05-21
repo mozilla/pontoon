@@ -110,7 +110,7 @@ var Pontoon = (function () {
           }
         });
 
-      } else if (type === "repository") {
+      } else if (type === "repository-commit") {
         self.startLoader();
 
         if (value) {
