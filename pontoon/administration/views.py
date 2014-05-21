@@ -214,7 +214,7 @@ def _save_entity(project, string, string_plural="",
             e.string_plural = string_plural
 
         # Set obsolete attribute for all entities to False
-        e.obsolete = False;
+        e.obsolete = False
 
     # Add new entity
     except Entity.DoesNotExist:
@@ -274,8 +274,10 @@ def _get_locale_paths(source_paths, source_directory, locale_code):
 
             # Also check for locale variants with underscore, e.g. de_AT
             elif locale_code.find('-') != -1:
-                path = path.replace('/' + locale_code + '/',
-                                  '/' + locale_code.replace('-', '_') + '/', 1)
+                path = path.replace(
+                    '/' + locale_code + '/',
+                    '/' + locale_code.replace('-', '_') + '/', 1
+                )
 
                 if os.path.exists(path):
                     locale_paths.append(path)
@@ -394,7 +396,8 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
                         # Entities without plurals
                         if len(escape(entry.msgstr)) > 0:
                             try:
-                                e = Entity.objects.get(project=project,
+                                e = Entity.objects.get(
+                                    project=project,
                                     string=escape(entry.msgid))
                                 _save_translation(
                                     entity=e,
@@ -408,7 +411,8 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
                         # Pluralized entities
                         elif len(entry.msgstr_plural) > 0:
                             try:
-                                e = Entity.objects.get(project=project,
+                                e = Entity.objects.get(
+                                    project=project,
                                     string=escape(entry.msgid))
                                 for k in entry.msgstr_plural:
                                     _save_translation(
