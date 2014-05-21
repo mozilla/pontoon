@@ -542,21 +542,26 @@ def update_and_extract(
     Entity.objects.filter(project=project).update(obsolete=True)
 
     if repository_type == 'file':
-        file_name = repository_url.rstrip('/').rsplit('/', 1)[1]
 
+        # Store project format and repository_path
+        file_name = repository_url.rstrip('/').rsplit('/', 1)[1]
         temp, file_extension = os.path.splitext(file_name)
         format = file_extension[1:].lower()
+
         if format == 'pot':
             format = 'po'
+
         project.format = format
         project.repository_path = repository_path_master
         project.save()
 
-        # Store file to server
+        # Save file to server
         u = urllib2.urlopen(repository_url)
         file_path = os.path.join(repository_path_master, file_name)
+
         if not os.path.exists(repository_path_master):
             os.makedirs(repository_path_master)
+
         try:
             with open(file_path, 'w') as f:
                 f.write(u.read().decode("utf-8-sig").encode("utf-8"))
@@ -564,21 +569,25 @@ def update_and_extract(
             log.debug("IOError: " + str(e))
             raise PullFromRepositoryException(unicode(e))
 
-        if format in ('po', 'properties', 'lang'):
-            source_locale = 'en-US'
-            locales = [Locale.objects.get(code=source_locale)]
-            locales.extend(project.locales.all())
+        # Extract file data and store to DB
+        source_locale = 'en-US'
+        locales = [Locale.objects.get(code=source_locale)]
+        locales.extend(project.locales.all())
 
+        if format == 'po':
             for l in locales:
-                if format == 'po':
-                    _extract_po(
-                        project, l, [file_path], source_locale, False)
-                elif format == 'properties':
-                    _extract_properties(
-                        project, l, [file_path], source_locale, False)
-                elif format == 'lang':
-                    _extract_lang(
-                        project, l, [file_path], source_locale, False)
+                _extract_po(
+                    project, l, [file_path], source_locale, False)
+
+        elif format == 'properties':
+            for l in locales:
+                _extract_properties(
+                    project, l, [file_path], source_locale, False)
+
+        elif format == 'lang':
+            for l in locales:
+                _extract_lang(
+                    project, l, [file_path], source_locale, False)
 
         elif format == 'ini':
             try:
@@ -691,6 +700,7 @@ def update_from_repository(request, template=None):
 
     repository_path_master = os.path.join(
         settings.MEDIA_ROOT, repository_type, p.slug)
+
     try:
         update_and_extract(
             p, repository_type, repository_url, repository_path_master)
