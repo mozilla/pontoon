@@ -253,9 +253,10 @@ def _save_translation(entity, locale, string, plural_form=None, fuzzy=False):
         t.save()
 
 
-def _get_locale_paths(source_paths, source_directory, locale_code):
+def _get_locale_paths(source_paths, source_directory, code, index):
     """Get paths to locale files."""
 
+    locale_code = source_directory if index == 0 else code
     locale_paths = []
     for sp in source_paths:
 
@@ -316,7 +317,7 @@ def get_source_directory(path):
 
         for directory in ('templates', 'en-US', 'en-GB', 'en'):
             for dirname in fnmatch.filter(dirnames, directory):
-                return dirname, root
+                return dirname, os.path.join(root, dirname)
 
     # INI Format
     return '', path
@@ -332,8 +333,7 @@ def _is_one_locale_repository(repository_url, repository_path_master):
     if last in ('templates', 'en-US', 'en-GB', 'en'):
         source_directory = last
         repository_url_master = repository_url.rsplit(last, 1)[0]
-        repository_path = os.path.join(
-            repository_path_master, source_directory)
+        repository_path = os.path.join(repository_path_master, last)
 
     return source_directory, repository_url_master, repository_path
 
@@ -605,62 +605,61 @@ def update_and_extract(
             raise PullFromRepositoryException("Not supported")
 
     elif repository_type in ('git', 'hg', 'svn'):
-        """ Mercurial """
-        # Update repository URL and path if one-locale repository
+
+        # Update repository path if one-locale repository
         source_directory, repository_url_master, repository_path = \
             _is_one_locale_repository(repository_url, repository_path_master)
 
+        # Store repository to server
         update_from_vcs(repository_type, repository_url, repository_path)
 
-        # Get file format and paths to source files
-        if source_directory is False:
-            source_directory, source_directory_path = \
-                get_source_directory(repository_path)
-            format, source_paths = \
-                _get_format_and_source_paths(
-                    os.path.join(source_directory_path, source_directory))
-        else:
-            format, source_paths = \
-                _get_format_and_source_paths(repository_path)
-
-            # Get remaining repositories if one-locale repository specified
+        # If one-locale repository, store remaining repositories
+        if source_directory:
+            source_directory_path = repository_path
             for l in project.locales.all():
                 update_from_vcs(
                     repository_type,
                     os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
 
+        # If multiple-locale repository, get source directory
+        else:
+            source_directory, source_directory_path = get_source_directory(
+                repository_path)
+
+        # Store project format and repository_path
+        format, source_paths = _get_format_and_source_paths(
+            source_directory_path)
+
         project.format = format
         project.repository_path = repository_path
         project.save()
 
-        if format in ('po', 'properties', 'lang'):
-            # Extend project locales array with source locale
-            if source_directory == 'templates':
-                source_locale = 'en-US'
-            else:
-                source_locale = source_directory
-            locales = [Locale.objects.get(code=source_locale)]
-            locales.extend(project.locales.all())
+        # Extract file data and store to DB
+        if source_directory == 'templates':
+            source_locale = 'en-US'
+        else:
+            source_locale = source_directory
+        locales = [Locale.objects.get(code=source_locale)]
+        locales.extend(project.locales.all())
 
+        if format == 'po':
             for index, l in enumerate(locales):
-                # source_directory could also be called templates
-                locale_code = l.code
-                if index == 0:
-                    locale_code = source_directory
-                locale_paths = \
-                    _get_locale_paths(
-                        source_paths, source_directory, locale_code)
+                locale_paths = _get_locale_paths(
+                    source_paths, source_directory, l.code, index)
+                _extract_po(project, l, locale_paths, source_locale)
 
-                if format == 'po':
-                    _extract_po(
-                        project, l, locale_paths, source_locale)
-                elif format == 'properties':
-                    _extract_properties(
-                        project, l, locale_paths, source_locale)
-                elif format == 'lang':
-                    _extract_lang(
-                        project, l, locale_paths, source_locale)
+        elif format == 'properties':
+            for index, l in enumerate(locales):
+                locale_paths = _get_locale_paths(
+                    source_paths, source_directory, l.code, index)
+                _extract_properties(project, l, locale_paths, source_locale)
+
+        elif format == 'lang':
+            for index, l in enumerate(locales):
+                locale_paths = _get_locale_paths(
+                    source_paths, source_directory, l.code, index)
+                _extract_lang(project, l, locale_paths, source_locale)
 
         elif format == 'ini':
             try:
