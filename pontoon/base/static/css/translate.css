@@ -224,6 +224,10 @@
   padding: 20px 5px;
 }
 
+#pontoon #profile .menu {
+  width: 160px;
+}
+
 #pontoon #profile .menu ul,
 #pontoon #filter .menu ul {
   max-height: none;

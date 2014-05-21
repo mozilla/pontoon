@@ -42,8 +42,15 @@ from django.utils.encoding import smart_text
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 
-from pontoon.administration.utils.vcs import commit_to_vcs
-from pontoon.administration.views import get_source_directory
+from pontoon.administration.utils.vcs import (
+    PullFromRepositoryException,
+    commit_to_vcs,
+)
+
+from pontoon.administration.views import (
+    get_source_directory,
+    _update_from_repository,
+)
 
 from pontoon.base.models import (
     Locale,
@@ -1413,7 +1420,6 @@ def commit_to_repository(request, template=None):
         return HttpResponse("error")
 
     path = _get_locale_repository_path(p, locale.code)
-
     if not path:
         return HttpResponse(json.dumps({
             'type': 'error',
@@ -1431,6 +1437,51 @@ def commit_to_repository(request, template=None):
 
     if r is not None:
         return HttpResponse(json.dumps(r), mimetype='application/json')
+
+    return HttpResponse("ok")
+
+
+@login_required(redirect_field_name='', login_url='/403')
+def update_from_repository(request, template=None):
+    """Update translations from repository."""
+    log.debug("Update translations from repository.")
+
+    if not request.user.has_perm('base.can_localize'):
+        return render(request, '403.html', status=403)
+
+    if request.method != 'POST':
+        log.error("Non-POST request")
+        raise Http404
+
+    try:
+        data = json.loads(request.POST['data'])
+    except MultiValueDictKeyError as e:
+        log.error(e)
+        return HttpResponse("error")
+
+    try:
+        locale = Locale.objects.get(code=data['locale'])
+    except Locale.DoesNotExist as e:
+        log.error(e)
+        return HttpResponse("error")
+
+    try:
+        p = Project.objects.get(pk=data['project'])
+    except Project.DoesNotExist as e:
+        log.error(e)
+        return HttpResponse("error")
+
+    repository_path_master = os.path.join(
+        settings.MEDIA_ROOT, p.repository_type, p.slug)
+    try:
+        _update_from_repository(
+            p, p.repository_type, p.repository_url, repository_path_master)
+    except PullFromRepositoryException as e:
+        log.error("PullFromRepositoryException: " + str(e))
+        return HttpResponse('error')
+    except Exception as e:
+        log.error("Exception: " + str(e))
+        return HttpResponse('error')
 
     return HttpResponse("ok")
 

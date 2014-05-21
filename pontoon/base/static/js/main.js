@@ -158,6 +158,34 @@ var Pontoon = (function () {
             $('#repository').hide();
           }
         });
+
+      } else if (type === "repository-update") {
+        self.startLoader();
+
+        $.ajax({
+          url: 'update-from-repository/',
+          type: 'POST',
+          data: {
+            csrfmiddlewaretoken: $('#server').data('csrf'),
+            data: JSON.stringify(params)
+          },
+          success: function(data) {
+            if (data === "ok") {
+              self.endLoader('Done!');
+              // TODO: update entities with AJAX
+              window.location.reload();
+
+            } else if (data.type === "error") {
+              self.endLoader(self.doNotRender(data.message), 'error', true);
+
+            } else {
+              self.endLoader('Oops, something went wrong.', 'error');
+            }
+          },
+          error: function() {
+            self.endLoader('Oops, something went wrong.', 'error');
+          }
+        });
       }
     },
 
