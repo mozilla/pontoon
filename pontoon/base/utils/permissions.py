@@ -23,7 +23,7 @@ def add_can_localize(user):
     }
 
     try:
-        mozillians = requests.get(url, params=payload)
+        mozillians = requests.get(url, params=payload, timeout=20)
         email = user.email
         log.debug(email)
 
@@ -42,3 +42,4 @@ def add_can_localize(user):
     except Exception as e:
         log.debug(e)
         log.debug("Is your MOZILLIANS_API_KEY set?")
+        user.save()
