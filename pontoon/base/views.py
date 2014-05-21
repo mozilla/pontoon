@@ -1473,6 +1473,7 @@ def update_from_repository(request, template=None):
 
     repository_path_master = os.path.join(
         settings.MEDIA_ROOT, p.repository_type, p.slug)
+
     try:
         update_and_extract(
             p, p.repository_type, p.repository_url, repository_path_master)
