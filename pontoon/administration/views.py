@@ -640,8 +640,6 @@ def update_and_extract(
         locales = [Locale.objects.get(code=source_locale)]
         locales.extend(project.locales.all())
 
-        format = 'bla'
-
         if format == 'po':
             for index, l in enumerate(locales):
                 locale_paths = _get_locale_paths(
