@@ -558,12 +558,9 @@ def _extract_ini(project, path):
         log.debug("[" + section + "]: saved to DB.")
 
 
-def extract_files(project):
+def extract_files(project, locales=None):
     """Extract data from project files and save or update in DB."""
     log.debug("Extract data from project files and save or update in DB.")
-
-    # Mark all existing project entities as obsolete
-    Entity.objects.filter(project=project).update(obsolete=True)
 
     repository_path_master = get_repository_path_master(project)
     source_directory = get_source_directory(repository_path_master)
@@ -572,8 +569,12 @@ def extract_files(project):
     if not source_directory['name'] in ('', 'templates'):
         source_locale = source_directory['name']
 
-    locales = [Locale.objects.get(code=source_locale)]
-    locales.extend(project.locales.all())
+    if not locales:
+        # Mark all existing project entities as obsolete
+        Entity.objects.filter(project=project).update(obsolete=True)
+
+        locales = [Locale.objects.get(code=source_locale)]
+        locales.extend(project.locales.all())
 
     isVCS = project.repository_type != 'file'
     source_paths = get_source_paths(source_directory['path'])
