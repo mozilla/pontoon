@@ -3,10 +3,12 @@ import os
 import datetime
 
 from django.core.management.base import BaseCommand, CommandError
+
 from pontoon.administration.views import (
     update_files_from_repository,
     extract_files,
 )
+
 from pontoon.base.models import Project
 
 

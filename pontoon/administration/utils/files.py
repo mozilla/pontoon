@@ -11,7 +11,6 @@ import silme.format.properties
 import urllib2
 
 from django.conf import settings
-
 from pontoon.administration.utils.vcs import update_from_vcs
 
 from pontoon.base.models import (
@@ -25,61 +24,6 @@ from pontoon.base.models import (
 )
 
 log = commonware.log.getLogger('pontoon')
-
-
-def _save_entity(project, string, string_plural="",
-                 comment="", key="", source=""):
-    """Admin interface: save new or update existing entity in DB."""
-
-    # Update existing entity
-    try:
-        if key is "":
-            e = Entity.objects.get(
-                project=project, string=string, string_plural=string_plural)
-
-        else:
-            e = Entity.objects.get(project=project, key=key, source=source)
-            e.string = string
-            e.string_plural = string_plural
-
-        # Set obsolete attribute for all entities to False
-        e.obsolete = False
-
-    # Add new entity
-    except Entity.DoesNotExist:
-        e = Entity(project=project, string=string, string_plural=string_plural,
-                   key=key, source=source)
-
-    if len(comment) > 0:
-        e.comment = comment
-
-    e.save()
-
-
-def _save_translation(entity, locale, string, plural_form=None, fuzzy=False):
-    """Admin interface: save new or update existing translation in DB."""
-
-    approved = not fuzzy
-
-    # Update existing translation if different from repository
-    try:
-        t = Translation.objects.get(entity=entity, locale=locale,
-                                    plural_form=plural_form, approved=True)
-        if t.string != string or t.fuzzy != fuzzy:
-            t.string = string
-            t.user = None
-            t.date = datetime.datetime.now()
-            t.approved = approved
-            t.fuzzy = fuzzy
-            t.save()
-
-    # Save new translation if it doesn's exist yet
-    except Translation.DoesNotExist:
-        t = Translation(
-            entity=entity, locale=locale, string=string,
-            plural_form=plural_form, date=datetime.datetime.now(),
-            approved=approved, fuzzy=fuzzy)
-        t.save()
 
 
 def get_locale_paths(source_paths, source_directory, locale_code):
@@ -189,6 +133,61 @@ def get_repository_path_master(project):
 
     return os.path.join(
         settings.MEDIA_ROOT, project.repository_type, project.slug)
+
+
+def _save_entity(project, string, string_plural="",
+                 comment="", key="", source=""):
+    """Admin interface: save new or update existing entity in DB."""
+
+    # Update existing entity
+    try:
+        if key is "":
+            e = Entity.objects.get(
+                project=project, string=string, string_plural=string_plural)
+
+        else:
+            e = Entity.objects.get(project=project, key=key, source=source)
+            e.string = string
+            e.string_plural = string_plural
+
+        # Set obsolete attribute for all entities to False
+        e.obsolete = False
+
+    # Add new entity
+    except Entity.DoesNotExist:
+        e = Entity(project=project, string=string, string_plural=string_plural,
+                   key=key, source=source)
+
+    if len(comment) > 0:
+        e.comment = comment
+
+    e.save()
+
+
+def _save_translation(entity, locale, string, plural_form=None, fuzzy=False):
+    """Admin interface: save new or update existing translation in DB."""
+
+    approved = not fuzzy
+
+    # Update existing translation if different from repository
+    try:
+        t = Translation.objects.get(entity=entity, locale=locale,
+                                    plural_form=plural_form, approved=True)
+        if t.string != string or t.fuzzy != fuzzy:
+            t.string = string
+            t.user = None
+            t.date = datetime.datetime.now()
+            t.approved = approved
+            t.fuzzy = fuzzy
+            t.save()
+
+    # Save new translation if it doesn's exist yet
+    except Translation.DoesNotExist:
+        t = Translation(
+            entity=entity, locale=locale, string=string,
+            plural_form=plural_form, date=datetime.datetime.now(),
+            approved=approved, fuzzy=fuzzy)
+        t.save()
 
 
 def _parse_lang(path):
