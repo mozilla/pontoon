@@ -26,35 +26,19 @@ from pontoon.base.models import (
 log = commonware.log.getLogger('pontoon')
 
 
-def get_locale_paths(source_paths, source_directory, locale_code):
+def get_locale_paths(project, locale):
     """Get paths to locale files."""
 
     locale_paths = []
+    path = get_locale_directory(project, locale.code)["path"]
 
-    for sp in source_paths:
+    for root, dirnames, filenames in os.walk(path):
+        # Ignore hidden files and folders
+        filenames = [f for f in filenames if not f[0] == '.']
+        dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        # Also include paths to source files
-        if source_directory == locale_code:
-            path = sp
-            locale_paths.append(path)
-
-        else:
-            path = sp.replace('/' + source_directory + '/',
-                              '/' + locale_code + '/', 1).rstrip("t")
-
-            # Only include if path exists
-            if os.path.exists(path):
-                locale_paths.append(path)
-
-            # Also check for locale variants with underscore, e.g. de_AT
-            elif locale_code.find('-') != -1:
-                path = path.replace(
-                    '/' + locale_code + '/',
-                    '/' + locale_code.replace('-', '_') + '/', 1
-                )
-
-                if os.path.exists(path):
-                    locale_paths.append(path)
+        for filename in fnmatch.filter(filenames, '*.' + project.format):
+            locale_paths.append(os.path.join(root, filename))
 
     return locale_paths
 
@@ -455,9 +439,7 @@ def extract_to_database(project, locales=None):
                 os.remove(file_path)
 
     for index, locale in enumerate(locales):
-        locale_code = source_directory['name'] if index == 0 else locale.code
-        locale_paths = get_locale_paths(
-            source_paths, source_directory['name'], locale_code)
+        locale_paths = get_locale_paths(project, locale)
         globals()['_extract_%s' % project.format](
             project, locale, locale_paths, source_locale, isVCS)
 

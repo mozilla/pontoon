@@ -1045,26 +1045,11 @@ def transvision(request):
         return HttpResponse("error")
 
 
-def _get_locale_paths(path, format):
-    """Get paths to locale files."""
-
-    locale_paths = []
-    for root, dirnames, filenames in os.walk(path):
-        # Ignore hidden files and folders
-        filenames = [f for f in filenames if not f[0] == '.']
-        dirnames[:] = [d for d in dirnames if not d[0] == '.']
-
-        for filename in fnmatch.filter(filenames, '*.' + format):
-            locale_paths.append(os.path.join(root, filename))
-
-    return locale_paths
-
-
 def _update_files(p, locale, locale_repository_path):
     entities = Entity.objects.filter(project=p, obsolete=False)
 
     if p.format == 'po':
-        locale_paths = _get_locale_paths(locale_repository_path, p.format)
+        locale_paths = files.get_locale_paths(p, locale)
 
         for path in locale_paths:
             po = polib.pofile(path)
@@ -1199,11 +1184,11 @@ def _update_files(p, locale, locale_repository_path):
             log.debug("File updated: " + path)
 
     elif p.format == 'ini':
-        locale_paths = _get_locale_paths(locale_repository_path, p.format)
+        path = files.get_locale_directory(p, locale.code)["path"]
+        source_path = files.get_source_paths(path)[0]
         config = configparser.ConfigParser()
 
-        with codecs.open(
-                locale_paths[0], 'r+', 'utf-8', errors='replace') as f:
+        with codecs.open(source_path, 'r+', 'utf-8', errors='replace') as f:
             try:
                 config.read_file(f)
                 if config.has_section(locale.code):
@@ -1219,7 +1204,7 @@ def _update_files(p, locale, locale_repository_path):
                     f.seek(0)
                     f.truncate()
                     config.write(f)
-                    log.debug("File updated: " + locale_paths[0])
+                    log.debug("File updated: " + source_path)
 
                 else:
                     log.debug("Locale not available in the source file")
@@ -1229,7 +1214,7 @@ def _update_files(p, locale, locale_repository_path):
                 log.debug("INI configparser: " + str(e))
 
     elif p.format == 'lang':
-        locale_paths = _get_locale_paths(locale_repository_path, p.format)
+        locale_paths = files.get_locale_paths(p, locale)
 
         for path in locale_paths:
             with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
