@@ -1469,7 +1469,7 @@ def update_from_repository(request, template=None):
         return HttpResponse("error")
 
     try:
-        update_files_from_repository(project)
+        update_files_from_repository(project, [locale])
         extract_files(project, [locale])
     except Exception as e:
         log.error("Exception: " + str(e))

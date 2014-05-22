@@ -595,9 +595,9 @@ def extract_files(project, locales=None):
             project, locale, locale_paths, source_locale, isVCS)
 
 
-def update_files_from_repository(project):
-    """Update all project files from remote repository."""
-    log.debug("Update all project files from remote repository.")
+def update_files_from_repository(project, locales=None):
+    """Update project files from remote repository."""
+    log.debug("Update project files from remote repository.")
 
     repository_type = project.repository_type
     repository_url = project.repository_url
@@ -631,10 +631,12 @@ def update_files_from_repository(project):
     else:
 
         # Save files to server
-        update_from_vcs(repository_type, repository_url, repository_path)
+        if not locales or not one_locale:
+            locales = project.locales.all()
+            update_from_vcs(repository_type, repository_url, repository_path)
 
         if one_locale:
-            for l in project.locales.all():
+            for l in locales:
                 update_from_vcs(
                     repository_type,
                     os.path.join(repository_url_master, l.code),
