@@ -1331,7 +1331,7 @@ var Pontoon = (function () {
         e.preventDefault();
         if ($(this).is(".sign-out")) {
           window.location = 'signout/';
-        } else if ($(this).is(".admin")) {
+        } else if ($(this).is(".admin") || $(this).is(".project-admin")) {
           window.location = $(this).data('url');
         } else if ($(this).is(".html")) {
           self.common.postMessage("HTML");
