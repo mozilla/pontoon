@@ -323,10 +323,16 @@ def get_source_directory(path):
 
         for directory in ('templates', 'en-US', 'en-GB', 'en'):
             for dirname in fnmatch.filter(dirnames, directory):
-                return dirname, os.path.join(root, dirname)
+                return {
+                    'name': dirname,
+                    'path': os.path.join(root, dirname),
+                }
 
     # INI Format
-    return '', path
+    return {
+        'name': '',
+        'path': path,
+    }
 
 
 def _is_one_locale_repository(repository_url, repository_path_master):
@@ -560,18 +566,17 @@ def extract_files(project):
     Entity.objects.filter(project=project).update(obsolete=True)
 
     repository_path_master = get_repository_path_master(project)
-    source_directory, source_directory_path = get_source_directory(
-        repository_path_master)
+    source_directory = get_source_directory(repository_path_master)
 
     source_locale = 'en-US'
-    if not source_directory in ('', 'templates'):
-        source_locale = source_directory
+    if not source_directory['name'] in ('', 'templates'):
+        source_locale = source_directory['name']
 
     locales = [Locale.objects.get(code=source_locale)]
     locales.extend(project.locales.all())
 
     isVCS = project.repository_type != 'file'
-    source_paths = get_source_paths(source_directory_path)
+    source_paths = get_source_paths(source_directory['path'])
 
     if project.format == 'ini':
         try:
@@ -582,9 +587,9 @@ def extract_files(project):
                 os.remove(file_path)
 
     for index, locale in enumerate(locales):
-        locale_code = source_directory if index == 0 else locale.code
+        locale_code = source_directory['name'] if index == 0 else locale.code
         locale_paths = _get_locale_paths(
-            source_paths, source_directory, locale_code)
+            source_paths, source_directory['name'], locale_code)
         globals()['_extract_%s' % project.format](
             project, locale, locale_paths, source_locale, isVCS)
 
@@ -635,8 +640,8 @@ def update_files_from_repository(project):
                     os.path.join(repository_path_master, l.code))
 
         # Detect format
-        t, source_directory_path = get_source_directory(repository_path_master)
-        format = detect_format(source_directory_path)
+        source_directory = get_source_directory(repository_path_master)
+        format = detect_format(source_directory['path'])
 
     # Store project format and repository_path
     project.format = format

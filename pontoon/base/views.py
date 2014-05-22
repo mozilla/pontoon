@@ -1164,7 +1164,7 @@ def _update_files(p, locale, locale_repository_path):
                 log.error(e)
 
         parser = silme.format.properties.PropertiesFormatParser
-        source_dir, source_path = get_source_directory(p.repository_path)
+        source_directory = get_source_directory(p.repository_path)
 
         # Get short paths to translated files only
         translations = Translation.objects.filter(
@@ -1181,7 +1181,7 @@ def _update_files(p, locale, locale_repository_path):
             if not os.path.exists(basedir):
                 os.makedirs(basedir)
             try:
-                shutil.copy(source_path + short[0], path)
+                shutil.copy(source_directory['path'] + short[0], path)
             # Obsolete files
             except Exception as e:
                 log.debug(e)
