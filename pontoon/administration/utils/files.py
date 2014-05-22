@@ -391,7 +391,7 @@ def _extract_ini(project, path):
         log.debug("[" + section + "]: saved to DB.")
 
 
-def extract_files(project, locales=None):
+def extract_to_database(project, locales=None):
     """Extract data from project files and save or update in DB."""
     log.debug("Extract data from project files and save or update in DB.")
 
@@ -428,7 +428,7 @@ def extract_files(project, locales=None):
             project, locale, locale_paths, source_locale, isVCS)
 
 
-def update_files_from_repository(project, locales=None):
+def update_from_repository(project, locales=None):
     """Update project files from remote repository."""
     log.debug("Update project files from remote repository.")
 

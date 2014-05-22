@@ -208,8 +208,8 @@ def update_from_repository(request, template=None):
         return HttpResponse("error")
 
     try:
-        files.update_files_from_repository(project)
-        files.extract_files(project)
+        files.update_from_repository(project)
+        files.extract_to_database(project)
     except Exception as e:
         log.error("Exception: " + str(e))
         return HttpResponse('error')
