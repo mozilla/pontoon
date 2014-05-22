@@ -675,8 +675,6 @@ def update_from_transifex(request, template=None):
     """Update all project locales from Transifex repository."""
     log.debug("Update all project locales from Transifex repository.")
 
-    from pontoon.base.views import _request
-
     if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
 

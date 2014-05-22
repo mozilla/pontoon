@@ -5,6 +5,7 @@ import codecs
 import commonware
 import datetime
 import fnmatch
+import hashlib
 import json
 import os
 import polib
@@ -14,9 +15,9 @@ import silme.core
 import silme.format.properties
 import StringIO
 import traceback
+import xml.etree.ElementTree as ET
 import urllib
 import zipfile
-import hashlib
 
 from django.conf import settings
 from django.contrib import messages
@@ -57,7 +58,7 @@ from pontoon.base.models import (
     Subpage,
     Entity,
     Translation,
-    UserProfile
+    UserProfile,
 )
 
 from pontoon.base.utils.permissions import add_can_localize
@@ -884,7 +885,6 @@ def machine_translation(request):
         log.debug(r.content)
 
         # Parse XML response
-        import xml.etree.ElementTree as ET
         root = ET.fromstring(r.content)
         translation = root.text
         obj['translation'] = translation
