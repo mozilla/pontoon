@@ -44,13 +44,7 @@ from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 
 from pontoon.administration.utils.vcs import commit_to_vcs
-
-from pontoon.administration.views import (
-    get_source_directory,
-    get_repository_path_master,
-    update_files_from_repository,
-    extract_files,
-)
+from pontoon.administration.utils import files
 
 from pontoon.base.models import (
     Locale,
@@ -1055,7 +1049,7 @@ def _get_locale_repository_path(project, locale):
     """Get path to locale directory."""
     log.debug("Get path to locale directory.")
 
-    path = get_repository_path_master(project)
+    path = files.get_repository_path_master(project)
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
@@ -1164,7 +1158,7 @@ def _update_files(p, locale, locale_repository_path):
                 log.error(e)
 
         parser = silme.format.properties.PropertiesFormatParser
-        source_directory = get_source_directory(p.repository_path)
+        source_directory = files.get_source_directory(p.repository_path)
 
         # Get short paths to translated files only
         translations = Translation.objects.filter(
@@ -1469,8 +1463,8 @@ def update_from_repository(request, template=None):
         return HttpResponse("error")
 
     try:
-        update_files_from_repository(project, [locale])
-        extract_files(project, [locale])
+        files.update_files_from_repository(project, [locale])
+        files.extract_files(project, [locale])
     except Exception as e:
         log.error("Exception: " + str(e))
         return HttpResponse('error')
