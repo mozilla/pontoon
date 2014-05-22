@@ -581,6 +581,10 @@ def update_files_from_repository(
     """Update all project files from remote repository."""
     log.debug("Update all project files from remote repository.")
 
+    # Update repository path if one-locale repository
+    source_directory, repository_url_master, repository_path = \
+        _is_one_locale_repository(repository_url, repository_path_master)
+
     if repository_type == 'file':
 
         # Save file to server
@@ -601,38 +605,27 @@ def update_files_from_repository(
         # Detect format
         temp, file_extension = os.path.splitext(file_name)
         format = file_extension[1:].lower()
-        if format == 'pot':
-            format = 'po'
+        format = 'po' if format == 'pot' else format
 
     else:
-
-        # Update repository path if one-locale repository
-        source_directory, repository_url_master, repository_path = \
-            _is_one_locale_repository(repository_url, repository_path_master)
 
         # Save files to server
         update_from_vcs(repository_type, repository_url, repository_path)
 
-        # If one-locale repository, save remaining files
         if source_directory:
-            source_directory_path = repository_path
             for l in project.locales.all():
                 update_from_vcs(
                     repository_type,
                     os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
 
-        # If multiple-locale repository, get source directory
-        else:
-            source_directory, source_directory_path = get_source_directory(
-                repository_path)
-
-        format, source_paths = _get_format_and_source_paths(
-            source_directory_path)
+        # Detect format
+        t, source_directory_path = get_source_directory(repository_path_master)
+        format, t = _get_format_and_source_paths(source_directory_path)
 
     # Store project format and repository_path
     project.format = format
-    project.repository_path = repository_path or repository_path_master
+    project.repository_path = repository_path
     project.save()
 
 
