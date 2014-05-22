@@ -667,14 +667,14 @@ def update_from_repository(request, template=None):
         return HttpResponse("error")
 
     try:
-        p = Project.objects.get(pk=pk)
+        project = Project.objects.get(pk=pk)
     except Project.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
 
     try:
-        update_files_from_repository(p)
-        extract_files(p)
+        update_files_from_repository(project)
+        extract_files(project)
     except Exception as e:
         log.error("Exception: " + str(e))
         return HttpResponse('error')
