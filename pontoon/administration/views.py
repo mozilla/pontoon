@@ -281,11 +281,24 @@ def _get_locale_paths(source_paths, source_directory, locale_code):
     return locale_paths
 
 
-def _get_format_and_source_paths(path):
-    """Get file format based on extensions and paths to source files."""
-    log.debug("Get file format based on extensions and paths to source files.")
+def detect_format(path):
+    """Detect file format based on file extensions."""
+    log.debug("Detect file format based on file extensions.")
 
-    format = None
+    for root, dirnames, filenames in os.walk(path):
+        # Ignore hidden files and folders
+        filenames = [f for f in filenames if not f[0] == '.']
+        dirnames[:] = [d for d in dirnames if not d[0] == '.']
+
+        for extension in ('pot', 'po', 'properties', 'ini', 'lang'):
+            for filename in fnmatch.filter(filenames, '*.' + extension):
+                return 'po' if extension == 'pot' else extension
+
+
+def get_source_paths(path):
+    """Get paths to source files."""
+    log.debug("Get paths to source files.")
+
     source_paths = []
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
@@ -294,11 +307,9 @@ def _get_format_and_source_paths(path):
 
         for extension in ('pot', 'po', 'properties', 'ini', 'lang'):
             for filename in fnmatch.filter(filenames, '*.' + extension):
-                if format is None:
-                    format = 'po' if extension == 'pot' else extension
                 source_paths.append(os.path.join(root, filename))
 
-    return format, source_paths
+    return source_paths
 
 
 def get_source_directory(path):
@@ -548,7 +559,6 @@ def extract_files(project):
     # Mark all existing project entities as obsolete
     Entity.objects.filter(project=project).update(obsolete=True)
 
-    # Get source_directory
     repository_path_master = get_repository_path_master(project)
     source_directory, source_directory_path = get_source_directory(
         repository_path_master)
@@ -556,13 +566,12 @@ def extract_files(project):
     source_locale = 'en-US'
     if not source_directory in ('', 'templates'):
         source_locale = source_directory
+
     locales = [Locale.objects.get(code=source_locale)]
     locales.extend(project.locales.all())
 
     isVCS = project.repository_type != 'file'
-
-    # Get source_paths
-    format, source_paths = _get_format_and_source_paths(source_directory_path)
+    source_paths = get_source_paths(source_directory_path)
 
     if project.format == 'ini':
         try:
@@ -627,7 +636,7 @@ def update_files_from_repository(project):
 
         # Detect format
         t, source_directory_path = get_source_directory(repository_path_master)
-        format, t = _get_format_and_source_paths(source_directory_path)
+        format = detect_format(source_directory_path)
 
     # Store project format and repository_path
     project.format = format
