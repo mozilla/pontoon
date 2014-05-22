@@ -100,10 +100,7 @@ $(function() {
       pk: $('input[name=pk]').val(),
       csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
     }
-    if (source === 'repository') {
-      params.repository_url = $('input[name=repository_url]').val();
-      params.repository_type = $('select[name=repository_type]').val();
-    } else if (source === 'transifex') {
+    if (source === 'transifex') {
       if ($(this).parents('.popup').length === 0) {
         project = $('.transifex input#id_transifex_project');
         resource = $('.transifex input#id_transifex_resource');

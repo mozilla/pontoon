@@ -1469,11 +1469,8 @@ def update_from_repository(request, template=None):
         log.error(e)
         return HttpResponse("error")
 
-    repository_path_master = get_repository_path_master(p)
-
     try:
-        update_files_from_repository(
-            p, p.repository_type, p.repository_url, repository_path_master)
+        update_files_from_repository(p)
         extract_files(p)
     except Exception as e:
         log.error("Exception: " + str(e))

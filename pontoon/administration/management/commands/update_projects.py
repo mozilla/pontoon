@@ -4,8 +4,8 @@ import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from pontoon.administration.views import (
-    get_repository_path_master,
     update_files_from_repository,
+    extract_files,
 )
 from pontoon.base.models import Project
 
@@ -17,13 +17,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for project in Project.objects.all():
             try:
-                repository_type = project.repository_type
-                repository_url = project.repository_url
-                repository_path_master = get_repository_path_master(project)
-
-                update_files_from_repository(
-                    project, repository_type, repository_url,
-                    repository_path_master)
+                update_files_from_repository(project)
+                extract_files(project)
                 now = datetime.datetime.now()
                 self.stdout.write(
                     '[%s]: Successfully updated project "%s"\n' %

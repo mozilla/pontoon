@@ -582,10 +582,13 @@ def extract_files(project):
             project, locale, locale_paths, source_locale, isVCS)
 
 
-def update_files_from_repository(
-        project, repository_type, repository_url, repository_path_master):
+def update_files_from_repository(project):
     """Update all project files from remote repository."""
     log.debug("Update all project files from remote repository.")
+
+    repository_type = project.repository_type
+    repository_url = project.repository_url
+    repository_path_master = get_repository_path_master(project)
 
     # Update repository path if one-locale repository
     source_directory, repository_url_master, repository_path = \
@@ -648,8 +651,6 @@ def update_from_repository(request, template=None):
 
     try:
         pk = request.POST['pk']
-        repository_type = request.POST['repository_type']
-        repository_url = request.POST['repository_url']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
@@ -660,11 +661,8 @@ def update_from_repository(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    repository_path_master = get_repository_path_master(p)
-
     try:
-        update_files_from_repository(
-            p, repository_type, repository_url, repository_path_master)
+        update_files_from_repository(p)
         extract_files(p)
     except Exception as e:
         log.error("Exception: " + str(e))
