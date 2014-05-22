@@ -2,9 +2,11 @@
 import os
 import datetime
 
-from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from pontoon.administration.views import _update_from_repository
+from pontoon.administration.views import (
+    get_repository_path_master,
+    update_files_from_repository,
+)
 from pontoon.base.models import Project
 
 
@@ -17,10 +19,9 @@ class Command(BaseCommand):
             try:
                 repository_type = project.repository_type
                 repository_url = project.repository_url
-                repository_path_master = os.path.join(
-                    settings.MEDIA_ROOT, repository_type, project.slug)
+                repository_path_master = get_repository_path_master(project)
 
-                _update_from_repository(
+                update_files_from_repository(
                     project, repository_type, repository_url,
                     repository_path_master)
                 now = datetime.datetime.now()

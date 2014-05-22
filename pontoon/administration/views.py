@@ -175,8 +175,7 @@ def delete_project(request, pk, template=None):
         project = Project.objects.get(pk=pk)
         project.delete()
 
-        path = os.path.join(
-            settings.MEDIA_ROOT, project.repository_type, project.slug)
+        path = get_repository_path_master(project)
         if os.path.exists(path):
             shutil.rmtree(path)
 
@@ -332,6 +331,14 @@ def _is_one_locale_repository(repository_url, repository_path_master):
         repository_path = os.path.join(repository_path_master, last)
 
     return source_directory, repository_url_master, repository_path
+
+
+def get_repository_path_master(project):
+    """Get path to master project folder containing repository data."""
+    log.debug("Get path to master project folder containing repository data.")
+
+    return os.path.join(
+        settings.MEDIA_ROOT, project.repository_type, project.slug)
 
 
 def _parse_lang(path):
@@ -543,8 +550,7 @@ def extract_files(project):
     Entity.objects.filter(project=project).update(obsolete=True)
 
     # Get source_directory
-    repository_path_master = os.path.join(
-        settings.MEDIA_ROOT, project.repository_type, project.slug)
+    repository_path_master = get_repository_path_master(project)
     source_directory, source_directory_path = get_source_directory(
         repository_path_master)
 
@@ -654,8 +660,7 @@ def update_from_repository(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    repository_path_master = os.path.join(
-        settings.MEDIA_ROOT, repository_type, p.slug)
+    repository_path_master = get_repository_path_master(p)
 
     try:
         update_files_from_repository(

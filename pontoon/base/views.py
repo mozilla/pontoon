@@ -46,6 +46,7 @@ from pontoon.administration.utils.vcs import commit_to_vcs
 
 from pontoon.administration.views import (
     get_source_directory,
+    get_repository_path_master,
     update_files_from_repository,
     extract_files,
 )
@@ -1054,8 +1055,7 @@ def _get_locale_repository_path(project, locale):
     """Get path to locale directory."""
     log.debug("Get path to locale directory.")
 
-    path = os.path.join(
-        settings.MEDIA_ROOT, project.repository_type, project.slug)
+    path = get_repository_path_master(project)
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
@@ -1469,8 +1469,7 @@ def update_from_repository(request, template=None):
         log.error(e)
         return HttpResponse("error")
 
-    repository_path_master = os.path.join(
-        settings.MEDIA_ROOT, p.repository_type, p.slug)
+    repository_path_master = get_repository_path_master(p)
 
     try:
         update_files_from_repository(
