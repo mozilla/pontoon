@@ -250,10 +250,9 @@ def _save_translation(entity, locale, string, plural_form=None, fuzzy=False):
         t.save()
 
 
-def _get_locale_paths(source_paths, source_directory, code, index):
+def _get_locale_paths(source_paths, source_directory, locale_code):
     """Get paths to locale files."""
 
-    locale_code = source_directory if index == 0 else code
     locale_paths = []
     for sp in source_paths:
 
@@ -536,11 +535,51 @@ def _extract_ini(project, path):
         log.debug("[" + section + "]: saved to DB.")
 
 
-def update_and_extract(
-        project, repository_type, repository_url, repository_path_master):
+def extract_files(project):
+    """Extract data from project files and save or update in DB."""
+    log.debug("Extract data from project files and save or update in DB.")
 
     # Mark all existing project entities as obsolete
     Entity.objects.filter(project=project).update(obsolete=True)
+
+    # Get source_directory
+    repository_path_master = os.path.join(
+        settings.MEDIA_ROOT, project.repository_type, project.slug)
+    source_directory, source_directory_path = get_source_directory(
+        repository_path_master)
+
+    source_locale = 'en-US'
+    if not source_directory in ('', 'templates'):
+        source_locale = source_directory
+    locales = [Locale.objects.get(code=source_locale)]
+    locales.extend(project.locales.all())
+
+    isVCS = project.repository_type != 'file'
+
+    # Get source_paths
+    format, source_paths = _get_format_and_source_paths(source_directory_path)
+
+    if project.format == 'ini':
+        try:
+            _extract_ini(project, source_paths[0])
+            return
+        except Exception as e:
+            if not isVCS:
+                os.remove(file_path)
+            raise Exception(unicode(e))
+
+    for index, locale in enumerate(locales):
+        locale_code = source_directory if index == 0 else locale.code
+        locale_paths = _get_locale_paths(
+            source_paths, source_directory, locale_code)
+        globals()['_extract_%s' % project.format](
+            project, locale, locale_paths, source_locale, isVCS)
+
+
+def update_files_from_repository(
+        project, repository_type, repository_url, repository_path_master):
+    """Update all project files from remote repository."""
+    log.debug("Update all project files from remote repository.")
 
     if repository_type == 'file':
 
@@ -570,38 +609,7 @@ def update_and_extract(
             log.debug("IOError: " + str(e))
             raise Exception(unicode(e))
 
-        # Extract file data and store to DB
-        source_locale = 'en-US'
-        locales = [Locale.objects.get(code=source_locale)]
-        locales.extend(project.locales.all())
-
-        if format == 'po':
-            for l in locales:
-                _extract_po(
-                    project, l, [file_path], source_locale, False)
-
-        elif format == 'properties':
-            for l in locales:
-                _extract_properties(
-                    project, l, [file_path], source_locale, False)
-
-        elif format == 'lang':
-            for l in locales:
-                _extract_lang(
-                    project, l, [file_path], source_locale, False)
-
-        elif format == 'ini':
-            try:
-                _extract_ini(project, file_path)
-            except Exception as e:
-                os.remove(file_path)
-                raise Exception(unicode(e))
-
-        else:
-            log.error("Format not supported")
-            raise Exception("Not supported")
-
-    elif repository_type in ('git', 'hg', 'svn'):
+    else:
 
         # Update repository path if one-locale repository
         source_directory, repository_url_master, repository_path = \
@@ -631,46 +639,6 @@ def update_and_extract(
         project.format = format
         project.repository_path = repository_path
         project.save()
-
-        # Extract file data and store to DB
-        if source_directory == 'templates':
-            source_locale = 'en-US'
-        else:
-            source_locale = source_directory
-        locales = [Locale.objects.get(code=source_locale)]
-        locales.extend(project.locales.all())
-
-        if format == 'po':
-            for index, l in enumerate(locales):
-                locale_paths = _get_locale_paths(
-                    source_paths, source_directory, l.code, index)
-                _extract_po(project, l, locale_paths, source_locale)
-
-        elif format == 'properties':
-            for index, l in enumerate(locales):
-                locale_paths = _get_locale_paths(
-                    source_paths, source_directory, l.code, index)
-                _extract_properties(project, l, locale_paths, source_locale)
-
-        elif format == 'lang':
-            for index, l in enumerate(locales):
-                locale_paths = _get_locale_paths(
-                    source_paths, source_directory, l.code, index)
-                _extract_lang(project, l, locale_paths, source_locale)
-
-        elif format == 'ini':
-            try:
-                _extract_ini(project, source_paths[0])
-            except Exception as e:
-                raise Exception(unicode(e))
-
-        else:
-            log.error("Format not supported")
-            raise Exception("Not supported")
-
-    else:
-        log.error("Repository type not supported")
-        raise Exception("Not supported")
 
 
 def update_from_repository(request, template=None):
@@ -702,8 +670,9 @@ def update_from_repository(request, template=None):
         settings.MEDIA_ROOT, repository_type, p.slug)
 
     try:
-        update_and_extract(
+        update_files_from_repository(
             p, repository_type, repository_url, repository_path_master)
+        extract_files(p)
     except Exception as e:
         log.error("Exception: " + str(e))
         return HttpResponse('error')

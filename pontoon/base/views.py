@@ -46,7 +46,8 @@ from pontoon.administration.utils.vcs import commit_to_vcs
 
 from pontoon.administration.views import (
     get_source_directory,
-    update_and_extract,
+    update_files_from_repository,
+    extract_files,
 )
 
 from pontoon.base.models import (
@@ -1472,8 +1473,9 @@ def update_from_repository(request, template=None):
         settings.MEDIA_ROOT, p.repository_type, p.slug)
 
     try:
-        update_and_extract(
+        update_files_from_repository(
             p, p.repository_type, p.repository_url, repository_path_master)
+        extract_files(p)
     except Exception as e:
         log.error("Exception: " + str(e))
         return HttpResponse('error')
