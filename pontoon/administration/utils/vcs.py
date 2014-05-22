@@ -257,58 +257,21 @@ class CommitToSvn(CommitToRepository):
 
 
 def update_from_vcs(repo_type, url, path):
-    if repo_type == 'git':
-        try:
-            obj = PullFromGit(url, path)
-            obj.pull()
-        except PullFromRepositoryException as e:
-            log.debug('Git PullError for %s: %s' % (url, e))
-
-    elif repo_type == 'hg':
-        try:
-            obj = PullFromHg(url, path)
-            obj.pull()
-        except PullFromRepositoryException as e:
-            log.debug('Mercurial PullError for %s: %s' % (url, e))
-
-    elif repo_type == 'svn':
-        try:
-            obj = PullFromSvn(url, path)
-            obj.pull()
-        except PullFromRepositoryException as e:
-            log.debug('Subversion PullError for %s: %s' % (url, e))
+    try:
+        obj = globals()['PullFrom%s' % repo_type.capitalize()](url, path)
+        obj.pull()
+    except PullFromRepositoryException as e:
+        log.debug('%s Pull Error for %s: %s' % (repo_type.upper(), url, e))
 
 
 def commit_to_vcs(repo_type, path, message, user, data):
-    if repo_type == 'git':
-        try:
-            obj = CommitToGit(path, message, user, data)
-            return obj.commit()
-        except CommitToRepositoryException as e:
-            log.debug('Git CommitError for %s: %s' % (path, e))
-            return {
-                'type': 'error',
-                'message': str(e)
-            }
-
-    elif repo_type == 'hg':
-        try:
-            obj = CommitToHg(path, message, user, data)
-            return obj.commit()
-        except CommitToRepositoryException as e:
-            log.debug('Mercurial CommitError for %s: %s' % (path, e))
-            return {
-                'type': 'error',
-                'message': str(e)
-            }
-
-    elif repo_type == 'svn':
-        try:
-            obj = CommitToSvn(path, message, user, data)
-            return obj.commit()
-        except CommitToRepositoryException as e:
-            log.debug('Subversion CommitError for %s: %s' % (path, e))
-            return {
-                'type': 'error',
-                'message': str(e)
-            }
+    try:
+        obj = globals()['CommitTo%s' % repo_type.capitalize()](
+            path, message, user, data)
+        return obj.commit()
+    except CommitToRepositoryException as e:
+        log.debug('%s Commit Error for %s: %s' % (repo_type.upper(), path, e))
+        return {
+            'type': 'error',
+            'message': str(e)
+        }
