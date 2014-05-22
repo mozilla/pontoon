@@ -503,7 +503,6 @@ def _extract_ini(project, path):
             config.read_file(f)
         except Exception as e:
             log.debug("INI configparser: " + str(e))
-            raise Exception("error")
 
     sections = config.sections()
 
@@ -572,7 +571,6 @@ def extract_files(project):
         except Exception as e:
             if not isVCS:
                 os.remove(file_path)
-            raise Exception(unicode(e))
 
     for index, locale in enumerate(locales):
         locale_code = source_directory if index == 0 else locale.code
@@ -609,7 +607,6 @@ def update_files_from_repository(project):
                 f.write(u.read().decode("utf-8-sig").encode("utf-8"))
         except IOError as e:
             log.debug("IOError: " + str(e))
-            raise Exception(unicode(e))
 
         # Detect format
         temp, file_extension = os.path.splitext(file_name)
@@ -666,6 +663,9 @@ def update_from_repository(request, template=None):
         extract_files(p)
     except Exception as e:
         log.error("Exception: " + str(e))
+        return HttpResponse('error')
+    except IOError as e:
+        log.debug("IOError: " + str(e))
         return HttpResponse('error')
 
     return HttpResponse("200")

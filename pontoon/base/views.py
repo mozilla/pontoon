@@ -1254,7 +1254,6 @@ def _update_files(p, locale, locale_repository_path):
 
             except Exception as e:
                 log.debug("INI configparser: " + str(e))
-                raise Exception("error")
 
     elif p.format == 'lang':
         locale_paths = _get_locale_paths(locale_repository_path, p.format)
