@@ -30,7 +30,7 @@ def get_locale_paths(project, locale):
     """Get paths to locale files."""
 
     locale_paths = []
-    path = get_locale_directory(project, locale.code)["path"]
+    path = get_locale_directory(project, locale)["path"]
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
@@ -54,14 +54,14 @@ def get_locale_directory(project, locale):
         filenames = [f for f in filenames if not f[0] == '.']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for dirname in fnmatch.filter(dirnames, locale):
+        for dirname in fnmatch.filter(dirnames, locale.code):
             return {
                 'name': dirname,
                 'path': os.path.join(root, dirname),
             }
 
         # Also check for locale variants with underscore, e.g. de_AT
-        for dirname in fnmatch.filter(dirnames, locale.replace('-', '_')):
+        for dirname in fnmatch.filter(dirnames, locale.code.replace('-', '_')):
             return {
                 'name': dirname,
                 'path': os.path.join(root, dirname),

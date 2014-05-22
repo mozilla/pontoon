@@ -1045,7 +1045,7 @@ def transvision(request):
         return HttpResponse("error")
 
 
-def _update_files(p, locale, locale_repository_path):
+def _update_files(p, locale):
     entities = Entity.objects.filter(project=p, obsolete=False)
 
     if p.format == 'po':
@@ -1109,11 +1109,13 @@ def _update_files(p, locale, locale_repository_path):
             log.debug("File updated: " + path)
 
     elif p.format == 'properties':
+        locale_directory_path = files.get_locale_directory(p, locale)["path"]
+
         # Remove all non-hidden files and folders in locale repository
-        items = os.listdir(locale_repository_path)
+        items = os.listdir(locale_directory_path)
         items = [i for i in items if not i[0] == '.']
         for item in items:
-            path = os.path.join(locale_repository_path, item)
+            path = os.path.join(locale_directory_path, item)
             try:
                 shutil.rmtree(path)
             except OSError:
@@ -1132,7 +1134,7 @@ def _update_files(p, locale, locale_repository_path):
         short_paths = entities_translated.values_list("source").distinct()
 
         for short in short_paths:
-            path = locale_repository_path + short[0]
+            path = locale_directory_path + short[0]
 
             # Create folders and copy files from source
             basedir = os.path.dirname(path)
@@ -1184,7 +1186,7 @@ def _update_files(p, locale, locale_repository_path):
             log.debug("File updated: " + path)
 
     elif p.format == 'ini':
-        path = files.get_locale_directory(p, locale.code)["path"]
+        path = files.get_locale_directory(p, locale)["path"]
         source_path = files.get_source_paths(path)[0]
         config = configparser.ConfigParser()
 
@@ -1259,14 +1261,13 @@ def _update_files(p, locale, locale_repository_path):
                 log.debug("File updated: " + path)
 
 
-def _generate_zip(project, locale, path):
+def _generate_zip(project, locale):
     """
     Generate .zip file of all project files for the specified locale.
 
     Args:
         project: Project
         locale: Locale code
-        path: Locale repository path
     Returns:
         A string for generated ZIP content.
     """
@@ -1276,13 +1277,17 @@ def _generate_zip(project, locale, path):
     except Locale.DoesNotExist as e:
         log.error(e)
 
-    _update_files(project, locale, path)
+    path = files.get_locale_directory(project, locale)["path"]
+    if not path:
+        return False
+
+    _update_files(project, locale)
 
     s = StringIO.StringIO()
     zf = zipfile.ZipFile(s, "w")
 
-    for root, dirs, files in os.walk(path):
-        for f in files:
+    for root, dirs, fls in os.walk(path):
+        for f in fls:
             file_path = os.path.join(root, f)
             zip_path = os.path.relpath(file_path, os.path.join(path, '..'))
             zf.write(file_path, zip_path)
@@ -1330,12 +1335,11 @@ def download(request, template=None):
         response['Content-Type'] = 'application/json'
 
     elif format == 'zip':
-        path = files.get_locale_directory(p, locale)["path"]
+        content = _generate_zip(p, locale)
 
-        if not path:
+        if content == False:
             raise Http404
 
-        content = _generate_zip(p, locale, path)
         response['Content-Type'] = 'application/x-zip-compressed'
 
     response.content = content
@@ -1374,22 +1378,21 @@ def commit_to_repository(request, template=None):
         log.error(e)
         return HttpResponse("error")
 
-    path = files.get_locale_directory(p, locale.code)["path"]
+    path = files.get_locale_directory(p, locale)["path"]
     if not path:
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': 'Sorry, repository path not found.',
         }), mimetype='application/json')
 
+    _update_files(p, locale)
+
     name = request.user.email if not request.user.first_name else '%s (%s)' \
         % (request.user.first_name, request.user.email)
     message = 'Pontoon: Update %s (%s) localization of %s on behalf of %s.' \
         % (locale.name, locale.code, p.name, name)
 
-    _update_files(p, locale, path)
-
     r = commit_to_vcs(p.repository_type, path, message, request.user, data)
-
     if r is not None:
         return HttpResponse(json.dumps(r), mimetype='application/json')
 
