@@ -1045,27 +1045,6 @@ def transvision(request):
         return HttpResponse("error")
 
 
-def _get_locale_repository_path(project, locale):
-    """Get path to locale directory."""
-    log.debug("Get path to locale directory.")
-
-    path = files.get_repository_path_master(project)
-
-    for root, dirnames, filenames in os.walk(path):
-        # Ignore hidden files and folders
-        filenames = [f for f in filenames if not f[0] == '.']
-        dirnames[:] = [d for d in dirnames if not d[0] == '.']
-
-        for dirname in fnmatch.filter(dirnames, locale):
-            return os.path.join(root, dirname)
-
-        # Also check for locale variants with underscore, e.g. de_AT
-        for dirname in fnmatch.filter(dirnames, locale.replace('-', '_')):
-            return os.path.join(root, dirname)
-
-    log.error("Locale repository path not found.")
-
-
 def _get_locale_paths(path, format):
     """Get paths to locale files."""
 
@@ -1366,7 +1345,7 @@ def download(request, template=None):
         response['Content-Type'] = 'application/json'
 
     elif format == 'zip':
-        path = _get_locale_repository_path(p, locale)
+        path = files.get_locale_directory(p, locale)["path"]
 
         if not path:
             raise Http404
@@ -1410,7 +1389,7 @@ def commit_to_repository(request, template=None):
         log.error(e)
         return HttpResponse("error")
 
-    path = _get_locale_repository_path(p, locale.code)
+    path = files.get_locale_directory(p, locale.code)["path"]
     if not path:
         return HttpResponse(json.dumps({
             'type': 'error',

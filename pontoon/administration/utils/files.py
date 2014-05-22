@@ -30,6 +30,7 @@ def get_locale_paths(source_paths, source_directory, locale_code):
     """Get paths to locale files."""
 
     locale_paths = []
+
     for sp in source_paths:
 
         # Also include paths to source files
@@ -58,6 +59,39 @@ def get_locale_paths(source_paths, source_directory, locale_code):
     return locale_paths
 
 
+def get_locale_directory(project, locale):
+    """Get path to the directory with locale files."""
+    log.debug("Get path to the directory with locale files.")
+
+    path = get_repository_path_master(project)
+
+    for root, dirnames, filenames in os.walk(path):
+        # Ignore hidden files and folders
+        filenames = [f for f in filenames if not f[0] == '.']
+        dirnames[:] = [d for d in dirnames if not d[0] == '.']
+
+        for dirname in fnmatch.filter(dirnames, locale):
+            return {
+                'name': dirname,
+                'path': os.path.join(root, dirname),
+            }
+
+        # Also check for locale variants with underscore, e.g. de_AT
+        for dirname in fnmatch.filter(dirnames, locale.replace('-', '_')):
+            return {
+                'name': dirname,
+                'path': os.path.join(root, dirname),
+            }
+
+    log.error("Locale repository path not found.")
+
+    # INI Format
+    return {
+        'name': '',
+        'path': path,
+    }
+
+
 def detect_format(path):
     """Detect file format based on file extensions."""
     log.debug("Detect file format based on file extensions.")
@@ -77,6 +111,7 @@ def get_source_paths(path):
     log.debug("Get paths to source files.")
 
     source_paths = []
+
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
         filenames = [f for f in filenames if not f[0] == '.']
@@ -90,8 +125,8 @@ def get_source_paths(path):
 
 
 def get_source_directory(path):
-    """Get name and path of the directory with source strings."""
-    log.debug("Get name and path of the directory with source strings.")
+    """Get name and path of the directory with source files."""
+    log.debug("Get name and path of the directory with source files.")
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
@@ -128,8 +163,8 @@ def is_one_locale_repository(repository_url, repository_path_master):
 
 
 def get_repository_path_master(project):
-    """Get path to master project folder containing repository data."""
-    log.debug("Get path to master project folder containing repository data.")
+    """Get path to master project folder containing repository files."""
+    log.debug("Get path to master project folder containing repository files.")
 
     return os.path.join(
         settings.MEDIA_ROOT, project.repository_type, project.slug)
