@@ -232,6 +232,8 @@ class CommitToSvn(CommitToRepository):
         try:
             client.checkin([path], message)
             log.info(message)
+            client.set_default_username(None)
+            client.set_default_password(None)
 
             # Save username and password
             if data.get('auth', {}).get('remember', {}) == 1:
