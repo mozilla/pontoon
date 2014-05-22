@@ -249,7 +249,7 @@ def _save_translation(entity, locale, string, plural_form=None, fuzzy=False):
         t.save()
 
 
-def _get_locale_paths(source_paths, source_directory, locale_code):
+def get_locale_paths(source_paths, source_directory, locale_code):
     """Get paths to locale files."""
 
     locale_paths = []
@@ -335,19 +335,19 @@ def get_source_directory(path):
     }
 
 
-def _is_one_locale_repository(repository_url, repository_path_master):
+def is_one_locale_repository(repository_url, repository_path_master):
     """Check if repository contains one or multiple locales."""
 
-    source_directory = repository_url_master = False
+    one_locale = repository_url_master = False
     repository_path = repository_path_master
     last = os.path.basename(os.path.normpath(repository_url))
 
     if last in ('templates', 'en-US', 'en-GB', 'en'):
-        source_directory = last
+        one_locale = True
         repository_url_master = repository_url.rsplit(last, 1)[0]
         repository_path = os.path.join(repository_path_master, last)
 
-    return source_directory, repository_url_master, repository_path
+    return one_locale, repository_url_master, repository_path
 
 
 def get_repository_path_master(project):
@@ -588,7 +588,7 @@ def extract_files(project):
 
     for index, locale in enumerate(locales):
         locale_code = source_directory['name'] if index == 0 else locale.code
-        locale_paths = _get_locale_paths(
+        locale_paths = get_locale_paths(
             source_paths, source_directory['name'], locale_code)
         globals()['_extract_%s' % project.format](
             project, locale, locale_paths, source_locale, isVCS)
@@ -603,8 +603,8 @@ def update_files_from_repository(project):
     repository_path_master = get_repository_path_master(project)
 
     # Update repository path if one-locale repository
-    source_directory, repository_url_master, repository_path = \
-        _is_one_locale_repository(repository_url, repository_path_master)
+    one_locale, repository_url_master, repository_path = \
+        is_one_locale_repository(repository_url, repository_path_master)
 
     if repository_type == 'file':
 
@@ -632,7 +632,7 @@ def update_files_from_repository(project):
         # Save files to server
         update_from_vcs(repository_type, repository_url, repository_path)
 
-        if source_directory:
+        if one_locale:
             for l in project.locales.all():
                 update_from_vcs(
                     repository_type,
