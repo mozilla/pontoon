@@ -485,16 +485,27 @@ def update_from_repository(project, locales=None):
     else:
 
         # Save files to server
-        if not locales or not one_locale:
-            locales = project.locales.all()
+        if not locales:
             update_from_vcs(repository_type, repository_url, repository_path)
 
         if one_locale:
+            if not locales:
+                locales = project.locales.all()
             for l in locales:
                 update_from_vcs(
                     repository_type,
                     os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
+
+        elif locales:
+            if repository_type == 'svn':
+                for l in locales:
+                    path = get_locale_directory(project, l)["path"]
+                    update_from_vcs(repository_type, None, path)
+
+            else:
+                update_from_vcs(
+                    repository_type, repository_url, repository_path)
 
         # Detect format
         source_directory = get_source_directory(repository_path_master)
