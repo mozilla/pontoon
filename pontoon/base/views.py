@@ -34,6 +34,7 @@ from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 from pontoon.administration.utils.vcs import commit_to_vcs
 from pontoon.administration.utils import files
+from pontoon.base import utils
 
 from pontoon.base.models import (
     Locale,
@@ -47,10 +48,8 @@ from pontoon.base.models import (
     unset_approved,
 )
 
-from pontoon.base.utils.permissions import add_can_localize
 from session_csrf import anonymous_csrf_exempt
 from suds.client import Client, WebFault
-from translate.filters import checks
 
 
 log = commonware.log.getLogger('pontoon')
@@ -277,70 +276,6 @@ def translate_project(request, locale, slug, page=None,
     return render(request, template, data)
 
 
-def _request(method, project, resource, locale,
-             username, password, payload=False):
-    """
-    Make request to Transifex server.
-
-    Args:
-        method: Request method
-        project: Transifex project name
-        resource: Transifex resource name
-        locale: Locale code
-        username: Transifex username
-        password: Transifex password
-        payload: Data to be sent to the server
-    Returns:
-        A server response or error message.
-    """
-    url = os.path.join(
-        'https://www.transifex.com/api/2/project/', project,
-        'resource', resource, 'translation', locale, 'strings')
-
-    try:
-        if method == 'get':
-            r = requests.get(
-                url + '?details', auth=(username, password), timeout=10)
-        elif method == 'put':
-            r = requests.put(url, auth=(username, password), timeout=10,
-                             data=json.dumps(payload),
-                             headers={'content-type': 'application/json'})
-        log.debug(r.status_code)
-        if r.status_code == 401:
-            return "authenticate"
-        elif r.status_code != 200:
-            log.debug("Response not 200")
-            return "error"
-        return r
-    # Network problem (DNS failure, refused connection, etc.)
-    except requests.exceptions.ConnectionError as e:
-        log.debug('ConnectionError: ' + str(e))
-        return "error"
-    # Invalid HTTP response
-    except requests.exceptions.HTTPError as e:
-        log.debug('HTTPError: ' + str(e))
-        return "error"
-    # A valid URL is required
-    except requests.exceptionsURLRequired as e:
-        log.debug('URLRequired: ' + str(e))
-        return "error"
-    # Request times out
-    except requests.exceptions.Timeout as e:
-        log.debug('Timeout: ' + str(e))
-        return "error"
-    # Request exceeds the number of maximum redirections
-    except requests.exceptions.TooManyRedirects as e:
-        log.debug('TooManyRedirects: ' + str(e))
-        return "error"
-    # Ambiguous exception occurres
-    except requests.exceptions.RequestException as e:
-        log.debug('RequestException: ' + str(e))
-        return "error"
-    except Exception:
-        log.debug('Generic exception: ' + traceback.format_exc())
-        return "error"
-
-
 def get_translations_from_other_locales(request, template=None):
     """Get entity translations for all but specified locale."""
     log.debug("Get entity translation for all but specified locale.")
@@ -545,69 +480,6 @@ def delete_translation(request, template=None):
     }), mimetype='application/json')
 
 
-def _quality_check(original, string, ignore):
-    """Check for obvious errors like blanks and missing interpunction."""
-
-    if not ignore:
-        warnings = checks.runtests(original, string)
-        if warnings:
-
-            # https://github.com/translate/pootle/
-            check_names = {
-                'accelerators': 'Accelerators',
-                'acronyms': 'Acronyms',
-                'blank': 'Blank',
-                'brackets': 'Brackets',
-                'compendiumconflicts': 'Compendium conflict',
-                'credits': 'Translator credits',
-                'doublequoting': 'Double quotes',
-                'doublespacing': 'Double spaces',
-                'doublewords': 'Repeated word',
-                'emails': 'E-mail',
-                'endpunc': 'Ending punctuation',
-                'endwhitespace': 'Ending whitespace',
-                'escapes': 'Escapes',
-                'filepaths': 'File paths',
-                'functions': 'Functions',
-                'gconf': 'GConf values',
-                'kdecomments': 'Old KDE comment',
-                'long': 'Long',
-                'musttranslatewords': 'Must translate words',
-                'newlines': 'Newlines',
-                'nplurals': 'Number of plurals',
-                'notranslatewords': 'Don\'t translate words',
-                'numbers': 'Numbers',
-                'options': 'Options',
-                'printf': 'printf()',
-                'puncspacing': 'Punctuation spacing',
-                'purepunc': 'Pure punctuation',
-                'sentencecount': 'Number of sentences',
-                'short': 'Short',
-                'simplecaps': 'Simple capitalization',
-                'simpleplurals': 'Simple plural(s)',
-                'singlequoting': 'Single quotes',
-                'startcaps': 'Starting capitalization',
-                'startpunc': 'Starting punctuation',
-                'startwhitespace': 'Starting whitespace',
-                'tabs': 'Tabs',
-                'unchanged': 'Unchanged',
-                'untranslated': 'Untranslated',
-                'urls': 'URLs',
-                'validchars': 'Valid characters',
-                'variables': 'Placeholders',
-                'xmltags': 'XML tags',
-            }
-
-            warnings_array = []
-            for key in warnings.keys():
-                warning = check_names.get(key, key)
-                warnings_array.append(warning)
-
-            return HttpResponse(json.dumps({
-                'warnings': warnings_array,
-            }), mimetype='application/json')
-
-
 def update_translation(request, template=None):
     """Update entity translation for the specified locale and user."""
     log.debug("Update entity translation for the specified locale and user.")
@@ -671,7 +543,7 @@ def update_translation(request, template=None):
             if t.string == string:
                 # If added by privileged user, approve it
                 if can_localize:
-                    warnings = _quality_check(original, string, ignore)
+                    warnings = utils.quality_check(original, string, ignore)
                     if warnings:
                         return warnings
 
@@ -688,7 +560,8 @@ def update_translation(request, template=None):
                 else:
                     # Non-priviliged users can unfuzzy existing translations
                     if t.fuzzy:
-                        warnings = _quality_check(original, string, ignore)
+                        warnings = utils.quality_check(
+                            original, string, ignore)
                         if warnings:
                             return warnings
 
@@ -704,7 +577,7 @@ def update_translation(request, template=None):
                     return HttpResponse("Same translation already exist.")
 
         # Different translation added
-        warnings = _quality_check(original, string, ignore)
+        warnings = utils.quality_check(original, string, ignore)
         if warnings:
             return warnings
 
@@ -728,7 +601,7 @@ def update_translation(request, template=None):
 
     # No translations saved yet
     else:
-        warnings = _quality_check(original, string, ignore)
+        warnings = utils.quality_check(original, string, ignore)
         if warnings:
             return warnings
 
@@ -1154,7 +1027,7 @@ def save_to_transifex(request, template=None):
     except Project.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
-    response = _request('put', p.transifex_project, p.transifex_resource,
+    response = utils.req('put', p.transifex_project, p.transifex_resource,
                         data['locale'], username, password, payload)
 
     """Save Transifex username and password."""
@@ -1196,7 +1069,7 @@ def verify(request, template=None):
         # Check for permission to localize if not granted on every login
         if not user.has_perm('base.can_localize'):
             user = User.objects.get(username=user)
-            add_can_localize(user)
+            utils.add_can_localize(user)
 
         response = {
             'browserid': verification,

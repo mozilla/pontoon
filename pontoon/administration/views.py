@@ -14,6 +14,7 @@ from django.shortcuts import render
 from django.template.defaultfilters import slugify
 from django.utils.datastructures import MultiValueDictKeyError
 from pontoon.administration.utils import files
+from pontoon.base import utils
 
 from pontoon.base.models import (
     Entity,
@@ -256,7 +257,7 @@ def update_from_transifex(request, template=None):
 
     for l in p.locales.all():
         """Make GET request to Transifex API."""
-        response = _request('get', transifex_project, transifex_resource,
+        response = utils.req('get', transifex_project, transifex_resource,
                             l.code, username, password)
 
         """Save or update Transifex data to DB."""
