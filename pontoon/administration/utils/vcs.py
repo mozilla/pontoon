@@ -104,10 +104,14 @@ class PullFromSvn(PullFromRepository):
         client.callback_ssl_server_trust_prompt = self.ssl_server_trust_prompt
 
         try:
-            client.checkout(source, target)
+            client.update(target)
         except pysvn.ClientError, e:
             log.debug("Subversion: " + str(e))
-            raise PullFromRepositoryException(unicode(e))
+            try:
+                client.checkout(source, target)
+            except pysvn.ClientError, e:
+                log.debug("Subversion: " + str(e))
+                raise PullFromRepositoryException(unicode(e))
 
     @staticmethod
     def conflict_resolution_callback(conflict_description):
