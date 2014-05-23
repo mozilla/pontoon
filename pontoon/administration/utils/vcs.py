@@ -175,10 +175,11 @@ class CommitToHg(CommitToRepository):
         user = user or self.user
 
         strings = [user.first_name, '<%s>' % user.email]
-        author = ' '.join(filter(None, strings)) #  Only if not empty
+        author = ' '.join(filter(None, strings))  # Only if not empty
 
         # For some reason default push path is not set properly
-        import configparser, codecs
+        import configparser
+        import codecs
         config = configparser.ConfigParser()
 
         with codecs.open(os.path.join(path, '.hg/hgrc'), 'r', 'utf-8') as f:

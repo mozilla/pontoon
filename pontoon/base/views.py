@@ -60,8 +60,8 @@ def home(request, template='home.html'):
     log.debug("Home view.")
 
     data = {
-        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '') \
-            .split(',')[0],
+        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '')
+        .split(',')[0],
         'locales': Locale.objects.all(),
         'projects': Project.objects.filter(
             pk__in=Entity.objects.values('project'))
@@ -205,8 +205,8 @@ def translate_project(request, locale, slug, page=None,
             return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
-        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '') \
-            .split(',')[0],
+        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '')
+        .split(',')[0],
         'locale': l,
         'locales': Locale.objects.all(),
         'pages': Subpage.objects.all(),
@@ -880,7 +880,7 @@ def download(request, template=None):
     elif format == 'zip':
         content = files.generate_zip(p, locale)
 
-        if content == False:
+        if content is False:
             raise Http404
 
         response['Content-Type'] = 'application/x-zip-compressed'
@@ -1028,7 +1028,7 @@ def save_to_transifex(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
     response = utils.req('put', p.transifex_project, p.transifex_resource,
-                        data['locale'], username, password, payload)
+                         data['locale'], username, password, payload)
 
     """Save Transifex username and password."""
     if data.get('auth', {}).get('remember', {}) == 1:

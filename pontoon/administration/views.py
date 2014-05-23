@@ -258,7 +258,7 @@ def update_from_transifex(request, template=None):
     for l in p.locales.all():
         """Make GET request to Transifex API."""
         response = utils.req('get', transifex_project, transifex_resource,
-                            l.code, username, password)
+                             l.code, username, password)
 
         """Save or update Transifex data to DB."""
         if hasattr(response, 'status_code') and response.status_code == 200:

@@ -160,7 +160,7 @@ def get_repository_path_master(project):
 
 
 def save_entity(project, string, string_plural="",
-                 comment="", key="", source=""):
+                comment="", key="", source=""):
     """Admin interface: save new or update existing entity in DB."""
 
     # Update existing entity
@@ -261,10 +261,10 @@ def extract_po(project, locale, paths, source_locale, translations=True):
                 for entry in po:
                     if not entry.obsolete:
                         save_entity(project=project,
-                                     string=escape(entry.msgid),
-                                     string_plural=escape(entry.msgid_plural),
-                                     comment=entry.comment,
-                                     source=entry.occurrences)
+                                    string=escape(entry.msgid),
+                                    string_plural=escape(entry.msgid_plural),
+                                    comment=entry.comment,
+                                    source=entry.occurrences)
             elif translations:
                 for entry in (po.translated_entries() + po.fuzzy_entries()):
                     if not entry.obsolete:
@@ -307,7 +307,7 @@ def extract_po(project, locale, paths, source_locale, translations=True):
 
 
 def extract_properties(project, locale, paths,
-                        source_locale, translations=True):
+                       source_locale, translations=True):
     """Extract .properties files from paths and save or update in DB."""
 
     for path in paths:
@@ -325,7 +325,7 @@ def extract_properties(project, locale, paths,
                 if isinstance(obj, silme.core.entity.Entity):
                     if locale.code == source_locale:
                         save_entity(project=project, string=obj.value,
-                                     key=obj.id, source=short_path)
+                                    key=obj.id, source=short_path)
                     elif translations:
                         try:
                             e = Entity.objects.get(
@@ -395,7 +395,7 @@ def extract_ini(project, path):
         for item in config.items(section):
             if section == source_locale:
                 save_entity(project=project, string=item[1],
-                             key=item[0], source=path)
+                            key=item[0], source=path)
             else:
                 try:
                     l = Locale.objects.get(code=section)
