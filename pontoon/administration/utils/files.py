@@ -159,7 +159,7 @@ def get_repository_path_master(project):
         settings.MEDIA_ROOT, project.repository_type, project.slug)
 
 
-def _save_entity(project, string, string_plural="",
+def save_entity(project, string, string_plural="",
                  comment="", key="", source=""):
     """Admin interface: save new or update existing entity in DB."""
 
@@ -188,7 +188,7 @@ def _save_entity(project, string, string_plural="",
     e.save()
 
 
-def _save_translation(entity, locale, string, plural_form=None, fuzzy=False):
+def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
     """Admin interface: save new or update existing translation in DB."""
 
     approved = not fuzzy
@@ -214,7 +214,7 @@ def _save_translation(entity, locale, string, plural_form=None, fuzzy=False):
         t.save()
 
 
-def _parse_lang(path):
+def parse_lang(path):
     """Parse a dotlang file and return a dict of translations."""
     trans = {}
 
@@ -248,7 +248,7 @@ def _parse_lang(path):
     return trans
 
 
-def _extract_po(project, locale, paths, source_locale, translations=True):
+def extract_po(project, locale, paths, source_locale, translations=True):
     """Extract .po (gettext) files from paths and save or update in DB."""
 
     for path in paths:
@@ -260,7 +260,7 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
             if locale.code == source_locale:
                 for entry in po:
                     if not entry.obsolete:
-                        _save_entity(project=project,
+                        save_entity(project=project,
                                      string=escape(entry.msgid),
                                      string_plural=escape(entry.msgid_plural),
                                      comment=entry.comment,
@@ -275,7 +275,7 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
                                 e = Entity.objects.get(
                                     project=project,
                                     string=escape(entry.msgid))
-                                _save_translation(
+                                save_translation(
                                     entity=e,
                                     locale=locale,
                                     string=escape(entry.msgstr),
@@ -291,7 +291,7 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
                                     project=project,
                                     string=escape(entry.msgid))
                                 for k in entry.msgstr_plural:
-                                    _save_translation(
+                                    save_translation(
                                         entity=e,
                                         locale=locale,
                                         string=escape(entry.msgstr_plural[k]),
@@ -306,7 +306,7 @@ def _extract_po(project, locale, paths, source_locale, translations=True):
             log.critical('PoExtractError for %s: %s' % (path, e))
 
 
-def _extract_properties(project, locale, paths,
+def extract_properties(project, locale, paths,
                         source_locale, translations=True):
     """Extract .properties files from paths and save or update in DB."""
 
@@ -324,7 +324,7 @@ def _extract_properties(project, locale, paths,
             for obj in structure:
                 if isinstance(obj, silme.core.entity.Entity):
                     if locale.code == source_locale:
-                        _save_entity(project=project, string=obj.value,
+                        save_entity(project=project, string=obj.value,
                                      key=obj.id, source=short_path)
                     elif translations:
                         try:
@@ -332,7 +332,7 @@ def _extract_properties(project, locale, paths,
                                 project=project,
                                 key=obj.id,
                                 source=short_path)
-                            _save_translation(
+                            save_translation(
                                 entity=e,
                                 locale=locale,
                                 string=obj.value)
@@ -345,21 +345,21 @@ def _extract_properties(project, locale, paths,
                       path + " doesn't exist. Skipping.")
 
 
-def _extract_lang(project, locale, paths, source_locale, translations=True):
+def extract_lang(project, locale, paths, source_locale, translations=True):
     """Extract .lang files from paths and save or update in DB."""
 
     for path in paths:
-        lang = _parse_lang(path)
+        lang = parse_lang(path)
 
         if locale.code == source_locale:
             for key, value in lang.items():
-                _save_entity(project=project, string=key, comment=value[0])
+                save_entity(project=project, string=key, comment=value[0])
         elif translations:
             for key, value in lang.items():
                 if key != value[1]:
                     try:
                         e = Entity.objects.get(project=project, string=key)
-                        _save_translation(
+                        save_translation(
                             entity=e, locale=locale, string=value[1])
                     except Entity.DoesNotExist:
                         continue
@@ -367,7 +367,7 @@ def _extract_lang(project, locale, paths, source_locale, translations=True):
         log.debug("[" + locale.code + "]: saved to DB.")
 
 
-def _extract_ini(project, path):
+def extract_ini(project, path):
     """Extract .ini file from path and save or update in DB."""
 
     config = configparser.ConfigParser()
@@ -394,7 +394,7 @@ def _extract_ini(project, path):
     for section in sections:
         for item in config.items(section):
             if section == source_locale:
-                _save_entity(project=project, string=item[1],
+                save_entity(project=project, string=item[1],
                              key=item[0], source=path)
             else:
                 try:
@@ -405,7 +405,7 @@ def _extract_ini(project, path):
                 try:
                     e = Entity.objects.get(
                         project=project, key=item[0], source=path)
-                    _save_translation(
+                    save_translation(
                         entity=e, locale=l, string=item[1])
                 except Entity.DoesNotExist:
                     log.debug("[" + section + "]: line ID " +
@@ -437,7 +437,7 @@ def extract_to_database(project, locales=None):
 
     if project.format == 'ini':
         try:
-            _extract_ini(project, source_paths[0])
+            extract_ini(project, source_paths[0])
             return
         except Exception as e:
             if not isVCS:
@@ -445,7 +445,7 @@ def extract_to_database(project, locales=None):
 
     for index, locale in enumerate(locales):
         locale_paths = get_locale_paths(project, locale)
-        globals()['_extract_%s' % project.format](
+        globals()['extract_%s' % project.format](
             project, locale, locale_paths, source_locale, isVCS)
 
 
@@ -504,6 +504,7 @@ def update_from_repository(project, locales=None):
     project.format = format
     project.repository_path = repository_path
     project.save()
+
 
 def update_from_database(p, locale):
     entities = Entity.objects.filter(project=p, obsolete=False)
