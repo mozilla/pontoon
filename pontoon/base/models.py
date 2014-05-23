@@ -183,3 +183,72 @@ class ProjectForm(ModelForm):
                 [u"You need to provide a valid URL."])
 
         return cleaned_data
+
+
+def get_entities(project, locale, page=None):
+    """Load all project entities and translations."""
+
+    entities = Entity.objects.filter(project=project, obsolete=False)
+
+    # Firefox OS Hack
+    if 'gaia-l10n' in project.repository_url:
+        if page is not None and entities[0].source != '':
+            entities = entities.filter(source__contains='/' + page + '/')
+
+    entities_array = []
+    for e in entities:
+        translation_array = []
+
+        # Entities without plurals
+        if e.string_plural == "":
+            translation = get_translation(entity=e, locale=locale)
+            translation_array.append({
+                "string": translation.string,
+                "approved": translation.approved,
+                "fuzzy": translation.fuzzy,
+            })
+
+        # Pluralized entities
+        else:
+            for i in range(0, locale.nplurals or 1):
+                translation = get_translation(
+                    entity=e, locale=locale, plural_form=i)
+                translation_array.append({
+                    "string": translation.string,
+                    "approved": translation.approved,
+                    "fuzzy": translation.fuzzy,
+                })
+
+        obj = e.serialize()
+        obj["translation"] = translation_array
+
+        entities_array.append(obj)
+    return entities_array
+
+
+def get_translation(entity, locale, plural_form=None):
+    """Get translation of a given entity to a given locale in a given form."""
+
+    translations = Translation.objects.filter(
+        entity=entity, locale=locale, plural_form=plural_form)
+
+    if len(translations) > 0:
+        try:
+            t = translations.get(approved=True)
+            return t
+        except Translation.DoesNotExist:
+            latest = translations.order_by("date").reverse()[0]
+            return latest
+    else:
+        return Translation()
+
+
+def unset_approved(translations):
+    """Unset approved attribute for given translations."""
+
+    try:
+        t = translations.get(approved=True)
+        t.approved = False
+        t.save()
+    except Translation.DoesNotExist:
+        pass

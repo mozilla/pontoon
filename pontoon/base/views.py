@@ -53,6 +53,9 @@ from pontoon.base.models import (
     Entity,
     Translation,
     UserProfile,
+    get_entities,
+    get_translation,
+    unset_approved,
 )
 
 from pontoon.base.utils.permissions import add_can_localize
@@ -183,65 +186,6 @@ def translate_site(request, locale, url, template='translate.html'):
             kwargs={'locale': locale, 'slug': p.slug, 'page': page}))
 
 
-def _get_translation(entity, locale, plural_form=None):
-    """Get translation of a given entity to a given locale in a given form."""
-
-    translations = Translation.objects.filter(
-        entity=entity, locale=locale, plural_form=plural_form)
-
-    if len(translations) > 0:
-        try:
-            t = translations.get(approved=True)
-            return t
-        except Translation.DoesNotExist:
-            latest = translations.order_by("date").reverse()[0]
-            return latest
-    else:
-        return Translation()
-
-
-def _get_entities(project, locale, page=None):
-    """Load all project entities and translations."""
-    log.debug("Load all project entities and translations.")
-
-    entities = Entity.objects.filter(project=project, obsolete=False)
-
-    # Firefox OS Hack
-    if 'gaia-l10n' in project.repository_url:
-        if page is not None and entities[0].source != '':
-            entities = entities.filter(source__contains='/' + page + '/')
-
-    entities_array = []
-    for e in entities:
-        translation_array = []
-
-        # Entities without plurals
-        if e.string_plural == "":
-            translation = _get_translation(entity=e, locale=locale)
-            translation_array.append({
-                "string": translation.string,
-                "approved": translation.approved,
-                "fuzzy": translation.fuzzy,
-            })
-
-        # Pluralized entities
-        else:
-            for i in range(0, locale.nplurals or 1):
-                translation = _get_translation(
-                    entity=e, locale=locale, plural_form=i)
-                translation_array.append({
-                    "string": translation.string,
-                    "approved": translation.approved,
-                    "fuzzy": translation.fuzzy,
-                })
-
-        obj = e.serialize()
-        obj["translation"] = translation_array
-
-        entities_array.append(obj)
-    return entities_array
-
-
 def translate_project(request, locale, slug, page=None,
                       template='translate.html'):
     """Translate view: project."""
@@ -339,7 +283,7 @@ def translate_project(request, locale, slug, page=None,
     # Get entities
     if page is not None:
         page = page.lower().replace(" ", "").replace(".", "")
-    data['entities'] = json.dumps(_get_entities(p, l, page))
+    data['entities'] = json.dumps(get_entities(p, l, page))
 
     return render(request, template, data)
 
@@ -442,7 +386,7 @@ def get_translations_from_other_locales(request, template=None):
     locales = entity.project.locales.all().exclude(code=locale.code)
 
     for l in locales:
-        translation = _get_translation(entity=entity, locale=l)
+        translation = get_translation(entity=entity, locale=l)
         if translation.string != '' or translation.pk is not None:
             payload.append({
                 "locale": {
@@ -520,18 +464,6 @@ def get_translation_history(request, template=None):
         return HttpResponse("error")
 
 
-def _unset_approved(translations):
-    """Unset approved attribute for given translations."""
-    log.debug("Unset approved attribute for given translations.")
-
-    try:
-        t = translations.get(approved=True)
-        t.approved = False
-        t.save()
-    except Translation.DoesNotExist:
-        pass
-
-
 def approve_translation(request, template=None):
     """Approve given translation."""
     log.debug("Approve given translation.")
@@ -563,7 +495,7 @@ def approve_translation(request, template=None):
 
     translations = Translation.objects.filter(
         entity=entity, locale=locale, plural_form=plural_form)
-    _unset_approved(translations)
+    unset_approved(translations)
 
     translation.approved = True
     translation.save()
@@ -611,7 +543,7 @@ def delete_translation(request, template=None):
     plural_form = translation.plural_form
 
     translation.delete()
-    next = _get_translation(
+    next = get_translation(
         entity=entity, locale=locale, plural_form=plural_form)
 
     if next.id is not None and request.user.has_perm('base.can_localize'):
@@ -754,7 +686,7 @@ def update_translation(request, template=None):
                     if warnings:
                         return warnings
 
-                    _unset_approved(translations)
+                    unset_approved(translations)
                     t.approved = True
                     t.fuzzy = False
                     t.save()
@@ -788,7 +720,7 @@ def update_translation(request, template=None):
             return warnings
 
         if can_localize:
-            _unset_approved(translations)
+            unset_approved(translations)
 
         t = Translation(
             entity=e, locale=l, user=user, string=string,
@@ -796,7 +728,7 @@ def update_translation(request, template=None):
             approved=can_localize)
         t.save()
 
-        active = _get_translation(
+        active = get_translation(
             entity=e, locale=l, plural_form=plural_form)
 
         return HttpResponse(json.dumps({
@@ -1045,7 +977,7 @@ def transvision(request):
         return HttpResponse("error")
 
 
-def _update_files(p, locale):
+def update_files(p, locale):
     entities = Entity.objects.filter(project=p, obsolete=False)
 
     if p.format == 'po':
@@ -1061,7 +993,7 @@ def _update_files(p, locale):
                 entry = po.find(polib.unescape(smart_text(entity.string)))
                 if entry:
                     if not entry.msgid_plural:
-                        translation = _get_translation(
+                        translation = get_translation(
                             entity=entity, locale=locale)
                         if translation.string != '':
                             entry.msgstr = polib.unescape(translation.string)
@@ -1075,7 +1007,7 @@ def _update_files(p, locale):
                     else:
                         for i in range(0, 6):
                             if i < (locale.nplurals or 1):
-                                translation = _get_translation(
+                                translation = get_translation(
                                     entity=entity, locale=locale,
                                     plural_form=i)
                                 if translation.string != '':
@@ -1153,7 +1085,7 @@ def _update_files(p, locale):
 
                 for entity in entities_with_path:
                     key = entity.key
-                    translation = _get_translation(
+                    translation = get_translation(
                         entity=entity, locale=locale)
 
                     try:
@@ -1197,7 +1129,7 @@ def _update_files(p, locale):
 
                     for entity in entities:
                         key = entity.key
-                        translation = _get_translation(
+                        translation = get_translation(
                             entity=entity, locale=locale).string
 
                         config.set(locale.code, key, translation)
@@ -1249,7 +1181,7 @@ def _update_files(p, locale):
                                       "\" does not exist in " + p.name)
                             continue
 
-                        translation = _get_translation(
+                        translation = get_translation(
                             entity=entity, locale=locale).string
                         if translation == '':
                             translation = original
@@ -1261,7 +1193,7 @@ def _update_files(p, locale):
                 log.debug("File updated: " + path)
 
 
-def _generate_zip(project, locale):
+def generate_zip(project, locale):
     """
     Generate .zip file of all project files for the specified locale.
 
@@ -1281,13 +1213,13 @@ def _generate_zip(project, locale):
     if not path:
         return False
 
-    _update_files(project, locale)
+    update_files(project, locale)
 
     s = StringIO.StringIO()
     zf = zipfile.ZipFile(s, "w")
 
-    for root, dirs, fls in os.walk(path):
-        for f in fls:
+    for root, dirs, filenames in os.walk(path):
+        for f in filenames:
             file_path = os.path.join(root, f)
             zip_path = os.path.relpath(file_path, os.path.join(path, '..'))
             zf.write(file_path, zip_path)
@@ -1335,7 +1267,7 @@ def download(request, template=None):
         response['Content-Type'] = 'application/json'
 
     elif format == 'zip':
-        content = _generate_zip(p, locale)
+        content = generate_zip(p, locale)
 
         if content == False:
             raise Http404
@@ -1385,7 +1317,7 @@ def commit_to_repository(request, template=None):
             'message': 'Sorry, repository path not found.',
         }), mimetype='application/json')
 
-    _update_files(p, locale)
+    update_files(p, locale)
 
     name = request.user.email if not request.user.first_name else '%s (%s)' \
         % (request.user.first_name, request.user.email)
