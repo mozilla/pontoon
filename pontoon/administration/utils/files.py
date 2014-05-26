@@ -517,11 +517,11 @@ def update_from_repository(project, locales=None):
     project.save()
 
 
-def update_po(p, locale):
+def update_po(project, locale):
     """Update .po (gettext) files from database."""
 
-    entities = Entity.objects.filter(project=p, obsolete=False)
-    locale_paths = get_locale_paths(p, locale)
+    entities = Entity.objects.filter(project=project, obsolete=False)
+    locale_paths = get_locale_paths(project, locale)
 
     for path in locale_paths:
         po = polib.pofile(path)
@@ -533,23 +533,20 @@ def update_po(p, locale):
             entry = po.find(polib.unescape(smart_text(entity.string)))
             if entry:
                 if not entry.msgid_plural:
-                    translation = get_translation(
-                        entity=entity, locale=locale)
+                    translation = get_translation(entity=entity, locale=locale)
                     if translation.string != '':
                         entry.msgstr = polib.unescape(translation.string)
                         if translation.date > date:
                             date = translation.date
                             newest = translation
-                        if ('fuzzy' in entry.flags and
-                           not translation.fuzzy):
+                        if ('fuzzy' in entry.flags and not translation.fuzzy):
                             entry.flags.remove('fuzzy')
 
                 else:
                     for i in range(0, 6):
                         if i < (locale.nplurals or 1):
                             translation = get_translation(
-                                entity=entity, locale=locale,
-                                plural_form=i)
+                                entity=entity, locale=locale, plural_form=i)
                             if translation.string != '':
                                 entry.msgstr_plural[unicode(i)] = \
                                     polib.unescape(translation.string)
@@ -581,11 +578,11 @@ def update_po(p, locale):
         log.debug("File updated: " + path)
 
 
-def update_properties(p, locale):
+def update_properties(project, locale):
     """Update .properties files from database."""
 
-    entities = Entity.objects.filter(project=p, obsolete=False)
-    locale_directory_path = get_locale_directory(p, locale)["path"]
+    entities = Entity.objects.filter(project=project, obsolete=False)
+    locale_directory_path = get_locale_directory(project, locale)["path"]
 
     # Remove all non-hidden files and folders in locale repository
     items = os.listdir(locale_directory_path)
@@ -600,7 +597,7 @@ def update_properties(p, locale):
             log.error(e)
 
     parser = silme.format.properties.PropertiesFormatParser
-    source_directory = get_source_directory(p.repository_path)
+    source_directory = get_source_directory(project.repository_path)
 
     # Get short paths to translated files only
     translations = Translation.objects.filter(
@@ -629,8 +626,7 @@ def update_properties(p, locale):
 
             for entity in entities_with_path:
                 key = entity.key
-                translation = get_translation(
-                    entity=entity, locale=locale)
+                translation = get_translation(entity=entity, locale=locale)
 
                 try:
                     if (translation.string != '' or
@@ -662,10 +658,10 @@ def update_properties(p, locale):
         log.debug("File updated: " + path)
 
 
-def update_lang(p, locale):
+def update_lang(project, locale):
     """Update .lang files from database."""
 
-    locale_paths = get_locale_paths(p, locale)
+    locale_paths = get_locale_paths(project, locale)
 
     for path in locale_paths:
         with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
@@ -691,11 +687,11 @@ def update_lang(p, locale):
 
                     try:
                         entity = Entity.objects.get(
-                            project=p, string=original)
+                            project=project, string=original)
                     except Entity.DoesNotExist as e:
                         log.error(path + ": \
                                   Entity with string \"" + original +
-                                  "\" does not exist in " + p.name)
+                                  "\" does not exist in " + project.name)
                         continue
 
                     translation = get_translation(
@@ -710,11 +706,11 @@ def update_lang(p, locale):
             log.debug("File updated: " + path)
 
 
-def update_ini(p, locale):
+def update_ini(project, locale):
     """Update .ini files from database."""
 
-    entities = Entity.objects.filter(project=p, obsolete=False)
-    path = get_locale_directory(p, locale)["path"]
+    entities = Entity.objects.filter(project=project, obsolete=False)
+    path = get_locale_directory(project, locale)["path"]
     source_path = get_source_paths(path)[0]
     config = configparser.ConfigParser()
 
