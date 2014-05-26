@@ -692,6 +692,8 @@ def update_lang(project, locale):
                         entity=entity, locale=locale).string
                     if translation == '':
                         translation = original
+                    elif translation == original:
+                        translation += ' {ok}'
 
             # Erase file and then write, otherwise content gets appended
             lines.seek(0)
