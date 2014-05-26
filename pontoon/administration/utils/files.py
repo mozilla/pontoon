@@ -684,9 +684,8 @@ def update_lang(project, locale):
                         entity = Entity.objects.get(
                             project=project, string=original)
                     except Entity.DoesNotExist as e:
-                        log.error(path + ": \
-                                  Entity with string \"" + original +
-                                  "\" does not exist in " + project.name)
+                        log.error('%s: Entity "%s" does not exist %s' %
+                                  (path, original, project.name))
                         continue
 
                     translation = get_translation(
