@@ -50,7 +50,6 @@ def get_locale_paths(project, locale):
 
 def get_locale_directory(project, locale):
     """Get path to the directory with locale files."""
-    log.debug("Get path to the directory with locale files.")
 
     path = get_repository_path_master(project)
 
@@ -83,7 +82,6 @@ def get_locale_directory(project, locale):
 
 def detect_format(path):
     """Detect file format based on file extensions."""
-    log.debug("Detect file format based on file extensions.")
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
@@ -97,7 +95,6 @@ def detect_format(path):
 
 def get_source_paths(path):
     """Get paths to source files."""
-    log.debug("Get paths to source files.")
 
     source_paths = []
 
@@ -115,7 +112,6 @@ def get_source_paths(path):
 
 def get_source_directory(path):
     """Get name and path of the directory with source files."""
-    log.debug("Get name and path of the directory with source files.")
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
@@ -153,7 +149,6 @@ def is_one_locale_repository(repository_url, repository_path_master):
 
 def get_repository_path_master(project):
     """Get path to master project folder containing repository files."""
-    log.debug("Get path to master project folder containing repository files.")
 
     return os.path.join(
         settings.MEDIA_ROOT, project.repository_type, project.slug)
@@ -742,13 +737,14 @@ def update_ini(project, locale):
 
 def update_from_database(project, locale):
     """Update project files from database."""
+    log.debug("Update project files from database.")
 
     globals()['update_%s' % project.format](project, locale)
 
 
 def generate_zip(project, locale):
     """
-    Generate .zip file of all project files for the specified locale.
+    Generate .zip of all project files for the specified locale.
 
     Args:
         project: Project
@@ -756,6 +752,7 @@ def generate_zip(project, locale):
     Returns:
         A string for generated ZIP content.
     """
+    log.debug("Generate .zip of all project files for the specified locale.")
 
     try:
         locale = Locale.objects.get(code=locale)
