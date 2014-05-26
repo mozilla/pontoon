@@ -517,220 +517,237 @@ def update_from_repository(project, locales=None):
     project.save()
 
 
-def update_from_database(p, locale):
+def update_po(p, locale):
+    """Update .po (gettext) files from database."""
+
     entities = Entity.objects.filter(project=p, obsolete=False)
+    locale_paths = get_locale_paths(p, locale)
 
-    if p.format == 'po':
-        locale_paths = get_locale_paths(p, locale)
+    for path in locale_paths:
+        po = polib.pofile(path)
+        valid_entries = [e for e in po if not e.obsolete]
+        date = datetime.datetime(1, 1, 1)
+        newest = Translation()
 
-        for path in locale_paths:
-            po = polib.pofile(path)
-            valid_entries = [e for e in po if not e.obsolete]
-            date = datetime.datetime(1, 1, 1)
-            newest = Translation()
-
-            for entity in entities:
-                entry = po.find(polib.unescape(smart_text(entity.string)))
-                if entry:
-                    if not entry.msgid_plural:
-                        translation = get_translation(
-                            entity=entity, locale=locale)
-                        if translation.string != '':
-                            entry.msgstr = polib.unescape(translation.string)
-                            if translation.date > date:
-                                date = translation.date
-                                newest = translation
-                            if ('fuzzy' in entry.flags and
-                               not translation.fuzzy):
-                                entry.flags.remove('fuzzy')
-
-                    else:
-                        for i in range(0, 6):
-                            if i < (locale.nplurals or 1):
-                                translation = get_translation(
-                                    entity=entity, locale=locale,
-                                    plural_form=i)
-                                if translation.string != '':
-                                    entry.msgstr_plural[unicode(i)] = \
-                                        polib.unescape(translation.string)
-                                    if translation.date > date:
-                                        date = translation.date
-                                        newest = translation
-                                    if ('fuzzy' in entry.flags and
-                                       not translation.fuzzy):
-                                        entry.flags.remove('fuzzy')
-                            # Remove obsolete plural forms if exist
-                            else:
-                                if unicode(i) in entry.msgstr_plural:
-                                    del entry.msgstr_plural[unicode(i)]
-
-            # Update PO metadata
-            if newest.id:
-                po.metadata['PO-Revision-Date'] = newest.date
-                if newest.user:
-                    po.metadata['Last-Translator'] = '%s <%s>' \
-                        % (newest.user.first_name, newest.user.email)
-            po.metadata['Language'] = locale.code
-            po.metadata['X-Generator'] = 'Pontoon'
-
-            if locale.nplurals:
-                po.metadata['Plural-Forms'] = 'nplurals=%s; plural=%s;' \
-                    % (str(locale.nplurals), locale.plural_rule)
-
-            po.save()
-            log.debug("File updated: " + path)
-
-    elif p.format == 'properties':
-        locale_directory_path = get_locale_directory(p, locale)["path"]
-
-        # Remove all non-hidden files and folders in locale repository
-        items = os.listdir(locale_directory_path)
-        items = [i for i in items if not i[0] == '.']
-        for item in items:
-            path = os.path.join(locale_directory_path, item)
-            try:
-                shutil.rmtree(path)
-            except OSError:
-                os.remove(path)
-            except Exception as e:
-                log.error(e)
-
-        parser = silme.format.properties.PropertiesFormatParser
-        source_directory = get_source_directory(p.repository_path)
-
-        # Get short paths to translated files only
-        translations = Translation.objects.filter(
-            entity__in=entities, locale=locale)
-        entities_pks = translations.values("entity").distinct()
-        entities_translated = Entity.objects.filter(pk__in=entities_pks)
-        short_paths = entities_translated.values_list("source").distinct()
-
-        for short in short_paths:
-            path = locale_directory_path + short[0]
-
-            # Create folders and copy files from source
-            basedir = os.path.dirname(path)
-            if not os.path.exists(basedir):
-                os.makedirs(basedir)
-            try:
-                shutil.copy(source_directory['path'] + short[0], path)
-            # Obsolete files
-            except Exception as e:
-                log.debug(e)
-                continue
-
-            with codecs.open(path, 'r+', 'utf-8') as f:
-                structure = parser.get_structure(f.read())
-                entities_with_path = entities.filter(source=short[0])
-
-                for entity in entities_with_path:
-                    key = entity.key
+        for entity in entities:
+            entry = po.find(polib.unescape(smart_text(entity.string)))
+            if entry:
+                if not entry.msgid_plural:
                     translation = get_translation(
                         entity=entity, locale=locale)
-
-                    try:
-                        if (translation.string != '' or
-                                translation.pk is not None):
-                            # Modify translated entities
-                            structure.modify_entity(key, translation.string)
-                        else:
-                            # Remove untranslated and following newline
-                            pos = structure.entity_pos(key)
-                            structure.remove_entity(key)
-                            line = structure[pos]
-
-                            if type(line) == unicode and line.startswith('\n'):
-                                line = line[len('\n'):]
-                                structure[pos] = line
-                                if len(line) is 0:
-                                    structure.remove_element(pos)
-
-                    # Obsolete entities
-                    except KeyError as e:
-                        pass
-
-                # Erase file and then write, otherwise content gets appended
-                f.seek(0)
-                f.truncate()
-                content = parser.dump_structure(structure)
-                f.write(content)
-
-            log.debug("File updated: " + path)
-
-    elif p.format == 'ini':
-        path = get_locale_directory(p, locale)["path"]
-        source_path = get_source_paths(path)[0]
-        config = configparser.ConfigParser()
-
-        with codecs.open(source_path, 'r+', 'utf-8', errors='replace') as f:
-            try:
-                config.read_file(f)
-                if config.has_section(locale.code):
-
-                    for entity in entities:
-                        key = entity.key
-                        translation = get_translation(
-                            entity=entity, locale=locale).string
-
-                        config.set(locale.code, key, translation)
-
-                    # Erase and then write, otherwise content gets appended
-                    f.seek(0)
-                    f.truncate()
-                    config.write(f)
-                    log.debug("File updated: " + source_path)
+                    if translation.string != '':
+                        entry.msgstr = polib.unescape(translation.string)
+                        if translation.date > date:
+                            date = translation.date
+                            newest = translation
+                        if ('fuzzy' in entry.flags and
+                           not translation.fuzzy):
+                            entry.flags.remove('fuzzy')
 
                 else:
-                    log.debug("Locale not available in the source file")
-                    raise Exception("error")
+                    for i in range(0, 6):
+                        if i < (locale.nplurals or 1):
+                            translation = get_translation(
+                                entity=entity, locale=locale,
+                                plural_form=i)
+                            if translation.string != '':
+                                entry.msgstr_plural[unicode(i)] = \
+                                    polib.unescape(translation.string)
+                                if translation.date > date:
+                                    date = translation.date
+                                    newest = translation
+                                if ('fuzzy' in entry.flags and
+                                   not translation.fuzzy):
+                                    entry.flags.remove('fuzzy')
+                        # Remove obsolete plural forms if exist
+                        else:
+                            if unicode(i) in entry.msgstr_plural:
+                                del entry.msgstr_plural[unicode(i)]
 
-            except Exception as e:
-                log.debug("INI configparser: " + str(e))
+        # Update PO metadata
+        if newest.id:
+            po.metadata['PO-Revision-Date'] = newest.date
+            if newest.user:
+                po.metadata['Last-Translator'] = '%s <%s>' \
+                    % (newest.user.first_name, newest.user.email)
+        po.metadata['Language'] = locale.code
+        po.metadata['X-Generator'] = 'Pontoon'
 
-    elif p.format == 'lang':
-        locale_paths = get_locale_paths(p, locale)
+        if locale.nplurals:
+            po.metadata['Plural-Forms'] = 'nplurals=%s; plural=%s;' \
+                % (str(locale.nplurals), locale.plural_rule)
 
-        for path in locale_paths:
-            with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
-                content = []
-                translation = None
+        po.save()
+        log.debug("File updated: " + path)
 
-                for line in lines:
-                    if translation:
-                        # Keep newlines and white spaces in line if present
-                        trans_line = line.replace(line.strip(), translation)
-                        content.append(trans_line)
-                        translation = None
+
+def update_properties(p, locale):
+    """Update .properties files from database."""
+
+    entities = Entity.objects.filter(project=p, obsolete=False)
+    locale_directory_path = get_locale_directory(p, locale)["path"]
+
+    # Remove all non-hidden files and folders in locale repository
+    items = os.listdir(locale_directory_path)
+    items = [i for i in items if not i[0] == '.']
+    for item in items:
+        path = os.path.join(locale_directory_path, item)
+        try:
+            shutil.rmtree(path)
+        except OSError:
+            os.remove(path)
+        except Exception as e:
+            log.error(e)
+
+    parser = silme.format.properties.PropertiesFormatParser
+    source_directory = get_source_directory(p.repository_path)
+
+    # Get short paths to translated files only
+    translations = Translation.objects.filter(
+        entity__in=entities, locale=locale)
+    entities_pks = translations.values("entity").distinct()
+    entities_translated = Entity.objects.filter(pk__in=entities_pks)
+    short_paths = entities_translated.values_list("source").distinct()
+
+    for short in short_paths:
+        path = locale_directory_path + short[0]
+
+        # Create folders and copy files from source
+        basedir = os.path.dirname(path)
+        if not os.path.exists(basedir):
+            os.makedirs(basedir)
+        try:
+            shutil.copy(source_directory['path'] + short[0], path)
+        # Obsolete files
+        except Exception as e:
+            log.debug(e)
+            continue
+
+        with codecs.open(path, 'r+', 'utf-8') as f:
+            structure = parser.get_structure(f.read())
+            entities_with_path = entities.filter(source=short[0])
+
+            for entity in entities_with_path:
+                key = entity.key
+                translation = get_translation(
+                    entity=entity, locale=locale)
+
+                try:
+                    if (translation.string != '' or
+                            translation.pk is not None):
+                        # Modify translated entities
+                        structure.modify_entity(key, translation.string)
+                    else:
+                        # Remove untranslated and following newline
+                        pos = structure.entity_pos(key)
+                        structure.remove_entity(key)
+                        line = structure[pos]
+
+                        if type(line) == unicode and line.startswith('\n'):
+                            line = line[len('\n'):]
+                            structure[pos] = line
+                            if len(line) is 0:
+                                structure.remove_element(pos)
+
+                # Obsolete entities
+                except KeyError as e:
+                    pass
+
+            # Erase file and then write, otherwise content gets appended
+            f.seek(0)
+            f.truncate()
+            content = parser.dump_structure(structure)
+            f.write(content)
+
+        log.debug("File updated: " + path)
+
+
+def update_lang(p, locale):
+    """Update .lang files from database."""
+
+    locale_paths = get_locale_paths(p, locale)
+
+    for path in locale_paths:
+        with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
+            content = []
+            translation = None
+
+            for line in lines:
+                if translation:
+                    # Keep newlines and white spaces in line if present
+                    trans_line = line.replace(line.strip(), translation)
+                    content.append(trans_line)
+                    translation = None
+                    continue
+
+                content.append(line)
+                line = line.strip()
+
+                if not line:
+                    continue
+
+                if line[0] == ';':
+                    original = line[1:].strip()
+
+                    try:
+                        entity = Entity.objects.get(
+                            project=p, string=original)
+                    except Entity.DoesNotExist as e:
+                        log.error(path + ": \
+                                  Entity with string \"" + original +
+                                  "\" does not exist in " + p.name)
                         continue
 
-                    content.append(line)
-                    line = line.strip()
+                    translation = get_translation(
+                        entity=entity, locale=locale).string
+                    if translation == '':
+                        translation = original
 
-                    if not line:
-                        continue
+            # Erase file and then write, otherwise content gets appended
+            lines.seek(0)
+            lines.truncate()
+            lines.writelines(content)
+            log.debug("File updated: " + path)
 
-                    if line[0] == ';':
-                        original = line[1:].strip()
 
-                        try:
-                            entity = Entity.objects.get(
-                                project=p, string=original)
-                        except Entity.DoesNotExist as e:
-                            log.error(path + ": \
-                                      Entity with string \"" + original +
-                                      "\" does not exist in " + p.name)
-                            continue
+def update_ini(p, locale):
+    """Update .ini files from database."""
 
-                        translation = get_translation(
-                            entity=entity, locale=locale).string
-                        if translation == '':
-                            translation = original
+    entities = Entity.objects.filter(project=p, obsolete=False)
+    path = get_locale_directory(p, locale)["path"]
+    source_path = get_source_paths(path)[0]
+    config = configparser.ConfigParser()
 
-                # Erase file and then write, otherwise content gets appended
-                lines.seek(0)
-                lines.truncate()
-                lines.writelines(content)
-                log.debug("File updated: " + path)
+    with codecs.open(source_path, 'r+', 'utf-8', errors='replace') as f:
+        try:
+            config.read_file(f)
+            if config.has_section(locale.code):
+
+                for entity in entities:
+                    key = entity.key
+                    translation = get_translation(
+                        entity=entity, locale=locale).string
+
+                    config.set(locale.code, key, translation)
+
+                # Erase and then write, otherwise content gets appended
+                f.seek(0)
+                f.truncate()
+                config.write(f)
+                log.debug("File updated: " + source_path)
+
+            else:
+                log.debug("Locale not available in the source file")
+                raise Exception("error")
+
+        except Exception as e:
+            log.debug("INI configparser: " + str(e))
+
+
+def update_from_database(project, locale):
+    """Update project files from database."""
+
+    globals()['update_%s' % project.format](project, locale)
 
 
 def generate_zip(project, locale):
