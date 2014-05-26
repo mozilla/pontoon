@@ -878,6 +878,7 @@
 }
 
 #pontoon #helpers > section ul li.delete {
+  -webkit-transform: scale(0); /* MANDATORY! Or transitionend in main.js triggered too late */
   transform: scale(0);
 }
 
