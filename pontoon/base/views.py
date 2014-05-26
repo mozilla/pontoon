@@ -470,7 +470,7 @@ def delete_translation(request, template=None):
     next = get_translation(
         entity=entity, locale=locale, plural_form=plural_form)
 
-    if next.id is not None and request.user.has_perm('base.can_localize'):
+    if next.pk is not None and request.user.has_perm('base.can_localize'):
         next.approved = True
         next.save()
 
