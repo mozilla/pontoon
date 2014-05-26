@@ -541,6 +541,7 @@ def update_translation(request, template=None):
         # Same translation exist
         for t in translations:
             if t.string == string:
+
                 # If added by privileged user, approve it
                 if can_localize:
                     warnings = utils.quality_check(original, string, ignore)
@@ -554,24 +555,24 @@ def update_translation(request, template=None):
 
                     return HttpResponse(json.dumps({
                         'type': 'updated',
-                        'approved': can_localize,
-                        'translation': t.string,
+                        'translation': t.serialize(),
                     }), mimetype='application/json')
+
+                # Non-priviliged users can unfuzzy existing translations
                 else:
-                    # Non-priviliged users can unfuzzy existing translations
                     if t.fuzzy:
                         warnings = utils.quality_check(
                             original, string, ignore)
                         if warnings:
                             return warnings
 
+                        t.approved = False
                         t.fuzzy = False
                         t.save()
 
                         return HttpResponse(json.dumps({
                             'type': 'updated',
-                            'approved': can_localize,
-                            'translation': t.string,
+                            'translation': t.serialize(),
                         }), mimetype='application/json')
 
                     return HttpResponse("Same translation already exist.")
@@ -595,8 +596,7 @@ def update_translation(request, template=None):
 
         return HttpResponse(json.dumps({
             'type': 'added',
-            'approved': active.approved,
-            'translation': active.string,
+            'translation': active.serialize(),
         }), mimetype='application/json')
 
     # No translations saved yet
@@ -613,8 +613,7 @@ def update_translation(request, template=None):
 
         return HttpResponse(json.dumps({
             'type': 'saved',
-            'approved': can_localize,
-            'translation': t.string,
+            'translation': t.serialize(),
         }), mimetype='application/json')
 
 

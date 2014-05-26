@@ -1204,9 +1204,7 @@ var Pontoon = (function () {
             self.endLoader('Translation ' + data.type);
 
             var pf = self.getPluralForm(true);
-            entity.translation[pf].string = data.translation;
-            entity.translation[pf].approved = data.approved;
-            entity.translation[pf].fuzzy = false;
+            entity.translation[pf] = data.translation;
 
             self.updateEntityUI(entity);
 
