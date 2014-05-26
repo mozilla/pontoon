@@ -588,7 +588,7 @@ var Pontoon = (function () {
         if (entity.translation[i].fuzzy) {
           fuzzy++;
         }
-        if (entity.translation[i].string !== '') {
+        if (entity.translation[i].pk) {
           translated++;
         }
       }

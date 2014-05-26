@@ -157,6 +157,7 @@ class Translation(models.Model):
 
     def serialize(self):
         return {
+            'pk': self.pk,
             'string': self.string,
             'approved': self.approved,
             'fuzzy': self.fuzzy,
