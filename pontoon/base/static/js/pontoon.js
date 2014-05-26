@@ -547,8 +547,10 @@
               this.html(entity.original);
             });
             selectNodeContents(target);
-            entity.translation[0].approved = false;
+            entity.translation[0].pk = null;
             entity.translation[0].string = '';
+            entity.translation[0].approved = false;
+            entity.translation[0].fuzzy = false;
             sendData();
             postMessage("DELETE", entity.id);
             break;

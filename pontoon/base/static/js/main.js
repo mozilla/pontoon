@@ -1094,8 +1094,10 @@ var Pontoon = (function () {
                       if (entity.body && pluralForm === 0) {
                         self.common.postMessage("DELETE");
                       } else {
-                        entity.translation[pluralForm].string = "";
+                        entity.translation[pluralForm].pk = null;
+                        entity.translation[pluralForm].string = '';
                         entity.translation[pluralForm].approved = false;
+                        entity.translation[pluralForm].fuzzy = false;
                         self.updateEntityUI(entity);
                       }
                       $('#history ul')
@@ -1205,7 +1207,6 @@ var Pontoon = (function () {
 
             var pf = self.getPluralForm(true);
             entity.translation[pf] = data.translation;
-
             self.updateEntityUI(entity);
 
             // Update translation, including in-place if possible
