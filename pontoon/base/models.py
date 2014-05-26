@@ -155,6 +155,13 @@ class Translation(models.Model):
     def __unicode__(self):
         return self.string
 
+    def serialize(self):
+        return {
+            'string': self.string,
+            'approved': self.approved,
+            'fuzzy': self.fuzzy,
+        }
+
 
 class ProjectForm(ModelForm):
     class Meta:
@@ -202,22 +209,14 @@ def get_entities(project, locale, page=None):
         # Entities without plurals
         if e.string_plural == "":
             translation = get_translation(entity=e, locale=locale)
-            translation_array.append({
-                "string": translation.string,
-                "approved": translation.approved,
-                "fuzzy": translation.fuzzy,
-            })
+            translation_array.append(translation.serialize())
 
         # Pluralized entities
         else:
             for i in range(0, locale.nplurals or 1):
                 translation = get_translation(
                     entity=e, locale=locale, plural_form=i)
-                translation_array.append({
-                    "string": translation.string,
-                    "approved": translation.approved,
-                    "fuzzy": translation.fuzzy,
-                })
+                translation_array.append(translation.serialize())
 
         obj = e.serialize()
         obj["translation"] = translation_array
