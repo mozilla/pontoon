@@ -1083,8 +1083,10 @@ var Pontoon = (function () {
                     // Make newest alternative translation active
                     if (next.length > 0) {
                       next.click();
-                      entity.translation[pluralForm].string =
-                        next.find('.translation').html();
+                      translation = next.find('.translation').html();
+                      entity.translation[pluralForm].string = translation;
+                      entity.ui.find('.translation-string')
+                        .html(self.doNotRender(translation));
                       entity.dirty = true;
 
                     // Last translation deleted, no alternative available
@@ -1158,7 +1160,7 @@ var Pontoon = (function () {
           translation = entity.translation[0].string;
       entity.ui.addClass(status);
       entity.ui.find('.translation-string')
-          .html(this.doNotRender(translation));
+        .html(this.doNotRender(translation));
 
       this.updateProgress();
     },
