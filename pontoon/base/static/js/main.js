@@ -629,6 +629,24 @@ var Pontoon = (function () {
 
 
     /*
+     * Switch to new entity in editor
+     *
+     * newEntity New entity we want to switch to
+     */
+    switchToEntity: function (newEntity) {
+      var oldEntity = $('#editor')[0].entity;
+
+      if (newEntity.body || (oldEntity && oldEntity.body)) {
+        this.common.postMessage("NAVIGATE", newEntity.id);
+      }
+      if (!newEntity.body) {
+        this.openEditor(newEntity);
+      }
+    },
+
+
+
+    /*
      * Render list of entities to translate
      */
     renderEntityList: function () {
@@ -752,15 +770,7 @@ var Pontoon = (function () {
 
       // Open entity editor on click
       $("#entitylist .entity").click(function () {
-        var entity = $('#editor')[0].entity,
-            newEntity = this.entity;
-
-        if (newEntity.body || (entity && entity.body)) {
-          self.common.postMessage("NAVIGATE", newEntity.id);
-        }
-        if (!newEntity.body) {
-          self.openEditor(newEntity);
-        }
+        self.switchToEntity(this.entity);
       });
     },
 
@@ -799,9 +809,8 @@ var Pontoon = (function () {
         e.preventDefault();
 
         var sec = $(this).attr('id'),
-            entity = $('#editor')[0].entity,
             entitySelector = '#entitylist .entity:visible',
-            index = entity.ui.index(entitySelector);
+            index = $('#editor')[0].entity.ui.index(entitySelector);
 
         switch (sec) {
 
@@ -814,13 +823,7 @@ var Pontoon = (function () {
           if (prev.length === 0) {
             prev = $(entitySelector + ':last');
           }
-          var newEntity = prev[0].entity;
-          if (newEntity.body || entity.body) {
-            self.common.postMessage("NAVIGATE", newEntity.id);
-          }
-          if (!newEntity.body) {
-            self.openEditor(newEntity);
-          }
+          self.switchToEntity(prev[0].entity);
           break;
 
         case "next":
@@ -828,13 +831,7 @@ var Pontoon = (function () {
           if (next.length === 0) {
             next = $(entitySelector + ':first');
           }
-          var newEntity = next[0].entity;
-          if (newEntity.body || entity.body) {
-            self.common.postMessage("NAVIGATE", newEntity.id);
-          }
-          if (!newEntity.body) {
-            self.openEditor(newEntity);
-          }
+          self.switchToEntity(next[0].entity);
           break;
 
         }
