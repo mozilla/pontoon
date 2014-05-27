@@ -998,32 +998,31 @@ var Pontoon = (function () {
         var sec = $(this).attr('href').substr(1),
             editor = $('#editor')[0],
             entity = editor.entity,
-            history = entity.id + self.isPluralized(),
-            machinery = entity.id + self.isPluralized(),
-            otherLocales = entity.id + self.isPluralized();
+            currentEntity = entity.id,
+            currentEntityPlural = entity.id + self.isPluralized();
 
         switch (sec) {
 
         case "history":
-          if (editor.history !== history) {
+          if (editor.history !== currentEntity) {
             // Hard to say which plural form to use; always using singular
             self.getHistory(entity);
-            editor.history = history;
+            editor.history = currentEntity;
           }
           break;
 
         case "machinery":
-          if (editor.machinery !== machinery) {
+          if (editor.machinery !== currentEntityPlural) {
             self.getMachinery(entity['original' + self.isPluralized()]);
-            editor.machinery = machinery;
+            editor.machinery = currentEntityPlural;
           }
           break;
 
         case "other-locales":
-          if (editor.otherLocales !== otherLocales) {
+          if (editor.otherLocales !== currentEntity) {
             // Hard to say which plural form to use; always using singular
             self.getOtherLocales(entity);
-            editor.otherLocales = otherLocales;
+            editor.otherLocales = currentEntity;
           }
           break;
 
