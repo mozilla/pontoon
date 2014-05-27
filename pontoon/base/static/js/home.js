@@ -21,6 +21,8 @@ $(function() {
   $("#browserid").click(function(e) {
     $('#loading').toggleClass(spin).empty();
     e.preventDefault();
+    var redirect = $('#server').data('redirect');
+
     navigator.id.get(function(assertion) {
       if (assertion) {
         $.ajax({
@@ -32,6 +34,10 @@ $(function() {
           },
           success: function(data) {
             if (data !== 'error') {
+              if (redirect) {
+                window.location = redirect;
+                return;
+              }
               $('#action').remove();
               $('#signout').removeClass('hidden').find('a').attr('title', data.browserid.email);
               if (data.manager) {

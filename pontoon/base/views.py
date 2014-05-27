@@ -68,12 +68,16 @@ def home(request, template='home.html'):
     translate_error = request.session.pop('translate_error', {})
     locale = translate_error.get('locale')
     project = translate_error.get('project')
+    redirect = translate_error.get('redirect')
 
     if locale is not None:
         data['locale_code'] = locale
 
     if project is not None:
         data['project'] = project
+
+    if redirect is not None:
+        data['redirect'] = redirect
 
     return render(request, template, data)
 
@@ -122,6 +126,9 @@ def translate_project(request, locale, slug, page=None,
     if not p.name == 'Testpilot':
         if not request.user.is_authenticated():
             messages.error(request, "You need to sign in first.")
+            request.session['translate_error'] = {
+                'redirect': request.get_full_path(),
+            }
             return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
