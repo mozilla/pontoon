@@ -57,27 +57,18 @@ def home(request, template='home.html'):
     """Home view."""
     log.debug("Home view.")
 
+    translate_error = request.session.pop('translate_error', {})
+
     data = {
-        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '')
+        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', None)
         .split(',')[0],
+        'locale_code': translate_error.get('locale', None),
+        'project': translate_error.get('project', None),
+        'redirect': translate_error.get('redirect', None),
         'locales': Locale.objects.all(),
         'projects': Project.objects.filter(
             pk__in=Entity.objects.values('project'))
     }
-
-    translate_error = request.session.pop('translate_error', {})
-    locale = translate_error.get('locale')
-    project = translate_error.get('project')
-    redirect = translate_error.get('redirect')
-
-    if locale is not None:
-        data['locale_code'] = locale
-
-    if project is not None:
-        data['project'] = project
-
-    if redirect is not None:
-        data['redirect'] = redirect
 
     return render(request, template, data)
 
