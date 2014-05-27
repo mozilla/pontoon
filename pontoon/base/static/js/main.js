@@ -1014,6 +1014,7 @@ var Pontoon = (function () {
 
         case "other-locales":
           if (editor.otherLocales !== otherLocales) {
+            // Hard to say which plural form to use; always using singular
             self.getOtherLocales(entity);
             editor.otherLocales = otherLocales;
           }
