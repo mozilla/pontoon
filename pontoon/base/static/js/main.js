@@ -237,14 +237,16 @@ var Pontoon = (function () {
           ul = $('#machinery ul').empty(),
           requests = 0;
 
-      function complete() {
-        requests--;
-        if (requests === 0) {
-          $('#helpers li a[href="#machinery"]').removeClass('loading');
-          if (ul.find('li').length === 0) {
-            ul.append('<li class="disabled">' +
-              '<p>No translations available.</p>' +
-            '</li>');
+      function complete(jqXHR, status) {
+        if (status !== "abort") {
+          requests--;
+          if (requests === 0) {
+            $('#helpers li a[href="#machinery"]').removeClass('loading');
+            if (ul.find('li').length === 0) {
+              ul.append('<li class="disabled">' +
+                '<p>No translations available.</p>' +
+              '</li>');
+            }
           }
         }
       }
@@ -262,13 +264,17 @@ var Pontoon = (function () {
         '</li>');
       }
 
-      $('#helpers li.active a').addClass('loading');
+      $('#helpers nav .active a').addClass('loading');
 
       // Machine translation
       if (self.locale.mt !== false) {
         requests++;
 
-        $.ajax({
+        if (self.XHRmachineTranslation) {
+          self.XHRmachineTranslation.abort();
+        }
+
+        self.XHRmachineTranslation = $.ajax({
           url: 'machine-translation/',
           data: {
             text: original,
@@ -300,7 +306,11 @@ var Pontoon = (function () {
       if (self.locale.msTerminology !== false) {
         requests++;
 
-        $.ajax({
+        if (self.XHRmicrosoftTerminology) {
+          self.XHRmicrosoftTerminology.abort();
+        }
+
+        self.XHRmicrosoftTerminology = $.ajax({
           url: 'microsoft-terminology/',
           data: {
             text: original,
@@ -335,7 +345,12 @@ var Pontoon = (function () {
 
       // amaGama
       requests++;
-      $.ajax({
+
+      if (self.XHRamagama) {
+        self.XHRamagama.abort();
+      }
+
+      self.XHRamagama = $.ajax({
         url: 'amagama/',
         data: {
           text: original,
@@ -359,7 +374,12 @@ var Pontoon = (function () {
 
       // Transvision
       requests++;
-      $.ajax({
+
+      if (self.XHRtransvision) {
+        self.XHRtransvision.abort();
+      }
+
+      self.XHRtransvision = $.ajax({
         url: 'transvision/',
         data: {
           text: original,
