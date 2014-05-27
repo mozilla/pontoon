@@ -200,7 +200,11 @@ var Pontoon = (function () {
       var self = this,
           list = $('#other-locales ul').empty();
 
-      $.ajax({
+      if (self.XHRgetOtherLocales) {
+        self.XHRgetOtherLocales.abort();
+      }
+
+      self.XHRgetOtherLocales = $.ajax({
         url: 'other-locales/',
         data: {
           entity: entity.pk,
@@ -1019,7 +1023,7 @@ var Pontoon = (function () {
 
         case "other-locales":
           if (editor.otherLocales !== currentEntity) {
-            // Hard to say which plural form to use; always using singular
+            // Hard to match plural forms with other locales; using singular
             self.getOtherLocales(entity);
             editor.otherLocales = currentEntity;
           }
