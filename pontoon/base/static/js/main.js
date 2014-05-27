@@ -999,15 +999,14 @@ var Pontoon = (function () {
             editor = $('#editor')[0],
             entity = editor.entity,
             currentEntity = entity.id,
-            currentEntityPlural = entity.id + self.isPluralized();
+            currentEntityPlural = currentEntity + self.isPluralized();
 
         switch (sec) {
 
         case "history":
-          if (editor.history !== currentEntity) {
-            // Hard to say which plural form to use; always using singular
+          if (editor.history !== currentEntityPlural) {
             self.getHistory(entity);
-            editor.history = currentEntity;
+            editor.history = currentEntityPlural;
           }
           break;
 
