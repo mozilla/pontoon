@@ -999,21 +999,23 @@ var Pontoon = (function () {
 
         var sec = $(this).attr('href').substr(1),
             editor = $('#editor')[0],
-            entity = editor.entity;
+            entity = editor.entity,
+            machinery = entity.id + self.isPluralized(),
+            otherLocales = entity.id + self.isPluralized();
 
         switch (sec) {
 
         case "machinery":
-          if (editor.machinery !== entity.id + self.isPluralized()) {
+          if (editor.machinery !== machinery) {
             self.getMachinery(entity['original' + self.isPluralized()]);
-            editor.machinery = entity.id + self.isPluralized();
+            editor.machinery = machinery;
           }
           break;
 
         case "other-locales":
-          if (editor.otherLocales !== entity.id + self.isPluralized()) {
+          if (editor.otherLocales !== otherLocales) {
             self.getOtherLocales(entity);
-            editor.otherLocales = entity.id + self.isPluralized();
+            editor.otherLocales = otherLocales;
           }
           break;
 
