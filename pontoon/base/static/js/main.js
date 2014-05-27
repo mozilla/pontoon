@@ -516,8 +516,7 @@ var Pontoon = (function () {
           $('#plural-tabs li:first a').click();
         }
       } else {
-        this.getHistory(entity);
-        $("#helpers nav a:first").click();
+        $("#helpers nav .active a").click();
       }
 
       // Translation area
@@ -854,8 +853,7 @@ var Pontoon = (function () {
           .find('.current-length').html(source.length);
 
         $('#warning:visible .cancel').click();
-        self.getHistory(entity);
-        $("#helpers nav a:first").click();
+        $("#helpers nav .active a").click();
       });
 
       // Translate in textarea
@@ -1000,10 +998,19 @@ var Pontoon = (function () {
         var sec = $(this).attr('href').substr(1),
             editor = $('#editor')[0],
             entity = editor.entity,
+            history = entity.id + self.isPluralized(),
             machinery = entity.id + self.isPluralized(),
             otherLocales = entity.id + self.isPluralized();
 
         switch (sec) {
+
+        case "history":
+          if (editor.history !== history) {
+            // Hard to say which plural form to use; always using singular
+            self.getHistory(entity);
+            editor.history = history;
+          }
+          break;
 
         case "machinery":
           if (editor.machinery !== machinery) {
