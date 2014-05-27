@@ -544,7 +544,7 @@ var Pontoon = (function () {
       }
 
       // Translation area
-      $('#translation').val(entity.translation[0].string);
+      $('#translation').val(entity.translation[0].string).focus();
       $('#warning:visible .cancel').click();
 
       // Length
