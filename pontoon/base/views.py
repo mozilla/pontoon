@@ -15,9 +15,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
-from django.core.validators import URLValidator
 
 from django.http import (
     Http404,
@@ -94,84 +92,6 @@ def handle_error(request):
         'project': request.GET.get('project')
     }
     return HttpResponseRedirect(reverse('pontoon.home'))
-
-
-def translate_site(request, locale, url, template='translate.html'):
-    """Translate view: site."""
-    log.debug("Translate view: site.")
-
-    # Validate URL
-    # Default configuration of Apache doesn't allow encoded slashes in URLs
-    # https://github.com/mozilla/playdoh/issues/143
-    url = urllib.unquote(url)
-    log.debug("URL: " + url)
-    validate = URLValidator()
-
-    try:
-        validate(url)
-    except ValidationError as e:
-        log.debug(e)
-        request.session['translate_error'] = {
-            'locale': locale,
-        }
-        messages.error(request, "Oops, this is not a valid URL.")
-        return HttpResponseRedirect(reverse('pontoon.home'))
-
-    # Validate locale
-    log.debug("Locale: " + locale)
-    try:
-        l = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist:
-        messages.error(request, "Oops, locale is not supported.")
-        request.session['translate_error'] = {
-            'locale': locale,
-        }
-        return HttpResponseRedirect(reverse('pontoon.home'))
-
-    data = {
-        'locale': l,
-        'locales': Locale.objects.all(),
-        'project_url': url,
-        'project': {},
-        'projects': Project.objects.filter(
-            pk__in=Entity.objects.values('project'))
-    }
-
-    try:
-        p = Project.objects.get(url=url)
-        try:
-            # Select project and a subpage
-            s = Subpage.objects.get(url=url)
-            page = s.name
-        except Subpage.DoesNotExist:
-            # Select project, subpage does not exist
-            page = None
-    except Project.DoesNotExist:
-        try:
-            # Select subpage and its project
-            s = Subpage.objects.get(url=url)
-            p = s.project
-            page = s.name
-        except Subpage.DoesNotExist:
-            # Project not stored in the DB
-            data['project']['locales'] = Locale.objects.all()
-            return render(request, template, data)
-
-    # Check if user authenticated and has sufficient privileges
-    if not p.name == 'Testpilot':
-        if not request.user.is_authenticated():
-            messages.error(request, "You need to sign in first.")
-            return HttpResponseRedirect(reverse('pontoon.home'))
-
-    # Project stored in the DB, add more data
-    if page is None:
-        return HttpResponseRedirect(reverse(
-            'pontoon.translate.project',
-            kwargs={'locale': locale, 'slug': p.slug}))
-    else:
-        return HttpResponseRedirect(reverse(
-            'pontoon.translate.project.page',
-            kwargs={'locale': locale, 'slug': p.slug, 'page': page}))
 
 
 def translate_project(request, locale, slug, page=None,

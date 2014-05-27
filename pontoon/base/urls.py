@@ -11,11 +11,6 @@ urlpatterns = patterns(
     # Errors
     url('^translate/error/$', views.handle_error, name='pontoon.handle_error'),
 
-    # Translate site
-    url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/site/(?P<url>.+)/$',
-        views.translate_site,
-        name='pontoon.translate.site'),
-
     # Translate project's page
     url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/project/(?P<slug>.+)' +
         '/page/(?P<page>.+)/$',
