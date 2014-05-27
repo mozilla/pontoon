@@ -752,12 +752,14 @@ var Pontoon = (function () {
 
       // Open entity editor on click
       $("#entitylist .entity").click(function () {
-        var entity = this.entity;
+        var entity = $('#editor')[0].entity,
+            newEntity = this.entity;
 
-        if ($(this).is(':not(".uneditable")')) {
-          self.common.postMessage("EDIT");
-        } else {
-          self.openEditor(entity);
+        if (newEntity.body || (entity && entity.body)) {
+          self.common.postMessage("NAVIGATE", newEntity.id);
+        }
+        if (!newEntity.body) {
+          self.openEditor(newEntity);
         }
       });
     },

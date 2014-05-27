@@ -527,10 +527,6 @@
             }
             break;
 
-          case "EDIT":
-            startEditing();
-            break;
-
           case "SAVE":
             var entity = $('.pontoon-editable-toolbar')[0].target.entity;
             entity.translation[0].string = message.value;
