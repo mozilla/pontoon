@@ -1029,10 +1029,8 @@ var Pontoon = (function () {
         switch (sec) {
 
         case "history":
-          if (editor.history !== currentEntityPlural) {
-            self.getHistory(entity);
-            editor.history = currentEntityPlural;
-          }
+          // Do not cache history to prevent outdate suggestions on return
+          self.getHistory(entity);
           break;
 
         case "machinery":
