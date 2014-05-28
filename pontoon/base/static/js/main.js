@@ -879,7 +879,7 @@ var Pontoon = (function () {
         $("#helpers nav .active a").click();
       });
 
-      // Translate in textarea
+      // Translate textarea keyboard shortcuts
       $('#translation').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
         var key = e.which;
 
@@ -1782,14 +1782,15 @@ var Pontoon = (function () {
         }
       });
 
-      // Use arrow keys to move around menu, confirm/close eith Enter/Esc
+      // General keyboard shortcuts
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         if ($('.menu').is(':visible')) {
           var key = e.which,
               menu = $('.menu:visible'),
               hovered = menu.find('li.hover');
 
-          if (key === 38) { // Up arrow
+          // Up arrow: move up
+          if (key === 38) {
             if (hovered.length === 0 ||
                 menu.find('li:visible:first').is('.hover')) {
               menu.find('li.hover').removeClass('hover');
@@ -1810,7 +1811,8 @@ var Pontoon = (function () {
             return false;
           }
 
-          if (key === 40) { // Down arrow
+          // Down arrow: move down
+          if (key === 40) {
             if (hovered.length === 0 ||
                 menu.find('li:visible:last').is('.hover')) {
               menu.find('li.hover').removeClass('hover');
@@ -1831,7 +1833,8 @@ var Pontoon = (function () {
             return false;
           }
 
-          if (key === 13) { // Enter
+          // Enter: confirm
+          if (key === 13) {
             var a = hovered.find('a');
             if (a.length > 0) {
               a.click();
@@ -1841,20 +1844,25 @@ var Pontoon = (function () {
             return false;
           }
 
-          if (key === 27) { // Escape
+          // Escape: close
+          if (key === 27) {
             menu.siblings('.selector').click();
             return false;
           }
         }
+
         if ($('.popup').is(':visible')) {
           var key = e.which,
               popup = $('.popup:visible');
 
-          if (key === 13) { // Enter
+          // Enter: confirm
+          if (key === 13) {
             popup.find('.button').click();
             return false;
           }
-          if (key === 27) { // Escape
+
+          // Escape: close
+          if (key === 27) {
             popup.find('.cancel').click();
             return false;
           }
