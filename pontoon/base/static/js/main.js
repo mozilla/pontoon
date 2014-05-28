@@ -824,6 +824,7 @@ var Pontoon = (function () {
             prev = $(entitySelector + ':last');
           }
           self.switchToEntity(prev[0].entity);
+          self.updateScroll($('#entitylist .wrapper'));
           break;
 
         case "next":
@@ -832,6 +833,7 @@ var Pontoon = (function () {
             next = $(entitySelector + ':first');
           }
           self.switchToEntity(next[0].entity);
+          self.updateScroll($('#entitylist .wrapper'));
           break;
 
         }
@@ -1600,7 +1602,7 @@ var Pontoon = (function () {
      * menu Menu element
      */
     updateScroll: function (menu) {
-      var hovered = menu.find('li.hover'),
+      var hovered = menu.find('[class*=hover]'),
           maxHeight = menu.height(),
           visibleTop = menu.scrollTop(),
           visibleBottom = visibleTop + maxHeight,
