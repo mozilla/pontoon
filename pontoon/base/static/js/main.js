@@ -1595,11 +1595,11 @@ var Pontoon = (function () {
 
 
     /*
-     * Update slider position in the menu
+     * Update scrollbar position in the menu
      * 
      * menu Menu element
      */
-    updateSlider: function (menu) {
+    updateScroll: function (menu) {
       var hovered = menu.find('li.hover'),
           maxHeight = menu.height(),
           visibleTop = menu.scrollTop(),
@@ -1800,7 +1800,7 @@ var Pontoon = (function () {
                   .addClass('hover');
             }
             if (menu.parent().is('.locale')) {
-              Pontoon.updateSlider(menu.find('ul'));
+              Pontoon.updateScroll(menu.find('ul'));
             }
             if (menu.parent().is('.project')) {
               var type = (!$('body').is('.admin')) ?
@@ -1822,7 +1822,7 @@ var Pontoon = (function () {
                   .addClass('hover');
             }
             if (menu.parent().is('.locale')) {
-              Pontoon.updateSlider(menu.find('ul'));
+              Pontoon.updateScroll(menu.find('ul'));
             }
             if (menu.parent().is('.project')) {
               var type = (!$('body').is('.admin')) ?
@@ -1890,6 +1890,8 @@ var Pontoon = (function () {
               section
                 .find('li').removeClass('hover').end()
                 .find('li:eq(' + index + ')').addClass('hover').click();
+
+              Pontoon.updateScroll(section);
               return false;
             }
           }
