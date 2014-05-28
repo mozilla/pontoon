@@ -1867,6 +1867,17 @@ var Pontoon = (function () {
             return false;
           }
         }
+
+        if ($('#sidebar').is(':visible') &&
+            (Pontoon.app.advanced || !$("#editor").is('.opened'))) {
+          var key = e.which;
+
+          // Alt + F: focus search
+          if (e.altKey && key === 70) {
+            $('#search').focus();
+            return false;
+          }
+        }
       });
 
       return {
