@@ -1784,9 +1784,10 @@ var Pontoon = (function () {
 
       // General keyboard shortcuts
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
+        var key = e.which;
+
         if ($('.menu').is(':visible')) {
-          var key = e.which,
-              menu = $('.menu:visible'),
+          var menu = $('.menu:visible'),
               hovered = menu.find('li.hover');
 
           // Up arrow: move up
@@ -1852,8 +1853,7 @@ var Pontoon = (function () {
         }
 
         if ($('.popup').is(':visible')) {
-          var key = e.which,
-              popup = $('.popup:visible');
+          var popup = $('.popup:visible');
 
           // Enter: confirm
           if (key === 13) {
@@ -1870,7 +1870,6 @@ var Pontoon = (function () {
 
         if ($('#sidebar').is(':visible') &&
             (Pontoon.app.advanced || !$("#editor").is('.opened'))) {
-          var key = e.which;
 
           // Alt + F: focus search
           if (e.altKey && key === 70) {
