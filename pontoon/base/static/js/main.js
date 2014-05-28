@@ -889,7 +889,7 @@ var Pontoon = (function () {
         }
 
         // Enter: save translation
-        if (key === 13 && !e.shiftKey) {
+        if (key === 13 && !e.shiftKey && !e.altKey) {
           $('#save').click();
           return false;
         }
