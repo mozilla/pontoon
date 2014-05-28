@@ -6,7 +6,6 @@ import hashlib
 import json
 import os
 import requests
-import traceback
 import xml.etree.ElementTree as ET
 import urllib
 
