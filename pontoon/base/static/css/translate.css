@@ -882,7 +882,8 @@
   transform: scale(0);
 }
 
-#pontoon #helpers > section ul li:not(.disabled):hover {
+#pontoon #helpers > section ul li:not(.disabled):hover,
+#pontoon #helpers > section ul li:not(.disabled).hover {
   background: #4D5967;
   border-color: #5E6475;
 }

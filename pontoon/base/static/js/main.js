@@ -1866,13 +1866,33 @@ var Pontoon = (function () {
           }
         }
 
-        if ($('#sidebar').is(':visible') &&
-            (Pontoon.app.advanced || !$("#editor").is('.opened'))) {
+        if ($('#sidebar').is(':visible')) {
 
           // Alt + F: focus search
-          if (e.altKey && key === 70) {
-            $('#search').focus();
-            return false;
+          if (Pontoon.app.advanced || !$("#editor").is('.opened')) {
+            if (e.altKey && key === 70) {
+              $('#search').focus();
+              return false;
+            }
+          }
+
+          // Tab: select suggestions
+          if (Pontoon.app.advanced || $("#editor").is('.opened')) {
+            if (key === 9) {
+              var section = $('#helpers section:visible'),
+                  index = section.find('li.hover').index();
+
+              if (index === -1 || section.find('li:last').is('.hover')) {
+                index = 0;
+              } else {
+                index = index + 1;
+              }
+
+              section
+                .find('li').removeClass('hover').end()
+                .find('li:eq(' + index + ')').addClass('hover').click();
+              return false;
+            }
           }
         }
       });
