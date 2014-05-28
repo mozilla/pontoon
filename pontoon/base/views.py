@@ -287,9 +287,11 @@ def get_translation_history(request, template=None):
     if len(translations) > 0:
         payload = []
         for t in translations:
+            usr = t.user
+            user = user if usr is None else usr.first_name or usr.email
             o = {
                 "id": t.id,
-                "user": getattr(t.user, 'email', user),
+                "user": user,
                 "translation": t.string,
                 "date": t.date.strftime('%b %d, %Y %H:%M'),
                 "approved": t.approved,
