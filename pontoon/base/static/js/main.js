@@ -896,7 +896,9 @@ var Pontoon = (function () {
 
         // Esc: cancel translation and return to entity list
         if (key === 27) {
-          if (!self.app.advanced) {
+          if ($('#warning').is(':visible')) {
+            $('#warning .cancel').click();
+          } else if (!self.app.advanced) {
             $('#cancel').click();
           }
           return false;
