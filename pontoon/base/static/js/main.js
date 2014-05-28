@@ -1880,12 +1880,11 @@ var Pontoon = (function () {
           if (Pontoon.app.advanced || $("#editor").is('.opened')) {
             if (key === 9) {
               var section = $('#helpers section:visible'),
-                  index = section.find('li.hover').index();
+                  index = section.find('li.hover').index() + 1;
 
-              if (index === -1 || section.find('li:last').is('.hover')) {
+              // If possible, select next suggestion, or select first
+              if (section.find('li:last').is('.hover')) {
                 index = 0;
-              } else {
-                index = index + 1;
               }
 
               section
