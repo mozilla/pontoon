@@ -450,7 +450,7 @@ var Pontoon = (function () {
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
-                      (this.user || "Imported") +
+                      this.user +
                       '<span class="stress">' + this.date + '</span>' +
                     '</div>' +
                     '<menu class="toolbar">' +

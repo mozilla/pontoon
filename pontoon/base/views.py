@@ -282,16 +282,14 @@ def get_translation_history(request, template=None):
         translations = translations.filter(plural_form=plural_form)
     translations = translations.order_by('-approved', '-date')
 
-    user = ''
-    if entity.project.name == 'Testpilot':
-        user = 'Anonymous'
+    user = 'Anonymous' if entity.project.name == 'Testpilot' else 'Imported'
 
     if len(translations) > 0:
         payload = []
         for t in translations:
             o = {
                 "id": t.id,
-                "user": getattr(t.user, 'email', user),  # Empty for imported
+                "user": getattr(t.user, 'email', user),
                 "translation": t.string,
                 "date": t.date.strftime('%b %d, %Y %H:%M'),
                 "approved": t.approved,
