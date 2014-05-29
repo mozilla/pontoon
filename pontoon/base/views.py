@@ -93,19 +93,33 @@ def translate_project(request, locale, slug, page=None,
     """Translate view: project."""
     log.debug("Translate view: project.")
 
+    invalid_locale = invalid_project = False
+
     # Validate locale
     log.debug("Locale: " + locale)
     try:
         l = Locale.objects.get(code=locale)
     except Locale.DoesNotExist:
-        messages.error(request, "Oops, locale is not supported.")
-        return HttpResponseRedirect(reverse('pontoon.home'))
+        invalid_locale = True
 
     # Validate project
     try:
         p = Project.objects.get(
             slug=slug, pk__in=Entity.objects.values('project'))
     except Project.DoesNotExist:
+        invalid_project = True
+
+    if invalid_locale:
+        if invalid_project:
+            raise Http404
+        else:
+            messages.error(request, "Oops, locale is not supported.")
+            request.session['translate_error'] = {
+                'project': p.slug,
+            }
+            return HttpResponseRedirect(reverse('pontoon.home'))
+
+    if invalid_project:
         messages.error(request, "Oops, project could not be found.")
         request.session['translate_error'] = {
             'locale': locale,
