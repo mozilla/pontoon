@@ -17,9 +17,6 @@ urlpatterns = patterns(
     # Locale redirect for compatibility with old (i18n ready) URL scheme
     (r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s")),
 
-    # Main app:
-    (r'', include('pontoon.base.urls')),
-
     # Admin:
     (r'admin/', include('pontoon.administration.urls')),
 
@@ -45,6 +42,9 @@ urlpatterns = patterns(
 
     # Django admin
     (r'^a/', include(admin.site.urls)),
+
+    # Main app:
+    (r'', include('pontoon.base.urls')),
 )
 
 ## In DEBUG mode, serve media files through Django.

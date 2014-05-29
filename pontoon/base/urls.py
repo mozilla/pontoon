@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from django.views.generic import RedirectView
 
 import views
 
@@ -11,14 +12,22 @@ urlpatterns = patterns(
     # Errors
     url('^translate/error/$', views.handle_error, name='pontoon.handle_error'),
 
-    # Translate project's page
+    # Legacy: Translate project's page
     url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/project/(?P<slug>.+)' +
         '/page/(?P<page>.+)/$',
+        RedirectView.as_view(url="/%(locale)s/%(slug)s/%(page)s/")),
+
+    # Legacy: Translate project
+    url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/project/(?P<slug>.+)/$',
+        RedirectView.as_view(url="/%(locale)s/%(slug)s/")),
+
+    # Translate project's page
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>.+)/(?P<page>.+)/$',
         views.translate_project,
         name='pontoon.translate.project.page'),
 
     # Translate project
-    url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/project/(?P<slug>.+)/$',
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>.+)/$',
         views.translate_project,
         name='pontoon.translate.project'),
 
