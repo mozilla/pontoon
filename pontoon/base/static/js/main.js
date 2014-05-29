@@ -559,6 +559,7 @@ var Pontoon = (function () {
       // Update entity list
       $("#entitylist .hovered").removeClass('hovered');
       entity.ui.addClass('hovered');
+      this.updateScroll($('#entitylist .wrapper'));
 
       // Switch editor and entitylist in 1-column layout
       if (!this.app.advanced) {
@@ -1600,7 +1601,7 @@ var Pontoon = (function () {
      * menu Menu element
      */
     updateScroll: function (menu) {
-      var hovered = menu.find('li.hover'),
+      var hovered = menu.find('[class*=hover]'),
           maxHeight = menu.height(),
           visibleTop = menu.scrollTop(),
           visibleBottom = visibleTop + maxHeight,
