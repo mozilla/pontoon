@@ -59,7 +59,7 @@ def home(request, template='home.html'):
     translate_error = request.session.pop('translate_error', {})
 
     data = {
-        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', None)
+        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '')
         .split(',')[0],
         'locale_code': translate_error.get('locale', None),
         'project': translate_error.get('project', None),
