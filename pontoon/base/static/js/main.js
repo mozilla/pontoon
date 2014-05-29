@@ -1696,7 +1696,7 @@ var Pontoon = (function () {
         }
 
         if (page) {
-          loc += '/page/' + page;
+          loc += '/' + page;
         }
         window.location = loc;
       });
