@@ -14,13 +14,16 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
 
-    # Locale redirect for compatibility with old (i18n ready) URL scheme
+    # Legacy: Locale redirect for compatibility with i18n ready URL scheme
     (r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s")),
 
-    # Admin:
+    # Admin
     (r'admin/', include('pontoon.administration.urls')),
 
-    # BrowserID:
+    # Django admin
+    (r'^a/', include(admin.site.urls)),
+
+    # BrowserID
     url(r'^browserid/$', 'pontoon.base.views.verify', name='browserid.verify'),
 
     # Logout
@@ -40,10 +43,7 @@ urlpatterns = patterns(
     url(r'^pontoon\.js$',
         RedirectView.as_view(url='/static/js/pontoon.js')),
 
-    # Django admin
-    (r'^a/', include(admin.site.urls)),
-
-    # Main app:
+    # Main app
     (r'', include('pontoon.base.urls')),
 )
 
