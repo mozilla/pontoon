@@ -126,7 +126,7 @@ def translate_project(request, locale, slug, page=None,
         }
         return HttpResponseRedirect(reverse('pontoon.home'))
 
-    # Check if user authenticated and has sufficient privileges
+    # Check if user authenticated
     if not p.name == 'Testpilot':
         if not request.user.is_authenticated():
             messages.error(request, "You need to sign in first.")
@@ -183,7 +183,7 @@ def translate_project(request, locale, slug, page=None,
         data['project_pages'] = pages
         data['current_page'] = page.name
 
-        # Get entities
+        # Firefox OS Hack
         if page is not None:
             page = page.name.lower().replace(" ", "").replace(".", "")
     data['entities'] = json.dumps(get_entities(p, l, page))
