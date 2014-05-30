@@ -76,6 +76,14 @@ def locale(request, locale, template='locale.html'):
     """Locale view."""
     log.debug("Locale view.")
 
+    # Check if user authenticated
+    if not request.user.is_authenticated():
+        messages.error(request, "You need to sign in first.")
+        request.session['translate_error'] = {
+            'redirect': request.get_full_path(),
+        }
+        return HttpResponseRedirect(reverse('pontoon.home'))
+
     # Validate locale
     try:
         l = Locale.objects.get(code=locale)
@@ -94,6 +102,14 @@ def locale(request, locale, template='locale.html'):
 def project(request, slug, template='project.html'):
     """Project view."""
     log.debug("Project view.")
+
+    # Check if user authenticated
+    if not request.user.is_authenticated():
+        messages.error(request, "You need to sign in first.")
+        request.session['translate_error'] = {
+            'redirect': request.get_full_path(),
+        }
+        return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Validate project
     try:
