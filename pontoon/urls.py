@@ -43,7 +43,7 @@ urlpatterns = patterns(
     url(r'^pontoon\.js$',
         RedirectView.as_view(url='/static/js/pontoon.js')),
 
-    # Main app
+    # Main app: Must be at the end
     (r'', include('pontoon.base.urls')),
 )
 

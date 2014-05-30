@@ -40,11 +40,6 @@ urlpatterns = patterns(
         views.translate,
         name='pontoon.translate'),
 
-    # List locale projects
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
-        views.locale,
-        name='pontoon.locale'),
-
     # AJAX
     url(r'^update/', views.update_translation,
         name='pontoon.update'),
@@ -74,4 +69,9 @@ urlpatterns = patterns(
         name='pontoon.transifex'),
     url(r'^csrf/$', views.get_csrf,
         name='pontoon.csrf'),
+
+    # List locale projects: Must be at the end
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
+        views.locale,
+        name='pontoon.locale'),
 )
