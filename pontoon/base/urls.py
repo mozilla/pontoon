@@ -23,13 +23,13 @@ urlpatterns = patterns(
 
     # Translate project's page
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<page>[^/]+)/$',
-        views.translate_project,
-        name='pontoon.translate.project.page'),
+        views.translate,
+        name='pontoon.translate.page'),
 
     # Translate project
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/$',
-        views.translate_project,
-        name='pontoon.translate.project'),
+        views.translate,
+        name='pontoon.translate'),
 
     # AJAX
     url(r'^update/', views.update_translation,

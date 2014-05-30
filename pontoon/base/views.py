@@ -88,10 +88,9 @@ def handle_error(request):
     return HttpResponseRedirect(reverse('pontoon.home'))
 
 
-def translate_project(request, locale, slug, page=None,
-                      template='translate.html'):
-    """Translate view: project."""
-    log.debug("Translate view: project.")
+def translate(request, locale, slug, page=None, template='translate.html'):
+    """Translate view."""
+    log.debug("Translate view.")
 
     invalid_locale = invalid_project = False
 
