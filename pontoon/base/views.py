@@ -95,7 +95,6 @@ def translate(request, locale, slug, page=None, template='translate.html'):
     invalid_locale = invalid_project = False
 
     # Validate locale
-    log.debug("Locale: " + locale)
     try:
         l = Locale.objects.get(code=locale)
     except Locale.DoesNotExist:
