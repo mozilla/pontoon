@@ -72,6 +72,26 @@ def home(request, template='home.html'):
     return render(request, template, data)
 
 
+def locale(request, locale, template='locale.html'):
+    """Locale view."""
+    log.debug("Locale view.")
+
+    # Validate locale
+    try:
+        l = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist:
+        messages.error(request, "Oops, locale is not supported.")
+        return HttpResponseRedirect(reverse('pontoon.home'))
+
+    data = {
+        'projects': Project.objects.filter(
+            pk__in=Entity.objects.values('project')).filter(locales=l),
+        'locale': l,
+    }
+
+    return render(request, template, data)
+
+
 def handle_error(request):
     """
     This view is bound with a generic URL which can be called from Pontoon's

@@ -1702,7 +1702,7 @@ var Pontoon = (function () {
       });
 
       // Project menu handler
-      $('.project .menu li:not(".no-match")').click(function () {
+      $('.project .menu li:not(".no-match")').bind('click.main', function () {
         var name = $(this).find('.project-name').html(),
             slug = $(this).find('.project-name').data('slug');
 

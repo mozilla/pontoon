@@ -1,8 +1,8 @@
-{% extends "base.html" %}
+{% extends "base_landing.html" %}
 
 {% block class %}home{% endblock %}
 
-{% block content %}
+{% block before %}
 <!-- Server data -->
 <div id="server"
      class="hidden"
@@ -11,96 +11,77 @@
      data-project="{{ project }}"
      data-redirect="{{ redirect }}">
 </div>
+{% endblock %}
 
-<!-- Frontpage -->
-<section id="intro">
+{% block middle %}
+<form class="clearfix{% if not user.is_authenticated() %} hidden{% endif %}">
 
-  <div class="inner">
-
-    <nav>
-      <ul class="links">
-        <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon" target="_blank" title="Localize">How it works</a></li>
-        <li><a href="https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla" target="_blank" title="Integrate">Developers</a></li>
-        <li><a href="https://github.com/mathjazz/pontoon" target="_blank" title="Hack">GitHub</a></li>
-        <li><a href="https://twitter.com/#!/mozillapontoon" target="_blank" title="Follow">Twitter</a></li>
-        <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{{ url('pontoon.admin') }}" title="Admin">Admin</a></li>
-        <li id="signout"{% if not user.is_authenticated() %} class="hidden"{% endif %}><a href="{{ url('signout') }}" title="{{ user.email }}">Sign out</a></li>
-      </ul>
-    </nav>
-
-    <h1 id="title"><a href="/">Pontoon</a></h1>
-    <h2 id="subtitle">Translate websites. In place.</h2>
-
-    <form class="clearfix{% if not user.is_authenticated() %} hidden{% endif %}">
-
-      <!-- Project input/select -->
-      <div class="project select">
-        {% if projects|length > 0 %}
-        <div class="button breadcrumbs selector">
-          <span class="title">Select website</span>
-        </div>
-        {% endif %}
-        <div class="menu">
-          <input type="text" class="search" autocomplete="off">
-          <ul>
-            {% for project in projects %}
-            <li class="clearfix">
-              <span class="project-name"
-                data-slug={{ project.slug }}
-                data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
-                data-pages="{% if pages %}{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}{% endif %}">{{ project.name }}</span>
-              <span class="project-url">{{ project.url }}</span>
-            </li>
-            {% endfor %}
-            <li class="no-match">No results</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Locale selector -->
-      <div class="locale select">
-        <div class="button breadcrumbs selector">
-          <span class="language">Select language
-          </span>
-        </div>
-        <div class="menu">
-          <input type="text" class="search" autocomplete="off">
-          <ul>
-            {% for locale in locales %}
-            <li><span class="language {{ locale.code|lower }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
-            {% endfor %}
-            <li class="no-match">No results</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Go -->
-      <div class="go select">
-        <a id="go" href="#">Go</a>
-      </div>
-
-    </form>
-
-    {% if not user.is_authenticated() %}
-    <p id="action">
-      <a id="link" href="{{ url('pontoon.translate', 'de', 'testpilot') }}">Try it out</a>
-      <span id="loading" class="spacing">or</span>
-      <img id="browserid" src="{{ static('img/plain_sign_in_blue.png') }}" alt="Sign in with Persona" />
-    </p>
+  <!-- Project selector -->
+  <div class="project select">
+    {% if projects|length > 0 %}
+    <div class="button breadcrumbs selector">
+      <span class="title">Select website</span>
+    </div>
     {% endif %}
-
-    <ul class="notification{% if not messages %} hidden{% endif %}">
-      {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-    </ul>
-
+    <div class="menu">
+      <input type="text" class="search" autocomplete="off">
+      <ul>
+        {% for project in projects %}
+        <li class="clearfix">
+          <span class="project-name"
+            data-slug={{ project.slug }}
+            data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
+            data-pages="{% if pages %}{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}{% endif %}">{{ project.name }}</span>
+          <span class="project-url">{{ project.url }}</span>
+        </li>
+        {% endfor %}
+        <li class="no-match">No results</li>
+      </ul>
+    </div>
   </div>
-</section>
 
+  <!-- Locale selector -->
+  <div class="locale select">
+    <div class="button breadcrumbs selector">
+      <span class="language">Select language
+      </span>
+    </div>
+    <div class="menu">
+      <input type="text" class="search" autocomplete="off">
+      <ul>
+        {% for locale in locales %}
+        <li><span class="language {{ locale.code|lower }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
+        {% endfor %}
+        <li class="no-match">No results</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Go -->
+  <div class="go select">
+    <a id="go" href="#">Go</a>
+  </div>
+
+</form>
+
+{% if not user.is_authenticated() %}
+<p id="action">
+  <a id="link" href="{{ url('pontoon.translate', 'de', 'testpilot') }}">Try it out</a>
+  <span id="loading" class="spacing">or</span>
+  <img id="browserid" src="{{ static('img/plain_sign_in_blue.png') }}" alt="Sign in with Persona" />
+</p>
+{% endif %}
+
+<ul class="notification{% if not messages %} hidden{% endif %}">
+  {% for message in messages %}
+  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+
+{% block after %}
 <!-- Project loading indicator -->
 {% include 'loader.html' %}
-
 {% endblock %}
 
 {% block extend_js %}
