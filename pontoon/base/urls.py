@@ -22,12 +22,12 @@ urlpatterns = patterns(
         RedirectView.as_view(url="/%(locale)s/%(slug)s/")),
 
     # Translate project's page
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>.+)/(?P<page>.+)/$',
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<page>[^/]+)/$',
         views.translate_project,
         name='pontoon.translate.project.page'),
 
     # Translate project
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>.+)/$',
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/$',
         views.translate_project,
         name='pontoon.translate.project'),
 
