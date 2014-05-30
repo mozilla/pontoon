@@ -174,34 +174,18 @@ def translate_project(request, locale, slug, page=None,
     # Validate subpages
     pages = Subpage.objects.filter(project=p)
     if len(pages) > 0:
-        if page is None:
-            try:
-                # If page exist, but not specified in URL
-                page = pages.filter(url__startswith=p.url)[0].name
-            except IndexError:
-                request.session['translate_error'] = {
-                    'locale': locale,
-                    'project': p.slug,
-                }
-                messages.error(
-                    request, "Oops, project URL doesn't match any subpage.")
-                return HttpResponseRedirect(reverse('pontoon.home'))
-        else:
-            try:
-                data['project_url'] = pages.get(name=page).url
-            except Subpage.DoesNotExist:
-                request.session['translate_error'] = {
-                    'locale': locale,
-                    'project': p.slug,
-                }
-                messages.error(request, "Oops, subpage could not be found.")
-                return HttpResponseRedirect(reverse('pontoon.home'))
+        try:
+            page = pages.get(name=page)
+        except Subpage.DoesNotExist:
+            # If page not specified or doesn't exist
+            page = pages[0]
+        data['project_url'] = page.url
         data['project_pages'] = pages
-        data['current_page'] = page
+        data['current_page'] = page.name
 
-    # Get entities
-    if page is not None:
-        page = page.lower().replace(" ", "").replace(".", "")
+        # Get entities
+        if page is not None:
+            page = page.name.lower().replace(" ", "").replace(".", "")
     data['entities'] = json.dumps(get_entities(p, l, page))
 
     return render(request, template, data)
