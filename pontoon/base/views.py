@@ -126,6 +126,16 @@ def translate_project(request, locale, slug, page=None,
         }
         return HttpResponseRedirect(reverse('pontoon.home'))
 
+    # Validate project locales
+    if len(p.locales.filter(code=locale)) == 0:
+        request.session['translate_error'] = {
+            'locale': locale,
+            'project': p.slug,
+        }
+        messages.error(
+            request, "Oops, locale is not supported for this project.")
+        return HttpResponseRedirect(reverse('pontoon.home'))
+
     # Check if user authenticated
     if not p.name == 'Testpilot':
         if not request.user.is_authenticated():
@@ -147,30 +157,6 @@ def translate_project(request, locale, slug, page=None,
             pk__in=Entity.objects.values('project'))
     }
 
-    # Get profile image from Gravatar
-    if request.user.is_authenticated():
-        email = request.user.email
-        size = 44
-
-        gravatar_url = "//www.gravatar.com/avatar/" + \
-            hashlib.md5(email.lower()).hexdigest() + "?"
-        gravatar_url += urllib.urlencode({'s': str(size)})
-        if settings.SITE_URL != 'http://localhost:8000':
-            default = settings.SITE_URL + static('img/user_icon&24.png')
-            gravatar_url += urllib.urlencode({'d': default})
-
-        data['gravatar_url'] = gravatar_url
-
-    # Validate project locales
-    if len(p.locales.filter(code=locale)) == 0:
-        request.session['translate_error'] = {
-            'locale': locale,
-            'project': p.slug,
-        }
-        messages.error(
-            request, "Oops, locale is not supported for this project.")
-        return HttpResponseRedirect(reverse('pontoon.home'))
-
     # Validate subpages
     pages = Subpage.objects.filter(project=p)
     if len(pages) > 0:
@@ -186,6 +172,23 @@ def translate_project(request, locale, slug, page=None,
         # Firefox OS Hack
         if page is not None:
             page = page.name.lower().replace(" ", "").replace(".", "")
+
+    # Get profile image from Gravatar
+    if request.user.is_authenticated():
+        email = request.user.email
+        size = 44
+
+        gravatar_url = "//www.gravatar.com/avatar/" + \
+            hashlib.md5(email.lower()).hexdigest() + "?"
+        gravatar_url += urllib.urlencode({'s': str(size)})
+
+        if settings.SITE_URL != 'http://localhost:8000':
+            default = settings.SITE_URL + static('img/user_icon&24.png')
+            gravatar_url += urllib.urlencode({'d': default})
+
+        data['gravatar_url'] = gravatar_url
+
+    # Get entities
     data['entities'] = json.dumps(get_entities(p, l, page))
 
     return render(request, template, data)
