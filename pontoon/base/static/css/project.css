@@ -4,7 +4,8 @@
 }
 
 #pontoon .select > .button.breadcrumbs {
-  padding-left: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 #pontoon .select > .button.breadcrumbs:before {
