@@ -80,8 +80,7 @@ def locale(request, locale, template='locale.html'):
     try:
         l = Locale.objects.get(code=locale)
     except Locale.DoesNotExist:
-        messages.error(request, "Oops, locale is not supported.")
-        return HttpResponseRedirect(reverse('pontoon.home'))
+        raise Http404
 
     data = {
         'projects': Project.objects.filter(
