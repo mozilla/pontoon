@@ -157,17 +157,17 @@ def translate_project(request, locale, slug, page=None,
             pk__in=Entity.objects.values('project'))
     }
 
-    # Validate subpages
+    # Set subpage
     pages = Subpage.objects.filter(project=p)
     if len(pages) > 0:
         try:
             page = pages.get(name=page)
         except Subpage.DoesNotExist:
-            # If page not specified or doesn't exist
-            page = pages[0]
+            page = pages[0]  # If page not specified or doesn't exist
+
+        data['current_page'] = page.name
         data['project_url'] = page.url
         data['project_pages'] = pages
-        data['current_page'] = page.name
 
         # Firefox OS Hack
         if page is not None:
