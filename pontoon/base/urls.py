@@ -21,6 +21,15 @@ urlpatterns = patterns(
     url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/project/(?P<slug>.+)/$',
         RedirectView.as_view(url="/%(locale)s/%(slug)s/")),
 
+    # Nothing to show: Redirect home
+    url(r'^project/$',
+        RedirectView.as_view(url="/")),
+
+    # List project locales
+    url(r'^project/(?P<slug>[\w-]+)/$',
+        views.project,
+        name='pontoon.project'),
+
     # Translate project's page
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<page>[^/]+)/$',
         views.translate,

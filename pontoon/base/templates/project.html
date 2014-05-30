@@ -1,0 +1,51 @@
+{% extends "base_landing.html" %}
+
+{% block title %}Pontoon &middot; {{ project.name }}{% endblock %}
+
+{% block class %}project{% endblock %}
+
+{% block before %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     data-project="{{ project.slug }}">
+</div>
+{% endblock %}
+
+{% block intro_class %}class="visible"{% endblock %}
+
+{% block middle %}
+<form class="clearfix{% if not user.is_authenticated() %} hidden{% endif %}">
+  <!-- Locale selector -->
+  <div class="locale select">
+    <div class="button breadcrumbs selector">
+      <span class="language">Select language
+      </span>
+    </div>
+    <div class="menu">
+      <input type="text" class="search" autocomplete="off">
+      <ul>
+        {% for locale in locales %}
+        <li><span class="language {{ locale.code|lower }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
+        {% endfor %}
+        <li class="no-match">No results</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Home -->
+  <div>
+    <a class="add" href="/">Go Home</a>
+  </div>
+</form>
+{% endblock %}
+
+{% block extend_css %}
+  <link rel="stylesheet" href="{{ static('css/project.css') }}">
+{% endblock %}
+
+{% block extend_js %}
+  {% compress js %}
+  <script src="{{ static('js/project.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

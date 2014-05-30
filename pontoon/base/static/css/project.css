@@ -1,0 +1,17 @@
+#pontoon .select {
+  padding-left: 10px;
+  text-align: center;
+}
+
+#pontoon .select > .button.breadcrumbs {
+  padding-left: 20px;
+}
+
+#pontoon .select > .button.breadcrumbs:before {
+  border-left: none;
+}
+
+#pontoon .menu ul {
+  list-style: none;
+  text-align: left;
+}

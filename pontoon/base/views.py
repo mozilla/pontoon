@@ -92,6 +92,25 @@ def locale(request, locale, template='locale.html'):
     return render(request, template, data)
 
 
+def project(request, slug, template='project.html'):
+    """Project view."""
+    log.debug("Project view.")
+
+    # Validate project
+    try:
+        p = Project.objects.get(slug=slug)
+    except Project.DoesNotExist:
+        messages.error(request, "Oops, project could not be found.")
+        return HttpResponseRedirect(reverse('pontoon.home'))
+
+    data = {
+        'locales': p.locales.all(),
+        'project': p,
+    }
+
+    return render(request, template, data)
+
+
 def handle_error(request):
     """
     This view is bound with a generic URL which can be called from Pontoon's
