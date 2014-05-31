@@ -76,6 +76,12 @@ def locale(request, locale, template='locale.html'):
     """Locale view."""
     log.debug("Locale view.")
 
+    # Validate locale
+    try:
+        l = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist:
+        raise Http404
+
     # Check if user authenticated
     if not request.user.is_authenticated():
         messages.error(request, "You need to sign in first.")
@@ -83,12 +89,6 @@ def locale(request, locale, template='locale.html'):
             'redirect': request.get_full_path(),
         }
         return HttpResponseRedirect(reverse('pontoon.home'))
-
-    # Validate locale
-    try:
-        l = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist:
-        raise Http404
 
     data = {
         'projects': Project.objects.filter(
@@ -103,19 +103,19 @@ def project(request, slug, template='project.html'):
     """Project view."""
     log.debug("Project view.")
 
+    # Validate project
+    try:
+        p = Project.objects.get(slug=slug)
+    except Project.DoesNotExist:
+        messages.error(request, "Oops, project could not be found.")
+        return HttpResponseRedirect(reverse('pontoon.home'))
+
     # Check if user authenticated
     if not request.user.is_authenticated():
         messages.error(request, "You need to sign in first.")
         request.session['translate_error'] = {
             'redirect': request.get_full_path(),
         }
-        return HttpResponseRedirect(reverse('pontoon.home'))
-
-    # Validate project
-    try:
-        p = Project.objects.get(slug=slug)
-    except Project.DoesNotExist:
-        messages.error(request, "Oops, project could not be found.")
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     data = {
