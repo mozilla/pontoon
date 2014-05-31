@@ -32,6 +32,8 @@
 
 #pontoon .select {
   float: left;
+  padding-left: 0;
+  text-align: left;
 }
 
 #pontoon > header .project.select {

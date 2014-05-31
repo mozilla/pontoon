@@ -88,6 +88,10 @@ Translate websites. In place.
 {% include 'base/loader.html' %}
 {% endblock %}
 
+{% block extend_css %}
+  <link rel="stylesheet" href="{{ static('css/home.css') }}">
+{% endblock %}
+
 {% block extend_js %}
   {% compress js %}
   <script src="{{ static('js/home.js') }}"></script>

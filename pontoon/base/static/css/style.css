@@ -360,8 +360,9 @@ button {
   display: inline-block;
   font-size: 14px;
   margin-left: 0;
+  padding-left: 10px;
   position: relative;
-  text-align: left;
+  text-align: center;
 }
 
 #pontoon .select.hidden {
