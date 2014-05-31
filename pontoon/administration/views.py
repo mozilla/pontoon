@@ -30,7 +30,7 @@ from pontoon.base.models import (
 log = commonware.log.getLogger('pontoon')
 
 
-def admin(request, template='admin.html'):
+def admin(request, template='administration/admin.html'):
     """Admin interface."""
     log.debug("Admin interface.")
 
@@ -69,7 +69,7 @@ def get_slug(request):
     return HttpResponse(slug)
 
 
-def manage_project(request, slug=None, template='project.html'):
+def manage_project(request, slug=None, template='administration/project.html'):
     """Admin interface: manage project."""
     log.debug("Admin interface: manage project.")
 

@@ -52,7 +52,7 @@ from suds.client import Client, WebFault
 log = commonware.log.getLogger('pontoon')
 
 
-def home(request, template='home.html'):
+def home(request, template='base/home.html'):
     """Home view."""
     log.debug("Home view.")
 
@@ -72,7 +72,7 @@ def home(request, template='home.html'):
     return render(request, template, data)
 
 
-def locale(request, locale, template='locale.html'):
+def locale(request, locale, template='base/locale.html'):
     """Locale view."""
     log.debug("Locale view.")
 
@@ -99,7 +99,7 @@ def locale(request, locale, template='locale.html'):
     return render(request, template, data)
 
 
-def project(request, slug, template='project.html'):
+def project(request, slug, template='base/project.html'):
     """Project view."""
     log.debug("Project view.")
 
@@ -140,7 +140,8 @@ def handle_error(request):
     return HttpResponseRedirect(reverse('pontoon.home'))
 
 
-def translate(request, locale, slug, page=None, template='translate.html'):
+def translate(request, locale, slug, page=None,
+              template='base/translate.html'):
     """Translate view."""
     log.debug("Translate view.")
 
