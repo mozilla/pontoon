@@ -1,4 +1,4 @@
-{% extends "base/landing.html" %}
+{% extends "landing.html" %}
 
 {% block class %}home{% endblock %}
 
@@ -13,9 +13,7 @@
 </div>
 {% endblock %}
 
-{% block subtitle %}
-Translate websites. In place.
-{% endblock %}
+{% block intro_class %}{% endblock %}
 
 {% block middle %}
 <form class="clearfix{% if not user.is_authenticated() %} hidden{% endif %}">

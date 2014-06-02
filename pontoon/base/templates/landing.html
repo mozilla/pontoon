@@ -6,7 +6,7 @@
 {% endblock %}
 
 <!-- Landing page -->
-<section id="intro"{% block intro_class %}{% endblock %}>
+<section id="intro"{% block intro_class %} class="visible"{% endblock %}>
   <div class="inner">
 
     <nav>
@@ -20,10 +20,13 @@
       </ul>
     </nav>
 
-    <h1 id="title"><a href="/">Pontoon</a></h1>
-    <h2 id="subtitle">{% block subtitle %}{% endblock %}</h2>
+    <h1 id="title"><a href="/">{% block heading %}Pontoon{% endblock %}</a></h1>
+    <h2 id="subtitle">{% block subtitle %}Translate websites. In place.{% endblock %}</h2>
 
     {% block middle %}
+    <p id="action">
+      <a id="link" href="/">Go Home</a>
+    </p>
     {% endblock %}
 
   </div>

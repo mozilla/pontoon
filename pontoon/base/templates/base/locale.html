@@ -1,4 +1,4 @@
-{% extends "base/landing.html" %}
+{% extends "landing.html" %}
 
 {% block title %}Pontoon &middot; {{ locale.name }} ({{ locale.code }}){% endblock %}
 
@@ -12,14 +12,10 @@
 </div>
 {% endblock %}
 
-{% block intro_class %}class="visible"{% endblock %}
-
-{% block subtitle %}
-{{ locale.name }} ({{ locale.code }})
-{% endblock %}
+{% block subtitle %}{{ locale.name }} ({{ locale.code }}){% endblock %}
 
 {% block middle %}
-<form class="clearfix{% if not user.is_authenticated() %} hidden{% endif %}">
+<form>
   <!-- Project selector -->
   <div class="project select">
     {% if projects|length > 0 %}
@@ -42,11 +38,6 @@
         <li class="no-match">No results</li>
       </ul>
     </div>
-  </div>
-
-  <!-- Home -->
-  <div>
-    <a class="add" href="/">Go Home</a>
   </div>
 </form>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "base/landing.html" %}
+{% extends "landing.html" %}
 
 {% block title %}Pontoon &middot; {{ project.name }}{% endblock %}
 
@@ -12,14 +12,10 @@
 </div>
 {% endblock %}
 
-{% block intro_class %}class="visible"{% endblock %}
-
-{% block subtitle %}
-{{ project.name }}
-{% endblock %}
+{% block subtitle %}{{ project.name }}{% endblock %}
 
 {% block middle %}
-<form class="clearfix{% if not user.is_authenticated() %} hidden{% endif %}">
+<form>
   <!-- Locale selector -->
   <div class="locale select">
     <div class="button breadcrumbs selector">
@@ -35,11 +31,6 @@
         <li class="no-match">No results</li>
       </ul>
     </div>
-  </div>
-
-  <!-- Home -->
-  <div>
-    <a class="add" href="/">Go Home</a>
   </div>
 </form>
 {% endblock %}

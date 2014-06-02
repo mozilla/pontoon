@@ -1,55 +1,44 @@
-{% extends "base.html" %}
+{% extends "landing.html" %}
 
 {% block title %}Pontoon &middot; Admin{% endblock %}
 
 {% block class %}admin{% endblock %}
 
-{% block content %}
-<section id="intro" class="visible">
-  <div class="inner">
+{% block heading %}Admin{% endblock %}
 
-    <nav>
-      <ul class="links">
-        <li><a href="{{ url('pontoon.home') }}" title="Pontoon Home">Home</a></li>
+{% block subtitle %}Don't mess it up. Please.{% endblock %}
+
+{% block middle %}
+<form>
+  <!-- Project input/select -->
+  <div class="project select">
+    {% if projects|length > 0 %}
+    <div class="button breadcrumbs selector">
+      <span class="title">Select website</span>
+    </div>
+    {% endif %}
+    <div class="menu">
+      <input type="text" class="search" autocomplete="off">
+      <ul>
+        {% for project in projects %}
+        <li class="clearfix">
+          <span class="project-name"
+            data-slug="{{ project.slug }}"
+            data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
+            data-pages="{% if pages %}{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}{% endif %}">{{ project.name }}</span>
+          <span class="project-url">{{ project.url }}</span>
+        </li>
+        {% endfor %}
+        <li class="no-match">No results</li>
       </ul>
-    </nav>
-
-    <h1 id="title"><a href="{{ url('pontoon.admin') }}">Admin</a></h1>
-    <h2 id="subtitle">Don't mess it up. Please.</h2>
-
-    <form>
-      <!-- Project input/select -->
-      <div class="project select">
-        {% if projects|length > 0 %}
-        <div class="button breadcrumbs selector">
-          <span class="title">Select website</span>
-        </div>
-        {% endif %}
-        <div class="menu">
-          <input type="text" class="search" autocomplete="off">
-          <ul>
-            {% for project in projects %}
-            <li class="clearfix">
-              <span class="project-name"
-                data-slug="{{ project.slug }}"
-                data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
-                data-pages="{% if pages %}{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}{% endif %}">{{ project.name }}</span>
-              <span class="project-url">{{ project.url }}</span>
-            </li>
-            {% endfor %}
-            <li class="no-match">No results</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Add new -->
-      <div>
-        <a class="add" href="{{ url('pontoon.admin.project.new') }}">Add new</a>
-      </div>
-    </form>
-
+    </div>
   </div>
-</section>
+
+  <!-- Add new -->
+  <div>
+    <a class="add" href="{{ url('pontoon.admin.project.new') }}">Add new</a>
+  </div>
+</form>
 {% endblock %}
 
 {% block extend_js %}
