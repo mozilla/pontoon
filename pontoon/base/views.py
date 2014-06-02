@@ -606,7 +606,7 @@ def translation_memory(request):
     entities = Entity.objects.filter(obsolete=False, string=text)
     translations = set()
     for e in entities:
-        translation = get_translation(entity=e, locale=locale)
+        translation = get_translation(entity=e, locale=locale, fuzzy=False)
         if translation.string != '' or translation.pk is not None:
             translations.add(translation.string)
 

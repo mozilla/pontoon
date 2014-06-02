@@ -226,11 +226,14 @@ def get_entities(project, locale, page=None):
     return entities_array
 
 
-def get_translation(entity, locale, plural_form=None):
+def get_translation(entity, locale, plural_form=None, fuzzy=None):
     """Get translation of a given entity to a given locale in a given form."""
 
     translations = Translation.objects.filter(
         entity=entity, locale=locale, plural_form=plural_form)
+
+    if fuzzy is not None:
+        translations = translations.filter(fuzzy=fuzzy)
 
     if len(translations) > 0:
         try:
