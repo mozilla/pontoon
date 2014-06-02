@@ -266,6 +266,35 @@ var Pontoon = (function () {
 
       $('#helpers nav .active a').addClass('loading');
 
+      // Translation memory
+      requests++;
+
+      if (self.XHRtranslationMemory) {
+        self.XHRtranslationMemory.abort();
+      }
+
+      self.XHRtranslationMemory = $.ajax({
+        url: 'translation-memory/',
+        data: {
+          text: original,
+          locale: self.locale.code
+        }
+
+      }).success(function(data) {
+        if (data.translations) {
+          $.each(data.translations, function() {
+            append({
+              original: original,
+              quality: '100%',
+              url: self.app.path,
+              title: 'Pontoon Homepage',
+              source: 'Translation memory',
+              translation: this
+            });
+          });
+        }
+      }).complete(complete);
+
       // Machine translation
       if (self.locale.mt !== false) {
         requests++;

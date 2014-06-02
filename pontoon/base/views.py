@@ -586,6 +586,39 @@ def update_translation(request, template=None):
         }), mimetype='application/json')
 
 
+def translation_memory(request):
+    """Get translations from internal translations."""
+    log.debug("Get translations from internal translations.")
+
+    try:
+        text = request.GET['text']
+        locale = request.GET['locale']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    try:
+        locale = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist as e:
+        log.error(e)
+        return HttpResponse("error")
+
+    entities = Entity.objects.filter(obsolete=False, string=text)
+    translations = set()
+    for e in entities:
+        translation = get_translation(entity=e, locale=locale)
+        if translation.string != '' or translation.pk is not None:
+            translations.add(translation.string)
+
+    if len(translations) > 0:
+        return HttpResponse(json.dumps({
+            'translations': list(translations)
+        }), mimetype='application/json')
+
+    else:
+        return HttpResponse("no")
+
+
 def machine_translation(request):
     """Get translation from machine translation service."""
     log.debug("Get translation from machine translation service.")
