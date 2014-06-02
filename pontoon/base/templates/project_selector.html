@@ -1,0 +1,27 @@
+{% if projects|length > 0 %}
+<!-- Project input/select -->
+<div class="project select">
+  <div class="button breadcrumbs selector">
+    {% if project and project.name != '' %}
+    <span class="title" data-slug="{{ project.slug }}">{{ project.name }}</span>
+    {% else %}
+    <span class="title">Select website</span>
+    {% endif %}
+  </div>
+  <div class="menu">
+    <input type="text" class="search" autocomplete="off">
+    <ul>
+      {% for project in projects %}
+      <li class="clearfix">
+        <span class="project-name"
+          data-slug="{{ project.slug }}"
+          data-locales="{% for l in project.locales.all() %}{{ l.code|lower }},{% endfor %}"
+          data-pages="{% if pages %}{% for p in pages.filter(project=project) %}{{ p.name }},{% endfor %}{% endif %}">{{ project.name }}</span>
+        <span class="project-url">{{ project.url }}</span>
+      </li>
+      {% endfor %}
+      <li class="no-match">No results</li>
+    </ul>
+  </div>
+</div>
+{% endif %}
