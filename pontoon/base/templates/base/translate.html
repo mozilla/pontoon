@@ -48,22 +48,7 @@
       </div>
     </div>
 
-    <!-- Locale selector -->
-    <div class="locale select">
-      <div class="button breadcrumbs selector">
-        <span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span>
-        </span>
-      </div>
-      <div class="menu">
-        <input type="text" class="search" autocomplete="off">
-        <ul>
-          {% for locale in locales %}
-          <li><span class="language {{ locale.code|lower }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
-          {% endfor %}
-          <li class="no-match">No results</li>
-        </ul>
-      </div>
-    </div>
+    {% include 'locale_selector.html' %}
 
     <!-- Go -->
     <div class="go select">
