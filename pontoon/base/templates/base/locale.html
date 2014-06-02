@@ -16,13 +16,12 @@
 
 {% block middle %}
 <form>
+  {% if projects|length > 0 %}
   <!-- Project selector -->
   <div class="project select">
-    {% if projects|length > 0 %}
     <div class="button breadcrumbs selector">
       <span class="title">Select website</span>
     </div>
-    {% endif %}
     <div class="menu">
       <input type="text" class="search" autocomplete="off">
       <ul>
@@ -39,6 +38,7 @@
       </ul>
     </div>
   </div>
+  {% endif %}
 </form>
 {% endblock %}
 

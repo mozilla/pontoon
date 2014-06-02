@@ -18,13 +18,12 @@
 {% block middle %}
 <form class="clearfix{% if not user.is_authenticated() %} hidden{% endif %}">
 
+  {% if projects|length > 0 %}
   <!-- Project selector -->
   <div class="project select">
-    {% if projects|length > 0 %}
     <div class="button breadcrumbs selector">
       <span class="title">Select website</span>
     </div>
-    {% endif %}
     <div class="menu">
       <input type="text" class="search" autocomplete="off">
       <ul>
@@ -41,6 +40,7 @@
       </ul>
     </div>
   </div>
+  {% endif %}
 
   <!-- Locale selector -->
   <div class="locale select">

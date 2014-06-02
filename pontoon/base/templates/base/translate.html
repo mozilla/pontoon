@@ -30,13 +30,12 @@
   <div class="container">
     <button id="switch" class="fa fa-bars fa-2x"></button>
 
+    {% if projects|length > 0 %}
     <!-- Project input/select -->
     <div class="project select">
-      {% if projects|length > 0 %}
       <div class="button breadcrumbs selector">
         <span class="title" data-slug="{{ project.slug }}">{{ project.name }}</span>
       </div>
-      {% endif %}
       <div class="menu">
         <input type="text" class="search" autocomplete="off">
         <ul>
@@ -53,6 +52,7 @@
         </ul>
       </div>
     </div>
+    {% endif %}
 
     <!-- Page selector -->
     <div class="page select{% if not project_pages %} hidden{% endif %}">
