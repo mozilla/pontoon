@@ -872,6 +872,10 @@
   top: 43px;
 }
 
+#pontoon #helpers > section#custom-search .search-wrapper {
+  margin-bottom: 0;
+}
+
 #pontoon #helpers > section#custom-search .icon {
   right: 10px;
 }
