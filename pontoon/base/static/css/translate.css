@@ -52,10 +52,6 @@
   border-left-color: #272A2F;
 }
 
-#pontoon .select .search {
-  border-color: #525A65;
-}
-
 #pontoon .project.select .search {
   width: 474px;
 }
@@ -410,6 +406,21 @@
 #pontoon .advanced #entitylist,
 #pontoon .advanced #editor {
   width: 50%;
+}
+
+#pontoon .search-wrapper {
+  border-color: #5E6475;
+}
+
+#pontoon #entitylist .search-wrapper {
+  margin-bottom: 0;
+}
+
+#pontoon #entitylist .search-wrapper .icon {
+  font-size: 19px;
+  left: auto;
+  right: 5px;
+  top: 12px;
 }
 
 #pontoon #search {

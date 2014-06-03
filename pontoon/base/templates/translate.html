@@ -38,7 +38,10 @@
         <span class="title">{{ current_page }}</span>
       </div>
       <div class="menu">
-        <input type="text" class="search" autocomplete="off">
+        <div class="search-wrapper clearfix">
+          <div class="icon fa fa-search"></div>
+          <input type="text" class="search" autocomplete="off">
+        </div>
         <ul>
           {% for page in project_pages %}
           <li>{{ page.name }}</li>

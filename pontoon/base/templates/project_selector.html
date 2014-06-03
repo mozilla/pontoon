@@ -9,7 +9,10 @@
     {% endif %}
   </div>
   <div class="menu">
-    <input type="text" class="search" autocomplete="off">
+    <div class="search-wrapper clearfix">
+      <div class="icon fa fa-search"></div>
+      <input type="text" class="search" autocomplete="off">
+    </div>
     <ul>
       {% for project in projects %}
       <li class="clearfix">

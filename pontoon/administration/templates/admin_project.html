@@ -46,7 +46,10 @@
         <div class="locale select">
           <label for="available">Available locales<a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>
           <div class="menu">
-            <input id="available" type="text" class="search" autocomplete="off">
+            <div class="search-wrapper clearfix">
+              <div class="icon fa fa-search"></div>
+              <input id="available"  type="text" class="search" autocomplete="off">
+            </div>
             <ul>
               {% for locale in locales_available %}
               <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
@@ -58,7 +61,10 @@
         <div class="locale select selected">
           <label for="selected">Chosen locales<a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
           <div class="menu">
-            <input id="selected" type="text" class="search" autocomplete="off">
+            <div class="search-wrapper clearfix">
+              <div class="icon fa fa-search"></div>
+              <input id="selected"  type="text" class="search" autocomplete="off">
+            </div>
             <ul>
               {% for locale in locales_selected %}
               <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
