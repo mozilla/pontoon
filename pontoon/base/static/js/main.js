@@ -231,10 +231,12 @@ var Pontoon = (function () {
      * Get suggestions from machine translation and translation memory
      *
      * original Original string
+     * target Target element jQuery selector
      */
-    getMachinery: function (original) {
+    getMachinery: function (original, target) {
       var self = this,
-          ul = $('#machinery ul').empty(),
+          target = target || '#machinery'
+          ul = $(target).find('ul').empty(),
           requests = 0;
 
       function complete(jqXHR, status) {
@@ -1082,6 +1084,15 @@ var Pontoon = (function () {
 
         $("#helpers > section").hide();
         $("#helpers > section#" + sec).show();
+      });
+
+      // Custom search: trigger with Enter
+      $('#custom-search input').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
+        var value = $(this).val();
+        if (e.which === 13 && value.length > 0) {
+          self.getMachinery(value, "#custom-search");
+          return false;
+        }
       });
 
       // Copy helpers result to translation
