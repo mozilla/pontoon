@@ -417,8 +417,16 @@
   position: relative;
 }
 
+#pontoon .search-wrapper .search-icon {
+  color: #AAAAAA;
+  font-size: 1.6em;
+  position: absolute;
+  right: 5px;
+  top: 11px;
+}
+
 #pontoon #search {
-  background: url('../img/search.png') center right 10px no-repeat #4D5967;
+  background: #4D5967;
   color: #FFFFFF;
   font-size: 16px;
   font-weight: 300;
