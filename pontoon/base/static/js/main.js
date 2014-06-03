@@ -231,19 +231,21 @@ var Pontoon = (function () {
      * Get suggestions from machine translation and translation memory
      *
      * original Original string
-     * target Target element jQuery selector
+     * target Target element id
      */
     getMachinery: function (original, target) {
       var self = this,
-          target = target || '#machinery'
-          ul = $(target).find('ul').empty(),
+          tab = target || 'machinery',
+          loader = target || 'helpers li a[href="#' + tab + '"]',
+          ul = $('#' + tab).find('ul').empty(),
+          tab = $('#' + loader).addClass('loading'),
           requests = 0;
 
       function complete(jqXHR, status) {
         if (status !== "abort") {
           requests--;
           if (requests === 0) {
-            $('#helpers li a[href="#machinery"]').removeClass('loading');
+            tab.removeClass('loading');
             if (ul.find('li').length === 0) {
               ul.append('<li class="disabled">' +
                 '<p>No translations available.</p>' +
@@ -265,8 +267,6 @@ var Pontoon = (function () {
           '</p>' +
         '</li>');
       }
-
-      $('#helpers nav .active a').addClass('loading');
 
       // Translation memory
       requests++;
@@ -1090,7 +1090,7 @@ var Pontoon = (function () {
       $('#custom-search input').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
         var value = $(this).val();
         if (e.which === 13 && value.length > 0) {
-          self.getMachinery(value, "#custom-search");
+          self.getMachinery(value, "custom-search");
           return false;
         }
       });

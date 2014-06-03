@@ -876,6 +876,15 @@
   right: 10px;
 }
 
+#pontoon #helpers > section#custom-search.loading .icon,
+#pontoon #helpers > section#custom-search .icon.fa-cog {
+  display: none;
+}
+
+#pontoon #helpers > section#custom-search.loading .icon.fa-cog {
+  display: block;
+}
+
 #pontoon #helpers > section#custom-search .search {
   background: transparent;
   padding-left: 10px;
