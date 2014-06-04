@@ -1805,7 +1805,7 @@ var Pontoon = (function () {
       $('.search').click(function (e) {
         e.stopPropagation();
       }).keyup(function(e) {
-        var ul = $(this).siblings('ul'),
+        var ul = $(this).parent().siblings('ul'),
             val = $(this).val(),
             // Only search a limited set if defined
             limited = ul.find('li.limited').length > 0 ? '.limited' : '';
