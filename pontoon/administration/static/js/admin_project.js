@@ -4,7 +4,7 @@ $(function() {
   $('form').submit(function (e) {
     // Update locales
     var arr = [];
-    $("#selected").siblings('ul').find('li:not(".no-match")').each(function() {
+    $("#selected").parent().siblings('ul').find('li:not(".no-match")').each(function() {
       arr.push($(this).data('id'));
     });
     $('#id_locales').val(arr);
