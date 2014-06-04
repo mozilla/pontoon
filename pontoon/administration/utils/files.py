@@ -368,7 +368,7 @@ def extract_lang(project, locale, paths, source_locale, translations=True):
                     except Entity.DoesNotExist:
                         continue
 
-        log.debug("[" + locale.code + "]: saved to DB.")
+        log.debug("[" + locale.code + "]: " + path + " saved to DB.")
 
 
 def extract_ini(project, path):
