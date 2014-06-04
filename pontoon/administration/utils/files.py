@@ -168,20 +168,23 @@ def save_entity(project, string, string_plural="", comment="",
     try:
         if key is "":
             e = Entity.objects.get(
-                project=project, string=string, string_plural=string_plural)
+                project=project, string=string,
+                string_plural=string_plural, path=path)
 
         else:
-            e = Entity.objects.get(project=project, key=key, source=source)
+            e = Entity.objects.get(project=project, key=key, path=path)
             e.string = string
             e.string_plural = string_plural
 
-        # Set obsolete attribute for all entities to False
+        e.source = source
+
+        # Set obsolete attribute for all updated entities to False
         e.obsolete = False
 
     # Add new entity
     except Entity.DoesNotExist:
         e = Entity(project=project, string=string, string_plural=string_plural,
-                   key=key, source=source)
+                   key=key, path=path, source=source)
 
     if len(comment) > 0:
         e.comment = comment
@@ -326,13 +329,13 @@ def extract_properties(project, locale, paths,
                 if isinstance(obj, silme.core.entity.Entity):
                     if locale.code == source_locale:
                         save_entity(project=project, string=obj.value,
-                                    key=obj.id, source=relative_path)
+                                    key=obj.id, path=relative_path)
                     elif translations:
                         try:
                             e = Entity.objects.get(
                                 project=project,
                                 key=obj.id,
-                                source=relative_path)
+                                path=relative_path)
                             save_translation(
                                 entity=e,
                                 locale=locale,
@@ -396,7 +399,7 @@ def extract_ini(project, path):
         for item in config.items(section):
             if section == source_locale:
                 save_entity(project=project, string=item[1],
-                            key=item[0], source=path)
+                            key=item[0], path=path)
             else:
                 try:
                     l = Locale.objects.get(code=section)
@@ -405,7 +408,7 @@ def extract_ini(project, path):
                     break
                 try:
                     e = Entity.objects.get(
-                        project=project, key=item[0], source=path)
+                        project=project, key=item[0], path=path)
                     save_translation(
                         entity=e, locale=l, string=item[1])
                 except Entity.DoesNotExist:
@@ -605,7 +608,7 @@ def update_properties(project, locale):
         entity__in=entities, locale=locale)
     entities_pks = translations.values("entity").distinct()
     entities_translated = Entity.objects.filter(pk__in=entities_pks)
-    relative_paths = entities_translated.values_list("source").distinct()
+    relative_paths = entities_translated.values_list("path").distinct()
 
     for relative in relative_paths:
         path = locale_directory_path + relative[0]
@@ -623,7 +626,7 @@ def update_properties(project, locale):
 
         with codecs.open(path, 'r+', 'utf-8') as f:
             structure = parser.get_structure(f.read())
-            entities_with_path = entities.filter(source=relative[0])
+            entities_with_path = entities.filter(path=relative[0])
 
             for entity in entities_with_path:
                 key = entity.key

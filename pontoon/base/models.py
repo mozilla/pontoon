@@ -117,9 +117,10 @@ class Entity(models.Model):
     project = models.ForeignKey(Project)
     string = models.TextField()
     string_plural = models.TextField(blank=True)
-    comment = models.TextField(blank=True)
     key = models.TextField(blank=True)  # Needed for webL10n
-    source = models.TextField(blank=True)
+    path = models.TextField(blank=True)  # Path to localization file
+    comment = models.TextField(blank=True)
+    source = models.TextField(blank=True)  # Path to source code file
     obsolete = models.BooleanField(default=False)
 
     def __unicode__(self):
@@ -135,9 +136,11 @@ class Entity(models.Model):
             'pk': self.pk,
             'original': self.string,
             'original_plural': self.string_plural,
-            'comment': self.comment,
             'key': self.key,
+            'path': self.path,
+            'comment': self.comment,
             'source': source,
+            'obsolete': self.obsolete,
         }
 
 
