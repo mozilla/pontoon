@@ -600,22 +600,22 @@ def update_properties(project, locale):
     parser = silme.format.properties.PropertiesFormatParser
     source_directory = get_source_directory(project.repository_path)
 
-    # Get short paths to translated files only
+    # Get relative paths to translated files only
     translations = Translation.objects.filter(
         entity__in=entities, locale=locale)
     entities_pks = translations.values("entity").distinct()
     entities_translated = Entity.objects.filter(pk__in=entities_pks)
-    short_paths = entities_translated.values_list("source").distinct()
+    relative_paths = entities_translated.values_list("source").distinct()
 
-    for short in short_paths:
-        path = locale_directory_path + short[0]
+    for relative in relative_paths:
+        path = locale_directory_path + relative[0]
 
         # Create folders and copy files from source
         basedir = os.path.dirname(path)
         if not os.path.exists(basedir):
             os.makedirs(basedir)
         try:
-            shutil.copy(source_directory['path'] + short[0], path)
+            shutil.copy(source_directory['path'] + relative[0], path)
         # Obsolete files
         except Exception as e:
             log.debug(e)
@@ -623,7 +623,7 @@ def update_properties(project, locale):
 
         with codecs.open(path, 'r+', 'utf-8') as f:
             structure = parser.get_structure(f.read())
-            entities_with_path = entities.filter(source=short[0])
+            entities_with_path = entities.filter(source=relative[0])
 
             for entity in entities_with_path:
                 key = entity.key
