@@ -40,6 +40,10 @@ body #intro {
   opacity: 0.3;
 }
 
+#pontoon #intro form .notification {
+  margin-bottom: 10px;
+}
+
 #pontoon #intro h2 {
   color: #EBEBEB;
   font-size: 30px;
