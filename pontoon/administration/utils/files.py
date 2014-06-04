@@ -261,9 +261,12 @@ def extract_po(project, locale, paths, source_locale, translations=True):
 
     for path in paths:
         try:
-            log.debug(path)
             po = polib.pofile(path)
             escape = polib.escape
+
+            relative_path = get_relative_path(path, locale)
+            if relative_path[-1] == 't':
+                relative_path = relative_path[:-1]
 
             if locale.code == source_locale:
                 for entry in po:
@@ -271,6 +274,7 @@ def extract_po(project, locale, paths, source_locale, translations=True):
                         save_entity(project=project,
                                     string=escape(entry.msgid),
                                     string_plural=escape(entry.msgid_plural),
+                                    path=relative_path,
                                     comment=entry.comment,
                                     source=entry.occurrences)
             elif translations:
@@ -282,7 +286,8 @@ def extract_po(project, locale, paths, source_locale, translations=True):
                             try:
                                 e = Entity.objects.get(
                                     project=project,
-                                    string=escape(entry.msgid))
+                                    string=escape(entry.msgid),
+                                    path=relative_path)
                                 save_translation(
                                     entity=e,
                                     locale=locale,
@@ -297,7 +302,8 @@ def extract_po(project, locale, paths, source_locale, translations=True):
                             try:
                                 e = Entity.objects.get(
                                     project=project,
-                                    string=escape(entry.msgid))
+                                    string=escape(entry.msgid),
+                                    path=relative_path)
                                 for k in entry.msgstr_plural:
                                     save_translation(
                                         entity=e,
@@ -309,7 +315,7 @@ def extract_po(project, locale, paths, source_locale, translations=True):
                             except Entity.DoesNotExist:
                                 continue
 
-            log.debug("[" + locale.code + "]: saved to DB.")
+            log.debug("[" + locale.code + "]: " + path + " saved to DB.")
         except Exception as e:
             log.critical('PoExtractError for %s: %s' % (path, e))
 
@@ -325,7 +331,6 @@ def extract_properties(project, locale, paths,
                 .PropertiesFormatParser.get_structure(f.read())
 
             relative_path = get_relative_path(path, locale)
-
             for obj in structure:
                 if isinstance(obj, silme.core.entity.Entity):
                     if locale.code == source_locale:
