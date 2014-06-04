@@ -518,8 +518,10 @@ var Pontoon = (function () {
       if (entity.comment) {
         $('#metadata').html('<span id="comment">' + entity.comment + '</span>').show();
       }
-      if (entity.source) {
+      if (entity.source || entity.path || entity.key) {
         $('#metadata').append('<a href="#" class="details">More details</a>').show();
+      }
+      if (entity.source) {
         if (typeof(entity.source) === 'object') {
           $.each(entity.source, function() {
             $('#metadata').append('<span>#: ' + this.join(':') + '</span>');
@@ -527,6 +529,9 @@ var Pontoon = (function () {
         } else {
           $('#metadata').append('<span>' + entity.source + '</span>');
         }
+      }
+      if (entity.path) {
+        $('#metadata').append('<span>' + entity.path + '</span>');
       }
       if (entity.key) {
         $('#metadata').append('<span>Key: ' + entity.key + '</span>');
