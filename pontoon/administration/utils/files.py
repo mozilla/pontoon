@@ -154,8 +154,12 @@ def get_repository_path_master(project):
         settings.MEDIA_ROOT, project.repository_type, project.slug)
 
 
-def get_relative_path(path, locale_directory):
+def get_relative_path(path, locale):
     """Get relative path to repository file."""
+
+    locale_directory = locale.code
+    if 'templates' in path:
+        locale_directory = 'templates'
 
     return '/' + path.split('/' + locale_directory + '/')[-1]
 
@@ -320,10 +324,7 @@ def extract_properties(project, locale, paths,
             structure = silme.format.properties \
                 .PropertiesFormatParser.get_structure(f.read())
 
-            locale_directory = locale.code
-            if 'templates' in path:
-                locale_directory = 'templates'
-            relative_path = get_relative_path(path, locale_directory)
+            relative_path = get_relative_path(path, locale)
 
             for obj in structure:
                 if isinstance(obj, silme.core.entity.Entity):
