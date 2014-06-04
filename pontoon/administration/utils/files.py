@@ -449,9 +449,12 @@ def extract_to_database(project, locales=None):
                 os.remove(file_path)
 
     for index, locale in enumerate(locales):
-        locale_paths = get_locale_paths(project, locale)
+        if locale.code == source_locale:
+            paths = source_paths
+        else:
+            paths = get_locale_paths(project, locale)
         globals()['extract_%s' % project.format](
-            project, locale, locale_paths, source_locale, isVCS)
+            project, locale, paths, source_locale, isVCS)
 
 
 def update_from_repository(project, locales=None):
