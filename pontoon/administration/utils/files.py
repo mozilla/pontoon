@@ -154,8 +154,14 @@ def get_repository_path_master(project):
         settings.MEDIA_ROOT, project.repository_type, project.slug)
 
 
-def save_entity(project, string, string_plural="",
-                comment="", key="", source=""):
+def get_relative_path(path, locale_directory):
+    """Get relative path to repository file."""
+
+    return '/' + path.split('/' + locale_directory + '/')[-1]
+
+
+def save_entity(project, string, string_plural="", comment="",
+                key="", path="", source=""):
     """Admin interface: save new or update existing entity in DB."""
 
     # Update existing entity
@@ -311,22 +317,22 @@ def extract_properties(project, locale, paths,
             structure = silme.format.properties \
                 .PropertiesFormatParser.get_structure(f.read())
 
-            locale_code = locale.code
+            locale_directory = locale.code
             if 'templates' in path:
-                locale_code = 'templates'
-            short_path = '/' + path.split('/' + locale_code + '/')[-1]
+                locale_directory = 'templates'
+            relative_path = get_relative_path(path, locale_directory)
 
             for obj in structure:
                 if isinstance(obj, silme.core.entity.Entity):
                     if locale.code == source_locale:
                         save_entity(project=project, string=obj.value,
-                                    key=obj.id, source=short_path)
+                                    key=obj.id, source=relative_path)
                     elif translations:
                         try:
                             e = Entity.objects.get(
                                 project=project,
                                 key=obj.id,
-                                source=short_path)
+                                source=relative_path)
                             save_translation(
                                 entity=e,
                                 locale=locale,
