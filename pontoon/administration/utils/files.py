@@ -331,6 +331,7 @@ def extract_properties(project, locale, paths,
                 .PropertiesFormatParser.get_structure(f.read())
 
             relative_path = get_relative_path(path, locale)
+
             for obj in structure:
                 if isinstance(obj, silme.core.entity.Entity):
                     if locale.code == source_locale:
@@ -360,15 +361,18 @@ def extract_lang(project, locale, paths, source_locale, translations=True):
 
     for path in paths:
         lang = parse_lang(path)
+        relative_path = get_relative_path(path, locale)
 
         if locale.code == source_locale:
             for key, value in lang.items():
-                save_entity(project=project, string=key, comment=value[0])
+                save_entity(project=project, string=key,
+                            path=relative_path, comment=value[0])
         elif translations:
             for key, value in lang.items():
                 if key != value[1]:
                     try:
-                        e = Entity.objects.get(project=project, string=key)
+                        e = Entity.objects.get(
+                            project=project, string=key, path=relative_path)
                         save_translation(
                             entity=e, locale=locale, string=value[1])
                     except Entity.DoesNotExist:
