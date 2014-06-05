@@ -515,6 +515,11 @@ button {
   padding: 2px 4px;
 }
 
+#pontoon #intro .menu li {
+  color: #FFFFFF;
+  text-align: left;
+}
+
 #pontoon .menu li.hover {
   cursor: pointer;
   color: #FFFFFF;
