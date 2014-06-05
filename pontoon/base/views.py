@@ -603,7 +603,7 @@ def translation_memory(request):
         log.error(e)
         return HttpResponse("error")
 
-    entities = Entity.objects.filter(obsolete=False, string=text)
+    entities = Entity.objects.filter(string=text)
     translations = set()
     for e in entities:
         translation = get_translation(entity=e, locale=locale, fuzzy=False)
