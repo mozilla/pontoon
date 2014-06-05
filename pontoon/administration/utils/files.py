@@ -161,7 +161,7 @@ def get_relative_path(path, locale):
     if 'templates' in path:
         locale_directory = 'templates'
 
-    return '/' + path.split('/' + locale_directory + '/')[-1]
+    return path.split('/' + locale_directory + '/')[-1]
 
 
 def save_entity(project, string, string_plural="", comment="",
