@@ -54,7 +54,7 @@
               {% for locale in locales_available %}
               <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
               {% endfor %}
-              <li class="no-match">No results match "<span></span>"</li>
+              <li class="no-match">No results</li>
             </ul>
           </div>
         </div>
@@ -69,7 +69,7 @@
               {% for locale in locales_selected %}
               <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}<span class="code">{{ locale.code }}</span></span></li>
               {% endfor %}
-              <li class="no-match">No results match "<span></span>"</li>
+              <li class="no-match">No results</li>
             </ul>
           </div>
         </div>

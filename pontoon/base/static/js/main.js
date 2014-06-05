@@ -1820,7 +1820,7 @@ var Pontoon = (function () {
           .find('li' + limited + ':not(":containsi("' + val + '")")').hide();
 
         if (ul.find('li:not(".no-match"):visible').length === 0) {
-          ul.find('.no-match').find('span').html(val).end().show();
+          ul.find('.no-match').show();
         } else {
           ul.find('.no-match').hide();
         }
