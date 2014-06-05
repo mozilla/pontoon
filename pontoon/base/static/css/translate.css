@@ -122,13 +122,6 @@
   font-size: 21px;
 }
 
-#pontoon .page .menu .progress {
-  float: right;
-  font-size: 10px;
-  margin-top: 2px;
-  color: #7BC876;
-}
-
 #pontoon #progress {
   border: 1px solid #7BC876;
   float: left;
