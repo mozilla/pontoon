@@ -549,7 +549,7 @@
 #pontoon #entitylist > .wrapper > ul > li p span.translation-string {
   color: #AAAAAA;
   font-style: italic;
-  margin-left: 2%;
+  padding-left: 2%;
 }
 
 #pontoon #entitylist h2  {
