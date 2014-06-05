@@ -1956,7 +1956,6 @@ var Pontoon = (function () {
           $('.project-name').each(function() {
             if ($('.project .button .title').html() === $(this).html()) {
               resources = $(this).data(resourceType).split(',');
-              resources.pop();
               return false;
             }
           });

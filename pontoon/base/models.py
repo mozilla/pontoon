@@ -196,15 +196,12 @@ class ProjectForm(ModelForm):
         return cleaned_data
 
 
-def get_entities(project, locale, page=None):
-    """Load all project entities and translations."""
+def get_entities(project, locale, path=None):
+    """Load project entities with locale translations."""
 
     entities = Entity.objects.filter(project=project, obsolete=False)
-
-    # Firefox OS Hack
-    if 'gaia-l10n' in project.repository_url:
-        if page is not None and entities[0].path != '':
-            entities = entities.filter(path__contains='/' + page + '/')
+    if path:
+        entities = entities.filter(path=path)
 
     entities_array = []
     for e in entities:

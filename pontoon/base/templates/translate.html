@@ -33,7 +33,7 @@
     {% include 'project_selector.html' %}
 
     <!-- Page selector -->
-    <div class="page select{% if not project_pages %} hidden{% endif %}">
+    <div class="page select{% if not current_page %} hidden{% endif %}">
       <div class="button breadcrumbs selector">
         <span class="title">{{ current_page }}</span>
       </div>
@@ -43,9 +43,6 @@
           <input type="text" class="search" autocomplete="off">
         </div>
         <ul>
-          {% for page in project_pages %}
-          <li>{{ page.name }}</li>
-          {% endfor %}
           <li class="no-match">No results</li>
         </ul>
       </div>

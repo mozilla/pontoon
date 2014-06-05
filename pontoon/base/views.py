@@ -140,7 +140,7 @@ def handle_error(request):
     return HttpResponseRedirect(reverse('pontoon.home'))
 
 
-def translate(request, locale, slug, page=None,
+def translate(request, locale, slug, page=None, path=None,
               template='translate.html'):
     """Translate view."""
     log.debug("Translate view.")
@@ -196,16 +196,28 @@ def translate(request, locale, slug, page=None,
             }
             return HttpResponseRedirect(reverse('pontoon.home'))
 
+    # Set project parts
+    projects = Project.objects.filter(pk__in=Entity.objects.values('project'))
+    for project in projects:
+        pages = Subpage.objects.filter(project=project)
+
+        if len(pages) > 0:
+            project.parts = ",".join([pg.name for pg in pages])
+        else:
+            entities = Entity.objects.filter(project=project, obsolete=False)
+            paths = entities.values_list("path").distinct()
+
+            if len(paths) > 1:
+                project.parts = ",".join([pt[0] for pt in paths])
+
     data = {
         'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '')
         .split(',')[0],
         'locale': l,
         'locales': Locale.objects.all(),
-        'pages': Subpage.objects.all(),
         'project_url': p.url,
         'project': p,
-        'projects': Project.objects.filter(
-            pk__in=Entity.objects.values('project'))
+        'projects': projects,
     }
 
     # Set subpage
@@ -216,15 +228,23 @@ def translate(request, locale, slug, page=None,
         except Subpage.DoesNotExist:
             page = pages[0]  # If page not specified or doesn't exist
 
-        data['current_page'] = page.name
         data['project_url'] = page.url
-        data['project_pages'] = pages
+        data['current_page'] = page.name
 
-        # Firefox OS Hack
-        if page is not None:
-            page = page.name.lower().replace(" ", "").replace(".", "")
+    # Set path if subpages not defined and entities in more than one file
+    else:
+        entities = Entity.objects.filter(project=p, obsolete=False)
+        paths = entities.values_list("path").distinct()
 
-    # Get profile image from Gravatar
+        if len(paths) > 1:
+            path = data['current_page'] = path or paths[0][0]
+        else:
+            path = None
+
+    # Set entities
+    data['entities'] = json.dumps(get_entities(p, l, path))
+
+    # Subpageet profile image from Gravatar
     if request.user.is_authenticated():
         email = request.user.email
         size = 44
@@ -238,9 +258,6 @@ def translate(request, locale, slug, page=None,
             gravatar_url += urllib.urlencode({'d': default})
 
         data['gravatar_url'] = gravatar_url
-
-    # Get entities
-    data['entities'] = json.dumps(get_entities(p, l, page))
 
     return render(request, template, data)
 

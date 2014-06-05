@@ -35,6 +35,11 @@ urlpatterns = patterns(
         views.translate,
         name='pontoon.translate.page'),
 
+    # Translate project's path
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<path>.+)/$',
+        views.translate,
+        name='pontoon.translate.page'),
+
     # Translate project
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/$',
         views.translate,
