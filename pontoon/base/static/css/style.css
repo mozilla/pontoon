@@ -464,7 +464,7 @@ button {
   width: 489px;
 }
 
-#pontoon .project.select .search {
+#pontoon .project.select input[type=search] {
   width: 454px;
 }
 
@@ -560,7 +560,7 @@ button {
   top: 5px;
 }
 
-#pontoon .menu .search {
+#pontoon .menu input[type=search] {
   background: transparent;
   color: #FFFFFF;
   float: none;
@@ -569,7 +569,7 @@ button {
   width: 200px;
 }
 
-#pontoon .menu .search:focus {
+#pontoon .menu input[type=search]:focus {
   background-color: transparent;
 }
 

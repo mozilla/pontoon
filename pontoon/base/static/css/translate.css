@@ -52,8 +52,8 @@
   border-left-color: #272A2F;
 }
 
-#pontoon .project.select .search,
-#pontoon .part.select .search {
+#pontoon .project.select input[type=search],
+#pontoon .part.select input[type=search] {
   width: 474px;
 }
 
@@ -890,7 +890,7 @@
   display: block;
 }
 
-#pontoon #helpers > section#custom-search .search {
+#pontoon #helpers > section#custom-search input[type=search] {
   background: transparent;
   padding-left: 10px;
 }

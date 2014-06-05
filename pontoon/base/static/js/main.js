@@ -1676,7 +1676,7 @@ var Pontoon = (function () {
           $(this).siblings('.menu').show().end()
                  .parents('.select').addClass('opened');
           $('#iframe-cover').show(); // iframe fix
-          $('body:not(".admin-project") .search:visible').focus();
+          $('body:not(".admin-project") .menu:visible input[type=search]').focus();
         }
       });
 
@@ -1705,7 +1705,7 @@ var Pontoon = (function () {
           });
         }
 
-        $('.search:visible').trigger("keyup");
+        $('.menu:visible input[type=search]').trigger("keyup");
       });
 
       // Show only locales available for the selected project
@@ -1721,7 +1721,7 @@ var Pontoon = (function () {
           });
         }
 
-        $('.search:visible').trigger("keyup");
+        $('.menu:visible input[type=search]').trigger("keyup");
       });
 
       // Open selected project (part) and locale combination
@@ -1807,7 +1807,7 @@ var Pontoon = (function () {
       };
 
       // Project, part and locale search
-      $('.search').click(function (e) {
+      $('.menu input[type=search]').click(function (e) {
         e.stopPropagation();
       }).keyup(function(e) {
         var ul = $(this).parent().siblings('ul'),

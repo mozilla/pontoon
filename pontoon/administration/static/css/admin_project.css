@@ -144,7 +144,7 @@ body #intro {
   width: 271px;
 }
 
-#pontoon #intro .locale.select .menu .search {
+#pontoon #intro .locale.select .menu input[type=search] {
   background-position: 4px 6px;
   margin-left: 0;
   width: 234px;
