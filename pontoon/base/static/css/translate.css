@@ -52,7 +52,8 @@
   border-left-color: #272A2F;
 }
 
-#pontoon .project.select .search {
+#pontoon .project.select .search,
+#pontoon .part.select .search {
   width: 474px;
 }
 
@@ -63,7 +64,8 @@
   top: 60px;
 }
 
-#pontoon .project.select .menu {
+#pontoon .project.select .menu,
+#pontoon .part.select .menu {
   width: 510px;
 }
 
