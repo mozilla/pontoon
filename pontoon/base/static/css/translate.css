@@ -78,6 +78,12 @@
   color: #AAAAAA;
 }
 
+#pontoon .part .menu ul li {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 #pontoon .menu li.horizontal-separator {
   border-top: 1px solid #525A65;
   height: 0;
