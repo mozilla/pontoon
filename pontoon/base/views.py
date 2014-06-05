@@ -229,7 +229,7 @@ def translate(request, locale, slug, page=None, path=None,
             page = pages[0]  # If page not specified or doesn't exist
 
         data['project_url'] = page.url
-        data['current_page'] = page.name
+        data['current_part'] = page.name
 
     # Set path if subpages not defined and entities in more than one file
     else:
@@ -237,14 +237,14 @@ def translate(request, locale, slug, page=None, path=None,
         paths = entities.values_list("path").distinct()
 
         if len(paths) > 1:
-            path = data['current_page'] = path or paths[0][0]
+            path = data['current_part'] = path or paths[0][0]
         else:
             path = None
 
     # Set entities
     data['entities'] = json.dumps(get_entities(p, l, path))
 
-    # Subpageet profile image from Gravatar
+    # Set profile image from Gravatar
     if request.user.is_authenticated():
         email = request.user.email
         size = 44
