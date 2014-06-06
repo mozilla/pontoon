@@ -627,14 +627,15 @@ def update_properties(project, locale):
     relative_paths = entities_translated.values_list("path").distinct()
 
     for relative in relative_paths:
-        path = locale_directory_path + relative[0]
+        path = os.path.join(locale_directory_path, relative[0])
 
         # Create folders and copy files from source
         basedir = os.path.dirname(path)
         if not os.path.exists(basedir):
             os.makedirs(basedir)
         try:
-            shutil.copy(source_directory['path'] + relative[0], path)
+            shutil.copy(
+                os.path.join(source_directory['path'], relative[0]), path)
         # Obsolete files
         except Exception as e:
             log.debug(e)
