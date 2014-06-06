@@ -685,6 +685,7 @@ def update_lang(project, locale):
     locale_paths = get_locale_paths(project, locale)
 
     for path in locale_paths:
+        relative_path = get_relative_path(path, locale)
         with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
             content = []
             translation = None
@@ -708,7 +709,8 @@ def update_lang(project, locale):
 
                     try:
                         entity = Entity.objects.get(
-                            project=project, string=original)
+                            project=project, string=original,
+                            path=relative_path)
                     except Entity.DoesNotExist as e:
                         log.error('%s: Entity "%s" does not exist %s' %
                                   (path, original, project.name))
