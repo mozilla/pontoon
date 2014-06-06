@@ -9,7 +9,7 @@
      {% if accept_language %}data-accept-language="{{ accept_language }}"{% endif %}
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      {% if locale %}data-locale="{{ locale.stringify() }}"{% endif %}
-     {% if project_url %}data-url="{{ project_url }}"{% endif %}
+     {% if page_url %}data-url="{{ page_url }}"{% endif %}
      {% if project.id %}data-id="{{ project.id }}"{% endif %}
      {% if project.format %}data-format="{{ project.format }}"{% endif %}
      {% if project.width %}data-width="{{ project.width }}"{% endif %}

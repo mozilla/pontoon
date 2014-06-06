@@ -215,7 +215,7 @@ def translate(request, locale, slug, page=None, path=None,
         .split(',')[0],
         'locale': l,
         'locales': Locale.objects.all(),
-        'project_url': p.url,
+        'page_url': p.url,
         'project': p,
         'projects': projects,
     }
@@ -228,7 +228,7 @@ def translate(request, locale, slug, page=None, path=None,
         except Subpage.DoesNotExist:
             page = pages[0]  # If page not specified or doesn't exist
 
-        data['project_url'] = page.url
+        data['page_url'] = page.url
         data['current_part'] = page.name
 
     # Set path if subpages not defined and entities in more than one file
