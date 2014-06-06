@@ -232,6 +232,7 @@ def parse_lang(path):
     with codecs.open(path, 'r', 'utf-8', errors='replace') as lines:
         source = None
         comment = ''
+        tags = []
 
         for line in lines:
             line = line.strip()
@@ -249,9 +250,11 @@ def parse_lang(path):
                 for tag in ('{ok}', '{l10n-extra}'):
                     if line.lower().endswith(tag):
                         line = line[:-len(tag)]
+                        tags.append(tag)
                 line = line.strip()
-                trans[source] = [comment, line]
+                trans[source] = [comment, line, tags]
                 comment = ''
+                tags = []
 
     return trans
 
@@ -369,7 +372,7 @@ def extract_lang(project, locale, paths, source_locale, translations=True):
                             path=relative_path, comment=value[0])
         elif translations:
             for key, value in lang.items():
-                if key != value[1]:
+                if key != value[1] or '{ok}' in value[2]:
                     try:
                         e = Entity.objects.get(
                             project=project, string=key, path=relative_path)
