@@ -33,9 +33,9 @@
     {% include 'project_selector.html' %}
 
     <!-- Page selector -->
-    <div class="part select{% if not current_part %} hidden{% endif %}">
+    <div class="part select{% if not part %} hidden{% endif %}">
       <div class="button breadcrumbs selector">
-        <span class="title">{{ current_part }}</span>
+        <span class="title">{{ part }}</span>
       </div>
       <div class="menu">
         <div class="search-wrapper clearfix">

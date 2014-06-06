@@ -229,7 +229,7 @@ def translate(request, locale, slug, page=None, path=None,
             page = pages[0]  # If page not specified or doesn't exist
 
         data['page_url'] = page.url
-        data['current_part'] = page.name
+        data['part'] = page.name
 
     # Set path if subpages not defined and entities in more than one file
     else:
@@ -237,7 +237,7 @@ def translate(request, locale, slug, page=None, path=None,
         paths = entities.values_list("path").distinct()
 
         if len(paths) > 1:
-            path = data['current_part'] = path or paths[0][0]
+            path = data['part'] = path if path in paths else paths[0][0]
         else:
             path = None
 
