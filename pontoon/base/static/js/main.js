@@ -131,31 +131,32 @@ var Pontoon = (function () {
           success: function(data) {
             if (data.type === "authenticate") {
               self.endLoader(data.message);
-              $("#repository").show();
+              $("#repository-commit").show();
 
               // Move notification up
               var temp = $('.notification').css('top');
-              $('.notification').css('top', '+=' + $('#repository').outerHeight());
+              $('.notification')
+                .css('top', '+=' + $('#repository-commit').outerHeight());
               setTimeout(function() {
                 $('.notification').css('top', temp);
               }, 2400); // Wait for close + fadeout
 
             } else if (data === "ok") {
               self.endLoader('Done!');
-              $('#repository').hide();
+              $('#repository-commit').hide();
 
             } else if (data.type === "error") {
               self.endLoader(self.doNotRender(data.message), 'error', true);
-              $('#repository').hide();
+              $('#repository-commit').hide();
 
             } else {
               self.endLoader('Oops, something went wrong.', 'error');
-              $('#repository').hide();
+              $('#repository-commit').hide();
             }
           },
           error: function() {
             self.endLoader('Oops, something went wrong.', 'error');
-            $('#repository').hide();
+            $('#repository-commit').hide();
           }
         });
 
