@@ -1217,7 +1217,7 @@ var Pontoon = (function () {
       $('#progress .fuzzy').width(percentFuzzy + '%');
       $('#progress .number').html(approved + '|' + all);
 
-      if (percentTranslated + percentApproved + percentFuzzy> 50) {
+      if (percentTranslated + percentApproved + percentFuzzy > 50) {
         $('#progress .number').addClass('left');
       } else {
         $('#progress .number').removeClass('left');
@@ -1924,7 +1924,8 @@ var Pontoon = (function () {
           }
 
           // Tab: select suggestions
-          if (Pontoon.app.advanced || $("#editor").is('.opened')) {
+          if (!$('.menu').is(':visible') && !$('.popup').is(':visible') &&
+              (Pontoon.app.advanced || $("#editor").is('.opened'))) {
             if (key === 9) {
               var section = $('#helpers section:visible'),
                   index = section.find('li.hover').index() + 1;
