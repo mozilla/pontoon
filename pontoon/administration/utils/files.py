@@ -545,11 +545,12 @@ def update_po(project, locale):
 
     for path in locale_paths:
         po = polib.pofile(path)
-        valid_entries = [e for e in po if not e.obsolete]
         date = datetime.datetime(1, 1, 1)
         newest = Translation()
+        relative_path = get_relative_path(path, locale)
+        entities_with_path = entities.filter(path=relative_path)
 
-        for entity in entities:
+        for entity in entities_with_path:
             entry = po.find(polib.unescape(smart_text(entity.string)))
             if entry:
                 if not entry.msgid_plural:
