@@ -610,6 +610,7 @@ def translation_memory(request):
     try:
         text = request.GET['text']
         locale = request.GET['locale']
+        pk = request.GET['pk']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
@@ -621,6 +622,9 @@ def translation_memory(request):
         return HttpResponse("error")
 
     entities = Entity.objects.filter(string=text)
+    if pk:
+        entities = entities.exclude(pk=pk)  # Exclude existing entity
+
     translations = set()
     for e in entities:
         translation = get_translation(entity=e, locale=locale, fuzzy=False)

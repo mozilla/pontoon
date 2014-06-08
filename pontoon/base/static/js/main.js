@@ -236,9 +236,9 @@ var Pontoon = (function () {
      */
     getMachinery: function (original, target) {
       var self = this,
-          tab = target || 'machinery',
-          loader = target || 'helpers li a[href="#' + tab + '"]',
-          ul = $('#' + tab).find('ul').empty(),
+          tab_id = target || 'machinery',
+          loader = target || 'helpers li a[href="#' + tab_id + '"]',
+          ul = $('#' + tab_id).find('ul').empty(),
           tab = $('#' + loader).addClass('loading'),
           requests = 0;
 
@@ -280,7 +280,8 @@ var Pontoon = (function () {
         url: 'translation-memory/',
         data: {
           text: original,
-          locale: self.locale.code
+          locale: self.locale.code,
+          pk: !target ? $('#editor')[0].entity.pk : ''
         }
 
       }).success(function(data) {
