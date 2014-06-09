@@ -259,7 +259,7 @@ def parse_lang(path):
     return trans
 
 
-def extract_po(project, locale, paths, source_locale, translations=True):
+def extract_po(project, locale, paths, entities=False):
     """Extract .po (gettext) files from paths and save or update in DB."""
 
     for path in paths:
@@ -271,7 +271,7 @@ def extract_po(project, locale, paths, source_locale, translations=True):
             if relative_path[-1] == 't':
                 relative_path = relative_path[:-1]
 
-            if locale.code == source_locale:
+            if entities:
                 for entry in po:
                     if not entry.obsolete:
                         save_entity(project=project,
@@ -280,7 +280,7 @@ def extract_po(project, locale, paths, source_locale, translations=True):
                                     path=relative_path,
                                     comment=entry.comment,
                                     source=entry.occurrences)
-            elif translations:
+            else:
                 for entry in (po.translated_entries() + po.fuzzy_entries()):
                     if not entry.obsolete:
 
@@ -323,8 +323,7 @@ def extract_po(project, locale, paths, source_locale, translations=True):
             log.critical('PoExtractError for %s: %s' % (path, e))
 
 
-def extract_properties(project, locale, paths,
-                       source_locale, translations=True):
+def extract_properties(project, locale, paths, entities=False):
     """Extract .properties files from paths and save or update in DB."""
 
     for path in paths:
@@ -337,10 +336,10 @@ def extract_properties(project, locale, paths,
 
             for obj in structure:
                 if isinstance(obj, silme.core.entity.Entity):
-                    if locale.code == source_locale:
+                    if entities:
                         save_entity(project=project, string=obj.value,
                                     key=obj.id, path=relative_path)
-                    elif translations:
+                    else:
                         try:
                             e = Entity.objects.get(
                                 project=project,
@@ -359,18 +358,18 @@ def extract_properties(project, locale, paths,
                       path + " doesn't exist. Skipping.")
 
 
-def extract_lang(project, locale, paths, source_locale, translations=True):
+def extract_lang(project, locale, paths, entities=False):
     """Extract .lang files from paths and save or update in DB."""
 
     for path in paths:
         lang = parse_lang(path)
         relative_path = get_relative_path(path, locale)
 
-        if locale.code == source_locale:
+        if entities:
             for key, value in lang.items():
                 save_entity(project=project, string=key,
                             path=relative_path, comment=value[0])
-        elif translations:
+        else:
             for key, value in lang.items():
                 if key != value[1] or '{ok}' in value[2]:
                     try:
@@ -449,24 +448,26 @@ def extract_to_database(project, locales=None):
         locales = [Locale.objects.get(code=source_locale)]
         locales.extend(project.locales.all())
 
-    isVCS = project.repository_type != 'file'
+    isFile = project.repository_type == 'file'
     source_paths = get_source_paths(source_directory['path'])
 
     if project.format == 'ini':
         try:
             extract_ini(project, source_paths[0])
-            return
         except Exception as e:
-            if not isVCS:
+            if isFile:
                 os.remove(file_path)
+        return
 
     for index, locale in enumerate(locales):
         if locale.code == source_locale:
             paths = source_paths
+            entities = True
         else:
             paths = get_locale_paths(project, locale)
+            entities = isFile
         globals()['extract_%s' % project.format](
-            project, locale, paths, source_locale, isVCS)
+            project, locale, paths, entities)
 
 
 def update_from_repository(project, locales=None):
