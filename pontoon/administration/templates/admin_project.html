@@ -168,9 +168,7 @@
         {{ form.url.label_tag() }}
         {{ form.name }}
         {{ form.url }}
-        <button title="Delete subpage" class="button delete-subpage" tabindex="-1">
-            <img src="{{ static('img/cancel.png') }}" alt="Delete subpage" />
-        </button>
+        <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
         {{ form.DELETE }}
         {{ form.name.errors }}
         {{ form.url.errors }}
@@ -181,9 +179,7 @@
         {{ formset.empty_form.url.label_tag() }}
         {{ formset.empty_form.name }}
         {{ formset.empty_form.url }}
-        <button title="Delete subpage" class="button delete-subpage" tabindex="-1">
-            <img src="{{ static('img/cancel.png') }}" alt="Delete subpage" />
-        </button>
+        <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
         {{ formset.empty_form.DELETE }}
         {{ formset.empty_form.name.errors }}
         {{ formset.empty_form.url.errors }}

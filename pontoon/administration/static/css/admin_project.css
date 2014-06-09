@@ -93,6 +93,12 @@ body #intro {
   width: 31px;
 }
 
+#pontoon #intro .button.delete-subpage {
+  color: #333333;
+  font-size: 20px;
+  padding: 4px;
+}
+
 #pontoon #intro .controls .button {
   background: #7BC876;
   border-radius: 3px;
