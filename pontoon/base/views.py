@@ -832,25 +832,17 @@ def transvision(request):
         log.error(str(e))
         return HttpResponse("error")
 
-    url = "http://transvision.mozfr.org/"
-    payload = {
-        "recherche": text,
-        "sourcelocale": "en-US",
-        "locale": locale,
-        "perfect_match": "perfect_match",
-        "repo": "aurora",
-        "json": True,
-    }
+    url = "http://transvision.mozfr.org/api/v1/tm/release/en-US/" \
+          "%s/%s/?max_results=%s&min_quality=70" % (locale, text, 5)
 
     try:
-        r = requests.get(url, params=payload)
+        r = requests.get(url)
 
         if r.text != '[]':
-            translation = r.json().itervalues().next().itervalues().next()
+            translations = r.json()
 
-            # Use JSON to distinguish from error if such translation returned
             return HttpResponse(json.dumps({
-                'translation': translation
+                'translations': translations
             }), mimetype='application/json')
 
         else:

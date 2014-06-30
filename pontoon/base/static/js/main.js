@@ -420,14 +420,16 @@ var Pontoon = (function () {
         }
 
       }).success(function(data) {
-        if (data.translation) {
-          append({
-            original: original,
-            quality: '100%',
-            url: 'http://transvision.mozfr.org/',
-            title: 'Visit Transvision',
-            source: 'Mozilla',
-            translation: data.translation
+        if (data.translations) {
+          $.each(data.translations, function() {
+            append({
+              original: this.source,
+              quality: Math.round(this.quality) + '%',
+              url: 'http://transvision.mozfr.org/',
+              title: 'Visit Transvision',
+              source: 'Mozilla',
+              translation: this.target
+            });
           });
         }
       }).complete(complete);
