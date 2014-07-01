@@ -205,7 +205,8 @@ def translate(request, locale, slug, page=None, path=None,
             project.parts = ",".join([pg.name for pg in pages])
         else:
             entities = Entity.objects.filter(project=project, obsolete=False)
-            paths = [i[0] for i in entities.values_list("path").distinct()]
+            paths = sorted(
+                [i[0] for i in entities.values_list("path").distinct()])
 
             if len(paths) > 1:
                 project.parts = ",".join([pt for pt in paths])
@@ -234,7 +235,8 @@ def translate(request, locale, slug, page=None, path=None,
     # Set path if subpages not defined and entities in more than one file
     else:
         entities = Entity.objects.filter(project=p, obsolete=False)
-        paths = [i[0] for i in entities.values_list("path").distinct()]
+        paths = sorted(
+            [i[0] for i in entities.values_list("path").distinct()])
 
         if len(paths) > 1:
             path = data['part'] = path if path in paths else paths[0]
