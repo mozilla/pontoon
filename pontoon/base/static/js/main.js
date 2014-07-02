@@ -520,7 +520,7 @@ var Pontoon = (function () {
       // Metadata: comments, sources, keys
       $('#metadata').empty().hide();
       if (entity.comment) {
-        $('#metadata').html('<span id="comment">' + entity.comment + '</span>').show();
+        $('#metadata').html('<span id="comment">' + this.doNotRender(entity.comment) + '</span>').show();
       }
       if (entity.source || entity.path || entity.key) {
         $('#metadata').append('<a href="#" class="details">More details</a>').show();
