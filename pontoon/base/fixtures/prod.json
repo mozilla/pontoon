@@ -5,7 +5,7 @@
         "fields": {
             "name": "Testpilot",
             "slug": "testpilot",
-            "url": "https://pontoon.mozillalabs.com/pontoon/hooks/php/test/testpilot/",
+            "url": "https://pontoon.mozilla.org/pontoon/hooks/php/test/testpilot/",
             "locales": [47, 74, 85, 182, 205],
             "repository_type": "svn",
             "repository_url": "https://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/testpilot/",
@@ -18,7 +18,7 @@
         "fields": {
             "project": 1,
             "name": "Homepage",
-            "url": "https://pontoon.mozillalabs.com/pontoon/hooks/php/test/testpilot/"
+            "url": "https://pontoon.mozilla.org/pontoon/hooks/php/test/testpilot/"
         }
     },
     {
@@ -27,7 +27,7 @@
         "fields": {
             "project": 1,
             "name": "Test Cases",
-            "url": "https://pontoon.mozillalabs.com/pontoon/hooks/php/test/testpilot/?page=testcases.php"
+            "url": "https://pontoon.mozilla.org/pontoon/hooks/php/test/testpilot/?page=testcases.php"
         }
     },
     {
@@ -36,7 +36,7 @@
         "fields": {
             "project": 1,
             "name": "Guiding Principles",
-            "url": "https://pontoon.mozillalabs.com/pontoon/hooks/php/test/testpilot/?page=principles.php"
+            "url": "https://pontoon.mozilla.org/pontoon/hooks/php/test/testpilot/?page=principles.php"
         }
     },
     {
@@ -45,7 +45,7 @@
         "fields": {
             "project": 1,
             "name": "Privacy Policy",
-            "url": "https://pontoon.mozillalabs.com/pontoon/hooks/php/test/testpilot/?page=privacy.php"
+            "url": "https://pontoon.mozilla.org/pontoon/hooks/php/test/testpilot/?page=privacy.php"
         }
     }
 ]
