@@ -67,7 +67,7 @@ def home(request, template='home.html'):
         'redirect': translate_error.get('redirect', None),
         'locales': Locale.objects.all(),
         'projects': Project.objects.filter(
-            pk__in=Entity.objects.values('project'))
+            pk__in=Entity.objects.values('project')).order_by("name")
     }
 
     return render(request, template, data)
@@ -93,7 +93,8 @@ def locale(request, locale, template='locale.html'):
 
     data = {
         'projects': Project.objects.filter(
-            pk__in=Entity.objects.values('project')).filter(locales=l),
+            pk__in=Entity.objects.values('project')).filter(locales=l)
+        .order_by("name"),
         'locale': l,
     }
 
@@ -198,7 +199,8 @@ def translate(request, locale, slug, page=None, path=None,
             return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Set project parts
-    projects = Project.objects.filter(pk__in=Entity.objects.values('project'))
+    projects = Project.objects.filter(
+        pk__in=Entity.objects.values('project')).order_by("name")
     for project in projects:
         pages = Subpage.objects.filter(project=project)
 

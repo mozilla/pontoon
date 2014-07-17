@@ -38,7 +38,7 @@ def admin(request, template='admin.html'):
         return render(request, '403.html', status=403)
 
     data = {
-        'projects': Project.objects.all(),
+        'projects': Project.objects.all().order_by("name"),
     }
 
     return render(request, template, data)
