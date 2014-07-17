@@ -14,7 +14,7 @@
       <input type="search" autocomplete="off">
     </div>
     <ul>
-      {% for project in projects %}
+      {% for project in projects.order_by("name") %}
       <li class="clearfix">
         <span class="project-name"
           data-slug="{{ project.slug }}"
