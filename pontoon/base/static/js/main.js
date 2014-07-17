@@ -259,7 +259,9 @@ var Pontoon = (function () {
       function append(data) {
         ul.append('<li title="Click to copy">' +
           '<header>' +
-            '<span class="stress">' + (data.quality || '') + '</span>' +
+            '<span class="stress">' + (data.quality || '') +
+              (data.count ? ' &bull; <span>#</span>' + data.count : '') +
+            '</span>' +
             '<a href="' + data.url + '" target="_blank"' +
               'title="' + data.title + '">' + data.source + '</a>' +
           '</header>' +
@@ -293,7 +295,8 @@ var Pontoon = (function () {
               url: self.app.path,
               title: 'Pontoon Homepage',
               source: 'Translation memory',
-              translation: this
+              translation: this[0],
+              count: this[1]
             });
           });
         }
