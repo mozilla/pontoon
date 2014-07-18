@@ -35,10 +35,11 @@ from pontoon.administration.utils import files
 from pontoon.base import utils
 
 from pontoon.base.models import (
+    Entity,
     Locale,
     Project,
+    Resource,
     Subpage,
-    Entity,
     Translation,
     UserProfile,
     get_entities,
@@ -67,7 +68,7 @@ def home(request, template='home.html'):
         'redirect': translate_error.get('redirect', None),
         'locales': Locale.objects.all(),
         'projects': Project.objects.filter(
-            pk__in=Entity.objects.values('project')).order_by("name")
+            pk__in=Resource.objects.values('project')).order_by("name")
     }
 
     return render(request, template, data)
@@ -93,7 +94,7 @@ def locale(request, locale, template='locale.html'):
 
     data = {
         'projects': Project.objects.filter(
-            pk__in=Entity.objects.values('project')).filter(locales=l)
+            pk__in=Resource.objects.values('project')).filter(locales=l)
         .order_by("name"),
         'locale': l,
     }
@@ -158,7 +159,7 @@ def translate(request, locale, slug, page=None, path=None,
     # Validate project
     try:
         p = Project.objects.get(
-            slug=slug, pk__in=Entity.objects.values('project'))
+            slug=slug, pk__in=Resource.objects.values('project'))
     except Project.DoesNotExist:
         invalid_project = True
 
@@ -200,16 +201,16 @@ def translate(request, locale, slug, page=None, path=None,
 
     # Set project parts
     projects = Project.objects.filter(
-        pk__in=Entity.objects.values('project')).order_by("name")
+        pk__in=Resource.objects.values('project')).order_by("name")
     for project in projects:
         pages = Subpage.objects.filter(project=project)
 
         if len(pages) > 0:
             project.parts = ",".join([pg.name for pg in pages])
         else:
-            entities = Entity.objects.filter(project=project, obsolete=False)
-            paths = sorted(
-                [i[0] for i in entities.values_list("path").distinct()])
+            project_resource_paths = Resource.objects.filter(
+                project=project).values_list("path")
+            paths = sorted([i[0] for i in project_resource_paths])
 
             if len(paths) > 1:
                 project.parts = ",".join([pt for pt in paths])
@@ -237,15 +238,17 @@ def translate(request, locale, slug, page=None, path=None,
 
     # Set path if subpages not defined and entities in more than one file
     else:
-        entities = Entity.objects.filter(project=p, obsolete=False)
-        paths = sorted(
-            [i[0] for i in entities.values_list("path").distinct()])
+        project_resource_paths = Resource.objects.filter(
+            project=p).values_list("path")
+        paths = sorted([i[0] for i in project_resource_paths])
+        log.debug(paths)
 
         if len(paths) > 1:
             path = data['part'] = path if path in paths else paths[0]
         else:
             path = None
 
+        log.debug(path)
     # Set entities
     data['entities'] = json.dumps(get_entities(p, l, path))
 
@@ -298,7 +301,7 @@ def get_translations_from_other_locales(request, template=None):
         return HttpResponse("error")
 
     payload = []
-    locales = entity.project.locales.all().exclude(code=locale.code)
+    locales = entity.resource.project.locales.all().exclude(code=locale.code)
 
     for l in locales:
         translation = get_translation(entity=entity, locale=l)
@@ -355,7 +358,10 @@ def get_translation_history(request, template=None):
         translations = translations.filter(plural_form=plural_form)
     translations = translations.order_by('-approved', '-date')
 
-    user = 'Anonymous' if entity.project.name == 'Testpilot' else 'Imported'
+    if entity.resource.project.name == 'Testpilot':
+        user = 'Anonymous'
+    else:
+        user = 'Imported'
 
     if len(translations) > 0:
         payload = []

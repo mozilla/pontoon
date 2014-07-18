@@ -22,6 +22,7 @@ from pontoon.base.models import (
     Locale,
     Project,
     ProjectForm,
+    Resource,
     Subpage,
     Translation,
     UserProfile,
@@ -164,19 +165,19 @@ def get_relative_path(path, locale):
     return path.split('/' + locale_directory + '/')[-1]
 
 
-def save_entity(project, string, string_plural="", comment="",
-                key="", path="", source=""):
+def save_entity(resource, string, string_plural="", comment="",
+                key="", source=""):
     """Admin interface: save new or update existing entity in DB."""
 
     # Update existing entity
     try:
         if key is "":
             e = Entity.objects.get(
-                project=project, string=string,
-                string_plural=string_plural, path=path)
+                resource=resource, string=string,
+                string_plural=string_plural)
 
         else:
-            e = Entity.objects.get(project=project, key=key, path=path)
+            e = Entity.objects.get(resource=resource, key=key)
             e.string = string
             e.string_plural = string_plural
 
@@ -187,8 +188,8 @@ def save_entity(project, string, string_plural="", comment="",
 
     # Add new entity
     except Entity.DoesNotExist:
-        e = Entity(project=project, string=string, string_plural=string_plural,
-                   key=key, path=path, source=source)
+        e = Entity(resource=resource, string=string,
+                   string_plural=string_plural, key=key, source=source)
 
     if len(comment) > 0:
         e.comment = comment
@@ -271,13 +272,15 @@ def extract_po(project, locale, paths, entities=False):
             if relative_path[-1] == 't':
                 relative_path = relative_path[:-1]
 
+            resource, created = Resource.objects.get_or_create(
+                project=project, path=relative_path)
+
             if entities:
                 for entry in po:
                     if not entry.obsolete:
-                        save_entity(project=project,
+                        save_entity(resource=resource,
                                     string=escape(entry.msgid),
                                     string_plural=escape(entry.msgid_plural),
-                                    path=relative_path,
                                     comment=entry.comment,
                                     source=entry.occurrences)
             else:
@@ -288,9 +291,8 @@ def extract_po(project, locale, paths, entities=False):
                         if len(escape(entry.msgstr)) > 0:
                             try:
                                 e = Entity.objects.get(
-                                    project=project,
-                                    string=escape(entry.msgid),
-                                    path=relative_path)
+                                    resource=resource,
+                                    string=escape(entry.msgid))
                                 save_translation(
                                     entity=e,
                                     locale=locale,
@@ -304,9 +306,8 @@ def extract_po(project, locale, paths, entities=False):
                         elif len(entry.msgstr_plural) > 0:
                             try:
                                 e = Entity.objects.get(
-                                    project=project,
-                                    string=escape(entry.msgid),
-                                    path=relative_path)
+                                    resource=resource,
+                                    string=escape(entry.msgid))
                                 for k in entry.msgstr_plural:
                                     save_translation(
                                         entity=e,
@@ -333,24 +334,27 @@ def extract_properties(project, locale, paths, entities=False):
                 .PropertiesFormatParser.get_structure(f.read())
 
             relative_path = get_relative_path(path, locale)
+            resource, created = Resource.objects.get_or_create(
+                project=project, path=relative_path)
 
             for obj in structure:
                 if isinstance(obj, silme.core.entity.Entity):
                     if entities:
-                        save_entity(project=project, string=obj.value,
-                                    key=obj.id, path=relative_path)
+                        save_entity(resource=resource, string=obj.value,
+                                    key=obj.id)
                     else:
                         try:
                             e = Entity.objects.get(
-                                project=project,
-                                key=obj.id,
-                                path=relative_path)
+                                resource=resource,
+                                key=obj.id)
                             save_translation(
                                 entity=e,
                                 locale=locale,
                                 string=obj.value)
+
                         except Entity.DoesNotExist:
                             continue
+
             log.debug("[" + locale.code + "]: " + path + " saved to DB.")
             f.close()
         except IOError:
@@ -365,18 +369,21 @@ def extract_lang(project, locale, paths, entities=False):
         lang = parse_lang(path)
         relative_path = get_relative_path(path, locale)
 
+        resource, created = Resource.objects.get_or_create(
+            project=project, path=relative_path)
+
         if entities:
             for key, value in lang.items():
-                save_entity(project=project, string=key,
-                            path=relative_path, comment=value[0])
+                save_entity(resource=resource, string=key,
+                            comment=value[0])
         else:
             for key, value in lang.items():
                 if key != value[1] or '{ok}' in value[2]:
                     try:
-                        e = Entity.objects.get(
-                            project=project, string=key, path=relative_path)
+                        e = Entity.objects.get(resource=resource, string=key)
                         save_translation(
                             entity=e, locale=locale, string=value[1])
+
                     except Entity.DoesNotExist:
                         continue
 
@@ -407,11 +414,14 @@ def extract_ini(project, path):
     # Move source locale on top, so we save entities first, then translations
     sections.insert(0, sections.pop(sections.index(source_locale)))
 
+    resource, created = Resource.objects.get_or_create(
+        project=project, path=path)
+
     for section in sections:
         for item in config.items(section):
             if section == source_locale:
-                save_entity(project=project, string=item[1],
-                            key=item[0], path=path)
+                save_entity(resource=resource, string=item[1],
+                            key=item[0])
             else:
                 try:
                     l = Locale.objects.get(code=section)
@@ -420,7 +430,7 @@ def extract_ini(project, path):
                     break
                 try:
                     e = Entity.objects.get(
-                        project=project, key=item[0], path=path)
+                        resource=resource, key=item[0])
                     save_translation(
                         entity=e, locale=l, string=item[1])
                 except Entity.DoesNotExist:
@@ -443,7 +453,8 @@ def extract_to_database(project, locales=None):
 
     if not locales:
         # Mark all existing project entities as obsolete
-        Entity.objects.filter(project=project).update(obsolete=True)
+        resources = Resource.objects.filter(project=project)
+        Entity.objects.filter(resource__in=resources).update(obsolete=True)
 
         locales = [Locale.objects.get(code=source_locale)]
         locales.extend(project.locales.all())
@@ -541,7 +552,6 @@ def update_from_repository(project, locales=None):
 def update_po(project, locale):
     """Update .po (gettext) files from database."""
 
-    entities = Entity.objects.filter(project=project, obsolete=False)
     locale_paths = get_locale_paths(project, locale)
 
     for path in locale_paths:
@@ -549,9 +559,10 @@ def update_po(project, locale):
         date = datetime.datetime(1, 1, 1)
         newest = Translation()
         relative_path = get_relative_path(path, locale)
-        entities_with_path = entities.filter(path=relative_path)
+        resource = Resource.objects.filter(project=project, path=relative_path)
+        entities = Entity.objects.filter(resource=resource, obsolete=False)
 
-        for entity in entities_with_path:
+        for entity in entities:
             entry = po.find(polib.unescape(smart_text(entity.string)))
             if entry:
                 if not entry.msgid_plural:
@@ -601,9 +612,11 @@ def update_po(project, locale):
 
 
 def update_properties(project, locale):
-    """Update .properties files from database."""
+    """Update .properties files from database. Generate files from source
+    files, but only ones with translated strings."""
 
-    entities = Entity.objects.filter(project=project, obsolete=False)
+    resources = Resource.objects.filter(project=project)
+    entities = Entity.objects.filter(resource__in=resources, obsolete=False)
     locale_directory_path = get_locale_directory(project, locale)["path"]
 
     # Remove all non-hidden files and folders in locale repository
@@ -645,7 +658,8 @@ def update_properties(project, locale):
 
         with codecs.open(path, 'r+', 'utf-8') as f:
             structure = parser.get_structure(f.read())
-            entities_with_path = entities.filter(path=relative[0])
+            resource = resources.filter(path=relative[0])
+            entities_with_path = entities.filter(resource=resource)
 
             for entity in entities_with_path:
                 key = entity.key
@@ -688,6 +702,14 @@ def update_lang(project, locale):
 
     for path in locale_paths:
         relative_path = get_relative_path(path, locale)
+
+        try:
+            resource = Resource.objects.get(
+                project=project, path=relative_path)
+        except Resource.DoesNotExist as e:
+            log.error('Resource does not exist')
+            continue
+
         with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
             content = []
             translation = None
@@ -711,8 +733,7 @@ def update_lang(project, locale):
 
                     try:
                         entity = Entity.objects.get(
-                            project=project, string=original,
-                            path=relative_path)
+                            resource=resource, string=original)
                     except Entity.DoesNotExist as e:
                         log.error('%s: Entity "%s" does not exist %s' %
                                   (path, original, project.name))
@@ -735,9 +756,10 @@ def update_lang(project, locale):
 def update_ini(project, locale):
     """Update .ini files from database."""
 
-    entities = Entity.objects.filter(project=project, obsolete=False)
     path = get_locale_directory(project, locale)["path"]
     source_path = get_source_paths(path)[0]
+    resource = Resource.objects.get(project=project, path=source_path)
+    entities = Entity.objects.filter(resource=resource, obsolete=False)
     config = configparser.ConfigParser()
 
     with codecs.open(source_path, 'r+', 'utf-8', errors='replace') as f:

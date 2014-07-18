@@ -21,6 +21,7 @@ from pontoon.base.models import (
     Locale,
     Project,
     ProjectForm,
+    Resource,
     Subpage,
     Translation,
     UserProfile,
@@ -116,7 +117,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 formset = SubpageInlineFormSet(instance=project)
                 subtitle += '. Saved.'
                 pk = project.pk
-                if len(Entity.objects.filter(project=project)) is 0:
+                if not Resource.objects.filter(project=project).exists():
                     messages.warning(request, message)
             else:
                 subtitle += '. Error.'
@@ -132,7 +133,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
             formset = SubpageInlineFormSet(instance=project)
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
-            if len(Entity.objects.filter(project=project)) is 0:
+            if not Resource.objects.filter(project=project).exists():
                 messages.warning(request, message)
         except Project.DoesNotExist:
             form = ProjectForm(initial={'slug': slug})
@@ -147,7 +148,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'pk': pk,
     }
 
-    if len(Entity.objects.filter(project=project)) is not 0:
+    if Resource.objects.filter(project=project).exists():
         data['ready'] = True
 
     return render(request, template, data)

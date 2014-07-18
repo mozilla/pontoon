@@ -113,12 +113,16 @@ class Subpage(models.Model):
         return self.name
 
 
-class Entity(models.Model):
+class Resource(models.Model):
     project = models.ForeignKey(Project)
+    path = models.TextField()  # Path to localization file
+
+
+class Entity(models.Model):
+    resource = models.ForeignKey(Resource, null=True)
     string = models.TextField()
     string_plural = models.TextField(blank=True)
     key = models.TextField(blank=True)  # Needed for webL10n
-    path = models.TextField(blank=True)  # Path to localization file
     comment = models.TextField(blank=True)
     source = models.TextField(blank=True)  # Path to source code file
     obsolete = models.BooleanField(default=False)
@@ -137,7 +141,7 @@ class Entity(models.Model):
             'original': self.string,
             'original_plural': self.string_plural,
             'key': self.key,
-            'path': self.path,
+            'path': self.resource.path,
             'comment': self.comment,
             'source': source,
             'obsolete': self.obsolete,
@@ -199,9 +203,16 @@ class ProjectForm(ModelForm):
 def get_entities(project, locale, path=None):
     """Load project entities with locale translations."""
 
-    entities = Entity.objects.filter(project=project, obsolete=False)
+    import commonware
+    log = commonware.log.getLogger('pontoon')
+
+    resources = Resource.objects.filter(project=project)
     if path:
-        entities = entities.filter(path=path)
+        resources = resources.filter(path=path)
+    log.debug(resources)
+    log.debug(len(resources))
+    entities = Entity.objects.filter(resource__in=resources, obsolete=False)
+    log.debug(len(entities))
 
     entities_array = []
     for e in entities:
