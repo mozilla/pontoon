@@ -119,7 +119,7 @@ class Resource(models.Model):
 
 
 class Entity(models.Model):
-    resource = models.ForeignKey(Resource, null=True)
+    resource = models.ForeignKey(Resource)
     string = models.TextField()
     string_plural = models.TextField(blank=True)
     key = models.TextField(blank=True)  # Needed for webL10n
