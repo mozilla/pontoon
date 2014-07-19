@@ -116,6 +116,7 @@ class Subpage(models.Model):
 class Resource(models.Model):
     project = models.ForeignKey(Project)
     path = models.TextField()  # Path to localization file
+    entity_count = models.PositiveIntegerField()
 
 
 class Entity(models.Model):
