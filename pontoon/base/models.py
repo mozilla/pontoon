@@ -172,6 +172,14 @@ class Translation(models.Model):
         }
 
 
+class Stats(models.Model):
+    resource = models.ForeignKey(Resource)
+    locale = models.ForeignKey(Locale)
+    translated_count = models.PositiveIntegerField(null=True, blank=True)
+    approved_count = models.PositiveIntegerField(null=True, blank=True)
+    fuzzy_count = models.PositiveIntegerField(null=True, blank=True)
+
+
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
@@ -204,18 +212,13 @@ class ProjectForm(ModelForm):
 def get_entities(project, locale, path=None):
     """Load project entities with locale translations."""
 
-    import commonware
-    log = commonware.log.getLogger('pontoon')
-
     resources = Resource.objects.filter(project=project)
     if path:
         resources = resources.filter(path=path)
-    log.debug(resources)
-    log.debug(len(resources))
-    entities = Entity.objects.filter(resource__in=resources, obsolete=False)
-    log.debug(len(entities))
 
+    entities = Entity.objects.filter(resource__in=resources, obsolete=False)
     entities_array = []
+
     for e in entities:
         translation_array = []
 

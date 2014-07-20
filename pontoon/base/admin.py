@@ -7,6 +7,7 @@ from pontoon.base.models import (
     Resource,
     Entity,
     Translation,
+    Stats,
 )
 
 admin.site.register(UserProfile)
@@ -16,3 +17,4 @@ admin.site.register(Subpage)
 admin.site.register(Resource)
 admin.site.register(Entity)
 admin.site.register(Translation)
+admin.site.register(Stats)
