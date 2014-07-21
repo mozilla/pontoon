@@ -241,14 +241,12 @@ def translate(request, locale, slug, page=None, path=None,
         project_resource_paths = Resource.objects.filter(
             project=p).values_list("path")
         paths = sorted([i[0] for i in project_resource_paths])
-        log.debug(paths)
 
         if len(paths) > 1:
             path = data['part'] = path if path in paths else paths[0]
         else:
             path = None
 
-        log.debug(path)
     # Set entities
     data['entities'] = json.dumps(get_entities(p, l, path))
 
