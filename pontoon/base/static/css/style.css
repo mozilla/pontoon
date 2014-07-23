@@ -474,30 +474,25 @@ button {
 }
 
 #pontoon .project.select .menu ul li .project-name {
-  float: left;
   overflow: hidden;
-  text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 110px;
 }
 
 #pontoon .project.select .menu ul li .project-url {
-  color: #7BC876;
-  float: right;
   overflow: hidden;
-  text-align: right;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 350px;
 }
 
-#pontoon .part.select .menu ul li span:first-child {
+#pontoon .select .menu ul li > span:first-child {
   float: left;
   text-align: left;
 }
 
-#pontoon .part.select .menu ul li span:last-child {
+#pontoon .select .menu ul li > span:last-child {
   color: #7BC876;
   float: right;
   text-align: right;
