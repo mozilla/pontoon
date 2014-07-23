@@ -1733,7 +1733,7 @@ var Pontoon = (function () {
 
         menu.find('.limited').removeClass('limited');
 
-        if (details) {
+        if (details) { // If project selected on homepage
           menu.find('li').hide();
           $(Object.keys(details)).each(function() {
             menu.find('.language.' + this).parent().addClass('limited').show();
@@ -1801,7 +1801,7 @@ var Pontoon = (function () {
 
         if (locales.indexOf(selected) === -1) {
           var code = (locales.indexOf(accept) !== -1) ? accept : locale;
-          var localeHtml = menu.find('.language.' + code)[0].outerHTML;
+          var localeHtml = menu.find('.language.' + code).parent().html();
           selector.html(localeHtml);
         }
       });
@@ -1815,12 +1815,11 @@ var Pontoon = (function () {
       // Locale menu handler
       $('body:not(".admin-project") .locale .menu li:not(".no-match")').click(function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
-            locale = locale.replace( /(:|\.|\[|@|\])/g, "\\$1" ), // Escape special characters in CSS notation
-            language = $('.locale .menu .language.' + locale).html();
+            // Escape special characters in CSS notation
+            code = locale.replace( /(:|\.|\[|@|\])/g, "\\$1" ),
+            language = $('.locale .menu .language.' + code).parent().html();
 
-        $('.locale .selector .language')
-          .attr('class', 'language ' + locale)
-          .html(language);
+        $('.locale .selector').html(language);
       });
 
       // Add case insensitive :contains-like selector to jQuery (needed for locale search)
