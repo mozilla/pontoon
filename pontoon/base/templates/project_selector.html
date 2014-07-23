@@ -19,7 +19,7 @@
         <span class="project-name"
           data-slug="{{ project.slug }}"
           data-locales="{% for l in project.locales.all() %}{{ l.code|lower }}{% if not loop.last %},{% endif %}{% endfor %}"
-          data-stats="{{ project.stats }}">{{ project.name }}</span>
+          data-details="{{ project.details }}">{{ project.name }}</span>
         <span class="project-url">{{ project.url }}</span>
       </li>
       {% endfor %}

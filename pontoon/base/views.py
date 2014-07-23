@@ -200,35 +200,31 @@ def translate(request, locale, slug, page=None, path=None,
             }
             return HttpResponseRedirect(reverse('pontoon.home'))
 
-    # Set project parts (pages or resources) and stats
+    # Set project details (locales and pages or paths + stats)
     projects = Project.objects.filter(
         pk__in=Resource.objects.values('project')).order_by("name")
 
     for project in projects:
         pages = Subpage.objects.filter(project=project)
+        resources = Resource.objects.filter(project=project)
+        details = {}
 
-        if len(pages) > 0:
-            project.parts = ",".join([pg.name for pg in pages])
-        else:
-            resources = Resource.objects.filter(project=project)
-            paths = sorted([i[0] for i in resources.values_list("path")])
+        for loc in project.locales.all():
+            if len(pages) == 0 and len(resources) > 1:
+                locale_details = Stats.objects \
+                    .filter(resource__in=resources, locale=loc) \
+                    .values(
+                        'resource__path',
+                        'resource__entity_count',
+                        'translated_count',
+                        'approved_count',
+                    )
+            else:
+                locale_details = pages.values('name')
 
-            if len(paths) > 1:
-                project.parts = ",".join([pt for pt in paths])
+            details[loc.code.lower()] = list(locale_details)
 
-                stats = {}
-                for loc in project.locales.all():
-                    stats_list = Stats.objects \
-                        .filter(resource__in=resources, locale=loc) \
-                        .values(
-                            'resource__path',
-                            'resource__entity_count',
-                            'translated_count',
-                            'approved_count',
-                        )
-                    stats[loc.code.lower()] = list(stats_list)
-
-                project.stats = json.dumps(stats)
+        project.details = json.dumps(details)
 
     data = {
         'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '')
