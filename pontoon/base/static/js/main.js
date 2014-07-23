@@ -1702,7 +1702,7 @@ var Pontoon = (function () {
 
       // Show only parts available for the selected project
       $('.part .selector').click(function () {
-        var details = Pontoon.common.getProjectResources('details'),
+        var details = Pontoon.common.getProjectDetails(),
             menu = $(this).siblings('.menu').find('ul'),
             locale = $('.locale .menu').siblings('.selector').find('.code').html();
 
@@ -1728,7 +1728,8 @@ var Pontoon = (function () {
 
       // Show only locales available for the selected project
       $('.locale .selector').click(function () {
-        var locales = Pontoon.common.getProjectResources('locales').split(','),
+        var details = Pontoon.common.getProjectDetails(),
+            locales = Object.keys(details),
             menu = $(this).siblings('.menu');
 
         menu.find('.limited').removeClass('limited');
@@ -1778,7 +1779,7 @@ var Pontoon = (function () {
         }
 
         // Fallback if selected part not available for the selected project
-        var details = Pontoon.common.getProjectResources('details'),
+        var details = Pontoon.common.getProjectDetails(),
             locales = Object.keys(details),
             locale = locales[0],
             detail = details[locale][0];
@@ -1968,16 +1969,14 @@ var Pontoon = (function () {
 
       return {
         /*
-         * Get resources available for selected project
-         *
-         * resourceType locales or details
+         * Get details available for selected project
          */
-        getProjectResources: function(resourceType) {
+        getProjectDetails: function() {
           var resources = null;
 
           $('.project-name').each(function() {
             if ($('.project .button .title').html() === $(this).html()) {
-              resources = $(this).data(resourceType);
+              resources = $(this).data('details');
               return false;
             }
           });
