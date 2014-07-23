@@ -1704,7 +1704,7 @@ var Pontoon = (function () {
       $('.part .selector').click(function () {
         var details = Pontoon.common.getProjectDetails(),
             menu = $(this).siblings('.menu').find('ul'),
-            locale = $('.locale .menu').siblings('.selector').find('.code').html();
+            locale = $.trim($('.locale .selector .code').html());
 
         if (details) {
           menu.find('li:not(".no-match")').remove();
