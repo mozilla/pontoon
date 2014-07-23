@@ -41,6 +41,7 @@ from pontoon.base.models import (
     Resource,
     Subpage,
     Translation,
+    Stats,
     UserProfile,
     get_entities,
     get_translation,
@@ -199,21 +200,35 @@ def translate(request, locale, slug, page=None, path=None,
             }
             return HttpResponseRedirect(reverse('pontoon.home'))
 
-    # Set project parts
+    # Set project parts (pages or resources) and stats
     projects = Project.objects.filter(
         pk__in=Resource.objects.values('project')).order_by("name")
+
     for project in projects:
         pages = Subpage.objects.filter(project=project)
 
         if len(pages) > 0:
             project.parts = ",".join([pg.name for pg in pages])
         else:
-            project_resource_paths = Resource.objects.filter(
-                project=project).values_list("path")
-            paths = sorted([i[0] for i in project_resource_paths])
+            resources = Resource.objects.filter(project=project)
+            paths = sorted([i[0] for i in resources.values_list("path")])
 
             if len(paths) > 1:
                 project.parts = ",".join([pt for pt in paths])
+
+                stats = {}
+                for loc in project.locales.all():
+                    stats_list = Stats.objects \
+                        .filter(resource__in=resources, locale=loc) \
+                        .values(
+                            'resource__path',
+                            'resource__entity_count',
+                            'translated_count',
+                            'approved_count',
+                        )
+                    stats[loc.code.lower()] = list(stats_list)
+
+                project.stats = json.dumps(stats)
 
     data = {
         'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '')
@@ -238,9 +253,8 @@ def translate(request, locale, slug, page=None, path=None,
 
     # Set path if subpages not defined and entities in more than one file
     else:
-        project_resource_paths = Resource.objects.filter(
-            project=p).values_list("path")
-        paths = sorted([i[0] for i in project_resource_paths])
+        resources = Resource.objects.filter(project=p)
+        paths = sorted([i[0] for i in resources.values_list("path")])
 
         if len(paths) > 1:
             path = data['part'] = path if path in paths else paths[0]

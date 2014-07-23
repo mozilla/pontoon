@@ -1702,13 +1702,17 @@ var Pontoon = (function () {
 
       // Show only parts available for the selected project
       $('.part .selector').click(function () {
-        var parts = Pontoon.common.getProjectResources('parts'),
-            menu = $(this).siblings('.menu').find('ul');
+        var stats = Pontoon.common.getProjectResources('stats'),
+            menu = $(this).siblings('.menu').find('ul'),
+            locale = $('.locale .menu').siblings('.selector').find('.code').html();
 
-        if (parts) {
+        if (stats) {
           menu.find('li:not(".no-match")').remove();
-          $(parts.reverse()).each(function() {
-            menu.prepend('<li>' + this + '</li>');
+          $(stats[locale].reverse()).each(function() {
+            var percent = (this.approved_count + this.translated_count) /
+                          this.resource__entity_count * 100;
+            menu.prepend('<li><span>' + this.resource__path + '</span>' +
+              '<span>' + Math.round(percent) + ' %</span></li>');
           });
         }
 
@@ -1717,7 +1721,7 @@ var Pontoon = (function () {
 
       // Show only locales available for the selected project
       $('.locale .selector').click(function () {
-        var locales = Pontoon.common.getProjectResources('locales'),
+        var locales = Pontoon.common.getProjectResources('locales').split(','),
             menu = $(this).siblings('.menu');
 
         menu.find('.limited').removeClass('limited');
@@ -1767,17 +1771,20 @@ var Pontoon = (function () {
         }
 
         // Fallback if selected part not available for the selected project
-        var defaultPage = Pontoon.common.getProjectResources('parts')[0];
-        if (defaultPage) {
-          $('.part .selector .title').html(defaultPage);
+        var stats = Pontoon.common.getProjectResources('stats');
+
+        if (stats) {
+          var first = Object.keys(stats)[0],
+              defaultPart = stats[first][0].resource__path;
+          $('.part .selector .title').html(defaultPart);
           $('header .part').removeClass("hidden")
-            .find('.selector .title').html(defaultPage);
+            .find('.selector .title').html(defaultPart);
         } else {
           $('header .part').addClass("hidden");
         }
 
         // Fallback if selected locale not available for the selected project
-        var locales = Pontoon.common.getProjectResources('locales'),
+        var locales = Pontoon.common.getProjectResources('locales').split(','),
             menu = $('.locale .menu'),
             selector = menu.siblings('.selector'),
             selected = selector.find('.code').html(),
@@ -1791,9 +1798,9 @@ var Pontoon = (function () {
         }
       });
 
-      // Page menu handler
+      // Parts menu handler
       $('.part .menu li:not(".no-match")').live("click.pontoon", function () {
-        var title = $(this).html();
+        var title = $(this).find('span:first').html();
         $('.part .selector .title').html(title);
       });
 
@@ -1956,14 +1963,14 @@ var Pontoon = (function () {
         /*
          * Get resources available for selected project
          *
-         * resourceType locales or parts
+         * resourceType locales or stats
          */
         getProjectResources: function(resourceType) {
           var resources = null;
 
           $('.project-name').each(function() {
             if ($('.project .button .title').html() === $(this).html()) {
-              resources = $(this).data(resourceType).split(',');
+              resources = $(this).data(resourceType);
               return false;
             }
           });
