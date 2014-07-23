@@ -1,10 +1,16 @@
 
+import commonware.log
 import json
 
+from collections import Counter
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import F
 from django.db.models.signals import post_save
 from django.forms import ModelForm
+
+
+log = commonware.log.getLogger('pontoon')
 
 
 class UserProfile(models.Model):
@@ -162,6 +168,72 @@ class Translation(models.Model):
 
     def __unicode__(self):
         return self.string
+
+    def update_stats(self, change):
+        Stats.objects \
+            .filter(resource=self.entity.resource, locale=self.locale) \
+            .update(
+                approved_count=F('approved_count')+change['approved'],
+                fuzzy_count=F('fuzzy_count')+change['fuzzy'],
+                translated_count=F('translated_count')+change['translated'],
+            )
+
+    def get_entity_stats(self):
+        locale = self.locale
+        entity = self.entity
+
+        translation_array = []
+        forms_approved = forms_fuzzy = forms_translated = 0
+        approved = fuzzy = translated = 0
+
+        if entity.string_plural == "":
+            translation = get_translation(entity=entity, locale=locale)
+            translation_array.append(translation)
+
+        else:
+            for j in range(0, locale.nplurals or 1):
+                translation = get_translation(
+                    entity=entity, locale=locale, plural_form=j)
+                translation_array.append(translation)
+
+        for i in range(0, len(translation_array)):
+            if translation_array[i].approved is True:
+                forms_approved += 1
+            if translation_array[i].fuzzy is True:
+                forms_fuzzy += 1
+            if translation_array[i].pk is not None:
+                forms_translated += 1
+
+        if i+1 == forms_approved:
+            approved += 1
+        elif i+1 == forms_fuzzy:
+            fuzzy += 1
+        elif i+1 == forms_translated:
+            translated += 1
+
+        return Counter(
+            approved=approved,
+            fuzzy=fuzzy,
+            translated=translated
+        )
+
+    def save(self, *args, **kwargs):
+        before = self.get_entity_stats()
+        super(Translation, self).save(*args, **kwargs)
+        after = self.get_entity_stats()
+
+        if before != after:
+            after.subtract(before)
+            self.update_stats(change=after)
+
+    def delete(self, *args, **kwargs):
+        before = self.get_entity_stats()
+        super(Translation, self).delete(*args, **kwargs)
+        after = self.get_entity_stats()
+
+        if before != after:
+            after.subtract(before)
+            self.update_stats(change=after)
 
     def serialize(self):
         return {
