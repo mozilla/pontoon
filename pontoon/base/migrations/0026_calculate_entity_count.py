@@ -13,7 +13,8 @@ class Migration(DataMigration):
         # and orm['appname.ModelName'] for models in other applications.
 
         for r in orm.Resource.objects.all():
-            r.entity_count = len(orm.Entity.objects.filter(resource=r))
+            r.entity_count = len(orm.Entity.objects.filter(
+                resource=r, obsolete=False))
             r.save()
 
     def backwards(self, orm):
