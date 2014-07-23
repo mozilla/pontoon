@@ -1729,13 +1729,13 @@ var Pontoon = (function () {
       // Show only locales available for the selected project
       $('.locale .selector').click(function () {
         var details = Pontoon.common.getProjectDetails(),
-            locales = Object.keys(details),
             menu = $(this).siblings('.menu');
 
         menu.find('.limited').removeClass('limited');
-        if (locales) {
+
+        if (details) {
           menu.find('li').hide();
-          $(locales).each(function() {
+          $(Object.keys(details)).each(function() {
             menu.find('.language.' + this).parent().addClass('limited').show();
           });
         }
