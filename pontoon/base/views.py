@@ -60,6 +60,16 @@ def home(request, template='home.html'):
     log.debug("Home view.")
 
     translate_error = request.session.pop('translate_error', {})
+    projects = Project.objects.filter(
+        pk__in=Resource.objects.values('project')).order_by("name")
+
+    for project in projects:
+        details = {}
+
+        for l in project.locales.all():
+            details[l.code.lower()] = []
+
+        project.details = json.dumps(details)
 
     data = {
         'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '')
@@ -68,8 +78,7 @@ def home(request, template='home.html'):
         'project': translate_error.get('project', None),
         'redirect': translate_error.get('redirect', None),
         'locales': Locale.objects.all(),
-        'projects': Project.objects.filter(
-            pk__in=Resource.objects.values('project')).order_by("name")
+        'projects': projects,
     }
 
     return render(request, template, data)
