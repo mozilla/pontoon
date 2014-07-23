@@ -137,6 +137,19 @@ class Entity(models.Model):
     def __unicode__(self):
         return self.string
 
+    def update_resource(self):
+        r = self.resource
+        r.entity_count = len(Entity.objects.filter(resource=r, obsolete=False))
+        r.save()
+
+    def save(self, *args, **kwargs):
+        super(Entity, self).save(*args, **kwargs)
+        self.update_resource()
+
+    def delete(self, *args, **kwargs):
+        super(Entity, self).delete(*args, **kwargs)
+        self.update_resource()
+
     def serialize(self):
         try:
             source = eval(self.source)
