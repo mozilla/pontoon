@@ -1228,6 +1228,17 @@ var Pontoon = (function () {
       } else {
         $('#progress .number').removeClass('left');
       }
+
+      // Update parts menu
+      var details = Pontoon.common.getProjectDetails(),
+          path = this.project.entities[0].path;
+
+      $(details[this.locale.code]).each(function() {
+        if (this.resource__path === path) {
+          this.approved_count = approved;
+          this.translated_count = translated;
+        }
+      });
     },
 
 
