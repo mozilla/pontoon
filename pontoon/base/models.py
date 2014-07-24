@@ -122,7 +122,7 @@ class Subpage(models.Model):
 class Resource(models.Model):
     project = models.ForeignKey(Project)
     path = models.TextField()  # Path to localization file
-    entity_count = models.PositiveIntegerField()
+    entity_count = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         return '%s: %s' % (self.project.name, self.path)
@@ -186,13 +186,13 @@ class Translation(models.Model):
         return self.string
 
     def update_stats(self, change):
-        Stats.objects \
-            .filter(resource=self.entity.resource, locale=self.locale) \
-            .update(
-                approved_count=F('approved_count')+change['approved'],
-                fuzzy_count=F('fuzzy_count')+change['fuzzy'],
-                translated_count=F('translated_count')+change['translated'],
-            )
+        stats, created = Stats.objects.get_or_create(
+            resource=self.entity.resource, locale=self.locale)
+
+        stats.approved_count += change['approved']
+        stats.fuzzy_count += change['fuzzy']
+        stats.translated_count += change['translated']
+        stats.save()
 
     def get_entity_stats(self):
         locale = self.locale
@@ -263,9 +263,9 @@ class Translation(models.Model):
 class Stats(models.Model):
     resource = models.ForeignKey(Resource)
     locale = models.ForeignKey(Locale)
-    translated_count = models.PositiveIntegerField(null=True, blank=True)
-    approved_count = models.PositiveIntegerField(null=True, blank=True)
-    fuzzy_count = models.PositiveIntegerField(null=True, blank=True)
+    translated_count = models.PositiveIntegerField(default=0)
+    approved_count = models.PositiveIntegerField(default=0)
+    fuzzy_count = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         translated = float(self.translated_count + self.approved_count)
