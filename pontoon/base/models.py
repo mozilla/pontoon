@@ -124,6 +124,9 @@ class Resource(models.Model):
     path = models.TextField()  # Path to localization file
     entity_count = models.PositiveIntegerField()
 
+    def __unicode__(self):
+        return '%s: %s' % (self.project.name, self.path)
+
 
 class Entity(models.Model):
     resource = models.ForeignKey(Resource)
@@ -263,6 +266,11 @@ class Stats(models.Model):
     translated_count = models.PositiveIntegerField(null=True, blank=True)
     approved_count = models.PositiveIntegerField(null=True, blank=True)
     fuzzy_count = models.PositiveIntegerField(null=True, blank=True)
+
+    def __unicode__(self):
+        translated = float(self.translated_count + self.approved_count)
+        percent = translated * 100 / self.resource.entity_count
+        return str(int(round(percent)))
 
 
 class ProjectForm(ModelForm):
