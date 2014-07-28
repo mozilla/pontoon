@@ -637,9 +637,13 @@ def update_properties(project, locale):
     # Get relative paths to translated files only
     translations = Translation.objects.filter(
         entity__in=entities, locale=locale)
+
     entities_pks = translations.values("entity").distinct()
     entities_translated = Entity.objects.filter(pk__in=entities_pks)
-    relative_paths = entities_translated.values_list("path").distinct()
+    resources_pks = entities_translated.values("resource").distinct()
+    resources_translated = Resource.objects.filter(pk__in=resources_pks)
+
+    relative_paths = resources_translated.values_list("path").distinct()
 
     for relative in relative_paths:
         path = os.path.join(locale_directory_path, relative[0])
