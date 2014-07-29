@@ -223,6 +223,14 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
         t.save()
 
 
+def update_entity_count(resource):
+    """Save number of non-obsolete entities for a given resource."""
+
+    entities = Entity.objects.filter(resource=resource, obsolete=False)
+    resource.entity_count = entities.count()
+    resource.save()
+
+
 def parse_lang(path):
     """Parse a dotlang file and return a dict of translations."""
     trans = {}
@@ -283,6 +291,9 @@ def extract_po(project, locale, paths, entities=False):
                                     string_plural=escape(entry.msgid_plural),
                                     comment=entry.comment,
                                     source=entry.occurrences)
+
+                update_entity_count(resource)
+
             else:
                 for entry in (po.translated_entries() + po.fuzzy_entries()):
                     if not entry.obsolete:
@@ -355,6 +366,9 @@ def extract_properties(project, locale, paths, entities=False):
                         except Entity.DoesNotExist:
                             continue
 
+            if entities:
+                update_entity_count(resource)
+
             log.debug("[" + locale.code + "]: " + path + " saved to DB.")
             f.close()
         except IOError:
@@ -376,6 +390,9 @@ def extract_lang(project, locale, paths, entities=False):
             for key, value in lang.items():
                 save_entity(resource=resource, string=key,
                             comment=value[0])
+
+            update_entity_count(resource)
+
         else:
             for key, value in lang.items():
                 if key != value[1] or '{ok}' in value[2]:
@@ -437,6 +454,10 @@ def extract_ini(project, path):
                     log.debug("[" + section + "]: line ID " +
                               item[0] + " is obsolete.")
                     continue
+
+        if section == source_locale:
+            update_entity_count(resource)
+
         log.debug("[" + section + "]: saved to DB.")
 
 
