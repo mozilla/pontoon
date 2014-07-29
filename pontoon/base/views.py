@@ -191,7 +191,7 @@ def translate(request, locale, slug, page=None, path=None,
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Validate project locales
-    if len(p.locales.filter(code=locale)) == 0:
+    if p.locales.filter(code=locale).count() == 0:
         request.session['translate_error'] = {
             'locale': locale,
             'project': p.slug,
