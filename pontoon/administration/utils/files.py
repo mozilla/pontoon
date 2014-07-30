@@ -27,6 +27,7 @@ from pontoon.base.models import (
     Translation,
     UserProfile,
     get_translation,
+    unset_approved,
     update_stats,
 )
 
@@ -202,14 +203,14 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
     """Admin interface: save new or update existing translation in DB."""
 
     approved = not fuzzy
+    translations = Translation.objects.filter(
+        entity=entity, locale=locale, plural_form=plural_form)
 
-    # Update existing translation if different from repository
+    # Update existing translations if fuzzy status changes
     try:
-        t = Translation.objects.get(entity=entity, locale=locale,
-                                    plural_form=plural_form, approved=True)
-        if t.string != string or t.fuzzy != fuzzy:
-            t.string = string
-            t.user = None
+        t = translations.get(string=string)
+        if t.fuzzy != fuzzy:
+            unset_approved(translations)
             t.date = datetime.datetime.now()
             t.approved = approved
             t.fuzzy = fuzzy
@@ -217,9 +218,10 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
 
     # Save new translation if it doesn's exist yet
     except Translation.DoesNotExist:
+        unset_approved(translations)
         t = Translation(
-            entity=entity, locale=locale, string=string,
-            plural_form=plural_form, date=datetime.datetime.now(),
+            entity=entity, locale=locale, plural_form=plural_form,
+            string=string, date=datetime.datetime.now(),
             approved=approved, fuzzy=fuzzy)
         t.save()
 
