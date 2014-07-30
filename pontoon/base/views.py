@@ -436,6 +436,7 @@ def approve_translation(request, template=None):
         entity=entity, locale=locale, plural_form=plural_form)
     unset_approved(translations)
 
+    translation.user = request.user
     translation.approved = True
     translation.save()
 
@@ -557,7 +558,7 @@ def update_translation(request, template=None):
 
     # Translations exist
     if len(translations) > 0:
-        # Same translation exist
+        # Same translation exists
         for t in translations:
             if t.string == string:
 
@@ -568,6 +569,7 @@ def update_translation(request, template=None):
                         return warnings
 
                     unset_approved(translations)
+                    t.user = user
                     t.approved = True
                     t.fuzzy = False
                     t.save()
@@ -587,6 +589,7 @@ def update_translation(request, template=None):
                         if warnings:
                             return warnings
 
+                        t.user = user
                         t.approved = False
                         t.fuzzy = False
                         t.save()
