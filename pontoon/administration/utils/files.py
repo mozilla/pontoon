@@ -27,6 +27,7 @@ from pontoon.base.models import (
     Translation,
     UserProfile,
     get_translation,
+    update_stats,
 )
 
 log = commonware.log.getLogger('pontoon')
@@ -72,7 +73,7 @@ def get_locale_directory(project, locale):
                 'path': os.path.join(root, dirname),
             }
 
-    log.error("Locale repository path not found.")
+    log.debug("Locale repository path not found.")
 
     # INI Format
     return {
@@ -330,6 +331,8 @@ def extract_po(project, locale, paths, entities=False):
                             except Entity.DoesNotExist:
                                 continue
 
+                update_stats(resource, locale)
+
             log.debug("[" + locale.code + "]: " + path + " saved to DB.")
         except Exception as e:
             log.critical('PoExtractError for %s: %s' % (path, e))
@@ -368,6 +371,8 @@ def extract_properties(project, locale, paths, entities=False):
 
             if entities:
                 update_entity_count(resource)
+            else:
+                update_stats(resource, locale)
 
             log.debug("[" + locale.code + "]: " + path + " saved to DB.")
             f.close()
@@ -404,6 +409,8 @@ def extract_lang(project, locale, paths, entities=False):
                     except Entity.DoesNotExist:
                         continue
 
+            update_stats(resource, locale)
+
         log.debug("[" + locale.code + "]: " + path + " saved to DB.")
 
 
@@ -435,21 +442,22 @@ def extract_ini(project, path):
         project=project, path=path)
 
     for section in sections:
+        try:
+            locale = Locale.objects.get(code=section)
+        except Locale.DoesNotExist:
+            log.debug("Locale not supported: " + section)
+            break
+
         for item in config.items(section):
             if section == source_locale:
                 save_entity(resource=resource, string=item[1],
                             key=item[0])
             else:
                 try:
-                    l = Locale.objects.get(code=section)
-                except Locale.DoesNotExist:
-                    log.debug("Locale not supported: " + section)
-                    break
-                try:
                     e = Entity.objects.get(
                         resource=resource, key=item[0])
                     save_translation(
-                        entity=e, locale=l, string=item[1])
+                        entity=e, locale=locale, string=item[1])
                 except Entity.DoesNotExist:
                     log.debug("[" + section + "]: line ID " +
                               item[0] + " is obsolete.")
@@ -457,6 +465,8 @@ def extract_ini(project, path):
 
         if section == source_locale:
             update_entity_count(resource)
+        else:
+            update_stats(resource, locale)
 
         log.debug("[" + section + "]: saved to DB.")
 

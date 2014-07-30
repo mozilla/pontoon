@@ -24,14 +24,6 @@ class UserProfile(models.Model):
     svn_password = models.CharField(max_length=128, blank=True)
 
 
-# For every newly created user
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-
-post_save.connect(create_user_profile, sender=User)
-
-
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
@@ -172,72 +164,6 @@ class Translation(models.Model):
     def __unicode__(self):
         return self.string
 
-    def update_stats(self, change):
-        stats, created = Stats.objects.get_or_create(
-            resource=self.entity.resource, locale=self.locale)
-
-        stats.approved_count += change['approved']
-        stats.fuzzy_count += change['fuzzy']
-        stats.translated_count += change['translated']
-        stats.save()
-
-    def get_entity_stats(self):
-        locale = self.locale
-        entity = self.entity
-
-        translation_array = []
-        forms_approved = forms_fuzzy = forms_translated = 0
-        approved = fuzzy = translated = 0
-
-        if entity.string_plural == "":
-            translation = get_translation(entity=entity, locale=locale)
-            translation_array.append(translation)
-
-        else:
-            for j in range(0, locale.nplurals or 1):
-                translation = get_translation(
-                    entity=entity, locale=locale, plural_form=j)
-                translation_array.append(translation)
-
-        for i in range(0, len(translation_array)):
-            if translation_array[i].approved is True:
-                forms_approved += 1
-            if translation_array[i].fuzzy is True:
-                forms_fuzzy += 1
-            if translation_array[i].pk is not None:
-                forms_translated += 1
-
-        if i+1 == forms_approved:
-            approved += 1
-        elif i+1 == forms_fuzzy:
-            fuzzy += 1
-        elif i+1 == forms_translated:
-            translated += 1
-
-        return Counter(
-            approved=approved,
-            fuzzy=fuzzy,
-            translated=translated
-        )
-
-    def save(self, *args, **kwargs):
-        before = self.get_entity_stats()
-        super(Translation, self).save(*args, **kwargs)
-        after = self.get_entity_stats()
-
-        if before != after:
-            after.subtract(before)
-            self.update_stats(change=after)
-
-    def delete(self, *args, **kwargs):
-        before = self.get_entity_stats()
-        super(Translation, self).delete(*args, **kwargs)
-        after = self.get_entity_stats()
-
-        if before != after:
-            after.subtract(before)
-            self.update_stats(change=after)
-
     def serialize(self):
         return {
             'pk': self.pk,
@@ -289,6 +215,14 @@ class ProjectForm(ModelForm):
         return cleaned_data
 
 
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+# For every newly created user
+post_save.connect(create_user_profile, sender=User)
+
+
 def get_entities(project, locale, path=None):
     """Load project entities with locale translations."""
 
@@ -332,11 +266,9 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
 
     if len(translations) > 0:
         try:
-            t = translations.get(approved=True)
-            return t
+            return translations.get(approved=True)
         except Translation.DoesNotExist:
-            latest = translations.order_by("date").reverse()[0]
-            return latest
+            return translations.order_by("date").reverse()[0]
     else:
         return Translation()
 
@@ -350,3 +282,22 @@ def unset_approved(translations):
         t.save()
     except Translation.DoesNotExist:
         pass
+
+
+def update_stats(resource, locale):
+    """Save stats for given resource and locale."""
+
+    stats, c = Stats.objects.get_or_create(resource=resource, locale=locale)
+    entities = Entity.objects.filter(resource=resource, obsolete=False)
+    translated_entities = entities.filter(
+        pk__in=Translation.objects.values('entity'))
+
+    translations = Translation.objects.filter(
+        entity__in=translated_entities, locale=locale)
+    approved = translations.filter(approved=True).count()
+    fuzzy = translations.filter(fuzzy=True).count()
+
+    stats.approved_count = approved
+    stats.fuzzy_count = fuzzy
+    stats.translated_count = translated_entities.count() - approved - fuzzy
+    stats.save()

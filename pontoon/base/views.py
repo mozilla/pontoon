@@ -46,6 +46,7 @@ from pontoon.base.models import (
     get_entities,
     get_translation,
     unset_approved,
+    update_stats,
 )
 
 from session_csrf import anonymous_csrf_exempt
@@ -438,6 +439,8 @@ def approve_translation(request, template=None):
     translation.approved = True
     translation.save()
 
+    update_stats(entity.resource, locale)
+
     return HttpResponse(json.dumps({
         'type': 'approved',
     }), mimetype='application/json')
@@ -487,6 +490,8 @@ def delete_translation(request, template=None):
     if next.pk is not None and request.user.has_perm('base.can_localize'):
         next.approved = True
         next.save()
+
+    update_stats(entity.resource, locale)
 
     return HttpResponse(json.dumps({
         'type': 'deleted',
@@ -567,6 +572,8 @@ def update_translation(request, template=None):
                     t.fuzzy = False
                     t.save()
 
+                    update_stats(e.resource, l)
+
                     return HttpResponse(json.dumps({
                         'type': 'updated',
                         'translation': t.serialize(),
@@ -583,6 +590,8 @@ def update_translation(request, template=None):
                         t.approved = False
                         t.fuzzy = False
                         t.save()
+
+                        update_stats(e.resource, l)
 
                         return HttpResponse(json.dumps({
                             'type': 'updated',
@@ -608,6 +617,8 @@ def update_translation(request, template=None):
         active = get_translation(
             entity=e, locale=l, plural_form=plural_form)
 
+        update_stats(e.resource, l)
+
         return HttpResponse(json.dumps({
             'type': 'added',
             'translation': active.serialize(),
@@ -624,6 +635,8 @@ def update_translation(request, template=None):
             plural_form=plural_form, date=datetime.datetime.now(),
             approved=can_localize)
         t.save()
+
+        update_stats(e.resource, l)
 
         return HttpResponse(json.dumps({
             'type': 'saved',
