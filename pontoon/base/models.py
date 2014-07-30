@@ -164,6 +164,16 @@ class Translation(models.Model):
     def __unicode__(self):
         return self.string
 
+    def save(self, stats=True, *args, **kwargs):
+        super(Translation, self).save(*args, **kwargs)
+        if stats:
+            update_stats(self.entity.resource, self.locale)
+
+    def delete(self, stats=True, *args, **kwargs):
+        super(Translation, self).delete(*args, **kwargs)
+        if stats:
+            update_stats(self.entity.resource, self.locale)
+
     def serialize(self):
         return {
             'pk': self.pk,

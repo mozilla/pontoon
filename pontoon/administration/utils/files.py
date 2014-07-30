@@ -214,7 +214,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             t.date = datetime.datetime.now()
             t.approved = approved
             t.fuzzy = fuzzy
-            t.save()
+            t.save(stats=False)
 
     # Save new translation if it doesn's exist yet
     except Translation.DoesNotExist:
@@ -223,7 +223,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             entity=entity, locale=locale, plural_form=plural_form,
             string=string, date=datetime.datetime.now(),
             approved=approved, fuzzy=fuzzy)
-        t.save()
+        t.save(stats=False)
 
 
 def update_entity_count(resource):
