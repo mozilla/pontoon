@@ -276,12 +276,7 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
 def unset_approved(translations):
     """Unset approved attribute for given translations."""
 
-    try:
-        t = translations.get(approved=True)
-        t.approved = False
-        t.save()
-    except Translation.DoesNotExist:
-        pass
+    translations.update(approved=False)
 
 
 def update_stats(resource, locale):
