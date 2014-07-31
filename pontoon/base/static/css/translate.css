@@ -131,44 +131,67 @@
 }
 
 #pontoon #progress {
-  border: 1px solid #7BC876;
+  border: 4px solid #4D5967;
+  border-radius: 50%;
   float: left;
-  height: 38px;
-  margin: 10px 20px 10px 0;
+  height: 44px;
+  margin: 8px 10px 8px 0;
   position: relative;
-  width: 180px;
-  text-align: center;
+  width: 44px;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #pontoon #progress .graph {
-  background: #FFFFFF;
-  float: left;
-  height: 100%;
-  transition: all 0.2s ease-out;
-  width: 0%;
+  clip: rect(0, 44px, 44px, 22px);
+  height: 44px;
+  left: -4px;
+  position: absolute;
+  top: -4px;
+  width: 44px;
 }
 
-#pontoon #progress .graph.approved {
-  background: #7BC876;
+#pontoon #progress .graph.gt50 {
+  clip: rect(auto, auto, auto, auto);
 }
 
-#pontoon #progress .graph.fuzzy {
-  background: #FED271;
+#pontoon #progress .graph .half {
+  border: 4px solid #7BC876;
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  clip: rect(0, 22px, 44px, 0);
+  border-radius: 50%;
+}
+
+#pontoon #progress .graph .half:nth-child(2) {
+  display: none;
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+#pontoon #progress .graph.gt50 .half:nth-child(2) {
+  display: block;
 }
 
 #pontoon #progress .number {
   color: #FFFFFF;
-  font-size: 14px;
-  line-height: 30px;
+  font-size: 16px;
+  left: 0;
+  line-height: 20px;
   position: absolute;
-  right: 5px;
-  top: 5px;
+  text-align: center;
+  top: 3px;
+  width: 100%;
 }
 
-#pontoon #progress .number.left {
-  color: #272A2F;
-  left: 5px;
-  right: auto;
+#pontoon #progress .number:after {
+  content: "%";
+  color: #AAAAAA;
+  display: block;
+  font-size: 10px;
+  line-height: 10px;
 }
 
 #pontoon > header #loading {

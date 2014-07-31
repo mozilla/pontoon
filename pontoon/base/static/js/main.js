@@ -1216,18 +1216,14 @@ var Pontoon = (function () {
           fuzzy = $("#entitylist .entity.fuzzy").length,
           percentTranslated = Math.round(translated * 100 / all),
           percentApproved = Math.round(approved * 100 / all),
-          percentFuzzy = Math.round(fuzzy * 100 / all);
+          percentFuzzy = Math.round(fuzzy * 100 / all),
+          percent = percentTranslated + percentApproved;
 
-      $('#progress .translated').width(percentTranslated + '%');
-      $('#progress .approved').width(percentApproved + '%');
-      $('#progress .fuzzy').width(percentFuzzy + '%');
-      $('#progress .number').html(approved + '|' + all);
+      $('#progress .number').html(percent);
+      $('#progress .graph').toggleClass('gt50', percent > 50);
 
-      if (percentTranslated + percentApproved + percentFuzzy > 50) {
-        $('#progress .number').addClass('left');
-      } else {
-        $('#progress .number').removeClass('left');
-      }
+      $('#progress .graph .half:first')
+        .css('transform', 'rotate(' + percent/100*360 + 'deg)');
 
       // Update parts menu
       var details = Pontoon.common.getProjectDetails(),
