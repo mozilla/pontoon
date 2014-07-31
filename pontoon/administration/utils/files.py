@@ -34,6 +34,67 @@ from pontoon.base.models import (
 log = commonware.log.getLogger('pontoon')
 
 
+""" Start monkeypatching """
+
+from silme.core.structure import Structure, Comment
+from silme.format.properties.parser import PropertiesParser
+
+@classmethod
+def split_comments_mine(cls, text, object, code='default', pointer=0, end=None):
+    pattern = cls.patterns['comment']
+    if end:
+        match = pattern.search(text, pointer, end)
+    else:
+        match = pattern.search(text, pointer)
+    while match:
+        st0 = match.start(0)
+        if st0 > pointer:
+            cls.split_entities(
+                text, object, code=code, pointer=pointer, end=st0)
+        groups = match.groups()
+        comment = silme.core.structure.Comment(
+            match.group(0)[1:].replace('\n#','\n'))
+        object.append(comment)
+        pointer = match.end(0)
+        if end:
+            match = pattern.search(text, pointer, end)
+        else:
+            match = pattern.search(text, pointer)
+    if (not end or (end > pointer)) and len(text) > pointer:
+        cls.split_entities(text, object, code=code, pointer=pointer)
+
+PropertiesParser.split_comments = split_comments_mine
+
+
+def __repr__mine(self):
+        string = ''
+        for i in self:
+            string += str(i)
+        return string
+
+Comment.__repr__ = __repr__mine
+
+
+def modify_entity_mine(self, id, value, code=None):
+    """
+    modifies entity value; supports duplicate keys
+    code - if given modified the value for given locale code
+    """
+    found = False
+    for item in self:
+        if isinstance(item, silme.core.entity.Entity) and item.id == id:
+            item.set_value(value, code)
+            found = True
+
+    if found:
+        return True
+    else:
+        raise KeyError('No such entity')
+
+Structure.modify_entity = modify_entity_mine
+
+""" End monkeypatching """
+
 def get_locale_paths(project, locale):
     """Get paths to locale files."""
 
@@ -343,12 +404,14 @@ def extract_po(project, locale, paths, entities=False):
 def extract_properties(project, locale, paths, entities=False):
     """Extract .properties files from paths and save or update in DB."""
 
+    parser = silme.format.properties.PropertiesFormatParser
+
     for path in paths:
         try:
             f = open(path)
-            structure = silme.format.properties \
-                .PropertiesFormatParser.get_structure(f.read())
+            structure = parser.get_structure(f.read())
 
+            comment = ""
             relative_path = get_relative_path(path, locale)
             resource, created = Resource.objects.get_or_create(
                 project=project, path=relative_path)
@@ -357,7 +420,8 @@ def extract_properties(project, locale, paths, entities=False):
                 if isinstance(obj, silme.core.entity.Entity):
                     if entities:
                         save_entity(resource=resource, string=obj.value,
-                                    key=obj.id)
+                                    key=obj.id, comment=comment)
+                        comment = ""
                     else:
                         try:
                             e = Entity.objects.get(
@@ -370,6 +434,10 @@ def extract_properties(project, locale, paths, entities=False):
 
                         except Entity.DoesNotExist:
                             continue
+
+                elif isinstance(obj, silme.core.structure.Comment):
+                    if entities:
+                        comment = str(obj)
 
             if entities:
                 update_entity_count(resource)
@@ -642,27 +710,6 @@ def update_po(project, locale):
 
         po.save()
         log.debug("File updated: " + path)
-
-
-def modify_entity_mine(self, id, value, code=None):
-    """
-    modifies entity value; supports duplicate keys
-    code - if given modified the value for given locale code
-    """
-    found = False
-    for item in self:
-        if isinstance(item, silme.core.entity.Entity) and item.id == id:
-            item.set_value(value, code)
-            found = True
-
-    if found:
-        return True
-    else:
-        raise KeyError('No such entity')
-
-
-from silme.core.structure import Structure
-Structure.modify_entity = modify_entity_mine
 
 
 def update_properties(project, locale):
