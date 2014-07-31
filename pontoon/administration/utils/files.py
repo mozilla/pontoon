@@ -644,6 +644,27 @@ def update_po(project, locale):
         log.debug("File updated: " + path)
 
 
+def modify_entity_mine(self, id, value, code=None):
+    """
+    modifies entity value; supports duplicate keys
+    code - if given modified the value for given locale code
+    """
+    found = False
+    for item in self:
+        if isinstance(item, silme.core.entity.Entity) and item.id == id:
+            item.set_value(value, code)
+            found = True
+
+    if found:
+        return True
+    else:
+        raise KeyError('No such entity')
+
+
+from silme.core.structure import Structure
+Structure.modify_entity = modify_entity_mine
+
+
 def update_properties(project, locale):
     """Update .properties files from database. Generate files from source
     files, but only ones with translated strings."""
