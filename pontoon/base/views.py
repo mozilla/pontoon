@@ -153,12 +153,12 @@ def handle_error(request):
     return HttpResponseRedirect(reverse('pontoon.home'))
 
 
-def translate(request, locale, slug, page=None, path=None,
-              template='translate.html'):
+def translate(request, locale, slug, part=None, template='translate.html'):
     """Translate view."""
     log.debug("Translate view.")
 
     invalid_locale = invalid_project = False
+    path = None
 
     # Validate locale
     try:
@@ -249,7 +249,7 @@ def translate(request, locale, slug, page=None, path=None,
     pages = Subpage.objects.filter(project=p)
     if len(pages) > 0:
         try:
-            page = pages.get(name=page)
+            page = pages.get(name=part)
         except Subpage.DoesNotExist:
             page = pages[0]  # If page not specified or doesn't exist
 
@@ -262,9 +262,7 @@ def translate(request, locale, slug, page=None, path=None,
         paths = sorted([i[0] for i in resources.values_list("path")])
 
         if len(paths) > 1:
-            path = data['part'] = path if path in paths else paths[0]
-        else:
-            path = None
+            path = data['part'] = part if part in paths else paths[0]
 
     # Set entities
     data['entities'] = json.dumps(get_entities(p, l, path))
