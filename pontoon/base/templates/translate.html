@@ -34,8 +34,8 @@
 
     <!-- Part selector -->
     <div class="part select{% if not part %} hidden{% endif %}">
-      <div class="button breadcrumbs selector">
-        <span class="title">{{ part }}</span>
+      <div class="button breadcrumbs selector" title="{{ part }}">
+        <span class="title">{% if part %}{{ part.rsplit('/')[-1] }}{% endif %}</span>
       </div>
       <div class="menu">
         <div class="search-wrapper clearfix">
