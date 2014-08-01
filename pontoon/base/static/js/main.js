@@ -1721,9 +1721,14 @@ var Pontoon = (function () {
                   percent = '';
             } else {
               var title = this.resource__path,
-                  share = (this.approved_count + this.translated_count) /
-                          this.resource__entity_count * 100,
-                  percent = Math.round(share) + '%';
+                  share = 0;
+
+              if (this.resource__entity_count > 0) {
+                share = (this.approved_count + this.translated_count) /
+                        this.resource__entity_count * 100;
+              }
+
+              percent = Math.round(share) + '%';
             }
             menu.prepend('<li><span>' + title + '</span>' +
               '<span>' + percent + '</span></li>');

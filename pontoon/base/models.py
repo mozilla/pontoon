@@ -192,7 +192,9 @@ class Stats(models.Model):
 
     def __unicode__(self):
         translated = float(self.translated_count + self.approved_count)
-        percent = translated * 100 / self.resource.entity_count
+        percent = 0
+        if self.resource.entity_count > 0:
+            percent = translated * 100 / self.resource.entity_count
         return str(int(round(percent)))
 
 
