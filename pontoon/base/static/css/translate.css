@@ -177,12 +177,12 @@
 
 #pontoon #progress .number {
   color: #FFFFFF;
-  font-size: 16px;
+  font-size: 14px;
   left: 0;
   line-height: 20px;
   position: absolute;
   text-align: center;
-  top: 3px;
+  top: 5px;
   width: 100%;
 }
 
@@ -191,7 +191,7 @@
   color: #AAAAAA;
   display: block;
   font-size: 10px;
-  line-height: 8px;
+  line-height: 3px;
 }
 
 #pontoon > header #loading {
