@@ -1214,9 +1214,9 @@ var Pontoon = (function () {
           translated = $("#entitylist .entity.translated").length,
           approved = $("#entitylist .entity.approved").length,
           fuzzy = $("#entitylist .entity.fuzzy").length,
-          percentTranslated = Math.round(translated * 100 / all),
-          percentApproved = Math.round(approved * 100 / all),
-          percentFuzzy = Math.round(fuzzy * 100 / all),
+          percentTranslated = all ? Math.round(translated * 100 / all) : 0,
+          percentApproved = all ? Math.round(approved * 100 / all) : 0,
+          percentFuzzy = all ? Math.round(fuzzy * 100 / all) : 0,
           percent = percentTranslated + percentApproved;
 
       $('#progress .number').html(percent);
@@ -1226,15 +1226,17 @@ var Pontoon = (function () {
         .css('transform', 'rotate(' + percent/100*360 + 'deg)');
 
       // Update parts menu
-      var details = Pontoon.common.getProjectDetails(),
-          path = this.project.entities[0].path;
+      if (all) {
+        var details = Pontoon.common.getProjectDetails(),
+            path = this.project.entities[0].path;
 
-      $(details[this.locale.code]).each(function() {
-        if (this.resource__path === path) {
-          this.approved_count = approved;
-          this.translated_count = translated;
-        }
-      });
+        $(details[this.locale.code]).each(function() {
+          if (this.resource__path === path) {
+            this.approved_count = approved;
+            this.translated_count = translated;
+          }
+        });
+      }
     },
 
 
