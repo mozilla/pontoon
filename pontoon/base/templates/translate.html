@@ -56,12 +56,41 @@
     </div>
 
     <!-- Progress indicator -->
-    <div id="progress">
-      <span class="graph">
-        <span class="half"></span>
-        <span class="half"></span>
-      </span>
-      <span class="number"></span>
+    <div id="progress" class="select rounded-graph">
+      <div class="selector">
+        <span class="graph">
+          <span class="half"></span>
+          <span class="half"></span>
+        </span>
+        <span class="number"></span>
+      </div>
+      <aside class="menu">
+        <div>
+          <h2>Translated</h2>
+          <div class="big rounded-graph">
+            <span class="graph">
+              <span class="half"></span>
+              <span class="half"></span>
+            </span>
+            <span class="number"></span>
+          </div>
+        </div>
+        <div class="details">
+          <div class="untranslated">
+            <span>Untranslated</span>
+            <p></p>
+          </div><div class="need-work">
+            <span>Need work</span>
+            <p></p>
+          </div><div class="translated">
+            <span>Unapproved</span>
+            <p></p>
+          </div><div class="approved">
+            <span>Approved</span>
+            <p></p>
+          </div>
+        </div>
+      </aside>
     </div>
 
     <div class="right">
@@ -237,7 +266,7 @@
             <li class="horizontal-separator"></li>
             <li class="untranslated"><span class="status fa"></span>Untranslated</li>
             <li class="fuzzy"><span class="status fa"></span>Need work</li>
-            <li class="translated"><span class="status fa"></span>Translated</li>
+            <li class="translated"><span class="status fa"></span>Unapproved</li>
             <li class="approved"><span class="status fa"></span>Approved</li>
           </ul>
         </div>

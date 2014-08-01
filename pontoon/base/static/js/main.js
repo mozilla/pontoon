@@ -1217,13 +1217,20 @@ var Pontoon = (function () {
           percentTranslated = all ? Math.round(translated * 100 / all) : 0,
           percentApproved = all ? Math.round(approved * 100 / all) : 0,
           percentFuzzy = all ? Math.round(fuzzy * 100 / all) : 0,
-          percent = percentTranslated + percentApproved;
+          percent = percentTranslated + percentApproved,
+          percentUntranslated = 100 - percent - percentFuzzy;
 
       $('#progress .number').html(percent);
       $('#progress .graph').toggleClass('gt50', percent > 50);
+      $('#progress .graph .half:first-child')
+        .css('transform', 'rotate(' + percent / 100 * 360 + 'deg)');
 
-      $('#progress .graph .half:first')
-        .css('transform', 'rotate(' + percent/100*360 + 'deg)');
+      // Update details in the menu
+      $('#progress .menu .details')
+        .find('.untranslated p').html(percentUntranslated).end()
+        .find('.need-work p').html(percentFuzzy).end()
+        .find('.translated p').html(percentTranslated).end()
+        .find('.approved p').html(percentApproved);
 
       // Update parts menu
       if (all) {
