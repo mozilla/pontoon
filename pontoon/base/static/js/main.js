@@ -288,15 +288,15 @@ var Pontoon = (function () {
 
       }).success(function(data) {
         if (data.translations) {
-          $.each(data.translations, function() {
+          $.each(Object.keys(data.translations), function() {
             append({
               original: original,
               quality: '100%',
               url: self.app.path,
               title: 'Pontoon Homepage',
               source: 'Translation memory',
-              translation: this[0],
-              count: this[1]
+              translation: this,
+              count: data.translations[this]
             });
           });
         }

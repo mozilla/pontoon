@@ -9,7 +9,6 @@ import requests
 import xml.etree.ElementTree as ET
 import urllib
 
-from collections import Counter
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -654,15 +653,18 @@ def translation_memory(request):
     if pk:
         entities = entities.exclude(pk=pk)  # Exclude existing entity
 
-    translations = []
+    translations = {}
     for e in entities:
         translation = get_translation(entity=e, locale=locale, fuzzy=False)
         if translation.string != '' or translation.pk is not None:
-            translations.append(translation.string)
+            count = 1
+            if translation.string in translations:
+                count = translations[translation.string] + 1
+            translations[translation.string] = count
 
     if len(translations) > 0:
         return HttpResponse(json.dumps({
-            'translations': Counter(translations).most_common()
+            'translations': translations
         }), mimetype='application/json')
 
     else:
