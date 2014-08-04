@@ -1214,9 +1214,9 @@ var Pontoon = (function () {
           translated = $("#entitylist .entity.translated").length,
           approved = $("#entitylist .entity.approved").length,
           fuzzy = $("#entitylist .entity.fuzzy").length,
-          percentTranslated = all ? Math.round(translated * 100 / all) : 0,
-          percentApproved = all ? Math.round(approved * 100 / all) : 0,
-          percentFuzzy = all ? Math.round(fuzzy * 100 / all) : 0,
+          percentTranslated = all ? Math.floor(translated * 100 / all) : 0,
+          percentApproved = all ? Math.floor(approved * 100 / all) : 0,
+          percentFuzzy = all ? Math.floor(fuzzy * 100 / all) : 0,
           percent = percentTranslated + percentApproved,
           percentUntranslated = 100 - percent - percentFuzzy;
 
@@ -1737,7 +1737,7 @@ var Pontoon = (function () {
                         this.resource__entity_count * 100;
               }
 
-              percent = Math.round(share) + '%';
+              percent = Math.floor(share) + '%';
             }
             menu.prepend('<li><span>' + title + '</span>' +
               '<span>' + percent + '</span></li>');
