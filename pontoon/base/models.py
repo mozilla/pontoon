@@ -2,10 +2,8 @@
 import commonware.log
 import json
 
-from collections import Counter
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import F
 from django.db.models.signals import post_save
 from django.forms import ModelForm
 
