@@ -295,14 +295,24 @@ def update_stats(resource, locale):
     """Save stats for given resource and locale."""
 
     stats, c = Stats.objects.get_or_create(resource=resource, locale=locale)
-    entities = Entity.objects.filter(resource=resource, obsolete=False)
-    translated_entities = entities.filter(
-        pk__in=Translation.objects.values('entity'))
+    entity_ids = Translation.objects.values('entity')
+    translated_entities = Entity.objects.filter(
+        pk__in=entity_ids, resource=resource, obsolete=False)
 
+    # Singular
     translations = Translation.objects.filter(
-        entity__in=translated_entities, locale=locale)
+        entity__in=translated_entities.filter(string_plural=''), locale=locale)
     approved = translations.filter(approved=True).count()
     fuzzy = translations.filter(fuzzy=True).count()
+
+    # Plural
+    nplurals = locale.nplurals or 1
+    for e in translated_entities.exclude(string_plural=''):
+        translations = Translation.objects.filter(entity=e, locale=locale)
+        if translations.filter(approved=True).count() == nplurals:
+            approved += 1
+        elif translations.filter(fuzzy=True).count() == nplurals:
+            fuzzy += 1
 
     stats.approved_count = approved
     stats.fuzzy_count = fuzzy
