@@ -221,6 +221,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
             if len(pages) == 0 and len(resources) > 1:
                 locale_details = Stats.objects \
                     .filter(resource__in=resources, locale=loc) \
+                    .order_by('resource__path') \
                     .values(
                         'resource__path',
                         'resource__entity_count',
