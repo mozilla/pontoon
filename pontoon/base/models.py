@@ -278,7 +278,7 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
         try:
             return translations.get(approved=True)
         except Translation.DoesNotExist:
-            return translations.order_by("date").reverse()[0]
+            return translations.latest("date")
     else:
         return Translation()
 

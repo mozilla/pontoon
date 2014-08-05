@@ -285,7 +285,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             try:
                 t = translations_equal.get(approved=True)
             except Translation.DoesNotExist:
-                t = translations_equal.order_by("date").reverse()[0]
+                t = translations_equal.latest("date")
 
         if t.fuzzy != fuzzy:
             unset_approved(translations)
