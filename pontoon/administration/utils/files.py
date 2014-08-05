@@ -266,25 +266,33 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
     approved = not fuzzy
     translations = Translation.objects.filter(
         entity=entity, locale=locale, plural_form=plural_form)
-
-    # Update existing translations if fuzzy status changes
-    try:
-        t = translations.get(string=string)
-        if t.fuzzy != fuzzy:
-            unset_approved(translations)
-            t.date = datetime.datetime.now()
-            t.approved = approved
-            t.fuzzy = fuzzy
-            t.save(stats=False)
+    translations_equal = translations.filter(string=string)
+    translations_equal_count = translations_equal.count()
 
     # Save new translation if it doesn's exist yet
-    except Translation.DoesNotExist:
+    if translations_equal_count == 0:
         unset_approved(translations)
         t = Translation(
             entity=entity, locale=locale, plural_form=plural_form,
             string=string, date=datetime.datetime.now(),
             approved=approved, fuzzy=fuzzy)
         t.save(stats=False)
+
+    # Update existing translations if fuzzy status changes
+    elif translations_equal_count > 0:
+        t = translations_equal[0]
+        if translations_equal_count > 1:
+            try:
+                t = translations_equal.get(approved=True)
+            except Translation.DoesNotExist:
+                t = translations_equal.order_by("date").reverse()[0]
+
+        if t.fuzzy != fuzzy:
+            unset_approved(translations)
+            t.date = datetime.datetime.now()
+            t.approved = approved
+            t.fuzzy = fuzzy
+            t.save(stats=False)
 
 
 def update_entity_count(resource):
