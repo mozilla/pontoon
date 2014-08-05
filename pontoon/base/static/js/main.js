@@ -199,7 +199,8 @@ var Pontoon = (function () {
      */
     getOtherLocales: function (entity) {
       var self = this,
-          list = $('#other-locales ul').empty();
+          list = $('#other-locales ul').empty(),
+          tab = $('#helpers a[href="#other-locales"]').addClass('loading');
 
       if (self.XHRgetOtherLocales) {
         self.XHRgetOtherLocales.abort();
@@ -222,6 +223,7 @@ var Pontoon = (function () {
           } else {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
+          tab.removeClass('loading');
         }
       });
     },
@@ -237,7 +239,7 @@ var Pontoon = (function () {
     getMachinery: function (original, target) {
       var self = this,
           tab_id = target || 'machinery',
-          loader = target || 'helpers li a[href="#' + tab_id + '"]',
+          loader = 'helpers li a[href="#' + tab_id + '"]',
           ul = $('#' + tab_id).find('ul').empty(),
           tab = $('#' + loader).addClass('loading'),
           requests = 0;
@@ -462,7 +464,8 @@ var Pontoon = (function () {
      */
     getHistory: function (entity) {
       var self = this,
-          list = $('#history ul').empty();
+          list = $('#history ul').empty(),
+          tab = $('#helpers a[href="#history"]').addClass('loading');
 
       if (self.XHRgetHistory) {
         self.XHRgetHistory.abort();
@@ -506,6 +509,7 @@ var Pontoon = (function () {
           } else {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
+          tab.removeClass('loading');
         }
       });
     },
