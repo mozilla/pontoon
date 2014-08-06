@@ -1215,37 +1215,35 @@ var Pontoon = (function () {
      */
     updateProgress: function () {
       var all = $("#entitylist .entity").length,
-          translated = $("#entitylist .entity.translated").length,
           approved = $("#entitylist .entity.approved").length,
+          translated = $("#entitylist .entity.translated").length,
           fuzzy = $("#entitylist .entity.fuzzy").length,
           untranslated = all - translated - approved - fuzzy,
-          percentTranslated = all ? translated * 100 / all : 0,
-          percentApproved = all ? approved * 100 / all : 0,
-          percentFuzzy = all ? fuzzy * 100 / all : 0,
-          percent = Math.floor(percentTranslated + percentApproved);
+          percent = {
+            approved: all ? approved * 100 / all : 0,
+            translated: all ? translated * 100 / all : 0,
+            fuzzy: all ? fuzzy * 100 / all : 0
+          },
+          number = Math.floor(percent.translated + percent.approved);
 
-      $('#progress .number').html(percent);
+      $('#progress .number').html(number);
 
-      // Graph
-      $('#progress .graph')
-        .find('.approved')
-          .toggleClass('gt50', percentApproved > 50)
+      // Update graph
+      $('#progress .graph > span').each(function(i) {
+        var cls = $(this).attr('class'),
+            keys = Object.keys(percent).slice(0, i % 3),
+            shift = 0;
+
+        $(keys).each(function() {
+          shift += percent[this];
+        });
+
+        $(this)
+          .css('transform', 'rotate(' + shift / 100 * 360 + 'deg)')
+          .toggleClass('gt50', percent[cls] > 50)
           .find('.half:first-child')
-            .css('transform', 'rotate(' + percentApproved / 100 * 360 + 'deg)')
-        .end().end()
-
-        .find('.translated')
-          .css('transform', 'rotate(' + percentApproved / 100 * 360 + 'deg)')
-          .toggleClass('gt50', percentTranslated > 50)
-          .find('.half:first-child')
-            .css('transform', 'rotate(' + percentTranslated / 100 * 360 + 'deg)')
-        .end().end()
-
-        .find('.fuzzy')
-          .css('transform', 'rotate(' + (percentApproved + percentTranslated) / 100 * 360 + 'deg)')
-          .toggleClass('gt50', percentFuzzy > 50)
-          .find('.half:first-child')
-            .css('transform', 'rotate(' + percentFuzzy / 100 * 360 + 'deg)')
+            .css('transform', 'rotate(' + percent[cls] / 100 * 360 + 'deg)')
+      });
 
       // Update details in the menu
       $('#progress .menu .details')
