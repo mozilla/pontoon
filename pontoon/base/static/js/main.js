@@ -1218,11 +1218,10 @@ var Pontoon = (function () {
           translated = $("#entitylist .entity.translated").length,
           approved = $("#entitylist .entity.approved").length,
           fuzzy = $("#entitylist .entity.fuzzy").length,
+          untranslated = all - translated - approved - fuzzy,
           percentTranslated = all ? Math.floor(translated * 100 / all) : 0,
           percentApproved = all ? Math.floor(approved * 100 / all) : 0,
-          percentFuzzy = all ? Math.floor(fuzzy * 100 / all) : 0,
-          percent = percentTranslated + percentApproved,
-          percentUntranslated = 100 - percent - percentFuzzy;
+          percent = percentTranslated + percentApproved;
 
       $('#progress .number').html(percent);
       $('#progress .graph').toggleClass('gt50', percent > 50);
@@ -1231,10 +1230,10 @@ var Pontoon = (function () {
 
       // Update details in the menu
       $('#progress .menu .details')
-        .find('.untranslated p').html(percentUntranslated).end()
-        .find('.need-work p').html(percentFuzzy).end()
-        .find('.translated p').html(percentTranslated).end()
-        .find('.approved p').html(percentApproved);
+        .find('.untranslated p').html(untranslated).end()
+        .find('.need-work p').html(fuzzy).end()
+        .find('.translated p').html(translated).end()
+        .find('.approved p').html(approved);
 
       // Update parts menu
       if (all) {

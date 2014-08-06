@@ -288,13 +288,6 @@
   position: relative;
 }
 
-#pontoon #progress .menu .details p:after {
-  content: "%";
-  font-size: 14px;
-  position: absolute;
-  top: 3px;
-}
-
 #pontoon > header #loading {
   display: none;
   float: left;
