@@ -1891,6 +1891,15 @@ var Pontoon = (function () {
         }
       });
 
+      // Update progress popup
+      $('#progress .selector').click(function() {
+        if (!$(this).find('.menu').is(':visible')) {
+          $('#progress .menu .big')
+            .empty()
+            .append($('#progress .selector').html());
+        }
+      });
+
       // General keyboard shortcuts
       $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
         var key = e.which;
