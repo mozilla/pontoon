@@ -1219,14 +1219,33 @@ var Pontoon = (function () {
           approved = $("#entitylist .entity.approved").length,
           fuzzy = $("#entitylist .entity.fuzzy").length,
           untranslated = all - translated - approved - fuzzy,
-          percentTranslated = all ? Math.floor(translated * 100 / all) : 0,
-          percentApproved = all ? Math.floor(approved * 100 / all) : 0,
-          percent = percentTranslated + percentApproved;
+          percentTranslated = all ? translated * 100 / all : 0,
+          percentApproved = all ? approved * 100 / all : 0,
+          percentFuzzy = all ? fuzzy * 100 / all : 0,
+          percent = Math.floor(percentTranslated + percentApproved);
 
       $('#progress .number').html(percent);
-      $('#progress .graph').toggleClass('gt50', percent > 50);
-      $('#progress .graph .half:first-child')
-        .css('transform', 'rotate(' + percent / 100 * 360 + 'deg)');
+
+      // Graph
+      $('#progress .graph')
+        .find('.approved')
+          .toggleClass('gt50', percentApproved > 50)
+          .find('.half:first-child')
+            .css('transform', 'rotate(' + percentApproved / 100 * 360 + 'deg)')
+        .end().end()
+
+        .find('.translated')
+          .css('transform', 'rotate(' + percentApproved / 100 * 360 + 'deg)')
+          .toggleClass('gt50', percentTranslated > 50)
+          .find('.half:first-child')
+            .css('transform', 'rotate(' + percentTranslated / 100 * 360 + 'deg)')
+        .end().end()
+
+        .find('.fuzzy')
+          .css('transform', 'rotate(' + (percentApproved + percentTranslated) / 100 * 360 + 'deg)')
+          .toggleClass('gt50', percentFuzzy > 50)
+          .find('.half:first-child')
+            .css('transform', 'rotate(' + percentFuzzy / 100 * 360 + 'deg)')
 
       // Update details in the menu
       $('#progress .menu .details')

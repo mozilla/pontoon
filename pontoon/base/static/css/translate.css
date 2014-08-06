@@ -131,7 +131,7 @@
 }
 
 #pontoon .rounded-graph {
-  border: 4px solid #4D5967;
+  border: 4px solid #FD5F60;
   border-radius: 50%;
   position: relative;
 
@@ -154,7 +154,7 @@
   width: 44px;
 }
 
-#pontoon #progress .graph {
+#pontoon #progress .graph > span {
   clip: rect(0, 44px, 44px, 22px);
   height: 44px;
   left: -4px;
@@ -163,7 +163,7 @@
   width: 44px;
 }
 
-#pontoon #progress .big .graph {
+#pontoon #progress .big .graph > span {
   clip: rect(0, 220px, 220px, 110px);
   height: 220px;
   left: -20px;
@@ -171,7 +171,7 @@
   width: 220px;
 }
 
-#pontoon #progress .graph.gt50 {
+#pontoon #progress .graph > span.gt50 {
   clip: rect(auto, auto, auto, auto);
 }
 
@@ -192,13 +192,21 @@
   width: 180px;
 }
 
+#pontoon #progress .graph .translated .half {
+  border-color: #4FC4F6;
+}
+
+#pontoon #progress .graph .fuzzy .half {
+  border-color: #FED271;
+}
+
 #pontoon #progress .graph .half:nth-child(2) {
   display: none;
   -webkit-transform: rotate(180deg);
   transform: rotate(180deg);
 }
 
-#pontoon #progress .graph.gt50 .half:nth-child(2) {
+#pontoon #progress .graph > span.gt50 .half:nth-child(2) {
   display: block;
 }
 
