@@ -1226,11 +1226,9 @@ var Pontoon = (function () {
           },
           number = Math.floor(percent.translated + percent.approved);
 
-      $('#progress .number').html(number);
-
       // Update graph
       $('#progress .graph > span').each(function(i) {
-        var cls = $(this).attr('class'),
+        var cls = $(this).attr('class').split(" ")[0],
             keys = Object.keys(percent).slice(0, i % 3),
             shift = 0;
 
@@ -1244,6 +1242,7 @@ var Pontoon = (function () {
           .find('.half:first-child')
             .css('transform', 'rotate(' + percent[cls] / 100 * 360 + 'deg)')
       });
+      $('#progress .number').html(number);
 
       // Update details in the menu
       $('#progress .menu .details')
