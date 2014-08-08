@@ -65,6 +65,11 @@ Get involved
 * Join #pontoon on [IRC](https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon)
 * Follow us on [Twitter](https://twitter.com/#!/mozillapontoon)
 
+Servers
+-------
+* [Development](https://pontoon-dev.allizom.org/)
+* [Production](https://pontoon.mozilla.org/)
+
 License
 -------
 This software is licensed under the [New BSD License](http://creativecommons.org/licenses/BSD/). For more information, read the file `LICENSE`.
