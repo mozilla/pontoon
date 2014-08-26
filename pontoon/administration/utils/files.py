@@ -23,6 +23,7 @@ from pontoon.base.models import (
     Project,
     ProjectForm,
     Resource,
+    Stats,
     Subpage,
     Translation,
     UserProfile,
@@ -295,12 +296,15 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             t.save(stats=False)
 
 
-def update_entity_count(resource):
+def update_entity_count(resource, project):
     """Save number of non-obsolete entities for a given resource."""
-
     entities = Entity.objects.filter(resource=resource, obsolete=False)
     resource.entity_count = entities.count()
     resource.save()
+
+    # Also make sure resource-locale Stats object exists
+    for locale in project.locales.all():
+        s, c = Stats.objects.get_or_create(resource=resource, locale=locale)
 
 
 def parse_lang(path):
@@ -364,7 +368,7 @@ def extract_po(project, locale, paths, entities=False):
                                     comment=entry.comment,
                                     source=entry.occurrences)
 
-                update_entity_count(resource)
+                update_entity_count(resource, project)
 
             else:
                 for entry in (po.translated_entries() + po.fuzzy_entries()):
@@ -448,7 +452,7 @@ def extract_properties(project, locale, paths, entities=False):
                         comment = str(obj)
 
             if entities:
-                update_entity_count(resource)
+                update_entity_count(resource, project)
             else:
                 update_stats(resource, locale)
 
@@ -474,7 +478,7 @@ def extract_lang(project, locale, paths, entities=False):
                 save_entity(resource=resource, string=key,
                             comment=value[0])
 
-            update_entity_count(resource)
+            update_entity_count(resource, project)
 
         else:
             for key, value in lang.items():
@@ -542,7 +546,7 @@ def extract_ini(project, path):
                     continue
 
         if section == source_locale:
-            update_entity_count(resource)
+            update_entity_count(resource, project)
         else:
             update_stats(resource, locale)
 
