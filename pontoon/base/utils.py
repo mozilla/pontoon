@@ -110,7 +110,7 @@ def quality_check(original, string, ignore):
 
 
 def req(method, project, resource, locale,
-             username, password, payload=False):
+        username, password, payload=False):
     """
     Make request to Transifex server.
 
