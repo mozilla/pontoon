@@ -284,6 +284,15 @@ button {
   outline: none;
 }
 
+/* Reset values for Persian (fa) to avoid colision with Font Awesome */
+.language.fa {
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+}
+
 #pontoon h2 {
   color: #888888;
   font-size: 14px;
