@@ -4,6 +4,7 @@ import commonware.log
 import configparser
 import datetime
 import fnmatch
+import operator
 import os
 import polib
 import shutil
@@ -318,6 +319,7 @@ def parse_lang(path):
         source = None
         comment = ''
         tags = []
+        counter = 0
 
         for line in lines:
             line = line.strip()
@@ -337,10 +339,13 @@ def parse_lang(path):
                         line = line[:-len(tag)]
                         tags.append(tag)
                 line = line.strip()
-                trans[source] = [comment, line, tags]
+                trans[source] = [counter, comment, line, tags]
                 comment = ''
                 tags = []
+                counter += 1
 
+    # Sort by counter
+    trans = sorted(trans.iteritems(), key=operator.itemgetter(1))
     return trans
 
 
@@ -474,19 +479,19 @@ def extract_lang(project, locale, paths, entities=False):
             project=project, path=relative_path)
 
         if entities:
-            for key, value in lang.items():
+            for key, value in lang:
                 save_entity(resource=resource, string=key,
-                            comment=value[0])
+                            comment=value[1])
 
             update_entity_count(resource, project)
 
         else:
-            for key, value in lang.items():
-                if key != value[1] or '{ok}' in value[2]:
+            for key, value in lang:
+                if key != value[2] or '{ok}' in value[3]:
                     try:
                         e = Entity.objects.get(resource=resource, string=key)
                         save_translation(
-                            entity=e, locale=locale, string=value[1])
+                            entity=e, locale=locale, string=value[2])
 
                     except Entity.DoesNotExist:
                         continue
