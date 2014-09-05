@@ -420,7 +420,7 @@ var Pontoon = (function () {
       self.XHRtransvision = $.ajax({
         url: 'transvision/',
         data: {
-          text: original,
+          text: encodeURIComponent(original),
           locale: self.locale.code
         }
 
