@@ -227,6 +227,11 @@ def get_relative_path(path, locale):
     if 'templates' in path:
         locale_directory = 'templates'
 
+    # Also check for locale variants with underscore, e.g. de_AT
+    underscore = locale.code.replace('-', '_')
+    if '/' + underscore + '/' in path:
+        locale_directory = underscore
+
     return path.split('/' + locale_directory + '/')[-1]
 
 
