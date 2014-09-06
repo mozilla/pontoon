@@ -1790,7 +1790,7 @@ var Pontoon = (function () {
 
         var locale = $('.locale .selector .language').attr('class').split(' ')[1],
             project = $('.project .selector .title').data('slug'),
-            part = $('.part .selector .title:visible').attr('title'),
+            part = $('.part .selector:visible').attr('title'),
             loc = locale + '/' + project;
 
         // On homepage, show error if no project selected
@@ -1827,9 +1827,10 @@ var Pontoon = (function () {
         if (detail) {
           var defaultPart = detail.resource__path || detail.name;
           $('header .part').removeClass("hidden")
-            .find('.selector .title')
-              .html(defaultPart.replace(/^.*[\\\/]/, ''))
-              .attr('title', defaultPart);
+            .find('.selector')
+              .attr('title', defaultPart)
+              .find('.title')
+                .html(defaultPart.replace(/^.*[\\\/]/, ''));
         } else {
           $('header .part').addClass("hidden");
         }
@@ -1850,9 +1851,10 @@ var Pontoon = (function () {
       // Parts menu handler
       $('.part .menu li:not(".no-match")').live("click.pontoon", function () {
         var title = $(this).find('span:first').html();
-        $('.part .selector .title')
-          .html(title.replace(/^.*[\\\/]/, ''))
-          .attr('title', title);
+        $('.part .selector')
+          .attr('title', title)
+          .find('.title')
+            .html(title.replace(/^.*[\\\/]/, ''));
       });
 
       // Locale menu handler
