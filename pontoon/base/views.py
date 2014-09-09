@@ -541,7 +541,7 @@ def update_translation(request, template=None):
 
     user = request.user
     if not request.user.is_authenticated():
-        if e.project.name != 'Testpilot':
+        if e.resource.project.name != 'Testpilot':
             log.error("Not authenticated")
             return HttpResponse("error")
         else:
