@@ -214,7 +214,9 @@ def translate(request, locale, slug, part=None, template='translate.html'):
 
     for project in projects:
         pages = Subpage.objects.filter(project=project)
-        resources = Resource.objects.filter(project=project)
+        entities = Entity.objects.filter(obsolete=False)
+        resources = Resource.objects.filter(
+            project=project, pk__in=entities.values('resource'))
         details = {}
 
         for loc in project.locales.all():
