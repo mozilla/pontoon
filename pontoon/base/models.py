@@ -293,7 +293,7 @@ def update_stats(resource, locale):
     """Save stats for given resource and locale."""
 
     stats, c = Stats.objects.get_or_create(resource=resource, locale=locale)
-    entity_ids = Translation.objects.values('entity')
+    entity_ids = Translation.objects.filter(locale=locale).values('entity')
     translated_entities = Entity.objects.filter(
         pk__in=entity_ids, resource=resource, obsolete=False)
 
