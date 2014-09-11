@@ -581,10 +581,15 @@
   width: 43px;
 }
 
-#pontoon #filter.opened .button,
-#pontoon #filter .button:hover {
+#pontoon #filter .button:hover .status:before {
+  color: #FFFFFF;
+}
+
+#pontoon #filter.opened .button {
   background-color: #272A2F;
+  border-bottom: 1px solid #525A65;
   width: 100%;
+  z-index: 30;
 }
 
 #pontoon #filter .button .title {
@@ -596,8 +601,7 @@
   top: 12px;
 }
 
-#pontoon #filter.opened .button .title,
-#pontoon #filter .button:hover .title {
+#pontoon #filter.opened .button .title {
   display: block;
 }
 
