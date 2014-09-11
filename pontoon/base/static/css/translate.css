@@ -241,6 +241,7 @@
 }
 
 #pontoon #progress .menu {
+  cursor: auto;
   padding: 0;
   text-align: center;
   top: 48px;
