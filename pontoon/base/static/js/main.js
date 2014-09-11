@@ -1743,7 +1743,7 @@ var Pontoon = (function () {
 
         if (details) {
           menu.find('li:not(".no-match")').remove();
-          $(details[locale].reverse()).each(function() {
+          $(details[locale]).each(function() {
             if (this.name) {
               var title = this.name,
                   percent = '';
@@ -1758,7 +1758,7 @@ var Pontoon = (function () {
 
               percent = Math.floor(share) + '%';
             }
-            menu.prepend('<li><span>' + title + '</span>' +
+            menu.append('<li><span>' + title + '</span>' +
               '<span>' + percent + '</span></li>');
           });
         }
