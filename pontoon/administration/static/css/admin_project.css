@@ -348,6 +348,12 @@ body #intro {
   height: 60px;
 }
 
+#pontoon #intro .subtitle {
+  font-size: 12px;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
 #pontoon #intro .errorlist {
   color: #FD5F60;
   display: inline-block;
