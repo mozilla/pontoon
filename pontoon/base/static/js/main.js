@@ -836,7 +836,7 @@ var Pontoon = (function () {
       if ((nplurals === 2 && pluralForm === 1) ||
           (nplurals > 2 &&
            pluralForm !== -1 &&
-           pluralForm !== eval(plural_rule.replace("n", 1)))) {
+           pluralForm !== eval(plural_rule.replace(/n/g, 1)))) {
         original = '_plural';
       }
 
