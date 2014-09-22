@@ -1256,7 +1256,7 @@ var Pontoon = (function () {
         var details = Pontoon.common.getProjectDetails(),
             path = this.project.entities[0].path;
 
-        $(details[this.locale.code]).each(function() {
+        $(details[this.locale.code.toLowerCase()]).each(function() {
           if (this.resource__path === path) {
             this.approved_count = approved;
             this.translated_count = translated;
@@ -1739,7 +1739,7 @@ var Pontoon = (function () {
       $('.part .selector').click(function () {
         var details = Pontoon.common.getProjectDetails(),
             menu = $(this).siblings('.menu').find('ul'),
-            locale = $.trim($('.locale .selector .code').html());
+            locale = $.trim($('.locale .selector .code').html().toLowerCase());
 
         if (details) {
           menu.find('li:not(".no-match")').remove();
