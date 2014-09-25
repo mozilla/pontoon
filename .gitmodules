@@ -7,3 +7,6 @@
 [submodule "hooks/django/django-pontoon-hook"]
 	path = hooks/django/django-pontoon-hook
 	url = git://github.com/rtnpro/django-pontoon-hook.git
+[submodule "intro"]
+	path = intro
+	url = git@github.com:mathjazz/pontoon-intro.git
