@@ -16,7 +16,8 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     # Application base, containing global templates.
     '%s.base' % PROJECT_MODULE,
     '%s.administration' % PROJECT_MODULE,
-    'django.contrib.admin', 
+    '%s.intro' % PROJECT_MODULE,
+    'django.contrib.admin',
     'south',
 ]
 
@@ -83,7 +84,7 @@ DOMAIN_METHODS['messages'] = [
 #    ('media/js/**.js', 'javascript'),
 # ]
 
-LOGGING = dict(loggers=dict(pontoon = {'level': logging.DEBUG}))
+LOGGING = dict(loggers=dict(pontoon={'level': logging.DEBUG}))
 
 # Required for storing additional information about users
 AUTH_PROFILE_MODULE = 'base.UserProfile'

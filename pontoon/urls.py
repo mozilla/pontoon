@@ -23,6 +23,9 @@ urlpatterns = patterns(
     # Django admin
     (r'^a/', include(admin.site.urls)),
 
+    # Test project: Pontoon Intro
+    url(r'^intro/$', 'pontoon.intro.views.intro'),
+
     # BrowserID
     url(r'^browserid/$', 'pontoon.base.views.verify', name='browserid.verify'),
 
@@ -47,6 +50,6 @@ urlpatterns = patterns(
     (r'', include('pontoon.base.urls')),
 )
 
-## In DEBUG mode, serve media files through Django.
+# In DEBUG mode, serve media files through Django.
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
