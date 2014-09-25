@@ -104,10 +104,8 @@
       <!-- Profile -->
       <div id="profile" class="select">
         <div class="button selector">
-          {% if user.first_name %}<span class="title">{{ user.first_name }}</span>
-          {% elif user.email %}<span class="title">{{ user.email }}</span>{% endif %}
-          {% if gravatar_url %}<img src="{{ gravatar_url }}">
-          {% else %}<span class="icon fa fa-user fa-2x"></span>{%endif %}
+          <span class="title">{% if user.first_name %}{{ user.first_name }}{% elif user.email %}{{ user.email }}{% else %}Anonymous{% endif %}</span>
+          <img src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
         </div>
         <div class="menu">
           <ul>

@@ -279,7 +279,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         gravatar_url += urllib.urlencode({'s': str(size)})
 
         if settings.SITE_URL != 'http://localhost:8000':
-            default = settings.SITE_URL + static('img/user_icon&24.png')
+            default = settings.SITE_URL + static('img/anonymous.jpg')
             gravatar_url += urllib.urlencode({'d': default})
 
         data['gravatar_url'] = gravatar_url
