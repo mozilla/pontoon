@@ -27,11 +27,10 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set it u
 6. Run the development server:
  * `./manage.py runserver`
  * Point your browser to [http://localhost:8000](http://localhost:8000)
+7. (optional) To add and edit projects at [http://localhost:8000/admin/](http://localhost:8000/admin/), first create admin account:
+ * `./manage.py createsuperuser`
 
 __Mac users__: see workarounds for possible issues with [installing requirements](/../../issues/16) or [syncing database](/../../issues/18).
-
-You can also add your own project at [http://localhost:8000/admin/](http://localhost:8000/admin/), but you need an admin account for that:
- * `./manage.py createsuperuser`
 
 Local settings
 --------------
