@@ -200,7 +200,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Check if user authenticated
-    if not p.name == 'Testpilot':
+    if not p.pk == 1:
         if not request.user.is_authenticated():
             messages.error(request, "You need to sign in first.")
             request.session['translate_error'] = {
@@ -375,7 +375,7 @@ def get_translation_history(request, template=None):
         translations = translations.filter(plural_form=plural_form)
     translations = translations.order_by('-approved', '-date')
 
-    if entity.resource.project.name == 'Testpilot':
+    if entity.resource.project.pk == 1:
         user = 'Anonymous'
     else:
         user = 'Imported'
@@ -541,7 +541,7 @@ def update_translation(request, template=None):
 
     user = request.user
     if not request.user.is_authenticated():
-        if e.resource.project.name != 'Testpilot':
+        if e.resource.project.pk != 1:
             log.error("Not authenticated")
             return HttpResponse("error")
         else:
