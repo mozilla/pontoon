@@ -22,35 +22,22 @@ Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set it u
  * `mysql -u root -e 'CREATE DATABASE pontoon CHARACTER SET utf8;'`
  * `./manage.py syncdb --noinput && ./manage.py migrate`
  * `mysql -u root pontoon -e 'ALTER TABLE base_entity CONVERT TO CHARACTER SET utf8 COLLATE utf8_bin;'`
-5. Run the development server:
- * `./manage.py runserver`
-
-And that's it, just point your web browser to [http://localhost:8000](http://localhost:8000) and Pontoon's homepage should apear.
-
-__Mac users__: please see workarounds in case you run into issues with [installing requirements](/../../issues/16) or [syncing database](/../../issues/18).
-
-Test project
-------------
-It gets much more exciting if you add at least one project, so you can try how the localization with Pontoon actually works. We created a simple website in PHP that uses SVN repository for storing localization files. Here's how you set it up:
-
-1. Move or link main Pontoon project folder (`pontoon/`) to your web server's document root, which should be capable of running PHP.
-2. Install [pysvn](http://pysvn.tigris.org/project_downloads.html) to work with the SVN repository. Binaries are available for most popular platforms, but you can also install it from source:
- * Download and untar the latest [source kit](http://pysvn.tigris.org/project_downloads.html) under pysvn Extension.
- * `cd Source`
- * `python setup.py configure`
- * `make`
- * `cp -R pysvn pontoon/env/lib/python2.X/site-packages/`
-3. Run project from localization files stored in SVN repository:
+5. Populate database with test project:
  * `./manage.py update_projects`
+6. Run the development server:
+ * `./manage.py runserver`
+ * Point your browser to [http://localhost:8000](http://localhost:8000)
+
+__Mac users__: see workarounds for possible issues with [installing requirements](/../../issues/16) or [syncing database](/../../issues/18).
 
 You can also add your own project at [http://localhost:8000/admin/](http://localhost:8000/admin/), but you need an admin account for that:
  * `./manage.py createsuperuser`
 
 Local settings
 --------------
- * `MICROSOFT_TRANSLATOR_API_KEY`: set to a valid [Microsoft Translator API key](http://msdn.microsoft.com/en-us/library/hh454950) to use machine translation.
- * `GOOGLE_ANALYTICS_KEY`: set to a valid [Google Analytics key](https://www.google.com/analytics/) to use Google Analytics.
- * `MOZILLIANS_API_KEY`: set to a valid [Mozillians API key](https://wiki.mozilla.org/Mozillians/API-Specification) to grant permission to Mozilla localizers.
+ * `MICROSOFT_TRANSLATOR_API_KEY`: set [Microsoft Translator API key](http://msdn.microsoft.com/en-us/library/hh454950) to use machine translation.
+ * `GOOGLE_ANALYTICS_KEY`: set [Google Analytics key](https://www.google.com/analytics/) to use Google Analytics.
+ * `MOZILLIANS_API_KEY`: set [Mozillians API key](https://wiki.mozilla.org/Mozillians/API-Specification) to grant permission to Mozilla localizers.
 
 Updates
 -------
