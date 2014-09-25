@@ -3,49 +3,7 @@
         "model": "base.project",
         "pk": 1,
         "fields": {
-            "name": "Testpilot",
-            "slug": "testpilot",
-            "url": "https://pontoon-dev.allizom.org/pontoon/hooks/php/test/testpilot/",
-            "locales": [47, 74, 85, 182, 205],
-            "repository_type": "svn",
-            "repository_url": "https://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/testpilot/",
-            "info_brief": "This is a demo website, used for demonstration purposes only. You can translate on the website itself by double clicking on page elements. Access to advanced features like translation memory and machine translation is available by clicking on the menu icon on the left."
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 1,
-        "fields": {
-            "project": 1,
-            "name": "Homepage",
             "url": "https://pontoon-dev.allizom.org/pontoon/hooks/php/test/testpilot/"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 2,
-        "fields": {
-            "project": 1,
-            "name": "Test Cases",
-            "url": "https://pontoon-dev.allizom.org/pontoon/hooks/php/test/testpilot/?page=testcases.php"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 3,
-        "fields": {
-            "project": 1,
-            "name": "Guiding Principles",
-            "url": "https://pontoon-dev.allizom.org/pontoon/hooks/php/test/testpilot/?page=principles.php"
-        }
-    },
-    {
-        "model": "base.subpage",
-        "pk": 4,
-        "fields": {
-            "project": 1,
-            "name": "Privacy Policy",
-            "url": "https://pontoon-dev.allizom.org/pontoon/hooks/php/test/testpilot/?page=privacy.php"
         }
     }
 ]
