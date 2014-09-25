@@ -37,12 +37,13 @@ log = commonware.log.getLogger('pontoon')
 
 
 """ Start monkeypatching """
-
 from silme.core.structure import Structure, Comment
 from silme.format.properties.parser import PropertiesParser
 
+
 @classmethod
-def split_comments_mine(cls, text, object, code='default', pointer=0, end=None):
+def split_comments_mine(
+        cls, text, object, code='default', pointer=0, end=None):
     pattern = cls.patterns['comment']
     if end:
         match = pattern.search(text, pointer, end)
@@ -55,7 +56,7 @@ def split_comments_mine(cls, text, object, code='default', pointer=0, end=None):
                 text, object, code=code, pointer=pointer, end=st0)
         groups = match.groups()
         comment = silme.core.structure.Comment(
-            match.group(0)[1:].replace('\n#','\n'))
+            match.group(0)[1:].replace('\n#', '\n'))
         object.append(comment)
         pointer = match.end(0)
         if end:
@@ -94,8 +95,8 @@ def modify_entity_mine(self, id, value, code=None):
         raise KeyError('No such entity')
 
 Structure.modify_entity = modify_entity_mine
-
 """ End monkeypatching """
+
 
 def get_locale_paths(project, locale):
     """Get paths to locale files."""
@@ -186,10 +187,12 @@ def get_source_directory(path):
 
         for directory in ('templates', 'en-US', 'en-GB', 'en'):
             for dirname in fnmatch.filter(dirnames, directory):
-                return {
-                    'name': dirname,
-                    'path': os.path.join(root, dirname),
-                }
+                source_directory_path = os.path.join(root, dirname)
+                if detect_format(source_directory_path):
+                    return {
+                        'name': dirname,
+                        'path': source_directory_path,
+                    }
 
     # INI Format
     return {
