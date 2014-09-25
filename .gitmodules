@@ -9,4 +9,4 @@
 	url = git://github.com/rtnpro/django-pontoon-hook.git
 [submodule "intro"]
 	path = intro
-	url = git@github.com:mathjazz/pontoon-intro.git
+	url = git://github.com/mathjazz/pontoon-intro.git
