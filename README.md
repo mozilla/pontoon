@@ -6,7 +6,7 @@ To enable localization of your site with Pontoon, include a script to overcome c
 
 Installation
 ------------
-Pontoon is basedon on [Playdoh](https://github.com/mozilla/playdoh). To set it up, you can either use Playdoh's official [documentation](http://playdoh.readthedocs.org/en/latest/) or follow the steps below.
+Pontoon is basedon on [Playdoh](http://playdoh.readthedocs.org/en/latest/), so it's easy to set it up. Follow the steps below.
 
 1. Clone this repository or your [fork](http://help.github.com/fork-a-repo/):
  * `git clone --recursive https://github.com/mathjazz/pontoon.git`
