@@ -5,7 +5,7 @@
         "fields": {
             "name": "Pontoon Intro",
             "slug": "pontoon-intro",
-            "url": "https://pontoon-dev.allizom.org/intro/"
+            "url": "https://pontoon-dev.allizom.org/intro/",
             "locales": [74, 85, 111, 205, 213],
             "repository_type": "git",
             "repository_url": "https://github.com/mathjazz/pontoon-intro.git",
