@@ -3,7 +3,13 @@
         "model": "base.project",
         "pk": 1,
         "fields": {
-            "url": "https://pontoon.mozilla.org/pontoon/hooks/php/test/testpilot/"
+            "name": "Pontoon Intro",
+            "slug": "pontoon-intro",
+            "url": "https://pontoon.mozilla.org/intro/"
+            "locales": [74, 85, 111, 205, 213],
+            "repository_type": "git",
+            "repository_url": "https://github.com/mathjazz/pontoon-intro.git",
+            "info_brief": "This is a demo website, used for demonstration purposes only. You can translate on the website itself by double clicking on page elements. Access to advanced features like translation memory and machine translation is available by clicking on the menu icon on the left."
         }
     }
 ]
