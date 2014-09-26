@@ -11,23 +11,23 @@ Pontoon is basedon on [Playdoh](http://playdoh.readthedocs.org/en/latest/), so i
 1. Clone this repository or your [fork](http://help.github.com/fork-a-repo/):
  * `git clone --recursive https://github.com/mathjazz/pontoon.git`
  * `cd pontoon`
-2. Create and set up the [virtual environment](http://www.virtualenv.org/en/latest/index.html):
+2. Create and set up [virtual environment](http://www.virtualenv.org/en/latest/index.html):
  * `virtualenv --no-site-packages env`
  * `source env/bin/activate`
  * `pip install -r requirements/compiled.txt -r requirements/prod.txt`
-3. Configure the [settings](#local-settings):
+3. Configure [settings](#local-settings):
  * `cp settings/local.py-dist settings/local.py`
-4. Set up the database:
+4. Set up database:
  * `mysql.server start`
  * `mysql -u root -e 'CREATE DATABASE pontoon CHARACTER SET utf8;'`
  * `./manage.py syncdb --noinput && ./manage.py migrate`
  * `mysql -u root pontoon -e 'ALTER TABLE base_entity CONVERT TO CHARACTER SET utf8 COLLATE utf8_bin;'`
 5. Populate database with test project:
  * `./manage.py update_projects`
-6. Run the development server:
+6. Run development server:
  * `./manage.py runserver`
  * Point your browser to [http://localhost:8000](http://localhost:8000)
-7. (optional) To add and edit projects at [http://localhost:8000/admin/](http://localhost:8000/admin/), first create admin account:
+7. (optional) For admin access at [http://localhost:8000/admin/](http://localhost:8000/admin/), create admin account:
  * `./manage.py createsuperuser`
 
 __Mac users__: see workarounds for possible issues with [installing requirements](/../../issues/16) or [syncing database](/../../issues/18).
