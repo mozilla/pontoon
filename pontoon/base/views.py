@@ -969,14 +969,12 @@ def commit_to_repository(request, template=None):
         log.error(e)
         return HttpResponse("error")
 
-    path = files.get_locale_directory(p, locale)["path"]
+    path = files.update_from_database(p, locale)
     if not path:
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': 'Sorry, repository path not found.',
         }), mimetype='application/json')
-
-    files.update_from_database(p, locale)
 
     name = request.user.email if not request.user.first_name else '%s (%s)' \
         % (request.user.first_name, request.user.email)

@@ -927,7 +927,12 @@ def update_from_database(project, locale):
     """Update project files from database."""
     log.debug("Update project files from database.")
 
+    path = get_locale_directory(project, locale)["path"]
+    if not path:
+        return False
+
     globals()['update_%s' % project.format](project, locale)
+    return path
 
 
 def generate_zip(project, locale):
@@ -947,11 +952,9 @@ def generate_zip(project, locale):
     except Locale.DoesNotExist as e:
         log.error(e)
 
-    path = get_locale_directory(project, locale)["path"]
+    path = update_from_database(project, locale)
     if not path:
         return False
-
-    update_from_database(project, locale)
 
     s = StringIO.StringIO()
     zf = zipfile.ZipFile(s, "w")
