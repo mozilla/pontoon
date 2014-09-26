@@ -201,21 +201,6 @@ def get_source_directory(path):
     }
 
 
-def is_one_locale_repository(repository_url, repository_path_master):
-    """Check if repository contains one or multiple locales."""
-
-    one_locale = repository_url_master = False
-    repository_path = repository_path_master
-    last = os.path.basename(os.path.normpath(repository_url))
-
-    if last in ('templates', 'en-US', 'en-GB', 'en'):
-        one_locale = True
-        repository_url_master = repository_url.rsplit(last, 1)[0]
-        repository_path = os.path.join(repository_path_master, last)
-
-    return one_locale, repository_url_master, repository_path
-
-
 def get_repository_path_master(project):
     """Get path to master project folder containing repository files."""
 
@@ -608,20 +593,31 @@ def extract_to_database(project, locales=None):
 
 
 def update_from_repository(project, locales=None):
-    """Update project files from remote repository."""
+    """
+    Update project files from remote repository.
+
+    Args:
+        project: Project instance
+        locales: List of Locale instances
+    """
     log.debug("Update project files from remote repository.")
 
     repository_type = project.repository_type
     repository_url = project.repository_url
-    repository_path_master = get_repository_path_master(project)
+    repository_path = repository_path_master = \
+        get_repository_path_master(project)
 
-    # Update repository path if one-locale repository
-    one_locale, repository_url_master, repository_path = \
-        is_one_locale_repository(repository_url, repository_path_master)
+    # If one-locale repo, set repository_url_master and update repository_path
+    repository_url_master = False
+    ending = os.path.basename(os.path.normpath(repository_url))
 
+    if ending in ('templates', 'en-US', 'en-GB', 'en'):
+        repository_url_master = repository_url.rsplit(ending, 1)[0]
+        repository_path = os.path.join(repository_path_master, ending)
+
+    # Save file to server
     if repository_type == 'file':
 
-        # Save file to server
         u = urllib2.urlopen(repository_url)
         file_name = repository_url.rstrip('/').rsplit('/', 1)[1]
         file_path = os.path.join(repository_path_master, file_name)
@@ -640,13 +636,13 @@ def update_from_repository(project, locales=None):
         format = file_extension[1:].lower()
         format = 'po' if format == 'pot' else format
 
+    # Save files to server
     else:
 
-        # Save files to server
         if not locales:
             update_from_vcs(repository_type, repository_url, repository_path)
 
-        if one_locale:
+        if repository_url_master:  # One-locale repo
             if not locales:
                 locales = project.locales.all()
             for l in locales:
@@ -930,7 +926,7 @@ def generate_zip(project, locale):
     Generate .zip of all project files for the specified locale.
 
     Args:
-        project: Project
+        project: Project instance
         locale: Locale code
     Returns:
         A string for generated ZIP content.
