@@ -12,11 +12,15 @@ from pontoon.base.models import Project
 
 
 class Command(BaseCommand):
-    help = 'Update all projects from their repositories and store changes \
-            to the database'
+    args = '<project_id project_id ...>'
+    help = 'Update projects from repositories and store changes to database'
 
     def handle(self, *args, **options):
-        for project in Project.objects.all():
+        projects = Project.objects.all()
+        if args:
+            projects = projects.filter(pk__in=args)
+
+        for project in projects:
             try:
                 update_from_repository(project)
                 extract_to_database(project)
