@@ -85,6 +85,7 @@ def update_site(env, debug):
         (CHDIR, os.path.join(here)),
         (EXEC, './manage.py migrate'),
         (EXEC, './manage.py loaddata ' + env + '.json'),
+        (EXEC, './manage.py update_projects 1'),
         (EXEC, './manage.py collectstatic --noinput'),
         # un-comment if you haven't moved to django-compressor yet
         # (EXEC, 'python2.6 manage.py compress_assets'),
