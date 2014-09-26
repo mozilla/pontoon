@@ -146,7 +146,7 @@ def get_locale_directory(project, locale):
                 'path': os.path.join(root, dirname),
             }
 
-    # Return repository_path_master for projects not using locale directories
+    # Projects not using locale directories (.ini, file)
     if project.format == 'ini' or project.repository_type == 'file':
         return {
             'name': '',
@@ -203,7 +203,7 @@ def get_source_directory(path):
                         'path': source_directory_path,
                     }
 
-    # INI Format
+    # Projects not using locale directories (.ini, file)
     return {
         'name': '',
         'path': path,
