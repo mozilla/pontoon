@@ -15,12 +15,12 @@ Options:
 import os
 import sys
 from textwrap import dedent
-from optparse import  OptionParser
+from optparse import OptionParser
 from hashlib import md5
 
 # Constants
 PROJECT = 0
-VENDOR  = 1
+VENDOR = 1
 
 ENV_BRANCH = {
     # 'environment': [PROJECT_BRANCH, VENDOR_BRANCH],
@@ -31,8 +31,7 @@ ENV_BRANCH = {
 
 # The URL of the SVN repository with the localization files (*.po). If you set
 # it to a non-empty value, remember to `git rm --cached -r locale` in the root
-# of the project.  Example:
-# LOCALE_REPO_URL = 'https://svn.mozilla.org/projects/l10n-misc/trunk/playdoh/locale'
+# of the project.
 LOCALE_REPO_URL = ''
 
 GIT_PULL = "git pull -q"
@@ -88,7 +87,7 @@ def update_site(env, debug):
         (EXEC, './manage.py loaddata ' + env + '.json'),
         (EXEC, './manage.py collectstatic --noinput'),
         # un-comment if you haven't moved to django-compressor yet
-        #(EXEC, 'python2.6 manage.py compress_assets'),
+        # (EXEC, 'python2.6 manage.py compress_assets'),
     ]
 
     for cmd, cmd_args in commands:
