@@ -116,7 +116,15 @@ def get_locale_paths(project, locale):
 
 
 def get_locale_directory(project, locale):
-    """Get path to the directory with locale files."""
+    """
+    Get path to the directory with locale files.
+
+    Args:
+        project: Project instance
+        locale: Locale instance
+    Returns:
+        Dict with directory name and path as keys.
+    """
 
     path = get_repository_path_master(project)
 
@@ -138,13 +146,14 @@ def get_locale_directory(project, locale):
                 'path': os.path.join(root, dirname),
             }
 
-    log.debug("Locale repository path not found.")
+    # Return repository_path_master for projects not using locale directories
+    if project.format == 'ini' or project.repository_type == 'file':
+        return {
+            'name': '',
+            'path': path,
+        }
 
-    # INI Format
-    return {
-        'name': '',
-        'path': path,
-    }
+    log.debug("Locale repository path not found.")
 
 
 def detect_format(path):
