@@ -959,6 +959,7 @@ def generate_zip(project, locale):
     s = StringIO.StringIO()
     zf = zipfile.ZipFile(s, "w")
 
+    # ZIP empty root directory to avoid corrupt archive if no file translated
     root = os.path.split(path)[-1]
     zf.write(path, root)
 
