@@ -969,7 +969,7 @@ def commit_to_repository(request, template=None):
         log.error(e)
         return HttpResponse("error")
 
-    path = files.update_from_database(p, locale)
+    path = files.dump_from_database(p, locale)
     if not path:
         return HttpResponse(json.dumps({
             'type': 'error',

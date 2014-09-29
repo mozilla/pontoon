@@ -680,7 +680,7 @@ def update_from_repository(project, locales=None):
     project.save()
 
 
-def update_po(project, locale):
+def dump_po(project, locale):
     """Update .po (gettext) files from database."""
 
     locale_paths = get_locale_paths(project, locale)
@@ -742,7 +742,7 @@ def update_po(project, locale):
         log.debug("File updated: " + path)
 
 
-def update_properties(project, locale):
+def dump_properties(project, locale):
     """Update .properties files from database. Generate files from source
     files, but only ones with translated strings."""
 
@@ -830,7 +830,7 @@ def update_properties(project, locale):
         log.debug("File updated: " + path)
 
 
-def update_lang(project, locale):
+def dump_lang(project, locale):
     """Update .lang files from database."""
 
     locale_paths = get_locale_paths(project, locale)
@@ -888,7 +888,7 @@ def update_lang(project, locale):
             log.debug("File updated: " + path)
 
 
-def update_ini(project, locale):
+def dump_ini(project, locale):
     """Update .ini files from database."""
 
     path = get_locale_directory(project, locale)["path"]
@@ -923,7 +923,7 @@ def update_ini(project, locale):
             log.debug("INI configparser: " + str(e))
 
 
-def update_from_database(project, locale):
+def dump_from_database(project, locale):
     """Update project files from database."""
     log.debug("Update project files from database.")
 
@@ -931,7 +931,7 @@ def update_from_database(project, locale):
     if not path:
         return False
 
-    globals()['update_%s' % project.format](project, locale)
+    globals()['dump_%s' % project.format](project, locale)
     return path
 
 
@@ -952,7 +952,7 @@ def generate_zip(project, locale):
     except Locale.DoesNotExist as e:
         log.error(e)
 
-    path = update_from_database(project, locale)
+    path = dump_from_database(project, locale)
     if not path:
         return False
 
