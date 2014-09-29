@@ -959,6 +959,9 @@ def generate_zip(project, locale):
     s = StringIO.StringIO()
     zf = zipfile.ZipFile(s, "w")
 
+    root = os.path.split(path)[-1]
+    zf.write(path, root)
+
     for root, dirs, filenames in os.walk(path):
         for f in filenames:
             file_path = os.path.join(root, f)
