@@ -229,7 +229,7 @@
             elements[$.trim($(this).html())] = {
               node: $(this),
               body: !$(this).parents('head').length
-            }
+            };
         });
 
         $(Pontoon.project.entities).each(function(i, entity) {
@@ -383,12 +383,13 @@
               toolbarTop = top - toolbar.outerHeight();
 
           toolbar.css('left', left);
+
           // Display toolbar at the bottom if otherwise too high
           if (toolbarTop >= 0) {
             toolbar.removeClass('bottom').css('top', toolbarTop);
           } else{
             toolbar.addClass('bottom').css('top', top + $(newTarget).outerHeight());
-          };
+          }
         }
 
         var toolbarNode = toolbar[0];
@@ -749,7 +750,7 @@
         message = {
           type: messageType,
           value: messageValue
-        }
+        };
     otherWindow.postMessage(JSON.stringify(message), targetOrigin);
   }
 
