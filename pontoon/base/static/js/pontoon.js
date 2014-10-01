@@ -633,6 +633,18 @@
         return false;
       });
 
+      $(window).scroll(function(e) {
+        var toolbar = $('.pontoon-editable-toolbar'),
+            target = toolbar[0].target;
+
+        if (target) {
+          var top = target.getBoundingClientRect().top + window.scrollY,
+          toolbarTop = top - toolbar.outerHeight();
+
+          toolbar.css('top', toolbarTop);
+        }
+      });
+
       // Enable context menu
       $('body')
         .attr("contextmenu", "context")
