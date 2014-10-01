@@ -200,23 +200,37 @@ def update_from_repository(request, template=None):
         pk = request.POST['pk']
     except MultiValueDictKeyError as e:
         log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponse(json.dumps({
+            'type': 'error',
+            'message': 'Project primary key not provided.',
+        }), mimetype='application/json')
 
     try:
         project = Project.objects.get(pk=pk)
     except Project.DoesNotExist as e:
         log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponse(json.dumps({
+            'type': 'error',
+            'message': str(e),
+        }), mimetype='application/json')
 
     try:
         files.update_from_repository(project)
         files.extract_to_database(project)
+
     except Exception as e:
         log.error("Exception: " + str(e))
-        return HttpResponse('error')
+        return HttpResponse(json.dumps({
+            'type': 'error',
+            'message': str(e),
+        }), mimetype='application/json')
+
     except IOError as e:
         log.debug("IOError: " + str(e))
-        return HttpResponse('error')
+        return HttpResponse(json.dumps({
+            'type': 'error',
+            'message': str(e),
+        }), mimetype='application/json')
 
     return HttpResponse("200")
 

@@ -93,13 +93,14 @@ $(function() {
   $('.repository .update:not(".disabled"), .transifex .update:not(".disabled")').unbind('click.pontoon').bind('click.pontoon', function (e) {
     e.preventDefault();
     $(this).addClass('disabled');
-    var source = $(this).data('source'),
-        icon = $(this).find('span').attr('class', 'fa fa-refresh fa-spin');
 
-    params = {
-      pk: $('input[name=pk]').val(),
-      csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-    }
+    var source = $(this).data('source'),
+        icon = $(this).find('span').attr('class', 'fa fa-refresh fa-spin'),
+        params = {
+          pk: $('input[name=pk]').val(),
+          csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        };
+
     if (source === 'transifex') {
       if ($(this).parents('.popup').length === 0) {
         project = $('.transifex input#id_transifex_project');
@@ -133,8 +134,10 @@ $(function() {
         } else if (data === "authenticate") {
           icon.attr('class', 'fa fa-refresh');
           $('.repository').addClass('authenticate');
-        } else if (data === "error"){
+        } else if (data.type === "error") {
           icon.attr('class', 'fa fa-warning');
+          $('.repository').find('.errorlist').remove().end().append(
+            '<ul class="errorlist"><li>' + data.message + '</li></ul>');
         }
       },
       error: function() {
