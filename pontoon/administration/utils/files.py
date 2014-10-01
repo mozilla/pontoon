@@ -153,7 +153,9 @@ def get_locale_directory(project, locale):
             'path': path,
         }
 
-    log.error("Locale repository path not found.")
+    error = "Locale %s directory not found." % locale.code
+    log.error(error)
+    raise Exception(error)
 
 
 def detect_format(path):
