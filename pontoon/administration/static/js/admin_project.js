@@ -128,7 +128,8 @@ $(function() {
       success: function(data) {
         if (data === "200") {
           icon.attr('class', 'fa fa-check');
-          $('.repository').removeClass('authenticate');
+          $('.repository').removeClass('authenticate')
+            .find('.errorlist').remove();
           $('.warning').fadeOut();
           $('.links .translate').removeClass('hidden');
         } else if (data === "authenticate") {
@@ -136,7 +137,9 @@ $(function() {
           $('.repository').addClass('authenticate');
         } else if (data.type === "error") {
           icon.attr('class', 'fa fa-warning');
-          $('.repository').find('.errorlist').remove().end().append(
+          $('.repository')
+            .find('.errorlist').remove().end()
+          .append(
             '<ul class="errorlist"><li>' + data.message + '</li></ul>');
         }
       },
