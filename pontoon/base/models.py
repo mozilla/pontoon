@@ -1,5 +1,6 @@
 
 import commonware.log
+import datetime
 import json
 
 from django.contrib.auth.models import User
@@ -281,6 +282,73 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
             return translations.latest("date")
     else:
         return Translation()
+
+
+def save_entity(resource, string, string_plural="", comment="",
+                key="", source=""):
+    """Add new or update existing entity."""
+
+    # Update existing entity
+    try:
+        if key is "":
+            e = Entity.objects.get(
+                resource=resource, string=string,
+                string_plural=string_plural)
+
+        else:
+            e = Entity.objects.get(resource=resource, key=key)
+            e.string = string
+            e.string_plural = string_plural
+
+        e.source = source
+
+        # Set obsolete attribute for all updated entities to False
+        e.obsolete = False
+
+    # Add new entity
+    except Entity.DoesNotExist:
+        e = Entity(resource=resource, string=string,
+                   string_plural=string_plural, key=key, source=source)
+
+    if len(comment) > 0:
+        e.comment = comment
+
+    e.save()
+
+
+def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
+    """Add new or update existing translation."""
+
+    approved = not fuzzy
+    translations = Translation.objects.filter(
+        entity=entity, locale=locale, plural_form=plural_form)
+    translations_equal = translations.filter(string=string)
+    translations_equal_count = translations_equal.count()
+
+    # Add new translation if it doesn's exist yet
+    if translations_equal_count == 0:
+        unset_approved(translations)
+        t = Translation(
+            entity=entity, locale=locale, plural_form=plural_form,
+            string=string, date=datetime.datetime.now(),
+            approved=approved, fuzzy=fuzzy)
+        t.save(stats=False)
+
+    # Update existing translations if fuzzy status changes
+    elif translations_equal_count > 0:
+        t = translations_equal[0]
+        if translations_equal_count > 1:
+            try:
+                t = translations_equal.get(approved=True)
+            except Translation.DoesNotExist:
+                t = translations_equal.latest("date")
+
+        if t.fuzzy != fuzzy:
+            unset_approved(translations)
+            t.date = datetime.datetime.now()
+            t.approved = approved
+            t.fuzzy = fuzzy
+            t.save(stats=False)
 
 
 def unset_approved(translations):

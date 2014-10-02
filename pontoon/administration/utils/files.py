@@ -22,14 +22,12 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Project,
-    ProjectForm,
     Resource,
     Stats,
-    Subpage,
     Translation,
-    UserProfile,
     get_translation,
-    unset_approved,
+    save_entity,
+    save_translation,
     update_stats,
 )
 
@@ -232,73 +230,6 @@ def get_relative_path(path, locale):
         locale_directory = underscore
 
     return path.split('/' + locale_directory + '/')[-1]
-
-
-def save_entity(resource, string, string_plural="", comment="",
-                key="", source=""):
-    """Admin interface: save new or update existing entity in DB."""
-
-    # Update existing entity
-    try:
-        if key is "":
-            e = Entity.objects.get(
-                resource=resource, string=string,
-                string_plural=string_plural)
-
-        else:
-            e = Entity.objects.get(resource=resource, key=key)
-            e.string = string
-            e.string_plural = string_plural
-
-        e.source = source
-
-        # Set obsolete attribute for all updated entities to False
-        e.obsolete = False
-
-    # Add new entity
-    except Entity.DoesNotExist:
-        e = Entity(resource=resource, string=string,
-                   string_plural=string_plural, key=key, source=source)
-
-    if len(comment) > 0:
-        e.comment = comment
-
-    e.save()
-
-
-def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
-    """Admin interface: save new or update existing translation in DB."""
-
-    approved = not fuzzy
-    translations = Translation.objects.filter(
-        entity=entity, locale=locale, plural_form=plural_form)
-    translations_equal = translations.filter(string=string)
-    translations_equal_count = translations_equal.count()
-
-    # Save new translation if it doesn's exist yet
-    if translations_equal_count == 0:
-        unset_approved(translations)
-        t = Translation(
-            entity=entity, locale=locale, plural_form=plural_form,
-            string=string, date=datetime.datetime.now(),
-            approved=approved, fuzzy=fuzzy)
-        t.save(stats=False)
-
-    # Update existing translations if fuzzy status changes
-    elif translations_equal_count > 0:
-        t = translations_equal[0]
-        if translations_equal_count > 1:
-            try:
-                t = translations_equal.get(approved=True)
-            except Translation.DoesNotExist:
-                t = translations_equal.latest("date")
-
-        if t.fuzzy != fuzzy:
-            unset_approved(translations)
-            t.date = datetime.datetime.now()
-            t.approved = approved
-            t.fuzzy = fuzzy
-            t.save(stats=False)
 
 
 def update_entity_count(resource, project):
