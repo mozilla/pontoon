@@ -860,6 +860,7 @@ def dump_from_database(project, locale):
     """Update project files from database."""
     log.debug("Update project files from database.")
 
+    # Check if locale directory even exist
     path = get_locale_directory(project, locale)["path"]
     if not path:
         return False
