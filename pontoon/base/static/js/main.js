@@ -1020,7 +1020,7 @@ var Pontoon = (function () {
         e.stopPropagation();
         e.preventDefault();
 
-        var entity = $("#editor")[0].entity
+        var entity = $("#editor")[0].entity,
             data = data || {};
 
         // Save entity if dirty - cannot be automatically synced with backend
@@ -1240,7 +1240,7 @@ var Pontoon = (function () {
           .css('transform', 'rotate(' + shift / 100 * 360 + 'deg)')
           .toggleClass('gt50', percent[cls] > 50)
           .find('.half:first-child')
-            .css('transform', 'rotate(' + percent[cls] / 100 * 360 + 'deg)')
+            .css('transform', 'rotate(' + percent[cls] / 100 * 360 + 'deg)');
       });
       $('#progress .number').html(number);
 
@@ -2064,10 +2064,10 @@ var Pontoon = (function () {
               message = {
                 type: messageType,
                 value: messageValue
-              }
+              };
           otherWindow.postMessage(JSON.stringify(message), targetOrigin);
         }
-      }
+      };
     })()
 
   };

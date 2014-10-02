@@ -25,7 +25,7 @@ $(function() {
         }
       }
     }
-  };
+  }
 
   function mouseMoveHandler(e) {
     var initial = e.data.initial,
@@ -59,7 +59,7 @@ $(function() {
     }
 
     $('#iframe-cover').width(right).css('margin-left', left); // iframe fix
-  };
+  }
 
   function resizeIframe() {
     $('#source')
