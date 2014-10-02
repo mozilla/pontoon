@@ -83,7 +83,7 @@ class Project(models.Model):
     # Project info
     info_brief = models.TextField("Project info", blank=True)
 
-    # Website for in-place localization
+    # Website for in place localization
     url = models.URLField("URL", blank=True)
     width = models.PositiveIntegerField(
         "Default website (iframe) width in pixels. If set, \

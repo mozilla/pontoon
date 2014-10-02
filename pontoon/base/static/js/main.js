@@ -1291,7 +1291,7 @@ var Pontoon = (function () {
      * 
      * entity Entity
      * translation Translation
-     * inplace Was translation submitted in-place?
+     * inplace Was translation submitted in place?
      */
     updateOnServer: function (entity, translation, inplace) {
       var self = this,
@@ -1330,7 +1330,7 @@ var Pontoon = (function () {
             entity.translation[pf] = data.translation;
             self.updateEntityUI(entity);
 
-            // Update translation, including in-place if possible
+            // Update translation, including in place if possible
             if (!inplace && entity.body && (self.user.localizer ||
                 !entity.translation[pf].approved)) {
               self.common.postMessage("SAVE", translation);
@@ -1655,7 +1655,7 @@ var Pontoon = (function () {
         manager: $('#server').data('manager')
       };
 
-      // Initialize Pontoon for projects with in-place translation support
+      // Initialize Pontoon for projects with in place translation support
       // (iframe cross-domain policy solution)
       if (project) {
         self.common.postMessage("INITIALIZE", {
@@ -1671,7 +1671,7 @@ var Pontoon = (function () {
         // Wait for project code messages
         window.addEventListener("message", self.receiveMessage, false);
 
-      // Initialize Pontoon for projects without in-place translation support
+      // Initialize Pontoon for projects without in place translation support
       } else {
         $(self.project.entities).each(function (i) {
           this.id = i;

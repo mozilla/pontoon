@@ -148,12 +148,12 @@ $(function() {
 
   var url = $('#server').data('url');
 
-  // Initialize Pontoon for projects without in-place translation support
+  // Initialize Pontoon for projects without in place translation support
   if (!url) {
     return initializeWithoutWebsite();
   }
 
-  // Initialize Pontoon for projects with in-place translation support
+  // Initialize Pontoon for projects with in place translation support
   $('#source').attr('src', url);
   var projectWindow = $('#source')[0].contentWindow;
   window.addEventListener("message", receiveMessage, false);

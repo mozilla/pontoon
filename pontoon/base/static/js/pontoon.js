@@ -191,7 +191,7 @@
             counter++;
             entity.original = parent.html();
 
-            // Head entities cannot be edited in-place
+            // Head entities cannot be edited in place
             if ($(this).parents('head').length === 0) {
               entity.node = [parent];
               makeEditable(entity);
@@ -244,7 +244,7 @@
               element.node.html(translation);
             }
 
-            // Head entities cannot be edited in-place
+            // Head entities cannot be edited in place
             if (element.body) {
               if (!entity.node) {
                 entity.node = [element.node];
@@ -293,7 +293,7 @@
               translation = this.translation[0].string;
           entity.id = counter;
 
-          // Head strings cannot be edited in-place
+          // Head strings cannot be edited in place
           $(parent).each(function() {
             if (translation) {
               this.html(translation);
