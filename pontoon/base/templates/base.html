@@ -45,8 +45,8 @@
     <!-- Javascript at the bottom for fast page loading -->
     {% block site_js %}
       <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-      <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ static('js/jquery-1.7.2.min.js') }}"%3E%3C/script%3E'))</script>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ static('js/jquery-1.11.1.min.js') }}"%3E%3C/script%3E'))</script>
 
       {% compress js %}
       <script src="{{ static('js/main.js') }}"></script>

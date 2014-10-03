@@ -59,14 +59,14 @@ $(function() {
   });
 
   // Choose locales
-  $('.locale.select li').live('click.pontoon', function (e) {
+  $('.locale.select').on('click.pontoon', 'li', function (e) {
     var target = $(this).parents('.locale.select').siblings('.locale.select').find('ul'),
         clone = $(this).remove();
     target.prepend(clone);
   });
 
   // Choose/remove all locales
-  $('.choose-all, .remove-all').live('click.pontoon', function (e) {
+  $('.choose-all, .remove-all').click(function (e) {
     e.preventDefault();
     var ls = $(this).parents('.locale.select'),
         target = ls.siblings('.locale.select').find('ul'),
@@ -75,11 +75,12 @@ $(function() {
   });
 
   // Select repository type
-  $('body').live("click.pontoon", function () {
-    $('.repository .menu').hide();
-    $('.select').removeClass('opened');
+  $('body').click(function () {
+    $('.repository')
+      .find('.menu').hide().end()
+      .find('.select').removeClass('opened');
   });
-  $('.repository .type li').live("click.pontoon", function () {
+  $('.repository .type li').click(function () {
     var selected = $(this).html(),
         selected_lower = selected.toLowerCase();
     $(this).parents('.select').find('.title').html(selected);
@@ -155,7 +156,7 @@ $(function() {
   });
 
   // Delete subpage
-  $('.delete-subpage').live('click.pontoon', function (e) {
+  $('body').on('click.pontoon', '.delete-subpage', function (e) {
     e.preventDefault();
     $(this).parent().toggleClass('delete');
     $(this).next().prop('checked', !$(this).next().prop('checked'));
@@ -173,7 +174,7 @@ $(function() {
   });
 
   // Delete project
-  $('.delete-project').live('click.pontoon', function (e) {
+  $('.delete-project').click(function (e) {
     e.preventDefault();
     if ($(this).is('.clicked')) {
       window.location = '/admin/delete/' + $('input[name=pk]').val();

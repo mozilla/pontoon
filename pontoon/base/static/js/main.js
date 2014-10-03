@@ -716,7 +716,7 @@ var Pontoon = (function () {
 
         ul
           .find('.limited').show()
-            .find('.string-wrapper' + ':not(":containsi("' + val + '")")')
+            .find('.string-wrapper' + ':not(":containsi(\'' + val + '\')")')
           .parent().hide();
 
         if ($('.uneditables li:visible').length === 0) {
@@ -886,7 +886,7 @@ var Pontoon = (function () {
       });
 
       // Show/hide more source string metadata
-      $("#metadata a.details").live("click", function (e) {
+      $("#metadata").on("click", "a.details", function (e) {
         e.stopPropagation();
         e.preventDefault();
 
@@ -1112,7 +1112,7 @@ var Pontoon = (function () {
       });
 
       // Copy helpers result to translation
-      $("#helpers li:not('.disabled')").live("click", function (e) {
+      $("#helpers section").on("click", "li:not('.disabled')", function (e) {
         e.stopPropagation();
         e.preventDefault();
 
@@ -1125,12 +1125,12 @@ var Pontoon = (function () {
       });
 
       // Restore clickable links
-      $("#helpers li > a").live("click", function (e) {
+      $("#helpers section").on("click", "li a", function (e) {
         e.stopPropagation();
       });
 
       // Approve and delete translations
-      $("#history menu button").live("click", function (e) {
+      $("#history").on("click", "menu button", function (e) {
         var button = $(this);
         if (button.is('.approve') && button.parents('li.approved').length > 0) {
           return;
@@ -1730,7 +1730,7 @@ var Pontoon = (function () {
       });
 
       // Menu hover
-      $('.menu li').live('hover', function () {
+      $('.menu').on('mouseenter', 'li', function () {
         $('.menu li.hover').removeClass('hover');
         $(this).toggleClass('hover');
       });
@@ -1849,7 +1849,7 @@ var Pontoon = (function () {
       });
 
       // Parts menu handler
-      $('.part .menu li:not(".no-match")').live("click.pontoon", function () {
+      $('.part .menu').on('click.pontoon', 'li:not(".no-match")', function () {
         var title = $(this).find('span:first').html();
         $('.part .selector')
           .attr('title', title)
@@ -1883,7 +1883,7 @@ var Pontoon = (function () {
 
         ul
           .find('li' + limited).show().end()
-          .find('li' + limited + ':not(":containsi("' + val + '")")').hide();
+          .find('li' + limited + ':not(":containsi(\'' + val + '\')")').hide();
 
         if (ul.find('li:not(".no-match"):visible').length === 0) {
           ul.find('.no-match').show();
