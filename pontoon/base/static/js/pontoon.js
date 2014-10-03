@@ -175,7 +175,7 @@
           }).appendTo("body");
         });
 
-        $(':not("script, style, iframe, noscript, [translate=\"no\"]")').contents().each(function () {
+        $(':not("script, style, iframe, noscript, [translate=\'no\']")').contents().each(function () {
           if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
             var entity = {},
                 parent = $(this).parent();
@@ -224,7 +224,7 @@
         var counter = 0,
             elements = {};
 
-        $(':not("script, style, iframe, noscript, [translate=\"no\"]")')
+        $(':not("script, style, iframe, noscript, [translate=\'no\']")')
           .children().each(function() {
             elements[$.trim($(this).html())] = {
               node: $(this),
