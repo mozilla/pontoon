@@ -249,15 +249,15 @@ class CommitToSvn(CommitToRepository):
                 log.info("Username and password saved.")
 
         except pysvn.ClientError as e:
-            log.debug(str(e))
             if "callback_get_login" in str(e):
+                log.debug(str(e))
                 log.debug('Subversion authentication failed for %s' % path)
                 return {
                     'type': 'authenticate',
                     'message': 'Authentication failed.'
                 }
 
-            raise CommitToRepositoryException(str(e))
+            raise CommitToRepositoryException(e.args[0])
 
 
 def update_from_vcs(repo_type, url, path):
