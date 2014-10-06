@@ -40,12 +40,12 @@ class PullFromGit(PullFromRepository):
             repo = git.Repo(target)
             repo.git.pull()
             log.debug("Git: repository at " + source + " updated.")
-        except Exception, e:
+        except Exception as e:
             log.debug("Git: " + str(e))
             try:
                 git.Git().clone(source, target)
                 log.debug("Git: repository at " + source + " cloned.")
-            except Exception, e:
+            except Exception as e:
                 log.debug("Git: " + str(e))
                 raise PullFromRepositoryException(unicode(e))
 
@@ -76,12 +76,12 @@ class PullFromHg(PullFromRepository):
             commands.pull(ui.ui(), repo, source=url)
             commands.update(ui.ui(), repo)
             log.debug("Mercurial: repository at " + url + " updated.")
-        except error.RepoError, e:
+        except error.RepoError as e:
             log.debug("Mercurial: " + str(e))
             try:
                 commands.clone(ui.ui(), url, path)
                 log.debug("Mercurial: repository at " + url + " cloned.")
-            except Exception, e:
+            except Exception as e:
                 log.debug("Mercurial: " + str(e))
                 raise PullFromRepositoryException(unicode(e))
 
@@ -108,7 +108,7 @@ class PullFromSvn(PullFromRepository):
                 client.update(target)
             else:
                 client.checkout(source, target)
-        except pysvn.ClientError, e:
+        except pysvn.ClientError as e:
             log.debug("Subversion: " + str(e))
             raise PullFromRepositoryException(unicode(e))
 
