@@ -313,6 +313,7 @@
   cursor: pointer;
   display: none;
   font-weight: 100;
+  max-width: 500px;
   padding: 10px;
   position: absolute;
   right: 15px;
@@ -320,6 +321,7 @@
   top: 70px;
   visibility: visible;
   width: auto;
+  white-space: pre-wrap;
 }
 
 #pontoon > header .notification.error {
