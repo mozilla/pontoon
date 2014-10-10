@@ -627,7 +627,7 @@ def update_from_repository(project, locales=None):
 
 
 def dump_po(project, locale):
-    """Update .po (gettext) files from database."""
+    """Dump .po (gettext) files from database."""
 
     locale_paths = get_locale_paths(project, locale)
 
@@ -689,7 +689,7 @@ def dump_po(project, locale):
 
 
 def dump_silme(parser, project, locale):
-    """Update files from database using silme. Generate files from source
+    """Dump files from database using silme. Generate files from source
     files, but only ones with translated strings."""
 
     resources = Resource.objects.filter(project=project)
@@ -776,21 +776,21 @@ def dump_silme(parser, project, locale):
 
 
 def dump_properties(project, locale):
-    """Update .properties files from database."""
+    """Dump .properties files from database."""
 
     parser = silme.format.properties.PropertiesFormatParser
     dump_silme(parser, project, locale)
 
 
 def dump_dtd(project, locale):
-    """Update .dtd files from database."""
+    """Dump .dtd files from database."""
 
     parser = silme.format.dtd.DTDFormatParser
     dump_silme(parser, project, locale)
 
 
 def dump_lang(project, locale):
-    """Update .lang files from database."""
+    """Dump .lang files from database."""
 
     locale_paths = get_locale_paths(project, locale)
 
@@ -848,7 +848,7 @@ def dump_lang(project, locale):
 
 
 def dump_ini(project, locale):
-    """Update .ini files from database."""
+    """Dump .ini files from database."""
 
     path = get_locale_directory(project, locale)["path"]
     source_path = get_source_paths(path)[0]
@@ -883,8 +883,8 @@ def dump_ini(project, locale):
 
 
 def dump_from_database(project, locale):
-    """Update project files from database."""
-    log.debug("Update project files from database.")
+    """Dump project files from database."""
+    log.debug("Dump project files from database.")
 
     # Check if locale directory even exist
     path = get_locale_directory(project, locale)["path"]
