@@ -74,6 +74,7 @@ class Project(models.Model):
     FORMAT_CHOICES = (
         ('po', 'po'),
         ('properties', 'properties'),
+        ('dtd', 'dtd'),
         ('ini', 'ini'),
         ('lang', 'lang'),
     )

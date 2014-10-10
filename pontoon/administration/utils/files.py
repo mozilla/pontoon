@@ -10,6 +10,7 @@ import polib
 import shutil
 import silme.core
 import silme.format.properties
+import silme.format.dtd
 import StringIO
 import urllib2
 import zipfile
@@ -164,7 +165,7 @@ def detect_format(path):
         filenames = [f for f in filenames if not f[0] == '.']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for extension in ('pot', 'po', 'properties', 'ini', 'lang'):
+        for extension in ('pot', 'po', 'properties', 'dtd', 'ini', 'lang'):
             for filename in fnmatch.filter(filenames, '*.' + extension):
                 return 'po' if extension == 'pot' else extension
 
@@ -179,7 +180,7 @@ def get_source_paths(path):
         filenames = [f for f in filenames if not f[0] == '.']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for extension in ('pot', 'po', 'properties', 'ini', 'lang'):
+        for extension in ('pot', 'po', 'properties', 'dtd', 'ini', 'lang'):
             for filename in fnmatch.filter(filenames, '*.' + extension):
                 source_paths.append(os.path.join(root, filename))
 
@@ -353,10 +354,8 @@ def extract_po(project, locale, paths, entities=False):
             log.critical('PoExtractError for %s: %s' % (path, e))
 
 
-def extract_properties(project, locale, paths, entities=False):
-    """Extract .properties files from paths and save or update in DB."""
-
-    parser = silme.format.properties.PropertiesFormatParser
+def extract_silme(parser, project, locale, paths, entities=False):
+    """Extract files from paths using silme and save or update in DB."""
 
     for path in paths:
         try:
@@ -401,6 +400,20 @@ def extract_properties(project, locale, paths, entities=False):
         except IOError:
             log.debug("[" + locale.code + "]: " +
                       path + " doesn't exist. Skipping.")
+
+
+def extract_properties(project, locale, paths, entities=False):
+    """Extract .properties files from paths and save or update in DB."""
+
+    parser = silme.format.properties.PropertiesFormatParser
+    extract_silme(parser, project, locale, paths, entities)
+
+
+def extract_dtd(project, locale, paths, entities=False):
+    """Extract .dtd files from paths and save or update in DB."""
+
+    parser = silme.format.dtd.DTDFormatParser
+    extract_silme(parser, project, locale, paths, entities)
 
 
 def extract_lang(project, locale, paths, entities=False):
@@ -675,8 +688,8 @@ def dump_po(project, locale):
         log.debug("File updated: " + path)
 
 
-def dump_properties(project, locale):
-    """Update .properties files from database. Generate files from source
+def dump_silme(parser, project, locale):
+    """Update files from database using silme. Generate files from source
     files, but only ones with translated strings."""
 
     resources = Resource.objects.filter(project=project)
@@ -695,7 +708,6 @@ def dump_properties(project, locale):
         except Exception as e:
             log.error(e)
 
-    parser = silme.format.properties.PropertiesFormatParser
     source_directory = get_source_directory(project.repository_path)
 
     # Get relative paths to translated files only
@@ -761,6 +773,20 @@ def dump_properties(project, locale):
             f.write(content)
 
         log.debug("File updated: " + path)
+
+
+def dump_properties(project, locale):
+    """Update .properties files from database."""
+
+    parser = silme.format.properties.PropertiesFormatParser
+    dump_silme(parser, project, locale)
+
+
+def dump_dtd(project, locale):
+    """Update .dtd files from database."""
+
+    parser = silme.format.dtd.DTDFormatParser
+    dump_silme(parser, project, locale)
 
 
 def dump_lang(project, locale):
