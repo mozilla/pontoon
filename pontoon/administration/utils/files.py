@@ -165,7 +165,7 @@ def detect_format(path):
         filenames = [f for f in filenames if not f[0] == '.']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for extension in ('pot', 'po', 'properties', 'dtd', 'ini', 'lang'):
+        for extension in ['pot'] + [i[0] for i in Project.FORMAT_CHOICES]:
             for filename in fnmatch.filter(filenames, '*.' + extension):
                 return 'po' if extension == 'pot' else extension
 
@@ -180,7 +180,7 @@ def get_source_paths(path):
         filenames = [f for f in filenames if not f[0] == '.']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for extension in ('pot', 'po', 'properties', 'dtd', 'ini', 'lang'):
+        for extension in ['pot'] + [i[0] for i in Project.FORMAT_CHOICES]:
             for filename in fnmatch.filter(filenames, '*.' + extension):
                 source_paths.append(os.path.join(root, filename))
 
