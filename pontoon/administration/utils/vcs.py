@@ -249,6 +249,8 @@ class CommitToSvn(CommitToRepository):
                 log.info("Username and password saved.")
 
         except pysvn.ClientError as e:
+            error = e.args[0]
+
             if "callback_get_login" in str(e):
                 log.debug(str(e))
                 log.debug('Subversion authentication failed for %s' % path)
@@ -257,7 +259,11 @@ class CommitToSvn(CommitToRepository):
                     'message': 'Authentication failed.'
                 }
 
-            raise CommitToRepositoryException(e.args[0])
+            if e.args[1][0][1] == 155011:
+                error = \
+                    'Content out of date. Try updating from repository first.'
+
+            raise CommitToRepositoryException(error)
 
 
 def update_from_vcs(repo_type, url, path):
