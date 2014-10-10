@@ -251,8 +251,8 @@ class CommitToSvn(CommitToRepository):
         except pysvn.ClientError as e:
             error = e.args[0]
 
-            if "callback_get_login" in str(e):
-                log.debug(str(e))
+            if "callback_get_login" in error:
+                log.debug(error)
                 log.debug('Subversion authentication failed for %s' % path)
                 return {
                     'type': 'authenticate',
