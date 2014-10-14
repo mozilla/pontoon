@@ -376,15 +376,15 @@ def get_translation_history(request, template=None):
     translations = translations.order_by('-approved', '-date')
 
     if entity.resource.project.pk == 1:
-        user = 'Anonymous'
+        default = 'Anonymous'
     else:
-        user = 'Imported'
+        default = 'Imported'
 
     if len(translations) > 0:
         payload = []
         for t in translations:
             usr = t.user
-            user = user if usr is None else usr.first_name or usr.email
+            user = default if usr is None else usr.first_name or usr.email
             o = {
                 "id": t.id,
                 "user": user,
