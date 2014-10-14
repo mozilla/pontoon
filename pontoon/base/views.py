@@ -375,19 +375,16 @@ def get_translation_history(request, template=None):
         translations = translations.filter(plural_form=plural_form)
     translations = translations.order_by('-approved', '-date')
 
-    if entity.resource.project.pk == 1:
-        default = 'Anonymous'
-    else:
-        default = 'Imported'
+    default = 'Anonymous' if entity.resource.project.pk == 1 else 'Imported'
 
     if len(translations) > 0:
         payload = []
+
         for t in translations:
-            usr = t.user
-            user = default if usr is None else usr.first_name or usr.email
+            u = t.user
             o = {
                 "id": t.id,
-                "user": user,
+                "user": default if u is None else u.first_name or u.email,
                 "translation": t.string,
                 "date": t.date.strftime('%b %d, %Y %H:%M'),
                 "approved": t.approved,
