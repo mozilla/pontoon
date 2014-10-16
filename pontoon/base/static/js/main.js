@@ -1807,8 +1807,9 @@ var Pontoon = (function () {
 
       // Project menu handler
       $('.project .menu li:not(".no-match")').bind('click.main', function () {
-        var name = $(this).find('.project-name').html(),
-            slug = $(this).find('.project-name').data('slug');
+        var project = $(this).find('.project-name'),
+            name = project.html(),
+            slug = project.data('slug');
 
         $('.project .selector .title')
           .html(name)
@@ -1818,14 +1819,36 @@ var Pontoon = (function () {
           return false;
         }
 
-        // Fallback if selected part not available for the selected project
         var details = Pontoon.common.getProjectDetails(),
             locales = Object.keys(details),
             locale = locales[0],
-            detail = details[locale][0];
+            menu = $('.locale .menu'),
+            selected_locale = menu.siblings('.selector').find('.code').html();
 
+        // Fallback if selected locale not available for the selected project
+        if (locales.indexOf(selected_locale) === -1) {
+          var accept = $('#server').data('accept-language').toLowerCase();
+              code = (locales.indexOf(accept) !== -1) ? accept : locale;
+
+          menu.find('.language.' + code).click();
+        }
+
+        selected_locale = menu.siblings('.selector').find('.code').html();
+        var detail = details[selected_locale][0];
+
+        // Fallback if selected part not available for the selected project
         if (detail) {
-          var defaultPart = detail.resource__path || detail.name;
+          var isPath = Object.keys(detail).indexOf("name") === -1,
+              type = isPath ? 'resource__path' : 'name';
+              selected_part = $('.part .selector').attr('title');
+
+          for(var d in details[selected_locale]) {
+            if (details[selected_locale][d][type] === selected_part) {
+              return;
+            }
+          }
+
+          var defaultPart = detail[type];
           $('header .part').removeClass("hidden")
             .find('.selector')
               .attr('title', defaultPart)
@@ -1833,18 +1856,6 @@ var Pontoon = (function () {
                 .html(defaultPart.replace(/^.*[\\\/]/, ''));
         } else {
           $('header .part').addClass("hidden");
-        }
-
-        // Fallback if selected locale not available for the selected project
-        var menu = $('.locale .menu'),
-            selector = menu.siblings('.selector'),
-            selected = selector.find('.code').html(),
-            accept = $('#server').data('accept-language').toLowerCase();
-
-        if (locales.indexOf(selected) === -1) {
-          var code = (locales.indexOf(accept) !== -1) ? accept : locale;
-          var localeHtml = menu.find('.language.' + code).parent().html();
-          selector.html(localeHtml);
         }
       });
 
