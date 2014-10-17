@@ -45,8 +45,6 @@ urlpatterns = patterns(
         name='pontoon.update'),
     url(r'^get-history/', views.get_translation_history,
         name='pontoon.get_history'),
-    url(r'^approve-translation/', views.approve_translation,
-        name='pontoon.approve_translation'),
     url(r'^delete-translation/', views.delete_translation,
         name='pontoon.delete_translation'),
     url(r'^translation-memory/$', views.translation_memory,

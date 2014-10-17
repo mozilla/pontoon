@@ -1139,21 +1139,24 @@ var Pontoon = (function () {
         e.stopPropagation();
         e.preventDefault();
 
+        if (button.is('.approve')) {
+          button
+            .parents('li').addClass('approved').click()
+              .siblings().removeClass('approved');
+
+          $('#save').click();
+          return;
+        }
+
         $.ajax({
-          url: $(this).attr('class').split(' ')[0] + '-translation/',
+          url: 'delete-translation/',
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),
             translation: $(this).parents('li').data('id')
           },
           success: function(data) {
-            if (data.type === "approved") {
-              button.parents('li')
-                .addClass('approved').click()
-                .siblings().removeClass('approved');
-              $('#save').click();
-
-            } else if (data.type === "deleted") {
+            if (data.type === "deleted") {
               var item = button.parents('li'),
                   index = item.index();
               item

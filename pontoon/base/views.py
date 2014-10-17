@@ -399,50 +399,6 @@ def get_translation_history(request, template=None):
         return HttpResponse("error")
 
 
-def approve_translation(request, template=None):
-    """Approve given translation."""
-    log.debug("Approve given translation.")
-
-    if not request.user.has_perm('base.can_localize'):
-        return render(request, '403.html', status=403)
-
-    if not request.is_ajax():
-        log.error("Non-AJAX request")
-        raise Http404
-
-    try:
-        t = request.POST['translation']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    log.debug("Translation: " + t)
-
-    try:
-        translation = Translation.objects.get(pk=t)
-    except Translation.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    entity = translation.entity
-    locale = translation.locale
-    plural_form = translation.plural_form
-
-    translations = Translation.objects.filter(
-        entity=entity, locale=locale, plural_form=plural_form)
-    unset_approved(translations)
-
-    if translation.user is None:
-        translation.user = request.user
-
-    translation.approved = True
-    translation.save()
-
-    return HttpResponse(json.dumps({
-        'type': 'approved',
-    }), mimetype='application/json')
-
-
 def delete_translation(request, template=None):
     """Delete given translation."""
     log.debug("Delete given translation.")
