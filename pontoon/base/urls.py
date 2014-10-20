@@ -9,9 +9,6 @@ urlpatterns = patterns(
     # Home
     url(r'^$', views.home, name='pontoon.home'),
 
-    # Errors
-    url('^translate/error/$', views.handle_error, name='pontoon.handle_error'),
-
     # Legacy: Translate project's page
     url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/project/(?P<slug>.+)' +
         '/page/(?P<page>.+)/$',

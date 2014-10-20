@@ -138,20 +138,6 @@ def project(request, slug, template='project.html'):
     return render(request, template, data)
 
 
-def handle_error(request):
-    """
-    This view is bound with a generic URL which can be called from Pontoon's
-    javascript with appropriate GET parameters and the page will get
-    redirected to the home page showing proper error messages, url and locale.
-    """
-    messages.error(request, request.GET.get('error', ''))
-    request.session['translate_error'] = {
-        'locale': request.GET.get('locale'),
-        'project': request.GET.get('project')
-    }
-    return HttpResponseRedirect(reverse('pontoon.home'))
-
-
 def translate(request, locale, slug, part=None, template='translate.html'):
     """Translate view."""
     log.debug("Translate view.")
