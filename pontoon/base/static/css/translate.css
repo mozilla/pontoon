@@ -154,6 +154,14 @@
   width: 44px;
 }
 
+#pontoon #progress:hover {
+  background: #3F4752;
+}
+
+#pontoon #progress.opened:hover {
+  background: inherit;
+}
+
 #pontoon #progress .graph > span {
   clip: rect(0, 44px, 44px, 22px);
   height: 44px;
