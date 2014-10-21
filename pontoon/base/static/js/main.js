@@ -1454,6 +1454,35 @@ var Pontoon = (function () {
         e.preventDefault();
         if ($(this).is(".sign-out")) {
           window.location = 'signout/';
+        } else if ($(this).is(".sign-in")) {
+          self.startLoader();
+          navigator.id.get(function(assertion) {
+            if (assertion) {
+              $.ajax({
+                url: 'browserid/',
+                type: 'POST',
+                data: {
+                  assertion: assertion,
+                  csrfmiddlewaretoken: $('#server').data('csrf')
+                },
+                success: function(data) {
+                  if (data !== 'error') {
+                    window.location.reload();
+                  } else {
+                    self.endLoader('Oops, something went wrong.', 'error');
+                  }
+                },
+                error: function() {
+                  self.endLoader('Oops, something went wrong.', 'error');
+                }
+              });
+            } else {
+              self.endLoader();
+            }
+          });
+
+
+
         } else if ($(this).is(".admin") || $(this).is(".project-admin")) {
           window.location = $(this).data('url');
         } else if ($(this).is(".html")) {

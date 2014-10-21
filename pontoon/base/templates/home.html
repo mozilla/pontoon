@@ -31,7 +31,7 @@
 
 {% if not user.is_authenticated() %}
 <p id="action">
-  <a id="link" href="{{ url('pontoon.translate', 'de', 'pontoon-intro') }}">Try it out</a>
+  <a id="link" href="/">Try it out</a>
   <span id="loading" class="spacing">or</span>
   <img id="browserid" src="{{ static('img/plain_sign_in_blue.png') }}" alt="Sign in with Persona" />
 </p>

@@ -59,6 +59,10 @@ def home(request, template='home.html'):
     log.debug("Home view.")
 
     translate_error = request.session.pop('translate_error', {})
+    if not translate_error:
+        slug = Project.objects.get(id=1).slug
+        return translate(request, 'de', slug)
+
     projects = Project.objects.filter(
         pk__in=Resource.objects.values('project')).order_by("name")
 
@@ -120,6 +124,9 @@ def project(request, slug, template='project.html'):
         p = Project.objects.get(slug=slug)
     except Project.DoesNotExist:
         messages.error(request, "Oops, project could not be found.")
+        request.session['translate_error'] = {
+            'none': None,
+        }
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Check if user authenticated
