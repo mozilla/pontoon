@@ -534,7 +534,7 @@ def extract_to_database(project, locales=None):
             extract_ini(project, source_paths[0])
         except Exception as e:
             if isFile:
-                os.remove(file_path)
+                os.remove(source_paths[0])
         return
 
     for index, locale in enumerate(locales):
