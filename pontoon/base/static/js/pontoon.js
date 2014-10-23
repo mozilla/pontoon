@@ -660,7 +660,7 @@
       var entities = Pontoon.project.entities;
       if (entities.length > 0) {
 
-        if (Pontoon.project.format === 'properties') {
+        if (entities[0].format === 'properties') {
           var localized = false;
           window.addEventListener("localized", function() {
             if (!localized && document.webL10n.getReadyState() === 'complete') {
@@ -735,7 +735,6 @@
             title: document.title.split("-->")[1] || document.title,
             entities: message.value.entities,
             pk: message.value.pk,
-            format: message.value.format,
             links: message.value.links
           },
           locale: message.value.locale,

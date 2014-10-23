@@ -28,7 +28,6 @@
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
     {% if pk %}
     <input type="hidden" value="{{ pk }}" name="pk">
-    {{ form.format.as_hidden() }}
     {{ form.repository_path.as_hidden() }}
     {% endif %}
 

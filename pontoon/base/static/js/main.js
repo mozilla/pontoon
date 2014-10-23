@@ -1052,7 +1052,7 @@ var Pontoon = (function () {
         var entity = $('#editor')[0].entity,
             source = $('#translation').val();
 
-        if (source === '' && self.project.format !== 'properties') {
+        if (source === '' && entity.format !== 'properties') {
           self.endLoader('Empty translations cannot be submitted.', 'error');
           return;
         }
@@ -1672,7 +1672,6 @@ var Pontoon = (function () {
         title: "",
         entities: $('#server').data('entities') || [],
         pk: $('#server').data('id'),
-        format: $('#server').data('format'),
         width: (
           $('#server').data('width') &&
           ($(window).width() - $('#server').data('width')) >= 700) ?
@@ -1695,7 +1694,6 @@ var Pontoon = (function () {
           links: self.project.links,
           entities: self.project.entities,
           pk: self.project.pk,
-          format: self.project.format,
           locale: self.locale,
           user: self.user
         }, null, $('#server').data('url'));

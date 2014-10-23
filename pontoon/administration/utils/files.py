@@ -102,14 +102,17 @@ def get_locale_paths(project, locale):
 
     locale_paths = []
     path = get_locale_directory(project, locale)["path"]
+    formats = Resource.objects.filter(project=project).values_list(
+        'format', flat=True).distinct()
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files and folders
         filenames = [f for f in filenames if not f[0] == '.']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for filename in fnmatch.filter(filenames, '*.' + project.format):
-            locale_paths.append(os.path.join(root, filename))
+        for format in formats:
+            for filename in fnmatch.filter(filenames, '*.' + format):
+                locale_paths.append(os.path.join(root, filename))
 
     return locale_paths
 
@@ -146,7 +149,9 @@ def get_locale_directory(project, locale):
             }
 
     # Projects not using locale directories (.ini, file)
-    if project.format == 'ini' or project.repository_type == 'file':
+    formats = Resource.objects.filter(project=project).values_list(
+        'format', flat=True).distinct()
+    if 'ini' in formats or project.repository_type == 'file':
         return {
             'name': '',
             'path': path,
@@ -165,7 +170,7 @@ def detect_format(path):
         filenames = [f for f in filenames if not f[0] == '.']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for extension in ['pot'] + [i[0] for i in Project.FORMAT_CHOICES]:
+        for extension in ['pot'] + [i[0] for i in Resource.FORMAT_CHOICES]:
             for filename in fnmatch.filter(filenames, '*.' + extension):
                 return 'po' if extension == 'pot' else extension
 
@@ -180,7 +185,7 @@ def get_source_paths(path):
         filenames = [f for f in filenames if not f[0] == '.']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for extension in ['pot'] + [i[0] for i in Project.FORMAT_CHOICES]:
+        for extension in ['pot'] + [i[0] for i in Resource.FORMAT_CHOICES]:
             for filename in fnmatch.filter(filenames, '*.' + extension):
                 source_paths.append(os.path.join(root, filename))
 
@@ -285,172 +290,167 @@ def parse_lang(path):
     return trans
 
 
-def extract_po(project, locale, paths, entities=False):
-    """Extract .po (gettext) files from paths and save or update in DB."""
+def extract_po(project, locale, path, entities=False):
+    """Extract .po (gettext) file with path and save or update in DB."""
 
-    for path in paths:
-        try:
-            po = polib.pofile(path)
-            escape = polib.escape
+    try:
+        po = polib.pofile(path)
+        escape = polib.escape
 
-            relative_path = get_relative_path(path, locale)
-            if relative_path[-1] == 't':
-                relative_path = relative_path[:-1]
-
-            resource, created = Resource.objects.get_or_create(
-                project=project, path=relative_path)
-
-            if entities:
-                for entry in po:
-                    if not entry.obsolete:
-                        save_entity(resource=resource,
-                                    string=escape(entry.msgid),
-                                    string_plural=escape(entry.msgid_plural),
-                                    comment=entry.comment,
-                                    source=entry.occurrences)
-
-                update_entity_count(resource, project)
-
-            else:
-                for entry in (po.translated_entries() + po.fuzzy_entries()):
-                    if not entry.obsolete:
-
-                        # Entities without plurals
-                        if len(escape(entry.msgstr)) > 0:
-                            try:
-                                e = Entity.objects.get(
-                                    resource=resource,
-                                    string=escape(entry.msgid))
-                                save_translation(
-                                    entity=e,
-                                    locale=locale,
-                                    string=escape(entry.msgstr),
-                                    fuzzy='fuzzy' in entry.flags)
-
-                            except Entity.DoesNotExist:
-                                continue
-
-                        # Pluralized entities
-                        elif len(entry.msgstr_plural) > 0:
-                            try:
-                                e = Entity.objects.get(
-                                    resource=resource,
-                                    string=escape(entry.msgid))
-                                for k in entry.msgstr_plural:
-                                    save_translation(
-                                        entity=e,
-                                        locale=locale,
-                                        string=escape(entry.msgstr_plural[k]),
-                                        plural_form=k,
-                                        fuzzy='fuzzy' in entry.flags)
-
-                            except Entity.DoesNotExist:
-                                continue
-
-                update_stats(resource, locale)
-
-            log.debug("[" + locale.code + "]: " + path + " saved to DB.")
-        except Exception as e:
-            log.critical('PoExtractError for %s: %s' % (path, e))
-
-
-def extract_silme(parser, project, locale, paths, entities=False):
-    """Extract files from paths using silme and save or update in DB."""
-
-    for path in paths:
-        try:
-            f = open(path)
-            structure = parser.get_structure(f.read())
-
-            comment = ""
-            relative_path = get_relative_path(path, locale)
-            resource, created = Resource.objects.get_or_create(
-                project=project, path=relative_path)
-
-            for obj in structure:
-                if isinstance(obj, silme.core.entity.Entity):
-                    if entities:
-                        save_entity(resource=resource, string=obj.value,
-                                    key=obj.id, comment=comment)
-                        comment = ""
-                    else:
-                        try:
-                            e = Entity.objects.get(
-                                resource=resource,
-                                key=obj.id)
-                            save_translation(
-                                entity=e,
-                                locale=locale,
-                                string=obj.value)
-
-                        except Entity.DoesNotExist:
-                            continue
-
-                elif isinstance(obj, silme.core.structure.Comment):
-                    if entities:
-                        comment = str(obj)
-
-            if entities:
-                update_entity_count(resource, project)
-            else:
-                update_stats(resource, locale)
-
-            log.debug("[" + locale.code + "]: " + path + " saved to DB.")
-            f.close()
-        except IOError:
-            log.debug("[" + locale.code + "]: " +
-                      path + " doesn't exist. Skipping.")
-
-
-def extract_properties(project, locale, paths, entities=False):
-    """Extract .properties files from paths and save or update in DB."""
-
-    parser = silme.format.properties.PropertiesFormatParser
-    extract_silme(parser, project, locale, paths, entities)
-
-
-def extract_dtd(project, locale, paths, entities=False):
-    """Extract .dtd files from paths and save or update in DB."""
-
-    parser = silme.format.dtd.DTDFormatParser
-    extract_silme(parser, project, locale, paths, entities)
-
-
-def extract_lang(project, locale, paths, entities=False):
-    """Extract .lang files from paths and save or update in DB."""
-
-    for path in paths:
-        lang = parse_lang(path)
         relative_path = get_relative_path(path, locale)
+        if relative_path[-1] == 't':
+            relative_path = relative_path[:-1]
 
         resource, created = Resource.objects.get_or_create(
-            project=project, path=relative_path)
+            project=project, path=relative_path, format='po')
 
         if entities:
-            for key, value in lang:
-                save_entity(resource=resource, string=key,
-                            comment=value[1])
+            for entry in po:
+                if not entry.obsolete:
+                    save_entity(resource=resource,
+                                string=escape(entry.msgid),
+                                string_plural=escape(entry.msgid_plural),
+                                comment=entry.comment,
+                                source=entry.occurrences)
 
             update_entity_count(resource, project)
 
         else:
-            for key, value in lang:
-                if key != value[2] or '{ok}' in value[3]:
-                    try:
-                        e = Entity.objects.get(resource=resource, string=key)
-                        save_translation(
-                            entity=e, locale=locale, string=value[2])
+            for entry in (po.translated_entries() + po.fuzzy_entries()):
+                if not entry.obsolete:
 
-                    except Entity.DoesNotExist:
-                        continue
+                    # Entities without plurals
+                    if len(escape(entry.msgstr)) > 0:
+                        try:
+                            e = Entity.objects.get(
+                                resource=resource,
+                                string=escape(entry.msgid))
+                            save_translation(
+                                entity=e,
+                                locale=locale,
+                                string=escape(entry.msgstr),
+                                fuzzy='fuzzy' in entry.flags)
+
+                        except Entity.DoesNotExist:
+                            continue
+
+                    # Pluralized entities
+                    elif len(entry.msgstr_plural) > 0:
+                        try:
+                            e = Entity.objects.get(
+                                resource=resource,
+                                string=escape(entry.msgid))
+                            for k in entry.msgstr_plural:
+                                save_translation(
+                                    entity=e,
+                                    locale=locale,
+                                    string=escape(entry.msgstr_plural[k]),
+                                    plural_form=k,
+                                    fuzzy='fuzzy' in entry.flags)
+
+                        except Entity.DoesNotExist:
+                            continue
 
             update_stats(resource, locale)
 
         log.debug("[" + locale.code + "]: " + path + " saved to DB.")
+    except Exception as e:
+        log.critical('PoExtractError for %s: %s' % (path, e))
+
+
+def extract_silme(parser, project, locale, path, entities=False):
+    """Extract file with path using silme and save or update in DB."""
+
+    try:
+        f = open(path)
+        structure = parser.get_structure(f.read())
+        format = str(parser).split('.')[-1].split('Format')[0].lower()
+
+        comment = ""
+        relative_path = get_relative_path(path, locale)
+        resource, created = Resource.objects.get_or_create(
+            project=project, path=relative_path, format=format)
+
+        for obj in structure:
+            if isinstance(obj, silme.core.entity.Entity):
+                if entities:
+                    save_entity(resource=resource, string=obj.value,
+                                key=obj.id, comment=comment)
+                    comment = ""
+                else:
+                    try:
+                        e = Entity.objects.get(resource=resource, key=obj.id)
+                        save_translation(
+                            entity=e,
+                            locale=locale,
+                            string=obj.value)
+
+                    except Entity.DoesNotExist:
+                        continue
+
+            elif isinstance(obj, silme.core.structure.Comment):
+                if entities:
+                    comment = str(obj)
+
+        if entities:
+            update_entity_count(resource, project)
+        else:
+            update_stats(resource, locale)
+
+        log.debug("[" + locale.code + "]: " + path + " saved to DB.")
+        f.close()
+    except IOError:
+        log.debug("[" + locale.code + "]: " +
+                  path + " doesn't exist. Skipping.")
+
+
+def extract_properties(project, locale, path, entities=False):
+    """Extract .properties file with path and save or update in DB."""
+
+    parser = silme.format.properties.PropertiesFormatParser
+    extract_silme(parser, project, locale, path, entities)
+
+
+def extract_dtd(project, locale, path, entities=False):
+    """Extract .dtd file with path and save or update in DB."""
+
+    parser = silme.format.dtd.DTDFormatParser
+    extract_silme(parser, project, locale, path, entities)
+
+
+def extract_lang(project, locale, path, entities=False):
+    """Extract .lang file with path and save or update in DB."""
+
+    lang = parse_lang(path)
+    relative_path = get_relative_path(path, locale)
+
+    resource, created = Resource.objects.get_or_create(
+        project=project, path=relative_path, format='lang')
+
+    if entities:
+        for key, value in lang:
+            save_entity(resource=resource, string=key, comment=value[1])
+
+        update_entity_count(resource, project)
+
+    else:
+        for key, value in lang:
+            if key != value[2] or '{ok}' in value[3]:
+                try:
+                    e = Entity.objects.get(resource=resource, string=key)
+                    save_translation(
+                        entity=e, locale=locale, string=value[2])
+
+                except Entity.DoesNotExist:
+                    continue
+
+        update_stats(resource, locale)
+
+    log.debug("[" + locale.code + "]: " + path + " saved to DB.")
 
 
 def extract_ini(project, path):
-    """Extract .ini file from path and save or update in DB."""
+    """Extract .ini file with path and save or update in DB."""
 
     config = configparser.ConfigParser()
     with codecs.open(path, 'r', 'utf-8') as f:
@@ -474,7 +474,7 @@ def extract_ini(project, path):
     sections.insert(0, sections.pop(sections.index(source_locale)))
 
     resource, created = Resource.objects.get_or_create(
-        project=project, path=path)
+        project=project, path=path, format='ini')
 
     for section in sections:
         try:
@@ -527,8 +527,9 @@ def extract_to_database(project, locales=None):
 
     isFile = project.repository_type == 'file'
     source_paths = get_source_paths(source_directory['path'])
+    format = detect_format(source_directory['path'])
 
-    if project.format == 'ini':
+    if format == 'ini':
         try:
             extract_ini(project, source_paths[0])
         except Exception as e:
@@ -543,8 +544,11 @@ def extract_to_database(project, locales=None):
         else:
             paths = get_locale_paths(project, locale)
             entities = isFile
-        globals()['extract_%s' % project.format](
-            project, locale, paths, entities)
+
+        for path in paths:
+            format = os.path.splitext(path)[1][1:].lower()
+            format = 'po' if format == 'pot' else format
+            globals()['extract_%s' % format](project, locale, path, entities)
 
 
 def update_from_repository(project, locales=None):
@@ -586,11 +590,6 @@ def update_from_repository(project, locales=None):
         except IOError as e:
             log.debug("IOError: " + str(e))
 
-        # Detect format
-        temp, file_extension = os.path.splitext(file_name)
-        format = file_extension[1:].lower()
-        format = 'po' if format == 'pot' else format
-
     # Save files to server
     else:
 
@@ -616,235 +615,197 @@ def update_from_repository(project, locales=None):
                 update_from_vcs(
                     repository_type, repository_url, repository_path)
 
-        # Detect format
-        source_directory = get_source_directory(repository_path_master)
-        format = detect_format(source_directory['path'])
-
-    # Store project format and repository_path
-    project.format = format
+    # Store project repository_path
     project.repository_path = repository_path
     project.save()
 
 
-def dump_po(project, locale):
-    """Dump .po (gettext) files from database."""
+def dump_po(project, locale, relative_path):
+    """Dump .po (gettext) file with relative path from database."""
 
-    locale_paths = get_locale_paths(project, locale)
-
-    for path in locale_paths:
-        po = polib.pofile(path)
-        date = datetime.datetime(1, 1, 1)
-        newest = Translation()
-        relative_path = get_relative_path(path, locale)
-        resource = Resource.objects.filter(project=project, path=relative_path)
-        entities = Entity.objects.filter(resource=resource, obsolete=False)
-
-        for entity in entities:
-            entry = po.find(polib.unescape(smart_text(entity.string)))
-            if entry:
-                if not entry.msgid_plural:
-                    translation = get_translation(entity=entity, locale=locale)
-                    if translation.string != '':
-                        entry.msgstr = polib.unescape(translation.string)
-                        if translation.date > date:
-                            date = translation.date
-                            newest = translation
-                        if ('fuzzy' in entry.flags and not translation.fuzzy):
-                            entry.flags.remove('fuzzy')
-
-                else:
-                    for i in range(0, 6):
-                        if i < (locale.nplurals or 1):
-                            translation = get_translation(
-                                entity=entity, locale=locale, plural_form=i)
-                            if translation.string != '':
-                                entry.msgstr_plural[unicode(i)] = \
-                                    polib.unescape(translation.string)
-                                if translation.date > date:
-                                    date = translation.date
-                                    newest = translation
-                                if ('fuzzy' in entry.flags and
-                                   not translation.fuzzy):
-                                    entry.flags.remove('fuzzy')
-                        # Remove obsolete plural forms if exist
-                        else:
-                            if unicode(i) in entry.msgstr_plural:
-                                del entry.msgstr_plural[unicode(i)]
-
-        # Update PO metadata
-        if newest.id:
-            po.metadata['PO-Revision-Date'] = newest.date
-            if newest.user:
-                po.metadata['Last-Translator'] = '%s <%s>' \
-                    % (newest.user.first_name, newest.user.email)
-        po.metadata['Language'] = locale.code
-        po.metadata['X-Generator'] = 'Pontoon'
-
-        if locale.nplurals:
-            po.metadata['Plural-Forms'] = 'nplurals=%s; plural=%s;' \
-                % (str(locale.nplurals), locale.plural_rule)
-
-        po.save()
-        log.debug("File updated: " + path)
-
-
-def dump_silme(parser, project, locale):
-    """Dump files from database using silme. Generate files from source
-    files, but only ones with translated strings."""
-
-    resources = Resource.objects.filter(project=project)
-    entities = Entity.objects.filter(resource__in=resources, obsolete=False)
     locale_directory_path = get_locale_directory(project, locale)["path"]
+    path = os.path.join(locale_directory_path, relative_path)
+    po = polib.pofile(path)
+    date = datetime.datetime(1, 1, 1)
+    newest = Translation()
+    resource = Resource.objects.filter(project=project, path=relative_path)
+    entities = Entity.objects.filter(resource=resource, obsolete=False)
 
-    # Remove all non-hidden files and folders in locale repository
-    items = os.listdir(locale_directory_path)
-    items = [i for i in items if not i[0] == '.']
-    for item in items:
-        path = os.path.join(locale_directory_path, item)
-        try:
-            shutil.rmtree(path)
-        except OSError:
-            os.remove(path)
-        except Exception as e:
-            log.error(e)
-
-    source_directory = get_source_directory(project.repository_path)
-
-    # Get relative paths to translated files only
-    translations = Translation.objects.filter(
-        entity__in=entities, locale=locale)
-
-    entities_pks = translations.values("entity").distinct()
-    entities_translated = Entity.objects.filter(pk__in=entities_pks)
-    resources_pks = entities_translated.values("resource").distinct()
-    resources_translated = Resource.objects.filter(pk__in=resources_pks)
-
-    relative_paths = resources_translated.values_list("path").distinct()
-
-    for relative in relative_paths:
-        path = os.path.join(locale_directory_path, relative[0])
-
-        # Create folders and copy files from source
-        basedir = os.path.dirname(path)
-        if not os.path.exists(basedir):
-            os.makedirs(basedir)
-        try:
-            shutil.copy(
-                os.path.join(source_directory['path'], relative[0]), path)
-        # Obsolete files
-        except Exception as e:
-            log.debug(e)
-            continue
-
-        with codecs.open(path, 'r+', 'utf-8') as f:
-            structure = parser.get_structure(f.read())
-            resource = resources.filter(path=relative[0])
-            entities_with_path = entities.filter(resource=resource)
-
-            for entity in entities_with_path:
-                key = entity.key
+    for entity in entities:
+        entry = po.find(polib.unescape(smart_text(entity.string)))
+        if entry:
+            if not entry.msgid_plural:
                 translation = get_translation(entity=entity, locale=locale)
+                if translation.string != '':
+                    entry.msgstr = polib.unescape(translation.string)
+                    if translation.date > date:
+                        date = translation.date
+                        newest = translation
+                    if ('fuzzy' in entry.flags and not translation.fuzzy):
+                        entry.flags.remove('fuzzy')
 
-                try:
-                    if (translation.string != '' or
-                            translation.pk is not None):
-                        # Modify translated entities
-                        structure.modify_entity(key, translation.string)
+            else:
+                for i in range(0, 6):
+                    if i < (locale.nplurals or 1):
+                        translation = get_translation(
+                            entity=entity, locale=locale, plural_form=i)
+                        if translation.string != '':
+                            entry.msgstr_plural[unicode(i)] = \
+                                polib.unescape(translation.string)
+                            if translation.date > date:
+                                date = translation.date
+                                newest = translation
+                            if ('fuzzy' in entry.flags and
+                               not translation.fuzzy):
+                                entry.flags.remove('fuzzy')
+                    # Remove obsolete plural forms if exist
                     else:
-                        # Remove untranslated and following newline
-                        pos = structure.entity_pos(key)
-                        structure.remove_entity(key)
-                        line = structure[pos]
+                        if unicode(i) in entry.msgstr_plural:
+                            del entry.msgstr_plural[unicode(i)]
 
-                        if type(line) == unicode and line.startswith('\n'):
-                            line = line[len('\n'):]
-                            structure[pos] = line
-                            if len(line) is 0:
-                                structure.remove_element(pos)
+    # Update PO metadata
+    if newest.id:
+        po.metadata['PO-Revision-Date'] = newest.date
+        if newest.user:
+            po.metadata['Last-Translator'] = '%s <%s>' \
+                % (newest.user.first_name, newest.user.email)
+    po.metadata['Language'] = locale.code
+    po.metadata['X-Generator'] = 'Pontoon'
 
-                # Obsolete entities
-                except KeyError as e:
-                    pass
+    if locale.nplurals:
+        po.metadata['Plural-Forms'] = 'nplurals=%s; plural=%s;' \
+            % (str(locale.nplurals), locale.plural_rule)
 
-            # Erase file and then write, otherwise content gets appended
-            f.seek(0)
-            f.truncate()
-            content = parser.dump_structure(structure)
-            f.write(content)
-
-        log.debug("File updated: " + path)
+    po.save()
+    log.debug("File updated: " + path)
 
 
-def dump_properties(project, locale):
-    """Dump .properties files from database."""
+def dump_silme(parser, project, locale, relative_path):
+    """Dump file with relative path from database using silme. Generate files
+    from source files, but only ones with translated strings."""
+
+    locale_directory_path = get_locale_directory(project, locale)["path"]
+    path = os.path.join(locale_directory_path, relative_path)
+
+    # Create folders and copy files from source
+    basedir = os.path.dirname(path)
+    source_directory = get_source_directory(project.repository_path)
+    if not os.path.exists(basedir):
+        os.makedirs(basedir)
+    try:
+        shutil.copy(
+            os.path.join(source_directory['path'], relative_path), path)
+    # Obsolete files
+    except Exception as e:
+        log.debug(e)
+        return
+
+    with codecs.open(path, 'r+', 'utf-8') as f:
+        structure = parser.get_structure(f.read())
+        resource = Resource.objects.filter(project=project, path=relative_path)
+        entities_with_path = Entity.objects.filter(
+            resource=resource, obsolete=False)
+
+        for entity in entities_with_path:
+            key = entity.key
+            translation = get_translation(entity=entity, locale=locale)
+
+            try:
+                if (translation.string != '' or translation.pk is not None):
+                    # Modify translated entities
+                    structure.modify_entity(key, translation.string)
+                else:
+                    # Remove untranslated and following newline
+                    pos = structure.entity_pos(key)
+                    structure.remove_entity(key)
+                    line = structure[pos]
+
+                    if type(line) == unicode and line.startswith('\n'):
+                        line = line[len('\n'):]
+                        structure[pos] = line
+                        if len(line) is 0:
+                            structure.remove_element(pos)
+
+            # Obsolete entities
+            except KeyError as e:
+                pass
+
+        # Erase file and then write, otherwise content gets appended
+        f.seek(0)
+        f.truncate()
+        content = parser.dump_structure(structure)
+        f.write(content)
+
+    log.debug("File updated: " + path)
+
+
+def dump_properties(project, locale, relative_path):
+    """Dump .properties file with relative path from database."""
 
     parser = silme.format.properties.PropertiesFormatParser
-    dump_silme(parser, project, locale)
+    dump_silme(parser, project, locale, relative_path)
 
 
-def dump_dtd(project, locale):
-    """Dump .dtd files from database."""
+def dump_dtd(project, locale, relative_path):
+    """Dump .dtd file with relative path from database."""
 
     parser = silme.format.dtd.DTDFormatParser
-    dump_silme(parser, project, locale)
+    dump_silme(parser, project, locale, relative_path)
 
 
-def dump_lang(project, locale):
-    """Dump .lang files from database."""
+def dump_lang(project, locale, relative_path):
+    """Dump .lang file with relative path from database."""
 
-    locale_paths = get_locale_paths(project, locale)
+    locale_directory_path = get_locale_directory(project, locale)["path"]
+    path = os.path.join(locale_directory_path, relative_path)
 
-    for path in locale_paths:
-        relative_path = get_relative_path(path, locale)
+    try:
+        resource = Resource.objects.get(project=project, path=relative_path)
+    except Resource.DoesNotExist as e:
+        log.error('Resource does not exist')
+        return
 
-        try:
-            resource = Resource.objects.get(
-                project=project, path=relative_path)
-        except Resource.DoesNotExist as e:
-            log.error('Resource does not exist')
-            continue
+    with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
+        content = []
+        translation = None
 
-        with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
-            content = []
-            translation = None
+        for line in lines:
+            if translation:
+                # Keep newlines and white spaces in line if present
+                trans_line = line.replace(line.strip(), translation)
+                content.append(trans_line)
+                translation = None
+                continue
 
-            for line in lines:
-                if translation:
-                    # Keep newlines and white spaces in line if present
-                    trans_line = line.replace(line.strip(), translation)
-                    content.append(trans_line)
-                    translation = None
+            content.append(line)
+            line = line.strip()
+
+            if not line:
+                continue
+
+            if line[0] == ';':
+                original = line[1:].strip()
+
+                try:
+                    entity = Entity.objects.get(
+                        resource=resource, string=original)
+                except Entity.DoesNotExist as e:
+                    log.error('%s: Entity "%s" does not exist %s' %
+                              (path, original, project.name))
                     continue
 
-                content.append(line)
-                line = line.strip()
+                translation = get_translation(
+                    entity=entity, locale=locale).string
+                if translation == '':
+                    translation = original
+                elif translation == original:
+                    translation += ' {ok}'
 
-                if not line:
-                    continue
-
-                if line[0] == ';':
-                    original = line[1:].strip()
-
-                    try:
-                        entity = Entity.objects.get(
-                            resource=resource, string=original)
-                    except Entity.DoesNotExist as e:
-                        log.error('%s: Entity "%s" does not exist %s' %
-                                  (path, original, project.name))
-                        continue
-
-                    translation = get_translation(
-                        entity=entity, locale=locale).string
-                    if translation == '':
-                        translation = original
-                    elif translation == original:
-                        translation += ' {ok}'
-
-            # Erase file and then write, otherwise content gets appended
-            lines.seek(0)
-            lines.truncate()
-            lines.writelines(content)
-            log.debug("File updated: " + path)
+        # Erase file and then write, otherwise content gets appended
+        lines.seek(0)
+        lines.truncate()
+        lines.writelines(content)
+        log.debug("File updated: " + path)
 
 
 def dump_ini(project, locale):
@@ -887,12 +848,49 @@ def dump_from_database(project, locale):
     log.debug("Dump project files from database.")
 
     # Check if locale directory even exist
-    path = get_locale_directory(project, locale)["path"]
-    if not path:
+    locale_directory_path = get_locale_directory(project, locale)["path"]
+    if not locale_directory_path:
         return False
 
-    globals()['dump_%s' % project.format](project, locale)
-    return path
+    formats = Resource.objects.filter(project=project).values_list(
+        'format', flat=True).distinct()
+
+    if 'ini' in formats:
+        dump_ini(project, locale)
+
+    else:
+        # Get relative paths to translated files only
+        relative_paths = Resource.objects \
+            .filter(project=project, stats__locale=locale) \
+            .exclude(
+                stats__translated_count=0,
+                stats__approved_count=0,
+                stats__fuzzy_count=0) \
+            .values_list('path', flat=True) \
+            .distinct()
+
+        # Silme: Remove all non-hidden files and folders in locale repository
+        first = relative_paths[0]
+        if os.path.splitext(first)[1][1:].lower() in ('dtd', 'properties'):
+            items = os.listdir(locale_directory_path)
+            items = [i for i in items if not i[0] == '.']
+
+            for item in items:
+                path = os.path.join(locale_directory_path, item)
+                try:
+                    shutil.rmtree(path)
+                except OSError:
+                    os.remove(path)
+                except Exception as e:
+                    log.error(e)
+
+        # Dump files based on format
+        for path in relative_paths:
+            format = os.path.splitext(path)[1][1:].lower()
+            format = 'po' if format == 'pot' else format
+            globals()['dump_%s' % format](project, locale, path)
+
+    return locale_directory_path
 
 
 def generate_zip(project, locale):

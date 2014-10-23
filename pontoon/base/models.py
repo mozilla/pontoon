@@ -70,17 +70,6 @@ class Project(models.Model):
     transifex_resource = models.CharField(
         "Resource", max_length=128, blank=True)
 
-    # Format
-    FORMAT_CHOICES = (
-        ('po', 'po'),
-        ('properties', 'properties'),
-        ('dtd', 'dtd'),
-        ('ini', 'ini'),
-        ('lang', 'lang'),
-    )
-    format = models.CharField(
-        "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
-
     # Project info
     info_brief = models.TextField("Project info", blank=True)
 
@@ -116,6 +105,17 @@ class Resource(models.Model):
     path = models.TextField()  # Path to localization file
     entity_count = models.PositiveIntegerField(default=0)
 
+    # Format
+    FORMAT_CHOICES = (
+        ('po', 'po'),
+        ('properties', 'properties'),
+        ('dtd', 'dtd'),
+        ('ini', 'ini'),
+        ('lang', 'lang'),
+    )
+    format = models.CharField(
+        "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
+
     def __unicode__(self):
         return '%s: %s' % (self.project.name, self.path)
 
@@ -144,6 +144,7 @@ class Entity(models.Model):
             'original_plural': self.string_plural,
             'key': self.key,
             'path': self.resource.path,
+            'format': self.resource.format,
             'comment': self.comment,
             'source': source,
             'obsolete': self.obsolete,
