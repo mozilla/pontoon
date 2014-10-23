@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import requests
+import traceback
 import xml.etree.ElementTree as ET
 import urllib
 
@@ -976,6 +977,7 @@ def update_from_repository(request, template=None):
         files.extract_to_database(project, [locale])
     except Exception as e:
         log.error("Exception: " + str(e))
+        log.debug(traceback.format_exc())
         return HttpResponse('error')
 
     return HttpResponse("ok")

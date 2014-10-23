@@ -4,6 +4,7 @@ import commonware
 import json
 import os
 import shutil
+import traceback
 
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -227,6 +228,7 @@ def update_from_repository(request, template=None):
 
     except Exception as e:
         log.error("Exception: " + str(e))
+        log.debug(traceback.format_exc())
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': str(e),
@@ -234,6 +236,7 @@ def update_from_repository(request, template=None):
 
     except IOError as e:
         log.error("IOError: " + str(e))
+        log.debug(traceback.format_exc())
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': str(e),
