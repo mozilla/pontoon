@@ -106,9 +106,8 @@ def get_locale_paths(project, locale):
         'format', flat=True).distinct()
 
     for root, dirnames, filenames in os.walk(path):
-        # Ignore hidden files and folders
+        # Ignore hidden files
         filenames = [f for f in filenames if not f[0] == '.']
-        dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
         for format in formats:
             for filename in fnmatch.filter(filenames, '*.' + format):
@@ -131,8 +130,7 @@ def get_locale_directory(project, locale):
     path = get_repository_path_master(project)
 
     for root, dirnames, filenames in os.walk(path):
-        # Ignore hidden files and folders
-        filenames = [f for f in filenames if not f[0] == '.']
+        # Ignore hidden folders
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
         for dirname in fnmatch.filter(dirnames, locale.code):
@@ -166,9 +164,8 @@ def detect_format(path):
     """Detect file format based on file extensions."""
 
     for root, dirnames, filenames in os.walk(path):
-        # Ignore hidden files and folders
+        # Ignore hidden files
         filenames = [f for f in filenames if not f[0] == '.']
-        dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
         for extension in ['pot'] + [i[0] for i in Resource.FORMAT_CHOICES]:
             for filename in fnmatch.filter(filenames, '*.' + extension):
@@ -181,9 +178,8 @@ def get_source_paths(path):
     source_paths = []
 
     for root, dirnames, filenames in os.walk(path):
-        # Ignore hidden files and folders
+        # Ignore hidden files
         filenames = [f for f in filenames if not f[0] == '.']
-        dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
         for extension in ['pot'] + [i[0] for i in Resource.FORMAT_CHOICES]:
             for filename in fnmatch.filter(filenames, '*.' + extension):
@@ -196,8 +192,7 @@ def get_source_directory(path):
     """Get name and path of the directory with source files."""
 
     for root, dirnames, filenames in os.walk(path):
-        # Ignore hidden files and folders
-        filenames = [f for f in filenames if not f[0] == '.']
+        # Ignore hidden folders
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
         for directory in ('templates', 'en-US', 'en-GB', 'en'):
