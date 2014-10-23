@@ -1851,29 +1851,28 @@ var Pontoon = (function () {
 
         var details = Pontoon.common.getProjectDetails(),
             locales = Object.keys(details),
-            locale = locales[0],
             menu = $('.locale .menu'),
-            selected_locale = menu.siblings('.selector').find('.code').html();
+            locale = menu.siblings('.selector')
+              .find('.code').html().toLowerCase();
 
         // Fallback if selected locale not available for the selected project
-        if (locales.indexOf(selected_locale) === -1) {
+        if (locales.indexOf(locale) === -1) {
           var accept = $('#server').data('accept-language').toLowerCase();
-              code = (locales.indexOf(accept) !== -1) ? accept : locale;
+              locale = (locales.indexOf(accept) !== -1) ? accept : locales[0];
 
-          menu.find('.language.' + code).click();
+          menu.find('.language.' + locale).click();
         }
 
-        selected_locale = menu.siblings('.selector').find('.code').html();
-        var detail = details[selected_locale][0];
-
         // Fallback if selected part not available for the selected project
-        if (detail) {
-          var isPath = Object.keys(detail).indexOf("name") === -1,
+        if (details[locale].length > 0) {
+          var detail = details[locale][0],
+              isPath = Object.keys(detail).indexOf("name") === -1,
               type = isPath ? 'resource__path' : 'name';
-              selected_part = $('.part .selector').attr('title');
+              part = $('.part .selector').attr('title');
 
-          for(var d in details[selected_locale]) {
-            if (details[selected_locale][d][type] === selected_part) {
+          // Selected part available
+          for (var d in details[locale]) {
+            if (details[locale][d][type] === part) {
               return;
             }
           }
