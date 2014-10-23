@@ -233,7 +233,7 @@ def update_from_repository(request, template=None):
         }), mimetype='application/json')
 
     except IOError as e:
-        log.debug("IOError: " + str(e))
+        log.error("IOError: " + str(e))
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': str(e),
