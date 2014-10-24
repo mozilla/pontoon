@@ -486,14 +486,14 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 110px;
+  width: 160px;
 }
 
 #pontoon .project.select .menu ul li .project-url {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 350px;
+  width: 300px;
 }
 
 #pontoon .select .menu ul li > span:first-child {
