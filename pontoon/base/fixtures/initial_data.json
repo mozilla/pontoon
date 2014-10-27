@@ -2474,6 +2474,7 @@
             "name": "Pontoon Intro",
             "slug": "pontoon-intro",
             "url": "http://localhost:8000/intro/",
+            "links": true,
             "locales": [74, 85, 111, 205, 213],
             "repository_type": "git",
             "repository_url": "git@github.com:mathjazz/pontoon-intro.git",
