@@ -411,33 +411,35 @@ var Pontoon = (function () {
       }).complete(complete);
 
       // Transvision
-      requests++;
+      $(['aurora', 'gaia', 'mozilla-org']).each(function(i, v) {
+        requests++;
 
-      if (self.XHRtransvision) {
-        self.XHRtransvision.abort();
-      }
-
-      self.XHRtransvision = $.ajax({
-        url: 'transvision/',
-        data: {
-          text: encodeURIComponent(original),
-          locale: self.locale.code
+        if (self["XHRtransvision" + v]) {
+          self["XHRtransvision" + v].abort();
         }
 
-      }).success(function(data) {
-        if (data.translations) {
-          $.each(data.translations, function() {
-            append({
-              original: this.source,
-              quality: Math.round(this.quality) + '%',
-              url: 'http://transvision.mozfr.org/',
-              title: 'Visit Transvision',
-              source: 'Mozilla',
-              translation: this.target
+        self["XHRtransvision" + v] = $.ajax({
+          url: 'transvision' + '-' + v + '/',
+          data: {
+            text: encodeURIComponent(original),
+            locale: self.locale.code
+          }
+
+        }).success(function(data) {
+          if (data.translations) {
+            $.each(data.translations, function() {
+              append({
+                original: this.source,
+                quality: Math.round(this.quality) + '%',
+                url: 'http://transvision.mozfr.org/',
+                title: 'Visit Transvision',
+                source: data.title,
+                translation: this.target
+              });
             });
-          });
-        }
-      }).complete(complete);
+          }
+        }).complete(complete);
+      });
     },
 
 

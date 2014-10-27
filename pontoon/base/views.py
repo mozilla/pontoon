@@ -809,7 +809,7 @@ def amagama(request):
         return HttpResponse("error")
 
 
-def transvision(request):
+def transvision(request, repo, title, src="en-US"):
     """Get Mozilla translations from Transvision service."""
     log.debug("Get Mozilla translations from Transvision service.")
 
@@ -820,8 +820,8 @@ def transvision(request):
         log.error(str(e))
         return HttpResponse("error")
 
-    url = "http://transvision.mozfr.org/api/v1/tm/release/en-US/" \
-          "%s/%s/?max_results=%s&min_quality=70" % (locale, text, 5)
+    url = "http://transvision.mozfr.org/api/v1/tm/%s/%s/" \
+          "%s/%s/?max_results=%s&min_quality=70" % (repo, src, locale, text, 5)
 
     try:
         r = requests.get(url)
@@ -830,7 +830,8 @@ def transvision(request):
             translations = r.json()
 
             return HttpResponse(json.dumps({
-                'translations': translations
+                'translations': translations,
+                'title': title,
             }), mimetype='application/json')
 
         else:
@@ -839,6 +840,18 @@ def transvision(request):
     except Exception as e:
         log.error(e)
         return HttpResponse("error")
+
+
+def transvision_aurora(request):
+    return transvision(request, "aurora", "Mozilla Aurora")
+
+
+def transvision_gaia(request):
+    return transvision(request, "gaia", "Firefox OS")
+
+
+def transvision_mozilla_org(request):
+    return transvision(request, "mozilla_org", "Mozilla.org", "en-GB")
 
 
 @anonymous_csrf_exempt
