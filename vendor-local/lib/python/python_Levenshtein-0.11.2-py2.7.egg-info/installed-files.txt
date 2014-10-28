@@ -1,0 +1,10 @@
+../Levenshtein.so
+./
+dependency_links.txt
+entry_points.txt
+namespace_packages.txt
+not-zip-safe
+PKG-INFO
+requires.txt
+SOURCES.txt
+top_level.txt
