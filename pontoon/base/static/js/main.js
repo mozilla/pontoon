@@ -290,15 +290,15 @@ var Pontoon = (function () {
 
       }).success(function(data) {
         if (data.translations) {
-          $.each(Object.keys(data.translations), function() {
+          $.each(data.translations, function() {
             append({
-              original: original,
-              quality: '100%',
+              original: this.source,
+              quality: Math.round(this.quality) + '%',
               url: self.app.path,
               title: 'Pontoon Homepage',
               source: 'Translation memory',
-              translation: this,
-              count: data.translations[this]
+              translation: this.target,
+              count: this.count
             });
           });
         }

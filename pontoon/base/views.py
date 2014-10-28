@@ -4,6 +4,8 @@ import commonware
 import datetime
 import hashlib
 import json
+import Levenshtein
+import math
 import os
 import requests
 import traceback
@@ -30,6 +32,7 @@ from django.templatetags.static import static
 from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
+from operator import itemgetter
 from pontoon.administration.utils.vcs import commit_to_vcs
 from pontoon.administration.utils import files
 from pontoon.base import utils
@@ -606,22 +609,59 @@ def translation_memory(request):
         log.error(e)
         return HttpResponse("error")
 
-    entities = Entity.objects.filter(string=text)
+    min_quality = 0.7
+    max_results = 5
+    length = len(text)
+    min_dist = math.ceil(max(length * min_quality, 2))
+    max_dist = math.floor(min(length / min_quality, 1000))
+
+    # Only check entities with similar length
+    entities = Entity.objects.all().extra(
+        where=["CHAR_LENGTH(string) BETWEEN %s AND %s" % (min_dist, max_dist)])
+
+    # Exclude existing entity
     if pk:
-        entities = entities.exclude(pk=pk)  # Exclude existing entity
+        entities = entities.exclude(pk=pk)
 
     translations = {}
+
     for e in entities:
-        translation = get_translation(entity=e, locale=locale, fuzzy=False)
-        if translation.string != '' or translation.pk is not None:
-            count = 1
-            if translation.string in translations:
-                count = translations[translation.string] + 1
-            translations[translation.string] = count
+        source = e.string
+        quality = Levenshtein.ratio(str(text), source)
+
+        if quality > min_quality:
+            translation = get_translation(entity=e, locale=locale, fuzzy=False)
+
+            if translation.string != '' or translation.pk is not None:
+                count = 1
+                quality = quality * 100
+
+                if translation.string in translations:
+                    existing = translations[translation.string]
+                    count = existing['count'] + 1
+
+                    # Store data for best match among equal translations only
+                    if quality < existing['quality']:
+                        quality = existing['quality']
+                        source = existing['source']
+
+                translations[translation.string] = {
+                    'source': source,
+                    'quality': quality,
+                    'count': count,
+                }
 
     if len(translations) > 0:
+        # Sort by translation count
+        t = sorted(translations.iteritems(), key=itemgetter(1), reverse=True)
+        translations_array = []
+
+        for a, b in t[:max_results]:
+            b["target"] = a
+            translations_array.append(b)
+
         return HttpResponse(json.dumps({
-            'translations': translations
+            'translations': translations_array
         }), mimetype='application/json')
 
     else:
