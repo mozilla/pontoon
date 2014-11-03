@@ -855,14 +855,14 @@ def dump_from_database(project, locale):
 
     else:
         # Get relative paths to translated files only
-        relative_paths = Resource.objects \
-            .filter(project=project, stats__locale=locale) \
-            .exclude(
-                stats__translated_count=0,
-                stats__approved_count=0,
-                stats__fuzzy_count=0) \
-            .values_list('path', flat=True) \
-            .distinct()
+        stats = Stats.objects.filter(locale=locale) \
+            .exclude(translated_count=0, approved_count=0, fuzzy_count=0) \
+            .values("resource")
+        resources = Resource.objects.filter(project=project, id__in=stats)
+        relative_paths = resources.values_list('path', flat=True).distinct()
+
+        if len(relative_paths) == 0:
+            return False
 
         # Silme: Remove all non-hidden files and folders in locale repository
         first = relative_paths[0]
