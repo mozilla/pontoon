@@ -126,6 +126,7 @@ class Entity(models.Model):
     string_plural = models.TextField(blank=True)
     key = models.TextField(blank=True)  # Needed for webL10n
     comment = models.TextField(blank=True)
+    order = models.PositiveIntegerField(default=0)
     source = models.TextField(blank=True)  # Path to source code file
     obsolete = models.BooleanField(default=False)
 
@@ -146,6 +147,7 @@ class Entity(models.Model):
             'path': self.resource.path,
             'format': self.resource.format,
             'comment': self.comment,
+            'order': self.order,
             'source': source,
             'obsolete': self.obsolete,
         }
@@ -265,7 +267,7 @@ def get_entities(project, locale, path=None):
         obj["translation"] = translation_array
 
         entities_array.append(obj)
-    return entities_array
+    return sorted(entities_array, key=lambda k: k['order'])
 
 
 def get_translation(entity, locale, plural_form=None, fuzzy=None):
@@ -287,7 +289,7 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
 
 
 def save_entity(resource, string, string_plural="", comment="",
-                key="", source=""):
+                order=0, key="", source=""):
     """Add new or update existing entity."""
 
     # Update existing entity
@@ -315,6 +317,7 @@ def save_entity(resource, string, string_plural="", comment="",
     if len(comment) > 0:
         e.comment = comment
 
+    e.order = order
     e.save()
 
 

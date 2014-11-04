@@ -300,12 +300,13 @@ def extract_po(project, locale, path, entities=False):
             project=project, path=relative_path, format='po')
 
         if entities:
-            for entry in po:
+            for order, entry in enumerate(po):
                 if not entry.obsolete:
                     save_entity(resource=resource,
                                 string=escape(entry.msgid),
                                 string_plural=escape(entry.msgid_plural),
                                 comment=entry.comment,
+                                order=order,
                                 source=entry.occurrences)
 
             update_entity_count(resource, project)
@@ -362,6 +363,7 @@ def extract_silme(parser, project, locale, path, entities=False):
         format = str(parser).split('.')[-1].split('Format')[0].lower()
 
         comment = ""
+        order = 0
         relative_path = get_relative_path(path, locale)
         resource, created = Resource.objects.get_or_create(
             project=project, path=relative_path, format=format)
@@ -370,8 +372,9 @@ def extract_silme(parser, project, locale, path, entities=False):
             if isinstance(obj, silme.core.entity.Entity):
                 if entities:
                     save_entity(resource=resource, string=obj.value,
-                                key=obj.id, comment=comment)
+                                key=obj.id, comment=comment, order=order)
                     comment = ""
+                    order += 1
                 else:
                     try:
                         e = Entity.objects.get(resource=resource, key=obj.id)
@@ -423,8 +426,9 @@ def extract_lang(project, locale, path, entities=False):
         project=project, path=relative_path, format='lang')
 
     if entities:
-        for key, value in lang:
-            save_entity(resource=resource, string=key, comment=value[1])
+        for order, (key, value) in enumerate(lang):
+            save_entity(
+                resource=resource, string=key, comment=value[1], order=order)
 
         update_entity_count(resource, project)
 
@@ -478,10 +482,12 @@ def extract_ini(project, path):
             log.debug("Locale not supported: " + section)
             break
 
+        order = 0
         for item in config.items(section):
             if section == source_locale:
                 save_entity(resource=resource, string=item[1],
-                            key=item[0])
+                            key=item[0], order=order)
+                order += 1
             else:
                 try:
                     e = Entity.objects.get(
