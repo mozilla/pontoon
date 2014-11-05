@@ -155,7 +155,7 @@ def get_locale_directory(project, locale):
             'path': path,
         }
 
-    error = "Locale %s directory not found." % locale.code
+    error = "Directory for locale %s not found." % locale.code
     log.error(error)
     raise Exception(error)
 
