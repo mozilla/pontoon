@@ -156,6 +156,7 @@ class CommitToGit(CommitToRepository):
 
         try:
             repo = git.Repo(path)
+            repo.git.add(path, A=True)
             if repo.is_dirty:
                 repo.git.commit(path, m=message, author=author)
                 repo.git.push()

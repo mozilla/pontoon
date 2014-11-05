@@ -867,12 +867,8 @@ def dump_from_database(project, locale):
         resources = Resource.objects.filter(project=project, id__in=stats)
         relative_paths = resources.values_list('path', flat=True).distinct()
 
-        if len(relative_paths) == 0:
-            return False
-
         # Silme: Remove all non-hidden files and folders in locale repository
-        first = relative_paths[0]
-        if os.path.splitext(first)[1][1:].lower() in ('dtd', 'properties'):
+        if 'dtd' in formats or 'properties' in formats:
             items = os.listdir(locale_directory_path)
             items = [i for i in items if not i[0] == '.']
 
@@ -884,6 +880,10 @@ def dump_from_database(project, locale):
                     os.remove(path)
                 except Exception as e:
                     log.error(e)
+
+            # If directory empty, make sure Git and Mercurial don't remove it
+            if len(os.listdir(locale_directory_path)) == 0:
+                open(os.path.join(locale_directory_path, '.keep'), 'a').close()
 
         # Dump files based on format
         for path in relative_paths:
