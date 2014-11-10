@@ -28,19 +28,9 @@ Pontoon is basedon on [Playdoh](http://playdoh.readthedocs.org/en/latest/), so i
  * `./manage.py runserver`
  * Point your browser to [http://localhost:8000](http://localhost:8000)
 
+For [admin](http://localhost:8000/admin/) access, create admin account with `./manage.py createsuperuser`.
+
 __Mac users__: see workarounds for possible issues with [installing requirements](/../../issues/16) or [syncing database](/../../issues/18).
-
-Optional steps
---------------
-For admin access at [http://localhost:8000/admin/](http://localhost:8000/admin/), create admin account:
- * `./manage.py createsuperuser`
-
-To work with SVN repositories, install [pysvn](http://pysvn.tigris.org/) from binaries or source:
- * Download and untar the latest [source kit](http://pysvn.tigris.org/project_downloads.html) under pysvn Extension.
- * `cd Source`
- * `python setup.py configure`
- * `make`
- * `cp -R pysvn pontoon/env/lib/python2.X/site-packages/`
 
 Local settings
 --------------

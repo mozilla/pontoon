@@ -2,7 +2,6 @@
 
 south
 polib
-mercurial
 configparser
 suds
 python-Levenshtein==0.11.2

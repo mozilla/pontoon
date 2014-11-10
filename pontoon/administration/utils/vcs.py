@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 import base64
 import os
+import subprocess
 import commonware.log
 
 
@@ -22,104 +23,81 @@ class PullFromRepository(object):
     def pull(self, source=None, target=None):
         raise NotImplementedError
 
-    @staticmethod
-    def conflict_resolution_callback(*args, **kwargs):
-        raise NotImplementedError
-
 
 class PullFromGit(PullFromRepository):
 
     def pull(self, source=None, target=None):
-        import git
         log.debug("Clone or update Git repository.")
 
         source = source or self.source
         target = target or self.target
 
-        try:
-            repo = git.Repo(target)
-            repo.git.pull()
-            log.debug("Git: repository at " + source + " updated.")
-        except Exception as e:
-            log.debug("Git: " + str(e))
-            try:
-                git.Git().clone(source, target)
-                log.debug("Git: repository at " + source + " cloned.")
-            except Exception as e:
-                log.debug("Git: " + str(e))
-                raise PullFromRepositoryException(unicode(e))
+        command = ["git", "pull"]
+        code, output, error = execute(command, target)
 
-    @staticmethod
-    def conflict_resolution_callback(*args, **kwargs):
-        pass
+        if code == 0:
+            log.debug("Git: repository at " + source + " updated.")
+
+        else:
+            log.debug("Git: " + unicode(error))
+            command = ["git", "clone", source, target]
+            code, output, error = execute(command)
+
+            if code == 0:
+                log.debug("Git: repository at " + source + " cloned.")
+
+            else:
+                raise PullFromRepositoryException(unicode(error))
 
 
 class PullFromHg(PullFromRepository):
 
     def pull(self, source=None, target=None):
-        from mercurial import commands, hg, ui, error
         log.debug("Clone or update HG repository.")
 
         source = source or self.source
         target = target or self.target
 
-        # Folders need to be manually created
-        if not os.path.exists(target):
-            os.makedirs(target)
+        command = ["hg", "pull", "-u"]
+        code, output, error = execute(command, target)
 
-        # Doesn't work with unicode type
-        url = str(source)
-        path = str(target)
+        if code == 0:
+            log.debug("Mercurial: repository at " + source + " updated.")
 
-        try:
-            repo = hg.repository(ui.ui(), path)
-            commands.pull(ui.ui(), repo, source=url)
-            commands.update(ui.ui(), repo)
-            log.debug("Mercurial: repository at " + url + " updated.")
-        except error.RepoError as e:
-            log.debug("Mercurial: " + str(e))
-            try:
-                commands.clone(ui.ui(), url, path)
-                log.debug("Mercurial: repository at " + url + " cloned.")
-            except Exception as e:
-                log.debug("Mercurial: " + str(e))
-                raise PullFromRepositoryException(unicode(e))
+        else:
+            log.debug("Mercurial: " + unicode(error))
+            command = ["hg", "clone", source, target]
+            code, output, error = execute(command)
 
-    @staticmethod
-    def conflict_resolution_callback(*args, **kwargs):
-        pass
+            if code == 0:
+                log.debug("Mercurial: repository at " + source + " cloned.")
+
+            else:
+                raise PullFromRepositoryException(unicode(error))
 
 
 class PullFromSvn(PullFromRepository):
 
     def pull(self, source=None, target=None):
-        import pysvn
         log.debug("Checkout or update SVN repository.")
 
         source = source or self.source
         target = target or self.target
 
-        client = pysvn.Client()
-        client.callback_conflict_resolver = self.conflict_resolution_callback
-        client.callback_ssl_server_trust_prompt = self.ssl_server_trust_prompt
+        if os.path.exists(target):
+            status = "updated"
+            command = ["svn", "update", "--accept", "theirs-full", target]
+        else:
+            status = "checked out"
+            command = [
+                "svn", "checkout", "--trust-server-cert", source, target]
 
-        try:
-            if os.path.exists(target):
-                client.update(target)
-            else:
-                client.checkout(source, target)
-        except pysvn.ClientError as e:
-            log.debug("Subversion: " + str(e))
-            raise PullFromRepositoryException(unicode(e))
+        code, output, error = execute(command)
 
-    @staticmethod
-    def conflict_resolution_callback(conflict_description):
-        import pysvn
-        return pysvn.wc_conflict_choice.theirs_full, None, False
+        if code != 0:
+            raise PullFromRepositoryException(unicode(error))
 
-    @staticmethod
-    def ssl_server_trust_prompt(trust_dict):
-        return True, 2, False
+        log.debug("Subversion: repository at " + source + " %s." % status)
 
 
 class CommitToRepositoryException(Exception):
@@ -141,7 +119,6 @@ class CommitToRepository(object):
 class CommitToGit(CommitToRepository):
 
     def commit(self, path=None, message=None, user=None):
-        import git
         log.debug("Commit to Git repository.")
 
         path = path or self.path
@@ -154,74 +131,64 @@ class CommitToGit(CommitToRepository):
             name = user.email.split('@')[0]
         author = ' '.join([name, '<%s>' % user.email])
 
-        try:
-            repo = git.Repo(path)
-            repo.git.add(path, A=True)
-            if repo.is_dirty:
-                repo.git.commit(path, m=message, author=author)
-                repo.git.push()
-                log.info(message)
-            else:
-                log.info("Nothing to commit")
+        # Add
+        add = ["git", "add", "-A"]
+        execute(add, path)
 
-        except git.errors.GitCommandError as e:
-            raise CommitToRepositoryException(str(e))
+        # Commit
+        commit = ["git", "commit", "-m", message, "--author", author]
+        code, output, error = execute(commit, path)
+        if code != 0 and len(error):
+            raise CommitToRepositoryException(unicode(error))
+
+        # Push
+        push = ["git", "push"]
+        code, output, error = execute(push, path)
+        if code != 0:
+            raise CommitToRepositoryException(unicode(error))
+
+        log.info(message)
 
 
 class CommitToHg(CommitToRepository):
 
     def commit(self, path=None, message=None, user=None):
-        from mercurial import commands, hg, ui, error
         log.debug("Commit to Mercurial repository.")
 
         path = path or self.path
         message = message or self.message
         user = user or self.user
 
-        strings = [user.first_name, '<%s>' % user.email]
-        author = ' '.join(filter(None, strings))  # Only if not empty
+        # Set commit author
+        name = user.first_name
+        if not name:
+            name = user.email.split('@')[0]
+        author = ' '.join([name, '<%s>' % user.email])
 
-        # For some reason default push path is not set properly
-        import configparser
-        import codecs
-        config = configparser.ConfigParser()
+        # Commit
+        commit = ["hg", "commit", "-m", message, "-u", author]
+        code, output, error = execute(commit, path)
+        if code != 0 and len(error):
+            raise CommitToRepositoryException(unicode(error))
 
-        with codecs.open(os.path.join(path, '.hg/hgrc'), 'r', 'utf-8') as f:
-            try:
-                config.read_file(f)
-            except Exception as e:
-                raise CommitToRepositoryException(str(e))
+        # Push
+        push = ["hg", "push"]
+        code, output, error = execute(push, path)
+        if code != 0:
+            raise CommitToRepositoryException(unicode(error))
 
-        default_path = config.get('paths', 'default')
-
-        try:
-            u = ui.ui()
-            u.setconfig('paths', 'default', default_path)
-            repo = hg.repository(u, path)
-            commands.commit(u, repo, message=message, user=author)
-            commands.push(u, repo)
-            log.info(message)
-
-        except Exception as e:
-            raise CommitToRepositoryException(str(e))
+        log.info(message)
 
 
 class CommitToSvn(CommitToRepository):
 
     def commit(self, path=None, message=None, user=None, data=None):
-        try:
-            import pysvn
-        except ImportError as e:
-            raise CommitToRepositoryException("SVN module not available")
         log.debug("Commit to SVN repository.")
 
         path = path or self.path
         message = message or self.message
         user = user or self.user
         data = data or self.data
-
-        client = pysvn.Client()
-        client.exception_style = 1
 
         # Check if user authenticated
         from pontoon.base.models import UserProfile
@@ -230,15 +197,14 @@ class CommitToSvn(CommitToRepository):
         password = data.get('auth', {}).get(
             'password', base64.decodestring(profile.svn_password))
 
+        command = ["svn", "commit", "-m", message, path]
         if len(username) > 0 and len(password) > 0:
-            client.set_default_username(username)
-            client.set_default_password(password)
+            command += ['--username', username, '--password', password]
 
-        try:
-            client.checkin([path], message)
+        code, output, error = execute(command)
+
+        if code == 0:
             log.info(message)
-            client.set_default_username(None)
-            client.set_default_password(None)
 
             # Save username and password
             if data.get('auth', {}).get('remember', {}) == 1:
@@ -249,22 +215,34 @@ class CommitToSvn(CommitToRepository):
                 profile.save()
                 log.info("Username and password saved.")
 
-        except pysvn.ClientError as e:
-            error = e.args[0]
+        elif "E215004" in error:
+            log.debug(error)
+            log.debug('Subversion authentication failed for %s' % path)
+            return {
+                'type': 'authenticate',
+                'message': 'Authentication failed.'
+            }
 
-            if "callback_get_login" in error:
-                log.debug(error)
-                log.debug('Subversion authentication failed for %s' % path)
-                return {
-                    'type': 'authenticate',
-                    'message': 'Authentication failed.'
-                }
-
-            if e.args[1][0][1] == 155011:
+        else:
+            if "E155011" in error:
                 error = \
                     'Content out of date. Try updating from repository first.'
 
-            raise CommitToRepositoryException(error)
+            raise CommitToRepositoryException(unicode(error))
+
+
+def execute(command, cwd=None):
+    try:
+        st = subprocess.PIPE
+        proc = subprocess.Popen(args=command, stdout=st, stderr=st, stdin=st,
+                                cwd=cwd)
+
+        (output, error) = proc.communicate()
+        code = proc.returncode
+        return code, output, error
+
+    except OSError as error:
+        return -1, "", error
 
 
 def update_from_vcs(repo_type, url, path):
@@ -286,5 +264,5 @@ def commit_to_vcs(repo_type, path, message, user, data):
         log.debug('%s Commit Error for %s: %s' % (repo_type.upper(), path, e))
         return {
             'type': 'error',
-            'message': str(e)
+            'message': unicode(e)
         }
