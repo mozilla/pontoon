@@ -593,7 +593,7 @@ var Pontoon = (function () {
       }
 
       // Translation area
-      $('#translation').val(entity.translation[0].string).focus();
+      $('#translation').val(entity.translation[0].string);
       $('#warning:visible .cancel').click();
 
       // Length
@@ -617,7 +617,11 @@ var Pontoon = (function () {
 
         $("#editor")
           .addClass('opened')
-          .css('left', 0);
+          .css('left', 0)
+          .bind('transitionend.pontoon', function() {
+            $('#translation').focus();
+            $("#editor").unbind('transitionend.pontoon');
+          });
       }
     },
 
