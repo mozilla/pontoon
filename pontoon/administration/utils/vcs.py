@@ -32,7 +32,11 @@ class PullFromGit(PullFromRepository):
         source = source or self.source
         target = target or self.target
 
-        command = ["git", "pull"]
+        command = ["git", "fetch", "--all"]
+        execute(command, target)
+
+        # Undo local changes
+        command = ["git", "reset", "--hard", "origin/master"]
         code, output, error = execute(command, target)
 
         if code == 0:
@@ -57,6 +61,10 @@ class PullFromHg(PullFromRepository):
 
         source = source or self.source
         target = target or self.target
+
+        # Undo local changes
+        command = ["hg", "revert", "--all", "--no-backup"]
+        execute(command, target)
 
         command = ["hg", "pull", "-u"]
         code, output, error = execute(command, target)
@@ -87,6 +95,7 @@ class PullFromSvn(PullFromRepository):
         if os.path.exists(target):
             status = "updated"
             command = ["svn", "update", "--accept", "theirs-full", target]
+
         else:
             status = "checked out"
             command = [
@@ -234,8 +243,8 @@ class CommitToSvn(CommitToRepository):
 def execute(command, cwd=None):
     try:
         st = subprocess.PIPE
-        proc = subprocess.Popen(args=command, stdout=st, stderr=st, stdin=st,
-                                cwd=cwd)
+        proc = subprocess.Popen(
+            args=command, stdout=st, stderr=st, stdin=st, cwd=cwd)
 
         (output, error) = proc.communicate()
         code = proc.returncode
@@ -249,6 +258,7 @@ def update_from_vcs(repo_type, url, path):
     try:
         obj = globals()['PullFrom%s' % repo_type.capitalize()](url, path)
         obj.pull()
+
     except PullFromRepositoryException as e:
         error = '%s Pull Error for %s: %s' % (repo_type.upper(), url, e)
         log.debug(error)
@@ -260,6 +270,7 @@ def commit_to_vcs(repo_type, path, message, user, data):
         obj = globals()['CommitTo%s' % repo_type.capitalize()](
             path, message, user, data)
         return obj.commit()
+
     except CommitToRepositoryException as e:
         log.debug('%s Commit Error for %s: %s' % (repo_type.upper(), path, e))
         return {
