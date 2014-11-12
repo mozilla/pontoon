@@ -610,7 +610,7 @@ def update_from_repository(project, locales=None):
             if repository_type == 'svn':
                 for l in locales:
                     path = get_locale_directory(project, l)["path"]
-                    update_from_vcs(repository_type, None, path)
+                    update_from_vcs(repository_type, repository_url, path)
 
             else:
                 update_from_vcs(
