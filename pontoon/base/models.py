@@ -360,13 +360,13 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
 
 def unapprove(translations):
     """Set approved attribute for given translations to False."""
-    log.debug("1")
+
     translations.update(approved=False)
 
 
 def unfuzzy(translations):
     """Set fuzzy attribute for given translations to False."""
-    log.debug("2")
+
     translations.update(fuzzy=False)
 
 
