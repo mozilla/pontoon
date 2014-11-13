@@ -332,7 +332,8 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
 
     # Add new translation if it doesn's exist yet
     if translations_equal_count == 0:
-        unset_approved(translations)
+        unapprove(translations)
+        unfuzzy(translations)
         t = Translation(
             entity=entity, locale=locale, plural_form=plural_form,
             string=string, date=datetime.datetime.now(),
@@ -349,17 +350,24 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
                 t = translations_equal.latest("date")
 
         if t.fuzzy != fuzzy:
-            unset_approved(translations)
+            unapprove(translations)
+            unfuzzy(translations)
             t.date = datetime.datetime.now()
             t.approved = approved
             t.fuzzy = fuzzy
             t.save(stats=False)
 
 
-def unset_approved(translations):
-    """Unset approved attribute for given translations."""
-
+def unapprove(translations):
+    """Set approved attribute for given translations to False."""
+    log.debug("1")
     translations.update(approved=False)
+
+
+def unfuzzy(translations):
+    """Set fuzzy attribute for given translations to False."""
+    log.debug("2")
+    translations.update(fuzzy=False)
 
 
 def update_stats(resource, locale):

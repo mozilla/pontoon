@@ -48,7 +48,8 @@ from pontoon.base.models import (
     UserProfile,
     get_entities,
     get_translation,
-    unset_approved,
+    unapprove,
+    unfuzzy,
 )
 
 from session_csrf import anonymous_csrf_exempt
@@ -505,17 +506,19 @@ def update_translation(request, template=None):
 
     # Translations exist
     if len(translations) > 0:
+
         # Same translation exists
         for t in translations:
             if t.string == string:
 
-                # If added by privileged user, approve it
+                # If added by privileged user, approve and unfuzzy it
                 if can_localize:
                     warnings = utils.quality_check(original, string, ignore)
                     if warnings:
                         return warnings
 
-                    unset_approved(translations)
+                    unapprove(translations)
+                    unfuzzy(translations)
 
                     if t.user is None:
                         t.user = user
@@ -529,7 +532,7 @@ def update_translation(request, template=None):
                         'translation': t.serialize(),
                     }), mimetype='application/json')
 
-                # Non-priviliged users can unfuzzy existing translations
+                # If added by non-privileged user, unfuzzy it
                 else:
                     if t.fuzzy:
                         warnings = utils.quality_check(
@@ -557,7 +560,9 @@ def update_translation(request, template=None):
             return warnings
 
         if can_localize:
-            unset_approved(translations)
+            unapprove(translations)
+
+        unfuzzy(translations)
 
         t = Translation(
             entity=e, locale=l, user=user, string=string,
