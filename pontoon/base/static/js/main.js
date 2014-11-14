@@ -1900,7 +1900,7 @@ var Pontoon = (function () {
       });
 
       // Locale menu handler
-      $('body:not(".admin-project") .locale .menu li:not(".no-match")').click(function () {
+      $('body .locale .menu li:not(".no-match")').bind("click.main", function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             // Escape special characters in CSS notation
             code = locale.replace( /(:|\.|\[|@|\])/g, "\\$1" ),
