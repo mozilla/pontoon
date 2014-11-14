@@ -137,7 +137,7 @@
 
             {% if perms.base.can_manage %}
             <li class="admin" data-url="{{ url('pontoon.admin') }}">Admin</li>
-            <li class="project-admin" data-url="{{ url('pontoon.admin.project', project.slug) }}">Project Admin</li>
+            <li class="admin-project" data-url="{{ url('pontoon.admin.project', project.slug) }}">Project Admin</li>
             {% endif %}
 
             {% if user.is_authenticated() %}

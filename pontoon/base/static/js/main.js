@@ -1489,7 +1489,7 @@ var Pontoon = (function () {
 
 
 
-        } else if ($(this).is(".admin") || $(this).is(".project-admin")) {
+        } else if ($(this).is(".admin") || $(this).is(".admin-project")) {
           window.location = $(this).data('url');
         } else if ($(this).is(".html")) {
           self.common.postMessage("HTML");
