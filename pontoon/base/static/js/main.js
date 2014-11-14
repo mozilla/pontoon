@@ -1951,37 +1951,35 @@ var Pontoon = (function () {
           var menu = $('.menu:visible'),
               hovered = menu.find('li.hover');
 
-          // Up arrow: move up
-          if (key === 38) {
+          function moveMenu(type) {
+            var options = (type === "up") ? ["first", "last", "prevAll"] :
+              ["last", "first", "nextAll"];
+
             if (hovered.length === 0 ||
-                menu.find('li:visible:first').is('.hover')) {
+                menu.find('li:visible:' + options[0]).is('.hover')) {
               menu.find('li.hover').removeClass('hover');
-              menu.find('li:visible:last').addClass('hover');
+              menu.find('li:visible:' + options[1]).addClass('hover');
+
             } else {
               menu.find('li.hover').removeClass('hover')
-                .prevAll(':visible:not(".horizontal-separator"):first')
+                [options[2]](':visible:not(".horizontal-separator"):first')
                   .addClass('hover');
             }
+
             if (menu.parent().is('.project, .part, .locale')) {
               Pontoon.updateScroll(menu.find('ul'));
             }
+          }
+
+          // Up arrow
+          if (key === 38) {
+            moveMenu("up");
             return false;
           }
 
-          // Down arrow: move down
+          // Down arrow
           if (key === 40) {
-            if (hovered.length === 0 ||
-                menu.find('li:visible:last').is('.hover')) {
-              menu.find('li.hover').removeClass('hover');
-              menu.find('li:visible:first').addClass('hover');
-            } else {
-              menu.find('li.hover').removeClass('hover')
-                .nextAll(':visible:not(".horizontal-separator"):first')
-                  .addClass('hover');
-            }
-            if (menu.parent().is('.project, .part, .locale')) {
-              Pontoon.updateScroll(menu.find('ul'));
-            }
+            moveMenu("down");
             return false;
           }
 
