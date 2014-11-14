@@ -1962,13 +1962,8 @@ var Pontoon = (function () {
                 .prevAll(':visible:not(".horizontal-separator"):first')
                   .addClass('hover');
             }
-            if (menu.parent().is('.locale')) {
+            if (menu.parent().is('.project, .part, .locale')) {
               Pontoon.updateScroll(menu.find('ul'));
-            }
-            if (menu.parent().is('.project')) {
-              var type = (!$('body').is('.admin')) ?
-                '.project-url' : '.project-name';
-              $('.url').val($('.project .menu li.hover').find(type).html());
             }
             return false;
           }
@@ -1984,13 +1979,8 @@ var Pontoon = (function () {
                 .nextAll(':visible:not(".horizontal-separator"):first')
                   .addClass('hover');
             }
-            if (menu.parent().is('.locale')) {
+            if (menu.parent().is('.project, .part, .locale')) {
               Pontoon.updateScroll(menu.find('ul'));
-            }
-            if (menu.parent().is('.project')) {
-              var type = (!$('body').is('.admin')) ?
-                '.project-url' : '.project-name';
-              $('.url').val($('.project .menu li.hover').find(type).html());
             }
             return false;
           }
