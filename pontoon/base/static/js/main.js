@@ -1759,7 +1759,7 @@ var Pontoon = (function () {
       });
 
       // Hide menus on click outside
-      $('body:not(".admin-project")').click(function () {
+      $('body').bind("click.main", function () {
         $('.menu').hide();
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
@@ -1850,10 +1850,6 @@ var Pontoon = (function () {
         $('.project .selector .title')
           .html(name)
           .data('slug', slug);
-
-        if ($('body').is('.admin')) {
-          return false;
-        }
 
         var details = Pontoon.common.getProjectDetails(),
             locales = Object.keys(details),
