@@ -1,13 +1,11 @@
 <!-- Locale selector -->
 <div class="locale select">
+  {% if locale and locale.code != '' %}
   <div class="button breadcrumbs selector">
-    {% if locale and locale.code != '' %}
     <span class="language {{ locale.code|lower }}">{{ locale.name }}</span><span class="code">{{ locale.code }}
-    {% else %}
-    <span class="language">Select language
-    {% endif %}
     </span>
   </div>
+  {% endif %}
   <div class="menu">
     <div class="search-wrapper clearfix">
       <div class="icon fa fa-search"></div>

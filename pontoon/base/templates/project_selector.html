@@ -1,13 +1,11 @@
 {% if projects|length > 0 %}
 <!-- Project input/select -->
 <div class="project select">
+  {% if project and project.name != '' %}
   <div class="button breadcrumbs selector">
-    {% if project and project.name != '' %}
     <span class="title" data-slug="{{ project.slug }}">{{ project.name }}</span>
-    {% else %}
-    <span class="title">Select website</span>
-    {% endif %}
   </div>
+  {% endif %}
   <div class="menu">
     <div class="search-wrapper clearfix">
       <div class="icon fa fa-search"></div>
