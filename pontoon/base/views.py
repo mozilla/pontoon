@@ -77,14 +77,6 @@ def locale(request, locale, template='locale.html'):
     except Locale.DoesNotExist:
         raise Http404
 
-    # Check if user authenticated
-    if not request.user.is_authenticated():
-        messages.error(request, "You need to sign in first.")
-        request.session['translate_error'] = {
-            'redirect': request.get_full_path(),
-        }
-        return HttpResponseRedirect(reverse('pontoon.home'))
-
     data = {
         'projects': Project.objects.filter(
             pk__in=Resource.objects.values('project')).filter(locales=l)
@@ -106,14 +98,6 @@ def project(request, slug, template='project.html'):
         messages.error(request, "Oops, project could not be found.")
         request.session['translate_error'] = {
             'none': None,
-        }
-        return HttpResponseRedirect(reverse('pontoon.home'))
-
-    # Check if user authenticated
-    if not request.user.is_authenticated():
-        messages.error(request, "You need to sign in first.")
-        request.session['translate_error'] = {
-            'redirect': request.get_full_path(),
         }
         return HttpResponseRedirect(reverse('pontoon.home'))
 
