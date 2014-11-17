@@ -275,9 +275,11 @@ html {
 }
 
 body {
-  background: #DBDBDB;
+  background: #272A2F;
+  color: #EBEBEB;
   height: 100%;
   overflow: hidden;
+  text-align: center;
 }
 
 button {
@@ -371,7 +373,6 @@ button {
   margin-left: 0;
   padding-left: 10px;
   position: relative;
-  text-align: center;
 }
 
 #pontoon .select.hidden {
@@ -530,11 +531,6 @@ button {
   padding: 2px 4px;
 }
 
-#pontoon #intro .menu li {
-  color: #FFFFFF;
-  text-align: left;
-}
-
 #pontoon .menu li.hover {
   cursor: pointer;
   color: #FFFFFF;
@@ -605,23 +601,16 @@ button {
 
 /* PRIMARY STYLES */
 
-#intro {
-  background: #272A2F;
+#error {
   bottom: 0;
-  display: none;
+  display: table;
   height: 100%;
   overflow: hidden;
   position: fixed;
-  text-align: center;  
   width: 100%;
 }
 
-#intro.visible {
-  display: table;
-}
-
-#intro.visible .notification li {
-  text-align: center;
+#error .notification li {
   visibility: visible;
 }
 
@@ -630,12 +619,14 @@ button {
   vertical-align: middle;
 }
 
-#intro nav {
+#pontoon > nav,
+#pontoon .inner > nav {
   left: 50%;
   margin-left: -350px;
   position: absolute;
   top: 20px;
   width: 700px;
+  z-index: 1;
 }
 
 .links li {
@@ -650,17 +641,17 @@ button {
   display: none;
 }
 
-#intro .links li a:link,
-#intro .links li a:visited {
+#pontoon .links li a:link,
+#pontoon .links li a:visited {
   color: #EBEBEB;
 }
 
-#intro .links li a:hover,
-#intro .links li a:active {
+#pontoon .links li a:hover,
+#pontoon .links li a:active {
   color: #7BC876;
 }
 
-#intro noscript p {
+#pontoon noscript p {
   text-transform: uppercase;
 }
 
@@ -670,14 +661,18 @@ button {
   font-size: 108px;
   font-weight: 300;
   letter-spacing: -4px;
-  text-align: center;
+  padding-top: 150px;
+}
+
+#pontoon #error #title {
+  padding-top: 0;
 }
 
 #pontoon #title a {
   color: #7BC876;
 }
 
-#intro #subtitle {
+#pontoon #subtitle {
   color: #EBEBEB;
   font-size: 48px;
   letter-spacing: -2px;
@@ -702,25 +697,21 @@ button {
   width: 20px;
 }
 
-#intro form {
+#pontoon > form {
   width: 730px;
   height: 60px;
-  margin: 50px auto 0;
+  margin: 0 auto;
   position: relative;
 }
 
 #pontoon .notification {
   color: #FD5F60;
   line-height: 17px;
-  margin: 5px auto 0;
+  margin: 5px auto -22px;
   min-height: 17px;
   text-transform: uppercase;
   font-weight: 300;
-  width: 730px; /* Must be same as #intro form */
-}
-
-#pontoon #intro .notification {
-  margin-bottom: -22px;
+  width: 730px; /* Must be same as #pontoon > form */
 }
 
 #pontoon .notification.hidden {
@@ -729,10 +720,6 @@ button {
 
 #pontoon .notification li {
   list-style: none;
-}
-
-#pontoon .notification.center li {
-  text-align: center;
 }
 
 #pontoon #browserid {
@@ -754,7 +741,7 @@ button {
   position: absolute;
   top: 60px;
   width: 100%;
-  z-index: 10; /* Must be lower than locale-list */
+  z-index: 10; /* Must be lower than menu */
 }
 
 #project-load {
@@ -762,7 +749,6 @@ button {
   height: 100%;
   overflow: hidden;
   position: fixed;
-  text-align: center;
   width: 100%;
 }
 

@@ -1,7 +1,6 @@
 /* move to general styles and override defaults in admin-project? */
 #pontoon form {
   height: auto;
-  margin-top: 0;
   padding: 30px 0 0;
 }
 

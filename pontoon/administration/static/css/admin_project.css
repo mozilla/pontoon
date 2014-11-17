@@ -1,9 +1,5 @@
 body {
   overflow: auto;
-}
-
-body #intro {
-  overflow: auto;
   position: relative;
 }
 
@@ -19,32 +15,32 @@ body #intro {
   text-align: left;
 }
 
-#pontoon #intro form {
+#pontoon form {
   color: #AAAAAA;
   font-size: 14px;
   height: auto;
   width: 620px;
-  padding: 100px 20px;
+  padding: 0 20px 100px;
 }
 
-#pontoon #intro form > div {
+#pontoon form > div {
   margin: 20px 0;
   text-align: right;
 }
 
-#pontoon #intro form > div.controls {
+#pontoon form > div.controls {
   margin-top: 70px;
 }
 
-#pontoon #intro form > div.subpages.delete {
+#pontoon form > div.subpages.delete {
   opacity: 0.3;
 }
 
-#pontoon #intro form .notification {
+#pontoon form .notification {
   margin-bottom: 10px;
 }
 
-#pontoon #intro h2 {
+#pontoon h2 {
   color: #EBEBEB;
   font-size: 30px;
   font-weight: 300;
@@ -55,12 +51,12 @@ body #intro {
   text-transform: none;
 }
 
-#pontoon #intro h2 .small {
+#pontoon h2 .small {
   color: #AAAAAA;
   font-size: 0.7em;
 }
 
-#pontoon #intro h3 {
+#pontoon h3 {
   color: #FD5F60;
   font-weight: 300;
   margin-left: -1px;
@@ -68,22 +64,22 @@ body #intro {
   text-transform: uppercase;
 }
 
-#pontoon #intro label {
+#pontoon label {
   display: block;
   padding-bottom: 3px;
   text-align: left;
 }
 
-#pontoon #intro input[type=text],
-#pontoon #intro input[type=password],
-#pontoon #intro textarea {
+#pontoon input[type=text],
+#pontoon input[type=password],
+#pontoon textarea {
   display: block;
   height: 24px;
   margin-left: -1px;
-  width: 615px; /* Must be same as #pontoon #intro form width - padding - margin-left */
+  width: 615px; /* Must be same as #pontoon form width - padding - margin-left */
 }
 
-#pontoon #intro .button {
+#pontoon .button {
   background: #888888;
   border: none;
   display: block;
@@ -93,13 +89,13 @@ body #intro {
   width: 31px;
 }
 
-#pontoon #intro .button.delete-subpage {
+#pontoon .button.delete-subpage {
   color: #333333;
   font-size: 20px;
   padding: 4px;
 }
 
-#pontoon #intro .controls .button {
+#pontoon .controls .button {
   background: #7BC876;
   border-radius: 3px;
   color: #272A2F;
@@ -108,41 +104,41 @@ body #intro {
   width: auto;
 }
 
-#pontoon #intro .controls .button.delete-project {
+#pontoon .controls .button.delete-project {
   background: #FF0A43;
   color: #FFFFFF;
   float: left;
 }
 
-#pontoon #intro form a {
+#pontoon form a:link, #pontoon form a:visited {
   color: #7BC876;
   float: right;
   text-transform: uppercase;
 }
 
-#pontoon #intro form a.add-subpage {
+#pontoon form a.add-subpage {
   font-size: 14px;
   letter-spacing: 0;
   margin-top: 17px;
 }
 
-#pontoon #intro .controls a {
+#pontoon .controls a {
   margin: 9px;
 }
 
-#pontoon #intro .authenticate .transifex .button {
+#pontoon .authenticate .transifex .button {
   margin-top: 41px;
 }
 
-#pontoon #intro .locale.select {
+#pontoon .locale.select {
   float: left;
 }
 
-#pontoon #intro .locale.select.selected {
+#pontoon .locale.select.selected {
   float: right;
 }
 
-#pontoon #intro .locale.select .menu {
+#pontoon .locale.select .menu {
   display: inline-block;
   margin: 2px 0 -4px -1px;
   overflow: auto;
@@ -151,66 +147,66 @@ body #intro {
   width: 271px;
 }
 
-#pontoon #intro .locale.select .menu input[type=search] {
+#pontoon .locale.select .menu input[type=search] {
   background-position: 4px 6px;
   margin-left: 0;
   width: 234px;
 }
 
-#pontoon #intro .locale.select .menu ul {
+#pontoon .locale.select .menu ul {
   height: 170px;
 }
 
-#pontoon #intro #id_locales {
+#pontoon #id_locales {
   display: none;
 }
 
-#pontoon #intro .checkbox {
+#pontoon .checkbox {
   margin: 0;
 }
 
-#pontoon #intro .checkbox label {
+#pontoon .checkbox label {
   float: left;
   padding: 6px 0 0 16px;
 }
 
-#pontoon #intro .repository.authenticate .bottom label {
+#pontoon .repository.authenticate .bottom label {
   padding-left: 16px;
 }
 
-#pontoon #intro .checkbox label input,
-#pontoon #intro .repository.authenticate .bottom label input {
+#pontoon .checkbox label input,
+#pontoon .repository.authenticate .bottom label input {
   float: left;
   margin-left: -16px;
   margin-top: 2px;
 }
 
-#pontoon #intro .repository.authenticate .bottom label input {
+#pontoon .repository.authenticate .bottom label input {
   margin-top: 0;
 }
 
-#pontoon #intro .repository .type-wrapper .authentication-title,
-#pontoon #intro .repository .transifex .authentication-form,
-#pontoon #intro .repository .transifex .bottom {
+#pontoon .repository .type-wrapper .authentication-title,
+#pontoon .repository .transifex .authentication-form,
+#pontoon .repository .transifex .bottom {
   display: none;
 }
 
-#pontoon #intro .repository.authenticate .type-wrapper .authentication-title,
-#pontoon #intro .repository.authenticate .transifex .authentication-form,
-#pontoon #intro .repository.authenticate .transifex .bottom {
+#pontoon .repository.authenticate .type-wrapper .authentication-title,
+#pontoon .repository.authenticate .transifex .authentication-form,
+#pontoon .repository.authenticate .transifex .bottom {
   display: block;
 }
 
-#pontoon #intro .repository .type-wrapper {
+#pontoon .repository .type-wrapper {
   float: left;
   margin-right: 6px;
 }
 
-#pontoon #intro .repository .type.select {
+#pontoon .repository .type.select {
   margin-left: -1px;
 }
 
-#pontoon #intro .repository .type.select .selector {
+#pontoon .repository .type.select .selector {
   color: #444444;
   font-weight: 400;
   height: 24px;
@@ -218,16 +214,16 @@ body #intro {
   width: 199px;
 }
 
-#pontoon #intro .repository .type.select .selector > span:nth-child(2) {
+#pontoon .repository .type.select .selector > span:nth-child(2) {
   float: right;
 }
 
-#pontoon #intro .repository .type.select .menu {
+#pontoon .repository .type.select .menu {
   bottom: 31px;
   width: 183px;
 }
 
-#pontoon #intro .repository .type-wrapper .authentication-title {
+#pontoon .repository .type-wrapper .authentication-title {
   color: #FD5F60;
   font-size: 12px;
   padding-top: 54px;
@@ -235,127 +231,127 @@ body #intro {
   text-transform: uppercase;
 }
 
-#pontoon #intro .repository .details-wrapper {
+#pontoon .repository .details-wrapper {
   float: left;
   width: 408px;
 }
 
-#pontoon #intro .repository .details-wrapper[data-repository-type="transifex"] .repo {
+#pontoon .repository .details-wrapper[data-repository-type="transifex"] .repo {
   display: none;
 }
 
-#pontoon #intro .repository .details-wrapper[data-repository-type="transifex"] .transifex {
+#pontoon .repository .details-wrapper[data-repository-type="transifex"] .transifex {
   display: block;
 }
 
-#pontoon #intro .repository .details-wrapper .button.update {
+#pontoon .repository .details-wrapper .button.update {
   color: #444444;
   padding: 0;
 }
 
-#pontoon #intro .repository input[type=text] {
+#pontoon .repository input[type=text] {
   width: 403px;
 }
 
-#pontoon #intro .edit .repository input[type=text],
-#pontoon #intro .subpages input[id*=url] {
+#pontoon .edit .repository input[type=text],
+#pontoon .subpages input[id*=url] {
   float: left;
   width: 367px;
 }
 
-#pontoon #intro .transifex {
+#pontoon .transifex {
   display: none;
 }
 
-#pontoon #intro .transifex .authentication-form {
+#pontoon .transifex .authentication-form {
   padding-top: 73px;
   padding-bottom: 57px;
 }
 
-#pontoon #intro .transifex input#id_transifex_project,
-#pontoon #intro .edit .authenticate .transifex input#id_transifex_project,
-#pontoon #intro .edit .transifex input#id_transifex_username {
+#pontoon .transifex input#id_transifex_project,
+#pontoon .edit .authenticate .transifex input#id_transifex_project,
+#pontoon .edit .transifex input#id_transifex_username {
   float: left;
   width: 196px;
 }
 
-#pontoon #intro .transifex input#id_transifex_resource,
-#pontoon #intro .edit .authenticate .transifex input#id_transifex_resource {
+#pontoon .transifex input#id_transifex_resource,
+#pontoon .edit .authenticate .transifex input#id_transifex_resource {
   float: left;
   width: 196px;
 }
 
-#pontoon #intro .edit .transifex input#id_transifex_project,
-#pontoon #intro .edit .transifex input#id_transifex_resource {
+#pontoon .edit .transifex input#id_transifex_project,
+#pontoon .edit .transifex input#id_transifex_resource {
   float: left;
   width: 178px;
 }
 
-#pontoon #intro .edit .transifex input#id_transifex_password,
-#pontoon #intro .edit .authenticate .transifex .authentication-form label:nth-child(2) {
+#pontoon .edit .transifex input#id_transifex_password,
+#pontoon .edit .authenticate .transifex .authentication-form label:nth-child(2) {
   float: left;
   width: 157px;
 }
 
-#pontoon #intro .transifex label,
-#pontoon #intro .edit .authenticate .transifex label  {
+#pontoon .transifex label,
+#pontoon .edit .authenticate .transifex label  {
   float: left;
   width: 200px;
 }
 
-#pontoon #intro .edit .transifex label {
+#pontoon .edit .transifex label {
   width: 182px;
 }
 
-#pontoon #intro .edit section .bottom {
+#pontoon .edit section .bottom {
   font-size: 12px;
   text-transform: uppercase;
 }
 
-#pontoon #intro .subpages[data-count] {
+#pontoon .subpages[data-count] {
   display: none;
 }
 
-#pontoon #intro .subpages label[for*=name] {
+#pontoon .subpages label[for*=name] {
   float: left;
   width: 205px;
 }
 
-#pontoon #intro .subpages input[id*=name] {
+#pontoon .subpages input[id*=name] {
   float: left;
   width: 201px;
 }
 
-#pontoon #intro .subpages input[id$=DELETE] {
+#pontoon .subpages input[id$=DELETE] {
   display: none;
 }
 
-#pontoon #intro .subpages label[for*=url] {
+#pontoon .subpages label[for*=url] {
   float: left;
   width: 407px;
 }
 
-#pontoon #intro label[for=id_repository_type],
-#pontoon #intro .transifex input#id_transifex_project,
-#pontoon #intro .transifex input#id_transifex_username,
-#pontoon #intro .transifex label[for*=project],
-#pontoon #intro .transifex label[for*=username],
-#pontoon #intro .subpages input[id*=name],
-#pontoon #intro .subpages label[for*=name] {
+#pontoon label[for=id_repository_type],
+#pontoon .transifex input#id_transifex_project,
+#pontoon .transifex input#id_transifex_username,
+#pontoon .transifex label[for*=project],
+#pontoon .transifex label[for*=username],
+#pontoon .subpages input[id*=name],
+#pontoon .subpages label[for*=name] {
   margin-right: 6px;
 }
 
-#pontoon #intro textarea {
+#pontoon textarea {
   height: 60px;
 }
 
-#pontoon #intro .subtitle {
+#pontoon .subtitle {
   font-size: 12px;
   margin-top: 4px;
   text-transform: uppercase;
 }
 
-#pontoon #intro .errorlist {
+#pontoon .errorlist {
   color: #FD5F60;
   display: inline-block;
   font-size: 12px;
@@ -366,15 +362,15 @@ body #intro {
   text-transform: uppercase;
 }
 
-#pontoon #intro .errorlist li {
+#pontoon .errorlist li {
   display: inline;
   margin-left: 5px;
 }
 
-#pontoon #intro .notification {
+#pontoon .notification {
   width: auto;
 }
 
-#pontoon #intro .notification li {
+#pontoon .notification li {
   text-align: left;
 }

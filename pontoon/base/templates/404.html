@@ -2,9 +2,19 @@
 
 {% block title %}Pontoon &middot; Page not found{% endblock %}
 
+{% block before %}
+<section id="error">
+  <div class="inner">
+{% endblock %}
+
 {% block heading %}Oops{% endblock %}
 
 {% block subtitle %}We couldn't find the page you're looking for.{% endblock %}
+
+{% block after %}
+  </div>
+</section>
+{% endblock %}
 
 {% block site_js %}
 {% endblock %}

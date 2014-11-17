@@ -5,202 +5,199 @@
 {% block class %}admin-project{% endblock %}
 
 {% block content %}
-<section id="intro" class="visible">
-
-  <nav>
-    <ul class="links">
-      <li><a href="{{ url('pontoon.home') }}" title="Pontoon Home">Home</a></li>
-      <li><a href="{{ url('pontoon.admin') }}" title="Pontoon Admin">Admin</a></li>
-      {% if pk %}
-      <li><a href="{{ url('pontoon.admin.project.new') }}" title="Add new project">Add</a></li>
-      <li class="translate{% if not ready %} hidden{% endif %}"><a href="{{ url('pontoon.translate', translate_locale, form.slug.value()) }}" title="Translate project">Translate</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-  <form method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
-
-    <h1 id="title">{{ '%(subtitle)s' | format(subtitle=subtitle) }}</h1>
-    <ul class="notification{% if not messages %} hidden{% endif %}">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+<nav>
+  <ul class="links">
+    <li><a href="{{ url('pontoon.home') }}" title="Pontoon Home">Home</a></li>
+    <li><a href="{{ url('pontoon.admin') }}" title="Pontoon Admin">Admin</a></li>
     {% if pk %}
-    <input type="hidden" value="{{ pk }}" name="pk">
-    {{ form.repository_path.as_hidden() }}
+    <li><a href="{{ url('pontoon.admin.project.new') }}" title="Add new project">Add</a></li>
+    <li class="translate{% if not ready %} hidden{% endif %}"><a href="{{ url('pontoon.translate', translate_locale, form.slug.value()) }}" title="Translate project">Translate</a></li>
     {% endif %}
+  </ul>
+</nav>
 
-    <div class="clearfix">
-        {{ form.name.label_tag() }}
-        {{ form.name }}
-        {{ form.name.errors }}
-    </div>
-    <div class="clearfix">
-        {{ form.slug.label_tag() }}
-        {{ form.slug }}
-        {{ form.slug.errors }}
-    </div>
-    <div class="locales clearfix">
-        <div class="locale select">
-          <label for="available">Available locales<a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>
-          <div class="menu">
-            <div class="search-wrapper clearfix">
-              <div class="icon fa fa-search"></div>
-              <input id="available" type="search" autocomplete="off">
+<form method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
+
+  <h1 id="title">{{ '%(subtitle)s' | format(subtitle=subtitle) }}</h1>
+  <ul class="notification{% if not messages %} hidden{% endif %}">
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+  </ul>
+  <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+  {% if pk %}
+  <input type="hidden" value="{{ pk }}" name="pk">
+  {{ form.repository_path.as_hidden() }}
+  {% endif %}
+
+  <div class="clearfix">
+      {{ form.name.label_tag() }}
+      {{ form.name }}
+      {{ form.name.errors }}
+  </div>
+  <div class="clearfix">
+      {{ form.slug.label_tag() }}
+      {{ form.slug }}
+      {{ form.slug.errors }}
+  </div>
+  <div class="locales clearfix">
+      <div class="locale select">
+        <label for="available">Available locales<a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>
+        <div class="menu">
+          <div class="search-wrapper clearfix">
+            <div class="icon fa fa-search"></div>
+            <input id="available" type="search" autocomplete="off">
+          </div>
+          <ul>
+            {% for locale in locales_available %}
+            <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
+            {% endfor %}
+            <li class="no-match">No results</li>
+          </ul>
+        </div>
+      </div>
+      <div class="locale select selected">
+        <label for="selected">Chosen locales<a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
+        <div class="menu">
+          <div class="search-wrapper clearfix">
+            <div class="icon fa fa-search"></div>
+            <input id="selected" type="search" autocomplete="off">
+          </div>
+          <ul>
+            {% for locale in locales_selected %}
+            <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
+            {% endfor %}
+            <li class="no-match">No results</li>
+          </ul>
+        </div>
+      </div>
+      {{ form.locales }}
+      {{ form.locales.errors }}
+  </div>
+
+  <h2>Repository</h2>
+
+  <div class="repository clearfix">
+      <section class="type-wrapper">
+          {{ form.repository_type.label_tag() }}
+          <div class="type select">
+            <div class="hidden">
+              {{ form.repository_type }}
             </div>
-            <ul>
-              {% for locale in locales_available %}
-              <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
+            <div class="button selector">
+              <span class="title"></span>
+              <span> &#9652;</span>
+            </div>
+            <ul class="menu">
+              {% for choice in REPOSITORY_TYPE_CHOICES %}
+                  <li data-type="{{ choice[0] }}">{{ choice[1] }}</li>
               {% endfor %}
-              <li class="no-match">No results</li>
             </ul>
           </div>
-        </div>
-        <div class="locale select selected">
-          <label for="selected">Chosen locales<a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
-          <div class="menu">
-            <div class="search-wrapper clearfix">
-              <div class="icon fa fa-search"></div>
-              <input id="selected" type="search" autocomplete="off">
-            </div>
-            <ul>
-              {% for locale in locales_selected %}
-              <li data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
-              {% endfor %}
-              <li class="no-match">No results</li>
-            </ul>
+          <p class="authentication-title">Please sign in</p>
+      </section>
+      <section class="details-wrapper" data-repository-type="{{ form.repository_type.value()|lower }}">
+          <div class="repo">
+              {{ form.repository_url.label_tag() }}
+              {{ form.repository_url }}
+              {% if pk %}
+              <button title="Update all locales from repository" data-source="repository" class="button update">
+                  <span class="fa fa-refresh"></span>
+              </button>
+              {% endif %}
           </div>
-        </div>
-        {{ form.locales }}
-        {{ form.locales.errors }}
-    </div>
-
-    <h2>Repository</h2>
-
-    <div class="repository clearfix">
-        <section class="type-wrapper">
-            {{ form.repository_type.label_tag() }}
-            <div class="type select">
-              <div class="hidden">
-                {{ form.repository_type }}
+          <div class="transifex clearfix">
+              {{ form.transifex_project.label_tag() }}
+              {{ form.transifex_resource.label_tag() }}
+              {{ form.transifex_project }}
+              {{ form.transifex_resource }}
+              {% if pk %}
+              <button title="Update all locales from Transifex" data-source="transifex" class="button update">
+                  <span class="fa fa-refresh"></span>
+              </button>
+              <section class="authentication-form">
+                  <label for="id_transifex_username">Username or email</label>
+                  <label for="id_transifex_password">Password</label>
+                  <input id="id_transifex_username" name="transifex_username" type="text" />
+                  <input id="id_transifex_password" name="transifex_password" type="password" />
+              </section>
+              <div class="bottom">
+                  <label class="remember">
+                      <input name="remember" type="checkbox" />Remember me
+                  </label>
+                  <a class="new" target="_blank" href="http://www.transifex.com/signup/">New to Transifex?</a>
               </div>
-              <div class="button selector">
-                <span class="title"></span>
-                <span> &#9652;</span>
-              </div>
-              <ul class="menu">
-                {% for choice in REPOSITORY_TYPE_CHOICES %}
-                    <li data-type="{{ choice[0] }}">{{ choice[1] }}</li>
-                {% endfor %}
-              </ul>
-            </div>
-            <p class="authentication-title">Please sign in</p>
-        </section>
-        <section class="details-wrapper" data-repository-type="{{ form.repository_type.value()|lower }}">
-            <div class="repo">
-                {{ form.repository_url.label_tag() }}
-                {{ form.repository_url }}
-                {% if pk %}
-                <button title="Update all locales from repository" data-source="repository" class="button update">
-                    <span class="fa fa-refresh"></span>
-                </button>
-                {% endif %}
-            </div>
-            <div class="transifex clearfix">
-                {{ form.transifex_project.label_tag() }}
-                {{ form.transifex_resource.label_tag() }}
-                {{ form.transifex_project }}
-                {{ form.transifex_resource }}
-                {% if pk %}
-                <button title="Update all locales from Transifex" data-source="transifex" class="button update">
-                    <span class="fa fa-refresh"></span>
-                </button>
-                <section class="authentication-form">
-                    <label for="id_transifex_username">Username or email</label>
-                    <label for="id_transifex_password">Password</label>
-                    <input id="id_transifex_username" name="transifex_username" type="text" />
-                    <input id="id_transifex_password" name="transifex_password" type="password" />
-                </section>
-                <div class="bottom">
-                    <label class="remember">
-                        <input name="remember" type="checkbox" />Remember me
-                    </label>
-                    <a class="new" target="_blank" href="http://www.transifex.com/signup/">New to Transifex?</a>
-                </div>
-                {% endif %}
-            </div>
-        </section>
-        {{ form.repository_url.errors }}
-        {{ form.transifex_project.errors }}
-        {{ form.transifex_resource.errors }}
-    </div>
+              {% endif %}
+          </div>
+      </section>
+      {{ form.repository_url.errors }}
+      {{ form.transifex_project.errors }}
+      {{ form.transifex_resource.errors }}
+  </div>
 
-    <h2>Website</h2>
+  <h2>Website</h2>
 
-    <div class="clearfix">
-        {{ form.url.label_tag() }}
-        {{ form.url }}
-        {{ form.url.errors }}
-    </div>
-    <div class="clearfix">
-        {{ form.width.label_tag() }}
-        {{ form.width }}
-        {{ form.width.errors }}
-    </div>
-    <div class="checkbox clearfix">
-        <label for="id_links">
-            {{ form.links }}{{ form.links.label }}
-        </label>
-    </div>
+  <div class="clearfix">
+      {{ form.url.label_tag() }}
+      {{ form.url }}
+      {{ form.url.errors }}
+  </div>
+  <div class="clearfix">
+      {{ form.width.label_tag() }}
+      {{ form.width }}
+      {{ form.width.errors }}
+  </div>
+  <div class="checkbox clearfix">
+      <label for="id_links">
+          {{ form.links }}{{ form.links.label }}
+      </label>
+  </div>
 
-    <h2>Subpages
-        <span class="small">(optional)</span>
-        <a href="#add-subpage" class="add-subpage">Add more</a>
-    </h2>
+  <h2>Subpages
+      <span class="small">(optional)</span>
+      <a href="#add-subpage" class="add-subpage">Add more</a>
+  </h2>
 
-    {{ formset.management_form }}
-    {% for form in formset %}
-        {{ form.id }}
-    <div class="subpages clearfix">
-        {{ form.name.label_tag() }}
-        {{ form.url.label_tag() }}
-        {{ form.name }}
-        {{ form.url }}
-        <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
-        {{ form.DELETE }}
-        {{ form.name.errors }}
-        {{ form.url.errors }}
-    </div>
-    {% endfor %}
-    <div class="subpages clearfix" data-count="{{ formset.total_form_count() }}">
-        {{ formset.empty_form.name.label_tag() }}
-        {{ formset.empty_form.url.label_tag() }}
-        {{ formset.empty_form.name }}
-        {{ formset.empty_form.url }}
-        <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
-        {{ formset.empty_form.DELETE }}
-        {{ formset.empty_form.name.errors }}
-        {{ formset.empty_form.url.errors }}
-    </div>
+  {{ formset.management_form }}
+  {% for form in formset %}
+      {{ form.id }}
+  <div class="subpages clearfix">
+      {{ form.name.label_tag() }}
+      {{ form.url.label_tag() }}
+      {{ form.name }}
+      {{ form.url }}
+      <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
+      {{ form.DELETE }}
+      {{ form.name.errors }}
+      {{ form.url.errors }}
+  </div>
+  {% endfor %}
+  <div class="subpages clearfix" data-count="{{ formset.total_form_count() }}">
+      {{ formset.empty_form.name.label_tag() }}
+      {{ formset.empty_form.url.label_tag() }}
+      {{ formset.empty_form.name }}
+      {{ formset.empty_form.url }}
+      <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
+      {{ formset.empty_form.DELETE }}
+      {{ formset.empty_form.name.errors }}
+      {{ formset.empty_form.url.errors }}
+  </div>
 
-    <h2>Project info <span class="small">(optional)</span></h2>
+  <h2>Project info <span class="small">(optional)</span></h2>
 
-    <div>
-        {{ form.info_brief }}
-        <p class="subtitle">Supports HTML</p>
-        {{ form.info_brief.errors }}
-    </div>
+  <div>
+      {{ form.info_brief }}
+      <p class="subtitle">Supports HTML</p>
+      {{ form.info_brief.errors }}
+  </div>
 
-    <div class="controls clearfix">
-        {% if pk %}<button class="button delete-project">Delete project</button>{% endif %}
-        <button class="button">Save project</button>
-        <a href="{{ url('pontoon.admin') }}" class="cancel">Cancel</a>
-    </div>
+  <div class="controls clearfix">
+      {% if pk %}<button class="button delete-project">Delete project</button>{% endif %}
+      <button class="button">Save project</button>
+      <a href="{{ url('pontoon.admin') }}" class="cancel">Cancel</a>
+  </div>
 
-  </form>
-</section>
-
+</form>
 {% endblock %}
 
 {% block extend_css %}

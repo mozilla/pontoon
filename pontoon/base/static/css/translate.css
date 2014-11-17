@@ -5,6 +5,7 @@
   display: none;
   height: 60px;
   position: fixed;
+  text-align: left;
   width: 100%;
   z-index: 15; /* Must be higher than iframe-cover */
 }
@@ -414,7 +415,7 @@
 }
 
 #pontoon > header aside h2 {
-  margin-bottom: 5px;
+  margin-bottom: 15px;
 }
 
 #pontoon > header aside p {
@@ -711,6 +712,7 @@
   background: #272A2F;
   color: #AAAAAA;
   padding: 10px 6px;
+  text-align: left;
 }
 
 #pontoon #entitylist .no-match  {
