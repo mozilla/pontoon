@@ -101,14 +101,13 @@ $(function() {
   }
 
   function initializeWithoutWebsite() {
-    $('#pontoon > header').slideDown(function() {
-      $('#sidebar')
-        .addClass('advanced')
-        .css('width', '100%');
-      $('#switch, #drag').remove();
-      $('#editor').addClass('opened');
-      $('#project-load').hide();
-    });
+    $('#pontoon > header').show();
+    $('#sidebar')
+      .addClass('advanced')
+      .css('width', '100%');
+    $('#switch, #drag').remove();
+    $('#editor').addClass('opened');
+    $('#project-load').hide();
 
     Pontoon.init(window, true);
   }

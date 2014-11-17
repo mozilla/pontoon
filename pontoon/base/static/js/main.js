@@ -1565,9 +1565,8 @@ var Pontoon = (function () {
       self.updateProgress();
       self.attachEditorHandlers();
 
-      $("#spinner").fadeOut(function() {
-        $("#pontoon > header > .container").fadeIn();
-      });
+      $("#spinner").hide();
+      $("#pontoon > header > .container").show();
 
       // If 2-column layout opened by default, open first entity in the editor
       if (self.app.advanced) {
