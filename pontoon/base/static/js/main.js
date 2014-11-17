@@ -1417,12 +1417,9 @@ var Pontoon = (function () {
       $('#loading').removeClass('loader');
       if (text) {
         $('.notification')
-          .html(text)
+          .html('<li>' + text + '</li>')
           .removeClass().addClass('notification ' + type)
-          .show()
-          .click(function() {
-            Pontoon.closeNotification();
-        });
+          .show();
       }
       if (!persist) {
         setTimeout(function() {
@@ -1473,7 +1470,12 @@ var Pontoon = (function () {
                 },
                 success: function(data) {
                   if (data !== 'error') {
-                    window.location.reload();
+                    var redirect = $('#server').data('redirect');
+                    if (redirect) {
+                      window.location = redirect;
+                    } else {
+                      window.location.reload();
+                    }
                   } else {
                     self.endLoader('Oops, something went wrong.', 'error');
                   }
@@ -1496,6 +1498,11 @@ var Pontoon = (function () {
         } else {
           self.save($(this).attr('class').split(" ")[0]);
         }
+      });
+
+      // Close notification on click
+      $('#pontoon > header').on('click', '.notification', function() {
+        Pontoon.closeNotification();
       });
 
       // Transifex and repository authentication
@@ -1604,9 +1611,8 @@ var Pontoon = (function () {
               'Oops, something went wrong. Refresh to try again.';
           Pontoon.common.showError(msg);
           $("#progress, #switch, #drag").remove();
-          $("#spinner").fadeOut(function() {
-            $("#pontoon > header > .container").fadeIn();
-          });
+          $("#spinner").hide();
+          $("#pontoon > header > .container").show();
           Pontoon.attachMainHandlers();
           break;
 
@@ -1712,6 +1718,11 @@ var Pontoon = (function () {
           this.id = i;
         });
         self.createUI();
+      }
+
+      // Show message if needed
+      if ($('.notification li').length > 0) {
+        $('.notification').css('visibility', 'visible').show();
       }
     },
 

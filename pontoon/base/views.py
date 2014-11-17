@@ -59,37 +59,12 @@ from suds.client import Client, WebFault
 log = commonware.log.getLogger('pontoon')
 
 
-def home(request, template='home.html'):
+def home(request):
     """Home view."""
     log.debug("Home view.")
 
-    translate_error = request.session.pop('translate_error', {})
-    if not translate_error:
-        slug = Project.objects.get(id=1).slug
-        return translate(request, 'de', slug)
-
-    projects = Project.objects.filter(
-        pk__in=Resource.objects.values('project')).order_by("name")
-
-    for project in projects:
-        details = {}
-
-        for l in project.locales.all():
-            details[l.code.lower()] = []
-
-        project.details = json.dumps(details)
-
-    data = {
-        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '')
-        .split(',')[0],
-        'locale_code': translate_error.get('locale', None),
-        'project': translate_error.get('project', None),
-        'redirect': translate_error.get('redirect', None),
-        'locales': Locale.objects.all(),
-        'projects': projects,
-    }
-
-    return render(request, template, data)
+    slug = Project.objects.get(id=1).slug
+    return translate(request, 'de', slug)
 
 
 def locale(request, locale, template='locale.html'):
@@ -176,22 +151,21 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         else:
             messages.error(request, "Oops, locale is not supported.")
             request.session['translate_error'] = {
-                'project': p.slug,
+                'none': None,
             }
             return HttpResponseRedirect(reverse('pontoon.home'))
 
     if invalid_project:
         messages.error(request, "Oops, project could not be found.")
         request.session['translate_error'] = {
-            'locale': locale,
+            'none': None,
         }
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Validate project locales
     if p.locales.filter(code=locale).count() == 0:
         request.session['translate_error'] = {
-            'locale': locale,
-            'project': p.slug,
+            'none': None,
         }
         messages.error(
             request, "Oops, locale is not supported for this project.")
@@ -281,6 +255,11 @@ def translate(request, locale, slug, part=None, template='translate.html'):
             gravatar_url += urllib.urlencode({'d': default})
 
         data['gravatar_url'] = gravatar_url
+
+    # Set error data
+    translate_error = request.session.pop('translate_error', {})
+    if translate_error:
+        data['redirect'] = translate_error.get('redirect', None)
 
     return render(request, template, data)
 

@@ -329,22 +329,27 @@
 
 #pontoon > header .notification {
   background: rgba(0, 0, 0, 0.8);
-  color: #7BC876;
   cursor: pointer;
   display: none;
-  font-weight: 100;
+  list-style: none;
+  margin: 0;
   max-width: 500px;
   padding: 10px;
   position: absolute;
   right: 15px;
-  text-transform: uppercase;
   top: 70px;
   visibility: visible;
   width: auto;
+}
+
+#pontoon > header .notification li {
+  color: #7BC876;
+  font-weight: 100;
+  text-transform: uppercase;
   white-space: pre-wrap;
 }
 
-#pontoon > header .notification.error {
+#pontoon > header .notification li.error {
   color: #FD5F60;
 }
 
