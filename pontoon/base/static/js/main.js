@@ -1828,12 +1828,6 @@ var Pontoon = (function () {
             part = $('.part .selector:visible').attr('title'),
             loc = locale + '/' + project;
 
-        // On homepage, show error if no project selected
-        if (!locale) {
-          Pontoon.common.showError("Oops, no project selected.");
-          return;
-        }
-
         if (part) {
           loc += '/' + part;
         }
