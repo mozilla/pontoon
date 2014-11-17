@@ -373,7 +373,12 @@
 {% endif %}
 
 <!-- Project loading indicator -->
-{% include 'loader.html' %}
+<div id="project-load">
+  <div class="inner">
+    <p>Loading</p>
+    <img src="{{ static('img/loader-big.gif') }}" />
+  </div>
+</div>
 {% endblock %}
 
 {% block extend_css %}
