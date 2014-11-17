@@ -470,17 +470,30 @@ button {
   color: #272A2F;
 }
 
-#pontoon .project.select .menu {
-  width: 489px;
+#pontoon .project.select {
+  padding-left: 0;
+  width: 100%;
 }
 
-#pontoon .project.select input[type=search] {
-  width: 454px;
+#pontoon .project.select .menu {
+  bottom: auto;
+  display: inline-block;
+  position: relative;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#pontoon .project.select input[type="search"] {
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #pontoon .project.select .menu ul {
-  list-style: none;
-  overflow: auto;
+  max-height: none;
 }
 
 #pontoon .project.select .menu ul li .project-name {
@@ -497,6 +510,32 @@ button {
   width: 300px;
 }
 
+#pontoon .locale.select {
+  padding-left: 0;
+  width: 100%;
+}
+
+#pontoon .locale.select .menu {
+  bottom: auto;
+  display: inline-block;
+  position: relative;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#pontoon .locale.select input[type="search"] {
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#pontoon .locale.select .menu ul {
+  max-height: none;
+}
+
 #pontoon .select .menu ul li > span:first-child {
   float: left;
   text-align: left;
@@ -511,11 +550,6 @@ button {
 #pontoon .locale .selector,
 #pontoon .project .selector {
   float: right;
-}
-
-#pontoon .locale .menu,
-#pontoon .part .menu {
-  width: 236px;
 }
 
 #pontoon .menu ul {
@@ -581,7 +615,7 @@ button {
   color: #FFFFFF;
   float: none;
   padding-left: 25px;
-  padding-right: 11px;
+  padding-right: 0;
   width: 200px;
 }
 
@@ -698,10 +732,11 @@ button {
 }
 
 #pontoon > form {
-  width: 730px;
-  height: 60px;
+  height: auto;
   margin: 0 auto;
+  padding: 30px 0 0;
   position: relative;
+  width: 730px;
 }
 
 #pontoon .notification {

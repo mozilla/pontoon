@@ -18,7 +18,6 @@ body {
 #pontoon form {
   color: #AAAAAA;
   font-size: 14px;
-  height: auto;
   width: 620px;
   padding: 0 20px 100px;
 }
@@ -132,6 +131,7 @@ body {
 
 #pontoon .locale.select {
   float: left;
+  width: auto;
 }
 
 #pontoon .locale.select.selected {
@@ -139,18 +139,9 @@ body {
 }
 
 #pontoon .locale.select .menu {
-  display: inline-block;
   margin: 2px 0 -4px -1px;
   overflow: auto;
-  position: relative;
-  top: 0;
   width: 271px;
-}
-
-#pontoon .locale.select .menu input[type=search] {
-  background-position: 4px 6px;
-  margin-left: 0;
-  width: 234px;
 }
 
 #pontoon .locale.select .menu ul {

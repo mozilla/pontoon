@@ -39,6 +39,11 @@
 
 #pontoon > header .project.select {
   margin-left: 10px;
+  width: auto;
+}
+
+#pontoon > header .locale.select {
+  width: auto;
 }
 
 #pontoon .select > .button.breadcrumbs {
@@ -53,11 +58,6 @@
   border-left-color: #272A2F;
 }
 
-#pontoon .project.select input[type=search],
-#pontoon .part.select input[type=search] {
-  width: 474px;
-}
-
 #pontoon .select .menu,
 #pontoon .select .popup {
   background: #272A2F;
@@ -67,12 +67,20 @@
 
 #pontoon .project.select .menu,
 #pontoon .part.select .menu {
+  position: absolute;
   width: 510px;
 }
 
-#pontoon .menu ul {
-  max-height: 149px;
+#pontoon .locale.select .menu {
+  position: absolute;
+  width: 236px;
+}
+
+#pontoon .menu ul,
+#pontoon .project.select .menu ul,
+#pontoon .locale.select .menu ul {
   margin: 0;
+  max-height: 149px;
 }
 
 #pontoon .menu ul li {
