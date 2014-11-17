@@ -60,7 +60,6 @@
 
 #pontoon .select .menu,
 #pontoon .select .popup {
-  background: #272A2F;
   bottom: auto;
   top: 60px;
 }
@@ -83,11 +82,6 @@
 #pontoon .locale.select .menu ul {
   margin: 0;
   max-height: 149px;
-}
-
-#pontoon .menu ul li,
-#pontoon .menu ul li.no-match.hover {
-  color: #AAAAAA;
 }
 
 #pontoon .part .menu ul li {
@@ -558,10 +552,6 @@
 #pontoon .advanced #entitylist,
 #pontoon .advanced #editor {
   width: 50%;
-}
-
-#pontoon .search-wrapper {
-  border-color: #5E6475;
 }
 
 #pontoon #entitylist .search-wrapper {

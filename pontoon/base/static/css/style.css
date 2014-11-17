@@ -381,7 +381,7 @@ button {
 
 #pontoon .select .menu,
 #pontoon .select .popup {
-  background: #4d5967;
+  background: #272A2F;
   bottom: 50px;
   color: #AAAAAA;
   display: none;
@@ -560,7 +560,7 @@ button {
 }
 
 #pontoon .menu li {
-  color: #FFFFFF;
+  color: #AAAAAA;
   font-weight: 300;
   padding: 2px 4px;
 }
@@ -592,13 +592,14 @@ button {
 }
 
 #pontoon .menu li.no-match.hover {
-  display: none;
-  cursor: default;
   background: transparent;
+  color: inherit;
+  cursor: default;
+  display: none;
 }
 
 #pontoon .search-wrapper {
-  border-bottom: 1px solid #272A2F;
+  border-bottom: 1px solid #5E6475;
   margin-bottom: 10px;
   position: relative;
 }

@@ -135,13 +135,16 @@ body {
 }
 
 #pontoon .locale.select .menu {
+  border-bottom: 1px solid #5E6475;
   margin: 2px 0 -4px -1px;
   overflow: auto;
-  width: 271px;
+  padding: 10px 0;
+  width: 295px;
 }
 
 #pontoon .locale.select .menu ul {
   height: 170px;
+  margin-bottom: 0;
 }
 
 #pontoon #id_locales {
@@ -206,8 +209,11 @@ body {
 }
 
 #pontoon .repository .type.select .menu {
+  background: #272A2F;
+  border-top: 1px solid #5E6475;
   bottom: 31px;
-  width: 183px;
+  padding: 10px 0;
+  width: 207px;
 }
 
 #pontoon .repository .type-wrapper .authentication-title {
