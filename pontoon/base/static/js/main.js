@@ -1806,14 +1806,12 @@ var Pontoon = (function () {
         var details = Pontoon.common.getProjectDetails(),
             menu = $(this).siblings('.menu');
 
-        menu.find('.limited').removeClass('limited');
+        menu.find('.limited').removeClass('limited').end()
+          .find('li').hide();
 
-        if (details) { // If project selected on homepage
-          menu.find('li').hide();
-          $(Object.keys(details)).each(function() {
-            menu.find('.language.' + this).parent().addClass('limited').show();
-          });
-        }
+        $(Object.keys(details)).each(function() {
+          menu.find('.language.' + this).parent().addClass('limited').show();
+        });
 
         $('.menu:visible input[type=search]').trigger("keyup");
       });
