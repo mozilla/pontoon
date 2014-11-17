@@ -85,7 +85,8 @@
   max-height: 149px;
 }
 
-#pontoon .menu ul li {
+#pontoon .menu ul li,
+#pontoon .menu ul li.no-match.hover {
   color: #AAAAAA;
 }
 

@@ -560,7 +560,7 @@ button {
 }
 
 #pontoon .menu li {
-  color: #EBEBEB;
+  color: #FFFFFF;
   font-weight: 300;
   padding: 2px 4px;
 }
@@ -585,14 +585,15 @@ button {
 }
 
 #pontoon .menu li.no-match {
-  display: none;
   cursor: default;
+  display: none;
+  list-style: none;
+  text-align: left;
 }
 
 #pontoon .menu li.no-match.hover {
   display: none;
   cursor: default;
-  color: #AAAAAA;
   background: transparent;
 }
 
