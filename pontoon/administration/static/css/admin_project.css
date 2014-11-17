@@ -35,10 +35,6 @@ body {
   opacity: 0.3;
 }
 
-#pontoon form .notification {
-  margin-bottom: 10px;
-}
-
 #pontoon h2 {
   color: #EBEBEB;
   font-size: 30px;
@@ -359,9 +355,20 @@ body {
 }
 
 #pontoon .notification {
+  color: #FD5F60;
+  font-weight: 300;
+  line-height: 17px;
+  margin: 5px auto 10px;
+  min-height: 17px;
+  text-transform: uppercase;
   width: auto;
 }
 
+#pontoon .notification.hidden {
+  display: block;
+}
+
 #pontoon .notification li {
+  list-style: none;
   text-align: left;
 }
