@@ -644,10 +644,6 @@ button {
   width: 100%;
 }
 
-#error .notification li {
-  visibility: visible;
-}
-
 .inner {
   display: table-cell;
   vertical-align: middle;
@@ -737,30 +733,6 @@ button {
   padding: 30px 0 0;
   position: relative;
   width: 730px;
-}
-
-#pontoon .notification {
-  color: #FD5F60;
-  line-height: 17px;
-  margin: 5px auto -22px;
-  min-height: 17px;
-  text-transform: uppercase;
-  font-weight: 300;
-  width: 730px; /* Must be same as #pontoon > form */
-}
-
-#pontoon .notification.hidden {
-  display: block;
-}
-
-#pontoon .notification li {
-  list-style: none;
-}
-
-#pontoon #browserid {
-  cursor: pointer;
-  margin-top: -1px;
-  vertical-align: middle;
 }
 
 #source {
