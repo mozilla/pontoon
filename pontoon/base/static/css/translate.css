@@ -67,11 +67,13 @@
 
 #pontoon .project.select .menu,
 #pontoon .part.select .menu {
+  display: none;
   position: absolute;
   width: 510px;
 }
 
 #pontoon .locale.select .menu {
+  display: none;
   position: absolute;
   width: 236px;
 }
