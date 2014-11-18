@@ -277,8 +277,6 @@ html {
 body {
   background: #272A2F;
   color: #EBEBEB;
-  height: 100%;
-  overflow: hidden;
   text-align: center;
 }
 
@@ -809,7 +807,7 @@ button {
 #pontoon > form {
   height: auto;
   margin: 0 auto;
-  padding: 50px 0 0;
+  padding: 50px 0 100px;
   position: relative;
   width: 730px;
 }
