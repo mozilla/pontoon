@@ -1254,11 +1254,12 @@ var Pontoon = (function () {
       $('#progress .number').html(number);
 
       // Update details in the menu
-      $('#progress .menu .details')
-        .find('.untranslated p').html(untranslated).end()
-        .find('.need-work p').html(fuzzy).end()
-        .find('.translated p').html(translated).end()
-        .find('.approved p').html(approved);
+      $('#progress .menu').find('header span').html(all).end()
+        .find('.details')
+          .find('.untranslated p').html(untranslated).end()
+          .find('.need-work p').html(fuzzy).end()
+          .find('.translated p').html(translated).end()
+          .find('.approved p').html(approved);
 
       // Update parts menu
       if (all) {

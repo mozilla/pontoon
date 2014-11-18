@@ -283,6 +283,12 @@
   top: 48px;
 }
 
+#pontoon #progress .menu header span {
+  color: #FFFFFF;
+  font-size: 28px;
+  padding: 0 2px;
+}
+
 #pontoon #progress .menu > div:first-child {
   padding: 10px 12px;
 }
