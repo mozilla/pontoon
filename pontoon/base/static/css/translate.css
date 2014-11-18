@@ -75,6 +75,10 @@
   width: 510px;
 }
 
+#pontoon .project.select .menu {
+  width: 580px;
+}
+
 #pontoon .locale.select .menu {
   display: none;
   position: absolute;
