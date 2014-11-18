@@ -5,6 +5,7 @@ import json
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Sum
 from django.db.models.signals import post_save
 from django.forms import ModelForm
 
@@ -268,6 +269,46 @@ def get_entities(project, locale, path=None):
 
         entities_array.append(obj)
     return sorted(entities_array, key=lambda k: k['order'])
+
+
+def get_chart_data(stats):
+    """Get chart data for stats."""
+
+    return stats.aggregate(
+        total=Sum('resource__entity_count'),
+        approved=Sum('approved_count'),
+        translated=Sum('translated_count'),
+        fuzzy=Sum('fuzzy_count')
+    )
+
+
+def get_locales_stats(locales, project):
+    """Add chart data to locales for specified project."""
+
+    for locale in locales:
+        r = Entity.objects.filter(obsolete=False).values('resource')
+        resources = Resource.objects.filter(project=project, pk__in=r)
+        stats = Stats.objects.filter(resource__in=resources, locale=locale)
+
+        locale.chart = get_chart_data(stats)
+
+    return locales
+
+
+def get_projects_stats(projects, locale=None):
+    """Add chart data to projects (for specified locale)."""
+
+    for project in projects:
+        r = Entity.objects.filter(obsolete=False).values('resource')
+        resources = Resource.objects.filter(project=project, pk__in=r)
+        stats = Stats.objects.filter(resource__in=resources)
+
+        if locale:
+            stats = stats.filter(locale=locale)
+
+        project.chart = get_chart_data(stats)
+
+    return projects
 
 
 def get_translation(entity, locale, plural_form=None, fuzzy=None):

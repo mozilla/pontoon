@@ -18,7 +18,6 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.db.models import Sum
 
 from django.http import (
     Http404,
@@ -48,6 +47,8 @@ from pontoon.base.models import (
     Stats,
     UserProfile,
     get_entities,
+    get_locales_stats,
+    get_projects_stats,
     get_translation,
     unapprove,
     unfuzzy,
@@ -82,20 +83,8 @@ def locale(request, locale, template='locale.html'):
         pk__in=Resource.objects.values('project')).filter(locales=l) \
         .order_by("name")
 
-    for project in projects:
-        entities = Entity.objects.filter(obsolete=False).values('resource')
-        resources = Resource.objects.filter(project=project, pk__in=entities)
-        stats = Stats.objects.filter(resource__in=resources, locale=l)
-
-        project.chart = stats.aggregate(
-            total=Sum('resource__entity_count'),
-            approved=Sum('approved_count'),
-            translated=Sum('translated_count'),
-            fuzzy=Sum('fuzzy_count')
-        )
-
     data = {
-        'projects': projects,
+        'projects': get_projects_stats(projects, l),
         'locale': l,
     }
 
@@ -118,20 +107,8 @@ def project(request, slug, template='project.html'):
 
     locales = p.locales.all().order_by("name")
 
-    for locale in locales:
-        entities = Entity.objects.filter(obsolete=False).values('resource')
-        resources = Resource.objects.filter(project=p, pk__in=entities)
-        stats = Stats.objects.filter(resource__in=resources, locale=locale)
-
-        locale.chart = stats.aggregate(
-            total=Sum('resource__entity_count'),
-            approved=Sum('approved_count'),
-            translated=Sum('translated_count'),
-            fuzzy=Sum('fuzzy_count')
-        )
-
     data = {
-        'locales': locales,
+        'locales': get_locales_stats(locales, p),
         'project': p,
     }
 
@@ -199,9 +176,8 @@ def translate(request, locale, slug, part=None, template='translate.html'):
 
     for project in projects:
         pages = Subpage.objects.filter(project=project)
-        entities = Entity.objects.filter(obsolete=False)
-        resources = Resource.objects.filter(
-            project=project, pk__in=entities.values('resource'))
+        r = Entity.objects.filter(obsolete=False).values('resource')
+        resources = Resource.objects.filter(project=project, pk__in=r)
         details = {}
 
         for loc in project.locales.all():
