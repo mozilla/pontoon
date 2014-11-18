@@ -496,15 +496,17 @@ button {
   max-height: none;
 }
 
-#pontoon .project.select .menu ul li .project-name {
+#pontoon .project.select .menu ul li .name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 160px;
 }
 
-#pontoon .project.select .menu ul li .project-url {
+#pontoon .project.select .menu ul li .url {
+  float: left;
   overflow: hidden;
+  text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 300px;
@@ -541,10 +543,33 @@ button {
   text-align: left;
 }
 
-#pontoon .select .menu ul li > span:last-child {
+#pontoon .select .menu ul li > span:nth-child(2) {
   color: #7BC876;
+}
+
+#pontoon .select .menu ul li .chart {
+  background: #FD5F60;
   float: right;
-  text-align: right;
+  height: 5px;
+  margin-top: 6px;
+  width: 160px;
+}
+
+#pontoon .select .menu ul li .chart span {
+  float: left;
+  height: 100%;
+}
+
+#pontoon .select .menu ul li .chart span.approved {
+  background: #7BC876;
+}
+
+#pontoon .select .menu ul li .chart span.translated {
+  background: #4FC4F6;
+}
+
+#pontoon .select .menu ul li .chart span.fuzzy {
+  background: #FED271;
 }
 
 #pontoon .locale .selector,
@@ -628,7 +653,6 @@ button {
 #pontoon .locale .code {
   color: #7BC876;
   float: right;
-  margin-left: 10px;
 }
 
 

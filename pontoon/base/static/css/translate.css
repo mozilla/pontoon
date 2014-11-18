@@ -37,6 +37,10 @@
   text-align: left;
 }
 
+#pontoon .locale .code {
+  margin-left: 10px;
+}
+
 #pontoon > header .project.select {
   margin-left: 10px;
   width: auto;
@@ -88,6 +92,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+#pontoon .part.select .menu ul li > span:nth-child(2),
+#pontoon .project.select .menu ul li > span:nth-child(2) {
+  float: right;
+  text-align: right;
 }
 
 #pontoon .menu li.horizontal-separator {

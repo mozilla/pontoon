@@ -9,6 +9,7 @@ import traceback
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import Sum
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
@@ -23,6 +24,7 @@ from pontoon.base.models import (
     Project,
     ProjectForm,
     Resource,
+    Stats,
     Subpage,
     Translation,
     UserProfile,
@@ -39,8 +41,22 @@ def admin(request, template='admin.html'):
     if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
 
+    projects = Project.objects.all().order_by("name")
+
+    for project in projects:
+        entities = Entity.objects.filter(obsolete=False).values('resource')
+        resources = Resource.objects.filter(project=project, pk__in=entities)
+        stats = Stats.objects.filter(resource__in=resources)
+
+        project.chart = stats.aggregate(
+            total=Sum('resource__entity_count'),
+            approved=Sum('approved_count'),
+            translated=Sum('translated_count'),
+            fuzzy=Sum('fuzzy_count')
+        )
+
     data = {
-        'projects': Project.objects.all().order_by("name"),
+        'projects': projects,
     }
 
     return render(request, template, data)

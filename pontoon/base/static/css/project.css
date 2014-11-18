@@ -1,0 +1,7 @@
+#pontoon .select .menu ul li > span:first-child {
+  width: 160px;
+}
+
+#pontoon .locale .code {
+  float: left;
+}

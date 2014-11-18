@@ -18,6 +18,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db.models import Sum
 
 from django.http import (
     Http404,
@@ -77,10 +78,24 @@ def locale(request, locale, template='locale.html'):
     except Locale.DoesNotExist:
         raise Http404
 
+    projects = Project.objects.filter(
+        pk__in=Resource.objects.values('project')).filter(locales=l) \
+        .order_by("name")
+
+    for project in projects:
+        entities = Entity.objects.filter(obsolete=False).values('resource')
+        resources = Resource.objects.filter(project=project, pk__in=entities)
+        stats = Stats.objects.filter(resource__in=resources, locale=l)
+
+        project.chart = stats.aggregate(
+            total=Sum('resource__entity_count'),
+            approved=Sum('approved_count'),
+            translated=Sum('translated_count'),
+            fuzzy=Sum('fuzzy_count')
+        )
+
     data = {
-        'projects': Project.objects.filter(
-            pk__in=Resource.objects.values('project')).filter(locales=l)
-        .order_by("name"),
+        'projects': projects,
         'locale': l,
     }
 
@@ -101,8 +116,22 @@ def project(request, slug, template='project.html'):
         }
         return HttpResponseRedirect(reverse('pontoon.home'))
 
+    locales = p.locales.all().order_by("name")
+
+    for locale in locales:
+        entities = Entity.objects.filter(obsolete=False).values('resource')
+        resources = Resource.objects.filter(project=p, pk__in=entities)
+        stats = Stats.objects.filter(resource__in=resources, locale=locale)
+
+        locale.chart = stats.aggregate(
+            total=Sum('resource__entity_count'),
+            approved=Sum('approved_count'),
+            translated=Sum('translated_count'),
+            fuzzy=Sum('fuzzy_count')
+        )
+
     data = {
-        'locales': p.locales.all(),
+        'locales': locales,
         'project': p,
     }
 

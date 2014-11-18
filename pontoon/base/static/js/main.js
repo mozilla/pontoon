@@ -1845,7 +1845,7 @@ var Pontoon = (function () {
 
       // Project menu handler
       $('.project .menu li:not(".no-match")').bind('click.main', function () {
-        var project = $(this).find('.project-name'),
+        var project = $(this).find('.name'),
             name = project.html(),
             slug = project.data('slug');
 
@@ -2059,7 +2059,7 @@ var Pontoon = (function () {
         getProjectDetails: function() {
           var resources = null;
 
-          $('.project-name').each(function() {
+          $('.project .menu li .name').each(function() {
             if ($('.project .button .title').html() === $(this).html()) {
               resources = $(this).data('details');
               return false;
