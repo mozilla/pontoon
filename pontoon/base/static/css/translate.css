@@ -27,8 +27,15 @@
   color: #FFFFFF;
   float: left;
   height: 60px;
-  padding: 0 0 0 10px; /* All values neede to prevent jumping on click */
-  width: 35px;
+  margin-left: 8px;
+  padding: 0; /* Needed to prevent jumping on click */
+  transition: all 0.2s ease-out;
+  width: 27px;
+}
+
+#pontoon #switch.opened {
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 
 #pontoon .select {
@@ -230,6 +237,7 @@
 
 #pontoon #progress .graph .half:nth-child(2) {
   display: none;
+
   -webkit-transform: rotate(180deg);
   transform: rotate(180deg);
 }
