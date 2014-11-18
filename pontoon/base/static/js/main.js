@@ -1779,6 +1779,41 @@ var Pontoon = (function () {
       $('.menu').on('mouseenter', 'li', function () {
         $('.menu li.hover').removeClass('hover');
         $(this).toggleClass('hover');
+
+        var chart = $(this).find('.chart');
+
+        if (chart.length > 0) {
+          if ($('.tooltip').length === 0) {
+            $('body').prepend(
+              '<aside class="tooltip">' +
+                '<div class="total">Total<span></span></div>' +
+                '<div class="approved">Approved<span></span></div>' +
+                '<div class="translated">Unapproved<span></span></div>' +
+                '<div class="fuzzy">Needs work<span></span></div>' +
+                '<div class="untranslated">Untranslated<span></span></div>' +
+              '</aside>');
+          }
+
+          var data = JSON.parse(chart.data('chart').replace(/'/g, "\"")),
+              untranslated = data.total - data.approved - data.translated - data.fuzzy,
+              rect = chart[0].getBoundingClientRect(),
+              height = $('.tooltip').outerHeight() + 15,
+              width = ($('.tooltip').outerWidth() - chart.outerWidth()) / 2,
+              left = rect.left + window.scrollX - width,
+              top = rect.top + window.scrollY - height;
+
+          $('.tooltip')
+            .find('.total span').html(data.total).end()
+            .find('.approved span').html(data.approved).end()
+            .find('.translated span').html(data.translated).end()
+            .find('.fuzzy span').html(data.fuzzy).end()
+            .find('.untranslated span').html(untranslated).end()
+            .css('left', left)
+            .css('top', top)
+            .show();
+        }
+      }).on('mouseleave', 'li', function () {
+        $('.tooltip:visible').remove();
       });
 
       // Show only parts available for the selected project

@@ -655,6 +655,59 @@ button {
   float: right;
 }
 
+.tooltip {
+  background: #3F4752;
+  border-radius: 5px;
+  display: none;
+  height: 104px;
+  padding: 10px;
+  position: absolute;
+  width: 160px;
+  z-index: 25;
+}
+
+.tooltip:after {
+  content: "";
+  position: absolute;
+  border: 8px solid;
+  border-color: #3F4752 transparent transparent transparent;
+  bottom: -16px;
+  left: 82px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
+}
+
+.tooltip div {
+  border-left: 5px solid;
+  color: #CCCCCC;
+  font-size: 11px;
+  margin: 6px 0;
+  padding-left: 5px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.tooltip div.untranslated {
+  border-color: #FD5F60;
+}
+
+.tooltip div.approved {
+  border-color: #7BC876;
+}
+
+.tooltip div.translated {
+  border-color: #4FC4F6;
+}
+
+.tooltip div.fuzzy {
+  border-color: #FED271;
+}
+
+.tooltip div span {
+  color: #FFFFFF;
+  float: right;
+  font-size: 13px;
+  line-height: 13px;
+}
+
 
 
 
