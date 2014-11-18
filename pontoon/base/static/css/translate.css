@@ -376,8 +376,12 @@
 
 #pontoon #profile .button .title {
   float: left;
-  margin: 20px 10px;
+  margin: 20px 5px 20px 10px;
   font-size: 16px;
+}
+
+#pontoon #profile .button .title span {
+  margin-left: 5px;
 }
 
 #pontoon #profile .button img {
