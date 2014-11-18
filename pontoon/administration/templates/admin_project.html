@@ -11,7 +11,7 @@
     <li><a href="{{ url('pontoon.admin') }}" title="Pontoon Admin">Admin</a></li>
     {% if pk %}
     <li><a href="{{ url('pontoon.admin.project.new') }}" title="Add new project">Add</a></li>
-      {% if translate_locale %}
+      {% if translate_locale and form.slug.value() != '' %}
       <li class="translate{% if not ready %} hidden{% endif %}"><a href="{{ url('pontoon.translate', translate_locale, form.slug.value()) }}" title="Translate project">Translate</a></li>
       {% endif %}
     {% endif %}
