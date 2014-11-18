@@ -278,6 +278,8 @@
 
 #pontoon #progress .menu {
   cursor: auto;
+  left: 50%;
+  margin-left: -180px; /* Must be half the width */
   padding: 0;
   text-align: center;
   top: 48px;
