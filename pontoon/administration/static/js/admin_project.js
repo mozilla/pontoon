@@ -1,8 +1,5 @@
 $(function() {
 
-  // Prevent hiding locale selector on click outside
-  $('body').unbind("click.main");
-
   // Before submitting the form
   $('form').submit(function (e) {
     // Update locales

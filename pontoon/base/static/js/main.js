@@ -1769,13 +1769,6 @@ var Pontoon = (function () {
         }
       });
 
-      // Hide menus on click outside
-      $('body').bind("click.main", function () {
-        $('.menu').hide();
-        $('#iframe-cover').hide(); // iframe fix
-        $('.select').removeClass('opened');
-      });
-
       // Menu hover
       $('.menu').on('mouseenter', 'li', function () {
         $('.menu li.hover').removeClass('hover');

@@ -145,6 +145,13 @@ $(function() {
     }
   }
 
+  // Hide menus on click outside
+  $('body').bind("click.main", function () {
+    $('.menu').hide();
+    $('#iframe-cover').hide(); // iframe fix
+    $('.select').removeClass('opened');
+  });
+
   var url = $('#server').data('url');
 
   // Initialize Pontoon for projects without in place translation support
