@@ -1456,8 +1456,10 @@ var Pontoon = (function () {
       // Profile menu
       $('#profile .menu li').click(function (e) {
         e.preventDefault();
+
         if ($(this).is(".sign-out")) {
           window.location = 'signout/';
+
         } else if ($(this).is(".sign-in")) {
           self.startLoader();
           navigator.id.get(function(assertion) {
@@ -1490,12 +1492,15 @@ var Pontoon = (function () {
             }
           });
 
-
-
         } else if ($(this).is(".admin") || $(this).is(".admin-project")) {
           window.location = $(this).data('url');
+
         } else if ($(this).is(".html")) {
           self.common.postMessage("HTML");
+
+        } else if ($(this).is(".hotkeys")) {
+          $('#hotkeys').show();
+
         } else {
           self.save($(this).attr('class').split(" ")[0]);
         }
@@ -1765,7 +1770,7 @@ var Pontoon = (function () {
           $(this).siblings('.menu').show().end()
                  .parents('.select').addClass('opened');
           $('#iframe-cover').show(); // iframe fix
-          $('body:not(".admin-project") .menu:visible input[type=search]').focus();
+          //$('body:not(".admin-project") .menu:visible input[type=search]').focus();
         }
       });
 

@@ -147,6 +147,8 @@
             <li class="admin-project" data-url="{{ url('pontoon.admin.project', project.slug) }}">Project Admin</li>
             {% endif %}
 
+            <li class="hotkeys">Keyboard shortcuts</li>
+
             {% if user.is_authenticated() %}
             <li class="sign-out">Sign out</li>
             {% else %}
@@ -155,6 +157,52 @@
 
           </ul>
         </div>
+
+        <!-- Keyboard shortcuts -->
+        <aside id="hotkeys" class="popup">
+          <h2>Keyboard shortcuts</h2>
+          <table>
+            <tbody>
+              <tr>
+                <td>Save translation</td>
+                <td><span>Enter</span></td>
+              </tr>
+              <tr>
+                <td>Cancel translation</td>
+                <td><span>Esc</span></td>
+              </tr>
+              <tr>
+                <td>Insert a new line</td>
+                <td><span>Shift</span>&nbsp;+&nbsp;<span>Enter</span></td>
+              </tr>
+              <tr>
+                <td>Copy from source</td>
+                <td><span>Alt</span>&nbsp;+&nbsp;<span>C</span></td>
+              </tr>
+              <tr>
+                <td>Clear translation</td>
+                <td><span>Alt</span>&nbsp;+&nbsp;<span>Backspace</span></td>
+              </tr>
+              <tr>
+                <td>Next string</td>
+                <td><span>Alt</span>&nbsp;+&nbsp;<span>Down</span></td>
+              </tr>
+              <tr>
+                <td>Previous string</td>
+                <td><span>Alt</span>&nbsp;+&nbsp;<span>Up</span></td>
+              </tr>
+              <tr>
+                <td>Search</td>
+                <td><span>Alt</span>&nbsp;+&nbsp;<span>F</span></td>
+              </tr>
+              <tr>
+                <td>Select suggestions</td>
+                <td><span>Tab</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </aside>
+
         {% if project.transifex_project and project.transifex_resource %}
         <aside id="transifex" class="popup">
           <h2>
@@ -174,6 +222,7 @@
           </form>
         </aside>
         {% endif %}
+
         {% if project.repository_type in ('git', 'hg', 'svn') %}
         <aside id="repository-commit" class="popup">
           <h2>
@@ -195,63 +244,16 @@
         {% endif %}
       </div>
 
+      {% if project.info_brief %}
+      <!-- Project Info -->
       <div id="info" class="select">
-        <div class="button selector fa fa-info-circle fa-2x">
-        </div>
+        <div class="button selector fa fa-info-circle fa-2x"></div>
         <aside class="menu">
-          <!-- Keyboard shortcuts -->
-          <section id="hotkeys">
-            <h2>Keyboard shortcuts</h2>
-            <table>
-              <tbody>
-                <tr>
-                  <td>Save translation</td>
-                  <td><span>Enter</span></td>
-                </tr>
-                <tr>
-                  <td>Cancel translation</td>
-                  <td><span>Esc</span></td>
-                </tr>
-                <tr>
-                  <td>Insert a new line</td>
-                  <td><span>Shift</span>&nbsp;+&nbsp;<span>Enter</span></td>
-                </tr>
-                <tr>
-                  <td>Copy from source</td>
-                  <td><span>Alt</span>&nbsp;+&nbsp;<span>C</span></td>
-                </tr>
-                <tr>
-                  <td>Clear translation</td>
-                  <td><span>Alt</span>&nbsp;+&nbsp;<span>Backspace</span></td>
-                </tr>
-                <tr>
-                  <td>Next string</td>
-                  <td><span>Alt</span>&nbsp;+&nbsp;<span>Down</span></td>
-                </tr>
-                <tr>
-                  <td>Previous string</td>
-                  <td><span>Alt</span>&nbsp;+&nbsp;<span>Up</span></td>
-                </tr>
-                <tr>
-                  <td>Search</td>
-                  <td><span>Alt</span>&nbsp;+&nbsp;<span>F</span></td>
-                </tr>
-                <tr>
-                  <td>Select suggestions</td>
-                  <td><span>Tab</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </section>
-          {% if project.info_brief %}
-          <!-- Project info -->
-          <section>
-            <h2>Project info</h2>
-            <p>{{ project.info_brief|safe }}</p>
-          </section>
-          {% endif %}
+          <h2>Project info</h2>
+          <p>{{ project.info_brief|safe }}</p>
         </aside>
       </div>
+      {% endif %}
 
       <a id="projects" class="fa fa-bar-chart-o fa-2x" href="{{ url('pontoon.projects') }}" title="Go to Project Overview"></a>
     </div>

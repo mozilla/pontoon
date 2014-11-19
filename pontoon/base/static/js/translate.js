@@ -146,10 +146,16 @@ $(function() {
   }
 
   // Hide menus on click outside
-  $('body').bind("click.main", function () {
-    $('.menu').hide();
+  $('body').bind("click.main", function (e) {
+    $('.menu, #hotkeys').hide();
     $('#iframe-cover').hide(); // iframe fix
     $('.select').removeClass('opened');
+
+    // Special case: menu in menu
+    if ($(e.target).is('.hotkeys')) {
+      $('#hotkeys').show();
+      $('#iframe-cover').show(); // iframe fix
+    }
   });
 
   var url = $('#server').data('url');

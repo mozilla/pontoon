@@ -279,6 +279,7 @@
 #pontoon #progress .menu {
   cursor: auto;
   left: 50%;
+  line-height: 18px;
   margin-left: -180px; /* Must be half the width */
   padding: 0;
   text-align: center;
@@ -407,27 +408,35 @@
   max-height: none;
 }
 
-#pontoon .select#profile .popup {
+#pontoon #profile.select .popup {
   right: 0;
   width: 200px;
 }
 
-#pontoon #info .button {
-  font-size: 1.6em;
-  height: 20px;
-  padding: 20px 5px;
+#pontoon #profile.select #hotkeys.popup {
+  width: 360px;
 }
 
-#pontoon #info #hotkeys table {
+#pontoon #info .button {
+  font-size: 1.6em;
+  height: 22px;
+  padding: 19px 5px;
+}
+
+#pontoon #info .menu a {
+  color: #7BC876;
+}
+
+#pontoon #hotkeys table {
   width: 100%;
 }
 
-#pontoon #info #hotkeys td:first-child {
+#pontoon #hotkeys td:first-child {
   height: 26px;
   width: 60%;
 }
 
-#pontoon #info #hotkeys span {
+#pontoon #hotkeys span {
   background: #3F4752;
   border: 1px solid #5E6475;
   border-radius: 2px;
@@ -435,27 +444,7 @@
 }
 
 #pontoon > header .select aside.menu {
-  line-height: 18px;
   width: 360px;
-}
-
-#pontoon > header .select aside.menu section {
-  padding: 10px 4px;
-}
-
-#pontoon > header .select aside.menu section:last-child {
-  border-top: 1px solid #525A65;
-  padding-bottom: 0;
-}
-
-#pontoon > header .select aside.menu section:last-child a {
-  color: #7BC876;
-}
-
-/* Must follow last-child to remove border if only one section visible */
-#pontoon > header .select aside.menu section:first-child {
-  border-top: none;
-  padding-top: 0;
 }
 
 #pontoon > header aside h2 {
@@ -468,13 +457,13 @@
   padding: 4px 0;
 }
 
+#pontoon .right .menu {
+  right: 0;
+}
+
 #pontoon #projects {
   color: #FFFFFF;
   padding: 17px 5px;
-}
-
-#pontoon .right .menu {
-  right: 0;
 }
 
 #pontoon .popup .cancel {
