@@ -10,11 +10,11 @@ urlpatterns = patterns(
         name='pontoon.admin'),
 
     # Add new project
-    url(r'^project/$', views.manage_project,
+    url(r'^projects/$', views.manage_project,
         name='pontoon.admin.project.new'),
 
     # Edit project
-    url(r'^project/(?P<slug>.+)/$', views.manage_project,
+    url(r'^projects/(?P<slug>.+)/$', views.manage_project,
         name='pontoon.admin.project'),
 
     # Delete project

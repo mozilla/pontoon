@@ -23,7 +23,7 @@ $(function() {
     if (slug.length > 0) {
       slug += '/';
     }
-    $('form').attr('action', $('form').attr('action').split('/project/')[0] + '/project/' + slug);
+    $('form').attr('action', $('form').attr('action').split('/projects/')[0] + '/projects/' + slug);
   });
 
   // Submit form with Enter
