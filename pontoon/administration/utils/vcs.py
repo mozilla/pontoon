@@ -98,8 +98,8 @@ class PullFromSvn(PullFromRepository):
 
         else:
             status = "checked out"
-            command = [
-                "svn", "checkout", "--trust-server-cert", source, target]
+            command = ["svn", "checkout", "--trust-server-cert",
+                       "--non-interactive", source, target]
 
         code, output, error = execute(command)
 
