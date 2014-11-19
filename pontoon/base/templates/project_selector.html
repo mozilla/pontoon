@@ -18,7 +18,7 @@
           data-slug="{{ project.slug }}"
           data-details="{{ project.details }}">{{ project.name }}</span>
         <span class="url">{{ project.url }}</span>
-        {% if project and project.chart %}
+        {% if project and project.chart and project.chart.total %}
         <span class="chart" data-chart="{{ project.chart }}">
           <span class="approved" style="width:{{ project.chart.approved / project.chart.total * 100 }}%;"></span>
           <span class="translated" style="width:{{ project.chart.translated / project.chart.total * 100 }}%;"></span>
