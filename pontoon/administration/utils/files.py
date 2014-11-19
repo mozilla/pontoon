@@ -760,10 +760,14 @@ def dump_lang(project, locale, relative_path):
     locale_directory_path = get_locale_directory(project, locale)["path"]
     path = os.path.join(locale_directory_path, relative_path)
 
+    if not os.path.exists(path):
+        log.info("File does not exist: " + path)
+        return
+
     try:
         resource = Resource.objects.get(project=project, path=relative_path)
     except Resource.DoesNotExist as e:
-        log.error('Resource does not exist')
+        log.info("Resource does not exist")
         return
 
     with codecs.open(path, 'r+', 'utf-8', errors='replace') as lines:
