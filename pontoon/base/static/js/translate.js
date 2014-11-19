@@ -152,7 +152,7 @@ $(function() {
     $('.select').removeClass('opened');
 
     // Special case: menu in menu
-    if ($(e.target).is('.hotkeys')) {
+    if ($(e.target).is('.hotkeys') || $(e.target).parent().is('.hotkeys')) {
       $('#hotkeys').show();
       $('#iframe-cover').show(); // iframe fix
     }

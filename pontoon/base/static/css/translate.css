@@ -400,12 +400,25 @@
 }
 
 #pontoon #profile .menu {
-  width: 160px;
+  line-height: 18px;
+  width: 200px;
 }
 
 #pontoon #profile .menu ul,
 #pontoon #filter .menu ul {
   max-height: none;
+}
+
+#pontoon #profile .menu li i.fa {
+  color: #FFFFFF;
+  margin: 0 8px 0 -2px;
+}
+
+#pontoon #profile .menu li i.file-format {
+  font-weight: 300;
+  font-size: 13px;
+  font-style: normal;
+  margin-left: 5px;
 }
 
 #pontoon #profile.select .popup {
@@ -436,6 +449,7 @@
   width: 60%;
 }
 
+#pontoon #profile .menu li i.file-format,
 #pontoon #hotkeys span {
   background: #3F4752;
   border: 1px solid #5E6475;

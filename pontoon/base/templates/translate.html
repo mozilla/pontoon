@@ -118,8 +118,8 @@
             {% if user.is_authenticated() %}
               {% if perms.base.can_localize %}
                 {% if project.repository_type in ('git', 'hg', 'svn') %}
-                <li class="repository-commit">Commit to repository</li>
-                <li class="repository-update">Update from repository</li>
+                <li class="repository-commit"><i class="fa fa-upload fa-fw"></i>Commit to repository</li>
+                <li class="repository-update"><i class="fa fa-download fa-fw"></i>Update from repository</li>
                 <li class="horizontal-separator"></li>
                 {% endif %}
 
@@ -131,28 +131,28 @@
             {% endif %}
 
             {% if project.repository_path and project.repository_type != 'file' %}
-            <li class="zip">Download .zip</li>
+            <li class="zip">Download <i class="file-format">ZIP</i></li>
             {% endif %}
 
             {% if project.url %}
-            <li class="html">Download .html</li>
+            <li class="html">Download <i class="file-format">HTML</i></li>
             {% endif %}
 
-            <li class="json">Download .json</li>
+            <li class="json">Download <i class="file-format">JSON</i></li>
 
             <li class="horizontal-separator"></li>
 
             {% if perms.base.can_manage %}
-            <li class="admin" data-url="{{ url('pontoon.admin') }}">Admin</li>
-            <li class="admin-project" data-url="{{ url('pontoon.admin.project', project.slug) }}">Project Admin</li>
+            <li class="admin" data-url="{{ url('pontoon.admin') }}"><i class="fa fa-gears fa-fw"></i>Admin</li>
+            <li class="admin-project" data-url="{{ url('pontoon.admin.project', project.slug) }}"><i class="fa fa-gear fa-fw"></i>Project Admin</li>
             {% endif %}
 
-            <li class="hotkeys">Keyboard shortcuts</li>
+            <li class="hotkeys"><i class="fa fa-keyboard-o fa-fw"></i>Keyboard shortcuts</li>
 
             {% if user.is_authenticated() %}
-            <li class="sign-out">Sign out</li>
+            <li class="sign-out"><i class="fa fa-sign-out fa-fw"></i>Sign out</li>
             {% else %}
-            <li class="sign-in">Sign in</li>
+            <li class="sign-in"><i class="fa fa-sign-in fa-fw"></i>Sign in</li>
             {% endif %}
 
           </ul>
