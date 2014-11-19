@@ -414,7 +414,7 @@
 
 #pontoon #info .button {
   font-size: 1.6em;
-  height: 24px;
+  height: 20px;
   padding: 20px 5px;
 }
 
@@ -468,10 +468,9 @@
   padding: 4px 0;
 }
 
-#pontoon #home {
+#pontoon #projects {
   color: #FFFFFF;
-  height: 24px;
-  padding: 18px 5px;
+  padding: 17px 5px;
 }
 
 #pontoon .right .menu {
