@@ -1,0 +1,19 @@
+{% extends "landing.html" %}
+
+{% block title %}Pontoon &middot; Project Overview{% endblock %}
+
+{% block class %}projects{% endblock %}
+
+{% block subtitle %}Project Overview{% endblock %}
+
+{% block middle %}
+<form>
+  {% include 'project_selector.html' %}
+</form>
+{% endblock %}
+
+{% block extend_js %}
+  {% compress js %}
+  <script src="{{ static('js/projects.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

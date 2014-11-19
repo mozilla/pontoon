@@ -115,6 +115,20 @@ def project(request, slug, template='project.html'):
     return render(request, template, data)
 
 
+def projects(request, template='projects.html'):
+    """Project overview."""
+    log.debug("Project overview.")
+
+    projects = Project.objects.filter(
+        pk__in=Resource.objects.values('project')).order_by("name")
+
+    data = {
+        'projects': get_projects_stats(projects),
+    }
+
+    return render(request, template, data)
+
+
 def translate(request, locale, slug, part=None, template='translate.html'):
     """Translate view."""
     log.debug("Translate view.")

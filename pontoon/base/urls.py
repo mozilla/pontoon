@@ -26,9 +26,10 @@ urlpatterns = patterns(
     url(r'^project/(?P<slug>[\w-]+)/$',
         RedirectView.as_view(url="/projects/%(slug)s/")),
 
-    # Nothing to show: Redirect home
+    # List all imported projects
     url(r'^projects/$',
-        RedirectView.as_view(url="/")),
+        views.projects,
+        name='pontoon.projects'),
 
     # List project locales
     url(r'^projects/(?P<slug>[\w-]+)/$',
