@@ -7,8 +7,8 @@
 {% block content %}
 <nav>
   <ul class="links">
-    <li><a href="{{ url('pontoon.home') }}" title="Pontoon Home">Home</a></li>
-    <li><a href="{{ url('pontoon.admin') }}" title="Pontoon Admin">Admin</a></li>
+    <li><a href="{{ url('pontoon.home') }}" title="Home">Home</a></li>
+    <li><a href="{{ url('pontoon.admin') }}" title="Admin">Admin</a></li>
     {% if pk %}
     <li><a href="{{ url('pontoon.admin.project.new') }}" title="Add new project">Add</a></li>
       {% if translate_locale and form.slug.value() != '' %}
