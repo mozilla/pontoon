@@ -7,6 +7,8 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.http import HttpResponse
 from translate.filters import checks
+from translate.storage import base as storage_base
+from translate.lang import data as lang_data
 
 
 log = commonware.log.getLogger('pontoon')
@@ -50,7 +52,14 @@ def quality_check(original, string, ignore):
     """Check for obvious errors like blanks and missing interpunction."""
 
     if not ignore:
-        warnings = checks.runtests(original, string)
+        original = lang_data.normalized_unicode(original)
+        string = lang_data.normalized_unicode(string)
+
+        unit = storage_base.TranslationUnit(original)
+        unit.target = string
+        checker = checks.StandardChecker()
+
+        warnings = checker.run_filters(unit)
         if warnings:
 
             # https://github.com/translate/pootle/
