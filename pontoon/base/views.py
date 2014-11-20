@@ -495,6 +495,11 @@ def update_translation(request, template=None):
 
                 # If added by privileged user, approve and unfuzzy it
                 if can_localize:
+
+                    # Unless there's nothing to be changed
+                    if t.user is not None and t.approved and not t.fuzzy:
+                        return HttpResponse("Same translation already exist.")
+
                     warnings = utils.quality_check(original, string, ignore)
                     if warnings:
                         return warnings
