@@ -411,6 +411,21 @@ def unfuzzy(translations):
     translations.update(fuzzy=False)
 
 
+def update_entity_count(resource):
+    """Save number of non-obsolete entities for a given resource."""
+
+    entities = Entity.objects.filter(resource=resource, obsolete=False)
+    resource.entity_count = entities.count()
+    resource.save()
+
+    # Asymmetric formats:
+    # Make sure Stats object exists, so resources are listed in the menu
+    if resource.format in ('dtd', 'properties'):
+        for locale in resource.project.locales.all():
+            stats, created = Stats.objects.get_or_create(
+                resource=resource, locale=locale)
+
+
 def update_stats(resource, locale):
     """Save stats for given resource and locale."""
 

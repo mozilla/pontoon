@@ -29,6 +29,7 @@ from pontoon.base.models import (
     get_translation,
     save_entity,
     save_translation,
+    update_entity_count,
     update_stats,
 )
 
@@ -231,19 +232,6 @@ def get_relative_path(path, locale):
         locale_directory = underscore
 
     return path.split('/' + locale_directory + '/')[-1]
-
-
-def update_entity_count(resource):
-    """Save number of non-obsolete entities for a given resource."""
-    entities = Entity.objects.filter(resource=resource, obsolete=False)
-    resource.entity_count = entities.count()
-    resource.save()
-
-    # Asymmetric formats: make sure Stats object exists
-    if resource.format in ('dtd', 'properties'):
-        for locale in resource.project.locales.all():
-            stats, created = Stats.objects.get_or_create(
-                resource=resource, locale=locale)
 
 
 def parse_lang(path):
@@ -873,8 +861,7 @@ def dump_from_database(project, locale):
         resources = Resource.objects.filter(project=project, id__in=stats)
         relative_paths = resources.values_list('path', flat=True).distinct()
 
-        # Asymmetric formats:
-        # Remove all non-hidden files and folders in locale repository
+        # Asymmetric formats: Remove files and folders from locale repository
         if 'dtd' in formats or 'properties' in formats:
             items = os.listdir(locale_directory_path)
             items = [i for i in items if not i[0] == '.']
