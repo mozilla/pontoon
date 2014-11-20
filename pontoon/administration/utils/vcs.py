@@ -44,7 +44,7 @@ class PullFromGit(PullFromRepository):
 
         else:
             log.debug("Git: " + unicode(error))
-            log.debug("Git: Clone instead")
+            log.debug("Git: Clone instead.")
             command = ["git", "clone", source, target]
             code, output, error = execute(command)
 
@@ -75,7 +75,7 @@ class PullFromHg(PullFromRepository):
 
         else:
             log.debug("Mercurial: " + unicode(error))
-            log.debug("Mercurial: Clone instead")
+            log.debug("Mercurial: Clone instead.")
             command = ["hg", "clone", source, target]
             code, output, error = execute(command)
 
@@ -130,7 +130,7 @@ class CommitToRepository(object):
 class CommitToGit(CommitToRepository):
 
     def commit(self, path=None, message=None, user=None):
-        log.debug("Commit to Git repository.")
+        log.debug("Git: Commit to repository.")
 
         path = path or self.path
         message = message or self.message
@@ -164,7 +164,7 @@ class CommitToGit(CommitToRepository):
 class CommitToHg(CommitToRepository):
 
     def commit(self, path=None, message=None, user=None):
-        log.debug("Commit to Mercurial repository.")
+        log.debug("Mercurial: Commit to repository.")
 
         path = path or self.path
         message = message or self.message
@@ -194,7 +194,7 @@ class CommitToHg(CommitToRepository):
 class CommitToSvn(CommitToRepository):
 
     def commit(self, path=None, message=None, user=None, data=None):
-        log.debug("Commit to SVN repository.")
+        log.debug("Subversion: Commit to repository.")
 
         path = path or self.path
         message = message or self.message
@@ -228,7 +228,7 @@ class CommitToSvn(CommitToRepository):
 
         elif "E215004" in error:
             log.debug(error)
-            log.debug('Subversion authentication failed for %s' % path)
+            log.debug('Subversion: Authentication failed for %s.' % path)
             return {
                 'type': 'authenticate',
                 'message': 'Authentication failed.'
