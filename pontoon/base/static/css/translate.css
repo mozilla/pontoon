@@ -1,3 +1,7 @@
+body {
+  overflow: hidden;
+}
+
 /* HEADER */
 
 #pontoon > header {

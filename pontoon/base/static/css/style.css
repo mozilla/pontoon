@@ -270,10 +270,6 @@ body, select, input, textarea, button {
   font-family: "Open Sans", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
 }
 
-html {
-  height: 100%;
-}
-
 body {
   background: #272A2F;
   color: #EBEBEB;
