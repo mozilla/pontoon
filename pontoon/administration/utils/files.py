@@ -233,15 +233,17 @@ def get_relative_path(path, locale):
     return path.split('/' + locale_directory + '/')[-1]
 
 
-def update_entity_count(resource, project):
+def update_entity_count(resource):
     """Save number of non-obsolete entities for a given resource."""
     entities = Entity.objects.filter(resource=resource, obsolete=False)
     resource.entity_count = entities.count()
     resource.save()
 
-    # Also make sure resource-locale Stats object exists
-    for locale in project.locales.all():
-        s, c = Stats.objects.get_or_create(resource=resource, locale=locale)
+    # Asymmetric formats: make sure Stats object exists
+    if resource.format in ('dtd', 'properties'):
+        for locale in resource.project.locales.all():
+            stats, created = Stats.objects.get_or_create(
+                resource=resource, locale=locale)
 
 
 def parse_lang(path):
@@ -309,7 +311,7 @@ def extract_po(project, locale, path, entities=False):
                                 order=order,
                                 source=entry.occurrences)
 
-            update_entity_count(resource, project)
+            update_entity_count(resource)
 
         else:
             for entry in (po.translated_entries() + po.fuzzy_entries()):
@@ -391,7 +393,7 @@ def extract_silme(parser, project, locale, path, entities=False):
                     comment = str(obj)
 
         if entities:
-            update_entity_count(resource, project)
+            update_entity_count(resource)
         else:
             update_stats(resource, locale)
 
@@ -430,7 +432,7 @@ def extract_lang(project, locale, path, entities=False):
             save_entity(
                 resource=resource, string=key, comment=value[1], order=order)
 
-        update_entity_count(resource, project)
+        update_entity_count(resource)
 
     else:
         for key, value in lang:
@@ -500,7 +502,7 @@ def extract_ini(project, path):
                     continue
 
         if section == source_locale:
-            update_entity_count(resource, project)
+            update_entity_count(resource)
         else:
             update_stats(resource, locale)
 
@@ -871,7 +873,8 @@ def dump_from_database(project, locale):
         resources = Resource.objects.filter(project=project, id__in=stats)
         relative_paths = resources.values_list('path', flat=True).distinct()
 
-        # Silme: Remove all non-hidden files and folders in locale repository
+        # Asymmetric formats:
+        # Remove all non-hidden files and folders in locale repository
         if 'dtd' in formats or 'properties' in formats:
             items = os.listdir(locale_directory_path)
             items = [i for i in items if not i[0] == '.']
