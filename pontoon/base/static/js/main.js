@@ -1418,8 +1418,7 @@ var Pontoon = (function () {
       $('#loading').removeClass('loader');
       if (text) {
         $('.notification')
-          .html('<li>' + text + '</li>')
-          .removeClass().addClass('notification ' + type)
+          .html('<li class="' + type + '">' + text + '</li>')
           .show();
       }
       if (!persist) {
@@ -2109,8 +2108,7 @@ var Pontoon = (function () {
          */
         showError: function(message) {
           $('.notification')
-            .html('<li>' + message + '</li>')
-            .addClass('error')
+            .html('<li class="error">' + message + '</li>')
             .css('visibility', 'visible').show();
         },
         /*
