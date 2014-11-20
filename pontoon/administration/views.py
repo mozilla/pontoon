@@ -274,7 +274,7 @@ def update_from_transifex(request, template=None):
         return HttpResponse("error")
 
     """Check if user authenticated to Transifex."""
-    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    profile = UserProfile.objects.get(user=request.user)
     username = request.POST.get(
         'transifex_username', profile.transifex_username)
     password = request.POST.get(

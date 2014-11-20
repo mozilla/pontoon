@@ -203,7 +203,7 @@ class CommitToSvn(CommitToRepository):
 
         # Check if user authenticated
         from pontoon.base.models import UserProfile
-        profile, created = UserProfile.objects.get_or_create(user=user)
+        profile = UserProfile.objects.get(user=user)
         username = data.get('auth', {}).get('username', profile.svn_username)
         password = data.get('auth', {}).get(
             'password', base64.decodestring(profile.svn_password))
