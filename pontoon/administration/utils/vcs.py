@@ -27,7 +27,7 @@ class PullFromRepository(object):
 class PullFromGit(PullFromRepository):
 
     def pull(self, source=None, target=None):
-        log.debug("Clone or update Git repository.")
+        log.debug("Git: Update repository.")
 
         source = source or self.source
         target = target or self.target
@@ -40,15 +40,16 @@ class PullFromGit(PullFromRepository):
         code, output, error = execute(command, target)
 
         if code == 0:
-            log.debug("Git: repository at " + source + " updated.")
+            log.debug("Git: Repository at " + source + " updated.")
 
         else:
             log.debug("Git: " + unicode(error))
+            log.debug("Git: Clone instead")
             command = ["git", "clone", source, target]
             code, output, error = execute(command)
 
             if code == 0:
-                log.debug("Git: repository at " + source + " cloned.")
+                log.debug("Git: Repository at " + source + " cloned.")
 
             else:
                 raise PullFromRepositoryException(unicode(error))
@@ -57,7 +58,7 @@ class PullFromGit(PullFromRepository):
 class PullFromHg(PullFromRepository):
 
     def pull(self, source=None, target=None):
-        log.debug("Clone or update HG repository.")
+        log.debug("Mercurial: Update repository.")
 
         source = source or self.source
         target = target or self.target
@@ -70,15 +71,16 @@ class PullFromHg(PullFromRepository):
         code, output, error = execute(command, target)
 
         if code == 0:
-            log.debug("Mercurial: repository at " + source + " updated.")
+            log.debug("Mercurial: Repository at " + source + " updated.")
 
         else:
             log.debug("Mercurial: " + unicode(error))
+            log.debug("Mercurial: Clone instead")
             command = ["hg", "clone", source, target]
             code, output, error = execute(command)
 
             if code == 0:
-                log.debug("Mercurial: repository at " + source + " cloned.")
+                log.debug("Mercurial: Repository at " + source + " cloned.")
 
             else:
                 raise PullFromRepositoryException(unicode(error))
@@ -87,7 +89,7 @@ class PullFromHg(PullFromRepository):
 class PullFromSvn(PullFromRepository):
 
     def pull(self, source=None, target=None):
-        log.debug("Checkout or update SVN repository.")
+        log.debug("Subversion: Checkout or update repository.")
 
         source = source or self.source
         target = target or self.target
@@ -106,7 +108,7 @@ class PullFromSvn(PullFromRepository):
         if code != 0:
             raise PullFromRepositoryException(unicode(error))
 
-        log.debug("Subversion: repository at " + source + " %s." % status)
+        log.debug("Subversion: Repository at " + source + " %s." % status)
 
 
 class CommitToRepositoryException(Exception):
