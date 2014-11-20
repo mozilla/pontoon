@@ -472,8 +472,6 @@ def update_translation(request, template=None):
     if plural_form == "-1":
         plural_form = None
 
-    ignore = True if ignore_check == 'true' else False
-
     user = request.user
     if not request.user.is_authenticated():
         if e.resource.project.pk != 1:
@@ -481,6 +479,12 @@ def update_translation(request, template=None):
             return HttpResponse("error")
         else:
             user = None
+
+    profile = UserProfile.objects.get(user=user)
+
+    ignore = False
+    if ignore_check == 'true' or not profile.quality_checks:
+        ignore = True
 
     can_localize = request.user.has_perm('base.can_localize')
     translations = Translation.objects.filter(
