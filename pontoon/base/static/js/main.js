@@ -267,7 +267,7 @@ var Pontoon = (function () {
             '<a href="' + data.url + '" target="_blank"' +
               'title="' + data.title + '">' + data.source + '</a>' +
           '</header>' +
-          '<p class="original">' + (data.original || '') + '</p>' +
+          '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
           '<p class="translation">' + self.doNotRender(data.translation) +
           '</p>' +
         '</li>');
