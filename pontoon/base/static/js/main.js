@@ -1497,6 +1497,27 @@ var Pontoon = (function () {
         } else if ($(this).is(".html")) {
           self.common.postMessage("HTML");
 
+        } else if ($(this).is('.quality-checks')) {
+          self.startLoader();
+          $.ajax({
+            url: 'quality-checks-switch/',
+            type: 'POST',
+            data: {
+              csrfmiddlewaretoken: $('#server').data('csrf')
+            },
+            success: function(data) {
+              if (data === 'ok') {
+                $('.quality-checks').toggleClass('enabled');
+
+                var status = $('.quality-checks').is('.enabled') ? 'enabled' : 'disabled';
+                self.endLoader('Quality checks ' + status + '.');
+              }
+            },
+            error: function() {
+              self.endLoader('Oops, something went wrong.', 'error');
+            }
+          });
+
         } else if ($(this).is(".hotkeys")) {
           $('#hotkeys').show();
 

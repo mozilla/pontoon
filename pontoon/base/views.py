@@ -1093,6 +1093,22 @@ def save_to_transifex(request, template=None):
         return HttpResponse(response)
 
 
+@login_required(redirect_field_name='', login_url='/403')
+def quality_checks_switch(request):
+    """Turn quality checks on/off for the current user."""
+    log.debug("Turn quality checks on/off for the current user.")
+
+    if request.method != 'POST':
+        log.error("Non-POST request")
+        raise Http404
+
+    profile = request.user.get_profile()
+    profile.quality_checks = not profile.quality_checks
+    profile.save()
+
+    return HttpResponse("ok")
+
+
 @anonymous_csrf_exempt
 def verify(request, template=None):
     """Verify BrowserID assertion, and return whether a user is registered."""
