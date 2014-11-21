@@ -150,6 +150,7 @@ $(function() {
     $('.menu, #hotkeys').hide();
     $('#iframe-cover').hide(); // iframe fix
     $('.select').removeClass('opened');
+    $('.menu li').removeClass('hover');
 
     // Special case: menu in menu
     if ($(e.target).is('.hotkeys') || $(e.target).parent().is('.hotkeys')) {
