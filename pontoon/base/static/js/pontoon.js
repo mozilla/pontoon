@@ -604,15 +604,12 @@
         href: Pontoon.app.path + 'static/css/pontoon.css'
       }).appendTo('head');
 
-      // Disable links and follow them on double-click instead
-      if (!Pontoon.project.links) {
-        $('a').click(function() {
-          return false;
-        }).dblclick(function() {
-          window.top.location = this.href;
-          return false;
-        })
-      }
+      // Disable links
+      $('a').click(function(e) {
+        if (!Pontoon.project.links) {
+          e.preventDefault();
+        }
+      });
 
       // Prepare editable toolbar
       var toolbar = $(
