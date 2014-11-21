@@ -48,7 +48,7 @@ def add_can_localize(user):
         user.save()
 
 
-def quality_check(original, string, ignore):
+def quality_check(original, string, locale, ignore):
     """Check for obvious errors like blanks and missing interpunction."""
 
     if not ignore:
@@ -57,7 +57,8 @@ def quality_check(original, string, ignore):
 
         unit = storage_base.TranslationUnit(original)
         unit.target = string
-        checker = checks.StandardChecker()
+        checker = checks.StandardChecker(
+            checkerconfig=checks.CheckerConfig(targetlanguage=locale.code))
 
         warnings = checker.run_filters(unit)
         if warnings:

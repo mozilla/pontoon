@@ -504,7 +504,7 @@ def update_translation(request, template=None):
                     if t.user is not None and t.approved and not t.fuzzy:
                         return HttpResponse("Same translation already exist.")
 
-                    warnings = utils.quality_check(original, string, ignore)
+                    warnings = utils.quality_check(original, string, l, ignore)
                     if warnings:
                         return warnings
 
@@ -527,7 +527,7 @@ def update_translation(request, template=None):
                 else:
                     if t.fuzzy:
                         warnings = utils.quality_check(
-                            original, string, ignore)
+                            original, string, l, ignore)
                         if warnings:
                             return warnings
 
@@ -546,7 +546,7 @@ def update_translation(request, template=None):
                     return HttpResponse("Same translation already exist.")
 
         # Different translation added
-        warnings = utils.quality_check(original, string, ignore)
+        warnings = utils.quality_check(original, string, l, ignore)
         if warnings:
             return warnings
 
@@ -571,7 +571,7 @@ def update_translation(request, template=None):
 
     # No translations saved yet
     else:
-        warnings = utils.quality_check(original, string, ignore)
+        warnings = utils.quality_check(original, string, l, ignore)
         if warnings:
             return warnings
 
