@@ -623,7 +623,7 @@ def translation_memory(request):
 
     for e in entities:
         source = e.string
-        quality = Levenshtein.ratio(str(text), source)
+        quality = Levenshtein.ratio(text, unicode(source, "utf-8"))
 
         if quality > min_quality:
             translation = get_translation(entity=e, locale=locale, fuzzy=False)
