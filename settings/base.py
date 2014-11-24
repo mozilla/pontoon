@@ -25,7 +25,7 @@ LOCALE_PATHS = (
     os.path.join(ROOT, PROJECT_MODULE, 'locale'),
 )
 
-# Remove LocaleURLMiddleware since we are not localing our website
+# Remove LocaleURLMiddleware since we are not localizing our website
 MIDDLEWARE_CLASSES = filter(
     lambda x: x != 'funfactory.middleware.LocaleURLMiddleware',
     MIDDLEWARE_CLASSES)
