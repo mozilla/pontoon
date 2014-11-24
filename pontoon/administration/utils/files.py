@@ -162,7 +162,7 @@ def get_locale_directory(project, locale):
 
 
 def detect_format(path):
-    """Detect file format based on file extensions."""
+    """Detect file format from source directory path."""
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden files
@@ -171,6 +171,12 @@ def detect_format(path):
         for extension in ['pot'] + [i[0] for i in Resource.FORMAT_CHOICES]:
             for filename in fnmatch.filter(filenames, '*.' + extension):
                 return 'po' if extension == 'pot' else extension
+
+
+def get_format(path):
+    """Get file format from file path based on extension."""
+
+    return os.path.splitext(path)[1][1:].lower()
 
 
 def get_source_paths(path):
@@ -537,7 +543,7 @@ def extract_to_database(project, locales=None):
             entities = isFile
 
         for path in paths:
-            format = os.path.splitext(path)[1][1:].lower()
+            format = get_format(path)
             format = 'po' if format == 'pot' else format
             globals()['extract_%s' % format](project, locale, path, entities)
 
@@ -871,8 +877,7 @@ def dump_from_database(project, locale):
                 try:
                     shutil.rmtree(path)
                 except OSError:
-                    if os.path.splitext(path)[1][1:].lower() in (
-                            'dtd', 'properties'):
+                    if get_format(path) in ('dtd', 'properties'):
                         os.remove(path)
                 except Exception as e:
                     log.error(e)
@@ -883,7 +888,7 @@ def dump_from_database(project, locale):
 
         # Dump files based on format
         for path in relative_paths:
-            format = os.path.splitext(path)[1][1:].lower()
+            format = get_format(path)
             format = 'po' if format == 'pot' else format
             globals()['dump_%s' % format](project, locale, path)
 
