@@ -415,8 +415,8 @@ def unfuzzy(translations):
 def update_entity_count(resource):
     """Save number of non-obsolete entities for a given resource."""
 
-    entities = Entity.objects.filter(resource=resource, obsolete=False)
-    resource.entity_count = entities.count()
+    count = Entity.objects.filter(resource=resource, obsolete=False).count()
+    resource.entity_count = count
     resource.save()
 
     # Asymmetric formats:
