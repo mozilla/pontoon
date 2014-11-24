@@ -30,7 +30,6 @@ from django.http import (
 from django.shortcuts import render
 from django.templatetags.static import static
 from django.utils.datastructures import MultiValueDictKeyError
-from django.utils.translation import trans_real
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 from operator import itemgetter
@@ -66,18 +65,8 @@ def home(request):
     """Home view."""
     log.debug("Home view.")
 
-    locale = 'de'
     project = Project.objects.get(id=1)
-
-    string = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
-    accept = trans_real.parse_accept_lang_header(string)
-
-    for a in accept:
-        try:
-            locale = project.locales.get(code__iexact=a[0]).code
-            break
-        except:
-            continue
+    locale = utils.get_project_locale_from_request(request, project) or 'de'
 
     return translate(request, locale, project.slug)
 

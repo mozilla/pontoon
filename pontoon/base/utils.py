@@ -6,6 +6,7 @@ import requests
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.http import HttpResponse
+from django.utils.translation import trans_real
 from translate.filters import checks
 from translate.storage import base as storage_base
 from translate.lang import data as lang_data
@@ -46,6 +47,19 @@ def add_can_localize(user):
         log.debug(e)
         log.debug("Is your MOZILLIANS_API_KEY set?")
         user.save()
+
+
+def get_project_locale_from_request(request, project):
+    """Get project locale from Accept-language request header."""
+
+    header = request.META.get('HTTP_ACCEPT_LANGUAGE')
+    accept = trans_real.parse_accept_lang_header(header)
+
+    for a in accept:
+        try:
+            return project.locales.get(code__iexact=a[0]).code
+        except:
+            continue
 
 
 def quality_check(original, string, locale, ignore):
