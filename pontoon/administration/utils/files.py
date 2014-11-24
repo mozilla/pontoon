@@ -871,7 +871,9 @@ def dump_from_database(project, locale):
                 try:
                     shutil.rmtree(path)
                 except OSError:
-                    os.remove(path)
+                    if os.path.splitext(path)[1][1:].lower() in (
+                            'dtd', 'properties'):
+                        os.remove(path)
                 except Exception as e:
                     log.error(e)
 
