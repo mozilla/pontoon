@@ -2470,6 +2470,16 @@
         }
     },
     {
+        "model": "base.locale",
+        "pk": 277,
+        "fields": {
+            "code": "dsb",
+            "name": "Lower Sorbian",
+            "nplurals": "4",
+            "plural_rule": "(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)"
+        }
+    },
+    {
         "model": "base.project",
         "pk": 1,
         "fields": {
