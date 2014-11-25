@@ -1,6 +1,7 @@
 
 import commonware.log
 import json
+import re
 import requests
 
 from django.conf import settings
@@ -9,6 +10,8 @@ from django.http import HttpResponse
 from django.utils.translation import trans_real
 from translate.filters import checks
 from translate.storage import base as storage_base
+from translate.storage.placeables import base, general, parse, strelem
+from translate.storage.placeables.interfaces import BasePlaceable
 from translate.lang import data as lang_data
 
 
@@ -60,6 +63,130 @@ def get_project_locale_from_request(request, project):
             return project.locales.get(code__iexact=a[0]).code
         except:
             continue
+
+
+def mark_placeables(text):
+    """Wrap placeables to easily distinguish and manipulate them.
+
+    Source: http://bit.ly/1yQOC9B
+    """
+
+    class TabEscapePlaceable(base.Ph):
+        """Placeable handling tab escapes."""
+        istranslatable = False
+        regex = re.compile(r'\t')
+        parse = classmethod(general.regex_parse)
+
+    class EscapePlaceable(base.Ph):
+        """Placeable handling escapes."""
+        istranslatable = False
+        regex = re.compile(r'\\')
+        parse = classmethod(general.regex_parse)
+
+    class SpacesPlaceable(base.Ph):
+        """Placeable handling spaces."""
+        istranslatable = False
+        regex = re.compile('^ +| +$|[\r\n\t] +| {2,}')
+        parse = classmethod(general.regex_parse)
+
+    PARSERS = [
+        TabEscapePlaceable.parse,
+        EscapePlaceable.parse,
+        general.NewlinePlaceable.parse,
+        # The spaces placeable can match '\n  ' and mask the newline,
+        # so it has to come later.
+        SpacesPlaceable.parse,
+        general.XMLTagPlaceable.parse,
+        general.AltAttrPlaceable.parse,
+        general.XMLEntityPlaceable.parse,
+        general.PythonFormattingPlaceable.parse,
+        general.JavaMessageFormatPlaceable.parse,
+        general.FormattingPlaceable.parse,
+        # The Qt variables can consume the %1 in %1$s which will mask a printf
+        # placeable, so it has to come later.
+        general.QtFormattingPlaceable.parse,
+        general.UrlPlaceable.parse,
+        general.FilePlaceable.parse,
+        general.EmailPlaceable.parse,
+        general.CapsPlaceable.parse,
+        general.CamelCasePlaceable.parse,
+        general.OptionPlaceable.parse,
+        general.PunctuationPlaceable.parse,
+        general.NumberPlaceable.parse,
+    ]
+
+    TITLES = {
+        'TabEscapePlaceable': "Escaped tab",
+        'EscapePlaceable': "Escaped sequence",
+        'SpacesPlaceable': "Unusual space in string",
+        'AltAttrPlaceable': "'alt' attribute inside XML tag",
+        'NewlinePlaceable': "New-line",
+        'NumberPlaceable': "Number",
+        'QtFormattingPlaceable': "Qt string formatting variable",
+        'PythonFormattingPlaceable': "Python string formatting variable",
+        'JavaMessageFormatPlaceable': "Java Message formatting variable",
+        'FormattingPlaceable': "String formatting variable",
+        'UrlPlaceable': "URI",
+        'FilePlaceable': "File location",
+        'EmailPlaceable': "Email",
+        'PunctuationPlaceable': "Punctuation",
+        'XMLEntityPlaceable': "XML entity",
+        'CapsPlaceable': "Long all-caps string",
+        'CamelCasePlaceable': "Camel case string",
+        'XMLTagPlaceable': "XML tag",
+        'OptionPlaceable': "Command line option",
+    }
+
+    text = unicode(text, "utf8")
+    output = u""
+
+    # Get a flat list of placeables and StringElem instances
+    flat_items = parse(text, PARSERS).flatten()
+
+    for item in flat_items:
+
+        # Placeable: mark
+        if isinstance(item, BasePlaceable):
+            class_name = item.__class__.__name__
+            placeable = unicode(item)
+
+            # CSS class used to mark the placeable
+            css = {
+                'TabEscapePlaceable': "escape",
+                'EscapePlaceable': "escape",
+                'SpacesPlaceable': "space",
+                'NewlinePlaceable': "escape",
+            }.get(class_name, "")
+
+            title = TITLES.get(class_name, "Unknown placeable")
+
+            spaces = '&nbsp;' * len(placeable)
+            if not placeable.startswith(' '):
+                spaces = placeable[0] + '&nbsp;' * (len(placeable) - 1)
+
+            # Correctly render placeables in translation editor
+            content = {
+                'TabEscapePlaceable': u'\\t',
+                'EscapePlaceable': u'\\\\',
+                'SpacesPlaceable': spaces,
+                'NewlinePlaceable': {
+                    u'\r\n': u'\\r\\n<br/>\n',
+                    u'\r': u'\\r<br/>\n',
+                    u'\n': u'\\n<br/>\n',
+                }.get(placeable),
+                'XMLEntityPlaceable': placeable.replace('&', '&amp;'),
+                'XMLTagPlaceable':
+                    placeable.replace('<', '&lt;').replace('>', '&gt;'),
+            }.get(class_name, placeable)
+
+            output += ('<mark class="%s placeable" title="%s">%s</mark>') \
+                % (css, title, content)
+
+        # Not a placeable: skip
+        else:
+            output += unicode(item)
+
+    return output
 
 
 def quality_check(original, string, locale, ignore):

@@ -551,7 +551,7 @@ var Pontoon = (function () {
       }
 
       // Original string and plurals
-      $('#original').html(this.doNotRender(entity.original));
+      $('#original').html(entity.marked);
       $('#source-pane').removeClass('pluralized');
       $('#plural-tabs li').css('display', 'none');
 
@@ -789,8 +789,7 @@ var Pontoon = (function () {
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status fa"></span>' +
           '<p class="string-wrapper">' +
-            '<span class="source-string">' +
-              self.doNotRender(this.original) +
+            '<span class="source-string">' + this.marked +
             '</span><span class="translation-string">' +
               self.doNotRender(this.translation[0].string) +
             '</span>' +
@@ -917,12 +916,12 @@ var Pontoon = (function () {
         var i = $(this).parent().index(),
             editor = $('#editor')[0],
             entity = editor.entity,
-            original = entity['original' + self.isPluralized()],
+            original = entity['marked' + self.isPluralized()],
             title = !self.isPluralized() ? "Singular" : "Plural",
             source = entity.translation[i].string;
 
         $('#source-pane h2').html(title).show();
-        $('#original').html(self.doNotRender(original));
+        $('#original').html(original);
 
         $('#translation').val(source).focus();
         $('#translation-length')
@@ -1008,6 +1007,7 @@ var Pontoon = (function () {
         var entity = $('#editor')[0].entity,
             original = entity['original' + self.isPluralized()],
             source = self.doRender(original);
+
         $('#translation').val(source).focus();
         $('#translation-length .current-length').html(source.length);
       });

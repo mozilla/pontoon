@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Sum
 from django.db.models.signals import post_save
 from django.forms import ModelForm
+from pontoon.base import utils
 
 
 log = commonware.log.getLogger('pontoon')
@@ -144,7 +145,9 @@ class Entity(models.Model):
         return {
             'pk': self.pk,
             'original': self.string,
+            'marked': utils.mark_placeables(self.string),
             'original_plural': self.string_plural,
+            'marked_plural': utils.mark_placeables(self.string_plural),
             'key': self.key,
             'path': self.resource.path,
             'format': self.resource.format,

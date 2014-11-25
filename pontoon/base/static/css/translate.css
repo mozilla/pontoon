@@ -2,6 +2,13 @@ body {
   overflow: hidden;
 }
 
+mark {
+  background: transparent;
+  color: #FE8388;
+  font-style: normal;
+  font-weight: normal;
+}
+
 /* HEADER */
 
 #pontoon > header {
