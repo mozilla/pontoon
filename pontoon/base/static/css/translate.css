@@ -2,7 +2,7 @@ body {
   overflow: hidden;
 }
 
-mark {
+mark.placeable {
   background: transparent;
   color: #FE8388;
   font-style: normal;
@@ -907,6 +907,10 @@ mark {
 #pontoon #source-pane.pluralized h2 {
   display: block;
   text-align: left;
+}
+
+#pontoon #source-pane #original mark.placeable {
+  cursor: pointer;
 }
 
 #pontoon #editor nav ul {
