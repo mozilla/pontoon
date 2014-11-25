@@ -899,6 +899,7 @@ body {
 
 #pontoon #source-pane.pluralized h2 {
   display: block;
+  text-align: left;
 }
 
 #pontoon #editor nav ul {
