@@ -1915,8 +1915,15 @@ var Pontoon = (function () {
 
         // Fallback if selected locale not available for the selected project
         if (locales.indexOf(locale) === -1) {
-          var accept = $('#server').data('accept-language').toLowerCase();
-              locale = (locales.indexOf(accept) !== -1) ? accept : locales[0];
+          locale = locales[0];
+
+          var accept = $('#server').data('accept-language');
+          if (accept) {
+            accept = accept.toLowerCase();
+            if (locales.indexOf(accept) !== -1) {
+              locale = accept;
+            }
+          }
 
           menu.find('.language.' + locale).click();
         }

@@ -215,8 +215,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         project.details = json.dumps(details)
 
     data = {
-        'accept_language': request.META.get('HTTP_ACCEPT_LANGUAGE', '')
-        .split(',')[0],
+        'accept_language': utils.get_project_locale_from_request(request, p),
         'locale': l,
         'locales': Locale.objects.all(),
         'page_url': p.url,
