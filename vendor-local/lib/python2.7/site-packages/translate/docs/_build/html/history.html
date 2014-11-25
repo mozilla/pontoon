@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>History of the Translate Toolkit &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/bootstrap.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="index.html" />
+    <link rel="next" title="License" href="license.html" />
+    <link rel="prev" title="Translate Toolkit 1.8.1" href="releases/1.8.1.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases/index.html">Release Notes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">History of the Translate Toolkit</a><ul>
+<li><a class="reference internal" href="#conception">Conception</a></li>
+<li><a class="reference internal" href="#growth">Growth</a></li>
+<li><a class="reference internal" href="#expansion">Expansion</a></li>
+<li><a class="reference internal" href="#pootle">Pootle</a></li>
+<li><a class="reference internal" href="#wordforge-project">WordForge project</a></li>
+<li><a class="reference internal" href="#anloc-project">ANLoc project</a></li>
+<li><a class="reference internal" href="#the-future">The Future</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="releases/1.8.1.html"
+         title="previous chapter">&laquo; Translate Toolkit 1.8.1</a></li>
+  <li><a href="license.html"
+         title="next chapter">License &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="history-of-the-translate-toolkit">
+<span id="history"></span><h1>History of the Translate Toolkit<a class="headerlink" href="#history-of-the-translate-toolkit" title="Permalink to this headline">¶</a></h1>
+<p>This is a short history of the Translate Toolkit. In many ways written so that
+people who see problems in the toolkit can understand how it evolved and where
+it is going.</p>
+<div class="section" id="conception">
+<span id="history-conception"></span><h2>Conception<a class="headerlink" href="#conception" title="Permalink to this headline">¶</a></h2>
+<p>The toolkit was developed by David Fraser while working for <a class="reference external" href="http://translate.org.za">Translate.org.za</a>.  Initially Translate.org.za had focussed on
+translating KDE into South Africa languages, this work was PO based.  The next
+project was to translate Mozilla which used a combination of DTD and
+.properties files.  The Mozilla project used a tool called Mozilla Translator,
+which mostly worked although it was not as feature rich as KBabel that was
+being used to manage PO translations.  A decision was made to create a set of
+tools that could convert the DTD and .properties files into PO files.  The
+advantage being that translators would not need to learn new tools, that
+existing translations could be leveraged and that the resultant files, being
+bilingual, would make it easier to upgrade and manage translations.</p>
+<p>Thus was born what initially was called the mozpotools.</p>
+</div>
+<div class="section" id="growth">
+<span id="history-growth"></span><h2>Growth<a class="headerlink" href="#growth" title="Permalink to this headline">¶</a></h2>
+<p>The first problem with the tools was that it was possible to break Mozilla
+translations.  This was a combination of the fact that translators would often
+translate variables such as &amp;browserName; and that the toolkit had developed a
+method of folding labels and accelerators into one PO field.  These breakages
+where presented as broken XML.  Thus was born pofilter which allowed us to
+check the translations for problems in variables and accelerators.  pomerge its
+sister allowed us to merge the corrections back into the main.  We also
+developed pocount which allowed us to for the first time get a real feel of the
+volume of work required in translating a PO file.</p>
+</div>
+<div class="section" id="expansion">
+<span id="history-expansion"></span><h2>Expansion<a class="headerlink" href="#expansion" title="Permalink to this headline">¶</a></h2>
+<p>Of course once you can convert the convoluted Mozilla translations then you
+realise you can do anything.  A key addition was the converter for
+OpenOffice.org but also added where TMX, Qt .ts, txt and OpenOffice.org SXW
+files.</p>
+<p>The key being that files are converted to PO to allow translations and use of
+the Gettext tools and existing PO files.</p>
+</div>
+<div class="section" id="pootle">
+<span id="history-pootle"></span><h2>Pootle<a class="headerlink" href="#pootle" title="Permalink to this headline">¶</a></h2>
+<p>Initially started as a separate project to allow online translation it was soon
+realised that the toolkit being file based gave all the infrastructure to allow
+Pootle to be a wrapper around the toolkit.  So a file based, web translation
+tool was created.</p>
+</div>
+<div class="section" id="wordforge-project">
+<span id="history-wordforge-project"></span><h2>WordForge project<a class="headerlink" href="#wordforge-project" title="Permalink to this headline">¶</a></h2>
+<p>In 2006 with funding from the <a class="reference external" href="http://www.opensocietyfoundations.org/">Open Society Institute</a> (OSI) and <a class="reference external" href="http://www.idrc.ca/">IDRC</a> the toolkit was adapted to allow many core changes.
+The first being to introduce the concept of a base class from which PO and
+XLIFF storage formats are derived.  This allowed tools to be adapted to allow
+output to XLIFF or PO files.  The tools themselves where adapted to allow them
+to work with the core formats XLIFF and PO as well as all base class derived
+formats.  Thus we can count XLIFF, PO, MO and other formats.</p>
+<p>Additional contributions during this phase where the adaptation of Pootle to
+use XLIFF as well as PO.  The creation of tools to manage translation memory
+files and glossary files.</p>
+<p>The toolkit was also adapted to make dealing with encodings, plural forms, and
+escaping easier and more consistent throughout the code.  Many but not all of
+the formats where converted to the base class.</p>
+<p>As part of the WordForge project Pootling was created which in the same way
+that Pootle is a web-based wrapper around the toolkit so Pootling is a GUI
+wrapper around the toolkit.</p>
+</div>
+<div class="section" id="anloc-project">
+<span id="history-anloc-project"></span><h2>ANLoc project<a class="headerlink" href="#anloc-project" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="http://africanlocalisation.net">African Network for Localisation</a>
+provided the opportunity for further improvements to the project.  We saw the
+first official releases of <a class="reference external" href="http://virtaal.org">Virtaal</a> and massive
+improvements to all the translation tools.</p>
+<p>Format support improved a lot, with several bilingual file formats now support
+(Wordfast TM, Qt TS, etc.), and several monolingual file formats (PHP arrays,
+video subtitles, Mac OS X strings, etc.).</p>
+</div>
+<div class="section" id="the-future">
+<span id="history-the-future"></span><h2>The Future<a class="headerlink" href="#the-future" title="Permalink to this headline">¶</a></h2>
+<p>The toolkit continues to evolve with clean-up focused in various areas:</p>
+<ul class="simple">
+<li>Pulling features out of Pootle that should be in the Toolkit</li>
+<li>Cleaning up storage classes and converters to be XLIFF/PO interchangeable</li>
+<li>Cleaning up the converters to use only base class features and migrating code
+from the converters to the storage class</li>
+<li>Adding storage classes as needed</li>
+<li>Optimisation where needed</li>
+</ul>
+<p>The toolkit continues to serve as the core for the command line tools and for
+Pootle.  Key new features:</p>
+<ul class="simple">
+<li>Process Management</li>
+</ul>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>XLIFF &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Translation Related File Formats" href="index.html" />
+    <link rel="next" title="PO Files" href="po.html" />
+    <link rel="prev" title="Translation Related File Formats" href="index.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">XLIFF</a><ul>
+<li><a class="reference internal" href="#references">References</a><ul>
+<li><a class="reference internal" href="#flavours">Flavours</a></li>
+<li><a class="reference internal" href="#standard-conformance">Standard conformance</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#done">Done</a><ul>
+<li><a class="reference internal" href="#xliff-and-other-tools">XLIFF and other tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="index.html"
+         title="previous chapter">&laquo; Translation Related File Formats</a></li>
+  <li><a href="po.html"
+         title="next chapter">PO Files &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="xliff">
+<span id="id1"></span><h1>XLIFF<a class="headerlink" href="#xliff" title="Permalink to this headline">¶</a></h1>
+<p>XLIFF[*] is the <a class="reference external" href="https://www.oasis-open.org/">OASIS</a> standard for translation.</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[*]</td><td>XML Localization Interchange File Format</td></tr>
+</tbody>
+</table>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://docs.oasis-open.org/xliff/xliff-core/xliff-core.html">XLIFF Standard</a></li>
+<li><a class="reference external" href="https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=xliff">OASIS XLIFF Technical Committee</a> website</li>
+</ul>
+<div class="section" id="flavours">
+<span id="xliff-flavours"></span><h3>Flavours<a class="headerlink" href="#flavours" title="Permalink to this headline">¶</a></h3>
+<p>XLIFF also has documents that specify the conversion from various standard
+source documents and localisation formats.</p>
+<ul class="simple">
+<li>PO &#8211; For conformance to the po2xliff spec, see <a class="reference internal" href="../commands/xliff2po.html"><em>xliff2po</em></a>.<ul>
+<li>Draft <a class="reference external" href="http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2.html">XLIFF 1.2 Representation Guide for Gettext PO</a></li>
+</ul>
+</li>
+<li>HTML &#8211; not implemented<ul>
+<li>Draft <a class="reference external" href="http://docs.oasis-open.org/xliff/v1.2/xliff-profile-html/xliff-profile-html-1.2.html">XLIFF 1.2 Representation Guide for HTML</a></li>
+</ul>
+</li>
+<li>Java (includes .properties and Java resource bundles) &#8211; not implemented<ul>
+<li>Draft <a class="reference external" href="http://docs.oasis-open.org/xliff/v1.2/xliff-profile-java/xliff-profile-java-v1.2.html">XLIFF 1.2 Representation Guide for Java Resource Bundles</a></li>
+</ul>
+</li>
+<li>ICU Resource Bundles &#8211; not officially being developed by XLIFF &#8211; Proposed
+<a class="reference external" href="http://www.icu-project.org/repos/icu/icuhtml/trunk/design/locale/xliff-profile-icuresourcebundle-1.2.htm">representation guide</a></li>
+</ul>
+</div>
+<div class="section" id="standard-conformance">
+<span id="xliff-standard-conformance"></span><h3>Standard conformance<a class="headerlink" href="#standard-conformance" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="done">
+<span id="xliff-done"></span><h2>Done<a class="headerlink" href="#done" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">File creation and parsing</p>
+</li>
+<li><p class="first">API can create multiple files in one XLIFF (some tools only read the first
+file)</p>
+</li>
+<li><p class="first">source-language attribute</p>
+</li>
+<li><dl class="first docutils">
+<dt>trans-unit with</dt>
+<dd><ul class="first last">
+<li><p class="first">note: addnote() and getnotes()</p>
+</li>
+<li><dl class="first docutils">
+<dt>state</dt>
+<dd><ul class="first last simple">
+<li>fuzzy: isfuzzy() and markfuzzy()</li>
+<li>translated: marktranslated()</li>
+<li>approved</li>
+<li>needs-review-transaltion: isreview(), markreviewneeded()</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">id: setid()</p>
+</li>
+<li><p class="first">context-group: createcontextgroup()</p>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">context groups</p>
+</li>
+<li><p class="first">alt-trans</p>
+</li>
+</ul>
+<div class="section" id="xliff-and-other-tools">
+<span id="xliff-xliff-and-other-tools"></span><h3>XLIFF and other tools<a class="headerlink" href="#xliff-and-other-tools" title="Permalink to this headline">¶</a></h3>
+<p>Here is a small report on <a class="reference external" href="http://translate.sourceforge.net/wiki/guide/tools/xliff_support_by_ms_windows_programs">XLIFF support by Windows programs</a>.</p>
+</div>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

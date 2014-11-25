@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Building &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="next" title="Testing" href="testing.html" />
+    <link rel="prev" title="Translate Styleguide" href="styleguide.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Building</a><ul>
+<li><a class="reference internal" href="#unix">UNIX</a></li>
+<li><a class="reference internal" href="#windows">Windows</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a><ul>
+<li><a class="reference internal" href="#building-python-packages-with-c-extensions-under-windows">Building Python packages with C extensions under Windows</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#building-building">Building</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="styleguide.html"
+         title="previous chapter">&laquo; Translate Styleguide</a></li>
+  <li><a href="testing.html"
+         title="next chapter">Testing &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="building">
+<span id="id1"></span><h1>Building<a class="headerlink" href="#building" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="unix">
+<span id="building-unix"></span><h2>UNIX<a class="headerlink" href="#unix" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="windows">
+<span id="building-windows"></span><h2>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="requirements">
+<span id="building-requirements"></span><h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="http://www.jrsoftware.org/isinfo.php">Innosetup</a></li>
+<li><a class="reference external" href="http://www.py2exe.org/">py2exe</a></li>
+</ul>
+<p>Consult the README in the source distribution for the build dependencies.</p>
+<div class="section" id="building-python-packages-with-c-extensions-under-windows">
+<span id="building-building-python-packages-with-c-extensions-under-windows"></span><h4>Building Python packages with C extensions under Windows<a class="headerlink" href="#building-python-packages-with-c-extensions-under-windows" title="Permalink to this headline">¶</a></h4>
+<p>In order to build modules which have C extensions, you will need either the
+Visual Studio C++ compiler or <a class="reference external" href="http://sourceforge.net/projects/mingw/files/MSYS/Extension/">MinGW</a>.</p>
+<p>Make sure that your Visual Studio C++ or MinGW program path is part of your
+system&#8217;s program path, since the Python build system requires this.</p>
+<p>To build and install a package with MinGW, you need to execute:</p>
+<div class="highlight-python"><div class="highlight"><pre>python setup.py build -c mingw32 install
+</pre></div>
+</div>
+<p>from the command line.</p>
+<p>To build a Windows installer when using MinGW, execute:</p>
+<div class="highlight-python"><div class="highlight"><pre>python setup.py build -c mingw32 bdist_wininst
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="building-building">
+<span id="id2"></span><h3>Building<a class="headerlink" href="#building-building" title="Permalink to this headline">¶</a></h3>
+<p>Simply execute:</p>
+<div class="highlight-python"><div class="highlight"><pre>python setup.py innosetup
+</pre></div>
+</div>
+<p>The generated file can be found under <tt class="docutils literal"><span class="pre">translate-toolkit-&lt;version&gt;\Output</span></tt>
+(where <tt class="docutils literal"><span class="pre">&lt;version&gt;</span></tt> is the software version).</p>
+</div>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

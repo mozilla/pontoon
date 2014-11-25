@@ -1,0 +1,366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PHP &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Translation Related File Formats" href="index.html" />
+    <link rel="next" title="Qt .ts" href="ts.html" />
+    <link rel="prev" title="OpenOffice.org GSI/SDF format" href="gsi.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">PHP</a><ul>
+<li><a class="reference internal" href="#conformance">Conformance</a></li>
+<li><a class="reference internal" href="#non-conformance">Non-Conformance</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="gsi.html"
+         title="previous chapter">&laquo; OpenOffice.org GSI/SDF format</a></li>
+  <li><a href="ts.html"
+         title="next chapter">Qt .ts &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="php">
+<span id="id1"></span><h1>PHP<a class="headerlink" href="#php" title="Permalink to this headline">¶</a></h1>
+<p>Many <a class="reference external" href="http://en.wikipedia.org/wiki/PHP">PHP</a> programs make use of a localisable string array.  The toolkit
+supports the full localisation of such files with <a class="reference internal" href="../commands/php2po.html"><em>php2po</em></a> and
+po2php.</p>
+<div class="section" id="conformance">
+<span id="php-conformance"></span><h2>Conformance<a class="headerlink" href="#conformance" title="Permalink to this headline">¶</a></h2>
+<p>Our format support allows:</p>
+<ul>
+<li><p class="first"><a class="reference external" href="http://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.single">Single</a>
+and <a class="reference external" href="http://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.double">double</a>
+quoted strings (both for keys and values)</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$variable</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span><span class="p">;</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s2">&quot;language&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Language&#39;</span><span class="p">;</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s2">&quot;another string&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">PHP simple variable syntax</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$variable</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span><span class="p">;</span>
+<span class="nv">$another_variable</span> <span class="o">=</span> <span class="s2">&quot;another string&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">PHP square bracket array syntax</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Language&#39;</span><span class="p">;</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;File&quot;</span><span class="p">;</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s2">&quot;window&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Window&#39;</span><span class="p">;</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s2">&quot;firewall&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Firewall&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">PHP array syntax</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="c1">// Can be &#39;array&#39;, &#39;Array&#39; or &#39;ARRAY&#39;.</span>
+<span class="nv">$lang</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+   <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+   <span class="s1">&#39;name2&#39;</span> <span class="o">=&gt;</span> <span class="s2">&quot;value2&quot;</span><span class="p">,</span>
+   <span class="s2">&quot;key1&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value3&#39;</span><span class="p">,</span>
+   <span class="s2">&quot;key2&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;value4&quot;</span><span class="p">,</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">PHP define syntax</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.10.0.</span></p>
+</div>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;another_item&#39;</span><span class="p">,</span> <span class="s2">&quot;another string&quot;</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s1">&#39;and another string&#39;</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s2">&quot;another_key&quot;</span><span class="p">,</span> <span class="s2">&quot;yet another string&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Escape sequences (both for <a class="reference external" href="http://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.single">single</a>
+and <a class="reference external" href="http://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.double">double</a>
+quoted strings)</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$variable</span> <span class="o">=</span> <span class="s1">&#39;He said: &quot;I\&#39;ll be back&quot;&#39;</span><span class="p">;</span>
+<span class="nv">$another_variable</span> <span class="o">=</span> <span class="s2">&quot;First line </span><span class="se">\n</span><span class="s2"> second line&quot;</span><span class="p">;</span>
+<span class="nv">$key</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Indented string&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Multiline entries</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$lang</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+   <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+   <span class="s1">&#39;info&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Some hosts disable automated mail sending</span>
+<span class="s1">          on their servers. In this case the following features</span>
+<span class="s1">          cannot be implemented.&#39;</span><span class="p">,</span>
+   <span class="s1">&#39;name2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value2&#39;</span><span class="p">,</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Various layouts of the id</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$string</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span><span class="p">;</span>
+<span class="nv">$string</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span><span class="p">;</span>
+<span class="nv">$string</span><span class="p">[</span> <span class="s1">&#39;name&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Comments</p>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.10.0.</span></p>
+</div>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="c1"># Hash one-line comment</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Language&#39;</span><span class="p">;</span>
+
+<span class="c1">// Double slash one-line comment</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;File&#39;</span><span class="p">;</span>
+
+<span class="cm">/*</span>
+<span class="cm">   Multi-line</span>
+<span class="cm">   comment</span>
+<span class="cm">*/</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;help&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Help&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Whitespace before end delimiter</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.10.0.</span></p>
+</div>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$variable</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span>     <span class="p">;</span>
+
+<span class="nv">$string</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span>     <span class="p">;</span>
+
+<span class="nv">$lang</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+   <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value&#39;</span>           <span class="p">,</span>
+<span class="p">);</span>
+
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span>    <span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Nested arrays with any number of nesting levels</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.11.0.</span></p>
+</div>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$lang</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+   <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+   <span class="s1">&#39;datetime&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+      <span class="s1">&#39;TODAY&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Today&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;YESTERDAY&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Yesterday&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;AGO&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+          <span class="mi">0</span> <span class="o">=&gt;</span> <span class="s1">&#39;less than a minute ago&#39;</span><span class="p">,</span>
+          <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s1">&#39;%d minutes ago&#39;</span><span class="p">,</span>
+          <span class="mi">60</span> <span class="o">=&gt;</span> <span class="s1">&#39;1 hour ago&#39;</span><span class="p">,</span>
+      <span class="p">),</span>
+      <span class="s1">&#39;Converted&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Converted&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;LAST&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;last&#39;</span><span class="p">,</span>
+   <span class="p">),</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Whitespace in the array declaration</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.11.0.</span></p>
+</div>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$variable</span> <span class="o">=</span> <span class="k">array</span>    <span class="p">(</span>
+   <span class="s2">&quot;one&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;this&quot;</span><span class="p">,</span>
+   <span class="s2">&quot;two&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;that&quot;</span><span class="p">,</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Blank array declaration, then square bracket syntax to fill that array</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.12.0.</span></p>
+</div>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="k">global</span> <span class="nv">$messages</span><span class="p">;</span>
+<span class="nv">$messages</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+
+<span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Language&#39;</span><span class="p">;</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;File&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="non-conformance">
+<span id="php-non-conformance"></span><h2>Non-Conformance<a class="headerlink" href="#non-conformance" title="Permalink to this headline">¶</a></h2>
+<p>The following are not yet supported:</p>
+<ul>
+<li><p class="first">Keyless arrays:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$days</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Sunday&#39;</span><span class="p">,</span> <span class="s1">&#39;Monday&#39;</span><span class="p">,</span> <span class="s1">&#39;Tuesday&#39;</span><span class="p">,</span> <span class="s1">&#39;Wednesday&#39;</span><span class="p">,</span> <span class="s1">&#39;Thursday&#39;</span><span class="p">,</span> <span class="s1">&#39;Friday&#39;</span><span class="p">,</span> <span class="s1">&#39;Saturday&#39;</span><span class="p">);</span>
+
+<span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;days_short&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Sun&#39;</span><span class="p">,</span> <span class="s1">&#39;Mon&#39;</span><span class="p">,</span> <span class="s1">&#39;Tue&#39;</span><span class="p">,</span> <span class="s1">&#39;Wed&#39;</span><span class="p">,</span> <span class="s1">&#39;Thu&#39;</span><span class="p">,</span> <span class="s1">&#39;Fri&#39;</span><span class="p">,</span> <span class="s1">&#39;Sat&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Nested arrays without key for a nested array:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$lang</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s2">&quot;key&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;value&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Array entries without ending comma:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$variable</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+   <span class="s2">&quot;one&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;this&quot;</span><span class="p">,</span>
+   <span class="s2">&quot;two&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;that&quot;</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">String concatenation:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;welcome&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Welcome &#39;</span> <span class="o">.</span> <span class="nv">$name</span> <span class="o">.</span> <span class="s1">&#39;!&#39;</span><span class="p">;</span>
+<span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;greeting&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Hi &#39;</span> <span class="o">.</span> <span class="nv">$name</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Assignment in the same line a multiline comment ends:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="cm">/*</span>
+<span class="cm">   Multi-line</span>
+<span class="cm">   comment</span>
+<span class="cm">*/</span> <span class="nv">$messages</span><span class="p">[</span><span class="s1">&#39;help&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Help&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><a class="reference external" href="http://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.heredoc">Heredoc</a></p>
+</li>
+<li><p class="first"><a class="reference external" href="http://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.nowdoc">Nowdoc</a></p>
+</li>
+</ul>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

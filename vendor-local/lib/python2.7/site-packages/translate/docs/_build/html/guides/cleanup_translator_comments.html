@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Cleanup translator comments &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Use Cases" href="index.html" />
+    <link rel="next" title="Creating Mozilla POT files" href="creating_mozilla_pot_files.html" />
+    <link rel="prev" title="Running the tools on Microsoft Windows" href="running_the_tools_on_microsoft_windows.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Cleanup translator comments</a><ul>
+<li><a class="reference internal" href="#the-change">The Change</a></li>
+<li><a class="reference internal" href="#removing-old-translator-comments">Removing old translator comments</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="running_the_tools_on_microsoft_windows.html"
+         title="previous chapter">&laquo; Running the tools on Microsoft Windows</a></li>
+  <li><a href="creating_mozilla_pot_files.html"
+         title="next chapter">Creating Mozilla POT files &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="cleanup-translator-comments">
+<span id="id1"></span><h1>Cleanup translator comments<a class="headerlink" href="#cleanup-translator-comments" title="Permalink to this headline">¶</a></h1>
+<p>Translate Toolkit 1.1 saw source comments being converted to developer comments
+instead of translator comments.</p>
+<p>This use case shows you how to get rid of the old translator comments.</p>
+<div class="section" id="the-change">
+<span id="cleanup-translator-comments-the-change"></span><h2>The Change<a class="headerlink" href="#the-change" title="Permalink to this headline">¶</a></h2>
+<p>We used to put all source comments into translator comments.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Some Comment</span>
+</pre></div>
+</div>
+<p>But now place them in developer comments.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#. Some Comment</span>
+</pre></div>
+</div>
+<p>This ensures that these source comments are updated to the newest versions from
+the source files, which is a good thing.  Translator comments survive these
+updates, just like you want, while developer comments are discarded.</p>
+<p>If you don&#8217;t clean up your PO files you will now end up with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Some Comment</span>
+<span class="c">#. Some Comment</span>
+</pre></div>
+</div>
+<p>Thus a duplicated comment.  Fortunately you only need to clean your PO files
+once.</p>
+</div>
+<div class="section" id="removing-old-translator-comments">
+<span id="cleanup-translator-comments-removing-old-translator-comments"></span><h2>Removing old translator comments<a class="headerlink" href="#removing-old-translator-comments" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This will remove all your translator comments.  So if you have some
+that you actually want to keep then you will need to manual editing</p>
+</div>
+<p>Removal is simple using <a class="reference internal" href="../commands/pocommentclean.html"><em>pocommentclean</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre>pocommentclean my-po-dir
+</pre></div>
+</div>
+<p>Which will clean all your PO files in <tt class="docutils literal"><span class="pre">my-po-dir</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">pocommentclean</span></tt> is simply a nice wrapper for this sed command:</p>
+<div class="highlight-python"><div class="highlight"><pre>sed -i &quot;/^#$/d;/^#[^\:\~,\.]/d&quot; $(find po -name &quot;*.po&quot;)
+</pre></div>
+</div>
+<p>This will delete all lines starting with # that are not used by PO for
+locations (#:), automatic/developer comments (#.), state (#,) and obsolete
+(#~).</p>
+<p>You can now safely commit your changes and begin your migrations using
+<a class="reference internal" href="../commands/pot2po.html"><em>pot2po</em></a> of <a class="reference internal" href="../commands/pomigrate2.html"><em>pomigrate2</em></a></p>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

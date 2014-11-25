@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>moz-l10n-builder &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Converters" href="index.html" />
+    <link rel="next" title="phase" href="phase.html" />
+    <link rel="prev" title="Mozilla L10n Scripts" href="mozilla_l10n_scripts.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">moz-l10n-builder</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#latest-version">Latest Version</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#operation">Operation</a></li>
+<li><a class="reference internal" href="#bugs">Bugs</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="mozilla_l10n_scripts.html"
+         title="previous chapter">&laquo; Mozilla L10n Scripts</a></li>
+  <li><a href="phase.html"
+         title="next chapter">phase &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="moz-l10n-builder">
+<span id="id1"></span><h1>moz-l10n-builder<a class="headerlink" href="#moz-l10n-builder" title="Permalink to this headline">¶</a></h1>
+<p>Take a set of Mozilla (Firefox, Thunderbird, SeaMonkey, etc.) localisation and
+migrate them to the latest Mozilla source, building XPIs and repackaging hte
+Windows .exe file as needed.</p>
+<p>Please also check the page on <a class="reference external" href="https://developer.mozilla.org/en/docs/Creating_a_Language_Pack">creating a language pack</a> on the
+Mozilla wiki, to stay abreast of the latest Mozilla way of doing things.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>This page is only applicable to Mozilla products with its source
+hosted in CVS. This includes Firefox versions before 3.1 and Thunderbird
+versions before 3.0.</p>
+<p class="last">For information about working with the new source trees in Mercurial, see the <a class="reference internal" href="mozilla_l10n_scripts.html"><em>Mozilla L10n Scripts</em></a> page.</p>
+</div>
+<div class="section" id="prerequisites">
+<span id="moz-l10n-builder-prerequisites"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Translation update component and building XPIs<ul>
+<li><a class="reference internal" href="../installation.html"><em>Translate Toolkit</em></a></li>
+<li>Existing Mozilla translations in PO format</li>
+<li>A checkout of <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Developer_Guide/Source_Code/CVS">Mozilla sources</a>
+updated to the correct <a class="reference external" href="https://developer.mozilla.org/en/docs/CVS_Tags">BRANCH or RELEASE</a></li>
+</ul>
+</li>
+<li>Building Windows executables<ul>
+<li>Firefox or Thunderbird <a class="reference external" href="http://releases.mozilla.org/pub/mozilla.org/firefox/releases/">en-US .exe</a> file e.g.
+<a class="reference external" href="http://releases.mozilla.org/pub/mozilla.org/firefox/releases/2.0/win32/en-US/Firefox%20Setup%202.0.exe">Firefox 2.0 en-US</a></li>
+<li><a class="reference external" href="http://upx.sourceforge.net/">upx</a> for executable compression</li>
+<li><a class="reference external" href="http://nsis.sourceforge.net/Main_Page">Nullsoft installer</a> to package
+the installer.</li>
+<li><a class="reference external" href="http://www.7-zip.org/">7zip</a> for various compression</li>
+<li>Linux: <a class="reference external" href="http://www.winehq.org/">WINE</a> to run the Nullsoft installer</li>
+</ul>
+</li>
+<li>Directory structure under the directory you want to run moz-l10n-builder in:</li>
+</ul>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>l10n/</td>
+<td>Contains Mozilla l10n files for available/needed language(s)</td>
+</tr>
+<tr class="row-even"><td>mozilla/</td>
+<td>The Mozilla source tree</td>
+</tr>
+<tr class="row-odd"><td>po/</td>
+<td>Contains your PO files (output from moz2po)</td>
+</tr>
+<tr class="row-even"><td>potpacks/</td>
+<td>Where POT-archives go</td>
+</tr>
+</tbody>
+</table>
+<p>Note these instructions are for building on Linux, they may work on Windows.
+All software should be available through your distribution.  You will need to
+use Wine to install the Nullsoft installer and may need to sort out some path
+issues to get it to run correctly.</p>
+</div>
+<div class="section" id="latest-version">
+<span id="moz-l10n-builder-latest-version"></span><h2>Latest Version<a class="headerlink" href="#latest-version" title="Permalink to this headline">¶</a></h2>
+<p>moz-l10n-builer is not currently distributed as part of the toolkit.  You can
+get the <a class="reference external" href="https://raw.github.com/translate/translate/master/tools/mozilla/moz-l10n-builder">latest version from Git</a>
+and you will also need this <a class="reference external" href="https://raw.github.com/translate/translate/master/tools/mozilla/mozilla-l10n.patch">minor patch</a>
+to the mozilla source code.</p>
+</div>
+<div class="section" id="usage">
+<span id="moz-l10n-builder-usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">moz</span><span class="o">-</span><span class="n">l10n</span><span class="o">-</span><span class="n">builder</span> <span class="p">[</span><span class="n">language</span><span class="o">-</span><span class="n">code</span><span class="o">|</span><span class="n">ALL</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Where:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>language-code</td>
+<td>build only the supplied languages, or build ALL if
+specified or if no option is supplied</td>
+</tr>
+</tbody>
+</table>
+<p>Your translations will not be modified.</p>
+</div>
+<div class="section" id="operation">
+<span id="moz-l10n-builder-operation"></span><h2>Operation<a class="headerlink" href="#operation" title="Permalink to this headline">¶</a></h2>
+<p>moz-l10n-builder does the following:</p>
+<ul class="simple">
+<li>Updates the mozilla/ directory</li>
+<li>Creates POT files</li>
+<li>Migrates your translations to this new POT file</li>
+<li>Converts the migrated POT files to .dtd and .properties files</li>
+<li>Builds XPI and .exe files</li>
+<li>Performs various hacks to cater for the anomalies of file formats</li>
+<li>Outputs a diff of you migrated PO files and your newly generated Mozilla
+l10n/ files</li>
+</ul>
+</div>
+<div class="section" id="bugs">
+<span id="moz-l10n-builder-bugs"></span><h2>Bugs<a class="headerlink" href="#bugs" title="Permalink to this headline">¶</a></h2>
+<p>Currently it is too Translate.org.za specific and not easily configurable
+without editing.  It is also not intelligent enough to work our that you want
+Firefox vs Thunderbird generation.  A lot of this functionality should be in
+the Mozilla source code itself.  We hope over time that this might happen.</p>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

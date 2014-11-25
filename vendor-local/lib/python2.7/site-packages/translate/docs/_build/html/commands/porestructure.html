@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>porestructure &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Converters" href="index.html" />
+    <link rel="next" title="junitmsgfmt" href="junitmsgfmt.html" />
+    <link rel="prev" title="pomerge" href="pomerge.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">porestructure</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="pomerge.html"
+         title="previous chapter">&laquo; pomerge</a></li>
+  <li><a href="junitmsgfmt.html"
+         title="next chapter">junitmsgfmt &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="porestructure">
+<span id="id1"></span><h1>porestructure<a class="headerlink" href="#porestructure" title="Permalink to this headline">¶</a></h1>
+<p>porestructure takes the PO files output by <a class="reference internal" href="poconflicts.html"><em>poconflicts</em></a> (a flat
+structure), and recreates the directory structure according to the poonflict
+location comments found in each PO message. After being restructured, the
+messages in the resulting directory structure can be merged back using
+<a class="reference internal" href="pomerge.html"><em>pomerge</em></a>.</p>
+<p>Since poconflicts adds conflicting messages, from many different PO files, into
+a single PO file, the original structure of the files and directories are lost
+and the new PO files are output to a single directory. The original structure
+information is left in &#8220;(pofilter)&#8221; comments for each PO element.</p>
+<div class="section" id="usage">
+<span id="porestructure-usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>porestructure [options] &lt;conflicts&gt; &lt;po&gt;
+</pre></div>
+</div>
+<p>Where:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>&lt;conflicts&gt;</td>
+<td>is a directory containing one the corrected output from
+poconflict</td>
+</tr>
+<tr class="row-even"><td>&lt;po&gt;</td>
+<td>is an output directory to write the restructured files to</td>
+</tr>
+</tbody>
+</table>
+<p>Options:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--version</span></kbd></td>
+<td>show program&#8217;s version number and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--manpage</span></kbd></td>
+<td>output a manpage based on the help</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--progress=<var>PROGRESS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show progress as: <a class="reference internal" href="option_progress.html"><em>dots, none, bar, names, verbose</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--errorlevel=<var>ERRORLEVEL</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show errorlevel as: <a class="reference internal" href="option_errorlevel.html"><em>none, message, exception,
+traceback</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i<var>INPUT</var></span>, <span class="option">--input=<var>INPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read from INPUT in po format</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-x<var>EXCLUDE</var></span>, <span class="option">--exclude=<var>EXCLUDE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>exclude names matching EXCLUDE from input paths</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o<var>OUTPUT</var></span>, <span class="option">--output=<var>OUTPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>write to OUTPUT in po format</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="examples">
+<span id="porestructure-examples"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>The documentation for poconflicts has <a class="reference internal" href="poconflicts.html#poconflicts-examples"><em>Examples</em></a> for the
+complete process using poconflict, porestructure, and pomerge.</p>
+<span class="target" id="porestructure-bugs"></span></div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

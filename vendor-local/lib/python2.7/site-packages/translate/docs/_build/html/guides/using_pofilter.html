@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Checking your files with PO filter &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Use Cases" href="index.html" />
+    <link rel="next" title="Using csv2po" href="using_csv2po.html" />
+    <link rel="prev" title="Migrating your translations" href="migrating_translations.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Checking your files with PO filter</a><ul>
+<li><a class="reference internal" href="#quickstart">Quickstart</a></li>
+<li><a class="reference internal" href="#detailed-description">Detailed Description</a><ul>
+<li><a class="reference internal" href="#extracting-errors">Extracting Errors</a></li>
+<li><a class="reference internal" href="#edit-the-files">Edit the files</a></li>
+<li><a class="reference internal" href="#merging-your-corrections-back-into-the-originals">Merging your corrections back into the originals</a></li>
+<li><a class="reference internal" href="#checking-the-corrections">Checking the corrections</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="migrating_translations.html"
+         title="previous chapter">&laquo; Migrating your translations</a></li>
+  <li><a href="using_csv2po.html"
+         title="next chapter">Using csv2po &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="checking-your-files-with-po-filter">
+<span id="using-pofilter"></span><span id="id1"></span><h1>Checking your files with PO filter<a class="headerlink" href="#checking-your-files-with-po-filter" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="../commands/pofilter.html"><em>pofilter</em></a> allows you to check your PO or XLIFF files for
+certain common errors.  This quick-start guide takes you through the process of
+using this tool, making corrections and merging your correction back into your
+translations.</p>
+<p>The toolkit also other tools that can assist with <a class="reference internal" href="../commands/index.html#commands-quality-assurance"><em>quality assurance</em></a>.</p>
+<div class="section" id="quickstart">
+<span id="using-pofilter-quickstart"></span><h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
+<p><em>Use any preferred text editor wherever</em> <tt class="docutils literal"><span class="pre">vim</span></tt> <em>is used.</em></p>
+<ol class="arabic simple">
+<li>Select filter(s): <tt class="docutils literal"><span class="pre">pofilter</span> <span class="pre">-l</span></tt></li>
+<li>Run filter(s): <tt class="docutils literal"><span class="pre">pofilter</span> <span class="pre">-i</span> <span class="pre">existing_files/</span> <span class="pre">-o</span> <span class="pre">errors/</span> <span class="pre">[-t</span> <span class="pre">specific</span> <span class="pre">tests]</span>
+<span class="pre">[--excludefilter</span> <span class="pre">don't</span> <span class="pre">perform</span> <span class="pre">specific</span> <span class="pre">tests]</span></tt></li>
+<li>Delete items you don&#8217;t want changed, set fuzzy if needed, delete if not
+needed: <tt class="docutils literal"><span class="pre">vim</span> <span class="pre">errors/*.po</span></tt></li>
+<li>Merge changes back: <tt class="docutils literal"><span class="pre">pomerge</span> <span class="pre">-i</span> <span class="pre">errors/</span> <span class="pre">-o</span> <span class="pre">existing_files/</span> <span class="pre">-t</span>
+<span class="pre">existing_files/</span></tt> (will overwrite existing files)</li>
+<li>Create a patch for the changes: <tt class="docutils literal"><span class="pre">cvs</span> <span class="pre">diff</span> <span class="pre">-u</span> <span class="pre">existing_files/</span> <span class="pre">&gt;</span> <span class="pre">x.diff</span></tt></li>
+<li>Check to see that the updates are what you want: <tt class="docutils literal"><span class="pre">vim</span> <span class="pre">x.diff</span></tt></li>
+<li>Commit changes: <tt class="docutils literal"><span class="pre">cvs</span> <span class="pre">ci</span> <span class="pre">existing_files/</span></tt></li>
+</ol>
+</div>
+<div class="section" id="detailed-description">
+<span id="using-pofilter-detailed-description"></span><h2>Detailed Description<a class="headerlink" href="#detailed-description" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../commands/pofilter.html"><em>pofilter</em></a> runs a number of checks against your translation
+files.  Any messages that fail are output to a set of new files (in the same
+structure as the source/input files).  You then edit these new/output files to
+correct any errors.  Once you are satisfied with your corrections these
+corrected files are then merged back into the original files using
+<a class="reference internal" href="../commands/pomerge.html"><em>pomerge</em></a>.</p>
+<div class="section" id="extracting-errors">
+<span id="using-pofilter-extracting-errors"></span><h3>Extracting Errors<a class="headerlink" href="#extracting-errors" title="Permalink to this headline">¶</a></h3>
+<p>pofilter will run all tests unless you use the <tt class="docutils literal"><span class="pre">-t</span></tt> or
+<tt class="docutils literal"><span class="pre">--excludefilter</span></tt> options.  There are over <a class="reference internal" href="../commands/pofilter_tests.html"><em>38 tests</em></a> and pofilter can itself provide you with a current
+list of all the available checks:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pofilter</span> <span class="o">-</span><span class="n">l</span>
+</pre></div>
+</div>
+<p>We want to run the: accelerators, escapes, variables and xmltags tests as these
+are the ones most likely to break programs at runtime.  We are also working
+with OpenOffice.org PO files created using <a class="reference internal" href="../commands/oo2po.html"><em>oo2po</em></a> so we want to
+ensure that we set the accelerator key marker and variables definitions
+correctly:</p>
+<div class="highlight-python"><div class="highlight"><pre>pofilter -t accelerators -t escapes -t variables -t xmltags --openoffice existing_files errors
+</pre></div>
+</div>
+<p>Any messages that fail one of the 4 checks will be placed in files in <em>errors</em>.
+We also used the <tt class="docutils literal"><span class="pre">--openoffice</span></tt> option to ensure that the tool is aware of
+the OpenOffice.org accelerator marker (<em>~</em>) and the OpenOffice.org variable
+styles (OpenOffice.org has over 10 variable styles).  You can also specify
+other styles of project including GNOME, KDE or Mozilla.</p>
+<p>You can also specify whether you want fuzzy entries included and checked, by
+specifying the <tt class="docutils literal"><span class="pre">--fuzzy</span></tt> parameter. By default this is off because fuzzy
+strings are usually known to be broken and will be reviewed by translators
+anyway.</p>
+<p>Similarly you can include items marked for review by specifying <tt class="docutils literal"><span class="pre">--review</span></tt>
+or <tt class="docutils literal"><span class="pre">--ingnorereview</span></tt>.  By default review items are included.  This is not
+part of the standard Gettext format. We have allowed entries like this when we
+want to communicate to someone what error we have picked up:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># (review) - wrong word for gallery chosen</span>
+</pre></div>
+</div>
+<p>You can run pofilter without the <tt class="docutils literal"><span class="pre">-t</span></tt> option.  This runs all the checks.
+This can be confusing if you have a lot of errors as you easily lose focus.
+One strategy is to run each test individually.  This allows you to focus on one
+problem at a time across a number of files.  It is much easier to correct end
+punctuation on its own then to correct many different types of errors.  For a
+small file it is probably best to run all of the test together.</p>
+<p>By using the <tt class="docutils literal"><span class="pre">--autocorrect</span></tt> option you can automatically correct some
+very common errors.  Use with caution though. This option assumes you use the
+same punctuation style as the source text.</p>
+</div>
+<div class="section" id="edit-the-files">
+<span id="using-pofilter-edit-the-files"></span><h3>Edit the files<a class="headerlink" href="#edit-the-files" title="Permalink to this headline">¶</a></h3>
+<p>Once the errors have been marked you can edit them with any text editor or PO
+editor e.g. <a class="reference external" href="http://virtaal.org">Virtaal</a>.  You will be editing the files in
+the <em>errors</em> directory.  Only messages that failed one of the tests will be
+present.  If no messages failed then there will be no error PO file for the
+source PO file.  Only critical errors are marked fuzzy &#8211; all others are simply
+marked with the pofilter marker.  Critical errors are marked fuzzy as this
+allows you to simply merge them back into you PO files and then rely on the
+fact that all po2* tools will ignore a message marked fuzzy.  This allows you
+to quickly eliminate messages that can break builds.</p>
+<p>To edit run:</p>
+<div class="highlight-python"><div class="highlight"><pre>vi `find errors -name &quot;*.po&quot;`
+virtaal `find errors -name &quot;*.po&quot;`
+</pre></div>
+</div>
+<p>or similar command.</p>
+<p>The pofilter marker helps you determine what error was discovered:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># (pofilter) &lt;test&gt; - &lt;explanation of test error&gt;</span>
+</pre></div>
+</div>
+<p>Use the test description to help you determine what is wrong with the message.
+Remember that all your changes will be ported back into the PO files.  So if
+you leave a string fuzzy in the error files, it will become fuzzy in the main
+files when you merge the corrected file back into the main file.  Therefore
+delete anything you do not want to migrate back when you merge the files.
+Delete the test comments and fuzzy markings as needed.  Leave them in if you
+want another translator to see them.</p>
+<p>The computer can get it wrong, so an error that pofilter finds may in fact not
+be an error.  We&#8217;d like to hear about these false positives so that we can
+improve the checks.  Also if you have some checks that you have added or ideas
+for better checks, then let us know.</p>
+</div>
+<div class="section" id="merging-your-corrections-back-into-the-originals">
+<span id="using-pofilter-merging-your-corrections-back-into-the-originals"></span><h3>Merging your corrections back into the originals<a class="headerlink" href="#merging-your-corrections-back-into-the-originals" title="Permalink to this headline">¶</a></h3>
+<p>After correcting the errors in the PO files its time to merge these corrections
+back into the originals using <a class="reference internal" href="../commands/pomerge.html"><em>pomerge</em></a>.</p>
+<div class="highlight-python"><div class="highlight"><pre>pomerge -t existing_files -i errors -o files_without_errors
+</pre></div>
+</div>
+<p>If <tt class="docutils literal"><span class="pre">-t</span></tt> and <tt class="docutils literal"><span class="pre">-o</span></tt> are the same directory, the corrections will be
+merged into the existing files.  Do this only if you are using some kind of
+version control system so that you can check the changes made by
+<a class="reference internal" href="../commands/pomerge.html"><em>pomerge</em></a>.</p>
+</div>
+<div class="section" id="checking-the-corrections">
+<span id="using-pofilter-checking-the-corrections"></span><h3>Checking the corrections<a class="headerlink" href="#checking-the-corrections" title="Permalink to this headline">¶</a></h3>
+<p>We have done this against CVS but you could run a normal diff between a good
+copy and your modifications.  Thus we assume in the last step that we merged
+the corrections into the existing translations:</p>
+<div class="highlight-python"><div class="highlight"><pre>pomerge -t existing_files -i errors -o existing_files
+</pre></div>
+</div>
+<p>Now we check the changes using <em>cvs diff</em>:</p>
+<div class="highlight-python"><div class="highlight"><pre>cvs diff -u existing_files &gt; x.diff
+</pre></div>
+</div>
+<p>This creates a unified diff (one with + and - lines so you can see what was
+added and what was removed) in the file x.diff:</p>
+<div class="highlight-python"><div class="highlight"><pre>vim x.diff
+</pre></div>
+</div>
+<p>Check the diff file in any editor, here we use vim.  You should check to see
+that the changes you requested are going in and that something major did not go
+wrong.  Also look to see if you haven&#8217;t left any lines with &#8220;# (pofilter): test
+description&#8221; which should have been deleted from the error checking PO files.
+Also check for stray fuzzy markers that shouldn&#8217;t have been added.  You will
+have to make corrections in the files in <em>existing_files</em> not in <em>errors</em>.</p>
+<p>When you are happy that the changes are correct run:</p>
+<div class="highlight-python"><div class="highlight"><pre>cvs ci existing_files
+</pre></div>
+</div>
+<p>Congratulations you have helped eliminate a number of errors that could give
+problems when running the application.  Now you might want to look at running
+some of the other tests that check for style and uniformity in translation.</p>
+</div>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

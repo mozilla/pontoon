@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mozilla l20n &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Translation Related File Formats" href="index.html" />
+    <link rel="next" title="Wireless Markup Language" href="wml.html" />
+    <link rel="prev" title="Qt .qm" href="qm.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Mozilla l20n</a><ul>
+<li><a class="reference internal" href="#comments">Comments</a><ul>
+<li><a class="reference internal" href="#findings">Findings</a></li>
+<li><a class="reference internal" href="#issues">Issues</a></li>
+<li><a class="reference internal" href="#approach">Approach</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="qm.html"
+         title="previous chapter">&laquo; Qt .qm</a></li>
+  <li><a href="wml.html"
+         title="next chapter">Wireless Markup Language &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="mozilla-l20n">
+<span id="l20n"></span><h1>Mozilla l20n<a class="headerlink" href="#mozilla-l20n" title="Permalink to this headline">¶</a></h1>
+<p>L20n is a proposed method for localisation in the Mozilla project.
+<a class="reference external" href="https://wiki.mozilla.org/L20n">https://wiki.mozilla.org/L20n</a></p>
+<div class="section" id="comments">
+<span id="l20n-comments"></span><h2>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h2>
+<p>Here we collect some comments about the possibility of l20n support in our
+tools.</p>
+<p>Our tools are based on the idea of units. Each unit has an associated (source,
+target) pair, possibly containing more, like comments, state, etc. We prefer to
+build our richer tools against bilingual formats like <a class="reference internal" href="po.html"><em>PO Files</em></a>, <a class="reference internal" href="xliff.html"><em>XLIFF</em></a>,
+<a class="reference internal" href="ts.html"><em>Qt .ts</em></a>, etc. and provide converters to these formats when we want to support
+<a class="reference external" href="http://translate.sourceforge.net/wiki/guide/monolingual">guide/monolingual</a> formats. Pootle also implements its own bilingual
+format in its database.</p>
+<p>l20n is based on the idea of entity soup, or object soup. Files are (at least
+in the first iteration) monolingual, and each language defines a set of objects
+which can contain one or more presentation forms of an entity/string, to vary
+it according to gender, case, declension, plural, time of day, etc.  A language
+can define extra entities to help in constructing others by &#8220;factoring out&#8221;
+things, if you will. The structure of each object is left to the programmer for
+the target language to define.</p>
+<div class="section" id="findings">
+<h3>Findings<a class="headerlink" href="#findings" title="Permalink to this headline">¶</a></h3>
+<p>Our tools work on the principle of units.  A unit being in its simplest form a
+source to target mapping, in other words the English source text plus the
+target translation make a unit.  Our code has, for a long time now, a good
+understanding of units that don&#8217;t have a one to one mapping.  In PO those are
+plural units.  This is where N source strings map to M target strings.  We
+currently only have 1-M and 2-M mappings for Qt and PO files. l20n introduces
+N-M mappings which we don&#8217;t currently support.</p>
+<p>l20n is of course working around an idea of translation objects not strings.
+But I think the string metaphor works in most cases to ease explanation.</p>
+<p>The closest thing we have to this is plural support by means of multistrings.</p>
+<p>l20n is pretty powerful with the ability to arbitrarily make up
+functions/macros that then map to the correct string to use in the translation.
+In PO the number of possible (plural) strings is mapped before you begin, l20n
+potentially has any arbitrary mapping.</p>
+<p>We could write a simple converter to another format for simple string based
+objects without further structure, but that doesn&#8217;t expose the power of l20n
+yet, and doesn&#8217;t handle complexity in the source text if it was present.</p>
+</div>
+<div class="section" id="issues">
+<span id="l20n-issues"></span><h3>Issues<a class="headerlink" href="#issues" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>N-M mapping. We need to support arbitrary mappings between source and target</li>
+<li>Determining N and M on the fly.  We need to have the ability to determine N
+and M in real time.  So that would mean being able to read l20n files and
+determine what function is used, then determine how many possible results
+that function can return.  We&#8217;d do that for both source and target.  Thus
+we&#8217;d get N and M counts which we can use in the interface.</li>
+<li>GUI for Pootle/Virtaal to allow dynamic source and target numbers.  We
+already adapt to N and M on both platforms, but doing this on the fly is
+harder.<ul>
+<li>If we assume that functions are implemented once in a common library and
+named the same (for example for plural support) then this is easy.</li>
+<li>If functions are arbitrarily implemented per target file but at least named
+the same then this is harder.</li>
+<li>If names of functions are changed then we&#8217;d need to present the ability to
+change the function that a translator would use in their translation.  How
+to do this so that it isn&#8217;t confusing would require quite some thought.</li>
+<li>Being able to write functions on the fly within the translation tool would
+most likely be the ultimate ability.  We suspect we won&#8217;t need to address
+that level just yet.</li>
+</ul>
+</li>
+<li>Backend file store.  We have two options.<ul>
+<li>Covert to a bilingual store &#8211; this is what we do in moz2po.</li>
+<li>Support monolingual stores &#8211; we can do that in Pootle, but it needs wider
+testing.  In Virtaal we do automatic conversion to bilingual formats, but
+is is currently disabled.  To enable this so that we can rely on it we&#8217;d need
+some work on both Pootle and Virtaal; in testing and in managing source and
+target files changes reliably.</li>
+</ul>
+</li>
+<li>More complex l20n interactions.  These start pushing the translation tool
+into an IDE but would include:<ul>
+<li>A translator making a 1-1 into a 1-M (to add gender, vary on the time of
+day, platform, etc). Since no functions are present in the source we&#8217;d need
+to have access to a library of functions or have a structured object
+editor.</li>
+<li>A translator might want to define a local entity (an entity which is not in
+the original source document), or it might be there from before.</li>
+</ul>
+</li>
+<li>Still needs some thought on how to do anything meaningful with our current
+translation features like TM, MT, quality checks.</li>
+</ul>
+</div>
+<div class="section" id="approach">
+<span id="l20n-approach"></span><h3>Approach<a class="headerlink" href="#approach" title="Permalink to this headline">¶</a></h3>
+<p>The problems above really highlight the approach we&#8217;d take to implement l20n in
+our tools.</p>
+<ul class="simple">
+<li>Expand the toolkit to do N-M mapping</li>
+<li>Include l20n parser to allows N and M mapping determination on the fly</li>
+<li>Convert to an interim store.  Before tackling the monoligual side we&#8217;d look
+at converting to an interim store to reduce the risks.  We&#8217;d determine what
+to use at the time.  The only thing certain is that it would not be PO, as PO
+can&#8217;t do N source strings.</li>
+<li>GUI changes. This would be to allow N and M to change dynamically.  But we&#8217;d
+limit this to at first relying on 1-1 mappings of functions.  Thus plural()
+in source means plural() in target.</li>
+</ul>
+<p>At this point we have a usable translation tool for l20n.  The next steps would
+be about making that support more robust.  Each of these would really be
+determined closer to the time.</p>
+<ul class="simple">
+<li>Adaptable N and M.  First allowing functions within a file to adapt the
+values of N and M.</li>
+<li>GUI selection of functions.  Ability to select functions from within the GUI.</li>
+<li>Monolingual on the fly.  We&#8217;d then look at the monolingual side of things.
+This would be so that we can work on the source and target without the need
+for the interim store.</li>
+</ul>
+<p>We&#8217;re now really at a position where we&#8217;ve solved things up to point 4 above.
+Addressing issues in point 5 and 6 would be the next steps.</p>
+</div>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

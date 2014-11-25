@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pofilter &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Converters" href="index.html" />
+    <link rel="next" title="Descriptions of all pofilter tests" href="pofilter_tests.html" />
+    <link rel="prev" title="poconflicts" href="poconflicts.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">pofilter</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#bugs">Bugs</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="poconflicts.html"
+         title="previous chapter">&laquo; poconflicts</a></li>
+  <li><a href="pofilter_tests.html"
+         title="next chapter">Descriptions of all pofilter tests &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="pofilter">
+<span id="id1"></span><h1>pofilter<a class="headerlink" href="#pofilter" title="Permalink to this headline">¶</a></h1>
+<p>Pofilter allows you to run a <a class="reference internal" href="pofilter_tests.html"><em>number of checks</em></a> against
+your PO, XLIFF or TMX files.  These checks are designed to pick up problems
+with capitalisation, accelerators, variables, etc.  Those messages that fail
+any of the checks are output and marked so that you can correct them.</p>
+<p>Use <tt class="docutils literal"><span class="pre">pofilter</span> <span class="pre">-l</span></tt> to get a list of available checks.</p>
+<p>Once you have corrected the errors in your PO files you can merge the
+corrections into your existing translated PO files using <a class="reference internal" href="pomerge.html"><em>pomerge</em></a>.</p>
+<div class="section" id="usage">
+<span id="pofilter-usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>pofilter [options] &lt;in&gt; &lt;out&gt;
+</pre></div>
+</div>
+<p>Where:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>&lt;in&gt;</td>
+<td>the input file or directory which contains PO or XLIFF files</td>
+</tr>
+<tr class="row-even"><td>&lt;out&gt;</td>
+<td>the output file or directory that contains PO or XLIFF files that
+fail the various tests</td>
+</tr>
+</tbody>
+</table>
+<p>Options:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--version</span></kbd></td>
+<td>show program&#8217;s version number and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--manpage</span></kbd></td>
+<td>output a manpage based on the help</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--progress=<var>PROGRESS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show progress as: <a class="reference internal" href="option_progress.html"><em>dots, none, bar, names, verbose</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--errorlevel=<var>ERRORLEVEL</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show errorlevel as: <a class="reference internal" href="option_errorlevel.html"><em>none, message, exception,
+traceback</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i<var>INPUT</var></span>, <span class="option">--input=<var>INPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read from INPUT in pot, po, xlf, tmx formats</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-x<var>EXCLUDE</var></span>, <span class="option">--exclude=<var>EXCLUDE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>exclude names matching EXCLUDE from input paths</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o<var>OUTPUT</var></span>, <span class="option">--output=<var>OUTPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>write to OUTPUT in po, pot, xlf, tmx formats</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-l</span>, <span class="option">--listfilters</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>list filters available</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--review</span></kbd></td>
+<td>include elements marked for review (default)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--noreview</span></kbd></td>
+<td>exclude elements marked for review</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--fuzzy</span></kbd></td>
+<td>include elements marked fuzzy (default)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--nofuzzy</span></kbd></td>
+<td>exclude elements marked fuzzy</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--header</span></kbd></td>
+<td>include a PO header in the output (always the case since version 1.6)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--nonotes</span></kbd></td>
+<td>don&#8217;t add notes about the errors (since version 1.3)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--autocorrect</span></kbd></td>
+<td>output automatic corrections where possible rather than describing issues</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--language=<var>LANG</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>set target language code (e.g. af-ZA) [required for spell check]. This will help to make pofilter aware of the conventions of your language</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--openoffice</span></kbd></td>
+<td>use the standard checks for OpenOffice translations</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--libreoffice</span></kbd></td>
+<td>use the standard checks for LibreOffice translations</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--mozilla</span></kbd></td>
+<td>use the standard checks for Mozilla translations</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--drupal</span></kbd></td>
+<td>use the standard checks for Drupal translations</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--gnome</span></kbd></td>
+<td>use the standard checks for Gnome translations</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--kde</span></kbd></td>
+<td>use the standard checks for KDE translations</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--wx</span></kbd></td>
+<td>use the standard checks for wxWidgets translations &#8211; identical to &#8211;kde</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--excludefilter=<var>FILTER</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>don&#8217;t use FILTER when filtering</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t<var>FILTER</var></span>, <span class="option">--test=<var>FILTER</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>only use test FILTERs specified with this option when filtering</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--notranslatefile=<var>FILE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read list of untranslatable words from FILE (must not be translated)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--musttranslatefile=<var>FILE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read list of translatable words from FILE (must be translated)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--validcharsfile=<var>FILE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read list of all valid characters from FILE (must be in UTF-8)</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="example">
+<span id="pofilter-example"></span><h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Here are some examples to demonstrate how to use pofilter:</p>
+<div class="highlight-python"><div class="highlight"><pre>pofilter --openoffice af af-check
+</pre></div>
+</div>
+<p>Use the default settings (accelerator and variables) for OpenOffice.org.  Check
+all PO files in <em>af</em> and output any messages that fail the check in <em>af-check</em>
+(create the directory if it does not already exist).</p>
+<div class="highlight-python"><div class="highlight"><pre>pofilter -t isfuzzy -t untranslated zu zu-check
+</pre></div>
+</div>
+<p>Only run the <em>isfuzzy</em> and <em>untranslated</em> checks, this will extract all
+messages that are either fuzzy or untranslated.</p>
+<div class="highlight-python"><div class="highlight"><pre>pofilter --excludefilter=simplecaps --nofuzzy nso nso-check
+</pre></div>
+</div>
+<p>Run all filters except <em>simplecaps</em>.  You might want to do this if your
+language does not make use of capitalisation or if the test is creating too
+many false positives.  Also only run the checks against messages that are not
+marked fuzzy.  This is useful if you have already marked problem strings as
+fuzzy or you know that the fuzzy strings are bad, with this option you don&#8217;t
+have to see the obviously wrong messages.</p>
+<div class="highlight-python"><div class="highlight"><pre>pofilter --language=fr dir dir-check
+</pre></div>
+</div>
+<p>Tell pofilter that you are checking French translations so that it can take the
+conventions of the language into account (for things like punctuation, spacing,
+quoting, etc.) It will also disable some tests that are not meaningful for your
+language, like capitalisation checks for languages that don&#8217;t have capital
+letters.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pofilter</span> <span class="o">--</span><span class="n">excludefilter</span><span class="o">=</span><span class="n">untranslated</span>
+</pre></div>
+</div>
+<p>Tell pofilter not to complain about your untranslated units.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pofilter</span> <span class="o">-</span><span class="n">l</span>
+</pre></div>
+</div>
+<p>List all the available checks.</p>
+</div>
+<div class="section" id="bugs">
+<span id="pofilter-bugs"></span><h2>Bugs<a class="headerlink" href="#bugs" title="Permalink to this headline">¶</a></h2>
+<p>There are minor bugs in the filters.  Most relate to false positives, corner
+cases or minor changes for better fault description.</p>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

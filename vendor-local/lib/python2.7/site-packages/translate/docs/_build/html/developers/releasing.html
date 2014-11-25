@@ -1,0 +1,498 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Making a Translate Toolkit Release &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="next" title="Deprecation of Features" href="deprecation.html" />
+    <link rel="prev" title="Translate Toolkit Developers Guide" href="developers.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Making a Translate Toolkit Release</a><ul>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+<li><a class="reference internal" href="#detailed-instructions">Detailed instructions</a><ul>
+<li><a class="reference internal" href="#get-a-clean-checkout">Get a clean checkout</a></li>
+<li><a class="reference internal" href="#create-release-notes">Create release notes</a></li>
+<li><a class="reference internal" href="#add-release-notes-for-dev">Add release notes for dev</a></li>
+<li><a class="reference internal" href="#up-version-numbers">Up version numbers</a></li>
+<li><a class="reference internal" href="#build-the-package">Build the package</a></li>
+<li><a class="reference internal" href="#test-install-and-other-tests">Test install and other tests</a></li>
+<li><a class="reference internal" href="#tag-and-branch-the-release">Tag and branch the release</a></li>
+<li><a class="reference internal" href="#publish-on-pypi">Publish on PyPI</a></li>
+<li><a class="reference internal" href="#create-a-release-on-github">Create a release on Github</a></li>
+<li><a class="reference internal" href="#copy-files-to-sourceforge">Copy files to sourceforge</a></li>
+<li><a class="reference internal" href="#release-documentation">Release documentation</a></li>
+<li><a class="reference internal" href="#update-translate-website">Update translate website</a></li>
+<li><a class="reference internal" href="#unstage-on-sourceforge">Unstage on sourceforge</a></li>
+<li><a class="reference internal" href="#announce-to-the-world">Announce to the world</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cleanup">Cleanup</a><ul>
+<li><a class="reference internal" href="#bump-version-to-n-1-alpha1">Bump version to N+1-alpha1</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-possible-steps">Other possible steps</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="developers.html"
+         title="previous chapter">&laquo; Translate Toolkit Developers Guide</a></li>
+  <li><a href="deprecation.html"
+         title="next chapter">Deprecation of Features &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="making-a-translate-toolkit-release">
+<h1>Making a Translate Toolkit Release<a class="headerlink" href="#making-a-translate-toolkit-release" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Git clone <a class="reference external" href="mailto:git&#37;&#52;&#48;github&#46;com">git<span>&#64;</span>github<span>&#46;</span>com</a>:translate/translate.git translate-release</li>
+<li>Create release notes</li>
+<li>Up version number</li>
+<li>make build</li>
+<li>Test install and other tests</li>
+<li>Tag the release</li>
+<li>Publish on PyPI</li>
+<li>Upload to Github</li>
+<li>Upload to Sourceforge</li>
+<li>Release documentation</li>
+<li>Update translate website</li>
+<li>Unstage sourceforge</li>
+<li>Announce to the world</li>
+<li>Cleanup</li>
+<li>Other possible steps</li>
+</ol>
+</div>
+<div class="section" id="detailed-instructions">
+<h2>Detailed instructions<a class="headerlink" href="#detailed-instructions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-a-clean-checkout">
+<h3>Get a clean checkout<a class="headerlink" href="#get-a-clean-checkout" title="Permalink to this headline">¶</a></h3>
+<p>We work from a clean checkout to ensure that everything you are adding to the
+build is what is in VC and doesn&#8217;t contain any of your uncommitted changes.  It
+also ensure that someone else could replicate your process.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git clone git@github.com:translate/translate.git translate-release
+<span class="nv">$ </span><span class="nb">cd </span>translate-release
+<span class="nv">$ </span>git submodule update --init
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-release-notes">
+<h3>Create release notes<a class="headerlink" href="#create-release-notes" title="Permalink to this headline">¶</a></h3>
+<p>The release notes will be used in these places:</p>
+<ul class="simple">
+<li>Toolkit website - <a class="reference external" href="http://toolkit.translatehouse.org/download.html">download page</a> (used in gh-pages)</li>
+<li>Sourceforge download - README.rst (used to give user info)</li>
+<li>Email announcements - text version</li>
+</ul>
+<p>We create our release notes in reStructured Text, since we use that elsewhere
+and since it can be rendered well in some of our key sites.</p>
+<p>First we need to create a log of changes in the Translate Toolkit, which is
+done generically like this:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git log <span class="nv">$previous_version</span>..HEAD &gt; docs/release/<span class="nv">$version</span>.rst
+</pre></div>
+</div>
+<p>Or a more specific example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git log 1.10.0..HEAD &gt; docs/releases/1.11.0-rc1.rst
+</pre></div>
+</div>
+<p>Edit this file.  You can use the commits as a guide to build up the release
+notes.  You should remove all log messages before the release.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Since the release notes will be used in places that allow linking we
+use links within the notes.  These should link back to products websites
+(<a class="reference external" href="http://virtaal.org">Virtaal</a>, <a class="reference external" href="http://pootle.translatehouse.org">Pootle</a>, etc), references to <a class="reference external" href="http://translatehouse.org">Translate</a> and possibly bug numbers, etc.</p>
+</div>
+<p>Read for grammar and spelling errors.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>When writing the notes please remember:</p>
+<ol class="last arabic simple">
+<li>The voice is active. &#8216;Translate has released a new version of the
+toolkit&#8217;, not &#8216;A new version of the toolkit was release by Translate&#8217;.</li>
+<li>The connection to the users is human not distant.</li>
+<li>We speak in familiar terms e.g. &#8220;I know you&#8217;ve been waiting for this
+release&#8221; instead of formal.</li>
+</ol>
+</div>
+<p>We create a list of contributors using this command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git log 1.10.0..HEAD --format<span class="o">=</span><span class="s1">&#39;%aN, &#39;</span> | awk <span class="s1">&#39;{arr[$0]++} END{for (i in arr){print arr[i], i;}}&#39;</span> | sort -rn | cut -d<span class="se">\ </span> -f2-
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-release-notes-for-dev">
+<h3>Add release notes for dev<a class="headerlink" href="#add-release-notes-for-dev" title="Permalink to this headline">¶</a></h3>
+<p>After updating the release notes for the about to be released version, it is
+necessary to add new release notes for the next release, tagged as <tt class="docutils literal"><span class="pre">dev</span></tt>.</p>
+</div>
+<div class="section" id="up-version-numbers">
+<h3>Up version numbers<a class="headerlink" href="#up-version-numbers" title="Permalink to this headline">¶</a></h3>
+<p>Update the version number in:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">translate/__version__.py</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">docs/conf.py</span></tt></li>
+</ul>
+<p>In <tt class="docutils literal"><span class="pre">__version__.py</span></tt>, bump the build number if anybody used the toolkit with
+the previous number, and there have been any changes to code touching stats or
+quality checks.  An increased build number will force a toolkit user, like
+Pootle, to regenerate the stats and checks.</p>
+<p>For <tt class="docutils literal"><span class="pre">conf.py</span></tt> change <tt class="docutils literal"><span class="pre">version</span></tt> and <tt class="docutils literal"><span class="pre">release</span></tt></p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">FIXME - We might want to consolidate the version and release info so
+that we can update it in one place.</p>
+</div>
+<p>The version string should follow the pattern:</p>
+<div class="highlight-python"><div class="highlight"><pre>$MAJOR-$MINOR-$MICRO[-$EXTRA]
+</pre></div>
+</div>
+<p>E.g.</p>
+<div class="highlight-python"><div class="highlight"><pre>1.10.0
+0.9.1-rc1
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">$EXTRA</span></tt> is optional but all the three others are required.  The first
+release of a <tt class="docutils literal"><span class="pre">$MINOR</span></tt> version will always have a <tt class="docutils literal"><span class="pre">$MICRO</span></tt> of <tt class="docutils literal"><span class="pre">.0</span></tt>. So
+<tt class="docutils literal"><span class="pre">1.10.0</span></tt> and never just <tt class="docutils literal"><span class="pre">1.10</span></tt>.</p>
+</div>
+<div class="section" id="build-the-package">
+<h3>Build the package<a class="headerlink" href="#build-the-package" title="Permalink to this headline">¶</a></h3>
+<p>Building is the first step to testing that things work.  From your clean
+checkout run:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkvirtualenv build-ttk-release
+<span class="o">(</span>build-ttk-release<span class="o">)</span><span class="nv">$ </span>pip install -r requirements/dev.txt
+<span class="o">(</span>build-ttk-release<span class="o">)</span><span class="nv">$ </span>make build
+<span class="o">(</span>build-ttk-release<span class="o">)</span><span class="nv">$ </span>deactivate
+<span class="nv">$ </span>rmvirtualenv build-ttk-release
+</pre></div>
+</div>
+<p>This will create a tarball in <tt class="docutils literal"><span class="pre">dist/</span></tt> which you can use for further testing.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We use a clean checkout just to make sure that no inadvertant changes
+make it into the release.</p>
+</div>
+</div>
+<div class="section" id="test-install-and-other-tests">
+<h3>Test install and other tests<a class="headerlink" href="#test-install-and-other-tests" title="Permalink to this headline">¶</a></h3>
+<p>The easiest way to test is in a virtualenv. You can test the installation of
+the new toolkit using:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkvirtualenv <span class="nb">test</span>-ttk-release
+<span class="o">(</span>releasing<span class="o">)</span><span class="nv">$ </span>pip install path/to/dist/translate-toolkit-<span class="nv">$version</span>.tar.bz2
+</pre></div>
+</div>
+<p>You can then proceed with other tests such as checking:</p>
+<ol class="arabic">
+<li><p class="first">Documentation is available in the package</p>
+</li>
+<li><p class="first">Converters and scripts are installed and run correctly:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="o">(</span><span class="nb">test</span>-ttk-release<span class="o">)</span><span class="nv">$ </span>moz2po --help
+<span class="o">(</span><span class="nb">test</span>-ttk-release<span class="o">)</span><span class="nv">$ </span>php2po --version
+<span class="o">(</span><span class="nb">test</span>-ttk-release<span class="o">)</span><span class="nv">$ </span>deactivate
+<span class="nv">$ </span>rmvirtualenv <span class="nb">test</span>-ttk-release
+</pre></div>
+</div>
+</li>
+<li><p class="first">Meta information about the package is correct. This is stored in
+<tt class="file docutils literal"><span class="pre">setup.py</span></tt>, to see some options to display meta-data use:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./setup.py --help
+</pre></div>
+</div>
+<p>Now you can try some options like:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./setup.py --name
+<span class="nv">$ </span>./setup.py --version
+<span class="nv">$ </span>./setup.py --author
+<span class="nv">$ </span>./setup.py --author-email
+<span class="nv">$ </span>./setup.py --url
+<span class="nv">$ </span>./setup.py --license
+<span class="nv">$ </span>./setup.py --description
+<span class="nv">$ </span>./setup.py --long-description
+<span class="nv">$ </span>./setup.py --classifiers
+</pre></div>
+</div>
+<p>The actual descriptions are taken from <tt class="file docutils literal"><span class="pre">translate/__init__.py</span></tt>.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="tag-and-branch-the-release">
+<h3>Tag and branch the release<a class="headerlink" href="#tag-and-branch-the-release" title="Permalink to this headline">¶</a></h3>
+<p>You should only tag once you are happy with your release as there are some
+things that we can&#8217;t undo. You can safely branch for a <tt class="docutils literal"><span class="pre">stable/</span></tt> branch
+before you tag.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git checkout -b stable/1.10.0
+<span class="nv">$ </span>git push origin stable/1.10.0
+<span class="nv">$ </span>git tag -a 1.10.0 -m <span class="s2">&quot;Tag version 1.10.0&quot;</span>
+<span class="nv">$ </span>git push --tags
+</pre></div>
+</div>
+</div>
+<div class="section" id="publish-on-pypi">
+<h3>Publish on PyPI<a class="headerlink" href="#publish-on-pypi" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>You need a username and password on <a class="reference external" href="https://pypi.python.org">Python Package Index (PyPI)</a> and have rights to the project before you can
+proceed with this step.</p>
+<p>These can be stored in <tt class="file docutils literal"><span class="pre">$HOME/.pypirc</span></tt> and will contain your username
+and password. A first run of:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./setup.py register
+</pre></div>
+</div>
+<p class="last">will create such file. It will also actually publish the meta-data so only
+do it when you are actually ready.</p>
+</div>
+<p>To test before publishing run:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>make <span class="nb">test</span>-publish-pypi
+</pre></div>
+</div>
+<p>Then to actually publish:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>make publish-pypi
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-a-release-on-github">
+<h3>Create a release on Github<a class="headerlink" href="#create-a-release-on-github" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/translate/translate/releases/new">https://github.com/translate/translate/releases/new</a></li>
+</ul>
+<p>You will need:</p>
+<ul class="simple">
+<li>Tarball of the release</li>
+<li>Release notes in Markdown</li>
+</ul>
+<ol class="arabic simple">
+<li>Draft a new release with the corresponding tag version</li>
+<li>Convert the release notes to Markdown with <a class="reference external" href="http://johnmacfarlane.net/pandoc/">Pandoc</a> and add those to the release</li>
+<li>Attach the tarball to the release</li>
+<li>Mark it as pre-release if it&#8217;s a release candidate.</li>
+</ol>
+</div>
+<div class="section" id="copy-files-to-sourceforge">
+<h3>Copy files to sourceforge<a class="headerlink" href="#copy-files-to-sourceforge" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You need to have release permissions on sourceforge to perform this
+step.</p>
+</div>
+<ul class="simple">
+<li><a class="reference external" href="http://sourceforge.net/projects/translate/files/Translate%20Toolkit/">http://sourceforge.net/projects/translate/files/Translate%20Toolkit/</a></li>
+</ul>
+<p>You will need:</p>
+<ul class="simple">
+<li>Tarball of the release</li>
+<li>Release notes in reStructured Text</li>
+</ul>
+<p>These are the steps to perform:</p>
+<ol class="arabic simple">
+<li>Create a new folder in the <a class="reference external" href="https://sourceforge.net/projects/translate/files/Translate%20Toolkit/">Translate Toolkit</a>
+release folder using the &#8216;Add Folder&#8217; button.  The folder must have the same
+name as the release version e.g.  <tt class="docutils literal"><span class="pre">1.10.0-rc1</span></tt>.  Mark this as being for
+staging for the moment.</li>
+<li><tt class="docutils literal"><span class="pre">make</span> <span class="pre">publish-sourceforge</span></tt> will give you the command to upload your
+tarball and <tt class="docutils literal"><span class="pre">README.rst</span></tt>.<ol class="arabic">
+<li>Upload tarball for release.</li>
+<li>Upload release notes as <tt class="docutils literal"><span class="pre">README.rst</span></tt>.</li>
+<li>Click on the info icon for <tt class="docutils literal"><span class="pre">README.rst</span></tt> and tick &#8220;Exclude Stats&#8221; to
+exclude the README from stats counting.</li>
+</ol>
+</li>
+<li>Check that the README.rst for the parent <tt class="docutils literal"><span class="pre">Translate</span> <span class="pre">Toolkit</span></tt> folder is
+still appropriate, this is the text from <tt class="docutils literal"><span class="pre">translate/__info__.py</span></tt>.</li>
+<li>Check all links for <tt class="docutils literal"><span class="pre">README.rst</span></tt> files, new release and parent.</li>
+</ol>
+</div>
+<div class="section" id="release-documentation">
+<h3>Release documentation<a class="headerlink" href="#release-documentation" title="Permalink to this headline">¶</a></h3>
+<p>We need a tagged release before we can do this.  The docs are published on Read
+The Docs.</p>
+<ul class="simple">
+<li><a class="reference external" href="https://readthedocs.org/dashboard/translate-toolkit/versions/">https://readthedocs.org/dashboard/translate-toolkit/versions/</a></li>
+</ul>
+<p>Use the admin pages to flag a version that should be published</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">FIXME we might need to do this before publishing so that we can
+update doc references to point to the tagged version as apposed to the
+latest version.</p>
+</div>
+</div>
+<div class="section" id="update-translate-website">
+<h3>Update translate website<a class="headerlink" href="#update-translate-website" title="Permalink to this headline">¶</a></h3>
+<p>We use github pages for the website. First we need to checkout the pages:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git checkout gh-pages
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>In <tt class="docutils literal"><span class="pre">_posts/</span></tt> add a new release posting.  This is in Markdown format (for
+now), so we need to change the release notes .rst to .md, which mostly means
+changing URL links from <tt class="docutils literal"><span class="pre">`xxx</span> <span class="pre">&lt;link&gt;`_</span></tt> to <tt class="docutils literal"><span class="pre">[xxx](link)</span></tt>.</li>
+<li>Change $version as needed. See <tt class="docutils literal"><span class="pre">download.html</span></tt>, <tt class="docutils literal"><span class="pre">_config.yml</span></tt> and
+<tt class="docutils literal"><span class="pre">egrep</span> <span class="pre">-r</span> <span class="pre">$old_release</span> <span class="pre">*</span></tt></li>
+<li><strong class="command">git commit</strong> and <strong class="command">git push</strong> &#8211; changes are quite quick, so
+easy to review.</li>
+</ol>
+</div>
+<div class="section" id="unstage-on-sourceforge">
+<h3>Unstage on sourceforge<a class="headerlink" href="#unstage-on-sourceforge" title="Permalink to this headline">¶</a></h3>
+<p>If you have created a staged release folder, then unstage it now.</p>
+</div>
+<div class="section" id="announce-to-the-world">
+<h3>Announce to the world<a class="headerlink" href="#announce-to-the-world" title="Permalink to this headline">¶</a></h3>
+<p>Let people know that there is a new version:</p>
+<ol class="arabic simple">
+<li>Announce on mailing lists:
+Send the announcement to the translate-announce mailing lists on
+<a class="reference external" href="mailto:translate-announce&#37;&#52;&#48;lists&#46;sourceforge&#46;net">translate-announce<span>&#64;</span>lists<span>&#46;</span>sourceforge<span>&#46;</span>net</a></li>
+<li>Adjust the #pootle channel notice. Use <tt class="docutils literal"><span class="pre">/topic</span></tt> to change the topic.</li>
+<li>Email important users</li>
+<li>Tweet about it</li>
+<li>Update <a class="reference external" href="http://en.wikipedia.org/wiki/Translate_Toolkit">Toolkit&#8217;s Wikipedia page</a></li>
+</ol>
+</div>
+</div>
+<div class="section" id="cleanup">
+<h2>Cleanup<a class="headerlink" href="#cleanup" title="Permalink to this headline">¶</a></h2>
+<p>These are tasks not directly related to the releasing, but that are
+nevertheless completely necessary.</p>
+<div class="section" id="bump-version-to-n-1-alpha1">
+<h3>Bump version to N+1-alpha1<a class="headerlink" href="#bump-version-to-n-1-alpha1" title="Permalink to this headline">¶</a></h3>
+<p>Now that we&#8217;ve release lets make sure that master reflect the current state
+which would be <tt class="docutils literal"><span class="pre">{N+1}-alpha1</span></tt>. This prevents anyone using master being
+confused with a stable release and we can easily check if they are using master
+or stable.</p>
+</div>
+</div>
+<div class="section" id="other-possible-steps">
+<h2>Other possible steps<a class="headerlink" href="#other-possible-steps" title="Permalink to this headline">¶</a></h2>
+<p>Some possible cleanup tasks:</p>
+<ul class="simple">
+<li>Remove any RC builds from the sourceforge download pages (maybe?).</li>
+<li>Commit any release notes and such (or maybe do that before tagging).</li>
+<li>Remove your translate-release checkout.</li>
+<li>Update and fix these release notes.</li>
+</ul>
+<p>We also need to check and document these if needed:</p>
+<ul class="simple">
+<li>Change URLs to point to the correct docs: do we want to change URLs to point
+to the $version docs rather then &#8216;latest&#8217;</li>
+<li>Building on Windows, building for other Linux distros. We have produced
+Windows builds in the past.</li>
+<li>Communicating to upstream packagers</li>
+</ul>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

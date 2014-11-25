@@ -1,0 +1,164 @@
+.. These notes are used in:
+   1. Our email announcements
+   2. The Translate Tools download page at toolkit.translatehouse.org
+   3. Sourceforge download page in
+      http://sourceforge.net/projects/translate/files/Translate%20Toolkit/1.12.0-rc1/README.rst/download
+
+Translate Toolkit 1.12.0-rc1
+****************************
+
+*Released on 11 July 2014*
+
+This release contains many improvements and bug fixes. While it contains many
+general improvements, it also specifically contains needed changes and
+optimizations for the upcoming `Pootle <http://pootle.translatehouse.org/>`_
+2.6.0 and `Virtaal <http://virtaal.translatehouse.org>`_ releases.
+
+It is just over 6 months since the last release and there are many improvements
+across the board.  A number of people contributed to this release and we've
+tried to credit them wherever possible (sorry if somehow we missed you).
+
+..
+  This is used for the email and other release notifications
+  Getting it and sharing it
+  =========================
+  * pip install translate-toolkit
+  * `Sourceforge download
+    <https://sourceforge.net/projects/translate/files/Translate%20Toolkit/1.12.0-rc1/>`_
+  * Please share this URL http://toolkit.translatehouse.org/download.html if
+    you'd like to tweet or post about the release.
+
+Highlighted improvements
+========================
+
+Major changes
+-------------
+
+- Properties and DTD formats fix a number of issues
+- Massive code cleanup looking forward Python 3 compatibility
+- Important changes in development process to ease testing
+
+
+Formats and Converters
+----------------------
+
+- Mozilla properties
+
+  - If a unit has an associated access key entry then these are combined into a
+    single unit
+  - Encoding errors are now reported early to prevent them being masked by
+    subsequent errors
+  - Leading and trailing spaces are escaped in order to avoid losing them when
+    using the converters
+  - The ``\uNN`` characters are now properly handled
+  - po2prop Now uses the source language accesskey if translation is missing
+  - Fixed conversion of successive Gaia plural units in prop2po
+
+- DTD
+
+  - The ``&amp;`` entity is automatically expanded when reading DTD files, and
+    escaped back when writing them
+  - Underscore character is now a valid character in entity names
+  - Nonentities at end of string are now correctly handled
+  - po2dtd:
+
+    - Now uses the source language accesskey if target accesskey is missing
+    - Doesn't remove stray ``&`` as they probably ``&amp;``
+
+- HTML
+
+  - The HTML5 ``figcaption`` tag is now localizable
+  - The ``title`` attribute is now localizable
+  - po2html now retains the untranslated attributes
+
+- Accesskeys
+
+  - Now accesskeys are combined using the correct case
+  - Added support for accesskey after ampersand and space
+
+- PHP
+
+  - Fall back to default dialect after adding every new unit
+  - Added support for empty array declaration when it is filled later
+
+- Android
+
+  - Added support for plurals
+  - Text is now properly escaped when using markup
+
+- TS
+
+  - The message id attribute is added to contextname
+
+
+Version Control improvements
+----------------------------
+
+- Added support for Subversion ``.svn`` directories
+
+
+Checks
+------
+
+- Added specific checks for LibreOffice
+
+
+Tools
+-----
+
+- The ``pocount`` tool has now a better counting algorithm for things that look
+  like XML
+
+
+Mozilla tooling fixes
+---------------------
+
+- Added support to check for bad accesskeys in .properties files
+- Now the Mozilla roundtrip script can be silently run
+- Added a new Gaia roundtrip script
+- The ``buildxpi`` ``--disable-compile-environment`` option has been restored,
+  resulting in huge speed improvements
+
+
+General
+-------
+
+- Extensive cleanup of setup script
+- Some bugfixes for placeables
+- Misc docs cleanups
+- Code cleanups:
+
+  - Applied tons of PEP8 and style guide cleanups
+  - Python 2.6 is our new minimum:
+
+    - Removed lots of code used to support old Python versions
+    - Dropped custom code in favor of Python standard libraries
+    - Updated codebase to use newer libraries
+    - Changed code to use newer syntax seeking Python 3 compatibility
+
+  - Updated some third party bundled software: CherryPy, BeautifulSoup4
+  - Added document to track licenses used by third party bundled code
+  - Removed TODO items. Some of them were moved to the bug tracker
+
+- Development process:
+
+  - Added a functional test framework
+  - Added dozens of new unit and functional tests
+  - Expanded the tasks performed in Travis: pep8, pytest-xdist, compile all
+    files, coveralls.io, ...
+
+
+...and loads of general code cleanups and of course many many bugfixes.
+
+
+Contributors
+------------
+
+This release was made possible by the following people:
+
+Dwayne Bailey, Jerome Leclanche, Leandro Regueiro, Khaled Hosny, Friedel Wolff,
+Heiki Ojasild, Julen Ruiz Aizpuru, damian.golda, Zolnai Tamás,
+Vladimir Rusinov, Stuart Prescott, Michal Čihař, Luca De Petrillo,
+Kevin KIN-FOO, Henrik Saari, Dominic König.
+
+And to all our bug finders and testers, a Very BIG Thank You.

@@ -1,0 +1,2056 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>tools &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="API" href="index.html" />
+    <link rel="prev" title="storage" href="storage.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">tools</a><ul>
+<li><a class="reference internal" href="#module-translate.tools.build_tmdb">build_tmdb</a></li>
+<li><a class="reference internal" href="#module-translate.tools.phppo2pypo">phppo2pypo</a></li>
+<li><a class="reference internal" href="#module-translate.tools.poclean">poclean</a></li>
+<li><a class="reference internal" href="#module-translate.tools.pocompile">pocompile</a></li>
+<li><a class="reference internal" href="#module-translate.tools.poconflicts">poconflicts</a></li>
+<li><a class="reference internal" href="#module-translate.tools.pocount">pocount</a></li>
+<li><a class="reference internal" href="#module-translate.tools.podebug">podebug</a></li>
+<li><a class="reference internal" href="#module-translate.tools.pogrep">pogrep</a></li>
+<li><a class="reference internal" href="#module-translate.tools.pomerge">pomerge</a></li>
+<li><a class="reference internal" href="#module-translate.tools.porestructure">porestructure</a></li>
+<li><a class="reference internal" href="#module-translate.tools.posegment">posegment</a></li>
+<li><a class="reference internal" href="#module-translate.tools.poswap">poswap</a></li>
+<li><a class="reference internal" href="#module-translate.tools.poterminology">poterminology</a></li>
+<li><a class="reference internal" href="#module-translate.tools.pretranslate">pretranslate</a></li>
+<li><a class="reference internal" href="#module-translate.tools.pydiff">pydiff</a></li>
+<li><a class="reference internal" href="#module-translate.tools.pypo2phppo">pypo2phppo</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="storage.html"
+         title="previous chapter">&laquo; storage</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="module-translate.tools">
+<span id="tools"></span><h1>tools<a class="headerlink" href="#module-translate.tools" title="Permalink to this headline">¶</a></h1>
+<p>Code to perform various operations, mostly on po files.</p>
+<div class="section" id="module-translate.tools.build_tmdb">
+<span id="build-tmdb"></span><h2>build_tmdb<a class="headerlink" href="#module-translate.tools.build_tmdb" title="Permalink to this headline">¶</a></h2>
+<p>Import units from translations files into tmdb.</p>
+</div>
+<div class="section" id="module-translate.tools.phppo2pypo">
+<span id="phppo2pypo"></span><h2>phppo2pypo<a class="headerlink" href="#module-translate.tools.phppo2pypo" title="Permalink to this headline">¶</a></h2>
+<p>Convert PHP format .po files to Python format .po files.</p>
+<dl class="function">
+<dt id="translate.tools.phppo2pypo.convertphp2py">
+<tt class="descclassname">translate.tools.phppo2pypo.</tt><tt class="descname">convertphp2py</tt><big>(</big><em>inputfile</em>, <em>outputfile</em>, <em>template=None</em><big>)</big><a class="headerlink" href="#translate.tools.phppo2pypo.convertphp2py" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts from PHP .po format to Python .po format</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inputfile</strong> &#8211; file handle of the source</li>
+<li><strong>outputfile</strong> &#8211; file handle to write to</li>
+<li><strong>template</strong> &#8211; unused</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.phppo2pypo.main">
+<tt class="descclassname">translate.tools.phppo2pypo.</tt><tt class="descname">main</tt><big>(</big><em>argv=None</em><big>)</big><a class="headerlink" href="#translate.tools.phppo2pypo.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts PHP .po files to Python .po files.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.poclean">
+<span id="poclean"></span><h2>poclean<a class="headerlink" href="#module-translate.tools.poclean" title="Permalink to this headline">¶</a></h2>
+<p>Produces a clean file from an unclean file (Trados/Wordfast) by stripping
+out the tw4win indicators.</p>
+<p>This does not convert an RTF file to PO/XLIFF, but produces the target file
+with only the target text in from a text version of the RTF.</p>
+<dl class="function">
+<dt id="translate.tools.poclean.cleanfile">
+<tt class="descclassname">translate.tools.poclean.</tt><tt class="descname">cleanfile</tt><big>(</big><em>thefile</em><big>)</big><a class="headerlink" href="#translate.tools.poclean.cleanfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>cleans the given file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.poclean.cleanunit">
+<tt class="descclassname">translate.tools.poclean.</tt><tt class="descname">cleanunit</tt><big>(</big><em>unit</em><big>)</big><a class="headerlink" href="#translate.tools.poclean.cleanunit" title="Permalink to this definition">¶</a></dt>
+<dd><p>cleans the targets in the given unit</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.poclean.runclean">
+<tt class="descclassname">translate.tools.poclean.</tt><tt class="descname">runclean</tt><big>(</big><em>inputfile</em>, <em>outputfile</em>, <em>templatefile</em><big>)</big><a class="headerlink" href="#translate.tools.poclean.runclean" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads in inputfile, cleans, writes to outputfile</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.pocompile">
+<span id="pocompile"></span><h2>pocompile<a class="headerlink" href="#module-translate.tools.pocompile" title="Permalink to this headline">¶</a></h2>
+<p>Compile XLIFF and Gettext PO localization files into Gettext MO (Machine Object) files.</p>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pocompile.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pocompile.html</a>
+for examples and usage instructions.</p>
+<dl class="function">
+<dt id="translate.tools.pocompile.convertmo">
+<tt class="descclassname">translate.tools.pocompile.</tt><tt class="descname">convertmo</tt><big>(</big><em>inputfile</em>, <em>outputfile</em>, <em>templatefile</em>, <em>includefuzzy=False</em><big>)</big><a class="headerlink" href="#translate.tools.pocompile.convertmo" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads in a base class derived inputfile, converts using pocompile, writes to outputfile</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.poconflicts">
+<span id="poconflicts"></span><h2>poconflicts<a class="headerlink" href="#module-translate.tools.poconflicts" title="Permalink to this headline">¶</a></h2>
+<p>Conflict finder for Gettext PO localization files.</p>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/poconflicts.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/poconflicts.html</a>
+for examples and usage instructions.</p>
+<dl class="class">
+<dt id="translate.tools.poconflicts.ConflictOptionParser">
+<em class="property">class </em><tt class="descclassname">translate.tools.poconflicts.</tt><tt class="descname">ConflictOptionParser</tt><big>(</big><em>formats</em>, <em>usetemplates=False</em>, <em>allowmissingtemplate=False</em>, <em>description=None</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>a specialized Option Parser for the conflict tool...</p>
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.add_option">
+<tt class="descname">add_option</tt><big>(</big><em>Option</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.add_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>add_option(opt_str, ..., kwarg=val, ...)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.buildconflictmap">
+<tt class="descname">buildconflictmap</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.buildconflictmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>work out which strings are conflicting</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.check_values">
+<tt class="descname">check_values</tt><big>(</big><em>values : Values, args : [string]</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.check_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>-&gt; (values : Values, args : [string])</p>
+<p>Check that the supplied option values and leftover arguments are
+valid.  Returns the option values and leftover arguments
+(possibly adjusted, possibly completely new &#8211; whatever you
+like).  Default implementation just returns the passed-in
+values; subclasses may override as desired.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.checkoutputsubdir">
+<tt class="descname">checkoutputsubdir</tt><big>(</big><em>options</em>, <em>subdir</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.checkoutputsubdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if subdir under options.output needs to be created,
+creates if neccessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.clean">
+<tt class="descname">clean</tt><big>(</big><em>string</em>, <em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the cleaned string that contains the text to be matched</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.define_option">
+<tt class="descname">define_option</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.define_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the given option, replacing an existing one of the same short
+name if neccessary...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declare that you are done with this OptionParser.  This cleans up
+reference cycles so the OptionParser (and all objects referenced by
+it) can be garbage-collected promptly.  After calling destroy(), the
+OptionParser is unusable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.disable_interspersed_args">
+<tt class="descname">disable_interspersed_args</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.disable_interspersed_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parsing to stop on the first non-option. Use this if
+you have a command processor which runs another command that
+has options of its own and you want to make sure these options
+don&#8217;t get confused.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.enable_interspersed_args">
+<tt class="descname">enable_interspersed_args</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.enable_interspersed_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parsing to not stop on the first non-option, allowing
+interspersing switches with command arguments. This is the
+default behavior. See also disable_interspersed_args() and the
+class documentation description of the attribute
+allow_interspersed_args.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.error">
+<tt class="descname">error</tt><big>(</big><em>msg : string</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a usage message incorporating &#8216;msg&#8217; to stderr and exit.
+If you override this in a subclass, it should not return &#8211; it
+should either exit or raise an exception.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.finalizetempoutputfile">
+<tt class="descname">finalizetempoutputfile</tt><big>(</big><em>options</em>, <em>outputfile</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.finalizetempoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the temp outputfile to its final destination.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.flatten">
+<tt class="descname">flatten</tt><big>(</big><em>text</em>, <em>joinchar</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>flattens text to just be words</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.format_manpage">
+<tt class="descname">format_manpage</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.format_manpage" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a formatted manpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.getformathelp">
+<tt class="descname">getformathelp</tt><big>(</big><em>formats</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.getformathelp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a nice help string for describing formats...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.getfullinputpath">
+<tt class="descname">getfullinputpath</tt><big>(</big><em>options</em>, <em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.getfullinputpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to an input file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.getfulloutputpath">
+<tt class="descname">getfulloutputpath</tt><big>(</big><em>options</em>, <em>outputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.getfulloutputpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to an output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.getfulltemplatepath">
+<tt class="descname">getfulltemplatepath</tt><big>(</big><em>options</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.getfulltemplatepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to a template file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.getoutputname">
+<tt class="descname">getoutputname</tt><big>(</big><em>options</em>, <em>inputname</em>, <em>outputformat</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.getoutputname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an output filename based on the input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.getoutputoptions">
+<tt class="descname">getoutputoptions</tt><big>(</big><em>options</em>, <em>inputpath</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.getoutputoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works out which output format and processor method to use...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.getpassthroughoptions">
+<tt class="descname">getpassthroughoptions</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.getpassthroughoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the options required to pass to the filtermethod...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.gettemplatename">
+<tt class="descname">gettemplatename</tt><big>(</big><em>options</em>, <em>inputname</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.gettemplatename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an output filename based on the input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.getusageman">
+<tt class="descname">getusageman</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.getusageman" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the usage string for the given option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.getusagestring">
+<tt class="descname">getusagestring</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.getusagestring" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the usage string for the given option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.initprogressbar">
+<tt class="descname">initprogressbar</tt><big>(</big><em>allfiles</em>, <em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.initprogressbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up a progress bar appropriate to the options and files.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.isexcluded">
+<tt class="descname">isexcluded</tt><big>(</big><em>options</em>, <em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.isexcluded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this path has been excluded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.isrecursive">
+<tt class="descname">isrecursive</tt><big>(</big><em>fileoption</em>, <em>filepurpose='input'</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.isrecursive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if fileoption is a recursive file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.isvalidinputname">
+<tt class="descname">isvalidinputname</tt><big>(</big><em>options</em>, <em>inputname</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.isvalidinputname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this is a valid input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.mkdir">
+<tt class="descname">mkdir</tt><big>(</big><em>parent</em>, <em>subdir</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.mkdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a subdirectory (recursively if neccessary).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.openinputfile">
+<tt class="descname">openinputfile</tt><big>(</big><em>options</em>, <em>fullinputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.openinputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the input file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.openoutputfile">
+<tt class="descname">openoutputfile</tt><big>(</big><em>options</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.openoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.opentemplatefile">
+<tt class="descname">opentemplatefile</tt><big>(</big><em>options</em>, <em>fulltemplatepath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.opentemplatefile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the template file (if required).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.opentempoutputfile">
+<tt class="descname">opentempoutputfile</tt><big>(</big><em>options</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.opentempoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a temporary output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.outputconflicts">
+<tt class="descname">outputconflicts</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.outputconflicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>saves the result of the conflict match</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.parse_args">
+<tt class="descname">parse_args</tt><big>(</big><em>args=None</em>, <em>values=None</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>parses the command line options, handling implicit input/output args</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.print_help">
+<tt class="descname">print_help</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.print_help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print an extended help message, listing all options and any
+help text provided with them, to &#8216;file&#8217; (default stdout).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.print_manpage">
+<tt class="descname">print_manpage</tt><big>(</big><em>file=None</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.print_manpage" title="Permalink to this definition">¶</a></dt>
+<dd><p>outputs a manpage for the program using the help information</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.print_usage">
+<tt class="descname">print_usage</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.print_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the usage message for the current program (self.usage) to
+&#8216;file&#8217; (default stdout).  Any occurrence of the string &#8220;%prog&#8221; in
+self.usage is replaced with the name of the current program
+(basename of sys.argv[0]).  Does nothing if self.usage is empty
+or not defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.print_version">
+<tt class="descname">print_version</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.print_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the version message for this program (self.version) to
+&#8216;file&#8217; (default stdout).  As with print_usage(), any occurrence
+of &#8220;%prog&#8221; in self.version is replaced by the current program&#8217;s
+name.  Does nothing if self.version is empty or undefined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.processfile">
+<tt class="descname">processfile</tt><big>(</big><em>fileprocessor</em>, <em>options</em>, <em>fullinputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.processfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>process an individual file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.recurseinputfilelist">
+<tt class="descname">recurseinputfilelist</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.recurseinputfilelist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a list of files, and find a common base directory for them.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.recurseinputfiles">
+<tt class="descname">recurseinputfiles</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.recurseinputfiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recurse through directories and return files to be processed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.recursiveprocess">
+<tt class="descname">recursiveprocess</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.recursiveprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>recurse through directories and process files</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.reportprogress">
+<tt class="descname">reportprogress</tt><big>(</big><em>filename</em>, <em>success</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.reportprogress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows that we are progressing...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>parses the arguments, and runs recursiveprocess with the resulting options</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.set_usage">
+<tt class="descname">set_usage</tt><big>(</big><em>usage=None</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.set_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>sets the usage string - if usage not given, uses getusagestring for each option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.seterrorleveloptions">
+<tt class="descname">seterrorleveloptions</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.seterrorleveloptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the errorlevel options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.setformats">
+<tt class="descname">setformats</tt><big>(</big><em>formats</em>, <em>usetemplates</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.setformats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the format options using the given format dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>formats</strong> (<em>Dictionary</em>) &#8211; <p>The dictionary <em>keys</em> should be:</p>
+<ul class="simple">
+<li>Single strings (or 1-tuples) containing an
+input format (if not <em>usetemplates</em>)</li>
+<li>Tuples containing an input format and
+template format (if <em>usetemplates</em>)</li>
+<li>Formats can be <em>None</em> to indicate what to do
+with standard input</li>
+</ul>
+<p>The dictionary <em>values</em> should be tuples of
+outputformat (string) and processor method.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.setmanpageoption">
+<tt class="descname">setmanpageoption</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.setmanpageoption" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a manpage option that allows the optionparser to generate a
+manpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.setprogressoptions">
+<tt class="descname">setprogressoptions</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.setprogressoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the progress options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.splitext">
+<tt class="descname">splitext</tt><big>(</big><em>pathname</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.splitext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits <em>pathname</em> into name and ext, and removes the extsep.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pathname</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; A file path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">root, ext</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.splitinputext">
+<tt class="descname">splitinputext</tt><big>(</big><em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.splitinputext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits an <em>inputpath</em> into name and extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.splittemplateext">
+<tt class="descname">splittemplateext</tt><big>(</big><em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.splittemplateext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a <em>templatepath</em> into name and extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.templateexists">
+<tt class="descname">templateexists</tt><big>(</big><em>options</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.templateexists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the given template exists...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poconflicts.ConflictOptionParser.warning">
+<tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>options=None</em>, <em>exc_info=None</em><big>)</big><a class="headerlink" href="#translate.tools.poconflicts.ConflictOptionParser.warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a warning message incorporating &#8216;msg&#8217; to stderr and exit.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.pocount">
+<span id="pocount"></span><h2>pocount<a class="headerlink" href="#module-translate.tools.pocount" title="Permalink to this headline">¶</a></h2>
+<p>Count strings and words for supported localization files.</p>
+<p>These include: XLIFF, TMX, Gettex PO and MO, Qt .ts and .qm, Wordfast TM, etc</p>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pocount.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pocount.html</a>
+for examples and usage instructions.</p>
+<dl class="function">
+<dt id="translate.tools.pocount.calcstats_old">
+<tt class="descclassname">translate.tools.pocount.</tt><tt class="descname">calcstats_old</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#translate.tools.pocount.calcstats_old" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the previous implementation of calcstats() and is left for
+comparison and debuging purposes.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pocount.summarize">
+<tt class="descclassname">translate.tools.pocount.</tt><tt class="descname">summarize</tt><big>(</big><em>title</em>, <em>stats</em>, <em>style=0</em>, <em>indent=8</em>, <em>incomplete_only=False</em><big>)</big><a class="headerlink" href="#translate.tools.pocount.summarize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print summary for a .po file in specified format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>title</strong> &#8211; name of .po file</li>
+<li><strong>stats</strong> &#8211; array with translation statistics for the file specified</li>
+<li><strong>indent</strong> &#8211; indentation of the 2nd column (length of longest filename)</li>
+<li><strong>incomplete_only</strong> (<em>Boolean</em>) &#8211; omit fully translated files</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Boolean</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1 if counting incomplete files (incomplete_only=True) and the
+file is completely translated, 0 otherwise</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.podebug">
+<span id="podebug"></span><h2>podebug<a class="headerlink" href="#module-translate.tools.podebug" title="Permalink to this headline">¶</a></h2>
+<p>Insert debug messages into XLIFF and Gettext PO localization files.</p>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/podebug.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/podebug.html</a>
+for examples and usage instructions.</p>
+<dl class="function">
+<dt id="translate.tools.podebug.convertpo">
+<tt class="descclassname">translate.tools.podebug.</tt><tt class="descname">convertpo</tt><big>(</big><em>inputfile</em>, <em>outputfile</em>, <em>templatefile</em>, <em>format=None</em>, <em>rewritestyle=None</em>, <em>ignoreoption=None</em><big>)</big><a class="headerlink" href="#translate.tools.podebug.convertpo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads in inputfile, changes it to have debug strings, writes to outputfile.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.pogrep">
+<span id="pogrep"></span><h2>pogrep<a class="headerlink" href="#module-translate.tools.pogrep" title="Permalink to this headline">¶</a></h2>
+<p>Grep XLIFF, Gettext PO and TMX localization files.</p>
+<p>Matches are output to snippet files of the same type which can then be reviewed
+and later merged using <a class="reference internal" href="../commands/pomerge.html"><em>pomerge</em></a>.</p>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pogrep.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pogrep.html</a>
+for examples and usage instructions.</p>
+<dl class="class">
+<dt id="translate.tools.pogrep.GrepMatch">
+<em class="property">class </em><tt class="descclassname">translate.tools.pogrep.</tt><tt class="descname">GrepMatch</tt><big>(</big><em>unit</em>, <em>part='target'</em>, <em>part_n=0</em>, <em>start=0</em>, <em>end=0</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepMatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just a small data structure that represents a search match.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="translate.tools.pogrep.GrepOptionParser">
+<em class="property">class </em><tt class="descclassname">translate.tools.pogrep.</tt><tt class="descname">GrepOptionParser</tt><big>(</big><em>formats</em>, <em>usetemplates=False</em>, <em>allowmissingtemplate=False</em>, <em>description=None</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>a specialized Option Parser for the grep tool...</p>
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.add_option">
+<tt class="descname">add_option</tt><big>(</big><em>Option</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.add_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>add_option(opt_str, ..., kwarg=val, ...)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.check_values">
+<tt class="descname">check_values</tt><big>(</big><em>values : Values, args : [string]</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.check_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>-&gt; (values : Values, args : [string])</p>
+<p>Check that the supplied option values and leftover arguments are
+valid.  Returns the option values and leftover arguments
+(possibly adjusted, possibly completely new &#8211; whatever you
+like).  Default implementation just returns the passed-in
+values; subclasses may override as desired.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.checkoutputsubdir">
+<tt class="descname">checkoutputsubdir</tt><big>(</big><em>options</em>, <em>subdir</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.checkoutputsubdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if subdir under options.output needs to be created,
+creates if neccessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.define_option">
+<tt class="descname">define_option</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.define_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the given option, replacing an existing one of the same short
+name if neccessary...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declare that you are done with this OptionParser.  This cleans up
+reference cycles so the OptionParser (and all objects referenced by
+it) can be garbage-collected promptly.  After calling destroy(), the
+OptionParser is unusable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.disable_interspersed_args">
+<tt class="descname">disable_interspersed_args</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.disable_interspersed_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parsing to stop on the first non-option. Use this if
+you have a command processor which runs another command that
+has options of its own and you want to make sure these options
+don&#8217;t get confused.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.enable_interspersed_args">
+<tt class="descname">enable_interspersed_args</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.enable_interspersed_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parsing to not stop on the first non-option, allowing
+interspersing switches with command arguments. This is the
+default behavior. See also disable_interspersed_args() and the
+class documentation description of the attribute
+allow_interspersed_args.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.error">
+<tt class="descname">error</tt><big>(</big><em>msg : string</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a usage message incorporating &#8216;msg&#8217; to stderr and exit.
+If you override this in a subclass, it should not return &#8211; it
+should either exit or raise an exception.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.finalizetempoutputfile">
+<tt class="descname">finalizetempoutputfile</tt><big>(</big><em>options</em>, <em>outputfile</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.finalizetempoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the temp outputfile to its final destination.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.format_manpage">
+<tt class="descname">format_manpage</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.format_manpage" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a formatted manpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.getformathelp">
+<tt class="descname">getformathelp</tt><big>(</big><em>formats</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.getformathelp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a nice help string for describing formats...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.getfullinputpath">
+<tt class="descname">getfullinputpath</tt><big>(</big><em>options</em>, <em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.getfullinputpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to an input file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.getfulloutputpath">
+<tt class="descname">getfulloutputpath</tt><big>(</big><em>options</em>, <em>outputpath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.getfulloutputpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to an output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.getfulltemplatepath">
+<tt class="descname">getfulltemplatepath</tt><big>(</big><em>options</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.getfulltemplatepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to a template file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.getoutputname">
+<tt class="descname">getoutputname</tt><big>(</big><em>options</em>, <em>inputname</em>, <em>outputformat</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.getoutputname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an output filename based on the input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.getoutputoptions">
+<tt class="descname">getoutputoptions</tt><big>(</big><em>options</em>, <em>inputpath</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.getoutputoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works out which output format and processor method to use...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.getpassthroughoptions">
+<tt class="descname">getpassthroughoptions</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.getpassthroughoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the options required to pass to the filtermethod...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.gettemplatename">
+<tt class="descname">gettemplatename</tt><big>(</big><em>options</em>, <em>inputname</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.gettemplatename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an output filename based on the input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.getusageman">
+<tt class="descname">getusageman</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.getusageman" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the usage string for the given option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.getusagestring">
+<tt class="descname">getusagestring</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.getusagestring" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the usage string for the given option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.initprogressbar">
+<tt class="descname">initprogressbar</tt><big>(</big><em>allfiles</em>, <em>options</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.initprogressbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up a progress bar appropriate to the options and files.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.isexcluded">
+<tt class="descname">isexcluded</tt><big>(</big><em>options</em>, <em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.isexcluded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this path has been excluded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.isrecursive">
+<tt class="descname">isrecursive</tt><big>(</big><em>fileoption</em>, <em>filepurpose='input'</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.isrecursive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if fileoption is a recursive file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.isvalidinputname">
+<tt class="descname">isvalidinputname</tt><big>(</big><em>options</em>, <em>inputname</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.isvalidinputname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this is a valid input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.mkdir">
+<tt class="descname">mkdir</tt><big>(</big><em>parent</em>, <em>subdir</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.mkdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a subdirectory (recursively if neccessary).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.openinputfile">
+<tt class="descname">openinputfile</tt><big>(</big><em>options</em>, <em>fullinputpath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.openinputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the input file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.openoutputfile">
+<tt class="descname">openoutputfile</tt><big>(</big><em>options</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.openoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.opentemplatefile">
+<tt class="descname">opentemplatefile</tt><big>(</big><em>options</em>, <em>fulltemplatepath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.opentemplatefile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the template file (if required).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.opentempoutputfile">
+<tt class="descname">opentempoutputfile</tt><big>(</big><em>options</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.opentempoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a temporary output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.parse_args">
+<tt class="descname">parse_args</tt><big>(</big><em>args=None</em>, <em>values=None</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>parses the command line options, handling implicit input/output args</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.print_help">
+<tt class="descname">print_help</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.print_help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print an extended help message, listing all options and any
+help text provided with them, to &#8216;file&#8217; (default stdout).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.print_manpage">
+<tt class="descname">print_manpage</tt><big>(</big><em>file=None</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.print_manpage" title="Permalink to this definition">¶</a></dt>
+<dd><p>outputs a manpage for the program using the help information</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.print_usage">
+<tt class="descname">print_usage</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.print_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the usage message for the current program (self.usage) to
+&#8216;file&#8217; (default stdout).  Any occurrence of the string &#8220;%prog&#8221; in
+self.usage is replaced with the name of the current program
+(basename of sys.argv[0]).  Does nothing if self.usage is empty
+or not defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.print_version">
+<tt class="descname">print_version</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.print_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the version message for this program (self.version) to
+&#8216;file&#8217; (default stdout).  As with print_usage(), any occurrence
+of &#8220;%prog&#8221; in self.version is replaced by the current program&#8217;s
+name.  Does nothing if self.version is empty or undefined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.processfile">
+<tt class="descname">processfile</tt><big>(</big><em>fileprocessor</em>, <em>options</em>, <em>fullinputpath</em>, <em>fulloutputpath</em>, <em>fulltemplatepath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.processfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process an individual file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.recurseinputfilelist">
+<tt class="descname">recurseinputfilelist</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.recurseinputfilelist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a list of files, and find a common base directory for them.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.recurseinputfiles">
+<tt class="descname">recurseinputfiles</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.recurseinputfiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recurse through directories and return files to be processed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.recursiveprocess">
+<tt class="descname">recursiveprocess</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.recursiveprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recurse through directories and process files.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.reportprogress">
+<tt class="descname">reportprogress</tt><big>(</big><em>filename</em>, <em>success</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.reportprogress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows that we are progressing...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>parses the arguments, and runs recursiveprocess with the resulting options</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.set_usage">
+<tt class="descname">set_usage</tt><big>(</big><em>usage=None</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.set_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>sets the usage string - if usage not given, uses getusagestring for each option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.seterrorleveloptions">
+<tt class="descname">seterrorleveloptions</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.seterrorleveloptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the errorlevel options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.setformats">
+<tt class="descname">setformats</tt><big>(</big><em>formats</em>, <em>usetemplates</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.setformats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the format options using the given format dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>formats</strong> (<em>Dictionary</em>) &#8211; <p>The dictionary <em>keys</em> should be:</p>
+<ul class="simple">
+<li>Single strings (or 1-tuples) containing an
+input format (if not <em>usetemplates</em>)</li>
+<li>Tuples containing an input format and
+template format (if <em>usetemplates</em>)</li>
+<li>Formats can be <em>None</em> to indicate what to do
+with standard input</li>
+</ul>
+<p>The dictionary <em>values</em> should be tuples of
+outputformat (string) and processor method.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.setmanpageoption">
+<tt class="descname">setmanpageoption</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.setmanpageoption" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a manpage option that allows the optionparser to generate a
+manpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.setprogressoptions">
+<tt class="descname">setprogressoptions</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.setprogressoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the progress options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.splitext">
+<tt class="descname">splitext</tt><big>(</big><em>pathname</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.splitext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits <em>pathname</em> into name and ext, and removes the extsep.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pathname</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; A file path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">root, ext</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.splitinputext">
+<tt class="descname">splitinputext</tt><big>(</big><em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.splitinputext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits an <em>inputpath</em> into name and extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.splittemplateext">
+<tt class="descname">splittemplateext</tt><big>(</big><em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.splittemplateext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a <em>templatepath</em> into name and extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.templateexists">
+<tt class="descname">templateexists</tt><big>(</big><em>options</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.templateexists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the given template exists...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pogrep.GrepOptionParser.warning">
+<tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>options=None</em>, <em>exc_info=None</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.GrepOptionParser.warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a warning message incorporating &#8216;msg&#8217; to stderr and exit.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pogrep.find_matches">
+<tt class="descclassname">translate.tools.pogrep.</tt><tt class="descname">find_matches</tt><big>(</big><em>unit</em>, <em>part</em>, <em>strings</em>, <em>re_search</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.find_matches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the GrepFilter objects where re_search matches in strings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pogrep.real_index">
+<tt class="descclassname">translate.tools.pogrep.</tt><tt class="descname">real_index</tt><big>(</big><em>string</em>, <em>nfc_index</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.real_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the real index in the unnormalized string that corresponds to
+the index nfc_index in the normalized string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pogrep.rungrep">
+<tt class="descclassname">translate.tools.pogrep.</tt><tt class="descname">rungrep</tt><big>(</big><em>inputfile</em>, <em>outputfile</em>, <em>templatefile</em>, <em>checkfilter</em><big>)</big><a class="headerlink" href="#translate.tools.pogrep.rungrep" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads in inputfile, filters using checkfilter, writes to outputfile</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.pomerge">
+<span id="pomerge"></span><h2>pomerge<a class="headerlink" href="#module-translate.tools.pomerge" title="Permalink to this headline">¶</a></h2>
+<p>Merges XLIFF and Gettext PO localization files.</p>
+<p>Snippet file produced by e.g. <a class="reference internal" href="../commands/pogrep.html"><em>pogrep</em></a> and updated by a
+translator can be merged back into the original files.</p>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pomerge.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pomerge.html</a>
+for examples and usage instructions.</p>
+<dl class="function">
+<dt id="translate.tools.pomerge.mergestores">
+<tt class="descclassname">translate.tools.pomerge.</tt><tt class="descname">mergestores</tt><big>(</big><em>store1</em>, <em>store2</em>, <em>mergeblanks</em>, <em>mergefuzzy</em>, <em>mergecomments</em><big>)</big><a class="headerlink" href="#translate.tools.pomerge.mergestores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take any new translations in store2 and write them into store1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pomerge.str2bool">
+<tt class="descclassname">translate.tools.pomerge.</tt><tt class="descname">str2bool</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.pomerge.str2bool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a string value to boolean</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>option</strong> (<em>String</em>) &#8211; yes, true, 1, no, false, 0</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.porestructure">
+<span id="porestructure"></span><h2>porestructure<a class="headerlink" href="#module-translate.tools.porestructure" title="Permalink to this headline">¶</a></h2>
+<p>Restructure Gettxt PO files produced by
+<a class="reference internal" href="../commands/poconflicts.html"><em>poconflicts</em></a> into the original directory tree
+for merging using <a class="reference internal" href="../commands/pomerge.html"><em>pomerge</em></a>.</p>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pomerge.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pomerge.html</a>
+for examples and usage instructions.</p>
+<dl class="class">
+<dt id="translate.tools.porestructure.SplitOptionParser">
+<em class="property">class </em><tt class="descclassname">translate.tools.porestructure.</tt><tt class="descname">SplitOptionParser</tt><big>(</big><em>formats</em>, <em>usetemplates=False</em>, <em>allowmissingtemplate=False</em>, <em>description=None</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>a specialized Option Parser for posplit</p>
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.add_option">
+<tt class="descname">add_option</tt><big>(</big><em>Option</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.add_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>add_option(opt_str, ..., kwarg=val, ...)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.check_values">
+<tt class="descname">check_values</tt><big>(</big><em>values : Values, args : [string]</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.check_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>-&gt; (values : Values, args : [string])</p>
+<p>Check that the supplied option values and leftover arguments are
+valid.  Returns the option values and leftover arguments
+(possibly adjusted, possibly completely new &#8211; whatever you
+like).  Default implementation just returns the passed-in
+values; subclasses may override as desired.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.checkoutputsubdir">
+<tt class="descname">checkoutputsubdir</tt><big>(</big><em>options</em>, <em>subdir</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.checkoutputsubdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if subdir under options.output needs to be created,
+creates if neccessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.define_option">
+<tt class="descname">define_option</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.define_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the given option, replacing an existing one of the same short
+name if neccessary...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declare that you are done with this OptionParser.  This cleans up
+reference cycles so the OptionParser (and all objects referenced by
+it) can be garbage-collected promptly.  After calling destroy(), the
+OptionParser is unusable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.disable_interspersed_args">
+<tt class="descname">disable_interspersed_args</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.disable_interspersed_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parsing to stop on the first non-option. Use this if
+you have a command processor which runs another command that
+has options of its own and you want to make sure these options
+don&#8217;t get confused.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.enable_interspersed_args">
+<tt class="descname">enable_interspersed_args</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.enable_interspersed_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parsing to not stop on the first non-option, allowing
+interspersing switches with command arguments. This is the
+default behavior. See also disable_interspersed_args() and the
+class documentation description of the attribute
+allow_interspersed_args.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.error">
+<tt class="descname">error</tt><big>(</big><em>msg : string</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a usage message incorporating &#8216;msg&#8217; to stderr and exit.
+If you override this in a subclass, it should not return &#8211; it
+should either exit or raise an exception.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.finalizetempoutputfile">
+<tt class="descname">finalizetempoutputfile</tt><big>(</big><em>options</em>, <em>outputfile</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.finalizetempoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the temp outputfile to its final destination.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.format_manpage">
+<tt class="descname">format_manpage</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.format_manpage" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a formatted manpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.getformathelp">
+<tt class="descname">getformathelp</tt><big>(</big><em>formats</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.getformathelp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a nice help string for describing formats...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.getfullinputpath">
+<tt class="descname">getfullinputpath</tt><big>(</big><em>options</em>, <em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.getfullinputpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to an input file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.getfulloutputpath">
+<tt class="descname">getfulloutputpath</tt><big>(</big><em>options</em>, <em>outputpath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.getfulloutputpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to an output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.getfulltemplatepath">
+<tt class="descname">getfulltemplatepath</tt><big>(</big><em>options</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.getfulltemplatepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to a template file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.getoutputname">
+<tt class="descname">getoutputname</tt><big>(</big><em>options</em>, <em>inputname</em>, <em>outputformat</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.getoutputname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an output filename based on the input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.getoutputoptions">
+<tt class="descname">getoutputoptions</tt><big>(</big><em>options</em>, <em>inputpath</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.getoutputoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works out which output format and processor method to use...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.getpassthroughoptions">
+<tt class="descname">getpassthroughoptions</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.getpassthroughoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the options required to pass to the filtermethod...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.gettemplatename">
+<tt class="descname">gettemplatename</tt><big>(</big><em>options</em>, <em>inputname</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.gettemplatename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an output filename based on the input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.getusageman">
+<tt class="descname">getusageman</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.getusageman" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the usage string for the given option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.getusagestring">
+<tt class="descname">getusagestring</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.getusagestring" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the usage string for the given option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.initprogressbar">
+<tt class="descname">initprogressbar</tt><big>(</big><em>allfiles</em>, <em>options</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.initprogressbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up a progress bar appropriate to the options and files.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.isexcluded">
+<tt class="descname">isexcluded</tt><big>(</big><em>options</em>, <em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.isexcluded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this path has been excluded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.isrecursive">
+<tt class="descname">isrecursive</tt><big>(</big><em>fileoption</em>, <em>filepurpose='input'</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.isrecursive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if fileoption is a recursive file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.isvalidinputname">
+<tt class="descname">isvalidinputname</tt><big>(</big><em>options</em>, <em>inputname</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.isvalidinputname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this is a valid input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.mkdir">
+<tt class="descname">mkdir</tt><big>(</big><em>parent</em>, <em>subdir</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.mkdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a subdirectory (recursively if neccessary).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.openinputfile">
+<tt class="descname">openinputfile</tt><big>(</big><em>options</em>, <em>fullinputpath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.openinputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the input file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.openoutputfile">
+<tt class="descname">openoutputfile</tt><big>(</big><em>options</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.openoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.opentemplatefile">
+<tt class="descname">opentemplatefile</tt><big>(</big><em>options</em>, <em>fulltemplatepath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.opentemplatefile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the template file (if required).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.opentempoutputfile">
+<tt class="descname">opentempoutputfile</tt><big>(</big><em>options</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.opentempoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a temporary output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.parse_args">
+<tt class="descname">parse_args</tt><big>(</big><em>args=None</em>, <em>values=None</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>parses the command line options, handling implicit input/output args</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.print_help">
+<tt class="descname">print_help</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.print_help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print an extended help message, listing all options and any
+help text provided with them, to &#8216;file&#8217; (default stdout).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.print_manpage">
+<tt class="descname">print_manpage</tt><big>(</big><em>file=None</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.print_manpage" title="Permalink to this definition">¶</a></dt>
+<dd><p>outputs a manpage for the program using the help information</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.print_usage">
+<tt class="descname">print_usage</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.print_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the usage message for the current program (self.usage) to
+&#8216;file&#8217; (default stdout).  Any occurrence of the string &#8220;%prog&#8221; in
+self.usage is replaced with the name of the current program
+(basename of sys.argv[0]).  Does nothing if self.usage is empty
+or not defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.print_version">
+<tt class="descname">print_version</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.print_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the version message for this program (self.version) to
+&#8216;file&#8217; (default stdout).  As with print_usage(), any occurrence
+of &#8220;%prog&#8221; in self.version is replaced by the current program&#8217;s
+name.  Does nothing if self.version is empty or undefined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.processfile">
+<tt class="descname">processfile</tt><big>(</big><em>options</em>, <em>fullinputpath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.processfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>process an individual file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.recurseinputfilelist">
+<tt class="descname">recurseinputfilelist</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.recurseinputfilelist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a list of files, and find a common base directory for them.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.recurseinputfiles">
+<tt class="descname">recurseinputfiles</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.recurseinputfiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recurse through directories and return files to be processed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.recursiveprocess">
+<tt class="descname">recursiveprocess</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.recursiveprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>recurse through directories and process files</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.reportprogress">
+<tt class="descname">reportprogress</tt><big>(</big><em>filename</em>, <em>success</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.reportprogress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows that we are progressing...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the arguments, and runs recursiveprocess with the resulting
+options...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.set_usage">
+<tt class="descname">set_usage</tt><big>(</big><em>usage=None</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.set_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>sets the usage string - if usage not given, uses getusagestring for each option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.seterrorleveloptions">
+<tt class="descname">seterrorleveloptions</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.seterrorleveloptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the errorlevel options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.setformats">
+<tt class="descname">setformats</tt><big>(</big><em>formats</em>, <em>usetemplates</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.setformats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the format options using the given format dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>formats</strong> (<em>Dictionary</em>) &#8211; <p>The dictionary <em>keys</em> should be:</p>
+<ul class="simple">
+<li>Single strings (or 1-tuples) containing an
+input format (if not <em>usetemplates</em>)</li>
+<li>Tuples containing an input format and
+template format (if <em>usetemplates</em>)</li>
+<li>Formats can be <em>None</em> to indicate what to do
+with standard input</li>
+</ul>
+<p>The dictionary <em>values</em> should be tuples of
+outputformat (string) and processor method.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.setmanpageoption">
+<tt class="descname">setmanpageoption</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.setmanpageoption" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a manpage option that allows the optionparser to generate a
+manpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.setprogressoptions">
+<tt class="descname">setprogressoptions</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.setprogressoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the progress options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.splitext">
+<tt class="descname">splitext</tt><big>(</big><em>pathname</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.splitext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits <em>pathname</em> into name and ext, and removes the extsep.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pathname</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; A file path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">root, ext</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.splitinputext">
+<tt class="descname">splitinputext</tt><big>(</big><em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.splitinputext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits an <em>inputpath</em> into name and extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.splittemplateext">
+<tt class="descname">splittemplateext</tt><big>(</big><em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.splittemplateext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a <em>templatepath</em> into name and extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.templateexists">
+<tt class="descname">templateexists</tt><big>(</big><em>options</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.templateexists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the given template exists...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.porestructure.SplitOptionParser.warning">
+<tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>options=None</em>, <em>exc_info=None</em><big>)</big><a class="headerlink" href="#translate.tools.porestructure.SplitOptionParser.warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a warning message incorporating &#8216;msg&#8217; to stderr and exit.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.posegment">
+<span id="posegment"></span><h2>posegment<a class="headerlink" href="#module-translate.tools.posegment" title="Permalink to this headline">¶</a></h2>
+<p>Segment Gettext PO, XLIFF and TMX localization files at the sentence level.</p>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/posegment.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/posegment.html</a>
+for examples and usage instructions.</p>
+<dl class="function">
+<dt id="translate.tools.posegment.segmentfile">
+<tt class="descclassname">translate.tools.posegment.</tt><tt class="descname">segmentfile</tt><big>(</big><em>inputfile</em>, <em>outputfile</em>, <em>templatefile</em>, <em>sourcelanguage='en'</em>, <em>targetlanguage=None</em>, <em>stripspaces=True</em>, <em>onlyaligned=False</em><big>)</big><a class="headerlink" href="#translate.tools.posegment.segmentfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads in inputfile, segments it then, writes to outputfile</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.poswap">
+<span id="poswap"></span><h2>poswap<a class="headerlink" href="#module-translate.tools.poswap" title="Permalink to this headline">¶</a></h2>
+<p>Builds a new translation file with the target of the input language as
+source language.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Ensure that the two po files correspond 100% to the same pot file before using
+this.</p>
+</div>
+<p>To translate Kurdish (ku) through French:</p>
+<div class="highlight-python"><div class="highlight"><pre>poswap -i fr/ -t ku -o fr-ku
+</pre></div>
+</div>
+<p>To convert the fr-ku files back to en-ku:</p>
+<div class="highlight-python"><div class="highlight"><pre>poswap --reverse -i fr/ -t fr-ku -o en-ku
+</pre></div>
+</div>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/poswap.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/poswap.html</a>
+for examples and usage instructions.</p>
+<dl class="function">
+<dt id="translate.tools.poswap.convertpo">
+<tt class="descclassname">translate.tools.poswap.</tt><tt class="descname">convertpo</tt><big>(</big><em>inputpofile</em>, <em>outputpotfile</em>, <em>template</em>, <em>reverse=False</em><big>)</big><a class="headerlink" href="#translate.tools.poswap.convertpo" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads in inputpofile, removes the header, writes to outputpotfile.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.poswap.swapdir">
+<tt class="descclassname">translate.tools.poswap.</tt><tt class="descname">swapdir</tt><big>(</big><em>store</em><big>)</big><a class="headerlink" href="#translate.tools.poswap.swapdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Swap the source and target of each unit.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.poterminology">
+<span id="poterminology"></span><h2>poterminology<a class="headerlink" href="#module-translate.tools.poterminology" title="Permalink to this headline">¶</a></h2>
+<p>Create a terminology file by reading a set of .po or .pot files to produce a pootle-terminology.pot.</p>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/poterminology.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/poterminology.html</a>
+for examples and usage instructions.</p>
+<dl class="class">
+<dt id="translate.tools.poterminology.TerminologyOptionParser">
+<em class="property">class </em><tt class="descclassname">translate.tools.poterminology.</tt><tt class="descname">TerminologyOptionParser</tt><big>(</big><em>formats</em>, <em>usetemplates=False</em>, <em>allowmissingtemplate=False</em>, <em>description=None</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>a specialized Option Parser for the terminology tool...</p>
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.add_option">
+<tt class="descname">add_option</tt><big>(</big><em>Option</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.add_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>add_option(opt_str, ..., kwarg=val, ...)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.check_values">
+<tt class="descname">check_values</tt><big>(</big><em>values : Values, args : [string]</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.check_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>-&gt; (values : Values, args : [string])</p>
+<p>Check that the supplied option values and leftover arguments are
+valid.  Returns the option values and leftover arguments
+(possibly adjusted, possibly completely new &#8211; whatever you
+like).  Default implementation just returns the passed-in
+values; subclasses may override as desired.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.checkoutputsubdir">
+<tt class="descname">checkoutputsubdir</tt><big>(</big><em>options</em>, <em>subdir</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.checkoutputsubdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if subdir under options.output needs to be created,
+creates if neccessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.define_option">
+<tt class="descname">define_option</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.define_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the given option, replacing an existing one of the same short
+name if neccessary...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declare that you are done with this OptionParser.  This cleans up
+reference cycles so the OptionParser (and all objects referenced by
+it) can be garbage-collected promptly.  After calling destroy(), the
+OptionParser is unusable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.disable_interspersed_args">
+<tt class="descname">disable_interspersed_args</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.disable_interspersed_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parsing to stop on the first non-option. Use this if
+you have a command processor which runs another command that
+has options of its own and you want to make sure these options
+don&#8217;t get confused.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.enable_interspersed_args">
+<tt class="descname">enable_interspersed_args</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.enable_interspersed_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parsing to not stop on the first non-option, allowing
+interspersing switches with command arguments. This is the
+default behavior. See also disable_interspersed_args() and the
+class documentation description of the attribute
+allow_interspersed_args.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.error">
+<tt class="descname">error</tt><big>(</big><em>msg : string</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a usage message incorporating &#8216;msg&#8217; to stderr and exit.
+If you override this in a subclass, it should not return &#8211; it
+should either exit or raise an exception.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.finalizetempoutputfile">
+<tt class="descname">finalizetempoutputfile</tt><big>(</big><em>options</em>, <em>outputfile</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.finalizetempoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the temp outputfile to its final destination.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.format_manpage">
+<tt class="descname">format_manpage</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.format_manpage" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a formatted manpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.getformathelp">
+<tt class="descname">getformathelp</tt><big>(</big><em>formats</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.getformathelp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a nice help string for describing formats...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.getfullinputpath">
+<tt class="descname">getfullinputpath</tt><big>(</big><em>options</em>, <em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.getfullinputpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to an input file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.getfulloutputpath">
+<tt class="descname">getfulloutputpath</tt><big>(</big><em>options</em>, <em>outputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.getfulloutputpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to an output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.getfulltemplatepath">
+<tt class="descname">getfulltemplatepath</tt><big>(</big><em>options</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.getfulltemplatepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to a template file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.getoutputname">
+<tt class="descname">getoutputname</tt><big>(</big><em>options</em>, <em>inputname</em>, <em>outputformat</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.getoutputname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an output filename based on the input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.getoutputoptions">
+<tt class="descname">getoutputoptions</tt><big>(</big><em>options</em>, <em>inputpath</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.getoutputoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works out which output format and processor method to use...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.getpassthroughoptions">
+<tt class="descname">getpassthroughoptions</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.getpassthroughoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the options required to pass to the filtermethod...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.gettemplatename">
+<tt class="descname">gettemplatename</tt><big>(</big><em>options</em>, <em>inputname</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.gettemplatename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an output filename based on the input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.getusageman">
+<tt class="descname">getusageman</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.getusageman" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the usage string for the given option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.getusagestring">
+<tt class="descname">getusagestring</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.getusagestring" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the usage string for the given option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.initprogressbar">
+<tt class="descname">initprogressbar</tt><big>(</big><em>allfiles</em>, <em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.initprogressbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up a progress bar appropriate to the options and files.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.isexcluded">
+<tt class="descname">isexcluded</tt><big>(</big><em>options</em>, <em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.isexcluded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this path has been excluded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.isrecursive">
+<tt class="descname">isrecursive</tt><big>(</big><em>fileoption</em>, <em>filepurpose='input'</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.isrecursive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if fileoption is a recursive file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.isvalidinputname">
+<tt class="descname">isvalidinputname</tt><big>(</big><em>options</em>, <em>inputname</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.isvalidinputname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this is a valid input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.mkdir">
+<tt class="descname">mkdir</tt><big>(</big><em>parent</em>, <em>subdir</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.mkdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a subdirectory (recursively if neccessary).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.openinputfile">
+<tt class="descname">openinputfile</tt><big>(</big><em>options</em>, <em>fullinputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.openinputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the input file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.openoutputfile">
+<tt class="descname">openoutputfile</tt><big>(</big><em>options</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.openoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.opentemplatefile">
+<tt class="descname">opentemplatefile</tt><big>(</big><em>options</em>, <em>fulltemplatepath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.opentemplatefile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the template file (if required).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.opentempoutputfile">
+<tt class="descname">opentempoutputfile</tt><big>(</big><em>options</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.opentempoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a temporary output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.outputterminology">
+<tt class="descname">outputterminology</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.outputterminology" title="Permalink to this definition">¶</a></dt>
+<dd><p>saves the generated terminology glossary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.parse_args">
+<tt class="descname">parse_args</tt><big>(</big><em>args=None</em>, <em>values=None</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>parses the command line options, handling implicit input/output args</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.print_help">
+<tt class="descname">print_help</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.print_help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print an extended help message, listing all options and any
+help text provided with them, to &#8216;file&#8217; (default stdout).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.print_manpage">
+<tt class="descname">print_manpage</tt><big>(</big><em>file=None</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.print_manpage" title="Permalink to this definition">¶</a></dt>
+<dd><p>outputs a manpage for the program using the help information</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.print_usage">
+<tt class="descname">print_usage</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.print_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the usage message for the current program (self.usage) to
+&#8216;file&#8217; (default stdout).  Any occurrence of the string &#8220;%prog&#8221; in
+self.usage is replaced with the name of the current program
+(basename of sys.argv[0]).  Does nothing if self.usage is empty
+or not defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.print_version">
+<tt class="descname">print_version</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.print_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the version message for this program (self.version) to
+&#8216;file&#8217; (default stdout).  As with print_usage(), any occurrence
+of &#8220;%prog&#8221; in self.version is replaced by the current program&#8217;s
+name.  Does nothing if self.version is empty or undefined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.processfile">
+<tt class="descname">processfile</tt><big>(</big><em>fileprocessor</em>, <em>options</em>, <em>fullinputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.processfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>process an individual file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.recurseinputfilelist">
+<tt class="descname">recurseinputfilelist</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.recurseinputfilelist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a list of files, and find a common base directory for them.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.recurseinputfiles">
+<tt class="descname">recurseinputfiles</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.recurseinputfiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recurse through directories and return files to be processed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.recursiveprocess">
+<tt class="descname">recursiveprocess</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.recursiveprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>recurse through directories and process files</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.reportprogress">
+<tt class="descname">reportprogress</tt><big>(</big><em>filename</em>, <em>success</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.reportprogress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows that we are progressing...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>parses the arguments, and runs recursiveprocess with the resulting options</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.set_usage">
+<tt class="descname">set_usage</tt><big>(</big><em>usage=None</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.set_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>sets the usage string - if usage not given, uses getusagestring for each option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.seterrorleveloptions">
+<tt class="descname">seterrorleveloptions</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.seterrorleveloptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the errorlevel options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.setformats">
+<tt class="descname">setformats</tt><big>(</big><em>formats</em>, <em>usetemplates</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.setformats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the format options using the given format dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>formats</strong> (<em>Dictionary</em>) &#8211; <p>The dictionary <em>keys</em> should be:</p>
+<ul class="simple">
+<li>Single strings (or 1-tuples) containing an
+input format (if not <em>usetemplates</em>)</li>
+<li>Tuples containing an input format and
+template format (if <em>usetemplates</em>)</li>
+<li>Formats can be <em>None</em> to indicate what to do
+with standard input</li>
+</ul>
+<p>The dictionary <em>values</em> should be tuples of
+outputformat (string) and processor method.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.setmanpageoption">
+<tt class="descname">setmanpageoption</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.setmanpageoption" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a manpage option that allows the optionparser to generate a
+manpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.setprogressoptions">
+<tt class="descname">setprogressoptions</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.setprogressoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the progress options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.splitext">
+<tt class="descname">splitext</tt><big>(</big><em>pathname</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.splitext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits <em>pathname</em> into name and ext, and removes the extsep.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pathname</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; A file path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">root, ext</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.splitinputext">
+<tt class="descname">splitinputext</tt><big>(</big><em>inputpath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.splitinputext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits an <em>inputpath</em> into name and extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.splittemplateext">
+<tt class="descname">splittemplateext</tt><big>(</big><em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.splittemplateext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a <em>templatepath</em> into name and extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.templateexists">
+<tt class="descname">templateexists</tt><big>(</big><em>options</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.templateexists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the given template exists...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.poterminology.TerminologyOptionParser.warning">
+<tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>options=None</em>, <em>exc_info=None</em><big>)</big><a class="headerlink" href="#translate.tools.poterminology.TerminologyOptionParser.warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a warning message incorporating &#8216;msg&#8217; to stderr and exit.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.pretranslate">
+<span id="pretranslate"></span><h2>pretranslate<a class="headerlink" href="#module-translate.tools.pretranslate" title="Permalink to this headline">¶</a></h2>
+<p>Fill localization files with suggested translations based on
+translation memory and existing translations.</p>
+<p>See: <a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pretranslate.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pretranslate.html</a>
+for examples and usage instructions.</p>
+<dl class="function">
+<dt id="translate.tools.pretranslate.match_fuzzy">
+<tt class="descclassname">translate.tools.pretranslate.</tt><tt class="descname">match_fuzzy</tt><big>(</big><em>input_unit</em>, <em>matchers</em><big>)</big><a class="headerlink" href="#translate.tools.pretranslate.match_fuzzy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a fuzzy match from a queue of matchers.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pretranslate.match_source">
+<tt class="descclassname">translate.tools.pretranslate.</tt><tt class="descname">match_source</tt><big>(</big><em>input_unit</em>, <em>template_store</em><big>)</big><a class="headerlink" href="#translate.tools.pretranslate.match_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a matching unit from a template. matching based on unit id</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pretranslate.match_template_id">
+<tt class="descclassname">translate.tools.pretranslate.</tt><tt class="descname">match_template_id</tt><big>(</big><em>input_unit</em>, <em>template_store</em><big>)</big><a class="headerlink" href="#translate.tools.pretranslate.match_template_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a matching unit from a template. matching based on unit id</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pretranslate.match_template_location">
+<tt class="descclassname">translate.tools.pretranslate.</tt><tt class="descname">match_template_location</tt><big>(</big><em>input_unit</em>, <em>template_store</em><big>)</big><a class="headerlink" href="#translate.tools.pretranslate.match_template_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a matching unit from a template. matching based on locations</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pretranslate.memory">
+<tt class="descclassname">translate.tools.pretranslate.</tt><tt class="descname">memory</tt><big>(</big><em>tmfiles</em>, <em>max_candidates=1</em>, <em>min_similarity=75</em>, <em>max_length=1000</em><big>)</big><a class="headerlink" href="#translate.tools.pretranslate.memory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the TM store to use. Only initialises on first call.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pretranslate.pretranslate_file">
+<tt class="descclassname">translate.tools.pretranslate.</tt><tt class="descname">pretranslate_file</tt><big>(</big><em>input_file</em>, <em>output_file</em>, <em>template_file</em>, <em>tm=None</em>, <em>min_similarity=75</em>, <em>fuzzymatching=True</em><big>)</big><a class="headerlink" href="#translate.tools.pretranslate.pretranslate_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretranslate any factory supported file with old translations and
+translation memory.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pretranslate.pretranslate_store">
+<tt class="descclassname">translate.tools.pretranslate.</tt><tt class="descname">pretranslate_store</tt><big>(</big><em>input_store</em>, <em>template_store</em>, <em>tm=None</em>, <em>min_similarity=75</em>, <em>fuzzymatching=True</em><big>)</big><a class="headerlink" href="#translate.tools.pretranslate.pretranslate_store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do the actual pretranslation of a whole store.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pretranslate.pretranslate_unit">
+<tt class="descclassname">translate.tools.pretranslate.</tt><tt class="descname">pretranslate_unit</tt><big>(</big><em>input_unit</em>, <em>template_store</em>, <em>matchers=None</em>, <em>mark_reused=False</em>, <em>merge_on='id'</em><big>)</big><a class="headerlink" href="#translate.tools.pretranslate.pretranslate_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretranslate a unit or return unchanged if no translation was found.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_unit</strong> &#8211; Unit that will be pretranslated.</li>
+<li><strong>template_store</strong> &#8211; Fill input unit with units matching in this store.</li>
+<li><strong>matchers</strong> &#8211; List of fuzzy <a class="reference internal" href="search.html#translate.search.match.matcher" title="translate.search.match.matcher"><tt class="xref py py-class docutils literal"><span class="pre">matcher</span></tt></a>
+objects.</li>
+<li><strong>mark_reused</strong> &#8211; Whether to mark old translations as reused or not.</li>
+<li><strong>merge_on</strong> &#8211; Where will the merge matching happen on.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.pydiff">
+<span id="pydiff"></span><h2>pydiff<a class="headerlink" href="#module-translate.tools.pydiff" title="Permalink to this headline">¶</a></h2>
+<p>diff tool like GNU diff, but lets you have special options
+that are useful in dealing with PO files</p>
+<dl class="class">
+<dt id="translate.tools.pydiff.DirDiffer">
+<em class="property">class </em><tt class="descclassname">translate.tools.pydiff.</tt><tt class="descname">DirDiffer</tt><big>(</big><em>fromdir</em>, <em>todir</em>, <em>options</em><big>)</big><a class="headerlink" href="#translate.tools.pydiff.DirDiffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>generates diffs between directories</p>
+<dl class="method">
+<dt id="translate.tools.pydiff.DirDiffer.isexcluded">
+<tt class="descname">isexcluded</tt><big>(</big><em>difffile</em><big>)</big><a class="headerlink" href="#translate.tools.pydiff.DirDiffer.isexcluded" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks if the given filename has been excluded from the diff</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pydiff.DirDiffer.writediff">
+<tt class="descname">writediff</tt><big>(</big><em>outfile</em><big>)</big><a class="headerlink" href="#translate.tools.pydiff.DirDiffer.writediff" title="Permalink to this definition">¶</a></dt>
+<dd><p>writes the actual diff to the given file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="translate.tools.pydiff.FileDiffer">
+<em class="property">class </em><tt class="descclassname">translate.tools.pydiff.</tt><tt class="descname">FileDiffer</tt><big>(</big><em>fromfile</em>, <em>tofile</em>, <em>options</em><big>)</big><a class="headerlink" href="#translate.tools.pydiff.FileDiffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>generates diffs between files</p>
+<dl class="method">
+<dt id="translate.tools.pydiff.FileDiffer.get_from_lines">
+<tt class="descname">get_from_lines</tt><big>(</big><em>group</em><big>)</big><a class="headerlink" href="#translate.tools.pydiff.FileDiffer.get_from_lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the lines referred to by group, from the fromfile</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pydiff.FileDiffer.get_to_lines">
+<tt class="descname">get_to_lines</tt><big>(</big><em>group</em><big>)</big><a class="headerlink" href="#translate.tools.pydiff.FileDiffer.get_to_lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the lines referred to by group, from the tofile</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pydiff.FileDiffer.unified_diff">
+<tt class="descname">unified_diff</tt><big>(</big><em>group</em><big>)</big><a class="headerlink" href="#translate.tools.pydiff.FileDiffer.unified_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>takes the group of opcodes and generates a unified diff line
+by line</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.tools.pydiff.FileDiffer.writediff">
+<tt class="descname">writediff</tt><big>(</big><em>outfile</em><big>)</big><a class="headerlink" href="#translate.tools.pydiff.FileDiffer.writediff" title="Permalink to this definition">¶</a></dt>
+<dd><p>writes the actual diff to the given file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pydiff.main">
+<tt class="descclassname">translate.tools.pydiff.</tt><tt class="descname">main</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.tools.pydiff.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>main program for pydiff</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.tools.pypo2phppo">
+<span id="pypo2phppo"></span><h2>pypo2phppo<a class="headerlink" href="#module-translate.tools.pypo2phppo" title="Permalink to this headline">¶</a></h2>
+<p>Convert Python format .po files to PHP format .po files.</p>
+<dl class="function">
+<dt id="translate.tools.pypo2phppo.convertpy2php">
+<tt class="descclassname">translate.tools.pypo2phppo.</tt><tt class="descname">convertpy2php</tt><big>(</big><em>inputfile</em>, <em>outputfile</em>, <em>template=None</em><big>)</big><a class="headerlink" href="#translate.tools.pypo2phppo.convertpy2php" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts from Python .po to PHP .po</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inputfile</strong> &#8211; file handle of the source</li>
+<li><strong>outputfile</strong> &#8211; file handle to write to</li>
+<li><strong>template</strong> &#8211; unused</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.tools.pypo2phppo.main">
+<tt class="descclassname">translate.tools.pypo2phppo.</tt><tt class="descname">main</tt><big>(</big><em>argv=None</em><big>)</big><a class="headerlink" href="#translate.tools.pypo2phppo.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts from Python .po to PHP .po</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

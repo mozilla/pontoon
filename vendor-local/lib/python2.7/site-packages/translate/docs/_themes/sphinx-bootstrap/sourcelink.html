@@ -1,0 +1,7 @@
+{%- if show_source and has_source and sourcename %}
+  <li><a href="{{ pathto('_sources/' + sourcename, true)|e }}"
+	  rel="nofollow"><i class="icon-file"></i> {{ _('Source') }}</a></li>
+{%- endif %}
+{%- if READTHEDOCS %}
+  <li><a href="https://github.com/{{ github_user }}/{{ github_repo }}/edit/{{ github_version }}{{ conf_py_path }}{{ pagename }}.rst"><i class="icon-pencil"></i> {{ _('Edit') }}</a></li>
+{%- endif %}

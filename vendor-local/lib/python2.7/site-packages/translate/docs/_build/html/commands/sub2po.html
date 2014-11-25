@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>sub2po &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Converters" href="index.html" />
+    <link rel="next" title="txt2po" href="txt2po.html" />
+    <link rel="prev" title="php2po" href="php2po.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">sub2po</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#translating">Translating</a></li>
+<li><a class="reference internal" href="#bugs">Bugs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="php2po.html"
+         title="previous chapter">&laquo; php2po</a></li>
+  <li><a href="txt2po.html"
+         title="next chapter">txt2po &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="po2sub">
+<span id="sub2po"></span><span id="id1"></span><h1>sub2po<a class="headerlink" href="#po2sub" title="Permalink to this headline">¶</a></h1>
+<p>sub2po allows you to use the same principles of PO files with
+<a class="reference internal" href="../formats/subtitles.html"><em>Subtitles</em></a>. In PO only items that change are marked fuzzy and
+only new items need to be translated, unchanged items remain unchanged for the
+translation.</p>
+<div class="section" id="usage">
+<span id="sub2po-usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>sub2po [options] &lt;foo.srt&gt; &lt;foo.po&gt;
+po2sub [options] [-t &lt;foo.srt&gt;] &lt;XX.po&gt; &lt;foo-XX.srt&gt;
+</pre></div>
+</div>
+<p>Where:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>foo.srt</td>
+<td>is the input subtitle file</td>
+</tr>
+<tr class="row-even"><td>foo.po</td>
+<td>is an empty PO file that may be translated</td>
+</tr>
+<tr class="row-odd"><td>XX.po</td>
+<td>is a PO file translated into the XX language</td>
+</tr>
+<tr class="row-even"><td>foo-XX.srt</td>
+<td>is the foo.srt file translated into language XX</td>
+</tr>
+</tbody>
+</table>
+<p>Options (sub2po):</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--version</span></kbd></td>
+<td>show program&#8217;s version number and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--manpage</span></kbd></td>
+<td>output a manpage based on the help</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--progress=<var>PROGRESS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show progress as: <a class="reference internal" href="option_progress.html"><em>dots, none, bar, names, verbose</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--errorlevel=<var>ERRORLEVEL</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show errorlevel as: <a class="reference internal" href="option_errorlevel.html"><em>none, message, exception,
+traceback</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i<var>INPUT</var></span>, <span class="option">--input=<var>INPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read from INPUT in .srt format</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-x<var>EXCLUDE</var></span>, <span class="option">--exclude=<var>EXCLUDE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>exclude names matching EXCLUDE from input paths</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o<var>OUTPUT</var></span>, <span class="option">--output=<var>OUTPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>write to OUTPUT in po, pot formats</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-S</span>, <span class="option">--timestamp</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>skip conversion if the output file has newer timestamp</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-P</span>, <span class="option">--pot</span></kbd></td>
+<td>output PO Templates (.pot) rather than PO files (.po)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--duplicates=<var>DUPLICATESTYLE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>what to do with duplicate strings (identical source
+text): <a class="reference internal" href="option_duplicates.html"><em>merge, msgctxt</em></a>
+(default: &#8216;msgctxt&#8217;)</td></tr>
+</tbody>
+</table>
+<p>Options (po2sub):</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--version</span></kbd></td>
+<td>show program&#8217;s version number and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--manpage</span></kbd></td>
+<td>output a manpage based on the help</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--progress=<var>PROGRESS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show progress as: <a class="reference internal" href="option_progress.html"><em>dots, none, bar, names, verbose</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--errorlevel=<var>ERRORLEVEL</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show errorlevel as: <a class="reference internal" href="option_errorlevel.html"><em>none, message, exception,
+traceback</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i<var>INPUT</var></span>, <span class="option">--input=<var>INPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read from INPUT in po, pot formats</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-x<var>EXCLUDE</var></span>, <span class="option">--exclude=<var>EXCLUDE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>exclude names matching EXCLUDE from input paths</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o<var>OUTPUT</var></span>, <span class="option">--output=<var>OUTPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>write to OUTPUT in srt format</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t<var>TEMPLATE</var></span>, <span class="option">--template=<var>TEMPLATE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read from TEMPLATE in txt format</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-S</span>, <span class="option">--timestamp</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>skip conversion if the output file has newer timestamp</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--threshold=<var>PERCENT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>only convert files where the translation completion is above PERCENT</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--fuzzy</span></kbd></td>
+<td>use translations marked fuzzy</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--nofuzzy</span></kbd></td>
+<td>don&#8217;t use translations marked fuzzy (default)</td></tr>
+</tbody>
+</table>
+<div class="section" id="examples">
+<span id="sub2po-examples"></span><h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<p>To create the POT files is simple:</p>
+<div class="highlight-python"><div class="highlight"><pre>sub2po -P SUBTITLE_FILE subtitles.pot
+</pre></div>
+</div>
+<p>A translator would copy the POT file to their own PO file and then create
+translations of the entries. If you wish to create a PO file and not a POT file
+then leave off the <tt class="docutils literal"><span class="pre">-P</span></tt> option.</p>
+<p>To convert back:</p>
+<div class="highlight-python"><div class="highlight"><pre>po2sub -t SUBTITLE_FILE   subtitles-XX.po  subtitles-XX.srt
+</pre></div>
+</div>
+</div>
+<div class="section" id="translating">
+<span id="sub2po-translating"></span><h3>Translating<a class="headerlink" href="#translating" title="Permalink to this headline">¶</a></h3>
+<p>Translate as normal. However, see the issues mentioned at
+<a class="reference internal" href="../formats/subtitles.html"><em>Subtitles</em></a>.</p>
+</div>
+<div class="section" id="bugs">
+<span id="sub2po-bugs"></span><h3>Bugs<a class="headerlink" href="#bugs" title="Permalink to this headline">¶</a></h3>
+<p>There might be some issues with encodings, since the srt files don&#8217;t specify
+them. We assume files to be encoded in UTF-8, so a conversion should solve this
+easily. Note that most of the handling of the srt files come from gaupol.</p>
+</div>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

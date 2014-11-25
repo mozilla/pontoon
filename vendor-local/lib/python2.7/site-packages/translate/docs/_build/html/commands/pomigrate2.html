@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pomigrate2 &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Converters" href="index.html" />
+    <link rel="next" title="popuretext" href="popuretext.html" />
+    <link rel="prev" title="pocommentclean" href="pocommentclean.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">pomigrate2</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#operation">Operation</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="pocommentclean.html"
+         title="previous chapter">&laquo; pocommentclean</a></li>
+  <li><a href="popuretext.html"
+         title="next chapter">popuretext &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="pomigrate2">
+<span id="id1"></span><h1>pomigrate2<a class="headerlink" href="#pomigrate2" title="Permalink to this headline">¶</a></h1>
+<p>pomigrate2 aims to move an existing translation to a new version based on
+updated PO Template files automatically without user intervention.  Therefore
+it is ideal for when you are migrating many languages or migrating from related
+but divergent products e.g.  Mozilla to Firefox.</p>
+<div class="section" id="prerequisites">
+<span id="pomigrate2-prerequisites"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>GNU Gettext:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://linux.die.net/man/1/msginit">msginit</a></li>
+<li><a class="reference external" href="http://linux.die.net/man/1/msgcat">msgcat</a></li>
+<li><a class="reference external" href="http://linux.die.net/man/1/msgmerge">msgmerge</a></li>
+</ul>
+</div>
+<div class="section" id="usage">
+<span id="pomigrate2-usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>pomigrate [options] &lt;from&gt; &lt;to&gt; &lt;new templates&gt;
+</pre></div>
+</div>
+<p>Where:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>from</td>
+<td>is a directory of existing PO files</td>
+</tr>
+<tr class="row-even"><td>to</td>
+<td>is the directory where the migrated PO files will be stored</td>
+</tr>
+<tr class="row-odd"><td>new templates</td>
+<td>this is the directory that contains the PO Template files</td>
+</tr>
+</tbody>
+</table>
+<p>Options:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-F</span>, <span class="option">--use-fuzzy-matching</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>use fuzzy algorithms when merging to attempt to match strings</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-C</span>, <span class="option">--use-compendium</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>create and use a compendium built from the migrating files</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-C</span>, <span class="option">--use-compendium=<var>COMPENDIUM</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>use an external compendium during the migration</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--no-wrap</span></kbd></td>
+<td>do not wrap long lines</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--locale</span></kbd></td>
+<td>set locale for newly born files</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-q</span>, <span class="option">--quiet</span></kbd></td>
+<td>suppress most output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-p</span>, <span class="option">--pot2po</span></kbd></td>
+<td>use pot2po instead of msgmerge to migrate</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="operation">
+<span id="pomigrate2-operation"></span><h2>Operation<a class="headerlink" href="#operation" title="Permalink to this headline">¶</a></h2>
+<p>pomigrate2 makes use of the Gettext tools msgmerge or Translate Toolkit&#8217;s
+<a class="reference internal" href="pot2po.html"><em>pot2po</em></a> to perform its merging tasks.</p>
+<p>It firstly finds all files with the same name and location in the &lt;from&gt;
+directory as in the &lt;template&gt; directory and copies these to the &lt;to&gt;
+directory.  If there is no file in the &lt;from&gt; directory to match one needed by
+the &lt;template&gt; directory then it will msgcat all files in the &lt;from&gt; directory
+with the same name and copy them to the correct destination in the &lt;to&gt;
+directory.  If all of that fails then msginit is used to initialise any missing
+PO files.</p>
+<p>Lastly all the files in &lt;to&gt; are merged using msgmerge or pot2po.  This process
+updates the files to match the layout and messages in &lt;templates&gt;.  Optionally,
+by using <tt class="docutils literal"><span class="pre">--use-compendium</span></tt>, a compendium of all the translations in
+&lt;from&gt; can be created to be used in the final merge process.</p>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>csv2tbx &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Converters" href="index.html" />
+    <link rel="next" title="html2po" href="html2po.html" />
+    <link rel="prev" title="csv2po" href="csv2po.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">csv2tbx</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#csv-file-layout">CSV file layout</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#two-column-csv">Two column CSV</a></li>
+<li><a class="reference internal" href="#notes">Notes</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="csv2po.html"
+         title="previous chapter">&laquo; csv2po</a></li>
+  <li><a href="html2po.html"
+         title="next chapter">html2po &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="csv2tbx">
+<span id="id1"></span><h1>csv2tbx<a class="headerlink" href="#csv2tbx" title="Permalink to this headline">¶</a></h1>
+<p>Convert between CSV (Comma Separated Value) files and the <a class="reference internal" href="../formats/tbx.html"><em>TBX</em></a>
+format for terminology exchange.</p>
+<div class="section" id="usage">
+<span id="csv2tbx-usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>csv2tbx [--charset=CHARSET] [--columnorder=COLUMNORDER] &lt;csv&gt; &lt;tbx&gt;
+</pre></div>
+</div>
+<p>Where:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>&lt;csv&gt;</td>
+<td>is a CSV file</td>
+</tr>
+<tr class="row-even"><td>&lt;tbx&gt;</td>
+<td>is the target TBX file</td>
+</tr>
+</tbody>
+</table>
+<p>Options (csv2tbx):</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--version</span></kbd></td>
+<td>show program&#8217;s version number and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--manpage</span></kbd></td>
+<td>output a manpage based on the help</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--progress=<var>PROGRESS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show progress as: <a class="reference internal" href="option_progress.html"><em>dots, none, bar, names, verbose</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--errorlevel=<var>ERRORLEVEL</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show errorlevel as: <a class="reference internal" href="option_errorlevel.html"><em>none, message, exception,
+traceback</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i<var>INPUT</var></span>, <span class="option">--input=<var>INPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read from INPUT in csv format</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-x<var>EXCLUDE</var></span>, <span class="option">--exclude=<var>EXCLUDE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>exclude names matching EXCLUDE from input paths</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o<var>OUTPUT</var></span>, <span class="option">--output=<var>OUTPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>write to OUTPUT in tbx format</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-S</span>, <span class="option">--timestamp</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>skip conversion if the output file has newer timestamp</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--charset=<var>CHARSET</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>set charset to decode from csv files</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--columnorder=<var>COLUMNORDER</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>specify the order and position of columns (comment,source,target)</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="csv-file-layout">
+<span id="csv2tbx-csv-file-layout"></span><h2>CSV file layout<a class="headerlink" href="#csv-file-layout" title="Permalink to this headline">¶</a></h2>
+<p>The CSV file is expected to have three columns (separated by commas, not other
+characters like semicolons), of which the default layout is</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="23%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Data</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>A</td>
+<td>Comment</td>
+<td>All the PO #: location comments.  These are not
+used in the TBX files, and can be left empty,
+but could be generated by <a class="reference internal" href="csv2po.html"><em>po2csv</em></a></td>
+</tr>
+<tr class="row-odd"><td>B</td>
+<td>Source Language</td>
+<td>The msgid or source string</td>
+</tr>
+<tr class="row-even"><td>C</td>
+<td>Target Language</td>
+<td>The msgstr or target language</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="examples">
+<span id="csv2tbx-examples"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>These examples demonstrate the use of csv2tbx:</p>
+<div class="highlight-python"><div class="highlight"><pre>csv2tbx terms.csv terms.tbx
+</pre></div>
+</div>
+<p>to simply convert <em>terms.csv</em> to <em>terms.tbx</em>.</p>
+<p>To convert a directory recursively to another directory with the same structure
+of files:</p>
+<div class="highlight-python"><div class="highlight"><pre>csv2tbx csv-dir tbx-target-dir
+</pre></div>
+</div>
+<p>This will convert CSV files in <em>csv-dir</em> to TBX files placed in
+<em>tbx-target-dir</em>.:</p>
+<div class="highlight-python"><div class="highlight"><pre>csv2tbx --charset=windows-1250 csv tbx
+</pre></div>
+</div>
+<p>Users working on Windows will often return files in encoding other the Unicode
+based encodings.  In this case we convert CSV files found in <em>csv</em> from
+<em>windows-1250</em> to UTF-8 and place the correctly encoded files in <em>tbx</em>. Note
+that UTF-8 is the only available destination encoding.</p>
+</div>
+<div class="section" id="two-column-csv">
+<span id="csv2tbx-two-column-csv"></span><h2>Two column CSV<a class="headerlink" href="#two-column-csv" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>csv2tbx --columnorder=source,target foo.csv foo.tbx
+</pre></div>
+</div>
+</div>
+<div class="section" id="notes">
+<span id="csv2tbx-notes"></span><h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p>For conformance to the standards and to see which features are implemented, see
+<a class="reference internal" href="../formats/csv.html"><em>CSV</em></a> and <a class="reference internal" href="../formats/tbx.html"><em>TBX</em></a>.</p>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

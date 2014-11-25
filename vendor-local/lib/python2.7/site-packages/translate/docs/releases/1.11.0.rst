@@ -1,0 +1,149 @@
+.. These notes are used in:
+   1. Our email announcements
+   2. The Translate Tools download page at toolkit.translatehouse.org
+   3. Sourceforge download page in
+      http://sourceforge.net/projects/translate/files/Translate%20Toolkit/1.11.0-rc1/README.rst/download
+
+Translate Toolkit 1.11.0
+************************
+
+*Released on 22 January 2014*
+
+This release contains many improvements and bug fixes. While it contains many
+general improvements, it also specifically contains needed changes and
+optimizations for the upcoming `Pootle <http://pootle.translatehouse.org/>`_
+2.5.1 and `Virtaal <http://virtaal.translatehouse.org>`_ releases.
+
+It is just over a ten months since the last release and there are many
+improvements across the board.  A number of people contributed to this release
+and we've tried to credit them wherever possible (sorry if somehow we missed
+you).
+
+..
+  This is used for the email and other release notifications
+  Getting it and sharing it
+  =========================
+  * pip install translate-toolkit
+  * `Sourceforge download
+    <https://sourceforge.net/projects/translate/files/Translate%20Toolkit/1.11.0-rc1/>`_
+  * Please share this URL http://toolkit.translatehouse.org/download.html if
+    you'd like to tweet or post about the release.
+
+Highlighted improvements
+========================
+
+1.11.0 vs 1.11.0-rc1
+--------------------
+Changes since 1.11.0 RC1:
+
+- Improve handling of escapes in wrapping
+- Handle a broken version of python-Levenshtein 
+- Output HTML source in po2html when a unit is fuzzy (:issue:`3145`)
+
+Major changes
+-------------
+- The PO format now matches Gettext more closely
+- PHP format adds a number of new features
+- Support for Python 2.5 has been dropped
+
+Formats and Converters
+----------------------
+- Gettext PO:
+
+  - cPO now handles fuzzy obsolete messages correctly
+  - Line wrapping improvement allow PO files to more closely match Gettext
+  - Optimization to increase performance
+
+- PHP:
+
+  - Warn about duplicate entries
+  - Allow blank spaces in array declaration (:issue:`2646`)
+  - Support nested arrays (:issue:`2240`)
+
+- XLIFF:
+
+  - Correctly parse XLIFF 1.2
+
+- Properties
+  
+  - Blank source text is now always translated
+  - Fuzzy units are discarded with --remove-untranslated
+  - prop2po no longer drops entries that are translated the same as the source
+
+- TMX:
+
+  - po2tmx support comments
+
+- Android:
+
+  - Detect untranslatable resource strings
+  - Various format improvements
+
+- New conversion options:
+
+  - :option:`--timestamp` -- skip conversion if the output file has a newer
+    timestamp (Makefile-alike)
+  - :option:`--threshold` -- in po2* converters this allows you to specify a
+    percentage complete threshold.  If the PO files passes this theshold then
+    the file is output (:issue:`2998`)
+  - :option:`--removeuntranslated` -- Extend this option to po2dtd and thus
+    po2moz -- don't output untranslated text (:issue:`1718`)
+
+Language specific fixes
+-----------------------
+- The toolkit now supports: Sakha, N'ko, Turkish, improvements for Bengali &
+  Hindi
+- Pootle special characters are now stored on Toolkit and available for other
+  tools to use
+- Rules for language ``ab`` are now available for language ``ab_CD``
+
+Checks
+------
+- Spelling test improvements including speed and optimization
+- Reduce false positive for the filepath test in cases of self closing tags
+  e.g. ``<br />``
+- Lowered the accelerator check severity to reduce false positive impact
+
+Mozilla tooling fixes
+---------------------
+- Better decoding of some characters in DTD e.g » and &x0022 (")
+- .lang -- Improved support for untranslated entries
+- ``buildxpi``:
+
+  - Can now build multiple languages at once (:issue:`2999`)
+  - Set a max product version to allow the language pack to continue to work
+    once the browser version has moved out of Aurora channel
+
+- Dropped native XPI building support (untested and no longer used)
+- Add Mozilla plural formulas, in time we'll handle Mozilla plurals correctly
+
+General
+-------
+- Dropped support for Python 2.5 since it is no longer supported by the Python
+  Foundation. Also sticking to it was preventing us from using features that
+  are not supported on Python 2.5 but they are on later versions.
+- Dropped psyco support -- it is no longer maintained
+- Use logging throught instead of ``sys.stderr``
+- Lots of cleanups on docs: TBX, PHP, added Android and JSON docs
+- Use requirements files for documenting all requirements and make it easy to
+  install Translate Toolkit using ``pip``
+- Added some functional tests
+- Improve searching to find words with hyphens
+- Choose the closest repo in nested VCS
+- Test suite down to zero failing tests
+
+...and loads of internal changes to improve maintainability, remove unused
+imports, remove unused code and general code cleanups, some changes to ensure
+future Python 3 portability and of course many many bugfixes.
+
+
+Contributors
+------------
+This release was made possible by the following people:
+
+Dwayne Bailey, Leandro Regueiro, Alexander Dupuy, Friedel Wolff, Khaled Hosny,
+Michal Čihař, Jordi Mas, Stuart Prescott, Trung Ngo, Ronald Sterckx, Rail
+Aliev, Michael Schlenker, Martin-Zack Mekkaoui, Iskren Chernev, Luiz Fernando
+Ranghetti & Christian Hitz
+
+And to all our bug finders and testers, a Very BIG Thank You.

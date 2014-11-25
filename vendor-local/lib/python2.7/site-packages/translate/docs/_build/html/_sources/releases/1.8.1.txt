@@ -1,0 +1,74 @@
+Translate Toolkit 1.8.1
+***********************
+
+*Released on 19 Novermber 2010*
+
+Today the Translate team released version 1.8.1 of the Translate Toolkit.  The
+Translate Toolkit contains many useful tools for translation, management, and
+quality control. It is the technology platform for Pootle, Virtaal, and other
+software.
+
+This release contains many improvements and bug fixes. It is a recommended
+upgrade for users of Pootle and Virtaal. There were over 200 commits since
+version 1.8.0.
+
+This work was made possible by volunteers and our funders:
+ - ANLoc_, funded by IDRC
+
+
+Highlighted improvements
+========================
+
+File formats:
+
+- A rewrite and major improvement of the html format and html2po_ converter
+- New JSON format introduced
+- Support for `Universal Terminology Exchange (UTX)`_ format
+- Support for `Java properties`_ files encoded in UTF-8
+- Improvements to CSV_ format, and improved compatibility with Excel exports
+- Bug fixes to `Qt .ts`_
+- Support for XLIFF_'s state attributes (pocount_ now lists detailed state
+  statistics)
+- Minor bug fixes for PHP_ format
+
+Languages and quality checks:
+
+- Support for Persian quotations
+- Major performance improvements to quality checks
+
+Pootle will regenerate all statistics with the new Translate Toolkit installed.
+Read about the `quality checks`_.
+
+Other improvements:
+
+- Improvements to stability of Lucene text indexing (affecting Pootle)
+- Parameter for po2prop_ to ignore untranslated strings
+- Many improvements to pot2po_ including Qt ts support, improved handling of
+  extra XML namespaces in XLIFF, and performance improvements.
+
+Further resources:
+
+* `Full feature list`_
+* Download_
+* Bugs_
+
+
+Happy translating!
+
+The Translate team
+
+.. _ANLoc: http://africanlocalisation.net/
+.. _html2po: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/html2po.html
+.. _Universal Terminology Exchange (UTX): http://docs.translatehouse.org/projects/translate-toolkit/en/latest/formats/utx.html
+.. _Java properties: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/formats/properties.html
+.. _CSV: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/formats/csv.html
+.. _Qt .ts: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/formats/ts.html
+.. _XLIFF: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/formats/xliff.html
+.. _pocount: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pocount.html
+.. _PHP: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/formats/php.html
+.. _quality checks: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pofilter_tests.html
+.. _po2prop: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/prop2po.html
+.. _pot2po: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pot2po.html
+.. _Full feature list: http://docs.translatehouse.org/projects/translate-toolkit/en/latest/features.html
+.. _Download: http://sourceforge.net/projects/translate/files/Translate%20Toolkit/1.8.1/
+.. _Bugs: https://github.com/translate/translate/issues

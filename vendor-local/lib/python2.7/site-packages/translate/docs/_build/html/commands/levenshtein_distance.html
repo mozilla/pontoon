@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Levenshtein distance &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Converters" href="index.html" />
+    <link rel="next" title="Mozilla L10n Scripts" href="mozilla_l10n_scripts.html" />
+    <link rel="prev" title="pretranslate" href="pretranslate.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Levenshtein distance</a><ul>
+<li><a class="reference internal" href="#shortcommings">Shortcommings</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="pretranslate.html"
+         title="previous chapter">&laquo; pretranslate</a></li>
+  <li><a href="mozilla_l10n_scripts.html"
+         title="next chapter">Mozilla L10n Scripts &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="levenshtein-distance">
+<span id="id1"></span><h1>Levenshtein distance<a class="headerlink" href="#levenshtein-distance" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference external" href="http://en.wikipedia.org/wiki/Levenshtein_distance">levenshtein distance</a> is used for measuring the
+<em>&#8220;distance&#8221;</em> or similarity of two character strings. Other similarity algorithms
+can be supplied to the code that does the matching.</p>
+<p>This code is used in <a class="reference internal" href="pot2po.html"><em>pot2po</em></a>, <a class="reference internal" href="tmserver.html"><em>tmserver</em></a> and <a class="reference external" href="http://virtaal.org">Virtaal</a>. It is implemented in the toolkit, but can optionally use
+the fast C implementation provided by <a class="reference external" href="https://pypi.python.org/pypi/python-Levenshtein">python-Levenshtein</a> if it is installed. It is
+strongly recommended to have <strong>python-levenshtein</strong> installed.</p>
+<p>To exercise the code the classfile <em>&#8220;Levenshtein.py&#8221;</em> can be executed directly
+with:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python Levenshtein.py <span class="s2">&quot;The first string.&quot;</span> <span class="s2">&quot;The second string&quot;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Remember to quote the two parameters.</p>
+</div>
+<p>The following things should be noted:</p>
+<ul class="simple">
+<li>Only the first <tt class="docutils literal"><span class="pre">MAX_LEN</span></tt> characters are considered. Long strings differing
+at the end will therefore seem to match better than they should. A penalty is
+awarded if strings are shortened.</li>
+<li>The calculation can stop prematurely as soon as it realise that the supplied
+minimum required similarity can not be reached. Strings with widely different
+lengths give the opportunity for this shortcut. This is by definition of the
+Levenshtein distance: the distance will be at least as much as the difference
+in string length. Similarities lower than your supplied minimum (or the
+default) should therefore not be considered authoritative.</li>
+</ul>
+<div class="section" id="shortcommings">
+<span id="levenshtein-distance-shortcommings"></span><h2>Shortcommings<a class="headerlink" href="#shortcommings" title="Permalink to this headline">¶</a></h2>
+<p>The following shortcommings have been identified:</p>
+<ul class="simple">
+<li><strong>Cases sensitivity:</strong> <em>&#8216;E&#8217;</em> and <em>&#8216;e&#8217;</em> are considered different characters and
+according differ as much as <em>&#8216;z&#8217;</em> and <em>&#8216;e&#8217;</em>. This is not ideal, as case
+differences should be considered less of a difference.</li>
+<li><strong>Diacritics:</strong> <em>&#8216;ê&#8217;</em> and <em>&#8216;e&#8217;</em> are considered different characters and
+according differ as much as <em>&#8216;z&#8217;</em> and <em>&#8216;e&#8217;</em>. This is not ideal, as missing
+diacritics could be due to small input errors, or even input data that simply
+do not have the correct diacritics.</li>
+<li><strong>Similar but different words:</strong> Words that have similar characters, but are
+different, could increase the similarity beyond what is wanted. The sentences
+<em>&#8220;It is though.&#8221;</em> and <em>&#8220;It is dough.&#8221;</em> differ markedly semantically, but score
+similarity of almost 85%. A possible solution is to do an additional
+calculation based on words, instead of characters.</li>
+<li><strong>Whitespace:</strong> Differences in tabs, newlines, and space usage should perhaps
+be considered as a special case.</li>
+</ul>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

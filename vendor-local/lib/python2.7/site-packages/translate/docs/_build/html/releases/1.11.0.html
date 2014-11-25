@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Translate Toolkit 1.11.0 &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Release Notes" href="index.html" />
+    <link rel="next" title="Translate Toolkit 1.11.0-rc1" href="1.11.0-rc1.html" />
+    <link rel="prev" title="Translate Toolkit 1.12.0-rc1" href="1.12.0-rc1.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Translate Toolkit 1.11.0</a><ul>
+<li><a class="reference internal" href="#highlighted-improvements">Highlighted improvements</a><ul>
+<li><a class="reference internal" href="#vs-1-11-0-rc1">1.11.0 vs 1.11.0-rc1</a></li>
+<li><a class="reference internal" href="#major-changes">Major changes</a></li>
+<li><a class="reference internal" href="#formats-and-converters">Formats and Converters</a></li>
+<li><a class="reference internal" href="#language-specific-fixes">Language specific fixes</a></li>
+<li><a class="reference internal" href="#checks">Checks</a></li>
+<li><a class="reference internal" href="#mozilla-tooling-fixes">Mozilla tooling fixes</a></li>
+<li><a class="reference internal" href="#general">General</a></li>
+<li><a class="reference internal" href="#contributors">Contributors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="1.12.0-rc1.html"
+         title="previous chapter">&laquo; Translate Toolkit 1.12.0-rc1</a></li>
+  <li><a href="1.11.0-rc1.html"
+         title="next chapter">Translate Toolkit 1.11.0-rc1 &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="translate-toolkit-1-11-0">
+<h1>Translate Toolkit 1.11.0<a class="headerlink" href="#translate-toolkit-1-11-0" title="Permalink to this headline">¶</a></h1>
+<p><em>Released on 22 January 2014</em></p>
+<p>This release contains many improvements and bug fixes. While it contains many
+general improvements, it also specifically contains needed changes and
+optimizations for the upcoming <a class="reference external" href="http://pootle.translatehouse.org/">Pootle</a>
+2.5.1 and <a class="reference external" href="http://virtaal.translatehouse.org">Virtaal</a> releases.</p>
+<p>It is just over a ten months since the last release and there are many
+improvements across the board.  A number of people contributed to this release
+and we&#8217;ve tried to credit them wherever possible (sorry if somehow we missed
+you).</p>
+<div class="section" id="highlighted-improvements">
+<h2>Highlighted improvements<a class="headerlink" href="#highlighted-improvements" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="vs-1-11-0-rc1">
+<h3>1.11.0 vs 1.11.0-rc1<a class="headerlink" href="#vs-1-11-0-rc1" title="Permalink to this headline">¶</a></h3>
+<p>Changes since 1.11.0 RC1:</p>
+<ul class="simple">
+<li>Improve handling of escapes in wrapping</li>
+<li>Handle a broken version of python-Levenshtein</li>
+<li>Output HTML source in po2html when a unit is fuzzy (<a class="reference external" href="https://github.com/translate/translate/issues/3145">issue 3145</a>)</li>
+</ul>
+</div>
+<div class="section" id="major-changes">
+<h3>Major changes<a class="headerlink" href="#major-changes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>The PO format now matches Gettext more closely</li>
+<li>PHP format adds a number of new features</li>
+<li>Support for Python 2.5 has been dropped</li>
+</ul>
+</div>
+<div class="section" id="formats-and-converters">
+<h3>Formats and Converters<a class="headerlink" href="#formats-and-converters" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Gettext PO:<ul>
+<li>cPO now handles fuzzy obsolete messages correctly</li>
+<li>Line wrapping improvement allow PO files to more closely match Gettext</li>
+<li>Optimization to increase performance</li>
+</ul>
+</li>
+<li>PHP:<ul>
+<li>Warn about duplicate entries</li>
+<li>Allow blank spaces in array declaration (<a class="reference external" href="https://github.com/translate/translate/issues/2646">issue 2646</a>)</li>
+<li>Support nested arrays (<a class="reference external" href="https://github.com/translate/translate/issues/2240">issue 2240</a>)</li>
+</ul>
+</li>
+<li>XLIFF:<ul>
+<li>Correctly parse XLIFF 1.2</li>
+</ul>
+</li>
+<li>Properties<ul>
+<li>Blank source text is now always translated</li>
+<li>Fuzzy units are discarded with &#8211;remove-untranslated</li>
+<li>prop2po no longer drops entries that are translated the same as the source</li>
+</ul>
+</li>
+<li>TMX:<ul>
+<li>po2tmx support comments</li>
+</ul>
+</li>
+<li>Android:<ul>
+<li>Detect untranslatable resource strings</li>
+<li>Various format improvements</li>
+</ul>
+</li>
+<li>New conversion options:<ul>
+<li><em class="xref std std-option">--timestamp</em> &#8211; skip conversion if the output file has a newer
+timestamp (Makefile-alike)</li>
+<li><em class="xref std std-option">--threshold</em> &#8211; in po2* converters this allows you to specify a
+percentage complete threshold.  If the PO files passes this theshold then
+the file is output (<a class="reference external" href="https://github.com/translate/translate/issues/2998">issue 2998</a>)</li>
+<li><em class="xref std std-option">--removeuntranslated</em> &#8211; Extend this option to po2dtd and thus
+po2moz &#8211; don&#8217;t output untranslated text (<a class="reference external" href="https://github.com/translate/translate/issues/1718">issue 1718</a>)</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="language-specific-fixes">
+<h3>Language specific fixes<a class="headerlink" href="#language-specific-fixes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>The toolkit now supports: Sakha, N&#8217;ko, Turkish, improvements for Bengali &amp;
+Hindi</li>
+<li>Pootle special characters are now stored on Toolkit and available for other
+tools to use</li>
+<li>Rules for language <tt class="docutils literal"><span class="pre">ab</span></tt> are now available for language <tt class="docutils literal"><span class="pre">ab_CD</span></tt></li>
+</ul>
+</div>
+<div class="section" id="checks">
+<h3>Checks<a class="headerlink" href="#checks" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Spelling test improvements including speed and optimization</li>
+<li>Reduce false positive for the filepath test in cases of self closing tags
+e.g. <tt class="docutils literal"><span class="pre">&lt;br</span> <span class="pre">/&gt;</span></tt></li>
+<li>Lowered the accelerator check severity to reduce false positive impact</li>
+</ul>
+</div>
+<div class="section" id="mozilla-tooling-fixes">
+<h3>Mozilla tooling fixes<a class="headerlink" href="#mozilla-tooling-fixes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Better decoding of some characters in DTD e.g » and &amp;x0022 (&#8221;)</li>
+<li>.lang &#8211; Improved support for untranslated entries</li>
+<li><tt class="docutils literal"><span class="pre">buildxpi</span></tt>:<ul>
+<li>Can now build multiple languages at once (<a class="reference external" href="https://github.com/translate/translate/issues/2999">issue 2999</a>)</li>
+<li>Set a max product version to allow the language pack to continue to work
+once the browser version has moved out of Aurora channel</li>
+</ul>
+</li>
+<li>Dropped native XPI building support (untested and no longer used)</li>
+<li>Add Mozilla plural formulas, in time we&#8217;ll handle Mozilla plurals correctly</li>
+</ul>
+</div>
+<div class="section" id="general">
+<h3>General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Dropped support for Python 2.5 since it is no longer supported by the Python
+Foundation. Also sticking to it was preventing us from using features that
+are not supported on Python 2.5 but they are on later versions.</li>
+<li>Dropped psyco support &#8211; it is no longer maintained</li>
+<li>Use logging throught instead of <tt class="docutils literal"><span class="pre">sys.stderr</span></tt></li>
+<li>Lots of cleanups on docs: TBX, PHP, added Android and JSON docs</li>
+<li>Use requirements files for documenting all requirements and make it easy to
+install Translate Toolkit using <tt class="docutils literal"><span class="pre">pip</span></tt></li>
+<li>Added some functional tests</li>
+<li>Improve searching to find words with hyphens</li>
+<li>Choose the closest repo in nested VCS</li>
+<li>Test suite down to zero failing tests</li>
+</ul>
+<p>...and loads of internal changes to improve maintainability, remove unused
+imports, remove unused code and general code cleanups, some changes to ensure
+future Python 3 portability and of course many many bugfixes.</p>
+</div>
+<div class="section" id="contributors">
+<h3>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h3>
+<p>This release was made possible by the following people:</p>
+<p>Dwayne Bailey, Leandro Regueiro, Alexander Dupuy, Friedel Wolff, Khaled Hosny,
+Michal Čihař, Jordi Mas, Stuart Prescott, Trung Ngo, Ronald Sterckx, Rail
+Aliev, Michael Schlenker, Martin-Zack Mekkaoui, Iskren Chernev, Luiz Fernando
+Ranghetti &amp; Christian Hitz</p>
+<p>And to all our bug finders and testers, a Very BIG Thank You.</p>
+</div>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

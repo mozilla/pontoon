@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Migrating your translations &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Use Cases" href="index.html" />
+    <link rel="next" title="Checking your files with PO filter" href="using_pofilter.html" />
+    <link rel="prev" title="Use Cases" href="index.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Migrating your translations</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#preparing-the-new-pot-files">Preparing the new POT files</a></li>
+<li><a class="reference internal" href="#checking-your-old-po-files-for-errors">Checking your old PO files for errors</a></li>
+<li><a class="reference internal" href="#optional-checking-your-old-po-files-for-consistency">Optional: Checking your old PO files for consistency</a></li>
+<li><a class="reference internal" href="#migrate">Migrate</a><ul>
+<li><a class="reference internal" href="#techie-what-does-pomigrate2-do-to-your-file">Techie: what does pomigrate2 do to your file?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-well-did-you-do">How well did you do</a></li>
+<li><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="index.html"
+         title="previous chapter">&laquo; Use Cases</a></li>
+  <li><a href="using_pofilter.html"
+         title="next chapter">Checking your files with PO filter &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="migrating-your-translations">
+<span id="migrating-translations"></span><h1>Migrating your translations<a class="headerlink" href="#migrating-your-translations" title="Permalink to this headline">¶</a></h1>
+<p>You very often need to migrate older translations to newer template or POT
+files.  There are a number of Gettext tools that can manage this but they do
+not handle the situation where files have been renamed and moved.  The
+<a class="reference internal" href="../commands/pomigrate2.html"><em>pomigrate2</em></a> script allows us to migrate between versions where
+there has been considerable change.</p>
+<p>This migration HOWTO takes you through the steps in a generic fashion so that
+you can apply it to any of your projects.  We use OpenOffice.org as an example
+for clarity.  Our task in the examples is to migrate old translation for
+OpenOffice.org 1.1.3 to OpenOffice.org 2.0.</p>
+<div class="section" id="requirements">
+<span id="migrating-translations-requirements"></span><h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>You will need:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../commands/pomigrate2.html"><em>pomigrate2</em></a></li>
+<li><a class="reference internal" href="../commands/pocompendium.html"><em>pocompendium</em></a></li>
+<li>A text editor</li>
+<li>A PO editing tool</li>
+</ul>
+</div>
+<div class="section" id="preparing-the-new-pot-files">
+<span id="migrating-translations-preparing-the-new-pot-files"></span><h2>Preparing the new POT files<a class="headerlink" href="#preparing-the-new-pot-files" title="Permalink to this headline">¶</a></h2>
+<p>We need the new POT files.  Either download these from the project or generate
+them using <a class="reference internal" href="../commands/moz2po.html"><em>moz2po</em></a>, <a class="reference internal" href="../commands/oo2po.html"><em>oo2po</em></a> or the other tools
+of the Translate Toolkit.  The POT files are templates for the destination
+files that we will be creating.</p>
+<div class="highlight-python"><div class="highlight"><pre>oo2po -P en-US.sdf ooo-20-pot
+</pre></div>
+</div>
+<p>This will create new POT files in <em>ooo-20-pot</em>.</p>
+</div>
+<div class="section" id="checking-your-old-po-files-for-errors">
+<span id="migrating-translations-checking-your-old-po-files-for-errors"></span><h2>Checking your old PO files for errors<a class="headerlink" href="#checking-your-old-po-files-for-errors" title="Permalink to this headline">¶</a></h2>
+<p>We will be migrating your old PO files into the new POT files.  This is a good
+opportunity to check for encoding errors and inconsistencies.</p>
+<p>We use <a class="reference internal" href="../commands/pocompendium.html"><em>pocompendium</em></a> to check for encoding errors:</p>
+<div class="highlight-python"><div class="highlight"><pre>pocompendium check.po -d ooo-113-old
+</pre></div>
+</div>
+<p>This will create a compendium PO files, <em>check.po</em>, from all the PO files in
+the directory <em>ooo-113-old</em>, where <em>ooo-113-old</em> contains all your old
+translations.  pocompendium is a wrapper around various Gettext tools, encoding
+errors will appear as errors from those tools.</p>
+<p>Use your text editor to find and correct these errors.  If you do not correct
+these now they will migrate to your new version.  Once encoding errors are
+fixed they&#8217;re usually gone for good, so it is time well spent.</p>
+</div>
+<div class="section" id="optional-checking-your-old-po-files-for-consistency">
+<span id="migrating-translations-optional-checking-your-old-po-files-for-consistency"></span><h2>Optional: Checking your old PO files for consistency<a class="headerlink" href="#optional-checking-your-old-po-files-for-consistency" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Note this step is optional, a more detailed explanation is given in
+<a class="reference internal" href="checking_for_inconsistencies.html"><em>Checking for inconsistencies in your translations</em></a>.</p>
+</div>
+<p>We now look at consistency within the translations.  The first check extracts
+situations were the same English string was translated in two different ways:</p>
+<div class="highlight-python"><div class="highlight"><pre>pocompendium --ignore-case --accel-amp --errors check.po -d ooo-113-old
+</pre></div>
+</div>
+<p>In <em>check.po</em> you will find all situations where the same English text was
+translated differently.  We use <tt class="docutils literal"><span class="pre">--accel-amp</span></tt> to remove accelerator
+markers (you&#8217;ll change this depending on the one used by the project &#8211; we can
+do &amp; _ or ~).   Now view <em>check.po</em> in a PO editor or text editor.  You will
+need to correct each inconsistency in the source PO files, using <em>check.po</em> as
+the guide.  Many of the errors are usually spelling mistakes.  You can
+regenerate <em>check.po</em> from time to time until all inconsistencies are justified
+or removed.</p>
+<p>Then we check for words in your language that are used for more than one
+English concept.  You don&#8217;t for instance want the same word for <em>Cancel</em> and
+<em>Delete</em>.  For this we invert the compendium:</p>
+<div class="highlight-python"><div class="highlight"><pre>pocompendium --invert --ignore-case --accel-amp --errors check.po -d ooo-113-old
+</pre></div>
+</div>
+<p>We now have a file similar to the previous one except your language appears in
+the msgid and the English appears in the msgstr.  Look for inconsistencies that
+would cause problems for the user and correct them in the source files.</p>
+</div>
+<div class="section" id="migrate">
+<span id="migrating-translations-migrate"></span><h2>Migrate<a class="headerlink" href="#migrate" title="Permalink to this headline">¶</a></h2>
+<p>You are now ready to migrate using <a class="reference internal" href="../commands/pomigrate2.html"><em>pomigrate2</em></a>.  You have
+created your destination POT files and all your PO files are clean and ready to
+migrate.</p>
+<div class="highlight-python"><div class="highlight"><pre>pomigrate2 ooo-113-old ooo-20-new ooo-20-pot
+</pre></div>
+</div>
+<p>This will take all translations from <em>ooo-113-old</em> and migrate them to
+<em>ooo-20-new</em> using <em>ooo-20-pot</em> as templates.  By default pomigrate2 migrates
+without any fancy text matching, there are options to allow for fuzzy matching
+and the use of a compendium.  Read the <a class="reference internal" href="../commands/pomigrate2.html"><em>pomigrate2</em></a> help page to
+find out more about these options.</p>
+<div class="section" id="techie-what-does-pomigrate2-do-to-your-file">
+<span id="migrating-translations-techie-what-does-pomigrate2-do-to-your-file"></span><h3>Techie: what does pomigrate2 do to your file?<a class="headerlink" href="#techie-what-does-pomigrate2-do-to-your-file" title="Permalink to this headline">¶</a></h3>
+<p>This section is for those insanely curious about what pomigrate will do to
+their files. You don&#8217;t need to understand this section :-)</p>
+<ul class="simple">
+<li>Init stage<ul>
+<li>If a file has not changed location between old and new then it is simply
+copied across</li>
+<li>If it has moved then we try to find a file by the same name and move ours
+there.  If there are multiple files by the same name, then we join them
+together and copy them</li>
+<li>If a file does not exist then we initialise it</li>
+</ul>
+</li>
+<li>Update stage<ul>
+<li>We now update our translations using msgmerge or pot2po</li>
+<li>If you asked for a compendium, we will build one from the existing files
+and update using it and optionally other external compendiums</li>
+</ul>
+</li>
+</ul>
+<p>That&#8217;s it. At the end you should have every file that needs translation updated
+to the latest template files.  Files that moved should still be preserved and
+not lost.  Files that where renamed will still be translated if you used a
+compendium otherwise they will be untranslated.</p>
+</div>
+</div>
+<div class="section" id="how-well-did-you-do">
+<span id="migrating-translations-how-well-did-you-do"></span><h2>How well did you do<a class="headerlink" href="#how-well-did-you-do" title="Permalink to this headline">¶</a></h2>
+<p>Congratulations! Your files are now migrated.</p>
+<p>You might want to see how much of your old work was reusable in the new
+version:</p>
+<div class="highlight-python"><div class="highlight"><pre>pocount ooo-20-new
+</pre></div>
+</div>
+<p>This will use <a class="reference internal" href="../commands/pocount.html"><em>pocount</em></a> to count the words in your new files and
+you can compare the number of translate and untranslated messages from your old
+version.</p>
+</div>
+<div class="section" id="conclusion">
+<span id="migrating-translations-conclusion"></span><h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>Your files have now been migrated and are ready for updating.  If files have
+been moved or renamed, and you used a compendium, then most likely you have
+most of that work translated.</p>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

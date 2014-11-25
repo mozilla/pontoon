@@ -1,0 +1,1468 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>filters &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="API" href="index.html" />
+    <link rel="next" title="lang" href="lang.html" />
+    <link rel="prev" title="convert" href="convert.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">filters</a><ul>
+<li><a class="reference internal" href="#module-translate.filters.autocorrect">autocorrect</a></li>
+<li><a class="reference internal" href="#module-translate.filters.checks">checks</a></li>
+<li><a class="reference internal" href="#module-translate.filters.decoration">decoration</a></li>
+<li><a class="reference internal" href="#module-translate.filters.helpers">helpers</a></li>
+<li><a class="reference internal" href="#module-translate.filters.pofilter">pofilter</a></li>
+<li><a class="reference internal" href="#module-translate.filters.prefilters">prefilters</a></li>
+<li><a class="reference internal" href="#module-translate.filters.spelling">spelling</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="convert.html"
+         title="previous chapter">&laquo; convert</a></li>
+  <li><a href="lang.html"
+         title="next chapter">lang &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="module-translate.filters">
+<span id="filters"></span><h1>filters<a class="headerlink" href="#module-translate.filters" title="Permalink to this headline">¶</a></h1>
+<p>Filters that can be used on translations...</p>
+<div class="section" id="module-translate.filters.autocorrect">
+<span id="autocorrect"></span><h2>autocorrect<a class="headerlink" href="#module-translate.filters.autocorrect" title="Permalink to this headline">¶</a></h2>
+<p>A set of autocorrect functions that fix common punctuation and space problems automatically</p>
+<dl class="function">
+<dt id="translate.filters.autocorrect.correct">
+<tt class="descclassname">translate.filters.autocorrect.</tt><tt class="descname">correct</tt><big>(</big><em>source</em>, <em>target</em><big>)</big><a class="headerlink" href="#translate.filters.autocorrect.correct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a set of easy and automatic corrections</p>
+<dl class="docutils">
+<dt>Current corrections include:</dt>
+<dd><ul class="first last simple">
+<li>Ellipses - align target to use source form of ellipses (either three dots or the Unicode ellipses characters)</li>
+<li>Missing whitespace and start or end of the target</li>
+<li>Missing punction (.:?) at the end of the target</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.filters.checks">
+<span id="checks"></span><h2>checks<a class="headerlink" href="#module-translate.filters.checks" title="Permalink to this headline">¶</a></h2>
+<p>This is a set of validation checks that can be performed on translation
+units.</p>
+<p>Derivatives of UnitChecker (like StandardUnitChecker) check translation units,
+and derivatives of TranslationChecker (like StandardChecker) check
+(source, target) translation pairs.</p>
+<p>When adding a new test here, please document and explain their behaviour on the
+<a class="reference internal" href="../commands/pofilter_tests.html"><em>pofilter tests</em></a> page.</p>
+<dl class="class">
+<dt id="translate.filters.checks.CheckerConfig">
+<em class="property">class </em><tt class="descclassname">translate.filters.checks.</tt><tt class="descname">CheckerConfig</tt><big>(</big><em>targetlanguage=None</em>, <em>accelmarkers=None</em>, <em>varmatches=None</em>, <em>notranslatewords=None</em>, <em>musttranslatewords=None</em>, <em>validchars=None</em>, <em>punctuation=None</em>, <em>endpunctuation=None</em>, <em>ignoretags=None</em>, <em>canchangetags=None</em>, <em>criticaltests=None</em>, <em>credit_sources=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.CheckerConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object representing the configuration of a checker.</p>
+<dl class="method">
+<dt id="translate.filters.checks.CheckerConfig.update">
+<tt class="descname">update</tt><big>(</big><em>otherconfig</em><big>)</big><a class="headerlink" href="#translate.filters.checks.CheckerConfig.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines the info in <tt class="docutils literal"><span class="pre">otherconfig</span></tt> into this config object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.CheckerConfig.updatetargetlanguage">
+<tt class="descname">updatetargetlanguage</tt><big>(</big><em>langcode</em><big>)</big><a class="headerlink" href="#translate.filters.checks.CheckerConfig.updatetargetlanguage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the target language in the config to the given target
+language.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.CheckerConfig.updatevalidchars">
+<tt class="descname">updatevalidchars</tt><big>(</big><em>validchars</em><big>)</big><a class="headerlink" href="#translate.filters.checks.CheckerConfig.updatevalidchars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the map that eliminates valid characters.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="translate.filters.checks.FilterFailure">
+<em class="property">exception </em><tt class="descclassname">translate.filters.checks.</tt><tt class="descname">FilterFailure</tt><big>(</big><em>messages</em><big>)</big><a class="headerlink" href="#translate.filters.checks.FilterFailure" title="Permalink to this definition">¶</a></dt>
+<dd><p>This exception signals that a Filter didn&#8217;t pass, and gives an
+explanation or a comment.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="translate.filters.checks.SeriousFilterFailure">
+<em class="property">exception </em><tt class="descclassname">translate.filters.checks.</tt><tt class="descname">SeriousFilterFailure</tt><big>(</big><em>messages</em><big>)</big><a class="headerlink" href="#translate.filters.checks.SeriousFilterFailure" title="Permalink to this definition">¶</a></dt>
+<dd><p>This exception signals that a Filter didn&#8217;t pass, and the bad translation
+might break an application (so the string will be marked fuzzy)</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="translate.filters.checks.StandardChecker">
+<em class="property">class </em><tt class="descclassname">translate.filters.checks.</tt><tt class="descname">StandardChecker</tt><big>(</big><em>checkerconfig=None</em>, <em>excludefilters=None</em>, <em>limitfilters=None</em>, <em>errorhandler=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker" title="Permalink to this definition">¶</a></dt>
+<dd><p>The basic test suite for source -&gt; target translations.</p>
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.accelerators">
+<tt class="descname">accelerators</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.accelerators" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether accelerators are consistent between the
+two strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.acronyms">
+<tt class="descname">acronyms</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.acronyms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that acronyms that appear are unchanged.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.blank">
+<tt class="descname">blank</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.blank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether a translation only contains spaces.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.brackets">
+<tt class="descname">brackets</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.brackets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the number of brackets in both strings match.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.compendiumconflicts">
+<tt class="descname">compendiumconflicts</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.compendiumconflicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for Gettext compendium conflicts (#-#-#-#-#).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.credits">
+<tt class="descname">credits</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.credits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for messages containing translation credits instead of
+normal translations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.doublequoting">
+<tt class="descname">doublequoting</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.doublequoting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether doublequoting is consistent between the
+two strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.doublespacing">
+<tt class="descname">doublespacing</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.doublespacing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for bad double-spaces by comparing to original.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.doublewords">
+<tt class="descname">doublewords</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.doublewords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for repeated words in the translation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.emails">
+<tt class="descname">emails</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.emails" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that emails are not translated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.endpunc">
+<tt class="descname">endpunc</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.endpunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether punctuation at the end of the strings match.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.endwhitespace">
+<tt class="descname">endwhitespace</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.endwhitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether whitespace at the end of the strings matches.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.escapes">
+<tt class="descname">escapes</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.escapes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether escaping is consistent between the two strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.filepaths">
+<tt class="descname">filepaths</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.filepaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that file paths have not been translated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.filteraccelerators_by_list">
+<tt class="descname">filteraccelerators_by_list</tt><big>(</big><em>str1</em>, <em>acceptlist=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.filteraccelerators_by_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter out accelerators from <tt class="docutils literal"><span class="pre">str1</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.functions">
+<tt class="descname">functions</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that function names are not translated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.getfilters">
+<tt class="descname">getfilters</tt><big>(</big><em>excludefilters=None</em>, <em>limitfilters=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.getfilters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary of available filters, including/excluding those
+in the given lists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.kdecomments">
+<tt class="descname">kdecomments</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.kdecomments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to ensure that no KDE style comments appear in the
+translation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.long">
+<tt class="descname">long</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.long" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether a translation is much longer than the original
+string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.musttranslatewords">
+<tt class="descname">musttranslatewords</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.musttranslatewords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that words configured as definitely translatable don&#8217;t appear
+in the translation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.newlines">
+<tt class="descname">newlines</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.newlines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether newlines are consistent between the two strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.notranslatewords">
+<tt class="descname">notranslatewords</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.notranslatewords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that words configured as untranslatable appear in the
+translation too.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.numbers">
+<tt class="descname">numbers</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.numbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether numbers of various forms are consistent between the
+two strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.options">
+<tt class="descname">options</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that options are not translated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.printf">
+<tt class="descname">printf</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.printf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether printf format strings match.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.puncspacing">
+<tt class="descname">puncspacing</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.puncspacing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for bad spacing after punctuation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.purepunc">
+<tt class="descname">purepunc</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.purepunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that strings that are purely punctuation are not changed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.run_filters">
+<tt class="descname">run_filters</tt><big>(</big><em>unit</em>, <em>categorised=False</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.run_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do some optimisation by caching some data of the unit for the
+benefit of <a class="reference internal" href="#translate.filters.checks.TranslationChecker.run_test" title="translate.filters.checks.TranslationChecker.run_test"><tt class="xref py py-meth docutils literal"><span class="pre">run_test()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.run_test">
+<tt class="descname">run_test</tt><big>(</big><em>test</em>, <em>unit</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.run_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the given test on the given unit.</p>
+<p>Note that this can raise a <a class="reference internal" href="#translate.filters.checks.FilterFailure" title="translate.filters.checks.FilterFailure"><tt class="xref py py-exc docutils literal"><span class="pre">FilterFailure</span></tt></a> as part of normal
+operation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.sentencecount">
+<tt class="descname">sentencecount</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.sentencecount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the number of sentences in both strings match.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.setconfig">
+<tt class="descname">setconfig</tt><big>(</big><em>config</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.setconfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the accelerator list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.setsuggestionstore">
+<tt class="descname">setsuggestionstore</tt><big>(</big><em>store</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.setsuggestionstore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the filename that a checker should use for evaluating
+suggestions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.short">
+<tt class="descname">short</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.short" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether a translation is much shorter than the original
+string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.simplecaps">
+<tt class="descname">simplecaps</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.simplecaps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the capitalisation of two strings isn&#8217;t wildly different.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.simpleplurals">
+<tt class="descname">simpleplurals</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.simpleplurals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for English style plural(s) for you to review.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.singlequoting">
+<tt class="descname">singlequoting</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.singlequoting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether singlequoting is consistent between the two strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.spellcheck">
+<tt class="descname">spellcheck</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.spellcheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks words that don&#8217;t pass a spell check.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.startcaps">
+<tt class="descname">startcaps</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.startcaps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the message starts with the correct capitalisation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.startpunc">
+<tt class="descname">startpunc</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.startpunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether punctuation at the beginning of the strings match.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.startwhitespace">
+<tt class="descname">startwhitespace</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.startwhitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether whitespace at the beginning of the strings
+matches.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.tabs">
+<tt class="descname">tabs</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.tabs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether tabs are consistent between the two strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.unchanged">
+<tt class="descname">unchanged</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.unchanged" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether a translation is basically identical to the original
+string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.untranslated">
+<tt class="descname">untranslated</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.untranslated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether a string has been translated at all.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.urls">
+<tt class="descname">urls</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.urls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that URLs are not translated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.validchars">
+<tt class="descname">validchars</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.validchars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that only characters specified as valid appear in the
+translation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.variables">
+<tt class="descname">variables</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether variables of various forms are consistent between the
+two strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardChecker.xmltags">
+<tt class="descname">xmltags</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardChecker.xmltags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that XML/HTML tags have not been translated.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="translate.filters.checks.StandardUnitChecker">
+<em class="property">class </em><tt class="descclassname">translate.filters.checks.</tt><tt class="descname">StandardUnitChecker</tt><big>(</big><em>checkerconfig=None</em>, <em>excludefilters=None</em>, <em>limitfilters=None</em>, <em>errorhandler=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker" title="Permalink to this definition">¶</a></dt>
+<dd><p>The standard checks for common checks on translation units.</p>
+<dl class="method">
+<dt id="translate.filters.checks.StandardUnitChecker.filteraccelerators_by_list">
+<tt class="descname">filteraccelerators_by_list</tt><big>(</big><em>str1</em>, <em>acceptlist=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker.filteraccelerators_by_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter out accelerators from <tt class="docutils literal"><span class="pre">str1</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardUnitChecker.getfilters">
+<tt class="descname">getfilters</tt><big>(</big><em>excludefilters=None</em>, <em>limitfilters=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker.getfilters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary of available filters, including/excluding those
+in the given lists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardUnitChecker.hassuggestion">
+<tt class="descname">hassuggestion</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker.hassuggestion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if there is at least one suggested translation for this
+unit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardUnitChecker.isfuzzy">
+<tt class="descname">isfuzzy</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker.isfuzzy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the unit has been marked fuzzy.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardUnitChecker.isreview">
+<tt class="descname">isreview</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker.isreview" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the unit has been marked review.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardUnitChecker.nplurals">
+<tt class="descname">nplurals</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker.nplurals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for the correct number of noun forms for plural
+translations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardUnitChecker.run_filters">
+<tt class="descname">run_filters</tt><big>(</big><em>unit</em>, <em>categorised=False</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker.run_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all the tests in this suite.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dictionary</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Content of the dictionary is as follows:<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;testname&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="n">message_or_exception</span><span class="p">,</span> <span class="s">&#39;category&#39;</span><span class="p">:</span> <span class="n">failure_category</span> <span class="p">}</span> <span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardUnitChecker.run_test">
+<tt class="descname">run_test</tt><big>(</big><em>test</em>, <em>unit</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker.run_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the given test on the given unit.</p>
+<p>Note that this can raise a <a class="reference internal" href="#translate.filters.checks.FilterFailure" title="translate.filters.checks.FilterFailure"><tt class="xref py py-exc docutils literal"><span class="pre">FilterFailure</span></tt></a> as part of normal operation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardUnitChecker.setconfig">
+<tt class="descname">setconfig</tt><big>(</big><em>config</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker.setconfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the accelerator list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.StandardUnitChecker.setsuggestionstore">
+<tt class="descname">setsuggestionstore</tt><big>(</big><em>store</em><big>)</big><a class="headerlink" href="#translate.filters.checks.StandardUnitChecker.setsuggestionstore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the filename that a checker should use for evaluating
+suggestions.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="translate.filters.checks.TeeChecker">
+<em class="property">class </em><tt class="descclassname">translate.filters.checks.</tt><tt class="descname">TeeChecker</tt><big>(</big><em>checkerconfig=None</em>, <em>excludefilters=None</em>, <em>limitfilters=None</em>, <em>checkerclasses=None</em>, <em>errorhandler=None</em>, <em>languagecode=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TeeChecker" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Checker that controls multiple checkers.</p>
+<dl class="attribute">
+<dt id="translate.filters.checks.TeeChecker.categories">
+<tt class="descname">categories</tt><em class="property"> = {}</em><a class="headerlink" href="#translate.filters.checks.TeeChecker.categories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Categories where each checking function falls into
+Function names are used as keys, categories are the values</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.TeeChecker.getfilters">
+<tt class="descname">getfilters</tt><big>(</big><em>excludefilters=None</em>, <em>limitfilters=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TeeChecker.getfilters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of available filters, including/excluding
+those in the given lists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.TeeChecker.run_filters">
+<tt class="descname">run_filters</tt><big>(</big><em>unit</em>, <em>categorised=False</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TeeChecker.run_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all the tests in the checker&#8217;s suites.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.TeeChecker.setsuggestionstore">
+<tt class="descname">setsuggestionstore</tt><big>(</big><em>store</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TeeChecker.setsuggestionstore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the filename that a checker should use for evaluating
+suggestions.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="translate.filters.checks.TranslationChecker">
+<em class="property">class </em><tt class="descclassname">translate.filters.checks.</tt><tt class="descname">TranslationChecker</tt><big>(</big><em>checkerconfig=None</em>, <em>excludefilters=None</em>, <em>limitfilters=None</em>, <em>errorhandler=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TranslationChecker" title="Permalink to this definition">¶</a></dt>
+<dd><p>A checker that passes source and target strings to the checks, not the
+whole unit.</p>
+<p>This provides some speedup and simplifies testing.</p>
+<dl class="method">
+<dt id="translate.filters.checks.TranslationChecker.filteraccelerators_by_list">
+<tt class="descname">filteraccelerators_by_list</tt><big>(</big><em>str1</em>, <em>acceptlist=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TranslationChecker.filteraccelerators_by_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter out accelerators from <tt class="docutils literal"><span class="pre">str1</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.TranslationChecker.getfilters">
+<tt class="descname">getfilters</tt><big>(</big><em>excludefilters=None</em>, <em>limitfilters=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TranslationChecker.getfilters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary of available filters, including/excluding those
+in the given lists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.TranslationChecker.run_filters">
+<tt class="descname">run_filters</tt><big>(</big><em>unit</em>, <em>categorised=False</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TranslationChecker.run_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do some optimisation by caching some data of the unit for the
+benefit of <a class="reference internal" href="#translate.filters.checks.TranslationChecker.run_test" title="translate.filters.checks.TranslationChecker.run_test"><tt class="xref py py-meth docutils literal"><span class="pre">run_test()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.TranslationChecker.run_test">
+<tt class="descname">run_test</tt><big>(</big><em>test</em>, <em>unit</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TranslationChecker.run_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the given test on the given unit.</p>
+<p>Note that this can raise a <a class="reference internal" href="#translate.filters.checks.FilterFailure" title="translate.filters.checks.FilterFailure"><tt class="xref py py-exc docutils literal"><span class="pre">FilterFailure</span></tt></a> as part of normal
+operation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.TranslationChecker.setconfig">
+<tt class="descname">setconfig</tt><big>(</big><em>config</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TranslationChecker.setconfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the accelerator list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.TranslationChecker.setsuggestionstore">
+<tt class="descname">setsuggestionstore</tt><big>(</big><em>store</em><big>)</big><a class="headerlink" href="#translate.filters.checks.TranslationChecker.setsuggestionstore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the filename that a checker should use for evaluating
+suggestions.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="translate.filters.checks.UnitChecker">
+<em class="property">class </em><tt class="descclassname">translate.filters.checks.</tt><tt class="descname">UnitChecker</tt><big>(</big><em>checkerconfig=None</em>, <em>excludefilters=None</em>, <em>limitfilters=None</em>, <em>errorhandler=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.UnitChecker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parent Checker class which does the checking based on functions available
+in derived classes.</p>
+<dl class="attribute">
+<dt id="translate.filters.checks.UnitChecker.categories">
+<tt class="descname">categories</tt><em class="property"> = {}</em><a class="headerlink" href="#translate.filters.checks.UnitChecker.categories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Categories where each checking function falls into
+Function names are used as keys, categories are the values</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.UnitChecker.filteraccelerators_by_list">
+<tt class="descname">filteraccelerators_by_list</tt><big>(</big><em>str1</em>, <em>acceptlist=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.UnitChecker.filteraccelerators_by_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter out accelerators from <tt class="docutils literal"><span class="pre">str1</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.UnitChecker.getfilters">
+<tt class="descname">getfilters</tt><big>(</big><em>excludefilters=None</em>, <em>limitfilters=None</em><big>)</big><a class="headerlink" href="#translate.filters.checks.UnitChecker.getfilters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary of available filters, including/excluding those
+in the given lists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.UnitChecker.run_filters">
+<tt class="descname">run_filters</tt><big>(</big><em>unit</em>, <em>categorised=False</em><big>)</big><a class="headerlink" href="#translate.filters.checks.UnitChecker.run_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all the tests in this suite.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dictionary</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Content of the dictionary is as follows:<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;testname&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="n">message_or_exception</span><span class="p">,</span> <span class="s">&#39;category&#39;</span><span class="p">:</span> <span class="n">failure_category</span> <span class="p">}</span> <span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.UnitChecker.run_test">
+<tt class="descname">run_test</tt><big>(</big><em>test</em>, <em>unit</em><big>)</big><a class="headerlink" href="#translate.filters.checks.UnitChecker.run_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the given test on the given unit.</p>
+<p>Note that this can raise a <a class="reference internal" href="#translate.filters.checks.FilterFailure" title="translate.filters.checks.FilterFailure"><tt class="xref py py-exc docutils literal"><span class="pre">FilterFailure</span></tt></a> as part of normal operation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.UnitChecker.setconfig">
+<tt class="descname">setconfig</tt><big>(</big><em>config</em><big>)</big><a class="headerlink" href="#translate.filters.checks.UnitChecker.setconfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the accelerator list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.checks.UnitChecker.setsuggestionstore">
+<tt class="descname">setsuggestionstore</tt><big>(</big><em>store</em><big>)</big><a class="headerlink" href="#translate.filters.checks.UnitChecker.setsuggestionstore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the filename that a checker should use for evaluating
+suggestions.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.checks.batchruntests">
+<tt class="descclassname">translate.filters.checks.</tt><tt class="descname">batchruntests</tt><big>(</big><em>pairs</em><big>)</big><a class="headerlink" href="#translate.filters.checks.batchruntests" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs test on a batch of string pairs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.checks.intuplelist">
+<tt class="descclassname">translate.filters.checks.</tt><tt class="descname">intuplelist</tt><big>(</big><em>pair</em>, <em>list</em><big>)</big><a class="headerlink" href="#translate.filters.checks.intuplelist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests to see if pair == (a,b,c) is in list, but handles None entries in
+list as wildcards (only allowed in positions &#8220;a&#8221; and &#8220;c&#8221;). We take a
+shortcut by only considering &#8220;c&#8221; if &#8220;b&#8221; has already matched.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.checks.runtests">
+<tt class="descclassname">translate.filters.checks.</tt><tt class="descname">runtests</tt><big>(</big><em>str1</em>, <em>str2</em>, <em>ignorelist=()</em><big>)</big><a class="headerlink" href="#translate.filters.checks.runtests" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies that the tests pass for a pair of strings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.checks.tagname">
+<tt class="descclassname">translate.filters.checks.</tt><tt class="descname">tagname</tt><big>(</big><em>string</em><big>)</big><a class="headerlink" href="#translate.filters.checks.tagname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the XML/HTML tag in string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.checks.tagproperties">
+<tt class="descclassname">translate.filters.checks.</tt><tt class="descname">tagproperties</tt><big>(</big><em>strings</em>, <em>ignore</em><big>)</big><a class="headerlink" href="#translate.filters.checks.tagproperties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the properties in the XML/HTML tag string as
+(tagname, propertyname, propertyvalue), but ignore those combinations
+specified in ignore.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.filters.decoration">
+<span id="decoration"></span><h2>decoration<a class="headerlink" href="#module-translate.filters.decoration" title="Permalink to this headline">¶</a></h2>
+<p>functions to get decorative/informative text out of strings...</p>
+<dl class="function">
+<dt id="translate.filters.decoration.countaccelerators">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">countaccelerators</tt><big>(</big><em>accelmarker</em>, <em>acceptlist=None</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.countaccelerators" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a function that counts the number of accelerators marked
+with the given marker</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.findaccelerators">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">findaccelerators</tt><big>(</big><em>str1</em>, <em>accelmarker</em>, <em>acceptlist=None</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.findaccelerators" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all the accelerators and locations in str1 marked with a
+given marker</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.findmarkedvariables">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">findmarkedvariables</tt><big>(</big><em>str1</em>, <em>startmarker</em>, <em>endmarker</em>, <em>ignorelist=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#translate.filters.decoration.findmarkedvariables" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all the variables and locations in str1 marked with a given
+marker</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.getaccelerators">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">getaccelerators</tt><big>(</big><em>accelmarker</em>, <em>acceptlist=None</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.getaccelerators" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a function that gets a list of accelerators marked using
+accelmarker</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.getemails">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">getemails</tt><big>(</big><em>str1</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.getemails" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the email addresses that are in a string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.getfunctions">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">getfunctions</tt><big>(</big><em>str1</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.getfunctions" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the functions() that are in a string, while ignoring the
+trailing punctuation in the given parameter</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.getnumbers">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">getnumbers</tt><big>(</big><em>str1</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.getnumbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns any numbers that are in the string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.geturls">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">geturls</tt><big>(</big><em>str1</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.geturls" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the URIs in a string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.getvariables">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">getvariables</tt><big>(</big><em>startmarker</em>, <em>endmarker</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.getvariables" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a function that gets a list of variables marked using
+startmarker and endmarker</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.ispurepunctuation">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">ispurepunctuation</tt><big>(</big><em>str1</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.ispurepunctuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks whether the string is entirely punctuation</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.isvalidaccelerator">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">isvalidaccelerator</tt><big>(</big><em>accelerator</em>, <em>acceptlist=None</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.isvalidaccelerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns whether the given accelerator character is valid</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>accelerator</strong> (<em>character</em>) &#8211; A character to be checked for accelerator validity</li>
+<li><strong>acceptlist</strong> (<em>String</em>) &#8211; A list of characters that are permissible as
+accelerators</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Boolean</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True if the supplied character is an acceptable accelerator</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.puncend">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">puncend</tt><big>(</big><em>str1</em>, <em>punctuation</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.puncend" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all the punctuation from the end of the string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.puncstart">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">puncstart</tt><big>(</big><em>str1</em>, <em>punctuation</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.puncstart" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all the punctuation from the start of the string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.spaceend">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">spaceend</tt><big>(</big><em>str1</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.spaceend" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all the whitespace from the end of the string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.decoration.spacestart">
+<tt class="descclassname">translate.filters.decoration.</tt><tt class="descname">spacestart</tt><big>(</big><em>str1</em><big>)</big><a class="headerlink" href="#translate.filters.decoration.spacestart" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all the whitespace from the start of the string</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.filters.helpers">
+<span id="helpers"></span><h2>helpers<a class="headerlink" href="#module-translate.filters.helpers" title="Permalink to this headline">¶</a></h2>
+<p>a set of helper functions for filters...</p>
+<dl class="function">
+<dt id="translate.filters.helpers.countmatch">
+<tt class="descclassname">translate.filters.helpers.</tt><tt class="descname">countmatch</tt><big>(</big><em>str1</em>, <em>str2</em>, <em>countstr</em><big>)</big><a class="headerlink" href="#translate.filters.helpers.countmatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks whether countstr occurs the same number of times in str1 and str2</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.helpers.countsmatch">
+<tt class="descclassname">translate.filters.helpers.</tt><tt class="descname">countsmatch</tt><big>(</big><em>str1</em>, <em>str2</em>, <em>countlist</em><big>)</big><a class="headerlink" href="#translate.filters.helpers.countsmatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks whether each element in countlist occurs the same number of times in str1 and str2</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.helpers.filtercount">
+<tt class="descclassname">translate.filters.helpers.</tt><tt class="descname">filtercount</tt><big>(</big><em>str1</em>, <em>func</em><big>)</big><a class="headerlink" href="#translate.filters.helpers.filtercount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the number of characters in str1 that pass func</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.helpers.filtertestmethod">
+<tt class="descclassname">translate.filters.helpers.</tt><tt class="descname">filtertestmethod</tt><big>(</big><em>testmethod</em>, <em>strfilter</em><big>)</big><a class="headerlink" href="#translate.filters.helpers.filtertestmethod" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a version of the testmethod that operates on filtered strings using strfilter</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.helpers.funcmatch">
+<tt class="descclassname">translate.filters.helpers.</tt><tt class="descname">funcmatch</tt><big>(</big><em>str1</em>, <em>str2</em>, <em>func</em>, <em>*args</em><big>)</big><a class="headerlink" href="#translate.filters.helpers.funcmatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns whether the result of func is the same for str1 and str2</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.helpers.funcsmatch">
+<tt class="descclassname">translate.filters.helpers.</tt><tt class="descname">funcsmatch</tt><big>(</big><em>str1</em>, <em>str2</em>, <em>funclist</em><big>)</big><a class="headerlink" href="#translate.filters.helpers.funcsmatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks whether the results of each func in funclist match for str1 and str2</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.helpers.multifilter">
+<tt class="descclassname">translate.filters.helpers.</tt><tt class="descname">multifilter</tt><big>(</big><em>str1</em>, <em>strfilters</em>, <em>*args</em><big>)</big><a class="headerlink" href="#translate.filters.helpers.multifilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>passes str1 through a list of filters</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.helpers.multifiltertestmethod">
+<tt class="descclassname">translate.filters.helpers.</tt><tt class="descname">multifiltertestmethod</tt><big>(</big><em>testmethod</em>, <em>strfilters</em><big>)</big><a class="headerlink" href="#translate.filters.helpers.multifiltertestmethod" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a version of the testmethod that operates on filtered strings using strfilter</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.filters.pofilter">
+<span id="pofilter"></span><h2>pofilter<a class="headerlink" href="#module-translate.filters.pofilter" title="Permalink to this headline">¶</a></h2>
+<p>Perform quality checks on Gettext PO, XLIFF and TMX localization files.</p>
+<p>Snippet files are created whenever a test fails.  These can be examined,
+corrected and merged back into the originals using pomerge.</p>
+<p>See:
+<a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pofilter.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pofilter.html</a>
+for examples and usage instructions and
+<a class="reference external" href="http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pofilter_tests.html">http://docs.translatehouse.org/projects/translate-toolkit/en/latest/commands/pofilter_tests.html</a>
+for full descriptions of all tests.</p>
+<dl class="class">
+<dt id="translate.filters.pofilter.FilterOptionParser">
+<em class="property">class </em><tt class="descclassname">translate.filters.pofilter.</tt><tt class="descname">FilterOptionParser</tt><big>(</big><em>formats</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>A specialized Option Parser for filter tools...</p>
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.add_option">
+<tt class="descname">add_option</tt><big>(</big><em>Option</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.add_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>add_option(opt_str, ..., kwarg=val, ...)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.check_values">
+<tt class="descname">check_values</tt><big>(</big><em>values : Values, args : [string]</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.check_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>-&gt; (values : Values, args : [string])</p>
+<p>Check that the supplied option values and leftover arguments are
+valid.  Returns the option values and leftover arguments
+(possibly adjusted, possibly completely new &#8211; whatever you
+like).  Default implementation just returns the passed-in
+values; subclasses may override as desired.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.checkoutputsubdir">
+<tt class="descname">checkoutputsubdir</tt><big>(</big><em>options</em>, <em>subdir</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.checkoutputsubdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if subdir under options.output needs to be created,
+creates if neccessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.define_option">
+<tt class="descname">define_option</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.define_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the given option, replacing an existing one of the same short
+name if neccessary...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declare that you are done with this OptionParser.  This cleans up
+reference cycles so the OptionParser (and all objects referenced by
+it) can be garbage-collected promptly.  After calling destroy(), the
+OptionParser is unusable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.disable_interspersed_args">
+<tt class="descname">disable_interspersed_args</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.disable_interspersed_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parsing to stop on the first non-option. Use this if
+you have a command processor which runs another command that
+has options of its own and you want to make sure these options
+don&#8217;t get confused.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.enable_interspersed_args">
+<tt class="descname">enable_interspersed_args</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.enable_interspersed_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parsing to not stop on the first non-option, allowing
+interspersing switches with command arguments. This is the
+default behavior. See also disable_interspersed_args() and the
+class documentation description of the attribute
+allow_interspersed_args.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.error">
+<tt class="descname">error</tt><big>(</big><em>msg : string</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a usage message incorporating &#8216;msg&#8217; to stderr and exit.
+If you override this in a subclass, it should not return &#8211; it
+should either exit or raise an exception.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.finalizetempoutputfile">
+<tt class="descname">finalizetempoutputfile</tt><big>(</big><em>options</em>, <em>outputfile</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.finalizetempoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the temp outputfile to its final destination.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.format_manpage">
+<tt class="descname">format_manpage</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.format_manpage" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a formatted manpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.getformathelp">
+<tt class="descname">getformathelp</tt><big>(</big><em>formats</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.getformathelp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a nice help string for describing formats...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.getfullinputpath">
+<tt class="descname">getfullinputpath</tt><big>(</big><em>options</em>, <em>inputpath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.getfullinputpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to an input file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.getfulloutputpath">
+<tt class="descname">getfulloutputpath</tt><big>(</big><em>options</em>, <em>outputpath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.getfulloutputpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to an output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.getfulltemplatepath">
+<tt class="descname">getfulltemplatepath</tt><big>(</big><em>options</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.getfulltemplatepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the absolute path to a template file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.getoutputname">
+<tt class="descname">getoutputname</tt><big>(</big><em>options</em>, <em>inputname</em>, <em>outputformat</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.getoutputname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an output filename based on the input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.getoutputoptions">
+<tt class="descname">getoutputoptions</tt><big>(</big><em>options</em>, <em>inputpath</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.getoutputoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works out which output format and processor method to use...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.getpassthroughoptions">
+<tt class="descname">getpassthroughoptions</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.getpassthroughoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the options required to pass to the filtermethod...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.gettemplatename">
+<tt class="descname">gettemplatename</tt><big>(</big><em>options</em>, <em>inputname</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.gettemplatename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an output filename based on the input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.getusageman">
+<tt class="descname">getusageman</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.getusageman" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the usage string for the given option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.getusagestring">
+<tt class="descname">getusagestring</tt><big>(</big><em>option</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.getusagestring" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the usage string for the given option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.initprogressbar">
+<tt class="descname">initprogressbar</tt><big>(</big><em>allfiles</em>, <em>options</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.initprogressbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up a progress bar appropriate to the options and files.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.isexcluded">
+<tt class="descname">isexcluded</tt><big>(</big><em>options</em>, <em>inputpath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.isexcluded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this path has been excluded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.isrecursive">
+<tt class="descname">isrecursive</tt><big>(</big><em>fileoption</em>, <em>filepurpose='input'</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.isrecursive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if fileoption is a recursive file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.isvalidinputname">
+<tt class="descname">isvalidinputname</tt><big>(</big><em>options</em>, <em>inputname</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.isvalidinputname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this is a valid input filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.mkdir">
+<tt class="descname">mkdir</tt><big>(</big><em>parent</em>, <em>subdir</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.mkdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a subdirectory (recursively if neccessary).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.openinputfile">
+<tt class="descname">openinputfile</tt><big>(</big><em>options</em>, <em>fullinputpath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.openinputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the input file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.openoutputfile">
+<tt class="descname">openoutputfile</tt><big>(</big><em>options</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.openoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.opentemplatefile">
+<tt class="descname">opentemplatefile</tt><big>(</big><em>options</em>, <em>fulltemplatepath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.opentemplatefile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the template file (if required).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.opentempoutputfile">
+<tt class="descname">opentempoutputfile</tt><big>(</big><em>options</em>, <em>fulloutputpath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.opentempoutputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a temporary output file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.parse_args">
+<tt class="descname">parse_args</tt><big>(</big><em>args=None</em>, <em>values=None</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options, handling implicit input/output
+args.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.parse_noinput">
+<tt class="descname">parse_noinput</tt><big>(</big><em>option</em>, <em>opt</em>, <em>value</em>, <em>parser</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.parse_noinput" title="Permalink to this definition">¶</a></dt>
+<dd><p>This sets an option to <em>True</em>, but also sets input to <em>-</em>
+to prevent an error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.print_help">
+<tt class="descname">print_help</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.print_help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print an extended help message, listing all options and any
+help text provided with them, to &#8216;file&#8217; (default stdout).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.print_manpage">
+<tt class="descname">print_manpage</tt><big>(</big><em>file=None</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.print_manpage" title="Permalink to this definition">¶</a></dt>
+<dd><p>outputs a manpage for the program using the help information</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.print_usage">
+<tt class="descname">print_usage</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.print_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the usage message for the current program (self.usage) to
+&#8216;file&#8217; (default stdout).  Any occurrence of the string &#8220;%prog&#8221; in
+self.usage is replaced with the name of the current program
+(basename of sys.argv[0]).  Does nothing if self.usage is empty
+or not defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.print_version">
+<tt class="descname">print_version</tt><big>(</big><em>file : file = stdout</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.print_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the version message for this program (self.version) to
+&#8216;file&#8217; (default stdout).  As with print_usage(), any occurrence
+of &#8220;%prog&#8221; in self.version is replaced by the current program&#8217;s
+name.  Does nothing if self.version is empty or undefined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.processfile">
+<tt class="descname">processfile</tt><big>(</big><em>fileprocessor</em>, <em>options</em>, <em>fullinputpath</em>, <em>fulloutputpath</em>, <em>fulltemplatepath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.processfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process an individual file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.recurseinputfilelist">
+<tt class="descname">recurseinputfilelist</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.recurseinputfilelist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a list of files, and find a common base directory for them.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.recurseinputfiles">
+<tt class="descname">recurseinputfiles</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.recurseinputfiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recurse through directories and return files to be processed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.recursiveprocess">
+<tt class="descname">recursiveprocess</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.recursiveprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recurse through directories and process files.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.reportprogress">
+<tt class="descname">reportprogress</tt><big>(</big><em>filename</em>, <em>success</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.reportprogress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows that we are progressing...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the arguments, and runs recursiveprocess with the
+resulting options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.set_usage">
+<tt class="descname">set_usage</tt><big>(</big><em>usage=None</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.set_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>sets the usage string - if usage not given, uses getusagestring for
+each option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.seterrorleveloptions">
+<tt class="descname">seterrorleveloptions</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.seterrorleveloptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the errorlevel options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.setformats">
+<tt class="descname">setformats</tt><big>(</big><em>formats</em>, <em>usetemplates</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.setformats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the format options using the given format dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>formats</strong> (<em>Dictionary</em>) &#8211; <p>The dictionary <em>keys</em> should be:</p>
+<ul class="simple">
+<li>Single strings (or 1-tuples) containing an
+input format (if not <em>usetemplates</em>)</li>
+<li>Tuples containing an input format and
+template format (if <em>usetemplates</em>)</li>
+<li>Formats can be <em>None</em> to indicate what to do
+with standard input</li>
+</ul>
+<p>The dictionary <em>values</em> should be tuples of
+outputformat (string) and processor method.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.setmanpageoption">
+<tt class="descname">setmanpageoption</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.setmanpageoption" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a manpage option that allows the optionparser to generate a
+manpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.setprogressoptions">
+<tt class="descname">setprogressoptions</tt><big>(</big><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.setprogressoptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the progress options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.splitext">
+<tt class="descname">splitext</tt><big>(</big><em>pathname</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.splitext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits <em>pathname</em> into name and ext, and removes the extsep.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pathname</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; A file path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">root, ext</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.splitinputext">
+<tt class="descname">splitinputext</tt><big>(</big><em>inputpath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.splitinputext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits an <em>inputpath</em> into name and extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.splittemplateext">
+<tt class="descname">splittemplateext</tt><big>(</big><em>templatepath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.splittemplateext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a <em>templatepath</em> into name and extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.templateexists">
+<tt class="descname">templateexists</tt><big>(</big><em>options</em>, <em>templatepath</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.templateexists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the given template exists...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="translate.filters.pofilter.FilterOptionParser.warning">
+<tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>options=None</em>, <em>exc_info=None</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.FilterOptionParser.warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a warning message incorporating &#8216;msg&#8217; to stderr and exit.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.pofilter.build_checkerconfig">
+<tt class="descclassname">translate.filters.pofilter.</tt><tt class="descname">build_checkerconfig</tt><big>(</big><em>options</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.build_checkerconfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the checker config from the given options.  This is mainly
+factored out for the sake of unit tests.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.pofilter.runfilter">
+<tt class="descclassname">translate.filters.pofilter.</tt><tt class="descname">runfilter</tt><big>(</big><em>inputfile</em>, <em>outputfile</em>, <em>templatefile</em>, <em>checkfilter=None</em><big>)</big><a class="headerlink" href="#translate.filters.pofilter.runfilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads in inputfile, filters using checkfilter, writes to outputfile.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.filters.prefilters">
+<span id="prefilters"></span><h2>prefilters<a class="headerlink" href="#module-translate.filters.prefilters" title="Permalink to this headline">¶</a></h2>
+<p>Filters that strings can be passed through before certain tests.</p>
+<dl class="function">
+<dt id="translate.filters.prefilters.filteraccelerators">
+<tt class="descclassname">translate.filters.prefilters.</tt><tt class="descname">filteraccelerators</tt><big>(</big><em>accelmarker</em><big>)</big><a class="headerlink" href="#translate.filters.prefilters.filteraccelerators" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a function that filters accelerators marked using <em>accelmarker</em>
+from a strings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>accelmarker</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Accelerator marker character</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Function</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">fn(str1, acceplist=None)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.prefilters.filtervariables">
+<tt class="descclassname">translate.filters.prefilters.</tt><tt class="descname">filtervariables</tt><big>(</big><em>startmarker</em>, <em>endmarker</em>, <em>varfilter</em><big>)</big><a class="headerlink" href="#translate.filters.prefilters.filtervariables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a function that filters variables marked using <em>startmarker</em> and
+<em>endmarker</em> from a string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>startmarker</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Start of variable marker</li>
+<li><strong>endmarker</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; End of variable marker</li>
+<li><strong>varfilter</strong> (<em>Function</em>) &#8211; fn(variable, startmarker, endmarker)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Function</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">fn(str1)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.prefilters.filterwordswithpunctuation">
+<tt class="descclassname">translate.filters.prefilters.</tt><tt class="descname">filterwordswithpunctuation</tt><big>(</big><em>str1</em><big>)</big><a class="headerlink" href="#translate.filters.prefilters.filterwordswithpunctuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Goes through a list of known words that have punctuation and removes the
+punctuation from them.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.prefilters.removekdecomments">
+<tt class="descclassname">translate.filters.prefilters.</tt><tt class="descname">removekdecomments</tt><big>(</big><em>str1</em><big>)</big><a class="headerlink" href="#translate.filters.prefilters.removekdecomments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove KDE-style PO comments.</p>
+<p>KDE comments start with <tt class="docutils literal"><span class="pre">_:[space]</span></tt> and end with a literal <tt class="docutils literal"><span class="pre">\n</span></tt>.
+Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&quot;_: comment</span><span class="se">\n</span><span class="s">&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.prefilters.varname">
+<tt class="descclassname">translate.filters.prefilters.</tt><tt class="descname">varname</tt><big>(</big><em>variable</em>, <em>startmarker</em>, <em>endmarker</em><big>)</big><a class="headerlink" href="#translate.filters.prefilters.varname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variable filter that returns the variable name without the marking
+punctuation.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Currently this function simply returns <em>variable</em> unchanged, no
+matter what <em>*marker</em>’s are set to.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">String</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Variable name with the supplied <em>startmarker</em> and <em>endmarker</em>
+removed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="translate.filters.prefilters.varnone">
+<tt class="descclassname">translate.filters.prefilters.</tt><tt class="descname">varnone</tt><big>(</big><em>variable</em>, <em>startmarker</em>, <em>endmarker</em><big>)</big><a class="headerlink" href="#translate.filters.prefilters.varnone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variable filter that returns an empty string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">String</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Empty string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-translate.filters.spelling">
+<span id="spelling"></span><h2>spelling<a class="headerlink" href="#module-translate.filters.spelling" title="Permalink to this headline">¶</a></h2>
+<p>An API to provide spell checking for use in checks or elsewhere.</p>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

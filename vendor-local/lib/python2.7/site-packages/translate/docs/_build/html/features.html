@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Features &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/bootstrap.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="index.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Translate Toolkit" href="index.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Features</a></li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="index.html"
+         title="previous chapter">&laquo; Translate Toolkit</a></li>
+  <li><a href="installation.html"
+         title="next chapter">Installation &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="features">
+<span id="id1"></span><h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Work with <strong>ONE localisation format</strong>.  You&#8217;ll no longer be editing DTD files
+in one tool, .properties in another, OpenOffice GSI in a third.  Simply do
+all your localisation in a PO or XLIFF editor</li>
+<li><strong>Converters</strong> for a number of <a class="reference internal" href="formats/index.html"><em>formats</em></a><ul>
+<li>OpenOffice.org SDF/GSI</li>
+<li>Mozilla: .properties, DTD, XHTML, .inc, .ini, etc</li>
+<li>Others: Comma Separated Value, TMX, XLIFF, TBX, PHP, WordFast TXT, Qt .ts,
+txt, .ini, Windows .rc, ical, subtitles, Mac OS X strings</li>
+</ul>
+</li>
+<li><strong>File access to localization files</strong> through the format API in all the above
+formats, as well as .qph, .qm, .mo</li>
+<li>Output <strong>valid target file</strong> types.  We make sure that your output files
+(e.g. .properties) contain all comments from the original file and preserves
+the layout of the original as far as possible.  If your PO entry is marked as
+fuzzy we use the English text, not your half complete translation.  The
+converters for OpenOffice.org and Mozilla formats will also perform simple
+checks and corrections to make sure you have none of those hard to find
+localisation bugs.</li>
+<li>Our checker has over <a class="reference internal" href="commands/pofilter_tests.html"><em>42 checks</em></a> to find
+errors such as: missing or translated variables, missing accelerator keys,
+bad escaping, start capitalisation, missing sentences, bad XML and much more.</li>
+<li>Language awareness, taking language conventions for capitalisation, quotes
+and other punctuation into account</li>
+<li><strong>Find conflicting translations</strong> easily, cases where you have translated a
+source word differently or used a target word for 2 very different English
+concepts</li>
+<li><strong>Extract messages</strong> using simple text or a regular expression allowing you
+to quickly find and extract words that you need to fix due to glossary
+changes.</li>
+<li><strong>Merge snippets</strong> of PO files into your existing translations.</li>
+<li>Create word, string and file <strong>counts</strong> of your files.  Making it much easier
+to budget time as string counts do not give you a good indication of expected
+work.</li>
+<li>Create a set of PO files with <strong>debugging</strong> entries to allow you to easily
+locate the source of translations.  Very useful in OpenOffice.org which
+provides scant clues as to where the running application has sourced the
+message.</li>
+</ul>
+<p>The Translate Toolkit is also a <strong>powerful API</strong> for writing translation and
+localisation tools, already used by our own and several other projects. See the
+<a class="reference internal" href="formats/base_classes.html"><em>base class</em></a> section for more information.</p>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

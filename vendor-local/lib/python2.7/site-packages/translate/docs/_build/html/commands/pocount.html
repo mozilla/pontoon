@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pocount &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Converters" href="index.html" />
+    <link rel="next" title="podebug" href="podebug.html" />
+    <link rel="prev" title="Stopword file format" href="poterminology_stopword_file.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">pocount</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#easy-counting">Easy counting</a></li>
+<li><a class="reference internal" href="#incomplete-work">Incomplete work</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#output-formats">Output formats</a><ul>
+<li><a class="reference internal" href="#full">&#8211;full</a></li>
+<li><a class="reference internal" href="#csv">&#8211;csv</a></li>
+<li><a class="reference internal" href="#short-strings-alias-short">&#8211;short-strings (alias &#8211;short)</a></li>
+<li><a class="reference internal" href="#short-words">&#8211;short-words</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bugs">Bugs</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="poterminology_stopword_file.html"
+         title="previous chapter">&laquo; Stopword file format</a></li>
+  <li><a href="podebug.html"
+         title="next chapter">podebug &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="pocount">
+<span id="id1"></span><h1>pocount<a class="headerlink" href="#pocount" title="Permalink to this headline">¶</a></h1>
+<p>pocount will count the number of strings and words in translatable files.</p>
+<p>Supported formates include: PO and XLIFF.   Almost all bilingual file formats
+supported by the Translate Toolkit will work with pocount, including: <a class="reference internal" href="../formats/tmx.html"><em>TMX</em></a>, <a class="reference internal" href="../formats/tbx.html"><em>TBX</em></a>, <a class="reference internal" href="../formats/mo.html"><em>Gettext .mo</em></a>,
+<a class="reference internal" href="../formats/qm.html"><em>Qt .qm</em></a>, <a class="reference internal" href="../formats/wordfast.html"><em>Wordfast .txt TM</em></a>.</p>
+<p>A number of other <a class="reference internal" href="../formats/index.html"><em>formats</em></a> should be countable as the
+toolkit develops.  Note that only multilingual formats based the storage
+<a class="reference internal" href="../formats/base_classes.html"><em>base class</em></a> are supported, but that includes
+almost all storage formats.</p>
+<div class="section" id="usage">
+<span id="pocount-usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>pocount [options] &lt;directory|file(s)&gt;
+</pre></div>
+</div>
+<p>Where:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>directory</td>
+<td>will recurse and count all files in the specified directory</td>
+</tr>
+<tr class="row-even"><td>file(s)</td>
+<td>will count all files specified</td>
+</tr>
+</tbody>
+</table>
+<p>Options:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--incomplete</span></kbd></td>
+<td>skip 100% translated files</td></tr>
+</tbody>
+</table>
+<p>Output format:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--full</span></kbd></td>
+<td>(default) statistics in full, verbose format</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--csv</span></kbd></td>
+<td>statistics in CSV format</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--short</span></kbd></td>
+<td>same as &#8211;short-strings</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--short-strings</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>statistics of strings in short format &#8211; one line per file</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--short-words</span></kbd></td>
+<td>statistics of words in short format &#8211; one line per file</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="examples">
+<span id="pocount-examples"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>pocount makes it easy to count the current state of a body of translations. The
+most interesting options are those that adjust the output style and decide what
+to count.</p>
+<div class="section" id="easy-counting">
+<span id="pocount-easy-counting"></span><h3>Easy counting<a class="headerlink" href="#easy-counting" title="Permalink to this headline">¶</a></h3>
+<p>To count how much work is to be done in you project:</p>
+<div class="highlight-python"><div class="highlight"><pre>pocount project/
+</pre></div>
+</div>
+<p>This will count all translatable files found in the directory <em>project</em>/ and
+output the results in <tt class="docutils literal"><span class="pre">--full</span></tt> format.</p>
+<p>You might want to be more specific and only count certain files:</p>
+<div class="highlight-python"><div class="highlight"><pre>pocount *.po
+</pre></div>
+</div>
+<p>This will count all PO files in the current directory but will ignore any other
+files that &#8216;pocount&#8217; can count.</p>
+<p>You can have full control of the files to count by using some of the abilities
+of the Unix commandline, these may work on Mac OS X but are unlikely to work on
+Windows.:</p>
+<div class="highlight-python"><div class="highlight"><pre>pocount $(find . -name &quot;*.properties.po&quot;)
+</pre></div>
+</div>
+<p>This will first find all files that match <tt class="docutils literal"><span class="pre">*.properties.po</span></tt> and then count
+them.  That would make it easy to count the state of your Mozilla translations
+of .properties files.</p>
+</div>
+<div class="section" id="incomplete-work">
+<span id="pocount-incomplete-work"></span><h3>Incomplete work<a class="headerlink" href="#incomplete-work" title="Permalink to this headline">¶</a></h3>
+<p>To count what still needs to be done, ignoring what is 100% complete you can
+use the <tt class="docutils literal"><span class="pre">--incomplete</span></tt> option.:</p>
+<div class="highlight-python"><div class="highlight"><pre>pocount --incomplete --short *.xlf
+</pre></div>
+</div>
+<p>We are now counting all XLIFF files by using the <tt class="docutils literal"><span class="pre">*.xlf</span></tt> expansion.  We are
+only counting files that are not 100% complete and we&#8217;re outputing string
+counts using the <tt class="docutils literal"><span class="pre">--short</span></tt> option.</p>
+</div>
+</div>
+<div class="section" id="output-formats">
+<span id="pocount-output-formats"></span><h2>Output formats<a class="headerlink" href="#output-formats" title="Permalink to this headline">¶</a></h2>
+<p>The output options provide the following types of output</p>
+<div class="section" id="full">
+<span id="pocount-full"></span><h3>&#8211;full<a class="headerlink" href="#full" title="Permalink to this headline">¶</a></h3>
+<p>This is the normal, or default, mode.  It produces the most comprehensive and
+easy to read data, although the amount of data may overwhelm the user. It
+produces the following output:</p>
+<div class="highlight-python"><div class="highlight"><pre>avmedia/source/viewer.po
+type              strings      words (source)    words (translation)
+translated:   73465 ( 99%)     538598 ( 99%)          513296
+fuzzy:           13 (  0%)        141 (  0%)             n/a
+untranslated:    53 (  0%)        602 (  0%)             n/a
+Total:        73531            539341                 513296
+</pre></div>
+</div>
+<p>A grand total and file count is provided if the number of files is greater than
+one.</p>
+</div>
+<div class="section" id="csv">
+<span id="pocount-csv"></span><h3>&#8211;csv<a class="headerlink" href="#csv" title="Permalink to this headline">¶</a></h3>
+<p>This format is useful if you want to reuse the data in a spreadsheet.  In CSV
+mode the following output is shown:</p>
+<div class="highlight-python"><div class="highlight"><pre>Filename, Translated Messages, Translated Source Words, Translated Target Words, Fuzzy Messages, Fuzzy Source Words, Untranslated Messages, Untranslated Source Words, Review Messages, Review Source Words
+avmedia/source/viewer.po,  1, 3, 3, 0, 0, 4, 22, 1, 3
+</pre></div>
+</div>
+<p>Totals are not provided in CSV mode.</p>
+</div>
+<div class="section" id="short-strings-alias-short">
+<span id="pocount-short-strings-alias-short"></span><h3>&#8211;short-strings (alias &#8211;short)<a class="headerlink" href="#short-strings-alias-short" title="Permalink to this headline">¶</a></h3>
+<p>The focus is on easily accessible data in a compact form.  This will only count
+strings and uses a short syntax to make it easy for an experienced localiser to
+read.:</p>
+<div class="highlight-python"><div class="highlight"><pre>test-po/fuzzy.po strings: total: 1    | 0t    1f      0u      | 0%t   100%f   0%u
+</pre></div>
+</div>
+<p>The filename is followed by a word indicating the type of count, here we are
+counting strings.  The total give the total string count.  While the letters t,
+f and u represent &#8216;translated&#8217;, &#8216;fuzzy&#8217; and &#8216;untranslated&#8217; and here indicate
+the string counts for each of those categories.  The counts are followed by a
+percentage representation of the same categories.</p>
+</div>
+<div class="section" id="short-words">
+<span id="pocount-short-words"></span><h3>&#8211;short-words<a class="headerlink" href="#short-words" title="Permalink to this headline">¶</a></h3>
+<p>The output is very similar to <tt class="docutils literal"><span class="pre">--short-strings</span></tt> above:</p>
+<div class="highlight-python"><div class="highlight"><pre>test-po/fuzzy.po source words: total: 3       | 0t    3f      0u      | 0%t   100%f   0%u
+</pre></div>
+</div>
+<p>But instead of counting string we are now counting words as indicated by the
+term &#8216;source words&#8217;</p>
+</div>
+</div>
+<div class="section" id="bugs">
+<span id="pocount-bugs"></span><h2>Bugs<a class="headerlink" href="#bugs" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>There are some miscounts related to word breaks.</li>
+<li>When using the short output formats the columns may not be exactly aligned.
+This is because the number of digits in different columns is unknown before
+all input files are processed. The chosen tradeoff here was instanteous
+output (after each processed file) instead of waiting for the last file to be
+processed.</li>
+</ul>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,810 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Translate Styleguide &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="next" title="Building" href="building.html" />
+    <link rel="prev" title="Quoting and Escaping" href="../formats/quoting_and_escaping.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Translate Styleguide</a><ul>
+<li><a class="reference internal" href="#python">Python</a><ul>
+<li><a class="reference internal" href="#general">General</a><ul>
+<li><a class="reference internal" href="#indentation">Indentation</a></li>
+<li><a class="reference internal" href="#maximum-line-length">Maximum line length</a></li>
+<li><a class="reference internal" href="#continuing-long-statements">Continuing long statements</a></li>
+<li><a class="reference internal" href="#blank-lines">Blank lines</a></li>
+<li><a class="reference internal" href="#imports">Imports</a></li>
+<li><a class="reference internal" href="#properties">Properties</a></li>
+<li><a class="reference internal" href="#single-vs-double-quoted-strings">Single vs double quoted strings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#expressions-and-statements">Expressions and Statements</a><ul>
+<li><a class="reference internal" href="#general-whitespace-rules">General whitespace rules</a></li>
+<li><a class="reference internal" href="#slice-notation">Slice notation</a></li>
+<li><a class="reference internal" href="#comparisons">Comparisons</a></li>
+<li><a class="reference internal" href="#negated-containment-checks">Negated containment checks</a></li>
+<li><a class="reference internal" href="#instance-checks">Instance checks</a></li>
+<li><a class="reference internal" href="#if-statements">If statements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#naming-conventions">Naming Conventions</a><ul>
+<li><a class="reference internal" href="#function-and-method-arguments">Function and method arguments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#documentation">Documentation</a><ul>
+<li><a class="reference internal" href="#special-roles">Special roles</a></li>
+<li><a class="reference internal" href="#code-and-command-line-highlighting">Code and command line highlighting</a></li>
+<li><a class="reference internal" href="#user-documentation">User documentation</a></li>
+<li><a class="reference internal" href="#docstrings">Docstrings</a></li>
+<li><a class="reference internal" href="#comments">Comments</a></li>
+<li><a class="reference internal" href="#string-formatting">String formatting</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="../formats/quoting_and_escaping.html"
+         title="previous chapter">&laquo; Quoting and Escaping</a></li>
+  <li><a href="building.html"
+         title="next chapter">Building &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="translate-styleguide">
+<span id="styleguide"></span><h1>Translate Styleguide<a class="headerlink" href="#translate-styleguide" title="Permalink to this headline">¶</a></h1>
+<p>The Translate styleguide is the styleguide for all Translate projects,
+including Translate Toolkit, Pootle, Virtaal and others.  Patches are required
+to follow these guidelines.</p>
+<p>This Styleguide follows <span class="target" id="index-0"></span><a class="pep reference external" href="http://www.python.org/dev/peps/pep-0008"><strong>PEP 8</strong></a> with some clarifications. It is based almost
+verbatim on the <a class="reference external" href="http://flask.pocoo.org/docs/styleguide/">Flask Styleguide</a>.</p>
+<div class="section" id="python">
+<span id="styleguide-python"></span><h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
+<p>These are the Translate conventions for Python coding style.</p>
+<div class="section" id="general">
+<span id="styleguide-general"></span><h3>General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="indentation">
+<h4>Indentation<a class="headerlink" href="#indentation" title="Permalink to this headline">¶</a></h4>
+<p>4 real spaces, no tabs. Exceptions: modules that have been copied into the
+source that don&#8217;t follow this guideline.</p>
+</div>
+<div class="section" id="maximum-line-length">
+<h4>Maximum line length<a class="headerlink" href="#maximum-line-length" title="Permalink to this headline">¶</a></h4>
+<p>79 characters with a soft limit for 84 if absolutely necessary. Try to avoid
+too nested code by cleverly placing <cite>break</cite>, <cite>continue</cite> and <cite>return</cite>
+statements.</p>
+</div>
+<div class="section" id="continuing-long-statements">
+<h4>Continuing long statements<a class="headerlink" href="#continuing-long-statements" title="Permalink to this headline">¶</a></h4>
+<p>To continue a statement you can use backslashes (preceeded by a space) in which
+case you should align the next line with the last dot or equal sign, or indent
+four spaces:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">MyModel</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">MyModel</span><span class="o">.</span><span class="n">scalar</span> <span class="o">&gt;</span> <span class="mi">120</span><span class="p">)</span> \
+             <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">MyModel</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span> \
+             <span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">my_long_assignment</span> <span class="o">=</span> <span class="n">MyModel</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">MyModel</span><span class="o">.</span><span class="n">scalar</span> <span class="o">&gt;</span> <span class="mi">120</span><span class="p">)</span> \
+                     <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">MyModel</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span> \
+                     <span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">this_is_a_very_long</span><span class="p">(</span><span class="n">function_call</span><span class="p">,</span> <span class="s">&#39;with many parameters&#39;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">that_returns_an_object_with_an_attribute</span>
+</pre></div>
+</div>
+<p>If you break in a statement with parentheses or braces, align to the braces:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">this_is_a_very_long</span><span class="p">(</span><span class="n">function_call</span><span class="p">,</span> <span class="s">&#39;with many parameters&#39;</span><span class="p">,</span>
+                    <span class="mi">23</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="s">&#39;and even more&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you need to break long strings, on function calls or when assigning to
+variables, try to use implicit string continuation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">this_holds_a_very_long_string</span><span class="p">(</span><span class="s">&quot;Very long string with a lot of characters &quot;</span>
+                              <span class="s">&quot;and words on it, so many that it is &quot;</span>
+                              <span class="s">&quot;necessary to break it in several lines to &quot;</span>
+                              <span class="s">&quot;improve readability.&quot;</span><span class="p">)</span>
+<span class="n">long_string_var</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;Very long string with a lot of characters and words on &quot;</span>
+                   <span class="s">&quot;it, so many that it is necessary to break it in &quot;</span>
+                   <span class="s">&quot;several lines to improve readability.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For lists or tuples with many items, break immediately after the opening brace:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&#39;this is the first&#39;</span><span class="p">,</span> <span class="s">&#39;set of items&#39;</span><span class="p">,</span> <span class="s">&#39;with more items&#39;</span><span class="p">,</span>
+    <span class="s">&#39;to come in this line&#39;</span><span class="p">,</span> <span class="s">&#39;like this&#39;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="blank-lines">
+<h4>Blank lines<a class="headerlink" href="#blank-lines" title="Permalink to this headline">¶</a></h4>
+<p>Top level functions and classes are separated by two lines, everything else
+by one. Do not use too many blank lines to separate logical segments in code.
+Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&#39;Hello </span><span class="si">%s</span><span class="s">!&#39;</span> <span class="o">%</span> <span class="n">name</span>
+
+
+<span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&#39;See you </span><span class="si">%s</span><span class="s">.&#39;</span> <span class="o">%</span> <span class="n">name</span>
+
+
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This is a simple docstring&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">annoying_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#39;!!!!111&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="imports">
+<span id="styleguide-imports"></span><h4>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h4>
+<p>Like in <span class="target" id="index-1"></span><a class="pep reference external" href="http://www.python.org/dev/peps/pep-0008"><strong>PEP 8</strong></a>, but:</p>
+<ul class="simple">
+<li>Imports should be grouped in the following order:<ol class="arabic">
+<li>__future__ library imports</li>
+<li>Python standard library imports</li>
+<li>Third party libraries imports</li>
+<li>Translate Toolkit imports</li>
+<li>Current package imports, using explicit relative imports (See <a class="reference external" href="http://www.python.org/dev/peps/pep-0328/#guido-s-decision">PEP 328</a>)</li>
+</ol>
+</li>
+<li>A blank line must be present between each group of imports (like in PEP8).</li>
+<li>Imports on each group must be arranged alphabetically by module name:<ul>
+<li>Shortest module names must be before longer ones:
+<tt class="docutils literal"><span class="pre">from</span> <span class="pre">django.db</span> <span class="pre">import</span> <span class="pre">...</span></tt> before <tt class="docutils literal"><span class="pre">from</span> <span class="pre">django.db.models</span> <span class="pre">import</span> <span class="pre">...</span></tt>.</li>
+</ul>
+</li>
+<li><tt class="docutils literal"><span class="pre">import</span> <span class="pre">...</span></tt> calls must precede <tt class="docutils literal"><span class="pre">from</span> <span class="pre">...</span> <span class="pre">import</span></tt> ones on each group:<ul>
+<li>On each of these subgroups the entries should be alphabetically arranged.</li>
+<li>No blank lines between subgroups.</li>
+</ul>
+</li>
+<li>On <tt class="docutils literal"><span class="pre">from</span> <span class="pre">...</span> <span class="pre">import</span></tt><ul>
+<li>Use a <tt class="docutils literal"><span class="pre">CONSTANT</span></tt>, <tt class="docutils literal"><span class="pre">Class</span></tt>, <tt class="docutils literal"><span class="pre">function</span></tt> order, where the constants,
+classes and functions are in alphabetical order inside of its respective
+groups.</li>
+<li>If the import line exceeds the 80 chars, then split it using parentheses to
+continue the import on the next line (aligning the imported items with the
+opening parenthesis).</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys.path</span> <span class="kn">as</span> <span class="nn">sys_path</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+
+<span class="kn">from</span> <span class="nn">lxml.html</span> <span class="kn">import</span> <span class="n">fromstring</span>
+
+<span class="kn">from</span> <span class="nn">translate.filters</span> <span class="kn">import</span> <span class="n">checks</span>
+<span class="kn">from</span> <span class="nn">translate.storage</span> <span class="kn">import</span> <span class="n">versioncontrol</span>
+<span class="kn">from</span> <span class="nn">translate.storage.aresource</span> <span class="kn">import</span> <span class="p">(</span><span class="n">EOF</span><span class="p">,</span> <span class="n">WHITESPACE</span><span class="p">,</span> <span class="n">AndroidFile</span><span class="p">,</span>
+                                         <span class="n">AndroidUnit</span><span class="p">,</span> <span class="n">android_decode</span><span class="p">,</span>
+                                         <span class="n">android_encode</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">php2po</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="properties">
+<h4>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first">Never use <tt class="docutils literal"><span class="pre">lambda</span></tt> functions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Good.</span>
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">stores</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">stores</span>
+
+
+<span class="c"># Bad.</span>
+<span class="n">stores</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">stores</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Try to use <tt class="docutils literal"><span class="pre">&#64;property</span></tt> instead of <tt class="docutils literal"><span class="pre">get_*</span></tt> or <tt class="docutils literal"><span class="pre">is_*</span></tt> methods that don&#8217;t
+require passing any parameter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Good.</span>
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">terminology</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="o">...</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">is_monolingual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="o">...</span>
+
+
+<span class="c"># Also good.</span>
+<span class="k">def</span> <span class="nf">get_stores_for_language</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">):</span>
+  <span class="o">...</span>
+
+
+<span class="c"># Bad.</span>
+<span class="k">def</span> <span class="nf">get_terminology</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">is_monolingual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="o">...</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Always use <tt class="docutils literal"><span class="pre">&#64;property</span></tt> instead of <tt class="docutils literal"><span class="pre">property(...)</span></tt>, even for properties
+that also have a setter or a deleter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Good.</span>
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">units</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="o">...</span>
+
+
+<span class="c"># Also good.</span>
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;I&#39;m the &#39;x&#39; property.&quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+
+<span class="nd">@x.setter</span>
+<span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>  <span class="c"># Note: Method must be named &#39;x&#39; too.</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">value</span>
+
+<span class="nd">@x.deleter</span>
+<span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># Note: Method must be named &#39;x&#39; too.</span>
+  <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+
+
+<span class="c"># Bad.</span>
+<span class="k">def</span> <span class="nf">_get_units</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="o">...</span>
+<span class="n">units</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_units</span><span class="p">)</span>
+
+
+<span class="c"># Also bad.</span>
+<span class="k">def</span> <span class="nf">getx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+<span class="k">def</span> <span class="nf">setx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">value</span>
+<span class="k">def</span> <span class="nf">delx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+<span class="n">x</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getx</span><span class="p">,</span> <span class="n">setx</span><span class="p">,</span> <span class="n">delx</span><span class="p">,</span> <span class="s">&quot;I&#39;m the &#39;x&#39; property.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="single-vs-double-quoted-strings">
+<h4>Single vs double quoted strings<a class="headerlink" href="#single-vs-double-quoted-strings" title="Permalink to this headline">¶</a></h4>
+<p>There is no preference on using single or double quotes for strings, except in
+some specific cases:</p>
+<ul>
+<li><p class="first">Always use single quotes for string dictionary keys:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Good.</span>
+<span class="n">demo</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;language&#39;</span><span class="p">:</span> <span class="n">language</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c"># Bad.</span>
+<span class="n">demo</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&quot;language&quot;</span><span class="p">:</span> <span class="n">language</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">When a single or double quote character needs to be escaped it is recommended
+to instead enclose the string using the other quoting:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Good.</span>
+<span class="n">str1</span> <span class="o">=</span> <span class="s">&quot;Sauron&#39;s eye&quot;</span>
+<span class="n">str2</span> <span class="o">=</span> <span class="s">&#39;Its name is &quot;Virtaal&quot;.&#39;</span>
+
+
+<span class="c"># Bad.</span>
+<span class="n">str3</span> <span class="o">=</span> <span class="s">&#39;Sauron</span><span class="se">\&#39;</span><span class="s">s eye&#39;</span>
+<span class="n">str4</span> <span class="o">=</span> <span class="s">&quot;Its name is </span><span class="se">\&quot;</span><span class="s">Virtaal</span><span class="se">\&quot;</span><span class="s">.&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="expressions-and-statements">
+<h3>Expressions and Statements<a class="headerlink" href="#expressions-and-statements" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="general-whitespace-rules">
+<h4>General whitespace rules<a class="headerlink" href="#general-whitespace-rules" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>No whitespace for unary operators that are not words (e.g.: <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">~</span></tt>
+etc.) as well on the inner side of parentheses.</li>
+<li>Whitespace is placed between binary operators.</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Good.</span>
+<span class="n">exp</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.05</span>
+<span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">item_value</span> <span class="o">/</span> <span class="n">item_count</span><span class="p">)</span> <span class="o">*</span> <span class="n">offset</span> <span class="o">/</span> <span class="n">exp</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">my_list</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">my_dict</span><span class="p">[</span><span class="s">&#39;key&#39;</span><span class="p">]</span>
+
+
+<span class="c"># Bad.</span>
+<span class="n">exp</span> <span class="o">=</span> <span class="o">-</span> <span class="mf">1.05</span>
+<span class="n">value</span> <span class="o">=</span> <span class="p">(</span> <span class="n">item_value</span> <span class="o">/</span> <span class="n">item_count</span> <span class="p">)</span> <span class="o">*</span> <span class="n">offset</span> <span class="o">/</span> <span class="n">exp</span>
+<span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">item_value</span><span class="o">/</span><span class="n">item_count</span><span class="p">)</span><span class="o">*</span><span class="n">offset</span><span class="o">/</span><span class="n">exp</span>
+<span class="n">value</span><span class="o">=</span><span class="p">(</span> <span class="n">item_value</span><span class="o">/</span><span class="n">item_count</span> <span class="p">)</span> <span class="o">*</span> <span class="n">offset</span><span class="o">/</span><span class="n">exp</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">my_list</span><span class="p">[</span> <span class="n">index</span> <span class="p">]</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">my_dict</span> <span class="p">[</span><span class="s">&#39;key&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="slice-notation">
+<h4>Slice notation<a class="headerlink" href="#slice-notation" title="Permalink to this headline">¶</a></h4>
+<p>While <span class="target" id="index-2"></span><a class="pep reference external" href="http://www.python.org/dev/peps/pep-0008"><strong>PEP 8</strong></a> calls for spaces around operators <tt class="docutils literal"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">b</span> <span class="pre">+</span> <span class="pre">c</span></tt> this results in
+flags when you use <tt class="docutils literal"><span class="pre">a[b+1:c-1]</span></tt> but would allow the rather unreadable
+<tt class="docutils literal"><span class="pre">a[b</span> <span class="pre">+</span> <span class="pre">1:c</span> <span class="pre">-</span> <span class="pre">1]</span></tt> to pass. <span class="target" id="index-3"></span><a class="pep reference external" href="http://www.python.org/dev/peps/pep-0008"><strong>PEP 8</strong></a> is rather quiet on slice notation.</p>
+<ul>
+<li><p class="first">Don&#8217;t use spaces with simple variables or numbers</p>
+</li>
+<li><p class="first">Use brackets for expressions with spaces between binary operators</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Good.</span>
+<span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">a</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+<span class="n">a</span><span class="p">[(</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):(</span><span class="n">end</span> <span class="o">+</span> <span class="n">var</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)]</span>  <span class="c"># Brackets help group things and don&#39;t hide the slice</span>
+<span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:(</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="c"># Bad.</span>
+<span class="n">a</span><span class="p">[</span><span class="n">start</span><span class="p">:</span> <span class="n">end</span><span class="p">]</span>  <span class="c"># No spaces around :</span>
+<span class="n">a</span><span class="p">[</span><span class="n">start</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">end</span><span class="o">+</span><span class="n">var</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span>  <span class="c"># Insanely hard to read, especially when your expressions are more complex</span>
+<span class="n">a</span><span class="p">[</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">end</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>  <span class="c"># You lose sight of the fact that it is a slice</span>
+<span class="n">a</span><span class="p">[</span><span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>  <span class="c"># -1 is unary, no space</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">String slice formatting is still under discussion.</p>
+</div>
+</div>
+<div class="section" id="comparisons">
+<h4>Comparisons<a class="headerlink" href="#comparisons" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Against arbitrary types: <tt class="docutils literal"><span class="pre">==</span></tt> and <tt class="docutils literal"><span class="pre">!=</span></tt></li>
+<li>Against singletons with <tt class="docutils literal"><span class="pre">is</span></tt> and <tt class="docutils literal"><span class="pre">is</span> <span class="pre">not</span></tt> (e.g.: <tt class="docutils literal"><span class="pre">foo</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">None</span></tt>)</li>
+<li>Never compare something with <cite>True</cite> or <cite>False</cite> (for example never do <tt class="docutils literal"><span class="pre">foo</span> <span class="pre">==</span>
+<span class="pre">False</span></tt>, do <tt class="docutils literal"><span class="pre">not</span> <span class="pre">foo</span></tt> instead)</li>
+</ul>
+</div>
+<div class="section" id="negated-containment-checks">
+<h4>Negated containment checks<a class="headerlink" href="#negated-containment-checks" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Use <tt class="docutils literal"><span class="pre">foo</span> <span class="pre">not</span> <span class="pre">in</span> <span class="pre">bar</span></tt> instead of <tt class="docutils literal"><span class="pre">not</span> <span class="pre">foo</span> <span class="pre">in</span> <span class="pre">bar</span></tt></li>
+</ul>
+</div>
+<div class="section" id="instance-checks">
+<h4>Instance checks<a class="headerlink" href="#instance-checks" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">isinstance(a,</span> <span class="pre">C)</span></tt> instead of <tt class="docutils literal"><span class="pre">type(A)</span> <span class="pre">is</span> <span class="pre">C</span></tt>, but try to avoid instance
+checks in general.  Check for features.</li>
+</ul>
+</div>
+<div class="section" id="if-statements">
+<h4>If statements<a class="headerlink" href="#if-statements" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first">Use <tt class="docutils literal"><span class="pre">()</span></tt> brackets around complex if statements to allow easy wrapping,
+don&#8217;t use backslash to wrap an if statement.</p>
+</li>
+<li><p class="first">Wrap between <tt class="docutils literal"><span class="pre">and</span></tt>, <tt class="docutils literal"><span class="pre">or</span></tt>, etc.</p>
+</li>
+<li><p class="first">Keep <tt class="docutils literal"><span class="pre">not</span></tt> with the expression</p>
+</li>
+<li><p class="first">Use <tt class="docutils literal"><span class="pre">()</span></tt> alignment between expressions</p>
+</li>
+<li><p class="first">Use extra <tt class="docutils literal"><span class="pre">()</span></tt> to eliminate ambiguity, don&#8217;t rely on an understanding of
+Python operator precedence rules.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Good.</span>
+<span class="k">if</span> <span class="n">length</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">upper</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">length</span> <span class="o">&gt;=</span> <span class="mi">25</span> <span class="ow">and</span>
+    <span class="n">string</span> <span class="o">!=</span> <span class="s">&quot;Something&quot;</span> <span class="ow">and</span>
+    <span class="ow">not</span> <span class="n">careful</span><span class="p">):</span>
+    <span class="n">do_something</span><span class="p">()</span>
+
+
+<span class="c"># Bad.</span>
+<span class="k">if</span> <span class="n">length</span> <span class="o">&gt;=</span> <span class="n">upper</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="o">...</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="o">...</span>
+    <span class="ow">and</span> <span class="n">string</span> <span class="o">!=...</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="naming-conventions">
+<h3>Naming Conventions<a class="headerlink" href="#naming-conventions" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This has not been implemented or discussed.  The Translate code
+is not at all consistent with these conventions.</p>
+</div>
+<ul class="simple">
+<li>Class names: <tt class="docutils literal"><span class="pre">CamelCase</span></tt>, with acronyms kept uppercase (<tt class="docutils literal"><span class="pre">HTTPWriter</span></tt> and
+not <tt class="docutils literal"><span class="pre">HttpWriter</span></tt>)</li>
+<li>Variable names: <tt class="docutils literal"><span class="pre">lowercase_with_underscores</span></tt></li>
+<li>Method and function names: <tt class="docutils literal"><span class="pre">lowercase_with_underscores</span></tt></li>
+<li>Constants: <tt class="docutils literal"><span class="pre">UPPERCASE_WITH_UNDERSCORES</span></tt></li>
+<li>precompiled regular expressions: <tt class="docutils literal"><span class="pre">name_re</span></tt></li>
+</ul>
+<p>Protected members are prefixed with a single underscore.  Double underscores
+are reserved for mixin classes.</p>
+<p>To prevent name clashes with keywords, one trailing underscore may be appended.
+Clashes with builtins are allowed and <strong>must not</strong> be resolved by appending an
+underline to the name.  If your code needs to access a shadowed builtin, rebind
+the builtin to a different name instead.  Consider using a different name to
+avoid having to deal with either type of name clash, but don&#8217;t complicate names
+with prefixes or suffixes.</p>
+<div class="section" id="function-and-method-arguments">
+<h4>Function and method arguments<a class="headerlink" href="#function-and-method-arguments" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Class methods: <tt class="docutils literal"><span class="pre">cls</span></tt> as first parameter</li>
+<li>Instance methods: <tt class="docutils literal"><span class="pre">self</span></tt> as first parameter</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="documentation">
+<span id="styleguide-docs"></span><h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h1>
+<p>We use <a class="reference external" href="http://sphinx-doc.org/">Sphinx</a> to generate our API and user documentation. Read the
+<a class="reference external" href="http://sphinx-doc.org/rest.html">reStructuredText primer</a> and <a class="reference external" href="http://sphinx-doc.org/contents.html">Sphinx documentation</a> as needed.</p>
+<div class="section" id="special-roles">
+<h2>Special roles<a class="headerlink" href="#special-roles" title="Permalink to this headline">¶</a></h2>
+<p>We introduce a number of special roles for documentation:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">:issue:</span></tt> &#8211; links to a toolkit issue Github.<ul>
+<li><tt class="docutils literal"><span class="pre">:issue:`234`</span></tt> gives: <a class="reference external" href="https://github.com/translate/translate/issues/234">issue 234</a></li>
+<li><tt class="docutils literal"><span class="pre">:issue:`broken</span> <span class="pre">&lt;234&gt;`</span></tt> gives: <a class="reference external" href="https://github.com/translate/translate/issues/234">broken</a></li>
+</ul>
+</li>
+<li><tt class="docutils literal"><span class="pre">:opt:</span></tt> &#8211; mark command options and command values.<ul>
+<li><tt class="docutils literal"><span class="pre">:opt:`-P`</span></tt> gives <tt class="docutils literal"><span class="pre">-P</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">:opt:`--progress=dots`</span></tt> gives <tt class="docutils literal"><span class="pre">--progress=dots</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">:opt:`dots`</span></tt> gives <tt class="docutils literal"><span class="pre">dots</span></tt></li>
+</ul>
+</li>
+<li><tt class="docutils literal"><span class="pre">:man:</span></tt> &#8211; link to a Linux man page.<ul>
+<li><tt class="docutils literal"><span class="pre">:man:`msgfmt`</span></tt> gives <a class="reference external" href="http://linux.die.net/man/1/msgfmt">msgfmt</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="code-and-command-line-highlighting">
+<h2>Code and command line highlighting<a class="headerlink" href="#code-and-command-line-highlighting" title="Permalink to this headline">¶</a></h2>
+<p>All code examples and format snippets should be highlighted to make them easier
+to read.  By default Sphinx uses Python highlighting of code snippets (but it
+doesn&#8217;t always work).  You will want to change that in these situations:</p>
+<ul>
+<li><p class="first">The examples are not Python e.g. talking about INI file parsing.  In which
+case set the file level highlighting using:</p>
+<div class="highlight-rest"><div class="highlight"><pre><span class="p">..</span> <span class="ow">highlight</span><span class="p">::</span> ini
+</pre></div>
+</div>
+</li>
+<li><p class="first">There are multiple different code examples in the document, then use:</p>
+<div class="highlight-rest"><div class="highlight"><pre><span class="p">..</span> <span class="ow">code-block</span><span class="p">::</span> ruby
+</pre></div>
+</div>
+<p>before each code block.</p>
+</li>
+<li><p class="first">Python code highlighting isn&#8217;t working, then force Python highlighting using:</p>
+<div class="highlight-rest"><div class="highlight"><pre><span class="p">..</span> <span class="ow">code-block</span><span class="p">::</span> python
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Generally we prefer explicit markup as this makes it easier for those
+following you to know what you intended.  So use <tt class="docutils literal"><span class="pre">..</span> <span class="pre">code-block::</span> <span class="pre">python</span></tt>
+even though in some cases this is not required.</p>
+</div>
+<p>With bash <em>command line examples</em>, to improve readability use:</p>
+<div class="highlight-rest"><div class="highlight"><pre><span class="p">..</span> <span class="ow">code-block</span><span class="p">::</span> bash
+</pre></div>
+</div>
+<p>Add <tt class="docutils literal"><span class="pre">$</span></tt> command prompt markers and <tt class="docutils literal"><span class="pre">#</span></tt> comments as required, as shown in
+this example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>docs
+<span class="nv">$ </span>make html  <span class="c"># Build all Sphinx documentation</span>
+<span class="nv">$ </span>make linkcheck  <span class="c"># Report broken links</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="user-documentation">
+<h2>User documentation<a class="headerlink" href="#user-documentation" title="Permalink to this headline">¶</a></h2>
+<p>This is documentation found in <tt class="docutils literal"><span class="pre">docs/</span></tt> and that is published on Read the
+Docs. The target is the end user so our primary objective is to make accesible,
+readable and beautiful documents for them.</p>
+</div>
+<div class="section" id="docstrings">
+<h2>Docstrings<a class="headerlink" href="#docstrings" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Docstring conventions:</dt>
+<dd><p class="first">All docstrings are formatted with reStructuredText as understood by
+Sphinx.  Depending on the number of lines in the docstring, they are
+laid out differently.  If it&#8217;s just one line, the closing triple
+quote is on the same line as the opening, otherwise the text is on
+the same line as the opening quote and the triple quote that closes
+the string on its own line:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This is a simple docstring.&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">bar</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This is a longer docstring with so much information in there</span>
+<span class="sd">    that it spans three lines.  In this case the closing triple quote</span>
+<span class="sd">    is on its own line.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Please read <span class="target" id="index-4"></span><a class="pep reference external" href="http://www.python.org/dev/peps/pep-0257"><strong>PEP 257</strong></a> (Docstring Conventions) for a general overview,
+the important parts though are:</p>
+<ul class="simple">
+<li>A docstring should have a brief one-line summary, ending with a period. Use
+<tt class="docutils literal"><span class="pre">Do</span> <span class="pre">this</span></tt>, <tt class="docutils literal"><span class="pre">Return</span> <span class="pre">that</span></tt> rather than <tt class="docutils literal"><span class="pre">Does</span> <span class="pre">...</span></tt>, <tt class="docutils literal"><span class="pre">Returns</span> <span class="pre">...</span></tt>.</li>
+<li>If there are more details there should be a blank line between the one-line
+summary and the rest of the text.  Use paragraphs and formatting as needed.</li>
+<li>Use <a class="reference external" href="http://sphinx-doc.org/domains.html#info-field-lists">reST field lists</a> to describe the input parameters and/or return types
+as the last part of the docstring.</li>
+<li>Use proper capitalisation and punctuation.</li>
+<li>Don&#8217;t restate things that would appear in parameter descriptions.</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">addunit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Append the given unit to the object&#39;s list of units.</span>
+
+<span class="sd">    This method should always be used rather than trying to modify the</span>
+<span class="sd">    list manually.</span>
+
+<span class="sd">    :param Unit unit: Any object that inherits from :class:`Unit`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Parameter documentation:</dt>
+<dd><p class="first">Document parameters using <a class="reference external" href="http://sphinx-doc.org/domains.html#info-field-lists">reST field lists</a> as follows:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simple docstring.</span>
+
+<span class="sd">    :param SomeType bar: Something</span>
+<span class="sd">    :return: Returns something</span>
+<span class="sd">    :rtype: Return type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</dd>
+<dt>Cross referencing code:</dt>
+<dd>When talking about other objects, methods, functions and variables
+it is good practice to cross-reference them with Sphinx&#8217;s <a class="reference external" href="http://sphinx-doc.org/domains.html#cross-referencing-python-objects">Python
+cross-referencing</a>.</dd>
+<dt>Other directives:</dt>
+<dd>Use <a class="reference external" href="http://sphinx-doc.org/markup/para.html#paragraph-level-markup">paragraph-level markup</a> when needed.</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We still need to gather the useful ones that we want you to use and how to use
+them.  E.g. how to talk about a parameter in the docstring.  How to reference
+classes in the module.  How to reference other modules, etc.</p>
+</div>
+<dl class="docutils">
+<dt>Module header:</dt>
+<dd><p class="first">The module header consists of an utf-8 encoding declaration, copyright
+attribution, license block and a standard docstring:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c">#</span>
+<span class="o">...</span> <span class="n">LICENSE</span> <span class="n">BLOCK</span><span class="o">...</span>
+
+<span class="sd">&quot;&quot;&quot;A brief description&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="docutils">
+<dt>Deprecation:</dt>
+<dd><p class="first">Document the deprecation and version when deprecating features:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">translate.misc.deprecation</span> <span class="kn">import</span> <span class="n">deprecated</span>
+
+
+<span class="nd">@deprecated</span><span class="p">(</span><span class="s">&quot;Use util.run_fast() instead.&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">run_slow</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run fast</span>
+
+<span class="sd">    .. deprecated:: 1.5</span>
+<span class="sd">       Use :func:`run_fast` instead.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">run_fast</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="comments">
+<h2>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>General:</dt>
+<dd><ul class="first simple">
+<li>The <tt class="docutils literal"><span class="pre">#</span></tt> symbol (pound or hash) is used to start comments.</li>
+<li>A space must follow the <tt class="docutils literal"><span class="pre">#</span></tt> between any written text.</li>
+<li>Line length must be observed.</li>
+<li>Inline comments are preceded by two spaces.</li>
+<li>Write sentences correctly: proper capitalisation and punctuation.</li>
+</ul>
+<div class="last highlight-python"><div class="highlight"><pre><span class="c"># Good comment with space before and full sentence.</span>
+<span class="n">statement</span>  <span class="c"># Good comment with two spaces</span>
+
+
+<span class="c">#Bad comment no space before</span>
+<span class="n">statement</span> <span class="c"># Bad comment, needs two spaces</span>
+</pre></div>
+</div>
+</dd>
+<dt>Docstring comments:</dt>
+<dd><p class="first">Rules for comments are similar to docstrings.  Both are formatted with
+reStructuredText.  If a comment is used to document an attribute, put a
+colon after the opening pound sign (<tt class="docutils literal"><span class="pre">#</span></tt>):</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="c">#: the name of the user as unicode string</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+    <span class="c">#: the sha1 hash of the password + inline salt</span>
+    <span class="n">pw_hash</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="string-formatting">
+<h2>String formatting<a class="headerlink" href="#string-formatting" title="Permalink to this headline">¶</a></h2>
+<p>While str.format() is more powerful than %-formatting, the latter has been the
+canonical way of formatting strings in Python for a long time and the Python
+core team has shown no desire to settle on one syntax over the other.
+For simple, serial positional cases (non-translatable strings), the old &#8220;%s&#8221;
+way of formatting is preferred.
+For anything more complex, including translatable strings, str.format is
+preferred as it is significantly more powerful and often cleaner.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Good</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Hello, {thing}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">thing</span><span class="o">=</span><span class="s">&quot;world&quot;</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">=</span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">,</span> <span class="s">&quot;world&quot;</span><span class="p">))</span>  <span class="c"># non-translatable strings</span>
+
+<span class="c"># Bad</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">, </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span> <span class="s">&quot;world&quot;</span><span class="p">))</span>  <span class="c"># Translatable string.</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Hello, </span><span class="si">%(thing)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&quot;thing&quot;</span><span class="p">:</span> <span class="s">&quot;world&quot;</span><span class="p">})</span>  <span class="c"># Use {thing}.</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Hello, {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;world&quot;</span><span class="p">))</span>  <span class="c"># Incompatible with Python 2.6. Use %s.</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

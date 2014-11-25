@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Creating OpenOffice.org POT files &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Use Cases" href="index.html" />
+    <link rel="next" title="Checking for inconsistencies in your translations" href="checking_for_inconsistencies.html" />
+    <link rel="prev" title="Using csv2po" href="using_csv2po.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Creating OpenOffice.org POT files</a><ul>
+<li><a class="reference internal" href="#quick-start">Quick Start</a></li>
+<li><a class="reference internal" href="#detailed-description">Detailed Description</a><ul>
+<li><a class="reference internal" href="#using-oo2po-download-the-latest-pot-and-gsi-files">Download the latest POT and GSI files</a></li>
+<li><a class="reference internal" href="#produce-the-pot-files-using-oo2po">Produce the POT files using oo2po</a></li>
+<li><a class="reference internal" href="#produce-a-pot-files-with-french-source-text">Produce a POT files with French source text</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="using_csv2po.html"
+         title="previous chapter">&laquo; Using csv2po</a></li>
+  <li><a href="checking_for_inconsistencies.html"
+         title="next chapter">Checking for inconsistencies in your translations &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="creating-openoffice-org-pot-files">
+<span id="using-oo2po"></span><span id="id1"></span><h1>Creating OpenOffice.org POT files<a class="headerlink" href="#creating-openoffice-org-pot-files" title="Permalink to this headline">¶</a></h1>
+<p>This quick start guide shows you how to create the PO Template files for your
+OpenOffice.org translation.</p>
+<div class="section" id="quick-start">
+<span id="using-oo2po-quick-start"></span><h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><a class="reference external" href="ftp://ftp.linux.cz/pub/localization/openoffice.org/devel/pot">Download the latest POT and GSI files</a></li>
+<li><tt class="docutils literal"><span class="pre">oo2po</span> <span class="pre">-P</span> <span class="pre">&lt;gsi&gt;</span> <span class="pre">&lt;new-pots&gt;</span></tt></li>
+</ol>
+</div>
+<div class="section" id="detailed-description">
+<span id="using-oo2po-detailed-description"></span><h2>Detailed Description<a class="headerlink" href="#detailed-description" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="using-oo2po-download-the-latest-pot-and-gsi-files">
+<span id="id2"></span><h3>Download the latest POT and GSI files<a class="headerlink" href="#using-oo2po-download-the-latest-pot-and-gsi-files" title="Permalink to this headline">¶</a></h3>
+<p>The POT files produced by Pavel Janik contain the associated en-US.sdf file
+that you need to create your own languages SDF file.  This is the same file
+that produces the POT files.  So to begin translating you don&#8217;t need to go
+further than this.</p>
+<ul class="simple">
+<li><a class="reference external" href="ftp://ftp.linux.cz/pub/localization/openoffice.org/devel/pot">Download the latest POT and GSI files</a></li>
+</ul>
+<p>However, you will need this file if you need to use some of the other features
+of <a class="reference internal" href="../commands/oo2po.html"><em>oo2po</em></a> such as changing the source language from English.</p>
+</div>
+<div class="section" id="produce-the-pot-files-using-oo2po">
+<span id="using-oo2po-produce-the-pot-files-using-oo2po"></span><h3>Produce the POT files using oo2po<a class="headerlink" href="#produce-the-pot-files-using-oo2po" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre>oo2po -P &lt;gsi&gt; &lt;new-pots&gt;
+oo2po -P en-US.gsi pot
+</pre></div>
+</div>
+<p>This takes the <em>en-US.gsi</em> file and creates POT files in the <em>pot</em> directory.
+The <tt class="docutils literal"><span class="pre">-P</span></tt> option ensures that .pot files are created instead of .po file.</p>
+<p>If you want to create one large .pot file instead of a lot of small ones, you
+should use the:</p>
+<div class="highlight-python"><div class="highlight"><pre>oo2po -P --multifile=onefile en-US.gsi pot
+</pre></div>
+</div>
+<p>option as described in <a class="reference internal" href="../commands/oo2po.html"><em>oo2po</em></a>.</p>
+</div>
+<div class="section" id="produce-a-pot-files-with-french-source-text">
+<span id="using-oo2po-produce-a-pot-files-with-french-source-text"></span><h3>Produce a POT files with French source text<a class="headerlink" href="#produce-a-pot-files-with-french-source-text" title="Permalink to this headline">¶</a></h3>
+<p>You will need to have access to a French GSI file.  The following commands will
+create a set of POT files with French as the source language:</p>
+<div class="highlight-python"><div class="highlight"><pre>oo2po -P --source-language=fr fr.gsi pot-fr
+</pre></div>
+</div>
+<p>This will take translations from <em>fr.gsi</em> and create a set of POT files in
+<em>pot-fr</em>.  These POT files will have French as the source language.  You need
+to make sure that fr.gsi is in fact up to date.</p>
+</div>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

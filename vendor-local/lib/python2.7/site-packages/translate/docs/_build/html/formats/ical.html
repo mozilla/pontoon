@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>iCalendar &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Translation Related File Formats" href="index.html" />
+    <link rel="next" title="JSON" href="json.html" />
+    <link rel="prev" title="HTML" href="html.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">iCalendar</a><ul>
+<li><a class="reference internal" href="#resources">Resources</a></li>
+<li><a class="reference internal" href="#conformance">Conformance</a></li>
+<li><a class="reference internal" href="#notes">Notes</a><ul>
+<li><a class="reference internal" href="#language-not-a-multilingual-solution">LANGUAGE: not a multilingual solution</a></li>
+<li><a class="reference internal" href="#broken-lotus-notes">Broken Lotus Notes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#development-notes">Development Notes</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="html.html"
+         title="previous chapter">&laquo; HTML</a></li>
+  <li><a href="json.html"
+         title="next chapter">JSON &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="icalendar">
+<span id="ical"></span><span id="id1"></span><h1>iCalendar<a class="headerlink" href="#icalendar" title="Permalink to this headline">¶</a></h1>
+<p>Support for <a class="reference external" href="http://en.wikipedia.org/wiki/ICalendar">iCalendar</a> (*.ics) files.  This allows calendars
+to be localised.</p>
+<p>The format extracts certain properties from VEVENT objects.  The properties are
+limited to textual entries that would need to be localised, it does not include
+entries such as dates and durations that would indeed change for various
+locales.</p>
+<div class="section" id="resources">
+<span id="ical-resources"></span><h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://tools.ietf.org/html/rfc2445">rfc2445</a> &#8211; Internet Calendaring and
+Scheduling Core Object Specification (iCalendar)</li>
+<li>iCal <a class="reference external" href="http://www.kanzaki.com/docs/ical/">spec</a> in a simple adaptation of
+the rfc that makes it easy to refer to all sections, items and attributes.</li>
+<li><a class="reference external" href="http://vobject.skyhouseconsulting.com/">VObject</a> &#8211; the python library
+used to read the iCal file.</li>
+<li><a class="reference external" href="http://severinghaus.org/projects/icv/">iCalender validator</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/ICalendar">iCalendar</a></li>
+<li><a class="reference external" href="https://upload.wikimedia.org/wikipedia/commons/c/c0/ICalendarSpecification.png">Components and their properties</a></li>
+</ul>
+</div>
+<div class="section" id="conformance">
+<span id="ical-conformance"></span><h2>Conformance<a class="headerlink" href="#conformance" title="Permalink to this headline">¶</a></h2>
+<p>We are not creating iCal files, simply extracting localisable information and
+rebuilding the file.  We rely on VObject to ensure correctness.</p>
+<p>The following data is extracted:</p>
+<ul class="simple">
+<li>VEVENT:<ul>
+<li>SUMMARY</li>
+<li>DESCRIPTION</li>
+<li>LOCATION</li>
+<li>COMMENTS</li>
+</ul>
+</li>
+</ul>
+<p>No other sections are extracted.</p>
+</div>
+<div class="section" id="notes">
+<span id="ical-notes"></span><h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="language-not-a-multilingual-solution">
+<span id="ical-language-not-a-multilingual-solution"></span><h3>LANGUAGE: not a multilingual solution<a class="headerlink" href="#language-not-a-multilingual-solution" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to set the language attribute on an entry e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre>SUMMARY:LANGUAGE=af;New Year&#39;s Day
+</pre></div>
+</div>
+<p>However since only one SUMMARY entry is allowed this does not allow you to
+specify multiple entries which would allow a single multilingual file.  With
+that in mind it is not clear why the LANGUAGE attribute is allowed, the
+examples they give are for LOCATION entries but that is still not clearly
+useful.</p>
+</div>
+<div class="section" id="broken-lotus-notes">
+<span id="ical-broken-lotus-notes"></span><h3>Broken Lotus Notes<a class="headerlink" href="#broken-lotus-notes" title="Permalink to this headline">¶</a></h3>
+<p>Lotus notes creates broken iCalendar files.  They include _ (underscore) in
+some of the property names, while [A-Z0-9\-] are the only valid chars.
+Therefore, we require vobject &gt;= v0.6.5 (but there is unfortunately no way to
+check for the version of vobject).  See <a class="reference external" href="https://bugzilla.osafoundation.org/show_bug.cgi?id=12008">vobject bug 12008</a> for further
+details.</p>
+</div>
+</div>
+<div class="section" id="development-notes">
+<span id="ical-development-notes"></span><h2>Development Notes<a class="headerlink" href="#development-notes" title="Permalink to this headline">¶</a></h2>
+<p>If we use LANGUAGE at all it will be to ensure that we specify that an entry is
+in a given language.</p>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

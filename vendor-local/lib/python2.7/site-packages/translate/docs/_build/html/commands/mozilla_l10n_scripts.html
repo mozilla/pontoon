@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mozilla L10n Scripts &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Converters" href="index.html" />
+    <link rel="next" title="moz-l10n-builder" href="moz-l10n-builder.html" />
+    <link rel="prev" title="Levenshtein distance" href="levenshtein_distance.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Mozilla L10n Scripts</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#build-ff3-1-langs-sh">build_ff3.1_langs.sh</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#build-tb3-langs-sh">build_tb3_langs.sh</a></li>
+<li><a class="reference internal" href="#buildxpi-py">buildxpi.py</a><ul>
+<li><a class="reference internal" href="#buildxpi-py-description">Description</a></li>
+<li><a class="reference internal" href="#buildxpi-py-usage">Usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#get-moz-enus-py">get_moz_enUS.py</a><ul>
+<li><a class="reference internal" href="#get-moz-enus-py-description">Description</a></li>
+<li><a class="reference internal" href="#get-moz-enus-py-usage">Usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#moz-l10n-builder">moz-l10n-builder</a></li>
+<li><a class="reference internal" href="#moz-l10n-builder-py">moz_l10n_builder.py</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="levenshtein_distance.html"
+         title="previous chapter">&laquo; Levenshtein distance</a></li>
+  <li><a href="moz-l10n-builder.html"
+         title="next chapter">moz-l10n-builder &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="mozilla-l10n-scripts">
+<span id="id1"></span><h1>Mozilla L10n Scripts<a class="headerlink" href="#mozilla-l10n-scripts" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<span id="mozilla-l10n-scripts-introduction"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This page describes the purpose and usage of scripts available in the Translate
+Toolkit specifically for making the translation of Mozilla products easier.</p>
+<p>Mozilla&#8217;s move from CVS to Mercurial made a lot of these scripts necessary. For
+more information about Mozilla l10n from CVS, see the <a class="reference internal" href="moz-l10n-builder.html"><em>moz-l10n-builder</em></a>
+page.</p>
+<p>All of these scripts are available on Subversion from <a class="reference external" href="https://github.com/translate/translate/tree/master/tools/mozilla">here</a>.</p>
+<p>We are currently generating POT files for most major betas, RCs and releases of
+Firefox and Thunderbird. They are available here:
+<a class="reference external" href="http://l10n.mozilla.org/pootle/pot/">http://l10n.mozilla.org/pootle/pot/</a></p>
+<p>As a start you might want to just use these POT files and gradually learn more
+about the processes described below. Contact us for more help on using these.</p>
+</div>
+<div class="section" id="requirements">
+<span id="mozilla-l10n-scripts-requirements"></span><h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>The <a class="reference internal" href="../index.html"><em>Translate Toolkit</em></a> (&gt;=1.3)</li>
+<li>All scripts in the <tt class="docutils literal"><span class="pre">tools/mozilla</span></tt> directory (from the project sources)
+should be executable and in your <tt class="docutils literal"><span class="pre">PATH</span></tt>.</li>
+</ul>
+</div>
+<div class="section" id="build-ff3-1-langs-sh">
+<span id="id2"></span><h2>build_ff3.1_langs.sh<a class="headerlink" href="#build-ff3-1-langs-sh" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="description">
+<span id="build-ff3-1-langs-sh-description"></span><h3>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
+<p>This is a simple bash script that embodies most of the Mozilla l10n process and
+does the following:</p>
+<ol class="arabic simple">
+<li>Update Mozilla sources</li>
+<li>Update language files from <a class="reference external" href="http://hg.mozilla.org/l10n-central">Mozilla&#8217;s L10n</a> Mercurial repository.</li>
+<li>Replace old l10n en-US files with a fresh copy from the updated source tree.</li>
+<li><a class="reference internal" href="../guides/creating_mozilla_pot_files.html"><em>Create new POT files</em></a> from the
+<a class="reference internal" href="#get-moz-enus-py"><em>en-US</em></a> l10n files.</li>
+<li>Create archives of the POT files.</li>
+<li>For each language:<ol class="arabic">
+<li>Update existing PO files if the checked out from a CVS, Subversion or
+Mercurial repository.</li>
+<li><a class="reference internal" href="../guides/migrating_translations.html"><em>Migrate</em></a> PO files to new POT
+files.</li>
+<li><a class="reference internal" href="moz2po.html"><em>Create Mozilla l10n files</em></a> for the language based on the
+migrated PO files.</li>
+<li>Create archives of the PO files.</li>
+<li><a class="reference internal" href="#buildxpi-py"><em>Build langpack</em></a> for the
+language.</li>
+</ol>
+</li>
+</ol>
+<p>This script is used on the l10n.mozilla.org server to create most (if not all)
+of the files available from <a class="reference external" href="http://l10n.mozilla.org/pootle/">http://l10n.mozilla.org/pootle/</a>. It was originally
+written as a stable way to provide these files and as such making it as general
+as possible was not the biggest requirement. This is evident in the script&#8217;s
+very narrow focus.</p>
+</div>
+<div class="section" id="usage">
+<span id="build-ff3-1-langs-sh-usage"></span><h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<p>This script takes no command-line parameters and is only configurable via the
+variables at the top and, failing that, custom hacking of the script.</p>
+<p>The variables are used in the following ways:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">BUILD_DIR</span></tt></td>
+<td>The base build directory from where building is done.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">MOZCENTRAL_DIR</span></tt></td>
+<td>The directory containing a checkout of the Mozilla
+source tree <a class="reference external" href="http://hg.mozilla.org/mozilla-central/">http://hg.mozilla.org/mozilla-central/</a></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">HG_LANGS</span></tt></td>
+<td>A space-separated list of language codes to build
+for.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">L10N_DIR</span></tt></td>
+<td>The directory where Mozilla l10n files
+(from l10n-central) should be collected.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PO_DIR</span></tt></td>
+<td>The directory containing the externally-hosted or
+previously available source PO files (e.g. PO files
+managed in another VCS repository). It contains a
+sub-directory for each language.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">POPACK_DIR</span></tt></td>
+<td>The output directory for PO archives.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PORECOVER_DIR</span></tt></td>
+<td>The directory to put recovered PO files in. It
+contains a sub-directory for each language.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">POT_INCLUDES</span></tt></td>
+<td>A space-separated list of files to be included in POT
+archives.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">POTPACK_DIR</span></tt></td>
+<td>The output directory for POT archives.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">POUPDATED_DIR</span></tt></td>
+<td>The directory to use for updated PO files. It
+contains a sub-directory for each language.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">LANGPACK_DIR</span></tt></td>
+<td>The directory to put langpacks (XPIs) in.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">FF_VERSION</span></tt></td>
+<td>The version of Firefox that is being built for. This
+is used in the file names of archives.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>It is <strong>strongly</strong> recommended that you mirror the directory
+structure specified by the default values of the <tt class="docutils literal"><span class="pre">*_DIR</span></tt> variables. For
+example the default value for <tt class="docutils literal"><span class="pre">L10N_DIR</span></tt> is <tt class="docutils literal"><span class="pre">${BUILD_DIR}/l10n</span></tt>, then
+you should put your l10n-central check-outs in the <tt class="docutils literal"><span class="pre">l10n</span></tt> directory under
+your main build directory (<tt class="docutils literal"><span class="pre">BUILD_DIR</span></tt>).</p>
+<p class="last">Basically, you should have an ideally separate build directory containing
+the following sub-directories: <tt class="docutils literal"><span class="pre">l10n</span></tt>, <tt class="docutils literal"><span class="pre">mozilla-central</span></tt>, <tt class="docutils literal"><span class="pre">po</span></tt>,
+<tt class="docutils literal"><span class="pre">popacks</span></tt>, <tt class="docutils literal"><span class="pre">potpacks</span></tt>, <tt class="docutils literal"><span class="pre">po-updated</span></tt> and <tt class="docutils literal"><span class="pre">xpi</span></tt> (if used). This way
+the only variable that need to be changed is <tt class="docutils literal"><span class="pre">BUILD_DIR</span></tt>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="build-tb3-langs-sh">
+<span id="id3"></span><h2>build_tb3_langs.sh<a class="headerlink" href="#build-tb3-langs-sh" title="Permalink to this headline">¶</a></h2>
+<p>This is the script that the <tt class="docutils literal"><span class="pre">build_ff3.1_langs.sh</span></tt> script above was actually
+adapted from. It is 90% similar with the obvious exception that it is aimed at
+building Thunderbird 3.0 packages in stead of Firefox 3.1. Also note that this
+script uses the comm-central repository in stead of mozilla-central.</p>
+</div>
+<div class="section" id="buildxpi-py">
+<span id="id4"></span><h2>buildxpi.py<a class="headerlink" href="#buildxpi-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="buildxpi-py-description">
+<span id="id5"></span><h3>Description<a class="headerlink" href="#buildxpi-py-description" title="Permalink to this headline">¶</a></h3>
+<p>Creates XPI language packs from Mozilla sources and translated l10n files. This
+script has only been tested with Firefox 3.1 beta sources.</p>
+<p>It is basically the scripted version of the process described on Mozilla&#8217;s
+<a class="reference external" href="https://developer.mozilla.org/en-US/docs/Creating_a_Language_Pack">&#8220;Creating a language pack&#8221;</a> page.</p>
+<p>This script is used by <tt class="docutils literal"><span class="pre">build_ff3.1_langs.sh</span></tt> to build language packs in its
+final step.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This script uses the <tt class="docutils literal"><span class="pre">.mozconfig</span></tt> file in your home directory. Any
+existing <tt class="docutils literal"><span class="pre">.mozconfig</span></tt> is renamed to <tt class="docutils literal"><span class="pre">.mozconfig.bak</span></tt> during operation
+and copied back afterwards.</p>
+</div>
+</div>
+<div class="section" id="buildxpi-py-usage">
+<span id="id6"></span><h3>Usage<a class="headerlink" href="#buildxpi-py-usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre>buildxpi.py [&lt;options&gt;] &lt;lang&gt; [&lt;lang2&gt; ...]
+</pre></div>
+</div>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre>buildxpi.py -L /path/to/l10n -s /path/to/mozilla-central -o /path/to/xpi_output af ar
+</pre></div>
+</div>
+<p>Options:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-L <var>L10NBASE</var></span>, <span class="option">--l10n-base=<var>L10NBASE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The directory containing the &lt;lang&gt; subdirectory.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o <var>OUTPUTDIR</var></span>, <span class="option">--output-dir=<var>OUTPUTDIR</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The directory to copy the built XPI to (default:
+current directory).</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-p <var>MOZPRODUCT</var></span>, <span class="option">--mozproduct=<var>MOZPRODUCT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The Mozilla product name (default: &#8220;browser&#8221;).</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-s <var>SRCDIR</var></span>, <span class="option">--src=<var>SRCDIR</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The directory containing the Mozilla l10n sources.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-d</span>, <span class="option">--delete-dest</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Delete output XPI if it already exists.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Be more noisy</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="get-moz-enus-py">
+<span id="id7"></span><h2>get_moz_enUS.py<a class="headerlink" href="#get-moz-enus-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-moz-enus-py-description">
+<span id="id8"></span><h3>Description<a class="headerlink" href="#get-moz-enus-py-description" title="Permalink to this headline">¶</a></h3>
+<p>A simple script to collect the en-US l10n files from a Mozilla source tree
+(<tt class="docutils literal"><span class="pre">'comm-central</span></tt>&#8216; or <tt class="docutils literal"><span class="pre">'mozilla-central</span></tt>&#8216;) by traversing the product&#8217;s
+<tt class="docutils literal"><span class="pre">l10n.ini</span></tt> file.</p>
+</div>
+<div class="section" id="get-moz-enus-py-usage">
+<span id="id9"></span><h3>Usage<a class="headerlink" href="#get-moz-enus-py-usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">get_moz_enUS</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Options:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-s <var>SRCDIR</var></span>, <span class="option">--src=<var>SRCDIR</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The directory containing the Mozilla l10n sources.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-d <var>DESTDIR</var></span>, <span class="option">--dest=<var>DESTDIR</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The destination directory to copy the en-US locale
+files to.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-p <var>MOZPRODUCT</var></span>, <span class="option">--mozproduct=<var>MOZPRODUCT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The Mozilla product name.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--delete-dest</span></kbd></td>
+<td>Delete the destination directory (if it exists).</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Be more noisy</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="moz-l10n-builder">
+<span id="moz-l10n-builder-deprecated"></span><h2>moz-l10n-builder<a class="headerlink" href="#moz-l10n-builder" title="Permalink to this headline">¶</a></h2>
+<p>This is the pre-Mercurial build script originally written by Dwayne Bailey.
+This is the script that all the others on this page replaces for post-CVS
+Mozilla l10n.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This script is <strong>not</strong> applicable to the l10n process of any Mozilla products after the move to Mercurial.</p>
+</div>
+<p>For more information about this script see its <a class="reference internal" href="moz-l10n-builder.html"><em>dedicated page</em></a>.</p>
+</div>
+<div class="section" id="moz-l10n-builder-py">
+<span id="id10"></span><h2>moz_l10n_builder.py<a class="headerlink" href="#moz-l10n-builder-py" title="Permalink to this headline">¶</a></h2>
+<p>This script was intended to be a simple and direct port of the
+<tt class="docutils literal"><span class="pre">moz-l10n-builder</span></tt> script from above. It has pro&#8217;s and cons in comparison to
+the original, but is very similar for the most part. So for more information
+about this script, see the original script&#8217;s <a class="reference internal" href="moz-l10n-builder.html"><em>page</em></a>.</p>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

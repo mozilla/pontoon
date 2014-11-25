@@ -5,6 +5,7 @@ polib
 configparser
 suds
 python-Levenshtein==0.11.2
+translate-toolkit==1.12.0
 
 # Not available in PyPI
 -e hg+http://hg.mozilla.org/l10n/silme#egg=silme

@@ -1,0 +1,133 @@
+
+.. _l20n:
+
+Mozilla l20n
+************
+L20n is a proposed method for localisation in the Mozilla project.
+https://wiki.mozilla.org/L20n
+
+.. _l20n#comments:
+
+Comments
+========
+Here we collect some comments about the possibility of l20n support in our
+tools.
+
+Our tools are based on the idea of units. Each unit has an associated (source,
+target) pair, possibly containing more, like comments, state, etc. We prefer to
+build our richer tools against bilingual formats like :doc:`po`, :doc:`xliff`,
+:doc:`ts`, etc. and provide converters to these formats when we want to support
+:wiki:`guide/monolingual` formats. Pootle also implements its own bilingual
+format in its database.
+
+l20n is based on the idea of entity soup, or object soup. Files are (at least
+in the first iteration) monolingual, and each language defines a set of objects
+which can contain one or more presentation forms of an entity/string, to vary
+it according to gender, case, declension, plural, time of day, etc.  A language
+can define extra entities to help in constructing others by "factoring out"
+things, if you will. The structure of each object is left to the programmer for
+the target language to define.
+
+Findings
+--------
+Our tools work on the principle of units.  A unit being in its simplest form a
+source to target mapping, in other words the English source text plus the
+target translation make a unit.  Our code has, for a long time now, a good
+understanding of units that don't have a one to one mapping.  In PO those are
+plural units.  This is where N source strings map to M target strings.  We
+currently only have 1-M and 2-M mappings for Qt and PO files. l20n introduces
+N-M mappings which we don't currently support.
+
+l20n is of course working around an idea of translation objects not strings.
+But I think the string metaphor works in most cases to ease explanation.
+
+The closest thing we have to this is plural support by means of multistrings.
+
+l20n is pretty powerful with the ability to arbitrarily make up
+functions/macros that then map to the correct string to use in the translation.
+In PO the number of possible (plural) strings is mapped before you begin, l20n
+potentially has any arbitrary mapping.
+
+We could write a simple converter to another format for simple string based
+objects without further structure, but that doesn't expose the power of l20n
+yet, and doesn't handle complexity in the source text if it was present.
+
+.. _l20n#issues:
+
+Issues
+------
+
+- N-M mapping. We need to support arbitrary mappings between source and target
+- Determining N and M on the fly.  We need to have the ability to determine N
+  and M in real time.  So that would mean being able to read l20n files and
+  determine what function is used, then determine how many possible results
+  that function can return.  We'd do that for both source and target.  Thus
+  we'd get N and M counts which we can use in the interface.
+- GUI for Pootle/Virtaal to allow dynamic source and target numbers.  We
+  already adapt to N and M on both platforms, but doing this on the fly is
+  harder.
+
+  - If we assume that functions are implemented once in a common library and
+    named the same (for example for plural support) then this is easy.
+  - If functions are arbitrarily implemented per target file but at least named
+    the same then this is harder.
+  - If names of functions are changed then we'd need to present the ability to
+    change the function that a translator would use in their translation.  How
+    to do this so that it isn't confusing would require quite some thought.
+  - Being able to write functions on the fly within the translation tool would
+    most likely be the ultimate ability.  We suspect we won't need to address
+    that level just yet.
+
+- Backend file store.  We have two options.
+
+  - Covert to a bilingual store -- this is what we do in moz2po.
+  - Support monolingual stores -- we can do that in Pootle, but it needs wider
+    testing.  In Virtaal we do automatic conversion to bilingual formats, but
+    is is currently disabled.  To enable this so that we can rely on it we'd need
+    some work on both Pootle and Virtaal; in testing and in managing source and
+    target files changes reliably.
+
+- More complex l20n interactions.  These start pushing the translation tool
+  into an IDE but would include:
+
+  - A translator making a 1-1 into a 1-M (to add gender, vary on the time of
+    day, platform, etc). Since no functions are present in the source we'd need
+    to have access to a library of functions or have a structured object
+    editor.
+  - A translator might want to define a local entity (an entity which is not in
+    the original source document), or it might be there from before.
+
+- Still needs some thought on how to do anything meaningful with our current
+  translation features like TM, MT, quality checks.
+
+.. _l20n#approach:
+
+Approach
+--------
+
+The problems above really highlight the approach we'd take to implement l20n in
+our tools.
+
+- Expand the toolkit to do N-M mapping
+- Include l20n parser to allows N and M mapping determination on the fly
+- Convert to an interim store.  Before tackling the monoligual side we'd look
+  at converting to an interim store to reduce the risks.  We'd determine what
+  to use at the time.  The only thing certain is that it would not be PO, as PO
+  can't do N source strings.
+- GUI changes. This would be to allow N and M to change dynamically.  But we'd
+  limit this to at first relying on 1-1 mappings of functions.  Thus plural()
+  in source means plural() in target.
+
+At this point we have a usable translation tool for l20n.  The next steps would
+be about making that support more robust.  Each of these would really be
+determined closer to the time.
+
+- Adaptable N and M.  First allowing functions within a file to adapt the
+  values of N and M.
+- GUI selection of functions.  Ability to select functions from within the GUI.
+- Monolingual on the fly.  We'd then look at the monolingual side of things.
+  This would be so that we can work on the source and target without the need
+  for the interim store.
+
+We're now really at a position where we've solved things up to point 4 above.
+Addressing issues in point 5 and 6 would be the next steps.

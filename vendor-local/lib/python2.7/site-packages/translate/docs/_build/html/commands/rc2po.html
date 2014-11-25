@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>rc2po &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="up" title="Converters" href="index.html" />
+    <link rel="next" title="symb2po" href="symb2po.html" />
+    <link rel="prev" title="web2py2po" href="web2py2po.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats/index.html">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">rc2po</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#formats-supported">Formats Supported</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#issues">Issues</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="web2py2po.html"
+         title="previous chapter">&laquo; web2py2po</a></li>
+  <li><a href="symb2po.html"
+         title="next chapter">symb2po &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="po2rc">
+<span id="rc2po"></span><span id="id1"></span><h1>rc2po<a class="headerlink" href="#po2rc" title="Permalink to this headline">¶</a></h1>
+<p>Converts Windows Resource .rc files to Gettext PO format.</p>
+<div class="section" id="usage">
+<span id="rc2po-usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>rc2po [options] &lt;rc&gt; &lt;po&gt;
+po2rc [options] -t &lt;rc&gt; &lt;po&gt; &lt;rc&gt;
+</pre></div>
+</div>
+<p>Where:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>&lt;rc&gt;</td>
+<td>is a valid Windows Resource file or directory of those files</td>
+</tr>
+<tr class="row-even"><td>&lt;po&gt;</td>
+<td>is a directory of PO or POT files</td>
+</tr>
+</tbody>
+</table>
+<p>Options (rc2po):</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--version</span></kbd></td>
+<td>show program&#8217;s version number and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--manpage</span></kbd></td>
+<td>output a manpage based on the help</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--progress=<var>PROGRESS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show progress as: <a class="reference internal" href="option_progress.html"><em>dots, none, bar, names, verbose</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--errorlevel=<var>ERRORLEVEL</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show errorlevel as: <a class="reference internal" href="option_errorlevel.html"><em>none, message, exception,
+traceback</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i <var>INPUT</var></span>, <span class="option">--input=<var>INPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read from INPUT in rc format</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-x <var>EXCLUDE</var></span>, <span class="option">--exclude=<var>EXCLUDE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>exclude names matching EXCLUDE from input paths</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o <var>OUTPUT</var></span>, <span class="option">--output=<var>OUTPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>write to OUTPUT in po, pot formats</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t <var>TEMPLATE</var></span>, <span class="option">--template=<var>TEMPLATE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read from TEMPLATE in rc format</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-P</span>, <span class="option">--pot</span></kbd></td>
+<td>output PO Templates (.pot) rather than PO files (.po)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--charset=<var>CHARSET</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>charset to use to decode the RC files (default:                        cp1252)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--duplicates=<var>DUPLICATESTYLE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>what to do with duplicate strings (identical source
+text): <a class="reference internal" href="option_duplicates.html"><em>merge, msgctxt</em></a>
+(default: &#8216;msgctxt&#8217;)</td></tr>
+</tbody>
+</table>
+<p>Options (po2rc):</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--version</span></kbd></td>
+<td>show program&#8217;s version number and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--manpage</span></kbd></td>
+<td>output a manpage based on the help</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--progress=<var>PROGRESS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show progress as: <a class="reference internal" href="option_progress.html"><em>dots, none, bar, names, verbose</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--errorlevel=<var>ERRORLEVEL</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>show errorlevel as: <a class="reference internal" href="option_errorlevel.html"><em>none, message, exception,
+traceback</em></a></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i <var>INPUT</var></span>, <span class="option">--input=<var>INPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read from INPUT in po, pot formats</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-x <var>EXCLUDE</var></span>, <span class="option">--exclude=<var>EXCLUDE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>exclude names matching EXCLUDE from input paths</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o <var>OUTPUT</var></span>, <span class="option">--output=<var>OUTPUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>write to OUTPUT in rc format</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t <var>TEMPLATE</var></span>, <span class="option">--template=<var>TEMPLATE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>read from TEMPLATE in rc format</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-S</span>, <span class="option">--timestamp</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>skip conversion if the output file has newer timestamp</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--charset=<var>CHARSET</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>charset to use to decode the RC files (default: utf-8)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-l <var>LANG</var></span>, <span class="option">--lang=<var>LANG</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>LANG entry</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--sublang=<var>SUBLANG</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>SUBLANG entry (default: SUBLANG_DEFAULT)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--threshold=<var>PERCENT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>only convert files where the translation completion is above PERCENT</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--fuzzy</span></kbd></td>
+<td>use translations marked fuzzy</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--nofuzzy</span></kbd></td>
+<td>don&#8217;t use translations marked fuzzy (default)</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="formats-supported">
+<span id="rc2po-formats-supported"></span><h2>Formats Supported<a class="headerlink" href="#formats-supported" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This implementation is based mostly on observing WINE .rc files,
+these should mimic other non-WINE .rc files.</p>
+</div>
+</div>
+<div class="section" id="examples">
+<span id="rc2po-examples"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>This example looks at roundtrip of Windows Resource translations as well as
+recovery of existing translations.</p>
+<p>First we need to create a set of POT files.</p>
+<div class="highlight-python"><div class="highlight"><pre>rc2po -P lang/ pot/
+</pre></div>
+</div>
+<p>All .rc files found in the <tt class="docutils literal"><span class="pre">lang/</span></tt> directory are converted to Gettext POT
+files and placed in the <tt class="docutils literal"><span class="pre">pot/</span></tt> directory.</p>
+<p>If you are translating for the first time then you can skip the next step.  If
+you need to recovery your existing translations then we do the following:</p>
+<div class="highlight-python"><div class="highlight"><pre>rc2po -t lang zu po-zu/
+</pre></div>
+</div>
+<p>Using the English .rc files found in <tt class="docutils literal"><span class="pre">lang</span></tt> and your existing Zulu
+translation in <tt class="docutils literal"><span class="pre">zu</span></tt> we create a set of PO files in <tt class="docutils literal"><span class="pre">po-zu</span></tt>.  These will now
+have your translations.  Please be aware that in order for the to work 100% you
+need to have both English and Zulu at the same revision, if they are not you
+will have to review all translations.  Also the .rc files may be in different
+encoding, we cannot at the moment process files of different encodings and
+assume both are in the same encoding supplied.</p>
+<p>You are now in a position to translate your recovered translations or your new
+POT files.</p>
+<p>Once translated you can convert back as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre>po2rc -t lang/ po-zu/ zu/
+</pre></div>
+</div>
+<p>Your translations found in the Zulu PO directory, <tt class="docutils literal"><span class="pre">po-zu</span></tt>, will be converted
+to .rc using the files in <tt class="docutils literal"><span class="pre">lang/</span></tt> as templates and placing your new
+translations in <tt class="docutils literal"><span class="pre">zu/</span></tt>.</p>
+<p>To update your translations simply redo the POT creation step and make use of
+<a class="reference internal" href="pot2po.html"><em>pot2po</em></a> to bring your translation up-to-date.</p>
+</div>
+<div class="section" id="issues">
+<span id="rc2po-issues"></span><h2>Issues<a class="headerlink" href="#issues" title="Permalink to this headline">¶</a></h2>
+<p>If you are recovering translation using <tt class="docutils literal"><span class="pre">rc2po</span> <span class="pre">-t</span> <span class="pre">en.rc</span> <span class="pre">xx.rc</span> <span class="pre">xx.po</span></tt> then
+both en.rc and xx.rc need to be in the same encoding.</p>
+<p>There might be problems with MENUs that are deaply nested.</p>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>

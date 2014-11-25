@@ -1,0 +1,312 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Translation Related File Formats &mdash; Translate Toolkit 1.12.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Translate Toolkit 1.12.0 documentation" href="../index.html" />
+    <link rel="next" title="XLIFF" href="xliff.html" />
+    <link rel="prev" title="Document translation" href="../guides/document_translation.html" /> 
+  </head>
+  <body>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="../index.html">Translate Toolkit</a>
+        <span class="navbar-text pull-left"><b>1.12.0</b></span>
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            
+              <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"><ul class="simple">
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#tools">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html#scripts">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Use Cases</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Supported formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html">Translate Styleguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/styleguide.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/building.html">Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/testing.html#command-line-functional-testing">Command Line Functional Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/developers.html">Translate Toolkit Developers Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/releasing.html">Making a Translate Toolkit Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/deprecation.html">Deprecation of Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History of the Translate Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+</ul>
+</li>
+              
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Translation Related File Formats</a><ul>
+<li><a class="reference internal" href="#primary-translation-formats">Primary translation formats</a></li>
+<li><a class="reference internal" href="#other-translation-formats">Other translation formats</a></li>
+<li><a class="reference internal" href="#translation-memory-formats">Translation Memory formats</a></li>
+<li><a class="reference internal" href="#glossary-formats">Glossary formats</a></li>
+<li><a class="reference internal" href="#formats-of-translatable-documents">Formats of translatable documents</a></li>
+<li><a class="reference internal" href="#machine-readable-formats">Machine readable formats</a></li>
+<li><a class="reference internal" href="#in-development">In development</a></li>
+<li><a class="reference internal" href="#unsupported-formats">Unsupported formats</a></li>
+<li><a class="reference internal" href="#unlikely-to-be-supported">Unlikely to be supported</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            
+            
+              
+  <li><a href="../guides/document_translation.html"
+         title="previous chapter">&laquo; Document translation</a></li>
+  <li><a href="xliff.html"
+         title="next chapter">XLIFF &raquo;</a></li>
+            
+          </ul>
+          <ul class="nav pull-right">
+            
+              
+            
+          
+            
+<form class="navbar-search pull-right" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container content">
+   
+  <div class="section" id="translation-related-file-formats">
+<span id="formats"></span><h1>Translation Related File Formats<a class="headerlink" href="#translation-related-file-formats" title="Permalink to this headline">¶</a></h1>
+<p>These are the different storage formats for translations and files associated
+with translations that are supported by the toolkit. See also
+<a class="reference internal" href="conformance.html"><em>Standards conformance</em></a> for standards conformance.</p>
+<p>The Translate Toolkit implements a set of <a class="reference internal" href="base_classes.html"><em>classes</em></a> for
+handling translation files which allows for a uniform API which covers other
+issues such as <a class="reference internal" href="quoting_and_escaping.html"><em>quoting and escaping</em></a> of text.</p>
+<div class="section" id="primary-translation-formats">
+<span id="formats-primary-translation-formats"></span><h2>Primary translation formats<a class="headerlink" href="#primary-translation-formats" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="xliff.html">XLIFF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="po.html">Gettext PO</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="other-translation-formats">
+<span id="formats-other-translation-formats"></span><h2>Other translation formats<a class="headerlink" href="#other-translation-formats" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<ul class="simple">
+<li><a class="reference internal" href="csv.html"><em>CSV</em></a></li>
+<li><a class="reference internal" href="ini.html"><em>INI Files</em></a> (including Inno Setup .isl dialect)</li>
+<li>Java <a class="reference internal" href="properties.html"><em>Mozilla and Java properties files</em></a> (also Mozilla derived properties files)</li>
+<li>Mozilla <a class="reference internal" href="dtd.html"><em>Mozilla DTD format</em></a></li>
+<li>OpenOffice.org <a class="reference internal" href="gsi.html"><em>OpenOffice.org GSI/SDF format</em></a> (Also called SDF)</li>
+<li><a class="reference internal" href="php.html"><em>PHP</em></a> translation arrays</li>
+<li>Qt Linguist <a class="reference internal" href="ts.html"><em>Qt .ts</em></a> (both 1.0 and 1.1 supported, 1.0 has a converter)</li>
+<li>Symbian localization files</li>
+<li>Windows <a class="reference internal" href="rc.html"><em>Windows RC files</em></a> files</li>
+<li>Mac OSX <a class="reference internal" href="strings.html"><em>Mac OSX strings</em></a> files (also used on the iPhone) (from version 1.8)</li>
+<li>Adobe <a class="reference internal" href="flex.html"><em>Adobe Flex properties files</em></a> files (from version 1.8)</li>
+<li>Haiku <a class="reference internal" href="catkeys.html"><em>Haiku catkeys</em></a> (from version 1.8)</li>
+<li><a class="reference internal" href="android.html"><em>Android string resources</em></a> (supports storage, not conversion)</li>
+</ul>
+</div>
+<div class="section" id="translation-memory-formats">
+<span id="formats-translation-memory-formats"></span><h2>Translation Memory formats<a class="headerlink" href="#translation-memory-formats" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<ul class="simple">
+<li><a class="reference internal" href="tmx.html"><em>TMX</em></a></li>
+<li><a class="reference internal" href="wordfast.html"><em>Wordfast Translation Memory</em></a>: TM</li>
+<li>Trados: .txt TM (from v1.9.0 &#8211; read only)</li>
+</ul>
+</div>
+<div class="section" id="glossary-formats">
+<span id="formats-glossary-formats"></span><h2>Glossary formats<a class="headerlink" href="#glossary-formats" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<ul class="simple">
+<li><a class="reference internal" href="omegat_glossary.html"><em>OmegaT glossary</em></a> (from v1.5.1)</li>
+<li><a class="reference internal" href="qt_phrase_book.html"><em>Qt Phrase Book (.qph)</em></a></li>
+<li><a class="reference internal" href="tbx.html"><em>TBX</em></a></li>
+<li><a class="reference internal" href="utx.html"><em>Universal Terminology eXchange (UTX)</em></a> (from v1.9.0)</li>
+</ul>
+</div>
+<div class="section" id="formats-of-translatable-documents">
+<span id="formats-formats-of-translatable-documents"></span><h2>Formats of translatable documents<a class="headerlink" href="#formats-of-translatable-documents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<ul class="simple">
+<li><a class="reference internal" href="html.html"><em>HTML</em></a></li>
+<li><a class="reference internal" href="ical.html"><em>iCalendar</em></a></li>
+<li><a class="reference internal" href="json.html"><em>JSON</em></a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/OpenDocument">OpenDocument</a> &#8211; all ODF file types</li>
+<li><a class="reference internal" href="text.html"><em>Text</em></a> &#8211; plain text with blocks separated by whitespace</li>
+<li><a class="reference internal" href="wiki.html"><em>Wiki</em></a> &#8211; <a class="reference external" href="http://en.wikipedia.org/wiki/DokuWiki">DokuWiki</a> and <a class="reference external" href="http://en.wikipedia.org/wiki/MediaWiki">MediaWiki</a> supported</li>
+<li><a class="reference internal" href="subtitles.html"><em>Subtitles</em></a> &#8211; various formats (v1.4)</li>
+</ul>
+</div>
+<div class="section" id="machine-readable-formats">
+<span id="formats-machine-readable-formats"></span><h2>Machine readable formats<a class="headerlink" href="#machine-readable-formats" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<ul class="simple">
+<li>Gettext <a class="reference internal" href="mo.html"><em>Gettext .mo</em></a></li>
+<li>Qt <a class="reference internal" href="qm.html"><em>Qt .qm</em></a> (read-only)</li>
+</ul>
+</div>
+<div class="section" id="in-development">
+<span id="formats-in-development"></span><h2>In development<a class="headerlink" href="#in-development" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="unsupported-formats">
+<span id="formats-unsupported-formats"></span><h2>Unsupported formats<a class="headerlink" href="#unsupported-formats" title="Permalink to this headline">¶</a></h2>
+<p>Formats that we would like to support but don&#8217;t currently support:</p>
+<div class="toctree-wrapper compound">
+</div>
+<ul class="simple">
+<li>Wordfast:<ul>
+<li><a class="reference external" href="http://www.wordfast.net/index.php?lang=engb&amp;whichpage=specifications#glo">Glossary</a>
+tab-delimited &#8220;source,target,comment&#8221; i.e. like OmegaT but unsure if any
+extension is required.</li>
+</ul>
+</li>
+<li>Apple:<ul>
+<li><a class="reference external" href="ftp://ftp.apple.com/developer/tool_chest/localization_tools/appleglot/appleglot_3.2_usersguide.pdf">AppleGlot</a></li>
+<li>.plist &#8211; see <a class="reference external" href="https://github.com/translate/translate/issues/633">issue 633</a> and <a class="reference external" href="https://docs.python.org/2/library/plistlib.html">plistlib</a> for Python</li>
+</ul>
+</li>
+<li>Adobe:<ul>
+<li>FrameMaker&#8217;s Maker Interchange Format &#8211; <a class="reference external" href="http://help.adobe.com/en_US/FrameMaker/8.0/mif_reference.pdf">MIF</a> (See also
+<a class="reference external" href="http://lino.sourceforge.net/src/100.html">python-gendoc</a>, and <a class="reference external" href="http://search.cpan.org/~rst/FrameMaker-MifTree-0.075/lib/FrameMaker/MifTree.pm">Perl MIF
+module</a>)</li>
+<li>FrameMaker&#8217;s <a class="reference external" href="http://www.adobe.com/support/downloads/detail.jsp?ftpID=137">Maker Markup Language</a> (MML)</li>
+</ul>
+</li>
+<li>Microsoft<ul>
+<li>Word, Excel, etc (probably through usage of OpenOffice.org)</li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/OOXML">OOXML</a> (at least at the text level we don&#8217;t have to deal with much of
+the mess inside OOXML).  See also: <a class="reference external" href="http://go.microsoft.com/fwlink/?LinkId=120908">Open XML SDK v1</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Rich_Text_Format">Rich Text Format</a> (RTF) see also <a class="reference external" href="http://code.google.com/p/pyrtf-ng/">pyrtf-ng</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Open_XML_Paper_Specification">Open XML Paper Specification</a></li>
+<li>.NET Resource files (.resx) &#8211; <a class="reference external" href="https://github.com/translate/translate/issues/396">Issue 396</a></li>
+</ul>
+</li>
+<li>XML related<ul>
+<li>Generic XML</li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/DocBook">DocBook</a> (can be handled by KDE&#8217;s <a class="reference external" href="http://linux.die.net/man/1/xml2pot">xml2pot</a>)</li>
+<li><a class="reference external" href="http://www.w3.org/TR/SVG/">SVG</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Darwin_Information_Typing_Architecture">DITA</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Portable_Document_Format">PDF</a> see <a class="reference external" href="http://www.adobe.com/devnet/pdf/pdf_reference.html">spec</a>, <a class="reference external" href="http://pdfedit.cz/en/index.html">PDFedit</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/LaTeX">LaTeX</a> &#8211; see <a class="reference external" href="http://plastex.sourceforge.net/plastex/index.html">plasTeX</a>, a Python framework for
+processing LaTeX documents</li>
+<li><a class="reference external" href="http://dag.wiee.rs/home-made/unoconv/">unoconv</a> &#8211; Python bindings to
+OpenOffice.org UNO which could allow manipulation of all formats understood
+by OpenOffice.org.</li>
+<li>Trados:<ul>
+<li>TTX (<a class="reference external" href="http://www.tracom.de/04/EN/techdoccenter/download/TRADOS_TTX-DTD.zip">Reverse Engineered DTD</a>,
+<a class="reference external" href="http://timsfoster.wordpress.com/2005/07/05/beds-mattresses-and-open-standards/">other discussion</a>)</li>
+<li>Multiterm XML <a class="reference external" href="http://syntax.biz.pl/multiterm.html">TSV to MiltiTerm conversion script</a> or <a class="reference external" href="http://translationzone.eu/mtxml2txt.html">XLST</a></li>
+<li>.tmw</li>
+<li>.txt (You can interchange using TMX) <a class="reference external" href="http://translate.google.com/translate?js=y&amp;prev=_t&amp;hl=en&amp;ie=UTF-8&amp;layout=1&amp;eotf=1&amp;u=http%3A%2F%2Fwww.diemohrs.de%2Ftipps2_neu.html&amp;sl=auto&amp;tl=en">Format explanation</a>
+with some <a class="reference external" href="http://slaci.komarom.net/roli/Trados/TRADOS%206.5.5.439%20Freelance%20+%20TRADOS%20MultiTerm%20iX%206.0.1.209/TRADOS%206.5.5.439%20Freelance/Program%20Files/TRADOS/T65_FL/Samples/TW4Win/">examples</a>.</li>
+</ul>
+</li>
+<li>Tcl: .msg files.  <a class="reference external" href="http://www.google.com/codesearch?hl=en&amp;q=show:XvsRBDCljVk:M2kzUbm70Ts:D5EHICz0aaQ&amp;sa=N&amp;ct=rd&amp;cs_p=http://www.scilab.org/download/4.0/scilab-4.0-src.tar.gz&amp;cs_f=scilab-4.0/tcl/scipadsources/msg_files/AddingTranslations.txt">Good documentation</a></li>
+<li>Installers:<ul>
+<li>NSIS installer: <a class="reference external" href="http://trac.vidalia-project.net/browser/vidalia/trunk/src/tools">Existing C++ implementation</a></li>
+<li>WiX &#8211; MSI (Microsoft Installer) creator.  <a class="reference external" href="http://wix.mindcapers.com/wiki/Localization">Localization instructions</a>, <a class="reference external" href="http://www.mail-archive.com/wix-users&#64;lists.sourceforge.net/msg15489.html">more notes on
+localisation</a>.
+This is a custom XML format, another one!</li>
+</ul>
+</li>
+<li>catgets/<a class="reference external" href="http://pubs.opengroup.org/onlinepubs/009695399/utilities/gencat.html">gencat</a>:
+precedes gettext, looking in man packages is the best information I could
+find.  Also <a class="reference external" href="http://www.linuxbase.org/navigator/browse/cmd_single.php?cmd=list-by-name&amp;Cname=gencat">LSB requires it</a>.
+There is some info about the source (msgfile) format on <a class="reference external" href="http://www.gnu.org/software/libc/manual/html_node/The-message-catalog-files.html#The-message-catalog-files">GNU website</a></li>
+<li><a class="reference internal" href="wml.html"><em>Wireless Markup Language</em></a></li>
+<li><a class="reference external" href="http://www.maxprograms.com/glossml/glossml.pdf">GlossML</a></li>
+<li>Deja Vu External View: <a class="reference external" href="http://dvx.atril.com/docs/DVX/InstructionsExternalView.pdf">Instructions sent to a translator</a>, <a class="reference external" href="http://simmer-lossner.com/lib/presentations/External_Proofreading_for_DVX.pdf">Description
+of external view options and process</a></li>
+<li><a class="reference internal" href="l20n.html"><em>Mozilla&#8217;s l20n</em></a>.</li>
+</ul>
+</div>
+<div class="section" id="unlikely-to-be-supported">
+<span id="formats-unlikely-to-be-supported"></span><h2>Unlikely to be supported<a class="headerlink" href="#unlikely-to-be-supported" title="Permalink to this headline">¶</a></h2>
+<p>These formats are either: too difficult to implement, undocumented, can be
+processed using some intermediate format or used by too few people to justify
+the effort.  Or some combination or these issues.</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+</div>
+<hr>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right"><a href="#">Back to top ↑</a></p>
+    <ul class="unstyled muted">
+      <li><small>
+        &copy; 2002-2014, Translate.<br/>
+      </small></li>
+      <li><small>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+      </small></li>
+    </ul>
+  </div>
+</footer>
+  </body>
+</html>
