@@ -153,11 +153,10 @@ def manage_project(request, slug=None, template='admin_project.html'):
     }
 
     # Set locale in Translate link
-    if len(locales_selected) > 0:
-        data['translate_locale'] = locales_selected[0].code
-        accept = request.META.get('HTTP_ACCEPT_LANGUAGE', '').split(',')[0]
-        if locales_selected.filter(code=accept).exists():
-            data['translate_locale'] = accept
+    if project:
+        locale = utils.get_project_locale_from_request(request, project)
+        if locale:
+            data['translate_locale'] = locale
 
     if Resource.objects.filter(project=project).exists():
         data['ready'] = True
