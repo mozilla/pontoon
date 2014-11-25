@@ -905,6 +905,20 @@ var Pontoon = (function () {
         }
       });
 
+      // Insert placeable at cursor or at the end if not focused
+      $("#original").on("click", ".placeable", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        var textarea = $('#translation'),
+            pos = textarea[0].selectionStart,
+            placeable = self.doRender($(this).html()),
+            before = textarea.val(),
+            after = before.substring(0, pos) + placeable + before.substring(pos);
+
+        textarea.val(after).focus();
+      });
+
       // Plurals navigation
       $("#plural-tabs a").click(function (e) {
         e.stopPropagation();
