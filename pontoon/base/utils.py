@@ -152,10 +152,10 @@ def mark_placeables(text):
 
             # CSS class used to mark the placeable
             css = {
-                'TabEscapePlaceable': "escape",
-                'EscapePlaceable': "escape",
-                'SpacesPlaceable': "space",
-                'NewlinePlaceable': "escape",
+                'TabEscapePlaceable': "escape ",
+                'EscapePlaceable': "escape ",
+                'SpacesPlaceable': "space ",
+                'NewlinePlaceable': "escape ",
             }.get(class_name, "")
 
             title = TITLES.get(class_name, "Unknown placeable")
@@ -179,7 +179,7 @@ def mark_placeables(text):
                     placeable.replace('<', '&lt;').replace('>', '&gt;'),
             }.get(class_name, placeable)
 
-            output += ('<mark class="%s placeable" title="%s">%s</mark>') \
+            output += ('<mark class="%splaceable" title="%s">%s</mark>') \
                 % (css, title, content)
 
         # Not a placeable: skip
