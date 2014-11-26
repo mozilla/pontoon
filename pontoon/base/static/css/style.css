@@ -824,21 +824,6 @@ button {
   z-index: 10; /* Must be lower than menu */
 }
 
-#project-load {
-  display: table;
-  height: 100%;
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-}
-
-#project-load p {
-  font-size: 48px;
-  font-weight: 300;
-  letter-spacing: -3px;
-  margin-bottom: 5px;
-}
-
 .unselectable * {
   -webkit-user-select: none;
   -khtml-user-select: none;

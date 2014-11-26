@@ -9,6 +9,21 @@ mark.placeable {
   font-weight: normal;
 }
 
+#project-load {
+  display: table;
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+#project-load p {
+  font-size: 48px;
+  font-weight: 300;
+  letter-spacing: -3px;
+  margin-bottom: 5px;
+}
+
 /* HEADER */
 
 #pontoon > header {
