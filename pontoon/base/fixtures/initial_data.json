@@ -228,7 +228,9 @@
         "pk": 26,
         "fields": {
             "code": "bn-BD",
-            "name": "Bengali"
+            "name": "Bengali",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -236,7 +238,9 @@
         "pk": 27,
         "fields": {
             "code": "bn-IN",
-            "name": "Bengali"
+            "name": "Bengali",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -526,7 +530,9 @@
         "pk": 59,
         "fields": {
             "code": "en-AU",
-            "name": "English"
+            "name": "English",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -534,7 +540,9 @@
         "pk": 60,
         "fields": {
             "code": "en-CA",
-            "name": "English"
+            "name": "English",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -542,7 +550,9 @@
         "pk": 61,
         "fields": {
             "code": "en-IE",
-            "name": "English"
+            "name": "English",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -550,7 +560,9 @@
         "pk": 62,
         "fields": {
             "code": "en-ZA",
-            "name": "English"
+            "name": "English",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -558,7 +570,9 @@
         "pk": 63,
         "fields": {
             "code": "en-GB",
-            "name": "English"
+            "name": "English",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -566,7 +580,9 @@
         "pk": 64,
         "fields": {
             "code": "en-US",
-            "name": "English"
+            "name": "English",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -810,7 +826,9 @@
         "pk": 91,
         "fields": {
             "code": "gu-IN",
-            "name": "Gujarati"
+            "name": "Gujarati",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -828,7 +846,9 @@
         "pk": 93,
         "fields": {
             "code": "ht",
-            "name": "Haitian"
+            "name": "Haitian",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -882,7 +902,9 @@
         "pk": 99,
         "fields": {
             "code": "hi-IN",
-            "name": "Hindi"
+            "name": "Hindi",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -1222,7 +1244,9 @@
         "pk": 137,
         "fields": {
             "code": "lij",
-            "name": "Ligurian"
+            "name": "Ligurian",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -1774,7 +1798,9 @@
         "pk": 197,
         "fields": {
             "code": "sr@latin",
-            "name": "Serbian"
+            "name": "Serbian",
+            "nplurals": "3",
+            "plural_rule": "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)"
         }
     },
     {
@@ -1852,7 +1878,9 @@
         "pk": 206,
         "fields": {
             "code": "sl-SI",
-            "name": "Slovenian"
+            "name": "Slovenian",
+            "nplurals": "4",
+            "plural_rule": "(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0)"
         }
     },
     {
@@ -1880,7 +1908,9 @@
         "pk": 209,
         "fields": {
             "code": "st",
-            "name": "Sotho, Southern"
+            "name": "Sotho, Southern",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -1924,7 +1954,9 @@
         "pk": 214,
         "fields": {
             "code": "es-CL",
-            "name": "Spanish"
+            "name": "Spanish",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -1972,7 +2004,9 @@
         "pk": 220,
         "fields": {
             "code": "es-MX",
-            "name": "Spanish"
+            "name": "Spanish",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -2090,7 +2124,9 @@
         "pk": 234,
         "fields": {
             "code": "sv-SE",
-            "name": "Swedish"
+            "name": "Swedish",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -2142,7 +2178,9 @@
         "pk": 240,
         "fields": {
             "code": "ta-IN",
-            "name": "Tamil"
+            "name": "Tamil",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -2415,8 +2453,8 @@
         "fields": {
             "code": "wo",
             "name": "Wolof",
-            "nplurals": "1",
-            "plural_rule": "0"
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
@@ -2432,7 +2470,9 @@
         "pk": 272,
         "fields": {
             "code": "xh",
-            "name": "Xhosa"
+            "name": "Xhosa",
+            "nplurals": "2",
+            "plural_rule": "(n != 1)"
         }
     },
     {
