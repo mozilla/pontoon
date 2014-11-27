@@ -39,7 +39,7 @@ $(function() {
 
   // Suggest slugified name for new projects
   $('#id_name').blur(function() {
-    if ($('input[name=pk]').length > 0) {
+    if ($('input[name=pk]').length > 0 || !$('#id_name').val()) {
       return;
     }
     $('#id_slug').attr('placeholder', 'Retrieving...');
