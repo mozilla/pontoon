@@ -1120,6 +1120,7 @@ var Pontoon = (function () {
 
         $("#helpers > section").hide();
         $("#helpers > section#" + sec).show();
+        $("#custom-search input[type=search]:visible").focus();
       });
 
       // Custom search: trigger with Enter
