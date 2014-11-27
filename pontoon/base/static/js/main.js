@@ -2110,7 +2110,8 @@ var Pontoon = (function () {
 
           // Tab: select suggestions
           if (!$('.menu').is(':visible') && !$('.popup').is(':visible') &&
-              (Pontoon.app.advanced || $("#editor").is('.opened'))) {
+              (Pontoon.app.advanced || $("#editor").is('.opened')) &&
+              !$('#custom-search').is(':visible')) {
             if (key === 9) {
               var section = $('#helpers section:visible'),
                   index = section.find('li.hover').index() + 1;
