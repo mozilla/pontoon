@@ -56,22 +56,9 @@
     </div>
 
     <!-- Progress indicator -->
-    <div id="progress" class="select rounded-graph">
+    <div id="progress" class="select">
       <div class="selector">
-        <span class="graph">
-          <span class="approved">
-            <span class="half"></span>
-            <span class="half"></span>
-          </span>
-          <span class="translated">
-            <span class="half"></span>
-            <span class="half"></span>
-          </span>
-          <span class="fuzzy">
-            <span class="half"></span>
-            <span class="half"></span>
-          </span>
-        </span>
+        <canvas class="graph" width="44" height="44"></canvas>
         <span class="number"></span>
       </div>
       <aside class="menu">
@@ -79,7 +66,8 @@
           <header>
             <h2>Translated of total of <span></span> strings</h2>
           </header>
-          <div class="big rounded-graph"></div>
+          <canvas class="big graph" width="220" height="220"></canvas>
+          <span class="number"></span>
         </div>
         <div class="details">
           <div class="approved">
@@ -88,7 +76,7 @@
           </div><div class="translated">
             <span>Unapproved</span>
             <p></p>
-          </div><div class="need-work">
+          </div><div class="fuzzy">
             <span>Needs work</span>
             <p></p>
           </div><div class="untranslated">

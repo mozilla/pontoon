@@ -241,31 +241,17 @@ mark.placeable {
   font-size: 21px;
 }
 
-#pontoon .rounded-graph {
-  border: 4px solid #FD5F60;
-  border-radius: 50%;
-  position: relative;
-
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-#pontoon #progress .menu .big.rounded-graph {
-  border-width: 20px;
-  height: 220px;
-  margin: 10px auto;
-  width: 220px;
-}
-
 #pontoon #progress {
   cursor: pointer;
   float: left;
-  height: 44px;
   margin: 8px 10px 8px 0;
-  width: 44px;
 }
 
-#pontoon #progress:hover {
+#pontoon #progress canvas {
+  border-radius: 100%;
+}
+
+#pontoon #progress:hover .selector canvas {
   background: #3F4752;
 }
 
@@ -273,89 +259,31 @@ mark.placeable {
   background: inherit;
 }
 
-#pontoon #progress .graph > span {
-  clip: rect(0, 44px, 44px, 22px);
-  height: 44px;
-  left: -4px;
-  position: absolute;
-  top: -4px;
-  width: 44px;
-}
-
-#pontoon #progress .big .graph > span {
-  clip: rect(0, 220px, 220px, 110px);
-  height: 220px;
-  left: -20px;
-  top: -20px;
-  width: 220px;
-}
-
-#pontoon #progress .graph > span.gt50 {
-  clip: rect(auto, auto, auto, auto);
-}
-
-#pontoon #progress .graph .half {
-  border: 4px solid #7BC876;
-  border-radius: 50%;
-  clip: rect(0, 22px, 44px, 0);
-  height: 36px;
-  position: absolute;
-  width: 36px;
-  left: 0;
-}
-
-#pontoon #progress .big .graph .half {
-  border-width: 20px;
-  clip: rect(0, 110px, 220px, 0);
-  height: 180px;
-  width: 180px;
-}
-
-#pontoon #progress .graph .translated .half {
-  border-color: #4FC4F6;
-}
-
-#pontoon #progress .graph .fuzzy .half {
-  border-color: #FED271;
-}
-
-#pontoon #progress .graph .half:nth-child(2) {
-  display: none;
-
-  -webkit-transform: rotate(180deg);
-  transform: rotate(180deg);
-}
-
-#pontoon #progress .graph > span.gt50 .half:nth-child(2) {
-  display: block;
-}
-
 #pontoon #progress .number {
-  color: #FFFFFF;
-  font-size: 14px;
   left: 0;
   line-height: 20px;
   position: absolute;
   text-align: center;
-  top: 5px;
+  top: 8px;
   width: 100%;
-}
-
-#pontoon #progress .big .number {
-  font-size: 90px;
-  line-height: 100px;
-  top: 25px;
 }
 
 #pontoon #progress .number:after {
   content: "%";
-  color: #AAAAAA;
+  color: #888888;
   display: block;
   font-size: 10px;
   line-height: 3px;
 }
 
-#pontoon #progress .big .number:after {
+#pontoon #progress .menu .number {
+  color: #FFFFFF;
+  font-size: 90px;
+  line-height: 100px;
+  top: 110px;
+}
+
+#pontoon #progress .menu .number:after {
   font-size: 30px;
   line-height: 15px;
 }
@@ -370,14 +298,18 @@ mark.placeable {
   top: 48px;
 }
 
+#pontoon #progress .menu > div:first-child {
+  padding: 10px 12px;
+}
+
 #pontoon #progress .menu header span {
   color: #FFFFFF;
   font-size: 28px;
   padding: 0 2px;
 }
 
-#pontoon #progress .menu > div:first-child {
-  padding: 10px 12px;
+#pontoon #progress .menu .big.graph {
+  margin: 10px auto;
 }
 
 #pontoon #progress .menu .details {
@@ -398,20 +330,20 @@ mark.placeable {
   width: 90px;
 }
 
-#pontoon #progress .menu div.untranslated {
-  border-color: #FD5F60;
-}
-
-#pontoon #progress .menu div.need-work {
-  border-color: #FED271;
+#pontoon #progress .menu div.approved {
+  border-color: #7BC876;
 }
 
 #pontoon #progress .menu div.translated {
   border-color: #4FC4F6;
 }
 
-#pontoon #progress .menu div.approved {
-  border-color: #7BC876;
+#pontoon #progress .menu div.fuzzy {
+  border-color: #FED271;
+}
+
+#pontoon #progress .menu div.untranslated {
+  border-color: #FD5F60;
 }
 
 #pontoon #progress .menu .details span {

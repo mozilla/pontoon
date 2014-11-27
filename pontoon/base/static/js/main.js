@@ -1243,38 +1243,48 @@ var Pontoon = (function () {
           translated = $("#entitylist .entity.translated").length,
           fuzzy = $("#entitylist .entity.fuzzy").length,
           untranslated = all - translated - approved - fuzzy,
-          percent = {
-            approved: all ? approved * 100 / all : 0,
-            translated: all ? translated * 100 / all : 0,
-            fuzzy: all ? fuzzy * 100 / all : 0
+          fraction = {
+            approved: all ? approved / all : 0,
+            translated: all ? translated / all : 0,
+            fuzzy: all ? fuzzy / all : 0,
+            untranslated: all ? untranslated / all : 0
           },
-          number = Math.floor(percent.translated + percent.approved);
+          number = Math.floor(fraction.approved*100 + fraction.translated*100);
 
       // Update graph
-      $('#progress .graph > span').each(function(i) {
-        var cls = $(this).attr('class').split(" ")[0],
-            keys = Object.keys(percent).slice(0, i % 3),
-            shift = 0;
+      $('#progress .graph').each(function() {
+        var context = this.getContext('2d');
+        context.lineWidth = this.width/11;
 
-        $(keys).each(function() {
-          shift += percent[this];
+        var x = this.width/2,
+            y = this.height/2,
+            radius = (this.width - context.lineWidth)/2,
+            end = null;
+
+        $('#progress .details > div').each(function(i) {
+          var type = $(this).attr('class'),
+              length = fraction[type] * 2,
+              start = end || -0.5;
+
+          end = start + length;
+
+          context.beginPath();
+          context.arc(x, y, radius, start * Math.PI, end * Math.PI);
+          context.strokeStyle = $(this).css("border-top-color");
+          context.stroke();
         });
-
-        $(this)
-          .css('transform', 'rotate(' + shift / 100 * 360 + 'deg)')
-          .toggleClass('gt50', percent[cls] > 50)
-          .find('.half:first-child')
-            .css('transform', 'rotate(' + percent[cls] / 100 * 360 + 'deg)');
       });
+
+      // Update number
       $('#progress .number').html(number);
 
       // Update details in the menu
       $('#progress .menu').find('header span').html(all).end()
         .find('.details')
-          .find('.untranslated p').html(untranslated).end()
-          .find('.need-work p').html(fuzzy).end()
+          .find('.approved p').html(approved).end()
           .find('.translated p').html(translated).end()
-          .find('.approved p').html(approved);
+          .find('.fuzzy p').html(fuzzy).end()
+          .find('.untranslated p').html(untranslated);
 
       // Update parts menu
       if (all) {
