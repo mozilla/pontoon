@@ -540,6 +540,7 @@ mark.placeable {
 }
 
 #pontoon #hotkeys td:first-child {
+  font-weight: 300;
   height: 26px;
   width: 60%;
 }
@@ -549,6 +550,7 @@ mark.placeable {
   background: #3F4752;
   border: 1px solid #5E6475;
   border-radius: 2px;
+  font-weight: 300;
   padding: 0 4px;
 }
 
@@ -561,7 +563,6 @@ mark.placeable {
 }
 
 #pontoon > header aside p {
-  color: #CCCCCC;
   font-weight: 300;
 }
 
