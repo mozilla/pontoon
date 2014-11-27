@@ -1995,6 +1995,10 @@ var Pontoon = (function () {
       $('.menu input[type=search]').click(function (e) {
         e.stopPropagation();
       }).keyup(function(e) {
+        if (e.which === 9) {
+          return;
+        }
+
         var ul = $(this).parent().siblings('ul'),
             val = $(this).val(),
             // Only search a limited set if defined
