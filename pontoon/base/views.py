@@ -430,6 +430,7 @@ def delete_translation(request, template=None):
     }), mimetype='application/json')
 
 
+@anonymous_csrf_exempt
 def update_translation(request, template=None):
     """Update entity translation for the specified locale and user."""
     log.debug("Update entity translation for the specified locale and user.")
