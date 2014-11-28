@@ -16,6 +16,10 @@
 
 {% block middle %}
 <form>
+  <div class="about">
+	{% if project.info_brief %}<p>{{ project.info_brief|safe }}</p>{% endif %}
+	{% if project.url %}<p><span>Website: </span><a href="{{ project.url }}">{{ project.url }}</a></p>{% endif %}
+  </div>
   {% include 'locale_selector.html' %}
 </form>
 {% endblock %}

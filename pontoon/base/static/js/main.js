@@ -1265,7 +1265,6 @@ var Pontoon = (function () {
           var type = $(this).attr('class'),
               length = fraction[type] * 2,
               start = end || -0.5;
-
           end = start + length;
 
           context.beginPath();
