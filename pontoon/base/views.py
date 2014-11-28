@@ -449,8 +449,8 @@ def update_translation(request, template=None):
         plural_form = request.POST['plural_form']
         original = request.POST['original']
         ignore_check = request.POST['ignore_check']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
+    except MultiValueDictKeyError as error:
+        log.error(str(error))
         return HttpResponse("error")
 
     log.debug("Entity: " + entity)
@@ -459,14 +459,14 @@ def update_translation(request, template=None):
 
     try:
         e = Entity.objects.get(pk=entity)
-    except Entity.DoesNotExist as e:
-        log.error(str(e))
+    except Entity.DoesNotExist as error:
+        log.error(str(error))
         return HttpResponse("error")
 
     try:
         l = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist as e:
-        log.error(str(e))
+    except Locale.DoesNotExist as error:
+        log.error(str(error))
         return HttpResponse("error")
 
     if plural_form == "-1":
@@ -480,10 +480,13 @@ def update_translation(request, template=None):
         else:
             user = None
 
-    profile = UserProfile.objects.get(user=user)
+    try:
+        quality_checks = UserProfile.objects.get(user=user).quality_checks
+    except UserProfile.DoesNotExist as error:
+        quality_checks = True
 
     ignore = False
-    if ignore_check == 'true' or not profile.quality_checks:
+    if ignore_check == 'true' or not quality_checks:
         ignore = True
 
     can_localize = request.user.has_perm('base.can_localize')
