@@ -17,6 +17,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 
 from django.http import (
@@ -1112,6 +1113,52 @@ def quality_checks_switch(request):
     profile.save()
 
     return HttpResponse("ok")
+
+
+@login_required(redirect_field_name='', login_url='/403')
+def request_locale(request):
+    """Request new locale to be added to project."""
+    log.debug("Request new locale to be added to project.")
+
+    if request.method != 'POST':
+        log.error("Non-POST request")
+        raise Http404
+
+    try:
+        project = request.POST['project']
+        locale = request.POST['locale']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    log.debug("Project: " + project)
+    log.debug("Locale: " + locale)
+
+    try:
+        project = Project.objects.get(slug=project)
+    except Entity.DoesNotExist as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    try:
+        locale = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    subject = '[Pontoon] Locale Request'
+    message = 'Add locale %s (%s) to Project %s (%s)' % (
+        locale.name, locale.code, project.name, project.slug)
+    sender = request.user.email
+
+    if settings.ADMINS:
+        recipients = [settings.ADMINS[0][1]]
+        send_mail(subject, message, sender, recipients)
+    else:
+        log.error("ADMIN not defined in settings. Email recipient unknown.")
+        return HttpResponse("error")
+
+    return HttpResponse()
 
 
 @anonymous_csrf_exempt

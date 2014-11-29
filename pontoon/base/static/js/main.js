@@ -1895,9 +1895,10 @@ var Pontoon = (function () {
         var details = Pontoon.common.getProjectDetails(),
             menu = $(this).siblings('.menu');
 
-        menu.find('.limited').removeClass('limited').end()
-          .find('li').hide();
+      $('.locale .search-wrapper > a').removeClass('back')
+        .find('span').removeClass('fa-chevron-left').addClass('fa-plus-square');
 
+        menu.find('.limited').removeClass('limited').end().find('li').hide();
         $(Object.keys(details)).each(function() {
           menu.find('.language.' + this).parent().addClass('limited').show();
         });
@@ -1987,13 +1988,62 @@ var Pontoon = (function () {
       });
 
       // Locale menu handler
-      $('body .locale .menu li:not(".no-match")').bind("click.main", function () {
+      $('.locale .menu li:not(".no-match")').bind("click.main", function () {
         var locale = $(this).find('.language').attr('class').split(' ')[1],
             // Escape special characters in CSS notation
             code = locale.replace( /(:|\.|\[|@|\])/g, "\\$1" ),
             language = $('.locale .menu .language.' + code).parent().html();
 
+        // Request new locale
+        if ($('.locale .menu .search-wrapper > a').is('.back')) {
+          $.ajax({
+            url: 'request-locale/',
+            type: 'POST',
+            data: {
+              csrfmiddlewaretoken: $('#server').data('csrf'),
+              project: $('.project .title').data('slug'),
+              locale: locale
+            },
+            success: function(data) {
+              if (data !== "error") {
+                Pontoon.endLoader(
+                  'New locale (' + locale + ') requested.', '', true);
+              } else {
+                Pontoon.endLoader('Oops, something went wrong.', 'error');
+              }
+            },
+            error: function() {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            }
+          });
+
+          return;
+        }
+
         $('.locale .selector').html(language);
+      });
+
+      // Request new locale
+      $('.locale .menu .search-wrapper > a').click(function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        $(this).toggleClass('back')
+          .find('span').toggleClass('fa-plus-square fa-chevron-left');
+
+        if ($(this).is('.back')) {
+          var details = Pontoon.common.getProjectDetails(),
+              menu = $(this).parents('.menu');
+
+          menu.find('li').addClass('limited').show();
+          $(Object.keys(details)).each(function() {
+            menu.find('.language.' + this).parent().removeClass('limited').hide();
+          });
+          $('.menu:visible input[type=search]').trigger("keyup");
+
+        } else {
+          $('.locale .selector').click().click();
+        }
       });
 
       // Add case insensitive :contains-like selector to jQuery (needed for locale search)

@@ -522,6 +522,7 @@ button {
 }
 
 #pontoon .locale.select input[type="search"] {
+  padding-right: 50px;
   width: 100%;
 
   -moz-box-sizing: border-box;
@@ -629,6 +630,29 @@ button {
   position: absolute;
   left: 3px;
   top: 5px;
+}
+
+#pontoon .search-wrapper > a {
+  font-size: 13px;
+  font-weight: 300;
+  position: absolute;
+  right: 2px;
+  text-transform: uppercase;
+  top: 6px;
+}
+
+#pontoon .search-wrapper > a.new:after {
+  content: "New";
+}
+
+#pontoon .search-wrapper > a.back:after {
+  content: "Back";
+}
+
+#pontoon .search-wrapper > a span {
+  float: left;
+  font-size: 14px;
+  padding: 1px 3px;
 }
 
 #pontoon .menu input[type=search] {

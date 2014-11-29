@@ -77,6 +77,8 @@ urlpatterns = patterns(
         name='pontoon.download'),
     url(r'^quality-checks-switch/', views.quality_checks_switch,
         name='pontoon.quality_checks_switch'),
+    url(r'^request-locale/', views.request_locale,
+        name='pontoon.request_locale'),
     url(r'^transifex/$', views.save_to_transifex,
         name='pontoon.transifex'),
     url(r'^csrf/$', views.get_csrf,

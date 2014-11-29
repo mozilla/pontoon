@@ -8,6 +8,11 @@
   {% endif %}
   <div class="menu">
     <div class="search-wrapper clearfix">
+      {% if user.is_authenticated() %}
+      <a class="new" title="Request new locale" href="#new">
+        <span class="fa fa-plus-square"></span>
+      </a>
+      {% endif %}
       <div class="icon fa fa-search"></div>
       <input type="search" autocomplete="off" autofocus>
     </div>
