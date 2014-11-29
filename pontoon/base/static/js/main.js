@@ -1895,8 +1895,8 @@ var Pontoon = (function () {
         var details = Pontoon.common.getProjectDetails(),
             menu = $(this).siblings('.menu');
 
-      $('.locale .search-wrapper > a').removeClass('back')
-        .find('span').removeClass('fa-chevron-left').addClass('fa-plus-square');
+        $('.locale .search-wrapper > a').removeClass('back').find('span')
+          .removeClass('fa-chevron-left').addClass('fa-plus-square');
 
         menu.find('.limited').removeClass('limited').end().find('li').hide();
         $(Object.keys(details)).each(function() {
@@ -2037,7 +2037,8 @@ var Pontoon = (function () {
 
           menu.find('li').addClass('limited').show();
           $(Object.keys(details)).each(function() {
-            menu.find('.language.' + this).parent().removeClass('limited').hide();
+            menu.find('.language.' + this).parent()
+              .removeClass('limited').hide();
           });
           $('.menu:visible input[type=search]').trigger("keyup");
 
@@ -2046,9 +2047,10 @@ var Pontoon = (function () {
         }
       });
 
-      // Add case insensitive :contains-like selector to jQuery (needed for locale search)
+      // Add case insensitive :contains-like selector to jQuery (search)
       $.expr[':'].containsi = function(a, i, m) {
-        return (a.textContent || a.innerText || '').toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+        return (a.textContent || a.innerText || '')
+          .toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
       };
 
       // Project, part and locale search
