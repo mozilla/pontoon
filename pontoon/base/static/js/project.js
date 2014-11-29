@@ -25,16 +25,13 @@ $(function() {
         },
         success: function(data) {
           if (data !== "error") {
-            console.log("1");
             Pontoon.endLoader(
               'New locale (' + locale + ') requested.', '', true);
           } else {
-            console.log("2");
             Pontoon.endLoader('Oops, something went wrong.', 'error');
           }
         },
         error: function() {
-            console.log("3");
           Pontoon.endLoader('Oops, something went wrong.', 'error');
         },
         complete: function() {
