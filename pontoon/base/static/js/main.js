@@ -1417,7 +1417,7 @@ var Pontoon = (function () {
      * Close notification
      */
     closeNotification: function () {
-      $('.notification').fadeOut();
+      $('.notification').animate({opacity: 0});
     },
 
 
@@ -1443,7 +1443,7 @@ var Pontoon = (function () {
       if (text) {
         $('.notification')
           .html('<li class="' + type + '">' + text + '</li>')
-          .show();
+          .css('opacity', 100);
       }
       if (!persist) {
         setTimeout(function() {

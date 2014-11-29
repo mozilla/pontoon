@@ -737,7 +737,7 @@ button {
 }
 
 #pontoon .notification.hidden {
-  display: block;
+  opacity: 0;
 }
 
 #pontoon .notification li {
