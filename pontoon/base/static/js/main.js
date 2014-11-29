@@ -2017,14 +2017,14 @@ var Pontoon = (function () {
             }
           });
 
-          return;
+        // Select locale
+        } else {
+          $('.locale .selector').html(language);
         }
-
-        $('.locale .selector').html(language);
       });
 
-      // Request new locale
-      $('.locale .menu .search-wrapper > a').click(function(e) {
+      // Switch between available locales and locales to request
+      $('.locale .menu .search-wrapper > a').bind("click.main", function (e) {
         e.stopPropagation();
         e.preventDefault();
 
