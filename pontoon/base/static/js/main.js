@@ -2040,7 +2040,7 @@ var Pontoon = (function () {
             menu.find('.language.' + this).parent()
               .removeClass('limited').hide();
           });
-          $('.menu:visible input[type=search]').trigger("keyup");
+          $('.menu:visible input[type=search]').trigger("keyup").focus();
 
         } else {
           $('.locale .selector').click().click();
