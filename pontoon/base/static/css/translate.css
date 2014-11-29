@@ -385,8 +385,6 @@ mark.placeable {
 
 #pontoon > header .notification li {
   color: #7BC876;
-  font-weight: 100;
-  text-transform: uppercase;
   white-space: pre-wrap;
 }
 
