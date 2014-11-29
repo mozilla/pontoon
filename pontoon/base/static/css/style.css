@@ -642,7 +642,7 @@ button {
 }
 
 #pontoon .search-wrapper > a.new:after {
-  content: "New";
+  content: "Add";
 }
 
 #pontoon .search-wrapper > a.back:after {
