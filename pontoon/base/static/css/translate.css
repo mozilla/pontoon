@@ -388,10 +388,6 @@ mark.placeable {
   white-space: pre-wrap;
 }
 
-#pontoon > header .notification li.error {
-  color: #FD5F60;
-}
-
 #pontoon #profile > .button {
   height: 60px;
   padding: 0;

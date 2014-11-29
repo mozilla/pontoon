@@ -727,7 +727,7 @@ button {
 }
 
 #pontoon .notification {
-  color: #FD5F60;
+  color: #7BC876;
   font-weight: 300;
   line-height: 17px;
   margin: 5px 12px 10px;
@@ -743,6 +743,11 @@ button {
 #pontoon .notification li {
   list-style: none;
   text-align: left;
+}
+
+#pontoon .notification li.error,
+#pontoon .notification li.warning {
+  color: #FD5F60;
 }
 
 
