@@ -18,7 +18,7 @@
     </div>
     <ul>
       {% for locale in locales %}
-      <li class="clearfix">
+      <li class="clearfix{% if locale and locale.chart %} filter{% endif %}">
         <span class="language {{ locale.code|lower }}">{{ locale.name }}</span>
         <span class="code">{{ locale.code }}</span>
         {% if locale and locale.chart %}

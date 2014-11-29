@@ -8,7 +8,9 @@
 <!-- Server data -->
 <div id="server"
      class="hidden"
-     data-project="{{ project.slug }}">
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+     data-project="{{ project.slug }}"
+     data-project-locales="{{ project_locales }}">
 </div>
 {% endblock %}
 
@@ -16,6 +18,8 @@
 
 {% block middle %}
 <form>
+  <ul class="notification"></ul>
+
   <div class="about">
 	{% if project.info_brief %}<p>{{ project.info_brief|safe }}</p>{% endif %}
 	{% if project.url %}<p><span>Website: </span><a href="{{ project.url }}">{{ project.url }}</a></p>{% endif %}

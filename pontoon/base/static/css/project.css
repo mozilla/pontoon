@@ -20,3 +20,7 @@
 #pontoon .locale .code {
   float: left;
 }
+
+#pontoon .locale .menu li:not(.filter) {
+  display: none;
+}

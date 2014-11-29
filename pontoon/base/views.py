@@ -48,8 +48,8 @@ from pontoon.base.models import (
     Stats,
     UserProfile,
     get_entities,
-    get_locales_stats,
-    get_projects_stats,
+    get_locales_with_stats,
+    get_projects_with_stats,
     get_translation,
     unapprove,
     unfuzzy,
@@ -87,7 +87,7 @@ def locale(request, locale, template='locale.html'):
         .order_by("name")
 
     data = {
-        'projects': get_projects_stats(projects, l),
+        'projects': get_projects_with_stats(projects, l),
         'locale': l,
     }
 
@@ -111,8 +111,10 @@ def project(request, slug, template='project.html'):
     locales = p.locales.all().order_by("name")
 
     data = {
-        'locales': get_locales_stats(locales, p),
+        'locales': get_locales_with_stats(p),
         'project': p,
+        'project_locales': json.dumps(
+            [i.lower() for i in p.locales.values_list('code', flat=True)]),
     }
 
     return render(request, template, data)
@@ -126,7 +128,7 @@ def projects(request, template='projects.html'):
         pk__in=Resource.objects.values('project')).order_by("name")
 
     data = {
-        'projects': get_projects_stats(projects),
+        'projects': get_projects_with_stats(projects),
     }
 
     return render(request, template, data)

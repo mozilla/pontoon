@@ -286,20 +286,23 @@ def get_chart_data(stats):
     )
 
 
-def get_locales_stats(locales, project):
+def get_locales_with_stats(project):
     """Add chart data to locales for specified project."""
 
-    for locale in locales:
-        r = Entity.objects.filter(obsolete=False).values('resource')
-        resources = Resource.objects.filter(project=project, pk__in=r)
-        stats = Stats.objects.filter(resource__in=resources, locale=locale)
+    locales = Locale.objects.all()
 
-        locale.chart = get_chart_data(stats)
+    for locale in locales:
+        if locale in project.locales.all():
+            r = Entity.objects.filter(obsolete=False).values('resource')
+            resources = Resource.objects.filter(project=project, pk__in=r)
+            stats = Stats.objects.filter(resource__in=resources, locale=locale)
+
+            locale.chart = get_chart_data(stats)
 
     return locales
 
 
-def get_projects_stats(projects, locale=None):
+def get_projects_with_stats(projects, locale=None):
     """Add chart data to projects (for specified locale)."""
 
     for project in projects:

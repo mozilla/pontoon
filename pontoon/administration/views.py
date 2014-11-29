@@ -26,7 +26,7 @@ from pontoon.base.models import (
     Subpage,
     Translation,
     UserProfile,
-    get_projects_stats,
+    get_projects_with_stats,
 )
 
 
@@ -43,7 +43,7 @@ def admin(request, template='admin.html'):
     projects = Project.objects.all().order_by("name")
 
     data = {
-        'projects': get_projects_stats(projects),
+        'projects': get_projects_with_stats(projects),
     }
 
     return render(request, template, data)
