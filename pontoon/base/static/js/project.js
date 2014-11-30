@@ -13,31 +13,9 @@ $(function() {
 
     // Request new locale
     if ($('.locale .menu .search-wrapper > a').is('.back')) {
-      var locale = $(this).find('.language').attr('class').split(' ')[1];
-
-      $.ajax({
-        url: 'request-locale/',
-        type: 'POST',
-        data: {
-          csrfmiddlewaretoken: $('#server').data('csrf'),
-          project: $('#server').data('project'),
-          locale: locale
-        },
-        success: function(data) {
-          if (data !== "error") {
-            Pontoon.endLoader(
-              'New locale (' + locale + ') requested.', '', true);
-          } else {
-            Pontoon.endLoader('Oops, something went wrong.', 'error');
-          }
-        },
-        error: function() {
-          Pontoon.endLoader('Oops, something went wrong.', 'error');
-        },
-        complete: function() {
-          $('.locale .menu .search-wrapper > a').click();
-        }
-      });
+      var locale = $(this).find('.language').attr('class').split(' ')[1],
+          project = $('#server').data('project');
+      Pontoon.common.requestLocale(locale, project);
 
     // Translate locale
     } else {
@@ -66,7 +44,6 @@ $(function() {
       $(projectLocales).each(function() {
         menu.find('.language.' + this).parent().addClass('limited').show();
       });
-
     }
 
     $('.menu:visible input[type=search]').trigger("keyup").focus();

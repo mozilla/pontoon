@@ -1996,26 +1996,8 @@ var Pontoon = (function () {
 
         // Request new locale
         if ($('.locale .menu .search-wrapper > a').is('.back')) {
-          $.ajax({
-            url: 'request-locale/',
-            type: 'POST',
-            data: {
-              csrfmiddlewaretoken: $('#server').data('csrf'),
-              project: $('.project .title').data('slug'),
-              locale: locale
-            },
-            success: function(data) {
-              if (data !== "error") {
-                Pontoon.endLoader(
-                  'New locale (' + locale + ') requested.', '', true);
-              } else {
-                Pontoon.endLoader('Oops, something went wrong.', 'error');
-              }
-            },
-            error: function() {
-              Pontoon.endLoader('Oops, something went wrong.', 'error');
-            }
-          });
+          var project = $('.project .title').data('slug');
+          Pontoon.common.requestLocale(locale, project);
 
         // Select locale
         } else {
@@ -2209,6 +2191,37 @@ var Pontoon = (function () {
           });
 
           return resources;
+        },
+        /*
+         * Request new locale for project
+         *
+         * locale Locale code
+         * project Project slug
+         */
+        requestLocale: function(locale, project) {
+          $.ajax({
+            url: 'request-locale/',
+            type: 'POST',
+            data: {
+              csrfmiddlewaretoken: $('#server').data('csrf'),
+              project: project,
+              locale: locale
+            },
+            success: function(data) {
+              if (data !== "error") {
+                Pontoon.endLoader(
+                  'New locale (' + locale + ') requested.', '', true);
+              } else {
+                Pontoon.endLoader('Oops, something went wrong.', 'error');
+              }
+            },
+            error: function() {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+            complete: function() {
+              $('.locale .menu .search-wrapper > a').click();
+            }
+          });
         },
         /*
          * Show error message
