@@ -542,12 +542,18 @@ button {
   color: #7BC876;
 }
 
+#pontoon .select .menu ul li .chart-wrapper {
+  float: right;
+  height: 17px;
+  width: 160px;
+}
+
 #pontoon .select .menu ul li .chart {
   background: #FD5F60;
   float: right;
   height: 5px;
   margin-top: 6px;
-  width: 160px;
+  width: 100%;
 }
 
 #pontoon .select .menu ul li .chart span {

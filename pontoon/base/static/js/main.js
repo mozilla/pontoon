@@ -1822,7 +1822,10 @@ var Pontoon = (function () {
       $('.menu').on('mouseenter', 'li', function () {
         $('.menu li.hover').removeClass('hover');
         $(this).toggleClass('hover');
+      });
 
+      // Menu chart hover
+      $('.menu').on('mouseenter', 'li .chart-wrapper', function () {
         var chart = $(this).find('.chart');
 
         if (chart.length > 0) {
@@ -1855,7 +1858,7 @@ var Pontoon = (function () {
             .css('top', top)
             .show();
         }
-      }).on('mouseleave', 'li', function () {
+      }).on('mouseleave', 'li .chart-wrapper', function () {
         $('.tooltip:visible').remove();
       });
 
