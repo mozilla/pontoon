@@ -663,9 +663,11 @@
         if (entities[0].format === 'properties') {
           var localized = false;
           window.addEventListener("localized", function() {
-            if (!localized && document.webL10n.getReadyState() === 'complete') {
-              localized = true;
-              loadEntitiesWebl10n();
+            if (!localized) {
+              if (!document.webL10n || document.webL10n.getReadyState() === 'complete') {
+                localized = true;
+                loadEntitiesWebl10n();
+              }
             }
           }, false);
           // Fallback: some apps don't seem to trigger the event
