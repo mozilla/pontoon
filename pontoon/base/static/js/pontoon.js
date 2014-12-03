@@ -320,8 +320,9 @@
       /**
        * Match entities and elements with data-l10n-id attribute
        * https://github.com/fabi1cazenave/webL10n
+       * https://github.com/l20n/l20n.js
        */
-      function loadEntitiesWebl10n() {
+      function loadEntitiesL10nJs() {
         var counter = 0;
 
         $(Pontoon.project.entities).each(function(i, entity) {
@@ -666,14 +667,14 @@
             if (!localized) {
               if (!document.webL10n || document.webL10n.getReadyState() === 'complete') {
                 localized = true;
-                loadEntitiesWebl10n();
+                loadEntitiesL10nJs();
               }
             }
           }, false);
           // Fallback: some apps don't seem to trigger the event
           setTimeout(function() {
             if (!localized) {
-              loadEntitiesWebl10n();
+              loadEntitiesL10nJs();
             }
           }, 1000);
 
