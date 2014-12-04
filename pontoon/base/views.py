@@ -524,7 +524,8 @@ def update_translation(request, template=None):
 
                     t.approved = True
                     t.fuzzy = False
-                    t.save()
+                    if request.user.is_authenticated():
+                        t.save()
 
                     return HttpResponse(json.dumps({
                         'type': 'updated',
@@ -544,7 +545,8 @@ def update_translation(request, template=None):
 
                         t.approved = False
                         t.fuzzy = False
-                        t.save()
+                        if request.user.is_authenticated():
+                            t.save()
 
                         return HttpResponse(json.dumps({
                             'type': 'updated',
@@ -567,7 +569,8 @@ def update_translation(request, template=None):
             entity=e, locale=l, user=user, string=string,
             plural_form=plural_form, date=datetime.datetime.now(),
             approved=can_localize)
-        t.save()
+        if request.user.is_authenticated():
+            t.save()
 
         active = get_translation(
             entity=e, locale=l, plural_form=plural_form)
@@ -587,7 +590,8 @@ def update_translation(request, template=None):
             entity=e, locale=l, user=user, string=string,
             plural_form=plural_form, date=datetime.datetime.now(),
             approved=can_localize)
-        t.save()
+        if request.user.is_authenticated():
+            t.save()
 
         return HttpResponse(json.dumps({
             'type': 'saved',

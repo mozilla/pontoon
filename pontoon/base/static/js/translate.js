@@ -847,7 +847,8 @@ Pontoon = $.extend(true, Pontoon, {
       if (entity.translation[i].fuzzy) {
         fuzzy++;
       }
-      if (entity.translation[i].pk) {
+      // Include empty and anonymous translations
+      if (entity.translation[i].pk || entity.translation[i].string) {
         translated++;
       }
     }
