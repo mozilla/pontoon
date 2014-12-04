@@ -804,8 +804,10 @@ Pontoon = $.extend(true, Pontoon, {
         .addClass('opened')
         .css('left', 0)
         .bind('transitionend.pontoon', function() {
-          $('#translation').focus();
-          $("#editor").unbind('transitionend.pontoon');
+          if (!entity.body) {
+            $('#translation').focus();
+            $("#editor").unbind('transitionend.pontoon');
+          }
         });
     }
   },
