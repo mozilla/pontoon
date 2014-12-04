@@ -100,18 +100,6 @@ $(function() {
     });
   }
 
-  function initializeWithoutWebsite() {
-    $('body > header').show();
-    $('#sidebar')
-      .addClass('advanced')
-      .css('width', '100%');
-    $('#switch, #drag').remove();
-    $('#editor').addClass('opened');
-    $('#project-load').hide();
-
-    Pontoon.init(window, true);
-  }
-
   function receiveMessage(e) {
     if (e.source === projectWindow) {
       if (JSON.parse(e.data).type === "READY") {
@@ -143,6 +131,18 @@ $(function() {
         Pontoon.init(window, advanced, projectWindow);
       }
     }
+  }
+
+  function initializeWithoutWebsite() {
+    $('body > header').show();
+    $('#sidebar')
+      .addClass('advanced')
+      .css('width', '100%');
+    $('#switch, #drag').remove();
+    $('#editor').addClass('opened');
+    $('#project-load').hide();
+
+    Pontoon.init(window, true);
   }
 
   // Hide menus on click outside
