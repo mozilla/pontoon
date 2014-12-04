@@ -9,12 +9,6 @@ $(function() {
     });
     $('#id_locales').val(arr);
 
-    // Append slash to the URL field
-    var url = $('#id_url').val();
-    if (url.length > 0 && url[url.length-1] !== '/') {
-      $('#id_url').val(url + '/');
-    }
-
     // Update form action
     var slug = $('#id_slug').val();
     if (slug.length > 0) {
