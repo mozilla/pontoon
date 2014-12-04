@@ -1551,7 +1551,7 @@ var Pontoon = (function () {
       });
 
       // Close notification on click
-      $('#pontoon > header').on('click', '.notification', function() {
+      $('body > header').on('click', '.notification', function() {
         Pontoon.closeNotification();
       });
 
@@ -1623,7 +1623,7 @@ var Pontoon = (function () {
       self.attachEditorHandlers();
 
       $("#spinner").hide();
-      $("#pontoon > header > .container").show();
+      $("body > header > .container").show();
 
       // If 2-column layout opened by default, open first entity in the editor
       if (self.app.advanced) {
@@ -1662,7 +1662,7 @@ var Pontoon = (function () {
           Pontoon.common.showError(msg);
           $("#progress, #switch, #drag").remove();
           $("#spinner").hide();
-          $("#pontoon > header > .container").show();
+          $("body > header > .container").show();
           Pontoon.attachMainHandlers();
           break;
 

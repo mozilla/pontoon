@@ -8,19 +8,19 @@
   padding-bottom: 12px;
 }
 
-#pontoon .about p a:link,
-#pontoon .about p a:visited {
+.about p a:link,
+.about p a:visited {
   color: #7BC876;
 }
 
-#pontoon .select .menu ul li > span:first-child {
+.select .menu ul li > span:first-child {
   width: 160px;
 }
 
-#pontoon .locale .code {
+.locale .code {
   float: left;
 }
 
-#pontoon .locale .menu li:not(.filter) {
+.locale .menu li:not(.filter) {
   display: none;
 }

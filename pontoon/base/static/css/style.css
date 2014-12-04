@@ -289,7 +289,7 @@ button {
   -moz-osx-font-smoothing: inherit;
 }
 
-#pontoon h2 {
+h2 {
   color: #888888;
   font-size: 14px;
   font-weight: 300;
@@ -297,8 +297,8 @@ button {
   padding-bottom: 2px;
 }
 
-#pontoon a:link,
-#pontoon a:visited {
+a:link,
+a:visited {
   color: #AAAAAA;
   font-weight: 300;
   text-decoration: none;
@@ -309,16 +309,16 @@ button {
   transition: all 0.3s ease-out;
 }
 
-#pontoon a:hover,
-#pontoon a:active {
+a:hover,
+a:active {
   color: #7BC876;
   text-decoration: none;
 }
 
-#pontoon input[type=text],
-#pontoon input[type=search],
-#pontoon input[type=password],
-#pontoon textarea {
+input[type=text],
+input[type=search],
+input[type=password],
+textarea {
   background: #888888;
   border: none;
   padding: 4px 3px 3px;
@@ -326,14 +326,14 @@ button {
   float: left;
 }
 
-#pontoon textarea {
+textarea {
   float: none;
 }
 
-#pontoon input[type=text]:focus,
-#pontoon input[type=search]:focus,
-#pontoon input[type=password]:focus,
-#pontoon textarea:focus {
+input[type=text]:focus,
+input[type=search]:focus,
+input[type=password]:focus,
+textarea:focus {
   background-color: #FFFFFF;
   outline: none; /* Remove WebKit Glow */
 
@@ -343,11 +343,11 @@ button {
   transition: all 0.3s ease-out;
 }
 
-#pontoon label {
+label {
   font-weight: 300;
 }
 
-#pontoon .button {
+.button {
   color: #FFFFFF;
   cursor: pointer;
   display: inline-block;
@@ -356,12 +356,12 @@ button {
   padding: 5px 4px 2px;
 }
 
-#pontoon .right {
+.right {
   float: right;
   padding-right: 5px;
 }
 
-#pontoon .select {
+.select {
   display: inline-block;
   font-size: 14px;
   margin-left: 0;
@@ -369,12 +369,12 @@ button {
   position: relative;
 }
 
-#pontoon .select.hidden {
+.select.hidden {
   display: none!important;
 }
 
-#pontoon .select .menu,
-#pontoon .select .popup {
+.select .menu,
+.select .popup {
   background: #272A2F;
   bottom: 50px;
   color: #AAAAAA;
@@ -387,8 +387,8 @@ button {
   z-index: 20; /* Must be higher than iframe-cover */
 }
 
-#pontoon .select > .button.breadcrumbs,
-#pontoon #go {
+.select > .button.breadcrumbs,
+#go {
   background: #3f4752;
   font-size: 16px;
   height: 20px;
@@ -399,11 +399,11 @@ button {
   width: 200px;
 }
 
-#pontoon #go {
+#go {
   width: auto;
 }
 
-#pontoon .select > .button.breadcrumbs:before,
+.select > .button.breadcrumbs:before,
 #go:before {
   content: "";
   border-top: 20px solid transparent;
@@ -414,7 +414,7 @@ button {
   top: 10px;
 }
 
-#pontoon .select > .button.breadcrumbs:after {
+.select > .button.breadcrumbs:after {
   content: "";
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
@@ -425,31 +425,31 @@ button {
   z-index: 1;
 }
 
-#pontoon .project.select > .button.breadcrumbs {
+.project.select > .button.breadcrumbs {
   padding-left: 20px;
 }
 
-#pontoon .project.select > .button.breadcrumbs:before {
+.project.select > .button.breadcrumbs:before {
   display: none;
 }
 
-#pontoon .select > .button.breadcrumbs:hover {
+.select > .button.breadcrumbs:hover {
   background: #4d5967;
 }
 
-#pontoon .select > .button.breadcrumbs:hover:after {
+.select > .button.breadcrumbs:hover:after {
   border-left-color: #4d5967;
 }
 
-#pontoon .select.opened > .button.breadcrumbs {
+.select.opened > .button.breadcrumbs {
   background: #4d5967;
 }
 
-#pontoon .select.opened > .button.breadcrumbs:after {
+.select.opened > .button.breadcrumbs:after {
   border-left-color: #4d5967;
 }
 
-#pontoon #go {
+#go {
   color: #FFFFFF;
   float: left;
 
@@ -459,17 +459,17 @@ button {
   transition: none;
 }
 
-#pontoon #go:hover {
+#go:hover {
   background: #7BC876;
   color: #272A2F;
 }
 
-#pontoon .project.select {
+.project.select {
   padding-left: 0;
   width: 100%;
 }
 
-#pontoon .project.select .menu {
+.project.select .menu {
   bottom: auto;
   display: inline-block;
   position: relative;
@@ -479,25 +479,25 @@ button {
   box-sizing: border-box;
 }
 
-#pontoon .project.select input[type="search"] {
+.project.select input[type="search"] {
   width: 100%;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
-#pontoon .project.select .menu ul {
+.project.select .menu ul {
   max-height: none;
 }
 
-#pontoon .project.select .menu ul li .name {
+.project.select .menu ul li .name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 160px;
 }
 
-#pontoon .project.select .menu ul li .url {
+.project.select .menu ul li .url {
   float: left;
   overflow: hidden;
   text-align: left;
@@ -506,12 +506,12 @@ button {
   width: 370px;
 }
 
-#pontoon .locale.select {
+.locale.select {
   padding-left: 0;
   width: 100%;
 }
 
-#pontoon .locale.select .menu {
+.locale.select .menu {
   bottom: auto;
   display: inline-block;
   position: relative;
@@ -521,7 +521,7 @@ button {
   box-sizing: border-box;
 }
 
-#pontoon .locale.select input[type="search"] {
+.locale.select input[type="search"] {
   padding-right: 50px;
   width: 100%;
 
@@ -529,26 +529,26 @@ button {
   box-sizing: border-box;
 }
 
-#pontoon .locale.select .menu ul {
+.locale.select .menu ul {
   max-height: none;
 }
 
-#pontoon .select .menu ul li > span:first-child {
+.select .menu ul li > span:first-child {
   float: left;
   text-align: left;
 }
 
-#pontoon .select .menu ul li > span:nth-child(2) {
+.select .menu ul li > span:nth-child(2) {
   color: #7BC876;
 }
 
-#pontoon .select .menu ul li .chart-wrapper {
+.select .menu ul li .chart-wrapper {
   float: right;
   height: 17px;
   width: 160px;
 }
 
-#pontoon .select .menu ul li .chart {
+.select .menu ul li .chart {
   background: #FD5F60;
   float: right;
   height: 5px;
@@ -556,81 +556,81 @@ button {
   width: 100%;
 }
 
-#pontoon .select .menu ul li .chart span {
+.select .menu ul li .chart span {
   float: left;
   height: 100%;
 }
 
-#pontoon .select .menu ul li .chart span.approved {
+.select .menu ul li .chart span.approved {
   background: #7BC876;
 }
 
-#pontoon .select .menu ul li .chart span.translated {
+.select .menu ul li .chart span.translated {
   background: #4FC4F6;
 }
 
-#pontoon .select .menu ul li .chart span.fuzzy {
+.select .menu ul li .chart span.fuzzy {
   background: #FED271;
 }
 
-#pontoon .locale .selector,
-#pontoon .project .selector {
+.locale .selector,
+.project .selector {
   float: right;
 }
 
-#pontoon .menu ul {
+.menu ul {
   max-height: 170px;
   overflow: auto;
   margin: 0 0 6px 0;
   position: relative;
 }
 
-#pontoon .menu li {
+.menu li {
   color: #AAAAAA;
   font-weight: 300;
   padding: 2px 4px;
 }
 
-#pontoon .menu li.hover {
+.menu li.hover {
   cursor: pointer;
   color: #FFFFFF;
   background: #3F4752;
 }
 
-#pontoon .menu li a:link,
-#pontoon .menu li a:visited {
+.menu li a:link,
+.menu li a:visited {
   -moz-transition: none;  /* FF3.7+ */
   -o-transition: none;  /* Opera 10.5 */
   -webkit-transition: none;  /* Saf3.2+, Chrome */
   transition: none;
 }
 
-#pontoon .menu li a:hover,
-#pontoon .menu li a:active {
+.menu li a:hover,
+.menu li a:active {
   color: #FFFFFF;
 }
 
-#pontoon .menu li.no-match {
+.menu li.no-match {
   cursor: default;
   display: none;
   list-style: none;
   text-align: left;
 }
 
-#pontoon .menu li.no-match.hover {
+.menu li.no-match.hover {
   background: transparent;
   color: inherit;
   cursor: default;
   display: none;
 }
 
-#pontoon .search-wrapper {
+.search-wrapper {
   border-bottom: 1px solid #5E6475;
   margin-bottom: 10px;
   position: relative;
 }
 
-#pontoon .search-wrapper .icon {
+.search-wrapper .icon {
   color: #AAAAAA;
   font-size: 1.2em;
   position: absolute;
@@ -638,7 +638,7 @@ button {
   top: 5px;
 }
 
-#pontoon .search-wrapper > a {
+.search-wrapper > a {
   font-size: 13px;
   font-weight: 300;
   position: absolute;
@@ -647,21 +647,21 @@ button {
   top: 6px;
 }
 
-#pontoon .search-wrapper > a.new:after {
+.search-wrapper > a.new:after {
   content: "Add";
 }
 
-#pontoon .search-wrapper > a.back:after {
+.search-wrapper > a.back:after {
   content: "Back";
 }
 
-#pontoon .search-wrapper > a span {
+.search-wrapper > a span {
   float: left;
   font-size: 14px;
   padding: 1px 3px;
 }
 
-#pontoon .menu input[type=search] {
+.menu input[type=search] {
   background: transparent;
   color: #FFFFFF;
   float: none;
@@ -670,11 +670,11 @@ button {
   width: 200px;
 }
 
-#pontoon .menu input[type=search]:focus {
+.menu input[type=search]:focus {
   background-color: transparent;
 }
 
-#pontoon .locale .code {
+.locale .code {
   color: #7BC876;
   float: right;
 }
@@ -732,7 +732,7 @@ button {
   line-height: 13px;
 }
 
-#pontoon .notification {
+.notification {
   color: #7BC876;
   font-weight: 300;
   line-height: 17px;
@@ -742,17 +742,17 @@ button {
   width: auto;
 }
 
-#pontoon .notification.hidden {
+.notification.hidden {
   opacity: 0;
 }
 
-#pontoon .notification li {
+.notification li {
   list-style: none;
   text-align: left;
 }
 
-#pontoon .notification li.error,
-#pontoon .notification li.warning {
+.notification li.error,
+.notification li.warning {
   color: #FD5F60;
 }
 
@@ -775,8 +775,8 @@ button {
   vertical-align: middle;
 }
 
-#pontoon > nav,
-#pontoon .inner > nav {
+body > nav,
+.inner > nav {
   left: 50%;
   margin-left: -350px;
   position: absolute;
@@ -797,21 +797,21 @@ button {
   display: none;
 }
 
-#pontoon .links li a:link,
-#pontoon .links li a:visited {
+.links li a:link,
+.links li a:visited {
   color: #EBEBEB;
 }
 
-#pontoon .links li a:hover,
-#pontoon .links li a:active {
+.links li a:hover,
+.links li a:active {
   color: #7BC876;
 }
 
-#pontoon noscript p {
+noscript p {
   text-transform: uppercase;
 }
 
-#pontoon #title {
+#title {
   color: #7BC876;
   display: inline-block;
   font-size: 108px;
@@ -820,15 +820,15 @@ button {
   padding-top: 150px;
 }
 
-#pontoon #error #title {
+#error #title {
   padding-top: 0;
 }
 
-#pontoon #title a {
+#title a {
   color: #7BC876;
 }
 
-#pontoon #subtitle {
+#subtitle {
   color: #EBEBEB;
   font-size: 48px;
   letter-spacing: -2px;
@@ -853,7 +853,7 @@ button {
   width: 20px;
 }
 
-#pontoon > form {
+body > form {
   height: auto;
   margin: 0 auto;
   padding: 50px 0 100px;

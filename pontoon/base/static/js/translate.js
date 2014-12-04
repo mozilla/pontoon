@@ -64,7 +64,7 @@ $(function() {
   function resizeIframe() {
     $('#source')
       .width($(window).width() - $('#sidebar:visible').width())
-      .height($(window).height() - $('#pontoon > header').outerHeight());
+      .height($(window).height() - $('body > header').outerHeight());
   }
 
   function attachResizeHandlers() {
@@ -101,7 +101,7 @@ $(function() {
   }
 
   function initializeWithoutWebsite() {
-    $('#pontoon > header').show();
+    $('body > header').show();
     $('#sidebar')
       .addClass('advanced')
       .css('width', '100%');
@@ -116,7 +116,7 @@ $(function() {
     if (e.source === projectWindow) {
       if (JSON.parse(e.data).type === "READY") {
         window.removeEventListener("message", receiveMessage, false);
-        $('#pontoon > header').show();
+        $('body > header').show();
 
         var advanced = false,
             websiteWidth = $('#server').data('width');

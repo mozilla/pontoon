@@ -84,7 +84,7 @@ mark.placeable {
 
 /* HEADER */
 
-#pontoon > header {
+body > header {
   background: #272A2F;
   display: none;
   height: 60px;
@@ -94,18 +94,18 @@ mark.placeable {
   z-index: 15; /* Must be higher than iframe-cover */
 }
 
-#pontoon > header > .container {
+body > header > .container {
   display: none;
   min-width: 800px;
 }
 
-#pontoon > header .loader {
+body > header .loader {
   color: #FFFFFF;
   display: inline-block;
   margin: 23px 16px;
 }
 
-#pontoon #switch {
+#switch {
   background: transparent;
   border: none;
   color: #FFFFFF;
@@ -117,149 +117,149 @@ mark.placeable {
   width: 27px;
 }
 
-#pontoon #switch.opened {
+#switch.opened {
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
 }
 
-#pontoon .select {
+.select {
   float: left;
   padding-left: 0;
   text-align: left;
 }
 
-#pontoon .locale .code {
+.locale .code {
   margin-left: 10px;
 }
 
-#pontoon > header .project.select {
+body > header .project.select {
   margin-left: 10px;
   width: auto;
 }
 
-#pontoon > header .locale.select {
+body > header .locale.select {
   width: auto;
 }
 
-#pontoon .select > .button.breadcrumbs {
+.select > .button.breadcrumbs {
   width: auto;
 }
 
-#pontoon .select.opened > .button.breadcrumbs {
+.select.opened > .button.breadcrumbs {
   background: #272A2F;
 }
 
-#pontoon .select.opened > .button.breadcrumbs:after {
+.select.opened > .button.breadcrumbs:after {
   border-left-color: #272A2F;
 }
 
-#pontoon .select .menu,
-#pontoon .select .popup {
+.select .menu,
+.select .popup {
   bottom: auto;
   top: 60px;
 }
 
-#pontoon .project.select .menu,
-#pontoon .part.select .menu {
+.project.select .menu,
+.part.select .menu {
   display: none;
   position: absolute;
   width: 510px;
 }
 
-#pontoon .project.select .menu {
+.project.select .menu {
   width: 580px;
 }
 
-#pontoon .locale.select .menu {
+.locale.select .menu {
   display: none;
   position: absolute;
   width: 236px;
 }
 
-#pontoon .menu ul,
-#pontoon .project.select .menu ul,
-#pontoon .locale.select .menu ul {
+.menu ul,
+.project.select .menu ul,
+.locale.select .menu ul {
   margin: 0;
   max-height: 318px;
 }
 
-#pontoon .part .menu ul li {
+.part .menu ul li {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-#pontoon .part.select .menu ul li > span:nth-child(2),
-#pontoon .project.select .menu ul li > span:nth-child(2) {
+.part.select .menu ul li > span:nth-child(2),
+.project.select .menu ul li > span:nth-child(2) {
   float: right;
   text-align: right;
 }
 
-#pontoon .menu li.horizontal-separator {
+.menu li.horizontal-separator {
   border-top: 1px solid #525A65;
   height: 0;
   margin: 5px 0;
   padding: 0;
 }
 
-#pontoon .status {
+.status {
   font-size: 16px;
   left: 16px;
   position: absolute;
   top: 13px;
 }
 
-#pontoon .status:before {
+.status:before {
   color: #FD5F60;
   content: "";
 }
 
-#pontoon .translated .status:before {
+.translated .status:before {
   color: #4FC4F6;
   content: "";
 }
 
-#pontoon .fuzzy .status:before {
+.fuzzy .status:before {
   color: #FED271;
   content: "";
   margin-left: -1px;
 }
 
-#pontoon .approved .status:before {
+.approved .status:before {
   color: #7BC876;
   content: "";
 }
 
-#pontoon .all .status {
+.all .status {
   top: 11px;
   left: 14px;
 }
 
-#pontoon .all .status:before {
+.all .status:before {
   color: #AAAAAA;
   content: "";
   font-size: 21px;
 }
 
-#pontoon #progress {
+#progress {
   cursor: pointer;
   float: left;
   margin: 8px 10px 8px 0;
 }
 
-#pontoon #progress canvas {
+#progress canvas {
   border-radius: 100%;
 }
 
-#pontoon #progress:hover .selector canvas {
+#progress:hover .selector canvas {
   background: #3F4752;
 }
 
-#pontoon #progress.opened:hover {
+#progress.opened:hover {
   background: inherit;
 }
 
-#pontoon #progress .number {
+#progress .number {
   left: 0;
   line-height: 20px;
   position: absolute;
@@ -268,7 +268,7 @@ mark.placeable {
   width: 100%;
 }
 
-#pontoon #progress .number:after {
+#progress .number:after {
   content: "%";
   color: #888888;
   display: block;
@@ -276,19 +276,19 @@ mark.placeable {
   line-height: 3px;
 }
 
-#pontoon #progress .menu .number {
+#progress .menu .number {
   color: #FFFFFF;
   font-size: 90px;
   line-height: 100px;
   top: 110px;
 }
 
-#pontoon #progress .menu .number:after {
+#progress .menu .number:after {
   font-size: 30px;
   line-height: 15px;
 }
 
-#pontoon #progress .menu {
+#progress .menu {
   cursor: auto;
   left: 50%;
   line-height: 18px;
@@ -298,26 +298,26 @@ mark.placeable {
   top: 48px;
 }
 
-#pontoon #progress .menu > div:first-child {
+#progress .menu > div:first-child {
   padding: 10px 12px;
 }
 
-#pontoon #progress .menu header span {
+#progress .menu header span {
   color: #FFFFFF;
   font-size: 28px;
   padding: 0 2px;
 }
 
-#pontoon #progress .menu .big.graph {
+#progress .menu .big.graph {
   margin: 10px auto;
 }
 
-#pontoon #progress .menu .details {
+#progress .menu .details {
   padding: 0;
   width: 100%;
 }
 
-#pontoon #progress .menu .details div {
+#progress .menu .details div {
   border-top: 5px solid;
   color: #AAAAAA;
   display: inline-block;
@@ -325,50 +325,50 @@ mark.placeable {
   width: 89px;
 }
 
-#pontoon #progress .menu .details div:last-child {
+#progress .menu .details div:last-child {
   margin-right: 0;
   width: 90px;
 }
 
-#pontoon #progress .menu div.approved {
+#progress .menu div.approved {
   border-color: #7BC876;
 }
 
-#pontoon #progress .menu div.translated {
+#progress .menu div.translated {
   border-color: #4FC4F6;
 }
 
-#pontoon #progress .menu div.fuzzy {
+#progress .menu div.fuzzy {
   border-color: #FED271;
 }
 
-#pontoon #progress .menu div.untranslated {
+#progress .menu div.untranslated {
   border-color: #FD5F60;
 }
 
-#pontoon #progress .menu .details span {
+#progress .menu .details span {
   font-size: 10px;
   text-transform: uppercase;
 }
 
-#pontoon #progress .menu .details p {
+#progress .menu .details p {
   color: #FFFFFF;
   font-size: 28px;
   padding: 10px 0;
   position: relative;
 }
 
-#pontoon > header #loading {
+body > header #loading {
   display: none;
   float: left;
   margin-right: 5px;
 }
 
-#pontoon > header #loading.loader {
+body > header #loading.loader {
   display: inline-block;
 }
 
-#pontoon > header .notification {
+body > header .notification {
   background: rgba(0, 0, 0, 0.8);
   cursor: pointer;
   list-style: none;
@@ -383,96 +383,96 @@ mark.placeable {
   width: auto;
 }
 
-#pontoon > header .notification li {
+body > header .notification li {
   color: #7BC876;
   white-space: pre-wrap;
 }
 
-#pontoon #profile > .button {
+#profile > .button {
   height: 60px;
   padding: 0;
 }
 
-#pontoon #profile .button .title {
+#profile .button .title {
   float: left;
   margin: 20px 5px 20px 10px;
   font-size: 16px;
 }
 
-#pontoon #profile .button .title span {
+#profile .button .title span {
   margin-left: 5px;
 }
 
-#pontoon #profile .button img {
+#profile .button img {
   border-radius: 24px;
   border: 2px solid #4D5967;
   margin: 6px 5px 0 0;
 }
 
-#pontoon #profile .menu {
+#profile .menu {
   line-height: 18px;
   width: 200px;
 }
 
-#pontoon #profile .menu ul,
-#pontoon #filter .menu ul {
+#profile .menu ul,
+#filter .menu ul {
   max-height: none;
 }
 
-#pontoon #profile .menu li i.fa {
+#profile .menu li i.fa {
   margin: 0 8px 0 -2px;
 }
 
-#pontoon #profile .menu li i.file-format {
+#profile .menu li i.file-format {
   font-weight: 300;
   font-size: 13px;
   font-style: normal;
   margin-left: 2px;
 }
 
-#pontoon #profile .menu li.quality-checks i:before,
-#pontoon #profile .menu li.quality-checks.enabled:hover i:before {
+#profile .menu li.quality-checks i:before,
+#profile .menu li.quality-checks.enabled:hover i:before {
   color: #FD5F60;
   content: "";
 }
 
-#pontoon #profile .menu li.quality-checks:hover i:before,
-#pontoon #profile .menu li.quality-checks.enabled i:before {
+#profile .menu li.quality-checks:hover i:before,
+#profile .menu li.quality-checks.enabled i:before {
   color: #7BC876;
   content: "";
 }
 
-#pontoon #profile.select .popup {
+#profile.select .popup {
   right: 0;
   width: 200px;
 }
 
-#pontoon #profile.select #hotkeys.popup {
+#profile.select #hotkeys.popup {
   width: 300px;
 }
 
-#pontoon #info .button {
+#info .button {
   font-size: 1.6em;
   height: 22px;
   padding: 19px 5px;
 }
 
-#pontoon #info .menu a {
+#info .menu a {
   color: #7BC876;
 }
 
-#pontoon #hotkeys table {
+#hotkeys table {
   width: 100%;
 }
 
-#pontoon #hotkeys td:first-child {
+#hotkeys td:first-child {
   font-weight: 300;
   height: 26px;
   width: 60%;
 }
 
-#pontoon #profile .menu li i.file-format,
-#pontoon #hotkeys span {
+#profile .menu li i.file-format,
+#hotkeys span {
   background: #3F4752;
   border: 1px solid #5E6475;
   border-radius: 2px;
@@ -480,39 +480,39 @@ mark.placeable {
   padding: 0 4px;
 }
 
-#pontoon > header .select aside.menu {
+body > header .select aside.menu {
   width: 360px;
 }
 
-#pontoon > header aside h2 {
+body > header aside h2 {
   margin-bottom: 15px;
 }
 
-#pontoon > header aside p {
+body > header aside p {
   font-weight: 300;
 }
 
-#pontoon .right .menu {
+.right .menu {
   right: 0;
 }
 
-#pontoon #projects {
+#projects {
   color: #FFFFFF;
   padding: 17px 5px;
 }
 
-#pontoon .popup .cancel {
+.popup .cancel {
   float: right;
   font-size: 22px;
   margin-top: -5px;
 }
 
-#pontoon .popup .cancel:hover {
+.popup .cancel:hover {
   color: #FFFFFF;
 }
 
-#pontoon .popup input[type=text],
-#pontoon .popup input[type=password] {
+.popup input[type=text],
+.popup input[type=password] {
   background: transparent;
   border-bottom: 1px solid #525A65;
   color: #FFFFFF;
@@ -521,11 +521,11 @@ mark.placeable {
   width: 200px;
 }
 
-#pontoon .popup input[type=password] {
+.popup input[type=password] {
     width: 120px;
 }
 
-#pontoon .popup .button {
+.popup .button {
   background: #7BC876;
   border-radius: 3px;
   color: #272A2F;
@@ -535,21 +535,21 @@ mark.placeable {
   text-transform: uppercase;
 }
 
-#pontoon .popup .remember {
+.popup .remember {
   float: left;
   padding: 6px 0 0 14px;
 }
 
-#pontoon .popup .remember input {
+.popup .remember input {
   float: left;
   margin-left: -16px;
 }
 
-#pontoon .popup .bottom {
+.popup .bottom {
   font-size: 11px;
 }
 
-#pontoon .popup .bottom .new {
+.popup .bottom .new {
   float: right;
   margin-top: 6px;
 }
@@ -560,7 +560,7 @@ mark.placeable {
 
 /* ENTITY LIST */
 
-#pontoon #sidebar {
+#sidebar {
   background: #3F4752;
   border-right: 1px solid #5E6475;
   bottom: 0;
@@ -574,12 +574,12 @@ mark.placeable {
   box-sizing: border-box;
 }
 
-#pontoon #sidebar.advanced {
+#sidebar.advanced {
   display: block;
   width: 700px;
 }
 
-#pontoon #sidebar [id^="drag"] {
+#sidebar [id^="drag"] {
   cursor: ew-resize;
   display: none;
   height: 100%;
@@ -587,18 +587,18 @@ mark.placeable {
   width: 7px;
 }
 
-#pontoon #sidebar #drag,
-#pontoon #sidebar.advanced #drag-1 {
+#sidebar #drag,
+#sidebar.advanced #drag-1 {
   display: block;
   right: 0;
 }
 
-#pontoon #sidebar.advanced #drag-1 {
+#sidebar.advanced #drag-1 {
   left: -4px;
   z-index: 5;
 }
 
-#pontoon #entitylist {
+#entitylist {
   left: 0;
   height: 100%;
   position: absolute;
@@ -606,23 +606,23 @@ mark.placeable {
   width: 100%;
 }
 
-#pontoon .advanced #entitylist,
-#pontoon .advanced #editor {
+.advanced #entitylist,
+.advanced #editor {
   width: 50%;
 }
 
-#pontoon #entitylist .search-wrapper {
+#entitylist .search-wrapper {
   margin-bottom: 0;
 }
 
-#pontoon #sidebar .search-wrapper .icon {
+#sidebar .search-wrapper .icon {
   font-size: 19px;
   left: auto;
   right: 5px;
   top: 12px;
 }
 
-#pontoon #sidebar .search-wrapper input[type=search] {
+#sidebar .search-wrapper input[type=search] {
   background: #4D5967;
   color: #FFFFFF;
   font-size: 16px;
@@ -634,19 +634,19 @@ mark.placeable {
   box-sizing: border-box;
 }
 
-#pontoon #sidebar .search-wrapper input[type=search]:-moz-placeholder {
+#sidebar .search-wrapper input[type=search]:-moz-placeholder {
   color: #AAAAAA;
 }
 
-#pontoon #sidebar .search-wrapper input[type=search]:-webkit-input-placeholder {
+#sidebar .search-wrapper input[type=search]:-webkit-input-placeholder {
   color: #AAAAAA;
 }
 
-#pontoon #filter {
+#filter {
   position: static;
 }
 
-#pontoon #filter .button {
+#filter .button {
   height: 43px;
   padding: 0;
   position: absolute;
@@ -654,18 +654,18 @@ mark.placeable {
   width: 43px;
 }
 
-#pontoon #filter .button:hover .status:before {
+#filter .button:hover .status:before {
   color: #FFFFFF;
 }
 
-#pontoon #filter.opened .button {
+#filter.opened .button {
   background-color: #272A2F;
   border-bottom: 1px solid #525A65;
   width: 100%;
   z-index: 30;
 }
 
-#pontoon #filter .button .title {
+#filter .button .title {
   color: #AAAAAA;
   display: none;
   font-size: 16px;
@@ -674,11 +674,11 @@ mark.placeable {
   top: 12px;
 }
 
-#pontoon #filter.opened .button .title {
+#filter.opened .button .title {
   display: block;
 }
 
-#pontoon #filter .menu {
+#filter .menu {
   left: 0;
   top: 43px;
   width: 100%;
@@ -687,22 +687,22 @@ mark.placeable {
   box-sizing: border-box;
 }
 
-#pontoon #filter .menu li:not(.horizontal-separator) {
+#filter .menu li:not(.horizontal-separator) {
   padding: 4px 0 4px 30px;
   position: relative;
 }
 
-#pontoon #filter .menu li .status {
+#filter .menu li .status {
   left: 4px;
   top: 4px;
 }
 
-#pontoon #filter .menu li.all .status {
+#filter .menu li.all .status {
   left: 2px;
   top: 2px;
 }
 
-#pontoon #entitylist > .wrapper {
+#entitylist > .wrapper {
   bottom: 0px;
   overflow-y: auto;
   position: absolute;
@@ -710,14 +710,14 @@ mark.placeable {
   width: 100%;
 }
 
-#pontoon #entitylist > .wrapper > ul {
+#entitylist > .wrapper > ul {
   background: #EBEBEB;
   margin: 0;
   list-style: none;
   text-align: left;
 }
 
-#pontoon #entitylist > .wrapper > ul > li {
+#entitylist > .wrapper > ul > li {
   background: #3f4752;
   color: #FFFFFF;
   cursor: pointer;
@@ -726,29 +726,29 @@ mark.placeable {
   position: relative;
 }
 
-#pontoon #entitylist > .wrapper > ul > li:hover,
-#pontoon #entitylist > .wrapper > ul > li.hovered,
-#pontoon #entitylist > .wrapper > ul > li.active {
+#entitylist > .wrapper > ul > li:hover,
+#entitylist > .wrapper > ul > li.hovered,
+#entitylist > .wrapper > ul > li.active {
   background-color: #4d5967;
 }
 
-#pontoon #entitylist > .wrapper > ul > li .arrow {
+#entitylist > .wrapper > ul > li .arrow {
   color: #CCCCCC;
   display: none;
   float: right;
   margin: -17px -18px;
 }
 
-#pontoon #entitylist > .wrapper > ul > li:hover .arrow {
+#entitylist > .wrapper > ul > li:hover .arrow {
   display: block;
 }
 
-#pontoon #entitylist > .wrapper > ul > li p {
+#entitylist > .wrapper > ul > li p {
   height: 22px;
   line-height: 22px;
 }
 
-#pontoon #entitylist > .wrapper > ul > li p span {
+#entitylist > .wrapper > ul > li p span {
   display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -756,29 +756,29 @@ mark.placeable {
   width: 100%;
 }
 
-#pontoon #entitylist > .wrapper > ul > li p span.translation-string {
+#entitylist > .wrapper > ul > li p span.translation-string {
   color: #AAAAAA;
   display: none;
   font-style: italic;
   padding-left: 2%;
 }
 
-#pontoon #entitylist > .wrapper > ul > li.approved p span.source-string,
-#pontoon #entitylist > .wrapper > ul > li.translated p span.source-string,
-#pontoon #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
-#pontoon #entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {
+#entitylist > .wrapper > ul > li.approved p span.source-string,
+#entitylist > .wrapper > ul > li.translated p span.source-string,
+#entitylist > .wrapper > ul > li.fuzzy p span.source-string,
+#entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {
   display: inline-block;
   width: 49%;
 }
 
-#pontoon #entitylist h2  {
+#entitylist h2  {
   background: #272A2F;
   color: #AAAAAA;
   padding: 10px 6px;
   text-align: left;
 }
 
-#pontoon #entitylist .no-match  {
+#entitylist .no-match  {
   color: #FFFFFF;
   display: none;
   font-size: 28px;
@@ -787,7 +787,7 @@ mark.placeable {
   text-align: center;
 }
 
-#pontoon #entitylist .no-match div  {
+#entitylist .no-match div  {
   color: #7BC876;
   font-size: 128px;
   margin-bottom: 20px;
@@ -799,7 +799,7 @@ mark.placeable {
 
 /* EDITOR */
 
-#pontoon #editor {
+#editor {
   background: #3F4752;
   bottom: 0;
   color: #FFFFFF;
@@ -812,7 +812,7 @@ mark.placeable {
   width: 100%;
 }
 
-#pontoon .advanced #editor {
+.advanced #editor {
   border-left: 1px solid #5E6475;
   left: 50%;
 
@@ -820,12 +820,12 @@ mark.placeable {
   box-sizing: border-box;
 }
 
-#pontoon #editor p {
+#editor p {
   text-align: left;
   white-space: normal;
 }
 
-#pontoon #topbar {
+#topbar {
   background: #4D5967;
   border-bottom: 1px solid #5E6475;
   line-height: 23px;
@@ -836,32 +836,32 @@ mark.placeable {
   box-sizing: border-box;
 }
 
-#pontoon #topbar a {
+#topbar a {
   color: #CCCCCC;
   float: right;
 }
 
-#pontoon #topbar a#back {
+#topbar a#back {
   float: left;
 }
 
-#pontoon .advanced #topbar a#back {
+.advanced #topbar a#back {
   display: none;
 }
 
-#pontoon #topbar a#previous {
+#topbar a#previous {
   margin-right: 30px;
 }
 
-#pontoon #topbar a:hover {
+#topbar a:hover {
   color: #7BC876;
 }
 
-#pontoon #topbar a span {
+#topbar a span {
   padding-right: 5px;
 }
 
-#pontoon #source-pane {
+#source-pane {
   background: #3F4752;
   border-bottom: 1px solid #5E6475;
   height: 20%;
@@ -873,29 +873,29 @@ mark.placeable {
   box-sizing: border-box;
 }
 
-#pontoon #metadata {
+#metadata {
   color: #AAAAAA;
   display: none;
   font-size: 12px;
   font-style: italic;
 }
 
-#pontoon #metadata span {
+#metadata span {
   display: none;
 }
 
-#pontoon #metadata #comment {
+#metadata #comment {
   display: inline;
   padding-right: 4px;
 }
 
-#pontoon #metadata .details {
+#metadata .details {
   color: #7BC876;
   float: right;
   padding-left: 4px;
 }
 
-#pontoon #source-pane h2 {
+#source-pane h2 {
   color: #AAAAAA;
   display: none;
   font-size: 11px;
@@ -903,21 +903,21 @@ mark.placeable {
   margin-top: 6px;
 }
 
-#pontoon #source-pane.pluralized h2 {
+#source-pane.pluralized h2 {
   display: block;
   text-align: left;
 }
 
-#pontoon #source-pane #original mark.placeable {
+#source-pane #original mark.placeable {
   cursor: pointer;
 }
 
-#pontoon #editor nav ul {
+#editor nav ul {
   display: table;
   width: 100%;
 }
 
-#pontoon #editor nav li {
+#editor nav li {
   background: #4D5967;
   border-bottom: 1px solid #5E6475;
   border-right: 1px solid #5E6475;
@@ -925,27 +925,27 @@ mark.placeable {
   text-align: center;
 }
 
-#pontoon #editor nav li:last-child {
+#editor nav li:last-child {
   border-right: none;
 }
 
-#pontoon #editor nav li.active {
+#editor nav li.active {
   background: #3F4752;
   border-bottom: none;
 }
 
-#pontoon #editor nav li:hover {
+#editor nav li:hover {
   background: #3F4752;
 }
 
-#pontoon #editor nav li a {
+#editor nav li a {
   color: #CCCCCC;
   display: block;
   padding: 10px;
   text-transform: uppercase;
 }
 
-#pontoon #editor nav li a > span > span {
+#editor nav li a > span > span {
   left: 0px;
   position: absolute;
   right: 0px;
@@ -954,19 +954,19 @@ mark.placeable {
   visibility: hidden;
 }
 
-#pontoon #editor nav li a.loading > span > span {
+#editor nav li a.loading > span > span {
   visibility: visible;
 }
 
-#pontoon #editor nav li a > span {
+#editor nav li a > span {
   position: relative;
 }
 
-#pontoon #editor nav li a.loading > span {
+#editor nav li a.loading > span {
   visibility: hidden;
 }
 
-#pontoon #editor textarea {
+#editor textarea {
   background: #FFFFFF;
   display: block;
   font-size: 13px;
@@ -981,15 +981,15 @@ mark.placeable {
   box-sizing: border-box;
 }
 
-#pontoon #plural-tabs ul li {
+#plural-tabs ul li {
   display: none;
 }
 
-#pontoon #plural-tabs ul li a span {
+#plural-tabs ul li a span {
   color: #7BC876;
 }
 
-#pontoon #editor > menu {
+#editor > menu {
   background: #272A2F;
   border-bottom: 1px solid #5E6475;
   padding: 10px;
@@ -997,7 +997,7 @@ mark.placeable {
   text-align: right;
 }
 
-#pontoon #warning {
+#warning {
   background: #272A2F;
   bottom: 0;
   display: none;
@@ -1012,7 +1012,7 @@ mark.placeable {
   box-sizing: border-box;
 }
 
-#pontoon #warning .cancel {
+#warning .cancel {
   color: #AAAAAA;
   float: right;
   font-size: 24px;
@@ -1020,26 +1020,26 @@ mark.placeable {
   margin-top: -1px;
 }
 
-#pontoon #warning .cancel:hover {
+#warning .cancel:hover {
   color: #FFFFFF;
 }
 
-#pontoon #warning h2 {
+#warning h2 {
   color: #FD5F60;
 }
 
-#pontoon #warning ul {
+#warning ul {
   float: left;
   list-style: disc;
 }
 
-#pontoon #warning #save-anyway {
+#warning #save-anyway {
   bottom: 10px;
   position: absolute;
   right: 10px;
 }
 
-#pontoon #translation-length {
+#translation-length {
   color: #AAAAAA;
   display: none;
   float: left;
@@ -1047,7 +1047,7 @@ mark.placeable {
   padding: 9px 0;
 }
 
-#pontoon #editor > menu button {
+#editor > menu button {
   background: transparent;
   border: none;
   color: #EBEBEB;
@@ -1055,11 +1055,11 @@ mark.placeable {
   text-transform: uppercase;
 }
 
-#pontoon .advanced button#cancel {
+.advanced button#cancel {
   display: none;
 }
 
-#pontoon #editor > menu button[id^="save"] {
+#editor > menu button[id^="save"] {
   background: #7bc876;
   border-radius: 3px;
   color: #272A2F;
@@ -1068,15 +1068,15 @@ mark.placeable {
   padding: 10px 15px;
 }
 
-#pontoon #editor > menu button:hover {
+#editor > menu button:hover {
   color: #7BC876;
 }
 
-#pontoon #editor > menu button[id^="save"]:hover {
+#editor > menu button[id^="save"]:hover {
   color: #EBEBEB;
 }
 
-#pontoon #helpers {
+#helpers {
   background: #3F4752;
   height: calc(60% - 104px);
   position: relative;
@@ -1086,7 +1086,7 @@ mark.placeable {
   height: calc(60% - 147px);
 }
 
-#pontoon #helpers > section {
+#helpers > section {
   bottom: 0;
   display: none;
   left: 0;
@@ -1097,34 +1097,34 @@ mark.placeable {
   top: 43px;
 }
 
-#pontoon #helpers > section#custom-search .search-wrapper {
+#helpers > section#custom-search .search-wrapper {
   margin-bottom: 0;
 }
 
-#pontoon #helpers > section#custom-search .icon {
+#helpers > section#custom-search .icon {
   right: 10px;
 }
 
-#pontoon #helpers > section#custom-search.loading .icon,
-#pontoon #helpers > section#custom-search .icon.fa-cog {
+#helpers > section#custom-search.loading .icon,
+#helpers > section#custom-search .icon.fa-cog {
   display: none;
 }
 
-#pontoon #helpers > section#custom-search.loading .icon.fa-cog {
+#helpers > section#custom-search.loading .icon.fa-cog {
   display: block;
 }
 
-#pontoon #helpers > section#custom-search input[type=search] {
+#helpers > section#custom-search input[type=search] {
   background: transparent;
   padding-left: 10px;
 }
 
-#pontoon #helpers > section ul {
+#helpers > section ul {
   list-style: none;
   margin: 0;
 }
 
-#pontoon #helpers > section ul li {
+#helpers > section ul li {
   border-bottom: 1px solid #525a65;
   cursor: pointer;
   padding: 5px 10px 20px;
@@ -1132,22 +1132,22 @@ mark.placeable {
   transition: all 0.2s ease-out;
 }
 
-#pontoon #helpers > section ul li.delete {
+#helpers > section ul li.delete {
   -webkit-transform: scale(0); /* MANDATORY! Or transitionend in main.js triggered too late */
   transform: scale(0);
 }
 
-#pontoon #helpers > section ul li:not(.disabled):hover,
-#pontoon #helpers > section ul li:not(.disabled).hover {
+#helpers > section ul li:not(.disabled):hover,
+#helpers > section ul li:not(.disabled).hover {
   background: #4D5967;
   border-color: #5E6475;
 }
 
-#pontoon #helpers > section ul li.disabled {
+#helpers > section ul li.disabled {
   cursor: default;
 }
 
-#pontoon #helpers > section ul li > header {
+#helpers > section ul li > header {
   color: #AAAAAA;
   display: block;
   font-size: 11px;
@@ -1156,15 +1156,15 @@ mark.placeable {
   text-transform: uppercase;
 }
 
-#pontoon #helpers > section ul li > header .info {
+#helpers > section ul li > header .info {
   float: left;
 }
 
-#pontoon #helpers > section ul li > header .toolbar {
+#helpers > section ul li > header .toolbar {
   float: right;
 }
 
-#pontoon #helpers > section ul li > header button {
+#helpers > section ul li > header button {
   background: no-repeat transparent;
   border: none;
   color: #AAAAAA;
@@ -1176,50 +1176,50 @@ mark.placeable {
   width: 22px;
 }
 
-#pontoon #helpers > section ul li > header.localizer button,
-#pontoon #helpers > section ul li > header.own button.delete,
-#pontoon #helpers > section ul li.approved > header button.approve {
+#helpers > section ul li > header.localizer button,
+#helpers > section ul li > header.own button.delete,
+#helpers > section ul li.approved > header button.approve {
   display: inline-block;
 }
 
-#pontoon #helpers > section ul li > header button.approve:before {
+#helpers > section ul li > header button.approve:before {
   content: "";
 }
 
-#pontoon #helpers > section ul li > header button.approve:hover:before,
-#pontoon #helpers > section ul li.approved > header button.approve:before {
+#helpers > section ul li > header button.approve:hover:before,
+#helpers > section ul li.approved > header button.approve:before {
   color: #7BC876;
   content: "";
 }
 
-#pontoon #helpers > section ul li > header button.delete:before {
+#helpers > section ul li > header button.delete:before {
   content: "";
   margin-left: 5px;
 }
 
-#pontoon #helpers > section ul li > header button.delete:hover:before {
+#helpers > section ul li > header button.delete:hover:before {
   color: #FD5F60;
 }
 
-#pontoon #helpers > section ul li > header .stress {
+#helpers > section ul li > header .stress {
   color: #7BC876;
   padding-left: 3px;
 }
 
-#pontoon #helpers > section ul li > p {
+#helpers > section ul li > p {
   min-height: 22px;
 }
 
-#pontoon #helpers > section#machinery ul li > header .stress,
-#pontoon #helpers > section#custom-search ul li > header .stress {
+#helpers > section#machinery ul li > header .stress,
+#helpers > section#custom-search ul li > header .stress {
   padding-right: 3px;
 }
 
-#pontoon #helpers > section ul li.disabled p {
+#helpers > section ul li.disabled p {
   color: #AAAAAA;
   font-style: italic;
 }
 
-#pontoon #helpers > section ul li p.original {
+#helpers > section ul li p.original {
   color: #AAAAAA;
 }

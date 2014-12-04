@@ -3,39 +3,39 @@ body {
   position: relative;
 }
 
-#pontoon .select {
+.select {
   padding-left: 0;
   text-align: left;
 }
 
-#pontoon #title {
+#title {
   display: block;
   font-size: 50px;
   letter-spacing: -3px;
   text-align: left;
 }
 
-#pontoon form {
+body > form {
   color: #AAAAAA;
   font-size: 14px;
   width: 620px;
   padding: 0 20px 100px;
 }
 
-#pontoon form > div {
+form > div {
   margin: 20px 0;
   text-align: right;
 }
 
-#pontoon form > div.controls {
+form > div.controls {
   margin-top: 70px;
 }
 
-#pontoon form > div.subpages.delete {
+form > div.subpages.delete {
   opacity: 0.3;
 }
 
-#pontoon h2 {
+h2 {
   color: #EBEBEB;
   font-size: 30px;
   font-weight: 300;
@@ -46,12 +46,12 @@ body {
   text-transform: none;
 }
 
-#pontoon h2 .small {
+h2 .small {
   color: #AAAAAA;
   font-size: 0.7em;
 }
 
-#pontoon h3 {
+h3 {
   color: #FD5F60;
   font-weight: 300;
   margin-left: -1px;
@@ -59,22 +59,22 @@ body {
   text-transform: uppercase;
 }
 
-#pontoon label {
+label {
   display: block;
   padding-bottom: 3px;
   text-align: left;
 }
 
-#pontoon input[type=text],
-#pontoon input[type=password],
-#pontoon textarea {
+input[type=text],
+input[type=password],
+textarea {
   display: block;
   height: 24px;
   margin-left: -1px;
-  width: 615px; /* Must be same as #pontoon form width - padding - margin-left */
+  width: 615px; /* Must be same as form width - padding - margin-left */
 }
 
-#pontoon .button {
+.button {
   background: #888888;
   border: none;
   display: block;
@@ -84,13 +84,13 @@ body {
   width: 31px;
 }
 
-#pontoon .button.delete-subpage {
+.button.delete-subpage {
   color: #333333;
   font-size: 20px;
   padding: 4px;
 }
 
-#pontoon .controls .button {
+.controls .button {
   background: #7BC876;
   border-radius: 3px;
   color: #272A2F;
@@ -99,42 +99,42 @@ body {
   width: auto;
 }
 
-#pontoon .controls .button.delete-project {
+.controls .button.delete-project {
   background: #FF0A43;
   color: #FFFFFF;
   float: left;
 }
 
-#pontoon form a:link, #pontoon form a:visited {
+form a:link, form a:visited {
   color: #7BC876;
   float: right;
   text-transform: uppercase;
 }
 
-#pontoon form a.add-subpage {
+form a.add-subpage {
   font-size: 14px;
   letter-spacing: 0;
   margin-top: 17px;
 }
 
-#pontoon .controls a {
+.controls a {
   margin: 9px;
 }
 
-#pontoon .authenticate .transifex .button {
+.authenticate .transifex .button {
   margin-top: 41px;
 }
 
-#pontoon .locale.select {
+.locale.select {
   float: left;
   width: auto;
 }
 
-#pontoon .locale.select.selected {
+.locale.select.selected {
   float: right;
 }
 
-#pontoon .locale.select .menu {
+.locale.select .menu {
   border-bottom: 1px solid #5E6475;
   margin: 2px 0 -4px -1px;
   overflow: auto;
@@ -142,61 +142,61 @@ body {
   width: 295px;
 }
 
-#pontoon .locale.select .menu ul {
+.locale.select .menu ul {
   height: 170px;
   margin-bottom: 0;
 }
 
-#pontoon #id_locales {
+#id_locales {
   display: none;
 }
 
-#pontoon .checkbox {
+.checkbox {
   margin: 0;
 }
 
-#pontoon .checkbox label {
+.checkbox label {
   float: left;
   padding: 6px 0 0 16px;
 }
 
-#pontoon .repository.authenticate .bottom label {
+.repository.authenticate .bottom label {
   padding-left: 16px;
 }
 
-#pontoon .checkbox label input,
-#pontoon .repository.authenticate .bottom label input {
+.checkbox label input,
+.repository.authenticate .bottom label input {
   float: left;
   margin-left: -16px;
   margin-top: 2px;
 }
 
-#pontoon .repository.authenticate .bottom label input {
+.repository.authenticate .bottom label input {
   margin-top: 0;
 }
 
-#pontoon .repository .type-wrapper .authentication-title,
-#pontoon .repository .transifex .authentication-form,
-#pontoon .repository .transifex .bottom {
+.repository .type-wrapper .authentication-title,
+.repository .transifex .authentication-form,
+.repository .transifex .bottom {
   display: none;
 }
 
-#pontoon .repository.authenticate .type-wrapper .authentication-title,
-#pontoon .repository.authenticate .transifex .authentication-form,
-#pontoon .repository.authenticate .transifex .bottom {
+.repository.authenticate .type-wrapper .authentication-title,
+.repository.authenticate .transifex .authentication-form,
+.repository.authenticate .transifex .bottom {
   display: block;
 }
 
-#pontoon .repository .type-wrapper {
+.repository .type-wrapper {
   float: left;
   margin-right: 6px;
 }
 
-#pontoon .repository .type.select {
+.repository .type.select {
   margin-left: -1px;
 }
 
-#pontoon .repository .type.select .selector {
+.repository .type.select .selector {
   color: #444444;
   font-weight: 400;
   height: 24px;
@@ -204,11 +204,11 @@ body {
   width: 199px;
 }
 
-#pontoon .repository .type.select .selector > span:nth-child(2) {
+.repository .type.select .selector > span:nth-child(2) {
   float: right;
 }
 
-#pontoon .repository .type.select .menu {
+.repository .type.select .menu {
   background: #272A2F;
   border-top: 1px solid #5E6475;
   bottom: 31px;
@@ -216,7 +216,7 @@ body {
   width: 207px;
 }
 
-#pontoon .repository .type-wrapper .authentication-title {
+.repository .type-wrapper .authentication-title {
   color: #FD5F60;
   font-size: 12px;
   padding-top: 54px;
@@ -224,127 +224,127 @@ body {
   text-transform: uppercase;
 }
 
-#pontoon .repository .details-wrapper {
+.repository .details-wrapper {
   float: left;
   width: 408px;
 }
 
-#pontoon .repository .details-wrapper[data-repository-type="transifex"] .repo {
+.repository .details-wrapper[data-repository-type="transifex"] .repo {
   display: none;
 }
 
-#pontoon .repository .details-wrapper[data-repository-type="transifex"] .transifex {
+.repository .details-wrapper[data-repository-type="transifex"] .transifex {
   display: block;
 }
 
-#pontoon .repository .details-wrapper .button.update {
+.repository .details-wrapper .button.update {
   color: #444444;
   padding: 0;
 }
 
-#pontoon .repository input[type=text] {
+.repository input[type=text] {
   width: 403px;
 }
 
-#pontoon .edit .repository input[type=text],
-#pontoon .subpages input[id*=url] {
+.edit .repository input[type=text],
+.subpages input[id*=url] {
   float: left;
   width: 367px;
 }
 
-#pontoon .transifex {
+.transifex {
   display: none;
 }
 
-#pontoon .transifex .authentication-form {
+.transifex .authentication-form {
   padding-top: 73px;
   padding-bottom: 57px;
 }
 
-#pontoon .transifex input#id_transifex_project,
-#pontoon .edit .authenticate .transifex input#id_transifex_project,
-#pontoon .edit .transifex input#id_transifex_username {
+.transifex input#id_transifex_project,
+.edit .authenticate .transifex input#id_transifex_project,
+.edit .transifex input#id_transifex_username {
   float: left;
   width: 196px;
 }
 
-#pontoon .transifex input#id_transifex_resource,
-#pontoon .edit .authenticate .transifex input#id_transifex_resource {
+.transifex input#id_transifex_resource,
+.edit .authenticate .transifex input#id_transifex_resource {
   float: left;
   width: 196px;
 }
 
-#pontoon .edit .transifex input#id_transifex_project,
-#pontoon .edit .transifex input#id_transifex_resource {
+.edit .transifex input#id_transifex_project,
+.edit .transifex input#id_transifex_resource {
   float: left;
   width: 178px;
 }
 
-#pontoon .edit .transifex input#id_transifex_password,
-#pontoon .edit .authenticate .transifex .authentication-form label:nth-child(2) {
+.edit .transifex input#id_transifex_password,
+.edit .authenticate .transifex .authentication-form label:nth-child(2) {
   float: left;
   width: 157px;
 }
 
-#pontoon .transifex label,
-#pontoon .edit .authenticate .transifex label  {
+.transifex label,
+.edit .authenticate .transifex label  {
   float: left;
   width: 200px;
 }
 
-#pontoon .edit .transifex label {
+.edit .transifex label {
   width: 182px;
 }
 
-#pontoon .edit section .bottom {
+.edit section .bottom {
   font-size: 12px;
   text-transform: uppercase;
 }
 
-#pontoon .subpages[data-count] {
+.subpages[data-count] {
   display: none;
 }
 
-#pontoon .subpages label[for*=name] {
+.subpages label[for*=name] {
   float: left;
   width: 205px;
 }
 
-#pontoon .subpages input[id*=name] {
+.subpages input[id*=name] {
   float: left;
   width: 201px;
 }
 
-#pontoon .subpages input[id$=DELETE] {
+.subpages input[id$=DELETE] {
   display: none;
 }
 
-#pontoon .subpages label[for*=url] {
+.subpages label[for*=url] {
   float: left;
   width: 407px;
 }
 
-#pontoon label[for=id_repository_type],
-#pontoon .transifex input#id_transifex_project,
-#pontoon .transifex input#id_transifex_username,
-#pontoon .transifex label[for*=project],
-#pontoon .transifex label[for*=username],
-#pontoon .subpages input[id*=name],
-#pontoon .subpages label[for*=name] {
+label[for=id_repository_type],
+.transifex input#id_transifex_project,
+.transifex input#id_transifex_username,
+.transifex label[for*=project],
+.transifex label[for*=username],
+.subpages input[id*=name],
+.subpages label[for*=name] {
   margin-right: 6px;
 }
 
-#pontoon textarea {
+textarea {
   height: 60px;
 }
 
-#pontoon .subtitle {
+.subtitle {
   font-size: 12px;
   margin-top: 4px;
   text-transform: uppercase;
 }
 
-#pontoon .errorlist {
+.errorlist {
   color: #FD5F60;
   display: inline-block;
   font-size: 12px;
@@ -355,12 +355,12 @@ body {
   text-transform: uppercase;
 }
 
-#pontoon .errorlist li {
+.errorlist li {
   display: inline;
   margin-left: 5px;
 }
 
-#pontoon .notification {
+.notification {
   margin-left: auto;
   margin-right: auto;
 }
