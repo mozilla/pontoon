@@ -15,7 +15,7 @@ $(function() {
     if ($('.locale .menu .search-wrapper > a').is('.back')) {
       var locale = $(this).find('.language').attr('class').split(' ')[1],
           project = $('#server').data('project');
-      Pontoon.common.requestLocale(locale, project);
+      Pontoon.requestLocale(locale, project);
 
     // Translate locale
     } else {
