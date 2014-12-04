@@ -405,14 +405,12 @@ var Pontoon = (function () {
       $('.notification').animate({opacity: 0});
     },
 
-
     /*
      * Display loader to provide feedback about the background process
      */
     startLoader: function () {
       $('#loading').addClass('loader').show();
     },
-
 
     /*
      * Remove loader
