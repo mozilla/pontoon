@@ -1588,6 +1588,16 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Resize iframe to fit space available
+     */
+    resizeIframe: function () {
+      $('#source')
+        .width($(window).width() - $('#sidebar:visible').width())
+        .height($(window).height() - $('body > header').outerHeight());
+    },
+
+
+    /*
      * window.postMessage improved
      *
      * messageType data type to be sent to the other window
@@ -1613,10 +1623,39 @@ var Pontoon = (function (my) {
      * Handle messages from project code
      */
     receiveMessage: function (e) {
-      if (e.source === Pontoon.project.win) {
+      var projectWindow = $('#source')[0].contentWindow;
+
+      if (e.source === projectWindow) {
         var message = JSON.parse(e.data);
 
         switch (message.type) {
+
+        case "READY":
+          var advanced = false,
+              websiteWidth = $('#server').data('width');
+
+          $('body > header').show();
+          if (websiteWidth) {
+            var windowWidth = $(window).width(),
+                sidebarWidth = windowWidth - websiteWidth;
+
+            if (sidebarWidth >= 700) {
+              advanced = true;
+              $('#sidebar').addClass('advanced').width(sidebarWidth);
+              $('#switch, #editor').addClass('opened');
+
+            } else {
+              $('#sidebar').show().width(sidebarWidth);
+              $('#switch').addClass('opened');
+              $('#editor').css('left', sidebarWidth);
+            }
+          }
+
+          $('#source').show().css('margin-left', $('#sidebar:visible').width());
+          Pontoon.resizeIframe();
+          $('#project-load').hide();
+          Pontoon.init(window, advanced, projectWindow);
+          break;
 
         case "DATA":
           // Deep copy: http://api.jquery.com/jQuery.extend
@@ -1725,9 +1764,6 @@ var Pontoon = (function (my) {
           user: self.user
         }, null, $('#server').data('url'));
 
-        // Wait for project code messages
-        window.addEventListener("message", self.receiveMessage, false);
-
       // Initialize Pontoon for projects without in place translation support
       } else {
         $(self.project.entities).each(function (i) {
@@ -1832,16 +1868,10 @@ $(function() {
     $('#iframe-cover').width(right).css('margin-left', left); // iframe fix
   }
 
-  function resizeIframe() {
-    $('#source')
-      .width($(window).width() - $('#sidebar:visible').width())
-      .height($(window).height() - $('body > header').outerHeight());
-  }
-
   function attachResizeHandlers() {
     // Resize iframe with window
     $(window).resize(function () {
-      resizeIframe();
+      Pontoon.resizeIframe();
       Pontoon.postMessage("RESIZE");
     });
 
@@ -1871,39 +1901,6 @@ $(function() {
     });
   }
 
-  function receiveMessage(e) {
-    if (e.source === projectWindow) {
-      if (JSON.parse(e.data).type === "READY") {
-        window.removeEventListener("message", receiveMessage, false);
-        $('body > header').show();
-
-        var advanced = false,
-            websiteWidth = $('#server').data('width');
-
-        if (websiteWidth) {
-          var windowWidth = $(window).width(),
-              sidebarWidth = windowWidth - websiteWidth;
-
-          if (sidebarWidth >= 700) {
-            advanced = true;
-            $('#sidebar').addClass('advanced').width(sidebarWidth);
-            $('#switch, #editor').addClass('opened');
-
-          } else {
-            $('#sidebar').show().width(sidebarWidth);
-            $('#switch').addClass('opened');
-            $('#editor').css('left', sidebarWidth);
-          }
-        }
-
-        $('#source').show().css('margin-left', $('#sidebar:visible').width());
-        resizeIframe();
-        $('#project-load').hide();
-        Pontoon.init(window, advanced, projectWindow);
-      }
-    }
-  }
-
   function initializeWithoutWebsite() {
     $('body > header').show();
     $('#sidebar')
@@ -1925,8 +1922,7 @@ $(function() {
 
   // Initialize Pontoon for projects with in place translation support
   $('#source').attr('src', url);
-  var projectWindow = $('#source')[0].contentWindow;
-  window.addEventListener("message", receiveMessage, false);
+  window.addEventListener("message", Pontoon.receiveMessage, false);
 
   var i = 0,
       interval = setInterval(function() {
@@ -1941,7 +1937,7 @@ $(function() {
           // If no READY call in 10 seconds
           clearInterval(interval);
           $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
-          window.removeEventListener("message", receiveMessage, false);
+          window.removeEventListener("message", Pontoon.receiveMessage, false);
           return initializeWithoutWebsite();
         }
       }, 100);
