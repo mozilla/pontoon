@@ -140,7 +140,7 @@ class CommitToGit(CommitToRepository):
         name = user.first_name
         if not name:
             name = user.email.split('@')[0]
-        author = ' '.join([name, '<%s>' % user.email])
+        author = (' '.join([name, '<%s>' % user.email])).encode('utf8')
 
         # Add
         add = ["git", "add", "-A"]
@@ -174,7 +174,7 @@ class CommitToHg(CommitToRepository):
         name = user.first_name
         if not name:
             name = user.email.split('@')[0]
-        author = ' '.join([name, '<%s>' % user.email])
+        author = (' '.join([name, '<%s>' % user.email])).encode('utf8')
 
         # Commit
         commit = ["hg", "commit", "-m", message, "-u", author]
@@ -270,7 +270,7 @@ def update_from_vcs(repo_type, url, path):
 def commit_to_vcs(repo_type, path, message, user, data):
     try:
         obj = globals()['CommitTo%s' % repo_type.capitalize()](
-            path, message, user, data)
+            path, message.encode('utf8'), user, data)
         return obj.commit()
 
     except CommitToRepositoryException as e:
