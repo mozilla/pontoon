@@ -671,7 +671,7 @@
               }
             }
           }, false);
-          // Fallback: some apps don't seem to trigger the event
+          // Fallback: in case the event is never triggered
           setTimeout(function() {
             if (!localized) {
               loadEntitiesL10nJs();
@@ -772,10 +772,9 @@
       jqueryAppended = false,
       script = document.createElement('script');
 
-  // When loaded inside web client, notify it that project supports Pontoon
+  // When loaded inside web client, notify it and wait for messages
   if (window.opener || (window !== window.top)) {
+    window.addEventListener("message", initizalize, false);
     postMessage("READY", null, null, "*");
   }
-
-  window.addEventListener("message", initizalize, false);
 })();
