@@ -35,7 +35,7 @@
     <!-- Part selector -->
     <div class="part select{% if not part %} hidden{% endif %}">
       <div class="button breadcrumbs selector" title="{{ part }}">
-        <span class="title">{% if part %}{{ part.rsplit('/')[-1] }}{% endif %}</span>
+        <span class="title noselect">{% if part %}{{ part.rsplit('/')[-1] }}{% endif %}</span>
       </div>
       <div class="menu">
         <div class="search-wrapper clearfix">
@@ -59,7 +59,7 @@
     <div id="progress" class="select">
       <div class="selector">
         <canvas class="graph" width="44" height="44"></canvas>
-        <span class="number"></span>
+        <span class="number noselect"></span>
       </div>
       <aside class="menu">
         <div>
@@ -98,7 +98,7 @@
       <!-- Profile -->
       <div id="profile" class="select">
         <div class="button selector">
-          <span class="title">{% if user.first_name %}{{ user.first_name }}{% elif user.email %}{{ user.email }}{% else %}Anonymous{% endif %}<span class="fa fa-chevron-down"></span></span>
+          <span class="title noselect">{% if user.first_name %}{{ user.first_name }}{% elif user.email %}{{ user.email }}{% else %}Anonymous{% endif %}<span class="fa fa-chevron-down"></span></span>
           <img src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
         </div>
         <div class="menu">
