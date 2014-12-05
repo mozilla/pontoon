@@ -118,7 +118,7 @@
               {% endif %}
             {% endif %}
 
-            {% if project.repository_path and project.repository_type != 'file' %}
+            {% if user.is_authenticated() and project.repository_path and project.repository_type != 'file' %}
             <li class="zip">Download as <i class="file-format">ZIP</i></li>
             {% endif %}
 
