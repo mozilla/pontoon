@@ -1,3 +1,96 @@
+/* Public functions used across different files */
+var Pontoon = (function (my) {
+  return $.extend(true, my, {
+
+    /*
+     * Get details available for selected project
+     */
+    getProjectDetails: function() {
+      var resources = null;
+
+      $('.project .menu li .name').each(function() {
+        if ($('.project .button .title').html() === $(this).html()) {
+          resources = $(this).data('details');
+          return false;
+        }
+      });
+
+      return resources;
+    },
+
+    /*
+     * Close notification
+     */
+    closeNotification: function () {
+      $('.notification').animate({opacity: 0});
+    },
+
+    /*
+     * Display loader to provide feedback about the background process
+     */
+    startLoader: function () {
+      $('#loading').addClass('loader').show();
+    },
+
+    /*
+     * Remove loader
+     *
+     * text End of operation text (e.g. Done!)
+     * type Notification type (e.g. error)
+     * persist Do not close
+     */
+    endLoader: function (text, type, persist) {
+      $('#loading').removeClass('loader');
+      if (text) {
+        $('.notification')
+          .html('<li class="' + type + '">' + text + '</li>')
+          .css('opacity', 100);
+      }
+      if (!persist) {
+        setTimeout(function() {
+          Pontoon.closeNotification();
+        }, 2000);
+      }
+    },
+
+    /*
+     * Request new locale for project
+     *
+     * locale Locale code
+     * project Project slug
+     */
+    requestLocale: function(locale, project) {
+      $.ajax({
+        url: 'request-locale/',
+        type: 'POST',
+        data: {
+          csrfmiddlewaretoken: $('#server').data('csrf'),
+          project: project,
+          locale: locale
+        },
+        success: function(data) {
+          if (data !== "error") {
+            Pontoon.endLoader(
+              'New locale (' + locale + ') requested.', '', true);
+          } else {
+            Pontoon.endLoader('Oops, something went wrong.', 'error');
+          }
+        },
+        error: function() {
+          Pontoon.endLoader('Oops, something went wrong.', 'error');
+        },
+        complete: function() {
+          $('.locale .menu .search-wrapper > a').click();
+        }
+      });
+    }
+
+  });
+}(Pontoon || {}));
+
+
+
+/* Main code */
 $(function() {
 
   // Show/hide menu on click
@@ -377,93 +470,3 @@ $(function() {
 
 });
 
-
-// Public functions used across different files
-var Pontoon = (function () {
-  return {
-
-    /*
-     * Get details available for selected project
-     */
-    getProjectDetails: function() {
-      var resources = null;
-
-      $('.project .menu li .name').each(function() {
-        if ($('.project .button .title').html() === $(this).html()) {
-          resources = $(this).data('details');
-          return false;
-        }
-      });
-
-      return resources;
-    },
-
-    /*
-     * Close notification
-     */
-    closeNotification: function () {
-      $('.notification').animate({opacity: 0});
-    },
-
-    /*
-     * Display loader to provide feedback about the background process
-     */
-    startLoader: function () {
-      $('#loading').addClass('loader').show();
-    },
-
-    /*
-     * Remove loader
-     * 
-     * text End of operation text (e.g. Done!)
-     * type Notification type (e.g. error)
-     * persist Do not close
-     */
-    endLoader: function (text, type, persist) {
-      $('#loading').removeClass('loader');
-      if (text) {
-        $('.notification')
-          .html('<li class="' + type + '">' + text + '</li>')
-          .css('opacity', 100);
-      }
-      if (!persist) {
-        setTimeout(function() {
-          Pontoon.closeNotification();
-        }, 2000);
-      }
-    },
-
-    /*
-     * Request new locale for project
-     *
-     * locale Locale code
-     * project Project slug
-     */
-    requestLocale: function(locale, project) {
-      $.ajax({
-        url: 'request-locale/',
-        type: 'POST',
-        data: {
-          csrfmiddlewaretoken: $('#server').data('csrf'),
-          project: project,
-          locale: locale
-        },
-        success: function(data) {
-          if (data !== "error") {
-            Pontoon.endLoader(
-              'New locale (' + locale + ') requested.', '', true);
-          } else {
-            Pontoon.endLoader('Oops, something went wrong.', 'error');
-          }
-        },
-        error: function() {
-          Pontoon.endLoader('Oops, something went wrong.', 'error');
-        },
-        complete: function() {
-          $('.locale .menu .search-wrapper > a').click();
-        }
-      });
-    }
-
-  };
-}());
