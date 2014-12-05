@@ -1403,6 +1403,20 @@ var Pontoon = (function (my) {
     attachMainHandlers: function () {
       var self = this;
 
+      // Hide menus on click outside
+      $('body').bind("click.main", function (e) {
+        $('.menu, #hotkeys').hide();
+        $('#iframe-cover').hide(); // iframe fix
+        $('.select').removeClass('opened');
+        $('.menu li').removeClass('hover');
+
+        // Special case: menu in menu
+        if ($(e.target).is('.hotkeys') || $(e.target).parent().is('.hotkeys')) {
+          $('#hotkeys').show();
+          $('#iframe-cover').show(); // iframe fix
+        }
+      });
+
       // Open/close Pontoon UI
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
         if ($(this).is('.opened')) {
@@ -1901,20 +1915,6 @@ $(function() {
 
     Pontoon.init(window, true);
   }
-
-  // Hide menus on click outside
-  $('body').bind("click.main", function (e) {
-    $('.menu, #hotkeys').hide();
-    $('#iframe-cover').hide(); // iframe fix
-    $('.select').removeClass('opened');
-    $('.menu li').removeClass('hover');
-
-    // Special case: menu in menu
-    if ($(e.target).is('.hotkeys') || $(e.target).parent().is('.hotkeys')) {
-      $('#hotkeys').show();
-      $('#iframe-cover').show(); // iframe fix
-    }
-  });
 
   var url = $('#server').data('url');
 
