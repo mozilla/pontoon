@@ -1915,9 +1915,9 @@ Pontoon = $.extend(true, Pontoon, {
       self.createUI();
     }
 
-    // Show message if needed
-    if ($('.notification li').length > 0) {
-      $('.notification').css('visibility', 'visible').show();
+    // Show message if provided
+    if ($('.notification li').length) {
+      $('.notification').css('opacity', 100);
     }
   },
 
