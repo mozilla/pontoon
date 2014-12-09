@@ -3,7 +3,7 @@ import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 
-from pontoon.administration.utils.files import (
+from pontoon.administration.files import (
     update_from_repository,
     extract_to_database,
 )

@@ -14,7 +14,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
 from django.utils.datastructures import MultiValueDictKeyError
-from pontoon.administration.utils import files
+from pontoon.administration import files
 from pontoon.base import utils
 
 from pontoon.base.models import (

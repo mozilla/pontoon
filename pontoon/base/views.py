@@ -34,8 +34,8 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid import verify as browserid_verify
 from django_browserid import get_audience
 from operator import itemgetter
-from pontoon.administration.utils.vcs import commit_to_vcs
-from pontoon.administration.utils import files
+from pontoon.administration.vcs import commit_to_vcs
+from pontoon.administration import files
 from pontoon.base import utils
 
 from pontoon.base.models import (

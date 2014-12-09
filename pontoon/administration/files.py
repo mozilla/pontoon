@@ -17,7 +17,7 @@ import zipfile
 
 from django.conf import settings
 from django.utils.encoding import smart_text
-from pontoon.administration.utils.vcs import update_from_vcs
+from pontoon.administration.vcs import update_from_vcs
 
 from pontoon.base.models import (
     Entity,
