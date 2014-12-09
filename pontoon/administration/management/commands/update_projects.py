@@ -26,10 +26,9 @@ class Command(BaseCommand):
                 extract_to_database(project)
                 now = datetime.datetime.now()
                 self.stdout.write(
-                    '[%s]: Successfully updated project "%s"\n' %
+                    '[%s]: Updated project "%s"\n' %
                     (now, project))
             except Exception as e:
                 now = datetime.datetime.now()
                 raise CommandError(
-                    '[%s]: UpdateProjectsFromRepositoryError: %s\n' %
-                    (now, unicode(e)))
+                    '[%s]: Update Projects Error: %s\n' % (now, unicode(e)))
