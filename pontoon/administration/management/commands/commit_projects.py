@@ -13,12 +13,9 @@ class Command(BaseCommand):
     help = 'Store projects to filesystem and commit changes to repositories'
 
     def handle(self, *args, **options):
-        def output(message, success):
+        def output(message):
             now = datetime.datetime.now()
-            if success:
-                self.stdout.write('[%s]: %s\n' % (now, message))
-            else:
-                raise CommandError(message)
+            self.stdout.write('[%s]: %s\n' % (now, message))
 
         projects = Project.objects.all()
         if args:
@@ -26,12 +23,18 @@ class Command(BaseCommand):
 
         for project in projects:
             if project.repository_type not in ('git', 'hg', 'svn'):
+                output('Committing project %s failed: Not a VCS project' %
+                       (project))
                 continue
+
             for locale in project.locales.all():
 
                 path = dump_from_database(project, locale)
                 if not path:
-                    output('Repository path not found')
+                    error = 'Repository path not found'
+                    output('Committing project %s for %s (%s) failed: %s' %
+                           (project, locale.name, locale.code, error))
+                    continue
 
                 repo_type = project.repository_type
                 message = 'Pontoon: Update %s (%s) localization of %s.' \
@@ -41,9 +44,13 @@ class Command(BaseCommand):
                 try:
                     r = commit_to_vcs(repo_type, path, message, user, {})
                 except Exception as e:
-                    output('Commit Projects Error: %s' % unicode(e))
+                    output('Committing project %s for %s (%s) failed: %s' %
+                           (project, locale.name, locale.code, unicode(e)))
+                    continue
                 if r is not None:
-                    output('Commit Projects Error: %s' % r.message)
+                    output('Committing project %s for %s (%s) failed: %s' %
+                           (project, locale.name, locale.code, r["message"]))
+                    continue
 
                 output('Commited project %s for %s (%s)' %
-                       (project, locale.name, locale.code), True)
+                       (project, locale.name, locale.code))
