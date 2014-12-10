@@ -103,7 +103,7 @@
         </div>
         <div class="menu">
           <ul>
-            {% if user.is_authenticated() %}
+            {% if not settings.DEV and user.is_authenticated() %}
               {% if perms.base.can_localize %}
                 {% if project.repository_type in ('git', 'hg', 'svn') %}
                 <li class="repository-commit"><i class="fa fa-upload fa-fw"></i>Commit to repository</li>
