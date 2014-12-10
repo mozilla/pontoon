@@ -42,7 +42,7 @@ class Command(BaseCommand):
                 user = User.objects.filter(is_superuser=True)[0]
 
                 try:
-                    r = commit_to_vcs(repo_type, path, message, user, {})
+                    r = commit_to_vcs(repo_type, path, message, user)
                 except Exception as e:
                     output('Committing project %s for %s (%s) failed: %s' %
                            (project, locale.name, locale.code, unicode(e)))

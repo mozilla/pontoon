@@ -117,13 +117,12 @@ class CommitToRepositoryException(Exception):
 
 class CommitToRepository(object):
 
-    def __init__(self, path, message, user, data):
+    def __init__(self, path, message, user):
         self.path = path
         self.message = message
         self.user = user
-        self.data = data
 
-    def commit(self, path=None, message=None, user=None, data=None):
+    def commit(self, path=None, message=None, user=None):
         raise NotImplementedError
 
 
@@ -193,53 +192,19 @@ class CommitToHg(CommitToRepository):
 
 class CommitToSvn(CommitToRepository):
 
-    def commit(self, path=None, message=None, user=None, data=None):
+    def commit(self, path=None, message=None, user=None):
         log.debug("Subversion: Commit to repository.")
 
         path = path or self.path
         message = message or self.message
         user = user or self.user
-        data = data or self.data
-
-        # Check if user authenticated
-        from pontoon.base.models import UserProfile
-        profile = UserProfile.objects.get(user=user)
-        username = data.get('auth', {}).get('username', profile.svn_username)
-        password = data.get('auth', {}).get(
-            'password', base64.decodestring(profile.svn_password))
 
         command = ["svn", "commit", "-m", message, path]
-        if len(username) > 0 and len(password) > 0:
-            command += ['--username', username, '--password', password]
-
         code, output, error = execute(command)
-
-        if code == 0:
-            log.info(message)
-
-            # Save username and password
-            if data.get('auth', {}).get('remember', {}) == 1:
-                if profile.svn_username != username:
-                    profile.svn_username = username
-                if base64.decodestring(profile.svn_password) != password:
-                    profile.svn_password = base64.encodestring(password)
-                profile.save()
-                log.info("Username and password saved.")
-
-        elif "E215004" in error:
-            log.debug(error)
-            log.debug('Subversion: Authentication failed for %s.' % path)
-            return {
-                'type': 'authenticate',
-                'message': 'Authentication failed.'
-            }
-
-        else:
-            if "E155011" in error:
-                error = \
-                    'Content out of date. Try updating from repository first.'
-
+        if code != 0:
             raise CommitToRepositoryException(unicode(error))
+
+        log.info(message)
 
 
 def execute(command, cwd=None):
@@ -267,10 +232,10 @@ def update_from_vcs(repo_type, url, path):
         raise Exception(error)
 
 
-def commit_to_vcs(repo_type, path, message, user, data):
+def commit_to_vcs(repo_type, path, message, user):
     try:
         obj = globals()['CommitTo%s' % repo_type.capitalize()](
-            path, message.encode('utf8'), user, data)
+            path, message.encode('utf8'), user)
         return obj.commit()
 
     except CommitToRepositoryException as e:

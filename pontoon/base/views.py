@@ -996,7 +996,7 @@ def commit_to_repository(request, template=None):
     message = 'Pontoon: Update %s (%s) localization of %s on behalf of %s.' \
         % (locale.name, locale.code, p.name, name)
 
-    r = commit_to_vcs(p.repository_type, path, message, request.user, data)
+    r = commit_to_vcs(p.repository_type, path, message, request.user)
     if r is not None:
         return HttpResponse(json.dumps(r), mimetype='application/json')
 
