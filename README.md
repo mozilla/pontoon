@@ -22,6 +22,7 @@ Pontoon is basedon on [Playdoh](http://playdoh.readthedocs.org/en/latest/), so i
  * `mysql -u root -e 'CREATE DATABASE pontoon CHARACTER SET utf8;'`
  * `./manage.py syncdb --noinput && ./manage.py migrate`
  * `mysql -u root pontoon -e 'ALTER TABLE base_entity CONVERT TO CHARACTER SET utf8 COLLATE utf8_bin;'`
+ * `mysql -u root pontoon -e 'ALTER TABLE base_translation CONVERT TO CHARACTER SET utf8 COLLATE utf8_bin;'`
 5. Populate database with test project:
  * `./manage.py update_projects`
 6. Run development server:

@@ -634,7 +634,8 @@ def dump_po(project, locale, relative_path):
             if not entry.msgid_plural:
                 translation = get_translation(entity=entity, locale=locale)
                 if translation.string != '':
-                    entry.msgstr = polib.unescape(translation.string)
+                    entry.msgstr = polib.unescape(
+                        translation.string.decode('utf-8'))
                     if translation.date > date:
                         date = translation.date
                         newest = translation
@@ -648,7 +649,8 @@ def dump_po(project, locale, relative_path):
                             entity=entity, locale=locale, plural_form=i)
                         if translation.string != '':
                             entry.msgstr_plural[unicode(i)] = \
-                                polib.unescape(translation.string)
+                                polib.unescape(
+                                    translation.string.decode('utf-8'))
                             if translation.date > date:
                                 date = translation.date
                                 newest = translation
@@ -710,7 +712,8 @@ def dump_silme(parser, project, locale, relative_path):
             try:
                 if (translation.string != '' or translation.pk is not None):
                     # Modify translated entities
-                    structure.modify_entity(key, translation.string)
+                    structure.modify_entity(
+                        key, translation.string.decode('utf-8'))
                 else:
                     # Remove untranslated and following newline
                     pos = structure.entity_pos(key)
@@ -796,7 +799,7 @@ def dump_lang(project, locale, relative_path):
                     continue
 
                 translation = get_translation(
-                    entity=entity, locale=locale).string
+                    entity=entity, locale=locale).string.decode('utf-8')
                 if translation == '':
                     translation = original
                 elif translation == original:
@@ -826,7 +829,7 @@ def dump_ini(project, locale):
                 for entity in entities:
                     key = entity.key
                     translation = get_translation(
-                        entity=entity, locale=locale).string
+                        entity=entity, locale=locale).string.decode('utf-8')
 
                     config.set(locale.code, key, translation)
 
