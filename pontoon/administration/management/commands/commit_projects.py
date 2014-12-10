@@ -13,9 +13,9 @@ class Command(BaseCommand):
     help = 'Store projects to filesystem and commit changes to repositories'
 
     def handle(self, *args, **options):
-        def output(message):
+        def output(text):
             now = datetime.datetime.now()
-            self.stdout.write('[%s]: %s\n' % (now, message))
+            self.stdout.write('[%s]: %s\n' % (now, text))
 
         projects = Project.objects.all()
         if args:
