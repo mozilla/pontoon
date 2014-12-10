@@ -199,7 +199,15 @@ class CommitToSvn(CommitToRepository):
         message = message or self.message
         user = user or self.user
 
-        command = ["svn", "commit", "-m", message, path]
+        # Set commit author
+        name = user.first_name
+        if not name:
+            name = user.email.split('@')[0]
+        author = (' '.join([name, '<%s>' % user.email])).encode('utf8')
+
+        # Commit
+        command = ["svn", "commit", "-m", message, "--with-revprop",
+                   "translate:author=%s" % author, path]
         code, output, error = execute(command)
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
