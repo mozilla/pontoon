@@ -134,12 +134,7 @@ class CommitToGit(CommitToRepository):
         path = path or self.path
         message = message or self.message
         user = user or self.user
-
-        # Set commit author
-        name = user.first_name
-        if not name:
-            name = user.email.split('@')[0]
-        author = (' '.join([name, '<%s>' % user.email])).encode('utf8')
+        author = get_author(user)
 
         # Add
         add = ["git", "add", "-A"]
@@ -168,12 +163,7 @@ class CommitToHg(CommitToRepository):
         path = path or self.path
         message = message or self.message
         user = user or self.user
-
-        # Set commit author
-        name = user.first_name
-        if not name:
-            name = user.email.split('@')[0]
-        author = (' '.join([name, '<%s>' % user.email])).encode('utf8')
+        author = get_author(user)
 
         # Commit
         commit = ["hg", "commit", "-m", message, "-u", author]
@@ -198,12 +188,7 @@ class CommitToSvn(CommitToRepository):
         path = path or self.path
         message = message or self.message
         user = user or self.user
-
-        # Set commit author
-        name = user.first_name
-        if not name:
-            name = user.email.split('@')[0]
-        author = (' '.join([name, '<%s>' % user.email])).encode('utf8')
+        author = get_author(user)
 
         # Commit
         command = ["svn", "commit", "-m", message, "--with-revprop",
@@ -213,6 +198,13 @@ class CommitToSvn(CommitToRepository):
             raise CommitToRepositoryException(unicode(error))
 
         log.info(message)
+
+
+def get_author(user):
+    name = user.first_name
+    if not name:
+        name = user.email.split('@')[0]
+    return (' '.join([name, '<%s>' % user.email])).encode('utf8')
 
 
 def execute(command, cwd=None):
