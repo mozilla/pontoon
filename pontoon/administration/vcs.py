@@ -174,7 +174,7 @@ class CommitToHg(CommitToRepository):
         # Push
         push = ["hg", "push"]
         code, output, error = execute(push, path)
-        if code != 0:
+        if code != 0 and len(error):
             raise CommitToRepositoryException(unicode(error))
 
         log.info(message)
