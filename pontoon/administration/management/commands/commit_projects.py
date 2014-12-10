@@ -5,7 +5,10 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 from pontoon.administration.files import dump_from_database
 from pontoon.administration.vcs import commit_to_vcs
-from pontoon.base.models import Project
+from pontoon.base.models import (
+    Project,
+    Translation,
+)
 
 
 class Command(BaseCommand):
@@ -39,7 +42,13 @@ class Command(BaseCommand):
                 repo_type = project.repository_type
                 message = 'Pontoon: Update %s (%s) localization of %s.' \
                     % (locale.name, locale.code, project.name)
-                user = User.objects.filter(is_superuser=True)[0]
+
+                # Set latest translation author as commit author
+                user = Translation.objects.exclude(user=None).filter(
+                    locale=locale,
+                    entity__obsolete=False,
+                    entity__resource__project=project)
+                .order_by('-date')[0].user
 
                 try:
                     r = commit_to_vcs(repo_type, path, message, user)
