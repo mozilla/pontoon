@@ -43,12 +43,15 @@ class Command(BaseCommand):
                 message = 'Pontoon: Update %s (%s) localization of %s.' \
                     % (locale.name, locale.code, project.name)
 
-                # Set latest translation author as commit author
-                user = Translation.objects.exclude(user=None).filter(
+                # Set latest translation author as commit author if available
+                user = User.objects.filter(is_superuser=True)[0]
+                translation = Translation.objects.exclude(user=None).filter(
                     locale=locale,
                     entity__obsolete=False,
                     entity__resource__project=project) \
-                    .order_by('-date')[0].user
+                    .order_by('-date')
+                if translation:
+                    user = translation[0].user
 
                 try:
                     r = commit_to_vcs(repo_type, path, message, user)
