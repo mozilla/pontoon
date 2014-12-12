@@ -20,7 +20,7 @@ class Command(BaseCommand):
         if args:
             projects = projects.filter(pk__in=args)
         else:
-            self.stdout.write(self.help.upper())
+            self.stdout.write('%s\n' % self.help.upper())
 
         for project in projects:
             try:
