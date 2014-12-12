@@ -16,19 +16,21 @@ class Command(BaseCommand):
     help = 'Update projects from repositories and store changes to database'
 
     def handle(self, *args, **options):
+        def output(text):
+            now = datetime.datetime.now()
+            self.stdout.write('[%s]: %s\n' % (now, text.encode('utf8')))
+
         projects = Project.objects.all()
         if args:
             projects = projects.filter(pk__in=args)
         else:
-            self.stdout.write('%s\n' % self.help.upper())
+            output(self.help.upper())
 
         for project in projects:
             try:
                 update_from_repository(project)
                 extract_to_database(project)
-                now = datetime.datetime.now()
-                self.stdout.write(
-                    '[%s]: Updated project %s\n' % (now, project))
+                output('Updated project %s' % project)
             except Exception as e:
                 now = datetime.datetime.now()
                 raise CommandError(
