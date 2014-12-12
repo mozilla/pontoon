@@ -20,6 +20,8 @@ class Command(BaseCommand):
             now = datetime.datetime.now()
             self.stdout.write('[%s]: %s\n' % (now, text.encode('utf8')))
 
+        output(self.help.upper())
+
         projects = Project.objects.all()
         if args:
             projects = projects.filter(pk__in=args)

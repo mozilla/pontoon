@@ -16,6 +16,8 @@ class Command(BaseCommand):
     help = 'Update projects from repositories and store changes to database'
 
     def handle(self, *args, **options):
+        self.stdout.write(self.help.upper())
+
         projects = Project.objects.all()
         if args:
             projects = projects.filter(pk__in=args)
