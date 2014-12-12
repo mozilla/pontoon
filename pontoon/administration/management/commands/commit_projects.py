@@ -45,13 +45,13 @@ class Command(BaseCommand):
 
                 # Set latest translation author as commit author if available
                 user = User.objects.filter(is_superuser=True)[0]
-                translation = Translation.objects.exclude(user=None).filter(
+                translations = Translation.objects.exclude(user=None).filter(
                     locale=locale,
                     entity__obsolete=False,
                     entity__resource__project=project) \
                     .order_by('-date')
-                if translation:
-                    user = translation[0].user
+                if translations:
+                    user = translations[0].user
 
                 try:
                     r = commit_to_vcs(repo_type, path, message, user)
