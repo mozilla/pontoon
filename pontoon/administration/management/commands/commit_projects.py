@@ -47,8 +47,8 @@ class Command(BaseCommand):
                 user = Translation.objects.exclude(user=None).filter(
                     locale=locale,
                     entity__obsolete=False,
-                    entity__resource__project=project)
-                .order_by('-date')[0].user
+                    entity__resource__project=project) \
+                    .order_by('-date')[0].user
 
                 try:
                     r = commit_to_vcs(repo_type, path, message, user)
