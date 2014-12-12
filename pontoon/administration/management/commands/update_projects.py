@@ -20,11 +20,11 @@ class Command(BaseCommand):
             now = datetime.datetime.now()
             self.stdout.write('[%s]: %s\n' % (now, text.encode('utf8')))
 
+        output('UPDATE PROJECTS: start')
+
         projects = Project.objects.all()
         if args:
             projects = projects.filter(pk__in=args)
-        else:
-            output(self.help.upper())
 
         for project in projects:
             try:
@@ -35,3 +35,5 @@ class Command(BaseCommand):
                 now = datetime.datetime.now()
                 raise CommandError(
                     '[%s]: Update error: %s\n' % (now, unicode(e)))
+
+        output('UPDATE PROJECTS: done')
