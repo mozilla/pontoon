@@ -20,11 +20,11 @@ class Command(BaseCommand):
             now = datetime.datetime.now()
             self.stdout.write('[%s]: %s\n' % (now, text.encode('utf8')))
 
-        output(self.help.upper())
-
         projects = Project.objects.all()
         if args:
             projects = projects.filter(pk__in=args)
+        else:
+            output(self.help.upper())
 
         for project in projects:
             if project.repository_type not in ('git', 'hg', 'svn'):
