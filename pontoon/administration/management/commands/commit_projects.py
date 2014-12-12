@@ -18,7 +18,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         def output(text):
             now = datetime.datetime.now()
-            self.stdout.write('[%s]: %s\n' % (now, text))
+            self.stdout.write('[%s]: %s\n' % (now, text.encode('utf8')))
 
         projects = Project.objects.all()
         if args:
