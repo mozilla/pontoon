@@ -22,7 +22,9 @@ var Pontoon = (function (my) {
      * Close notification
      */
     closeNotification: function () {
-      $('.notification').animate({opacity: 0});
+      $('.notification').animate({opacity: 0}, function() {
+        $(this).addClass('hide');
+      });
     },
 
     /*
@@ -44,7 +46,8 @@ var Pontoon = (function (my) {
       if (text) {
         $('.notification')
           .html('<li class="' + type + '">' + text + '</li>')
-          .css('opacity', 100);
+          .css('opacity', 100)
+          .removeClass('hide');
       }
       if (!persist) {
         setTimeout(function() {

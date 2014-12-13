@@ -383,6 +383,10 @@ body > header .notification {
   width: auto;
 }
 
+body > header .notification.hide {
+  display: none;
+}
+
 body > header .notification li {
   color: #7BC876;
   white-space: pre-wrap;
