@@ -1151,7 +1151,7 @@ def request_locale(request):
         return HttpResponse("error")
 
     subject = '[Pontoon] Locale Request'
-    message = 'Add locale %s (%s) to Project %s (%s).' % (
+    message = 'Add locale %s (%s) to project %s (%s).' % (
         locale.name, locale.code, project.name, project.slug)
     sender = request.user.email
 
