@@ -125,6 +125,16 @@ class CommitToRepository(object):
     def commit(self, path=None, message=None, user=None):
         raise NotImplementedError
 
+    def get_author(self, user):
+        name = user.first_name
+        if not name:
+            name = user.email.split('@')[0]
+        return (' '.join([name, '<%s>' % user.email])).encode('utf8')
+
+    def nothing_to_commit(self):
+        text = 'Nothing to commit'
+        raise CommitToRepositoryException(unicode(text))
+
 
 class CommitToGit(CommitToRepository):
 
@@ -134,7 +144,7 @@ class CommitToGit(CommitToRepository):
         path = path or self.path
         message = message or self.message
         user = user or self.user
-        author = get_author(user)
+        author = self.get_author(user)
 
         # Add
         add = ["git", "add", "-A"]
@@ -153,8 +163,7 @@ class CommitToGit(CommitToRepository):
             raise CommitToRepositoryException(unicode(error))
 
         if 'Everything up-to-date' in error:
-            text = 'Nothing to commit'
-            raise CommitToRepositoryException(unicode(text))
+            self.nothing_to_commit()
 
         log.info(message)
 
@@ -167,7 +176,7 @@ class CommitToHg(CommitToRepository):
         path = path or self.path
         message = message or self.message
         user = user or self.user
-        author = get_author(user)
+        author = self.get_author(user)
 
         # Commit
         commit = ["hg", "commit", "-m", message, "-u", author]
@@ -179,8 +188,7 @@ class CommitToHg(CommitToRepository):
         push = ["hg", "push"]
         code, output, error = execute(push, path)
         if code == 1 and 'no changes found' in output:
-            text = 'Nothing to commit'
-            raise CommitToRepositoryException(unicode(text))
+            self.nothing_to_commit()
 
         if code != 0 and len(error):
             raise CommitToRepositoryException(unicode(error))
@@ -196,7 +204,7 @@ class CommitToSvn(CommitToRepository):
         path = path or self.path
         message = message or self.message
         user = user or self.user
-        author = get_author(user)
+        author = self.get_author(user)
 
         # Commit
         command = ["svn", "commit", "-m", message, "--with-revprop",
@@ -206,17 +214,9 @@ class CommitToSvn(CommitToRepository):
             raise CommitToRepositoryException(unicode(error))
 
         if not output and not error:
-            text = 'Nothing to commit'
-            raise CommitToRepositoryException(unicode(text))
+            self.nothing_to_commit()
 
         log.info(message)
-
-
-def get_author(user):
-    name = user.first_name
-    if not name:
-        name = user.email.split('@')[0]
-    return (' '.join([name, '<%s>' % user.email])).encode('utf8')
 
 
 def execute(command, cwd=None):
