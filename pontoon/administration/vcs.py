@@ -192,7 +192,7 @@ class CommitToSvn(CommitToRepository):
 
         # Commit
         command = ["svn", "commit", "-m", message, "--with-revprop",
-                   "translate:author=%s" % author, path]
+                   "author=%s" % author, path]
         code, output, error = execute(command)
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
