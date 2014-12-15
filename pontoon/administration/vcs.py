@@ -152,6 +152,10 @@ class CommitToGit(CommitToRepository):
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
 
+        if 'Everything up-to-date' in error:
+            text = 'Nothing to commit'
+            raise CommitToRepositoryException(unicode(text))
+
         log.info(message)
 
 
@@ -174,6 +178,10 @@ class CommitToHg(CommitToRepository):
         # Push
         push = ["hg", "push"]
         code, output, error = execute(push, path)
+        if code == 1 and 'no changes found' in output:
+            text = 'Nothing to commit'
+            raise CommitToRepositoryException(unicode(text))
+
         if code != 0 and len(error):
             raise CommitToRepositoryException(unicode(error))
 
@@ -196,6 +204,10 @@ class CommitToSvn(CommitToRepository):
         code, output, error = execute(command)
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
+
+        if not output and not error:
+            text = 'Nothing to commit'
+            raise CommitToRepositoryException(unicode(text))
 
         log.info(message)
 
