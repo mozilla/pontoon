@@ -519,8 +519,13 @@ def extract_to_database(project, locales=None):
         resources = Resource.objects.filter(project=project)
         Entity.objects.filter(resource__in=resources).update(obsolete=True)
 
+        # Remove Stats for removed locales
+        project_locales = project.locales.all()
+        Stats.objects.filter(resource__in=resources).exclude(
+            locale__in=project_locales).delete()
+
         locales = [Locale.objects.get(code=source_locale)]
-        locales.extend(project.locales.all())
+        locales.extend(project_locales)
 
     isFile = project.repository_type == 'file'
     source_paths = get_source_paths(source_directory['path'])
