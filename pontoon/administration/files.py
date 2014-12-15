@@ -775,8 +775,8 @@ def dump_lang(project, locale, relative_path):
 
         for line in lines:
             if translation:
-                # Keep newlines and white spaces in line if present
-                trans_line = line.replace(line.strip(), translation)
+                # Keep newlines in line if present
+                trans_line = line.replace(line.rstrip('\n'), translation)
                 content.append(trans_line)
                 translation = None
                 continue
