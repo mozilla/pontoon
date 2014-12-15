@@ -308,7 +308,9 @@ def get_projects_with_stats(projects, locale=None):
     for project in projects:
         r = Entity.objects.filter(obsolete=False).values('resource')
         resources = Resource.objects.filter(project=project, pk__in=r)
-        stats = Stats.objects.filter(resource__in=resources)
+        locales = project.locales.all()
+        stats = Stats.objects.filter(
+            resource__in=resources, locale__in=locales)
 
         if locale:
             stats = stats.filter(locale=locale)
