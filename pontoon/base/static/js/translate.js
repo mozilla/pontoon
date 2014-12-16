@@ -273,7 +273,7 @@ var Pontoon = (function (my) {
           var valA = parseInt($(a).find('.stress').html().split('%')[0]) || 0,
               valB = parseInt($(b).find('.stress').html().split('%')[0]) || 0;
           return (valA < valB) ? 1 : (valA > valB) ? -1 : 0;
-        })
+        });
         ul.append(listitems);
       }
 
