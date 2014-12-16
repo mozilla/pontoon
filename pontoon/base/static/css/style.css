@@ -633,6 +633,45 @@ label {
   display: none;
 }
 
+.menu .sort {
+  font-weight: bold;
+  padding: 4px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.menu .sort span {
+  cursor: pointer;
+  float: left;
+  position: relative;
+  width: 160px;
+}
+
+.menu .sort span:nth-child(2) {
+  width: 370px;
+}
+
+.menu .sort span:nth-child(3) {
+  float: right;
+}
+
+.menu .sort span i {
+  margin-left: 5px;
+  position: absolute;
+}
+
+.menu .sort span.asc i:after {
+  content: "";
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.menu .sort span.desc i:after {
+  content: "";
+  display: inline-block;
+  margin-top: -5px;
+}
+
 .search-wrapper {
   border-bottom: 1px solid #5E6475;
   margin-bottom: 10px;

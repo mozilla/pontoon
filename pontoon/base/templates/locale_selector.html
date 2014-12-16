@@ -16,6 +16,13 @@
       <div class="icon fa fa-search"></div>
       <input type="search" autocomplete="off" autofocus>
     </div>
+    {% if not locale %}
+    <div class="sort clearfix">
+      <span class="asc">Language<i class="fa"></i></span>
+      <span>Locale<i class="fa"></i></span>
+      <span>Progress<i class="fa"></i></span>
+    </div>
+    {% endif %}
     <ul>
       {% for locale in locales %}
       <li class="clearfix{% if locale and locale.chart %} filter{% endif %}">

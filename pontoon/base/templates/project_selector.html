@@ -11,6 +11,13 @@
       <div class="icon fa fa-search"></div>
       <input type="search" autocomplete="off" autofocus>
     </div>
+    {% if not project %}
+    <div class="sort clearfix">
+      <span class="asc">Name<i class="fa"></i></span>
+      <span>Website<i class="fa"></i></span>
+      <span>Progress<i class="fa"></i></span>
+    </div>
+    {% endif %}
     <ul>
       {% for project in projects %}
       <li class="clearfix">

@@ -154,6 +154,40 @@ $(function() {
     $('.tooltip:visible').remove();
   });
 
+  // Menu sort
+  $('.menu .sort span').click(function (e) {
+    function val(index, el) {
+      if (index !== 2) {
+        return $(el).find('span:eq(' + index + ')').html();
+
+      } else {
+        if (!$(el).find('.chart').length) {
+          return 0;
+        }
+        var chart = $(el).find('.chart').data('chart'),
+            data = JSON.parse(chart.replace(/'/g, "\""));
+        return data.approved/data.total;
+      }
+    }
+
+    var index = $(this).index(),
+        current = $(this).attr('class'),
+        ul = $(this).parents('.sort').next(),
+        listitems = ul.children("li:not('.no-match')"),
+        dir = (current === 'asc') ? -1 : 1,
+        cls = (current === 'asc') ? 'desc' : 'asc';
+
+    $('.menu .sort span').removeClass();
+    $(this).addClass(cls);
+
+    listitems.sort(function(a, b) {
+      return (val(index, a) < val(index, b)) ? -dir :
+        (val(index, a) > val(index, b)) ? dir : 0;
+    });
+
+    ul.append(listitems);
+  });
+
   // Show only parts available for the selected project
   $('.part .selector').click(function () {
     var details = Pontoon.getProjectDetails(),
