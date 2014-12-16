@@ -1745,7 +1745,7 @@ var Pontoon = (function (my) {
         win: project,
         url: "",
         title: "",
-        entities: $('#server').data('entities') || [],
+        entities: self.entities || [],
         pk: $('#server').data('id'),
         width: (
           $('#server').data('width') &&
@@ -1910,6 +1910,7 @@ $(function() {
     });
   }
 
+  // Initialize Pontoon for projects without in place translation support
   function initializeWithoutWebsite() {
     $('body > header').show();
     $('#sidebar')
@@ -1922,33 +1923,54 @@ $(function() {
     Pontoon.init(window, true);
   }
 
-  var url = $('#server').data('url');
+  // Initialize Pontoon for projects with in place translation support
+  function initializeWithWebsite() {
+    $('#source').attr('src', url);
+    window.addEventListener("message", Pontoon.receiveMessage, false);
 
-  // Initialize Pontoon for projects without in place translation support
-  if (!url) {
-    return initializeWithoutWebsite();
+    var i = 0,
+        interval = setInterval(function() {
+          if (i < 100) {
+            i++;
+            // Set in Pontoon.init(), which is called on READY
+            if (Pontoon.app) {
+              clearInterval(interval);
+              return attachResizeHandlers();
+            }
+          } else {
+            // If no READY call in 10 seconds
+            clearInterval(interval);
+            $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
+            window.removeEventListener("message", Pontoon.receiveMessage, false);
+            return initializeWithoutWebsite();
+          }
+        }, 100);
   }
 
-  // Initialize Pontoon for projects with in place translation support
-  $('#source').attr('src', url);
-  window.addEventListener("message", Pontoon.receiveMessage, false);
+  var url = $('#server').data('url');
 
-  var i = 0,
-      interval = setInterval(function() {
-        if (i < 100) {
-          i++;
-          // Set in Pontoon.init(), which is called on READY
-          if (Pontoon.app) {
-            clearInterval(interval);
-            return attachResizeHandlers();
-          }
-        } else {
-          // If no READY call in 10 seconds
-          clearInterval(interval);
-          $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
-          window.removeEventListener("message", Pontoon.receiveMessage, false);
-          return initializeWithoutWebsite();
-        }
-      }, 100);
+  // Get entities
+  $.ajax({
+    url: 'get-entities/',
+    data: {
+      project: $('#server').data('id'),
+      locale: $('#server').data('locale').code,
+      path: $('header .part .selector').attr('title')
+    },
+    success: function(data) {
+      if (data !== "error") {
+        Pontoon.entities = data;
+        return (url) ? initializeWithWebsite() : initializeWithoutWebsite();
+      } else {
+        $('#project-load')
+          .find('.animation').hide().end()
+          .find('.text').html('Oops, something went wrong.').animate({opacity: 1});
+      }
+    }
+  });
+
+  setTimeout(function() {
+    $('#project-load .text').animate({opacity: 1});
+  }, 3000);
 
 });

@@ -47,6 +47,8 @@ urlpatterns = patterns(
         name='pontoon.translate'),
 
     # AJAX
+    url(r'^get-entities/', views.entities,
+        name='pontoon.entities'),
     url(r'^update/', views.update_translation,
         name='pontoon.update'),
     url(r'^get-history/', views.get_translation_history,

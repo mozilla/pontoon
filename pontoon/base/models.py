@@ -248,7 +248,8 @@ def get_entities(project, locale, path=None):
 
     resources = Resource.objects.filter(project=project)
     if path:
-        resources = resources.filter(path=path)
+        resource_with_path = resources.filter(path=path)
+        resources = resource_with_path or resources
 
     entities = Entity.objects.filter(resource__in=resources, obsolete=False)
     entities_array = []

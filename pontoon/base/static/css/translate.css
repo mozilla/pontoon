@@ -30,11 +30,16 @@ mark.placeable {
  */
 
 #project-load .animation {
-  margin: 200px auto;
+  margin: 20px auto;
   width: 100px;
   height: 60px;
   text-align: center;
   font-size: 20px;
+}
+
+#project-load .text {
+  font-size: 1.5em;
+  opacity: 0;
 }
 
 #project-load .animation > div {

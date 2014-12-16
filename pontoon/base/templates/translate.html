@@ -14,7 +14,6 @@
      {% if project.width %}data-width="{{ project.width }}"{% endif %}
      {% if project.links %}data-links="{{ project.links|lower }}"{% endif %}
      {% if redirect %}data-redirect="{{ redirect }}"{% endif %}
-     {% if entities %}data-entities="{{ entities }}"{% endif %}
      {% if user.email %}data-email="{{ user.email }}"{% endif %}
      {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}
      {% if perms.base.can_localize %}data-localizer="true"{% endif %}
@@ -383,6 +382,7 @@
       <div></div>
       <div></div>
     </div>
+    <div class="text">640K ought to be enough for anybody</div>
   </div>
 </div>
 {% endblock %}

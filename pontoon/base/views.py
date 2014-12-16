@@ -139,7 +139,6 @@ def translate(request, locale, slug, part=None, template='translate.html'):
     log.debug("Translate view.")
 
     invalid_locale = invalid_project = False
-    path = None
 
     # Validate locale
     try:
@@ -237,16 +236,13 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         data['page_url'] = page.url
         data['part'] = page.name
 
-    # Set path if subpages not defined and entities in more than one file
+    # Set part if subpages not defined and entities in more than one file
     else:
         resources = Resource.objects.filter(project=p, entity_count__gt=0)
         paths = sorted([i for i in resources.values_list('path', flat=True)])
 
         if len(paths) > 1:
-            path = data['part'] = part if part in paths else paths[0]
-
-    # Set entities
-    data['entities'] = json.dumps(get_entities(p, l, path))
+            data['part'] = part if part in paths else paths[0]
 
     # Set profile image from Gravatar
     if request.user.is_authenticated():
@@ -269,6 +265,42 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         data['redirect'] = translate_error.get('redirect', None)
 
     return render(request, template, data)
+
+
+def entities(request, template=None):
+    """Get entities for the specified project, locale and path."""
+    log.debug("Get entities for the specified project, locale and path.")
+
+    if not request.is_ajax():
+        log.error("Non-AJAX request")
+        raise Http404
+
+    try:
+        project = request.GET['project']
+        locale = request.GET['locale']
+        path = request.GET['path']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    log.debug("Project: " + project)
+    log.debug("Locale: " + locale)
+    log.debug("Path: " + path)
+
+    try:
+        project = Project.objects.get(pk=project)
+    except Entity.DoesNotExist as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    try:
+        locale = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    entities = get_entities(project, locale, path)
+    return HttpResponse(json.dumps(entities), mimetype='application/json')
 
 
 def get_translations_from_other_locales(request, template=None):
