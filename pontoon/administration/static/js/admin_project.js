@@ -85,8 +85,11 @@ $(function() {
   $('.repository .type li[data-type=' + $('#id_repository_type').val() + ']').click();
 
   // Update from repository
-  $('.repository .update:not(".disabled"), .transifex .update:not(".disabled")').unbind('click.pontoon').bind('click.pontoon', function (e) {
+  $('.repository, .transifex').on('click', '.update', function (e) {
     e.preventDefault();
+    if ($(this).is('.disabled')) {
+      return;
+    }
     $(this).addClass('disabled');
 
     var source = $(this).data('source'),
