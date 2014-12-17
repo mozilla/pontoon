@@ -8,7 +8,7 @@ $(function() {
   $('.menu:visible input[type=search]').trigger("keyup");
 
   // Locale menu handler
-  $('.locale .menu li').unbind('click.main').bind('click', function (e) {
+  $('.locale .menu li').click(function (e) {
     e.preventDefault();
 
     // Request new locale
@@ -25,8 +25,7 @@ $(function() {
   });
 
   // Switch between available locales and locales to request
-  $('.locale .menu .search-wrapper > a')
-    .unbind('click.main').bind('click', function (e) {
+  $('.locale .menu .search-wrapper > a').click(function (e) {
     e.preventDefault();
 
     var menu = $(this).parents('.menu');

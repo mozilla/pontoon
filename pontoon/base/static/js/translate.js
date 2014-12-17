@@ -1426,7 +1426,7 @@ var Pontoon = (function (my) {
         }
       });
 
-      // Open/close Pontoon UI
+      // Open/close sidebar
       $('#switch').unbind("click.pontoon").bind("click.pontoon", function () {
         if ($(this).is('.opened')) {
           $('#sidebar').hide();
@@ -1440,6 +1440,176 @@ var Pontoon = (function (my) {
         $('#source, #iframe-cover').width($(window).width() - $('#sidebar:visible').width());
         self.postMessage("RESIZE");
         $(this).toggleClass('opened');
+      });
+
+      // Project menu handler
+      $('.project .menu li:not(".no-match")').click(function () {
+        var project = $(this).find('.name'),
+            name = project.html(),
+            slug = project.data('slug');
+
+        $('.project .selector .title')
+          .html(name)
+          .data('slug', slug);
+
+        var details = Pontoon.getProjectDetails(),
+            locales = Object.keys(details),
+            menu = $('.locale .menu'),
+            locale = menu.siblings('.selector')
+              .find('.code').html().toLowerCase();
+
+        // Fallback if selected locale not available for the selected project
+        if (locales.indexOf(locale) === -1) {
+          locale = locales[0];
+
+          var accept = $('#server').data('accept-language');
+          if (accept) {
+            accept = accept.toLowerCase();
+            if (locales.indexOf(accept) !== -1) {
+              locale = accept;
+            }
+          }
+
+          menu.find('.language.' + locale).click();
+        }
+
+        // Fallback if selected part not available for the selected project
+        if (details[locale].length > 0) {
+          var detail = details[locale][0],
+              isPath = Object.keys(detail).indexOf("name") === -1,
+              type = isPath ? 'resource__path' : 'name';
+              part = $('.part .selector').attr('title');
+
+          // Selected part available
+          for (var d in details[locale]) {
+            if (details[locale][d][type] === part) {
+              return;
+            }
+          }
+
+          var defaultPart = detail[type];
+          $('header .part').removeClass("hidden")
+            .find('.selector')
+              .attr('title', defaultPart)
+              .find('.title')
+                .html(defaultPart.replace(/^.*[\\\/]/, ''));
+        } else {
+          $('header .part').addClass("hidden");
+        }
+      });
+
+      // Show only parts available for the selected project
+      $('.part .selector').click(function () {
+        var details = Pontoon.getProjectDetails(),
+            menu = $(this).siblings('.menu').find('ul'),
+            locale = $.trim($('.locale .selector .code').html().toLowerCase());
+
+        if (details) {
+          menu.find('li:not(".no-match")').remove();
+          $(details[locale]).each(function() {
+            if (this.name) {
+              var title = this.name,
+                  percent = '';
+            } else {
+              var title = this.resource__path,
+                  share = 0;
+
+              if (this.resource__entity_count > 0) {
+                share = (this.approved_count + this.translated_count) /
+                        this.resource__entity_count * 100;
+              }
+
+              percent = Math.floor(share) + '%';
+            }
+            menu.append('<li><span>' + title + '</span>' +
+              '<span>' + percent + '</span></li>');
+          });
+        }
+
+        $('.menu:visible input[type=search]').trigger("keyup");
+      });
+
+      // Parts menu handler
+      $('.part .menu').on('click', 'li:not(".no-match")', function () {
+        var title = $(this).find('span:first').html();
+        $('.part .selector')
+          .attr('title', title)
+          .find('.title')
+            .html(title.replace(/^.*[\\\/]/, ''));
+      });
+
+      // Show only locales available for the selected project
+      $('.locale .selector').click(function () {
+        var details = Pontoon.getProjectDetails(),
+            menu = $(this).siblings('.menu');
+
+        $('.locale .search-wrapper > a').removeClass('back').find('span')
+          .removeClass('fa-chevron-left').addClass('fa-plus-square');
+
+        menu.find('.limited').removeClass('limited').end().find('li').hide();
+        $(Object.keys(details)).each(function() {
+          menu.find('.language.' + this).parent().addClass('limited').show();
+        });
+
+        $('.menu:visible input[type=search]').trigger("keyup");
+      });
+
+      // Locale menu handler
+      $('.locale .menu li:not(".no-match")').click(function () {
+        var locale = $(this).find('.language').attr('class').split(' ')[1],
+            // Escape special characters in CSS notation
+            code = locale.replace( /(:|\.|\[|@|\])/g, "\\$1" ),
+            language = $('.locale .menu .language.' + code).parent().html();
+
+        // Request new locale
+        if ($('.locale .menu .search-wrapper > a').is('.back')) {
+          var project = $('.project .title').data('slug');
+          Pontoon.requestLocale(locale, project);
+
+        // Select locale
+        } else {
+          $('.locale .selector').html(language);
+        }
+      });
+
+      // Switch between available locales and locales to request
+      $('.locale .menu .search-wrapper > a').click(function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        $(this).toggleClass('back')
+          .find('span').toggleClass('fa-plus-square fa-chevron-left');
+
+        if ($(this).is('.back')) {
+          var details = Pontoon.getProjectDetails(),
+              menu = $(this).parents('.menu');
+
+          menu.find('li').addClass('limited').show();
+          $(Object.keys(details)).each(function() {
+            menu.find('.language.' + this).parent()
+              .removeClass('limited').hide();
+          });
+          $('.menu:visible input[type=search]').trigger("keyup").focus();
+
+        } else {
+          $('.locale .selector').click().click();
+        }
+      });
+
+      // Open selected project (part) and locale combination
+      $('#go').click(function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var locale = $('.locale .selector .language').attr('class').split(' ')[1],
+            project = $('.project .selector .title').data('slug'),
+            part = $('.part .selector:visible').attr('title'),
+            loc = locale + '/' + project;
+
+        if (part) {
+          loc += '/' + part;
+        }
+        window.location = loc;
       });
 
       // Profile menu
