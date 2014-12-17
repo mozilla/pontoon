@@ -240,31 +240,31 @@ $(function() {
 
   // General keyboard shortcuts
   $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
+    function moveMenu(type) {
+      var options = (type === "up") ? ["first", "last", "prevAll"] :
+        ["last", "first", "nextAll"];
+
+      if (hovered.length === 0 ||
+          menu.find('li:visible:' + options[0]).is('.hover')) {
+        menu.find('li.hover').removeClass('hover');
+        menu.find('li:visible:' + options[1]).addClass('hover');
+
+      } else {
+        menu.find('li.hover').removeClass('hover')
+          [options[2]](':visible:not(".horizontal-separator"):first')
+            .addClass('hover');
+      }
+
+      if (menu.parent().is('.project, .part, .locale')) {
+        Pontoon.updateScroll(menu.find('ul'));
+      }
+    }
+
     var key = e.which;
 
     if ($('.menu').is(':visible')) {
       var menu = $('.menu:visible'),
           hovered = menu.find('li.hover');
-
-      function moveMenu(type) {
-        var options = (type === "up") ? ["first", "last", "prevAll"] :
-          ["last", "first", "nextAll"];
-
-        if (hovered.length === 0 ||
-            menu.find('li:visible:' + options[0]).is('.hover')) {
-          menu.find('li.hover').removeClass('hover');
-          menu.find('li:visible:' + options[1]).addClass('hover');
-
-        } else {
-          menu.find('li.hover').removeClass('hover')
-            [options[2]](':visible:not(".horizontal-separator"):first')
-              .addClass('hover');
-        }
-
-        if (menu.parent().is('.project, .part, .locale')) {
-          Pontoon.updateScroll(menu.find('ul'));
-        }
-      }
 
       // Up arrow
       if (key === 38) {
@@ -347,4 +347,3 @@ $(function() {
   });
 
 });
-
