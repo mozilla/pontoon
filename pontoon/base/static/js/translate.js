@@ -1955,27 +1955,6 @@ var Pontoon = (function (my) {
       if ($('.notification li').length) {
         $('.notification').css('opacity', 100);
       }
-    },
-
-
-    /*
-     * Update scrollbar position in the menu
-     * 
-     * menu Menu element
-     */
-    updateScroll: function (menu) {
-      var hovered = menu.find('[class*=hover]'),
-          maxHeight = menu.height(),
-          visibleTop = menu.scrollTop(),
-          visibleBottom = visibleTop + maxHeight,
-          hoveredTop = visibleTop + hovered.position().top,
-          hoveredBottom = hoveredTop + hovered.outerHeight();
-
-      if (hoveredBottom >= visibleBottom) {
-        menu.scrollTop(Math.max(hoveredBottom - maxHeight, 0));
-      } else if (hoveredTop < visibleTop) {
-        menu.scrollTop(hoveredTop);
-      }
     }
 
   });
