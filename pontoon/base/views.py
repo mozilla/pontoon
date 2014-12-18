@@ -139,13 +139,14 @@ def get_gravatar_url(email, size):
 
     gravatar_url = "//www.gravatar.com/avatar/" + \
         hashlib.md5(email.lower()).hexdigest() + "?"
-    gravatar_url += urllib.urlencode({'s': str(size)})
+    data = {'s': str(size)}
 
     if settings.SITE_URL != 'http://localhost:8000':
         append = '_big' if size > 44 else ''
         default = settings.SITE_URL + static('img/anonymous' + append + '.jpg')
-        gravatar_url += urllib.urlencode({'d': default})
+        data['d'] = default
 
+    gravatar_url += urllib.urlencode(data)
     return gravatar_url
 
 
