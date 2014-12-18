@@ -421,6 +421,7 @@ def get_translation_history(request, template=None):
             o = {
                 "id": t.id,
                 "user": 'Imported' if u is None else u.first_name or u.email,
+                "email": "" if u is None else u.email,
                 "translation": t.string,
                 "date": t.date.strftime('%b %d, %Y %H:%M'),
                 "approved": t.approved,
