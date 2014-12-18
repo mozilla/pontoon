@@ -26,7 +26,7 @@
         <td>
           <img class="rounded" src="{% if contributor.gravatar_url %}{{ contributor.gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
           <div class="contributor">
-            <a href="{{ url('pontoon.user', contributor.email) }}">{{ contributor.first_name or contributor.email.split('@')[0] }}</a>
+            <a href="{{ url('pontoon.user', contributor.email) }}">{{ contributor.first_name or contributor.email }}</a>
             <p>{{ contributor.email }}</p>
           </div>
         </td>

@@ -4,14 +4,16 @@ table {
   width: 100%;
 }
 
-th, td {
-  padding: 10px;
-}
-
 th {
   color: #AAAAAA;
+  padding: 10px;
   text-transform: uppercase;
 }
+
+td {
+  padding: 20px 10px;
+}
+
 
 tr:nth-child(even) {
   background: #333941;
@@ -29,16 +31,35 @@ img {
 
 .contributor {
   display: inline-block;
+  width: 210px;
+}
+
+.contributor > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .contributor a {
   font-size: 1.5em;
 }
 
+.contributor p {
+  margin-top: 1px;
+}
+
+th:last-child,
+.details {
+  width: 360px;
+}
+
 .details div {
+  border-width: 3px;
   text-align: center;
 }
 
 .details div p {
+  font-size: 22px;
   padding: 0;
 }
