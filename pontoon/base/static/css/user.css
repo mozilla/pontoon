@@ -33,9 +33,10 @@
 }
 
 #subtitle .wrapper .submit {
-  bottom: 12px;
+  bottom: -8px;
   color: #666666;
   opacity: 0;
+  padding: 20px 0;
   position: absolute;
   right: 0;
   /* Needed or click doesn't trigger */
