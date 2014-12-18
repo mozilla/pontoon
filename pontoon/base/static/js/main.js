@@ -45,7 +45,7 @@ var Pontoon = (function (my) {
       $('#loading').removeClass('loader');
       if (text) {
         $('.notification')
-          .html('<li class="' + type + '">' + text + '</li>')
+          .html('<li class="' + (type || "") + '">' + text + '</li>')
           .css('opacity', 100)
           .removeClass('hide');
       }
