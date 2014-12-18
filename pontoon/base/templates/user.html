@@ -5,19 +5,35 @@
 {% block class %}user{% endblock %}
 
 {% block before %}
+<!-- Server data -->
+<div id="server" class="hidden"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+     >
+</div>
 {% endblock %}
 
 {% block heading %}
 <img class="rounded" src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
 {% endblock %}
 
-{% block subtitle %}{{ contributor.first_name }}{% endblock %}
+{% block subtitle %}
+  {% if user.is_authenticated() and user.email == contributor.email %}
+    <div class="wrapper">
+      <input type="text" placeholder="What's your name?" value="{{ contributor.first_name }}" maxlength="30">
+      <div class="submit fa fa-arrow-circle-right"></div>
+    </div>
+  {% else %}
+    {{ contributor.first_name }}
+  {% endif %}
+{% endblock %}
 
 {% block middle %}
-<ul>
+<ul class="info">
   <li>{{ contributor.email }}</li>
   <li>Joined on {{ contributor.date_joined.strftime('%d %B %Y') }}</li>
 </ul>
+
+<ul class="notification"></ul>
 
 <div class="details">
   <div class="total">

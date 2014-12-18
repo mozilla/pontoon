@@ -1173,6 +1173,33 @@ def quality_checks_switch(request):
 
 
 @login_required(redirect_field_name='', login_url='/403')
+def save_user_name(request):
+    """Save user name."""
+    log.debug("Save user name.")
+
+    if request.method != 'POST':
+        log.error("Non-POST request")
+        raise Http404
+
+    try:
+        name = request.POST['name']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    if len(name) < 3 or len(name) > 30:
+        return HttpResponse("length")
+
+    log.debug("New name: " + name)
+
+    user = request.user
+    user.first_name = name
+    user.save()
+
+    return HttpResponse("ok")
+
+
+@login_required(redirect_field_name='', login_url='/403')
 def request_locale(request):
     """Request new locale to be added to project."""
     log.debug("Request new locale to be added to project.")
