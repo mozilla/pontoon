@@ -291,6 +291,24 @@ def user(request, email, template='user.html'):
     return render(request, template, data)
 
 
+def users(request, template='users.html'):
+    """Top contributors view."""
+    log.debug("Top contributors view.")
+
+    translators = Translation.objects.all().values('user')
+    users = User.objects.filter(pk__in=translators)
+
+    for user in users:
+        user.translations = Translation.objects.filter(user=user)
+        user.gravatar_url = get_gravatar_url(user.email, 44)
+
+    data = {
+        'contributors': users,
+    }
+
+    return render(request, template, data)
+
+
 def entities(request, template=None):
     """Get entities for the specified project, locale and path."""
     log.debug("Get entities for the specified project, locale and path.")

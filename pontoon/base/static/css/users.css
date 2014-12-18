@@ -1,0 +1,44 @@
+table {
+  font-size: 14px;
+  text-align: left;
+  width: 100%;
+}
+
+th, td {
+  padding: 10px;
+}
+
+th {
+  color: #AAAAAA;
+  text-transform: uppercase;
+}
+
+tr:nth-child(even) {
+  background: #333941;
+}
+
+img {
+  margin-right: 5px;
+}
+
+.rank {
+  font-size: 36px;
+  text-align: center;
+  width: 40px;
+}
+
+.contributor {
+  display: inline-block;
+}
+
+.contributor a {
+  font-size: 1.5em;
+}
+
+.details div {
+  text-align: center;
+}
+
+.details div p {
+  padding: 0;
+}

@@ -1,0 +1,59 @@
+{% extends "landing.html" %}
+
+{% block title %}Pontoon &middot; Top Contributors{% endblock %}
+
+{% block class %}users{% endblock %}
+
+{% block before %}
+{% endblock %}
+
+{% block subtitle %}Top Contributors{% endblock %}
+
+{% block middle %}
+<form>
+  <table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Contributor</th>
+        <th>Stats</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for contributor in contributors %}
+      <tr>
+        <td class="rank">{{ loop.index }}</td>
+        <td>
+          <img class="rounded" src="{% if contributor.gravatar_url %}{{ contributor.gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
+          <div class="contributor">
+            <a href="{{ url('pontoon.user', contributor.email) }}">{{ contributor.first_name or contributor.email }}</a>
+            <p>{{ contributor.email }}</p>
+          </div>
+        </td>
+        <td class="stats">
+          <div class="details">
+            <div class="total">
+              <span>Total</span>
+              <p>{{ contributor.translations.count() }}</p>
+            </div><div class="approved">
+              <span>Approved</span>
+              <p>{{ contributor.translations.filter(approved=True).count() }}</p>
+            </div><div class="translated">
+              <span>Unapproved</span>
+              <p>{{ contributor.translations.exclude(approved=True).exclude(fuzzy=True).count() }}</p>
+            </div><div class="fuzzy">
+              <span>Needs work</span>
+              <p>{{ contributor.translations.filter(fuzzy=True).count() }}</p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</form>
+{% endblock %}
+
+{% block extend_css %}
+  <link rel="stylesheet" href="{{ static('css/users.css') }}">
+{% endblock %}

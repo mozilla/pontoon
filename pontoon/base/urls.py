@@ -46,9 +46,10 @@ urlpatterns = patterns(
         views.translate,
         name='pontoon.translate'),
 
-    # Nothing to show for now: Redirect home
+    # List users with contributions
     url(r'^users/$',
-        RedirectView.as_view(url="/")),
+        views.users,
+        name='pontoon.users'),
 
     # User profile
     url(r'^users/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
