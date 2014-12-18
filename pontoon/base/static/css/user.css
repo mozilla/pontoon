@@ -11,6 +11,11 @@
   padding: 0;
 }
 
+#subtitle .uneditable {
+  letter-spacing: normal;
+  padding: 13px 0 21px;
+}
+
 #subtitle .wrapper {
   display: inline-block;
   position: relative;
@@ -20,6 +25,7 @@
   background: transparent;
   border-bottom: 1px dashed transparent;
   color: #FFFFFF;
+  font-size: 48px;
   font-weight: 300;
   padding: 4px 50px;
   text-align: center;
