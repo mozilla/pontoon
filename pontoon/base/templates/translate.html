@@ -141,6 +141,7 @@
             {% endif %}
 
             {% if user.is_authenticated() %}
+            <li class="profile" data-url="{{ url('pontoon.user', user.email) }}"><i class="fa fa-user fa-fw"></i>View profile</li>
             <li class="sign-out"><i class="fa fa-sign-out fa-fw"></i>Sign out</li>
             {% else %}
             <li class="sign-in"><i class="fa fa-sign-in fa-fw"></i>Sign in</li>
