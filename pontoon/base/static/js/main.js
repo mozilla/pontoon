@@ -49,8 +49,12 @@ var Pontoon = (function (my) {
           .css('opacity', 100)
           .removeClass('hide');
       }
+
       if (!persist) {
-        setTimeout(function() {
+        if (Pontoon.notificationTimeout) {
+          clearTimeout(Pontoon.notificationTimeout);
+        }
+        Pontoon.notificationTimeout = setTimeout(function() {
           Pontoon.closeNotification();
         }, 2000);
       }
