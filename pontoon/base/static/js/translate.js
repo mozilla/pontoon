@@ -491,7 +491,7 @@ var Pontoon = (function (my) {
                 'title="Click to copy">' +
                   '<header class="clearfix' +
                     ((self.user.localizer) ? ' localizer' :
-                      ((self.user.email === this.user && !this.approved) ?
+                      ((self.user.email === this.email && !this.approved) ?
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
