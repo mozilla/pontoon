@@ -46,6 +46,15 @@ urlpatterns = patterns(
         views.translate,
         name='pontoon.translate'),
 
+    # Nothing to show for now: Redirect home
+    url(r'^users/$',
+        RedirectView.as_view(url="/")),
+
+    # User profile
+    url(r'^users/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
+        views.user,
+        name='pontoon.user'),
+
     # AJAX
     url(r'^get-entities/', views.entities,
         name='pontoon.entities'),

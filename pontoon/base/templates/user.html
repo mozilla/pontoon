@@ -1,0 +1,47 @@
+{% extends "landing.html" %}
+
+{% block title %}Pontoon &middot; {% if contributor.first_name %}{{ contributor.first_name }}{% else %}{{ contributor.email }}{% endif %}{% endblock %}
+
+{% block class %}user{% endblock %}
+
+{% block before %}
+{% endblock %}
+
+{% block heading %}
+<img class="rounded" src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
+{% endblock %}
+
+{% block subtitle %}{{ contributor.first_name }}{% endblock %}
+
+{% block middle %}
+<ul>
+  <li>{{ contributor.email }}</li>
+  <li>Joined on {{ contributor.date_joined.strftime('%d %B %Y') }}</li>
+</ul>
+
+<div class="details">
+  <div class="total">
+    <span>Total</span>
+    <p>{{ translations.count() }}</p>
+  </div><div class="approved">
+    <span>Approved</span>
+    <p>{{ translations.filter(approved=True).count() }}</p>
+  </div><div class="translated">
+    <span>Unapproved</span>
+    <p>{{ translations.exclude(approved=True).exclude(fuzzy=True).count() }}</p>
+  </div><div class="fuzzy">
+    <span>Needs work</span>
+    <p>{{ translations.filter(fuzzy=True).count() }}</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block extend_css %}
+  <link rel="stylesheet" href="{{ static('css/user.css') }}">
+{% endblock %}
+
+{% block extend_js %}
+  {% compress js %}
+  <script src="{{ static('js/user.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

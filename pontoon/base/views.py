@@ -134,6 +134,20 @@ def projects(request, template='projects.html'):
     return render(request, template, data)
 
 
+def get_gravatar_url(email, size):
+    """Get gravatar URL."""
+
+    gravatar_url = "//www.gravatar.com/avatar/" + \
+        hashlib.md5(email.lower()).hexdigest() + "?"
+    gravatar_url += urllib.urlencode({'s': str(size)})
+
+    if settings.SITE_URL != 'http://localhost:8000':
+        default = settings.SITE_URL + static('img/anonymous.jpg')
+        gravatar_url += urllib.urlencode({'d': default})
+
+    return gravatar_url
+
+
 def translate(request, locale, slug, part=None, template='translate.html'):
     """Translate view."""
     log.debug("Translate view.")
@@ -246,23 +260,31 @@ def translate(request, locale, slug, part=None, template='translate.html'):
 
     # Set profile image from Gravatar
     if request.user.is_authenticated():
-        email = request.user.email
-        size = 44
-
-        gravatar_url = "//www.gravatar.com/avatar/" + \
-            hashlib.md5(email.lower()).hexdigest() + "?"
-        gravatar_url += urllib.urlencode({'s': str(size)})
-
-        if settings.SITE_URL != 'http://localhost:8000':
-            default = settings.SITE_URL + static('img/anonymous.jpg')
-            gravatar_url += urllib.urlencode({'d': default})
-
-        data['gravatar_url'] = gravatar_url
+        data['gravatar_url'] = get_gravatar_url(request.user.email, 44)
 
     # Set error data
     translate_error = request.session.pop('translate_error', {})
     if translate_error:
         data['redirect'] = translate_error.get('redirect', None)
+
+    return render(request, template, data)
+
+
+def user(request, email, template='user.html'):
+    """User view."""
+    log.debug("User view.")
+
+    # Validate user
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        raise Http404
+
+    data = {
+        'contributor': user,
+        'translations': Translation.objects.filter(user=user),
+        'gravatar_url': get_gravatar_url(user.email, 200),
+    }
 
     return render(request, template, data)
 

@@ -1,0 +1,28 @@
+#title {
+  font-size: inherit;
+}
+
+#title a {
+  display: block;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding-top: 1em;
+}
+
+li {
+  color: #AAAAAA;
+  font-size: 16px;
+  font-weight: 300;
+  padding: 2px 0;
+}
+
+.details {
+  margin-top: 3em;
+}
+
+.details p {
+  line-height: 18px;
+}
