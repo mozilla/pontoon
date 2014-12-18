@@ -19,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.db.models import Count
 
 from django.http import (
     Http404,
@@ -295,8 +296,8 @@ def users(request, template='users.html'):
     """Top contributors view."""
     log.debug("Top contributors view.")
 
-    translators = Translation.objects.all().values('user')
-    users = User.objects.filter(pk__in=translators)
+    users = User.objects.annotate(num_translations=Count('translation')) \
+        .order_by('-num_translations')[:100]
 
     for user in users:
         user.translations = Translation.objects.filter(user=user)
