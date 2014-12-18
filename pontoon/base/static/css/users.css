@@ -7,6 +7,7 @@ table {
 th {
   color: #AAAAAA;
   padding: 10px;
+  text-align: center;
   text-transform: uppercase;
 }
 
@@ -56,11 +57,23 @@ th:last-child,
 }
 
 .details div {
-  border-width: 3px;
+  border: none;
   text-align: center;
 }
 
+.details div.approved {
+  color: #7BC876;
+}
+
+.details div.translated {
+  color: #4FC4F6;
+}
+
+.details div.fuzzy {
+  color: #FED271;
+}
+
 .details div p {
-  font-size: 22px;
+  font-size: 25px;
   padding: 0;
 }
