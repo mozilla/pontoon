@@ -29,6 +29,9 @@ $(function() {
 
   // Save user name by mouse or keyboard
   $('.submit').click(function() {
+    if ($(this).css('opacity') === "0") {
+      return;
+    }
     save();
   });
   input.keydown(function(e) {
