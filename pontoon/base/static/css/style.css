@@ -216,7 +216,7 @@ button {  width: auto; overflow: visible; }
 
 
 
-/* COMMONS */
+/* COMMON */
 
 @font-face {
   font-family: 'Open Sans';
@@ -804,10 +804,51 @@ label {
   color: #FD5F60;
 }
 
+img.rounded {
+  border-radius: 100%;
+  border: 2px solid #4D5967;
+}
 
+.details div {
+  border-top: 5px solid;
+  color: #AAAAAA;
+  display: inline-block;
+  margin-right: 1px;
+  width: 89px;
+}
 
+.details div:last-child {
+  margin-right: 0;
+  width: 90px;
+}
 
-/* PRIMARY STYLES */
+.details div.approved {
+  border-color: #7BC876;
+}
+
+.details div.translated {
+  border-color: #4FC4F6;
+}
+
+.details div.fuzzy {
+  border-color: #FED271;
+}
+
+.details div.untranslated {
+  border-color: #FD5F60;
+}
+
+.details div span {
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.details div p {
+  color: #FFFFFF;
+  font-size: 28px;
+  padding: 10px 0;
+  position: relative;
+}
 
 #error {
   bottom: 0;

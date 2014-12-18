@@ -322,47 +322,6 @@ body > header .locale.select {
   width: 100%;
 }
 
-#progress .menu .details div {
-  border-top: 5px solid;
-  color: #AAAAAA;
-  display: inline-block;
-  margin-right: 1px;
-  width: 89px;
-}
-
-#progress .menu .details div:last-child {
-  margin-right: 0;
-  width: 90px;
-}
-
-#progress .menu div.approved {
-  border-color: #7BC876;
-}
-
-#progress .menu div.translated {
-  border-color: #4FC4F6;
-}
-
-#progress .menu div.fuzzy {
-  border-color: #FED271;
-}
-
-#progress .menu div.untranslated {
-  border-color: #FD5F60;
-}
-
-#progress .menu .details span {
-  font-size: 10px;
-  text-transform: uppercase;
-}
-
-#progress .menu .details p {
-  color: #FFFFFF;
-  font-size: 28px;
-  padding: 10px 0;
-  position: relative;
-}
-
 body > header #loading {
   display: none;
   float: left;
@@ -413,8 +372,6 @@ body > header .notification li {
 }
 
 #profile .button img {
-  border-radius: 24px;
-  border: 2px solid #4D5967;
   margin: 6px 5px 0 0;
 }
 
