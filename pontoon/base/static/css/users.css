@@ -4,6 +4,10 @@ table {
   width: 100%;
 }
 
+thead tr {
+  border-bottom: 1px solid #4D5967;
+}
+
 th {
   color: #AAAAAA;
   padding: 10px;
