@@ -1261,7 +1261,7 @@ var Pontoon = (function (my) {
         $('#progress .details > div').each(function(i) {
           var type = $(this).attr('class'),
               length = fraction[type] * 2,
-              start = end || -0.5;
+              start = (end !== null) ? end : -0.5;
           end = start + length;
 
           context.beginPath();
