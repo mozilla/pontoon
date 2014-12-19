@@ -23,12 +23,12 @@
     {% for contributor in contributors %}
       <tr>
         <td class="rank">{{ loop.index }}</td>
-        <td>
-          <img class="rounded" src="{% if contributor.gravatar_url %}{{ contributor.gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
-          <div class="contributor">
-            <a href="{{ url('pontoon.user', contributor.email) }}">{{ contributor.first_name or contributor.email.split('@')[0] }}</a>
-            <p>{{ contributor.email }}</p>
-          </div>
+        <td class="contributor">
+          <a href="{{ url('pontoon.user', contributor.email) }}">
+            <img class="rounded" src="{% if contributor.gravatar_url %}{{ contributor.gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
+            <p class="name">{{ contributor.first_name or contributor.email.split('@')[0] }}</p>
+          </a>
+          <p class="email">{{ contributor.email }}</p>
         </td>
         <td class="stats">
           <div class="details">

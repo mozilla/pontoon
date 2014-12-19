@@ -19,40 +19,42 @@ td {
   padding: 20px 10px;
 }
 
-
 tr:nth-child(even) {
   background: #333941;
-}
-
-img {
-  margin-right: 5px;
 }
 
 .rank {
   font-size: 36px;
   text-align: center;
-  width: 40px;
+  width: 41px;
 }
 
 .contributor {
   display: inline-block;
-  width: 210px;
+  position: relative;
+  width: 269px;
 }
 
-.contributor > * {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
-
-.contributor a {
-  display: block;
-  font-size: 1.5em;
+.contributor img {
+  margin-right: 5px;
 }
 
 .contributor p {
-  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 212px;
+}
+
+.contributor p.name {
+  display: inline-block;
+  font-size: 1.5em;
+}
+
+.contributor p.email {
+  left: 67px;
+  position: absolute;
+  top: 47px;
 }
 
 th:last-child,
