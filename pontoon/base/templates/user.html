@@ -50,6 +50,44 @@
     <p>{{ translations.filter(fuzzy=True).count() }}</p>
   </div>
 </div>
+
+<section id="timeline">
+  <div class="container">
+
+    {% for event in timeline %}
+    <div class="clearfix">
+      <div class="tick"></div>
+      <div class="content">
+        <h3>
+          <div class="day">{{ event.date.strftime('%d') }}</div>
+          <div>
+            <div class="weekday">{{ event.date.strftime('%A') }}</div>
+            <div class="month">{{ event.date.strftime('%B %Y') }}</div>
+          </div>
+        <h3>
+        <h2>{% if event.type == 'translated' %}Added new translation{% if event.count and event.count > 1 %}<div>(and {{ event.count-1 }} others)</div>{% endif %}
+            {% elif event.type == 'joined' %}Joined Pontoon{% endif %}
+        </h2>
+        {% if event.translations %}
+        <p>{{ event.translations[0].string.decode('utf8') }}</p>
+        {% endif %}
+        <div class="label clearfix {{ event.type }}">
+          <figure>
+            <div class="fa fa-3x fa-comment{% if event.count and event.count > 1 %}s{% endif %}-o"></div>
+            {% if event.translations %}
+            <figcaption>{{ event.translations[0].date.strftime('%H:%M') }}</figcaption>
+            {% endif %}
+          </figure>
+          {% if event.projects %}
+          <a href="{{ url('pontoon.project', event.projects[0].slug) }}">{{ event.projects[0].name }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+</section>
 {% endblock %}
 
 {% block extend_css %}

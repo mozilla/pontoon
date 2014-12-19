@@ -283,10 +283,34 @@ def user(request, email, template='user.html'):
     except User.DoesNotExist:
         raise Http404
 
+    translations = Translation.objects.filter(user=user)
+    translations_plus = translations.extra({'day': "date(date)"})
+
+    timeline = [{
+        'date': user.date_joined,
+        'type': 'joined',
+    }]
+
+    for event in translations_plus.values('day').annotate(count=Count('id')):
+        translations_day = translations.filter(date__startswith=event['day'])
+        projects_day = Project.objects.filter(
+            resource__entity__translation__in=translations_day).distinct()
+
+        timeline.append({
+            'date': event['day'],
+            'type': 'translated',
+            'count': event['count'],
+            'projects': projects_day,
+            'translations': translations_day,
+        })
+
+    timeline.reverse()
+
     data = {
         'contributor': user,
-        'translations': Translation.objects.filter(user=user),
         'gravatar_url': get_gravatar_url(user.email, 200),
+        'timeline': timeline,
+        'translations': translations,
     }
 
     return render(request, template, data)
