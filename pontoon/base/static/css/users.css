@@ -58,12 +58,12 @@ tr:nth-child(even) {
 
 th:last-child,
 .details {
+  text-align: center;
   width: 360px;
 }
 
 .details div {
   border: none;
-  text-align: center;
 }
 
 .details div.approved {
