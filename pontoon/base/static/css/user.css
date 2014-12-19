@@ -202,7 +202,7 @@
   padding: 0.5em 0;
   position: absolute;
   width: 100%;
-  left: 125%;
+  left: 122%;
   top: 0;
 }
 
@@ -247,7 +247,7 @@
 
 #timeline .container > div:nth-child(even) .content .label {
   left: auto;
-  right: 125%;
+  right: 122%;
   text-align: right;
 }
 
