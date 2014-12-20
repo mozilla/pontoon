@@ -75,6 +75,7 @@
         {% endif %}
         </h2>
         {% if event.translation %}
+          <div class="fa fa-2x fa-quote-left"></div>
           <p>{{ event.translation.string.decode('utf8') }}</p>
         {% endif %}
         <div class="label clearfix {{ event.type }}">

@@ -194,10 +194,14 @@
   font-size: 0.7em;
 }
 
+#timeline .content .fa-quote-left {
+  margin-top: 1em;
+}
+
 #timeline .content p {
   color: #AAAAAA;
   font-size: 16px;
-  margin: 1em 0;
+  margin-left: 2em;
   line-height: 1.6;
 }
 
