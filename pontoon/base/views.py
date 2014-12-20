@@ -295,7 +295,11 @@ def user(request, email, template='user.html'):
     for event in current.values('day').annotate(count=Count('id')):
         daily = current.filter(date__startswith=event['day'])
         example = daily[0]
-        project = Project.objects.get(resource__entity__translation=example)
+        log.debug(example)
+        log.debug(example.entity)
+        log.debug(example.entity.resource)
+        log.debug(example.entity.resource.project)
+        project = example.entity.resource.project
 
         timeline.append({
             'date': example.date,
