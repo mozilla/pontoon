@@ -94,7 +94,7 @@
 }
 
 #timeline .container {
-  margin: 0 auto;
+  margin: 0 auto 8em;
   width: 730px;
   position: relative;
   text-align: left;
