@@ -94,7 +94,7 @@
 }
 
 #timeline .container {
-  margin: 0 auto 8em;
+  margin: 0 auto 18em;
   width: 730px;
   position: relative;
   text-align: left;
@@ -107,6 +107,7 @@
   left: 50%;
   height: 100%;
   margin-left: -2px;
+  padding-bottom: 8em;
   width: 4px;
   background: #AAAAAA;
 }
@@ -121,7 +122,9 @@
 }
 
 #timeline .container > div:last-child {
-  margin-bottom: 0;
+  margin: 0;
+  position: absolute;
+  width: 100%;
 }
 
 #timeline .tick {
