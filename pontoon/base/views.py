@@ -297,11 +297,11 @@ def user(request, email, template='user.html'):
             resource__entity__translation__in=translations_day).distinct()
 
         timeline.append({
-            'date': event['day'],
+            'date': translations_day[0].date,
             'type': 'translated',
             'count': event['count'],
             'projects': projects_day,
-            'translations': translations_day,
+            'translation': translations_day[0],
         })
 
     timeline.reverse()

@@ -68,15 +68,13 @@
         <h2>{% if event.type == 'translated' %}Added new translation{% if event.count and event.count > 1 %}<div>(and {{ event.count-1 }} others)</div>{% endif %}
             {% elif event.type == 'joined' %}Joined Pontoon{% endif %}
         </h2>
-        {% if event.translations %}
-        <p>{{ event.translations[0].string.decode('utf8') }}</p>
+        {% if event.translation %}
+        <p>{{ event.translation.string.decode('utf8') }}</p>
         {% endif %}
         <div class="label clearfix {{ event.type }}">
           <figure>
-            <div class="fa fa-3x fa-comment{% if event.count and event.count > 1 %}s{% endif %}-o"></div>
-            {% if event.translations %}
-            <figcaption>{{ event.translations[0].date.strftime('%H:%M') }}</figcaption>
-            {% endif %}
+            <div class="fa fa-3x {% if event.count %}fa-comment{% if event.count > 1 %}s{% endif %}-o{% elif event.type == 'joined' %}fa-child{% endif %}"></div>
+            <figcaption>{{ event.date.strftime('%H:%M') }}</figcaption>
           </figure>
           {% if event.projects %}
           <a href="{{ url('pontoon.project', event.projects[0].slug) }}">{{ event.projects[0].name }}</a>
