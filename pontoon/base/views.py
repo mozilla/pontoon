@@ -284,7 +284,8 @@ def user(request, email, template='user.html'):
         raise Http404
 
     translations = Translation.objects.filter(user=user)
-    current = translations.extra({'day': "date(date)"})
+    current = translations.exclude(entity__obsolete=True) \
+        .extra({'day': "date(date)"})
 
     timeline = [{
         'date': user.date_joined,
