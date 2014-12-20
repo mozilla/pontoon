@@ -65,12 +65,12 @@
           </div>
         <h3>
         <h2>
-        {% if event.type == 'translated' %}
+        {% if event.type == 'translation' %}
           Added new translation
           {% if event.count > 1 %}
             <div>(and {{ event.count-1 }} other{% if event.count > 2 %}s{% endif %})</div>
           {% endif %}
-        {% elif event.type == 'joined' %}
+        {% elif event.type == 'join' %}
           Joined Pontoon
         {% endif %}
         </h2>
@@ -79,7 +79,7 @@
         {% endif %}
         <div class="label clearfix {{ event.type }}">
           <figure>
-            <div class="fa fa-3x {% if event.count %}fa-comment{% if event.count > 1 %}s{% endif %}-o{% elif event.type == 'joined' %}fa-child{% endif %}"></div>
+            <div class="fa fa-3x {% if event.count %}fa-comment{% if event.count > 1 %}s{% endif %}-o{% elif event.type == 'join' %}fa-child{% endif %}"></div>
             <figcaption>{{ event.date.strftime('%H:%M') }}</figcaption>
           </figure>
           {% if event.projects %}

@@ -284,24 +284,25 @@ def user(request, email, template='user.html'):
         raise Http404
 
     translations = Translation.objects.filter(user=user)
-    translations_plus = translations.extra({'day': "date(date)"})
+    current = translations.extra({'day': "date(date)"})
 
     timeline = [{
         'date': user.date_joined,
-        'type': 'joined',
+        'type': 'join',
     }]
 
-    for event in translations_plus.values('day').annotate(count=Count('id')):
-        translations_day = translations.filter(date__startswith=event['day'])
+    for event in current.values('day').annotate(count=Count('id')):
+        day = current.filter(date__startswith=event['day'])
+        example = day[0]
         projects_day = Project.objects.filter(
-            resource__entity__translation__in=translations_day).distinct()
+            resource__entity__translation__in=day).distinct()
 
         timeline.append({
-            'date': translations_day[0].date,
-            'type': 'translated',
+            'date': example.date,
+            'type': 'translation',
             'count': event['count'],
             'projects': projects_day,
-            'translation': translations_day[0],
+            'translation': example,
         })
 
     timeline.reverse()
