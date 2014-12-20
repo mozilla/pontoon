@@ -42,18 +42,26 @@ $(function() {
   });
 
   // Hide timeline blocks outside viewport
-  var block = $('#timeline > .container > div');
-  block.each(function() {
-    if ($(this).offset().top > $(window).scrollTop() + $(window).height() * 0.8) {
+  var blocks = $('#timeline > .container > div');
+  blocks.each(function() {
+    var block_bottom = $(this).offset().top + $(this).outerHeight(),
+        window_bottom = $(window).scrollTop() + $(window).height();
+
+    if (block_bottom > window_bottom) {
       $(this).find('.tick, .content').addClass('is-hidden');
     }
   });
 
-  //on scolling, show/animate timeline blocks when enter the viewport
+  // Show/animate timeline blocks when entering the viewport on scroll
   $(window).on('scroll', function() {
-    block.each(function() {
-      if ($(this).offset().top <= $(window).scrollTop() + $(window).height() * 0.8 && $(this).find('.tick').hasClass('is-hidden')) {
-        $(this).find('.tick, .content').removeClass('is-hidden').addClass('bounce-in');
+    blocks.each(function() {
+      var block_bottom = $(this).offset().top + $(this).outerHeight(),
+          window_bottom = $(window).scrollTop() + $(window).height(),
+          hidden = $(this).find('.tick').hasClass('is-hidden');
+
+      if (block_bottom <= window_bottom && hidden) {
+        $(this).find('.tick, .content')
+          .removeClass('is-hidden').addClass('bounce-in');
       }
     });
   });
