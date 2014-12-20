@@ -294,20 +294,21 @@ def user(request, email, template='user.html'):
 
     for event in current.values('day').annotate(count=Count('id')):
         daily = current.filter(date__startswith=event['day'])
-        example = daily[0]
-        log.debug(example)
-        log.debug(example.entity)
-        log.debug(example.entity.resource)
-        log.debug(example.entity.resource.project)
-        project = example.entity.resource.project
 
-        timeline.append({
-            'date': example.date,
-            'type': 'translation',
-            'count': event['count'],
-            'project': project,
-            'translation': example,
-        })
+        for example in daily:
+            try:
+                project = example.entity.resource.project
+            except Resource.DoesNotExist:
+                continue
+
+            timeline.append({
+                'date': example.date,
+                'type': 'translation',
+                'count': event['count'],
+                'project': project,
+                'translation': example,
+            })
+            break
 
     timeline.reverse()
 
