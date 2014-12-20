@@ -65,7 +65,7 @@
             <div class="month">{{ event.date.strftime('%B %Y') }}</div>
           </div>
         <h3>
-        <h2>{% if event.type == 'translated' %}Added new translation{% if event.count and event.count > 1 %}<div>(and {{ event.count-1 }} others)</div>{% endif %}
+        <h2>{% if event.type == 'translated' %}Added new translation{% if event.count > 1 %}<div>(and {{ event.count-1 }} other{% if event.count > 2 %}s{% endif %})</div>{% endif %}
             {% elif event.type == 'joined' %}Joined Pontoon{% endif %}
         </h2>
         {% if event.translation %}
