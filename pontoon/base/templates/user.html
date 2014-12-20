@@ -82,8 +82,8 @@
             <div class="fa fa-3x {% if event.count %}fa-comment{% if event.count > 1 %}s{% endif %}-o{% elif event.type == 'join' %}fa-child{% endif %}"></div>
             <figcaption>{{ event.date.strftime('%H:%M') }}</figcaption>
           </figure>
-          {% if event.projects %}
-            <a href="{{ url('pontoon.project', event.projects[0].slug) }}">{{ event.projects[0].name }}</a>
+          {% if event.project %}
+            <a href="{{ url('pontoon.project', event.project.slug) }}">{{ event.project.name }}</a>
           {% endif %}
         </div>
       </div>
