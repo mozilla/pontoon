@@ -52,7 +52,7 @@ $(function() {
   //on scolling, show/animate timeline blocks when enter the viewport
   $(window).on('scroll', function() {
     block.each(function() {
-      if( $(this).offset().top <= $(window).scrollTop()+$(window).height()*0.75 && $(this).find('.tick').hasClass('is-hidden') ) {
+      if ($(this).offset().top <= $(window).scrollTop() + $(window).height() * 0.75 && $(this).find('.tick').hasClass('is-hidden')) {
         $(this).find('.tick, .content').removeClass('is-hidden').addClass('bounce-in');
       }
     });
