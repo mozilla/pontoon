@@ -50,7 +50,6 @@ Get involved
 * File a [bug](https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all)
 * Read more on the [Wiki](https://github.com/mathjazz/pontoon/wiki)
 * Join #pontoon on [IRC](https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon)
-* Follow us on [Twitter](https://twitter.com/#!/mozillapontoon)
 
 Servers
 -------
