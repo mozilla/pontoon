@@ -1655,14 +1655,19 @@ var Pontoon = (function (my) {
         } else if ($(this).data("url")) {
           window.location = $(this).data('url');
 
-        } else if ($(this).is(".html")) {
-          self.postMessage("HTML");
-
         } else if ($(this).is(".hotkeys")) {
           $('#hotkeys').show();
+        }
+      });
 
+      // Download menu
+      $('#profile .menu .file-format').click(function (e) {
+        e.preventDefault();
+
+        if ($(this).is(".html")) {
+          self.postMessage("HTML");
         } else {
-          self.save($(this).attr('class').split(" ")[0]);
+          self.save($(this).attr('class').split(" ")[1]);
         }
       });
 

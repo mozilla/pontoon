@@ -132,15 +132,11 @@
             {% endif %}
             {% endif %}
 
-            {% if user.is_authenticated() and project.repository_path and project.repository_type != 'file' %}
-            <li class="zip">Download as <i class="file-format">ZIP</i></li>
-            {% endif %}
-
-            {% if project.url %}
-            <li class="html">Download as <i class="file-format">HTML</i></li>
-            {% endif %}
-
-            <li class="json">Download as <i class="file-format">JSON</i></li>
+            <li class="download">Download
+              {% if user.is_authenticated() and project.repository_path and project.repository_type != 'file' %}<i class="file-format zip">ZIP</i>{% endif %}
+              {% if project.url %}<i class="file-format html">HTML</i>{% endif %}
+              <i class="file-format json">JSON</i>
+            </li>
 
             <li class="horizontal-separator"></li>
 

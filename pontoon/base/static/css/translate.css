@@ -385,6 +385,12 @@ body > header .notification li {
   max-height: none;
 }
 
+#profile .menu li.download.hover {
+  color: inherit;
+  cursor: inherit;
+  background: inherit;
+}
+
 #profile .menu li i.fa {
   margin: 0 8px 0 -2px;
 }
@@ -393,7 +399,12 @@ body > header .notification li {
   font-weight: 300;
   font-size: 13px;
   font-style: normal;
-  margin-left: 2px;
+}
+
+#profile .menu li i.file-format:hover {
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+  cursor: pointer;
 }
 
 #profile.select .popup {
