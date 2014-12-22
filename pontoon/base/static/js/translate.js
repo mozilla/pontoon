@@ -1652,8 +1652,7 @@ var Pontoon = (function (my) {
             }
           });
 
-        } else if ($(this).is(".admin") || $(this).is(".admin-project") ||
-            $(this).is(".profile")) {
+        } else if ($(this).data("url")) {
           window.location = $(this).data('url');
 
         } else if ($(this).is(".html")) {
