@@ -63,13 +63,16 @@
 .info {
   list-style: none;
   margin: 0;
+  display: inline-block;
+  text-align: left;
 }
 
 .info li {
   color: #AAAAAA;
+  display: block;
   font-size: 16px;
   font-weight: 300;
-  padding: 2px 0;
+  padding: 4px 0;
 }
 
 .details {

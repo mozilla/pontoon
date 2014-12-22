@@ -29,7 +29,9 @@
 
 {% block middle %}
 <ul class="info">
-  <li><a href="mailto:{{ contributor.email }}">{{ contributor.email }}</a></li>
+  <li><span class="fa fa-fw fa-envelope"></span> <a href="mailto:{{ contributor.email }}">{{ contributor.email }}</a></li>
+  <li><span class="fa fa-fw fa-lock"></span> Can submit {% if contributor.has_perm('base.can_localize') %}and approve {% endif %}translations</li>
+  <li><span class="fa fa-fw fa-circle-o"></span> Quality checks</li>
 </ul>
 
 <ul class="notification"></ul>

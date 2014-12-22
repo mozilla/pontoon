@@ -287,6 +287,7 @@ def user(request, email, template='user.html'):
     current = translations.exclude(entity__obsolete=True) \
         .extra({'day': "date(date)"})
 
+    # Timeline
     timeline = [{
         'date': user.date_joined,
         'type': 'join',
