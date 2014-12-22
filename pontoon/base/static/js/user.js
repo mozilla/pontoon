@@ -49,7 +49,9 @@ $(function() {
 
       if (block_bottom <= window_bottom) {
         $(this).find('.tick, .content')
-          .css('visibility', 'visible').addClass('bounce-in');
+          .css('visibility', 'visible').addClass(function() {
+            return (blocks.length > 1) ? 'bounce-in' : '';
+          });
       }
     });
   }
