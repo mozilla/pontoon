@@ -101,14 +101,14 @@
 }
 
 #timeline .container:before {
+  background: #AAAAAA;
   content: '';
+  height: 100%;
+  left: 50%;
+  margin-left: -1px;
   position: absolute;
   top: 0;
-  left: 50%;
-  height: 100%;
-  margin-left: -1px;
   width: 2px;
-  background: #AAAAAA;
 }
 
 #timeline .container > div {
@@ -118,6 +118,10 @@
 
 #timeline .container > div:first-child {
   margin: 0;
+}
+
+#timeline .container > div:nth-last-child(2) {
+  padding-bottom: 8em;
 }
 
 #timeline .container > div:last-child {
