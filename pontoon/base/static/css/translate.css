@@ -249,7 +249,7 @@ body > header .locale.select {
 #progress {
   cursor: pointer;
   float: left;
-  margin: 8px 10px 8px 0;
+  margin: 8px 5px 4px 0;
 }
 
 #progress canvas {
@@ -446,8 +446,12 @@ body > header aside p {
   font-weight: 300;
 }
 
+.right {
+  float: right;
+}
+
 .right .menu {
-  right: 0;
+  right: 5px;
 }
 
 #projects {

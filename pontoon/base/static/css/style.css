@@ -365,11 +365,6 @@ label {
     user-select: none;
 }
 
-.right {
-  float: right;
-  padding-right: 5px;
-}
-
 .select {
   display: inline-block;
   font-size: 14px;
