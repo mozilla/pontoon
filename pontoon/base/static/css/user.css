@@ -75,6 +75,10 @@
   padding: 4px 0;
 }
 
+.info .fa {
+  padding-right: 6px;
+}
+
 .info li.quality-checks {
   cursor: pointer;
   display: inline-block;
