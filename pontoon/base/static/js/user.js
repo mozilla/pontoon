@@ -48,7 +48,8 @@ $(function() {
         window_bottom = $(window).scrollTop() + $(window).height();
 
     if (block_bottom <= window_bottom) {
-      $(this).find('.tick, .content').css('visibility', 'visible');
+      $(this).find('.tick, .content')
+        .css('visibility', 'visible').addClass('bounce-in');
     }
   });
 
