@@ -48,7 +48,7 @@ $(function() {
         window_bottom = $(window).scrollTop() + $(window).height();
 
     if (block_bottom > window_bottom) {
-      $(this).find('.tick, .content').addClass('is-hidden');
+      $(this).find('.tick, .content').css('visibility', 'hidden');
     }
   });
 
@@ -57,11 +57,11 @@ $(function() {
     blocks.each(function() {
       var block_bottom = $(this).offset().top + $(this).outerHeight(),
           window_bottom = $(window).scrollTop() + $(window).height(),
-          hidden = $(this).find('.tick').hasClass('is-hidden');
+          hidden = $(this).find('.tick').css('visibility') === 'hidden';
 
       if (block_bottom <= window_bottom && hidden) {
         $(this).find('.tick, .content')
-          .removeClass('is-hidden').addClass('bounce-in');
+          .css('visibility', 'visible').addClass('bounce-in');
       }
     });
   });

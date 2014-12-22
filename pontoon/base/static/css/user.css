@@ -157,10 +157,6 @@
   margin-left: -12px;
 }
 
-#timeline .tick.is-hidden {
-  visibility: hidden;
-}
-
 #timeline .content {
   border: 2px solid #AAAAAA;
   border-radius: 8px;
@@ -275,10 +271,6 @@
   left: auto;
   right: 122%;
   text-align: right;
-}
-
-#timeline .content.is-hidden {
-  visibility: hidden;
 }
 
 /*
