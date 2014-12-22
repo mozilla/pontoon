@@ -86,6 +86,17 @@
       </aside>
     </div>
 
+    {% if project.info_brief %}
+    <!-- Project Info -->
+    <div id="info" class="select">
+      <div class="button selector fa fa-info"></div>
+      <aside class="menu">
+        <h2>Project info</h2>
+        <p>{{ project.info_brief|safe }}</p>
+      </aside>
+    </div>
+    {% endif %}
+
     <div class="right">
       <ul class="notification">
       {% for message in messages %}
@@ -240,17 +251,6 @@
         </aside>
         {% endif %}
       </div>
-
-      {% if project.info_brief %}
-      <!-- Project Info -->
-      <div id="info" class="select">
-        <div class="button selector fa fa-info-circle"></div>
-        <aside class="menu">
-          <h2>Project info</h2>
-          <p>{{ project.info_brief|safe }}</p>
-        </aside>
-      </div>
-      {% endif %}
     </div>
 
   </div>
