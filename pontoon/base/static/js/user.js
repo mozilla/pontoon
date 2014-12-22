@@ -41,20 +41,8 @@ $(function() {
     }
   });
 
-  // Hide timeline blocks outside viewport
-  var blocks = $('#timeline > .container > div');
-  blocks.each(function() {
-    var block_bottom = $(this).offset().top + $(this).outerHeight(),
-        window_bottom = $(window).scrollTop() + $(window).height();
-
-    if (block_bottom <= window_bottom) {
-      $(this).find('.tick, .content')
-        .css('visibility', 'visible').addClass('bounce-in');
-    }
-  });
-
-  // Show/animate timeline blocks when entering the viewport on scroll
-  $(window).on('scroll', function() {
+  // Show/animate timeline blocks inside viewport
+  function animate() {
     blocks.each(function() {
       var block_bottom = $(this).offset().top + $(this).outerHeight(),
           window_bottom = $(window).scrollTop() + $(window).height();
@@ -64,6 +52,10 @@ $(function() {
           .css('visibility', 'visible').addClass('bounce-in');
       }
     });
-  });
+  }
+
+  var blocks = $('#timeline > .container > div');
+  animate();
+  $(window).on('scroll', animate);
 
 });
