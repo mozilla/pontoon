@@ -973,3 +973,15 @@ body > form {
   -o-user-select: none;
   user-select: none;
 }
+
+.quality-checks .fa:before,
+.quality-checks.enabled:hover .fa:before {
+  color: #FD5F60;
+  content: "";
+}
+
+.quality-checks:hover .fa:before,
+.quality-checks.enabled .fa:before {
+  color: #7BC876;
+  content: "";
+}

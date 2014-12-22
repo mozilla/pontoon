@@ -75,6 +75,11 @@
   padding: 4px 0;
 }
 
+.info li.quality-checks {
+  cursor: pointer;
+  display: inline-block;
+}
+
 .details {
   background: #333941;
   padding: 1em;

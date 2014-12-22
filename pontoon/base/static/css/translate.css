@@ -396,18 +396,6 @@ body > header .notification li {
   margin-left: 2px;
 }
 
-#profile .menu li.quality-checks i:before,
-#profile .menu li.quality-checks.enabled:hover i:before {
-  color: #FD5F60;
-  content: "";
-}
-
-#profile .menu li.quality-checks:hover i:before,
-#profile .menu li.quality-checks.enabled i:before {
-  color: #7BC876;
-  content: "";
-}
-
 #profile.select .popup {
   right: 0;
   width: 200px;

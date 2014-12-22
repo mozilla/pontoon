@@ -242,6 +242,30 @@ $(function() {
     ul.append(listitems);
   });
 
+  // Toggle quality checks
+  $('.quality-checks').click(function() {
+    var self = $(this);
+    Pontoon.startLoader();
+
+    $.ajax({
+      url: 'quality-checks-switch/',
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: $('#server').data('csrf')
+      },
+      success: function(data) {
+        if (data === 'ok') {
+          self.toggleClass('enabled');
+          var status = self.is('.enabled') ? 'enabled' : 'disabled';
+          Pontoon.endLoader('Quality checks ' + status + '.');
+        }
+      },
+      error: function() {
+        Pontoon.endLoader('Oops, something went wrong.', 'error');
+      }
+    });
+  });
+
   // General keyboard shortcuts
   $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
     function moveMenu(type) {
