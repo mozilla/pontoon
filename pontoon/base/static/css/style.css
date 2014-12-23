@@ -526,11 +526,14 @@ label {
 }
 
 .locale.select input[type="search"] {
-  padding-right: 50px;
   width: 100%;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+.locale.select .new ~ input[type="search"] {
+  padding-right: 50px;
 }
 
 .locale.select .menu ul {
