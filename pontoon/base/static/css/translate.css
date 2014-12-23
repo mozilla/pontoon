@@ -915,6 +915,7 @@ body > header aside p {
 #editor nav li a {
   color: #CCCCCC;
   display: block;
+  outline: none;
   padding: 10px;
   text-transform: uppercase;
 }
