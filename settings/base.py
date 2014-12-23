@@ -120,3 +120,6 @@ MICROSOFT_TERMINOLOGY_LOCALES = [
     'uz-latn-uz', 'vi-vn', 'wo-sn', 'xh-za', 'yo-ng', 'zh-cn', 'zh-hk',
     'zh-tw', 'zu-za'
 ]
+
+# Contributors to exclude from Top Contributors list
+EXCLUDE = []

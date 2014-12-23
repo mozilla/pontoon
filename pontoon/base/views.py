@@ -323,7 +323,8 @@ def users(request, template='users.html'):
     log.debug("Top contributors view.")
 
     users = User.objects.annotate(translation_count=Count('translation')) \
-        .exclude(translation_count=0).order_by('-translation_count')[:100]
+        .exclude(translation_count=0).exclude(email__in=settings.EXCLUDE) \
+        .order_by('-translation_count')[:100]
 
     for user in users:
         user.translations = Translation.objects.filter(user=user)
