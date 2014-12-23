@@ -586,6 +586,7 @@ label {
 }
 
 .menu ul {
+  list-style: none;
   max-height: 170px;
   overflow: auto;
   margin: 0 0 6px 0;
