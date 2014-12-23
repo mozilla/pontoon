@@ -307,7 +307,12 @@ body > header .locale.select {
   padding: 10px 12px;
 }
 
-#progress .menu header span {
+#progress .menu header h2 {
+  font-size: 20px;
+  padding: 4px;
+}
+
+#progress .menu header h2 span {
   color: #FFFFFF;
   font-size: 28px;
   padding: 0 2px;
