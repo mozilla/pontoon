@@ -84,6 +84,9 @@ class Project(models.Model):
     links = models.BooleanField(
         "Keep links on the project website clickable")
 
+    # Disable project instead of deleting to keep translation memory & stats
+    disabled = models.BooleanField(default=False)
+
     class Meta:
         permissions = (
             ("can_manage", "Can manage projects"),

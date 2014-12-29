@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
         output('UPDATE PROJECTS: start')
 
-        projects = Project.objects.all()
+        projects = Project.objects.filter(disabled=False)
         if args:
             projects = projects.filter(pk__in=args)
 

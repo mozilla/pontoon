@@ -121,6 +121,12 @@ form a.add-subpage {
   margin: 9px;
 }
 
+.controls .checkbox {
+  float: left;
+  margin: 3px 7px;
+  text-transform: uppercase;
+}
+
 .authenticate .transifex .button {
   margin-top: 41px;
 }
@@ -149,10 +155,6 @@ form a.add-subpage {
 
 #id_locales {
   display: none;
-}
-
-.checkbox {
-  margin: 0;
 }
 
 .checkbox label {

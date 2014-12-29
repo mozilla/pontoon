@@ -84,7 +84,7 @@ def locale(request, locale, template='locale.html'):
         raise Http404
 
     projects = Project.objects.filter(
-        pk__in=Resource.objects.values('project')).filter(locales=l) \
+        disabled=False, pk__in=Resource.objects.values('project'), locales=l) \
         .order_by("name")
 
     data = {
@@ -126,7 +126,8 @@ def projects(request, template='projects.html'):
     log.debug("Project overview.")
 
     projects = Project.objects.filter(
-        pk__in=Resource.objects.values('project')).order_by("name")
+        disabled=False, pk__in=Resource.objects.values('project')) \
+        .order_by("name")
 
     data = {
         'projects': get_projects_with_stats(projects),
@@ -166,6 +167,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
     # Validate project
     try:
         p = Project.objects.get(
+            disabled=False,
             slug=slug, pk__in=Resource.objects.values('project'))
     except Project.DoesNotExist:
         invalid_project = True
@@ -207,7 +209,8 @@ def translate(request, locale, slug, part=None, template='translate.html'):
 
     # Set project details (locales and pages or paths + stats)
     projects = Project.objects.filter(
-        pk__in=Resource.objects.values('project')).order_by("name")
+        disabled=False, pk__in=Resource.objects.values('project')) \
+        .order_by("name")
 
     for project in projects:
         pages = Subpage.objects.filter(project=project)
