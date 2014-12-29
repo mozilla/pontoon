@@ -469,13 +469,15 @@ def get_translation_history(request, template=None):
 
         for t in translations:
             u = t.user
+            a = t.approved_user
             o = {
                 "id": t.id,
-                "user": 'Imported' if u is None else u.first_name or u.email,
+                "user": "Imported" if u is None else u.first_name or u.email,
                 "email": "" if u is None else u.email,
                 "translation": t.string,
                 "date": t.date.strftime('%b %d, %Y %H:%M'),
                 "approved": t.approved,
+                "approved_user": "" if a is None else a.first_name or a.email,
             }
             payload.append(o)
 
@@ -530,6 +532,8 @@ def delete_translation(request, template=None):
 
     if next.pk is not None and request.user.has_perm('base.can_localize'):
         next.approved = True
+        next.approved_user = request.user
+        next.approved_date = datetime.datetime.now()
         next.save()
 
     return HttpResponse(json.dumps({
@@ -598,6 +602,7 @@ def update_translation(request, template=None):
     if ignore_check == 'true' or not quality_checks:
         ignore = True
 
+    now = datetime.datetime.now()
     can_localize = request.user.has_perm('base.can_localize')
     translations = Translation.objects.filter(
         entity=e, locale=l, plural_form=plural_form)
@@ -613,7 +618,8 @@ def update_translation(request, template=None):
                 if can_localize:
 
                     # Unless there's nothing to be changed
-                    if t.user is not None and t.approved and not t.fuzzy:
+                    if t.user is not None and t.approved and t.approved_user \
+                            and t.approved_date and not t.fuzzy:
                         return HttpResponse("Same translation already exist.")
 
                     warnings = utils.quality_check(original, string, l, ignore)
@@ -628,6 +634,11 @@ def update_translation(request, template=None):
 
                     t.approved = True
                     t.fuzzy = False
+
+                    if t.approved_user is None:
+                        t.approved_user = user
+                        t.approved_date = now
+
                     if request.user.is_authenticated():
                         t.save()
 
@@ -648,7 +659,10 @@ def update_translation(request, template=None):
                             t.user = user
 
                         t.approved = False
+                        t.approved_user = None
+                        t.approved_date = None
                         t.fuzzy = False
+
                         if request.user.is_authenticated():
                             t.save()
 
@@ -671,8 +685,13 @@ def update_translation(request, template=None):
 
         t = Translation(
             entity=e, locale=l, user=user, string=string,
-            plural_form=plural_form, date=datetime.datetime.now(),
+            plural_form=plural_form, date=now,
             approved=can_localize)
+
+        if can_localize:
+            t.approved_user = user
+            t.approved_date = now
+
         if request.user.is_authenticated():
             t.save()
 
@@ -692,8 +711,13 @@ def update_translation(request, template=None):
 
         t = Translation(
             entity=e, locale=l, user=user, string=string,
-            plural_form=plural_form, date=datetime.datetime.now(),
+            plural_form=plural_form, date=now,
             approved=can_localize)
+
+        if can_localize:
+            t.approved_user = user
+            t.approved_date = now
+
         if request.user.is_authenticated():
             t.save()
 

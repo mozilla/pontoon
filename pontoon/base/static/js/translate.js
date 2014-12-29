@@ -501,7 +501,8 @@ var Pontoon = (function (my) {
                     '</div>' +
                     '<menu class="toolbar">' +
                       '<button class="approve fa" title="' +
-                      (this.approved ? '' : 'Approve') +
+                      (this.approved ? this.approved_user ?
+                        'Approved by ' + this.approved_user : '' : 'Approve') +
                       '"></button>' +
                       '<button class="delete fa" title="Delete"></button>' +
                     '</menu>' +

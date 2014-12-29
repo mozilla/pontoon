@@ -170,6 +170,9 @@ class Translation(models.Model):
     plural_form = models.SmallIntegerField(null=True, blank=True)
     date = models.DateTimeField()
     approved = models.BooleanField(default=False)
+    approved_user = models.ForeignKey(
+        User, related_name='approvers', null=True, blank=True)
+    approved_date = models.DateTimeField(null=True, blank=True)
     fuzzy = models.BooleanField(default=False)
 
     def __unicode__(self):
@@ -379,6 +382,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
     """Add new or update existing translation."""
 
     approved = not fuzzy
+    now = datetime.datetime.now()
     translations = Translation.objects.filter(
         entity=entity, locale=locale, plural_form=plural_form)
     translations_equal = translations.filter(string=string)
@@ -390,8 +394,10 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
         unfuzzy(translations)
         t = Translation(
             entity=entity, locale=locale, plural_form=plural_form,
-            string=string, date=datetime.datetime.now(),
+            string=string, date=now,
             approved=approved, fuzzy=fuzzy)
+        if approved:
+            t.approved_date = now
         t.save(stats=False)
 
     # Update existing translations if fuzzy status changes
@@ -400,13 +406,14 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
         if translations_equal_count > 1:
             try:
                 t = translations_equal.get(approved=True)
+                t.approved_date = now
             except Translation.DoesNotExist:
                 t = translations_equal.latest("date")
 
         if t.fuzzy != fuzzy:
             unapprove(translations)
             unfuzzy(translations)
-            t.date = datetime.datetime.now()
+            t.date = now
             t.approved = approved
             t.fuzzy = fuzzy
             t.save(stats=False)
@@ -415,7 +422,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
 def unapprove(translations):
     """Set approved attribute for given translations to False."""
 
-    translations.update(approved=False)
+    translations.update(approved=False, approved_user=None, approved_date=None)
 
 
 def unfuzzy(translations):
