@@ -68,7 +68,7 @@ def home(request):
     log.debug("Home view.")
 
     project = Project.objects.get(id=1)
-    locale = utils.get_project_locale_from_request(request, project) or 'de'
+    locale = utils.get_project_locale_from_request(request, project) or 'en-GB'
 
     return translate(request, locale, project.slug)
 
