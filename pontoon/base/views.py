@@ -276,7 +276,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
     return render(request, template, data)
 
 
-def user(request, email, template='user.html'):
+def contributor(request, email, template='user.html'):
     """User view."""
     log.debug("User view.")
 
@@ -321,7 +321,7 @@ def user(request, email, template='user.html'):
     return render(request, template, data)
 
 
-def users(request, template='users.html'):
+def contributors(request, template='users.html'):
     """Top contributors view."""
     log.debug("Top contributors view.")
 

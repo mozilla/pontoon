@@ -21,7 +21,7 @@
       <tr>
         <td class="rank">{{ loop.index }}</td>
         <td class="contributor">
-          <a href="{{ url('pontoon.user', contributor.email) }}">
+          <a href="{{ url('pontoon.contributor', contributor.email) }}">
             <img class="rounded" src="{% if contributor.gravatar_url %}{{ contributor.gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
             <p class="name">{{ contributor.first_name or contributor.email.split('@')[0] }}</p>
           </a>

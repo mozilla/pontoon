@@ -47,14 +47,14 @@ urlpatterns = patterns(
         name='pontoon.translate'),
 
     # List users with contributions
-    url(r'^users/$',
-        views.users,
-        name='pontoon.users'),
+    url(r'^contributors/$',
+        views.contributors,
+        name='pontoon.contributors'),
 
     # User profile
-    url(r'^users/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
-        views.user,
-        name='pontoon.user'),
+    url(r'^contributor/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
+        views.contributor,
+        name='pontoon.contributor'),
 
     # AJAX
     url(r'^get-entities/', views.entities,
