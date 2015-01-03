@@ -7,6 +7,7 @@ import json
 import Levenshtein
 import math
 import os
+import pytz
 import requests
 import traceback
 import xml.etree.ElementTree as ET
@@ -466,6 +467,8 @@ def get_translation_history(request, template=None):
 
     if len(translations) > 0:
         payload = []
+        zone = pytz.timezone(settings.TIME_ZONE)
+        offset = datetime.datetime.now(zone).strftime('%z')
 
         for t in translations:
             u = t.user
@@ -476,6 +479,7 @@ def get_translation_history(request, template=None):
                 "email": "" if u is None else u.email,
                 "translation": t.string,
                 "date": t.date.strftime('%b %d, %Y %H:%M'),
+                "date_iso": t.date.isoformat() + offset,
                 "approved": t.approved,
                 "approved_user": "" if a is None else a.first_name or a.email,
             }

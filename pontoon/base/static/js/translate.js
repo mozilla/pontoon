@@ -497,7 +497,7 @@ var Pontoon = (function (my) {
                     '<div class="info">' +
                       ((!this.email) ? this.user :
                         '<a href="users/' + this.email + '">' + this.user + '</a>') +
-                      '<span class="stress">' + this.date + '</span>' +
+                      '<time class="stress" datetime="' + this.date_iso + '">' + this.date + '</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
                       '<button class="approve fa" title="' +
@@ -512,6 +512,7 @@ var Pontoon = (function (my) {
                   '</p>' +
                 '</li>');
             });
+            $("#history time").timeago();
           } else {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
