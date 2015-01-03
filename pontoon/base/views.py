@@ -615,33 +615,56 @@ def update_translation(request, template=None):
     if len(translations) > 0:
 
         # Same translation exists
-        for t in translations:
-            if t.string == string:
+        try:
+            t = translations.get(string=string)
 
-                # If added by privileged user, approve and unfuzzy it
-                if can_localize:
+            # If added by privileged user, approve and unfuzzy it
+            if can_localize:
 
-                    # Unless there's nothing to be changed
-                    if t.user is not None and t.approved and t.approved_user \
-                            and t.approved_date and not t.fuzzy:
-                        return HttpResponse("Same translation already exist.")
+                # Unless there's nothing to be changed
+                if t.user is not None and t.approved and t.approved_user \
+                        and t.approved_date and not t.fuzzy:
+                    return HttpResponse("Same translation already exist.")
 
+                warnings = utils.quality_check(original, string, l, ignore)
+                if warnings:
+                    return warnings
+
+                unapprove(translations)
+                unfuzzy(translations)
+
+                if t.user is None:
+                    t.user = user
+
+                t.approved = True
+                t.fuzzy = False
+
+                if t.approved_user is None:
+                    t.approved_user = user
+                    t.approved_date = now
+
+                if request.user.is_authenticated():
+                    t.save()
+
+                return HttpResponse(json.dumps({
+                    'type': 'updated',
+                    'translation': t.serialize(),
+                }), mimetype='application/json')
+
+            # If added by non-privileged user, unfuzzy it
+            else:
+                if t.fuzzy:
                     warnings = utils.quality_check(original, string, l, ignore)
                     if warnings:
                         return warnings
 
-                    unapprove(translations)
-                    unfuzzy(translations)
-
                     if t.user is None:
                         t.user = user
 
-                    t.approved = True
+                    t.approved = False
+                    t.approved_user = None
+                    t.approved_date = None
                     t.fuzzy = False
-
-                    if t.approved_user is None:
-                        t.approved_user = user
-                        t.approved_date = now
 
                     if request.user.is_authenticated():
                         t.save()
@@ -651,61 +674,38 @@ def update_translation(request, template=None):
                         'translation': t.serialize(),
                     }), mimetype='application/json')
 
-                # If added by non-privileged user, unfuzzy it
-                else:
-                    if t.fuzzy:
-                        warnings = utils.quality_check(
-                            original, string, l, ignore)
-                        if warnings:
-                            return warnings
-
-                        if t.user is None:
-                            t.user = user
-
-                        t.approved = False
-                        t.approved_user = None
-                        t.approved_date = None
-                        t.fuzzy = False
-
-                        if request.user.is_authenticated():
-                            t.save()
-
-                        return HttpResponse(json.dumps({
-                            'type': 'updated',
-                            'translation': t.serialize(),
-                        }), mimetype='application/json')
-
-                    return HttpResponse("Same translation already exist.")
+                return HttpResponse("Same translation already exist.")
 
         # Different translation added
-        warnings = utils.quality_check(original, string, l, ignore)
-        if warnings:
-            return warnings
+        except:
+            warnings = utils.quality_check(original, string, l, ignore)
+            if warnings:
+                return warnings
 
-        if can_localize:
-            unapprove(translations)
+            if can_localize:
+                unapprove(translations)
 
-        unfuzzy(translations)
+            unfuzzy(translations)
 
-        t = Translation(
-            entity=e, locale=l, user=user, string=string,
-            plural_form=plural_form, date=now,
-            approved=can_localize)
+            t = Translation(
+                entity=e, locale=l, user=user, string=string,
+                plural_form=plural_form, date=now,
+                approved=can_localize)
 
-        if can_localize:
-            t.approved_user = user
-            t.approved_date = now
+            if can_localize:
+                t.approved_user = user
+                t.approved_date = now
 
-        if request.user.is_authenticated():
-            t.save()
+            if request.user.is_authenticated():
+                t.save()
 
-        active = get_translation(
-            entity=e, locale=l, plural_form=plural_form)
+            active = get_translation(
+                entity=e, locale=l, plural_form=plural_form)
 
-        return HttpResponse(json.dumps({
-            'type': 'added',
-            'translation': active.serialize(),
-        }), mimetype='application/json')
+            return HttpResponse(json.dumps({
+                'type': 'added',
+                'translation': active.serialize(),
+            }), mimetype='application/json')
 
     # No translations saved yet
     else:
