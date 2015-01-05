@@ -1659,6 +1659,9 @@ var Pontoon = (function (my) {
 
         } else if ($(this).is(".hotkeys")) {
           $('#hotkeys').show();
+
+        } else {
+          self.save($(this).attr('class').split(" ")[0]);
         }
       });
 
