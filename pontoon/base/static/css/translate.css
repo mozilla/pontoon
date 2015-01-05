@@ -746,6 +746,10 @@ body > header aside p {
   width: 49%;
 }
 
+#entitylist > .wrapper > ul > li p span.source-string br {
+  display: none;
+}
+
 #entitylist h2  {
   background: #272A2F;
   color: #AAAAAA;
