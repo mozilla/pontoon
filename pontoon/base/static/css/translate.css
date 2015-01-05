@@ -720,6 +720,7 @@ body > header aside p {
 #entitylist > .wrapper > ul > li p {
   height: 22px;
   line-height: 22px;
+  overflow: hidden;
 }
 
 #entitylist > .wrapper > ul > li p span {
