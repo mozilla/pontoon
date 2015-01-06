@@ -223,7 +223,7 @@ class ProjectForm(ModelForm):
         transifex_project = cleaned_data.get("transifex_project")
         transifex_resource = cleaned_data.get("transifex_resource")
 
-        if repository_type == 'Transifex':
+        if repository_type == 'transifex':
             if not transifex_project:
                 self._errors["repository_url"] = self.error_class(
                     [u"You need to provide Transifex project and resource."])

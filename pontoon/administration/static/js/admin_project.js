@@ -100,7 +100,7 @@ $(function() {
         };
 
     if (source === 'transifex') {
-      if ($(this).parents('.popup').length === 0) {
+      if (!$(this).parents('.authenticate').length) {
         project = $('.transifex input#id_transifex_project');
         resource = $('.transifex input#id_transifex_resource');
         params[project.attr('name')] = project.val();

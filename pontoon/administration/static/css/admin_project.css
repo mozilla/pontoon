@@ -128,7 +128,7 @@ form a.add-subpage {
 }
 
 .authenticate .transifex .button {
-  margin-top: 41px;
+  margin-top: 42px;
 }
 
 .locale.select {
@@ -285,7 +285,7 @@ form a.add-subpage {
 .edit .transifex input#id_transifex_password,
 .edit .authenticate .transifex .authentication-form label:nth-child(2) {
   float: left;
-  width: 157px;
+  width: 160px;
 }
 
 .transifex label,
