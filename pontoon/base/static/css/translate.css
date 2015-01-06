@@ -414,10 +414,6 @@ body > header .notification li {
 
 #profile.select .popup {
   right: 0;
-  width: 200px;
-}
-
-#profile.select #hotkeys.popup {
   width: 300px;
 }
 
@@ -473,59 +469,6 @@ body > header aside p {
 #projects {
   color: #FFFFFF;
   padding: 17px 5px;
-}
-
-.popup .cancel {
-  float: right;
-  font-size: 22px;
-  margin-top: -5px;
-}
-
-.popup .cancel:hover {
-  color: #FFFFFF;
-}
-
-.popup input[type=text],
-.popup input[type=password] {
-  background: transparent;
-  border-bottom: 1px solid #525A65;
-  color: #FFFFFF;
-  margin-bottom: 7px;
-  padding: 3px 0;
-  width: 200px;
-}
-
-.popup input[type=password] {
-    width: 120px;
-}
-
-.popup .button {
-  background: #7BC876;
-  border-radius: 3px;
-  color: #272A2F;
-  float: right;
-  font-weight: 400;
-  padding: 5px 10px;
-  text-transform: uppercase;
-}
-
-.popup .remember {
-  float: left;
-  padding: 6px 0 0 14px;
-}
-
-.popup .remember input {
-  float: left;
-  margin-left: -16px;
-}
-
-.popup .bottom {
-  font-size: 11px;
-}
-
-.popup .bottom .new {
-  float: right;
-  margin-top: 6px;
 }
 
 

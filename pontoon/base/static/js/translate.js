@@ -59,131 +59,6 @@ var Pontoon = (function (my) {
 
       } else if (type === "zip") {
         download(params);
-
-      } else if (type === "transifex") {
-        self.startLoader();
-
-        params.strings = [];
-        $("#entitylist .approved").each(function() {
-          var entity = $(this)[0].entity;
-          params.strings.push({
-            original: entity.original,
-            translation: entity.translation[0].string
-          });
-        });
-
-        params.url = self.project.url;
-
-        if (value) {
-          params.auth = {
-            username: value[0].value,
-            password: value[1].value,
-            remember: value[2] ? 1 : 0
-          };
-        }
-
-        $.ajax({
-          url: 'transifex/',
-          type: 'POST',
-          data: {
-            csrfmiddlewaretoken: $('#server').data('csrf'),
-            data: JSON.stringify(params)
-          },
-          success: function(data) {
-            if (data === "authenticate") {
-              self.endLoader();
-              $("#transifex").show();
-            } else if (data === "200") {
-              self.endLoader('Done!');
-              $('#transifex').hide();
-            } else if (data === "error") {
-              self.endLoader('Oops, something went wrong.', 'error');
-              $('#transifex').hide();
-            }
-          },
-          error: function() {
-            self.endLoader('Oops, something went wrong.', 'error');
-            $('#transifex').hide();
-          }
-        });
-
-      } else if (type === "repository-commit") {
-        self.startLoader();
-
-        if (value) {
-          params.auth = {
-            username: value[0].value,
-            password: value[1].value,
-            remember: value[2] ? 1 : 0
-          };
-        }
-
-        $.ajax({
-          url: 'commit-to-repository/',
-          type: 'POST',
-          data: {
-            csrfmiddlewaretoken: $('#server').data('csrf'),
-            data: JSON.stringify(params)
-          },
-          success: function(data) {
-            if (data.type === "authenticate") {
-              self.endLoader(data.message);
-              $("#repository-commit").show();
-
-              // Move notification up
-              var temp = $('.notification').css('top');
-              $('.notification')
-                .css('top', '+=' + $('#repository-commit').outerHeight());
-              setTimeout(function() {
-                $('.notification').css('top', temp);
-              }, 2400); // Wait for close + fadeout
-
-            } else if (data === "ok") {
-              self.endLoader('Done!');
-              $('#repository-commit').hide();
-
-            } else if (data.type === "error") {
-              self.endLoader(self.doNotRender(data.message), 'error', true);
-              $('#repository-commit').hide();
-
-            } else {
-              self.endLoader('Oops, something went wrong.', 'error');
-              $('#repository-commit').hide();
-            }
-          },
-          error: function() {
-            self.endLoader('Oops, something went wrong.', 'error');
-            $('#repository-commit').hide();
-          }
-        });
-
-      } else if (type === "repository-update") {
-        self.startLoader();
-
-        $.ajax({
-          url: 'update-from-repository/',
-          type: 'POST',
-          data: {
-            csrfmiddlewaretoken: $('#server').data('csrf'),
-            data: JSON.stringify(params)
-          },
-          success: function(data) {
-            if (data === "ok") {
-              self.endLoader('Done!');
-              // TODO: update entities with AJAX
-              window.location.reload();
-
-            } else if (data.type === "error") {
-              self.endLoader(self.doNotRender(data.message), 'error', true);
-
-            } else {
-              self.endLoader('Oops, something went wrong.', 'error');
-            }
-          },
-          error: function() {
-            self.endLoader('Oops, something went wrong.', 'error');
-          }
-        });
       }
     },
 
@@ -1659,9 +1534,6 @@ var Pontoon = (function (my) {
 
         } else if ($(this).is(".hotkeys")) {
           $('#hotkeys').show();
-
-        } else {
-          self.save($(this).attr('class').split(" ")[0]);
         }
       });
 
@@ -1679,16 +1551,6 @@ var Pontoon = (function (my) {
       // Close notification on click
       $('body > header').on('click', '.notification', function() {
         Pontoon.closeNotification();
-      });
-
-      // Transifex and repository authentication
-      $('.popup').find('.cancel').click(function (e) {
-        e.preventDefault();
-        $('.popup').hide();
-      }).end().find('.button').click(function (e) {
-        e.preventDefault();
-        var type = $(this).parents('.popup').attr('id');
-        self.save(type, $('#' + type + ' form').serializeArray());
       });
 
       function mouseMoveHandler(e) {

@@ -324,20 +324,10 @@ $(function() {
       }
     }
 
-    if ($('.popup').is(':visible')) {
-      var popup = $('.popup:visible');
-
-      // Enter: confirm
-      if (key === 13) {
-        popup.find('.button').click();
-        return false;
-      }
-
-      // Escape: close
-      if (key === 27) {
-        popup.find('.cancel').click();
-        return false;
-      }
+    // Escape: close
+    if ($('.popup').is(':visible') && key === 27) {
+      $('body').click();
+      return false;
     }
 
     if ($('#sidebar').is(':visible')) {
