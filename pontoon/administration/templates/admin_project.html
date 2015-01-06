@@ -9,6 +9,7 @@
   <ul class="links">
     <li><a href="{{ url('pontoon.home') }}" title="Home">Home</a></li>
     <li><a href="{{ url('pontoon.projects') }}" title="Project Overview">Projects</a></li>
+    <li><a href="{{ url('pontoon.contributors') }}">Contributors</a></li>
     <li><a href="{{ url('pontoon.admin') }}" title="Admin">Admin</a></li>
     {% if pk %}
     <li><a href="{{ url('pontoon.admin.project.new') }}" title="Add new project">Add</a></li>
@@ -16,6 +17,7 @@
       <li class="translate{% if not ready %} hidden{% endif %}"><a href="{{ url('pontoon.translate', translate_locale, form.slug.value()) }}" title="Translate project">Translate</a></li>
       {% endif %}
     {% endif %}
+    <li id="signout"{% if not user.is_authenticated() %} class="hidden"{% endif %}><a href="{{ url('signout') }}" title="{{ user.email }}">Sign out</a></li>
   </ul>
 </nav>
 
