@@ -103,6 +103,7 @@ textarea {
   background: #FF0A43;
   color: #FFFFFF;
   float: left;
+  margin-right: 7px;
 }
 
 form a:link, form a:visited {
@@ -123,7 +124,7 @@ form a.add-subpage {
 
 .controls .checkbox {
   float: left;
-  margin: 3px 7px;
+  margin: 3px 0;
   text-transform: uppercase;
 }
 
@@ -159,11 +160,11 @@ form a.add-subpage {
 
 .checkbox label {
   float: left;
-  padding: 6px 0 0 16px;
+  padding: 6px 0 0 13px;
 }
 
 .repository.authenticate .bottom label {
-  padding-left: 16px;
+  padding-left: 13px;
 }
 
 .checkbox label input,
