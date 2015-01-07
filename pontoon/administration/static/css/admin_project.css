@@ -12,7 +12,20 @@ body {
   display: block;
   font-size: 50px;
   letter-spacing: -3px;
+  position: relative;
   text-align: left;
+}
+
+#title aside {
+  bottom: 8px;
+  position: absolute;
+  right: 0;
+}
+
+#title a {
+  font-size: 14px;
+  letter-spacing: 0;
+  margin-left: 20px;
 }
 
 body > form {

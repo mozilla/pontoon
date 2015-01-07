@@ -129,7 +129,7 @@ $(function() {
           $('.repository').removeClass('authenticate')
             .find('.errorlist').remove();
           $('.warning').animate({opacity: 0});
-          $('.links .translate').removeClass('hidden');
+          $('.translate').removeClass('hidden');
         } else if (data === "authenticate") {
           icon.attr('class', 'fa fa-refresh');
           $('.repository').addClass('authenticate');

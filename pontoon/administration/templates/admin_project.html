@@ -9,12 +9,24 @@
 {% block middle %}
 <form method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
 
-  <h1 id="title">{{ '%(subtitle)s' | format(subtitle=subtitle) }}</h1>
+  <h1 id="title">
+  {{ '%(subtitle)s' | format(subtitle=subtitle) }}
+  {% if pk %}
+  <aside>
+    <a href="{{ url('pontoon.admin.project.new') }}">Add new</a>
+    {% if translate_locale and form.slug.value() != '' %}
+    <a class="translate{% if not ready %} hidden{% endif %}" href="{{ url('pontoon.translate', translate_locale, form.slug.value()) }}">Translate</a>
+    {% endif %}
+  </aside>
+  {% endif %}
+  </h1>
+
   <ul class="notification{% if not messages %} hidden{% endif %}">
       {% for message in messages %}
       <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
       {% endfor %}
   </ul>
+
   <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
   {% if pk %}
   <input type="hidden" value="{{ pk }}" name="pk">
