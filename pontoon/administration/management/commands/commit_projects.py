@@ -27,7 +27,9 @@ class Command(BaseCommand):
             projects = projects.filter(pk__in=args)
 
         for project in projects:
-            if project.repository_type not in ('git', 'hg', 'svn'):
+            repo_type = project.repository_type
+
+            if repo_type not in ('git', 'hg', 'svn'):
                 output('Committing project %s failed: Not a VCS project' %
                        (project))
                 continue
@@ -41,7 +43,6 @@ class Command(BaseCommand):
                            (project, locale.name, locale.code, error))
                     continue
 
-                repo_type = project.repository_type
                 message = 'Pontoon: Update %s (%s) localization of %s.' \
                     % (locale.name, locale.code, project.name)
 
