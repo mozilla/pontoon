@@ -249,13 +249,13 @@ def create_user_profile(sender, instance, created, **kwargs):
 post_save.connect(create_user_profile, sender=User)
 
 
-def get_entities(project, locale, path=None):
+def get_entities(project, locale, paths=None):
     """Load project entities with locale translations."""
 
     resources = Resource.objects.filter(project=project)
-    if path:
-        resource_with_path = resources.filter(path=path)
-        resources = resource_with_path or resources
+    if paths:
+        resource_with_paths = resources.filter(path__in=paths)
+        resources = resource_with_paths or resources
 
     entities = Entity.objects.filter(resource__in=resources, obsolete=False)
     entities_array = []

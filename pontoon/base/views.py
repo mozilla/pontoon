@@ -342,8 +342,8 @@ def contributors(request, template='users.html'):
 
 
 def entities(request, template=None):
-    """Get entities for the specified project, locale and path."""
-    log.debug("Get entities for the specified project, locale and path.")
+    """Get entities for the specified project, locale and paths."""
+    log.debug("Get entities for the specified project, locale and paths.")
 
     if not request.is_ajax():
         log.error("Non-AJAX request")
@@ -352,14 +352,14 @@ def entities(request, template=None):
     try:
         project = request.GET['project']
         locale = request.GET['locale']
-        path = request.GET['path']
+        paths = json.loads(request.GET['paths'])
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
 
     log.debug("Project: " + project)
     log.debug("Locale: " + locale)
-    log.debug("Path: " + path)
+    log.debug("Paths: " + str(paths))
 
     try:
         project = Project.objects.get(pk=project)
@@ -373,7 +373,7 @@ def entities(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    entities = get_entities(project, locale, path)
+    entities = get_entities(project, locale, paths)
     return HttpResponse(json.dumps(entities), mimetype='application/json')
 
 

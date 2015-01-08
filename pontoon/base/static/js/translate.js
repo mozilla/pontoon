@@ -1829,9 +1829,9 @@ var Pontoon = (function (my) {
     /*
      * Get entities
      *
-     * path Website window object
+     * paths Website window object
      */
-    getEntities: function(path, advanced, project) {
+    getEntities: function(paths, advanced, project) {
       var self = this;
 
       $.ajax({
@@ -1839,7 +1839,7 @@ var Pontoon = (function (my) {
         data: {
           project: $('#server').data('id'),
           locale: $('#server').data('locale').code,
-          path: $('header .part .selector').attr('title')
+          paths: JSON.stringify([$('header .part .selector').attr('title')])
         },
         success: function(data) {
           if (data !== "error") {
