@@ -1608,7 +1608,7 @@ var Pontoon = (function (my) {
       self.updateProgress();
       self.attachEditorHandlers();
 
-      $("#spinner").hide();
+      $("#project-load").hide();
       $("body > header > .container").show();
 
       // If 2-column layout opened by default, open first entity in the editor
@@ -1684,7 +1684,6 @@ var Pontoon = (function (my) {
 
           $('#source').show().css('margin-left', $('#sidebar:visible').width());
           Pontoon.resizeIframe();
-          $('#project-load').hide();
 
           Pontoon.getEntities(message.value, advanced, projectWindow);
           break;
@@ -1820,7 +1819,6 @@ var Pontoon = (function (my) {
         .css('width', '100%');
       $('#switch, #drag').remove();
       $('#editor').addClass('opened');
-      $('#project-load').hide();
 
       this.init(true);
     },

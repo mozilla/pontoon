@@ -10,11 +10,14 @@ mark.placeable {
 }
 
 #project-load {
+  background: #272A2F;
   display: table;
   height: 100%;
   overflow: hidden;
   position: fixed;
+  top: 0;
   width: 100%;
+  z-index: 20;
 }
 
 #project-load p {
