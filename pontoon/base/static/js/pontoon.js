@@ -786,7 +786,7 @@
         .replace(/locales\//, '')
         .replace(/%7Blocale%7D./, '');
 
-      url.substring(url.indexOf(split) + split.length);
+      url = url.substring(url.indexOf(split) + split.length);
       paths.push(url);
     }
 
