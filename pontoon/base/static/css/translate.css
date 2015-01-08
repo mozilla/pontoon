@@ -413,7 +413,7 @@ body > header .notification li {
 }
 
 #profile.select .popup {
-  right: 0;
+  right: 5px;
   width: 300px;
 }
 
