@@ -1685,7 +1685,8 @@ var Pontoon = (function (my) {
           $('#source').show().css('margin-left', $('#sidebar:visible').width());
           Pontoon.resizeIframe();
           $('#project-load').hide();
-          Pontoon.init(window, advanced, projectWindow);
+
+          Pontoon.getEntities(message.value, advanced, projectWindow);
           break;
 
         case "DATA":
@@ -1750,16 +1751,15 @@ var Pontoon = (function (my) {
     /*
      * Initialize Pontoon
      *
-     * app Pontoon window object
      * advanced Is advanced (2-column) mode on?
      * project Website window object
      */
-    init: function (app, advanced, project) {
+    init: function (advanced, project) {
       var self = this;
 
       // Build Pontoon object
       this.app = {
-        win: app,
+        win: window,
         advanced: advanced,
         path: $('base').attr('href') // pontoon.css injection
       };
@@ -1783,7 +1783,7 @@ var Pontoon = (function (my) {
         manager: $('#server').data('manager')
       };
 
-      // Initialize Pontoon for projects with in place translation support
+      // Prepare UI for projects with in place translation support
       // (iframe cross-domain policy solution)
       if (project) {
         self.postMessage("INITIALIZE", {
@@ -1795,7 +1795,7 @@ var Pontoon = (function (my) {
           user: self.user
         }, null, $('#server').data('url'));
 
-      // Initialize Pontoon for projects without in place translation support
+      // Prepare UI for projects without in place translation support
       } else {
         $(self.project.entities).each(function (i) {
           this.id = i;
@@ -1807,6 +1807,55 @@ var Pontoon = (function (my) {
       if ($('.notification li').length) {
         $('.notification').css('opacity', 100);
       }
+    },
+
+
+    /*
+     * Initialize Pontoon for projects without in place translation support
+     */
+    initializeWithoutWebsite: function() {
+      $('body > header').show();
+      $('#sidebar')
+        .addClass('advanced')
+        .css('width', '100%');
+      $('#switch, #drag').remove();
+      $('#editor').addClass('opened');
+      $('#project-load').hide();
+
+      this.init(true);
+    },
+
+
+    /*
+     * Get entities
+     *
+     * path Website window object
+     */
+    getEntities: function(path, advanced, project) {
+      var self = this;
+
+      $.ajax({
+        url: 'get-entities/',
+        data: {
+          project: $('#server').data('id'),
+          locale: $('#server').data('locale').code,
+          path: $('header .part .selector').attr('title')
+        },
+        success: function(data) {
+          if (data !== "error") {
+            self.entities = data;
+            return project ? self.init(advanced, project) :
+              self.initializeWithoutWebsite();
+
+          } else {
+            $('#project-load')
+              .find('.animation').hide().end()
+              .find('.text')
+                .html('Oops, something went wrong.')
+                .animate({opacity: 1});
+          }
+        }
+      });
     }
 
   });
@@ -1911,19 +1960,6 @@ $(function() {
     });
   }
 
-  // Initialize Pontoon for projects without in place translation support
-  function initializeWithoutWebsite() {
-    $('body > header').show();
-    $('#sidebar')
-      .addClass('advanced')
-      .css('width', '100%');
-    $('#switch, #drag').remove();
-    $('#editor').addClass('opened');
-    $('#project-load').hide();
-
-    Pontoon.init(window, true);
-  }
-
   // Initialize Pontoon for projects with in place translation support
   function initializeWithWebsite() {
     $('#source').attr('src', url);
@@ -1933,7 +1969,7 @@ $(function() {
         interval = setInterval(function() {
           if (i < 100) {
             i++;
-            // Set in Pontoon.init(), which is called on READY
+            // Set in Pontoon.init(), which is called after READY
             if (Pontoon.app) {
               clearInterval(interval);
               return attachResizeHandlers();
@@ -1943,34 +1979,21 @@ $(function() {
             clearInterval(interval);
             $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
             window.removeEventListener("message", Pontoon.receiveMessage, false);
-            return initializeWithoutWebsite();
+            return Pontoon.initializeWithoutWebsite();
           }
         }, 100);
   }
 
+  // START
   var url = $('#server').data('url');
 
-  // Get entities
-  $.ajax({
-    url: 'get-entities/',
-    data: {
-      project: $('#server').data('id'),
-      locale: $('#server').data('locale').code,
-      path: $('header .part .selector').attr('title')
-    },
-    success: function(data) {
-      if (data !== "error") {
-        Pontoon.entities = data;
-        return (url) ? initializeWithWebsite() : initializeWithoutWebsite();
-      } else {
-        $('#project-load')
-          .find('.animation').hide().end()
-          .find('.text').html('Oops, something went wrong.').animate({opacity: 1});
-      }
-    }
-  });
+  if (url) {
+    initializeWithWebsite();
+  } else {
+    Pontoon.getEntities();
+  }
 
-  // Provide some potentially amusing message if loading takes too long
+  // Show potentially amusing message if loading takes more time
   setTimeout(function() {
     $('#project-load .text').animate({opacity: 1});
   }, 3000);

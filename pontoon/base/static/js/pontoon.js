@@ -775,6 +775,21 @@
   // When loaded inside web client, notify it and wait for messages
   if (window.opener || (window !== window.top)) {
     window.addEventListener("message", initizalize, false);
-    postMessage("READY", null, null, "*");
+
+    // Parse localization resource paths if present
+    var resources = document.querySelectorAll('link[rel="localization"]'),
+        split = '///',
+        paths = [];
+
+    for (var i = 0; i < resources.length; i++) {
+      var url = resources[i].href
+        .replace(/locales\//, '')
+        .replace(/%7Blocale%7D./, '');
+
+      url.substring(url.indexOf(split) + split.length);
+      paths.push(url);
+    }
+
+    postMessage("READY", paths, null, "*");
   }
 })();
