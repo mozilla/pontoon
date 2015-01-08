@@ -1970,6 +1970,7 @@ $(function() {
     }
   });
 
+  // Provide some potentially amusing message if loading takes too long
   setTimeout(function() {
     $('#project-load .text').animate({opacity: 1});
   }, 3000);
