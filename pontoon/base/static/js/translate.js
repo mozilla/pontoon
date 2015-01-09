@@ -1761,12 +1761,12 @@ var Pontoon = (function (my) {
     createObject: function (advanced, project) {
       var self = this;
 
-      // Build Pontoon object
       this.app = {
         win: window,
         advanced: advanced,
         path: $('base').attr('href') // pontoon.css injection
       };
+
       this.project = {
         win: project,
         url: "",
@@ -1779,7 +1779,9 @@ var Pontoon = (function (my) {
           $('#server').data('width') : false,
         links: $('#server').data('links')
       };
+
       this.locale = $('#server').data('locale');
+
       this.user = {
         email: $('#server').data('email') || '',
         name: $('#server').data('name') || '',
