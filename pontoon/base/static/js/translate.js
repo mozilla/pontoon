@@ -1684,8 +1684,7 @@ var Pontoon = (function (my) {
 
           $('#source').show().css('margin-left', $('#sidebar:visible').width());
           Pontoon.resizeIframe();
-
-          Pontoon.getEntities(message.value, advanced, projectWindow);
+          Pontoon.init(advanced, projectWindow, message.value);
           break;
 
         case "DATA":
@@ -1752,8 +1751,9 @@ var Pontoon = (function (my) {
      *
      * advanced Is advanced (2-column) mode on?
      * project Website window object
+     * paths Localization resource paths from the project
      */
-    init: function (advanced, project) {
+    init: function (advanced, project, paths) {
       var self = this;
 
       // Build Pontoon object
@@ -1781,6 +1781,8 @@ var Pontoon = (function (my) {
         localizer: $('#server').data('localizer'),
         manager: $('#server').data('manager')
       };
+
+      Pontoon.getEntities(paths);
 
       // Prepare UI for projects with in place translation support
       // (iframe cross-domain policy solution)
@@ -1827,9 +1829,9 @@ var Pontoon = (function (my) {
     /*
      * Get entities
      *
-     * paths Website window object
+     * paths Localization resource paths from the project
      */
-    getEntities: function(paths, advanced, project) {
+    getEntities: function(paths) {
       var self = this;
 
       $.ajax({
@@ -1967,13 +1969,13 @@ $(function() {
         interval = setInterval(function() {
           if (i < 100) {
             i++;
-            // Set in Pontoon.init(), which is called after READY
+            // Set in Pontoon.init(), called after READY received
             if (Pontoon.app) {
               clearInterval(interval);
               return attachResizeHandlers();
             }
           } else {
-            // If no READY call in 10 seconds
+            // If no READY received in 10 seconds
             clearInterval(interval);
             $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
             window.removeEventListener("message", Pontoon.receiveMessage, false);
