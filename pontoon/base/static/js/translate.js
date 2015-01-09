@@ -1603,6 +1603,11 @@ var Pontoon = (function (my) {
     createUI: function () {
       var self = this;
 
+      // Show message if provided
+      if ($('.notification li').length) {
+        $('.notification').css('opacity', 100);
+      }
+
       self.attachMainHandlers();
       self.renderEntityList();
       self.updateProgress();
@@ -1683,9 +1688,9 @@ var Pontoon = (function (my) {
           }
 
           $('#source').show().css('margin-left', $('#sidebar:visible').width());
-          Pontoon.ready = true;
+          Pontoon.paths = message.value;
           Pontoon.resizeIframe();
-          Pontoon.getEntities(message.value, advanced, projectWindow);
+          Pontoon.initialize(advanced, projectWindow);
           break;
 
         case "DATA":
@@ -1748,12 +1753,12 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Initialize Pontoon
+     * Create Pontoon object data
      *
      * advanced Is advanced (2-column) mode on?
      * project Website window object
      */
-    init: function (advanced, project) {
+    createObject: function (advanced, project) {
       var self = this;
 
       // Build Pontoon object
@@ -1781,55 +1786,13 @@ var Pontoon = (function (my) {
         localizer: $('#server').data('localizer'),
         manager: $('#server').data('manager')
       };
-
-      // Prepare UI for projects with in place translation support
-      // (iframe cross-domain policy solution)
-      if (project) {
-        self.postMessage("INITIALIZE", {
-          path: self.app.path,
-          links: self.project.links,
-          entities: self.project.entities,
-          pk: self.project.pk,
-          locale: self.locale,
-          user: self.user
-        }, null, $('#server').data('url'));
-
-      // Prepare UI for projects without in place translation support
-      } else {
-        $(self.project.entities).each(function (i) {
-          this.id = i;
-        });
-        self.createUI();
-      }
-
-      // Show message if provided
-      if ($('.notification li').length) {
-        $('.notification').css('opacity', 100);
-      }
     },
 
 
     /*
-     * Initialize Pontoon for projects without in place translation support
+     * Initialize Pontoon: load entities, store data, prepare UI
      */
-    initializeWithoutWebsite: function() {
-      $('body > header').show();
-      $('#sidebar')
-        .addClass('advanced')
-        .css('width', '100%');
-      $('#switch, #drag').remove();
-      $('#editor').addClass('opened');
-
-      this.init(true);
-    },
-
-
-    /*
-     * Get entities
-     *
-     * paths Localization resource paths from the project
-     */
-    getEntities: function(paths, advanced, project) {
+    initialize: function(advanced, project) {
       var self = this;
 
       $.ajax({
@@ -1837,13 +1800,40 @@ var Pontoon = (function (my) {
         data: {
           project: $('#server').data('id'),
           locale: $('#server').data('locale').code,
-          paths: JSON.stringify([$('header .part .selector').attr('title')])
+          paths: JSON.stringify(/* Pontoon.paths || */[$('header .part .selector').attr('title')])
         },
         success: function(data) {
           if (data !== "error") {
             self.entities = data;
-            return project ? self.init(advanced, project) :
-              self.initializeWithoutWebsite();
+
+            // Projects with in place translation support
+            if (project) {
+              self.createObject(advanced, project);
+
+              self.postMessage("INITIALIZE", {
+                path: self.app.path,
+                links: self.project.links,
+                entities: self.project.entities,
+                pk: self.project.pk,
+                locale: self.locale,
+                user: self.user
+              }, null, $('#server').data('url'));
+
+            // Projects without in place translation support
+            } else {
+              $('body > header').show();
+              $('#sidebar').addClass('advanced').css('width', '100%');
+              $('#switch, #drag').remove();
+              $('#editor').addClass('opened');
+
+              self.createObject(true);
+
+              $(self.project.entities).each(function (i) {
+                this.id = i;
+              });
+
+              self.createUI();
+            }
 
           } else {
             $('#project-load')
@@ -1958,7 +1948,7 @@ $(function() {
     });
   }
 
-  // START
+  // START: Depending on project URL
   var url = $('#server').data('url');
 
   if (url) {
@@ -1972,22 +1962,22 @@ $(function() {
       if (i < 100) {
         i++;
         // Set when READY received
-        if (Pontoon.ready) {
+        if (Pontoon.paths) {
           clearInterval(interval);
           return attachResizeHandlers();
         }
 
       } else {
-        // If no READY received in 10 seconds
+        // If no READY received for 10 seconds
         clearInterval(interval);
         $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
         window.removeEventListener("message", Pontoon.receiveMessage, false);
-        return Pontoon.getEntities();
+        return Pontoon.initialize();
       }
     }, 100);
 
   } else {
-    Pontoon.getEntities();
+    Pontoon.initialize();
   }
 
   // Show potentially amusing message if loading takes more time
