@@ -1918,6 +1918,8 @@ var Pontoon = (function (my) {
                 user: self.user
               }, null, $('#server').data('url'));
 
+              self.makeIframeResizable();
+
             // Projects without in place translation support
             } else {
               $('body > header').show();
@@ -1963,17 +1965,10 @@ $(function() {
     var i = 0,
         interval = 0;
 
+    // If no READY (Pontoon.paths) received for 10 seconds
     interval = setInterval(function() {
-      if (i < 100) {
-        i++;
-        // Set when READY received
-        if (Pontoon.paths) {
-          clearInterval(interval);
-          return Pontoon.makeIframeResizable();
-        }
-
-      } else {
-        // If no READY received for 10 seconds
+      i++;
+      if (i > 100 && !Pontoon.paths) {
         clearInterval(interval);
         $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
         window.removeEventListener("message", Pontoon.receiveMessage, false);
