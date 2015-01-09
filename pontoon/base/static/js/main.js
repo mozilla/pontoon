@@ -330,7 +330,7 @@ $(function() {
       return false;
     }
 
-    if ($('#sidebar').is(':visible')) {
+    if ($('#sidebar').is(':visible') && !$('#project-load').is(':visible')) {
 
       // Alt + F: focus search
       if (Pontoon.app.advanced || !$("#editor").is('.opened')) {
