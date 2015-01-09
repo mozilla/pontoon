@@ -1977,7 +1977,7 @@ $(function() {
             clearInterval(interval);
             $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
             window.removeEventListener("message", Pontoon.receiveMessage, false);
-            return Pontoon.initializeWithoutWebsite();
+            return Pontoon.getEntities();
           }
         }, 100);
   }
