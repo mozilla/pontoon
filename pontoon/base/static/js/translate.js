@@ -1970,7 +1970,7 @@ $(function() {
             // Set in Pontoon.init(), called after READY received
             if (Pontoon.ready) {
               clearInterval(interval);
-              return;
+              return attachResizeHandlers();
             }
           } else {
             // If no READY received in 10 seconds
