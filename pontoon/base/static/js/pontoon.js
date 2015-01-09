@@ -11,7 +11,7 @@
        */
       function sendData() {
         // Deep copy: http://api.jquery.com/jQuery.extend
-        var entities = $.extend(true, [], Pontoon.project.entities);
+        var entities = $.extend(true, [], Pontoon.entities);
         $(entities).each(function () {
           delete this.node;
         });
@@ -86,7 +86,7 @@
                 entity = target.entity,
                 id = entity.id,
                 next = id + 1,
-                entities = Pontoon.project.entities;
+                entities = Pontoon.entities;
 
             if (key === 13 && !e.shiftKey) { // Enter: confirm translation
               save.click();
@@ -200,12 +200,12 @@
             // Remove entities from child nodes if parent node is entity
             parent.find(".pontoon-entity").each(function() {
               delete this.entity;
-              Pontoon.project.entities.pop();
+              Pontoon.entities.pop();
               entity.id--;
               counter--;
             });
 
-            Pontoon.project.entities.push(entity);
+            Pontoon.entities.push(entity);
             parent.addClass("pontoon-entity");
           }
         });
@@ -232,7 +232,7 @@
             };
         });
 
-        $(Pontoon.project.entities).each(function(i, entity) {
+        $(Pontoon.entities).each(function(i, entity) {
           var translation = entity.translation[0].string,
               original = entity.original,
               element = elements[original];
@@ -285,7 +285,7 @@
         });
 
         // Match l10n comment nodes with DB data
-        $(Pontoon.project.entities).each(function(i, entity) {
+        $(Pontoon.entities).each(function(i, entity) {
           // Renedered text could be different than source
           $('body').append('<div id="pontoon-string">' + this.original + '</div>');
 
@@ -325,7 +325,7 @@
       function loadEntitiesL10nJs() {
         var counter = 0;
 
-        $(Pontoon.project.entities).each(function(i, entity) {
+        $(Pontoon.entities).each(function(i, entity) {
           var translation = entity.translation[0].string,
               split = entity.key.split('.'),
               key = split[0],
@@ -505,11 +505,11 @@
           switch (message.type) {
 
           case "HOVER":
-            Pontoon.project.entities[message.value].hover();
+            Pontoon.entities[message.value].hover();
             break;
 
           case "UNHOVER":
-            Pontoon.project.entities[message.value].unhover();
+            Pontoon.entities[message.value].unhover();
             break;
 
           case "NAVIGATE":
@@ -522,7 +522,7 @@
               hideToolbar(target);
             }
             // Start editing new entity
-            var entity = Pontoon.project.entities[message.value];
+            var entity = Pontoon.entities[message.value];
             if (entity.body) {
               entity.hover();
               startEditing();
@@ -658,7 +658,7 @@
         });
 
       // Select appropriate way of loading entities
-      var entities = Pontoon.project.entities;
+      var entities = Pontoon.entities;
       if (entities.length > 0) {
 
         if (entities[0].format === 'properties') {

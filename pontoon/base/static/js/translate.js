@@ -53,7 +53,7 @@ var Pontoon = (function (my) {
         download(params);
 
       } else if (type === "json") {
-        var entities = strip(this.project.entities);
+        var entities = strip(this.entities);
         params.content = JSON.stringify(entities, null, "\t");
         download(params);
 
@@ -659,7 +659,7 @@ var Pontoon = (function (my) {
       });
 
       // Render
-      $(self.project.entities).each(function () {
+      $(self.entities).each(function () {
         var status = self.getEntityStatus(this),
             li = $('<li class="entity limited' +
           (status ? ' ' + status : '') +
@@ -1162,7 +1162,7 @@ var Pontoon = (function (my) {
       // Update parts menu
       if (all) {
         var details = Pontoon.getProjectDetails(),
-            path = this.project.entities[0].path;
+            path = this.entities[0].path;
 
         $(details[this.locale.code.toLowerCase()]).each(function() {
           if (this.resource__path === path) {
@@ -1695,9 +1695,9 @@ var Pontoon = (function (my) {
 
         case "DATA":
           // Deep copy: http://api.jquery.com/jQuery.extend
-          Pontoon.project.entities = $.extend(
+          Pontoon.entities = $.extend(
             true,
-            Pontoon.project.entities,
+            Pontoon.entities,
             message.value.entities);
           break;
 
@@ -1713,16 +1713,16 @@ var Pontoon = (function (my) {
           break;
 
         case "HOVER":
-          Pontoon.project.entities[message.value].ui.addClass('hovered');
+          Pontoon.entities[message.value].ui.addClass('hovered');
           break;
 
         case "UNHOVER":
-          Pontoon.project.entities[message.value].ui.removeClass('hovered');
+          Pontoon.entities[message.value].ui.removeClass('hovered');
           break;
 
         case "ACTIVE":
           if ($('#switch').is('.opened')) {
-            var entity = Pontoon.project.entities[message.value];
+            var entity = Pontoon.entities[message.value];
             Pontoon.openEditor(entity);
           }
           break;
@@ -1734,12 +1734,12 @@ var Pontoon = (function (my) {
           break;
 
         case "UPDATE":
-          var entity = Pontoon.project.entities[message.value.id];
+          var entity = Pontoon.entities[message.value.id];
           Pontoon.updateOnServer(entity, message.value.content, true);
           break;
 
         case "DELETE":
-          var entity = Pontoon.project.entities[message.value];
+          var entity = Pontoon.entities[message.value];
           Pontoon.updateEntityUI(entity);
           break;
 
@@ -1868,7 +1868,6 @@ var Pontoon = (function (my) {
         win: project,
         url: "",
         title: "",
-        entities: self.entities || [],
         pk: $('#server').data('id'),
         width: (
           $('#server').data('width') &&
@@ -1912,7 +1911,7 @@ var Pontoon = (function (my) {
               self.postMessage("INITIALIZE", {
                 path: self.app.path,
                 links: self.project.links,
-                entities: self.project.entities,
+                entities: self.entities,
                 pk: self.project.pk,
                 locale: self.locale,
                 user: self.user
@@ -1929,7 +1928,7 @@ var Pontoon = (function (my) {
 
               self.createObject(true);
 
-              $(self.project.entities).each(function (i) {
+              $(self.entities).each(function (i) {
                 this.id = i;
               });
 
