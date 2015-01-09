@@ -1751,6 +1751,103 @@ var Pontoon = (function (my) {
       }
     },
 
+    /*
+     * Make iFrame resizable
+     */
+    makeIframeResizable: function() {
+      function mouseUpHandler(e) {
+        $(document)
+          .unbind('mousemove', mouseMoveHandler)
+          .unbind('mouseup', mouseUpHandler);
+
+        $('#iframe-cover').hide(); // iframe fix
+        $('#editor:not(".opened")').css('left', $('#sidebar').width()).show();
+
+        var initial = e.data.initial,
+            advanced = Pontoon.app.advanced;
+        if (initial.advanced !== advanced) {
+
+          // On switch to 2-column view, populate editor if empty
+          if (advanced) {
+            if (!$('#editor')[0].entity || !$('#entitylist .entity.hovered').length) {
+              $("#entitylist .entity:first").mouseover().click();
+            }
+
+          // On switch to 1-column view, open editor if needed
+          } else {
+            if ($('#entitylist .entity.hovered').length) {
+              Pontoon.openEditor($('#editor')[0].entity);
+            }
+          }
+        }
+      }
+
+      function mouseMoveHandler(e) {
+        var initial = e.data.initial,
+            left = Math.min(Math.max(initial.leftWidth + (e.pageX - initial.position), initial.leftMin), initial.leftMax),
+            right = Math.min(Math.max(initial.rightWidth - (e.pageX - initial.position), 0), initial.leftMax - initial.leftMin);
+
+        initial.left.width(left);
+        initial.right.width(right).css('margin-left', left);
+
+        // Sidebar resized over 2-column breakpoint
+        if (left >= 700) {
+          $('#entitylist, #editor').removeAttr('style');
+          if (!Pontoon.app.advanced) {
+            Pontoon.app.advanced = true;
+            initial.left.addClass('advanced');
+            $('#editor')
+              .addClass('opened')
+              .show();
+          }
+
+        // Sidebar resized below 2-column breakpoint
+        } else {
+          if (Pontoon.app.advanced) {
+            Pontoon.app.advanced = false;
+            initial.left.removeClass('advanced').show();
+            $('#editor')
+              .removeClass('opened')
+              .css('left', $('#sidebar').width())
+              .hide();
+          }
+        }
+
+        $('#iframe-cover').width(right).css('margin-left', left); // iframe fix
+      }
+
+      // Resize iframe with window
+      $(window).resize(function () {
+        Pontoon.resizeIframe();
+        Pontoon.postMessage("RESIZE");
+      });
+
+      // Resize sidebar and iframe
+      $('#drag').bind('mousedown', function (e) {
+        e.preventDefault();
+
+        var left = $('#sidebar'),
+            right = $('#source'),
+            data = {
+              left: left,
+              right: right,
+              leftWidth: left.width(),
+              rightWidth: right.width(),
+              leftMin: 350,
+              leftMax: $(window).width(),
+              position: e.pageX,
+              advanced: Pontoon.app.advanced
+            };
+
+        $('#iframe-cover').show().width(right.width()); // iframe fix
+        $('#editor:not(".opened")').hide();
+
+        $(document)
+          .bind('mousemove', { initial: data }, mouseMoveHandler)
+          .bind('mouseup', { initial: data }, mouseUpHandler);
+      });
+    },
+
 
     /*
      * Create Pontoon object data
@@ -1856,101 +1953,7 @@ var Pontoon = (function (my) {
 /* Main code */
 $(function() {
 
-  function mouseUpHandler(e) {
-    $(document)
-      .unbind('mousemove', mouseMoveHandler)
-      .unbind('mouseup', mouseUpHandler);
-
-    $('#iframe-cover').hide(); // iframe fix
-    $('#editor:not(".opened")').css('left', $('#sidebar').width()).show();
-
-    var initial = e.data.initial,
-        advanced = Pontoon.app.advanced;
-    if (initial.advanced !== advanced) {
-
-      // On switch to 2-column view, populate editor if empty
-      if (advanced) {
-        if (!$('#editor')[0].entity || !$('#entitylist .entity.hovered').length) {
-          $("#entitylist .entity:first").mouseover().click();
-        }
-
-      // On switch to 1-column view, open editor if needed
-      } else {
-        if ($('#entitylist .entity.hovered').length) {
-          Pontoon.openEditor($('#editor')[0].entity);
-        }
-      }
-    }
-  }
-
-  function mouseMoveHandler(e) {
-    var initial = e.data.initial,
-        left = Math.min(Math.max(initial.leftWidth + (e.pageX - initial.position), initial.leftMin), initial.leftMax),
-        right = Math.min(Math.max(initial.rightWidth - (e.pageX - initial.position), 0), initial.leftMax - initial.leftMin);
-
-    initial.left.width(left);
-    initial.right.width(right).css('margin-left', left);
-
-    // Sidebar resized over 2-column breakpoint
-    if (left >= 700) {
-      $('#entitylist, #editor').removeAttr('style');
-      if (!Pontoon.app.advanced) {
-        Pontoon.app.advanced = true;
-        initial.left.addClass('advanced');
-        $('#editor')
-          .addClass('opened')
-          .show();
-      }
-
-    // Sidebar resized below 2-column breakpoint
-    } else {
-      if (Pontoon.app.advanced) {
-        Pontoon.app.advanced = false;
-        initial.left.removeClass('advanced').show();
-        $('#editor')
-          .removeClass('opened')
-          .css('left', $('#sidebar').width())
-          .hide();
-      }
-    }
-
-    $('#iframe-cover').width(right).css('margin-left', left); // iframe fix
-  }
-
-  function attachResizeHandlers() {
-    // Resize iframe with window
-    $(window).resize(function () {
-      Pontoon.resizeIframe();
-      Pontoon.postMessage("RESIZE");
-    });
-
-    // Resize sidebar and iframe
-    $('#drag').bind('mousedown', function (e) {
-      e.preventDefault();
-
-      var left = $('#sidebar'),
-          right = $('#source'),
-          data = {
-            left: left,
-            right: right,
-            leftWidth: left.width(),
-            rightWidth: right.width(),
-            leftMin: 350,
-            leftMax: $(window).width(),
-            position: e.pageX,
-            advanced: Pontoon.app.advanced
-          };
-
-      $('#iframe-cover').show().width(right.width()); // iframe fix
-      $('#editor:not(".opened")').hide();
-
-      $(document)
-        .bind('mousemove', { initial: data }, mouseMoveHandler)
-        .bind('mouseup', { initial: data }, mouseUpHandler);
-    });
-  }
-
-  // START: Depending on project URL
+  // Start differently, depending on project URL
   var url = $('#server').data('url');
 
   if (url) {
@@ -1966,7 +1969,7 @@ $(function() {
         // Set when READY received
         if (Pontoon.paths) {
           clearInterval(interval);
-          return attachResizeHandlers();
+          return Pontoon.makeIframeResizable();
         }
 
       } else {
