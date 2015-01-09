@@ -1971,7 +1971,7 @@ $(function() {
     interval = setInterval(function() {
       if (i < 100) {
         i++;
-        // Set in Pontoon.init(), called after READY received
+        // Set when READY received
         if (Pontoon.ready) {
           clearInterval(interval);
           return attachResizeHandlers();
