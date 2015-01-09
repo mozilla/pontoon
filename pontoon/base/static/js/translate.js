@@ -1958,35 +1958,34 @@ $(function() {
     });
   }
 
-  // Initialize Pontoon for projects with in place translation support
-  function initializeWithWebsite() {
-    $('#source').attr('src', url);
-    window.addEventListener("message", Pontoon.receiveMessage, false);
-
-    var i = 0,
-        interval = setInterval(function() {
-          if (i < 100) {
-            i++;
-            // Set in Pontoon.init(), called after READY received
-            if (Pontoon.ready) {
-              clearInterval(interval);
-              return attachResizeHandlers();
-            }
-          } else {
-            // If no READY received in 10 seconds
-            clearInterval(interval);
-            $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
-            window.removeEventListener("message", Pontoon.receiveMessage, false);
-            return Pontoon.getEntities();
-          }
-        }, 100);
-  }
-
   // START
   var url = $('#server').data('url');
 
   if (url) {
-    initializeWithWebsite();
+    $('#source').attr('src', url);
+    window.addEventListener("message", Pontoon.receiveMessage, false);
+
+    var i = 0,
+        interval = 0;
+
+    interval = setInterval(function() {
+      if (i < 100) {
+        i++;
+        // Set in Pontoon.init(), called after READY received
+        if (Pontoon.ready) {
+          clearInterval(interval);
+          return attachResizeHandlers();
+        }
+
+      } else {
+        // If no READY received in 10 seconds
+        clearInterval(interval);
+        $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
+        window.removeEventListener("message", Pontoon.receiveMessage, false);
+        return Pontoon.getEntities();
+      }
+    }, 100);
+
   } else {
     Pontoon.getEntities();
   }
