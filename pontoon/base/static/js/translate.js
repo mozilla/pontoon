@@ -1683,8 +1683,9 @@ var Pontoon = (function (my) {
           }
 
           $('#source').show().css('margin-left', $('#sidebar:visible').width());
+          Pontoon.ready = true;
           Pontoon.resizeIframe();
-          Pontoon.init(advanced, projectWindow, message.value);
+          Pontoon.getEntities(message.value, advanced, projectWindow);
           break;
 
         case "DATA":
@@ -1751,9 +1752,8 @@ var Pontoon = (function (my) {
      *
      * advanced Is advanced (2-column) mode on?
      * project Website window object
-     * paths Localization resource paths from the project
      */
-    init: function (advanced, project, paths) {
+    init: function (advanced, project) {
       var self = this;
 
       // Build Pontoon object
@@ -1781,8 +1781,6 @@ var Pontoon = (function (my) {
         localizer: $('#server').data('localizer'),
         manager: $('#server').data('manager')
       };
-
-      Pontoon.getEntities(paths);
 
       // Prepare UI for projects with in place translation support
       // (iframe cross-domain policy solution)
@@ -1831,7 +1829,7 @@ var Pontoon = (function (my) {
      *
      * paths Localization resource paths from the project
      */
-    getEntities: function(paths) {
+    getEntities: function(paths, advanced, project) {
       var self = this;
 
       $.ajax({
@@ -1970,9 +1968,9 @@ $(function() {
           if (i < 100) {
             i++;
             // Set in Pontoon.init(), called after READY received
-            if (Pontoon.app) {
+            if (Pontoon.ready) {
               clearInterval(interval);
-              return attachResizeHandlers();
+              return;
             }
           } else {
             // If no READY received in 10 seconds
