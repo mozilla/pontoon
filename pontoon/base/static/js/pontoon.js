@@ -736,10 +736,10 @@
             win: window,
             url: window.location.href,
             title: document.title.split("-->")[1] || document.title,
-            entities: message.value.entities,
             pk: message.value.pk,
             links: message.value.links
           },
+          entities: message.value.entities,
           locale: message.value.locale,
           user: message.value.user
         };
