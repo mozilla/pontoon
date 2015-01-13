@@ -88,6 +88,14 @@ def locale(request, locale, template='locale.html'):
         disabled=False, pk__in=Resource.objects.values('project'), locales=l) \
         .order_by("name")
 
+    if not projects:
+        messages.error(
+            request, "Oops, no projects available for this locale.")
+        request.session['translate_error'] = {
+            'none': None,
+        }
+        return HttpResponseRedirect(reverse('pontoon.home'))
+
     data = {
         'projects': get_projects_with_stats(projects, l),
         'locale': l,
