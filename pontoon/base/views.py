@@ -102,7 +102,8 @@ def project(request, slug, template='project.html'):
 
     # Validate project
     try:
-        p = Project.objects.get(slug=slug)
+        p = Project.objects.get(slug=slug, disabled=False,
+                                pk__in=Resource.objects.values('project'))
     except Project.DoesNotExist:
         messages.error(request, "Oops, project could not be found.")
         request.session['translate_error'] = {
