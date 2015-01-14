@@ -18,7 +18,7 @@
     </nav>
 
     {% block header %}
-    <h1 id="title"><a href="/">{% block heading %}Pontoon{% endblock %}</a></h1>
+    <h1 id="title"><a href="{% block heading_url %}/{% endblock %}">{% block heading %}Pontoon{% endblock %}</a></h1>
     <h2 id="subtitle">{% block subtitle %}Localize the web. In place.{% endblock %}</h2>
     {% endblock %}
 

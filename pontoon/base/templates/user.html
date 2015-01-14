@@ -12,8 +12,14 @@
 </div>
 {% endblock %}
 
+{% block heading_url %}
+  {% if user.is_authenticated() and user.email == contributor.email %}
+    http://gravatar.com/
+  {% endif %}
+{% endblock %}
+
 {% block heading %}
-<img class="rounded" src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
+<img class="rounded" src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}"{% if user.is_authenticated() and user.email == contributor.email %} title="Update profile picture"{% endif %}>
 {% endblock %}
 
 {% block subtitle %}
