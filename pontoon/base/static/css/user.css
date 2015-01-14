@@ -4,6 +4,30 @@
 
 #title a {
   display: block;
+  position: relative;
+}
+
+#title a .desc {
+  bottom: 0;
+  color: #FFFFFF;
+  display: none;
+  font-size: 16px;
+  font-weight: bold;
+  height: 20px;
+  left: 0;
+  letter-spacing: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+#title a:hover .desc {
+  display: block;
+}
+
+#title a:hover .desc ~ img {
+  opacity: 0.3;
 }
 
 #subtitle .uneditable {
