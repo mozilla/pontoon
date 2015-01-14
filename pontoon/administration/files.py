@@ -286,7 +286,6 @@ def extract_po(project, locale, path, entities=False):
 
     try:
         po = polib.pofile(path)
-        escape = polib.escape
 
         relative_path = get_relative_path(path, locale)
         if relative_path[-1] == 't':
@@ -299,8 +298,8 @@ def extract_po(project, locale, path, entities=False):
             for order, entry in enumerate(po):
                 if not entry.obsolete:
                     save_entity(resource=resource,
-                                string=escape(entry.msgid),
-                                string_plural=escape(entry.msgid_plural),
+                                string=entry.msgid,
+                                string_plural=entry.msgid_plural,
                                 comment=entry.comment,
                                 order=order,
                                 source=entry.occurrences)
@@ -312,15 +311,15 @@ def extract_po(project, locale, path, entities=False):
                 if not entry.obsolete:
 
                     # Entities without plurals
-                    if len(escape(entry.msgstr)) > 0:
+                    if len(entry.msgstr) > 0:
                         try:
                             e = Entity.objects.get(
                                 resource=resource,
-                                string=escape(entry.msgid))
+                                string=entry.msgid)
                             save_translation(
                                 entity=e,
                                 locale=locale,
-                                string=escape(entry.msgstr),
+                                string=entry.msgstr,
                                 fuzzy='fuzzy' in entry.flags)
 
                         except Entity.DoesNotExist:
@@ -331,12 +330,12 @@ def extract_po(project, locale, path, entities=False):
                         try:
                             e = Entity.objects.get(
                                 resource=resource,
-                                string=escape(entry.msgid))
+                                string=entry.msgid)
                             for k in entry.msgstr_plural:
                                 save_translation(
                                     entity=e,
                                     locale=locale,
-                                    string=escape(entry.msgstr_plural[k]),
+                                    string=entry.msgstr_plural[k],
                                     plural_form=k,
                                     fuzzy='fuzzy' in entry.flags)
 
@@ -634,13 +633,12 @@ def dump_po(project, locale, relative_path):
     entities = Entity.objects.filter(resource=resource, obsolete=False)
 
     for entity in entities:
-        entry = po.find(polib.unescape(smart_text(entity.string)))
+        entry = po.find(smart_text(entity.string))
         if entry:
             if not entry.msgid_plural:
                 translation = get_translation(entity=entity, locale=locale)
                 if translation.string != '':
-                    entry.msgstr = polib.unescape(
-                        translation.string.decode('utf-8'))
+                    entry.msgstr = translation.string.decode('utf-8')
                     if translation.date > date:
                         date = translation.date
                         newest = translation
@@ -654,8 +652,7 @@ def dump_po(project, locale, relative_path):
                             entity=entity, locale=locale, plural_form=i)
                         if translation.string != '':
                             entry.msgstr_plural[unicode(i)] = \
-                                polib.unescape(
-                                    translation.string.decode('utf-8'))
+                                translation.string.decode('utf-8')
                             if translation.date > date:
                                 date = translation.date
                                 newest = translation
