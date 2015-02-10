@@ -1,7 +1,0 @@
-../polib.py
-../polib.pyc
-./
-PKG-INFO
-top_level.txt
-SOURCES.txt
-dependency_links.txt
