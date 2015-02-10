@@ -1071,7 +1071,7 @@ var Pontoon = (function (my) {
                     if (next.length > 0) {
                       next.click();
                       translation = next.find('.translation').html();
-                      entity.translation[pluralForm].string = translation;
+                      entity.translation[pluralForm].string = self.doRender(translation);
                       entity.ui.find('.translation-string')
                         .html(self.doNotRender(translation));
                       entity.dirty = true;
