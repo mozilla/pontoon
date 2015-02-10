@@ -411,11 +411,17 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
                 t = translations_equal.latest("date")
 
         if t.fuzzy != fuzzy:
-            unapprove(translations)
+            # Only if fuzzy flag removed
+            if not fuzzy:
+                unapprove(translations)
+
             unfuzzy(translations)
+
+            if fuzzy and get_translation(entity=entity, locale=locale) == t:
+                t.fuzzy = fuzzy
+
             t.date = now
             t.approved = approved
-            t.fuzzy = fuzzy
             t.save(stats=False)
 
 
