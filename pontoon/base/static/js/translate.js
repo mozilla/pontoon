@@ -1338,7 +1338,13 @@ var Pontoon = (function (my) {
 
         // Fallback if selected locale not available for the selected project
         if (locales.indexOf(locale) === -1) {
-          locale = locales[0];
+          menu.find('.code').each(function() {
+            var code = $(this).html().toLowerCase();
+            if (locales.indexOf(code) !== -1) {
+              locale = code;
+              return false;
+            }
+          });
 
           var accept = $('#server').data('accept-language');
           if (accept) {
