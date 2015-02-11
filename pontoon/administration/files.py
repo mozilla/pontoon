@@ -651,7 +651,7 @@ def dump_po(project, locale, relative_path):
                         translation = get_translation(
                             entity=entity, locale=locale, plural_form=i)
                         if translation.string != '':
-                            entry.msgstr_plural[unicode(i)] = \
+                            entry.msgstr_plural[i] = \
                                 translation.string.decode('utf-8')
                             if translation.date > date:
                                 date = translation.date
@@ -661,8 +661,8 @@ def dump_po(project, locale, relative_path):
                                 entry.flags.remove('fuzzy')
                     # Remove obsolete plural forms if exist
                     else:
-                        if unicode(i) in entry.msgstr_plural:
-                            del entry.msgstr_plural[unicode(i)]
+                        if i in entry.msgstr_plural:
+                            del entry.msgstr_plural[i]
 
     # Update PO metadata
     if newest.id:
