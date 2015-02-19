@@ -998,7 +998,7 @@ def amagama(request):
         return HttpResponse("error")
 
 
-def transvision(request, repo, title, src="en-US"):
+def transvision(request, repo, title):
     """Get Mozilla translations from Transvision service."""
     log.debug("Get Mozilla translations from Transvision service.")
 
@@ -1009,6 +1009,7 @@ def transvision(request, repo, title, src="en-US"):
         log.error(str(e))
         return HttpResponse("error")
 
+    src = "en-US"
     url = "http://transvision.mozfr.org/api/v1/tm/%s/%s/" \
           "%s/%s/?max_results=%s&min_quality=70" % (repo, src, locale, text, 5)
 
@@ -1040,7 +1041,7 @@ def transvision_gaia(request):
 
 
 def transvision_mozilla_org(request):
-    return transvision(request, "mozilla_org", "Mozilla.org", "en-GB")
+    return transvision(request, "mozilla_org", "Mozilla.org")
 
 
 @anonymous_csrf_exempt
