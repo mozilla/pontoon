@@ -36,6 +36,7 @@ class Command(BaseCommand):
 
             for locale in project.locales.all():
 
+                # Dump files from database
                 path = dump_from_database(project, locale)
                 if not path:
                     error = 'Repository path not found'
@@ -56,6 +57,7 @@ class Command(BaseCommand):
                 if translations:
                     user = translations[0].user
 
+                # Commit files to VCS
                 try:
                     r = commit_to_vcs(repo_type, path, message, user)
                 except Exception as e:
