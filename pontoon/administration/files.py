@@ -666,8 +666,8 @@ def dump_po(project, locale, relative_path):
 
     # Update PO metadata
     if newest.id:
-        po.metadata['PO-Revision-Date'] = newest.date
         if newest.user:
+            po.metadata['PO-Revision-Date'] = newest.date
             po.metadata['Last-Translator'] = '%s <%s>' \
                 % (newest.user.first_name, newest.user.email)
     po.metadata['Language'] = locale.code
