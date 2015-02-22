@@ -154,7 +154,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
 
     # Set locale in Translate link
     if project:
-        locale = utils.get_project_locale_from_request(request, project)
+        locale = utils.get_project_locale_from_request(
+            request, project.locales)
         if locale:
             data['translate_locale'] = locale
 

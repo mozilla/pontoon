@@ -52,15 +52,15 @@ def add_can_localize(user):
         user.save()
 
 
-def get_project_locale_from_request(request, project):
-    """Get project locale from Accept-language request header."""
+def get_project_locale_from_request(request, locales):
+    """Get Pontoon locale from Accept-language request header."""
 
     header = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
     accept = trans_real.parse_accept_lang_header(header)
 
     for a in accept:
         try:
-            return project.locales.get(code__iexact=a[0]).code
+            return locales.get(code__iexact=a[0]).code
         except:
             continue
 

@@ -69,7 +69,8 @@ def home(request):
     log.debug("Home view.")
 
     project = Project.objects.get(id=1)
-    locale = utils.get_project_locale_from_request(request, project) or 'en-GB'
+    locale = utils.get_project_locale_from_request(
+        request, project.locales) or 'en-GB'
 
     return translate(request, locale, project.slug)
 
@@ -247,7 +248,8 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         project.details = json.dumps(details)
 
     data = {
-        'accept_language': utils.get_project_locale_from_request(request, p),
+        'accept_language': utils.get_project_locale_from_request(
+            request, Locale.objects),
         'locale': l,
         'locales': Locale.objects.all(),
         'page_url': p.url,
