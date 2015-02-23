@@ -26,7 +26,6 @@ from pontoon.base.models import (
     Resource,
     Stats,
     Translation,
-    get_translation,
     save_entity,
     save_translation,
     update_entity_count,
@@ -636,29 +635,39 @@ def dump_po(project, locale, relative_path):
         entry = po.find(smart_text(entity.string))
         if entry:
             if not entry.msgid_plural:
-                translation = get_translation(entity=entity, locale=locale)
-                if translation.string != '':
+                try:
+                    translation = Translation.objects.get(
+                        entity=entity, locale=locale, approved=True)
                     entry.msgstr = translation.string.decode('utf-8')
+
                     if translation.date > date:
                         date = translation.date
                         newest = translation
-                    if ('fuzzy' in entry.flags and not translation.fuzzy):
+                    if 'fuzzy' in entry.flags:
                         entry.flags.remove('fuzzy')
+
+                except Translation.DoesNotExist as e:
+                    pass
 
             else:
                 for i in range(0, 6):
                     if i < (locale.nplurals or 1):
-                        translation = get_translation(
-                            entity=entity, locale=locale, plural_form=i)
-                        if translation.string != '':
+                        try:
+                            translation = Translation.objects.get(
+                                entity=entity, locale=locale,
+                                plural_form=i, approved=True)
                             entry.msgstr_plural[i] = \
                                 translation.string.decode('utf-8')
+
                             if translation.date > date:
                                 date = translation.date
                                 newest = translation
-                            if ('fuzzy' in entry.flags and
-                               not translation.fuzzy):
+                            if 'fuzzy' in entry.flags:
                                 entry.flags.remove('fuzzy')
+
+                        except Translation.DoesNotExist as e:
+                            pass
+
                     # Remove obsolete plural forms if exist
                     else:
                         if i in entry.msgstr_plural:
@@ -709,14 +718,16 @@ def dump_silme(parser, project, locale, relative_path):
 
         for entity in entities_with_path:
             key = entity.key
-            translation = get_translation(entity=entity, locale=locale)
 
             try:
-                if (translation.string != '' or translation.pk is not None):
+                try:
                     # Modify translated entities
+                    translation = Translation.objects.get(
+                        entity=entity, locale=locale, approved=True)
                     structure.modify_entity(
                         key, translation.string.decode('utf-8'))
-                else:
+
+                except Translation.DoesNotExist as e:
                     # Remove untranslated and following newline
                     pos = structure.entity_pos(key)
                     structure.remove_entity(key)
@@ -800,12 +811,18 @@ def dump_lang(project, locale, relative_path):
                               (path, original, project.name))
                     continue
 
-                translation = get_translation(
-                    entity=entity, locale=locale).string.decode('utf-8')
-                if translation == '':
-                    translation = original
-                elif translation == original:
-                    translation += ' {ok}'
+                try:
+                    translation = Translation.objects.get(
+                        entity=entity, locale=locale, approved=True) \
+                        .string.decode('utf-8')
+
+                    if translation == '':
+                        translation = original
+                    elif translation == original:
+                        translation += ' {ok}'
+
+                except Translation.DoesNotExist as e:
+                    pass
 
         # Erase file and then write, otherwise content gets appended
         lines.seek(0)
@@ -830,10 +847,15 @@ def dump_ini(project, locale):
 
                 for entity in entities:
                     key = entity.key
-                    translation = get_translation(
-                        entity=entity, locale=locale).string.decode('utf-8')
 
-                    config.set(locale.code, key, translation)
+                    try:
+                        translation = Translation.objects.get(
+                            entity=entity, locale=locale, approved=True) \
+                            .string.decode('utf-8')
+                        config.set(locale.code, key, translation)
+
+                    except Translation.DoesNotExist as e:
+                        pass
 
                 # Erase and then write, otherwise content gets appended
                 f.seek(0)
@@ -866,8 +888,7 @@ def dump_from_database(project, locale):
 
     else:
         # Get relative paths to translated files only
-        stats = Stats.objects.filter(locale=locale) \
-            .exclude(translated_count=0, approved_count=0, fuzzy_count=0) \
+        stats = Stats.objects.filter(locale=locale).exclude(approved_count=0) \
             .values("resource")
         resources = Resource.objects.filter(project=project, id__in=stats)
         relative_paths = resources.values_list('path', flat=True).distinct()
