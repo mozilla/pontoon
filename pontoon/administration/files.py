@@ -816,13 +816,11 @@ def dump_lang(project, locale, relative_path):
                         entity=entity, locale=locale, approved=True) \
                         .string.decode('utf-8')
 
-                    if translation == '':
-                        translation = original
-                    elif translation == original:
+                    if translation == original:
                         translation += ' {ok}'
 
                 except Translation.DoesNotExist as e:
-                    pass
+                    translation = original
 
         # Erase file and then write, otherwise content gets appended
         lines.seek(0)
