@@ -1208,7 +1208,7 @@ var Pontoon = (function (my) {
       function gotoEntityListOrNextEntity() {
         // Go to entity list
         if (!self.app.advanced && $("#editor").is('.opened')) {
-          $('#cancel').click();
+          $('#cancel').trigger('click', [{inplace: inplace}]);
 
         // Go to next entity
         } else {
