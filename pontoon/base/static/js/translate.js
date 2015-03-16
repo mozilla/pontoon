@@ -1243,7 +1243,7 @@ var Pontoon = (function (my) {
             }
 
             // Quit
-            if (!$("#editor").is('.opened')) {
+            if (!$("#editor:visible").is('.opened')) {
               return;
 
             // Go to next plural form
