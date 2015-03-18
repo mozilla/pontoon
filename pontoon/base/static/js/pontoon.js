@@ -40,6 +40,9 @@
               content = $(element).html();
 
           if (Pontoon.user.localizer || !entity.translation[0].approved) {
+            entity.translation[0].previous = entity.translation[0].string != "" 
+                                             ? entity.translation[0].string 
+                                             : entity.original;
             entity.translation[0].string = content;
             $(entity.node).each(function() {
               this.html(content);
@@ -530,10 +533,19 @@
             break;
 
           case "SAVE":
-            var entity = $('.pontoon-editable-toolbar')[0].target.entity;
-            entity.translation[0].string = message.value;
+            var entity = null;
+            if(message.value.id != null){
+              entity = Pontoon.entities[message.value.id];
+            }else{
+              entity = $('.pontoon-editable-toolbar')[0].target.entity;
+            }
+            
+            entity.translation[0].previous = entity.translation[0].string != "" 
+                                             ? entity.translation[0].string 
+                                             : entity.original;
+            entity.translation[0].string = message.value.translation;
             $(entity.node).each(function() {
-              this.html(message.value);
+              this.html(message.value.translation);
             });
             stopEditing();
             break;
