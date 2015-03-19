@@ -625,6 +625,9 @@
         hideToolbar(this);
       })
       .find('.edit').click(function () {
+        if (!toolbar[0].target) {
+          return false;
+        }
         startEditing();
         toolbar[0].target.focus();
         return false;
