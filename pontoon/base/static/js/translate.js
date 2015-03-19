@@ -1064,13 +1064,16 @@ var Pontoon = (function (my) {
                     // Make newest alternative translation active
                     if (next.length > 0) {
                       next.click();
-                      if (self.user.localizer) {
-                        next.addClass('approved');
-                      }
                       translation = next.find('.translation').html();
                       entity.translation[pluralForm].string = self.doRender(translation);
                       entity.ui.find('.translation-string')
                         .html(self.doNotRender(translation));
+                      if (self.user.localizer) {
+                        next.addClass('approved');
+                        if (entity.body) {
+                          self.postMessage("SAVE", entity.translation[0].string);
+                        }
+                      }
 
                     // Last translation deleted, no alternative available
                     } else {
