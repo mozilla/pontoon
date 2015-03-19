@@ -1064,6 +1064,9 @@ var Pontoon = (function (my) {
                     // Make newest alternative translation active
                     if (next.length > 0) {
                       next.click();
+                      if (self.user.localizer) {
+                        next.addClass('approved');
+                      }
                       translation = next.find('.translation').html();
                       entity.translation[pluralForm].string = self.doRender(translation);
                       entity.ui.find('.translation-string')
