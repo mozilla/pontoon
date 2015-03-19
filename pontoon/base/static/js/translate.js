@@ -1072,6 +1072,7 @@ var Pontoon = (function (my) {
                         next.addClass('approved');
                         if (entity.body) {
                           self.postMessage("SAVE", entity.translation[0].string);
+                          self.postMessage("NAVIGATE", entity.id);
                         }
                       }
 
