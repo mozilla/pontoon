@@ -305,7 +305,7 @@ var Pontoon = (function (my) {
           }
 
         }).success(function(data) {
-          if (data.translations) {
+          if (data.translations && !data.translations.error) {
             $.each(data.translations, function() {
               append({
                 original: this.source,
