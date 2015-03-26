@@ -1230,11 +1230,21 @@ var Pontoon = (function (my) {
           var value = localStorage[key];
           if (value != null) {
             value = JSON.parse(localStorage[key]);
+            console.log("SYNC TRANSLATION");
+            console.log(value);
+            console.log("PREVIOUS TRANSLATION: " + entity.translation[0].string + " "
+                        + (value.previous == entity.translation[0].string));
+            console.log("ORIGINAL TRANSLATION: " + entity.original + " "
+                        + (entity.translation[0].string == "" 
+                           && value.previous == entity.original));
             if (value.previous == entity.translation[0].string 
                 || (entity.translation[0].string == "" 
                     && value.previous == entity.original)) {
               this.updateOnServer(entity, value.translation, false, false);
+            }else{
+              console.log("FAILED!");
             }
+            console.log(" ");
             this.removeFromLocalStorage(key);
           }
         }
@@ -1244,7 +1254,7 @@ var Pontoon = (function (my) {
     },
 
     getLocalStorageKey : function(entity) {
-      return this.project.pk + "/" + this.locale.code + "/" + entity.key;
+      return this.locale.code + "/" + entity.pk;
     },
 
     addToLocalStorage : function(entity, newTranslation){
@@ -1257,6 +1267,8 @@ var Pontoon = (function (my) {
                             previous : previousTranslation,
                             translation : newTranslation,
                           }));
+      console.log("ADDED TRANSLATION: " + newTranslation);
+      console.log(localStorage);
     },
 
     removeFromLocalStorage : function(key) {
