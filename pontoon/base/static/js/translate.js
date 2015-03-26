@@ -1224,6 +1224,7 @@ var Pontoon = (function (my) {
     syncLocalStorageOnServer : function() {
       if (!this.isLocalStorageEmpty()) {
         var len = this.entities.length;
+        console.log("ENTITIES IN LOCAL STORAGE: " + len);
         for (var i = 0; i < len; i++) {          
           var entity = this.entities[i];
           var key = this.getLocalStorageKey(entity);
@@ -1247,6 +1248,8 @@ var Pontoon = (function (my) {
             console.log(" ");
             this.removeFromLocalStorage(key);
           }
+        }else{
+          console.log("LOCAL STORAGE IS EMPTY!");
         }
         // clear all other translations
         localStorage.clear();
