@@ -178,6 +178,10 @@ class CommitToHg(CommitToRepository):
         user = user or self.user
         author = self.get_author(user)
 
+        # Add
+        add = ["hg", "add"]
+        execute(add, path)
+
         # Commit
         commit = ["hg", "commit", "-m", message, "-u", author]
         code, output, error = execute(commit, path)
