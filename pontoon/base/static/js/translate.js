@@ -305,7 +305,7 @@ var Pontoon = (function (my) {
           }
 
         }).success(function(data) {
-          if (data.translations) {
+          if (data.translations && !data.translations.error) {
             $.each(data.translations, function() {
               append({
                 original: this.source,
@@ -918,12 +918,6 @@ var Pontoon = (function (my) {
         var entity = $("#editor")[0].entity,
             data = data || {};
 
-        // Save entity if dirty - cannot be automatically synced with backend
-        if (entity.dirty) {
-          entity.dirty = false;
-          $('#save').click();
-        }
-
         $("#entitylist")
           .css('left', 0)
           .find('.hovered').removeClass('hovered');
@@ -1074,11 +1068,16 @@ var Pontoon = (function (my) {
                       entity.translation[pluralForm].string = self.doRender(translation);
                       entity.ui.find('.translation-string')
                         .html(self.doNotRender(translation));
-                      entity.dirty = true;
+                      if (self.user.localizer) {
+                        next.addClass('approved');
+                        if (entity.body) {
+                          self.postMessage("SAVE", entity.translation[0].string);
+                          self.postMessage("NAVIGATE", entity.id);
+                        }
+                      }
 
                     // Last translation deleted, no alternative available
                     } else {
-                      entity.dirty = false;
                       $('#translation').val('').focus();
                       if (entity.body && pluralForm === 0) {
                         self.postMessage("DELETE");
