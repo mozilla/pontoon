@@ -1224,32 +1224,15 @@ var Pontoon = (function (my) {
     syncLocalStorageOnServer : function() {
       if (!this.isLocalStorageEmpty()) {
         var len = this.entities.length;
-        console.log("ENTITIES IN LOCAL STORAGE: " + len);
         for (var i = 0; i < len; i++) {          
           var entity = this.entities[i];
           var key = this.getLocalStorageKey(entity);
           var value = localStorage[key];
           if (value != null) {
             value = JSON.parse(localStorage[key]);
-            console.log("SYNC TRANSLATION");
-            console.log(value);
-            console.log("PREVIOUS TRANSLATION: " + entity.translation[0].string + " "
-                        + (value.previous == entity.translation[0].string));
-            console.log("ORIGINAL TRANSLATION: " + entity.original + " "
-                        + (entity.translation[0].string == "" 
-                           && value.previous == entity.original));
-            if (value.previous == entity.translation[0].string 
-                || (entity.translation[0].string == "" 
-                    && value.previous == entity.original)) {
-              this.updateOnServer(entity, value.translation, false, false);
-            }else{
-              console.log("FAILED!");
-            }
-            console.log(" ");
+            this.updateOnServer(entity, value.translation, false, false);
             this.removeFromLocalStorage(key);
           }
-        }else{
-          console.log("LOCAL STORAGE IS EMPTY!");
         }
         // clear all other translations
         localStorage.clear();
@@ -1270,8 +1253,6 @@ var Pontoon = (function (my) {
                             previous : previousTranslation,
                             translation : newTranslation,
                           }));
-      console.log("ADDED TRANSLATION: " + newTranslation);
-      console.log(localStorage);
     },
 
     removeFromLocalStorage : function(key) {
@@ -1386,7 +1367,7 @@ var Pontoon = (function (my) {
             self.addToLocalStorage(entity, translation);
             // imitate data to add translation
             var data = { type : "added",
-                         translation : { approved : false,
+                         translation : { approved : self.user.localizer,
                                          fuzzy : false,
                                          string : translation
                                        }
