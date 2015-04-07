@@ -108,3 +108,23 @@ newrelic==2.50.0.39
 
 # sha256: -jPrQhcqGbcVrbp6ZJcJEftdj9G2nPjaepXyvH8PMDs
 django-browserid==1.0.0
+
+# sha256: ECyBQVEUQ98B01RhDTsmiSQQBlQxZwm0OsBGSLUL9wM
+# sha256: zYMG5kw6EV3soTZoXpRduI_-FxOCAS7JOO0kGiDdfro
+factory_boy==2.5.2
+
+# sha256: R3KrUYkik5LRbHC6e4u2a108GAdmlMVTR6-5jJULKDw
+# sha256: 4ZtPiklWgcNnq1bDwE-L7zDd15B939m-5mOj8yhnYrY
+# sha256: 9h4JCadD7tN7Egfjio57Si_gqCGF428r4lLvGz-QF1g
+nose==1.3.6
+
+# sha256: Js7zxvYt8u7pVaJRld5veTiBMXwPX9GhxvniLzUakxM
+# sha256: 7ZCm7YglpRbGU_yQmcBTvjNbZPoASpA6GBt-AUiOxdQ
+django-nose==1.4
+
+# sha256: 7cVxMGHxCWYEi_a0DZpRSzgeC6hJxk4DTE72wYR9MAc
+blessings==1.6
+
+# sha256: RL1BNEwcwd5DSnJ2TtR_27vbzwPHgBEUwEM81saWy1U
+# sha256: qsAfM8hEZAezxebyGF1bCfXz5st3Px2y35nvzlpwuBs
+nose-progressive==1.5.1

@@ -85,6 +85,7 @@ INSTALLED_APPS = (
     'commonware.response.cookies',
     'django_browserid',
     'django_jinja',
+    'django_nose',
     'pipeline',
     'session_csrf',
 )
@@ -328,7 +329,9 @@ LOGGING = {
 }
 
 ## Tests
-TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = ['--logging-filter=-django_browserid,-factory', '--logging-clear-handlers',
+             '--with-progressive']
 
 # Set X-Frame-Options to DENY by default on all responses.
 X_FRAME_OPTIONS = 'DENY'

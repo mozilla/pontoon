@@ -54,6 +54,16 @@ $ docker-compose run web ./manage.py createsuperuser
 ```
 
 
+Running Tests
+-------------
+After following the installation instructions above, you can run the automated
+test suite with the following command:
+
+```sh
+$ docker-compose run web ./manage.py test
+```
+
+
 Local settings
 --------------
 The following settings can be set by creating a `.env` file in root directory of
