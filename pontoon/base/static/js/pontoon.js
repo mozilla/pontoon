@@ -40,9 +40,6 @@
               content = $(element).html();
 
           if (Pontoon.user.localizer || !entity.translation[0].approved) {
-            entity.translation[0].previous = entity.translation[0].string != "" 
-                                             ? entity.translation[0].string 
-                                             : entity.original;
             entity.translation[0].string = content;
             $(entity.node).each(function() {
               this.html(content);
@@ -539,10 +536,6 @@
             }else{
               entity = $('.pontoon-editable-toolbar')[0].target.entity;
             }
-            
-            entity.translation[0].previous = entity.translation[0].string != "" 
-                                             ? entity.translation[0].string 
-                                             : entity.original;
             entity.translation[0].string = message.value.translation;
             $(entity.node).each(function() {
               this.html(message.value.translation);

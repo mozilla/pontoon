@@ -1244,13 +1244,7 @@ var Pontoon = (function (my) {
     },
 
     addToLocalStorage : function(entity, newTranslation){
-      var key = this.getLocalStorageKey(entity), previousTranslation = entity.translation[0].previous, 
-          previousItem = localStorage.getItem(key);
-      if (previousItem != null) {
-        previousTranslation = JSON.parse(previousItem).previous;
-      }
-      localStorage.setItem(key, JSON.stringify({
-                            previous : previousTranslation,
+      localStorage.setItem(this.getLocalStorageKey(entity), JSON.stringify({
                             translation : newTranslation,
                           }));
     },
