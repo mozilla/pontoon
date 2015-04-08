@@ -1,0 +1,43 @@
+# Webapp Requirements
+Babel==1.3
+bleach==1.4.1
+cef==0.3
+celery==3.1.17
+commonware==0.4.3
+configparser==3.3.0r2
+django-browserid==0.9
+django-celery==3.1.16
+django-compressor==1.2
+django-cronjobs==0.2.3
+django-mobility==0.1
+https://github.com/fwenzel/django-mozilla-product-details/archive/515d55d.zip#egg=django-mozilla-product-details
+django-multidb-router==0.6
+django-session-csrf==0.5
+django-sha2==0.4
+Django==1.4.10
+funfactory==2.2.0
+GitPython==0.1.7
+https://github.com/mozilla/happyforms/archive/729612.zip#egg=happyforms
+jingo==0.7
+jingo_minify==0.5
+https://github.com/mozilla/nuggets/archive/ce50688.zip#egg=nuggets
+polib==1.0.6
+python-Levenshtein==0.11.2
+requests==0.13.0
+http://hg.mozilla.org/l10n/silme/archive/5f628a307fd5.zip#egg=silme
+South==1.0.2
+suds==0.4
+tower==0.4.1
+translate-toolkit==1.12.0
+
+# Compiled Requirements
+Jinja2==2.5.5
+MySQL-python==1.2.3c1
+py-bcrypt==0.3
+
+# Development requirements
+django-nose==1.3
+mock==1.0.1
+nose==1.0.0
+Sphinx==1.0.7
+https://github.com/jbalogh/test-utils/archive/4ae9327.zip#egg=test-utils
