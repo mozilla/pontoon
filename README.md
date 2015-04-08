@@ -14,7 +14,7 @@ Pontoon is based on [Playdoh](http://playdoh.readthedocs.org/en/latest/), so it'
 2. Create and set up [virtual environment](http://www.virtualenv.org/en/latest/index.html):
  * `virtualenv --no-site-packages env`
  * `source env/bin/activate`
- * `pip install -r requirements/compiled.txt -r requirements/prod.txt`
+ * `./peep.py install -r requirements.txt`
 3. Configure [settings](#local-settings):
  * `cp settings/local.py-dist settings/local.py`
 4. Set up database:
