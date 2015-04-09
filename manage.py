@@ -2,6 +2,10 @@
 import os
 import sys
 
+# Read .env file and inject it's values into the environment
+import dotenv
+dotenv.read_dotenv()
+
 # Edit this if necessary or override the variable in your environment.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
 

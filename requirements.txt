@@ -165,3 +165,9 @@ tower==0.4.1
 
 # sha256: EeMy8qKdhkQ2S0ynm0rAed8yhibsjCesDozEVGlnGco
 translate-toolkit==1.12.0
+# sha256: 8uJz7TSsu1YJYtXPEpF5NtjfAil98JvTCJuFRtRYQTg
+# sha256: ygF2j97N4TQwHzFwdDIm9g7f9cOTXxJDc3jr2RFQY1M
+dj-database-url==0.3.0
+# sha256: 3-W4wr5as0NbPXHlocZrsU2oEE2kTvDdjMw-ipJ2Ftk
+# sha256: EgxGIdHk9a2r4KaDRj0b56WmuZLt1HZNMjxifSKSUeA
+django-dotenv==1.3.0
