@@ -1235,7 +1235,7 @@ var Pontoon = (function (my) {
           var entity = this.entities[i],
               key = this.getLocalStorageKey(entity),
               value = localStorage[key];
-          if (value !== null) {
+          if (value) {
             value = JSON.parse(localStorage[key]);
             this.updateOnServer(entity, value.translation, false, false);
             delete localStorage[key];
