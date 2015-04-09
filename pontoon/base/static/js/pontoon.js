@@ -531,9 +531,9 @@
 
           case "SAVE":
             var entity = null;
-            if(message.value.id != null){
+            if (message.value.id !== null) {
               entity = Pontoon.entities[message.value.id];
-            }else{
+            } else {
               entity = $('.pontoon-editable-toolbar')[0].target.entity;
             }
             entity.translation[0].string = message.value.translation;

@@ -64,10 +64,19 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Get translations to other locales of given entity
+     * Show no connection error in helpers
      *
-     * entity Entity
+     * list List to append no connection error to
      */
+    noConnectionError: function (list) {
+      list.append(
+        '<li class="disabled">' +
+          '<p>Content not available while offline.</p>' +
+          '<p>Check your connection and try again.</p>' +
+        '</li>');
+    },
+
+
     getOtherLocales: function (entity) {
       var self = this,
           list = $('#other-locales ul').empty(),
@@ -96,11 +105,11 @@ var Pontoon = (function (my) {
           }
           tab.removeClass('loading');
         },
-        error: function(error){
-          if (error.status == 0) {
-            //allows to request the locales again
+        error: function(error) {
+          if (error.status === 0) {
+            // Allows requesting locales again
             editor.otherLocales = null;
-            list.append('<li class="disabled"><p>Translations are not available without a connection.</p><p>Check your connection and try again.</p></li>');
+            self.noConnectionError(list);
             tab.removeClass('loading');
           }
         }
@@ -160,16 +169,14 @@ var Pontoon = (function (my) {
         ul.append(listitems);
       }
 
-      function error(error){
-        if (error.status == 0) {
-          // allows to request machinery again
+      function error(error) {
+        if (error.status === 0) {
+          // Allows requesting Machinery again
           editor.machinery = null;
-          tab.removeClass('loading');
           if (ul.find('li').length === 0) {
-            ul.append('<li class="disabled">' +
-                      '<p>Machinery is not available without a connection.</p>' +
-                      '<p>Check your connection and try again.</p></li>');
+            self.noConnectionError(ul);
           }
+          tab.removeClass('loading');
         }
       }
 
@@ -414,9 +421,9 @@ var Pontoon = (function (my) {
           }
           tab.removeClass('loading');
         },
-        error: function(error){
-          if (error.status == 0) {
-            list.append('<li class="disabled"><p>History is not available without a connection.</p><p>Check your connection and try again.</p></li>');
+        error: function(error) {
+          if (error.status === 0) {
+            self.noConnectionError(list);
             tab.removeClass('loading');
           }
         }
@@ -1217,45 +1224,51 @@ var Pontoon = (function (my) {
       this.updateProgress();
     },
 
+
     /*
-     * Update all translations in the local storage on
-     * server.
+     * Update all translations in localStorage on server
      */
-    syncLocalStorageOnServer : function() {
-      if (!this.isLocalStorageEmpty()) {
+    syncLocalStorageOnServer: function() {
+      if (localStorage.length !== 0) {
         var len = this.entities.length;
         for (var i = 0; i < len; i++) {          
-          var entity = this.entities[i];
-          var key = this.getLocalStorageKey(entity);
-          var value = localStorage[key];
-          if (value != null) {
+          var entity = this.entities[i],
+              key = this.getLocalStorageKey(entity),
+              value = localStorage[key];
+          if (value !== null) {
             value = JSON.parse(localStorage[key]);
             this.updateOnServer(entity, value.translation, false, false);
-            this.removeFromLocalStorage(key);
+            delete localStorage[key];
           }
         }
-        // clear all other translations
+        // Clear all other translations
         localStorage.clear();
       }
     },
 
-    getLocalStorageKey : function(entity) {
+
+    /*
+     * Generate localStorage key
+     *
+     * entity Entity
+     */
+    getLocalStorageKey: function(entity) {
       return this.locale.code + "/" + entity.pk;
     },
 
-    addToLocalStorage : function(entity, newTranslation){
+
+    /*
+     * Add entity translation to localStorage
+     *
+     * entity Entity
+     * translation Translation
+     */
+    addToLocalStorage: function(entity, translation) {
       localStorage.setItem(this.getLocalStorageKey(entity), JSON.stringify({
-                            translation : newTranslation,
-                          }));
+        translation: translation,
+      }));
     },
 
-    removeFromLocalStorage : function(key) {
-      delete localStorage[key];
-    },
-
-    isLocalStorageEmpty : function() {
-      return localStorage.length === 0;
-    },
 
     /*
      * Update entity translation on server
@@ -1263,8 +1276,7 @@ var Pontoon = (function (my) {
      * entity Entity
      * translation Translation
      * inplace Was translation submitted in place?
-     * syncLocalStorage Synchronize translations in the local storage
-     *                  on the server
+     * syncLocalStorage Synchronize translations in localStorage with the server
      */
     updateOnServer: function (entity, translation, inplace, syncLocalStorage) {
       var self = this,
@@ -1283,56 +1295,56 @@ var Pontoon = (function (my) {
         }
       }
 
-      function translationAdded(data){
+      function renderTranslation(data) {
         if (data.type) {
-            self.endLoader('Translation ' + data.type);
+          self.endLoader('Translation ' + data.type);
 
-            var pf = self.getPluralForm(true);
-            entity.translation[pf] = data.translation;
-            self.updateEntityUI(entity);
+          var pf = self.getPluralForm(true);
+          entity.translation[pf] = data.translation;
+          self.updateEntityUI(entity);
 
-            // Update translation, including in place if possible
-            if (!inplace && entity.body && (self.user.localizer ||
-                !entity.translation[pf].approved)) {
-              self.postMessage("SAVE", {
-                      translation : translation,
-                      id : entity.id
-                    });
-            }
+          // Update translation, including in place if possible
+          if (!inplace && entity.body && (self.user.localizer ||
+              !entity.translation[pf].approved)) {
+            self.postMessage("SAVE", {
+              translation: translation,
+              id: entity.id
+            });
+          }
 
-            // Quit
-            if (!$("#editor:visible").is('.opened')) {
-              return;
+          // Quit
+          if (!$("#editor:visible").is('.opened')) {
+            return;
 
-            // Go to next plural form
-            } else if (pluralForm !== -1 && $("#editor").is('.opened')) {
-              var next = $('#plural-tabs li:visible')
-                .eq(pluralForm + 1).find('a');
+          // Go to next plural form
+          } else if (pluralForm !== -1 && $("#editor").is('.opened')) {
+            var next = $('#plural-tabs li:visible')
+              .eq(pluralForm + 1).find('a');
 
-              if (next.length === 0) {
-                gotoEntityListOrNextEntity();
-              } else {
-                next.click();
-              }
-
-            // Go to entity list or next entity
-            } else {
+            if (next.length === 0) {
               gotoEntityListOrNextEntity();
+            } else {
+              next.click();
             }
+
+          // Go to entity list or next entity
+          } else {
+            gotoEntityListOrNextEntity();
+          }
 
         } else if (data.warnings) {
-            self.endLoader();
-            $('#warning ul').empty();
-            $(data.warnings).each(function() {
-              $('#warning ul').append('<li>' + this + '</li>');
-            });
-            $('#warning').show();
+          self.endLoader();
+          $('#warning ul').empty();
+          $(data.warnings).each(function() {
+            $('#warning ul').append('<li>' + this + '</li>');
+          });
+          $('#warning').show();
 
         } else if (data === "error") {
-            self.endLoader('Oops, something went wrong.', 'error');
+          self.endLoader('Oops, something went wrong.', 'error');
 
         } else {
-            self.endLoader(data, 'error');
+          self.endLoader(data, 'error');
         }
       }
 
@@ -1349,24 +1361,26 @@ var Pontoon = (function (my) {
           ignore_check: inplace || $('#warning').is(':visible') || !syncLocalStorage
         },
         success: function(data) {
-          translationAdded(data);
-          // connection exists (at least a moment ago) -> try to sync local storage
+          renderTranslation(data);
+          // Connection exists -> sync localStorage
           if (syncLocalStorage) {
             self.syncLocalStorageOnServer();
           }
         },
         error: function(error) {
-          if (error.status == 0) {
-            // no connection -> use offline mode
+          if (error.status === 0) {
+            // No connection -> use offline mode
             self.addToLocalStorage(entity, translation);
-            // imitate data to add translation
-            var data = { type : "added",
-                         translation : { approved : self.user.localizer,
-                                         fuzzy : false,
-                                         string : translation
-                                       }
-                        };
-            translationAdded(data);
+            // Imitate data to add translation
+            var data = {
+              type: "added",
+              translation: {
+                approved: self.user.localizer,
+                fuzzy: false,
+                string: translation
+              }
+            };
+            renderTranslation(data);
           } else {
             self.endLoader('Oops, something went wrong.', 'error');
           }
