@@ -95,6 +95,14 @@ var Pontoon = (function (my) {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
           tab.removeClass('loading');
+        },
+        error: function(error){
+          if (error.status == 0) {
+            //allows to request the locales again
+            editor.otherLocales = null;
+            list.append('<li class="disabled"><p>Translations are not available without a connection.</p><p>Check your connection and try again.</p></li>');
+            tab.removeClass('loading');
+          }
         }
       });
     },
@@ -152,6 +160,19 @@ var Pontoon = (function (my) {
         ul.append(listitems);
       }
 
+      function error(error){
+        if (error.status == 0) {
+          // allows to request machinery again
+          editor.machinery = null;
+          tab.removeClass('loading');
+          if (ul.find('li').length === 0) {
+            ul.append('<li class="disabled">' +
+                      '<p>Machinery is not available without a connection.</p>' +
+                      '<p>Check your connection and try again.</p></li>');
+          }
+        }
+      }
+
       // Translation memory
       requests++;
 
@@ -181,7 +202,7 @@ var Pontoon = (function (my) {
             });
           });
         }
-      }).complete(complete);
+      }).error(error).complete(complete);
 
       // Machine translation
       if (self.locale.mt !== false) {
@@ -216,7 +237,7 @@ var Pontoon = (function (my) {
           } else if (data === "not-supported") {
             self.locale.mt = false;
           }
-        }).complete(complete);
+        }).error(error).complete(complete);
       }
 
       // Microsoft Terminology
@@ -257,7 +278,7 @@ var Pontoon = (function (my) {
           } else if (data === "not-supported") {
             self.locale.msTerminology = false;
           }
-        }).complete(complete);
+        }).error(error).complete(complete);
       }
 
       // amaGama
@@ -287,7 +308,7 @@ var Pontoon = (function (my) {
             });
           });
         }
-      }).complete(complete);
+      }).error(error).complete(complete);
 
       // Transvision
       $(['aurora', 'gaia', 'mozilla-org']).each(function(i, v) {
@@ -317,7 +338,7 @@ var Pontoon = (function (my) {
               });
             });
           }
-        }).complete(complete);
+        }).error(error).complete(complete);
       });
     },
 
@@ -392,6 +413,12 @@ var Pontoon = (function (my) {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
           tab.removeClass('loading');
+        },
+        error: function(error){
+          if (error.status == 0) {
+            list.append('<li class="disabled"><p>History is not available without a connection.</p><p>Check your connection and try again.</p></li>');
+            tab.removeClass('loading');
+          }
         }
       });
     },
@@ -946,7 +973,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        self.updateOnServer(entity, source);
+        self.updateOnServer(entity, source, false, true);
       });
 
       // Helpers navigation
@@ -1190,6 +1217,45 @@ var Pontoon = (function (my) {
       this.updateProgress();
     },
 
+    /*
+     * Update all translations in the local storage on
+     * server.
+     */
+    syncLocalStorageOnServer : function() {
+      if (!this.isLocalStorageEmpty()) {
+        var len = this.entities.length;
+        for (var i = 0; i < len; i++) {          
+          var entity = this.entities[i];
+          var key = this.getLocalStorageKey(entity);
+          var value = localStorage[key];
+          if (value != null) {
+            value = JSON.parse(localStorage[key]);
+            this.updateOnServer(entity, value.translation, false, false);
+            this.removeFromLocalStorage(key);
+          }
+        }
+        // clear all other translations
+        localStorage.clear();
+      }
+    },
+
+    getLocalStorageKey : function(entity) {
+      return this.locale.code + "/" + entity.pk;
+    },
+
+    addToLocalStorage : function(entity, newTranslation){
+      localStorage.setItem(this.getLocalStorageKey(entity), JSON.stringify({
+                            translation : newTranslation,
+                          }));
+    },
+
+    removeFromLocalStorage : function(key) {
+      delete localStorage[key];
+    },
+
+    isLocalStorageEmpty : function() {
+      return localStorage.length === 0;
+    },
 
     /*
      * Update entity translation on server
@@ -1197,8 +1263,10 @@ var Pontoon = (function (my) {
      * entity Entity
      * translation Translation
      * inplace Was translation submitted in place?
+     * syncLocalStorage Synchronize translations in the local storage
+     *                  on the server
      */
-    updateOnServer: function (entity, translation, inplace) {
+    updateOnServer: function (entity, translation, inplace, syncLocalStorage) {
       var self = this,
           pluralForm = self.getPluralForm();
 
@@ -1215,20 +1283,8 @@ var Pontoon = (function (my) {
         }
       }
 
-      $.ajax({
-        url: 'update/',
-        type: 'POST',
-        data: {
-          csrfmiddlewaretoken: $('#server').data('csrf'),
-          locale: self.locale.code,
-          entity: entity.pk,
-          translation: translation,
-          plural_form: pluralForm,
-          original: entity['original' + self.isPluralized()],
-          ignore_check: inplace || $('#warning').is(':visible')
-        },
-        success: function(data) {
-          if (data.type) {
+      function translationAdded(data){
+        if (data.type) {
             self.endLoader('Translation ' + data.type);
 
             var pf = self.getPluralForm(true);
@@ -1238,7 +1294,10 @@ var Pontoon = (function (my) {
             // Update translation, including in place if possible
             if (!inplace && entity.body && (self.user.localizer ||
                 !entity.translation[pf].approved)) {
-              self.postMessage("SAVE", translation);
+              self.postMessage("SAVE", {
+                      translation : translation,
+                      id : entity.id
+                    });
             }
 
             // Quit
@@ -1261,7 +1320,7 @@ var Pontoon = (function (my) {
               gotoEntityListOrNextEntity();
             }
 
-          } else if (data.warnings) {
+        } else if (data.warnings) {
             self.endLoader();
             $('#warning ul').empty();
             $(data.warnings).each(function() {
@@ -1269,15 +1328,48 @@ var Pontoon = (function (my) {
             });
             $('#warning').show();
 
-          } else if (data === "error") {
+        } else if (data === "error") {
             self.endLoader('Oops, something went wrong.', 'error');
 
-          } else {
+        } else {
             self.endLoader(data, 'error');
+        }
+      }
+
+      $.ajax({
+        url: 'update/',
+        type: 'POST',
+        data: {
+          csrfmiddlewaretoken: $('#server').data('csrf'),
+          locale: self.locale.code,
+          entity: entity.pk,
+          translation: translation,
+          plural_form: pluralForm,
+          original: entity['original' + self.isPluralized()],
+          ignore_check: inplace || $('#warning').is(':visible') || !syncLocalStorage
+        },
+        success: function(data) {
+          translationAdded(data);
+          // connection exists (at least a moment ago) -> try to sync local storage
+          if (syncLocalStorage) {
+            self.syncLocalStorageOnServer();
           }
         },
-        error: function() {
-          self.endLoader('Oops, something went wrong.', 'error');
+        error: function(error) {
+          if (error.status == 0) {
+            // no connection -> use offline mode
+            self.addToLocalStorage(entity, translation);
+            // imitate data to add translation
+            var data = { type : "added",
+                         translation : { approved : self.user.localizer,
+                                         fuzzy : false,
+                                         string : translation
+                                       }
+                        };
+            translationAdded(data);
+          } else {
+            self.endLoader('Oops, something went wrong.', 'error');
+          }
         }
       });
     },
@@ -1711,6 +1803,7 @@ var Pontoon = (function (my) {
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
           Pontoon.createUI();
+          Pontoon.syncLocalStorageOnServer();
           break;
 
         case "SWITCH":
@@ -1740,7 +1833,7 @@ var Pontoon = (function (my) {
 
         case "UPDATE":
           var entity = Pontoon.entities[message.value.id];
-          Pontoon.updateOnServer(entity, message.value.content, true);
+          Pontoon.updateOnServer(entity, message.value.content, true, true);
           break;
 
         case "DELETE":
@@ -1938,6 +2031,7 @@ var Pontoon = (function (my) {
               });
 
               self.createUI();
+              self.syncLocalStorageOnServer();
             }
 
           } else {
