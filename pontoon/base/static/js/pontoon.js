@@ -530,15 +530,16 @@
             break;
 
           case "SAVE":
-            var entity = null;
-            if (message.value.id !== null) {
+            var entity = null,
+                translation = message.value.translation || message.value;
+            if (message.value.id) {
               entity = Pontoon.entities[message.value.id];
             } else {
               entity = $('.pontoon-editable-toolbar')[0].target.entity;
             }
-            entity.translation[0].string = message.value.translation;
+            entity.translation[0].string = translation;
             $(entity.node).each(function() {
-              this.html(message.value.translation);
+              this.html(translation);
             });
             stopEditing();
             break;
