@@ -422,8 +422,9 @@ def get_translations_from_other_locales(request, template=None):
     locales = entity.resource.project.locales.all().exclude(code=locale.code)
 
     for l in locales:
-        pf = None if entity.string_plural == "" else 0
-        translation = get_translation(entity=entity, locale=l, plural_form=pf)
+        plural_form = None if entity.string_plural == "" else 0
+        translation = get_translation(
+            entity=entity, locale=l, plural_form=plural_form)
 
         if translation.string != '' or translation.pk is not None:
             payload.append({
@@ -785,9 +786,9 @@ def translation_memory(request):
         quality = Levenshtein.ratio(text, unicode(source, "utf-8"))
 
         if quality > min_quality:
-            pf = None if e.string_plural == "" else 0
+            plural_form = None if e.string_plural == "" else 0
             translation = get_translation(
-                entity=e, locale=locale, fuzzy=False, plural_form=pf)
+                entity=e, locale=locale, fuzzy=False, plural_form=plural_form)
 
             if translation.string != '' or translation.pk is not None:
                 count = 1
