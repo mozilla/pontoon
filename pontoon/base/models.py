@@ -417,7 +417,9 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
 
             unfuzzy(translations)
 
-            if fuzzy and get_translation(entity=entity, locale=locale) == t:
+            if fuzzy and get_translation(
+                    entity=entity, locale=locale,
+                    plural_form=plural_form) == t:
                 t.fuzzy = fuzzy
 
             t.date = now
