@@ -422,7 +422,9 @@ def get_translations_from_other_locales(request, template=None):
     locales = entity.resource.project.locales.all().exclude(code=locale.code)
 
     for l in locales:
-        translation = get_translation(entity=entity, locale=l)
+        pf = None if entity.string_plural == "" else 0
+        translation = get_translation(entity=entity, locale=l, plural_form=pf)
+
         if translation.string != '' or translation.pk is not None:
             payload.append({
                 "locale": {
