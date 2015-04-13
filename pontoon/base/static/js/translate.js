@@ -106,7 +106,7 @@ var Pontoon = (function (my) {
           tab.removeClass('loading');
         },
         error: function(error) {
-          if (error.status === 0) {
+          if (error.status === 0 && error.statusText !== "abort") {
             // Allows requesting locales again
             editor.otherLocales = null;
             self.noConnectionError(list);
@@ -170,7 +170,7 @@ var Pontoon = (function (my) {
       }
 
       function error(error) {
-        if (error.status === 0) {
+        if (error.status === 0 && error.statusText !== "abort") {
           // Allows requesting Machinery again
           editor.machinery = null;
           if (ul.find('li').length === 0) {
@@ -422,7 +422,7 @@ var Pontoon = (function (my) {
           tab.removeClass('loading');
         },
         error: function(error) {
-          if (error.status === 0) {
+          if (error.status === 0 && error.statusText !== "abort") {
             self.noConnectionError(list);
             tab.removeClass('loading');
           }
