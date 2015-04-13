@@ -785,7 +785,9 @@ def translation_memory(request):
         quality = Levenshtein.ratio(text, unicode(source, "utf-8"))
 
         if quality > min_quality:
-            translation = get_translation(entity=e, locale=locale, fuzzy=False)
+            pf = None if e.string_plural == "" else 0
+            translation = get_translation(
+                entity=e, locale=locale, fuzzy=False, plural_form=pf)
 
             if translation.string != '' or translation.pk is not None:
                 count = 1
