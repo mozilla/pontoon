@@ -338,8 +338,8 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
 
     if len(translations) > 0:
         try:
-            return translations.get(approved=True)
-        except Translation.DoesNotExist:
+            return translations.filter(approved=True).latest("date")
+        except Translation.DoesNotExist as e:
             return translations.latest("date")
     else:
         return Translation()
