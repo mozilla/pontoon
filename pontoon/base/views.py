@@ -154,7 +154,7 @@ def get_gravatar_url(email, size):
         hashlib.md5(email.lower()).hexdigest() + "?"
     data = {'s': str(size)}
 
-    if settings.SITE_URL != 'http://localhost:8000':
+    if not settings.DEBUG:
         append = '_big' if size > 44 else ''
         default = settings.SITE_URL + static('img/anonymous' + append + '.jpg')
         data['d'] = default

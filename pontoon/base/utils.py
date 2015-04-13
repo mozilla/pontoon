@@ -137,7 +137,6 @@ def mark_placeables(text):
         'OptionPlaceable': "Command line option",
     }
 
-    text = unicode(text, "utf8")
     output = u""
 
     # Get a flat list of placeables and StringElem instances

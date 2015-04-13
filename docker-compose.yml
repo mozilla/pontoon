@@ -1,0 +1,26 @@
+db:
+  image: mysql:5.7
+  environment:
+    - MYSQL_ROOT_PASSWORD=asdf
+    - MYSQL_USER=pontoon
+    - MYSQL_PASSWORD=asdf
+    - MYSQL_DATABASE=pontoon
+web:
+  build: .
+  ports:
+    - "8000:8000"
+  volumes:
+    - .:/pontoon
+  links:
+    - db
+  environment:
+    - PYTHONDONTWRITEBYTECODE=1
+    - DOCKER=1
+    - SECRET_KEY=asdf
+    - DJANGO_DEV=True
+    - DJANGO_DEBUG=True
+    - DATABASE_URL=mysql://pontoon:asdf@db/pontoon
+    - SESSION_COOKIE_SECURE=False
+    - HMAC_KEY=asdf
+    - SITE_URL=http://docker:8000
+  command: ./bin/run-compose.sh

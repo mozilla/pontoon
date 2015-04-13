@@ -34,7 +34,7 @@ SESSION_COOKIE_HTTPONLY = os.environ.get('SESSION_COOKIE_HTTPONLY', 'True') != '
 SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') != 'False'
 
 HMAC_KEYS = {
-    'hmac_key': os.environ['HMAC_KEY'],
+    'hmac-key': os.environ['HMAC_KEY'],
 }
 
 SITE_URL = os.environ['SITE_URL']
