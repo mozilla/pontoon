@@ -464,14 +464,18 @@
 
       /**
        * Enable editable mode
+       * inplace Was called in place?
        */
-      function startEditing() {
+      function startEditing(inplace) {
         var toolbar = $('.pontoon-editable-toolbar');
         toolbar.children().show().end()
           .find('.edit').hide();
         var target = toolbar[0].target;
         $(target).attr('contentEditable', true);
-        postMessage("ACTIVE", target.entity.id);
+        postMessage("ACTIVE", {
+          id: target.entity.id,
+          inplace: inplace
+        });
         selectNodeContents(target);
       }
 
@@ -634,7 +638,7 @@
         if (!toolbar[0].target) {
           return false;
         }
-        startEditing();
+        startEditing(true);
         toolbar[0].target.focus();
         return false;
       }).end()

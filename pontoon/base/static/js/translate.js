@@ -435,8 +435,9 @@ var Pontoon = (function (my) {
      * Open translation editor in the main UI
      *
      * entity Entity
+     * inplace Was editor opened from in place?
      */
-    openEditor: function (entity) {
+    openEditor: function (entity, inplace) {
       $("#editor")[0].entity = entity;
 
       // Metadata: comments, sources, keys
@@ -509,6 +510,11 @@ var Pontoon = (function (my) {
       $('#translation').val(entity.translation[0].string);
       $('#warning:visible .cancel').click();
 
+      // Focus
+      if (!inplace) {
+        $('#translation').focus();
+      }
+
       // Length
       var original = entity['original' + this.isPluralized()].length,
           translation = entity.translation[0].string.length;
@@ -528,15 +534,7 @@ var Pontoon = (function (my) {
         $("#entitylist")
           .css('left', -$('#sidebar').width()/2);
 
-        $("#editor")
-          .addClass('opened')
-          .css('left', 0)
-          .bind('transitionend.pontoon', function() {
-            if (!entity.body) {
-              $('#translation').focus();
-              $("#editor").unbind('transitionend.pontoon');
-            }
-          });
+        $("#editor").addClass('opened').css('left', 0);
       }
     },
 
@@ -1023,7 +1021,11 @@ var Pontoon = (function (my) {
 
         $("#helpers > section").hide();
         $("#helpers > section#" + sec).show();
-        $("#custom-search input[type=search]:visible").focus();
+
+        // Only if actually clicked on tab
+        if (e.hasOwnProperty('originalEvent')) {
+          $("#custom-search input[type=search]:visible").focus();
+        }
       });
 
       // Custom search: trigger with Enter
@@ -1834,8 +1836,8 @@ var Pontoon = (function (my) {
 
         case "ACTIVE":
           if ($('#switch').is('.opened')) {
-            var entity = Pontoon.entities[message.value];
-            Pontoon.openEditor(entity);
+            var entity = Pontoon.entities[message.value.id];
+            Pontoon.openEditor(entity, message.value.inplace);
           }
           break;
 
