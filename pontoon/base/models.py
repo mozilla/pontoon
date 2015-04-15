@@ -405,9 +405,9 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
         t = translations_equal[0]
         if translations_equal_count > 1:
             try:
-                t = translations_equal.get(approved=True)
+                t = translations_equal.filter(approved=True).latest("date")
                 t.approved_date = now
-            except Translation.DoesNotExist:
+            except Translation.DoesNotExist as e:
                 t = translations_equal.latest("date")
 
         if t.fuzzy != fuzzy:
