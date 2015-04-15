@@ -314,7 +314,7 @@ def extract_po(project, locale, path, entities=False):
                         try:
                             e = Entity.objects.get(
                                 resource=resource,
-                                string=entry.msgid)
+                                string__iexact=entry.msgid)
                             save_translation(
                                 entity=e,
                                 locale=locale,
@@ -329,7 +329,7 @@ def extract_po(project, locale, path, entities=False):
                         try:
                             e = Entity.objects.get(
                                 resource=resource,
-                                string=entry.msgid)
+                                string__iexact=entry.msgid)
                             for k in entry.msgstr_plural:
                                 save_translation(
                                     entity=e,
@@ -430,7 +430,8 @@ def extract_lang(project, locale, path, entities=False):
         for key, value in lang:
             if key != value[2] or '{ok}' in value[3]:
                 try:
-                    e = Entity.objects.get(resource=resource, string=key)
+                    e = Entity.objects.get(
+                        resource=resource, string__iexact=key)
                     save_translation(
                         entity=e, locale=locale, string=value[2])
 
@@ -807,7 +808,7 @@ def dump_lang(project, locale, relative_path):
 
                 try:
                     entity = Entity.objects.get(
-                        resource=resource, string=original)
+                        resource=resource, string__iexact=original)
                 except Entity.DoesNotExist as e:
                     log.error('%s: Entity "%s" does not exist %s' %
                               (path, original, project.name))

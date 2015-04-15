@@ -632,7 +632,7 @@ def update_translation(request, template=None):
 
         # Same translation exists
         try:
-            t = translations.get(string=string)
+            t = translations.get(string__iexact=string)
 
             # If added by privileged user, approve and unfuzzy it
             if can_localize:
