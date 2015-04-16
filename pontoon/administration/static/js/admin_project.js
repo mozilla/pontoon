@@ -180,4 +180,7 @@ $(function() {
     }
   });
 
+  // Auto-Update project if chosen locales changed
+  $('.repository.autoupdate .update:visible').click();
+
 });

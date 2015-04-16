@@ -80,7 +80,7 @@
 
   <h2>Repository</h2>
 
-  <div class="repository clearfix">
+  <div class="repository clearfix{% if autoupdate %} autoupdate{% endif %}">
       <section class="type-wrapper">
           {{ form.repository_type.label_tag() }}
           <div class="type select">
