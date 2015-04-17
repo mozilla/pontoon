@@ -1323,6 +1323,20 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Show quality check warnings
+     *
+     * warnings Array of warnings
+     */
+    showQualityCheckWarnings: function(warnings) {
+      $('#quality ul').empty();
+      $(warnings).each(function() {
+        $('#quality ul').append('<li>' + this + '</li>');
+      });
+      $('#quality').show();
+    },
+
+
+    /*
      * Update entity translation on server
      * 
      * entity Entity
@@ -1386,11 +1400,7 @@ var Pontoon = (function (my) {
 
         } else if (data.warnings) {
           self.endLoader();
-          $('#quality ul').empty();
-          $(data.warnings).each(function() {
-            $('#quality ul').append('<li>' + this + '</li>');
-          });
-          $('#quality').show();
+          self.showQualityCheckWarnings(data.warnings);
 
         } else if (data === "error") {
           self.endLoader('Oops, something went wrong.', 'error');
