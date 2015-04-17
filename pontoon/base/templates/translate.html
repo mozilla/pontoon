@@ -258,7 +258,13 @@
     <textarea id="translation" placeholder="Enter translation"></textarea>
 
     <menu>
-      <div id="warning">
+      <div id="unsaved" class="warning-overlay">
+        <a href="#" class="cancel">&times;</a>
+        <h2>You have unsaved changes</h2>
+        <p>Sure you want to leave?</p>
+        <button id="leave-anyway">Leave anyway</button>
+      </div>
+      <div id="quality" class="warning-overlay">
         <a href="#" class="cancel">&times;</a>
         <h2>The following checks have failed</h2>
         <ul></ul>

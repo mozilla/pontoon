@@ -508,7 +508,7 @@ var Pontoon = (function (my) {
 
       // Translation area
       $('#translation').val(entity.translation[0].string);
-      $('#warning:visible .cancel').click();
+      $('.warning-overlay:visible .cancel').click();
 
       // Focus
       if (!inplace) {
@@ -593,19 +593,50 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Check unsaved changes in editor
+     *
+     * callback Callback function
+     */
+    checkUnsavedChanges: function (callback) {
+      var entity = $('#editor')[0].entity;
+
+      if (!entity) {
+        return callback();
+      }
+
+      var pluralForm = this.getPluralForm(true),
+          translation = entity.translation[pluralForm].string,
+          source = $('#translation').val();
+
+      if (translation !== source) {
+        $('#unsaved').show();
+        $("#translation").focus();
+        this.checkUnsavedChangesCallback = callback;
+
+      } else {
+        return callback();
+      }
+    },
+
+
+    /*
      * Switch to new entity in editor
      *
      * newEntity New entity we want to switch to
      */
     switchToEntity: function (newEntity) {
-      var oldEntity = $('#editor')[0].entity;
+      var self = this;
 
-      if (newEntity.body || (oldEntity && oldEntity.body)) {
-        this.postMessage("NAVIGATE", newEntity.id);
-      }
-      if (!newEntity.body) {
-        this.openEditor(newEntity);
-      }
+      self.checkUnsavedChanges(function() {
+        var oldEntity = $('#editor')[0].entity;
+
+        if (newEntity.body || (oldEntity && oldEntity.body)) {
+          self.postMessage("NAVIGATE", newEntity.id);
+        }
+        if (!newEntity.body) {
+          self.openEditor(newEntity);
+        }
+      });
     },
 
 
@@ -775,7 +806,9 @@ var Pontoon = (function (my) {
         switch (sec) {
 
         case "back":
-          $('#cancel').click();
+          self.checkUnsavedChanges(function() {
+            $('#cancel').click();
+          });
           break;
 
         case "previous":
@@ -831,26 +864,29 @@ var Pontoon = (function (my) {
         e.stopPropagation();
         e.preventDefault();
 
-        $("#plural-tabs li").removeClass('active');
-        $(this).parent().addClass('active');
+        var tabs = $(this).parent();
 
-        var i = $(this).parent().index(),
-            editor = $('#editor')[0],
-            entity = editor.entity,
-            original = entity['marked' + self.isPluralized()],
-            title = !self.isPluralized() ? "Singular" : "Plural",
-            source = entity.translation[i].string;
+        self.checkUnsavedChanges(function() {
+          $("#plural-tabs li").removeClass('active');
+          tabs.addClass('active');
 
-        $('#source-pane h2').html(title).show();
-        $('#original').html(original);
+          var entity = $('#editor')[0].entity,
+              i = tabs.index(),
+              original = entity['marked' + self.isPluralized()],
+              title = !self.isPluralized() ? "Singular" : "Plural",
+              source = entity.translation[i].string;
 
-        $('#translation').val(source).focus();
-        $('#translation-length')
-          .find('.original-length').html(original.length).end()
-          .find('.current-length').html(source.length);
+          $('#source-pane h2').html(title).show();
+          $('#original').html(original);
 
-        $('#warning:visible .cancel').click();
-        $("#helpers nav .active a").click();
+          $('#translation').val(source).focus();
+          $('#translation-length')
+            .find('.original-length').html(original.length).end()
+            .find('.current-length').html(source.length);
+
+          $('#quality:visible .cancel').click();
+          $("#helpers nav .active a").click();
+        });
       });
 
       // Translate textarea keyboard shortcuts
@@ -864,14 +900,18 @@ var Pontoon = (function (my) {
 
         // Enter: save translation
         if (key === 13 && !e.shiftKey && !e.altKey) {
-          $('#save').click();
+          if ($('#leave-anyway').is(':visible')) {
+            $('#leave-anyway').click();
+          } else {
+            $('#save').click();
+          }
           return false;
         }
 
         // Esc: cancel translation and return to entity list
         if (key === 27) {
-          if ($('#warning').is(':visible')) {
-            $('#warning .cancel').click();
+          if ($('.warning-overlay').is(':visible')) {
+            $('.warning-overlay .cancel').click();
           } else if (!self.app.advanced) {
             $('#cancel').click();
           }
@@ -907,17 +947,27 @@ var Pontoon = (function (my) {
         var length = $('#translation').val().length;
         $('#translation-length .current-length').html(length);
 
-        $('#warning:visible .cancel').click();
+        $('.warning-overlay:visible .cancel').click();
       });
 
       // Close warning box
-      $('#warning .cancel').click(function (e) {
+      $('.warning-overlay .cancel').click(function (e) {
         e.stopPropagation();
         e.preventDefault();
 
-        $('#warning')
+        $('.warning-overlay')
           .find('ul').empty().end()
         .hide();
+
+        $('#translation').focus();
+      });
+
+      $('#leave-anyway').click(function() {
+        var callback = self.checkUnsavedChangesCallback;
+        if (callback) {
+          self.checkUnsavedChangesCallback();
+          $('#unsaved').hide();
+        }
       });
 
       // Copy source to translation
@@ -1047,7 +1097,7 @@ var Pontoon = (function (my) {
         $('#translation').val(source).focus();
         $('#translation-length .current-length').html(source.length);
 
-        $('#warning:visible .cancel').click();
+        $('.warning-overlay:visible .cancel').click();
       });
 
       // Restore clickable links
@@ -1336,11 +1386,11 @@ var Pontoon = (function (my) {
 
         } else if (data.warnings) {
           self.endLoader();
-          $('#warning ul').empty();
+          $('#quality ul').empty();
           $(data.warnings).each(function() {
-            $('#warning ul').append('<li>' + this + '</li>');
+            $('#quality ul').append('<li>' + this + '</li>');
           });
-          $('#warning').show();
+          $('#quality').show();
 
         } else if (data === "error") {
           self.endLoader('Oops, something went wrong.', 'error');
@@ -1360,7 +1410,7 @@ var Pontoon = (function (my) {
           translation: translation,
           plural_form: pluralForm,
           original: entity['original' + self.isPluralized()],
-          ignore_check: inplace || $('#warning').is(':visible') || !syncLocalStorage
+          ignore_check: inplace || $('#quality').is(':visible') || !syncLocalStorage
         },
         success: function(data) {
           renderTranslation(data);
