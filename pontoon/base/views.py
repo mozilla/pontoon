@@ -100,6 +100,7 @@ def locale(request, locale, template='locale.html'):
     data = {
         'projects': get_projects_with_stats(projects, l),
         'locale': l,
+        'url_prefix': l.code,
     }
 
     return render(request, template, data)
@@ -142,6 +143,7 @@ def projects(request, template='projects.html'):
 
     data = {
         'projects': get_projects_with_stats(projects),
+        'url_prefix': 'projects',
     }
 
     return render(request, template, data)

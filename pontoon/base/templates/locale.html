@@ -4,24 +4,10 @@
 
 {% block class %}locale{% endblock %}
 
-{% block before %}
-<!-- Server data -->
-<div id="server"
-     class="hidden"
-     data-locale="{{ locale.code }}">
-</div>
-{% endblock %}
-
 {% block subtitle %}{{ locale.name }} ({{ locale.code }}){% endblock %}
 
 {% block middle %}
 <form>
   {% include 'project_selector.html' %}
 </form>
-{% endblock %}
-
-{% block extend_js %}
-  {% compress js %}
-  <script src="{{ static('js/locale.js') }}"></script>
-  {% endcompress %}
 {% endblock %}

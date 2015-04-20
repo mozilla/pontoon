@@ -21,19 +21,23 @@
     <ul>
       {% for project in projects %}
       <li class="clearfix">
-        <span class="name"
-          data-slug="{{ project.slug }}"
-          data-details="{{ project.details }}">{{ project.name }}</span>
-        <span class="url">{{ project.url }}</span>
         {% if project and project.chart and project.chart.total %}
-        <span class="chart-wrapper">
-          <span class="chart" data-chart="{{ project.chart }}">
-            <span class="approved" style="width:{{ project.chart.approved / project.chart.total * 100 }}%;"></span>
-            <span class="translated" style="width:{{ project.chart.translated / project.chart.total * 100 }}%;"></span>
-            <span class="fuzzy" style="width:{{ project.chart.fuzzy / project.chart.total * 100 }}%;"></span>
-          </span>
-        </span>
+        <a href="/{{ url_prefix }}/{{ project.slug }}/" class="clearfix">
         {% endif %}
+          <span class="name"
+            data-slug="{{ project.slug }}"
+            data-details="{{ project.details }}">{{ project.name }}</span>
+          <span class="url">{{ project.url }}</span>
+          {% if project and project.chart and project.chart.total %}
+          <span class="chart-wrapper">
+            <span class="chart" data-chart="{{ project.chart }}">
+              <span class="approved" style="width:{{ project.chart.approved / project.chart.total * 100 }}%;"></span>
+              <span class="translated" style="width:{{ project.chart.translated / project.chart.total * 100 }}%;"></span>
+              <span class="fuzzy" style="width:{{ project.chart.fuzzy / project.chart.total * 100 }}%;"></span>
+            </span>
+          </span>
+        </a>
+          {% endif %}
       </li>
       {% endfor %}
       <li class="no-match">No results</li>

@@ -11,9 +11,3 @@
   {% include 'project_selector.html' %}
 </form>
 {% endblock %}
-
-{% block extend_js %}
-  {% compress js %}
-  <script src="{{ static('js/projects.js') }}"></script>
-  {% endcompress %}
-{% endblock %}
