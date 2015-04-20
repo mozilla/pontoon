@@ -18,7 +18,8 @@
     margin: -17px 12px 0px;
 }
 
-.select .menu ul li > span:first-child {
+.select .menu ul li > span:first-child,
+.select .menu ul li > a > span:first-child {
   width: 160px;
 }
 
@@ -28,4 +29,12 @@
 
 .locale .menu li:not(.filter) {
   display: none;
+}
+
+.locale .menu li a {
+  display: block;
+}
+
+.locale .menu li.hover > a  {
+  color: #FFFFFF;
 }

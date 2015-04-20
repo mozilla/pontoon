@@ -26,17 +26,19 @@
     <ul>
       {% for locale in locales %}
       <li class="clearfix{% if locale and locale.chart %} filter{% endif %}">
-        <span class="language {{ locale.code|lower }}">{{ locale.name }}</span>
-        <span class="code">{{ locale.code }}</span>
-        {% if locale and locale.chart %}
-        <span class="chart-wrapper">
-          <span class="chart" data-chart="{{ locale.chart }}">
-            <span class="approved" style="width:{{ locale.chart.approved / locale.chart.total * 100 }}%;"></span>
-            <span class="translated" style="width:{{ locale.chart.translated / locale.chart.total * 100 }}%;"></span>
-            <span class="fuzzy" style="width:{{ locale.chart.fuzzy / locale.chart.total * 100 }}%;"></span>
+        {% if locale and locale.chart %}<a href="/{{ locale.code|lower }}/{{ project.slug }}/" class="clearfix">{% endif %}
+          <span class="language {{ locale.code|lower }}">{{ locale.name }}</span>
+          <span class="code">{{ locale.code }}</span>
+          {% if locale and locale.chart %}
+          <span class="chart-wrapper">
+            <span class="chart" data-chart="{{ locale.chart }}">
+              <span class="approved" style="width:{{ locale.chart.approved / locale.chart.total * 100 }}%;"></span>
+              <span class="translated" style="width:{{ locale.chart.translated / locale.chart.total * 100 }}%;"></span>
+              <span class="fuzzy" style="width:{{ locale.chart.fuzzy / locale.chart.total * 100 }}%;"></span>
+            </span>
           </span>
-        </span>
-        {% endif %}
+        </a>
+          {% endif %}
       </li>
       {% endfor %}
       <li class="no-match">No results</li>

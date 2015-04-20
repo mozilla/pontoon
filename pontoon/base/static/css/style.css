@@ -546,7 +546,8 @@ label {
   max-height: none;
 }
 
-.select .menu ul li > span:first-child {
+.select .menu ul li > span:first-child,
+.select .menu ul li > a > span:first-child {
   float: left;
   text-align: left;
 }
