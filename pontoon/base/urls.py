@@ -26,6 +26,10 @@ urlpatterns = patterns(
     url(r'^project/(?P<slug>[\w-]+)/$',
         RedirectView.as_view(url="/projects/%(slug)s/")),
 
+    # Legacy: Redirect to /contributors/email
+    url(r'^contributor/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
+        RedirectView.as_view(url="/contributors/%(email)s/")),
+
     # List all imported projects
     url(r'^projects/$',
         views.projects,
@@ -52,7 +56,7 @@ urlpatterns = patterns(
         name='pontoon.contributors'),
 
     # User profile
-    url(r'^contributor/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
+    url(r'^contributors/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
         views.contributor,
         name='pontoon.contributor'),
 
