@@ -34,7 +34,3 @@
 .locale .menu li a {
   display: block;
 }
-
-.locale .menu li.hover > a  {
-  color: #FFFFFF;
-}

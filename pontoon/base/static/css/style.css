@@ -612,6 +612,10 @@ label {
   background: #3F4752;
 }
 
+.menu li.hover > a  {
+  color: #FFFFFF;
+}
+
 .menu li a:link,
 .menu li a:visited {
   -moz-transition: none;  /* FF3.7+ */
