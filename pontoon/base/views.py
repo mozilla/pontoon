@@ -1029,11 +1029,11 @@ def transvision(request, repo, title):
         return HttpResponse("error")
 
     src = "en-US"
-    url = "http://transvision.mozfr.org/api/v1/tm/%s/%s/" \
+    url = "https://transvision.mozfr.org/api/v1/tm/%s/%s/" \
           "%s/%s/?max_results=%s&min_quality=70" % (repo, src, locale, text, 5)
 
     try:
-        r = requests.get(url)
+        r = requests.get(url, verify=False)
 
         if r.text != '[]':
             translations = r.json()
