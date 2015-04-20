@@ -111,7 +111,7 @@
         <div class="menu">
           <ul>
             {% if user.is_authenticated() %}
-            <li data-url="{{ url('pontoon.contributor', user.email) }}"><i class="fa fa-user fa-fw"></i>View profile</li>
+            <li data-url="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View profile</li>
             <li class="quality-checks{% if user.get_profile().quality_checks %} enabled{% endif %}"><i class="fa fa-fw"></i>Quality checks</li>
             <li class="horizontal-separator"></li>
             {% endif %}

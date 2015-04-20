@@ -55,10 +55,15 @@ urlpatterns = patterns(
         views.contributors,
         name='pontoon.contributors'),
 
-    # User profile
+    # Contributor profile
     url(r'^contributors/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
         views.contributor,
         name='pontoon.contributor'),
+
+    # Current user profile
+    url(r'^profile/$',
+        views.profile,
+        name='pontoon.profile'),
 
     # AJAX
     url(r'^get-entities/', views.entities,

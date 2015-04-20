@@ -290,9 +290,17 @@ def translate(request, locale, slug, part=None, template='translate.html'):
     return render(request, template, data)
 
 
+@login_required(redirect_field_name='', login_url='/403')
+def profile(request):
+    """Current user profile."""
+    log.debug("Current user profile.")
+
+    return contributor(request, request.user.email)
+
+
 def contributor(request, email, template='user.html'):
-    """User view."""
-    log.debug("User view.")
+    """Contirbutor profile."""
+    log.debug("Contirbutor profile.")
 
     # Validate user
     try:
