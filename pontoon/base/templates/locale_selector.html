@@ -26,7 +26,9 @@
     <ul>
       {% for locale in locales %}
       <li class="clearfix{% if locale and locale.chart %} filter{% endif %}">
-        {% if locale and locale.chart %}<a href="/{{ locale.code|lower }}/{{ project.slug }}/" class="clearfix">{% endif %}
+        {% if locale and locale.chart %}
+        <a href="/{{ locale.code|lower }}/{{ project.slug }}/" class="clearfix">
+        {% endif %}
           <span class="language {{ locale.code|lower }}">{{ locale.name }}</span>
           <span class="code">{{ locale.code }}</span>
           {% if locale and locale.chart %}
