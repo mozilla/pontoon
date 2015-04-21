@@ -362,6 +362,21 @@ def contributors(request, template='users.html'):
     return render(request, template, data)
 
 
+def search(request, template='search.html'):
+    """Terminology search view."""
+    log.debug("Terminology search view.")
+
+    locale = utils.get_project_locale_from_request(
+        request, Locale.objects) or 'en-GB'
+
+    data = {
+        'locale': Locale.objects.get(code=locale),
+        'locales': Locale.objects.all(),
+    }
+
+    return render(request, template, data)
+
+
 def entities(request, template=None):
     """Get entities for the specified project, locale and paths."""
     log.debug("Get entities for the specified project, locale and paths.")

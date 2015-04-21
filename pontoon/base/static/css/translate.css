@@ -1055,16 +1055,10 @@ body > header aside p {
   padding-left: 10px;
 }
 
-#helpers > section ul {
-  list-style: none;
-  margin: 0;
-}
-
 #helpers > section ul li {
-  border-bottom: 1px solid #525a65;
   cursor: pointer;
-  padding: 5px 10px 20px;
-  text-align: right;
+  padding-left: 10px;
+  padding-right: 10px;
   transition: all 0.2s ease-out;
 }
 
@@ -1083,21 +1077,17 @@ body > header aside p {
   cursor: default;
 }
 
-#helpers > section ul li > header {
-  color: #AAAAAA;
-  display: block;
-  font-size: 11px;
-  font-weight: 300;
-  padding: 1px 0 5px;
-  text-transform: uppercase;
-}
-
 #helpers > section ul li > header .info {
   float: left;
 }
 
 #helpers > section ul li > header .toolbar {
   float: right;
+}
+
+#helpers > section#history ul li > header .stress,
+#helpers > section#other-locales ul li > header .stress {
+  padding-right: 0;
 }
 
 #helpers > section ul li > header button {
@@ -1135,27 +1125,4 @@ body > header aside p {
 
 #helpers > section ul li > header button.delete:hover:before {
   color: #FD5F60;
-}
-
-#helpers > section ul li > header .stress {
-  color: #7BC876;
-  padding-left: 3px;
-}
-
-#helpers > section ul li > p {
-  min-height: 22px;
-}
-
-#helpers > section#machinery ul li > header .stress,
-#helpers > section#custom-search ul li > header .stress {
-  padding-right: 3px;
-}
-
-#helpers > section ul li.disabled p {
-  color: #AAAAAA;
-  font-style: italic;
-}
-
-#helpers > section ul li p.original {
-  color: #AAAAAA;
 }

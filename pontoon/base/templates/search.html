@@ -1,0 +1,34 @@
+{% extends "landing.html" %}
+
+{% block title %}Pontoon &middot; Terminology Search{% endblock %}
+
+{% block class %}search{% endblock %}
+
+{% block subtitle %}Terminology Search{% endblock %}
+
+{% block middle %}
+<form>
+  {% include 'locale_selector.html' %}
+  <div id="search" class="search-wrapper clearfix">
+    <div class="icon fa fa-search"></div>
+    <div class="icon fa fa-cog fa-spin"></div>
+    <input type="search" placeholder="Type and press Enter to search" autocomplete="off" autofocus>
+  </div>
+  <div id="helpers">
+    <section>
+      <ul></ul>
+    </section>
+  </div>
+</form>
+{% endblock %}
+
+{% block extend_css %}
+  <link rel="stylesheet" href="{{ static('css/search.css') }}">
+{% endblock %}
+
+
+{% block extend_js %}
+  {% compress js %}
+    <script src="{{ static('js/search.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

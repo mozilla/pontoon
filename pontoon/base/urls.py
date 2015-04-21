@@ -65,6 +65,11 @@ urlpatterns = patterns(
         views.profile,
         name='pontoon.profile'),
 
+    # Terminology Search
+    url(r'^search/$',
+        views.search,
+        name='pontoon.search'),
+
     # AJAX
     url(r'^get-entities/', views.entities,
         name='pontoon.entities'),
