@@ -165,7 +165,6 @@ def manage_project(request, slug=None, template='admin_project.html'):
     return render(request, template, data)
 
 
-@transaction.commit_manually
 def delete_project(request, pk, template=None):
     """Admin interface: delete project."""
     try:
@@ -174,20 +173,19 @@ def delete_project(request, pk, template=None):
         if not request.user.has_perm('base.can_manage'):
             return render(request, '403.html', status=403)
 
-        project = Project.objects.get(pk=pk)
-        project.delete()
+        with transaction.atomic():
+            project = Project.objects.get(pk=pk)
+            project.delete()
 
-        path = files.get_repository_path_master(project)
-        if os.path.exists(path):
-            shutil.rmtree(path)
+            path = files.get_repository_path_master(project)
+            if os.path.exists(path):
+                shutil.rmtree(path)
 
-        transaction.commit()
         return HttpResponseRedirect(reverse('pontoon.admin'))
     except Exception as e:
         log.error(
             "Admin interface: delete project error.\n%s"
             % unicode(e), exc_info=True)
-        transaction.rollback()
         messages.error(
             request,
             "There was an error during deleting this project.")
