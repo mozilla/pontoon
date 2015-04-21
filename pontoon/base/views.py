@@ -385,7 +385,7 @@ def entities(request, template=None):
         return HttpResponse("error")
 
     entities = get_entities(project, locale, paths)
-    return HttpResponse(json.dumps(entities), mimetype='application/json')
+    return HttpResponse(json.dumps(entities), content_type='application/json')
 
 
 def get_translations_from_other_locales(request, template=None):
@@ -437,7 +437,7 @@ def get_translations_from_other_locales(request, template=None):
         return HttpResponse("error")
     else:
         return HttpResponse(
-            json.dumps(payload, indent=4), mimetype='application/json')
+            json.dumps(payload, indent=4), content_type='application/json')
 
 
 def get_translation_history(request, template=None):
@@ -497,7 +497,7 @@ def get_translation_history(request, template=None):
             payload.append(o)
 
         return HttpResponse(
-            json.dumps(payload, indent=4), mimetype='application/json')
+            json.dumps(payload, indent=4), content_type='application/json')
 
     else:
         log.debug("Translations do not exist")
@@ -556,7 +556,7 @@ def delete_translation(request, template=None):
     return HttpResponse(json.dumps({
         'type': 'deleted',
         'next': next.id,
-    }), mimetype='application/json')
+    }), content_type='application/json')
 
 
 @anonymous_csrf_exempt
@@ -662,7 +662,7 @@ def update_translation(request, template=None):
                 return HttpResponse(json.dumps({
                     'type': 'updated',
                     'translation': t.serialize(),
-                }), mimetype='application/json')
+                }), content_type='application/json')
 
             # If added by non-privileged user, unfuzzy it
             else:
@@ -685,7 +685,7 @@ def update_translation(request, template=None):
                     return HttpResponse(json.dumps({
                         'type': 'updated',
                         'translation': t.serialize(),
-                    }), mimetype='application/json')
+                    }), content_type='application/json')
 
                 return HttpResponse("Same translation already exist.")
 
@@ -718,7 +718,7 @@ def update_translation(request, template=None):
             return HttpResponse(json.dumps({
                 'type': 'added',
                 'translation': active.serialize(),
-            }), mimetype='application/json')
+            }), content_type='application/json')
 
     # No translations saved yet
     else:
@@ -741,7 +741,7 @@ def update_translation(request, template=None):
         return HttpResponse(json.dumps({
             'type': 'saved',
             'translation': t.serialize(),
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
 
 def translation_memory(request):
@@ -815,7 +815,7 @@ def translation_memory(request):
 
         return HttpResponse(json.dumps({
             'translations': translations_array
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
     else:
         return HttpResponse("no")
@@ -880,7 +880,7 @@ def machine_translation(request):
         translation = root.text
         obj['translation'] = translation
 
-        return HttpResponse(json.dumps(obj), mimetype='application/json')
+        return HttpResponse(json.dumps(obj), content_type='application/json')
 
     except Exception as e:
         log.error(e)
@@ -956,7 +956,7 @@ def microsoft_terminology(request):
 
             obj['translations'] = translations
 
-        return HttpResponse(json.dumps(obj), mimetype='application/json')
+        return HttpResponse(json.dumps(obj), content_type='application/json')
 
     except WebFault as e:
         log.error(e)
@@ -992,7 +992,7 @@ def amagama(request):
 
             return HttpResponse(json.dumps({
                 'translations': translations
-            }), mimetype='application/json')
+            }), content_type='application/json')
 
         else:
             return HttpResponse("no")
@@ -1026,7 +1026,7 @@ def transvision(request, repo, title):
             return HttpResponse(json.dumps({
                 'translations': translations,
                 'title': title,
-            }), mimetype='application/json')
+            }), content_type='application/json')
 
         else:
             return HttpResponse("no")
@@ -1170,7 +1170,7 @@ def quality_checks_switch(request):
         log.error("Non-POST request")
         raise Http404
 
-    profile = request.user.get_profile()
+    profile = request.user.profile
     profile.quality_checks = not profile.quality_checks
     profile.save()
 
@@ -1283,7 +1283,7 @@ def verify(request, template=None):
             'manager': user.has_perm('base.can_manage'),
         }
 
-    return HttpResponse(json.dumps(response), mimetype='application/json')
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 def get_csrf(request, template=None):

@@ -81,7 +81,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
     if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
 
-    SubpageInlineFormSet = inlineformset_factory(Project, Subpage, extra=1)
+    SubpageInlineFormSet = inlineformset_factory(Project, Subpage, extra=1,
+                                                 fields=('project', 'name', 'url'))
     form = ProjectForm()
     formset = SubpageInlineFormSet()
     locales_selected = []
@@ -212,7 +213,7 @@ def update_from_repository(request, template=None):
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': 'Project primary key not provided.',
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
     try:
         project = Project.objects.get(pk=pk)
@@ -221,7 +222,7 @@ def update_from_repository(request, template=None):
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': str(e),
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
     try:
         files.update_from_repository(project)
@@ -233,7 +234,7 @@ def update_from_repository(request, template=None):
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': str(e),
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
     except IOError as e:
         log.error("IOError: " + str(e))
@@ -241,7 +242,7 @@ def update_from_repository(request, template=None):
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': str(e),
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
     return HttpResponse("200")
 

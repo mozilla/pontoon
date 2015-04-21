@@ -16,7 +16,7 @@ log = commonware.log.getLogger('pontoon')
 
 class UserProfile(models.Model):
     # This field is required.
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, related_name='profile')
 
     # Other fields here
     transifex_username = models.CharField(max_length=40, blank=True)
