@@ -1048,7 +1048,7 @@ def transvision(request, repo, title):
           "%s/%s/?max_results=%s&min_quality=70" % (repo, src, locale, text, 5)
 
     try:
-        r = requests.get(url)
+        r = requests.get(url, verify=False)
 
         if r.text != '[]':
             translations = r.json()

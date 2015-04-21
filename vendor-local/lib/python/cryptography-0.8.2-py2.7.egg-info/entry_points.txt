@@ -1,4 +1,0 @@
-[cryptography.backends]
-commoncrypto = cryptography.hazmat.backends.commoncrypto:backend
-openssl = cryptography.hazmat.backends.openssl:backend
-
