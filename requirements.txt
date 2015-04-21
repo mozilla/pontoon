@@ -61,9 +61,6 @@ django-browserid==0.9
 # sha256: uiqjz1S7cQ9G8WiJ-hgzExdFipLiUxvo4-jTg-_UoU0
 django-celery==3.1.16
 
-# sha256: ke8X-6jMs-0chxtVc6OAWaOPB11LzrL--zzeiDPPHFw
-django-compressor==1.2
-
 # sha256: F3KVsUQkAMks22fo4Y-f9ZRvtEL4WBO50IN4I3IuoI0
 django-cronjobs==0.2.3
 
@@ -159,3 +156,7 @@ django==1.8
 
 # sha256: 3w1cLeq8MzdfKIx6tUYuBsbs2CTs-ie_qLzV5Mz7Nyo
 django-jinja==1.3.3
+
+# sha256: Vibe-NP1i9L1ne67vn7-KckiAGpFFQblwH3VtKSQ_8M
+# sha256: 4h6LijS01EbJtWCQ4yh847Y9GuHPbe8ejb-Ij0DkbMw
+django-pipeline==1.4.7

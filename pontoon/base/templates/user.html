@@ -39,7 +39,7 @@
   <li><span class="fa fa-fw fa-envelope"></span><a href="mailto:{{ contributor.email }}">{{ contributor.email }}</a></li>
   <li><span class="fa fa-fw fa-lock"></span>Can submit {% if contributor.has_perm('base.can_localize') %}and approve {% endif %}translations</li>
   {% if user.is_authenticated() and user.email == contributor.email %}
-  <li class="quality-checks{% if user.get_profile().quality_checks %} enabled{% endif %}"><span class="fa fa-fw"></span>Quality checks</li>
+  <li class="quality-checks{% if user.profile.quality_checks %} enabled{% endif %}"><span class="fa fa-fw"></span>Quality checks</li>
   {% endif %}
 </ul>
 
@@ -107,11 +107,9 @@
 {% endblock %}
 
 {% block extend_css %}
-  <link rel="stylesheet" href="{{ static('css/user.css') }}">
+  {% stylesheet 'user' %}
 {% endblock %}
 
 {% block extend_js %}
-  {% compress js %}
-  <script src="{{ static('js/user.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'user' %}
 {% endblock %}

@@ -2,23 +2,19 @@
 <html lang="{{ LANG }}" dir="{{ DIR }}">
   <head>
     <meta charset="utf-8">
-    
+
     <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
- 
+
     <title>{% block title %}Pontoon{% endblock %}</title>
     <meta name="description" content="Live web localization tool">
     <meta name="author" content="Mozilla">
     <base href="{{ settings.SITE_URL }}/">
 
     {% block site_css %}
-      {% compress css %}
-      <link rel="stylesheet" href="{{ static('css/style.css') }}">
-      <link rel="stylesheet" href="{{ static('css/font-awesome.css') }}">
-
+      {% stylesheet 'base' %}
       {% block extend_css %}
       {% endblock %}
-      {% endcompress %}
     {% endblock %}
 
     {% if settings.GOOGLE_ANALYTICS_KEY %}
@@ -38,7 +34,7 @@
     </script>
     {% endif %}
   </head>
-  
+
   <body class="{% block class %}{% endblock %}">
     {% block content %}{% endblock %}
 
@@ -48,9 +44,7 @@
       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
       <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ static('js/jquery-1.11.1.min.js') }}"%3E%3C/script%3E'))</script>
 
-      {% compress js %}
-      <script src="{{ static('js/main.js') }}"></script>
-      {% endcompress %}
+      {% javascript 'main' %}
 
       {% block extend_js %}
       {% endblock %}

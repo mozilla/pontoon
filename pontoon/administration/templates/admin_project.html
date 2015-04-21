@@ -209,11 +209,9 @@
 {% endblock %}
 
 {% block extend_css %}
-  <link rel="stylesheet" href="{{ static('css/admin_project.css') }}">
+  {% stylesheet 'admin_project' %}
 {% endblock %}
 
 {% block extend_js %}
-  {% compress js %}
-  <script src="{{ static('js/admin_project.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'admin_project' %}
 {% endblock %}

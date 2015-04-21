@@ -73,11 +73,11 @@ INSTALLED_APPS = (
 
     # Third-party apps, patches, fixes
     'commonware.response.cookies',
-    'compressor',
     'cronjobs',
     'django_browserid',
     'django_jinja',
     'djcelery',
+    'pipeline',
     'product_details',
     'session_csrf',
     'tower',
@@ -112,8 +112,8 @@ TEMPLATES = [
         'BACKEND': 'django_jinja.backend.Jinja2',
         'APP_DIRS': True,
         'OPTIONS': {
-            'match_extension': '.html',
-            'match_regex': r'^(?!(admin|registration)/).*',
+            'match_extension': '',
+            'match_regex': r'^(?!(admin|registration)/).*\.(html|jinja)$',
             'context_processors': TEMPLATE_CONTEXT_PROCESSORS,
             'extensions': [
                 'jinja2.ext.do',
@@ -127,7 +127,7 @@ TEMPLATES = [
                 'django_jinja.builtins.extensions.UrlsExtension',
                 'django_jinja.builtins.extensions.StaticFilesExtension',
                 'django_jinja.builtins.extensions.DjangoFiltersExtension',
-                'compressor.contrib.jinja2ext.CompressorExtension',
+                'pipeline.jinja2.ext.PipelineExtension',
             ],
         }
     },
@@ -135,6 +135,9 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
         'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': TEMPLATE_CONTEXT_PROCESSORS
+        }
     },
 ]
 
@@ -161,8 +164,103 @@ DOMAIN_METHODS = {
     ]
 }
 
-# Required for storing additional information about users
-AUTH_PROFILE_MODULE = 'base.UserProfile'
+PIPELINE_CSS = {
+    'base': {
+        'source_filenames': (
+            'css/style.css',
+            'css/font-awesome.css',
+        ),
+        'output_filename': 'css/base.min.css',
+    },
+    'admin': {
+        'source_filenames': (
+            'css/admin.css',
+        ),
+        'output_filename': 'css/admin.min.css',
+    },
+    'admin_project': {
+        'source_filenames': (
+            'css/admin_project.css',
+        ),
+        'output_filename': 'css/admin_project.min.css',
+    },
+    'project': {
+        'source_filenames': (
+            'css/project.css',
+        ),
+        'output_filename': 'css/project.min.css',
+    },
+    'translate': {
+        'source_filenames': (
+            'css/translate.css',
+        ),
+        'output_filename': 'css/translate.min.css',
+    },
+    'user': {
+        'source_filenames': (
+            'css/user.css',
+        ),
+        'output_filename': 'css/user.min.css',
+    },
+    'users': {
+        'source_filenames': (
+            'css/users.css',
+        ),
+        'output_filename': 'css/users.min.css',
+    },
+}
+
+PIPELINE_JS = {
+    'admin': {
+        'source_filenames': (
+            'js/admin.js',
+        ),
+        'output_filename': 'js/admin.min.js',
+    },
+    'admin_project': {
+        'source_filenames': (
+            'js/admin_project.js',
+        ),
+        'output_filename': 'js/admin_project.min.js',
+    },
+    'main': {
+        'source_filenames': (
+            'js/main.js',
+        ),
+        'output_filename': 'js/main.min.js',
+    },
+    'locale': {
+        'source_filenames': (
+            'js/locale.js',
+        ),
+        'output_filename': 'js/locale.min.js',
+    },
+    'project': {
+        'source_filenames': (
+            'js/project.js',
+        ),
+        'output_filename': 'js/project.min.js',
+    },
+    'projects': {
+        'source_filenames': (
+            'js/projects.js',
+        ),
+        'output_filename': 'js/projects.min.js',
+    },
+    'translate': {
+        'source_filenames': (
+            'js/translate.js',
+            'js/jquery.timeago.js',
+        ),
+        'output_filename': 'js/translate.min.js',
+    },
+    'user': {
+        'source_filenames': (
+            'js/user.js',
+        ),
+        'output_filename': 'js/user.min.js',
+    },
+}
 
 DATABASE_ROUTERS = ('multidb.PinningMasterSlaveRouter',)
 
@@ -190,24 +288,12 @@ STATIC_ROOT = path('static')
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
+    'pipeline.finders.PipelineFinder',
 )
-
-# Storage of static files
-COMPRESS_ROOT = STATIC_ROOT
-COMPRESS_CSS_FILTERS = (
-    'compressor.filters.css_default.CssAbsoluteFilter',
-    'compressor.filters.cssmin.CSSMinFilter'
-)
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
-)
-
-# Path to Java. Used for compress_assets.
-JAVA_BIN = '/usr/bin/java'
 
 ## Auth
 # The first hasher in this list will be used for new passwords.

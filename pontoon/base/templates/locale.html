@@ -21,7 +21,5 @@
 {% endblock %}
 
 {% block extend_js %}
-  {% compress js %}
-  <script src="{{ static('js/locale.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'locale' %}
 {% endblock %}

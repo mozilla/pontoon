@@ -13,7 +13,5 @@
 {% endblock %}
 
 {% block extend_js %}
-  {% compress js %}
-  <script src="{{ static('js/projects.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'projects' %}
 {% endblock %}

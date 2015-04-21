@@ -29,11 +29,9 @@
 {% endblock %}
 
 {% block extend_css %}
-  <link rel="stylesheet" href="{{ static('css/project.css') }}">
+  {% stylesheet 'project' %}
 {% endblock %}
 
 {% block extend_js %}
-  {% compress js %}
-  <script src="{{ static('js/project.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'project' %}
 {% endblock %}
