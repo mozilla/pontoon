@@ -1,0 +1,14 @@
+../enum/__init__.py
+../enum/enum.py
+../enum/test_enum.py
+../enum/LICENSE
+../enum/README
+../enum/doc/enum.rst
+../enum/__init__.pyc
+../enum/enum.pyc
+../enum/test_enum.pyc
+./
+dependency_links.txt
+PKG-INFO
+SOURCES.txt
+top_level.txt

@@ -1,0 +1,5 @@
+pyasn1
+six>=1.4.1
+setuptools
+enum34
+cffi>=0.8
