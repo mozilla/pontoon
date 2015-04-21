@@ -1,4 +1,5 @@
 .locale.select {
+  height: 40px;
   margin-bottom: 40px;
 }
 
@@ -17,7 +18,7 @@
 
 .locale.select .menu {
   background: #4D5967;
-  bottom: 45px;
+  bottom: 40px;
   display: none;
   left: 0;
   margin: 0 auto;
