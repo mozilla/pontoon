@@ -76,11 +76,9 @@ INSTALLED_APPS = (
     'compressor',
     'cronjobs',
     'django_browserid',
-    'django_nose',
     'djcelery',
     'product_details',
     'session_csrf',
-    'south',
     'tower',
 )
 

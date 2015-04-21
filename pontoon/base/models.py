@@ -215,6 +215,10 @@ class Stats(models.Model):
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
+        fields = ('name', 'slug', 'locales', 'repository_type',
+                  'repository_url', 'repository_path', 'transifex_project',
+                  'transifex_resource', 'info_brief', 'url', 'width',
+                  'links', 'disabled')
 
     def clean(self):
         cleaned_data = super(ProjectForm, self).clean()
