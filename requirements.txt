@@ -94,12 +94,6 @@ https://github.com/mozilla/happyforms/archive/729612.zip#egg=happyforms
 # sha256: w4h_fih112ZhB_qL7nYf-VuTkazcx80bX9V6I7X7xJ4
 html5lib==0.999
 
-# sha256: o71QUd0X6dUOip8tNiUI6C1wYwEP3AbV4HzjYI54D-Y
-jingo==0.7
-
-# sha256: zDw_3qAwgTFur-9mCWjpgeBBi20qlgago_6FA2NDhsg
-jingo-minify==0.5
-
 # sha256: SGL3SQ8T4GJXMS9X6BVT85jMcboDXQJjL_QXOcVy1K0
 kombu==3.0.24
 
@@ -162,3 +156,6 @@ django-dotenv==1.3.0
 # sha256: agPOL-r90ZOguoom29l3PnV9Ll1eeTOmLqwSmBO9OBo
 # sha256: BmutQstMZpROfvz3ME09F_ew6yIuU5WM3YZkINLotBI
 django==1.8
+
+# sha256: 3w1cLeq8MzdfKIx6tUYuBsbs2CTs-ie_qLzV5Mz7Nyo
+django-jinja==1.3.3

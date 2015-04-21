@@ -4,33 +4,25 @@ import urlparse
 
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse
-from django.template import defaultfilters
 from django.utils.encoding import smart_str
-from django.utils.html import strip_tags
 
 import jinja2
-from jingo import register
+from django_jinja import library
 
 
-# Yanking filters from Django.
-register.filter(strip_tags)
-register.filter(defaultfilters.timesince)
-register.filter(defaultfilters.truncatewords)
-
-
-@register.function
+@library.global_function
 def thisyear():
     """The current year."""
     return jinja2.Markup(datetime.date.today().year)
 
 
-@register.function
+@library.global_function
 def url(viewname, *args, **kwargs):
     """Helper for Django's ``reverse`` in templates."""
     return reverse(viewname, args=args, kwargs=kwargs)
 
 
-@register.filter
+@library.filter
 def urlparams(url_, hash=None, **query):
     """Add a fragment and/or query paramaters to a URL.
 
@@ -60,7 +52,7 @@ def _urlencode(items):
         return urllib.urlencode([(k, smart_str(v)) for k, v in items])
 
 
-@register.filter
+@library.filter
 def urlencode(txt):
     """Url encode a path."""
     if isinstance(txt, unicode):
@@ -68,6 +60,6 @@ def urlencode(txt):
     return urllib.quote_plus(txt)
 
 
-@register.function
+@library.global_function
 def static(path):
     return staticfiles_storage.url(path)

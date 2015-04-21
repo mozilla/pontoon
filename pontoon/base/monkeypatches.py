@@ -16,20 +16,11 @@ def patch():
     if _has_patched:
         return
 
-    # Monkey-patch django forms to avoid having to use Jinja2's |safe
-    # everywhere.
-    import jingo.monkey
-    jingo.monkey.patch()
-
     # Monkey-patch Django's csrf_protect decorator to use session-based CSRF
     # tokens:
     import session_csrf
     session_csrf.monkeypatch()
     django_admin.site = SessionCsrfAdminSite()
-
-    import jingo
-    from compressor.contrib.jinja2ext import CompressorExtension
-    jingo.env.add_extension(CompressorExtension)
 
     # prevent it from being run again later
     _has_patched = True

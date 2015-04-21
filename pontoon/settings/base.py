@@ -76,6 +76,7 @@ INSTALLED_APPS = (
     'compressor',
     'cronjobs',
     'django_browserid',
+    'django_jinja',
     'djcelery',
     'product_details',
     'session_csrf',
@@ -106,15 +107,36 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django_browserid.context_processors.browserid',
 )
 
-TEMPLATE_LOADERS = (
-    'jingo.Loader',
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_DIRS = (
-    path('templates'),
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django_jinja.backend.Jinja2',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'match_extension': '.html',
+            'match_regex': r'^(?!(admin|registration)/).*',
+            'context_processors': TEMPLATE_CONTEXT_PROCESSORS,
+            'extensions': [
+                'jinja2.ext.do',
+                'jinja2.ext.loopcontrols',
+                'jinja2.ext.with_',
+                'jinja2.ext.i18n',
+                'jinja2.ext.autoescape',
+                'django_jinja.builtins.extensions.CsrfExtension',
+                'django_jinja.builtins.extensions.CacheExtension',
+                'django_jinja.builtins.extensions.TimezoneExtension',
+                'django_jinja.builtins.extensions.UrlsExtension',
+                'django_jinja.builtins.extensions.StaticFilesExtension',
+                'django_jinja.builtins.extensions.DjangoFiltersExtension',
+                'compressor.contrib.jinja2ext.CompressorExtension',
+            ],
+        }
+    },
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+    },
+]
 
 AUTHENTICATION_BACKENDS = [
     'django_browserid.auth.BrowserIDBackend',
@@ -125,12 +147,6 @@ AUTHENTICATION_BACKENDS = [
 LOCALE_PATHS = (
     os.path.join(ROOT, 'pontoon', 'locale'),
 )
-
-# Template directories that contain Django templates instead of Jinja.
-JINGO_EXCLUDE_APPS = [
-    'admin',
-    'registration',
-]
 
 # Tells the extract script what files to look for L10n in and what function
 # handles the extraction. The Tower library expects this.
@@ -192,17 +208,6 @@ COMPRESS_PRECOMPILERS = (
 
 # Path to Java. Used for compress_assets.
 JAVA_BIN = '/usr/bin/java'
-
-def JINJA_CONFIG():
-    return {
-        'extensions': [
-            'tower.template.i18n',
-            'jinja2.ext.do',
-            'jinja2.ext.with_',
-            'jinja2.ext.loopcontrols'
-        ],
-        'finalize': lambda x: x if x is not None else ''
-    }
 
 ## Auth
 # The first hasher in this list will be used for new passwords.
