@@ -4,7 +4,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 
-from funfactory.monkeypatches import patch
+from pontoon.base.monkeypatches import patch
 patch()
 
 # Uncomment the next two lines to enable the admin:

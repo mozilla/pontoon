@@ -97,9 +97,6 @@ docutils==0.12
 # sha256: akF58qKszaKyc7_Ybeb3AkzuIDBDzJp8BA_nswa74SA
 fancy-tag==0.2.0
 
-# sha256: 04uHqt846I85nxs10ZlAkxXH0Ycs__IO6by3CrFFM74
-funfactory==2.2.0
-
 # sha256: XRCUSz0P_fpu2FmgnwdukLX8XnihDlxEY_yv58BhZbs
 https://github.com/mozilla/happyforms/archive/729612.zip#egg=happyforms
 

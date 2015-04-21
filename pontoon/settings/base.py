@@ -7,7 +7,13 @@ from django.utils.functional import lazy
 
 import dj_database_url
 
-from funfactory.manage import ROOT, path
+
+_dirname = os.path.dirname
+ROOT = _dirname(_dirname(_dirname(os.path.abspath(__file__))))
+
+
+def path(*args):
+    return os.path.join(ROOT, *args)
 
 
 # Environment-dependent settings. These are loaded from environment
@@ -72,7 +78,6 @@ INSTALLED_APPS = (
     'django_browserid',
     'django_nose',
     'djcelery',
-    'funfactory',
     'product_details',
     'session_csrf',
     'south',
@@ -98,8 +103,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'session_csrf.context_processor',
     'django.contrib.messages.context_processors.messages',
-    'funfactory.context_processors.i18n',
-    'funfactory.context_processors.globals',
+    'pontoon.base.context_processors.i18n',
+    'pontoon.base.context_processors.globals',
     'django_browserid.context_processors.browserid',
 )
 
