@@ -76,7 +76,6 @@ INSTALLED_APPS = (
     'cronjobs',
     'django_browserid',
     'django_jinja',
-    'djcelery',
     'pipeline',
     'product_details',
     'session_csrf',
@@ -327,25 +326,6 @@ CEF_DEVICE_VERSION = '0'
 
 ## Tests
 TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
-
-## Celery
-
-# True says to simulate background tasks without actually using celeryd.
-# Good for local development in case celeryd is not running.
-CELERY_ALWAYS_EAGER = True
-
-BROKER_CONNECTION_TIMEOUT = 0.1
-CELERY_RESULT_BACKEND = 'amqp'
-CELERY_IGNORE_RESULT = True
-CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
-
-# Time in seconds before celery.exceptions.SoftTimeLimitExceeded is raised.
-# The task can catch that and recover but should exit ASAP.
-CELERYD_TASK_SOFT_TIME_LIMIT = 60 * 2
-
-## Arecibo
-# when ARECIBO_SERVER_URL is set, it can use celery or the regular wrapper
-ARECIBO_USES_CELERY = True
 
 # django-browserid
 LOGIN_URL = '/'

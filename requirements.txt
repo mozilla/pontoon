@@ -34,9 +34,6 @@ bleach==1.4.1
 # sha256: YizsMzSqhnWk7C2wQKq3vmBaHvMxDeGMv_77BAdos8c
 cef==0.3
 
-# sha256: F0Oqhom9KGfFqzrwCodCY161YJY7G5PhTNItZvt34TU
-celery==3.1.17
-
 # sha256: HhvLrNY1fBUa43zwKQ3MgJch0yziH9a3M5Vo893vG2k
 certifi==14.05.14
 
@@ -57,9 +54,6 @@ django-appconf==1.0.1
 
 # sha256: U46flvWKXJp-DCDol5wHqnIL8kR_6EEWf3NPJd8TyW0
 django-browserid==0.9
-
-# sha256: uiqjz1S7cQ9G8WiJ-hgzExdFipLiUxvo4-jTg-_UoU0
-django-celery==3.1.16
 
 # sha256: F3KVsUQkAMks22fo4Y-f9ZRvtEL4WBO50IN4I3IuoI0
 django-cronjobs==0.2.3
