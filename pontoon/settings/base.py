@@ -73,7 +73,6 @@ INSTALLED_APPS = (
 
     # Third-party apps, patches, fixes
     'commonware.response.cookies',
-    'cronjobs',
     'django_browserid',
     'django_jinja',
     'pipeline',
@@ -90,8 +89,6 @@ MIDDLEWARE_CLASSES = (
     'session_csrf.CsrfMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'mobility.middleware.DetectMobileMiddleware',
-    'mobility.middleware.XMobileMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -344,9 +341,6 @@ except socket.error:
     DOMAIN = 'localhost'
 PROTOCOL = "http://"
 PORT = 80
-
-## django-mobility
-MOBILE_COOKIE = 'mobile'
 
 # Names for slave databases from the DATABASES setting.
 SLAVE_DATABASES = []
