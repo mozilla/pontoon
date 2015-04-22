@@ -22,5 +22,4 @@ web:
     - DATABASE_URL=mysql://pontoon:asdf@db/pontoon
     - SESSION_COOKIE_SECURE=False
     - HMAC_KEY=asdf
-    - SITE_URL=http://docker:8000
   command: ./bin/run-compose.sh

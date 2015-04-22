@@ -43,7 +43,7 @@ HMAC_KEYS = {
     'hmac-key': os.environ['HMAC_KEY'],
 }
 
-SITE_URL = os.environ['SITE_URL']
+SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')

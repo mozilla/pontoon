@@ -34,6 +34,15 @@ the site should be available on port 8000 at the IP output by running:
 $ boot2docker ip
 ```
 
+Note that if you're running the site via boot2docker, you'll want to add a
+`.env` file to the project's root director with the IP given by the command
+above. For example, if your IP was `192.168.1.102`, you'd create a `.env` file
+that looked like:
+
+```
+SITE_URL=http://192.168.1.102:8000
+```
+
 For [admin](http://localhost:8000/admin/) access, create admin account with:
 
 ```
