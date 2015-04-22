@@ -1,7 +1,6 @@
-
 import base64
-import commonware
 import json
+import logging
 import os
 import shutil
 import traceback
@@ -30,7 +29,7 @@ from pontoon.base.models import (
 )
 
 
-log = commonware.log.getLogger('pontoon')
+log = logging.getLogger('pontoon')
 
 
 def admin(request, template='admin.html'):

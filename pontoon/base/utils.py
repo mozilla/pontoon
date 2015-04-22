@@ -1,6 +1,5 @@
-
-import commonware.log
 import json
+import logging
 import re
 import requests
 
@@ -15,7 +14,7 @@ from translate.storage.placeables.interfaces import BasePlaceable
 from translate.lang import data as lang_data
 
 
-log = commonware.log.getLogger('pontoon')
+log = logging.getLogger('pontoon')
 
 
 def add_can_localize(user):

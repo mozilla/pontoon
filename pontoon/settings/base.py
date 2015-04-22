@@ -89,7 +89,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'session_csrf.CsrfMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'commonware.middleware.FrameOptionsHeader',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'mobility.middleware.DetectMobileMiddleware',
     'mobility.middleware.XMobileMiddleware',
 )
@@ -318,14 +318,11 @@ SYSLOG_TAG = "http_app_pontoon"  # Change this after you fork.
 LOGGING_CONFIG = None
 LOGGING = {}
 
-# CEF Logging
-CEF_PRODUCT = 'Pontoon'
-CEF_VENDOR = 'Mozilla'
-CEF_VERSION = '0'
-CEF_DEVICE_VERSION = '0'
-
 ## Tests
 TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
+
+# Set X-Frame-Options to DENY by default on all responses.
+X_FRAME_OPTIONS = 'DENY'
 
 # django-browserid
 LOGIN_URL = '/'

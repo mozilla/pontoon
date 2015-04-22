@@ -1,7 +1,6 @@
-
-import commonware.log
 import datetime
 import json
+import logging
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -11,7 +10,7 @@ from django.forms import ModelForm
 from pontoon.base import utils
 
 
-log = commonware.log.getLogger('pontoon')
+log = logging.getLogger('pontoon')
 
 
 class UserProfile(models.Model):

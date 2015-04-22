@@ -1,10 +1,9 @@
-
 import base64
-import commonware
 import datetime
 import hashlib
 import json
 import Levenshtein
+import logging
 import math
 import os
 import pytz
@@ -61,7 +60,7 @@ from session_csrf import anonymous_csrf_exempt
 from suds.client import Client, WebFault
 
 
-log = commonware.log.getLogger('pontoon')
+log = logging.getLogger('pontoon')
 
 
 def home(request):

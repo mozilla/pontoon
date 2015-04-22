@@ -1,13 +1,12 @@
 # -*- coding: utf8 -*-
-
 from __future__ import absolute_import
 import base64
+import logging
 import os
 import subprocess
-import commonware.log
 
 
-log = commonware.log.getLogger('pontoon')
+log = logging.getLogger('pontoon')
 
 
 class PullFromRepositoryException(Exception):

@@ -1,6 +1,3 @@
-# sha256: nwLQNXGE3h8JPBABK1LnRUoQCL5qXBhat6Mwes6x0S4
-Babel==1.3
-
 # sha256: A3VLx7JWOXwbZG5QSOIpFZD1CAFxrbiwD04tc4THbu4
 GitPython==0.1.7
 
@@ -27,12 +24,6 @@ argparse==1.3.0
 
 # sha256: bmuOxuRbiTiQUXN8fmIV2OVag4lutiEvpybKdugMehk
 billiard==3.3.0.19
-
-# sha256: FSrynUWAsRL8UpZoZEknkclR5jgrVgcOleEoxrYUgzs
-bleach==1.4.1
-
-# sha256: YizsMzSqhnWk7C2wQKq3vmBaHvMxDeGMv_77BAdos8c
-cef==0.3
 
 # sha256: HhvLrNY1fBUa43zwKQ3MgJch0yziH9a3M5Vo893vG2k
 certifi==14.05.14
@@ -81,9 +72,6 @@ fancy-tag==0.2.0
 
 # sha256: XRCUSz0P_fpu2FmgnwdukLX8XnihDlxEY_yv58BhZbs
 https://github.com/mozilla/happyforms/archive/729612.zip#egg=happyforms
-
-# sha256: w4h_fih112ZhB_qL7nYf-VuTkazcx80bX9V6I7X7xJ4
-html5lib==0.999
 
 # sha256: SGL3SQ8T4GJXMS9X6BVT85jMcboDXQJjL_QXOcVy1K0
 kombu==3.0.24
