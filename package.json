@@ -1,0 +1,15 @@
+{
+  "name": "pontoon",
+  "version": "0.1.0",
+  "description": "Mozilla in-place localization tool.",
+  "private": true,
+  "dependencies": {
+    "yuglify": "0.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mozilla/pontoon.git"
+  },
+  "author": "Mozilla",
+  "license": "BSD"
+}
