@@ -291,6 +291,17 @@ STATICFILES_FINDERS = (
     'pipeline.finders.PipelineFinder',
 )
 
+
+# Set ALLOWED_HOSTS based on SITE_URL setting.
+def _allowed_hosts():
+    from django.conf import settings
+    from urlparse import urlparse
+
+    host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
+    host = host.rsplit(':', 1)[0]  # Remove port
+    return [host]
+ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
+
 ## Auth
 # The first hasher in this list will be used for new passwords.
 # Any other hasher in the list can be used for existing passwords.
