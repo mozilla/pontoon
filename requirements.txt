@@ -118,3 +118,8 @@ django-pipeline==1.4.7
 
 # sha256: Ay7BxTJheSLm4-lW1QSm-xrM5PwcfJRhLQ_aIYKM6O8
 dj-static==0.0.6
+# sha256: pRec3pItK04EXuWxHocyPud9NjrkApT8glLyXWoOrwY
+# sha256: i8g1CCiCrZoBLNeQxGABHk2WvzUS2YoE09q75FOToIk
+gunicorn==19.3.0
+# sha256: eDk5g0gtj0Hm_PkfP9mcl5ztCIxHQMnyKDW5bmcSiXw
+static3==0.5.1
