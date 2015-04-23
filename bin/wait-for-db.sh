@@ -3,7 +3,7 @@
 set +e
 
 test_sql() {
-   mysql -h"db" -uroot -p"asdf" -D"pontoon" -e ";" >/dev/null 2>&1
+   PGPASSWORD=asdf psql -h db -U pontoon -d pontoon -c ";" -q >/dev/null 2>&1
 }
 
 tries=10

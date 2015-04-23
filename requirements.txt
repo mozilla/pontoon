@@ -7,9 +7,6 @@ GitPython==0.1.7
 # sha256: IvlnXkLcZAxEadT30hC67LXmlYI6-VTIE9UckwI1Z10
 Jinja2==2.5.5
 
-# sha256: H6pJd-mFBzHot_ih1YuGJzk6N0RUN4jsQ3-0XgbP5AE
-MySQL-python==1.2.3c1
-
 # sha256: CjoiZeHvsN76ci0fQpcw3J35da3DxgrH0rQyvfA8BB0
 Pygments==2.0.2
 
@@ -123,3 +120,5 @@ dj-static==0.0.6
 gunicorn==19.3.0
 # sha256: eDk5g0gtj0Hm_PkfP9mcl5ztCIxHQMnyKDW5bmcSiXw
 static3==0.5.1
+# sha256: wAr-yzAqmaT4PeybBVxNHMGWkm1iyNsBXWhDLfgRjKg
+psycopg2==2.6

@@ -1,5 +1,5 @@
 FROM python:2.7
-RUN apt-get update && apt-get install -y libmysqlclient-dev gettext libjpeg62-turbo-dev mysql-client nodejs npm
+RUN apt-get update && apt-get install -y libmysqlclient-dev gettext libjpeg62-turbo-dev postgresql-client nodejs npm
 
 WORKDIR /pontoon
 

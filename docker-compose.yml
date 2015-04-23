@@ -1,10 +1,8 @@
 db:
-  image: mysql:5.7
+  image: postgres:9.4
   environment:
-    - MYSQL_ROOT_PASSWORD=asdf
-    - MYSQL_USER=pontoon
-    - MYSQL_PASSWORD=asdf
-    - MYSQL_DATABASE=pontoon
+    - POSTGRES_USER=pontoon
+    - POSTGRES_PASSWORD=asdf
 web:
   build: .
   ports:
@@ -19,7 +17,7 @@ web:
     - SECRET_KEY=asdf
     - DJANGO_DEV=True
     - DJANGO_DEBUG=True
-    - DATABASE_URL=mysql://pontoon:asdf@db/pontoon
+    - DATABASE_URL=postgres://pontoon:asdf@db/pontoon
     - SESSION_COOKIE_SECURE=False
     - HMAC_KEY=asdf
   command: ./bin/run-compose.sh
