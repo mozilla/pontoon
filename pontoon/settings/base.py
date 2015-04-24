@@ -160,6 +160,11 @@ DOMAIN_METHODS = {
     ]
 }
 
+# Temporarily do not compress CSS or JS until we figure out the issue
+# with Heroku failing to compress static files.
+PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
+
 PIPELINE_CSS = {
     'base': {
         'source_filenames': (
