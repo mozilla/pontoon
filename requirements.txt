@@ -115,10 +115,20 @@ django-pipeline==1.4.7
 
 # sha256: Ay7BxTJheSLm4-lW1QSm-xrM5PwcfJRhLQ_aIYKM6O8
 dj-static==0.0.6
+
 # sha256: pRec3pItK04EXuWxHocyPud9NjrkApT8glLyXWoOrwY
 # sha256: i8g1CCiCrZoBLNeQxGABHk2WvzUS2YoE09q75FOToIk
 gunicorn==19.3.0
+
 # sha256: eDk5g0gtj0Hm_PkfP9mcl5ztCIxHQMnyKDW5bmcSiXw
 static3==0.5.1
+
 # sha256: wAr-yzAqmaT4PeybBVxNHMGWkm1iyNsBXWhDLfgRjKg
 psycopg2==2.6
+
+# sha256: DHH3cZwACWSM3h80aXU1lWX7CvM7xLX8acsLv1l9k-4
+django-storages==1.1.8
+
+# sha256: dYSYx38W4muLYa8m-NDbsRm3E_LY0WZoHsiSMR81IMQ
+# sha256: 2Qg_keId-FDIE7ODWNyD3xbX8lMYChNE7P7c4kIT7PI
+boto==2.38.0

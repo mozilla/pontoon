@@ -1,5 +1,4 @@
 """Django settings for Pontoon."""
-import logging
 import os
 import socket
 
@@ -54,6 +53,14 @@ GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY', '')
 # Mozillians API Key
 MOZILLIANS_API_KEY = os.environ.get('MOZILLIANS_API_KEY', '')
 
+# AWS Credentials
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
+
+if os.environ.get('USE_S3_STORAGE', 'False') == 'True':
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+
 
 # Environment-independent settings. These shouldn't have to change
 # between server environments.
@@ -77,6 +84,7 @@ INSTALLED_APPS = (
     'django_jinja',
     'pipeline',
     'product_details',
+    'storages',
     'session_csrf',
     'tower',
 )
@@ -284,7 +292,7 @@ STATIC_ROOT = path('static')
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
-STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+STATICFILES_STORAGE = 'pontoon.base.storage.S3PipelineCachedStorage'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
