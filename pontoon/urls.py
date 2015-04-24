@@ -15,7 +15,7 @@ urlpatterns = patterns(
     '',
 
     # Legacy: Locale redirect for compatibility with i18n ready URL scheme
-    (r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s")),
+    (r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s", permanent=True)),
 
     # Admin
     (r'admin/', include('pontoon.administration.urls')),
@@ -40,11 +40,11 @@ urlpatterns = patterns(
 
     # Favicon
     url(r'^favicon\.ico$',
-        RedirectView.as_view(url='/static/img/favicon.ico')),
+        RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),
 
     # Include script
     url(r'^pontoon\.js$',
-        RedirectView.as_view(url='/static/js/pontoon.js')),
+        RedirectView.as_view(url='/static/js/pontoon.js', permanent=True)),
 
     # Main app: Must be at the end
     (r'', include('pontoon.base.urls')),

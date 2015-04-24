@@ -12,19 +12,19 @@ urlpatterns = patterns(
     # Legacy: Translate project's page
     url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/project/(?P<slug>.+)' +
         '/page/(?P<page>.+)/$',
-        RedirectView.as_view(url="/%(locale)s/%(slug)s/%(page)s/")),
+        RedirectView.as_view(url="/%(locale)s/%(slug)s/%(page)s/", permanent=True)),
 
     # Legacy: Translate project
     url(r'^locale/(?P<locale>[A-Za-z0-9\-\@\.]+)/project/(?P<slug>.+)/$',
-        RedirectView.as_view(url="/%(locale)s/%(slug)s/")),
+        RedirectView.as_view(url="/%(locale)s/%(slug)s/", permanent=True)),
 
     # Legacy: Redirect to /projects
     url(r'^project/$',
-        RedirectView.as_view(url="/projects/")),
+        RedirectView.as_view(url="/projects/", permanent=True)),
 
     # Legacy: Redirect to /projects/slug
     url(r'^project/(?P<slug>[\w-]+)/$',
-        RedirectView.as_view(url="/projects/%(slug)s/")),
+        RedirectView.as_view(url="/projects/%(slug)s/", permanent=True)),
 
     # List all imported projects
     url(r'^projects/$',
