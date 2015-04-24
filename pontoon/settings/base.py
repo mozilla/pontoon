@@ -76,7 +76,6 @@ INSTALLED_APPS = (
     'django_jinja',
     'pipeline',
     'product_details',
-    'storages',
     'session_csrf',
     'tower',
 )
