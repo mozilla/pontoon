@@ -60,6 +60,9 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
 if os.environ.get('USE_S3_STORAGE', 'False') == 'True':
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    STATICFILES_STORAGE = 'pontoon.base.storage.S3PipelineStorage'
+else:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
 # Environment-independent settings. These shouldn't have to change
@@ -292,7 +295,6 @@ STATIC_ROOT = path('static')
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
-STATICFILES_STORAGE = 'pontoon.base.storage.S3PipelineCachedStorage'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
