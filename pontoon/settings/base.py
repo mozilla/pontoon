@@ -264,6 +264,14 @@ PIPELINE_JS = {
 
 DATABASE_ROUTERS = ('multidb.PinningMasterSlaveRouter',)
 
+# Cache config
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'pontoon'
+    }
+}
+
 # Site ID is used by Django's Sites framework.
 SITE_ID = 1
 
