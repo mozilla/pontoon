@@ -126,9 +126,10 @@ static3==0.5.1
 # sha256: wAr-yzAqmaT4PeybBVxNHMGWkm1iyNsBXWhDLfgRjKg
 psycopg2==2.6
 
-# sha256: DHH3cZwACWSM3h80aXU1lWX7CvM7xLX8acsLv1l9k-4
-django-storages==1.1.8
-
 # sha256: dYSYx38W4muLYa8m-NDbsRm3E_LY0WZoHsiSMR81IMQ
 # sha256: 2Qg_keId-FDIE7ODWNyD3xbX8lMYChNE7P7c4kIT7PI
 boto==2.38.0
+
+# sha256: oI5tACk-DMmntiYjhfniBZxAUJGCwDiYzGdppGxIqBo
+# sha256: Jyzoec8WuW63JGgS0NSuF97r9nnntjVQ63OYrEJ0P5U
+django-storages-redux==1.2.3
