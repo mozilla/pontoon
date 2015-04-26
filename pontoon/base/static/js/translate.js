@@ -152,7 +152,7 @@ var Pontoon = (function (my) {
                     '">' +
                     '<div class="info">' +
                       ((!this.email) ? this.user :
-                        '<a href="contributor/' + this.email + '">' + this.user + '</a>') +
+                        '<a href="contributors/' + this.email + '">' + this.user + '</a>') +
                       '<time class="stress" datetime="' + this.date_iso + '">' + this.date + '</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
