@@ -410,7 +410,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             except Translation.DoesNotExist as e:
                 t = translations_equal.latest("date")
 
-        # If fuzzy status changes or translation not approved yet
+        # If fuzzy status changes or existing translation not approved
         if t.fuzzy != fuzzy or not t.approved:
             # Only if fuzzy flag removed
             if not fuzzy:
