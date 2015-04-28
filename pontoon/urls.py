@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 
@@ -11,9 +10,8 @@ patch()
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns(
-    '',
 
+urlpatterns = patterns('',
     # Legacy: Locale redirect for compatibility with i18n ready URL scheme
     (r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s", permanent=True)),
 
@@ -49,7 +47,3 @@ urlpatterns = patterns(
     # Main app: Must be at the end
     (r'', include('pontoon.base.urls')),
 )
-
-# In DEBUG mode, serve media files through Django.
-if settings.DEBUG:
-    urlpatterns += staticfiles_urlpatterns()

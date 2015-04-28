@@ -20,4 +20,5 @@ web:
     - DATABASE_URL=postgres://pontoon:asdf@db/pontoon
     - SESSION_COOKIE_SECURE=False
     - HMAC_KEY=asdf
+    - STATIC_ROOT=/pontoon-static
   command: ./bin/run-compose.sh
