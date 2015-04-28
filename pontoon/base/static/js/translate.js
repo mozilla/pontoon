@@ -1175,7 +1175,7 @@ var Pontoon = (function (my) {
 
     /*
      * Update entity in the entity list
-     * 
+     *
      * entity Entity
      */
     updateEntityUI: function (entity) {
@@ -1193,7 +1193,7 @@ var Pontoon = (function (my) {
 
     /*
      * Update entity translation on server
-     * 
+     *
      * entity Entity
      * translation Translation
      * inplace Was translation submitted in place?
@@ -1496,50 +1496,34 @@ var Pontoon = (function (my) {
       });
 
       // Profile menu
-      $('#profile .menu li').click(function (e) {
-        e.preventDefault();
+      // Register handlers to prep django-browserid before binding menu.
+      django_browserid.registerWatchHandlers(function() {
+        $('#profile .menu li').click(function (e) {
+          e.preventDefault();
 
-        if ($(this).is(".sign-out")) {
-          window.location = 'signout/';
+          if ($(this).is(".sign-out")) {
+            window.location = 'signout/';
 
-        } else if ($(this).is(".sign-in")) {
-          self.startLoader();
-          navigator.id.get(function(assertion) {
-            if (assertion) {
-              $.ajax({
-                url: 'browserid/',
-                type: 'POST',
-                data: {
-                  assertion: assertion,
-                  csrfmiddlewaretoken: $('#server').data('csrf')
-                },
-                success: function(data) {
-                  if (data !== 'error') {
-                    var redirect = $('#server').data('redirect');
-                    if (redirect) {
-                      window.location = redirect;
-                    } else {
-                      window.location.reload();
-                    }
-                  } else {
-                    self.endLoader('Oops, something went wrong.', 'error');
-                  }
-                },
-                error: function() {
-                  self.endLoader('Oops, something went wrong.', 'error');
-                }
-              });
-            } else {
-              self.endLoader();
-            }
-          });
+          } else if ($(this).is(".sign-in")) {
+            self.startLoader();
+            django_browserid.login().then(function(verifyResult) {
+              var redirect = $('#server').data('redirect');
+              if (redirect) {
+                window.location = redirect;
+              } else {
+                window.location.reload();
+              }
+            }, function(jqXHR) {
+              self.endLoader('Oops, something went wrong.', 'error');
+            });
 
-        } else if ($(this).data("url")) {
-          window.location = $(this).data('url');
+          } else if ($(this).data("url")) {
+            window.location = $(this).data('url');
 
-        } else if ($(this).is(".hotkeys")) {
-          $('#hotkeys').show();
-        }
+          } else if ($(this).is(".hotkeys")) {
+            $('#hotkeys').show();
+          }
+        });
       });
 
       // Download menu

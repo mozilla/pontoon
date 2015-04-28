@@ -31,8 +31,8 @@ configparser==3.5.0b2
 # sha256: nbpWEfvyeJM0c0n9UcwZEctANoKnFjNzrazFZdEeLkw
 diff-match-patch==20121119
 
-# sha256: U46flvWKXJp-DCDol5wHqnIL8kR_6EEWf3NPJd8TyW0
-django-browserid==0.9
+# sha256: dCFwdwt0AJiZEkDdQFc9bDm6dJwiiwf1kBaMhj5WLVM
+https://github.com/Osmose/django-browserid/archive/2111b63ee15b58576b7d6034315a75a38e0659a4.zip#egg=django_browserid
 
 # sha256: N3FuUKlIDsQpOZ3nRted2ZwdWgfoigbYIh6Voifihmw
 https://github.com/fwenzel/django-mozilla-product-details/archive/515d55d.zip#egg=django-mozilla-product-details
@@ -70,8 +70,9 @@ python-Levenshtein==0.11.2
 # sha256: NYsFoMJgXBXPgzfRcBbrla_qrQfJAN-cLN524hlKklg
 pytz==2015.2
 
-# sha256: A6IAGENUYUfdtpctBmHiACub5My7vSF37hDwW9GRAQk
-requests==0.13.0
+# sha256: jw9WgT-C0MJ9lXgiEmismvSPB2xx7mlpMwXOymyjVb0
+# sha256: BXcknUtsSxH9l8KAN-mGZL-qBVkCL-57zva3UqEG5QU
+requests==2.6.2
 
 # sha256: 4rCwWTbCdrHt0uFSVVMjO2Zt-eKbXDuiI-7XOCd8gqA
 rsa==3.1.4

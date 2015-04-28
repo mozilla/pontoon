@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     url(r'^intro/$', 'pontoon.intro.views.intro'),
 
     # BrowserID
-    url(r'^browserid/$', 'pontoon.base.views.verify', name='browserid.verify'),
+    (r'', include('django_browserid.urls')),
 
     # Logout
     url(r'^signout/$', 'django.contrib.auth.views.logout', {'next_page': '/'},

@@ -32,8 +32,7 @@ from django.http import (
 from django.shortcuts import render
 from django.templatetags.static import static
 from django.utils.datastructures import MultiValueDictKeyError
-from django_browserid import verify as browserid_verify
-from django_browserid import get_audience
+from django_browserid.views import Verify as BrowserIDVerifyBase
 from operator import itemgetter
 from pontoon.administration.vcs import commit_to_vcs
 from pontoon.administration import files
@@ -1249,40 +1248,13 @@ def request_locale(request):
     return HttpResponse()
 
 
-@anonymous_csrf_exempt
-def verify(request, template=None):
-    """Verify BrowserID assertion, and return whether a user is registered."""
-    log.debug("Verify BrowserID assertion.")
-
-    if request.method != 'POST':
-        log.error("Non-POST request")
-        raise Http404
-
-    assertion = request.POST['assertion']
-    if assertion is None:
-        return HttpResponseBadRequest()
-
-    verification = browserid_verify(assertion, get_audience(request))
-    if not verification:
-        return HttpResponseForbidden()
-
-    response = "error"
-    user = authenticate(assertion=assertion, audience=get_audience(request))
-
-    if user is not None:
-        login(request, user)
-
+class BrowserIDVerify(BrowserIDVerifyBase):
+    def login_success(self):
         # Check for permission to localize if not granted on every login
-        if not user.has_perm('base.can_localize'):
-            user = User.objects.get(username=user)
-            utils.add_can_localize(user)
+        if not self.user.has_perm('base.can_localize'):
+            utils.add_can_localize(self.user)
 
-        response = {
-            'browserid': verification,
-            'manager': user.has_perm('base.can_manage'),
-        }
-
-    return HttpResponse(json.dumps(response), content_type='application/json')
+        return super(BrowserIDVerify, self).login_success()
 
 
 def get_csrf(request, template=None):

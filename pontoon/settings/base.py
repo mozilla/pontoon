@@ -105,7 +105,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'pontoon.base.context_processors.i18n',
     'pontoon.base.context_processors.globals',
-    'django_browserid.context_processors.browserid',
 )
 
 TEMPLATES = [
@@ -130,6 +129,9 @@ TEMPLATES = [
                 'django_jinja.builtins.extensions.DjangoFiltersExtension',
                 'pipeline.jinja2.ext.PipelineExtension',
             ],
+            'globals': {
+                'browserid_info': 'django_browserid.helpers.browserid_info',
+            }
         }
     },
     {
@@ -256,6 +258,7 @@ PIPELINE_JS = {
     },
     'translate': {
         'source_filenames': (
+            'browserid/api.js',
             'js/translate.js',
             'js/jquery.timeago.js',
         ),
@@ -345,7 +348,10 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-        }
+        },
+        'django_browserid': {
+            'handlers': ['console'],
+        },
     }
 }
 
@@ -359,6 +365,7 @@ X_FRAME_OPTIONS = 'DENY'
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
+BROWSERID_VERIFY_CLASS = 'pontoon.base.views.BrowserIDVerify'
 
 # Should robots.txt deny everything or disallow a calculated list of
 # URLs we don't want to be crawled?  Default is false, disallow
