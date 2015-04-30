@@ -98,6 +98,7 @@ def locale(request, locale, template='locale.html'):
     data = {
         'projects': get_projects_with_stats(projects, l),
         'locale': l,
+        'url_prefix': l.code,
     }
 
     return render(request, template, data)
@@ -140,6 +141,7 @@ def projects(request, template='projects.html'):
 
     data = {
         'projects': get_projects_with_stats(projects),
+        'url_prefix': 'projects',
     }
 
     return render(request, template, data)
@@ -286,9 +288,17 @@ def translate(request, locale, slug, part=None, template='translate.html'):
     return render(request, template, data)
 
 
+@login_required(redirect_field_name='', login_url='/403')
+def profile(request):
+    """Current user profile."""
+    log.debug("Current user profile.")
+
+    return contributor(request, request.user.email)
+
+
 def contributor(request, email, template='user.html'):
-    """User view."""
-    log.debug("User view.")
+    """Contirbutor profile."""
+    log.debug("Contirbutor profile.")
 
     # Validate user
     try:
@@ -345,6 +355,21 @@ def contributors(request, template='users.html'):
 
     data = {
         'contributors': users,
+    }
+
+    return render(request, template, data)
+
+
+def search(request, template='search.html'):
+    """Terminology search view."""
+    log.debug("Terminology search view.")
+
+    locale = utils.get_project_locale_from_request(
+        request, Locale.objects) or 'en-GB'
+
+    data = {
+        'locale': Locale.objects.get(code=locale),
+        'locales': Locale.objects.all(),
     }
 
     return render(request, template, data)
@@ -420,7 +445,10 @@ def get_translations_from_other_locales(request, template=None):
     locales = entity.resource.project.locales.all().exclude(code=locale.code)
 
     for l in locales:
-        translation = get_translation(entity=entity, locale=l)
+        plural_form = None if entity.string_plural == "" else 0
+        translation = get_translation(
+            entity=entity, locale=l, plural_form=plural_form)
+
         if translation.string != '' or translation.pk is not None:
             payload.append({
                 "locale": {
@@ -627,7 +655,7 @@ def update_translation(request, template=None):
 
         # Same translation exists
         try:
-            t = translations.get(string=string)
+            t = translations.get(string__iexact=string)
 
             # If added by privileged user, approve and unfuzzy it
             if can_localize:
@@ -781,7 +809,9 @@ def translation_memory(request):
         quality = Levenshtein.ratio(text, unicode(source, "utf-8"))
 
         if quality > min_quality:
-            translation = get_translation(entity=e, locale=locale, fuzzy=False)
+            plural_form = None if e.string_plural == "" else 0
+            translation = get_translation(
+                entity=e, locale=locale, fuzzy=False, plural_form=plural_form)
 
             if translation.string != '' or translation.pk is not None:
                 count = 1
@@ -1012,11 +1042,11 @@ def transvision(request, repo, title):
         return HttpResponse("error")
 
     src = "en-US"
-    url = "http://transvision.mozfr.org/api/v1/tm/%s/%s/" \
+    url = "https://transvision.mozfr.org/api/v1/tm/%s/%s/" \
           "%s/%s/?max_results=%s&min_quality=70" % (repo, src, locale, text, 5)
 
     try:
-        r = requests.get(url)
+        r = requests.get(url, verify=False)
 
         if r.text != '[]':
             translations = r.json()

@@ -63,11 +63,6 @@ var Pontoon = (function (my) {
     },
 
 
-    /*
-     * Get translations to other locales of given entity
-     *
-     * entity Entity
-     */
     getOtherLocales: function (entity) {
       var self = this,
           list = $('#other-locales ul').empty(),
@@ -95,229 +90,15 @@ var Pontoon = (function (my) {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
           tab.removeClass('loading');
-        }
-      });
-    },
-
-
-    /*
-     * Get suggestions from machine translation and translation memory
-     *
-     * original Original string
-     * target Target element id
-     */
-    getMachinery: function (original, target) {
-      var self = this,
-          tab_id = target || 'machinery',
-          loader = 'helpers li a[href="#' + tab_id + '"]',
-          ul = $('#' + tab_id).find('ul').empty(),
-          tab = $('#' + loader).addClass('loading'),
-          requests = 0;
-
-      function complete(jqXHR, status) {
-        if (status !== "abort") {
-          requests--;
-          if (requests === 0) {
+        },
+        error: function(error) {
+          if (error.status === 0 && error.statusText !== "abort") {
+            // Allows requesting locales again
+            editor.otherLocales = null;
+            self.noConnectionError(list);
             tab.removeClass('loading');
-            if (ul.find('li').length === 0) {
-              ul.append('<li class="disabled">' +
-                '<p>No translations available.</p>' +
-              '</li>');
-            }
           }
         }
-      }
-
-      function append(data) {
-        ul.append('<li title="Click to copy">' +
-          '<header>' +
-            '<span class="stress">' + (data.quality || '') +
-              (data.count ? ' &bull; <span>#</span>' + data.count : '') +
-            '</span>' +
-            '<a href="' + data.url + '" target="_blank"' +
-              'title="' + data.title + '">' + data.source + '</a>' +
-          '</header>' +
-          '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
-          '<p class="translation">' + self.doNotRender(data.translation) +
-          '</p>' +
-        '</li>');
-
-        // Sort by quality
-        var listitems = ul.children("li");
-        listitems.sort(function(a, b) {
-          var valA = parseInt($(a).find('.stress').html().split('%')[0]) || 0,
-              valB = parseInt($(b).find('.stress').html().split('%')[0]) || 0;
-          return (valA < valB) ? 1 : (valA > valB) ? -1 : 0;
-        });
-        ul.append(listitems);
-      }
-
-      // Translation memory
-      requests++;
-
-      if (self.XHRtranslationMemory) {
-        self.XHRtranslationMemory.abort();
-      }
-
-      self.XHRtranslationMemory = $.ajax({
-        url: 'translation-memory/',
-        data: {
-          text: original,
-          locale: self.locale.code,
-          pk: !target ? $('#editor')[0].entity.pk : ''
-        }
-
-      }).success(function(data) {
-        if (data.translations) {
-          $.each(data.translations, function() {
-            append({
-              original: this.source,
-              quality: Math.round(this.quality) + '%',
-              url: self.app.path,
-              title: 'Pontoon Homepage',
-              source: 'Translation memory',
-              translation: this.target,
-              count: this.count
-            });
-          });
-        }
-      }).complete(complete);
-
-      // Machine translation
-      if (self.locale.mt !== false) {
-        requests++;
-
-        if (self.XHRmachineTranslation) {
-          self.XHRmachineTranslation.abort();
-        }
-
-        self.XHRmachineTranslation = $.ajax({
-          url: 'machine-translation/',
-          data: {
-            text: original,
-            // On first run, check if target locale supported
-            check: (self.locale.mt === undefined) ? true : false,
-            // Use MT locale, Pontoon's might not be supported
-            locale: (self.locale.mt === undefined) ?
-                    self.locale.code : self.locale.mt
-          }
-
-        }).success(function(data) {
-          if (data.locale) {
-            self.locale.mt = data.locale;
-          }
-          if (data.translation) {
-            append({
-              url: 'http://www.bing.com/translator',
-              title: 'Visit Bing Translator',
-              source: 'Machine Translation',
-              translation: data.translation
-            });
-          } else if (data === "not-supported") {
-            self.locale.mt = false;
-          }
-        }).complete(complete);
-      }
-
-      // Microsoft Terminology
-      if (self.locale.msTerminology !== false) {
-        requests++;
-
-        if (self.XHRmicrosoftTerminology) {
-          self.XHRmicrosoftTerminology.abort();
-        }
-
-        self.XHRmicrosoftTerminology = $.ajax({
-          url: 'microsoft-terminology/',
-          data: {
-            text: original,
-            // On first run, check if target locale supported
-            check: (self.locale.msTerminology === undefined) ? true : false,
-            // Use Microsoft Terminology locale, Pontoon's might not be supported
-            locale: (self.locale.msTerminology === undefined) ?
-                    self.locale.code : self.locale.msTerminology
-          }
-
-        }).success(function(data) {
-          if (data.locale) {
-            self.locale.msTerminology = data.locale;
-          }
-          if (data.translations) {
-            $.each(data.translations, function() {
-              append({
-                original: this.source,
-                quality: Math.round(this.quality) + '%',
-                url: 'http://www.microsoft.com/Language/',
-                title: 'Visit Microsoft Terminology Service API.\n' +
-                       '© 2014 Microsoft Corporation. All rights reserved.',
-                source: 'Microsoft',
-                translation: this.target
-              });
-            });
-          } else if (data === "not-supported") {
-            self.locale.msTerminology = false;
-          }
-        }).complete(complete);
-      }
-
-      // amaGama
-      requests++;
-
-      if (self.XHRamagama) {
-        self.XHRamagama.abort();
-      }
-
-      self.XHRamagama = $.ajax({
-        url: 'amagama/',
-        data: {
-          text: original,
-          locale: self.locale.code
-        }
-
-      }).success(function(data) {
-        if (data.translations) {
-          $.each(data.translations, function() {
-            append({
-              original: this.source,
-              quality: Math.round(this.quality) + '%',
-              url: 'http://amagama.translatehouse.org/',
-              title: 'Visit amaGama',
-              source: 'Open Source',
-              translation: this.target
-            });
-          });
-        }
-      }).complete(complete);
-
-      // Transvision
-      $(['aurora', 'gaia', 'mozilla-org']).each(function(i, v) {
-        requests++;
-
-        if (self["XHRtransvision" + v]) {
-          self["XHRtransvision" + v].abort();
-        }
-
-        self["XHRtransvision" + v] = $.ajax({
-          url: 'transvision' + '-' + v + '/',
-          data: {
-            text: encodeURIComponent(original),
-            locale: self.locale.code
-          }
-
-        }).success(function(data) {
-          if (data.translations && !data.translations.error) {
-            $.each(data.translations, function() {
-              append({
-                original: this.source,
-                quality: Math.round(this.quality) + '%',
-                url: 'http://transvision.mozfr.org/',
-                title: 'Visit Transvision',
-                source: data.title,
-                translation: this.target
-              });
-            });
-          }
-        }).complete(complete);
       });
     },
 
@@ -371,7 +152,7 @@ var Pontoon = (function (my) {
                     '">' +
                     '<div class="info">' +
                       ((!this.email) ? this.user :
-                        '<a href="users/' + this.email + '">' + this.user + '</a>') +
+                        '<a href="contributors/' + this.email + '">' + this.user + '</a>') +
                       '<time class="stress" datetime="' + this.date_iso + '">' + this.date + '</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
@@ -392,6 +173,12 @@ var Pontoon = (function (my) {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
           tab.removeClass('loading');
+        },
+        error: function(error) {
+          if (error.status === 0 && error.statusText !== "abort") {
+            self.noConnectionError(list);
+            tab.removeClass('loading');
+          }
         }
       });
     },
@@ -401,8 +188,9 @@ var Pontoon = (function (my) {
      * Open translation editor in the main UI
      *
      * entity Entity
+     * inplace Was editor opened from in place?
      */
-    openEditor: function (entity) {
+    openEditor: function (entity, inplace) {
       $("#editor")[0].entity = entity;
 
       // Metadata: comments, sources, keys
@@ -473,7 +261,12 @@ var Pontoon = (function (my) {
 
       // Translation area
       $('#translation').val(entity.translation[0].string);
-      $('#warning:visible .cancel').click();
+      $('.warning-overlay:visible .cancel').click();
+
+      // Focus
+      if (!inplace) {
+        $('#translation').focus();
+      }
 
       // Length
       var original = entity['original' + this.isPluralized()].length,
@@ -494,36 +287,8 @@ var Pontoon = (function (my) {
         $("#entitylist")
           .css('left', -$('#sidebar').width()/2);
 
-        $("#editor")
-          .addClass('opened')
-          .css('left', 0)
-          .bind('transitionend.pontoon', function() {
-            if (!entity.body) {
-              $('#translation').focus();
-              $("#editor").unbind('transitionend.pontoon');
-            }
-          });
+        $("#editor").addClass('opened').css('left', 0);
       }
-    },
-
-
-    /*
-     * Do not render HTML tags
-     *
-     * string HTML snippet that has to be displayed as code instead of rendered
-     */
-    doNotRender: function (string) {
-      return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    },
-
-
-    /*
-     * Reverse function: do render HTML tags
-     *
-     * string HTML snippet that has to be rendered instead of displayed as code
-     */
-    doRender: function (string) {
-      return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     },
 
 
@@ -561,19 +326,50 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Check unsaved changes in editor
+     *
+     * callback Callback function
+     */
+    checkUnsavedChanges: function (callback) {
+      var entity = $('#editor')[0].entity;
+
+      if (!entity) {
+        return callback();
+      }
+
+      var pluralForm = this.getPluralForm(true),
+          translation = entity.translation[pluralForm].string,
+          source = $('#translation').val();
+
+      if (translation !== source) {
+        $('#unsaved').show();
+        $("#translation").focus();
+        this.checkUnsavedChangesCallback = callback;
+
+      } else {
+        return callback();
+      }
+    },
+
+
+    /*
      * Switch to new entity in editor
      *
      * newEntity New entity we want to switch to
      */
     switchToEntity: function (newEntity) {
-      var oldEntity = $('#editor')[0].entity;
+      var self = this;
 
-      if (newEntity.body || (oldEntity && oldEntity.body)) {
-        this.postMessage("NAVIGATE", newEntity.id);
-      }
-      if (!newEntity.body) {
-        this.openEditor(newEntity);
-      }
+      self.checkUnsavedChanges(function() {
+        var oldEntity = $('#editor')[0].entity;
+
+        if (newEntity.body || (oldEntity && oldEntity.body)) {
+          self.postMessage("NAVIGATE", newEntity.id);
+        }
+        if (!newEntity.body) {
+          self.openEditor(newEntity);
+        }
+      });
     },
 
 
@@ -743,7 +539,9 @@ var Pontoon = (function (my) {
         switch (sec) {
 
         case "back":
-          $('#cancel').click();
+          self.checkUnsavedChanges(function() {
+            $('#cancel').click();
+          });
           break;
 
         case "previous":
@@ -799,26 +597,29 @@ var Pontoon = (function (my) {
         e.stopPropagation();
         e.preventDefault();
 
-        $("#plural-tabs li").removeClass('active');
-        $(this).parent().addClass('active');
+        var tabs = $(this).parent();
 
-        var i = $(this).parent().index(),
-            editor = $('#editor')[0],
-            entity = editor.entity,
-            original = entity['marked' + self.isPluralized()],
-            title = !self.isPluralized() ? "Singular" : "Plural",
-            source = entity.translation[i].string;
+        self.checkUnsavedChanges(function() {
+          $("#plural-tabs li").removeClass('active');
+          tabs.addClass('active');
 
-        $('#source-pane h2').html(title).show();
-        $('#original').html(original);
+          var entity = $('#editor')[0].entity,
+              i = tabs.index(),
+              original = entity['marked' + self.isPluralized()],
+              title = !self.isPluralized() ? "Singular" : "Plural",
+              source = entity.translation[i].string;
 
-        $('#translation').val(source).focus();
-        $('#translation-length')
-          .find('.original-length').html(original.length).end()
-          .find('.current-length').html(source.length);
+          $('#source-pane h2').html(title).show();
+          $('#original').html(original);
 
-        $('#warning:visible .cancel').click();
-        $("#helpers nav .active a").click();
+          $('#translation').val(source).focus();
+          $('#translation-length')
+            .find('.original-length').html(original.length).end()
+            .find('.current-length').html(source.length);
+
+          $('#quality:visible .cancel').click();
+          $("#helpers nav .active a").click();
+        });
       });
 
       // Translate textarea keyboard shortcuts
@@ -832,14 +633,18 @@ var Pontoon = (function (my) {
 
         // Enter: save translation
         if (key === 13 && !e.shiftKey && !e.altKey) {
-          $('#save').click();
+          if ($('#leave-anyway').is(':visible')) {
+            $('#leave-anyway').click();
+          } else {
+            $('#save').click();
+          }
           return false;
         }
 
         // Esc: cancel translation and return to entity list
         if (key === 27) {
-          if ($('#warning').is(':visible')) {
-            $('#warning .cancel').click();
+          if ($('.warning-overlay').is(':visible')) {
+            $('.warning-overlay .cancel').click();
           } else if (!self.app.advanced) {
             $('#cancel').click();
           }
@@ -875,17 +680,27 @@ var Pontoon = (function (my) {
         var length = $('#translation').val().length;
         $('#translation-length .current-length').html(length);
 
-        $('#warning:visible .cancel').click();
+        $('.warning-overlay:visible .cancel').click();
       });
 
       // Close warning box
-      $('#warning .cancel').click(function (e) {
+      $('.warning-overlay .cancel').click(function (e) {
         e.stopPropagation();
         e.preventDefault();
 
-        $('#warning')
+        $('.warning-overlay')
           .find('ul').empty().end()
         .hide();
+
+        $('#translation').focus();
+      });
+
+      $('#leave-anyway').click(function() {
+        var callback = self.checkUnsavedChangesCallback;
+        if (callback) {
+          self.checkUnsavedChangesCallback();
+          $('#unsaved').hide();
+        }
       });
 
       // Copy source to translation
@@ -946,7 +761,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        self.updateOnServer(entity, source);
+        self.updateOnServer(entity, source, false, true);
       });
 
       // Helpers navigation
@@ -989,7 +804,11 @@ var Pontoon = (function (my) {
 
         $("#helpers > section").hide();
         $("#helpers > section#" + sec).show();
-        $("#custom-search input[type=search]:visible").focus();
+
+        // Only if actually clicked on tab
+        if (e.hasOwnProperty('originalEvent')) {
+          $("#custom-search input[type=search]:visible").focus();
+        }
       });
 
       // Custom search: trigger with Enter
@@ -1011,7 +830,7 @@ var Pontoon = (function (my) {
         $('#translation').val(source).focus();
         $('#translation-length .current-length').html(source.length);
 
-        $('#warning:visible .cancel').click();
+        $('.warning-overlay:visible .cancel').click();
       });
 
       // Restore clickable links
@@ -1192,13 +1011,73 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Update all translations in localStorage on server
+     */
+    syncLocalStorageOnServer: function() {
+      if (localStorage.length !== 0) {
+        var len = this.entities.length;
+        for (var i = 0; i < len; i++) {          
+          var entity = this.entities[i],
+              key = this.getLocalStorageKey(entity),
+              value = localStorage[key];
+          if (value) {
+            value = JSON.parse(localStorage[key]);
+            this.updateOnServer(entity, value.translation, false, false);
+            delete localStorage[key];
+          }
+        }
+        // Clear all other translations
+        localStorage.clear();
+      }
+    },
+
+
+    /*
+     * Generate localStorage key
+     *
+     * entity Entity
+     */
+    getLocalStorageKey: function(entity) {
+      return this.locale.code + "/" + entity.pk;
+    },
+
+
+    /*
+     * Add entity translation to localStorage
+     *
+     * entity Entity
+     * translation Translation
+     */
+    addToLocalStorage: function(entity, translation) {
+      localStorage.setItem(this.getLocalStorageKey(entity), JSON.stringify({
+        translation: translation,
+      }));
+    },
+
+
+    /*
+     * Show quality check warnings
+     *
+     * warnings Array of warnings
+     */
+    showQualityCheckWarnings: function(warnings) {
+      $('#quality ul').empty();
+      $(warnings).each(function() {
+        $('#quality ul').append('<li>' + this + '</li>');
+      });
+      $('#quality').show();
+    },
+
+
+    /*
      * Update entity translation on server
      *
      * entity Entity
      * translation Translation
      * inplace Was translation submitted in place?
+     * syncLocalStorage Synchronize translations in localStorage with the server
      */
-    updateOnServer: function (entity, translation, inplace) {
+    updateOnServer: function (entity, translation, inplace, syncLocalStorage) {
       var self = this,
           pluralForm = self.getPluralForm();
 
@@ -1215,6 +1094,55 @@ var Pontoon = (function (my) {
         }
       }
 
+      function renderTranslation(data) {
+        if (data.type) {
+          self.endLoader('Translation ' + data.type);
+
+          var pf = self.getPluralForm(true);
+          entity.translation[pf] = data.translation;
+          self.updateEntityUI(entity);
+
+          // Update translation, including in place if possible
+          if (!inplace && entity.body && (self.user.localizer ||
+              !entity.translation[pf].approved)) {
+            self.postMessage("SAVE", {
+              translation: translation,
+              id: entity.id
+            });
+          }
+
+          // Quit
+          if (!$("#editor:visible").is('.opened')) {
+            return;
+
+          // Go to next plural form
+          } else if (pluralForm !== -1 && $("#editor").is('.opened')) {
+            var next = $('#plural-tabs li:visible')
+              .eq(pluralForm + 1).find('a');
+
+            if (next.length === 0) {
+              gotoEntityListOrNextEntity();
+            } else {
+              next.click();
+            }
+
+          // Go to entity list or next entity
+          } else {
+            gotoEntityListOrNextEntity();
+          }
+
+        } else if (data.warnings) {
+          self.endLoader();
+          self.showQualityCheckWarnings(data.warnings);
+
+        } else if (data === "error") {
+          self.endLoader('Oops, something went wrong.', 'error');
+
+        } else {
+          self.endLoader(data, 'error');
+        }
+      }
+
       $.ajax({
         url: 'update/',
         type: 'POST',
@@ -1225,59 +1153,32 @@ var Pontoon = (function (my) {
           translation: translation,
           plural_form: pluralForm,
           original: entity['original' + self.isPluralized()],
-          ignore_check: inplace || $('#warning').is(':visible')
+          ignore_check: inplace || $('#quality').is(':visible') || !syncLocalStorage
         },
         success: function(data) {
-          if (data.type) {
-            self.endLoader('Translation ' + data.type);
-
-            var pf = self.getPluralForm(true);
-            entity.translation[pf] = data.translation;
-            self.updateEntityUI(entity);
-
-            // Update translation, including in place if possible
-            if (!inplace && entity.body && (self.user.localizer ||
-                !entity.translation[pf].approved)) {
-              self.postMessage("SAVE", translation);
-            }
-
-            // Quit
-            if (!$("#editor:visible").is('.opened')) {
-              return;
-
-            // Go to next plural form
-            } else if (pluralForm !== -1 && $("#editor").is('.opened')) {
-              var next = $('#plural-tabs li:visible')
-                .eq(pluralForm + 1).find('a');
-
-              if (next.length === 0) {
-                gotoEntityListOrNextEntity();
-              } else {
-                next.click();
-              }
-
-            // Go to entity list or next entity
-            } else {
-              gotoEntityListOrNextEntity();
-            }
-
-          } else if (data.warnings) {
-            self.endLoader();
-            $('#warning ul').empty();
-            $(data.warnings).each(function() {
-              $('#warning ul').append('<li>' + this + '</li>');
-            });
-            $('#warning').show();
-
-          } else if (data === "error") {
-            self.endLoader('Oops, something went wrong.', 'error');
-
-          } else {
-            self.endLoader(data, 'error');
+          renderTranslation(data);
+          // Connection exists -> sync localStorage
+          if (syncLocalStorage) {
+            self.syncLocalStorageOnServer();
           }
         },
-        error: function() {
-          self.endLoader('Oops, something went wrong.', 'error');
+        error: function(error) {
+          if (error.status === 0) {
+            // No connection -> use offline mode
+            self.addToLocalStorage(entity, translation);
+            // Imitate data to add translation
+            var data = {
+              type: "added",
+              translation: {
+                approved: self.user.localizer,
+                fuzzy: false,
+                string: translation
+              }
+            };
+            renderTranslation(data);
+          } else {
+            self.endLoader('Oops, something went wrong.', 'error');
+          }
         }
       });
     },
@@ -1695,6 +1596,7 @@ var Pontoon = (function (my) {
           Pontoon.project.url = value.url;
           Pontoon.project.title = value.title;
           Pontoon.createUI();
+          Pontoon.syncLocalStorageOnServer();
           break;
 
         case "SWITCH":
@@ -1711,8 +1613,8 @@ var Pontoon = (function (my) {
 
         case "ACTIVE":
           if ($('#switch').is('.opened')) {
-            var entity = Pontoon.entities[message.value];
-            Pontoon.openEditor(entity);
+            var entity = Pontoon.entities[message.value.id];
+            Pontoon.openEditor(entity, message.value.inplace);
           }
           break;
 
@@ -1724,7 +1626,7 @@ var Pontoon = (function (my) {
 
         case "UPDATE":
           var entity = Pontoon.entities[message.value.id];
-          Pontoon.updateOnServer(entity, message.value.content, true);
+          Pontoon.updateOnServer(entity, message.value.content, true, true);
           break;
 
         case "DELETE":
@@ -1922,6 +1824,7 @@ var Pontoon = (function (my) {
               });
 
               self.createUI();
+              self.syncLocalStorageOnServer();
             }
 
           } else {

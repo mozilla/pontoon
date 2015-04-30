@@ -341,8 +341,8 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
 
     if len(translations) > 0:
         try:
-            return translations.get(approved=True)
-        except Translation.DoesNotExist:
+            return translations.filter(approved=True).latest("date")
+        except Translation.DoesNotExist as e:
             return translations.latest("date")
     else:
         return Translation()
@@ -356,8 +356,8 @@ def save_entity(resource, string, string_plural="", comment="",
     try:
         if key is "":
             e = Entity.objects.get(
-                resource=resource, string=string,
-                string_plural=string_plural)
+                resource=resource, string__iexact=string,
+                string_plural__iexact=string_plural)
 
         else:
             e = Entity.objects.get(resource=resource, key=key)
@@ -388,7 +388,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
     now = datetime.datetime.now()
     translations = Translation.objects.filter(
         entity=entity, locale=locale, plural_form=plural_form)
-    translations_equal = translations.filter(string=string)
+    translations_equal = translations.filter(string__iexact=string)
     translations_equal_count = translations_equal.count()
 
     # Add new translation if it doesn's exist yet
@@ -403,24 +403,27 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             t.approved_date = now
         t.save(stats=False)
 
-    # Update existing translations if fuzzy status changes
+    # Update existing translations
     elif translations_equal_count > 0:
         t = translations_equal[0]
         if translations_equal_count > 1:
             try:
-                t = translations_equal.get(approved=True)
+                t = translations_equal.filter(approved=True).latest("date")
                 t.approved_date = now
-            except Translation.DoesNotExist:
+            except Translation.DoesNotExist as e:
                 t = translations_equal.latest("date")
 
-        if t.fuzzy != fuzzy:
+        # If fuzzy status changes or existing translation not approved
+        if t.fuzzy != fuzzy or not t.approved:
             # Only if fuzzy flag removed
             if not fuzzy:
                 unapprove(translations)
 
             unfuzzy(translations)
 
-            if fuzzy and get_translation(entity=entity, locale=locale) == t:
+            if fuzzy and get_translation(
+                    entity=entity, locale=locale,
+                    plural_form=plural_form) == t:
                 t.fuzzy = fuzzy
 
             t.date = now

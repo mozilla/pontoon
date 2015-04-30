@@ -43,6 +43,7 @@ def admin(request, template='admin.html'):
 
     data = {
         'projects': get_projects_with_stats(projects),
+        'url_prefix': 'admin/projects',
     }
 
     return render(request, template, data)
@@ -74,8 +75,8 @@ def get_slug(request):
 
 
 def manage_project(request, slug=None, template='admin_project.html'):
-    """Admin interface: manage project."""
-    log.debug("Admin interface: manage project.")
+    """Admin project."""
+    log.debug("Admin project.")
 
     if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
@@ -90,10 +91,13 @@ def manage_project(request, slug=None, template='admin_project.html'):
     project = None
     message = 'Before localizing projects, \
                you need to import strings from the repository.'
+    autoupdate = False
 
+    # Save project
     if request.method == 'POST':
         locales_selected = Locale.objects.filter(
             pk__in=request.POST.getlist('locales'))
+
         # Update existing project
         try:
             pk = request.POST['pk']
@@ -110,6 +114,9 @@ def manage_project(request, slug=None, template='admin_project.html'):
             formset = SubpageInlineFormSet(request.POST)
 
         if form.is_valid():
+            if set(project.locales.all()) != set(locales_selected):
+                autoupdate = True
+
             project = form.save(commit=False)
             formset = SubpageInlineFormSet(request.POST, instance=project)
             if formset.is_valid():
@@ -123,6 +130,9 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 pk = project.pk
                 if not Resource.objects.filter(project=project).exists():
                     messages.warning(request, message)
+                elif autoupdate:
+                    messages.warning(request, 'After updating locales, \
+                        strings need to be imported from the repository.')
             else:
                 subtitle += '. Error.'
         else:
@@ -150,6 +160,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'REPOSITORY_TYPE_CHOICES': Project.REPOSITORY_TYPE_CHOICES,
         'subtitle': subtitle,
         'pk': pk,
+        'autoupdate': autoupdate,
     }
 
     # Set locale in Translate link
@@ -166,9 +177,9 @@ def manage_project(request, slug=None, template='admin_project.html'):
 
 
 def delete_project(request, pk, template=None):
-    """Admin interface: delete project."""
+    """Delete project."""
     try:
-        log.debug("Admin interface: delete project.")
+        log.debug("Delete project.")
 
         if not request.user.has_perm('base.can_manage'):
             return render(request, '403.html', status=403)

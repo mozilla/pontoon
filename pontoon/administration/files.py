@@ -313,7 +313,7 @@ def extract_po(project, locale, path, entities=False):
                         try:
                             e = Entity.objects.get(
                                 resource=resource,
-                                string=entry.msgid)
+                                string__iexact=entry.msgid)
                             save_translation(
                                 entity=e,
                                 locale=locale,
@@ -328,7 +328,7 @@ def extract_po(project, locale, path, entities=False):
                         try:
                             e = Entity.objects.get(
                                 resource=resource,
-                                string=entry.msgid)
+                                string__iexact=entry.msgid)
                             for k in entry.msgstr_plural:
                                 save_translation(
                                     entity=e,
@@ -429,7 +429,8 @@ def extract_lang(project, locale, path, entities=False):
         for key, value in lang:
             if key != value[2] or '{ok}' in value[3]:
                 try:
-                    e = Entity.objects.get(resource=resource, string=key)
+                    e = Entity.objects.get(
+                        resource=resource, string__iexact=key)
                     save_translation(
                         entity=e, locale=locale, string=value[2])
 
@@ -635,8 +636,9 @@ def dump_po(project, locale, relative_path):
         if entry:
             if not entry.msgid_plural:
                 try:
-                    translation = Translation.objects.get(
-                        entity=entity, locale=locale, approved=True)
+                    translation = Translation.objects.filter(
+                        entity=entity, locale=locale, approved=True) \
+                        .latest('date')
                     entry.msgstr = translation.string.decode('utf-8')
 
                     if translation.date > date:
@@ -652,9 +654,9 @@ def dump_po(project, locale, relative_path):
                 for i in range(0, 6):
                     if i < (locale.nplurals or 1):
                         try:
-                            translation = Translation.objects.get(
+                            translation = Translation.objects.filter(
                                 entity=entity, locale=locale,
-                                plural_form=i, approved=True)
+                                plural_form=i, approved=True).latest('date')
                             entry.msgstr_plural[i] = \
                                 translation.string.decode('utf-8')
 
@@ -721,8 +723,9 @@ def dump_silme(parser, project, locale, relative_path):
             try:
                 try:
                     # Modify translated entities
-                    translation = Translation.objects.get(
-                        entity=entity, locale=locale, approved=True)
+                    translation = Translation.objects.filter(
+                        entity=entity, locale=locale, approved=True) \
+                        .latest('date')
                     structure.modify_entity(
                         key, translation.string.decode('utf-8'))
 
@@ -804,16 +807,16 @@ def dump_lang(project, locale, relative_path):
 
                 try:
                     entity = Entity.objects.get(
-                        resource=resource, string=original)
+                        resource=resource, string__iexact=original)
                 except Entity.DoesNotExist as e:
                     log.error('%s: Entity "%s" does not exist %s' %
                               (path, original, project.name))
                     continue
 
                 try:
-                    translation = Translation.objects.get(
+                    translation = Translation.objects.filter(
                         entity=entity, locale=locale, approved=True) \
-                        .string.decode('utf-8')
+                        .latest('date').string.decode('utf-8')
 
                     if translation == original:
                         translation += ' {ok}'
@@ -846,9 +849,9 @@ def dump_ini(project, locale):
                     key = entity.key
 
                     try:
-                        translation = Translation.objects.get(
+                        translation = Translation.objects.filter(
                             entity=entity, locale=locale, approved=True) \
-                            .string.decode('utf-8')
+                            .latest('date').string.decode('utf-8')
                         config.set(locale.code, key, translation)
 
                     except Translation.DoesNotExist as e:

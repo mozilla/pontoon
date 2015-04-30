@@ -464,14 +464,18 @@
 
       /**
        * Enable editable mode
+       * inplace Was called in place?
        */
-      function startEditing() {
+      function startEditing(inplace) {
         var toolbar = $('.pontoon-editable-toolbar');
         toolbar.children().show().end()
           .find('.edit').hide();
         var target = toolbar[0].target;
         $(target).attr('contentEditable', true);
-        postMessage("ACTIVE", target.entity.id);
+        postMessage("ACTIVE", {
+          id: target.entity.id,
+          inplace: inplace
+        });
         selectNodeContents(target);
       }
 
@@ -530,10 +534,16 @@
             break;
 
           case "SAVE":
-            var entity = $('.pontoon-editable-toolbar')[0].target.entity;
-            entity.translation[0].string = message.value;
+            var entity = null,
+                translation = message.value.translation || message.value;
+            if (message.value.id) {
+              entity = Pontoon.entities[message.value.id];
+            } else {
+              entity = $('.pontoon-editable-toolbar')[0].target.entity;
+            }
+            entity.translation[0].string = translation;
             $(entity.node).each(function() {
-              this.html(message.value);
+              this.html(translation);
             });
             stopEditing();
             break;
@@ -628,7 +638,7 @@
         if (!toolbar[0].target) {
           return false;
         }
-        startEditing();
+        startEditing(true);
         toolbar[0].target.focus();
         return false;
       }).end()

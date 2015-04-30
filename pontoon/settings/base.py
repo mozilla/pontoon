@@ -198,12 +198,6 @@ PIPELINE_CSS = {
 }
 
 PIPELINE_JS = {
-    'admin': {
-        'source_filenames': (
-            'js/admin.js',
-        ),
-        'output_filename': 'js/admin.min.js',
-    },
     'admin_project': {
         'source_filenames': (
             'js/admin_project.js',
@@ -216,23 +210,11 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/main.min.js',
     },
-    'locale': {
-        'source_filenames': (
-            'js/locale.js',
-        ),
-        'output_filename': 'js/locale.min.js',
-    },
     'project': {
         'source_filenames': (
             'js/project.js',
         ),
         'output_filename': 'js/project.min.js',
-    },
-    'projects': {
-        'source_filenames': (
-            'js/projects.js',
-        ),
-        'output_filename': 'js/projects.min.js',
     },
     'translate': {
         'source_filenames': (

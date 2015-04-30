@@ -26,6 +26,10 @@ urlpatterns = patterns(
     url(r'^project/(?P<slug>[\w-]+)/$',
         RedirectView.as_view(url="/projects/%(slug)s/", permanent=True)),
 
+    # Legacy: Redirect to /contributors/email
+    url(r'^contributor/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
+        RedirectView.as_view(url="/contributors/%(email)s/")),
+
     # List all imported projects
     url(r'^projects/$',
         views.projects,
@@ -51,10 +55,20 @@ urlpatterns = patterns(
         views.contributors,
         name='pontoon.contributors'),
 
-    # User profile
-    url(r'^contributor/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
+    # Contributor profile
+    url(r'^contributors/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
         views.contributor,
         name='pontoon.contributor'),
+
+    # Current user profile
+    url(r'^profile/$',
+        views.profile,
+        name='pontoon.profile'),
+
+    # Terminology Search
+    url(r'^search/$',
+        views.search,
+        name='pontoon.search'),
 
     # AJAX
     url(r'^get-entities/', views.entities,

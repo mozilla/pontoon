@@ -922,7 +922,7 @@ body > header aside p {
   text-align: right;
 }
 
-#warning {
+.warning-overlay {
   background: #272A2F;
   bottom: 0;
   display: none;
@@ -937,7 +937,7 @@ body > header aside p {
   box-sizing: border-box;
 }
 
-#warning .cancel {
+.warning-overlay .cancel {
   color: #AAAAAA;
   float: right;
   font-size: 24px;
@@ -945,20 +945,21 @@ body > header aside p {
   margin-top: -1px;
 }
 
-#warning .cancel:hover {
+.warning-overlay .cancel:hover {
   color: #FFFFFF;
 }
 
-#warning h2 {
+.warning-overlay h2 {
   color: #FD5F60;
 }
 
-#warning ul {
+.warning-overlay ul {
   float: left;
   list-style: disc;
 }
 
-#warning #save-anyway {
+.warning-overlay #save-anyway,
+.warning-overlay #leave-anyway {
   bottom: 10px;
   position: absolute;
   right: 10px;
@@ -984,7 +985,8 @@ body > header aside p {
   display: none;
 }
 
-#editor > menu button[id^="save"] {
+#editor > menu button[id^="save"],
+#editor > menu button#leave-anyway {
   background: #7bc876;
   border-radius: 3px;
   color: #272A2F;
@@ -993,12 +995,21 @@ body > header aside p {
   padding: 10px 15px;
 }
 
+#editor > menu button#leave-anyway {
+  background: #FF0A43;
+  color: #EBEBEB;
+}
+
 #editor > menu button:hover {
   color: #7BC876;
 }
 
 #editor > menu button[id^="save"]:hover {
   color: #EBEBEB;
+}
+
+#editor > menu button#leave-anyway:hover {
+  color: #272A2F;
 }
 
 #helpers {
@@ -1044,16 +1055,10 @@ body > header aside p {
   padding-left: 10px;
 }
 
-#helpers > section ul {
-  list-style: none;
-  margin: 0;
-}
-
 #helpers > section ul li {
-  border-bottom: 1px solid #525a65;
   cursor: pointer;
-  padding: 5px 10px 20px;
-  text-align: right;
+  padding-left: 10px;
+  padding-right: 10px;
   transition: all 0.2s ease-out;
 }
 
@@ -1072,21 +1077,17 @@ body > header aside p {
   cursor: default;
 }
 
-#helpers > section ul li > header {
-  color: #AAAAAA;
-  display: block;
-  font-size: 11px;
-  font-weight: 300;
-  padding: 1px 0 5px;
-  text-transform: uppercase;
-}
-
 #helpers > section ul li > header .info {
   float: left;
 }
 
 #helpers > section ul li > header .toolbar {
   float: right;
+}
+
+#helpers > section#history ul li > header .stress,
+#helpers > section#other-locales ul li > header .stress {
+  padding-right: 0;
 }
 
 #helpers > section ul li > header button {
@@ -1124,27 +1125,4 @@ body > header aside p {
 
 #helpers > section ul li > header button.delete:hover:before {
   color: #FD5F60;
-}
-
-#helpers > section ul li > header .stress {
-  color: #7BC876;
-  padding-left: 3px;
-}
-
-#helpers > section ul li > p {
-  min-height: 22px;
-}
-
-#helpers > section#machinery ul li > header .stress,
-#helpers > section#custom-search ul li > header .stress {
-  padding-right: 3px;
-}
-
-#helpers > section ul li.disabled p {
-  color: #AAAAAA;
-  font-style: italic;
-}
-
-#helpers > section ul li p.original {
-  color: #AAAAAA;
 }

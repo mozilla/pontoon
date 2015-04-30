@@ -3,24 +3,19 @@ $(function() {
   // Show only locales available for the selected project
   var projectLocales = $('#server').data('project-locales');
   $(projectLocales).each(function() {
-    $('.menu').find('.language.' + this).parent().addClass('limited').show();
+    $('.menu').find('.language.' + this).parents('li').addClass('limited').show();
   });
   $('.menu:visible input[type=search]').trigger("keyup");
 
-  // Locale menu handler
+  // Request new locale
   $('.locale .menu li').click(function (e) {
-    e.preventDefault();
-
-    // Request new locale
     if ($('.locale .menu .search-wrapper > a').is('.back')) {
+      e.preventDefault();
+
       var locale = $(this).find('.language').attr('class').split(' ')[1],
           project = $('#server').data('project');
-      Pontoon.requestLocale(locale, project);
 
-    // Translate locale
-    } else {
-      window.location = $(this)
-        .find('.code').html() + '/' + $('#server').data('project');
+      Pontoon.requestLocale(locale, project);
     }
   });
 
@@ -36,13 +31,13 @@ $(function() {
     if ($(this).is('.back')) {
       menu.find('li').addClass('limited').show();
       $(projectLocales).each(function() {
-        menu.find('.language.' + this).parent().removeClass('limited').hide();
+        menu.find('.language.' + this).parents('li').removeClass('limited').hide();
       });
 
     } else {
       menu.find('li').removeClass('limited').hide();
       $(projectLocales).each(function() {
-        menu.find('.language.' + this).parent().addClass('limited').show();
+        menu.find('.language.' + this).parents('li').addClass('limited').show();
       });
     }
 

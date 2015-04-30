@@ -111,7 +111,7 @@
         <div class="menu">
           <ul>
             {% if user.is_authenticated() %}
-            <li data-url="{{ url('pontoon.contributor', user.email) }}"><i class="fa fa-user fa-fw"></i>View profile</li>
+            <li data-url="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View profile</li>
             <li class="quality-checks{% if user.profile.quality_checks %} enabled{% endif %}"><i class="fa fa-fw"></i>Quality checks</li>
             <li class="horizontal-separator"></li>
             {% endif %}
@@ -126,6 +126,7 @@
 
             <li data-url="{{ url('pontoon.projects') }}"><i class="fa fa-bar-chart-o fa-fw"></i>Project Overview</a></li>
             <li data-url="{{ url('pontoon.contributors') }}"><i class="fa fa-trophy fa-fw"></i>Top Contributors</a></li>
+            <li data-url="{{ url('pontoon.search') }}"><i class="fa fa-search fa-fw"></i>Terminology Search</a></li>
             <li data-url="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
             <li data-url="https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla"><i class="fa fa-wrench fa-fw"></i>Developers</a></li>
             <li class="hotkeys"><i class="fa fa-keyboard-o fa-fw"></i>Keyboard shortcuts</li>
@@ -258,7 +259,13 @@
     <textarea id="translation" placeholder="Enter translation"></textarea>
 
     <menu>
-      <div id="warning">
+      <div id="unsaved" class="warning-overlay">
+        <a href="#" class="cancel">&times;</a>
+        <h2>You have unsaved changes</h2>
+        <p>Sure you want to leave?</p>
+        <button id="leave-anyway">Leave anyway</button>
+      </div>
+      <div id="quality" class="warning-overlay">
         <a href="#" class="cancel">&times;</a>
         <h2>The following checks have failed</h2>
         <ul></ul>
