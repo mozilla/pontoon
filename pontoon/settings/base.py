@@ -85,7 +85,6 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'multidb.middleware.PinningRouterMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -250,8 +249,6 @@ PIPELINE_JS = {
         'output_filename': 'js/user.min.js',
     },
 }
-
-DATABASE_ROUTERS = ('multidb.PinningMasterSlaveRouter',)
 
 # Cache config
 CACHES = {
