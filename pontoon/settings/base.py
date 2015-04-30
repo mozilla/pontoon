@@ -81,9 +81,7 @@ INSTALLED_APPS = (
     'django_browserid',
     'django_jinja',
     'pipeline',
-    'product_details',
     'session_csrf',
-    'tower',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -103,7 +101,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'session_csrf.context_processor',
     'django.contrib.messages.context_processors.messages',
-    'pontoon.base.context_processors.i18n',
     'pontoon.base.context_processors.globals',
 )
 
@@ -148,24 +145,6 @@ AUTHENTICATION_BACKENDS = [
     'django_browserid.auth.BrowserIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
-
-# Paths containing translation files for the site.
-LOCALE_PATHS = (
-    os.path.join(ROOT, 'pontoon', 'locale'),
-)
-
-# Tells the extract script what files to look for L10n in and what function
-# handles the extraction. The Tower library expects this.
-DOMAIN_METHODS = {
-    'messages': [
-        ('pontoon/**.py',
-            'tower.management.commands.extract.extract_tower_python'),
-        ('pontoon/**/templates/**.html',
-            'tower.management.commands.extract.extract_tower_template'),
-        ('templates/**.html',
-            'tower.management.commands.extract.extract_tower_template'),
-    ]
-}
 
 # Temporarily do not compress CSS or JS until we figure out the issue
 # with Heroku failing to compress static files.
@@ -399,70 +378,11 @@ TIME_ZONE = 'America/Los_Angeles'
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = True
+USE_I18N = False
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
-USE_L10N = True
-
-# Gettext text domain
-TEXT_DOMAIN = 'messages'
-STANDALONE_DOMAINS = [TEXT_DOMAIN, 'javascript']
-TOWER_KEYWORDS = {'_lazy': None}
-TOWER_ADD_HEADERS = True
-
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-US'
-
-## Accepted locales
-
-# Tells the product_details module where to find our local JSON files.
-# This ultimately controls how LANGUAGES are constructed.
-PROD_DETAILS_DIR = path('lib/product_details_json')
-
-# On dev instances, the list of accepted locales defaults to the contents of
-# the `locale` directory within a project module or, for older Playdoh apps,
-# the root locale directory.  A localizer can add their locale in the l10n
-# repository (copy of which is checked out into `locale`) in order to start
-# testing the localization on the dev server.
-import glob
-import itertools
-try:
-    DEV_LANGUAGES = [
-        os.path.basename(loc).replace('_', '-')
-        for loc in itertools.chain(glob.iglob(ROOT + '/locale/*'),  # old style
-                                   glob.iglob(ROOT + '/*/locale/*'))
-        if (os.path.isdir(loc) and os.path.basename(loc) != 'templates')
-    ]
-except OSError:
-    DEV_LANGUAGES = ('en-US',)
-
-# On stage/prod, the list of accepted locales is manually maintained.  Only
-# locales whose localizers have signed off on their work should be listed here.
-PROD_LANGUAGES = (
-    'en-US',
-)
-
-def lazy_lang_url_map():
-    from django.conf import settings
-    langs = settings.DEV_LANGUAGES if settings.DEV else settings.PROD_LANGUAGES
-    return dict([(i.lower(), i) for i in langs])
-
-LANGUAGE_URL_MAP = lazy(lazy_lang_url_map, dict)()
-
-# Override Django's built-in with our native names
-def lazy_langs():
-    from django.conf import settings
-    from product_details import product_details
-    langs = DEV_LANGUAGES if settings.DEV else settings.PROD_LANGUAGES
-    return dict([(lang.lower(), product_details.languages[lang]['native'])
-                 for lang in langs if lang in product_details.languages])
-
-LANGUAGES = lazy(lazy_langs, dict)()
-
-# Paths that don't require a locale code in the URL.
-SUPPORTED_NONLOCALES = ['media', 'static', 'admin']
+USE_L10N = False
 
 # Microsoft Translator Locales
 MICROSOFT_TRANSLATOR_LOCALES = [
