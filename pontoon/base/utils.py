@@ -255,7 +255,7 @@ def quality_check(original, string, locale, ignore):
 
             return HttpResponse(json.dumps({
                 'warnings': warnings_array,
-            }), mimetype='application/json')
+            }), content_type='application/json')
 
 
 def req(method, project, resource, locale,
