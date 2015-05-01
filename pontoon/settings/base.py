@@ -230,6 +230,12 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/user.min.js',
     },
+    'search': {
+        'source_filenames': (
+            'js/search.js',
+        ),
+        'output_filename': 'js/search.min.js',
+    },
 }
 
 # Cache config
