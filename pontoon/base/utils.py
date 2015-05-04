@@ -184,7 +184,7 @@ def mark_placeables(text):
 
         # Not a placeable: skip
         else:
-            output += unicode(item)
+            output += unicode(item).replace('<', '&lt;').replace('>', '&gt;')
 
     return output
 
