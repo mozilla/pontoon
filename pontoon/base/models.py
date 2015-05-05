@@ -1,7 +1,6 @@
-
-import commonware.log
 import datetime
 import json
+import logging
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -11,12 +10,12 @@ from django.forms import ModelForm
 from pontoon.base import utils
 
 
-log = commonware.log.getLogger('pontoon')
+log = logging.getLogger('pontoon')
 
 
 class UserProfile(models.Model):
     # This field is required.
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, related_name='profile')
 
     # Other fields here
     transifex_username = models.CharField(max_length=40, blank=True)
@@ -215,6 +214,10 @@ class Stats(models.Model):
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
+        fields = ('name', 'slug', 'locales', 'repository_type',
+                  'repository_url', 'repository_path', 'transifex_project',
+                  'transifex_resource', 'info_brief', 'url', 'width',
+                  'links', 'disabled')
 
     def clean(self):
         cleaned_data = super(ProjectForm, self).clean()

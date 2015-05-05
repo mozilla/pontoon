@@ -1,0 +1,24 @@
+db:
+  image: postgres:9.4
+  environment:
+    - POSTGRES_USER=pontoon
+    - POSTGRES_PASSWORD=asdf
+web:
+  build: .
+  ports:
+    - "8000:8000"
+  volumes:
+    - .:/pontoon
+  links:
+    - db
+  environment:
+    - PYTHONDONTWRITEBYTECODE=1
+    - DOCKER=1
+    - SECRET_KEY=asdf
+    - DJANGO_DEV=True
+    - DJANGO_DEBUG=True
+    - DATABASE_URL=postgres://pontoon:asdf@db/pontoon
+    - SESSION_COOKIE_SECURE=False
+    - HMAC_KEY=asdf
+    - STATIC_ROOT=/pontoon-static
+  command: ./bin/run-compose.sh

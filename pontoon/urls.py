@@ -1,21 +1,19 @@
 from django.conf import settings
-from django.conf.urls.defaults import patterns, include, url
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls import patterns, include, url
 from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 
-from funfactory.monkeypatches import patch
+from pontoon.base.monkeypatches import patch
 patch()
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns(
-    '',
 
+urlpatterns = patterns('',
     # Legacy: Locale redirect for compatibility with i18n ready URL scheme
-    (r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s")),
+    (r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s", permanent=True)),
 
     # Admin
     (r'admin/', include('pontoon.administration.urls')),
@@ -27,7 +25,7 @@ urlpatterns = patterns(
     url(r'^intro/$', 'pontoon.intro.views.intro'),
 
     # BrowserID
-    url(r'^browserid/$', 'pontoon.base.views.verify', name='browserid.verify'),
+    (r'', include('django_browserid.urls')),
 
     # Logout
     url(r'^signout/$', 'django.contrib.auth.views.logout', {'next_page': '/'},
@@ -40,16 +38,12 @@ urlpatterns = patterns(
 
     # Favicon
     url(r'^favicon\.ico$',
-        RedirectView.as_view(url='/static/img/favicon.ico')),
+        RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),
 
     # Include script
     url(r'^pontoon\.js$',
-        RedirectView.as_view(url='/static/js/pontoon.js')),
+        RedirectView.as_view(url='/static/js/pontoon.js', permanent=True)),
 
     # Main app: Must be at the end
     (r'', include('pontoon.base.urls')),
 )
-
-# In DEBUG mode, serve media files through Django.
-if settings.DEBUG:
-    urlpatterns += staticfiles_urlpatterns()

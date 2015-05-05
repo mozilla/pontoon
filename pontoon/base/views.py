@@ -1,10 +1,9 @@
-
 import base64
-import commonware
 import datetime
 import hashlib
 import json
 import Levenshtein
+import logging
 import math
 import os
 import pytz
@@ -33,8 +32,7 @@ from django.http import (
 from django.shortcuts import render
 from django.templatetags.static import static
 from django.utils.datastructures import MultiValueDictKeyError
-from django_browserid import verify as browserid_verify
-from django_browserid import get_audience
+from django_browserid.views import Verify as BrowserIDVerifyBase
 from operator import itemgetter
 from pontoon.administration.vcs import commit_to_vcs
 from pontoon.administration import files
@@ -61,7 +59,7 @@ from session_csrf import anonymous_csrf_exempt
 from suds.client import Client, WebFault
 
 
-log = commonware.log.getLogger('pontoon')
+log = logging.getLogger('pontoon')
 
 
 def home(request):
@@ -156,7 +154,7 @@ def get_gravatar_url(email, size):
         hashlib.md5(email.lower()).hexdigest() + "?"
     data = {'s': str(size)}
 
-    if settings.SITE_URL != 'http://localhost:8000':
+    if not settings.DEBUG:
         append = '_big' if size > 44 else ''
         default = settings.SITE_URL + static('img/anonymous' + append + '.jpg')
         data['d'] = default
@@ -410,7 +408,7 @@ def entities(request, template=None):
         return HttpResponse("error")
 
     entities = get_entities(project, locale, paths)
-    return HttpResponse(json.dumps(entities), mimetype='application/json')
+    return HttpResponse(json.dumps(entities), content_type='application/json')
 
 
 def get_translations_from_other_locales(request, template=None):
@@ -465,7 +463,7 @@ def get_translations_from_other_locales(request, template=None):
         return HttpResponse("error")
     else:
         return HttpResponse(
-            json.dumps(payload, indent=4), mimetype='application/json')
+            json.dumps(payload, indent=4), content_type='application/json')
 
 
 def get_translation_history(request, template=None):
@@ -525,7 +523,7 @@ def get_translation_history(request, template=None):
             payload.append(o)
 
         return HttpResponse(
-            json.dumps(payload, indent=4), mimetype='application/json')
+            json.dumps(payload, indent=4), content_type='application/json')
 
     else:
         log.debug("Translations do not exist")
@@ -584,7 +582,7 @@ def delete_translation(request, template=None):
     return HttpResponse(json.dumps({
         'type': 'deleted',
         'next': next.id,
-    }), mimetype='application/json')
+    }), content_type='application/json')
 
 
 @anonymous_csrf_exempt
@@ -690,7 +688,7 @@ def update_translation(request, template=None):
                 return HttpResponse(json.dumps({
                     'type': 'updated',
                     'translation': t.serialize(),
-                }), mimetype='application/json')
+                }), content_type='application/json')
 
             # If added by non-privileged user, unfuzzy it
             else:
@@ -713,7 +711,7 @@ def update_translation(request, template=None):
                     return HttpResponse(json.dumps({
                         'type': 'updated',
                         'translation': t.serialize(),
-                    }), mimetype='application/json')
+                    }), content_type='application/json')
 
                 return HttpResponse("Same translation already exist.")
 
@@ -746,7 +744,7 @@ def update_translation(request, template=None):
             return HttpResponse(json.dumps({
                 'type': 'added',
                 'translation': active.serialize(),
-            }), mimetype='application/json')
+            }), content_type='application/json')
 
     # No translations saved yet
     else:
@@ -769,7 +767,7 @@ def update_translation(request, template=None):
         return HttpResponse(json.dumps({
             'type': 'saved',
             'translation': t.serialize(),
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
 
 def translation_memory(request):
@@ -845,7 +843,7 @@ def translation_memory(request):
 
         return HttpResponse(json.dumps({
             'translations': translations_array
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
     else:
         return HttpResponse("no")
@@ -910,7 +908,7 @@ def machine_translation(request):
         translation = root.text
         obj['translation'] = translation
 
-        return HttpResponse(json.dumps(obj), mimetype='application/json')
+        return HttpResponse(json.dumps(obj), content_type='application/json')
 
     except Exception as e:
         log.error(e)
@@ -986,7 +984,7 @@ def microsoft_terminology(request):
 
             obj['translations'] = translations
 
-        return HttpResponse(json.dumps(obj), mimetype='application/json')
+        return HttpResponse(json.dumps(obj), content_type='application/json')
 
     except WebFault as e:
         log.error(e)
@@ -1022,7 +1020,7 @@ def amagama(request):
 
             return HttpResponse(json.dumps({
                 'translations': translations
-            }), mimetype='application/json')
+            }), content_type='application/json')
 
         else:
             return HttpResponse("no")
@@ -1056,7 +1054,7 @@ def transvision(request, repo, title):
             return HttpResponse(json.dumps({
                 'translations': translations,
                 'title': title,
-            }), mimetype='application/json')
+            }), content_type='application/json')
 
         else:
             return HttpResponse("no")
@@ -1200,7 +1198,7 @@ def quality_checks_switch(request):
         log.error("Non-POST request")
         raise Http404
 
-    profile = request.user.get_profile()
+    profile = request.user.profile
     profile.quality_checks = not profile.quality_checks
     profile.save()
 
@@ -1280,40 +1278,13 @@ def request_locale(request):
     return HttpResponse()
 
 
-@anonymous_csrf_exempt
-def verify(request, template=None):
-    """Verify BrowserID assertion, and return whether a user is registered."""
-    log.debug("Verify BrowserID assertion.")
-
-    if request.method != 'POST':
-        log.error("Non-POST request")
-        raise Http404
-
-    assertion = request.POST['assertion']
-    if assertion is None:
-        return HttpResponseBadRequest()
-
-    verification = browserid_verify(assertion, get_audience(request))
-    if not verification:
-        return HttpResponseForbidden()
-
-    response = "error"
-    user = authenticate(assertion=assertion, audience=get_audience(request))
-
-    if user is not None:
-        login(request, user)
-
+class BrowserIDVerify(BrowserIDVerifyBase):
+    def login_success(self):
         # Check for permission to localize if not granted on every login
-        if not user.has_perm('base.can_localize'):
-            user = User.objects.get(username=user)
-            utils.add_can_localize(user)
+        if not self.user.has_perm('base.can_localize'):
+            utils.add_can_localize(self.user)
 
-        response = {
-            'browserid': verification,
-            'manager': user.has_perm('base.can_manage'),
-        }
-
-    return HttpResponse(json.dumps(response), mimetype='application/json')
+        return super(BrowserIDVerify, self).login_success()
 
 
 def get_csrf(request, template=None):

@@ -26,9 +26,6 @@
   <link rel="stylesheet" href="{{ static('css/search.css') }}">
 {% endblock %}
 
-
 {% block extend_js %}
-  {% compress js %}
-    <script src="{{ static('js/search.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'search' %}
 {% endblock %}

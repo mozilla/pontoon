@@ -1,9 +1,8 @@
-
 import codecs
-import commonware.log
 import configparser
 import datetime
 import fnmatch
+import logging
 import operator
 import os
 import polib
@@ -32,7 +31,7 @@ from pontoon.base.models import (
     update_stats,
 )
 
-log = commonware.log.getLogger('pontoon')
+log = logging.getLogger('pontoon')
 
 
 """ Start monkeypatching """

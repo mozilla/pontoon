@@ -1,7 +1,6 @@
-
 import base64
-import commonware
 import json
+import logging
 import os
 import shutil
 import traceback
@@ -30,7 +29,7 @@ from pontoon.base.models import (
 )
 
 
-log = commonware.log.getLogger('pontoon')
+log = logging.getLogger('pontoon')
 
 
 def admin(request, template='admin.html'):
@@ -82,7 +81,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
     if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
 
-    SubpageInlineFormSet = inlineformset_factory(Project, Subpage, extra=1)
+    SubpageInlineFormSet = inlineformset_factory(Project, Subpage, extra=1,
+                                                 fields=('project', 'name', 'url'))
     form = ProjectForm()
     formset = SubpageInlineFormSet()
     locales_selected = []
@@ -176,7 +176,6 @@ def manage_project(request, slug=None, template='admin_project.html'):
     return render(request, template, data)
 
 
-@transaction.commit_manually
 def delete_project(request, pk, template=None):
     """Delete project."""
     try:
@@ -185,20 +184,19 @@ def delete_project(request, pk, template=None):
         if not request.user.has_perm('base.can_manage'):
             return render(request, '403.html', status=403)
 
-        project = Project.objects.get(pk=pk)
-        project.delete()
+        with transaction.atomic():
+            project = Project.objects.get(pk=pk)
+            project.delete()
 
-        path = files.get_repository_path_master(project)
-        if os.path.exists(path):
-            shutil.rmtree(path)
+            path = files.get_repository_path_master(project)
+            if os.path.exists(path):
+                shutil.rmtree(path)
 
-        transaction.commit()
         return HttpResponseRedirect(reverse('pontoon.admin'))
     except Exception as e:
         log.error(
             "Admin interface: delete project error.\n%s"
             % unicode(e), exc_info=True)
-        transaction.rollback()
         messages.error(
             request,
             "There was an error during deleting this project.")
@@ -225,7 +223,7 @@ def update_from_repository(request, template=None):
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': 'Project primary key not provided.',
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
     try:
         project = Project.objects.get(pk=pk)
@@ -234,7 +232,7 @@ def update_from_repository(request, template=None):
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': str(e),
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
     try:
         files.update_from_repository(project)
@@ -246,7 +244,7 @@ def update_from_repository(request, template=None):
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': str(e),
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
     except IOError as e:
         log.error("IOError: " + str(e))
@@ -254,7 +252,7 @@ def update_from_repository(request, template=None):
         return HttpResponse(json.dumps({
             'type': 'error',
             'message': str(e),
-        }), mimetype='application/json')
+        }), content_type='application/json')
 
     return HttpResponse("200")
 

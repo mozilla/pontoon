@@ -1,6 +1,5 @@
-
-import commonware.log
 import json
+import logging
 import re
 import requests
 
@@ -15,7 +14,7 @@ from translate.storage.placeables.interfaces import BasePlaceable
 from translate.lang import data as lang_data
 
 
-log = commonware.log.getLogger('pontoon')
+log = logging.getLogger('pontoon')
 
 
 def add_can_localize(user):
@@ -137,7 +136,6 @@ def mark_placeables(text):
         'OptionPlaceable': "Command line option",
     }
 
-    text = unicode(text, "utf8")
     output = u""
 
     # Get a flat list of placeables and StringElem instances
@@ -257,7 +255,7 @@ def quality_check(original, string, locale, ignore):
 
             return HttpResponse(json.dumps({
                 'warnings': warnings_array,
-            }), mimetype='application/json')
+            }), content_type='application/json')
 
 
 def req(method, project, resource, locale,

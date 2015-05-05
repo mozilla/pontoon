@@ -1,12 +1,6 @@
-[submodule "vendor"]
-	path = vendor
-	url = git://github.com/mozilla/playdoh-lib.git
 [submodule "vendor-local/src/pysvn"]
 	path = vendor-local/src/pysvn
 	url = git://github.com/Formulka/pysvn.git
-[submodule "hooks/django/django-pontoon-hook"]
-	path = hooks/django/django-pontoon-hook
-	url = git://github.com/rtnpro/django-pontoon-hook.git
 [submodule "pontoon/intro"]
 	path = pontoon/intro
-	url = git://github.com/mathjazz/pontoon-intro
+	url = git://github.com/Osmose/pontoon-intro

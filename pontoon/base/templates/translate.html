@@ -112,7 +112,7 @@
           <ul>
             {% if user.is_authenticated() %}
             <li data-url="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View profile</li>
-            <li class="quality-checks{% if user.get_profile().quality_checks %} enabled{% endif %}"><i class="fa fa-fw"></i>Quality checks</li>
+            <li class="quality-checks{% if user.profile.quality_checks %} enabled{% endif %}"><i class="fa fa-fw"></i>Quality checks</li>
             <li class="horizontal-separator"></li>
             {% endif %}
 
@@ -339,14 +339,11 @@
 {% endblock %}
 
 {% block extend_css %}
-  <link rel="stylesheet" href="{{ static('css/translate.css') }}">
+  {% stylesheet 'translate' %}
 {% endblock %}
 
 {% block extend_js %}
-  {% compress js %}
-  <script src="{{ static('js/translate.js') }}"></script>
-  <script src="{{ static('js/jquery.timeago.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'translate' %}
 
-<script src="https://login.persona.org/include.js"></script>
+  <script src="https://login.persona.org/include.js"></script>
 {% endblock %}
