@@ -60,6 +60,10 @@ GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY', '')
 # Mozillians API Key
 MOZILLIANS_API_KEY = os.environ.get('MOZILLIANS_API_KEY', '')
 
+# Git(hub) Credentials
+GIT_USERNAME = os.environ.get('GIT_USERNAME', '')
+GIT_PASSWORD = os.environ.get('GIT_PASSWORD', '')
+
 
 # Environment-independent settings. These shouldn't have to change
 # between server environments.

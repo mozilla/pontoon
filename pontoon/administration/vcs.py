@@ -4,6 +4,9 @@ import base64
 import logging
 import os
 import subprocess
+import urlparse
+
+from django.conf import settings
 
 
 log = logging.getLogger('pontoon')
@@ -116,10 +119,11 @@ class CommitToRepositoryException(Exception):
 
 class CommitToRepository(object):
 
-    def __init__(self, path, message, user):
+    def __init__(self, path, message, user, url):
         self.path = path
         self.message = message
         self.user = user
+        self.url = url
 
     def commit(self, path=None, message=None, user=None):
         raise NotImplementedError
@@ -128,7 +132,7 @@ class CommitToRepository(object):
         name = user.first_name
         if not name:
             name = user.email.split('@')[0]
-        return (' '.join([name, '<%s>' % user.email])).encode('utf8')
+        return (' '.join([name, '<%s>' % user.email]))
 
     def nothing_to_commit(self):
         text = 'Nothing to commit'
@@ -140,23 +144,39 @@ class CommitToGit(CommitToRepository):
     def commit(self, path=None, message=None, user=None):
         log.debug("Git: Commit to repository.")
 
+        # Bail early if we lack credentials.
+        if not settings.GIT_USERNAME or not settings.GIT_PASSWORD:
+            raise CommitToRepositoryException(
+                'GIT_USERNAME and GIT_PASSWORD settings are not defined and '
+                'are required for committing to git repositories.')
+
         path = path or self.path
         message = message or self.message
         user = user or self.user
         author = self.get_author(user)
 
+        # Embed git identity info into commands.
+        git_cmd = ['git', '-c', 'user.name=Pontoon', '-c',
+                   'user.email=pontoon@pontoon.mozilla.org']
+
         # Add
-        add = ["git", "add", "-A"]
-        execute(add, path)
+        execute(git_cmd + ['add', '-A'], path)
 
         # Commit
-        commit = ["git", "commit", "-m", message, "--author", author]
+        commit = git_cmd + ['commit', '-m', message, '--author', author]
         code, output, error = execute(commit, path)
         if code != 0 and len(error):
             raise CommitToRepositoryException(unicode(error))
 
+        # Add auth credentials to URL for push.
+        url_parts = urlparse.urlparse(self.url)
+        netloc = '{username}:{password}@{netloc}'.format(
+            username=settings.GIT_USERNAME, password=settings.GIT_PASSWORD,
+            netloc=url_parts.netloc)
+        url = url_parts._replace(netloc=netloc).geturl()
+
         # Push
-        push = ["git", "push"]
+        push = ["git", "push", url]
         code, output, error = execute(push, path)
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
@@ -247,10 +267,10 @@ def update_from_vcs(repo_type, url, path):
         raise Exception(error)
 
 
-def commit_to_vcs(repo_type, path, message, user):
+def commit_to_vcs(repo_type, path, message, user, url):
     try:
         obj = globals()['CommitTo%s' % repo_type.capitalize()](
-            path, message.encode('utf8'), user)
+            path, message, user, url)
         return obj.commit()
 
     except CommitToRepositoryException as e:

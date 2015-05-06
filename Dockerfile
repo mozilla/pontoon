@@ -11,6 +11,5 @@ COPY requirements.txt /tmp/requirements.txt
 COPY ./bin/peep.py /tmp/peep.py
 RUN /tmp/peep.py install -r /tmp/requirements.txt
 
-
 EXPOSE 8000
 ENV PYTHONUNBUFFERED 1
