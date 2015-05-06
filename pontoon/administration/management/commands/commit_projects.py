@@ -3,7 +3,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
-from pontoon.administration.files import dump_from_database
+from pontoon.administration.files import dump_from_database, update_from_repository
 from pontoon.administration.vcs import commit_to_vcs
 from pontoon.base.models import (
     Project,
@@ -33,6 +33,15 @@ class Command(BaseCommand):
                 output('Committing project %s failed: Not a VCS project' %
                        (project))
                 continue
+
+            # Update project from VCS to ensure the directory exists.
+            try:
+                update_from_repository(project)
+                output('Updated project %s' % project)
+            except Exception as e:
+                now = datetime.datetime.now()
+                raise CommandError(
+                    '[%s]: Update error: %s\n' % (now, unicode(e)))
 
             for locale in project.locales.all():
 
