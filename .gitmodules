@@ -1,6 +1,3 @@
-[submodule "vendor-local/src/pysvn"]
-	path = vendor-local/src/pysvn
-	url = git://github.com/Formulka/pysvn.git
 [submodule "pontoon/intro"]
 	path = pontoon/intro
 	url = git://github.com/Osmose/pontoon-intro
