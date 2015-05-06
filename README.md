@@ -13,9 +13,19 @@ Installation
    * `git clone --recursive https://github.com/mozilla/pontoon.git`
    * `cd pontoon`
 
-3. Build the development instance using the build script:
+3. OPTIONAL: If you're running the site via [boot2docker](http://boot2docker.io/),
+you'll want to add a `.env` file to the project's root director with the IP
+address of the boot2docker VM.
 
    ```sh
+   $ echo "SITE_URL=http://$(boot2docker ip):8000" > .env
+   ```
+
+4. Build the development instance using the build script:
+
+   ```sh
+   $ boot2docker up
+   $ eval "$(boot2docker shellinit)"
    $ ./bin/build-docker.sh
    ```
 
@@ -27,20 +37,11 @@ $ docker-compose up
 ```
 
 If you're running Docker directly (via Linux), the site should be available at
-http://localhost:8000. If you're running [boot2docker](http://boot2docker.io/),
-the site should be available on port 8000 at the IP output by running:
+http://localhost:8000. If you're running boot2docker, the site should be
+available on port 8000 at the IP output by running:
 
 ```
 $ boot2docker ip
-```
-
-Note that if you're running the site via boot2docker, you'll want to add a
-`.env` file to the project's root director with the IP given by the command
-above. For example, if your IP was `192.168.1.102`, you'd create a `.env` file
-that looked like:
-
-```
-SITE_URL=http://192.168.1.102:8000
 ```
 
 For [admin](http://localhost:8000/admin/) access, create admin account with:
