@@ -155,12 +155,15 @@ class CommitToGit(CommitToRepository):
         user = user or self.user
         author = self.get_author(user)
 
+        # Embed git identity info into commands.
+        git_cmd = ['git', '-c', 'user.name=Pontoon', '-c',
+                   'user.email=pontoon@pontoon.mozilla.org']
+
         # Add
-        add = ["git", "add", "-A"]
-        execute(add, path)
+        execute(git_cmd + ['add', '-A'], path)
 
         # Commit
-        commit = ["git", "commit", "-m", message, "--author", author]
+        commit = git_cmd + ['commit', '-m', message, '--author', author]
         code, output, error = execute(commit, path)
         if code != 0 and len(error):
             raise CommitToRepositoryException(unicode(error))
