@@ -11,6 +11,9 @@ COPY requirements.txt /tmp/requirements.txt
 COPY ./bin/peep.py /tmp/peep.py
 RUN /tmp/peep.py install -r /tmp/requirements.txt
 
+# Configure VCS identity.
+RUN git config --global user.name "Pontoon"
+RUN git config --global user.email "pontoon@pontoon.mozilla.org"
 
 EXPOSE 8000
 ENV PYTHONUNBUFFERED 1

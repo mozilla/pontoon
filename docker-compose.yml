@@ -11,6 +11,9 @@ web:
     - .:/pontoon
   links:
     - db
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4
   environment:
     - PYTHONDONTWRITEBYTECODE=1
     - DOCKER=1

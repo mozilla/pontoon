@@ -59,7 +59,7 @@ class Command(BaseCommand):
 
                 # Commit files to VCS
                 try:
-                    r = commit_to_vcs(repo_type, path, message, user)
+                    r = commit_to_vcs(repo_type, path, message, user, project.repository_url)
                 except Exception as e:
                     output('Committing project %s for %s (%s) failed: %s' %
                            (project, locale.name, locale.code, unicode(e)))
