@@ -40,14 +40,14 @@ If you're running Docker directly (via Linux), the site should be available at
 http://localhost:8000. If you're running boot2docker, the site should be
 available on port 8000 at the IP output by running:
 
-```
+```sh
 $ boot2docker ip
 ```
 
 For [admin](http://localhost:8000/admin/) access, create admin account with:
 
-```
-`./manage.py createsuperuser`.
+```sh
+$ docker-compose run web ./manage.py createsuperuser
 ```
 
 
