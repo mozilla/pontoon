@@ -806,7 +806,7 @@ def translation_memory(request):
 
     for e in entities:
         source = e.string
-        quality = Levenshtein.ratio(text, unicode(source, "utf-8"))
+        quality = Levenshtein.ratio(text, source)
 
         if quality > min_quality:
             plural_form = None if e.string_plural == "" else 0

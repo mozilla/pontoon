@@ -15,7 +15,6 @@ import urllib2
 import zipfile
 
 from django.conf import settings
-from django.utils.encoding import smart_text
 from pontoon.administration.vcs import update_from_vcs
 
 from pontoon.base.models import (
@@ -632,14 +631,14 @@ def dump_po(project, locale, relative_path):
     entities = Entity.objects.filter(resource=resource, obsolete=False)
 
     for entity in entities:
-        entry = po.find(smart_text(entity.string))
+        entry = po.find(entity.string)
         if entry:
             if not entry.msgid_plural:
                 try:
                     translation = Translation.objects.filter(
                         entity=entity, locale=locale, approved=True) \
                         .latest('date')
-                    entry.msgstr = translation.string.decode('utf-8')
+                    entry.msgstr = translation.string
 
                     if translation.date > date:
                         date = translation.date
@@ -657,8 +656,7 @@ def dump_po(project, locale, relative_path):
                             translation = Translation.objects.filter(
                                 entity=entity, locale=locale,
                                 plural_form=i, approved=True).latest('date')
-                            entry.msgstr_plural[i] = \
-                                translation.string.decode('utf-8')
+                            entry.msgstr_plural[i] = translation.string
 
                             if translation.date > date:
                                 date = translation.date
@@ -726,8 +724,7 @@ def dump_silme(parser, project, locale, relative_path):
                     translation = Translation.objects.filter(
                         entity=entity, locale=locale, approved=True) \
                         .latest('date')
-                    structure.modify_entity(
-                        key, translation.string.decode('utf-8'))
+                    structure.modify_entity(key, translation.string)
 
                 except Translation.DoesNotExist as e:
                     # Remove untranslated and following newline
@@ -816,7 +813,7 @@ def dump_lang(project, locale, relative_path):
                 try:
                     translation = Translation.objects.filter(
                         entity=entity, locale=locale, approved=True) \
-                        .latest('date').string.decode('utf-8')
+                        .latest('date').string
 
                     if translation == original:
                         translation += ' {ok}'
@@ -851,7 +848,7 @@ def dump_ini(project, locale):
                     try:
                         translation = Translation.objects.filter(
                             entity=entity, locale=locale, approved=True) \
-                            .latest('date').string.decode('utf-8')
+                            .latest('date').string
                         config.set(locale.code, key, translation)
 
                     except Translation.DoesNotExist as e:
