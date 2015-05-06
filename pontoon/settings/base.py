@@ -315,7 +315,7 @@ LOGGING = {
         },
         'pontoon': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+            'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
         },
         'django_browserid': {
             'handlers': ['console'],

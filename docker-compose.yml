@@ -17,6 +17,7 @@ web:
     - SECRET_KEY=asdf
     - DJANGO_DEV=True
     - DJANGO_DEBUG=True
+    - DJANGO_LOG_LEVEL=DEBUG
     - DATABASE_URL=postgres://pontoon:asdf@db/pontoon
     - SESSION_COOKIE_SECURE=False
     - HMAC_KEY=asdf
