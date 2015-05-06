@@ -10,8 +10,11 @@ Installation
 1. [Install Docker and Compose](https://docs.docker.com/compose/install/).
 
 2. Clone this repository or your [fork](http://help.github.com/fork-a-repo/):
-   * `git clone --recursive https://github.com/mozilla/pontoon.git`
-   * `cd pontoon`
+
+   ```sh
+   $ git clone --recursive https://github.com/mozilla/pontoon.git
+   $ cd pontoon
+   ```
 
 3. OPTIONAL: If you're running the site via [boot2docker](http://boot2docker.io/),
 you'll want to add a `.env` file to the project's root director with the IP
