@@ -10,7 +10,7 @@ Installation
 1. [Install Docker and Compose](https://docs.docker.com/compose/install/).
 
 2. Clone this repository or your [fork](http://help.github.com/fork-a-repo/):
-   * `git clone --recursive https://github.com/mathjazz/pontoon.git`
+   * `git clone --recursive https://github.com/mozilla/pontoon.git`
    * `cd pontoon`
 
 3. Build the development instance using the build script:
@@ -78,7 +78,7 @@ Get involved
 ------------
 * File a [bug](https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all)
 
-* Read more on the [Wiki](https://github.com/mathjazz/pontoon/wiki)
+* Read more on the [Wiki](https://github.com/mozilla/pontoon/wiki)
 
 * Join #pontoon on [IRC](https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon)
 
