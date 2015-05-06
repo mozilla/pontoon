@@ -356,8 +356,7 @@ def save_entity(resource, string, string_plural="", comment="",
     try:
         if key is "":
             e = Entity.objects.get(
-                resource=resource, string__iexact=string,
-                string_plural__iexact=string_plural)
+                resource=resource, string=string, string_plural=string_plural)
 
         else:
             e = Entity.objects.get(resource=resource, key=key)
@@ -388,7 +387,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
     now = datetime.datetime.now()
     translations = Translation.objects.filter(
         entity=entity, locale=locale, plural_form=plural_form)
-    translations_equal = translations.filter(string__iexact=string)
+    translations_equal = translations.filter(string=string)
     translations_equal_count = translations_equal.count()
 
     # Add new translation if it doesn's exist yet
