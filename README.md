@@ -10,12 +10,25 @@ Installation
 1. [Install Docker and Compose](https://docs.docker.com/compose/install/).
 
 2. Clone this repository or your [fork](http://help.github.com/fork-a-repo/):
-   * `git clone --recursive https://github.com/mathjazz/pontoon.git`
-   * `cd pontoon`
-
-3. Build the development instance using the build script:
 
    ```sh
+   $ git clone --recursive https://github.com/mozilla/pontoon.git
+   $ cd pontoon
+   ```
+
+3. OPTIONAL: If you're running the site via [boot2docker](http://boot2docker.io/),
+you'll want to add a `.env` file to the project's root director with the IP
+address of the boot2docker VM.
+
+   ```sh
+   $ echo "SITE_URL=http://$(boot2docker ip):8000" > .env
+   ```
+
+4. Build the development instance using the build script:
+
+   ```sh
+   $ boot2docker up
+   $ eval "$(boot2docker shellinit)"
    $ ./bin/build-docker.sh
    ```
 
@@ -27,26 +40,17 @@ $ docker-compose up
 ```
 
 If you're running Docker directly (via Linux), the site should be available at
-http://localhost:8000. If you're running [boot2docker](http://boot2docker.io/),
-the site should be available on port 8000 at the IP output by running:
+http://localhost:8000. If you're running boot2docker, the site should be
+available on port 8000 at the IP output by running:
 
-```
+```sh
 $ boot2docker ip
-```
-
-Note that if you're running the site via boot2docker, you'll want to add a
-`.env` file to the project's root director with the IP given by the command
-above. For example, if your IP was `192.168.1.102`, you'd create a `.env` file
-that looked like:
-
-```
-SITE_URL=http://192.168.1.102:8000
 ```
 
 For [admin](http://localhost:8000/admin/) access, create admin account with:
 
-```
-`./manage.py createsuperuser`.
+```sh
+$ docker-compose run web ./manage.py createsuperuser
 ```
 
 
@@ -78,7 +82,7 @@ Get involved
 ------------
 * File a [bug](https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all)
 
-* Read more on the [Wiki](https://github.com/mathjazz/pontoon/wiki)
+* Read more on the [Wiki](https://github.com/mozilla/pontoon/wiki)
 
 * Join #pontoon on [IRC](https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon)
 
