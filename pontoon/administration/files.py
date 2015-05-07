@@ -469,7 +469,7 @@ def extract_ini(project, path):
 
     for section in sections:
         try:
-            locale = Locale.objects.get(code=section)
+            locale = Locale.objects.get(code__iexact=section)
         except Locale.DoesNotExist:
             log.debug("Locale not supported: " + section)
             break
@@ -520,7 +520,7 @@ def extract_to_database(project, locales=None):
         Stats.objects.filter(resource__in=resources).exclude(
             locale__in=project_locales).delete()
 
-        locales = [Locale.objects.get(code=source_locale)]
+        locales = [Locale.objects.get(code__iexact=source_locale)]
         locales.extend(project_locales)
 
     isFile = project.repository_type == 'file'
@@ -930,7 +930,7 @@ def generate_zip(project, locale):
     log.debug("Generate .zip of all project files for the specified locale.")
 
     try:
-        locale = Locale.objects.get(code=locale)
+        locale = Locale.objects.get(code__iexact=locale)
     except Locale.DoesNotExist as e:
         log.error(e)
 

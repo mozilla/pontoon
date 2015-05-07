@@ -12,7 +12,7 @@ $(function() {
     if ($('.locale .menu .search-wrapper > a').is('.back')) {
       e.preventDefault();
 
-      var locale = $(this).find('.code').html(),
+      var locale = $(this).find('.language').attr('class').split(' ')[1],
           project = $('#server').data('project');
 
       Pontoon.requestLocale(locale, project);

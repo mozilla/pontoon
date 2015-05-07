@@ -79,7 +79,7 @@ def locale(request, locale, template='locale.html'):
 
     # Validate locale
     try:
-        l = Locale.objects.get(code=locale)
+        l = Locale.objects.get(code__iexact=locale)
     except Locale.DoesNotExist:
         raise Http404
 
@@ -171,7 +171,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
 
     # Validate locale
     try:
-        l = Locale.objects.get(code=locale)
+        l = Locale.objects.get(code__iexact=locale)
     except Locale.DoesNotExist:
         invalid_locale = True
 
@@ -201,7 +201,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         return HttpResponseRedirect(reverse('pontoon.home'))
 
     # Validate project locales
-    if p.locales.filter(code=locale).count() == 0:
+    if p.locales.filter(code__iexact=locale).count() == 0:
         request.session['translate_error'] = {
             'none': None,
         }
@@ -368,7 +368,7 @@ def search(request, template='search.html'):
         request, Locale.objects) or 'en-GB'
 
     data = {
-        'locale': Locale.objects.get(code=locale),
+        'locale': Locale.objects.get(code__iexact=locale),
         'locales': Locale.objects.all(),
     }
 
@@ -402,7 +402,7 @@ def entities(request, template=None):
         return HttpResponse("error")
 
     try:
-        locale = Locale.objects.get(code=locale)
+        locale = Locale.objects.get(code__iexact=locale)
     except Locale.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
@@ -436,13 +436,14 @@ def get_translations_from_other_locales(request, template=None):
         return HttpResponse("error")
 
     try:
-        locale = Locale.objects.get(code=locale)
+        locale = Locale.objects.get(code__iexact=locale)
     except Locale.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
 
     payload = []
-    locales = entity.resource.project.locales.all().exclude(code=locale.code)
+    locales = entity.resource.project.locales.all().exclude(
+        code__iexact=locale.code)
 
     for l in locales:
         plural_form = None if entity.string_plural == "" else 0
@@ -492,7 +493,7 @@ def get_translation_history(request, template=None):
         return HttpResponse("error")
 
     try:
-        locale = Locale.objects.get(code=locale)
+        locale = Locale.objects.get(code__iexact=locale)
     except Locale.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
@@ -620,7 +621,7 @@ def update_translation(request, template=None):
         return HttpResponse("error")
 
     try:
-        l = Locale.objects.get(code=locale)
+        l = Locale.objects.get(code__iexact=locale)
     except Locale.DoesNotExist as error:
         log.error(str(error))
         return HttpResponse("error")
@@ -783,7 +784,7 @@ def translation_memory(request):
         return HttpResponse("error")
 
     try:
-        locale = Locale.objects.get(code=locale)
+        locale = Locale.objects.get(code__iexact=locale)
     except Locale.DoesNotExist as e:
         log.error(e)
         return HttpResponse("error")
@@ -1258,7 +1259,7 @@ def request_locale(request):
         return HttpResponse("error")
 
     try:
-        locale = Locale.objects.get(code=locale)
+        locale = Locale.objects.get(code__iexact=locale)
     except Locale.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
