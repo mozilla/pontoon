@@ -1269,7 +1269,7 @@ def request_locale(request):
         locale.name, locale.code, project.name, project.slug)
     sender = request.user.email
 
-    if settings.ADMINS:
+    if settings.ADMINS[0][1] != '':
         recipients = [settings.ADMINS[0][1]]
         send_mail(subject, message, sender, recipients)
     else:
