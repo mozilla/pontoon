@@ -89,8 +89,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
     subtitle = 'Add project'
     pk = None
     project = None
-    message = 'Before localizing projects, \
-               you need to import strings from the repository.'
+    message = 'Please wait while strings are imported from the repository.'
     autoupdate = False
 
     # Save project
@@ -114,6 +113,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
             form = ProjectForm(request.POST)
             # Needed if form invalid
             formset = SubpageInlineFormSet(request.POST)
+            autoupdate = True
 
         if form.is_valid():
             project = form.save(commit=False)
@@ -127,11 +127,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 formset = SubpageInlineFormSet(instance=project)
                 subtitle += '. Saved.'
                 pk = project.pk
-                if not Resource.objects.filter(project=project).exists():
+                if autoupdate:
                     messages.warning(request, message)
-                elif autoupdate:
-                    messages.warning(request, 'After updating locales, \
-                        strings need to be imported from the repository.')
             else:
                 subtitle += '. Error.'
         else:
@@ -147,6 +144,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
             if not Resource.objects.filter(project=project).exists():
+                autoupdate = True
                 messages.warning(request, message)
         except Project.DoesNotExist:
             form = ProjectForm(initial={'slug': slug})
