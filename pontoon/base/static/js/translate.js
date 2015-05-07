@@ -1339,9 +1339,9 @@ var Pontoon = (function (my) {
 
       // Locale menu handler
       $('.locale .menu li:not(".no-match")').click(function () {
-        var locale = $(this).find('.language').attr('class').split(' ')[1],
+        var locale = $(this).find('.code').html(),
             // Escape special characters in CSS notation
-            code = locale.replace( /(:|\.|\[|@|\])/g, "\\$1" ),
+            code = locale.replace( /(:|\.|\[|@|\])/g, "\\$1" ).toLowerCase(),
             language = $('.locale .menu .language.' + code).parent().html();
 
         // Request new locale
