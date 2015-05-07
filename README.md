@@ -60,8 +60,9 @@ The following settings can be set by creating a `.env` file in root directory of
 your pontoon repo and adding their values:
 
 ```
-MICROSOFT_TRANSLATOR_API_KEY=my-api-key
+MICROSOFT_TRANSLATOR_API_KEY=microsoft-key
 GOOGLE_ANALYTICS_KEY=google-key
+MOZILLIANS_API_KEY=mozillians-key
 ```
 
 * `MICROSOFT_TRANSLATOR_API_KEY`: set [Microsoft Translator API key](http://msdn.microsoft.com/en-us/library/hh454950) to use machine translation.
