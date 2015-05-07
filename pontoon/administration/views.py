@@ -105,8 +105,6 @@ def manage_project(request, slug=None, template='admin_project.html'):
             # Needed if form invalid
             formset = SubpageInlineFormSet(request.POST, instance=project)
             subtitle = 'Edit project'
-            if set(project.locales.all()) != set(locales_selected):
-                autoupdate = True
 
         # Add a new project
         except MultiValueDictKeyError:
@@ -116,6 +114,9 @@ def manage_project(request, slug=None, template='admin_project.html'):
             autoupdate = True
 
         if form.is_valid():
+            if project and set(project.locales.all()) != set(locales_selected):
+                autoupdate = True
+
             project = form.save(commit=False)
             formset = SubpageInlineFormSet(request.POST, instance=project)
             if formset.is_valid():
