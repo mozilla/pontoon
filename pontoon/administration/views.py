@@ -151,6 +151,9 @@ def manage_project(request, slug=None, template='admin_project.html'):
         except Project.DoesNotExist:
             form = ProjectForm(initial={'slug': slug})
 
+    # Override default label suffix
+    form.label_suffix = ''
+
     data = {
         'form': form,
         'formset': formset,

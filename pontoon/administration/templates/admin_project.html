@@ -165,8 +165,8 @@
   {% for form in formset %}
       {{ form.id }}
   <div class="subpages clearfix">
-      {{ form.name.label_tag() }}
-      {{ form.url.label_tag() }}
+      {{ form.name.label_tag(label_suffix='') }}
+      {{ form.url.label_tag(label_suffix='') }}
       {{ form.name }}
       {{ form.url }}
       <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
@@ -176,8 +176,8 @@
   </div>
   {% endfor %}
   <div class="subpages clearfix" data-count="{{ formset.total_form_count() }}">
-      {{ formset.empty_form.name.label_tag() }}
-      {{ formset.empty_form.url.label_tag() }}
+      {{ formset.empty_form.name.label_tag(label_suffix='') }}
+      {{ formset.empty_form.url.label_tag(label_suffix='') }}
       {{ formset.empty_form.name }}
       {{ formset.empty_form.url }}
       <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
