@@ -71,13 +71,6 @@ GOOGLE_ANALYTICS_KEY=google-key
 * `MOZILLIANS_API_KEY`: set [Mozillians API key](https://wiki.mozilla.org/Mozillians/API-Specification) to grant permission to Mozilla localizers.
 
 
-Updates
--------
-To sync your repository with upstream changes, just update the code using git:
-
-* `git pull && git submodule sync --quiet && git submodule update --init --recursive`
-
-
 Get involved
 ------------
 * File a [bug](https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all)
