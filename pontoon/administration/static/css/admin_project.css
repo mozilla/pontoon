@@ -80,6 +80,8 @@ label {
 
 input[type=text],
 input[type=password],
+input[type=url],
+input[type=number],
 textarea {
   display: block;
   height: 24px;
