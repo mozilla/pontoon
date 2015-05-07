@@ -81,8 +81,9 @@ def manage_project(request, slug=None, template='admin_project.html'):
     if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
 
-    SubpageInlineFormSet = inlineformset_factory(Project, Subpage, extra=1,
-                                                 fields=('project', 'name', 'url'))
+    SubpageInlineFormSet = inlineformset_factory(
+        Project, Subpage, extra=1, fields=('project', 'name', 'url'))
+
     form = ProjectForm()
     formset = SubpageInlineFormSet()
     locales_selected = []
