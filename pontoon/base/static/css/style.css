@@ -308,11 +308,6 @@ a:visited {
   color: #AAAAAA;
   font-weight: 300;
   text-decoration: none;
-
-  -moz-transition: all 0.3s ease-out;  /* FF3.7+ */
-  -o-transition: all 0.3s ease-out;  /* Opera 10.5 */
-  -webkit-transition: all 0.3s ease-out;  /* Saf3.2+, Chrome */
-  transition: all 0.3s ease-out;
 }
 
 a:hover,
@@ -466,11 +461,6 @@ label {
 #go {
   color: #FFFFFF;
   float: left;
-
-  -moz-transition: none;  /* FF3.7+ */
-  -o-transition: none;  /* Opera 10.5 */
-  -webkit-transition: none;  /* Saf3.2+, Chrome */
-  transition: none;
 }
 
 #go:hover {
@@ -617,14 +607,6 @@ label {
 
 .menu li.hover > a  {
   color: #FFFFFF;
-}
-
-.menu li a:link,
-.menu li a:visited {
-  -moz-transition: none;  /* FF3.7+ */
-  -o-transition: none;  /* Opera 10.5 */
-  -webkit-transition: none;  /* Saf3.2+, Chrome */
-  transition: none;
 }
 
 .menu li a:hover,
