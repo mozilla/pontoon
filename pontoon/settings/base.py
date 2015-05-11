@@ -64,6 +64,18 @@ MOZILLIANS_API_KEY = os.environ.get('MOZILLIANS_API_KEY', '')
 GIT_USERNAME = os.environ.get('GIT_USERNAME', '')
 GIT_PASSWORD = os.environ.get('GIT_PASSWORD', '')
 
+# Email settings
+EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME', '')
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD', '')
+
+# Log emails to console if the SendGrid credentials are missing.
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Environment-independent settings. These shouldn't have to change
 # between server environments.
