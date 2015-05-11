@@ -5,7 +5,7 @@
 
 .about p {
   font-weight: 300;
-  padding-bottom: 12px;
+  padding: 12px 0;
 }
 
 .about p a:link,
@@ -14,8 +14,12 @@
 }
 
 .notification {
-    line-height: 17px;
-    margin: -17px 12px 0px;
+  line-height: 17px;
+  margin: -17px 12px 0px;
+}
+
+.notification li {
+  text-align: center;
 }
 
 .select .menu ul li > span:first-child,
