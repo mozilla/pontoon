@@ -60,6 +60,9 @@ GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY', '')
 # Mozillians API Key
 MOZILLIANS_API_KEY = os.environ.get('MOZILLIANS_API_KEY', '')
 
+# Raygun.io API Key
+RAYGUN4PY_API_KEY = os.environ.get('RAYGUN_APIKEY', '')
+
 # Git(hub) Credentials
 GIT_USERNAME = os.environ.get('GIT_USERNAME', '')
 GIT_PASSWORD = os.environ.get('GIT_PASSWORD', '')
@@ -103,6 +106,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'raygun4py.middleware.django.Provider',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

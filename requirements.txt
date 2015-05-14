@@ -128,3 +128,9 @@ blessings==1.6
 # sha256: RL1BNEwcwd5DSnJ2TtR_27vbzwPHgBEUwEM81saWy1U
 # sha256: qsAfM8hEZAezxebyGF1bCfXz5st3Px2y35nvzlpwuBs
 nose-progressive==1.5.1
+# sha256: 2pk9Q6BeOnBk_rEsexukn8UmtnBZFIR-zf8HLpvDEBs
+raygun4py==3.0.1
+# sha256: F3sOgxHG7b_H0YQVen6A9otrh0xWRfcwDUH0dfBfIx4
+jsonpickle==0.7.0
+# sha256: aBEBCAkmImHkGre5Lz9tI_Nc-Bb77CvAUHeZLuvsbi8
+blinker==1.3
