@@ -16,6 +16,7 @@ import zipfile
 
 from django.conf import settings
 from pontoon.administration.vcs import update_from_vcs
+from translate.storage import xliff
 
 from pontoon.base.models import (
     Entity,
@@ -344,6 +345,45 @@ def extract_po(project, locale, path, entities=False):
         log.debug("[" + locale.code + "]: " + path + " saved to DB.")
     except Exception as e:
         log.critical('PoExtractError for %s: %s' % (path, e))
+
+
+def extract_xliff(project, locale, path, entities=False):
+    """Extract .xliff file with path and save or update in DB."""
+
+    with open(path) as f:
+        xf = xliff.xlifffile(f)
+
+        relative_path = get_relative_path(path, locale)
+        resource, created = Resource.objects.get_or_create(
+            project=project, path=relative_path, format='xliff')
+
+        if entities:
+            for order, unit in enumerate(xf.units):
+                save_entity(
+                    resource=resource,
+                    string=unicode(unit.get_rich_source()[0]),
+                    key=unit.getid(),
+                    comment=unit.getnotes(),
+                    order=order)
+
+            update_entity_count(resource)
+
+        else:
+            for unit in xf.units:
+                translation = unicode(unit.get_rich_target()[0])
+                if translation:
+                    try:
+                        e = Entity.objects.get(
+                            resource=resource, key=unit.getid())
+                        save_translation(
+                            entity=e, locale=locale, string=translation)
+
+                    except Entity.DoesNotExist:
+                        continue
+
+            update_stats(resource, locale)
+
+        log.debug("[" + locale.code + "]: " + path + " saved to DB.")
 
 
 def extract_silme(parser, project, locale, path, entities=False):
@@ -688,6 +728,52 @@ def dump_po(project, locale, relative_path):
     log.debug("File updated: " + path)
 
 
+def dump_xliff(project, locale, relative_path):
+    """Dump .xliff file with relative path from database."""
+
+    locale_directory_path = get_locale_directory(project, locale)["path"]
+    path = os.path.join(locale_directory_path, relative_path)
+    resource = Resource.objects.filter(project=project, path=relative_path)
+    entities = Entity.objects.filter(resource=resource, obsolete=False)
+
+    with open(path, 'r+') as f:
+        xf = xliff.xlifffile(f)
+
+        for unit in xf.units:
+            key = unit.getid()
+
+            try:
+                entity = Entity.objects.get(resource=resource, key=key)
+
+            except Entity.DoesNotExist as e:
+                log.error('%s: Entity "%s" does not exist' % (path, original))
+                continue
+
+            try:
+                translation = Translation.objects.filter(
+                    entity=entity, locale=locale, approved=True) \
+                    .latest('date').string
+                unit.settarget(translation)
+
+            except Translation.DoesNotExist as e:
+                # Remove "approved" attribute
+                try:
+                    del unit.xmlelement.attrib['approved']
+                except KeyError:
+                    pass
+
+                # Remove "target" element
+                target = unit.xmlelement.find(unit.namespaced("target"))
+                if target:
+                    unit.xmlelement.remove(target)
+
+        # Erase file and then write, otherwise content gets appended
+        f.seek(0)
+        f.truncate()
+        f.writelines(xf.__str__())
+        log.debug("File updated: " + path)
+
+
 def dump_silme(parser, project, locale, relative_path):
     """Dump file with relative path from database using silme. Generate files
     from source files, but only ones with translated strings."""
@@ -805,8 +891,8 @@ def dump_lang(project, locale, relative_path):
                     entity = Entity.objects.get(
                         resource=resource, string=original)
                 except Entity.DoesNotExist as e:
-                    log.error('%s: Entity "%s" does not exist %s' %
-                              (path, original, project.name))
+                    log.error('%s: Entity "%s" does not exist' %
+                              (path, original))
                     continue
 
                 try:

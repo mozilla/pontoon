@@ -113,6 +113,7 @@ class Resource(models.Model):
     # Format
     FORMAT_CHOICES = (
         ('po', 'po'),
+        ('xliff', 'xliff'),
         ('properties', 'properties'),
         ('dtd', 'dtd'),
         ('ini', 'ini'),
