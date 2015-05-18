@@ -739,6 +739,10 @@ def dump_xliff(project, locale, relative_path):
     with open(path, 'r+') as f:
         xf = xliff.xlifffile(f)
 
+        # Update target-language attribute in file nodes
+        for node in xf.document.getroot().iterchildren(xf.namespaced("file")):
+            node.set("target-language", locale.code)
+
         for unit in xf.units:
             key = unit.getid()
 
