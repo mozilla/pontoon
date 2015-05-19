@@ -63,10 +63,6 @@ MOZILLIANS_API_KEY = os.environ.get('MOZILLIANS_API_KEY', '')
 # Raygun.io API Key
 RAYGUN4PY_API_KEY = os.environ.get('RAYGUN_APIKEY', '')
 
-# Git(hub) Credentials
-GIT_USERNAME = os.environ.get('GIT_USERNAME', '')
-GIT_PASSWORD = os.environ.get('GIT_PASSWORD', '')
-
 # Email settings
 EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME', '')
 EMAIL_HOST = 'smtp.sendgrid.net'

@@ -1,12 +1,8 @@
 # -*- coding: utf8 -*-
 from __future__ import absolute_import
-import base64
 import logging
 import os
 import subprocess
-import urlparse
-
-from django.conf import settings
 
 
 log = logging.getLogger('pontoon')
@@ -144,12 +140,6 @@ class CommitToGit(CommitToRepository):
     def commit(self, path=None, message=None, user=None):
         log.debug("Git: Commit to repository.")
 
-        # Bail early if we lack credentials.
-        if not settings.GIT_USERNAME or not settings.GIT_PASSWORD:
-            raise CommitToRepositoryException(
-                'GIT_USERNAME and GIT_PASSWORD settings are not defined and '
-                'are required for committing to git repositories.')
-
         path = path or self.path
         message = message or self.message
         user = user or self.user
@@ -168,15 +158,8 @@ class CommitToGit(CommitToRepository):
         if code != 0 and len(error):
             raise CommitToRepositoryException(unicode(error))
 
-        # Add auth credentials to URL for push.
-        url_parts = urlparse.urlparse(self.url)
-        netloc = '{username}:{password}@{netloc}'.format(
-            username=settings.GIT_USERNAME, password=settings.GIT_PASSWORD,
-            netloc=url_parts.netloc)
-        url = url_parts._replace(netloc=netloc).geturl()
-
         # Push
-        push = ["git", "push", url]
+        push = ["git", "push", self.url]
         code, output, error = execute(push, path)
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
