@@ -172,6 +172,9 @@ AUTHENTICATION_BACKENDS = [
 PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
 PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
 
+PIPELINE_COMPILERS = (
+    'pipeline.compilers.es6.ES6Compiler',
+)
 PIPELINE_DISABLE_WRAPPER = True
 PIPELINE_CSS = {
     'base': {
