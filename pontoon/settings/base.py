@@ -51,8 +51,9 @@ HMAC_KEYS = {
 SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 BROWSERID_AUDIENCES = [SITE_URL]
 
-# Path to Yuglify binary.
+# Path to binaries for django-pipeline.
 PIPELINE_YUGLIFY_BINARY = os.environ.get('PIPELINE_YUGLIFY_BINARY', 'yuglify')
+PIPELINE_BABEL_BINARY = os.environ.get('PIPELINE_BABEL_BINARY', 'babel')
 
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
@@ -172,6 +173,10 @@ AUTHENTICATION_BACKENDS = [
     'django_browserid.auth.BrowserIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+PIPELINE_COMPILERS = (
+    'pipeline.compilers.es6.ES6Compiler',
+)
 
 PIPELINE_DISABLE_WRAPPER = True
 PIPELINE_CSS = {
