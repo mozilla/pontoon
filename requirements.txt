@@ -68,8 +68,8 @@ six==1.9.0
 # sha256: 1VJK5SO7ngnFe829HvriwofSBgNojqMfYCDtGApImvA
 suds==0.4
 
-# sha256: B-lA57jFsdXYf3h9luYXt_gbsep2FZ4ZIvPHvzt0Y4Y
-https://github.com/jbalogh/test-utils/archive/4ae9327.zip#egg=test-utils
+# sha256: ih29HHrehSBq53DJzl9DCBoJjJX5lK8RP2Q06QBVmmc
+https://github.com/jbalogh/test-utils/archive/e42e031.zip#egg=test-utils
 
 # sha256: EeMy8qKdhkQ2S0ynm0rAed8yhibsjCesDozEVGlnGco
 translate-toolkit==1.12.0
