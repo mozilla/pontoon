@@ -30,14 +30,18 @@ you create:
 ``HMAC_KEY``
    Required. Secret key used for hashing passwords.
 
-``PIPELINE_YUGLIFY_BINARY``
-   Required. Command for executing Yuglify_ during the build process.
+``PIPELINE_BABEL_BINARY``
+   Required. Command for executing Babel_ during the build process.
 
    The Heroku Python buildpack moves the project's code around during the build
-   process, so specifying this is important as you can't rely on yuglify or node
+   process, so specifying this is important as you can't rely on babel or node
    to be in your ``PATH``. Set this to
-   ``./.heroku/node/bin/node ./node_modules/yuglify/bin/yuglify`` to get
+   ``./.heroku/node/bin/node ./node_modules/babel/bin/babel/index.js`` to get
    minification working properly on Heroku.
+
+``PIPELINE_YUGLIFY_BINARY``
+   Required. Command for executing Yuglify_ during the build process. Set this
+   to ``./.heroku/node/bin/node ./node_modules/yuglify/bin/yuglify``.
 
 ``SECRET_KEY``
    Required. Secret key used for sessions, cryptographic signing, etc.
@@ -76,6 +80,7 @@ you create:
 
       heroku config:set SSH_KEY="`cat /path/to/key_rsa`"
 
+.. _Babel: http://babeljs.io/
 .. _Yuglify: https://github.com/yui/yuglify
 
 Add-ons

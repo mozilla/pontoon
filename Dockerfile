@@ -9,6 +9,11 @@ RUN npm install -g yuglify babel
 # docker caching.
 COPY requirements.txt /tmp/requirements.txt
 COPY ./bin/peep.py /tmp/peep.py
+
+# Temporary fix: Downgrade pip since peep does not work with the latest
+# version.
+RUN pip install pip==6.1.1
+
 RUN /tmp/peep.py install -r /tmp/requirements.txt
 
 # Symlink node because Ubuntu's node binary is named nodejs.

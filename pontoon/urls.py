@@ -38,5 +38,8 @@ urlpatterns = patterns('',
         RedirectView.as_view(url='/static/js/pontoon.js', permanent=True)),
 
     # Main app: Must be at the end
+    (r'', include('pontoon.translate.urls')),
+
+    # Main app: Must be at the end
     (r'', include('pontoon.base.urls')),
 )

@@ -1015,7 +1015,7 @@ var Pontoon = (function (my) {
     syncLocalStorageOnServer: function() {
       if (localStorage.length !== 0) {
         var len = this.entities.length;
-        for (var i = 0; i < len; i++) {          
+        for (var i = 0; i < len; i++) {
           var entity = this.entities[i],
               key = this.getLocalStorageKey(entity),
               value = localStorage[key];
