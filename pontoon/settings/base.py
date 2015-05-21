@@ -244,7 +244,7 @@ PIPELINE_JS = {
     'translate': {
         'source_filenames': (
             'browserid/api.js',
-            'js/translate.js',
+            'js/translate.es6',
             'js/jquery.timeago.js',
         ),
         'output_filename': 'js/translate.min.js',

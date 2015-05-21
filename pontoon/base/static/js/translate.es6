@@ -299,9 +299,11 @@ var Pontoon = (function (my) {
      */
     getEntityStatus: function (entity) {
       var translation = entity.translation,
-          approved = translated = fuzzy = 0;
+          approved = 0,
+          translated = 0,
+          fuzzy = 0;
 
-      for (i=0; i<translation.length; i++) {
+      for (var i=0; i<translation.length; i++) {
         if (entity.translation[i].approved) {
           approved++;
         }
@@ -1015,7 +1017,7 @@ var Pontoon = (function (my) {
     syncLocalStorageOnServer: function() {
       if (localStorage.length !== 0) {
         var len = this.entities.length;
-        for (var i = 0; i < len; i++) {          
+        for (var i = 0; i < len; i++) {
           var entity = this.entities[i],
               key = this.getLocalStorageKey(entity),
               value = localStorage[key];
