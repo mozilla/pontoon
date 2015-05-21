@@ -243,6 +243,8 @@ PIPELINE_JS = {
     },
     'translate': {
         'source_filenames': (
+            'js/react-0.13.3.js' if DEBUG else 'js/react-0.13.3.min.js',
+            'js/classnames.js',
             'browserid/api.js',
             'js/translate.es6',
             'js/jquery.timeago.js',
