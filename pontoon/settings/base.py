@@ -172,6 +172,9 @@ AUTHENTICATION_BACKENDS = [
 PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
 PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
 
+PIPELINE_COMPILERS = (
+    'pipeline.compilers.es6.ES6Compiler',
+)
 PIPELINE_DISABLE_WRAPPER = True
 PIPELINE_CSS = {
     'base': {
@@ -240,8 +243,10 @@ PIPELINE_JS = {
     },
     'translate': {
         'source_filenames': (
+            'js/react-0.13.3.js' if DEBUG else 'js/react-0.13.3.min.js',
+            'js/classnames.js',
             'browserid/api.js',
-            'js/translate.js',
+            'js/translate.es6',
             'js/jquery.timeago.js',
         ),
         'output_filename': 'js/translate.min.js',
