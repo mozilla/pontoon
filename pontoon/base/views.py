@@ -166,6 +166,7 @@ def get_gravatar_url(email, size):
 def translate(request, locale, slug, part=None, template='translate.html'):
     """Translate view."""
     log.debug("Translate view.")
+    log.debug('Template: ' + template)
 
     invalid_locale = invalid_project = False
 

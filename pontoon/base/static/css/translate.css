@@ -43,6 +43,13 @@ mark.placeable {
 #project-load .text {
   font-size: 1.5em;
   opacity: 0;
+
+  animation: fadein 5s forwards;
+}
+
+@keyframes fadein {
+    0%, 60% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 #project-load .animation > div {
@@ -50,6 +57,7 @@ mark.placeable {
   height: 100%;
   width: 12px;
   display: inline-block;
+  margin: 0 2px;
 
   -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
   animation: stretchdelay 1.2s infinite ease-in-out;
@@ -484,7 +492,7 @@ body > header aside p {
   background: #3F4752;
   border-right: 1px solid #5E6475;
   bottom: 0;
-  display: none;
+  /*display: none;*/
   overflow: hidden;
   position: fixed;
   top: 60px;

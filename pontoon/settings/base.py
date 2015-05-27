@@ -88,6 +88,7 @@ INSTALLED_APPS = (
     'pontoon.base',
     'pontoon.administration',
     'pontoon.intro',
+    'pontoon.translate',
 
     # Django contrib apps
     'django.contrib.admin',
@@ -246,10 +247,20 @@ PIPELINE_JS = {
             'js/react-0.13.3.js' if DEBUG else 'js/react-0.13.3.min.js',
             'js/classnames.js',
             'browserid/api.js',
-            'js/translate.es6',
+            'js/translate_old.js',
             'js/jquery.timeago.js',
         ),
         'output_filename': 'js/translate.min.js',
+    },
+    'translate_new': {
+        'source_filenames': (
+            'js/react-0.13.3.js' if DEBUG else 'js/react-0.13.3.min.js',
+            'js/classnames.js',
+            'browserid/api.js',
+            'js/translate.es6',
+            'js/jquery.timeago.js',
+        ),
+        'output_filename': 'js/translate_new.min.js',
     },
     'user': {
         'source_filenames': (

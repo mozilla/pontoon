@@ -124,6 +124,7 @@ var Pontoon = (function (my) {
      */
     getHistory: function (entity) {
       var self = this,
+          list = $('#history ul').empty(),
           tab = $('#helpers a[href="#history"]').addClass('loading');
 
       if (self.XHRgetHistory) {
@@ -139,10 +140,37 @@ var Pontoon = (function (my) {
         },
         success: function(data) {
           if (data !== "error") {
-            self.historyComponent.setState({data: data});
+            $.each(data, function() {
+              list.append(
+                '<li data-id="' + this.id + '" ' +
+                (this.approved ? ' class="approved"' : '') +
+                'title="Click to copy">' +
+                  '<header class="clearfix' +
+                    ((self.user.localizer) ? ' localizer' :
+                      ((self.user.email === this.email && !this.approved) ?
+                        ' own' : '')) +
+                    '">' +
+                    '<div class="info">' +
+                      ((!this.email) ? this.user :
+                        '<a href="contributors/' + this.email + '">' + this.user + '</a>') +
+                      '<time class="stress" datetime="' + this.date_iso + '">' + this.date + '</time>' +
+                    '</div>' +
+                    '<menu class="toolbar">' +
+                      '<button class="approve fa" title="' +
+                      (this.approved ? this.approved_user ?
+                        'Approved by ' + this.approved_user : '' : 'Approve') +
+                      '"></button>' +
+                      '<button class="delete fa" title="Delete"></button>' +
+                    '</menu>' +
+                  '</header>' +
+                  '<p class="translation">' +
+                    self.doNotRender(this.translation) +
+                  '</p>' +
+                '</li>');
+            });
             $("#history time").timeago();
           } else {
-            self.historyComponent.setState({data: []});
+            list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
           tab.removeClass('loading');
         },
@@ -271,11 +299,9 @@ var Pontoon = (function (my) {
      */
     getEntityStatus: function (entity) {
       var translation = entity.translation,
-          approved = 0,
-          translated = 0,
-          fuzzy = 0;
+          approved = translated = fuzzy = 0;
 
-      for (var i=0; i<translation.length; i++) {
+      for (i=0; i<translation.length; i++) {
         if (entity.translation[i].approved) {
           approved++;
         }
@@ -1483,12 +1509,6 @@ var Pontoon = (function (my) {
       if (self.app.advanced) {
         $("#entitylist .entity:first").mouseover().click();
       }
-
-      // Initialize history React component.
-      self.historyComponent = React.render(
-        <EntityHistoryList user={this.user}></EntityHistoryList>,
-        document.getElementById('history')
-      );
     },
 
 
@@ -1820,83 +1840,7 @@ var Pontoon = (function (my) {
   });
 }(Pontoon || {}));
 
-var EntityHistoryList = React.createClass({
-  getInitialState: function() {
-    return {data: []};
-  },
-  render: function() {
-    let historyItems = [];
-    if (this.state.data.length < 1) {
-      historyItems.push(
-        <li className="disabled"><p>No translations available.</p></li>
-      )
-    } else {
-      historyItems = this.state.data.map(item => (
-        <EntityHistoryItem key={item.id} item={item} user={this.props.user}></EntityHistoryItem>
-      ));
-    }
 
-    return (
-      <ul>
-        {historyItems}
-      </ul>
-    );
-  }
-});
-
-var EntityHistoryItem = React.createClass({
-  render: function() {
-    return (
-      <li data-id={this.props.item.id}
-          className={classNames({approved: this.props.item.approved})}
-          title="Click to copy">
-        <header className={classNames('clearfix', this.headerClass())}>
-          <div className="info">
-            {this.localizerName()}
-            <time className="stress" dateTime={this.props.item.date_iso}>{this.props.item.date}</time>
-          </div>
-          <menu className="toolbar">
-            <button className="approve fa" title={this.approveTitle()}></button>
-            <button className="delete fa" title="Delete"></button>
-          </menu>
-        </header>
-        <p className="translation">
-          {this.props.item.translation}
-        </p>
-      </li>
-    );
-  },
-
-  headerClass: function() {
-    if (this.props.user.localizer) {
-      return 'localizer';
-    } else if (this.props.user.email == this.props.item.email &&
-               !this.props.item.approved) {
-      return 'own'
-    } else {
-      return '';
-    }
-  },
-
-  localizerName: function() {
-    if (this.props.item.email) {
-      let href = 'contributors/' + this.props.item.email;
-      return <a href={href}>{this.props.item.user}</a>;
-    } else {
-      return this.props.item.user;
-    }
-  },
-
-  approveTitle: function() {
-    if (!this.props.item.approved) {
-      return 'Approve';
-    } else if (this.props.item.approved_user) {
-      return 'Approved by '+ this.props.item.approved_user;
-    } else {
-      return '';
-    }
-  },
-});
 
 /* Main code */
 $(function() {

@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Sum
 from django.db.models.signals import post_save
 from django.forms import ModelForm
+
 from pontoon.base import utils
 
 
@@ -41,6 +42,15 @@ class Locale(models.Model):
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
         })
+
+
+class ProjectQuerySet(models.QuerySet):
+    def available(self):
+        """
+        Available projects are not disabled and have at least one
+        resource defined.
+        """
+        return self.filter(disabled=False, resource__isnull=False)
 
 
 class Project(models.Model):
@@ -86,6 +96,8 @@ class Project(models.Model):
     # Disable project instead of deleting to keep translation memory & stats
     disabled = models.BooleanField(default=False)
 
+    objects = ProjectQuerySet.as_manager()
+
     class Meta:
         permissions = (
             ("can_manage", "Can manage projects"),
@@ -94,6 +106,16 @@ class Project(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def serialize(self):
+        return {
+            'pk': self.pk,
+            'name': self.name,
+            'slug': self.slug,
+        }
+
+    def as_json(self):
+        return json.dumps(self.serialize())
 
 
 class Subpage(models.Model):
@@ -135,6 +157,20 @@ class Entity(models.Model):
     order = models.PositiveIntegerField(default=0)
     source = models.TextField(blank=True)  # Path to source code file
     obsolete = models.BooleanField(default=False)
+
+    @property
+    def marked(self):
+        return utils.mark_placeables(self.string)
+
+    @property
+    def marked_plural(self):
+        return utils.mark_placeables(self.string_plural)
+
+    def approved_translation(self, locale):
+        try:
+            return self.translation_set.get(approved=True, locale=locale)
+        except Translation.DoesNotExist:
+            return None
 
     def __unicode__(self):
         return self.string

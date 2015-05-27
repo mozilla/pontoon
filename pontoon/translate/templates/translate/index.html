@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block class %}translate{% endblock %}
+
+{% block content %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     {% if accept_language %}data-accept-language="{{ accept_language }}"{% endif %}
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+     {% if locale %}data-locale="{{ locale.stringify() }}"{% endif %}
+     {% if page_url %}data-url="{{ page_url }}"{% endif %}
+     {% if project.id %}data-id="{{ project.id }}"{% endif %}
+     {% if project.width %}data-width="{{ project.width }}"{% endif %}
+     {% if project.links %}data-links="{{ project.links|lower }}"{% endif %}
+     {% if redirect %}data-redirect="{{ redirect }}"{% endif %}
+     {% if user.email %}data-email="{{ user.email }}"{% endif %}
+     {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}
+     {% if perms.base.can_localize %}data-localizer="true"{% endif %}
+     {% if perms.base.can_manage %}data-manager="true"{% endif %}
+     data-project="{{ project.as_json() }}"
+     >
+</div>
+
+<!-- Main toolbar -->
+<header>
+  <div class="container clearfix">
+    <button id="switch" class="fa fa-bars fa-2x"></button>
+
+    {% include 'project_selector.html' %}
+
+    <!-- Part selector -->
+    <div class="part select{% if not part %} hidden{% endif %}">
+      <div class="button breadcrumbs selector" title="{{ part }}">
+        <span class="title noselect">{% if part %}{{ part.rsplit('/')[-1] }}{% endif %}</span>
+      </div>
+      <div class="menu">
+        <div class="search-wrapper clearfix">
+          <div class="icon fa fa-search"></div>
+          <input type="search" autocomplete="off">
+        </div>
+        <ul>
+          <li class="no-match">No results</li>
+        </ul>
+      </div>
+    </div>
+
+    {% include 'locale_selector.html' %}
+
+    <!-- Go -->
+    <div class="go select">
+      <a id="go" class="noselect" href="#">Go</a>
+    </div>
+
+    <!-- Progress indicator -->
+    <div id="progress" class="select">
+      <div class="selector">
+        <canvas class="graph" width="44" height="44"></canvas>
+        <span class="number noselect"></span>
+      </div>
+      <aside class="menu">
+        <div>
+          <header>
+            <h2>Total strings <span></span></h2>
+          </header>
+          <canvas class="big graph" width="220" height="220"></canvas>
+          <span class="number"></span>
+        </div>
+        <div class="details">
+          <div class="approved">
+            <span>Approved</span>
+            <p></p>
+          </div><div class="translated">
+            <span>Unapproved</span>
+            <p></p>
+          </div><div class="fuzzy">
+            <span>Needs work</span>
+            <p></p>
+          </div><div class="untranslated">
+            <span>Untranslated</span>
+            <p></p>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    {% if project.info_brief %}
+    <!-- Project Info -->
+    <div id="info" class="select">
+      <div class="button selector fa fa-info"></div>
+      <aside class="menu">
+        <h2>Project info</h2>
+        <p>{{ project.info_brief|safe }}</p>
+      </aside>
+    </div>
+    {% endif %}
+
+    <div class="right">
+      <ul class="notification">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+      </ul>
+      <span id="loading" class="fa fa-refresh fa-spin"></span>
+
+      <!-- Profile -->
+      <div id="profile" class="select">
+        <div class="button selector">
+          <span class="title noselect">{% if user.first_name %}{{ user.first_name }}{% elif user.email %}{{ user.email }}{% else %}Anonymous{% endif %}<span class="fa fa-chevron-down"></span></span>
+          <img class="rounded" src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
+        </div>
+        <div class="menu">
+          <ul>
+            {% if user.is_authenticated() %}
+            <li data-url="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View profile</li>
+            <li class="quality-checks{% if user.profile.quality_checks %} enabled{% endif %}"><i class="fa fa-fw"></i>Quality checks</li>
+            <li class="horizontal-separator"></li>
+            {% endif %}
+
+            <li class="download">Download
+              {% if user.is_authenticated() and project.repository_path and project.repository_type != 'file' %}<i class="file-format zip">ZIP</i>{% endif %}
+              {% if project.url %}<i class="file-format html">HTML</i>{% endif %}
+              <i class="file-format json">JSON</i>
+            </li>
+
+            <li class="horizontal-separator"></li>
+
+            <li data-url="{{ url('pontoon.projects') }}"><i class="fa fa-bar-chart-o fa-fw"></i>Project Overview</a></li>
+            <li data-url="{{ url('pontoon.contributors') }}"><i class="fa fa-trophy fa-fw"></i>Top Contributors</a></li>
+            <li data-url="{{ url('pontoon.search') }}"><i class="fa fa-search fa-fw"></i>Terminology Search</a></li>
+            <li data-url="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
+            <li data-url="https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla"><i class="fa fa-wrench fa-fw"></i>Developers</a></li>
+            <li class="hotkeys"><i class="fa fa-keyboard-o fa-fw"></i>Keyboard shortcuts</li>
+
+            <li class="horizontal-separator"></li>
+
+            {% if perms.base.can_manage %}
+            <li data-url="{{ url('pontoon.admin') }}"></i>Admin</li>
+            <li data-url="{{ url('pontoon.admin.project', project.slug) }}"></i>Admin &middot; Current project</li>
+            {% endif %}
+
+            {% if user.is_authenticated() %}
+            <li class="sign-out"><i class="fa fa-sign-out fa-fw"></i>Sign out</li>
+            {% else %}
+            <li class="sign-in"><i class="fa fa-sign-in fa-fw"></i>Sign in</li>
+            {% endif %}
+
+          </ul>
+        </div>
+
+        <!-- Keyboard shortcuts -->
+        <aside id="hotkeys" class="popup">
+          <h2>Keyboard shortcuts</h2>
+          <table>
+            <tbody>
+              <tr>
+                <td>Save translation</td>
+                <td><span>Enter</span></td>
+              </tr>
+              <tr>
+                <td>Cancel translation</td>
+                <td><span>Esc</span></td>
+              </tr>
+              <tr>
+                <td>Insert a new line</td>
+                <td><span>Shift</span>&nbsp;+&nbsp;<span>Enter</span></td>
+              </tr>
+              <tr>
+                <td>Copy from source</td>
+                <td><span>Alt</span>&nbsp;+&nbsp;<span>C</span></td>
+              </tr>
+              <tr>
+                <td>Clear translation</td>
+                <td><span>Alt</span>&nbsp;+&nbsp;<span>Backspace</span></td>
+              </tr>
+              <tr>
+                <td>Next string</td>
+                <td><span>Alt</span>&nbsp;+&nbsp;<span>Down</span></td>
+              </tr>
+              <tr>
+                <td>Previous string</td>
+                <td><span>Alt</span>&nbsp;+&nbsp;<span>Up</span></td>
+              </tr>
+              <tr>
+                <td>Search strings</td>
+                <td><span>Alt</span>&nbsp;+&nbsp;<span>F</span></td>
+              </tr>
+              <tr>
+                <td>Select suggestions</td>
+                <td><span>Tab</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </aside>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div id="translation-editor-container"></div>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'translate' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'translate_new' %}
+
+  <script src="https://login.persona.org/include.js"></script>
+{% endblock %}
