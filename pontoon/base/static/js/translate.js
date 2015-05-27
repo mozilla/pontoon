@@ -333,7 +333,8 @@ var Pontoon = (function (my) {
     checkUnsavedChanges: function (callback) {
       var entity = $('#editor')[0].entity;
 
-      if (!entity) {
+      // Ignore for anonymous users, for which we don't save traslations
+      if (!this.user.email || !entity) {
         return callback();
       }
 
