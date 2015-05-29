@@ -480,6 +480,63 @@ def extract_lang(project, locale, path, entities=False):
     log.debug("[" + locale.code + "]: " + path + " saved to DB.")
 
 
+def extract_inc(project, locale, path, entities=False):
+    """Extract .inc file with path and save or update in DB."""
+
+    with codecs.open(path, 'r', 'utf-8', errors='replace') as lines:
+
+        comment = []
+        order = 0
+        relative_path = get_relative_path(path, locale)
+        resource, created = Resource.objects.get_or_create(
+            project=project, path=relative_path, format='inc')
+
+        for line in lines:
+
+            # Special case: uncomment MOZ_LANGPACK_CONTRIBUTORS
+            if entities and line.startswith('# #define'):
+                line = line.lstrip('#').strip()
+
+            # Comments
+            if entities and line.startswith('# '):
+                comment.append(line.lstrip('# ').strip())
+
+            # Strings
+            elif line.startswith('#define'):
+                parts = line.lstrip('#define').strip().split(None, 1)
+
+                if not parts:
+                    continue
+                if len(parts) == 1:
+                    key, string = parts[0], ""
+                else:
+                    key, string = parts
+
+                if entities:
+                    save_entity(resource=resource, string=string, key=key,
+                                comment=" ".join(comment), order=order)
+                    comment = []
+                    order += 1
+
+                else:
+                    try:
+                        e = Entity.objects.get(resource=resource, key=key)
+                        save_translation(
+                            entity=e, locale=locale, string=string)
+                    except Entity.DoesNotExist:
+                        continue
+
+            elif entities:
+                comment = []
+
+        if entities:
+            update_entity_count(resource)
+        else:
+            update_stats(resource, locale)
+
+        log.debug("[" + locale.code + "]: " + path + " saved to DB.")
+
+
 def extract_ini(project, path):
     """Extract .ini file with path and save or update in DB."""
 
@@ -909,6 +966,67 @@ def dump_lang(project, locale, relative_path):
 
                 except Translation.DoesNotExist as e:
                     translation = original
+
+        # Erase file and then write, otherwise content gets appended
+        lines.seek(0)
+        lines.truncate()
+        lines.writelines(content)
+        log.debug("File updated: " + path)
+
+
+def dump_inc(project, locale, relative_path):
+    """Dump .inc file with relative path from database. Generate files
+    from source files, but only ones with translated strings."""
+
+    locale_directory_path = get_locale_directory(project, locale)["path"]
+    path = os.path.join(locale_directory_path, relative_path)
+
+    # Create folders and copy files from source
+    basedir = os.path.dirname(path)
+    source_directory = get_source_directory(project.repository_path)
+    if not os.path.exists(basedir):
+        os.makedirs(basedir)
+    try:
+        shutil.copy(
+            os.path.join(source_directory['path'], relative_path), path)
+    # Obsolete files
+    except Exception as e:
+        log.debug(e)
+        return
+
+    with codecs.open(path, 'r+', 'utf-8') as lines:
+        content = []
+        resource = Resource.objects.filter(project=project, path=relative_path)
+        entities_with_path = Entity.objects.filter(
+            resource=resource, obsolete=False)
+
+        for line in lines:
+            original = line
+
+            # Special case: uncomment MOZ_LANGPACK_CONTRIBUTORS
+            if line.startswith('# #define'):
+                line = line.lstrip('#').strip()
+
+            if line.startswith('#define'):
+                key = line.lstrip('#define').strip().split(None, 1)[0]
+
+                try:
+                    e = Entity.objects.get(resource=resource, key=key)
+                except Entity.DoesNotExist:
+                    log.error('%s: Entity "%s" does not exist' % (path, key))
+                    line = original
+                    pass
+
+                try:
+                    translation = Translation.objects.filter(
+                        entity=e, locale=locale, approved=True) \
+                        .latest('date').string
+                    line = "#define %s %s\n" % (key, translation)
+                except Translation.DoesNotExist as e:
+                    line = original
+                    pass
+
+            content.append(line)
 
         # Erase file and then write, otherwise content gets appended
         lines.seek(0)

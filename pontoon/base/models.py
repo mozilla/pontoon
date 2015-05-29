@@ -116,6 +116,7 @@ class Resource(models.Model):
         ('xliff', 'xliff'),
         ('properties', 'properties'),
         ('dtd', 'dtd'),
+        ('inc', 'inc'),
         ('ini', 'ini'),
         ('lang', 'lang'),
     )
