@@ -137,3 +137,5 @@ blinker==1.3
 
 # sha256: s9NiusRxFydHzaNRMjjxFcvWxfi45jGb9ql6eJJyQJk
 lxml==3.4.4
+# sha256: eorPcym-2jjO6inGiSEldNmmv__iTPVlAV6gBm987j8
+mercurial==3.4.1
