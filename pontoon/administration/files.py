@@ -796,7 +796,6 @@ def dump_silme(parser, project, locale, relative_path):
         log.debug(e)
         return
 
-    """
     with codecs.open(path, 'r+', 'utf-8') as f:
         structure = parser.get_structure(f.read())
         resource = Resource.objects.filter(project=project, path=relative_path)
@@ -835,7 +834,6 @@ def dump_silme(parser, project, locale, relative_path):
         f.truncate()
         content = parser.dump_structure(structure)
         f.write(content)
-    """
 
     log.debug("File updated: " + path)
 
