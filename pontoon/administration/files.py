@@ -612,15 +612,15 @@ def update_from_repository(project, locales=None):
         repository_url_master = repository_url.rsplit(ending, 1)[0]
         repository_path = os.path.join(repository_path_master, ending)
 
+    if not os.path.exists(repository_path_master):
+        os.makedirs(repository_path_master)
+
     # Save file to server
     if repository_type == 'file':
 
         u = urllib2.urlopen(repository_url)
         file_name = repository_url.rstrip('/').rsplit('/', 1)[1]
         file_path = os.path.join(repository_path_master, file_name)
-
-        if not os.path.exists(repository_path_master):
-            os.makedirs(repository_path_master)
 
         try:
             with open(file_path, 'w') as f:
