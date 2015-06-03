@@ -4,6 +4,8 @@ import logging
 import os
 import subprocess
 
+from django.conf import settings
+
 
 log = logging.getLogger('pontoon')
 
@@ -101,7 +103,13 @@ class PullFromSvn(PullFromRepository):
             command = ["svn", "checkout", "--trust-server-cert",
                        "--non-interactive", source, target]
 
-        code, output, error = execute(command)
+        env = None
+        if settings.SVN_LD_LIBRARY_PATH:
+            env = os.environ.copy()
+            env['LD_LIBRARY_PATH'] = (settings.SVN_LD_LIBRARY_PATH + ':' +
+                                      env['LD_LIBRARY_PATH'])
+
+        code, output, error = execute(command, env=env)
 
         if code != 0:
             raise PullFromRepositoryException(unicode(error))
@@ -225,11 +233,11 @@ class CommitToSvn(CommitToRepository):
         log.info(message)
 
 
-def execute(command, cwd=None):
+def execute(command, cwd=None, env=None):
     try:
         st = subprocess.PIPE
         proc = subprocess.Popen(
-            args=command, stdout=st, stderr=st, stdin=st, cwd=cwd)
+            args=command, stdout=st, stderr=st, stdin=st, cwd=cwd, env=env)
 
         (output, error) = proc.communicate()
         code = proc.returncode
