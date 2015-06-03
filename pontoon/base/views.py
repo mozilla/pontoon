@@ -271,7 +271,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
     # Set part if subpages not defined and entities in more than one file
     else:
         resources = Resource.objects.filter(project=p, entity_count__gt=0)
-        paths = sorted([i for i in resources.values_list('path', flat=True)])
+        paths = resources.order_by('path').values_list('path', flat=True)
 
         if len(paths) > 1:
             data['part'] = part if part in paths else paths[0]
