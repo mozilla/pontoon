@@ -10,6 +10,7 @@ import shutil
 import silme.core
 import silme.format.properties
 import silme.format.dtd
+import silme.format.ini
 import StringIO
 import urllib2
 import zipfile
@@ -145,10 +146,10 @@ def get_locale_directory(project, locale):
                 'path': os.path.join(root, dirname),
             }
 
-    # Projects not using locale directories (.ini, file)
+    # Projects not using locale directories (format=file)
     formats = Resource.objects.filter(project=project).values_list(
         'format', flat=True).distinct()
-    if 'ini' in formats or project.repository_type == 'file':
+    if project.repository_type == 'file':
         return {
             'name': '',
             'path': path,
@@ -209,7 +210,7 @@ def get_source_directory(path):
                         'path': source_directory_path,
                     }
 
-    # Projects not using locale directories (.ini, file)
+    # Projects not using locale directories (format=file)
     return {
         'name': '',
         'path': path,
@@ -448,6 +449,13 @@ def extract_dtd(project, locale, path, entities=False):
     extract_silme(parser, project, locale, path, entities)
 
 
+def extract_ini(project, locale, path, entities=False):
+    """Extract .ini file with path and save or update in DB."""
+
+    parser = silme.format.ini.IniFormatParser
+    extract_silme(parser, project, locale, path, entities)
+
+
 def extract_lang(project, locale, path, entities=False):
     """Extract .lang file with path and save or update in DB."""
 
@@ -537,65 +545,6 @@ def extract_inc(project, locale, path, entities=False):
         log.debug("[" + locale.code + "]: " + path + " saved to DB.")
 
 
-def extract_ini(project, path):
-    """Extract .ini file with path and save or update in DB."""
-
-    config = configparser.ConfigParser()
-    with codecs.open(path, 'r', 'utf-8') as f:
-        try:
-            config.read_file(f)
-        except Exception as e:
-            log.debug("INI configparser: " + str(e))
-
-    sections = config.sections()
-
-    source_locale = None
-    for s in ('templates', 'en-US', 'en-GB', 'en'):
-        if s in sections:
-            source_locale = s
-            break
-    if source_locale is None:
-        log.error("Unable to detect source locale")
-        raise Exception("error")
-
-    # Move source locale on top, so we save entities first, then translations
-    sections.insert(0, sections.pop(sections.index(source_locale)))
-
-    resource, created = Resource.objects.get_or_create(
-        project=project, path=path, format='ini')
-
-    for section in sections:
-        try:
-            locale = Locale.objects.get(code__iexact=section)
-        except Locale.DoesNotExist:
-            log.debug("Locale not supported: " + section)
-            break
-
-        order = 0
-        for item in config.items(section):
-            if section == source_locale:
-                save_entity(resource=resource, string=item[1],
-                            key=item[0], order=order)
-                order += 1
-            else:
-                try:
-                    e = Entity.objects.get(
-                        resource=resource, key=item[0])
-                    save_translation(
-                        entity=e, locale=locale, string=item[1])
-                except Entity.DoesNotExist:
-                    log.debug("[" + section + "]: line ID " +
-                              item[0] + " is obsolete.")
-                    continue
-
-        if section == source_locale:
-            update_entity_count(resource)
-        else:
-            update_stats(resource, locale)
-
-        log.debug("[" + section + "]: saved to DB.")
-
-
 def extract_to_database(project, locales=None):
     """Extract data from project files and save or update in DB."""
     log.debug("Extract data from project files and save or update in DB.")
@@ -623,14 +572,6 @@ def extract_to_database(project, locales=None):
     isFile = project.repository_type == 'file'
     source_paths = get_source_paths(source_directory['path'])
     format = detect_format(source_directory['path'])
-
-    if format == 'ini':
-        try:
-            extract_ini(project, source_paths[0])
-        except Exception as e:
-            if isFile:
-                os.remove(source_paths[0])
-        return
 
     for index, locale in enumerate(locales):
         if locale.code == source_locale:
@@ -855,6 +796,7 @@ def dump_silme(parser, project, locale, relative_path):
         log.debug(e)
         return
 
+    """
     with codecs.open(path, 'r+', 'utf-8') as f:
         structure = parser.get_structure(f.read())
         resource = Resource.objects.filter(project=project, path=relative_path)
@@ -893,6 +835,7 @@ def dump_silme(parser, project, locale, relative_path):
         f.truncate()
         content = parser.dump_structure(structure)
         f.write(content)
+    """
 
     log.debug("File updated: " + path)
 
@@ -908,6 +851,13 @@ def dump_dtd(project, locale, relative_path):
     """Dump .dtd file with relative path from database."""
 
     parser = silme.format.dtd.DTDFormatParser
+    dump_silme(parser, project, locale, relative_path)
+
+
+def dump_ini(project, locale, relative_path):
+    """Dump .ini file with relative path from database."""
+
+    parser = silme.format.ini.IniFormatParser
     dump_silme(parser, project, locale, relative_path)
 
 
@@ -1035,46 +985,6 @@ def dump_inc(project, locale, relative_path):
         log.debug("File updated: " + path)
 
 
-def dump_ini(project, locale):
-    """Dump .ini files from database."""
-
-    path = get_locale_directory(project, locale)["path"]
-    source_path = get_source_paths(path)[0]
-    resource = Resource.objects.get(project=project, path=source_path)
-    entities = Entity.objects.filter(resource=resource, obsolete=False)
-    config = configparser.ConfigParser()
-
-    with codecs.open(source_path, 'r+', 'utf-8', errors='replace') as f:
-        try:
-            config.read_file(f)
-            if config.has_section(locale.code):
-
-                for entity in entities:
-                    key = entity.key
-
-                    try:
-                        translation = Translation.objects.filter(
-                            entity=entity, locale=locale, approved=True) \
-                            .latest('date').string
-                        config.set(locale.code, key, translation)
-
-                    except Translation.DoesNotExist as e:
-                        pass
-
-                # Erase and then write, otherwise content gets appended
-                f.seek(0)
-                f.truncate()
-                config.write(f)
-                log.debug("File updated: " + source_path)
-
-            else:
-                log.debug("Locale not available in the source file")
-                raise Exception("error")
-
-        except Exception as e:
-            log.debug("INI configparser: " + str(e))
-
-
 def dump_from_database(project, locale):
     """Dump project files from database."""
     log.debug("Dump project files from database.")
@@ -1087,40 +997,36 @@ def dump_from_database(project, locale):
     formats = Resource.objects.filter(project=project).values_list(
         'format', flat=True).distinct()
 
-    if 'ini' in formats:
-        dump_ini(project, locale)
+    # Get relative paths to translated files only
+    stats = Stats.objects.filter(locale=locale).exclude(approved_count=0) \
+        .values("resource")
+    resources = Resource.objects.filter(project=project, id__in=stats)
+    relative_paths = resources.values_list('path', flat=True).distinct()
 
-    else:
-        # Get relative paths to translated files only
-        stats = Stats.objects.filter(locale=locale).exclude(approved_count=0) \
-            .values("resource")
-        resources = Resource.objects.filter(project=project, id__in=stats)
-        relative_paths = resources.values_list('path', flat=True).distinct()
+    # Asymmetric formats: Remove files and folders from locale repository
+    if 'dtd' in formats or 'properties' in formats:
+        items = os.listdir(locale_directory_path)
+        items = [i for i in items if not i[0] == '.']
 
-        # Asymmetric formats: Remove files and folders from locale repository
-        if 'dtd' in formats or 'properties' in formats:
-            items = os.listdir(locale_directory_path)
-            items = [i for i in items if not i[0] == '.']
+        for item in items:
+            path = os.path.join(locale_directory_path, item)
+            try:
+                shutil.rmtree(path)
+            except OSError:
+                if get_format(path) in ('dtd', 'properties'):
+                    os.remove(path)
+            except Exception as e:
+                log.error(e)
 
-            for item in items:
-                path = os.path.join(locale_directory_path, item)
-                try:
-                    shutil.rmtree(path)
-                except OSError:
-                    if get_format(path) in ('dtd', 'properties'):
-                        os.remove(path)
-                except Exception as e:
-                    log.error(e)
+        # If directory empty, make sure Git and Mercurial don't remove it
+        if len(os.listdir(locale_directory_path)) == 0:
+            open(os.path.join(locale_directory_path, '.keep'), 'a').close()
 
-            # If directory empty, make sure Git and Mercurial don't remove it
-            if len(os.listdir(locale_directory_path)) == 0:
-                open(os.path.join(locale_directory_path, '.keep'), 'a').close()
-
-        # Dump files based on format
-        for path in relative_paths:
-            format = get_format(path)
-            format = 'po' if format == 'pot' else format
-            globals()['dump_%s' % format](project, locale, path)
+    # Dump files based on format
+    for path in relative_paths:
+        format = get_format(path)
+        format = 'po' if format == 'pot' else format
+        globals()['dump_%s' % format](project, locale, path)
 
     return locale_directory_path
 
