@@ -103,13 +103,7 @@ class PullFromSvn(PullFromRepository):
             command = ["svn", "checkout", "--trust-server-cert",
                        "--non-interactive", source, target]
 
-        env = None
-        if settings.SVN_LD_LIBRARY_PATH:
-            env = os.environ.copy()
-            env['LD_LIBRARY_PATH'] = (settings.SVN_LD_LIBRARY_PATH + ':' +
-                                      env['LD_LIBRARY_PATH'])
-
-        code, output, error = execute(command, env=env)
+        code, output, error = execute(command, env=get_svn_env())
 
         if code != 0:
             raise PullFromRepositoryException(unicode(error))
@@ -223,7 +217,7 @@ class CommitToSvn(CommitToRepository):
         # Commit
         command = ["svn", "commit", "-m", message, "--with-revprop",
                    "author=%s" % author, path]
-        code, output, error = execute(command)
+        code, output, error = execute(command, env=get_svn_env())
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
 
@@ -270,3 +264,14 @@ def commit_to_vcs(repo_type, path, message, user, url):
             'type': 'error',
             'message': unicode(e)
         }
+
+
+def get_svn_env():
+    """Return an environment dict for running SVN in."""
+    if settings.SVN_LD_LIBRARY_PATH:
+        env = os.environ.copy()
+        env['LD_LIBRARY_PATH'] = (settings.SVN_LD_LIBRARY_PATH + ':' +
+                                  env['LD_LIBRARY_PATH'])
+        return env
+    else:
+        return None
