@@ -139,3 +139,5 @@ blinker==1.3
 lxml==3.4.4
 # sha256: eorPcym-2jjO6inGiSEldNmmv__iTPVlAV6gBm987j8
 mercurial==3.4.1
+# sha256: 9r_SEEjH38lbOWWaPad3ddbbHB96dFgFzMbGE494O20
+django-sslify==0.2.7

@@ -54,6 +54,9 @@ BROWSERID_AUDIENCES = [SITE_URL]
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
 
+# Disable forced SSL if debug mode is enabled.
+SSLIFY_DISABLE = DEBUG
+
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')
 
@@ -105,6 +108,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'sslify.middleware.SSLifyMiddleware',
     'raygun4py.middleware.django.Provider',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -364,6 +368,9 @@ ENGAGE_ROBOTS = False
 
 # Always generate a CSRF token for anonymous users.
 ANON_ALWAYS = True
+
+# Use correct header for detecting HTTPS on Heroku.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # For absolute urls
 try:
