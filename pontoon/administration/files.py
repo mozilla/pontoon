@@ -1002,7 +1002,7 @@ def dump_from_database(project, locale):
     relative_paths = resources.values_list('path', flat=True).distinct()
 
     # Asymmetric formats: Remove files and folders from locale repository
-    if 'dtd' in formats or 'properties' in formats:
+    if 'dtd' in formats or 'properties' in formats or 'ini' in formats:
         items = os.listdir(locale_directory_path)
         items = [i for i in items if not i[0] == '.']
 
@@ -1011,7 +1011,7 @@ def dump_from_database(project, locale):
             try:
                 shutil.rmtree(path)
             except OSError:
-                if get_format(path) in ('dtd', 'properties'):
+                if get_format(path) in ('dtd', 'properties', 'ini'):
                     os.remove(path)
             except Exception as e:
                 log.error(e)
