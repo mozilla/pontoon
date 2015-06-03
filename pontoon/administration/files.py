@@ -100,10 +100,10 @@ IniParser.patterns['entity'] = re.compile(
 
 
 def __repr__mine(self):
-        string = ''
-        for i in self:
-            string += str(i)
-        return string
+    string = ''
+    for i in self:
+        string += unicode(i)
+    return string
 
 Comment.__repr__ = __repr__mine
 
@@ -450,7 +450,7 @@ def extract_silme(parser, project, locale, path, entities=False):
 
             elif isinstance(obj, silme.core.structure.Comment):
                 if entities:
-                    comment = str(obj)
+                    comment = unicode(obj)
 
         if entities:
             update_entity_count(resource)
@@ -842,7 +842,12 @@ def dump_silme(parser, project, locale, relative_path):
                     # Remove untranslated and following newline
                     pos = structure.entity_pos(key)
                     structure.remove_entity(key)
-                    line = structure[pos]
+
+                    try:
+                        line = structure[pos]
+                    except IndexError:
+                        # No newline at end of file
+                        continue
 
                     if type(line) == unicode and line.startswith('\n'):
                         line = line[len('\n'):]
