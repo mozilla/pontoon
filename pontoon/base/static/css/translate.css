@@ -171,10 +171,6 @@ body > header .locale.select {
 .part.select .menu {
   display: none;
   position: absolute;
-  width: 510px;
-}
-
-.project.select .menu {
   width: 580px;
 }
 
