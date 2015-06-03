@@ -36,13 +36,14 @@ log = logging.getLogger('pontoon')
 
 
 """ Start monkeypatching """
+import re
 from silme.core.structure import Structure, Comment
 from silme.format.properties.parser import PropertiesParser
+from silme.format.ini.parser import Parser as IniParser
 
 
 @classmethod
-def split_comments_mine(
-        cls, text, object, code='default', pointer=0, end=None):
+def split_comments_pro(cls, text, object, code='default', pointer=0, end=None):
     pattern = cls.patterns['comment']
     if end:
         match = pattern.search(text, pointer, end)
@@ -54,8 +55,8 @@ def split_comments_mine(
             cls.split_entities(
                 text, object, code=code, pointer=pointer, end=st0)
         groups = match.groups()
-        comment = silme.core.structure.Comment(
-            match.group(0)[1:].replace('\n#', '\n'))
+        comment = Comment()
+        comment.add(match.group(0)[1:].replace('\n#', '\n'))
         object.append(comment)
         pointer = match.end(0)
         if end:
@@ -65,7 +66,37 @@ def split_comments_mine(
     if (not end or (end > pointer)) and len(text) > pointer:
         cls.split_entities(text, object, code=code, pointer=pointer)
 
-PropertiesParser.split_comments = split_comments_mine
+PropertiesParser.split_comments = split_comments_pro
+
+
+@classmethod
+def split_comments_ini(cls, text, object, pointer=0, end=None):
+    pattern = cls.patterns['comment']
+    if end:
+        match = pattern.search(text, pointer, end)
+    else:
+        match = pattern.search(text, pointer)
+    while match:
+        st0 = match.start(0)
+        if st0 > pointer:
+            cls.split_entities(text, object, pointer=pointer, end=st0)
+        comment = Comment()
+        comment.add(
+            match.group(0)[1:].replace('\n;', '\n').replace('\n#', '\n'))
+        object.append(comment)
+        pointer = match.end(0)
+        if end:
+            match = pattern.search(text, pointer, end)
+        else:
+            match = pattern.search(text, pointer)
+    if (not end or (end > pointer)) and len(text) > pointer:
+        cls.split_entities(text, object, pointer=pointer, end=end)
+
+IniParser.split_comments = split_comments_ini
+
+IniParser.patterns['entity'] = re.compile(
+    '^[ \t]*([^#!\s\n][^=:\n]*?)[ \t]*[:=][ \t]*(.*?)(?<!\\\)(?=\n|\Z)',
+    re.S | re.M)
 
 
 def __repr__mine(self):
@@ -77,15 +108,14 @@ def __repr__mine(self):
 Comment.__repr__ = __repr__mine
 
 
-def modify_entity_mine(self, id, value, code=None):
+def modify_entity_mine(self, id, value):
     """
-    modifies entity value; supports duplicate keys
-    code - if given modified the value for given locale code
+    modifies as entity value; supports duplicate keys
     """
     found = False
     for item in self:
         if isinstance(item, silme.core.entity.Entity) and item.id == id:
-            item.set_value(value, code)
+            item.value = value
             found = True
 
     if found:
@@ -390,10 +420,9 @@ def extract_xliff(project, locale, path, entities=False):
 def extract_silme(parser, project, locale, path, entities=False):
     """Extract file with path using silme and save or update in DB."""
 
-    try:
-        f = open(path)
+    with codecs.open(path, 'r', 'utf-8') as f:
         structure = parser.get_structure(f.read())
-        format = str(parser).split('.')[-1].split('Format')[0].lower()
+        format = str(parser).split('.')[2]
 
         comment = ""
         order = 0
@@ -429,30 +458,26 @@ def extract_silme(parser, project, locale, path, entities=False):
             update_stats(resource, locale)
 
         log.debug("[" + locale.code + "]: " + path + " saved to DB.")
-        f.close()
-    except IOError:
-        log.debug("[" + locale.code + "]: " +
-                  path + " doesn't exist. Skipping.")
 
 
 def extract_properties(project, locale, path, entities=False):
     """Extract .properties file with path and save or update in DB."""
 
-    parser = silme.format.properties.PropertiesFormatParser
+    parser = silme.format.properties.FormatParser
     extract_silme(parser, project, locale, path, entities)
 
 
 def extract_dtd(project, locale, path, entities=False):
     """Extract .dtd file with path and save or update in DB."""
 
-    parser = silme.format.dtd.DTDFormatParser
+    parser = silme.format.dtd.FormatParser
     extract_silme(parser, project, locale, path, entities)
 
 
 def extract_ini(project, locale, path, entities=False):
     """Extract .ini file with path and save or update in DB."""
 
-    parser = silme.format.ini.IniFormatParser
+    parser = silme.format.ini.FormatParser
     extract_silme(parser, project, locale, path, entities)
 
 
@@ -841,21 +866,21 @@ def dump_silme(parser, project, locale, relative_path):
 def dump_properties(project, locale, relative_path):
     """Dump .properties file with relative path from database."""
 
-    parser = silme.format.properties.PropertiesFormatParser
+    parser = silme.format.properties.FormatParser
     dump_silme(parser, project, locale, relative_path)
 
 
 def dump_dtd(project, locale, relative_path):
     """Dump .dtd file with relative path from database."""
 
-    parser = silme.format.dtd.DTDFormatParser
+    parser = silme.format.dtd.FormatParser
     dump_silme(parser, project, locale, relative_path)
 
 
 def dump_ini(project, locale, relative_path):
     """Dump .ini file with relative path from database."""
 
-    parser = silme.format.ini.IniFormatParser
+    parser = silme.format.ini.FormatParser
     dump_silme(parser, project, locale, relative_path)
 
 
