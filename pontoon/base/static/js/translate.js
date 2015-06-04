@@ -757,9 +757,10 @@ var Pontoon = (function (my) {
         var entity = $('#editor')[0].entity,
             source = $('#translation').val();
 
-        if (source === '' && entity.format !== 'properties' && entity.format !== 'ini') {
-          self.endLoader('Empty translations cannot be submitted.', 'error');
-          return;
+        if (source === '' &&
+          ['properties', 'ini', 'dtd'].indexOf(entity.format) === -1) {
+            self.endLoader('Empty translations cannot be submitted.', 'error');
+            return;
         }
 
         self.updateOnServer(entity, source, false, true);
