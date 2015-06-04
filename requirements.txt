@@ -1,12 +1,3 @@
-# sha256: IvlnXkLcZAxEadT30hC67LXmlYI6-VTIE9UckwI1Z10
-Jinja2==2.5.5
-
-# sha256: CjoiZeHvsN76ci0fQpcw3J35da3DxgrH0rQyvfA8BB0
-Pygments==2.0.2
-
-# sha256: gNYvP3kTwzIr8nnsJr-xLBznBASwD0yH3DrBkNFQsKs
-Sphinx==1.0.7
-
 # sha256: 0Bl46ajFHqezTscfP87RMmQ3zTZrnC4ZJlrOBQkk4OI
 argparse==1.3.0
 
@@ -30,7 +21,7 @@ django-session-csrf==0.5
 
 # sha256: sGqGRRqZ1sJr-mUIKZnb9ljgh-WW6SkszmiLU-q6qto
 django-sha2==0.4
-
+# sha256: 3OvUkoESYxYm9MTQ31l4fHSEBOZt2pUhEAMOqIPTuM0
 # sha256: x9txeBCraWX2bIzwOYqYydjfmC2jm0zX8WKRHriVlvo
 docutils==0.12
 
@@ -128,16 +119,47 @@ blessings==1.6
 # sha256: RL1BNEwcwd5DSnJ2TtR_27vbzwPHgBEUwEM81saWy1U
 # sha256: qsAfM8hEZAezxebyGF1bCfXz5st3Px2y35nvzlpwuBs
 nose-progressive==1.5.1
+
 # sha256: 2pk9Q6BeOnBk_rEsexukn8UmtnBZFIR-zf8HLpvDEBs
 raygun4py==3.0.1
+
 # sha256: F3sOgxHG7b_H0YQVen6A9otrh0xWRfcwDUH0dfBfIx4
 jsonpickle==0.7.0
+
 # sha256: aBEBCAkmImHkGre5Lz9tI_Nc-Bb77CvAUHeZLuvsbi8
 blinker==1.3
 
 # sha256: s9NiusRxFydHzaNRMjjxFcvWxfi45jGb9ql6eJJyQJk
 lxml==3.4.4
+
 # sha256: eorPcym-2jjO6inGiSEldNmmv__iTPVlAV6gBm987j8
 mercurial==3.4.1
+
 # sha256: 9r_SEEjH38lbOWWaPad3ddbbHB96dFgFzMbGE494O20
 django-sslify==0.2.7
+
+# sha256: bVTzUOeg5IkDpOO2ssq9G0PiN2X7yXUGVAKJNpKVQZE
+snowballstemmer==1.2.0
+
+# sha256: nwLQNXGE3h8JPBABK1LnRUoQCL5qXBhat6Mwes6x0S4
+babel==1.3
+
+# sha256: SlwIPaNyS1CauqpJQ2oyf9EwkL3Ah8fIuUTQ1DeudTM
+# sha256: znfi_bqrquOT_84qYlKgpmbjl3xsL6HEjE3tBWl4WVE
+alabaster==0.7.4
+
+# sha256: _5spJogkCW_JETkEYF2D9qqBcQLA8XARW0s58K4GUfM
+# sha256: dPYz7Tph2h0dWcMYVIPIGp1zRr8Oe18prQdkpvFZtoo
+sphinx_rtd_theme==0.1.8
+
+# sha256: IvlnXkLcZAxEadT30hC67LXmlYI6-VTIE9UckwI1Z10
+Jinja2==2.5.5
+
+# sha256: CjoiZeHvsN76ci0fQpcw3J35da3DxgrH0rQyvfA8BB0
+# sha256: Xe0vqQlP19_rPakmNkCf1wKg0H1gYoNQTX7gRAHO5cs
+# sha256: cyCRkITm2sj0VAY4pGRHo71zD8oXKvwX0sA-7SLPT1E
+Pygments==2.0.2
+
+# sha256: Ld8Y2jsGIfpD_uS3KQ2grnibRvuJkniorMzaGVxJeac
+# sha256: Gm5RMMK0LS3jAWk8KZ94zEvTUB54thDAjkXvxw4rURQ
+Sphinx==1.3.1

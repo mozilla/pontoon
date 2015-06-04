@@ -23,3 +23,4 @@ tmp/*
 /env/
 /static/
 .env
+docs/_build
