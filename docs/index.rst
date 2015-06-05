@@ -1,22 +1,33 @@
-.. Pontoon documentation master file, created by
-   sphinx-quickstart on Thu Jun  4 21:51:51 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Pontoon - Translate the Web. In Place.
+======================================
 
-Welcome to Pontoon's documentation!
-===================================
+Pontoon is a web interface for translating text into other languages. Pontoon
+specializes in translating websites in-place, but can handle any project that
+uses one of the file formats it supports:
 
-Contents:
+- Gettext PO files
+- XLIFF
+- Property files
+- DTD
+- INI
+- .lang files
 
+Pontoon pulls strings it needs to translate from an external source, and writes
+them back periodically. Typically these external sources are version control
+repositories that store the strings for an application. Supported external
+sources include:
+
+- Git
+- Mercurial
+- Subversion
+- Remote file (pull only)
+- Transifex (pull only)
+
+Contents
+--------
 .. toctree::
    :maxdepth: 2
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+   dev/install
+   dev/workflow
+   admin/deployment

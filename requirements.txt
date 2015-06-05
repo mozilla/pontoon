@@ -144,10 +144,6 @@ snowballstemmer==1.2.0
 # sha256: nwLQNXGE3h8JPBABK1LnRUoQCL5qXBhat6Mwes6x0S4
 babel==1.3
 
-# sha256: SlwIPaNyS1CauqpJQ2oyf9EwkL3Ah8fIuUTQ1DeudTM
-# sha256: znfi_bqrquOT_84qYlKgpmbjl3xsL6HEjE3tBWl4WVE
-alabaster==0.7.4
-
 # sha256: _5spJogkCW_JETkEYF2D9qqBcQLA8XARW0s58K4GUfM
 # sha256: dPYz7Tph2h0dWcMYVIPIGp1zRr8Oe18prQdkpvFZtoo
 sphinx_rtd_theme==0.1.8
@@ -163,3 +159,6 @@ Pygments==2.0.2
 # sha256: Ld8Y2jsGIfpD_uS3KQ2grnibRvuJkniorMzaGVxJeac
 # sha256: Gm5RMMK0LS3jAWk8KZ94zEvTUB54thDAjkXvxw4rURQ
 Sphinx==1.3.1
+# sha256: SlwIPaNyS1CauqpJQ2oyf9EwkL3Ah8fIuUTQ1DeudTM
+# sha256: znfi_bqrquOT_84qYlKgpmbjl3xsL6HEjE3tBWl4WVE
+alabaster==0.7.4
