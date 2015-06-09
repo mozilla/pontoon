@@ -51,6 +51,9 @@ HMAC_KEYS = {
 SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 BROWSERID_AUDIENCES = [SITE_URL]
 
+# Path to Yuglify binary.
+PIPELINE_YUGLIFY_BINARY = os.environ.get('PIPELINE_YUGLIFY_BINARY', 'yuglify')
+
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
 
@@ -169,11 +172,6 @@ AUTHENTICATION_BACKENDS = [
     'django_browserid.auth.BrowserIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
-
-# Temporarily do not compress CSS or JS until we figure out the issue
-# with Heroku failing to compress static files.
-PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
-PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
 
 PIPELINE_DISABLE_WRAPPER = True
 PIPELINE_CSS = {

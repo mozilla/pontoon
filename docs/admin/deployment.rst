@@ -30,6 +30,15 @@ you create:
 ``HMAC_KEY``
    Required. Secret key used for hashing passwords.
 
+``PIPELINE_YUGLIFY_BINARY``
+   Required. Command for executing Yuglify_ during the build process.
+
+   The Heroku Python buildpack moves the project's code around during the build
+   process, so specifying this is important as you can't rely on yuglify or node
+   to be in your ``PATH``. Set this to
+   ``./.heroku/node/bin/node ./node_modules/yuglify/bin/yuglify`` to get
+   minification working properly on Heroku.
+
 ``SECRET_KEY``
    Required. Secret key used for sessions, cryptographic signing, etc.
 
@@ -66,6 +75,8 @@ you create:
    .. code-block:: bash
 
       heroku config:set SSH_KEY="`cat /path/to/key_rsa`"
+
+.. _Yuglify: https://github.com/yui/yuglify
 
 Add-ons
 -------
