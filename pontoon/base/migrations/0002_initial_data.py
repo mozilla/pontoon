@@ -271,7 +271,7 @@ LOCALES = [
         u'code': u'kw',
         u'name': u'Cornish',
         u'nplurals': u'4',
-        u'plural_rule': u' (n==1) ? 0 : (n==2) ? 1 : (n == 3) ? 2 : 3'
+        u'plural_rule': u'(n==1) ? 0 : (n==2) ? 1 : (n == 3) ? 2 : 3'
     },
     {
         u'code': u'crh', u'name': u'Crimean Turkish'
@@ -1009,13 +1009,13 @@ LOCALES = [
         u'code': u'sl',
         u'name': u'Slovenian',
         u'nplurals': u'4',
-        u'plural_rule': u'(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0)'
+        u'plural_rule': u'(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)'
     },
     {
         u'code': u'sl-SI',
         u'name': u'Slovenian',
         u'nplurals': u'4',
-        u'plural_rule': u'(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0)'
+        u'plural_rule': u'(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)'
     },
     {
         u'code': u'so',
