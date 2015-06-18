@@ -255,9 +255,8 @@ var Pontoon = (function (my) {
           $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
           $('#plural-tabs li:first a').click();
         }
-      } else {
-        $("#helpers nav .active a").click();
       }
+      $("#helpers nav .active a").click();
 
       // Translation area
       $('#translation').val(entity.translation[0].string);
