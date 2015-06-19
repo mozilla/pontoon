@@ -9,6 +9,7 @@ web:
     - "8000:8000"
   volumes:
     - .:/pontoon
+    - ~/.ssh:/root/.ssh:ro
   links:
     - db
   dns:

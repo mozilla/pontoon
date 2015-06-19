@@ -740,7 +740,7 @@ def dump_po(project, locale, relative_path):
             po.metadata['PO-Revision-Date'] = newest.date
             po.metadata['Last-Translator'] = '%s <%s>' \
                 % (newest.user.first_name, newest.user.email)
-    po.metadata['Language'] = locale.code
+    po.metadata['Language'] = locale.code.replace('-', '_')
     po.metadata['X-Generator'] = 'Pontoon'
 
     if locale.nplurals:

@@ -51,6 +51,15 @@ HMAC_KEYS = {
 SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 BROWSERID_AUDIENCES = [SITE_URL]
 
+# Path to Yuglify binary.
+PIPELINE_YUGLIFY_BINARY = os.environ.get('PIPELINE_YUGLIFY_BINARY', 'yuglify')
+
+# Custom LD_LIBRARY_PATH environment variable for SVN
+SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
+
+# Disable forced SSL if debug mode is enabled.
+SSLIFY_DISABLE = DEBUG
+
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')
 
@@ -62,10 +71,6 @@ MOZILLIANS_API_KEY = os.environ.get('MOZILLIANS_API_KEY', '')
 
 # Raygun.io API Key
 RAYGUN4PY_API_KEY = os.environ.get('RAYGUN_APIKEY', '')
-
-# Git(hub) Credentials
-GIT_USERNAME = os.environ.get('GIT_USERNAME', '')
-GIT_PASSWORD = os.environ.get('GIT_PASSWORD', '')
 
 # Email settings
 EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME', '')
@@ -106,6 +111,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'sslify.middleware.SSLifyMiddleware',
     'raygun4py.middleware.django.Provider',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -166,11 +172,6 @@ AUTHENTICATION_BACKENDS = [
     'django_browserid.auth.BrowserIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
-
-# Temporarily do not compress CSS or JS until we figure out the issue
-# with Heroku failing to compress static files.
-PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
-PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
 
 PIPELINE_DISABLE_WRAPPER = True
 PIPELINE_CSS = {
@@ -365,6 +366,9 @@ ENGAGE_ROBOTS = False
 
 # Always generate a CSRF token for anonymous users.
 ANON_ALWAYS = True
+
+# Use correct header for detecting HTTPS on Heroku.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # For absolute urls
 try:

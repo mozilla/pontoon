@@ -1,10 +1,8 @@
 # -*- coding: utf8 -*-
 from __future__ import absolute_import
-import base64
 import logging
 import os
 import subprocess
-import urlparse
 
 from django.conf import settings
 
@@ -105,7 +103,7 @@ class PullFromSvn(PullFromRepository):
             command = ["svn", "checkout", "--trust-server-cert",
                        "--non-interactive", source, target]
 
-        code, output, error = execute(command)
+        code, output, error = execute(command, env=get_svn_env())
 
         if code != 0:
             raise PullFromRepositoryException(unicode(error))
@@ -144,12 +142,6 @@ class CommitToGit(CommitToRepository):
     def commit(self, path=None, message=None, user=None):
         log.debug("Git: Commit to repository.")
 
-        # Bail early if we lack credentials.
-        if not settings.GIT_USERNAME or not settings.GIT_PASSWORD:
-            raise CommitToRepositoryException(
-                'GIT_USERNAME and GIT_PASSWORD settings are not defined and '
-                'are required for committing to git repositories.')
-
         path = path or self.path
         message = message or self.message
         user = user or self.user
@@ -168,15 +160,8 @@ class CommitToGit(CommitToRepository):
         if code != 0 and len(error):
             raise CommitToRepositoryException(unicode(error))
 
-        # Add auth credentials to URL for push.
-        url_parts = urlparse.urlparse(self.url)
-        netloc = '{username}:{password}@{netloc}'.format(
-            username=settings.GIT_USERNAME, password=settings.GIT_PASSWORD,
-            netloc=url_parts.netloc)
-        url = url_parts._replace(netloc=netloc).geturl()
-
         # Push
-        push = ["git", "push", url]
+        push = ["git", "push", self.url]
         code, output, error = execute(push, path)
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
@@ -232,7 +217,7 @@ class CommitToSvn(CommitToRepository):
         # Commit
         command = ["svn", "commit", "-m", message, "--with-revprop",
                    "author=%s" % author, path]
-        code, output, error = execute(command)
+        code, output, error = execute(command, env=get_svn_env())
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
 
@@ -242,11 +227,11 @@ class CommitToSvn(CommitToRepository):
         log.info(message)
 
 
-def execute(command, cwd=None):
+def execute(command, cwd=None, env=None):
     try:
         st = subprocess.PIPE
         proc = subprocess.Popen(
-            args=command, stdout=st, stderr=st, stdin=st, cwd=cwd)
+            args=command, stdout=st, stderr=st, stdin=st, cwd=cwd, env=env)
 
         (output, error) = proc.communicate()
         code = proc.returncode
@@ -279,3 +264,14 @@ def commit_to_vcs(repo_type, path, message, user, url):
             'type': 'error',
             'message': unicode(e)
         }
+
+
+def get_svn_env():
+    """Return an environment dict for running SVN in."""
+    if settings.SVN_LD_LIBRARY_PATH:
+        env = os.environ.copy()
+        env['LD_LIBRARY_PATH'] = (settings.SVN_LD_LIBRARY_PATH + ':' +
+                                  env['LD_LIBRARY_PATH'])
+        return env
+    else:
+        return None
