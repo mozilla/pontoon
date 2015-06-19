@@ -586,10 +586,16 @@ def extract_to_database(project, locales=None):
         resources = Resource.objects.filter(project=project)
         Entity.objects.filter(resource__in=resources).update(obsolete=True)
 
+        # Empty resources to avoid displaying obsolete ones in part menu
+        resources.update(entity_count=0)
+
+        # Empty stats to avoid dumping obsolete files
+        stats = Stats.objects.filter(resource__in=resources)
+        stats.update(approved_count=0)
+
         # Remove Stats for removed locales
         project_locales = project.locales.all()
-        Stats.objects.filter(resource__in=resources).exclude(
-            locale__in=project_locales).delete()
+        stats.exclude(locale__in=project_locales).delete()
 
         locales = [Locale.objects.get(code__iexact=source_locale)]
         locales.extend(project_locales)
