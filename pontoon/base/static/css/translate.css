@@ -187,6 +187,10 @@ body > header .locale.select {
   max-height: 318px;
 }
 
+.menu ul li.current {
+  color: #7BC876;
+}
+
 .part .menu ul li {
   overflow: hidden;
   text-overflow: ellipsis;

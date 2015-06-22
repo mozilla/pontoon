@@ -13,6 +13,7 @@
      {% if project.id %}data-id="{{ project.id }}"{% endif %}
      {% if project.width %}data-width="{{ project.width }}"{% endif %}
      {% if project.links %}data-links="{{ project.links|lower }}"{% endif %}
+     {% if part %}data-part="{{ part }}"{% endif %}
      {% if redirect %}data-redirect="{{ redirect }}"{% endif %}
      {% if user.email %}data-email="{{ user.email }}"{% endif %}
      {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}

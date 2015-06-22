@@ -1291,9 +1291,12 @@ var Pontoon = (function (my) {
         if (details) {
           menu.find('li:not(".no-match")').remove();
           $(details[locale]).each(function() {
+            var cls = '';
+
             if (this.name) {
               var title = this.name,
                   percent = '';
+
             } else {
               var title = this.resource__path,
                   share = 0;
@@ -1305,7 +1308,12 @@ var Pontoon = (function (my) {
 
               percent = Math.floor(share) + '%';
             }
-            menu.append('<li><span>' + title + '</span>' +
+
+            if ($('#server').data('part') === title) {
+              cls = ' class="current"';
+            }
+
+            menu.append('<li' + cls + '><span>' + title + '</span>' +
               '<span>' + percent + '</span></li>');
           });
         }
