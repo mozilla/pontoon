@@ -34,6 +34,10 @@ from pontoon.base.models import (
 
 log = logging.getLogger('pontoon')
 
+MOZILLA_REPOS = (
+    'ssh://hg.mozilla.org/releases/l10n/mozilla-aurora/en-US/',
+    'ssh://hg.mozilla.org/releases/l10n/mozilla-beta/en-US/'
+)
 
 """ Start monkeypatching """
 import re
@@ -604,6 +608,11 @@ def extract_to_database(project, locales=None):
     source_paths = get_source_paths(source_directory['path'])
     format = detect_format(source_directory['path'])
 
+    # Ignore specific files from Mozilla repos
+    if project.repository_url in MOZILLA_REPOS:
+        source_paths = \
+            [x for x in source_paths if not x.endswith('region.properties')]
+
     for index, locale in enumerate(locales):
         if locale.code == source_locale:
             paths = source_paths
@@ -1037,23 +1046,26 @@ def dump_from_database(project, locale):
     resources = Resource.objects.filter(project=project, id__in=stats)
     relative_paths = resources.values_list('path', flat=True).distinct()
 
-    # Asymmetric formats: Remove files and folders from locale repository
-    if 'dtd' in formats or 'properties' in formats or 'ini' in formats:
-        items = os.listdir(locale_directory_path)
-        items = [i for i in items if not i[0] == '.']
+    # Asymmetric formats: Remove l10n files from locale repository
+    asymmetric = ['dtd', 'properties', 'ini', 'inc']
 
-        for item in items:
-            path = os.path.join(locale_directory_path, item)
-            try:
-                shutil.rmtree(path)
-            except OSError:
-                if get_format(path) in ('dtd', 'properties', 'ini'):
-                    os.remove(path)
-            except Exception as e:
-                log.error(e)
+    if all(x in formats for x in asymmetric):
+        for root, dirnames, filenames in os.walk(
+                locale_directory_path, topdown=False):
+            for extension in asymmetric:
+                for filename in fnmatch.filter(filenames, '*.' + extension):
+
+                    # Ignore specific files from Mozilla repos
+                    if filename != 'region.properties' \
+                            or project.repository_url not in MOZILLA_REPOS:
+                        os.remove(os.path.join(root, filename))
+
+            # Remove empty directories
+            if not os.listdir(root):
+                shutil.rmtree(os.path.join(locale_directory_path, root))
 
         # If directory empty, make sure Git and Mercurial don't remove it
-        if len(os.listdir(locale_directory_path)) == 0:
+        if not os.listdir(locale_directory_path):
             open(os.path.join(locale_directory_path, '.keep'), 'a').close()
 
     # Dump files based on format
