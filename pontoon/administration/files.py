@@ -35,8 +35,9 @@ from pontoon.base.models import (
 log = logging.getLogger('pontoon')
 
 MOZILLA_REPOS = (
+    'ssh://hg.mozilla.org/releases/l10n/mozilla-beta/en-US/',
     'ssh://hg.mozilla.org/releases/l10n/mozilla-aurora/en-US/',
-    'ssh://hg.mozilla.org/releases/l10n/mozilla-beta/en-US/'
+    'ssh://hg.mozilla.org/l10n-central',
 )
 
 """ Start monkeypatching """
