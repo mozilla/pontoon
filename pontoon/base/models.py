@@ -547,5 +547,5 @@ def update_stats(resource, locale):
 
     stats.approved_count = approved
     stats.fuzzy_count = fuzzy
-    stats.translated_count = translated_entities.count() - approved - fuzzy
+    stats.translated_count = (translated_entities.count() - approved - fuzzy) or 0
     stats.save()
