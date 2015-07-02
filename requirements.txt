@@ -37,6 +37,9 @@ py-bcrypt==0.3
 # sha256: 5PgdU8Uz9r2VJrBH8Ef3sQHCSrFzOcGnrY-YslwQHqs
 pyasn1==0.1.7
 
+# sha256: -Shql53l7vyjxaNVruygX0ba58QwixjgBOTdKvfX7Sk
+https://github.com/l20n/python-l20n/archive/4e32a8d.zip#egg=python-l20n
+
 # sha256: wTEccb61tu7OpLuiAKYmMx72cRA1dEi-R7ob_jxKowU
 python-Levenshtein==0.11.2
 

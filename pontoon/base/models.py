@@ -25,11 +25,19 @@ class UserProfile(models.Model):
     quality_checks = models.BooleanField(default=True)
 
 
+class CLDR_Plurals(models.Model):
+    name = models.CharField(max_length=5, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
     nplurals = models.SmallIntegerField(null=True, blank=True)
     plural_rule = models.CharField(max_length=128, blank=True)
+    cldr_plurals = models.ManyToManyField(CLDR_Plurals, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -40,6 +48,8 @@ class Locale(models.Model):
             'name': self.name,
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
+            'cldr_plurals': list(self.cldr_plurals.values_list(
+                "name", flat=True)),
         })
 
 
@@ -119,6 +129,7 @@ class Resource(models.Model):
         ('inc', 'inc'),
         ('ini', 'ini'),
         ('lang', 'lang'),
+        ('l20n', 'l20n'),
     )
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)

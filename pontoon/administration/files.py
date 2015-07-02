@@ -19,6 +19,12 @@ from django.conf import settings
 from pontoon.administration.vcs import update_from_vcs
 from translate.storage import xliff
 
+from l20n.format import (
+    parser as L20nParser,
+    serializer as L20nSerializer,
+    ast as L20nast
+)
+
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -518,6 +524,108 @@ def extract_lang(project, locale, path, entities=False):
     log.debug("[" + locale.code + "]: " + path + " saved to DB.")
 
 
+def store_l20n(
+        entities, resource, key, string, comment, locale, order,
+        string_plural="", plural_form=None):
+    """Store .l20n entity or translation."""
+
+    if entities:
+        save_entity(
+            resource=resource, string=string, string_plural=string_plural,
+            comment=comment, key=key, order=order)
+
+    else:
+        try:
+            e = Entity.objects.get(resource=resource, key=key)
+            save_translation(
+                entity=e, locale=locale, string=string,
+                plural_form=plural_form)
+        except Entity.DoesNotExist:
+            pass
+
+
+def extract_l20n(project, locale, path, entities=False):
+    """Extract .l20n file with path and save or update in DB."""
+
+    parser = L20nParser.L20nParser()
+
+    with codecs.open(path, 'r', 'utf-8') as f:
+        structure = parser.parse(f.read())
+        comment = ""
+        order = 0
+
+        relative_path = get_relative_path(path, locale)
+        resource, created = Resource.objects.get_or_create(
+            project=project, path=relative_path, format='l20n')
+
+        for obj in structure.body:
+            # Entities
+            if obj.type == "Entity":
+
+                # Simple
+                if obj.value.type == "String":
+                    key = obj.id.name
+                    string = obj.value.source
+
+                    store_l20n(
+                        entities, resource, key, string, comment, locale,
+                        order)
+
+                    comment = ""
+                    order += 1
+
+                # Plurals
+                elif obj.value.type == "Hash":
+                    key = obj.id.name
+                    string_plural = ""
+                    plural_form = None
+
+                    # Get strings
+                    for item in obj.value.items:
+                        if entities:
+                            if item.id.name == "one":
+                                string = item.value.source
+
+                            elif item.id.name == "many":
+                                string_plural = item.value.source
+
+                        else:
+                            string = item.value.source
+                            plurals = locale.cldr_plurals.values_list(
+                                "name", flat=True)
+                            plural_form = list(plurals).index(item.id.name)
+
+                        store_l20n(
+                            entities, resource, key, string, comment, locale,
+                            order, string_plural, plural_form)
+
+                    comment = ""
+                    order += 1
+
+                # Attributes
+                for attr in obj.attrs:
+                    key = ".".join([obj.id.name, attr.id.name])
+                    string = attr.value.source
+
+                    store_l20n(
+                        entities, resource, key, string, comment, locale,
+                        order)
+
+                    comment = ""
+                    order += 1
+
+            # Comments
+            elif obj.type == "Comment":
+                comment = obj.body
+
+        if entities:
+            update_entity_count(resource)
+        else:
+            update_stats(resource, locale)
+
+        log.debug("[" + locale.code + "]: " + path + " saved to DB.")
+
+
 def extract_inc(project, locale, path, entities=False):
     """Extract .inc file with path and save or update in DB."""
 
@@ -966,6 +1074,112 @@ def dump_lang(project, locale, relative_path):
         lines.truncate()
         lines.writelines(content)
         log.debug("File updated: " + path)
+
+
+def dump_l20n(project, locale, relative_path):
+    """Dump .l20n file with relative path from database. Generate files
+    from source files, but only ones with translated strings."""
+
+    locale_directory_path = get_locale_directory(project, locale)["path"]
+    path = os.path.join(locale_directory_path, relative_path)
+
+    # Create folders and copy files from source
+    basedir = os.path.dirname(path)
+    source_directory = get_source_directory(project.repository_path)
+    if not os.path.exists(basedir):
+        os.makedirs(basedir)
+    try:
+        shutil.copy(
+            os.path.join(source_directory['path'], relative_path), path)
+    # Obsolete files
+    except Exception as e:
+        log.debug(e)
+        return
+
+    with codecs.open(path, 'r+', 'utf-8') as f:
+        parser = L20nParser.L20nParser()
+        structure = parser.parse(f.read())
+        ast = L20nast
+
+        resource = Resource.objects.filter(project=project, path=relative_path)
+        entities = Entity.objects.filter(resource=resource, obsolete=False)
+
+        for obj in structure.body:
+            if obj.type == "Entity":
+
+                # Attributes
+                for attr in obj.attrs:
+                    key = ".".join([obj.id.name, attr.id.name])
+
+                    try:
+                        # Modify translated attributes
+                        translation = Translation.objects.filter(
+                            entity__key=key, locale=locale, approved=True) \
+                            .latest('date')
+                        attr.value.content[0] = translation.string
+
+                    except Translation.DoesNotExist as e:
+                        # Remove untranslated
+                        obj.attrs.remove(attr)
+
+                key = obj.id.name
+
+                # Simple entities
+                if obj.value.type == "String":
+                    try:
+                        # Modify translated entities
+                        translation = Translation.objects.filter(
+                            entity__key=key, locale=locale, approved=True) \
+                            .latest('date')
+                        obj.value.content[0] = translation.string
+
+                    except Translation.DoesNotExist as e:
+                        # Remove untranslated
+                        obj.value = None
+
+                        # Remove entity
+                        if not obj.attrs:
+                            structure.body.remove(obj)
+
+                # Plurals
+                elif obj.value.type == "Hash":
+                    obj.value.items = []
+                    plurals = locale.cldr_plurals.values_list("name")
+
+                    for i in range(0, (len(plurals) or 1)):
+                        try:
+                            # Modify translated plural forms
+                            translation = Translation.objects.filter(
+                                entity__key=key,
+                                locale=locale,
+                                plural_form=i,
+                                approved=True).latest('date')
+
+                            hashItem = ast.HashItem(
+                                ast.Identifier(plurals[i][0]),
+                                ast.String(
+                                    [translation.string],
+                                    translation.string),
+                                False,
+                            )
+                            obj.value.items.append(hashItem)
+
+                        except Translation.DoesNotExist as e:
+                            # Untranslated already removed on empty items
+                            pass
+
+                    # Remove entity
+                    if not obj.value.items and not obj.attrs:
+                        structure.body.remove(obj)
+
+        # Erase file and then write, otherwise content gets appended
+        f.seek(0)
+        f.truncate()
+        serializer = L20nSerializer.Serializer()
+        content = serializer.serialize(structure)
+        f.write(content)
+
+    log.debug("File updated: " + path)
 
 
 def dump_inc(project, locale, relative_path):
