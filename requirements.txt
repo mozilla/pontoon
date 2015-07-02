@@ -65,8 +65,8 @@ suds==0.4
 # sha256: ih29HHrehSBq53DJzl9DCBoJjJX5lK8RP2Q06QBVmmc
 https://github.com/jbalogh/test-utils/archive/e42e031.zip#egg=test-utils
 
-# sha256: EeMy8qKdhkQ2S0ynm0rAed8yhibsjCesDozEVGlnGco
-translate-toolkit==1.12.0
+# sha256: 3Lv0kFjkGWoG6YjZ3B52IyGrDQV8S-A1uE48ETU_wvg
+translate-toolkit==1.13.0
 
 # sha256: 8uJz7TSsu1YJYtXPEpF5NtjfAil98JvTCJuFRtRYQTg
 # sha256: ygF2j97N4TQwHzFwdDIm9g7f9cOTXxJDc3jr2RFQY1M
