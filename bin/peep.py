@@ -105,7 +105,7 @@ except ImportError:
     DownloadProgressBar = DownloadProgressSpinner = NullProgressBar
 
 
-__version__ = 2, 4, 0
+__version__ = 2, 4, 1
 
 
 ITS_FINE_ITS_FINE = 0
@@ -354,7 +354,6 @@ class DownloadedReq(object):
         self._req = req
         self._argv = argv
         self._finder = finder
-
 
         # We use a separate temp dir for each requirement so requirements
         # (from different indices) that happen to have the same archive names
@@ -890,7 +889,7 @@ def exception_handler(exc_type, exc_value, exc_tb):
     print('---')
     print('peep:', repr(__version__))
     print('python:', repr(sys.version))
-    print('pip:', repr(pip.__version__))
+    print('pip:', repr(getattr(pip, '__version__', 'no __version__ attr')))
     print('Command line: ', repr(sys.argv))
     print(
         ''.join(traceback.format_exception(exc_type, exc_value, exc_tb)))

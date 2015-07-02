@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Sum
 from django.db.models.signals import post_save
 from django.forms import ModelForm
+
 from pontoon.base import utils
 
 
@@ -53,6 +54,15 @@ class Locale(models.Model):
         })
 
 
+class ProjectQuerySet(models.QuerySet):
+    def available(self):
+        """
+        Available projects are not disabled and have at least one
+        resource defined.
+        """
+        return self.filter(disabled=False, resource__isnull=False)
+
+
 class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
@@ -96,6 +106,8 @@ class Project(models.Model):
     # Disable project instead of deleting to keep translation memory & stats
     disabled = models.BooleanField(default=False)
 
+    objects = ProjectQuerySet.as_manager()
+
     class Meta:
         permissions = (
             ("can_manage", "Can manage projects"),
@@ -104,6 +116,17 @@ class Project(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def serialize(self):
+        return {
+            'pk': self.pk,
+            'name': self.name,
+            'slug': self.slug,
+            'url': self.url,
+        }
+
+    def as_json(self):
+        return json.dumps(self.serialize())
 
 
 class Subpage(models.Model):
@@ -148,6 +171,14 @@ class Entity(models.Model):
     source = models.TextField(blank=True)  # Path to source code file
     obsolete = models.BooleanField(default=False)
 
+    @property
+    def marked(self):
+        return utils.mark_placeables(self.string)
+
+    @property
+    def marked_plural(self):
+        return utils.mark_placeables(self.string_plural)
+
     def __unicode__(self):
         return self.string
 
@@ -160,9 +191,9 @@ class Entity(models.Model):
         return {
             'pk': self.pk,
             'original': self.string,
-            'marked': utils.mark_placeables(self.string),
+            'marked': self.marked,
             'original_plural': self.string_plural,
-            'marked_plural': utils.mark_placeables(self.string_plural),
+            'marked_plural': self.marked_plural,
             'key': self.key,
             'path': self.resource.path,
             'format': self.resource.format,
@@ -172,6 +203,28 @@ class Entity(models.Model):
             'obsolete': self.obsolete,
         }
 
+    def add_translation(self, string, locale, user):
+        """
+        Add a new translation for this entity. If a matching translation
+        already exists, mark it as unfuzzy, and if the given user is a
+        translator, approve it.
+        """
+        try:
+            translation = self.translation_set.get(locale=locale, string=string)
+        except Translation.DoesNotExist:
+            translation = Translation(entity=self, locale=locale, user=user, string=string,
+                                      fuzzy=True)
+
+        if translation.pk:
+            translation.fuzzy = False
+
+        if user.has_perm('base.can_localize') and not translation.approved:
+            translation.approved = True
+            translation.approved_user = user
+            translation.approved_date = datetime.datetime.now()
+
+        translation.save()
+
 
 class Translation(models.Model):
     entity = models.ForeignKey(Entity)
@@ -180,7 +233,7 @@ class Translation(models.Model):
     string = models.TextField()
     # 0=zero, 1=one, 2=two, 3=few, 4=many, 5=other, null=no plural forms
     plural_form = models.SmallIntegerField(null=True, blank=True)
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
     approved_user = models.ForeignKey(
         User, related_name='approvers', null=True, blank=True)
@@ -192,8 +245,19 @@ class Translation(models.Model):
 
     def save(self, stats=True, *args, **kwargs):
         super(Translation, self).save(*args, **kwargs)
+
+        # Only one translation can be approved at a time for any
+        # Entity/Locale.
+        if self.approved:
+            (Translation.objects
+                .filter(entity=self.entity, locale=self.locale)
+                .exclude(pk=self.pk)
+                .update(approved=False, approved_user=None, approved_date=None))
+
+        # Update stats AFTER changing approval status.
         if stats:
             update_stats(self.entity.resource, self.locale)
+
 
     def delete(self, stats=True, *args, **kwargs):
         super(Translation, self).delete(*args, **kwargs)
@@ -495,5 +559,5 @@ def update_stats(resource, locale):
 
     stats.approved_count = approved
     stats.fuzzy_count = fuzzy
-    stats.translated_count = translated_entities.count() - approved - fuzzy
+    stats.translated_count = max(translated_entities.count() - approved - fuzzy, 0)
     stats.save()

@@ -217,6 +217,10 @@ var Pontoon = (function (my) {
         $('#metadata').append('<span>Key: ' + entity.key + '</span>');
       }
 
+      // Translation area (must be set before unsaved changes check)
+      $('#translation').val(entity.translation[0].string);
+      $('.warning-overlay:visible .cancel').click();
+
       // Original string and plurals
       $('#original').html(entity.marked);
       $('#source-pane').removeClass('pluralized');
@@ -257,10 +261,6 @@ var Pontoon = (function (my) {
         }
       }
       $("#helpers nav .active a").click();
-
-      // Translation area
-      $('#translation').val(entity.translation[0].string);
-      $('.warning-overlay:visible .cancel').click();
 
       // Focus
       if (!inplace) {
@@ -1025,7 +1025,7 @@ var Pontoon = (function (my) {
     syncLocalStorageOnServer: function() {
       if (localStorage.length !== 0) {
         var len = this.entities.length;
-        for (var i = 0; i < len; i++) {          
+        for (var i = 0; i < len; i++) {
           var entity = this.entities[i],
               key = this.getLocalStorageKey(entity),
               value = localStorage[key];

@@ -51,8 +51,9 @@ HMAC_KEYS = {
 SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 BROWSERID_AUDIENCES = [SITE_URL]
 
-# Path to Yuglify binary.
+# Path to binaries for django-pipeline.
 PIPELINE_YUGLIFY_BINARY = os.environ.get('PIPELINE_YUGLIFY_BINARY', 'yuglify')
+PIPELINE_BABEL_BINARY = os.environ.get('PIPELINE_BABEL_BINARY', 'babel')
 
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
@@ -93,6 +94,7 @@ INSTALLED_APPS = (
     'pontoon.base',
     'pontoon.administration',
     'pontoon.intro',
+    'pontoon.translate',
 
     # Django contrib apps
     'django.contrib.admin',
@@ -112,7 +114,7 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'sslify.middleware.SSLifyMiddleware',
-    'raygun4py.middleware.django.Provider',
+    #'raygun4py.middleware.django.Provider',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -173,6 +175,12 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+PIPELINE_COMPILERS = (
+    'pipeline.compilers.es6.ES6Compiler',
+)
+
+PIPELINE_BABEL_ARGUMENTS = '--modules ignore'
+
 PIPELINE_DISABLE_WRAPPER = True
 PIPELINE_CSS = {
     'base': {
@@ -205,6 +213,12 @@ PIPELINE_CSS = {
             'css/translate.css',
         ),
         'output_filename': 'css/translate.min.css',
+    },
+    'translate_new': {
+        'source_filenames': (
+            'css/translate_new.css',
+        ),
+        'output_filename': 'css/translate_new.min.css',
     },
     'user': {
         'source_filenames': (
@@ -242,10 +256,25 @@ PIPELINE_JS = {
     'translate': {
         'source_filenames': (
             'browserid/api.js',
-            'js/translate.js',
+            'js/translate_old.js',
             'js/jquery.timeago.js',
         ),
         'output_filename': 'js/translate.min.js',
+    },
+    'translate_new': {
+        'source_filenames': (
+            ('js/lib/react-with-addons-0.13.3.js' if DEBUG else
+             'js/lib/react-with-addons-0.13.3.min.js'),
+            'js/lib/classnames.js',
+            'browserid/api.js',
+            'js/translate/models.es6',
+            'js/translate/utils.es6',
+            'js/translate/TranslationEditor.es6',
+            'js/translate/TranslationSelector.es6',
+            'js/translate/TranslateView.es6',
+            'js/translate/bootstrap.es6',
+        ),
+        'output_filename': 'js/translate_new.min.js',
     },
     'user': {
         'source_filenames': (

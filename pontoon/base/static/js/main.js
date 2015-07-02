@@ -598,39 +598,6 @@ $(function() {
       $('body').click();
       return false;
     }
-
-    if ($('#sidebar').is(':visible') && !$('#project-load').is(':visible')) {
-
-      // Alt + F: focus search
-      if (Pontoon.app.advanced || !$("#editor").is('.opened')) {
-        if (e.altKey && key === 70) {
-          $('#search').focus();
-          return false;
-        }
-      }
-
-      // Tab: select suggestions
-      if (!$('.menu').is(':visible') && !$('.popup').is(':visible') &&
-          (Pontoon.app.advanced || $("#editor").is('.opened')) &&
-          !$('#custom-search').is(':visible')) {
-        if (key === 9) {
-          var section = $('#helpers section:visible'),
-              index = section.find('li.hover').index() + 1;
-
-          // If possible, select next suggestion, or select first
-          if (section.find('li:last').is('.hover')) {
-            index = 0;
-          }
-
-          section
-            .find('li').removeClass('hover').end()
-            .find('li:eq(' + index + ')').addClass('hover').click();
-
-          Pontoon.updateScroll(section);
-          return false;
-        }
-      }
-    }
   });
 
 });

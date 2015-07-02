@@ -1,0 +1,37 @@
+{
+    "name": "Pontoon",
+    "description": "Pontoon enables localizers to translate web apps and web sites in place with context and spatial limitations right in front of them.",
+    "repository": {
+        "url": "https://github.com/mozilla/pontoon",
+        "license": "MPL2"
+    },
+    "participate": {
+        "home": "https://wiki.mozilla.org/Webdev/GetInvolved/pontoon.mozilla.org",
+        "docs": "http://mozilla-pontoon.readthedocs.org/",
+        "irc": "irc://irc.mozilla.org/#pontoon",
+        "irc-contacts": [
+            "mathjazz",
+            "Osmose"
+        ]
+    },
+    "bugs": {
+        "list": "https://bugzilla.mozilla.org/buglist.cgi?product=Webtools&component=Pontoon",
+        "report": "https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon",
+        "mentored": "https://bugzilla.mozilla.org/buglist.cgi?f1=bug_mentor&o1=isnotempty&query_format=advanced&bug_status=NEW&product=Webtools&component=Pontoon"
+    },
+    "urls": {
+        "prod": "https://pontoon.mozilla.org",
+        "dev": "https://pontoon-dev.allizom.org"
+    },
+    "keywords": [
+        "python",
+        "django",
+        "html5",
+        "react",
+        "jquery",
+        "javascript",
+        "css",
+        "postgres"
+    ]
+}
+

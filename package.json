@@ -4,6 +4,7 @@
   "description": "Mozilla in-place localization tool.",
   "private": true,
   "dependencies": {
+    "babel": "^5.4.3",
     "yuglify": "0.1.4"
   },
   "engines": {
