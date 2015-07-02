@@ -280,6 +280,25 @@ def get_relative_path(path, locale):
     return path.split('/' + locale_directory + '/')[-1]
 
 
+def copy_from_source(file_path, repository_path, relative_path):
+    """Create folders and copy files from source"""
+
+    basedir = os.path.dirname(file_path)
+    source_directory = get_source_directory(repository_path)
+
+    if not os.path.exists(basedir):
+        os.makedirs(basedir)
+
+    try:
+        shutil.copy(
+            os.path.join(source_directory['path'], relative_path), file_path)
+
+    # Obsolete files
+    except Exception as e:
+        log.debug(e)
+        return
+
+
 def parse_lang(path):
     """Parse a dotlang file and return a dict of translations."""
     trans = {}
@@ -932,18 +951,7 @@ def dump_silme(parser, project, locale, relative_path):
     locale_directory_path = get_locale_directory(project, locale)["path"]
     path = os.path.join(locale_directory_path, relative_path)
 
-    # Create folders and copy files from source
-    basedir = os.path.dirname(path)
-    source_directory = get_source_directory(project.repository_path)
-    if not os.path.exists(basedir):
-        os.makedirs(basedir)
-    try:
-        shutil.copy(
-            os.path.join(source_directory['path'], relative_path), path)
-    # Obsolete files
-    except Exception as e:
-        log.debug(e)
-        return
+    copy_from_source(path, project.repository_path, relative_path)
 
     with codecs.open(path, 'r+', 'utf-8') as f:
         structure = parser.get_structure(f.read())
@@ -1083,18 +1091,7 @@ def dump_l20n(project, locale, relative_path):
     locale_directory_path = get_locale_directory(project, locale)["path"]
     path = os.path.join(locale_directory_path, relative_path)
 
-    # Create folders and copy files from source
-    basedir = os.path.dirname(path)
-    source_directory = get_source_directory(project.repository_path)
-    if not os.path.exists(basedir):
-        os.makedirs(basedir)
-    try:
-        shutil.copy(
-            os.path.join(source_directory['path'], relative_path), path)
-    # Obsolete files
-    except Exception as e:
-        log.debug(e)
-        return
+    copy_from_source(path, project.repository_path, relative_path)
 
     with codecs.open(path, 'r+', 'utf-8') as f:
         parser = L20nParser.L20nParser()
@@ -1189,18 +1186,7 @@ def dump_inc(project, locale, relative_path):
     locale_directory_path = get_locale_directory(project, locale)["path"]
     path = os.path.join(locale_directory_path, relative_path)
 
-    # Create folders and copy files from source
-    basedir = os.path.dirname(path)
-    source_directory = get_source_directory(project.repository_path)
-    if not os.path.exists(basedir):
-        os.makedirs(basedir)
-    try:
-        shutil.copy(
-            os.path.join(source_directory['path'], relative_path), path)
-    # Obsolete files
-    except Exception as e:
-        log.debug(e)
-        return
+    copy_from_source(path, project.repository_path, relative_path)
 
     with codecs.open(path, 'r+', 'utf-8') as lines:
         content = []
