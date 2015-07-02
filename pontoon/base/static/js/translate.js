@@ -592,34 +592,43 @@ var Pontoon = (function (my) {
         textarea.val(after).focus();
       });
 
+      function switchToPluralForm(tab) {
+        $("#plural-tabs li").removeClass('active');
+        tab.addClass('active');
+
+        var entity = $('#editor')[0].entity,
+            i = tab.index(),
+            original = entity['marked' + self.isPluralized()],
+            title = !self.isPluralized() ? "Singular" : "Plural",
+            source = entity.translation[i].string;
+
+        $('#source-pane h2').html(title).show();
+        $('#original').html(original);
+
+        $('#translation').val(source).focus();
+        $('#translation-length')
+          .find('.original-length').html(original.length).end()
+          .find('.current-length').html(source.length);
+
+        $('#quality:visible .cancel').click();
+        $("#helpers nav .active a").click();
+      }
+
       // Plurals navigation
       $("#plural-tabs a").click(function (e) {
         e.stopPropagation();
         e.preventDefault();
 
-        var tabs = $(this).parent();
+        var tab = $(this).parent();
 
-        self.checkUnsavedChanges(function() {
-          $("#plural-tabs li").removeClass('active');
-          tabs.addClass('active');
-
-          var entity = $('#editor')[0].entity,
-              i = tabs.index(),
-              original = entity['marked' + self.isPluralized()],
-              title = !self.isPluralized() ? "Singular" : "Plural",
-              source = entity.translation[i].string;
-
-          $('#source-pane h2').html(title).show();
-          $('#original').html(original);
-
-          $('#translation').val(source).focus();
-          $('#translation-length')
-            .find('.original-length').html(original.length).end()
-            .find('.current-length').html(source.length);
-
-          $('#quality:visible .cancel').click();
-          $("#helpers nav .active a").click();
-        });
+        // Only if actually clicked on tab
+        if (e.hasOwnProperty('originalEvent')) {
+          self.checkUnsavedChanges(function() {
+            switchToPluralForm(tab);
+          });
+        } else {
+          switchToPluralForm(tab);
+        }
       });
 
       // Translate textarea keyboard shortcuts
@@ -698,7 +707,7 @@ var Pontoon = (function (my) {
       $('#leave-anyway').click(function() {
         var callback = self.checkUnsavedChangesCallback;
         if (callback) {
-          self.checkUnsavedChangesCallback();
+          callback();
           $('#unsaved').hide();
         }
       });
