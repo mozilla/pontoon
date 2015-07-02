@@ -585,7 +585,7 @@ var Pontoon = (function (my) {
 
         var textarea = $('#translation'),
             pos = textarea[0].selectionStart,
-            placeable = self.doRender($(this).html()),
+            placeable = self.doRender($(this).text()),
             before = textarea.val(),
             after = before.substring(0, pos) + placeable + before.substring(pos);
 
