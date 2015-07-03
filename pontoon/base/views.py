@@ -230,10 +230,10 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         details = {}
 
         for loc in project.locales.all():
+            stats = Stats.objects.filter(resource__in=resources, locale=loc)
+
             if len(pages) == 0 and len(resources) > 1:
-                locale_details = Stats.objects \
-                    .filter(resource__in=resources, locale=loc) \
-                    .order_by('resource__path') \
+                locale_details = stats.order_by('resource__path') \
                     .values(
                         'resource__path',
                         'resource__entity_count',
@@ -242,6 +242,9 @@ def translate(request, locale, slug, part=None, template='translate.html'):
                     )
             else:
                 locale_details = pages.values('name')
+                if len(pages) > 0 and pages[0].resource is not None:
+                    locale_details = pages.filter(
+                        resource__stats=stats).values('name')
 
             details[loc.code.lower()] = list(locale_details)
 

@@ -119,15 +119,6 @@ class Project(models.Model):
         return json.dumps(self.serialize())
 
 
-class Subpage(models.Model):
-    project = models.ForeignKey(Project)
-    name = models.CharField(max_length=128)
-    url = models.URLField("URL", blank=True)  # Firefox OS Hack
-
-    def __unicode__(self):
-        return self.name
-
-
 class Resource(models.Model):
     project = models.ForeignKey(Project)
     path = models.TextField()  # Path to localization file
@@ -147,6 +138,16 @@ class Resource(models.Model):
 
     def __unicode__(self):
         return '%s: %s' % (self.project.name, self.path)
+
+
+class Subpage(models.Model):
+    project = models.ForeignKey(Project)
+    name = models.CharField(max_length=128)
+    url = models.URLField("URL", blank=True)  # Firefox OS Hack
+    resource = models.ManyToManyField(Resource, blank=True)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Entity(models.Model):
