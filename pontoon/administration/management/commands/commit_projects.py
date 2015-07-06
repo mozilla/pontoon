@@ -37,6 +37,7 @@ class Command(BaseCommand):
             # Update project from VCS to ensure the directory exists.
             try:
                 update_from_repository(project)
+                extract_to_database(project)
                 output('Updated project %s' % project)
             except Exception as e:
                 now = datetime.datetime.now()
