@@ -3,7 +3,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
-from pontoon.administration.files import dump_from_database, update_from_repository
+from pontoon.administration.files import dump_from_database, update_from_repository, extract_to_database
 from pontoon.administration.vcs import commit_to_vcs
 from pontoon.base.models import (
     Project,
