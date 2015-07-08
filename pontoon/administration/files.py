@@ -1192,8 +1192,6 @@ def dump_inc(project, locale, relative_path):
     with codecs.open(path, 'r+', 'utf-8') as inc_file:
         content = []
         resource = Resource.objects.filter(project=project, path=relative_path)
-        entities_with_path = Entity.objects.filter(
-            resource=resource, obsolete=False)
 
         for line in inc_file:
             original = line
