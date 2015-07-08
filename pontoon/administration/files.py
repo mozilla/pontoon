@@ -110,12 +110,6 @@ IniParser.patterns['entity'] = re.compile(
     re.S | re.M)
 
 
-def __repr__mine(self):
-    return ''.join(unicode(i) for i in self)
-
-Comment.__repr__ = __repr__mine
-
-
 def modify_entity_mine(self, id, value):
     """
     modifies as entity value; supports duplicate keys
@@ -477,7 +471,7 @@ def extract_silme(parser, project, locale, path, entities=False):
 
             elif isinstance(obj, silme.core.structure.Comment):
                 if entities:
-                    comment = unicode(obj)
+                    comment = ''.join(unicode(i) for i in obj)
 
         if entities:
             update_entity_count(resource)
