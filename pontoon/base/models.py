@@ -93,6 +93,7 @@ class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale)
+    last_dumped = models.DateTimeField(null=True)
 
     # Repositories
     REPOSITORY_TYPE_CHOICES = (

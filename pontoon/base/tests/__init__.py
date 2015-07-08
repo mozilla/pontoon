@@ -7,7 +7,7 @@ from django.test import TestCase as BaseTestCase
 
 from django_nose.tools import assert_equal
 
-from pontoon.base.models import Locale, Project, Resource
+from pontoon.base.models import Entity, Locale, Project, Resource, Translation
 
 
 class TestCase(BaseTestCase):
@@ -47,6 +47,23 @@ class LocaleFactory(DjangoModelFactory):
 
     class Meta:
         model = Locale
+
+
+class EntityFactory(DjangoModelFactory):
+    resource = SubFactory(ResourceFactory)
+    string = Sequence(lambda n: 'string-{0}'.format(n))
+
+    class Meta:
+        model = Entity
+
+
+class TranslationFactory(DjangoModelFactory):
+    entity = SubFactory(EntityFactory)
+    locale = SubFactory(LocaleFactory)
+    string = Sequence(lambda n: 'string-{0}'.format(n))
+
+    class Meta:
+        model = Translation
 
 
 def assert_redirects(response, expected_url, status_code=302, host=None):
