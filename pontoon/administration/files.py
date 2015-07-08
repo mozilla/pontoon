@@ -111,10 +111,7 @@ IniParser.patterns['entity'] = re.compile(
 
 
 def __repr__mine(self):
-    string = ''
-    for i in self:
-        string += unicode(i)
-    return string
+    return ''.join(unicode(i) for i in self)
 
 Comment.__repr__ = __repr__mine
 
