@@ -648,7 +648,7 @@ def extract_l20n(project, locale, path, entities=False):
 def extract_inc(project, locale, path, entities=False):
     """Extract .inc file with path and save or update in DB."""
 
-    with codecs.open(path, 'r', 'utf-8', errors='replace') as lines:
+    with codecs.open(path, 'r', 'utf-8', errors='replace') as inc_file:
 
         comment = []
         order = 0
@@ -656,7 +656,7 @@ def extract_inc(project, locale, path, entities=False):
         resource, created = Resource.objects.get_or_create(
             project=project, path=relative_path, format='inc')
 
-        for line in lines:
+        for line in inc_file:
 
             # Uncomment MOZ_LANGPACK_CONTRIBUTORS (commented out)
             # http://hg.mozilla.org/releases/mozilla-aurora/file/572c8f4c8fed/browser/locales/en-US/defines.inc#l10
@@ -1189,13 +1189,13 @@ def dump_inc(project, locale, relative_path):
 
     copy_from_source(path, project.repository_path, relative_path)
 
-    with codecs.open(path, 'r+', 'utf-8') as lines:
+    with codecs.open(path, 'r+', 'utf-8') as inc_file:
         content = []
         resource = Resource.objects.filter(project=project, path=relative_path)
         entities_with_path = Entity.objects.filter(
             resource=resource, obsolete=False)
 
-        for line in lines:
+        for line in inc_file:
             original = line
 
             # Uncomment MOZ_LANGPACK_CONTRIBUTORS (commented out)
@@ -1225,9 +1225,9 @@ def dump_inc(project, locale, relative_path):
             content.append(line)
 
         # Erase file and then write, otherwise content gets appended
-        lines.seek(0)
-        lines.truncate()
-        lines.writelines(content)
+        inc_file.seek(0)
+        inc_file.truncate()
+        inc_file.writelines(content)
         log.debug("File updated: " + path)
 
 
