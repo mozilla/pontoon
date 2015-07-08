@@ -658,7 +658,8 @@ def extract_inc(project, locale, path, entities=False):
 
         for line in lines:
 
-            # Special case: uncomment MOZ_LANGPACK_CONTRIBUTORS
+            # Uncomment MOZ_LANGPACK_CONTRIBUTORS (commented out)
+            # http://hg.mozilla.org/releases/mozilla-aurora/file/572c8f4c8fed/browser/locales/en-US/defines.inc#l10
             if entities and line.startswith('# #define'):
                 line = line.lstrip('#').strip()
 
@@ -1197,7 +1198,8 @@ def dump_inc(project, locale, relative_path):
         for line in lines:
             original = line
 
-            # Special case: uncomment MOZ_LANGPACK_CONTRIBUTORS
+            # Uncomment MOZ_LANGPACK_CONTRIBUTORS (commented out)
+            # http://hg.mozilla.org/releases/mozilla-aurora/file/572c8f4c8fed/browser/locales/en-US/defines.inc#l10
             if line.startswith('# #define'):
                 line = line.lstrip('#').strip()
 
