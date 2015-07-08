@@ -561,79 +561,80 @@ def extract_l20n(project, locale, path, entities=False):
 
     with codecs.open(path, 'r', 'utf-8') as f:
         structure = parser.parse(f.read())
-        comment = ""
-        order = 0
 
-        relative_path = get_relative_path(path, locale)
-        resource, created = Resource.objects.get_or_create(
-            project=project, path=relative_path, format='l20n')
+    comment = ""
+    order = 0
 
-        for obj in structure.body:
-            # Entities
-            if obj.type == "Entity":
+    relative_path = get_relative_path(path, locale)
+    resource, created = Resource.objects.get_or_create(
+        project=project, path=relative_path, format='l20n')
 
-                # Simple
-                if obj.value.type == "String":
-                    key = obj.id.name
-                    string = obj.value.source
+    for obj in structure.body:
+        # Entities
+        if obj.type == "Entity":
 
-                    store_l20n(
-                        entities, resource, key, string, comment, locale,
-                        order)
+            # Simple
+            if obj.value.type == "String":
+                key = obj.id.name
+                string = obj.value.source
 
-                    comment = ""
-                    order += 1
+                store_l20n(
+                    entities, resource, key, string, comment, locale,
+                    order)
 
-                # Plurals
-                elif obj.value.type == "Hash":
-                    key = obj.id.name
-                    string_plural = ""
-                    plural_form = None
+                comment = ""
+                order += 1
 
-                    # Get strings
-                    for item in obj.value.items:
-                        if entities:
-                            if item.id.name == "one":
-                                string = item.value.source
+            # Plurals
+            elif obj.value.type == "Hash":
+                key = obj.id.name
+                string_plural = ""
+                plural_form = None
 
-                            elif item.id.name == "many":
-                                string_plural = item.value.source
-
-                        else:
+                # Get strings
+                for item in obj.value.items:
+                    if entities:
+                        if item.id.name == "one":
                             string = item.value.source
-                            plurals = locale.cldr_plurals.values_list(
-                                "name", flat=True)
-                            plural_form = list(plurals).index(item.id.name)
 
-                        store_l20n(
-                            entities, resource, key, string, comment, locale,
-                            order, string_plural, plural_form)
+                        elif item.id.name == "many":
+                            string_plural = item.value.source
 
-                    comment = ""
-                    order += 1
-
-                # Attributes
-                for attr in obj.attrs:
-                    key = ".".join([obj.id.name, attr.id.name])
-                    string = attr.value.source
+                    else:
+                        string = item.value.source
+                        plurals = locale.cldr_plurals.values_list(
+                            "name", flat=True)
+                        plural_form = list(plurals).index(item.id.name)
 
                     store_l20n(
                         entities, resource, key, string, comment, locale,
-                        order)
+                        order, string_plural, plural_form)
 
-                    comment = ""
-                    order += 1
+                comment = ""
+                order += 1
 
-            # Comments
-            elif obj.type == "Comment":
-                comment = obj.body
+            # Attributes
+            for attr in obj.attrs:
+                key = ".".join([obj.id.name, attr.id.name])
+                string = attr.value.source
 
-        if entities:
-            update_entity_count(resource)
-        else:
-            update_stats(resource, locale)
+                store_l20n(
+                    entities, resource, key, string, comment, locale,
+                    order)
 
-        log.debug("[" + locale.code + "]: " + path + " saved to DB.")
+                comment = ""
+                order += 1
+
+        # Comments
+        elif obj.type == "Comment":
+            comment = obj.body
+
+    if entities:
+        update_entity_count(resource)
+    else:
+        update_stats(resource, locale)
+
+    log.debug("[" + locale.code + "]: " + path + " saved to DB.")
 
 
 def extract_inc(project, locale, path, entities=False):
