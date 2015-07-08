@@ -376,7 +376,8 @@ LOGGING = {
 
 ## Tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_ARGS = ['--logging-filter=-django_browserid,-factory', '--logging-clear-handlers',
+NOSE_ARGS = ['--logging-filter=-django_browserid,-factory,-django.db',
+             '--logging-clear-handlers',
              '--with-progressive']
 
 # Set X-Frame-Options to DENY by default on all responses.
