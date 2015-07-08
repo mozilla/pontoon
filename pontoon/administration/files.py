@@ -1212,7 +1212,7 @@ def dump_inc(project, locale, relative_path):
                     translation = Translation.objects.filter(
                         entity=e, locale=locale, approved=True) \
                         .latest('date').string
-                    line = "#define %s %s\n" % (key, translation)
+                    line = '#define %s %s\n' % (key, translation)
                 except Translation.DoesNotExist as e:
                     line = original
                     pass
