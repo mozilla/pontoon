@@ -23,7 +23,7 @@ class DumpPOTests(TestCase):
         self.project = ProjectFactory.create(
             slug='valid-project',
             locales=[self.locale],
-            last_dumped=datetime(2015, 2, 1)
+            last_committed=datetime(2015, 2, 1)
         )
         self.resource = ResourceFactory.create(
             path='foo/bar.po',
@@ -39,15 +39,18 @@ class DumpPOTests(TestCase):
         """)
         self.fake_pofile.save = mock.Mock()
 
-        patches = [
-            mock.patch('pontoon.administration.files.polib.pofile',
-                       return_value=self.fake_pofile),
-            mock.patch('pontoon.administration.files.get_locale_directory',
-                       return_value={'name': 'test', 'path': '/test'}),
-        ]
-        for patch in patches:
-            patch.start()
-            self.addCleanup(patch.stop)
+        self.patches = {
+            'pofile': mock.patch(
+                'pontoon.administration.files.polib.pofile',
+                return_value=self.fake_pofile
+            ),
+            'get_locale_directory': mock.patch(
+                'pontoon.administration.files.get_locale_directory',
+                return_value={'name': 'test', 'path': '/test'}
+            ),
+        }
+
+        super(DumpPOTests, self).setUp()
 
     def create_translation(self, key, string, approved=True, approved_date=None):
         TranslationFactory.create(

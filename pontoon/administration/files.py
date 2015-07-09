@@ -835,9 +835,9 @@ def dump_po(project, locale, relative_path):
                 locale=locale,
                 approved=True
             )
-            if project.last_dumped:
+            if project.last_committed:
                 translations = translations.filter(
-                    approved_date__gte=project.last_dumped)
+                    approved_date__gte=project.last_committed)
 
             if not entry.msgid_plural:
                 try:
