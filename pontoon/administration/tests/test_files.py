@@ -49,21 +49,42 @@ class DumpPOTests(TestCase):
             patch.start()
             self.addCleanup(patch.stop)
 
+    def create_translation(self, key, string, approved=True, approved_date=None):
+        TranslationFactory.create(
+            string=string,
+            entity__string=key,
+            approved=approved,
+            approved_date=approved_date or datetime(2015, 3, 1),
+            entity__resource=self.resource,
+            locale=self.locale
+        )
+
+    def assert_translated(self, key, expected_string):
+        assert_equal(self.fake_pofile.find(key).msgstr, expected_string)
+
+    def test_update_approved_translations(self):
+        """Ensure that only approved translations are updated."""
+        # Id1 translation unapproved.
+        self.create_translation('Id1', 'NewStr', approved=False)
+
+        # Id2 translation approved.
+        self.create_translation('Id2', 'NewStr', approved=True)
+
+        dump_po(self.project, self.locale, 'foo/bar.po')
+        self.assert_translated('Id1', 'Str1')
+        self.assert_translated('Id2', 'NewStr')
+
     def test_only_update_new_translations(self):
         """
         Ensure that only entities that have translations newer than the
         last update are modified.
         """
         # Id1 translation approved before last dump.
-        TranslationFactory.create(string='Id1', entity__string='NewStr',
-                                  approved=True, approved_date=datetime(2015, 1, 1),
-                                  entity__resource=self.resource, locale=self.locale)
+        self.create_translation('Id1', 'NewStr', approved_date=datetime(2015, 1, 1))
 
         # Id2 translation approved after last dump.
-        TranslationFactory.create(string='Id2', entity__string='NewStr',
-                                  approved=True, approved_date=datetime(2015, 3, 1),
-                                  entity__resource=self.resource, locale=self.locale)
+        self.create_translation('Id2', 'NewStr', approved_date=datetime(2015, 3, 1))
 
         dump_po(self.project, self.locale, 'foo/bar.po')
-        assert_equal(self.fake_pofile.find('Id1').msgstr, 'Str1')
-        assert_equal(self.fake_pofile.find('Id2').msgstr, 'NewStr')
+        self.assert_translated('Id1', 'Str1')
+        self.assert_translated('Id2', 'NewStr')

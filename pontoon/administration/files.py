@@ -830,11 +830,18 @@ def dump_po(project, locale, relative_path):
     for entity in entities:
         entry = po.find(entity.string)
         if entry:
+            translations = Translation.objects.filter(
+                entity=entity,
+                locale=locale,
+                approved=True
+            )
+            if project.last_dumped:
+                translations = translations.filter(
+                    approved_date__gte=project.last_dumped)
+
             if not entry.msgid_plural:
                 try:
-                    translation = Translation.objects.filter(
-                        entity=entity, locale=locale, approved=True) \
-                        .latest('date')
+                    translation = translations.latest('date')
                     entry.msgstr = translation.string
 
                     if translation.date > date:
@@ -850,9 +857,8 @@ def dump_po(project, locale, relative_path):
                 for i in range(0, 6):
                     if i < (locale.nplurals or 1):
                         try:
-                            translation = Translation.objects.filter(
-                                entity=entity, locale=locale,
-                                plural_form=i, approved=True).latest('date')
+                            translation = (translations.filter(plural_form=i)
+                                           .latest('date'))
                             entry.msgstr_plural[i] = translation.string
 
                             if translation.date > date:
