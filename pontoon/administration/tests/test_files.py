@@ -14,11 +14,12 @@ from pontoon.base.tests import (
 )
 
 
-class DumpPOTests(TestCase):
+class DumpResourceTests(TestCase):
+    resource_path = 'fake.file'
+
     def setUp(self):
-        """
-        Set up a fake locale, project, and pofile for dump_po to modify.
-        """
+        super(DumpResourceTests, self).setUp()
+
         self.locale = LocaleFactory.create(code='fake')
         self.project = ProjectFactory.create(
             slug='valid-project',
@@ -26,9 +27,22 @@ class DumpPOTests(TestCase):
             last_committed=datetime(2015, 2, 1)
         )
         self.resource = ResourceFactory.create(
-            path='foo/bar.po',
+            path=self.resource_path,
             project=self.project
         )
+
+        self.get_locale_directory = self.register_patch(mock.patch(
+            'pontoon.administration.files.get_locale_directory',
+            return_value={'name': 'test', 'path': '/test'}
+        ))
+
+
+class DumpPOTests(DumpResourceTests):
+    resource_path = 'foo/bar.po'
+
+    def setUp(self):
+        """Set up a fake pofile for dump_po to modify."""
+        super(DumpPOTests, self).setUp()
 
         self.fake_pofile = polib.pofile("""
             msgid "Id1"
@@ -39,18 +53,10 @@ class DumpPOTests(TestCase):
         """)
         self.fake_pofile.save = mock.Mock()
 
-        self.patches = {
-            'pofile': mock.patch(
-                'pontoon.administration.files.polib.pofile',
-                return_value=self.fake_pofile
-            ),
-            'get_locale_directory': mock.patch(
-                'pontoon.administration.files.get_locale_directory',
-                return_value={'name': 'test', 'path': '/test'}
-            ),
-        }
-
-        super(DumpPOTests, self).setUp()
+        self.register_patch(mock.patch(
+            'pontoon.administration.files.polib.pofile',
+            return_value=self.fake_pofile
+        ))
 
     def create_translation(self, key, string, approved=True, approved_date=None):
         TranslationFactory.create(
@@ -73,7 +79,7 @@ class DumpPOTests(TestCase):
         # Id2 translation approved.
         self.create_translation('Id2', 'NewStr', approved=True)
 
-        dump_po(self.project, self.locale, 'foo/bar.po')
+        dump_po(self.project, self.locale, self.resource_path)
         self.assert_translated('Id1', 'Str1')
         self.assert_translated('Id2', 'NewStr')
 
@@ -88,6 +94,6 @@ class DumpPOTests(TestCase):
         # Id2 translation approved after last dump.
         self.create_translation('Id2', 'NewStr', approved_date=datetime(2015, 3, 1))
 
-        dump_po(self.project, self.locale, 'foo/bar.po')
+        dump_po(self.project, self.locale, self.resource_path)
         self.assert_translated('Id1', 'Str1')
         self.assert_translated('Id2', 'NewStr')

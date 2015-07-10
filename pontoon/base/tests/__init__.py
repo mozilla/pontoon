@@ -11,19 +11,10 @@ from pontoon.base.models import Entity, Locale, Project, Resource, Translation
 
 
 class TestCase(BaseTestCase):
-    def setUp(self):
-        self.mocks = {}
-
-        # Avoid wrapping the entire loop in a try block so mock errors
-        # don't get swallowed up accidentally.
-        try:
-            patches_items = self.patches.items()
-        except AttributeError:
-            return  # No patches? No problem.
-
-        for name, patch in patches_items:
-            self.mocks[name] = patch.start()
-            self.addCleanup(patch.stop)
+    def register_patch(self, patch):
+        mock_object = patch.start()
+        self.addCleanup(patch.stop)
+        return mock_object
 
 
 class ProjectFactory(DjangoModelFactory):
