@@ -254,7 +254,7 @@ class Translation(models.Model):
         # Entity/Locale.
         if self.approved:
             (Translation.objects
-                .filter(entity=self.entity, locale=self.locale)
+                .filter(entity=self.entity, locale=self.locale, plural_form=self.plural_form)
                 .exclude(pk=self.pk)
                 .update(approved=False, approved_user=None, approved_date=None))
 
