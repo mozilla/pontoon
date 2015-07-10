@@ -26,19 +26,24 @@ class UserProfile(models.Model):
     quality_checks = models.BooleanField(default=True)
 
 
-class CLDR_Plurals(models.Model):
-    name = models.CharField(max_length=5, unique=True)
-
-    def __unicode__(self):
-        return self.name
-
-
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
     nplurals = models.SmallIntegerField(null=True, blank=True)
     plural_rule = models.CharField(max_length=128, blank=True)
-    cldr_plurals = models.ManyToManyField(CLDR_Plurals, blank=True)
+
+    # CLDR Plurals
+    CLDR_PLURALS = (
+        (0, 'zero'),
+        (1, 'one'),
+        (2, 'two'),
+        (3, 'few'),
+        (4, 'many'),
+        (5, 'other'),
+    )
+
+    cldr_plurals = models.CommaSeparatedIntegerField(
+        "CLDR Plurals", blank=True, max_length=18, choices=CLDR_PLURALS)
 
     def __unicode__(self):
         return self.name
@@ -49,8 +54,7 @@ class Locale(models.Model):
             'name': self.name,
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
-            'cldr_plurals': list(self.cldr_plurals.values_list(
-                "name", flat=True)),
+            'cldr_plurals': self.cldr_plurals.split(","),
         })
 
 

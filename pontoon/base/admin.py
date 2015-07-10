@@ -1,7 +1,6 @@
 from django.contrib import admin
 from pontoon.base.models import (
     UserProfile,
-    CLDR_Plurals,
     Locale,
     Project,
     Subpage,
@@ -12,7 +11,6 @@ from pontoon.base.models import (
 )
 
 admin.site.register(UserProfile)
-admin.site.register(CLDR_Plurals)
 admin.site.register(Locale)
 admin.site.register(Project)
 admin.site.register(Subpage)
