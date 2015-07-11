@@ -914,15 +914,20 @@ def dump_xliff(project, locale, relative_path):
                 entity = Entity.objects.get(resource=resource, key=key)
 
             except Entity.DoesNotExist as e:
-                log.error('%s: Entity "%s" does not exist' % (path, original))
+                log.error('%s: Entity "%s" does not exist' % (path, key))
                 continue
 
-            try:
-                translation = Translation.objects.filter(
-                    entity=entity, locale=locale, approved=True) \
-                    .latest('date').string
-                unit.settarget(translation)
+            translations = Translation.objects.filter(
+                entity=entity,
+                locale=locale,
+                approved=True
+            )
+            if project.last_committed:
+                translations = translations.filter(
+                    approved_date__gte=project.last_committed)
 
+            try:
+                unit.settarget(translations.latest('date').string)
             except Translation.DoesNotExist as e:
                 # Remove "approved" attribute
                 try:
