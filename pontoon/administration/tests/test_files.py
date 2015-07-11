@@ -54,7 +54,58 @@ class DumpResourceTests(TestCase):
         )
 
 
-class DumpPOTests(DumpResourceTests):
+class DumpTestsMixin(object):
+    """
+    Mixin that contains tests that are common to all dump_* functions.
+
+    These are kept separate from DumpResourceTests so that they're not
+    run except on subclasses.
+    """
+
+    # Subclasses should set this to the dump_* function they want to
+    # test, usually wrapped in a staticmethod() call.
+    dump_functions = None
+
+    def assert_translated(self, key, expected_string):
+        """
+        Assert that the entity witht he given key was dumped with the
+        given string as its translation.
+
+        This is highly dependent on how the subclass mocks the dump_*
+        function.
+        """
+        raise NotImplementedError()
+
+    def test_update_approved_translations(self):
+        """Ensure that only approved translations are updated."""
+        # Id1 translation unapproved.
+        self.create_translation('Id1', 'NewStr', approved=False)
+
+        # Id2 translation approved.
+        self.create_translation('Id2', 'NewStr', approved=True)
+
+        self.dump_function(self.project, self.locale, self.resource_path)
+        self.assert_translated('Id1', 'Str1')
+        self.assert_translated('Id2', 'NewStr')
+
+    def test_only_update_new_translations(self):
+        """
+        Ensure that only entities that have translations newer than the
+        last update are modified.
+        """
+        # Id1 translation approved before last dump.
+        self.create_translation('Id1', 'NewStr', approved_date=datetime(2015, 1, 1))
+
+        # Id2 translation approved after last dump.
+        self.create_translation('Id2', 'NewStr', approved_date=datetime(2015, 3, 1))
+
+        self.dump_function(self.project, self.locale, self.resource_path)
+        self.assert_translated('Id1', 'Str1')
+        self.assert_translated('Id2', 'NewStr')
+
+
+class DumpPOTests(DumpResourceTests, DumpTestsMixin):
+    dump_function = staticmethod(dump_po)
     resource_path = 'foo/bar.po'
 
     def setUp(self):
@@ -78,35 +129,11 @@ class DumpPOTests(DumpResourceTests):
     def assert_translated(self, key, expected_string):
         assert_equal(self.fake_pofile.find(key).msgstr, expected_string)
 
-    def test_update_approved_translations(self):
-        """Ensure that only approved translations are updated."""
-        # Id1 translation unapproved.
-        self.create_translation('Id1', 'NewStr', approved=False)
 
-        # Id2 translation approved.
-        self.create_translation('Id2', 'NewStr', approved=True)
+class DumpXLIFFTests(DumpResourceTests, DumpTestsMixin):
+    dump_function = staticmethod(dump_xliff)
+    resource_path = 'foo/bar.xliff'
 
-        dump_po(self.project, self.locale, self.resource_path)
-        self.assert_translated('Id1', 'Str1')
-        self.assert_translated('Id2', 'NewStr')
-
-    def test_only_update_new_translations(self):
-        """
-        Ensure that only entities that have translations newer than the
-        last update are modified.
-        """
-        # Id1 translation approved before last dump.
-        self.create_translation('Id1', 'NewStr', approved_date=datetime(2015, 1, 1))
-
-        # Id2 translation approved after last dump.
-        self.create_translation('Id2', 'NewStr', approved_date=datetime(2015, 3, 1))
-
-        dump_po(self.project, self.locale, self.resource_path)
-        self.assert_translated('Id1', 'Str1')
-        self.assert_translated('Id2', 'NewStr')
-
-
-class DumpXLIFFTests(DumpResourceTests):
     def setUp(self):
         super(DumpXLIFFTests, self).setUp()
 
@@ -139,18 +166,3 @@ class DumpXLIFFTests(DumpResourceTests):
             raise AssertionError('No unit found with key "{0}"'.format(key))
 
         assert_equal(unit.gettarget(), expected_string)
-
-    def test_only_update_new_translations(self):
-        """
-        Ensure that only entities that have translations newer than the
-        last update are modified.
-        """
-        # Id1 translation approved before last dump.
-        self.create_translation('Id1', 'NewStr', approved_date=datetime(2015, 1, 1))
-
-        # Id2 translation approved after last dump.
-        self.create_translation('Id2', 'NewStr', approved_date=datetime(2015, 3, 1))
-
-        dump_xliff(self.project, self.locale, self.resource_path)
-        self.assert_translated('Id1', 'Str1')
-        self.assert_translated('Id2', 'NewStr')
