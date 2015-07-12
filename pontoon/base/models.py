@@ -45,6 +45,10 @@ class Locale(models.Model):
     cldr_plurals = models.CommaSeparatedIntegerField(
         "CLDR Plurals", blank=True, max_length=18, choices=CLDR_PLURALS)
 
+    def cldr_plurals_list(self):
+        cldr_plurals = self.cldr_plurals.split(",") or [1]
+        return [int(x) for x in cldr_plurals]
+
     def __unicode__(self):
         return self.name
 
@@ -54,7 +58,7 @@ class Locale(models.Model):
             'name': self.name,
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
-            'cldr_plurals': self.cldr_plurals.split(","),
+            'cldr_plurals': self.cldr_plurals_list(),
         })
 
     @classmethod

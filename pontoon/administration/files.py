@@ -603,9 +603,7 @@ def extract_l20n(project, locale, path, entities=False):
                     else:
                         string = item.value.source
                         idx = Locale.cldr_plural_to_id(item.id.name)
-
-                        plurals = locale.cldr_plurals.split(",") or ["1"]
-                        plural_form = [int(x) for x in plurals].index(idx)
+                        plural_form = locale.cldr_plurals_list().index(idx)
 
                     store_l20n(
                         entities, resource, key, string, comment, locale,
@@ -1135,7 +1133,7 @@ def dump_l20n(project, locale, relative_path):
                 # Plurals
                 elif obj.value.type == "Hash":
                     obj.value.items = []
-                    plurals = locale.cldr_plurals.split(",") or ["1"]
+                    plurals = locale.cldr_plurals_list()
 
                     for i in range(0, (len(plurals) or 1)):
                         try:
@@ -1146,7 +1144,7 @@ def dump_l20n(project, locale, relative_path):
                                 plural_form=i,
                                 approved=True).latest('date')
 
-                            idx = int(plurals[i])
+                            idx = plurals[i]
                             hashItem = ast.HashItem(
                                 ast.Identifier(Locale.CLDR_PLURALS[idx][1]),
                                 ast.String(
