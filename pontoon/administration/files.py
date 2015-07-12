@@ -602,11 +602,7 @@ def extract_l20n(project, locale, path, entities=False):
 
                     else:
                         string = item.value.source
-
-                        for i in Locale.CLDR_PLURALS:
-                            if i[1] == item.id.name:
-                                idx = i[0]
-                                break
+                        idx = Locale.cldr_plural_to_id(item.id.name)
 
                         plurals = locale.cldr_plurals.split(",") or ["1"]
                         plural_form = [int(x) for x in plurals].index(idx)

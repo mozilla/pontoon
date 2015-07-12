@@ -57,6 +57,12 @@ class Locale(models.Model):
             'cldr_plurals': self.cldr_plurals.split(","),
         })
 
+    @classmethod
+    def cldr_plural_to_id(self, cldr_plural):
+        for i in self.CLDR_PLURALS:
+            if i[1] == cldr_plural:
+                return i[0]
+
 
 class ProjectQuerySet(models.QuerySet):
     def available(self):
