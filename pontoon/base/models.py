@@ -27,6 +27,14 @@ class UserProfile(models.Model):
     quality_checks = models.BooleanField(default=True)
 
 
+def validate_cldr(value):
+    for item in value.split(','):
+        number = int(item.strip())
+        if number < 0 or number >= len(Locale.CLDR_PLURALS):
+            raise ValidationError(
+                '%s must be a list of integers between 0 and 5' % value)
+
+
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
@@ -42,13 +50,6 @@ class Locale(models.Model):
         (4, 'many'),
         (5, 'other'),
     )
-
-    def validate_cldr(value):
-        for item in value.split(','):
-            number = int(item.strip())
-            if number < 0 or number >= len(Locale.CLDR_PLURALS):
-                raise ValidationError(
-                    '%s must be a list of integers between 0 and 5' % value)
 
     cldr_plurals = models.CommaSeparatedIntegerField(
         "CLDR Plurals", blank=True, max_length=11, validators=[validate_cldr])

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import pontoon.base.models
 
 
 class Migration(migrations.Migration):
@@ -14,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='locale',
             name='cldr_plurals',
-            field=models.CommaSeparatedIntegerField(blank=True, max_length=18, verbose_name=b'CLDR Plurals', choices=[(0, b'zero'), (1, b'one'), (2, b'two'), (3, b'few'), (4, b'other'), (5, b'many')]),
+            field=models.CommaSeparatedIntegerField(blank=True, max_length=11, verbose_name=b'CLDR Plurals', validators=[pontoon.base.models.validate_cldr]),
         ),
         migrations.AlterField(
             model_name='resource',
