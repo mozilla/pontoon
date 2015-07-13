@@ -3,6 +3,7 @@ import json
 import logging
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum
 from django.db.models.signals import post_save
@@ -42,8 +43,15 @@ class Locale(models.Model):
         (5, 'other'),
     )
 
+    def validate_cldr(value):
+        for item in value.split(','):
+            number = int(item.strip())
+            if number < 0 or number >= len(Locale.CLDR_PLURALS):
+                raise ValidationError(
+                    '%s must be a list of integers between 0 and 5' % value)
+
     cldr_plurals = models.CommaSeparatedIntegerField(
-        "CLDR Plurals", blank=True, max_length=18, choices=CLDR_PLURALS)
+        "CLDR Plurals", blank=True, max_length=11, validators=[validate_cldr])
 
     def cldr_plurals_list(self):
         cldr_plurals = self.cldr_plurals.split(",") or [1]
