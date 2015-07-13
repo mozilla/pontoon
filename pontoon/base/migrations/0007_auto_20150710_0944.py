@@ -8,7 +8,7 @@ import pontoon.base.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0005_auto_20150602_0616'),
+        ('base', '0006_auto_20150602_0616'),
     ]
 
     operations = [
