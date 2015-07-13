@@ -1262,33 +1262,9 @@ var Pontoon = (function (my) {
               locale = accept;
             }
           }
-
-          menu.find('.language.' + locale).click();
         }
 
-        // Fallback if selected part not available for the selected project
-        if (details[locale].length > 0) {
-          var detail = details[locale][0],
-              isPath = Object.keys(detail).indexOf("name") === -1,
-              type = isPath ? 'resource__path' : 'name';
-              part = $('.part .selector').attr('title');
-
-          // Selected part available
-          for (var d in details[locale]) {
-            if (details[locale][d][type] === part) {
-              return;
-            }
-          }
-
-          var defaultPart = detail[type];
-          $('header .part').removeClass("hidden")
-            .find('.selector')
-              .attr('title', defaultPart)
-              .find('.title')
-                .html(defaultPart.replace(/^.*[\\\/]/, ''));
-        } else {
-          $('header .part').addClass("hidden");
-        }
+        menu.find('.language.' + locale).click();
       });
 
       // Show only parts available for the selected project
@@ -1370,6 +1346,37 @@ var Pontoon = (function (my) {
         // Select locale
         } else {
           $('.locale .selector').html(language);
+        }
+
+        var details = Pontoon.getProjectDetails(),
+            locales = Object.keys(details),
+            menu = $('.locale .menu'),
+            locale = menu.siblings('.selector')
+              .find('.code').html().toLowerCase();
+
+        // Fallback if selected part not available for the selected project
+        if (details[locale].length > 0) {
+          var detail = details[locale][0],
+              isPath = Object.keys(detail).indexOf("name") === -1,
+              type = isPath ? 'resource__path' : 'name';
+              part = $('.part .selector').attr('title');
+
+          // Selected part available
+          for (var d in details[locale]) {
+            if (details[locale][d][type] === part) {
+              $('header .part').removeClass("hidden");
+              return;
+            }
+          }
+
+          var defaultPart = detail[type];
+          $('header .part').removeClass("hidden")
+            .find('.selector')
+              .attr('title', defaultPart)
+              .find('.title')
+                .html(defaultPart.replace(/^.*[\\\/]/, ''));
+        } else {
+          $('header .part').addClass("hidden");
         }
       });
 
