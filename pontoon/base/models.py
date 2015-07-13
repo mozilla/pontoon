@@ -58,8 +58,10 @@ class Locale(models.Model):
         "CLDR Plurals", blank=True, max_length=11, validators=[validate_cldr])
 
     def cldr_plurals_list(self):
-        cldr_plurals = self.cldr_plurals.split(",") or [1]
-        return [int(x) for x in cldr_plurals]
+        if self.cldr_plurals == '':
+            return [1]
+        else:
+            return map(int, self.cldr_plurals.split(','))
 
     def __unicode__(self):
         return self.name
