@@ -54,7 +54,7 @@ requests==2.6.2
 rsa==3.1.4
 
 # sha256: zHL2c3Bvjys836kQT6Z51ptf22Hn4Xm2cmFH7y5i0iQ
-http://hg.mozilla.org/l10n/silme/archive/b21c5151136e.zip#egg=silme
+http://hg.mozilla.org/l10n/silme/archive/b21c5151136e.zip#egg=silme==0.9.0b
 
 # sha256: QYqTw5en7asj5ViNvAZ6x0pyPts9VBvUk295R252Rdo
 six==1.9.0
