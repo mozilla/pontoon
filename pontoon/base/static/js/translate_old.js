@@ -585,41 +585,50 @@ var Pontoon = (function (my) {
 
         var textarea = $('#translation'),
             pos = textarea[0].selectionStart,
-            placeable = self.doRender($(this).html()),
+            placeable = self.doRender($(this).text()),
             before = textarea.val(),
             after = before.substring(0, pos) + placeable + before.substring(pos);
 
         textarea.val(after).focus();
       });
 
+      function switchToPluralForm(tab) {
+        $("#plural-tabs li").removeClass('active');
+        tab.addClass('active');
+
+        var entity = $('#editor')[0].entity,
+            i = tab.index(),
+            original = entity['marked' + self.isPluralized()],
+            title = !self.isPluralized() ? "Singular" : "Plural",
+            source = entity.translation[i].string;
+
+        $('#source-pane h2').html(title).show();
+        $('#original').html(original);
+
+        $('#translation').val(source).focus();
+        $('#translation-length')
+          .find('.original-length').html(original.length).end()
+          .find('.current-length').html(source.length);
+
+        $('#quality:visible .cancel').click();
+        $("#helpers nav .active a").click();
+      }
+
       // Plurals navigation
       $("#plural-tabs a").click(function (e) {
         e.stopPropagation();
         e.preventDefault();
 
-        var tabs = $(this).parent();
+        var tab = $(this).parent();
 
-        self.checkUnsavedChanges(function() {
-          $("#plural-tabs li").removeClass('active');
-          tabs.addClass('active');
-
-          var entity = $('#editor')[0].entity,
-              i = tabs.index(),
-              original = entity['marked' + self.isPluralized()],
-              title = !self.isPluralized() ? "Singular" : "Plural",
-              source = entity.translation[i].string;
-
-          $('#source-pane h2').html(title).show();
-          $('#original').html(original);
-
-          $('#translation').val(source).focus();
-          $('#translation-length')
-            .find('.original-length').html(original.length).end()
-            .find('.current-length').html(source.length);
-
-          $('#quality:visible .cancel').click();
-          $("#helpers nav .active a").click();
-        });
+        // Only if actually clicked on tab
+        if (e.hasOwnProperty('originalEvent')) {
+          self.checkUnsavedChanges(function() {
+            switchToPluralForm(tab);
+          });
+        } else {
+          switchToPluralForm(tab);
+        }
       });
 
       // Translate textarea keyboard shortcuts
@@ -698,7 +707,7 @@ var Pontoon = (function (my) {
       $('#leave-anyway').click(function() {
         var callback = self.checkUnsavedChangesCallback;
         if (callback) {
-          self.checkUnsavedChangesCallback();
+          callback();
           $('#unsaved').hide();
         }
       });
@@ -756,9 +765,10 @@ var Pontoon = (function (my) {
         var entity = $('#editor')[0].entity,
             source = $('#translation').val();
 
-        if (source === '' && entity.format !== 'properties') {
-          self.endLoader('Empty translations cannot be submitted.', 'error');
-          return;
+        if (source === '' &&
+          ['properties', 'ini', 'dtd'].indexOf(entity.format) === -1) {
+            self.endLoader('Empty translations cannot be submitted.', 'error');
+            return;
         }
 
         self.updateOnServer(entity, source, false, true);
@@ -1290,9 +1300,12 @@ var Pontoon = (function (my) {
         if (details) {
           menu.find('li:not(".no-match")').remove();
           $(details[locale]).each(function() {
+            var cls = '';
+
             if (this.name) {
               var title = this.name,
                   percent = '';
+
             } else {
               var title = this.resource__path,
                   share = 0;
@@ -1304,7 +1317,12 @@ var Pontoon = (function (my) {
 
               percent = Math.floor(share) + '%';
             }
-            menu.append('<li><span>' + title + '</span>' +
+
+            if ($('#server').data('part') === title) {
+              cls = ' class="current"';
+            }
+
+            menu.append('<li' + cls + '><span>' + title + '</span>' +
               '<span>' + percent + '</span></li>');
           });
         }
