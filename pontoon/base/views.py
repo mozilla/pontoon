@@ -266,7 +266,8 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         try:
             page = pages.get(name=part)
         except Subpage.DoesNotExist:
-            page = pages[0]  # If page not specified or doesn't exist
+            # If page not specified or doesn't exist
+            page = pages.filter(resource__stats__locale=l)[0]
 
         data['page_url'] = page.url
         data['part'] = page.name
