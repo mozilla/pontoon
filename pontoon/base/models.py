@@ -29,7 +29,10 @@ class UserProfile(models.Model):
 
 def validate_cldr(value):
     for item in value.split(','):
-        number = int(item.strip())
+        try:
+            number = int(item.strip())
+        except ValueError:
+            return
         if number < 0 or number >= len(Locale.CLDR_PLURALS):
             raise ValidationError(
                 '%s must be a list of integers between 0 and 5' % value)
