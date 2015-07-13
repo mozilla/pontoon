@@ -171,10 +171,6 @@ body > header .locale.select {
 .part.select .menu {
   display: none;
   position: absolute;
-  width: 510px;
-}
-
-.project.select .menu {
   width: 580px;
 }
 
@@ -189,6 +185,10 @@ body > header .locale.select {
 .locale.select .menu ul {
   margin: 0;
   max-height: 318px;
+}
+
+.menu ul li.current {
+  color: #7BC876;
 }
 
 .part .menu ul li {

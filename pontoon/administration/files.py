@@ -10,6 +10,7 @@ import shutil
 import silme.core
 import silme.format.properties
 import silme.format.dtd
+import silme.format.ini
 import StringIO
 import urllib2
 import zipfile
@@ -17,6 +18,12 @@ import zipfile
 from django.conf import settings
 from pontoon.administration.vcs import update_from_vcs
 from translate.storage import xliff
+
+from l20n.format import (
+    parser as L20nParser,
+    serializer as L20nSerializer,
+    ast as L20nast
+)
 
 from pontoon.base.models import (
     Entity,
@@ -33,15 +40,21 @@ from pontoon.base.models import (
 
 log = logging.getLogger('pontoon')
 
+MOZILLA_REPOS = (
+    'ssh://hg.mozilla.org/releases/l10n/mozilla-beta/en-US/',
+    'ssh://hg.mozilla.org/releases/l10n/mozilla-aurora/en-US/',
+    'ssh://hg.mozilla.org/l10n-central/en-US/',
+)
 
 """ Start monkeypatching """
+import re
 from silme.core.structure import Structure, Comment
 from silme.format.properties.parser import PropertiesParser
+from silme.format.ini.parser import Parser as IniParser
 
 
 @classmethod
-def split_comments_mine(
-        cls, text, object, code='default', pointer=0, end=None):
+def split_comments_pro(cls, text, object, code='default', pointer=0, end=None):
     pattern = cls.patterns['comment']
     if end:
         match = pattern.search(text, pointer, end)
@@ -53,8 +66,8 @@ def split_comments_mine(
             cls.split_entities(
                 text, object, code=code, pointer=pointer, end=st0)
         groups = match.groups()
-        comment = silme.core.structure.Comment(
-            match.group(0)[1:].replace('\n#', '\n'))
+        comment = Comment()
+        comment.add(match.group(0)[1:].replace('\n#', '\n'))
         object.append(comment)
         pointer = match.end(0)
         if end:
@@ -64,27 +77,47 @@ def split_comments_mine(
     if (not end or (end > pointer)) and len(text) > pointer:
         cls.split_entities(text, object, code=code, pointer=pointer)
 
-PropertiesParser.split_comments = split_comments_mine
+PropertiesParser.split_comments = split_comments_pro
 
 
-def __repr__mine(self):
-        string = ''
-        for i in self:
-            string += str(i)
-        return string
+@classmethod
+def split_comments_ini(cls, text, object, pointer=0, end=None):
+    pattern = cls.patterns['comment']
+    if end:
+        match = pattern.search(text, pointer, end)
+    else:
+        match = pattern.search(text, pointer)
+    while match:
+        st0 = match.start(0)
+        if st0 > pointer:
+            cls.split_entities(text, object, pointer=pointer, end=st0)
+        comment = Comment()
+        comment.add(
+            match.group(0)[1:].replace('\n;', '\n').replace('\n#', '\n'))
+        object.append(comment)
+        pointer = match.end(0)
+        if end:
+            match = pattern.search(text, pointer, end)
+        else:
+            match = pattern.search(text, pointer)
+    if (not end or (end > pointer)) and len(text) > pointer:
+        cls.split_entities(text, object, pointer=pointer, end=end)
 
-Comment.__repr__ = __repr__mine
+IniParser.split_comments = split_comments_ini
+
+IniParser.patterns['entity'] = re.compile(
+    '^[ \t]*([^#!\s\n][^=:\n]*?)[ \t]*[:=][ \t]*(.*?)(?<!\\\)(?=\n|\Z)',
+    re.S | re.M)
 
 
-def modify_entity_mine(self, id, value, code=None):
+def modify_entity_mine(self, id, value):
     """
-    modifies entity value; supports duplicate keys
-    code - if given modified the value for given locale code
+    modifies as entity value; supports duplicate keys
     """
     found = False
     for item in self:
         if isinstance(item, silme.core.entity.Entity) and item.id == id:
-            item.set_value(value, code)
+            item.value = value
             found = True
 
     if found:
@@ -145,10 +178,10 @@ def get_locale_directory(project, locale):
                 'path': os.path.join(root, dirname),
             }
 
-    # Projects not using locale directories (.ini, file)
+    # Projects not using locale directories (format=file)
     formats = Resource.objects.filter(project=project).values_list(
         'format', flat=True).distinct()
-    if 'ini' in formats or project.repository_type == 'file':
+    if project.repository_type == 'file':
         return {
             'name': '',
             'path': path,
@@ -209,7 +242,7 @@ def get_source_directory(path):
                         'path': source_directory_path,
                     }
 
-    # Projects not using locale directories (.ini, file)
+    # Projects not using locale directories (format=file)
     return {
         'name': '',
         'path': path,
@@ -236,6 +269,25 @@ def get_relative_path(path, locale):
         locale_directory = underscore
 
     return path.split('/' + locale_directory + '/')[-1]
+
+
+def copy_from_source(file_path, repository_path, relative_path):
+    """Create folders and copy files from source"""
+
+    basedir = os.path.dirname(file_path)
+    source_directory = get_source_directory(repository_path)
+
+    if not os.path.exists(basedir):
+        os.makedirs(basedir)
+
+    try:
+        shutil.copy(
+            os.path.join(source_directory['path'], relative_path), file_path)
+
+    # Obsolete files
+    except Exception as e:
+        log.debug(e)
+        return
 
 
 def parse_lang(path):
@@ -389,10 +441,9 @@ def extract_xliff(project, locale, path, entities=False):
 def extract_silme(parser, project, locale, path, entities=False):
     """Extract file with path using silme and save or update in DB."""
 
-    try:
-        f = open(path)
+    with codecs.open(path, 'r', 'utf-8') as f:
         structure = parser.get_structure(f.read())
-        format = str(parser).split('.')[-1].split('Format')[0].lower()
+        format = str(parser).split('.')[2]
 
         comment = ""
         order = 0
@@ -420,7 +471,7 @@ def extract_silme(parser, project, locale, path, entities=False):
 
             elif isinstance(obj, silme.core.structure.Comment):
                 if entities:
-                    comment = str(obj)
+                    comment = ''.join(unicode(i) for i in obj)
 
         if entities:
             update_entity_count(resource)
@@ -428,23 +479,26 @@ def extract_silme(parser, project, locale, path, entities=False):
             update_stats(resource, locale)
 
         log.debug("[" + locale.code + "]: " + path + " saved to DB.")
-        f.close()
-    except IOError:
-        log.debug("[" + locale.code + "]: " +
-                  path + " doesn't exist. Skipping.")
 
 
 def extract_properties(project, locale, path, entities=False):
     """Extract .properties file with path and save or update in DB."""
 
-    parser = silme.format.properties.PropertiesFormatParser
+    parser = silme.format.properties.FormatParser
     extract_silme(parser, project, locale, path, entities)
 
 
 def extract_dtd(project, locale, path, entities=False):
     """Extract .dtd file with path and save or update in DB."""
 
-    parser = silme.format.dtd.DTDFormatParser
+    parser = silme.format.dtd.FormatParser
+    extract_silme(parser, project, locale, path, entities)
+
+
+def extract_ini(project, locale, path, entities=False):
+    """Extract .ini file with path and save or update in DB."""
+
+    parser = silme.format.ini.FormatParser
     extract_silme(parser, project, locale, path, entities)
 
 
@@ -480,63 +534,164 @@ def extract_lang(project, locale, path, entities=False):
     log.debug("[" + locale.code + "]: " + path + " saved to DB.")
 
 
-def extract_ini(project, path):
-    """Extract .ini file with path and save or update in DB."""
+def store_l20n(
+        entities, resource, key, string, comment, locale, order,
+        string_plural="", plural_form=None):
+    """Store .l20n entity or translation."""
 
-    config = configparser.ConfigParser()
+    if entities:
+        save_entity(
+            resource=resource, string=string, string_plural=string_plural,
+            comment=comment, key=key, order=order)
+
+    else:
+        try:
+            e = Entity.objects.get(resource=resource, key=key)
+            save_translation(
+                entity=e, locale=locale, string=string,
+                plural_form=plural_form)
+        except Entity.DoesNotExist:
+            pass
+
+
+def extract_l20n(project, locale, path, entities=False):
+    """Extract .l20n file with path and save or update in DB."""
+
+    parser = L20nParser.L20nParser()
+
     with codecs.open(path, 'r', 'utf-8') as f:
-        try:
-            config.read_file(f)
-        except Exception as e:
-            log.debug("INI configparser: " + str(e))
+        structure = parser.parse(f.read())
 
-    sections = config.sections()
+    comment = ""
+    order = 0
 
-    source_locale = None
-    for s in ('templates', 'en-US', 'en-GB', 'en'):
-        if s in sections:
-            source_locale = s
-            break
-    if source_locale is None:
-        log.error("Unable to detect source locale")
-        raise Exception("error")
-
-    # Move source locale on top, so we save entities first, then translations
-    sections.insert(0, sections.pop(sections.index(source_locale)))
-
+    relative_path = get_relative_path(path, locale)
     resource, created = Resource.objects.get_or_create(
-        project=project, path=path, format='ini')
+        project=project, path=relative_path, format='l20n')
 
-    for section in sections:
-        try:
-            locale = Locale.objects.get(code__iexact=section)
-        except Locale.DoesNotExist:
-            log.debug("Locale not supported: " + section)
-            break
+    for obj in structure.body:
+        # Entities
+        if obj.type == "Entity":
 
-        order = 0
-        for item in config.items(section):
-            if section == source_locale:
-                save_entity(resource=resource, string=item[1],
-                            key=item[0], order=order)
+            # Simple
+            if obj.value.type == "String":
+                key = obj.id.name
+                string = obj.value.source
+
+                store_l20n(
+                    entities, resource, key, string, comment, locale,
+                    order)
+
+                comment = ""
                 order += 1
-            else:
-                try:
-                    e = Entity.objects.get(
-                        resource=resource, key=item[0])
-                    save_translation(
-                        entity=e, locale=locale, string=item[1])
-                except Entity.DoesNotExist:
-                    log.debug("[" + section + "]: line ID " +
-                              item[0] + " is obsolete.")
-                    continue
 
-        if section == source_locale:
+            # Plurals
+            elif obj.value.type == "Hash":
+                key = obj.id.name
+                string_plural = ""
+                plural_form = None
+
+                # Get strings
+                for item in obj.value.items:
+                    if entities:
+                        if item.id.name == "one":
+                            string = item.value.source
+
+                        elif item.id.name == "many":
+                            string_plural = item.value.source
+
+                    else:
+                        string = item.value.source
+                        idx = Locale.cldr_plural_to_id(item.id.name)
+                        plural_form = locale.cldr_plurals_list().index(idx)
+
+                    store_l20n(
+                        entities, resource, key, string, comment, locale,
+                        order, string_plural, plural_form)
+
+                comment = ""
+                order += 1
+
+            # Attributes
+            for attr in obj.attrs:
+                key = ".".join([obj.id.name, attr.id.name])
+                string = attr.value.source
+
+                store_l20n(
+                    entities, resource, key, string, comment, locale,
+                    order)
+
+                comment = ""
+                order += 1
+
+        # Comments
+        elif obj.type == "Comment":
+            comment = obj.body
+
+    if entities:
+        update_entity_count(resource)
+    else:
+        update_stats(resource, locale)
+
+    log.debug("[" + locale.code + "]: " + path + " saved to DB.")
+
+
+def extract_inc(project, locale, path, entities=False):
+    """Extract .inc file with path and save or update in DB."""
+
+    with codecs.open(path, 'r', 'utf-8', errors='replace') as inc_file:
+
+        comment = []
+        order = 0
+        relative_path = get_relative_path(path, locale)
+        resource, created = Resource.objects.get_or_create(
+            project=project, path=relative_path, format='inc')
+
+        for line in inc_file:
+
+            # Uncomment MOZ_LANGPACK_CONTRIBUTORS (commented out)
+            # http://hg.mozilla.org/releases/mozilla-aurora/file/572c8f4c8fed/browser/locales/en-US/defines.inc#l10
+            if entities and line.startswith('# #define'):
+                line = line.lstrip('#').strip()
+
+            # Comments
+            if entities and line.startswith('# '):
+                comment.append(line.lstrip('# ').strip())
+
+            # Strings
+            elif line.startswith('#define'):
+                parts = line.lstrip('#define').strip().split(None, 1)
+
+                if not parts:
+                    continue
+                if len(parts) == 1:
+                    key, string = parts[0], ""
+                else:
+                    key, string = parts
+
+                if entities:
+                    save_entity(resource=resource, string=string, key=key,
+                                comment=" ".join(comment), order=order)
+                    comment = []
+                    order += 1
+
+                else:
+                    try:
+                        e = Entity.objects.get(resource=resource, key=key)
+                        save_translation(
+                            entity=e, locale=locale, string=string)
+                    except Entity.DoesNotExist:
+                        continue
+
+            elif entities:
+                comment = []
+
+        if entities:
             update_entity_count(resource)
         else:
             update_stats(resource, locale)
 
-        log.debug("[" + section + "]: saved to DB.")
+        log.debug("[" + locale.code + "]: " + path + " saved to DB.")
 
 
 def extract_to_database(project, locales=None):
@@ -555,10 +710,16 @@ def extract_to_database(project, locales=None):
         resources = Resource.objects.filter(project=project)
         Entity.objects.filter(resource__in=resources).update(obsolete=True)
 
+        # Empty resources to avoid displaying obsolete ones in part menu
+        resources.update(entity_count=0)
+
+        # Empty stats to avoid dumping obsolete files
+        stats = Stats.objects.filter(resource__in=resources)
+        stats.update(approved_count=0)
+
         # Remove Stats for removed locales
         project_locales = project.locales.all()
-        Stats.objects.filter(resource__in=resources).exclude(
-            locale__in=project_locales).delete()
+        stats.exclude(locale__in=project_locales).delete()
 
         locales = [Locale.objects.get(code__iexact=source_locale)]
         locales.extend(project_locales)
@@ -567,13 +728,10 @@ def extract_to_database(project, locales=None):
     source_paths = get_source_paths(source_directory['path'])
     format = detect_format(source_directory['path'])
 
-    if format == 'ini':
-        try:
-            extract_ini(project, source_paths[0])
-        except Exception as e:
-            if isFile:
-                os.remove(source_paths[0])
-        return
+    # Ignore specific files from Mozilla repos
+    if project.repository_url in MOZILLA_REPOS:
+        source_paths = \
+            [x for x in source_paths if not x.endswith('region.properties')]
 
     for index, locale in enumerate(locales):
         if locale.code == source_locale:
@@ -785,18 +943,7 @@ def dump_silme(parser, project, locale, relative_path):
     locale_directory_path = get_locale_directory(project, locale)["path"]
     path = os.path.join(locale_directory_path, relative_path)
 
-    # Create folders and copy files from source
-    basedir = os.path.dirname(path)
-    source_directory = get_source_directory(project.repository_path)
-    if not os.path.exists(basedir):
-        os.makedirs(basedir)
-    try:
-        shutil.copy(
-            os.path.join(source_directory['path'], relative_path), path)
-    # Obsolete files
-    except Exception as e:
-        log.debug(e)
-        return
+    copy_from_source(path, project.repository_path, relative_path)
 
     with codecs.open(path, 'r+', 'utf-8') as f:
         structure = parser.get_structure(f.read())
@@ -819,7 +966,12 @@ def dump_silme(parser, project, locale, relative_path):
                     # Remove untranslated and following newline
                     pos = structure.entity_pos(key)
                     structure.remove_entity(key)
-                    line = structure[pos]
+
+                    try:
+                        line = structure[pos]
+                    except IndexError:
+                        # No newline at end of file
+                        continue
 
                     if type(line) == unicode and line.startswith('\n'):
                         line = line[len('\n'):]
@@ -843,14 +995,21 @@ def dump_silme(parser, project, locale, relative_path):
 def dump_properties(project, locale, relative_path):
     """Dump .properties file with relative path from database."""
 
-    parser = silme.format.properties.PropertiesFormatParser
+    parser = silme.format.properties.FormatParser
     dump_silme(parser, project, locale, relative_path)
 
 
 def dump_dtd(project, locale, relative_path):
     """Dump .dtd file with relative path from database."""
 
-    parser = silme.format.dtd.DTDFormatParser
+    parser = silme.format.dtd.FormatParser
+    dump_silme(parser, project, locale, relative_path)
+
+
+def dump_ini(project, locale, relative_path):
+    """Dump .ini file with relative path from database."""
+
+    parser = silme.format.ini.FormatParser
     dump_silme(parser, project, locale, relative_path)
 
 
@@ -917,44 +1076,149 @@ def dump_lang(project, locale, relative_path):
         log.debug("File updated: " + path)
 
 
-def dump_ini(project, locale):
-    """Dump .ini files from database."""
+def dump_l20n(project, locale, relative_path):
+    """Dump .l20n file with relative path from database. Generate files
+    from source files, but only ones with translated strings."""
 
-    path = get_locale_directory(project, locale)["path"]
-    source_path = get_source_paths(path)[0]
-    resource = Resource.objects.get(project=project, path=source_path)
-    entities = Entity.objects.filter(resource=resource, obsolete=False)
-    config = configparser.ConfigParser()
+    locale_directory_path = get_locale_directory(project, locale)["path"]
+    path = os.path.join(locale_directory_path, relative_path)
 
-    with codecs.open(source_path, 'r+', 'utf-8', errors='replace') as f:
-        try:
-            config.read_file(f)
-            if config.has_section(locale.code):
+    copy_from_source(path, project.repository_path, relative_path)
 
-                for entity in entities:
-                    key = entity.key
+    with codecs.open(path, 'r+', 'utf-8') as f:
+        parser = L20nParser.L20nParser()
+        structure = parser.parse(f.read())
+        ast = L20nast
+
+        resource = Resource.objects.filter(project=project, path=relative_path)
+        entities = Entity.objects.filter(resource=resource, obsolete=False)
+
+        for obj in structure.body:
+            if obj.type == "Entity":
+
+                # Attributes
+                for attr in obj.attrs:
+                    key = ".".join([obj.id.name, attr.id.name])
 
                     try:
+                        # Modify translated attributes
                         translation = Translation.objects.filter(
-                            entity=entity, locale=locale, approved=True) \
-                            .latest('date').string
-                        config.set(locale.code, key, translation)
+                            entity__key=key, locale=locale, approved=True) \
+                            .latest('date')
+                        attr.value.content[0] = translation.string
 
                     except Translation.DoesNotExist as e:
-                        pass
+                        # Remove untranslated
+                        obj.attrs.remove(attr)
 
-                # Erase and then write, otherwise content gets appended
-                f.seek(0)
-                f.truncate()
-                config.write(f)
-                log.debug("File updated: " + source_path)
+                key = obj.id.name
 
-            else:
-                log.debug("Locale not available in the source file")
-                raise Exception("error")
+                # Simple entities
+                if obj.value.type == "String":
+                    try:
+                        # Modify translated entities
+                        translation = Translation.objects.filter(
+                            entity__key=key, locale=locale, approved=True) \
+                            .latest('date')
+                        obj.value.content[0] = translation.string
 
-        except Exception as e:
-            log.debug("INI configparser: " + str(e))
+                    except Translation.DoesNotExist as e:
+                        # Remove untranslated
+                        obj.value = None
+
+                        # Remove entity
+                        if not obj.attrs:
+                            structure.body.remove(obj)
+
+                # Plurals
+                elif obj.value.type == "Hash":
+                    obj.value.items = []
+                    plurals = locale.cldr_plurals_list()
+
+                    for i in range(0, (len(plurals) or 1)):
+                        try:
+                            # Modify translated plural forms
+                            translation = Translation.objects.filter(
+                                entity__key=key,
+                                locale=locale,
+                                plural_form=i,
+                                approved=True).latest('date')
+
+                            idx = plurals[i]
+                            hashItem = ast.HashItem(
+                                ast.Identifier(Locale.CLDR_PLURALS[idx][1]),
+                                ast.String(
+                                    [translation.string],
+                                    translation.string),
+                                False,
+                            )
+                            obj.value.items.append(hashItem)
+
+                        except Translation.DoesNotExist as e:
+                            # Untranslated already removed on empty items
+                            pass
+
+                    # Remove entity
+                    if not obj.value.items and not obj.attrs:
+                        structure.body.remove(obj)
+
+        # Erase file and then write, otherwise content gets appended
+        f.seek(0)
+        f.truncate()
+        serializer = L20nSerializer.Serializer()
+        content = serializer.serialize(structure)
+        f.write(content)
+
+    log.debug("File updated: " + path)
+
+
+def dump_inc(project, locale, relative_path):
+    """Dump .inc file with relative path from database. Generate files
+    from source files, but only ones with translated strings."""
+
+    locale_directory_path = get_locale_directory(project, locale)["path"]
+    path = os.path.join(locale_directory_path, relative_path)
+
+    copy_from_source(path, project.repository_path, relative_path)
+
+    with codecs.open(path, 'r+', 'utf-8') as inc_file:
+        content = []
+        resource = Resource.objects.filter(project=project, path=relative_path)
+
+        for line in inc_file:
+            original = line
+
+            # Uncomment MOZ_LANGPACK_CONTRIBUTORS (commented out)
+            # http://hg.mozilla.org/releases/mozilla-aurora/file/572c8f4c8fed/browser/locales/en-US/defines.inc#l10
+            if line.startswith('# #define'):
+                line = line.lstrip('#').strip()
+
+            if line.startswith('#define'):
+                key = line.lstrip('#define').strip().split(None, 1)[0]
+
+                try:
+                    e = Entity.objects.get(resource=resource, key=key)
+                except Entity.DoesNotExist:
+                    log.error('%s: Entity "%s" does not exist' % (path, key))
+                    line = original
+                    pass
+
+                try:
+                    translation = Translation.objects.filter(
+                        entity=e, locale=locale, approved=True) \
+                        .latest('date').string
+                    line = '#define %s %s\n' % (key, translation)
+                except Translation.DoesNotExist as e:
+                    line = original
+                    pass
+
+            content.append(line)
+
+        # Erase file and then write, otherwise content gets appended
+        inc_file.seek(0)
+        inc_file.truncate()
+        inc_file.writelines(content)
+        log.debug("File updated: " + path)
 
 
 def dump_from_database(project, locale):
@@ -969,40 +1233,39 @@ def dump_from_database(project, locale):
     formats = Resource.objects.filter(project=project).values_list(
         'format', flat=True).distinct()
 
-    if 'ini' in formats:
-        dump_ini(project, locale)
+    # Get relative paths to translated files only
+    stats = Stats.objects.filter(locale=locale).exclude(approved_count=0) \
+        .values("resource")
+    resources = Resource.objects.filter(project=project, id__in=stats)
+    relative_paths = resources.values_list('path', flat=True).distinct()
 
-    else:
-        # Get relative paths to translated files only
-        stats = Stats.objects.filter(locale=locale).exclude(approved_count=0) \
-            .values("resource")
-        resources = Resource.objects.filter(project=project, id__in=stats)
-        relative_paths = resources.values_list('path', flat=True).distinct()
+    # Asymmetric formats: Remove l10n files from locale repository
+    asymmetric = ['dtd', 'properties', 'ini', 'inc']
 
-        # Asymmetric formats: Remove files and folders from locale repository
-        if 'dtd' in formats or 'properties' in formats:
-            items = os.listdir(locale_directory_path)
-            items = [i for i in items if not i[0] == '.']
+    if all(x in formats for x in asymmetric):
+        for root, dirnames, filenames in os.walk(
+                locale_directory_path, topdown=False):
+            for extension in asymmetric:
+                for filename in fnmatch.filter(filenames, '*.' + extension):
 
-            for item in items:
-                path = os.path.join(locale_directory_path, item)
-                try:
-                    shutil.rmtree(path)
-                except OSError:
-                    if get_format(path) in ('dtd', 'properties'):
-                        os.remove(path)
-                except Exception as e:
-                    log.error(e)
+                    # Ignore specific files from Mozilla repos
+                    if filename != 'region.properties' \
+                            or project.repository_url not in MOZILLA_REPOS:
+                        os.remove(os.path.join(root, filename))
 
-            # If directory empty, make sure Git and Mercurial don't remove it
-            if len(os.listdir(locale_directory_path)) == 0:
-                open(os.path.join(locale_directory_path, '.keep'), 'a').close()
+            # Remove empty directories
+            if not os.listdir(root):
+                shutil.rmtree(os.path.join(locale_directory_path, root))
 
-        # Dump files based on format
-        for path in relative_paths:
-            format = get_format(path)
-            format = 'po' if format == 'pot' else format
-            globals()['dump_%s' % format](project, locale, path)
+        # If directory empty, make sure Git and Mercurial don't remove it
+        if not os.listdir(locale_directory_path):
+            open(os.path.join(locale_directory_path, '.keep'), 'a').close()
+
+    # Dump files based on format
+    for path in relative_paths:
+        format = get_format(path)
+        format = 'po' if format == 'pot' else format
+        globals()['dump_%s' % format](project, locale, path)
 
     return locale_directory_path
 

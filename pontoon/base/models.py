@@ -3,6 +3,7 @@ import json
 import logging
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum
 from django.db.models.signals import post_save
@@ -26,11 +27,36 @@ class UserProfile(models.Model):
     quality_checks = models.BooleanField(default=True)
 
 
+def validate_cldr(value):
+    for item in value.split(','):
+        number = int(item.strip())
+        if number < 0 or number >= len(Locale.CLDR_PLURALS):
+            raise ValidationError(
+                '%s must be a list of integers between 0 and 5' % value)
+
+
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
     nplurals = models.SmallIntegerField(null=True, blank=True)
     plural_rule = models.CharField(max_length=128, blank=True)
+
+    # CLDR Plurals
+    CLDR_PLURALS = (
+        (0, 'zero'),
+        (1, 'one'),
+        (2, 'two'),
+        (3, 'few'),
+        (4, 'many'),
+        (5, 'other'),
+    )
+
+    cldr_plurals = models.CommaSeparatedIntegerField(
+        "CLDR Plurals", blank=True, max_length=11, validators=[validate_cldr])
+
+    def cldr_plurals_list(self):
+        cldr_plurals = self.cldr_plurals.split(",") or [1]
+        return [int(x) for x in cldr_plurals]
 
     def __unicode__(self):
         return self.name
@@ -41,7 +67,14 @@ class Locale(models.Model):
             'name': self.name,
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
+            'cldr_plurals': self.cldr_plurals_list(),
         })
+
+    @classmethod
+    def cldr_plural_to_id(self, cldr_plural):
+        for i in self.CLDR_PLURALS:
+            if i[1] == cldr_plural:
+                return i[0]
 
 
 class ProjectQuerySet(models.QuerySet):
@@ -130,8 +163,10 @@ class Resource(models.Model):
         ('xliff', 'xliff'),
         ('properties', 'properties'),
         ('dtd', 'dtd'),
+        ('inc', 'inc'),
         ('ini', 'ini'),
         ('lang', 'lang'),
+        ('l20n', 'l20n'),
     )
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
@@ -239,7 +274,7 @@ class Translation(models.Model):
         # Entity/Locale.
         if self.approved:
             (Translation.objects
-                .filter(entity=self.entity, locale=self.locale)
+                .filter(entity=self.entity, locale=self.locale, plural_form=self.plural_form)
                 .exclude(pk=self.pk)
                 .update(approved=False, approved_user=None, approved_date=None))
 

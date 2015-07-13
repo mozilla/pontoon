@@ -24,19 +24,19 @@
     </div>
     {% endif %}
     <ul>
-      {% for locale in locales %}
-      <li class="clearfix{% if locale and locale.chart %} filter{% endif %}">
-        {% if locale and locale.chart %}
-        <a href="/{{ locale.code|lower }}/{{ project.slug }}/" class="clearfix">
+      {% for l in locales %}
+      <li class="clearfix{% if locale and locale == l %} current{% endif %}{% if l and l.chart %} filter{% endif %}">
+        {% if l and l.chart %}
+        <a href="/{{ l.code|lower }}/{{ project.slug }}/" class="clearfix">
         {% endif %}
-          <span class="language {{ locale.code|lower }}">{{ locale.name }}</span>
-          <span class="code">{{ locale.code }}</span>
-          {% if locale and locale.chart %}
+          <span class="language {{ l.code|lower }}">{{ l.name }}</span>
+          <span class="code">{{ l.code }}</span>
+          {% if l and l.chart %}
           <span class="chart-wrapper">
-            <span class="chart" data-chart="{{ locale.chart }}">
-              <span class="approved" style="width:{{ locale.chart.approved / locale.chart.total * 100 }}%;"></span>
-              <span class="translated" style="width:{{ locale.chart.translated / locale.chart.total * 100 }}%;"></span>
-              <span class="fuzzy" style="width:{{ locale.chart.fuzzy / locale.chart.total * 100 }}%;"></span>
+            <span class="chart" data-chart="{{ l.chart }}">
+              <span class="approved" style="width:{{ l.chart.approved / l.chart.total * 100 }}%;"></span>
+              <span class="translated" style="width:{{ l.chart.translated / l.chart.total * 100 }}%;"></span>
+              <span class="fuzzy" style="width:{{ l.chart.fuzzy / l.chart.total * 100 }}%;"></span>
             </span>
           </span>
         </a>
