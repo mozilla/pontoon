@@ -746,7 +746,7 @@ body > header aside p {
 
 #editor p {
   text-align: left;
-  white-space: normal;
+  white-space: pre-line;
 }
 
 #topbar {
