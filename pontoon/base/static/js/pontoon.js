@@ -99,25 +99,6 @@
               hideToolbar(target);
               return false;
             }
-
-            if (key === 9) { // Tab: status quo + move around entities
-              // Disabled.
-              // TODO: re-number entities and re-enable
-              return false;
-              // If on last entity, jump to the first
-              if (next > entities.length) {
-                $.each(entities, function() {
-                  if (this.body) {
-                    next = this.id;
-                  }
-                });
-              }
-              cancel.click();
-              $(target).removeClass('pontoon-hovered');
-              postMessage("HOVER", id);
-              entities[next].hover();
-              $('.pontoon-editable-toolbar > .edit').click();
-            }
           }
         });
       }
