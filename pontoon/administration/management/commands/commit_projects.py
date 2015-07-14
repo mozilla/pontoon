@@ -1,4 +1,5 @@
-from datetime import datetime
+
+import datetime
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
@@ -77,9 +78,5 @@ class Command(BaseCommand):
 
                 output('Commited project %s for %s (%s)' %
                        (project, locale.name, locale.code))
-
-            # Update last_committed date for project.
-            project.last_committed = datetime.now()
-            project.save()
 
         output('COMMIT PROJECTS: done')

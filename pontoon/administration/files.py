@@ -830,18 +830,11 @@ def dump_po(project, locale, relative_path):
     for entity in entities:
         entry = po.find(entity.string)
         if entry:
-            translations = Translation.objects.filter(
-                entity=entity,
-                locale=locale,
-                approved=True
-            )
-            if project.last_committed:
-                translations = translations.filter(
-                    approved_date__gte=project.last_committed)
-
             if not entry.msgid_plural:
                 try:
-                    translation = translations.latest('date')
+                    translation = Translation.objects.filter(
+                        entity=entity, locale=locale, approved=True) \
+                        .latest('date')
                     entry.msgstr = translation.string
 
                     if translation.date > date:
@@ -857,8 +850,9 @@ def dump_po(project, locale, relative_path):
                 for i in range(0, 6):
                     if i < (locale.nplurals or 1):
                         try:
-                            translation = (translations.filter(plural_form=i)
-                                           .latest('date'))
+                            translation = Translation.objects.filter(
+                                entity=entity, locale=locale,
+                                plural_form=i, approved=True).latest('date')
                             entry.msgstr_plural[i] = translation.string
 
                             if translation.date > date:
@@ -914,20 +908,15 @@ def dump_xliff(project, locale, relative_path):
                 entity = Entity.objects.get(resource=resource, key=key)
 
             except Entity.DoesNotExist as e:
-                log.error('%s: Entity "%s" does not exist' % (path, key))
+                log.error('%s: Entity "%s" does not exist' % (path, original))
                 continue
 
-            translations = Translation.objects.filter(
-                entity=entity,
-                locale=locale,
-                approved=True
-            )
-            if project.last_committed:
-                translations = translations.filter(
-                    approved_date__gte=project.last_committed)
-
             try:
-                unit.settarget(translations.latest('date').string)
+                translation = Translation.objects.filter(
+                    entity=entity, locale=locale, approved=True) \
+                    .latest('date').string
+                unit.settarget(translation)
+
             except Translation.DoesNotExist as e:
                 # Remove "approved" attribute
                 try:
