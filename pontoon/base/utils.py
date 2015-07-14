@@ -165,7 +165,7 @@ def mark_placeables(text):
             # Correctly render placeables in translation editor
             content = {
                 'TabEscapePlaceable': u'\\t',
-                'EscapePlaceable': u'\\\\',
+                'EscapePlaceable': u'\\',
                 'SpacesPlaceable': spaces,
                 'NewlinePlaceable': {
                     u'\r\n': u'\\r\\n<br/>\n',
