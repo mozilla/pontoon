@@ -70,6 +70,12 @@ def mark_placeables(text):
     Source: http://bit.ly/1yQOC9B
     """
 
+    class NewlineEscapePlaceable(base.Ph):
+        """Placeable handling newline escapes."""
+        istranslatable = False
+        regex = re.compile(r'\\n')
+        parse = classmethod(general.regex_parse)
+
     class TabEscapePlaceable(base.Ph):
         """Placeable handling tab escapes."""
         istranslatable = False
@@ -89,6 +95,7 @@ def mark_placeables(text):
         parse = classmethod(general.regex_parse)
 
     PARSERS = [
+        NewlineEscapePlaceable.parse,
         TabEscapePlaceable.parse,
         EscapePlaceable.parse,
         # DISABLED: turns newline character into \n, see Firefox: netError.dtd
@@ -116,6 +123,7 @@ def mark_placeables(text):
     ]
 
     TITLES = {
+        'NewlineEscapePlaceable': "Escaped newline",
         'TabEscapePlaceable': "Escaped tab",
         'EscapePlaceable': "Escaped sequence",
         'SpacesPlaceable': "Unusual space in string",
