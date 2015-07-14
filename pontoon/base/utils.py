@@ -91,7 +91,8 @@ def mark_placeables(text):
     PARSERS = [
         TabEscapePlaceable.parse,
         EscapePlaceable.parse,
-        general.NewlinePlaceable.parse,
+        # DISABLED: turns newline character into \n, see Firefox: netError.dtd
+        # general.NewlinePlaceable.parse,
         # The spaces placeable can match '\n  ' and mask the newline,
         # so it has to come later.
         SpacesPlaceable.parse,
