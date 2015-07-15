@@ -747,13 +747,12 @@ def extract_to_database(project, locales=None):
             globals()['extract_%s' % format](project, locale, path, entities)
 
 
-def update_from_repository(project, locales=None):
+def update_from_repository(project):
     """
     Update project files from remote repository.
 
     Args:
         project: Project instance
-        locales: List of Locale instances
     """
     log.debug("Update project files from remote repository.")
 
@@ -772,7 +771,6 @@ def update_from_repository(project, locales=None):
 
     # Save file to server
     if repository_type == 'file':
-
         u = urllib2.urlopen(repository_url)
         file_name = repository_url.rstrip('/').rsplit('/', 1)[1]
         file_path = os.path.join(repository_path_master, file_name)
@@ -788,28 +786,15 @@ def update_from_repository(project, locales=None):
 
     # Save files to server
     else:
+        update_from_vcs(repository_type, repository_url, repository_path)
 
-        if not locales:
-            update_from_vcs(repository_type, repository_url, repository_path)
-
-        if repository_url_master:  # One-locale repo
-            if not locales:
-                locales = project.locales.all()
-            for l in locales:
+        # If one-locale repo, also update locale repositorites
+        if repository_url_master:
+            for l in project.locales.all():
                 update_from_vcs(
                     repository_type,
                     os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
-
-        elif locales:
-            if repository_type == 'svn':
-                for l in locales:
-                    path = get_locale_directory(project, l)["path"]
-                    update_from_vcs(repository_type, repository_url, path)
-
-            else:
-                update_from_vcs(
-                    repository_type, repository_url, repository_path)
 
     # Store project repository_path
     project.repository_path = repository_path
