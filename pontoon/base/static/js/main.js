@@ -479,17 +479,24 @@ $(function() {
 
   // Menu sort
   $('.menu .sort span').click(function (e) {
-    function val(index, el) {
+    function val(index, el, type) {
+      // Sort by alphabetical order
       if (index !== 2) {
         return $(el).find('span:eq(' + index + ')').html();
 
+      // Sort by approved, then by unapproved percentage
       } else {
         if (!$(el).find('.chart').length) {
           return 0;
         }
         var chart = $(el).find('.chart').data('chart'),
             data = JSON.parse(chart.replace(/'/g, "\""));
-        return data.approved/data.total;
+
+        if (type !== "unapproved") {
+          return data.approved/data.total;
+        } else {
+          return data.translated/data.total;
+        }
       }
     }
 
@@ -505,7 +512,9 @@ $(function() {
 
     listitems.sort(function(a, b) {
       return (val(index, a) < val(index, b)) ? -dir :
-        (val(index, a) > val(index, b)) ? dir : 0;
+        (val(index, a) > val(index, b)) ? dir :
+        (val(index, a, "unapproved") < val(index, b, "unapproved")) ? -dir :
+        (val(index, a, "unapproved") > val(index, b, "unapproved")) ? dir : 0;
     });
 
     ul.append(listitems);
