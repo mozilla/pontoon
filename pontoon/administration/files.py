@@ -25,6 +25,7 @@ from l20n.format import (
     ast as L20nast
 )
 
+from pontoon.base import MOZILLA_REPOS
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -40,13 +41,6 @@ from pontoon.base.models import (
 
 log = logging.getLogger('pontoon')
 
-MOZILLA_REPOS = (
-    'ssh://hg.mozilla.org/users/m_owca.info/firefox-aurora/',
-    'ssh://hg.mozilla.org/users/m_owca.info/firefox-for-android-aurora/',
-    'ssh://hg.mozilla.org/users/m_owca.info/thunderbird-aurora/',
-    'ssh://hg.mozilla.org/users/m_owca.info/lightning-aurora/',
-    'ssh://hg.mozilla.org/users/m_owca.info/seamonkey-aurora/',
-)
 
 """ Start monkeypatching """
 import re

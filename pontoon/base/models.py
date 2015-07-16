@@ -1,15 +1,20 @@
 import datetime
 import json
 import logging
+import os.path
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum
 from django.db.models.signals import post_save
 from django.forms import ModelForm
+from django.utils import timezone
 
-from pontoon.base import utils
+from jsonfield import JSONField
+
+from pontoon.base import MOZILLA_REPOS, utils
 
 
 log = logging.getLogger('pontoon')
@@ -95,6 +100,7 @@ class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale)
+    last_synced = models.DateTimeField(null=True)
 
     # Repositories
     REPOSITORY_TYPE_CHOICES = (
@@ -142,6 +148,80 @@ class Project(models.Model):
             ("can_localize", "Can localize projects"),
         )
 
+    @property
+    def can_commit(self):
+        """
+        True if we can commit strings back to the repository this
+        project is hosted in, False otherwise.
+        """
+        return self.repository_type in ('git', 'hg', 'svn')
+
+    @property
+    def checkout_path(self):
+        """Path that this project's VCS checkout is located."""
+        return os.path.join(settings.MEDIA_ROOT, self.repository_type, self.slug)
+
+    def source_directory_name(self):
+        """Name of the directory that source strings are stored in."""
+        for root, dirnames, filenames in os.walk(self.checkout_path):
+            for dirname in dirnames:
+                if dirname in ('templates', 'en-US', 'en-GB', 'en'):
+                    return dirname
+
+        return None
+
+    def locale_directory_name(self, locale_code=None):
+        """
+        Name of the directory that strings for the given locale are
+        stored.
+        """
+        path = self.checkout_path
+        locale_code = locale_code or self.source_directory_name()
+        if locale_code is not None:
+            for root, dirnames, filenames in os.walk(path):
+                if locale_code in dirnames:
+                    return locale_code
+
+                locale_variant = locale_code.replace('-', '_')
+                if locale_variant in dirnames:
+                    return locale_variant
+
+        raise Exception('Directory for locale `{0}` not found'.format(
+                        locale_code or 'source'))
+
+    def locale_directory_path(self, locale_code=None):
+        """
+        Path to the directory that strings for the given locale are
+        stored.
+        """
+        directory_name = self.locale_directory_name(locale_code)
+        return os.path.join(self.checkout_path, directory_name)
+
+    def relative_resource_paths(self, locale_code=None):
+        """
+        List of paths relative to self.checkout_path for all of the
+        resources for the given locale. If no locale code is given, the
+        source resources are used.
+        """
+        path = self.locale_directory_path(locale_code)
+        for absolute_path in self.resources_for_path(path):
+            yield os.path.relpath(absolute_path, path)
+
+    def resources_for_path(self, path):
+        """
+        List of paths for all supported resources found within the given
+        path.
+        """
+        for root, dirnames, filenames in os.walk(path):
+            # Ignore certain files in Mozilla repositories.
+            if self.repository_url in MOZILLA_REPOS:
+                filenames = [f for f in filenames if f.endswith('region.properties')]
+
+            for filename in filenames:
+                base, extension = os.path.splitext(filename)
+                if extension[1:].lower() in Resource.ALLOWED_EXTENSIONS:
+                    yield os.path.join(root, filename)
+
     def __unicode__(self):
         return self.name
 
@@ -176,8 +256,18 @@ class Resource(models.Model):
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
 
+    ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + ['pot']
+
     def __unicode__(self):
         return '%s: %s' % (self.project.name, self.path)
+
+    @classmethod
+    def get_path_format(self, path):
+        filename, extension = os.path.splitext(path)
+        path_format = extension[1:].lower()
+
+        # Special case: pot files are considered the po format
+        return 'po' if path_format == 'pot' else path_format
 
 
 class Subpage(models.Model):
@@ -232,6 +322,29 @@ class Entity(models.Model):
             'obsolete': self.obsolete,
         }
 
+    def has_changed(self, locale_code):
+        project = self.resource.project
+        if project.last_synced is None:
+            return True
+
+        recently_approved = self.translation_set.filter(
+            approved_date__gt=project.last_synced,
+            locale__code=locale_code
+        )
+        if recently_approved.exists():
+            return True
+
+        approved = self.translation_set.filter(approved=True)
+        recently_deleted = Translation.deleted_objects.filter(
+            entity=self,
+            deleted__gt=project.last_synced,
+            locale__code=locale_code
+        )
+        if not approved.exists() and recently_deleted.exists():
+            return True
+
+        return False
+
     def add_translation(self, string, locale, user):
         """
         Add a new translation for this entity. If a matching translation
@@ -255,6 +368,23 @@ class Entity(models.Model):
         translation.save()
 
 
+class TranslationManager(models.Manager):
+    def get_queryset(self):
+        return (super(TranslationManager, self).get_queryset()
+                .filter(deleted__isnull=True))
+
+
+class DeletedTranslationManager(models.Manager):
+    def get_queryset(self):
+        return (super(DeletedTranslationManager, self).get_queryset()
+                .filter(deleted__isnull=False))
+
+
+def extra_default():
+    """Default value for the Translation.extra field."""
+    return {}
+
+
 class Translation(models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
@@ -268,6 +398,19 @@ class Translation(models.Model):
         User, related_name='approvers', null=True, blank=True)
     approved_date = models.DateTimeField(null=True, blank=True)
     fuzzy = models.BooleanField(default=False)
+    deleted = models.DateTimeField(default=None, null=True)
+
+    # extra stores data that we want to save for the specific format
+    # this translation is stored in, but that we otherwise don't care
+    # about.
+    extra = JSONField(default=extra_default)
+
+    # Due to https://code.djangoproject.com/ticket/14891,
+    # TranslationManager will be used for the reverse FK from entities,
+    # e.g. entity.translation_set. Deleted translations cannot be
+    # accessed via that relation.
+    objects = TranslationManager()
+    deleted_objects = DeletedTranslationManager()
 
     def __unicode__(self):
         return self.string
@@ -287,6 +430,9 @@ class Translation(models.Model):
         if stats:
             update_stats(self.entity.resource, self.locale)
 
+    def mark_for_deletion(self):
+        self.deleted = timezone.now()
+        self.save()
 
     def delete(self, stats=True, *args, **kwargs):
         super(Translation, self).delete(*args, **kwargs)
@@ -448,7 +594,7 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
     if len(translations) > 0:
         try:
             return translations.filter(approved=True).latest("date")
-        except Translation.DoesNotExist as e:
+        except Translation.DoesNotExist:
             return translations.latest("date")
     else:
         return Translation()
@@ -515,7 +661,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             try:
                 t = translations_equal.filter(approved=True).latest("date")
                 t.approved_date = now
-            except Translation.DoesNotExist as e:
+            except Translation.DoesNotExist:
                 t = translations_equal.latest("date")
 
         # If fuzzy status changes

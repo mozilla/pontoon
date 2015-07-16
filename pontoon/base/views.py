@@ -576,7 +576,7 @@ def delete_translation(request, template=None):
     locale = translation.locale
     plural_form = translation.plural_form
 
-    translation.delete()
+    translation.mark_for_deletion()
 
     # Mark next translation approved if needed
     next = get_translation(
@@ -685,6 +685,7 @@ def update_translation(request, template=None):
                     t.user = user
 
                 t.approved = True
+                t.approved_date = datetime.datetime.now()
                 t.fuzzy = False
 
                 if t.approved_user is None:

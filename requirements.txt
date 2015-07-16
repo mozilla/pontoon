@@ -169,3 +169,10 @@ Sphinx==1.3.1
 # sha256: SlwIPaNyS1CauqpJQ2oyf9EwkL3Ah8fIuUTQ1DeudTM
 # sha256: znfi_bqrquOT_84qYlKgpmbjl3xsL6HEjE3tBWl4WVE
 alabaster==0.7.4
+# sha256: G-4U2FR4kpaYI3chlYnX6eTwalRrktmfLu-8KdBxHXE
+# sha256: bg5ENLg92FuXwBRx8TP9z-qofWwklk7kdRGzmfYGInc
+django-bulk-update==1.1.4
+# sha256: Qjri4WBhUEQYq3q_CnQOJqeB-bx2dKbPXi8R7bSugCk
+parsimonious==0.6.2
+# sha256: fn9zpnXFGHErrdeDJ54m0WQUDz_C7XoyECw9CKaipKc
+jsonfield==1.0.3
