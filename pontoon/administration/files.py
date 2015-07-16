@@ -41,9 +41,12 @@ from pontoon.base.models import (
 log = logging.getLogger('pontoon')
 
 MOZILLA_REPOS = (
-    'ssh://hg.mozilla.org/releases/l10n/mozilla-beta/en-US/',
-    'ssh://hg.mozilla.org/releases/l10n/mozilla-aurora/en-US/',
-    'ssh://hg.mozilla.org/l10n-central/en-US/',
+    'ssh://hg.mozilla.org/releases/mozilla-beta/',
+    'ssh://hg.mozilla.org/releases/mozilla-aurora/',
+    'ssh://hg.mozilla.org/mozilla-central/',
+    'ssh://hg.mozilla.org/releases/comm-beta/',
+    'ssh://hg.mozilla.org/releases/comm-aurora/',
+    'ssh://hg.mozilla.org/comm-central/',
 )
 
 """ Start monkeypatching """
@@ -288,6 +291,15 @@ def copy_from_source(file_path, repository_path, relative_path):
     except Exception as e:
         log.debug(e)
         return
+
+
+def copy_directory(source, destination):
+    """Empty destination and copy source directory over"""
+
+    if os.path.exists(destination):
+        shutil.rmtree(destination)
+
+    shutil.copytree(source, destination)
 
 
 def parse_lang(path):
@@ -769,6 +781,21 @@ def update_from_repository(project):
         repository_url_master = repository_url.rsplit(ending, 1)[0]
         repository_path = os.path.join(repository_path_master, ending)
 
+    # If Mozilla repo, set paths
+    elif project.repository_url in MOZILLA_REPOS:
+        base = repository_url.rsplit(ending, 1)[0]
+
+        src = 'en-US'
+        if ending.startswith('comm'):
+            src = 'en-US-comm'
+            ending = ending.replace('comm', 'mozilla')
+
+        repository_url_master = os.path.join(base, 'l10n', ending)
+        repository_path_master = os.path.join(
+            settings.MEDIA_ROOT, project.repository_type, ending)
+
+        repository_path = os.path.join(repository_path_master, src)
+
     # Save file to server
     if repository_type == 'file':
         u = urllib2.urlopen(repository_url)
@@ -795,6 +822,48 @@ def update_from_repository(project):
                     repository_type,
                     os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
+
+    # If Mozilla repo, copy l10n resources to a separate directory
+    if project.repository_url in MOZILLA_REPOS:
+        path = get_repository_path_master(project)
+
+        if project.slug.startswith('firefox-for-android'):
+            folders = ['mobile', 'mobile/android', 'mobile/android/base']
+
+        elif project.slug.startswith('firefox'):
+            folders = [
+                'browser', 'browser/branding/official', 'dom', 'netwerk',
+                'security/manager', 'services/sync', 'toolkit', 'webapprt'
+            ]
+
+        elif project.slug.startswith('thunderbird'):
+            folders = [
+                'chat', 'editor/ui', 'mail',
+                'other-licenses/branding/thunderbird'
+            ]
+
+        elif project.slug.startswith('lightning'):
+            folders = ['calendar']
+
+        elif project.slug.startswith('suite'):
+            folders = ['suite']
+
+        # Source folders
+        for folder in folders:
+            source = os.path.join(repository_path, folder, 'locales/en-US')
+            destination = os.path.join(os.path.join(path, 'en-US'), folder)
+            copy_directory(source, destination)
+
+        # Locale folders
+        locale_folders = set([x.split('/')[0] for x in folders])
+
+        for l in project.locales.all():
+            for folder in locale_folders:
+                source = os.path.join(repository_path_master, l.code, folder)
+                destination = os.path.join(os.path.join(path, l.code), folder)
+                copy_directory(source, destination)
+
+        repository_path = os.path.join(path, 'en-US')
 
     # Store project repository_path
     project.repository_path = repository_path
@@ -1251,6 +1320,22 @@ def dump_from_database(project, locale):
         format = get_format(path)
         format = 'po' if format == 'pot' else format
         globals()['dump_%s' % format](project, locale, path)
+
+    # If Mozilla repo, set locale directory path and copy folders back to repo
+    if project.repository_url in MOZILLA_REPOS:
+
+        # Set locale directory
+        old_locale_directory_path = locale_directory_path
+        repo_path = os.path.join(settings.MEDIA_ROOT, project.repository_type)
+        norm_url = os.path.normpath(project.repository_url)
+        directory = os.path.basename(norm_url).replace('comm', 'mozilla')
+        locale_directory_path = os.path.join(repo_path, directory, locale.code)
+
+        # Copy fodlers to locale repo
+        for folder in next(os.walk(old_locale_directory_path))[1]:
+            source = os.path.join(old_locale_directory_path, folder)
+            destination = os.path.join(locale_directory_path, folder)
+            copy_directory(source, destination)
 
     return locale_directory_path
 
