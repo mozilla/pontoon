@@ -21,7 +21,7 @@
     <ul>
       {% for p in projects %}
       <li class="clearfix{% if project and project == p %} current{% endif %}">
-        {% if p and p.chart and p.chart.total %}
+        {% if url_prefix %}
         <a href="/{{ url_prefix }}/{{ p.slug }}/" class="clearfix">
         {% endif %}
           <span class="name"
@@ -36,8 +36,10 @@
               <span class="fuzzy" style="width:{{ p.chart.fuzzy / p.chart.total * 100 }}%;"></span>
             </span>
           </span>
-        </a>
           {% endif %}
+        {% if url_prefix %}
+        </a>
+        {% endif %}
       </li>
       {% endfor %}
       <li class="no-match">No results</li>
