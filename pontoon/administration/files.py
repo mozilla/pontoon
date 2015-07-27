@@ -41,12 +41,9 @@ from pontoon.base.models import (
 log = logging.getLogger('pontoon')
 
 MOZILLA_REPOS = (
-    'ssh://hg.mozilla.org/releases/mozilla-beta/',
-    'ssh://hg.mozilla.org/releases/mozilla-aurora/',
-    'ssh://hg.mozilla.org/mozilla-central/',
-    'ssh://hg.mozilla.org/releases/comm-beta/',
-    'ssh://hg.mozilla.org/releases/comm-aurora/',
-    'ssh://hg.mozilla.org/comm-central/',
+    'ssh://hg.mozilla.org/users/m_owca.info/mozilla-beta/',
+    'ssh://hg.mozilla.org/users/m_owca.info/mozilla-aurora/',
+    'ssh://hg.mozilla.org/users/m_owca.info/mozilla-central/',
 )
 
 """ Start monkeypatching """
@@ -783,18 +780,12 @@ def update_from_repository(project):
 
     # If Mozilla repo, set paths
     elif project.repository_url in MOZILLA_REPOS:
-        base = repository_url.rsplit(ending, 1)[0]
-
-        src = 'en-US'
-        if ending.startswith('comm'):
-            src = 'en-US-comm'
-            ending = ending.replace('comm', 'mozilla')
-
-        repository_url_master = os.path.join(base, 'l10n', ending)
+        base = 'ssh://hg.mozilla.org/releases/l10n/'
+        repository_url_master = os.path.join(base, ending)
         repository_path_master = os.path.join(
             settings.MEDIA_ROOT, project.repository_type, ending)
 
-        repository_path = os.path.join(repository_path_master, src)
+        repository_path = os.path.join(repository_path_master, 'en-US')
 
     # Save file to server
     if repository_type == 'file':
@@ -825,22 +816,18 @@ def update_from_repository(project):
 
     # If Mozilla repo, copy l10n resources to a separate directory
     if project.repository_url in MOZILLA_REPOS:
-        path = get_repository_path_master(project)
 
         if project.slug.startswith('firefox-for-android'):
-            folders = ['mobile', 'mobile/android', 'mobile/android/base']
+            folders = ['mobile']
 
         elif project.slug.startswith('firefox'):
             folders = [
-                'browser', 'browser/branding/official', 'dom', 'netwerk',
-                'security/manager', 'services/sync', 'toolkit', 'webapprt'
+                'browser', 'dom', 'netwerk', 'security',
+                'services', 'toolkit', 'webapprt'
             ]
 
         elif project.slug.startswith('thunderbird'):
-            folders = [
-                'chat', 'editor/ui', 'mail',
-                'other-licenses/branding/thunderbird'
-            ]
+            folders = ['chat', 'editor', 'mail', 'other-licenses']
 
         elif project.slug.startswith('lightning'):
             folders = ['calendar']
@@ -848,19 +835,15 @@ def update_from_repository(project):
         elif project.slug.startswith('suite'):
             folders = ['suite']
 
-        # Source folders
-        for folder in folders:
-            source = os.path.join(repository_path, folder, 'locales/en-US')
-            destination = os.path.join(os.path.join(path, 'en-US'), folder)
-            copy_directory(source, destination)
+        path = get_repository_path_master(project)
 
-        # Locale folders
-        locale_folders = set([x.split('/')[0] for x in folders])
+        locales = [Locale.objects.get(code='en-US')]
+        locales.extend(project.locales.all())
 
-        for l in project.locales.all():
-            for folder in locale_folders:
+        for l in locales:
+            for folder in folders:
                 source = os.path.join(repository_path_master, l.code, folder)
-                destination = os.path.join(os.path.join(path, l.code), folder)
+                destination = os.path.join(path, l.code, folder)
                 copy_directory(source, destination)
 
         repository_path = os.path.join(path, 'en-US')
@@ -1331,7 +1314,7 @@ def dump_from_database(project, locale):
         directory = os.path.basename(norm_url).replace('comm', 'mozilla')
         locale_directory_path = os.path.join(repo_path, directory, locale.code)
 
-        # Copy fodlers to locale repo
+        # Copy folders to locale repo
         for folder in next(os.walk(old_locale_directory_path))[1]:
             source = os.path.join(old_locale_directory_path, folder)
             destination = os.path.join(locale_directory_path, folder)
