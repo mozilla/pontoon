@@ -2,10 +2,11 @@
 """This script creates or updates en-US repositories from Mozilla source
    code to use for Mozilla product localization."""
 
+from __future__ import print_function
+
 import os
 import shutil
 import subprocess
-
 
 TARGET_REPOS = {
     'firefox-aurora': {
@@ -35,7 +36,6 @@ TARGET_REPOS = {
         'repository': 'comm-aurora',
     },
 }
-
 
 SOURCE_REPOS = set(v["repository"] for v in TARGET_REPOS.values())
 
@@ -92,12 +92,10 @@ def push(path):
     elif len(error):
         print(unicode(error))
 
-
 # Change working directory to where script is located
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
-
 
 # Clone or update source repositories
 for repo in SOURCE_REPOS:
