@@ -131,21 +131,18 @@ Structure.modify_entity = modify_entity_mine
 """ End monkeypatching """
 
 
-def get_locale_paths(project, locale):
+def get_locale_paths(project, locale, source_paths, source_directory):
     """Get paths to locale files."""
 
     locale_paths = []
-    path = get_locale_directory(project, locale)["path"]
-    formats = Resource.objects.filter(project=project).values_list(
-        'format', flat=True).distinct()
+    locale_directory = get_locale_directory(project, locale)["name"]
 
-    for root, dirnames, filenames in os.walk(path):
-        # Ignore hidden files
-        filenames = [f for f in filenames if not f[0] == '.']
+    for path in source_paths:
+        locale_path = path.replace(
+            '/' + source_directory + '/', '/' + locale_directory + '/')
 
-        for format in formats:
-            for filename in fnmatch.filter(filenames, '*.' + format):
-                locale_paths.append(os.path.join(root, filename))
+        if os.path.exists(locale_path):
+            locale_paths.append(locale_path)
 
     return locale_paths
 
@@ -740,7 +737,7 @@ def extract_to_database(project, locales=None):
             paths = source_paths
             entities = True
         else:
-            paths = get_locale_paths(project, locale)
+            paths = get_locale_paths(project, locale, source_paths, source_directory['name'])
             entities = isFile
 
         for path in paths:
