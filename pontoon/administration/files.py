@@ -41,9 +41,11 @@ from pontoon.base.models import (
 log = logging.getLogger('pontoon')
 
 MOZILLA_REPOS = (
-    'ssh://hg.mozilla.org/users/m_owca.info/mozilla-beta/',
-    'ssh://hg.mozilla.org/users/m_owca.info/mozilla-aurora/',
-    'ssh://hg.mozilla.org/users/m_owca.info/mozilla-central/',
+    'ssh://hg.mozilla.org/users/m_owca.info/firefox-aurora/',
+    'ssh://hg.mozilla.org/users/m_owca.info/firefox-for-android-aurora/',
+    'ssh://hg.mozilla.org/users/m_owca.info/thunderbird-aurora/',
+    'ssh://hg.mozilla.org/users/m_owca.info/lightning-aurora/',
+    'ssh://hg.mozilla.org/users/m_owca.info/seamonkey-aurora/',
 )
 
 """ Start monkeypatching """
@@ -288,15 +290,6 @@ def copy_from_source(file_path, repository_path, relative_path):
     except Exception as e:
         log.debug(e)
         return
-
-
-def copy_directory(source, destination):
-    """Empty destination and copy source directory over"""
-
-    if os.path.exists(destination):
-        shutil.rmtree(destination)
-
-    shutil.copytree(source, destination)
 
 
 def parse_lang(path):
@@ -780,11 +773,8 @@ def update_from_repository(project):
 
     # If Mozilla repo, set paths
     elif project.repository_url in MOZILLA_REPOS:
-        base = 'ssh://hg.mozilla.org/releases/l10n/'
-        repository_url_master = os.path.join(base, ending)
-        repository_path_master = os.path.join(
-            settings.MEDIA_ROOT, project.repository_type, ending)
-
+        base = 'ssh://hg.mozilla.org/releases/l10n/mozilla-'
+        repository_url_master = base + ending.split("-")[-1]
         repository_path = os.path.join(repository_path_master, 'en-US')
 
     # Save file to server
@@ -813,40 +803,6 @@ def update_from_repository(project):
                     repository_type,
                     os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
-
-    # If Mozilla repo, copy l10n resources to a separate directory
-    if project.repository_url in MOZILLA_REPOS:
-
-        if project.slug.startswith('firefox-for-android'):
-            folders = ['mobile']
-
-        elif project.slug.startswith('firefox'):
-            folders = [
-                'browser', 'dom', 'netwerk', 'security',
-                'services', 'toolkit', 'webapprt'
-            ]
-
-        elif project.slug.startswith('thunderbird'):
-            folders = ['chat', 'editor', 'mail', 'other-licenses']
-
-        elif project.slug.startswith('lightning'):
-            folders = ['calendar']
-
-        elif project.slug.startswith('suite'):
-            folders = ['suite']
-
-        path = get_repository_path_master(project)
-
-        locales = [Locale.objects.get(code='en-US')]
-        locales.extend(project.locales.all())
-
-        for l in locales:
-            for folder in folders:
-                source = os.path.join(repository_path_master, l.code, folder)
-                destination = os.path.join(path, l.code, folder)
-                copy_directory(source, destination)
-
-        repository_path = os.path.join(path, 'en-US')
 
     # Store project repository_path
     project.repository_path = repository_path
@@ -1303,22 +1259,6 @@ def dump_from_database(project, locale):
         format = get_format(path)
         format = 'po' if format == 'pot' else format
         globals()['dump_%s' % format](project, locale, path)
-
-    # If Mozilla repo, set locale directory path and copy folders back to repo
-    if project.repository_url in MOZILLA_REPOS:
-
-        # Set locale directory
-        old_locale_directory_path = locale_directory_path
-        repo_path = os.path.join(settings.MEDIA_ROOT, project.repository_type)
-        norm_url = os.path.normpath(project.repository_url)
-        directory = os.path.basename(norm_url).replace('comm', 'mozilla')
-        locale_directory_path = os.path.join(repo_path, directory, locale.code)
-
-        # Copy folders to locale repo
-        for folder in next(os.walk(old_locale_directory_path))[1]:
-            source = os.path.join(old_locale_directory_path, folder)
-            destination = os.path.join(locale_directory_path, folder)
-            copy_directory(source, destination)
 
     return locale_directory_path
 

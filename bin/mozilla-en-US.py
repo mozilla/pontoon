@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""This script creates or updates en-US repository from Mozilla source
+"""This script creates or updates en-US repositories from Mozilla source
    code to use for Mozilla product localization."""
 
 import os
@@ -7,18 +7,37 @@ import shutil
 import subprocess
 
 
-CONFIG = {
-    'sources': ['comm-aurora', 'mozilla-aurora'],
-    'target': 'mozilla-aurora',
-    'folders': [
-        'browser', 'browser/branding/official', 'dom', 'netwerk',
-        'security/manager', 'services/sync', 'toolkit', 'webapprt',
-        'mobile', 'mobile/android', 'mobile/android/base',
-        'chat', 'editor/ui', 'mail', 'other-licenses/branding/thunderbird',
-        'calendar',
-        'suite',
-    ],
+TARGET_REPOS = {
+    'firefox-aurora': {
+        'folders': [
+            'browser', 'browser/branding/official', 'dom', 'netwerk',
+            'security/manager', 'services/sync', 'toolkit', 'webapprt',
+        ],
+        'repository': 'mozilla-aurora',
+    },
+    'firefox-for-android-aurora': {
+        'folders': ['mobile', 'mobile/android', 'mobile/android/base'],
+        'repository': 'mozilla-aurora',
+    },
+    'thunderbird-aurora': {
+        'folders': [
+            'chat', 'editor/ui', 'mail',
+            'other-licenses/branding/thunderbird'
+        ],
+        'repository': 'comm-aurora',
+    },
+    'lightning-aurora': {
+        'folders': ['calendar'],
+        'repository': 'comm-aurora',
+    },
+    'seamonkey-aurora': {
+        'folders': ['suite'],
+        'repository': 'comm-aurora',
+    },
 }
+
+
+SOURCE_REPOS = set(v["repository"] for v in TARGET_REPOS.values())
 
 
 def execute(command, cwd=None):
@@ -81,30 +100,32 @@ os.chdir(dname)
 
 
 # Clone or update source repositories
-for repo in CONFIG['sources']:
+for repo in SOURCE_REPOS:
     base = 'ssh://hg.mozilla.org/releases/'
     url = os.path.join(base, repo)
     target = os.path.join('source', repo)
     pull(url, target)
 
-# Clone or update target repository
-repo = CONFIG['target']
-base = 'ssh://hg.mozilla.org/users/m_owca.info/'
-url = os.path.join(base, repo)
-target = os.path.join('target', repo)
-pull(url, target)
+for repo in TARGET_REPOS.keys():
+    base = 'ssh://hg.mozilla.org/users/m_owca.info/'
+    url = os.path.join(base, repo)
+    target = os.path.join('target', repo)
 
-# Copy folders from source to target
-for folder in CONFIG['folders']:
-    for source in CONFIG['sources']:
+    # Clone or update target repositories
+    pull(url, target)
+
+    # Copy folders from source to target
+    folders = TARGET_REPOS[repo]['folders']
+    source = TARGET_REPOS[repo]['repository']
+
+    for folder in folders:
         origin = os.path.join('source', source, folder, 'locales/en-US')
         destination = os.path.join('target', repo, folder)
 
-        if os.path.exists(origin):
-            if os.path.exists(destination):
-                shutil.rmtree(destination)
+        if os.path.exists(destination):
+            shutil.rmtree(destination)
 
-            shutil.copytree(origin, destination)
+        shutil.copytree(origin, destination)
 
-# Commit and push target repository
-push(target)
+    # Commit and push target repositories
+    push(target)
