@@ -141,6 +141,9 @@ def get_locale_paths(project, locale, source_paths, source_directory):
         locale_path = path.replace(
             '/' + source_directory + '/', '/' + locale_directory + '/')
 
+        if locale_path.endswith('.pot'):
+            locale_path = locale_path[:-1]
+
         if os.path.exists(locale_path):
             locale_paths.append(locale_path)
 
