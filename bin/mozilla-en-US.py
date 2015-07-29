@@ -41,7 +41,6 @@ SOURCE_REPOS = set(v["repository"] for v in TARGET_REPOS.values())
 
 
 def execute(command, cwd=None):
-
     try:
         st = subprocess.PIPE
         proc = subprocess.Popen(
@@ -56,7 +55,6 @@ def execute(command, cwd=None):
 
 
 def pull(url, target):
-
     # Undo local changes
     execute(['hg', 'revert', '--all', '--no-backup'], target)
 
@@ -76,7 +74,6 @@ def pull(url, target):
 
 
 def push(path):
-
     # Add
     execute(['hg', 'add'], path)
 
