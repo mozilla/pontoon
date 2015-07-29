@@ -19,6 +19,15 @@ you create:
 ``ADMIN_NAME``
    Optional. Name for the ``ADMINS`` setting.
 
+``DISABLE_COLLECTSTATIC``
+   Disables running ``./manage.py collectstatic`` during the build. Should be
+   set to ``1``.
+
+   Heroku's Python buildpack has a bug that causes issues when running node
+   binaries during the compile step of the buildpack. To get around this, we run
+   the command in our post-compile step (see ``bin/post_compile``) when the
+   issue doesn't occur.
+
 ``DJANGO_DEBUG``
    Controls ``DEBUG`` mode for the site. Should be set to `False` in
    production.
@@ -29,19 +38,6 @@ you create:
 
 ``HMAC_KEY``
    Required. Secret key used for hashing passwords.
-
-``PIPELINE_BABEL_BINARY``
-   Required. Command for executing Babel_ during the build process.
-
-   The Heroku Python buildpack moves the project's code around during the build
-   process, so specifying this is important as you can't rely on babel or node
-   to be in your ``PATH``. Set this to
-   ``./.heroku/node/bin/node ./node_modules/babel/bin/babel/index.js`` to get
-   minification working properly on Heroku.
-
-``PIPELINE_YUGLIFY_BINARY``
-   Required. Command for executing Yuglify_ during the build process. Set this
-   to ``./.heroku/node/bin/node ./node_modules/yuglify/bin/yuglify``.
 
 ``SECRET_KEY``
    Required. Secret key used for sessions, cryptographic signing, etc.
@@ -145,7 +141,7 @@ you'll have to use the Django shell to mark your user account as an admin:
 Gotchas
 -------
 - Changing the ``SSH_KEY`` or ``SSH_CONFIG`` environment variables *requires*
-  a rebuild of the site, as these settings are only using at build time. Simply
+  a rebuild of the site, as these settings are only used at build time. Simply
   changing them will not actually update the site until the next build.
 
   The `Heroku Repo`_ plugin includes a rebuild command that is handy for
