@@ -58,10 +58,12 @@ def pull(url, target):
     # Undo local changes
     execute(['hg', 'revert', '--all', '--no-backup'], target)
 
+    # Pull
     code, output, error = execute(['hg', 'pull', '-u'], target)
     if code == 0:
         print('Repository at ' + url + ' updated.')
 
+    # Clone
     else:
         print(unicode(error))
         print('Clone instead.')
