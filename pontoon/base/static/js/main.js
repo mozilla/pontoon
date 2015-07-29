@@ -479,25 +479,19 @@ $(function() {
 
   // Menu sort
   $('.menu .sort span').click(function (e) {
-    function val(index, el, type) {
-      // Sort by alphabetical order
-      if (index !== 2) {
-        return $(el).find('span:eq(' + index + ')').html();
+    function getString(el) {
+      return $(el).find('span:eq(' + index + ')').html();
+    }
 
-      // Sort by approved, then by unapproved percentage
-      } else {
-        if (!$(el).find('.chart').length) {
-          return 0;
-        }
-        var chart = $(el).find('.chart').data('chart'),
-            data = JSON.parse(chart.replace(/'/g, "\""));
-
-        if (type !== "unapproved") {
-          return data.approved/data.total;
-        } else {
-          return data.translated/data.total;
-        }
+    function get(el, type) {
+      if (!$(el).find('.chart').length) {
+        return 0;
       }
+
+      var chart = $(el).find('.chart').data('chart'),
+          data = JSON.parse(chart.replace(/'/g, "\""));
+
+      return data[type]/data.total;
     }
 
     var index = $(this).index(),
@@ -511,10 +505,15 @@ $(function() {
     $(this).addClass(cls);
 
     listitems.sort(function(a, b) {
-      return (val(index, a) < val(index, b)) ? -dir :
-        (val(index, a) > val(index, b)) ? dir :
-        (val(index, a, "unapproved") < val(index, b, "unapproved")) ? -dir :
-        (val(index, a, "unapproved") > val(index, b, "unapproved")) ? dir : 0;
+      if (index !== 2) {
+        // Sort by alphabetical order
+        return getString(a).localeCompare(getString(b)) * dir;
+
+      } else {
+        // Sort by approved, then by unapproved percentage
+        return (get(a, "approved") - get(b, "approved")) * dir ||
+          (get(a, "translated") - get(b, "translated")) * dir;
+      }
     });
 
     ul.append(listitems);
