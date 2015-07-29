@@ -94,7 +94,6 @@ INSTALLED_APPS = (
     'pontoon.base',
     'pontoon.administration',
     'pontoon.intro',
-    'pontoon.translate',
 
     # Django contrib apps
     'django.contrib.admin',
@@ -214,12 +213,6 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/translate.min.css',
     },
-    'translate_new': {
-        'source_filenames': (
-            'css/translate_new.css',
-        ),
-        'output_filename': 'css/translate_new.min.css',
-    },
     'user': {
         'source_filenames': (
             'css/user.css',
@@ -260,21 +253,6 @@ PIPELINE_JS = {
             'js/jquery.timeago.js',
         ),
         'output_filename': 'js/translate.min.js',
-    },
-    'translate_new': {
-        'source_filenames': (
-            ('js/lib/react-with-addons-0.13.3.js' if DEBUG else
-             'js/lib/react-with-addons-0.13.3.min.js'),
-            'js/lib/classnames.js',
-            'browserid/api.js',
-            'js/translate/models.es6',
-            'js/translate/utils.es6',
-            'js/translate/TranslationEditor.es6',
-            'js/translate/TranslationSelector.es6',
-            'js/translate/TranslateView.es6',
-            'js/translate/bootstrap.es6',
-        ),
-        'output_filename': 'js/translate_new.min.js',
     },
     'user': {
         'source_filenames': (
