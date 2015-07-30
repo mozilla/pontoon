@@ -5,7 +5,7 @@ from django.utils import timezone
 from bulk_update.helper import bulk_update
 
 from pontoon.administration.files import update_from_repository
-from pontoon.administration.vcs import commit_to_vcs
+from pontoon.administration.vcs import commit_to_vcs, CommitToRepositoryException
 from pontoon.base.models import Entity, Locale, Project, Resource, Translation
 from pontoon.base.utils import match_attr
 from pontoon.base.vcs_models import VCSProject
@@ -23,6 +23,7 @@ class Command(BaseCommand):
             default=False,
             help='Do not commit changes to VCS'
         )
+
     def log(self, msg, *args, **kwargs):
         """Log a message to the console."""
         self.stdout.write(msg.format(*args, **kwargs))
@@ -107,10 +108,15 @@ class Command(BaseCommand):
             changeset.create_db_entity(vcs_entity)
         else:
             for locale in db_project.locales.all():
+                if not vcs_entity.has_translation_for(locale.code):
+                    # VCS lacks an entity for this locale, so we can't
+                    # pull updates nor edit it. Skip it!
+                    continue
+
                 if db_entity.has_changed(locale.code):
                     # Pontoon changes overwrite whatever VCS has.
                     changeset.update_vcs_entity(locale.code, db_entity, vcs_entity)
-                elif vcs_entity.has_translation_for(locale.code):
+                else:
                     # If Pontoon has nothing or has not changed, and the VCS
                     # still has the entity, update Pontoon with whatever may
                     # have changed.
@@ -165,7 +171,7 @@ class Command(BaseCommand):
                     user,
                     db_project.repository_url
                 )
-            except Exception as err:
+            except CommitToRepositoryException as err:
                 result = {'message': unicode(err)}
 
             if result is not None:

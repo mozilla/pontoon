@@ -30,6 +30,11 @@ class LangEntity(VCSTranslation):
             extra={'tags': tags},  # Tags are a langfile-specific feature.
         )
 
+        # If the translation matches the source string without the {ok}
+        # tag, then the translation isn't actually valid, so we remove
+        # it.
+        if source_string == translation_string and 'ok' not in tags:
+            del self.strings[None]
 
 
 class LangFile(ParsedResource):
@@ -61,11 +66,13 @@ class LangFile(ParsedResource):
         # {ok} tag if present. Or, if the translation exists and is
         # identical to the source, add the {ok} tag if it's missing.
         translation = entity.strings.get(None, None)
+        tags = entity.extra['tags']
         if translation is None:
             translation = entity.source_string
-            entity.extra['tags'].remove('ok')
-        elif translation == entity.source_string and 'ok' not in entity.extra['tags']:
-            entity.extra['tags'].append('ok')
+            if 'ok' in tags:
+                tags.remove('ok')
+        elif translation == entity.source_string and 'ok' not in tags:
+            tags.append('ok')
 
         if entity.extra.get('tags'):
             tags = [u'{{{tag}}}'.format(tag=t) for t in entity.extra['tags']]
