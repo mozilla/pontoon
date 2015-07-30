@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import Counter
 from textwrap import dedent
 
 from django.contrib.auth.models import User
@@ -158,24 +158,30 @@ class Command(BaseCommand):
         if self.no_commit:
             return
 
-        superuser = User.objects.filter(is_superuser=True).first()
         for locale in db_project.locales.all():
-            authors = changeset.commit_authors_per_locale[locale.code]
-            author_list = '\n'.join('- ' + author.display_name for author in authors)
+            authors = changeset.commit_authors_per_locale.get(locale.code, [])
+            author_list = '\n'.join('- ' + author.display_name for author in set(authors))
 
-            commit_message = dedent("""\
+            # Use the top translator for this batch as commit author, or
+            # the first admin we can find if there are no authors.
+            if len(authors) > 0:
+                commit_author = Counter(authors).most_common(1)[0][0]
+            else:
+                commit_author = User.objects.filter(is_superuser=True).first()
+
+            commit_message = dedent("""
                 Pontoon: Updated {locale.name} ({locale.code}) localization of {project.name}
 
                 Translation authors:
                 {author_list}
-            """).format(locale=locale, project=db_project, author_list=author_list)
+            """).strip().format(locale=locale, project=db_project, author_list=author_list)
 
             try:
                 result = commit_to_vcs(
                     db_project.repository_type,
                     db_project.locale_directory_path(locale.code),
                     commit_message,
-                    superuser,
+                    commit_author,
                     db_project.repository_url
                 )
             except CommitToRepositoryException as err:
@@ -213,7 +219,7 @@ class ChangeSet(object):
         self.translations_to_update = []
         self.translations_to_create = []
 
-        self.commit_authors_per_locale = defaultdict(set)
+        self.commit_authors_per_locale = {}
 
     def update_vcs_entity(self, locale_code, db_entity, vcs_entity):
         """
@@ -303,9 +309,7 @@ class ChangeSet(object):
             }
 
             # Track which translators were involved.
-            for translation in db_translations:
-                if translation.user:
-                    self.commit_authors_per_locale[locale_code].add(translation.user)
+            self.commit_authors_per_locale[locale_code] = [t.user for t in db_translations if t.user]
 
         for resource in changed_resources:
             resource.save()
