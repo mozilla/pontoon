@@ -152,7 +152,7 @@ class CommitToGit(CommitToRepository):
                    'user.email=pontoon@pontoon.mozilla.org']
 
         # Add
-        execute(git_cmd + ['add', '-A'], path)
+        execute(git_cmd + ['add', '-A', '--', path], path)
 
         # Commit
         commit = git_cmd + ['commit', '-m', message, '--author', author]
