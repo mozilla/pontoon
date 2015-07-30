@@ -1,3 +1,6 @@
+from collections import defaultdict
+from textwrap import dedent
+
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
@@ -83,7 +86,7 @@ class Command(BaseCommand):
 
         # Apply the changeset to the files and then commit them.
         changeset.execute()
-        self.commit_changes(db_project)
+        self.commit_changes(db_project, changeset)
 
         # Once we've successfully committed, update the last_synced date.
         db_project.last_synced = timezone.now()
@@ -116,6 +119,7 @@ class Command(BaseCommand):
                 if db_entity.has_changed(locale.code):
                     # Pontoon changes overwrite whatever VCS has.
                     changeset.update_vcs_entity(locale.code, db_entity, vcs_entity)
+
                 else:
                     # If Pontoon has nothing or has not changed, and the VCS
                     # still has the entity, update Pontoon with whatever may
@@ -149,26 +153,29 @@ class Command(BaseCommand):
         """
         return ':'.join([entity.resource.path, entity.key])
 
-    def commit_changes(self, db_project):
+    def commit_changes(self, db_project, changeset):
         """Commit the changes we've made back to the VCS."""
         if self.no_commit:
             return
 
-        # TODO: Set translation author properly.
-        user = User.objects.filter(is_superuser=True).first()
-
+        superuser = User.objects.filter(is_superuser=True).first()
         for locale in db_project.locales.all():
-            commit_message = (
-                'Pontoon: Updated {locale.name} ({locale.code}) localization of '
-                '{project.name}'
-            ).format(locale=locale, project=db_project)
+            authors = changeset.commit_authors_per_locale[locale.code]
+            author_list = '\n'.join('- ' + author.display_name for author in authors)
+
+            commit_message = dedent("""\
+                Pontoon: Updated {locale.name} ({locale.code}) localization of {project.name}
+
+                Translation authors:
+                {author_list}
+            """).format(locale=locale, project=db_project, author_list=author_list)
 
             try:
                 result = commit_to_vcs(
                     db_project.repository_type,
                     db_project.locale_directory_path(locale.code),
                     commit_message,
-                    user,
+                    superuser,
                     db_project.repository_url
                 )
             except CommitToRepositoryException as err:
@@ -205,6 +212,8 @@ class ChangeSet(object):
         self.entities_to_update = []
         self.translations_to_update = []
         self.translations_to_create = []
+
+        self.commit_authors_per_locale = defaultdict(set)
 
     def update_vcs_entity(self, locale_code, db_entity, vcs_entity):
         """
@@ -292,6 +301,11 @@ class ChangeSet(object):
             vcs_translation.strings = {
                 db.plural_form: db.string for db in db_translations
             }
+
+            # Track which translators were involved.
+            for translation in db_translations:
+                if translation.user:
+                    self.commit_authors_per_locale[locale_code].add(translation.user)
 
         for resource in changed_resources:
             resource.save()

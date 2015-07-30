@@ -20,6 +20,14 @@ from pontoon.base import MOZILLA_REPOS, utils
 log = logging.getLogger('pontoon')
 
 
+# User class extensions
+@property
+def user_display_name(self):
+    name = self.first_name or self.email.split('@')[0]
+    return u'{name} <{email}>'.format(name=name, email=self.email)
+User.add_to_class('display_name', user_display_name)
+
+
 class UserProfile(models.Model):
     # This field is required.
     user = models.OneToOneField(User, related_name='profile')
