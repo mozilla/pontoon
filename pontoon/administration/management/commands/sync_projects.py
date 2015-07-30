@@ -15,6 +15,14 @@ class Command(BaseCommand):
     args = '<project_slug project_slug ...>'
     help = 'Synchronize database and remote repositories.'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--no-commit',
+            action='store_true',
+            dest='no_commit',
+            default=False,
+            help='Do not commit changes to VCS'
+        )
     def log(self, msg, *args, **kwargs):
         """Log a message to the console."""
         self.stdout.write(msg.format(*args, **kwargs))
@@ -31,6 +39,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.verbosity = options['verbosity']
+        self.no_commit = options['no_commit']
 
         self.log('SYNC PROJECTS: start')
         projects = Project.objects.filter(disabled=False)
@@ -136,6 +145,9 @@ class Command(BaseCommand):
 
     def commit_changes(self, db_project):
         """Commit the changes we've made back to the VCS."""
+        if self.no_commit:
+            return
+
         # TODO: Set translation author properly.
         user = User.objects.filter(is_superuser=True).first()
 
