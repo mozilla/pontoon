@@ -16,6 +16,7 @@ from pontoon.base.vcs_models import VCSTranslation
 LangComment = namedtuple('LangComment', ['content'])
 
 
+BLANK_LINE = 'blank_line'
 TAG_REGEX = re.compile(r'\{(ok|l10n-extra)\}')
 
 
@@ -54,8 +55,8 @@ class LangFile(ParsedResource):
                     self.write_entity(f, child)
                 elif isinstance(child, LangComment):
                     self.write_comment(f, child)
-
-                f.write(u'\n\n')
+                elif child == BLANK_LINE:
+                    f.write(u'\n')
 
     def write_entity(self, f, entity):
         for comment in entity.comments:
@@ -88,17 +89,18 @@ class LangFile(ParsedResource):
 
 
 class LangVisitor(NodeVisitor):
-    grammar = Grammar("""
-        lang_file = (comment / entity)*
+    grammar = Grammar(r"""
+        lang_file = (comment / entity / blank_line)*
 
-        comment = "##" line_content line_end
+        comment = "##" line_content "\n"
         line_content = ~r".*"
-        line_end = ("\\n" / ~r"\s")+
+
+        blank_line = ~r"((?!\n)\s)*" "\n"
 
         entity = entity_comment* string translation
-        entity_comment = "#" line_content line_end
-        string = ";" line_content line_end
-        translation = line_content line_end
+        entity_comment = "#" line_content "\n"
+        string = ";" line_content "\n"
+        translation = line_content "\n"
     """)
 
     def visit_lang_file(self, node, children):
@@ -106,6 +108,9 @@ class LangVisitor(NodeVisitor):
 
     def visit_comment(self, node, (marker, content, end)):
         return LangComment(content.text.strip())
+
+    def visit_blank_line(self, node, (whitespace, newline)):
+        return BLANK_LINE
 
     def visit_entity(self, node, (comments, string, translation)):
         comments = self.normalize_zero_or_more_strings(comments)
