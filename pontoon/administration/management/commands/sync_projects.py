@@ -141,7 +141,7 @@ class Command(BaseCommand):
         Generate a key for the given entity that is unique within the
         project.
         """
-        return ':'.join([entity.resource.path, entity.string])
+        return ':'.join([entity.resource.path, entity.key])
 
     def commit_changes(self, db_project):
         """Commit the changes we've made back to the VCS."""
@@ -299,7 +299,7 @@ class ChangeSet(object):
             'resource': self.resources[vcs_entity.resource.path],
             'string': vcs_entity.string,
             'string_plural': '',  # TODO: Support plural source.
-            'key': '',  # TODO: Support keys separate from source.
+            'key': vcs_entity.key,
             'comment': '\n'.join(vcs_entity.comments),
             'order': vcs_entity.order,
             'source': ''  # TODO: Support source

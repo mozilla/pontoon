@@ -64,11 +64,12 @@ class VCSResource(object):
                 else:
                     vcs_entity = VCSEntity(
                         resource=self,
+                        key=translation.key,
                         string=translation.source_string,
                         comments=translation.comments,
                         order=index
                     )
-                    self.entities[translation.key] = vcs_entity
+                    self.entities[vcs_entity.key] = vcs_entity
 
                 vcs_entity.translations[locale.code] = translation
 
@@ -86,8 +87,9 @@ class VCSEntity(object):
     An Entity is a single string to be translated, and a VCSEntity
     stores the translations for an entity from several locales.
     """
-    def __init__(self, resource, string, comments, order):
+    def __init__(self, resource, key, string, comments, order):
         self.resource = resource
+        self.key = key
         self.string = string
         self.translations = {}
         self.comments = comments
@@ -108,20 +110,10 @@ class VCSTranslation(object):
     pontoon.base.models.Translation.plural_form and the values equal the
     translation for that plural form.
     """
-    def __init__(self, source_string, strings, comments, fuzzy, extra):
+    def __init__(self, key, source_string, strings, comments, fuzzy, extra):
+        self.key = key
         self.source_string = source_string
         self.strings = strings
         self.comments = comments
         self.fuzzy = fuzzy
         self.extra = extra
-
-    @property
-    def key(self):
-        """
-        String used to identify this entity that is unique within the
-        resource this translation belongs to.
-
-        Most formats either use the source string or a separate key
-        stored in self.extra for this.
-        """
-        raise NotImplementedError()

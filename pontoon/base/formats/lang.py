@@ -22,6 +22,7 @@ TAG_REGEX = re.compile(r'\{(ok|l10n-extra)\}')
 class LangEntity(VCSTranslation):
     def __init__(self, source_string, translation_string, comments, tags):
         super(LangEntity, self).__init__(
+            key=source_string,  # Langfiles use the source as the key.
             source_string=source_string,
             strings={None: translation_string},  # Langfiles lack plural support
             comments=comments,
@@ -29,9 +30,6 @@ class LangEntity(VCSTranslation):
             extra={'tags': tags},  # Tags are a langfile-specific feature.
         )
 
-    @property
-    def key(self):
-        return self.source_string
 
 
 class LangFile(ParsedResource):
