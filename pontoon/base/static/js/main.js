@@ -484,14 +484,13 @@ $(function() {
     }
 
     function get(el, type) {
-      if (!$(el).find('.chart').length) {
+      var chartData = $(el).find('.chart').data('chart');
+      if (chartData) {
+        var data = JSON.parse(chartData.replace(/'/g, "\""));
+        return data[type]/data.total;
+      } else {
         return 0;
       }
-
-      var chart = $(el).find('.chart').data('chart'),
-          data = JSON.parse(chart.replace(/'/g, "\""));
-
-      return data[type]/data.total;
     }
 
     var index = $(this).index(),
