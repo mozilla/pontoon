@@ -484,9 +484,8 @@ $(function() {
     }
 
     function getChart(el) {
-      var chartData = $(el).find('.chart').data('chart');
-      if (chartData) {
-        var data = JSON.parse(chartData.replace(/'/g, "\""));
+      var data = $(el).find('.chart').data('chart');
+      if (data) {
         return {
           "approved": data.approved/data.total,
           "translated": data.translated/data.total
