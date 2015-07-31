@@ -425,7 +425,7 @@ $(function() {
           '</aside>');
       }
 
-      var data = JSON.parse(chart.data('chart').replace(/'/g, "\"")),
+      var data = chart.data('chart'),
           untranslated = data.total - data.approved - data.translated - data.fuzzy,
           rect = chart[0].getBoundingClientRect(),
           height = $('.tooltip').outerHeight() + 15,
