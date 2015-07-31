@@ -483,11 +483,14 @@ $(function() {
       return $(el).find('span:eq(' + index + ')').html();
     }
 
-    function get(el, type) {
+    function getChart(el) {
       var chartData = $(el).find('.chart').data('chart');
       if (chartData) {
         var data = JSON.parse(chartData.replace(/'/g, "\""));
-        return data[type]/data.total;
+        return {
+          "approved": data.approved/data.total,
+          "translated": data.translated/data.total
+        };
       } else {
         return 0;
       }
@@ -510,8 +513,11 @@ $(function() {
 
       } else {
         // Sort by approved, then by unapproved percentage
-        return (get(a, "approved") - get(b, "approved")) * dir ||
-          (get(a, "translated") - get(b, "translated")) * dir;
+        var chartA = getChart(a),
+            chartB = getChart(b);
+
+        return (chartA.approved - chartB.approved) * dir ||
+          (chartA.translated - chartB.translated) * dir;
       }
     });
 
