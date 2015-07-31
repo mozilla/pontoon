@@ -8,6 +8,17 @@ below assume you've already created an app and have installed the
 
 .. _Heroku Toolbelt: https://toolbelt.heroku.com/
 
+Buildpack
+---------
+Pontoon uses `heroku-buildpack-multi`_ as its buildpack. You can set this (and
+pin it to the correct version) with the following toolbelt command:
+
+.. code-block:: bash
+
+   heroku buildpacks:set https://github.com/heroku/heroku-buildpack-multi.git#26fa21ac7156e63d3d36df1627329aa57f8f137c
+
+.. _heroku-buildpack-multi: https://github.com/heroku/heroku-buildpack-multi
+
 Environment Variables
 ---------------------
 The following is a list of environment variables you'll want to set on the app
