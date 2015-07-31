@@ -425,7 +425,7 @@ $(function() {
           '</aside>');
       }
 
-      var data = JSON.parse(chart.data('chart').replace(/'/g, "\"")),
+      var data = chart.data('chart'),
           untranslated = data.total - data.approved - data.translated - data.fuzzy,
           rect = chart[0].getBoundingClientRect(),
           height = $('.tooltip').outerHeight() + 15,
@@ -479,17 +479,19 @@ $(function() {
 
   // Menu sort
   $('.menu .sort span').click(function (e) {
-    function val(index, el) {
-      if (index !== 2) {
-        return $(el).find('span:eq(' + index + ')').html();
+    function getString(el) {
+      return $(el).find('span:eq(' + index + ')').html();
+    }
 
+    function getChart(el) {
+      var data = $(el).find('.chart').data('chart');
+      if (data) {
+        return {
+          "approved": data.approved/data.total,
+          "translated": data.translated/data.total
+        };
       } else {
-        if (!$(el).find('.chart').length) {
-          return 0;
-        }
-        var chart = $(el).find('.chart').data('chart'),
-            data = JSON.parse(chart.replace(/'/g, "\""));
-        return data.approved/data.total;
+        return 0;
       }
     }
 
@@ -504,8 +506,18 @@ $(function() {
     $(this).addClass(cls);
 
     listitems.sort(function(a, b) {
-      return (val(index, a) < val(index, b)) ? -dir :
-        (val(index, a) > val(index, b)) ? dir : 0;
+      if (index !== 2) {
+        // Sort by alphabetical order
+        return getString(a).localeCompare(getString(b)) * dir;
+
+      } else {
+        // Sort by approved, then by unapproved percentage
+        var chartA = getChart(a),
+            chartB = getChart(b);
+
+        return (chartA.approved - chartB.approved) * dir ||
+          (chartA.translated - chartB.translated) * dir;
+      }
     });
 
     ul.append(listitems);

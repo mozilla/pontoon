@@ -1,4 +1,5 @@
 import datetime
+import json
 import urllib
 import urlparse
 
@@ -63,3 +64,8 @@ def urlencode(txt):
 @library.global_function
 def static(path):
     return staticfiles_storage.url(path)
+
+
+@library.filter
+def to_json(value):
+    return json.dumps(value)
