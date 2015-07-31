@@ -123,8 +123,12 @@ blessings==1.6
 # sha256: qsAfM8hEZAezxebyGF1bCfXz5st3Px2y35nvzlpwuBs
 nose-progressive==1.5.1
 
+# Temporarily using a fork instead due to
 # sha256: 2pk9Q6BeOnBk_rEsexukn8UmtnBZFIR-zf8HLpvDEBs
-raygun4py==3.0.1
+# raygun4py==3.0.1
+
+# sha256: m0Xd02Z0Ohg2aqibKrH1W5ln8ujL2w1DNQBo33ceT7U
+https://github.com/Osmose/raygun4py/archive/84b7054281f589fee2646dc4f64122bcf98f486c.zip#egg=raygun4py==3.0.1-osmose
 
 # sha256: F3sOgxHG7b_H0YQVen6A9otrh0xWRfcwDUH0dfBfIx4
 jsonpickle==0.7.0
