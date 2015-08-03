@@ -24,3 +24,4 @@ tmp/*
 /static/
 .env
 docs/_build
+venv

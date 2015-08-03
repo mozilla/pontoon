@@ -1,67 +1,128 @@
 Developer Setup
 ===============
-1. `Install Docker and Compose`_.
+The following describes how to set up an instance of the site on your
+computer for development.
 
-2. Clone this repository or your fork_:
+Prerequisites
+-------------
+This guide assumes you have already installed and set up the following:
+
+1. Git_
+2. `Python 2.7`_, pip_, and virtualenv_
+3. `Node.js`_ and npm_
+4. `Postgres 9.4`_
+
+These docs assume a Unix-like operating system, although the site should, in
+theory, run on Windows as well. All the example commands given below are
+intended to be run in a terminal.
+
+.. _Git: https://git-scm.com/
+.. _Python 2.7: https://www.python.org/
+.. _pip: https://pip.pypa.io/en/stable/
+.. _virtualenv: https://virtualenv.pypa.io/en/latest/
+.. _Node.js: https://nodejs.org/
+.. _npm: https://www.npmjs.com/
+.. _Postgres 9.4: http://www.postgresql.org/
+
+Installation
+------------
+1. Clone this repository or your fork_:
 
    .. code-block:: bash
 
       git clone --recursive https://github.com/mozilla/pontoon.git
       cd pontoon
 
-3. **Optional**: If you're running the site via boot2docker_, you'll want to add
-   a ``.env`` file to the project's root director with the IP address of the
-   boot2docker VM.
+2. Create a virtualenv for Pontoon and activate it:
 
    .. code-block:: bash
 
-      echo "SITE_URL=http://$(boot2docker ip):8000" > .env
+      virtualenv venv
+      source ./venv/bin/activate
 
-4. Build the development instance using the build script:
+   .. note::
+
+      Whenever you want to work on Pontoon in a new terminal you'll have to
+      re-activate the virtualenv. Read the virtualenv_ documentation to learn
+      more about how virtualenv works.
+
+3. Install the dependencies using peep_, a wrapper around pip that is
+   included with Pontoon:
 
    .. code-block:: bash
 
-      boot2docker up
-      eval "$(boot2docker shellinit)"
-      ./bin/build-docker.sh
+      ./bin/peep.py install -r requirements.txt
 
+4. Create a ``.env`` file at the root of the repository to configure the
+   settings for your development instance. It should look something like this:
+
+   .. code-block:: ini
+
+      SECRET_KEY=insert_random_key
+      DJANGO_DEV=True
+      DJANGO_DEBUG=True
+      DATABASE_URL=postgres://pontoon:asdf@localhost/pontoon
+      SESSION_COOKIE_SECURE=False
+      HMAC_KEY=insert_random_key
+      SITE_URL=http://localhost:8000
+
+   Make sure to make the following modifications to the template above:
+
+   - ``SECRET_KEY`` and ``HMAC_KEY`` should be set to some random key you
+     come up with, as they are used to secure the authentication data for
+     your local instance.
+
+   - ``DATABASE_URL`` should contain the connection data for connecting to
+     your Postgres database. It takes the form
+     ``postgres://username:password@server_addr/database_name``.
+
+   - ``SITE_URL`` should be set to the URL you will use to connect to your
+     local development site. Some people prefer to use
+     ``http://127.0.0.1:8000`` instead of ``localhost``.
+
+5. Initialize your database by running the migrations:
+
+   .. code-block:: bash
+
+      python manage.py migrate
+
+6. Create a new superuser account:
+
+   .. code-block:: bash
+
+      python manage.py createsuperuser
+
+   Make sure that the email address you use for the superuser account matches
+   the email that you will log in with via Persona.
+
+7. Pull the latest strings from version control for the Pontoon Intro project
+   (which is automatically created for you during the database migrations):
+
+   .. code-block:: bash
+
+      python manage.py update_projects
+
+8. Install the required Node libraries using ``npm``:
+
+   .. code-block:: bash
+
+      npm install
 
 Once you've finished these steps, you should be able to start the site by
 running:
 
 .. code-block:: bash
 
-   docker-compose up
+   python manage.py runserver
 
-If you're running Docker directly (via Linux), the site should be available at
-http://localhost:8000. If you're running boot2docker, the site should be
-available on port 8000 at the IP output by running:
+The site should be available at http://localhost:8000.
 
-.. code-block:: bash
-
-   boot2docker ip
-
-For admin_ access, create admin account with:
-
-.. code-block:: bash
-
-   docker-compose run web ./manage.py createsuperuser
-
-.. _Install Docker and Compose: https://docs.docker.com/compose/install/
+.. _peep: https://github.com/erikrose/peep/
 .. _fork: http://help.github.com/fork-a-repo/
-.. _boot2docker: http://boot2docker.io/
-.. _admin: http://localhost:8000/admin/
 
-Local settings
+Extra settings
 --------------
-The following settings can be set by creating a `.env` file in root directory of
-your pontoon repo and adding their values:
-
-```
-MICROSOFT_TRANSLATOR_API_KEY=microsoft-key
-GOOGLE_ANALYTICS_KEY=google-key
-MOZILLIANS_API_KEY=mozillians-key
-```
+The following extra settings can be added to your ``.env`` file.
 
 ``MICROSOFT_TRANSLATOR_API_KEY``
    Set your `Microsoft Translator API key`_ to use machine translation.
