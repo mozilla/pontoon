@@ -30,6 +30,15 @@ urlpatterns = patterns(
     url(r'^contributor/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
         RedirectView.as_view(url="/contributors/%(email)s/", permanent=True)),
 
+    # List all active localization teams
+    url(r'^teams/$',
+        views.locales,
+        name='pontoon.teams'),
+
+    # Redirect to a team page
+    url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
+        RedirectView.as_view(url="/%(locale)s/", permanent=True)),
+
     # List all imported projects
     url(r'^projects/$',
         views.projects,
@@ -50,7 +59,7 @@ urlpatterns = patterns(
         views.translate,
         name='pontoon.translate'),
 
-    # List users with contributions
+    # List contributors
     url(r'^contributors/$',
         views.contributors,
         name='pontoon.contributors'),
@@ -108,7 +117,7 @@ urlpatterns = patterns(
     url(r'^csrf/$', views.get_csrf,
         name='pontoon.csrf'),
 
-    # List locale projects: Must be at the end
+    # Team page: Must be at the end
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
         views.locale,
         name='pontoon.locale'),
