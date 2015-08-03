@@ -94,6 +94,9 @@ class Locale(models.Model):
             if i[1] == cldr_plural:
                 return i[0]
 
+    class Meta:
+        ordering = ['name']
+
 
 class ProjectQuerySet(models.QuerySet):
     def available(self):
