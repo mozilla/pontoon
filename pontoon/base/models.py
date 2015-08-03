@@ -342,7 +342,10 @@ class Entity(models.Model):
         if recently_approved.exists():
             return True
 
-        approved = self.translation_set.filter(approved=True)
+        approved = self.translation_set.filter(
+            approved=True,
+            locale__code=locale_code
+        )
         recently_deleted = Translation.deleted_objects.filter(
             entity=self,
             deleted__gt=project.last_synced,
