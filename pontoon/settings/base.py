@@ -461,4 +461,4 @@ MICROSOFT_TERMINOLOGY_LOCALES = [
 ]
 
 # Contributors to exclude from Top Contributors list
-EXCLUDE = []
+EXCLUDE = os.environ.get('EXCLUDE', '').split(',')
