@@ -24,7 +24,7 @@
     </div>
     {% endif %}
     <ul>
-      {% for l in locales.order_by("name") %}
+      {% for l in locales %}
       <li class="clearfix{% if locale and locale == l %} current{% endif %}{% if l and l.chart %} filter{% endif %}">
         {% if l and l.chart %}
         <a href="/{{ l.code|lower }}/{{ project.slug }}/" class="clearfix">
