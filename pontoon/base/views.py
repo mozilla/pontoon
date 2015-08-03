@@ -672,7 +672,7 @@ def update_translation(request, template=None):
                 # Unless there's nothing to be changed
                 if t.user is not None and t.approved and t.approved_user \
                         and t.approved_date and not t.fuzzy:
-                    return HttpResponse("Same translation already exist.")
+                    return HttpResponse("Same translation already exists.")
 
                 warnings = utils.quality_check(original, string, l, ignore)
                 if warnings:
@@ -723,7 +723,7 @@ def update_translation(request, template=None):
                         'translation': t.serialize(),
                     }), content_type='application/json')
 
-                return HttpResponse("Same translation already exist.")
+                return HttpResponse("Same translation already exists.")
 
         # Different translation added
         except:
