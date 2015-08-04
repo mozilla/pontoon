@@ -6,10 +6,7 @@ from django.db import models, migrations
 
 def remove_unused_locales(apps, schema_editor):
     Locale = apps.get_model('base', 'Locale')
-
-    for unused_locale in UNUSED_LOCALES:
-        locale = Locale.objects.get(code=unused_locale)
-        locale.delete()
+    Locale.objects.filter(code__in=UNUSED_LOCALES).delete()
 
 
 class Migration(migrations.Migration):
