@@ -48,6 +48,7 @@ from pontoon.base.models import (
     Stats,
     UserProfile,
     get_entities,
+    get_locales_with_project_stats,
     get_locales_with_stats,
     get_projects_with_stats,
     get_translation,
@@ -133,7 +134,7 @@ def project(request, slug, template='project.html'):
     locales = p.locales.all().order_by("name")
 
     data = {
-        'locales': get_locales_with_stats(p),
+        'locales': get_locales_with_project_stats(p),
         'project': p,
         'project_locales': json.dumps(
             [i.lower() for i in p.locales.values_list('code', flat=True)]),
