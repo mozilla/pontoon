@@ -1236,7 +1236,7 @@ var Pontoon = (function (my) {
             slug = project.data('slug');
 
         if (slug !== 'pontoon-intro' && !self.user.email) {
-          return self.endLoader('Sign in to access more projects.', 'error left', true);
+          return self.endLoader('Sign in to access more projects.', 'error', true);
         }
 
         $('.project .selector .title')
