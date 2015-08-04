@@ -659,6 +659,9 @@ def update_translation(request, template=None):
     translations = Translation.objects.filter(
         entity=e, locale=l, plural_form=plural_form)
 
+    if e.resource.format == 'lang' and '\n' in string:
+        return HttpResponse("Newline characters are not allowed.")
+
     # Translations exist
     if len(translations) > 0:
 
