@@ -100,7 +100,7 @@ class Locale(models.Model):
                 return i[0]
 
     class Meta:
-        ordering = ['name']
+        ordering = ['name', 'code']
 
 
 class ProjectQuerySet(models.QuerySet):
