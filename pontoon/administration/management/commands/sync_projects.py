@@ -1,8 +1,8 @@
 from collections import Counter
-from textwrap import dedent
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
+from django.template.loader import render_to_string
 from django.utils import timezone
 
 from bulk_update.helper import bulk_update
@@ -161,7 +161,6 @@ class Command(BaseCommand):
 
         for locale in db_project.locales.all():
             authors = changeset.commit_authors_per_locale.get(locale.code, [])
-            author_list = '\n'.join('- ' + author.display_name for author in set(authors))
 
             # Use the top translator for this batch as commit author, or
             # the fake Pontoon user if there are no authors.
@@ -170,12 +169,11 @@ class Command(BaseCommand):
             else:
                 commit_author = User(first_name="Pontoon", email="pontoon@mozilla.com")
 
-            commit_message = dedent("""
-                Pontoon: Updated {locale.name} ({locale.code}) localization of {project.name}
-
-                Translation authors:
-                {author_list}
-            """).strip().format(locale=locale, project=db_project, author_list=author_list)
+            commit_message = render_to_string('commit_message.jinja', {
+                'locale': locale,
+                'project': db_project,
+                'authors': authors
+            })
 
             try:
                 result = commit_to_vcs(
