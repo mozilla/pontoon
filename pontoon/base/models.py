@@ -76,6 +76,11 @@ class Locale(models.Model):
         else:
             return map(int, self.cldr_plurals.split(','))
 
+    @property
+    def dir(self):
+        RTL_LOCALES = ('ar', 'fa', 'he', 'ur')
+        return 'rtl' if self.code in RTL_LOCALES else 'ltr'
+
     def __unicode__(self):
         return self.name
 
