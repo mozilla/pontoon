@@ -176,7 +176,7 @@ class Project(models.Model):
         """Path to the directory where source strings are stored."""
         for root, dirnames, filenames in os.walk(self.checkout_path):
             for dirname in dirnames:
-                if dirname in ('templates', 'en-US', 'en-GB', 'en'):
+                if dirname in ('templates', 'en-US', 'en'):
                     return os.path.join(root, dirname)
 
         raise Exception('No source directory found for project {0}'.format(self.slug))

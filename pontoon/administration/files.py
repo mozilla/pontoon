@@ -229,7 +229,7 @@ def get_source_directory(path):
         # Ignore hidden folders
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for directory in ('templates', 'en-US', 'en-GB', 'en'):
+        for directory in ('templates', 'en-US', 'en'):
             for dirname in fnmatch.filter(dirnames, directory):
                 source_directory_path = os.path.join(root, dirname)
                 if detect_format(source_directory_path):
@@ -761,7 +761,7 @@ def update_from_repository(project):
     repository_url_master = False
     ending = os.path.basename(os.path.normpath(repository_url))
 
-    if ending in ('templates', 'en-US', 'en-GB', 'en'):
+    if ending in ('templates', 'en-US', 'en'):
         repository_url_master = repository_url.rsplit(ending, 1)[0]
         repository_path = os.path.join(repository_path_master, ending)
 
