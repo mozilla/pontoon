@@ -462,7 +462,8 @@ def get_translations_from_other_locales(request, template=None):
             payload.append({
                 "locale": {
                     "code": l.code,
-                    "name": l.name
+                    "name": l.name,
+                    "dir": l.dir
                 },
                 "translation": translation.string
             })

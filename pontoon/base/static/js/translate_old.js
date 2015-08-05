@@ -83,7 +83,9 @@ var Pontoon = (function (my) {
             $.each(data, function() {
               list.append('<li title="Click to copy">' +
                 '<header>' + this.locale.name + '<span class="stress">' + this.locale.code + '</span></header>' +
-                '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
+                '<p class="translation" dir="' + this.locale.dir + '" lang="' + this.locale.code + '">' +
+                  self.doNotRender(this.translation) +
+                '</p>' +
               '</li>');
             });
           } else {
@@ -163,7 +165,7 @@ var Pontoon = (function (my) {
                       '<button class="delete fa" title="Delete"></button>' +
                     '</menu>' +
                   '</header>' +
-                  '<p class="translation">' +
+                  '<p class="translation" dir="' + self.locale.dir + '" lang="' + self.locale.code + '">' +
                     self.doNotRender(this.translation) +
                   '</p>' +
                 '</li>');
@@ -462,8 +464,9 @@ var Pontoon = (function (my) {
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status fa"></span>' +
           '<p class="string-wrapper">' +
-            '<span class="source-string">' + this.marked +
-            '</span><span class="translation-string">' +
+            '<span class="source-string">' + this.marked + '</span>' +
+            '<span class="translation-string" dir="' +
+              self.locale.dir + '" lang="' + self.locale.code + '">' +
               self.doNotRender(this.translation[0].string) +
             '</span>' +
           '</p>' +

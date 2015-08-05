@@ -76,6 +76,10 @@ class Locale(models.Model):
         else:
             return map(int, self.cldr_plurals.split(','))
 
+    @property
+    def dir(self):
+        return 'rtl' if self.code in settings.RTL_LOCALES else 'ltr'
+
     def __unicode__(self):
         return self.name
 
@@ -86,6 +90,7 @@ class Locale(models.Model):
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
             'cldr_plurals': self.cldr_plurals_list(),
+            'dir': self.dir,
         })
 
     @classmethod
