@@ -33,7 +33,7 @@
           <span class="code">{{ l.code }}</span>
           {% if l and l.chart %}
           <span class="chart-wrapper">
-            <span class="chart" data-chart="{{ l.chart }}">
+            <span class="chart" data-chart="{{ l.chart|to_json }}">
               <span class="approved" style="width:{{ l.chart.approved / l.chart.total * 100 }}%;"></span>
               <span class="translated" style="width:{{ l.chart.translated / l.chart.total * 100 }}%;"></span>
               <span class="fuzzy" style="width:{{ l.chart.fuzzy / l.chart.total * 100 }}%;"></span>
