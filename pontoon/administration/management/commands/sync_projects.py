@@ -164,11 +164,11 @@ class Command(BaseCommand):
             author_list = '\n'.join('- ' + author.display_name for author in set(authors))
 
             # Use the top translator for this batch as commit author, or
-            # the first admin we can find if there are no authors.
+            # the fake Pontoon user if there are no authors.
             if len(authors) > 0:
                 commit_author = Counter(authors).most_common(1)[0][0]
             else:
-                commit_author = User.objects.filter(is_superuser=True).first()
+                commit_author = User(first_name="Pontoon", email="pontoon@mozilla.com")
 
             commit_message = dedent("""
                 Pontoon: Updated {locale.name} ({locale.code}) localization of {project.name}
