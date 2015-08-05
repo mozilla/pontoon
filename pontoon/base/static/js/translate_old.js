@@ -165,7 +165,7 @@ var Pontoon = (function (my) {
                       '<button class="delete fa" title="Delete"></button>' +
                     '</menu>' +
                   '</header>' +
-                  '<p class="translation">' +
+                  '<p class="translation" dir="' + self.locale.dir + '" lang="' + self.locale.code + '">' +
                     self.doNotRender(this.translation) +
                   '</p>' +
                 '</li>');
