@@ -28,7 +28,7 @@ class LangEntity(VCSTranslation):
             strings={None: translation_string},  # Langfiles lack plural support
             comments=comments,
             fuzzy=False,  # Langfiles don't support fuzzy status.
-            extra={'tags': tags},  # Tags are a langfile-specific feature.
+            extra={'tags': set(tags)},  # Tags are a langfile-specific feature.
         )
 
         # If the translation matches the source string without the {ok}
@@ -63,17 +63,18 @@ class LangFile(ParsedResource):
             f.write(u'# {0}\n'.format(comment))
         f.write(u';{0}\n'.format(entity.source_string))
 
-        # If no translation exists, use the source string and remove the
-        # {ok} tag if present. Or, if the translation exists and is
-        # identical to the source, add the {ok} tag if it's missing.
         translation = entity.strings.get(None, None)
         tags = entity.extra['tags']
         if translation is None:
+            # No translation? Output the source string and remove {ok}.
             translation = entity.source_string
-            if 'ok' in tags:
-                tags.remove('ok')
-        elif translation == entity.source_string and 'ok' not in tags:
-            tags.append('ok')
+            tags.discard('ok')
+        elif translation == entity.source_string:
+            # Translation is equal to the source? Include {ok}.
+            tags.add('ok')
+        elif translation != entity.source_string:
+            # Translation is different? Remove {ok}, it's unneeded.
+            tags.discard('ok')
 
         if entity.extra.get('tags'):
             tags = [u'{{{tag}}}'.format(tag=t) for t in entity.extra['tags']]
