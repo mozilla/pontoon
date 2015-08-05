@@ -186,7 +186,7 @@ var Pontoon = (function (my) {
               'title="' + data.title + '">' + data.source + '</a>' +
           '</header>' +
           '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
-          '<p class="translation" dir="' + self.locale.dir + '" lang="' + self.locale.code + '">' +
+          '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
             self.doNotRender(data.translation) +
           '</p>' +
         '</li>');

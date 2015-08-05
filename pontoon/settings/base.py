@@ -462,6 +462,3 @@ MICROSOFT_TERMINOLOGY_LOCALES = [
 
 # Contributors to exclude from Top Contributors list
 EXCLUDE = os.environ.get('EXCLUDE', '').split(',')
-
-# List of RTL locales
-RTL_LOCALES = ['ar', 'fa', 'he', 'ur']
