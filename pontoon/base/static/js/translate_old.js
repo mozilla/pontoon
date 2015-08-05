@@ -83,7 +83,9 @@ var Pontoon = (function (my) {
             $.each(data, function() {
               list.append('<li title="Click to copy">' +
                 '<header>' + this.locale.name + '<span class="stress">' + this.locale.code + '</span></header>' +
-                '<p class="translation">' + self.doNotRender(this.translation) + '</p>' +
+                '<p class="translation" dir="' + this.locale.dir + '" lang="' + this.locale.code + '">' +
+                  self.doNotRender(this.translation) +
+                '</p>' +
               '</li>');
             });
           } else {
