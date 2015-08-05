@@ -78,8 +78,7 @@ class Locale(models.Model):
 
     @property
     def dir(self):
-        RTL_LOCALES = ('ar', 'fa', 'he', 'ur')
-        return 'rtl' if self.code in RTL_LOCALES else 'ltr'
+        return 'rtl' if self.code in settings.RTL_LOCALES else 'ltr'
 
     def __unicode__(self):
         return self.name
