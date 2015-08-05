@@ -63,7 +63,7 @@ class Command(BaseCommand):
 
     def handle_project(self, db_project):
         if not db_project.can_commit:
-            self.log('Skipping project {0}, cannot commit to repository.'
+            self.log(u'Skipping project {0}, cannot commit to repository.'
                      .format(db_project.name))
             return
 
@@ -92,7 +92,7 @@ class Command(BaseCommand):
         db_project.last_synced = timezone.now()
         db_project.save()
 
-        self.log('Synced project {0}', db_project.slug)
+        self.log(u'Synced project {0}', db_project.slug)
 
     def handle_entity(self, changeset, db_project, key, db_entity, vcs_entity):
         """
@@ -188,8 +188,8 @@ class Command(BaseCommand):
 
             if result is not None:
                 self.log(
-                    'Committing project {project.name} for {locale.name} '
-                    '({locale.code}) failed: {reason}',
+                    u'Committing project {project.name} for {locale.name} '
+                    u'({locale.code}) failed: {reason}',
                     project=db_project,
                     locale=locale,
                     reason=result['message']
