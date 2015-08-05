@@ -1,6 +1,10 @@
 from datetime import datetime
 from django.contrib.auth.models import Permission, User
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import (
+    BaseCommand,
+    CommandError,
+    NoArgsCommand,
+)
 from optparse import make_option
 from pontoon.base.models import Translation
 
