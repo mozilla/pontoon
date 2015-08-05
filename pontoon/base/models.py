@@ -172,49 +172,43 @@ class Project(models.Model):
         """Path that this project's VCS checkout is located."""
         return os.path.join(settings.MEDIA_ROOT, self.repository_type, self.slug)
 
-    def source_directory_name(self):
-        """Name of the directory that source strings are stored in."""
+    def source_directory_path(self):
+        """Path to the directory where source strings are stored."""
         for root, dirnames, filenames in os.walk(self.checkout_path):
             for dirname in dirnames:
                 if dirname in ('templates', 'en-US', 'en-GB', 'en'):
-                    return dirname
+                    return os.path.join(root, dirname)
 
-        return None
+        raise Exception('No source directory found for project {0}'.format(self.slug))
 
-    def locale_directory_name(self, locale_code=None):
+    def locale_directory_path(self, locale_code=None):
         """
-        Name of the directory that strings for the given locale are
+        Path to the directory where strings for the given locale are
         stored.
+
+        If locale_code is None, return the path to the directory where
+        source strings are stored.
         """
         path = self.checkout_path
         locale_code = locale_code or self.source_directory_name()
         if locale_code is not None:
             for root, dirnames, filenames in os.walk(path):
                 if locale_code in dirnames:
-                    return locale_code
+                    return os.path.join(root, locale_code)
 
                 locale_variant = locale_code.replace('-', '_')
                 if locale_variant in dirnames:
-                    return locale_variant
+                    return os.path.join(root, locale_variant)
 
         raise Exception('Directory for locale `{0}` not found'.format(
                         locale_code or 'source'))
 
-    def locale_directory_path(self, locale_code=None):
+    def relative_resource_paths(self):
         """
-        Path to the directory that strings for the given locale are
-        stored.
+        List of paths relative to the locale directories returned by
+        self.locale_directory_path() for each resource in this project.
         """
-        directory_name = self.locale_directory_name(locale_code)
-        return os.path.join(self.checkout_path, directory_name)
-
-    def relative_resource_paths(self, locale_code=None):
-        """
-        List of paths relative to self.checkout_path for all of the
-        resources for the given locale. If no locale code is given, the
-        source resources are used.
-        """
-        path = self.locale_directory_path(locale_code)
+        path = self.source_directory_path()
         for absolute_path in self.resources_for_path(path):
             yield os.path.relpath(absolute_path, path)
 

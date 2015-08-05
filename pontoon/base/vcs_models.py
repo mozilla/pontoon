@@ -46,8 +46,7 @@ class VCSResource(object):
         db_project = vcs_project.db_project
         for locale in db_project.locales.all():
             resource_path = os.path.join(
-                db_project.checkout_path,
-                db_project.locale_directory_name(locale.code),
+                db_project.locale_directory_path(locale.code),
                 self.path
             )
             try:
