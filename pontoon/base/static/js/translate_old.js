@@ -464,8 +464,9 @@ var Pontoon = (function (my) {
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status fa"></span>' +
           '<p class="string-wrapper">' +
-            '<span class="source-string">' + this.marked +
-            '</span><span class="translation-string">' +
+            '<span class="source-string">' + this.marked + '</span>' +
+            '<span class="translation-string" dir="' +
+              self.locale.dir + '" lang="' + self.locale.code + '">' +
               self.doNotRender(this.translation[0].string) +
             '</span>' +
           '</p>' +

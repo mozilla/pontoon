@@ -91,6 +91,7 @@ class Locale(models.Model):
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
             'cldr_plurals': self.cldr_plurals_list(),
+            'dir': self.dir,
         })
 
     @classmethod
