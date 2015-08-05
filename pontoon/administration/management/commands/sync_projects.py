@@ -151,7 +151,8 @@ class Command(BaseCommand):
         Generate a key for the given entity that is unique within the
         project.
         """
-        return ':'.join([entity.resource.path, entity.key])
+        key = entity.key or entity.string
+        return ':'.join([entity.resource.path, key])
 
     def commit_changes(self, db_project, changeset):
         """Commit the changes we've made back to the VCS."""
