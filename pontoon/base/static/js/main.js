@@ -484,15 +484,14 @@ $(function() {
     }
 
     function getChart(el) {
-      var data = $(el).find('.chart').data('chart');
-      if (data) {
-        return {
-          "approved": data.approved/data.total,
-          "translated": data.translated/data.total
-        };
-      } else {
-        return 0;
-      }
+      var data = $(el).find('.chart').data('chart'),
+          approved = data ? data.approved/data.total : 0,
+          translated = data ? data.translated/data.total : 0;
+
+      return {
+        "approved": approved,
+        "translated": translated
+      };
     }
 
     var index = $(this).index(),
