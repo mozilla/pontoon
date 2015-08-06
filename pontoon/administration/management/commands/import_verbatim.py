@@ -5,45 +5,52 @@ from django.core.management.base import (
     CommandError,
     NoArgsCommand,
 )
-from optparse import make_option
 from pontoon.base.models import Translation
 
-import urllib2
-import json
+import requests
 
 
 class Command(BaseCommand):
     help = 'Import translation authors and dates from Verbatim.'
 
-    option_list = NoArgsCommand.option_list + (
-        make_option('--project', action='store', dest='project',
-                    help='Project slug to import Verbatim data to'),
-        make_option('--locale', action='store', dest='locale',
-                    help='Locale code to import Verbatim data to'),
-        make_option('--filename', action='store', dest='filename',
-                    help='File name to import Verbatim data from'),
+    def add_arguments(self, parser):
+
+        parser.add_argument(
+            '--project',
+            action='store',
+            dest='project',
+            required=True,
+            help='Project slug to import Verbatim data to'
+        )
+
+        parser.add_argument(
+            '--locale',
+            action='store',
+            dest='locale',
+            required=True,
+            help='Locale code to import Verbatim data to'
+        )
+
+        parser.add_argument(
+            '--filename',
+            action='store',
+            dest='filename',
+            required=True,
+            help='File name to import Verbatim data from'
         )
 
     def handle(self, *args, **options):
-        project = options.get('project', False)
-        locale = options.get('locale', False)
-        filename = options.get('filename', False)
-
-        if not project or not locale or not filename:
-            raise CommandError('You must provide project, locale and file name.')
-
-        url = 'http://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/verbatim/' + filename + '.json'
-        response = urllib2.urlopen(url)
-        verbatim = json.load(response)
+        url = 'http://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/verbatim/' + options['filename']
+        verbatim = requests.get(url).json()
 
         for path in verbatim.keys():
             for source in verbatim[path]:
 
                 translations = Translation.objects.filter(
-                    entity__resource__project__slug=project,
+                    entity__resource__project__slug=options['project'],
                     entity__resource__path=path,
                     entity__string=source,
-                    locale__code=locale)
+                    locale__code=options['locale'])
 
                 for t in translations:
                     try:
@@ -69,6 +76,4 @@ class Command(BaseCommand):
 
                     except User.DoesNotExist:
                         # TODO: create missing user?
-                        self.stdout.write("Pontoon user not found: " + email + '\n')
-                    except Exception as e:
-                        self.stdout.write("Whoops, an unknown error has occured: " + e + '\n')
+                        self.stdout.write("Pontoon user not found: " + email)
