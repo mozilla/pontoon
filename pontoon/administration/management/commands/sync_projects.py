@@ -15,8 +15,7 @@ from pontoon.base.models import (
     Locale,
     Project,
     Resource,
-    Translation,
-    update_stats
+    Translation
 )
 from pontoon.base.utils import match_attr
 from pontoon.base.vcs_models import VCSProject
@@ -95,12 +94,6 @@ class Command(BaseCommand):
         # Apply the changeset to the files and then commit them.
         changeset.execute()
         self.commit_changes(db_project, changeset)
-
-        # Update the stats for all the resources and locales in this
-        # project.
-        for resource in db_project.resource_set.all():
-            for locale in db_project.locales.all():
-                update_stats(resource, locale)
 
         # Clear out the list of changed locales for entity in this
         # project now that we've finished syncing.
