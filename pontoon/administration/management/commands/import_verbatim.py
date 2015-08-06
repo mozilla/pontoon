@@ -50,7 +50,10 @@ class Command(BaseCommand):
                     entity__resource__project__slug=options['project'],
                     entity__resource__path=path,
                     entity__string=source,
-                    locale__code=options['locale'])
+                    locale__code=options['locale'],
+                    user=None,
+                    string=verbatim[path][source]["translation"]
+                )
 
                 for t in translations:
                     try:
