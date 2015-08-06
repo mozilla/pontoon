@@ -176,3 +176,8 @@ django-bulk-update==1.1.4
 parsimonious==0.6.2
 # sha256: fn9zpnXFGHErrdeDJ54m0WQUDz_C7XoyECw9CKaipKc
 jsonfield==1.0.3
+# sha256: FiVVlWFqbXjNeGpVzGQx2lt6zPRlEt-FRxKgzbs6z6o
+pylibmc==1.5.0
+# sha256: VZxCRyjkBCDajJmLE8PE8IYbR1JpoKh2-xcY__J20QY
+# sha256: YhN9U7WsovukJHRLobsw6SoRXZqGgcvmpkEdskGx0a0
+django-pylibmc==0.6.0
