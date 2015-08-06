@@ -14,7 +14,6 @@ class Command(BaseCommand):
     help = 'Import translation authors and dates from Verbatim.'
 
     def add_arguments(self, parser):
-
         parser.add_argument(
             '--project',
             action='store',
