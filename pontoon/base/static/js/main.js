@@ -610,6 +610,14 @@ $(function() {
       $('body').click();
       return false;
     }
+
+    // Alt + F: focus search
+    if ($('#sidebar').is(':visible') && (Pontoon.app.advanced || !$('#editor').is('.opened'))
+        && e.altKey && key === 70) {
+      $('#search').focus();
+      return false;
+    }
+
   });
 
 });
