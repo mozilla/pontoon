@@ -356,11 +356,12 @@ class ChangeSet(object):
                     ))
 
     def execute_update_db(self):
-        # TODO: Optimize to only update translations if necessary.
         for locale_code, db_entity, vcs_entity in self.changes['update_db']:
             for field, value in self.get_entity_updates(vcs_entity).items():
                 setattr(db_entity, field, value)
-            self.entities_to_update.append(db_entity)
+
+            if db_entity.is_dirty(check_relationship=True):
+                self.entities_to_update.append(db_entity)
 
             # Update translations for the entity.
             vcs_translation = vcs_entity.translations[locale_code]
@@ -380,7 +381,8 @@ class ChangeSet(object):
                     db_translation.fuzzy = vcs_translation.fuzzy
                     db_translation.extra = vcs_translation.extra
 
-                    self.translations_to_update.append(db_translation)
+                    if db_translation.is_dirty():
+                        self.translations_to_update.append(db_translation)
                     approved_translations.append(db_translation)
                 else:
                     self.translations_to_create.append(Translation(
@@ -400,7 +402,9 @@ class ChangeSet(object):
                     translation.approved = False
                     translation.approved_user = None
                     translation.approved_date = None
-                    self.translations_to_update.append(translation)
+
+                    if translation.is_dirty():
+                        self.translations_to_update.append(translation)
 
     def execute_obsolete_db(self):
         (Entity.objects

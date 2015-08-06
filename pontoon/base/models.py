@@ -12,6 +12,7 @@ from django.db.models.signals import post_save
 from django.forms import ModelForm
 from django.utils import timezone
 
+from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
 
 from pontoon.base import MOZILLA_REPOS, utils
@@ -284,7 +285,7 @@ class Subpage(models.Model):
         return self.name
 
 
-class Entity(models.Model):
+class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource)
     string = models.TextField()
     string_plural = models.TextField(blank=True)
@@ -399,7 +400,7 @@ def extra_default():
     return {}
 
 
-class Translation(models.Model):
+class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
     user = models.ForeignKey(User, null=True, blank=True)

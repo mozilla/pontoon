@@ -109,10 +109,18 @@ class VCSTranslation(object):
     pontoon.base.models.Translation.plural_form and the values equal the
     translation for that plural form.
     """
-    def __init__(self, key, source_string, strings, comments, fuzzy, extra):
+    def __init__(self, key, source_string, strings, comments, fuzzy):
         self.key = key
         self.source_string = source_string
         self.strings = strings
         self.comments = comments
         self.fuzzy = fuzzy
-        self.extra = extra
+
+    @property
+    def extra(self):
+        """
+        Return a dict of custom properties to store in the database.
+        Useful for subclasses from specific formats that have extra data
+        that needs to be preserved.
+        """
+        return {}
