@@ -21,7 +21,7 @@
     },
     "urls": {
         "prod": "https://pontoon.mozilla.org",
-        "dev": "https://pontoon-dev.allizom.org"
+        "dev": "https://mozilla-pontoon-staging.herokuapp.com"
     },
     "keywords": [
         "python",
@@ -34,4 +34,3 @@
         "postgres"
     ]
 }
-
