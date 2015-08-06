@@ -116,7 +116,6 @@ class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale)
-    last_synced = models.DateTimeField(null=True)
 
     # Repositories
     REPOSITORY_TYPE_CHOICES = (
@@ -300,6 +299,13 @@ class Entity(models.Model):
     source = models.TextField(blank=True)  # Path to source code file
     obsolete = models.BooleanField(default=False)
 
+    changed_locales = models.ManyToManyField(
+        Locale,
+        through='ChangedEntityLocale',
+        help_text='List of locales in which translations for this entity have '
+                  'changed since the last sync.'
+    )
+
     @property
     def marked(self):
         return utils.mark_placeables(self.string)
@@ -332,31 +338,19 @@ class Entity(models.Model):
             'obsolete': self.obsolete,
         }
 
-    def has_changed(self, locale_code):
-        project = self.resource.project
-        if project.last_synced is None:
-            return True
+    def has_changed(self, locale):
+        """
+        Check if translations in the given locale have changed since the
+        last sync.
+        """
+        return locale in self.changed_locales.all()
 
-        recently_approved = self.translation_set.filter(
-            approved_date__gt=project.last_synced,
-            locale__code=locale_code
-        )
-        if recently_approved.exists():
-            return True
-
-        approved = self.translation_set.filter(
-            approved=True,
-            locale__code=locale_code
-        )
-        recently_deleted = Translation.deleted_objects.filter(
-            entity=self,
-            deleted__gt=project.last_synced,
-            locale__code=locale_code
-        )
-        if not approved.exists() and recently_deleted.exists():
-            return True
-
-        return False
+    def mark_changed(self, locale):
+        """
+        Mark the given locale as having changed translations since the
+        last sync.
+        """
+        ChangedEntityLocale.objects.get_or_create(entity=self, locale=locale)
 
     def add_translation(self, string, locale, user):
         """
@@ -379,6 +373,18 @@ class Entity(models.Model):
             translation.approved_date = datetime.datetime.now()
 
         translation.save()
+
+
+class ChangedEntityLocale(models.Model):
+    """
+    ManyToMany model for storing what locales have changed translations for a
+    specific entity since the last sync.
+    """
+    entity = models.ForeignKey(Entity)
+    locale = models.ForeignKey(Locale)
+
+    class Meta:
+        unique_together = ('entity', 'locale')
 
 
 class TranslationManager(models.Manager):
@@ -428,7 +434,7 @@ class Translation(models.Model):
     def __unicode__(self):
         return self.string
 
-    def save(self, stats=True, *args, **kwargs):
+    def save(self, imported=False, *args, **kwargs):
         super(Translation, self).save(*args, **kwargs)
 
         # Only one translation can be approved at a time for any
@@ -439,9 +445,14 @@ class Translation(models.Model):
                 .exclude(pk=self.pk)
                 .update(approved=False, approved_user=None, approved_date=None))
 
-        # Update stats AFTER changing approval status.
-        if stats:
+        if not imported:
+            # Update stats AFTER changing approval status.
             update_stats(self.entity.resource, self.locale)
+
+            # Whenever a translation changes, mark the entity as having
+            # changed in the appropriate locale. We could be smarter about
+            # this but for now this is fine.
+            self.entity.mark_changed(self.locale)
 
     def mark_for_deletion(self):
         self.deleted = timezone.now()
@@ -665,7 +676,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             approved=approved, fuzzy=fuzzy)
         if approved:
             t.approved_date = now
-        t.save(stats=False)
+        t.save(imported=True)
 
     # Update existing translations
     elif translations_equal_count > 0:
@@ -692,7 +703,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
 
             t.date = now
             t.approved = approved
-            t.save(stats=False)
+            t.save(imported=True)
 
 
 def unapprove(translations):

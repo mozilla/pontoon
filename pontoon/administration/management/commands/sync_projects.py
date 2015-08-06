@@ -9,7 +9,14 @@ from bulk_update.helper import bulk_update
 
 from pontoon.administration.files import update_from_repository
 from pontoon.administration.vcs import commit_to_vcs, CommitToRepositoryException
-from pontoon.base.models import Entity, Locale, Project, Resource, Translation
+from pontoon.base.models import (
+    ChangedEntityLocale,
+    Entity,
+    Locale,
+    Project,
+    Resource,
+    Translation
+)
 from pontoon.base.utils import match_attr
 from pontoon.base.vcs_models import VCSProject
 
@@ -88,9 +95,11 @@ class Command(BaseCommand):
         changeset.execute()
         self.commit_changes(db_project, changeset)
 
-        # Once we've successfully committed, update the last_synced date.
-        db_project.last_synced = timezone.now()
-        db_project.save()
+        # Clear out the list of changed locales for entity in this
+        # project now that we've finished syncing.
+        (ChangedEntityLocale.objects
+            .filter(entity__resource__project=db_project)
+            .delete())
 
         self.log(u'Synced project {0}', db_project.slug)
 
@@ -116,7 +125,7 @@ class Command(BaseCommand):
                     # pull updates nor edit it. Skip it!
                     continue
 
-                if db_entity.has_changed(locale.code):
+                if db_entity.has_changed(locale):
                     # Pontoon changes overwrite whatever VCS has.
                     changeset.update_vcs_entity(locale.code, db_entity, vcs_entity)
 
@@ -143,6 +152,7 @@ class Command(BaseCommand):
     def get_db_entities(self, db_project):
         entities = (Entity.objects
                     .select_related('resource')
+                    .prefetch_related('changed_locales')
                     .filter(resource__project=db_project, obsolete=False))
         return {self.entity_key(entity): entity for entity in entities}
 
