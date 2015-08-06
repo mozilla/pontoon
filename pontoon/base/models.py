@@ -579,7 +579,7 @@ def get_locales_with_stats():
 def get_locales_with_project_stats(project):
     """Add chart data to locales for specified project."""
 
-    locales = project.locales.all()
+    locales = Locale.objects.all()
 
     for locale in locales:
         if locale in project.locales.all():
