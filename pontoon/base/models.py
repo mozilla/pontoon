@@ -721,6 +721,10 @@ def update_entity_count(resource):
             stats, created = Stats.objects.get_or_create(
                 resource=resource, locale=locale)
 
+            # Existing stats were set to 0 beforehand and need to be restored
+            if not created:
+                update_stats(resource, locale)
+
 
 def update_stats(resource, locale):
     """Save stats for given resource and locale."""
