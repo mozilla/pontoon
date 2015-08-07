@@ -695,6 +695,25 @@ var Pontoon = (function (my) {
           return false;
         }
 
+        // Tab: select suggestions
+        if (!$('.menu').is(':visible') && !$('.popup').is(':visible') && key === 9) {
+
+          var section = $('#helpers section:visible'),
+              index = section.find('li.hover').index() + 1;
+
+          // If possible, select next suggestion, or select first
+          if (section.find('li:last').is('.hover')) {
+            index = 0;
+          }
+
+          section
+            .find('li').removeClass('hover').end()
+            .find('li:eq(' + index + ')').addClass('hover').click();
+
+          self.updateScroll(section);
+          return false;
+        }
+
       // Update length (keydown is triggered too early)
       }).unbind("input propertychange").bind("input propertychange", function (e) {
         var length = $('#translation').val().length;
