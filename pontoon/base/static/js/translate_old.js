@@ -449,6 +449,15 @@ var Pontoon = (function (my) {
             .removeClass('limited').hide();
           break;
 
+        case "unchanged":
+          list.find('.entity').each(function() {
+            var entity = this.entity;
+            if (entity.original !== entity.translation[0].string) {
+              $(this).removeClass('limited').hide();
+            }
+          });
+          break;
+
         }
 
         searchEntities();
