@@ -611,7 +611,7 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
     if fuzzy is not None:
         translations = translations.filter(fuzzy=fuzzy)
 
-    if translations > 0:
+    if translations:
         try:
             return translations.filter(approved=True).latest("date")
         except Translation.DoesNotExist:
