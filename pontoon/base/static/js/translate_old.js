@@ -587,7 +587,7 @@ var Pontoon = (function (my) {
 
         var textarea = $('#translation'),
             pos = textarea[0].selectionStart,
-            placeable = self.doRender($(this).text()),
+            placeable = $(this).text(),
             before = textarea.val(),
             after = before.substring(0, pos) + placeable + before.substring(pos);
 
@@ -721,7 +721,7 @@ var Pontoon = (function (my) {
 
         var entity = $('#editor')[0].entity,
             original = entity['original' + self.isPluralized()],
-            source = self.doRender(original);
+            source = original;
 
         $('#translation').val(source).focus();
         $('#translation-length .current-length').html(source.length);
@@ -837,8 +837,8 @@ var Pontoon = (function (my) {
         e.stopPropagation();
         e.preventDefault();
 
-        var translation = $(this).find('.translation').html(),
-            source = self.doRender(translation);
+        var translation = $(this).find('.translation').text(),
+            source = translation;
         $('#translation').val(source).focus();
         $('#translation-length .current-length').html(source.length);
 
@@ -895,8 +895,8 @@ var Pontoon = (function (my) {
                     // Make newest alternative translation active
                     if (next.length > 0) {
                       next.click();
-                      translation = next.find('.translation').html();
-                      entity.translation[pluralForm].string = self.doRender(translation);
+                      translation = next.find('.translation').text();
+                      entity.translation[pluralForm].string = translation;
                       entity.ui.find('.translation-string')
                         .html(self.doNotRender(translation));
                       if (self.user.localizer) {
