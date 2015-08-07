@@ -15,7 +15,8 @@ from pontoon.base.models import (
     Locale,
     Project,
     Resource,
-    Translation
+    Translation,
+    update_stats
 )
 from pontoon.base.utils import match_attr
 from pontoon.base.vcs_models import VCSProject
@@ -91,9 +92,11 @@ class Command(BaseCommand):
             vcs_entity = vcs_entities.get(key, None)
             self.handle_entity(changeset, db_project, key, db_entity, vcs_entity)
 
-        # Apply the changeset to the files and then commit them.
+        # Apply the changeset to the files, commit them, and update stats
+        # entries in the DB.
         changeset.execute()
         self.commit_changes(db_project, changeset)
+        self.update_stats(db_project, vcs_project, changeset)
 
         # Clear out the list of changed locales for entity in this
         # project now that we've finished syncing.
@@ -145,6 +148,20 @@ class Command(BaseCommand):
             resource.format = Resource.get_path_format(relative_path)
             resource.entity_count = len(vcs_resource.entities)
             resource.save()
+
+    def update_stats(self, db_project, vcs_project, changeset):
+        """
+        Update the Stats entries in the database for locales that had
+        translation updates.
+        """
+        for resource in db_project.resource_set.all():
+            for locale in changeset.updated_locales:
+                # We only want to create/update the stats object if the resource
+                # exists in the current locale, UNLESS the file is asynmmetric.
+                vcs_resource = vcs_project.resources[resource.path]
+                resource_exists = vcs_resource.files.get(locale.code) is not None
+                if resource_exists or resource.is_asymmetric:
+                    update_stats(resource, locale)
 
     def get_vcs_entities(self, vcs_project):
         return {self.entity_key(entity): entity for entity in vcs_project.entities}
@@ -229,6 +246,7 @@ class ChangeSet(object):
         self.translations_to_create = []
 
         self.commit_authors_per_locale = {}
+        self.updated_locales = set()
 
     def update_vcs_entity(self, locale_code, db_entity, vcs_entity):
         """
@@ -296,6 +314,10 @@ class ChangeSet(object):
                 'fuzzy',
                 'extra'
             ])
+
+            # Track which locales were updated.
+            for translation in self.translations_to_update:
+                self.updated_locales.add(translation.locale)
 
     def execute_update_vcs(self):
         resources = self.vcs_project.resources

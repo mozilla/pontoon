@@ -263,6 +263,11 @@ class Resource(models.Model):
 
     ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + ['pot']
 
+    @property
+    def is_asymmetric(self):
+        """Return True if this resource is in an asymmetric format."""
+        return self.format in ('dtd', 'properties', 'ini', 'inc', 'l20n')
+
     def __unicode__(self):
         return '%s: %s' % (self.project.name, self.path)
 
