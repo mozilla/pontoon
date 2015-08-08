@@ -1,0 +1,8 @@
+Pontoon: Updated {{ locale.name }} ({{ locale.code }}) localization of {{ project.name }}
+{%- if authors %}
+
+Translation authors:
+{% for author in authors -%}
+- {{ author.display_name|safe }}
+{%- endfor %}
+{% endif -%}

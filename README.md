@@ -25,7 +25,7 @@ Get involved
 
 Servers
 -------
-* [Development](https://pontoon-dev.allizom.org/)
+* [Staging](https://mozilla-pontoon-staging.herokuapp.com/)
 * [Production](https://pontoon.mozilla.org/)
 
 License

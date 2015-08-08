@@ -267,7 +267,10 @@ def translate(request, locale, slug, part=None, template='translate.html'):
             page = pages.get(name=part)
         except Subpage.DoesNotExist:
             # If page not specified or doesn't exist
-            page = pages.filter(resource__stats__locale=l)[0]
+            page = pages[0]
+            locale_pages = pages.filter(resource__stats__locale=l)
+            if locale_pages:
+                page = locale_pages[0]
 
         data['page_url'] = page.url
         data['part'] = page.name
@@ -573,7 +576,7 @@ def delete_translation(request, template=None):
     locale = translation.locale
     plural_form = translation.plural_form
 
-    translation.delete()
+    translation.mark_for_deletion()
 
     # Mark next translation approved if needed
     next = get_translation(
@@ -656,6 +659,10 @@ def update_translation(request, template=None):
     translations = Translation.objects.filter(
         entity=e, locale=l, plural_form=plural_form)
 
+    # Newlines are not allowed in .lang files (bug 1190754)
+    if e.resource.format == 'lang' and '\n' in string:
+        return HttpResponse('Newline characters are not allowed.')
+
     # Translations exist
     if len(translations) > 0:
 
@@ -669,7 +676,7 @@ def update_translation(request, template=None):
                 # Unless there's nothing to be changed
                 if t.user is not None and t.approved and t.approved_user \
                         and t.approved_date and not t.fuzzy:
-                    return HttpResponse("Same translation already exist.")
+                    return HttpResponse("Same translation already exists.")
 
                 warnings = utils.quality_check(original, string, l, ignore)
                 if warnings:
@@ -682,6 +689,7 @@ def update_translation(request, template=None):
                     t.user = user
 
                 t.approved = True
+                t.approved_date = datetime.datetime.now()
                 t.fuzzy = False
 
                 if t.approved_user is None:
@@ -719,7 +727,7 @@ def update_translation(request, template=None):
                         'translation': t.serialize(),
                     }), content_type='application/json')
 
-                return HttpResponse("Same translation already exist.")
+                return HttpResponse("Same translation already exists.")
 
         # Different translation added
         except:

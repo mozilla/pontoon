@@ -1,18 +1,32 @@
 import datetime
 import json
 import logging
+import os.path
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum
 from django.db.models.signals import post_save
 from django.forms import ModelForm
+from django.utils import timezone
 
-from pontoon.base import utils
+from dirtyfields import DirtyFieldsMixin
+from jsonfield import JSONField
+
+from pontoon.base import MOZILLA_REPOS, utils
 
 
 log = logging.getLogger('pontoon')
+
+
+# User class extensions
+@property
+def user_display_name(self):
+    name = self.first_name or self.email.split('@')[0]
+    return u'{name} <{email}>'.format(name=name, email=self.email)
+User.add_to_class('display_name', user_display_name)
 
 
 class UserProfile(models.Model):
@@ -58,8 +72,10 @@ class Locale(models.Model):
         "CLDR Plurals", blank=True, max_length=11, validators=[validate_cldr])
 
     def cldr_plurals_list(self):
-        cldr_plurals = self.cldr_plurals.split(",") or [1]
-        return [int(x) for x in cldr_plurals]
+        if self.cldr_plurals == '':
+            return [1]
+        else:
+            return map(int, self.cldr_plurals.split(','))
 
     def __unicode__(self):
         return self.name
@@ -78,6 +94,9 @@ class Locale(models.Model):
         for i in self.CLDR_PLURALS:
             if i[1] == cldr_plural:
                 return i[0]
+
+    class Meta:
+        ordering = ['name']
 
 
 class ProjectQuerySet(models.QuerySet):
@@ -140,6 +159,74 @@ class Project(models.Model):
             ("can_localize", "Can localize projects"),
         )
 
+    @property
+    def can_commit(self):
+        """
+        True if we can commit strings back to the repository this
+        project is hosted in, False otherwise.
+        """
+        return self.repository_type in ('git', 'hg', 'svn')
+
+    @property
+    def checkout_path(self):
+        """Path that this project's VCS checkout is located."""
+        return os.path.join(settings.MEDIA_ROOT, self.repository_type, self.slug)
+
+    def source_directory_path(self):
+        """Path to the directory where source strings are stored."""
+        for root, dirnames, filenames in os.walk(self.checkout_path):
+            for dirname in dirnames:
+                if dirname in ('templates', 'en-US', 'en'):
+                    return os.path.join(root, dirname)
+
+        raise Exception('No source directory found for project {0}'.format(self.slug))
+
+    def locale_directory_path(self, locale_code=None):
+        """
+        Path to the directory where strings for the given locale are
+        stored.
+
+        If locale_code is None, return the path to the directory where
+        source strings are stored.
+        """
+        path = self.checkout_path
+        locale_code = locale_code or self.source_directory_name()
+        if locale_code is not None:
+            for root, dirnames, filenames in os.walk(path):
+                if locale_code in dirnames:
+                    return os.path.join(root, locale_code)
+
+                locale_variant = locale_code.replace('-', '_')
+                if locale_variant in dirnames:
+                    return os.path.join(root, locale_variant)
+
+        raise Exception('Directory for locale `{0}` not found'.format(
+                        locale_code or 'source'))
+
+    def relative_resource_paths(self):
+        """
+        List of paths relative to the locale directories returned by
+        self.locale_directory_path() for each resource in this project.
+        """
+        path = self.source_directory_path()
+        for absolute_path in self.resources_for_path(path):
+            yield os.path.relpath(absolute_path, path)
+
+    def resources_for_path(self, path):
+        """
+        List of paths for all supported resources found within the given
+        path.
+        """
+        for root, dirnames, filenames in os.walk(path):
+            # Ignore certain files in Mozilla repositories.
+            if self.repository_url in MOZILLA_REPOS:
+                filenames = [f for f in filenames if f.endswith('region.properties')]
+
+            for filename in filenames:
+                base, extension = os.path.splitext(filename)
+                if extension[1:].lower() in Resource.ALLOWED_EXTENSIONS:
+                    yield os.path.join(root, filename)
+
     def __unicode__(self):
         return self.name
 
@@ -174,8 +261,18 @@ class Resource(models.Model):
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
 
+    ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + ['pot']
+
     def __unicode__(self):
         return '%s: %s' % (self.project.name, self.path)
+
+    @classmethod
+    def get_path_format(self, path):
+        filename, extension = os.path.splitext(path)
+        path_format = extension[1:].lower()
+
+        # Special case: pot files are considered the po format
+        return 'po' if path_format == 'pot' else path_format
 
 
 class Subpage(models.Model):
@@ -188,7 +285,7 @@ class Subpage(models.Model):
         return self.name
 
 
-class Entity(models.Model):
+class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource)
     string = models.TextField()
     string_plural = models.TextField(blank=True)
@@ -197,6 +294,13 @@ class Entity(models.Model):
     order = models.PositiveIntegerField(default=0)
     source = models.TextField(blank=True)  # Path to source code file
     obsolete = models.BooleanField(default=False)
+
+    changed_locales = models.ManyToManyField(
+        Locale,
+        through='ChangedEntityLocale',
+        help_text='List of locales in which translations for this entity have '
+                  'changed since the last sync.'
+    )
 
     @property
     def marked(self):
@@ -230,6 +334,20 @@ class Entity(models.Model):
             'obsolete': self.obsolete,
         }
 
+    def has_changed(self, locale):
+        """
+        Check if translations in the given locale have changed since the
+        last sync.
+        """
+        return locale in self.changed_locales.all()
+
+    def mark_changed(self, locale):
+        """
+        Mark the given locale as having changed translations since the
+        last sync.
+        """
+        ChangedEntityLocale.objects.get_or_create(entity=self, locale=locale)
+
     def add_translation(self, string, locale, user):
         """
         Add a new translation for this entity. If a matching translation
@@ -253,7 +371,36 @@ class Entity(models.Model):
         translation.save()
 
 
-class Translation(models.Model):
+class ChangedEntityLocale(models.Model):
+    """
+    ManyToMany model for storing what locales have changed translations for a
+    specific entity since the last sync.
+    """
+    entity = models.ForeignKey(Entity)
+    locale = models.ForeignKey(Locale)
+
+    class Meta:
+        unique_together = ('entity', 'locale')
+
+
+class TranslationManager(models.Manager):
+    def get_queryset(self):
+        return (super(TranslationManager, self).get_queryset()
+                .filter(deleted__isnull=True))
+
+
+class DeletedTranslationManager(models.Manager):
+    def get_queryset(self):
+        return (super(DeletedTranslationManager, self).get_queryset()
+                .filter(deleted__isnull=False))
+
+
+def extra_default():
+    """Default value for the Translation.extra field."""
+    return {}
+
+
+class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
     user = models.ForeignKey(User, null=True, blank=True)
@@ -266,11 +413,24 @@ class Translation(models.Model):
         User, related_name='approvers', null=True, blank=True)
     approved_date = models.DateTimeField(null=True, blank=True)
     fuzzy = models.BooleanField(default=False)
+    deleted = models.DateTimeField(default=None, null=True)
+
+    # extra stores data that we want to save for the specific format
+    # this translation is stored in, but that we otherwise don't care
+    # about.
+    extra = JSONField(default=extra_default)
+
+    # Due to https://code.djangoproject.com/ticket/14891,
+    # TranslationManager will be used for the reverse FK from entities,
+    # e.g. entity.translation_set. Deleted translations cannot be
+    # accessed via that relation.
+    objects = TranslationManager()
+    deleted_objects = DeletedTranslationManager()
 
     def __unicode__(self):
         return self.string
 
-    def save(self, stats=True, *args, **kwargs):
+    def save(self, imported=False, *args, **kwargs):
         super(Translation, self).save(*args, **kwargs)
 
         # Only one translation can be approved at a time for any
@@ -281,10 +441,18 @@ class Translation(models.Model):
                 .exclude(pk=self.pk)
                 .update(approved=False, approved_user=None, approved_date=None))
 
-        # Update stats AFTER changing approval status.
-        if stats:
+        if not imported:
+            # Update stats AFTER changing approval status.
             update_stats(self.entity.resource, self.locale)
 
+            # Whenever a translation changes, mark the entity as having
+            # changed in the appropriate locale. We could be smarter about
+            # this but for now this is fine.
+            self.entity.mark_changed(self.locale)
+
+    def mark_for_deletion(self):
+        self.deleted = timezone.now()
+        self.save()
 
     def delete(self, stats=True, *args, **kwargs):
         super(Translation, self).delete(*args, **kwargs)
@@ -446,7 +614,7 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
     if len(translations) > 0:
         try:
             return translations.filter(approved=True).latest("date")
-        except Translation.DoesNotExist as e:
+        except Translation.DoesNotExist:
             return translations.latest("date")
     else:
         return Translation()
@@ -504,7 +672,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             approved=approved, fuzzy=fuzzy)
         if approved:
             t.approved_date = now
-        t.save(stats=False)
+        t.save(imported=True)
 
     # Update existing translations
     elif translations_equal_count > 0:
@@ -513,7 +681,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             try:
                 t = translations_equal.filter(approved=True).latest("date")
                 t.approved_date = now
-            except Translation.DoesNotExist as e:
+            except Translation.DoesNotExist:
                 t = translations_equal.latest("date")
 
         # If fuzzy status changes
@@ -531,7 +699,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
 
             t.date = now
             t.approved = approved
-            t.save(stats=False)
+            t.save(imported=True)
 
 
 def unapprove(translations):
@@ -559,6 +727,10 @@ def update_entity_count(resource):
         for locale in resource.project.locales.all():
             stats, created = Stats.objects.get_or_create(
                 resource=resource, locale=locale)
+
+            # Existing stats were set to 0 beforehand and need to be restored
+            if not created:
+                update_stats(resource, locale)
 
 
 def update_stats(resource, locale):

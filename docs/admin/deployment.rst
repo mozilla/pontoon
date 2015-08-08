@@ -8,6 +8,17 @@ below assume you've already created an app and have installed the
 
 .. _Heroku Toolbelt: https://toolbelt.heroku.com/
 
+Buildpack
+---------
+Pontoon uses `heroku-buildpack-multi`_ as its buildpack. You can set this (and
+pin it to the correct version) with the following toolbelt command:
+
+.. code-block:: bash
+
+   heroku buildpacks:set https://github.com/heroku/heroku-buildpack-multi.git#26fa21ac7156e63d3d36df1627329aa57f8f137c
+
+.. _heroku-buildpack-multi: https://github.com/heroku/heroku-buildpack-multi
+
 Environment Variables
 ---------------------
 The following is a list of environment variables you'll want to set on the app
@@ -19,6 +30,15 @@ you create:
 ``ADMIN_NAME``
    Optional. Name for the ``ADMINS`` setting.
 
+``DISABLE_COLLECTSTATIC``
+   Disables running ``./manage.py collectstatic`` during the build. Should be
+   set to ``1``.
+
+   Heroku's Python buildpack has a bug that causes issues when running node
+   binaries during the compile step of the buildpack. To get around this, we run
+   the command in our post-compile step (see ``bin/post_compile``) when the
+   issue doesn't occur.
+
 ``DJANGO_DEBUG``
    Controls ``DEBUG`` mode for the site. Should be set to `False` in
    production.
@@ -29,19 +49,6 @@ you create:
 
 ``HMAC_KEY``
    Required. Secret key used for hashing passwords.
-
-``PIPELINE_BABEL_BINARY``
-   Required. Command for executing Babel_ during the build process.
-
-   The Heroku Python buildpack moves the project's code around during the build
-   process, so specifying this is important as you can't rely on babel or node
-   to be in your ``PATH``. Set this to
-   ``./.heroku/node/bin/node ./node_modules/babel/bin/babel/index.js`` to get
-   minification working properly on Heroku.
-
-``PIPELINE_YUGLIFY_BINARY``
-   Required. Command for executing Yuglify_ during the build process. Set this
-   to ``./.heroku/node/bin/node ./node_modules/yuglify/bin/yuglify``.
 
 ``SECRET_KEY``
    Required. Secret key used for sessions, cryptographic signing, etc.
@@ -93,9 +100,39 @@ Pontoon is designed to run with the following add-ons enabled:
 - Error Tracking: Raygun.io
 - Email: Sendgrid
 - Scheduled Jobs: Heroku Scheduler
+- Cache: Memcached Cloud
 
 It's possible to run with the free tiers of all of these add-ons, but it is
 recommended that, at a minimum, you run the "Standard 0" tier of Postgres.
+
+Cache Add-ons
+~~~~~~~~~~~~~
+Pontoon uses `django-pylibmc`_, which expects the following environment
+variables from the cache add-on:
+
+``MEMCACHE_SERVERS``
+   Semi-colon separated list of memcache server addresses.
+``MEMCACHE_USERNAME``
+   Username to use for authentication.
+``MEMCACHE_PASSWORD``
+   Password to use for authentication.
+
+.. note::
+
+   By default, the environment variables added by Memcached Cloud are prefixed
+   with ``MEMCACHEDCLOUD`` instead of ``MEMCACHE``. You can "attach" the
+   configuration variables with the correct prefix using the ``addons:attach``
+   command:
+
+   .. code-block:: bash
+
+      heroku addons:attach resource_name --as MEMCACHE
+
+   Replace ``resource_name`` with the name of the resource provided by the cache
+   addon you wish to use, such as ``memcachedcloud:30``. Use the
+   ``heroku addons`` command to see a list of resource names that are available.
+
+.. _django-pylibmc: https://github.com/django-pylibmc/django-pylibmc/
 
 Scheduled Jobs
 --------------
@@ -145,7 +182,7 @@ you'll have to use the Django shell to mark your user account as an admin:
 Gotchas
 -------
 - Changing the ``SSH_KEY`` or ``SSH_CONFIG`` environment variables *requires*
-  a rebuild of the site, as these settings are only using at build time. Simply
+  a rebuild of the site, as these settings are only used at build time. Simply
   changing them will not actually update the site until the next build.
 
   The `Heroku Repo`_ plugin includes a rebuild command that is handy for

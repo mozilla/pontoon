@@ -76,9 +76,9 @@ dj-database-url==0.3.0
 # sha256: EgxGIdHk9a2r4KaDRj0b56WmuZLt1HZNMjxifSKSUeA
 django-dotenv==1.3.0
 
-# sha256: agPOL-r90ZOguoom29l3PnV9Ll1eeTOmLqwSmBO9OBo
-# sha256: BmutQstMZpROfvz3ME09F_ew6yIuU5WM3YZkINLotBI
-django==1.8
+# sha256: BH0PTJMmKzOAEEmi3N2u8Jwp50HAOpR6NVbqR0ju0uI
+# sha256: K7ZU_MBf1TAXyIyvK8OLXF6iPJH4rH8KKLKQ2vIwW7o
+django==1.8.3
 
 # sha256: 3w1cLeq8MzdfKIx6tUYuBsbs2CTs-ie_qLzV5Mz7Nyo
 django-jinja==1.3.3
@@ -123,8 +123,12 @@ blessings==1.6
 # sha256: qsAfM8hEZAezxebyGF1bCfXz5st3Px2y35nvzlpwuBs
 nose-progressive==1.5.1
 
+# Temporarily using a fork instead due to
 # sha256: 2pk9Q6BeOnBk_rEsexukn8UmtnBZFIR-zf8HLpvDEBs
-raygun4py==3.0.1
+# raygun4py==3.0.1
+
+# sha256: m0Xd02Z0Ohg2aqibKrH1W5ln8ujL2w1DNQBo33ceT7U
+https://github.com/Osmose/raygun4py/archive/84b7054281f589fee2646dc4f64122bcf98f486c.zip#egg=raygun4py==3.0.1-osmose
 
 # sha256: F3sOgxHG7b_H0YQVen6A9otrh0xWRfcwDUH0dfBfIx4
 jsonpickle==0.7.0
@@ -165,3 +169,17 @@ Sphinx==1.3.1
 # sha256: SlwIPaNyS1CauqpJQ2oyf9EwkL3Ah8fIuUTQ1DeudTM
 # sha256: znfi_bqrquOT_84qYlKgpmbjl3xsL6HEjE3tBWl4WVE
 alabaster==0.7.4
+# sha256: G-4U2FR4kpaYI3chlYnX6eTwalRrktmfLu-8KdBxHXE
+# sha256: bg5ENLg92FuXwBRx8TP9z-qofWwklk7kdRGzmfYGInc
+django-bulk-update==1.1.4
+# sha256: Qjri4WBhUEQYq3q_CnQOJqeB-bx2dKbPXi8R7bSugCk
+parsimonious==0.6.2
+# sha256: fn9zpnXFGHErrdeDJ54m0WQUDz_C7XoyECw9CKaipKc
+jsonfield==1.0.3
+# sha256: FiVVlWFqbXjNeGpVzGQx2lt6zPRlEt-FRxKgzbs6z6o
+pylibmc==1.5.0
+# sha256: VZxCRyjkBCDajJmLE8PE8IYbR1JpoKh2-xcY__J20QY
+# sha256: YhN9U7WsovukJHRLobsw6SoRXZqGgcvmpkEdskGx0a0
+django-pylibmc==0.6.0
+# sha256: U_5sxKvAXajw8DIgLVoQ298q3k1CvHD1ZVeykr8ycok
+django-dirtyfields==0.7

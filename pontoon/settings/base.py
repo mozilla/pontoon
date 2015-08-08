@@ -51,10 +51,6 @@ HMAC_KEYS = {
 SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 BROWSERID_AUDIENCES = [SITE_URL]
 
-# Path to binaries for django-pipeline.
-PIPELINE_YUGLIFY_BINARY = os.environ.get('PIPELINE_YUGLIFY_BINARY', 'yuglify')
-PIPELINE_BABEL_BINARY = os.environ.get('PIPELINE_BABEL_BINARY', 'babel')
-
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
 
@@ -114,7 +110,7 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'sslify.middleware.SSLifyMiddleware',
-    #'raygun4py.middleware.django.Provider',
+    'raygun4py.middleware.django.Provider',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -179,6 +175,8 @@ PIPELINE_COMPILERS = (
     'pipeline.compilers.es6.ES6Compiler',
 )
 
+PIPELINE_YUGLIFY_BINARY = path('node_modules/.bin/yuglify')
+PIPELINE_BABEL_BINARY = path('node_modules/.bin/babel')
 PIPELINE_BABEL_ARGUMENTS = '--modules ignore'
 
 PIPELINE_DISABLE_WRAPPER = True
@@ -291,12 +289,25 @@ PIPELINE_JS = {
 }
 
 # Cache config
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'pontoon'
+# If the environment contains configuration data for Memcached, use
+# PyLibMC for the cache backend. Otherwise, default to an in-memory
+# cache.
+if os.environ.get('MEMCACHE_SERVERS') is not None:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+            'TIMEOUT': 500,
+            'BINARY': True,
+            'OPTIONS': {}
+        }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'pontoon'
+        }
+    }
 
 # Site ID is used by Django's Sites framework.
 SITE_ID = 1
@@ -376,7 +387,8 @@ LOGGING = {
 
 ## Tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_ARGS = ['--logging-filter=-django_browserid,-factory', '--logging-clear-handlers',
+NOSE_ARGS = ['--logging-filter=-django_browserid,-factory,-django.db',
+             '--logging-clear-handlers',
              '--with-progressive']
 
 # Set X-Frame-Options to DENY by default on all responses.
@@ -462,4 +474,4 @@ MICROSOFT_TERMINOLOGY_LOCALES = [
 ]
 
 # Contributors to exclude from Top Contributors list
-EXCLUDE = []
+EXCLUDE = os.environ.get('EXCLUDE', '').split(',')

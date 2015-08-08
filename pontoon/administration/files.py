@@ -25,6 +25,7 @@ from l20n.format import (
     ast as L20nast
 )
 
+from pontoon.base import MOZILLA_REPOS
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -40,11 +41,6 @@ from pontoon.base.models import (
 
 log = logging.getLogger('pontoon')
 
-MOZILLA_REPOS = (
-    'ssh://hg.mozilla.org/releases/l10n/mozilla-beta/en-US/',
-    'ssh://hg.mozilla.org/releases/l10n/mozilla-aurora/en-US/',
-    'ssh://hg.mozilla.org/l10n-central/en-US/',
-)
 
 """ Start monkeypatching """
 import re
@@ -129,21 +125,21 @@ Structure.modify_entity = modify_entity_mine
 """ End monkeypatching """
 
 
-def get_locale_paths(project, locale):
+def get_locale_paths(project, locale, source_paths, source_directory):
     """Get paths to locale files."""
 
     locale_paths = []
-    path = get_locale_directory(project, locale)["path"]
-    formats = Resource.objects.filter(project=project).values_list(
-        'format', flat=True).distinct()
+    locale_directory = get_locale_directory(project, locale)["name"]
 
-    for root, dirnames, filenames in os.walk(path):
-        # Ignore hidden files
-        filenames = [f for f in filenames if not f[0] == '.']
+    for path in source_paths:
+        locale_path = path.replace(
+            '/' + source_directory + '/', '/' + locale_directory + '/')
 
-        for format in formats:
-            for filename in fnmatch.filter(filenames, '*.' + format):
-                locale_paths.append(os.path.join(root, filename))
+        if locale_path.endswith('.pot'):
+            locale_path = locale_path[:-1]
+
+        if os.path.exists(locale_path):
+            locale_paths.append(locale_path)
 
     return locale_paths
 
@@ -233,7 +229,7 @@ def get_source_directory(path):
         # Ignore hidden folders
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
 
-        for directory in ('templates', 'en-US', 'en-GB', 'en'):
+        for directory in ('templates', 'en-US', 'en'):
             for dirname in fnmatch.filter(dirnames, directory):
                 source_directory_path = os.path.join(root, dirname)
                 if detect_format(source_directory_path):
@@ -738,7 +734,7 @@ def extract_to_database(project, locales=None):
             paths = source_paths
             entities = True
         else:
-            paths = get_locale_paths(project, locale)
+            paths = get_locale_paths(project, locale, source_paths, source_directory['name'])
             entities = isFile
 
         for path in paths:
@@ -747,13 +743,12 @@ def extract_to_database(project, locales=None):
             globals()['extract_%s' % format](project, locale, path, entities)
 
 
-def update_from_repository(project, locales=None):
+def update_from_repository(project):
     """
     Update project files from remote repository.
 
     Args:
         project: Project instance
-        locales: List of Locale instances
     """
     log.debug("Update project files from remote repository.")
 
@@ -766,13 +761,18 @@ def update_from_repository(project, locales=None):
     repository_url_master = False
     ending = os.path.basename(os.path.normpath(repository_url))
 
-    if ending in ('templates', 'en-US', 'en-GB', 'en'):
+    if ending in ('templates', 'en-US', 'en'):
         repository_url_master = repository_url.rsplit(ending, 1)[0]
         repository_path = os.path.join(repository_path_master, ending)
 
+    # If Mozilla repo, set paths
+    elif project.repository_url in MOZILLA_REPOS:
+        base = 'ssh://hg.mozilla.org/releases/l10n/mozilla-'
+        repository_url_master = base + ending.split("-")[-1]
+        repository_path = os.path.join(repository_path_master, 'en-US')
+
     # Save file to server
     if repository_type == 'file':
-
         u = urllib2.urlopen(repository_url)
         file_name = repository_url.rstrip('/').rsplit('/', 1)[1]
         file_path = os.path.join(repository_path_master, file_name)
@@ -788,28 +788,15 @@ def update_from_repository(project, locales=None):
 
     # Save files to server
     else:
+        update_from_vcs(repository_type, repository_url, repository_path)
 
-        if not locales:
-            update_from_vcs(repository_type, repository_url, repository_path)
-
-        if repository_url_master:  # One-locale repo
-            if not locales:
-                locales = project.locales.all()
-            for l in locales:
+        # If one-locale repo, also update locale repositorites
+        if repository_url_master:
+            for l in project.locales.all():
                 update_from_vcs(
                     repository_type,
                     os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
-
-        elif locales:
-            if repository_type == 'svn':
-                for l in locales:
-                    path = get_locale_directory(project, l)["path"]
-                    update_from_vcs(repository_type, repository_url, path)
-
-            else:
-                update_from_vcs(
-                    repository_type, repository_url, repository_path)
 
     # Store project repository_path
     project.repository_path = repository_path

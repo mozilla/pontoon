@@ -22,8 +22,9 @@ $(function() {
     var value = $(this).val(),
         self = Pontoon;
     if (e.which === 13 && value.length > 0) {
+      var code = $('.locale .selector .language').attr('class').split(' ')[1];
       self.locale = {
-        code: $('.locale .selector .language').attr('class').split(' ')[1]
+        code: code
       };
       self.getMachinery(value, "helpers", "search");
       return false;

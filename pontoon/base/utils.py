@@ -1,7 +1,9 @@
 import json
 import logging
+import os
 import re
 import requests
+import traceback
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
@@ -9,7 +11,7 @@ from django.http import HttpResponse
 from django.utils.translation import trans_real
 from translate.filters import checks
 from translate.storage import base as storage_base
-from translate.storage.placeables import base, general, parse, strelem
+from translate.storage.placeables import base, general, parse
 from translate.storage.placeables.interfaces import BasePlaceable
 from translate.lang import data as lang_data
 
@@ -327,3 +329,24 @@ def req(method, project, resource, locale,
     except Exception:
         log.debug('Generic exception: ' + traceback.format_exc())
         return "error"
+
+
+def first(collection, test, default=None):
+    """
+    Return the first item that, when passed to the given test function,
+    returns True. If no item passes the test, return the default value.
+    """
+    return next((c for c in collection if test(c)), default)
+
+
+def match_attr(collection, **attributes):
+    """
+    Return the first item that has matching values for the given
+    attributes, or None if no item is found to match.
+    """
+    return first(
+        collection,
+        lambda i: all(getattr(i, attrib) == value
+                      for attrib, value in attributes.items()),
+        default=None
+    )

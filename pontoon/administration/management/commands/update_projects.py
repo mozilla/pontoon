@@ -17,8 +17,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         def output(text):
-            now = datetime.datetime.now()
-            self.stdout.write('[%s]: %s\n' % (now, text.encode('utf8')))
+            self.stdout.write(text.encode('utf8') + u'\n')
 
         output('UPDATE PROJECTS: start')
 
@@ -32,8 +31,6 @@ class Command(BaseCommand):
                 extract_to_database(project)
                 output('Updated project %s' % project)
             except Exception as e:
-                now = datetime.datetime.now()
-                raise CommandError(
-                    '[%s]: Update error: %s\n' % (now, unicode(e)))
+                raise CommandError(u'Update error: %s\n' % unicode(e))
 
         output('UPDATE PROJECTS: done')

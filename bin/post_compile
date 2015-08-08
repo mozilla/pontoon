@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+export PATH=/app/.heroku/node/bin:$PATH
+./manage.py migrate --noinput
+./manage.py collectstatic --noinput
