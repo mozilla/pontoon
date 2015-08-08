@@ -116,20 +116,10 @@ var Pontoon = (function (my) {
     /*
      * Do not render HTML tags
      *
-     * string HTML snippet that has to be displayed as code instead of rendered
+     * string String that has to be displayed as is instead of rendered
      */
     doNotRender: function (string) {
-      return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    },
-
-
-    /*
-     * Reverse function: do render HTML tags
-     *
-     * string HTML snippet that has to be rendered instead of displayed as code
-     */
-    doRender: function (string) {
-      return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+      return $('<div/>').text(string).html()
     },
 
 
