@@ -1229,7 +1229,7 @@ def dump_from_database(project, locale):
     # Asymmetric formats: Remove l10n files from locale repository
     asymmetric = ['dtd', 'properties', 'ini', 'inc']
 
-    if all(x in formats for x in asymmetric):
+    if all(x in asymmetric for x in formats):
         for root, dirnames, filenames in os.walk(
                 locale_directory_path, topdown=False):
             for extension in asymmetric:
