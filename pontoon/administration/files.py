@@ -1217,9 +1217,6 @@ def dump_from_database(project, locale):
     if not locale_directory_path:
         return False
 
-    formats = Resource.objects.filter(project=project).values_list(
-        'format', flat=True).distinct()
-
     # Get relative paths to translated files only
     stats = Stats.objects.filter(locale=locale).exclude(approved_count=0) \
         .values("resource")
@@ -1227,12 +1224,11 @@ def dump_from_database(project, locale):
     relative_paths = resources.values_list('path', flat=True).distinct()
 
     # Asymmetric formats: Remove l10n files from locale repository
-    asymmetric = ['dtd', 'properties', 'ini', 'inc']
-
-    if all(x in formats for x in asymmetric):
+    project_resources = Resource.objects.filter(project=project)
+    if all(r.is_asymmetric for r in project_resources):
         for root, dirnames, filenames in os.walk(
                 locale_directory_path, topdown=False):
-            for extension in asymmetric:
+            for extension in Resource.ASYMMETRIC:
                 for filename in fnmatch.filter(filenames, '*.' + extension):
 
                     # Ignore specific files from Mozilla repos
