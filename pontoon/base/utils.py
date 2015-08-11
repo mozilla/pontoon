@@ -66,35 +66,39 @@ def get_project_locale_from_request(request, locales):
             continue
 
 
+class NewlineEscapePlaceable(base.Ph):
+    """Placeable handling newline escapes."""
+    istranslatable = False
+    regex = re.compile(r'\\n')
+    parse = classmethod(general.regex_parse)
+
+
+class TabEscapePlaceable(base.Ph):
+    """Placeable handling tab escapes."""
+    istranslatable = False
+    regex = re.compile(r'\t')
+    parse = classmethod(general.regex_parse)
+
+
+class EscapePlaceable(base.Ph):
+    """Placeable handling escapes."""
+    istranslatable = False
+    regex = re.compile(r'\\')
+    parse = classmethod(general.regex_parse)
+
+
+class SpacesPlaceable(base.Ph):
+    """Placeable handling spaces."""
+    istranslatable = False
+    regex = re.compile('^ +| +$|[\r\n\t] +| {2,}')
+    parse = classmethod(general.regex_parse)
+
+
 def mark_placeables(text):
     """Wrap placeables to easily distinguish and manipulate them.
 
     Source: http://bit.ly/1yQOC9B
     """
-
-    class NewlineEscapePlaceable(base.Ph):
-        """Placeable handling newline escapes."""
-        istranslatable = False
-        regex = re.compile(r'\\n')
-        parse = classmethod(general.regex_parse)
-
-    class TabEscapePlaceable(base.Ph):
-        """Placeable handling tab escapes."""
-        istranslatable = False
-        regex = re.compile(r'\t')
-        parse = classmethod(general.regex_parse)
-
-    class EscapePlaceable(base.Ph):
-        """Placeable handling escapes."""
-        istranslatable = False
-        regex = re.compile(r'\\')
-        parse = classmethod(general.regex_parse)
-
-    class SpacesPlaceable(base.Ph):
-        """Placeable handling spaces."""
-        istranslatable = False
-        regex = re.compile('^ +| +$|[\r\n\t] +| {2,}')
-        parse = classmethod(general.regex_parse)
 
     PARSERS = [
         NewlineEscapePlaceable.parse,
