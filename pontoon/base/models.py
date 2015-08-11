@@ -12,6 +12,7 @@ from django.db.models.signals import post_save
 from django.forms import ModelForm
 from django.utils import timezone
 
+from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
 
 from pontoon.base import MOZILLA_REPOS, utils
@@ -76,10 +77,6 @@ class Locale(models.Model):
         else:
             return map(int, self.cldr_plurals.split(','))
 
-    @property
-    def dir(self):
-        return 'rtl' if self.code in settings.RTL_LOCALES else 'ltr'
-
     def __unicode__(self):
         return self.name
 
@@ -90,7 +87,6 @@ class Locale(models.Model):
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
             'cldr_plurals': self.cldr_plurals_list(),
-            'dir': self.dir,
         })
 
     @classmethod
@@ -116,7 +112,6 @@ class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale)
-    last_synced = models.DateTimeField(null=True)
 
     # Repositories
     REPOSITORY_TYPE_CHOICES = (
@@ -268,6 +263,13 @@ class Resource(models.Model):
 
     ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + ['pot']
 
+    ASYMMETRIC_FORMATS = ('dtd', 'properties', 'ini', 'inc', 'l20n')
+
+    @property
+    def is_asymmetric(self):
+        """Return True if this resource is in an asymmetric format."""
+        return self.format in self.ASYMMETRIC_FORMATS
+
     def __unicode__(self):
         return '%s: %s' % (self.project.name, self.path)
 
@@ -290,7 +292,7 @@ class Subpage(models.Model):
         return self.name
 
 
-class Entity(models.Model):
+class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource)
     string = models.TextField()
     string_plural = models.TextField(blank=True)
@@ -299,6 +301,13 @@ class Entity(models.Model):
     order = models.PositiveIntegerField(default=0)
     source = models.TextField(blank=True)  # Path to source code file
     obsolete = models.BooleanField(default=False)
+
+    changed_locales = models.ManyToManyField(
+        Locale,
+        through='ChangedEntityLocale',
+        help_text='List of locales in which translations for this entity have '
+                  'changed since the last sync.'
+    )
 
     @property
     def marked(self):
@@ -332,31 +341,19 @@ class Entity(models.Model):
             'obsolete': self.obsolete,
         }
 
-    def has_changed(self, locale_code):
-        project = self.resource.project
-        if project.last_synced is None:
-            return True
+    def has_changed(self, locale):
+        """
+        Check if translations in the given locale have changed since the
+        last sync.
+        """
+        return locale in self.changed_locales.all()
 
-        recently_approved = self.translation_set.filter(
-            approved_date__gt=project.last_synced,
-            locale__code=locale_code
-        )
-        if recently_approved.exists():
-            return True
-
-        approved = self.translation_set.filter(
-            approved=True,
-            locale__code=locale_code
-        )
-        recently_deleted = Translation.deleted_objects.filter(
-            entity=self,
-            deleted__gt=project.last_synced,
-            locale__code=locale_code
-        )
-        if not approved.exists() and recently_deleted.exists():
-            return True
-
-        return False
+    def mark_changed(self, locale):
+        """
+        Mark the given locale as having changed translations since the
+        last sync.
+        """
+        ChangedEntityLocale.objects.get_or_create(entity=self, locale=locale)
 
     def add_translation(self, string, locale, user):
         """
@@ -381,6 +378,18 @@ class Entity(models.Model):
         translation.save()
 
 
+class ChangedEntityLocale(models.Model):
+    """
+    ManyToMany model for storing what locales have changed translations for a
+    specific entity since the last sync.
+    """
+    entity = models.ForeignKey(Entity)
+    locale = models.ForeignKey(Locale)
+
+    class Meta:
+        unique_together = ('entity', 'locale')
+
+
 class TranslationManager(models.Manager):
     def get_queryset(self):
         return (super(TranslationManager, self).get_queryset()
@@ -398,7 +407,7 @@ def extra_default():
     return {}
 
 
-class Translation(models.Model):
+class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
     user = models.ForeignKey(User, null=True, blank=True)
@@ -428,7 +437,7 @@ class Translation(models.Model):
     def __unicode__(self):
         return self.string
 
-    def save(self, stats=True, *args, **kwargs):
+    def save(self, imported=False, *args, **kwargs):
         super(Translation, self).save(*args, **kwargs)
 
         # Only one translation can be approved at a time for any
@@ -439,9 +448,14 @@ class Translation(models.Model):
                 .exclude(pk=self.pk)
                 .update(approved=False, approved_user=None, approved_date=None))
 
-        # Update stats AFTER changing approval status.
-        if stats:
+        if not imported:
+            # Update stats AFTER changing approval status.
             update_stats(self.entity.resource, self.locale)
+
+            # Whenever a translation changes, mark the entity as having
+            # changed in the appropriate locale. We could be smarter about
+            # this but for now this is fine.
+            self.entity.mark_changed(self.locale)
 
     def mark_for_deletion(self):
         self.deleted = timezone.now()
@@ -621,7 +635,7 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
     if fuzzy is not None:
         translations = translations.filter(fuzzy=fuzzy)
 
-    if len(translations) > 0:
+    if translations.exists():
         try:
             return translations.filter(approved=True).latest("date")
         except Translation.DoesNotExist:
@@ -682,7 +696,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
             approved=approved, fuzzy=fuzzy)
         if approved:
             t.approved_date = now
-        t.save(stats=False)
+        t.save(imported=True)
 
     # Update existing translations
     elif translations_equal_count > 0:
@@ -709,7 +723,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
 
             t.date = now
             t.approved = approved
-            t.save(stats=False)
+            t.save(imported=True)
 
 
 def unapprove(translations):
@@ -737,6 +751,10 @@ def update_entity_count(resource):
         for locale in resource.project.locales.all():
             stats, created = Stats.objects.get_or_create(
                 resource=resource, locale=locale)
+
+            # Existing stats were set to 0 beforehand and need to be restored
+            if not created:
+                update_stats(resource, locale)
 
 
 def update_stats(resource, locale):

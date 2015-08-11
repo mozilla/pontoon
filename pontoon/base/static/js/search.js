@@ -24,8 +24,7 @@ $(function() {
     if (e.which === 13 && value.length > 0) {
       var code = $('.locale .selector .language').attr('class').split(' ')[1];
       self.locale = {
-        code: code,
-        dir: $('#server').data('rtl').indexOf(code) === -1 ? 'ltr' : 'rtl'
+        code: code
       };
       self.getMachinery(value, "helpers", "search");
       return false;

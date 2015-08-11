@@ -83,7 +83,7 @@ var Pontoon = (function (my) {
             $.each(data, function() {
               list.append('<li title="Click to copy">' +
                 '<header>' + this.locale.name + '<span class="stress">' + this.locale.code + '</span></header>' +
-                '<p class="translation" dir="' + this.locale.dir + '" lang="' + this.locale.code + '">' +
+                '<p class="translation" dir="auto" lang="' + this.locale.code + '">' +
                   self.doNotRender(this.translation) +
                 '</p>' +
               '</li>');
@@ -165,7 +165,7 @@ var Pontoon = (function (my) {
                       '<button class="delete fa" title="Delete"></button>' +
                     '</menu>' +
                   '</header>' +
-                  '<p class="translation" dir="' + self.locale.dir + '" lang="' + self.locale.code + '">' +
+                  '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
                     self.doNotRender(this.translation) +
                   '</p>' +
                 '</li>');
@@ -449,6 +449,15 @@ var Pontoon = (function (my) {
             .removeClass('limited').hide();
           break;
 
+        case "unchanged":
+          list.find('.entity').each(function() {
+            var entity = this.entity;
+            if (entity.original !== entity.translation[0].string) {
+              $(this).removeClass('limited').hide();
+            }
+          });
+          break;
+
         }
 
         searchEntities();
@@ -465,8 +474,7 @@ var Pontoon = (function (my) {
           '<span class="status fa"></span>' +
           '<p class="string-wrapper">' +
             '<span class="source-string">' + this.marked + '</span>' +
-            '<span class="translation-string" dir="' +
-              self.locale.dir + '" lang="' + self.locale.code + '">' +
+            '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
               self.doNotRender(this.translation[0].string) +
             '</span>' +
           '</p>' +
@@ -588,7 +596,7 @@ var Pontoon = (function (my) {
 
         var textarea = $('#translation'),
             pos = textarea[0].selectionStart,
-            placeable = self.doRender($(this).text()),
+            placeable = $(this).text(),
             before = textarea.val(),
             after = before.substring(0, pos) + placeable + before.substring(pos);
 
@@ -687,6 +695,25 @@ var Pontoon = (function (my) {
           return false;
         }
 
+        // Tab: select suggestions
+        if (!$('.menu').is(':visible') && !$('.popup').is(':visible') && key === 9) {
+
+          var section = $('#helpers section:visible'),
+              index = section.find('li.hover').index() + 1;
+
+          // If possible, select next suggestion, or select first
+          if (section.find('li:last').is('.hover')) {
+            index = 0;
+          }
+
+          section
+            .find('li').removeClass('hover').end()
+            .find('li:eq(' + index + ')').addClass('hover').click();
+
+          self.updateScroll(section);
+          return false;
+        }
+
       // Update length (keydown is triggered too early)
       }).unbind("input propertychange").bind("input propertychange", function (e) {
         var length = $('#translation').val().length;
@@ -722,7 +749,7 @@ var Pontoon = (function (my) {
 
         var entity = $('#editor')[0].entity,
             original = entity['original' + self.isPluralized()],
-            source = self.doRender(original);
+            source = original;
 
         $('#translation').val(source).focus();
         $('#translation-length .current-length').html(source.length);
@@ -838,8 +865,8 @@ var Pontoon = (function (my) {
         e.stopPropagation();
         e.preventDefault();
 
-        var translation = $(this).find('.translation').html(),
-            source = self.doRender(translation);
+        var translation = $(this).find('.translation').text(),
+            source = translation;
         $('#translation').val(source).focus();
         $('#translation-length .current-length').html(source.length);
 
@@ -896,8 +923,8 @@ var Pontoon = (function (my) {
                     // Make newest alternative translation active
                     if (next.length > 0) {
                       next.click();
-                      translation = next.find('.translation').html();
-                      entity.translation[pluralForm].string = self.doRender(translation);
+                      translation = next.find('.translation').text();
+                      entity.translation[pluralForm].string = translation;
                       entity.ui.find('.translation-string')
                         .html(self.doNotRender(translation));
                       if (self.user.localizer) {

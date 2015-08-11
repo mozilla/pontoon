@@ -27,15 +27,20 @@ class LangEntity(VCSTranslation):
             source_string=source_string,
             strings={None: translation_string},  # Langfiles lack plural support
             comments=comments,
-            fuzzy=False,  # Langfiles don't support fuzzy status.
-            extra={'tags': set(tags)},  # Tags are a langfile-specific feature.
+            fuzzy=False,  # Langfiles don't support fuzzy status
         )
+
+        self.tags = set(tags)
 
         # If the translation matches the source string without the {ok}
         # tag, then the translation isn't actually valid, so we remove
         # it.
         if source_string == translation_string and 'ok' not in tags:
             del self.strings[None]
+
+    @property
+    def extra(self):
+        return {'tags': list(self.tags)}
 
 
 class LangFile(ParsedResource):
@@ -64,20 +69,19 @@ class LangFile(ParsedResource):
         f.write(u';{0}\n'.format(entity.source_string))
 
         translation = entity.strings.get(None, None)
-        tags = entity.extra['tags']
         if translation is None:
             # No translation? Output the source string and remove {ok}.
             translation = entity.source_string
-            tags.discard('ok')
+            entity.tags.discard('ok')
         elif translation == entity.source_string:
             # Translation is equal to the source? Include {ok}.
-            tags.add('ok')
+            entity.tags.add('ok')
         elif translation != entity.source_string:
             # Translation is different? Remove {ok}, it's unneeded.
-            tags.discard('ok')
+            entity.tags.discard('ok')
 
         if entity.extra.get('tags'):
-            tags = [u'{{{tag}}}'.format(tag=t) for t in entity.extra['tags']]
+            tags = [u'{{{tag}}}'.format(tag=t) for t in entity.tags]
             translation = u'{translation} {tags}'.format(
                 translation=translation,
                 tags=u' '.join(tags)

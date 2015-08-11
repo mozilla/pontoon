@@ -6,14 +6,6 @@
 
 {% block subtitle %}Terminology Search{% endblock %}
 
-{% block before %}
-<!-- Server data -->
-<div id="server" class="hidden"
-     data-rtl="{{ settings.RTL_LOCALES|to_json }}"
-     >
-</div>
-{% endblock %}
-
 {% block middle %}
 <form>
   {% include 'locale_selector.html' %}

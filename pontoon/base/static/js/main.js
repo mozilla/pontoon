@@ -116,20 +116,10 @@ var Pontoon = (function (my) {
     /*
      * Do not render HTML tags
      *
-     * string HTML snippet that has to be displayed as code instead of rendered
+     * string String that has to be displayed as is instead of rendered
      */
     doNotRender: function (string) {
-      return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    },
-
-
-    /*
-     * Reverse function: do render HTML tags
-     *
-     * string HTML snippet that has to be rendered instead of displayed as code
-     */
-    doRender: function (string) {
-      return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+      return $('<div/>').text(string).html()
     },
 
 
@@ -186,7 +176,7 @@ var Pontoon = (function (my) {
               'title="' + data.title + '">' + data.source + '</a>' +
           '</header>' +
           '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
-          '<p class="translation" dir="' + self.locale.dir + '" lang="' + self.locale.code + '">' +
+          '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
             self.doNotRender(data.translation) +
           '</p>' +
         '</li>');
@@ -610,6 +600,14 @@ $(function() {
       $('body').click();
       return false;
     }
+
+    // Alt + F: focus search
+    if ($('#sidebar').is(':visible') && (Pontoon.app.advanced || !$('#editor').is('.opened'))
+        && e.altKey && key === 70) {
+      $('#search').focus();
+      return false;
+    }
+
   });
 
 });

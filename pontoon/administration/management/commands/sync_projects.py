@@ -9,7 +9,15 @@ from bulk_update.helper import bulk_update
 
 from pontoon.administration.files import update_from_repository
 from pontoon.administration.vcs import commit_to_vcs, CommitToRepositoryException
-from pontoon.base.models import Entity, Locale, Project, Resource, Translation
+from pontoon.base.models import (
+    ChangedEntityLocale,
+    Entity,
+    Locale,
+    Project,
+    Resource,
+    Translation,
+    update_stats
+)
 from pontoon.base.utils import match_attr
 from pontoon.base.vcs_models import VCSProject
 
@@ -84,13 +92,17 @@ class Command(BaseCommand):
             vcs_entity = vcs_entities.get(key, None)
             self.handle_entity(changeset, db_project, key, db_entity, vcs_entity)
 
-        # Apply the changeset to the files and then commit them.
+        # Apply the changeset to the files, commit them, and update stats
+        # entries in the DB.
         changeset.execute()
         self.commit_changes(db_project, changeset)
+        self.update_stats(db_project, vcs_project, changeset)
 
-        # Once we've successfully committed, update the last_synced date.
-        db_project.last_synced = timezone.now()
-        db_project.save()
+        # Clear out the list of changed locales for entity in this
+        # project now that we've finished syncing.
+        (ChangedEntityLocale.objects
+            .filter(entity__resource__project=db_project)
+            .delete())
 
         self.log(u'Synced project {0}', db_project.slug)
 
@@ -116,7 +128,7 @@ class Command(BaseCommand):
                     # pull updates nor edit it. Skip it!
                     continue
 
-                if db_entity.has_changed(locale.code):
+                if db_entity.has_changed(locale):
                     # Pontoon changes overwrite whatever VCS has.
                     changeset.update_vcs_entity(locale.code, db_entity, vcs_entity)
 
@@ -137,12 +149,27 @@ class Command(BaseCommand):
             resource.entity_count = len(vcs_resource.entities)
             resource.save()
 
+    def update_stats(self, db_project, vcs_project, changeset):
+        """
+        Update the Stats entries in the database for locales that had
+        translation updates.
+        """
+        for resource in db_project.resource_set.all():
+            for locale in changeset.updated_locales:
+                # We only want to create/update the stats object if the resource
+                # exists in the current locale, UNLESS the file is asynmmetric.
+                vcs_resource = vcs_project.resources[resource.path]
+                resource_exists = vcs_resource.files.get(locale.code) is not None
+                if resource_exists or resource.is_asymmetric:
+                    update_stats(resource, locale)
+
     def get_vcs_entities(self, vcs_project):
         return {self.entity_key(entity): entity for entity in vcs_project.entities}
 
     def get_db_entities(self, db_project):
         entities = (Entity.objects
                     .select_related('resource')
+                    .prefetch_related('changed_locales')
                     .filter(resource__project=db_project, obsolete=False))
         return {self.entity_key(entity): entity for entity in entities}
 
@@ -219,6 +246,7 @@ class ChangeSet(object):
         self.translations_to_create = []
 
         self.commit_authors_per_locale = {}
+        self.updated_locales = set()
 
     def update_vcs_entity(self, locale_code, db_entity, vcs_entity):
         """
@@ -287,6 +315,10 @@ class ChangeSet(object):
                 'extra'
             ])
 
+            # Track which locales were updated.
+            for translation in self.translations_to_update:
+                self.updated_locales.add(translation.locale)
+
     def execute_update_vcs(self):
         resources = self.vcs_project.resources
         changed_resources = set()
@@ -346,11 +378,12 @@ class ChangeSet(object):
                     ))
 
     def execute_update_db(self):
-        # TODO: Optimize to only update translations if necessary.
         for locale_code, db_entity, vcs_entity in self.changes['update_db']:
             for field, value in self.get_entity_updates(vcs_entity).items():
                 setattr(db_entity, field, value)
-            self.entities_to_update.append(db_entity)
+
+            if db_entity.is_dirty(check_relationship=True):
+                self.entities_to_update.append(db_entity)
 
             # Update translations for the entity.
             vcs_translation = vcs_entity.translations[locale_code]
@@ -370,7 +403,8 @@ class ChangeSet(object):
                     db_translation.fuzzy = vcs_translation.fuzzy
                     db_translation.extra = vcs_translation.extra
 
-                    self.translations_to_update.append(db_translation)
+                    if db_translation.is_dirty():
+                        self.translations_to_update.append(db_translation)
                     approved_translations.append(db_translation)
                 else:
                     self.translations_to_create.append(Translation(
@@ -390,7 +424,9 @@ class ChangeSet(object):
                     translation.approved = False
                     translation.approved_user = None
                     translation.approved_date = None
-                    self.translations_to_update.append(translation)
+
+                    if translation.is_dirty():
+                        self.translations_to_update.append(translation)
 
     def execute_obsolete_db(self):
         (Entity.objects

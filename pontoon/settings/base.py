@@ -149,7 +149,7 @@ TEMPLATES = [
                 'django_jinja.builtins.extensions.UrlsExtension',
                 'django_jinja.builtins.extensions.StaticFilesExtension',
                 'django_jinja.builtins.extensions.DjangoFiltersExtension',
-                'pipeline.jinja2.ext.PipelineExtension',
+                'pipeline.templatetags.ext.PipelineExtension',
             ],
             'globals': {
                 'browserid_info': 'django_browserid.helpers.browserid_info',
@@ -481,6 +481,3 @@ MICROSOFT_TERMINOLOGY_LOCALES = [
 
 # Contributors to exclude from Top Contributors list
 EXCLUDE = os.environ.get('EXCLUDE', '').split(',')
-
-# List of RTL locales
-RTL_LOCALES = ['ar', 'fa', 'he', 'ur']
