@@ -1237,7 +1237,7 @@ def dump_from_database(project, locale):
                         os.remove(os.path.join(root, filename))
 
             # Remove empty directories
-            if not os.listdir(root):
+            if not os.listdir(root) and locale_directory_path != root:
                 shutil.rmtree(os.path.join(locale_directory_path, root))
 
         # If directory empty, make sure Git and Mercurial don't remove it
