@@ -1228,7 +1228,7 @@ def dump_from_database(project, locale):
     if all(r.is_asymmetric for r in project_resources):
         for root, dirnames, filenames in os.walk(
                 locale_directory_path, topdown=False):
-            for extension in Resource.ASYMMETRIC:
+            for extension in Resource.ASYMMETRIC_FORMATS:
                 for filename in fnmatch.filter(filenames, '*.' + extension):
 
                     # Ignore specific files from Mozilla repos
