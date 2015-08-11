@@ -62,7 +62,11 @@ class Command(BaseCommand):
             raise CommandError('No matching projects found.')
 
         for project in projects:
-            self.handle_project(project)
+            if not project.can_commit:
+                self.log(u'Skipping project {0}, cannot commit to repository.'
+                         .format(project.name))
+            else:
+                self.handle_project(project)
         self.log('SYNC PROJECTS: done')
 
         # Once we've synced, we can delete all translations scheduled
@@ -70,11 +74,6 @@ class Command(BaseCommand):
         Translation.deleted_objects.all().delete()
 
     def handle_project(self, db_project):
-        if not db_project.can_commit:
-            self.log(u'Skipping project {0}, cannot commit to repository.'
-                     .format(db_project.name))
-            return
-
         # Pull changes from VCS and update what we know about the files.
         update_from_repository(db_project)
         vcs_project = VCSProject(db_project)
@@ -95,7 +94,8 @@ class Command(BaseCommand):
         # Apply the changeset to the files, commit them, and update stats
         # entries in the DB.
         changeset.execute()
-        self.commit_changes(db_project, changeset)
+        if not self.no_commit:
+            self.commit_changes(db_project, changeset)
         self.update_stats(db_project, vcs_project, changeset)
 
         # Clear out the list of changed locales for entity in this
@@ -157,7 +157,7 @@ class Command(BaseCommand):
         for resource in db_project.resource_set.all():
             for locale in changeset.updated_locales:
                 # We only want to create/update the stats object if the resource
-                # exists in the current locale, UNLESS the file is asynmmetric.
+                # exists in the current locale, UNLESS the file is asymmetric.
                 vcs_resource = vcs_project.resources[resource.path]
                 resource_exists = vcs_resource.files.get(locale.code) is not None
                 if resource_exists or resource.is_asymmetric:
@@ -183,9 +183,6 @@ class Command(BaseCommand):
 
     def commit_changes(self, db_project, changeset):
         """Commit the changes we've made back to the VCS."""
-        if self.no_commit:
-            return
-
         for locale in db_project.locales.all():
             authors = changeset.commit_authors_per_locale.get(locale.code, [])
 
@@ -309,7 +306,7 @@ class ChangeSet(object):
                 'string',
                 'plural_form',
                 'approved',
-                'approved_user',
+                'approved_user_id',
                 'approved_date',
                 'fuzzy',
                 'extra'
