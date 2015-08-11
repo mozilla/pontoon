@@ -29,6 +29,8 @@
 
     {% include 'project_selector.html' %}
 
+    {% include 'locale_selector.html' %}
+
     <!-- Part selector -->
     <div class="part select{% if not part %} hidden{% endif %}">
       <div class="button breadcrumbs selector" title="{{ part }}">
@@ -44,8 +46,6 @@
         </ul>
       </div>
     </div>
-
-    {% include 'locale_selector.html' %}
 
     <!-- Go -->
     <div class="go select">
@@ -216,6 +216,7 @@
             <li class="fuzzy"><span class="status fa"></span>Needs work</li>
             <li class="translated"><span class="status fa"></span>Unapproved</li>
             <li class="approved"><span class="status fa"></span>Approved</li>
+            <li class="unchanged"><span class="status fa"></span>Unchanged</li>
           </ul>
         </div>
       </div>

@@ -1,4 +1,5 @@
 # sha256: 0Bl46ajFHqezTscfP87RMmQ3zTZrnC4ZJlrOBQkk4OI
+# sha256: s6eaI9N7WgL6pVC5LLu-vrSqHXfmScPrOcGav1Ji2gQ
 argparse==1.3.0
 
 # sha256: HhvLrNY1fBUa43zwKQ3MgJch0yziH9a3M5Vo893vG2k
@@ -29,6 +30,7 @@ docutils==0.12
 oauthlib==0.1.3
 
 # sha256: seoUHVjtXkiu0mdPfIlN-4P2OcMobXsysuGfoDKltAA
+# sha256: INKg1YmmksEd9Um9fNqDxmXu8qg-AXuEP-zflW7brXQ
 polib==1.0.6
 
 # sha256: rxL5lFTolenkMMdXI8O5QZwLzNDqd4A2YtaprFb2Qls
@@ -44,6 +46,7 @@ https://github.com/l20n/python-l20n/archive/4e32a8d.zip#egg=python-l20n
 python-Levenshtein==0.11.2
 
 # sha256: NYsFoMJgXBXPgzfRcBbrla_qrQfJAN-cLN524hlKklg
+# sha256: PhW0FsmiA5waUSCLLNO7T_15bNGeYBsdJlevy3fD3JA
 pytz==2015.2
 
 # sha256: jw9WgT-C0MJ9lXgiEmismvSPB2xx7mlpMwXOymyjVb0
@@ -57,6 +60,7 @@ rsa==3.1.4
 http://hg.mozilla.org/l10n/silme/archive/b21c5151136e.zip#egg=silme==0.9.0b
 
 # sha256: QYqTw5en7asj5ViNvAZ6x0pyPts9VBvUk295R252Rdo
+# sha256: 4kBSQR_E-9H2cmNVN8P8IzDZSBsYwDF2lbRiWVEskdU
 six==1.9.0
 
 # sha256: 1VJK5SO7ngnFe829HvriwofSBgNojqMfYCDtGApImvA
@@ -82,9 +86,9 @@ django==1.8.3
 
 # sha256: 3w1cLeq8MzdfKIx6tUYuBsbs2CTs-ie_qLzV5Mz7Nyo
 django-jinja==1.3.3
-
-# sha256: dFYt2z4rkbygR3Lx_YLP6JEts2H7SuDShiua0EfioVk
-django-pipeline==1.5.0
+# sha256: SOccixeBUzre5kVhzKIMnxfUATYhHCsyUx5w_-f7DO0
+# sha256: dS-jXUDLZF5tOlTM3gFyZzLkQaLVTZBCGcaOQC944ZQ
+django-pipeline==1.5.3
 
 # sha256: pRec3pItK04EXuWxHocyPud9NjrkApT8glLyXWoOrwY
 # sha256: i8g1CCiCrZoBLNeQxGABHk2WvzUS2YoE09q75FOToIk

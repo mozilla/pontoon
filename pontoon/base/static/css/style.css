@@ -493,7 +493,7 @@ label {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 160px;
+  width: 200px;
 }
 
 .project.select .menu ul li .url {
@@ -502,7 +502,7 @@ label {
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 370px;
+  width: 330px;
 }
 
 .locale.select {
@@ -634,15 +634,12 @@ label {
   cursor: pointer;
   float: left;
   position: relative;
-  width: 160px;
-}
-
-.menu .sort span:nth-child(2) {
-  width: 370px;
+  width: 200px;
 }
 
 .menu .sort span:nth-child(3) {
   float: right;
+  width: 160px;
 }
 
 .menu .sort span i {

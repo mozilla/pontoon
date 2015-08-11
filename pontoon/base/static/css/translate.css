@@ -238,6 +238,11 @@ body > header .locale.select {
   content: "";
 }
 
+.unchanged .status:before {
+  color: #AAAAAA;
+  content: "";
+}
+
 .all .status {
   top: 11px;
   left: 14px;
