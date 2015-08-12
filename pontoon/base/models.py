@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Prefetch
 from django.db.models.signals import post_save
 from django.forms import ModelForm
 from django.utils import timezone
@@ -357,88 +357,84 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         translation.save()
 
+    def get_translation(self, plural_form=None):
+        """Get fetched translation of a given entity."""
+        translations = self.fetched_translations
+
+        if translations:
+            if plural_form:
+                translations = [t for t in translations if t.plural_form == plural_form]
+
+            translation = sorted(translations, key=lambda k: (-k.approved, k.date))[0]
+
+            return {
+                'fuzzy': translation.fuzzy,
+                'string': translation.string,
+                'approved': translation.approved,
+                'pk': translation.pk
+            }
+
+        else:
+            return {
+                'fuzzy': False,
+                'string': u'',
+                'approved': False,
+                'pk': None
+            }
+
     @classmethod
     def serialize(self, project, locale, paths=None):
-        """Load project entities with locale translations."""
+        """Get project entities with locale translations."""
 
-        def get_translation_dict(entity, translations_dict, plural_form=None):
-            translation = {}
+        entities = self.objects.filter(resource__project=project, obsolete=False)
 
-            if entity in translations_dict:
-                translations = translations_dict[entity]
-
-                if plural_form:
-                    translations = [x for x in translations if x['plural_form'] == plural_form]
-
-                translation = sorted(translations, key=lambda k: (-k['approved'], k['date']))[0]
-
-                return {
-                    'fuzzy': translation['fuzzy'],
-                    'string': translation['string'],
-                    'approved': translation['approved'],
-                    'pk': translation['id']
-                }
-
-            else:
-                return {
-                    'fuzzy': False,
-                    'string': u'',
-                    'approved': False,
-                    'pk': None
-                }
-
-        resources = Resource.objects.filter(project=project)
         if paths:
-            resource_with_paths = resources.filter(path__in=paths)
-            resources = resource_with_paths or resources
+            entities = entities.filter(resource__path__in=paths)
 
-        entities = self.objects.filter(resource__in=resources, obsolete=False)
-
-        entities_array = entities.values(
-            'pk', 'string', 'string_plural', 'key', 'resource__path',
-            'resource__format', 'comment', 'order', 'source', 'obsolete'
-        )
-
-        translations_array = Translation.objects.filter(locale=locale, entity__in=entities).values()
-        translations_dict = collections.defaultdict(list)
-
-        for t in translations_array:
-            translations_dict[t['entity_id']].append(t)
-
-        for e in entities_array:
-            # Rename fields
-            e['original'] = e.pop('string')
-            e['original_plural'] = e.pop('string_plural')
-            e['format'] = e.pop('resource__format')
-            e['path'] = e.pop('resource__path')
-
-            # Mark placeables
-            e['marked'] = utils.mark_placeables(e['original'])
-            e['marked_plural'] = utils.mark_placeables(e['original_plural'])
-
-            # Set source
-            try:
-                e['source'] = eval(e['source'])
-            except SyntaxError:
-                pass
-
-            # Set translations
-            translation_array = []
-
-            # Singular
-            if e['original_plural'] == u'':
-                translation_array.append(
-                    get_translation_dict(e['pk'], translations_dict)
-                )
-
-            # Plural
-            else:
-                for plural_form in range(0, locale.nplurals or 1):
-                    translation_array.append(
-                        get_translation_dict(e['pk'], translations_dict, plural_form)
+        entities = (entities
+                    .prefetch_related(
+                        Prefetch(
+                            'translation_set',
+                            queryset=Translation.objects.filter(locale=locale),
+                            to_attr='fetched_translations'
+                        )
+                    )
+                    .prefetch_related('resource')
                     )
 
-            e['translation'] = translation_array
+        entities_array = []
+
+        for entity in entities:
+
+            try:
+                source = eval(entity.source)
+            except SyntaxError:
+                source = entity.source
+
+            translation_array = []
+
+            if entity.string_plural == "":
+                translation_array.append(entity.get_translation())
+
+            else:
+                for plural_form in range(0, locale.nplurals or 1):
+                    translation_array.append(entity.get_translation(plural_form))
+
+            entities_array.append({
+                'pk': entity.pk,
+                'original': entity.string,
+                'marked': entity.marked,
+                'original_plural': entity.string_plural,
+                'marked_plural': entity.marked_plural,
+                'key': entity.key,
+                'path': entity.resource.path,
+                'format': entity.resource.format,
+                'comment': entity.comment,
+                'order': entity.order,
+                'source': source,
+                'obsolete': entity.obsolete,
+                'translation': translation_array,
+            })
 
         return sorted(entities_array, key=lambda k: k['order'])
 
