@@ -751,7 +751,12 @@ body > header aside p {
 
 #editor p {
   text-align: left;
-  white-space: normal;
+}
+
+#editor p#original,
+#editor p.original,
+#editor p.translation {
+  white-space: pre-wrap;
 }
 
 #topbar {

@@ -66,34 +66,44 @@ def get_project_locale_from_request(request, locales):
             continue
 
 
+class NewlineEscapePlaceable(base.Ph):
+    """Placeable handling newline escapes."""
+    istranslatable = False
+    regex = re.compile(r'\\n')
+    parse = classmethod(general.regex_parse)
+
+
+class TabEscapePlaceable(base.Ph):
+    """Placeable handling tab escapes."""
+    istranslatable = False
+    regex = re.compile(r'\t')
+    parse = classmethod(general.regex_parse)
+
+
+class EscapePlaceable(base.Ph):
+    """Placeable handling escapes."""
+    istranslatable = False
+    regex = re.compile(r'\\')
+    parse = classmethod(general.regex_parse)
+
+
+class SpacesPlaceable(base.Ph):
+    """Placeable handling spaces."""
+    istranslatable = False
+    regex = re.compile('^ +| +$|[\r\n\t] +| {2,}')
+    parse = classmethod(general.regex_parse)
+
+
 def mark_placeables(text):
     """Wrap placeables to easily distinguish and manipulate them.
 
     Source: http://bit.ly/1yQOC9B
     """
 
-    class TabEscapePlaceable(base.Ph):
-        """Placeable handling tab escapes."""
-        istranslatable = False
-        regex = re.compile(r'\t')
-        parse = classmethod(general.regex_parse)
-
-    class EscapePlaceable(base.Ph):
-        """Placeable handling escapes."""
-        istranslatable = False
-        regex = re.compile(r'\\')
-        parse = classmethod(general.regex_parse)
-
-    class SpacesPlaceable(base.Ph):
-        """Placeable handling spaces."""
-        istranslatable = False
-        regex = re.compile('^ +| +$|[\r\n\t] +| {2,}')
-        parse = classmethod(general.regex_parse)
-
     PARSERS = [
+        NewlineEscapePlaceable.parse,
         TabEscapePlaceable.parse,
         EscapePlaceable.parse,
-        general.NewlinePlaceable.parse,
         # The spaces placeable can match '\n  ' and mask the newline,
         # so it has to come later.
         SpacesPlaceable.parse,
@@ -117,6 +127,7 @@ def mark_placeables(text):
     ]
 
     TITLES = {
+        'NewlineEscapePlaceable': "Escaped newline",
         'TabEscapePlaceable': "Escaped tab",
         'EscapePlaceable': "Escaped sequence",
         'SpacesPlaceable': "Unusual space in string",
@@ -167,7 +178,7 @@ def mark_placeables(text):
             # Correctly render placeables in translation editor
             content = {
                 'TabEscapePlaceable': u'\\t',
-                'EscapePlaceable': u'\\\\',
+                'EscapePlaceable': u'\\',
                 'SpacesPlaceable': spaces,
                 'NewlinePlaceable': {
                     u'\r\n': u'\\r\\n<br/>\n',
