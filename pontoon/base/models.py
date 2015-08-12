@@ -1,3 +1,4 @@
+import collections
 import datetime
 import json
 import logging
@@ -510,21 +511,31 @@ def create_user_profile(sender, instance, created, **kwargs):
 post_save.connect(create_user_profile, sender=User)
 
 
-def get_translation_dict(entity, translations_dict, i=None):
+def get_translation_dict(entity, translations_dict, plural_form=None):
     translation = {}
 
     if entity in translations_dict:
         translations = translations_dict[entity]
-        if i:
-            translations = [x for x in translations if x['plural_form'] == i]
+
+        if plural_form:
+            translations = [x for x in translations if x['plural_form'] == plural_form]
+
         translation = sorted(translations, key=lambda k: (-k['approved'], k['date']))[0]
 
-    return {
-        'fuzzy': translation.get('fuzzy', False),
-        'string': translation.get('string', u''),
-        'approved': translation.get('approved', False),
-        'pk': translation.get('id', None)
-    }
+        return {
+            'fuzzy': translation['fuzzy'],
+            'string': translation['string'],
+            'approved': translation['approved'],
+            'pk': translation['id']
+        }
+
+    else:
+        return {
+            'fuzzy': False,
+            'string': u'',
+            'approved': False,
+            'pk': None
+        }
 
 
 def get_entities(project, locale, paths=None):
@@ -543,10 +554,10 @@ def get_entities(project, locale, paths=None):
     )
 
     translations_array = Translation.objects.filter(locale=locale, entity__in=entities).values()
-    translations_dict = {}
+    translations_dict = collections.defaultdict(list)
 
     for t in translations_array:
-        translations_dict.setdefault(t['entity_id'], []).append(t)
+        translations_dict[t['entity_id']].append(t)
 
     for e in entities_array:
         # Rename fields
@@ -576,9 +587,9 @@ def get_entities(project, locale, paths=None):
 
         # Plural
         else:
-            for i in range(0, locale.nplurals or 1):
+            for plural_form in range(0, locale.nplurals or 1):
                 translation_array.append(
-                    get_translation_dict(e['pk'], translations_dict, i)
+                    get_translation_dict(e['pk'], translations_dict, plural_form)
                 )
 
         e['translation'] = translation_array
