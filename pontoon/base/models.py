@@ -387,7 +387,8 @@ class Entity(DirtyFieldsMixin, models.Model):
         entities = self.objects.filter(resource__project=project, obsolete=False)
 
         if paths:
-            entities = entities.filter(resource__path__in=paths)
+            entities_with_paths = entities.filter(resource__path__in=paths)
+            entities = entities.filter(resource__path__in=paths) or entities
 
         entities = entities.prefetch_related(
             'resource',
