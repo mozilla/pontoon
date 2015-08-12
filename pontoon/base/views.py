@@ -414,7 +414,7 @@ def entities(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    entities = Entity.serialize(project, locale, paths)
+    entities = Entity.for_project_locale(project, locale, paths)
     return HttpResponse(json.dumps(entities), content_type='application/json')
 
 

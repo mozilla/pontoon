@@ -361,12 +361,11 @@ class Entity(DirtyFieldsMixin, models.Model):
         """Get fetched translation of a given entity."""
         translations = self.fetched_translations
 
+        if plural_form:
+            translations = [t for t in translations if t.plural_form == plural_form]
+
         if translations:
-            if plural_form:
-                translations = [t for t in translations if t.plural_form == plural_form]
-
-            translation = sorted(translations, key=lambda k: (-k.approved, k.date))[0]
-
+            translation = sorted(translations, key=lambda k: (not k.approved, k.date))[0]
             return {
                 'fuzzy': translation.fuzzy,
                 'string': translation.string,
@@ -383,24 +382,21 @@ class Entity(DirtyFieldsMixin, models.Model):
             }
 
     @classmethod
-    def serialize(self, project, locale, paths=None):
+    def for_project_locale(self, project, locale, paths=None):
         """Get project entities with locale translations."""
-
         entities = self.objects.filter(resource__project=project, obsolete=False)
 
         if paths:
             entities = entities.filter(resource__path__in=paths)
 
-        entities = (entities
-                    .prefetch_related(
-                        Prefetch(
-                            'translation_set',
-                            queryset=Translation.objects.filter(locale=locale),
-                            to_attr='fetched_translations'
-                        )
-                    )
-                    .prefetch_related('resource')
-                    )
+        entities = entities.prefetch_related(
+            'resource',
+            Prefetch(
+                'translation_set',
+                queryset=Translation.objects.filter(locale=locale),
+                to_attr='fetched_translations'
+            )
+        )
 
         entities_array = []
 
