@@ -320,27 +320,6 @@ class Entity(DirtyFieldsMixin, models.Model):
     def __unicode__(self):
         return self.string
 
-    def serialize(self):
-        try:
-            source = eval(self.source)
-        except SyntaxError:
-            source = self.source
-
-        return {
-            'pk': self.pk,
-            'original': self.string,
-            'marked': self.marked,
-            'original_plural': self.string_plural,
-            'marked_plural': self.marked_plural,
-            'key': self.key,
-            'path': self.resource.path,
-            'format': self.resource.format,
-            'comment': self.comment,
-            'order': self.order,
-            'source': source,
-            'obsolete': self.obsolete,
-        }
-
     def has_changed(self, locale):
         """
         Check if translations in the given locale have changed since the
@@ -531,6 +510,23 @@ def create_user_profile(sender, instance, created, **kwargs):
 post_save.connect(create_user_profile, sender=User)
 
 
+def get_translation_dict(entity, translations_dict, i=None):
+    translation = {}
+
+    if entity in translations_dict:
+        translations = translations_dict[entity]
+        if i:
+            translations = [x for x in translations if x['plural_form'] == i]
+        translation = sorted(translations, key=lambda k: (-k['approved'], k['date']))[0]
+
+    return {
+        'fuzzy': translation.get('fuzzy', False),
+        'string': translation.get('string', u''),
+        'approved': translation.get('approved', False),
+        'pk': translation.get('id', None)
+    }
+
+
 def get_entities(project, locale, paths=None):
     """Load project entities with locale translations."""
 
@@ -540,27 +536,53 @@ def get_entities(project, locale, paths=None):
         resources = resource_with_paths or resources
 
     entities = Entity.objects.filter(resource__in=resources, obsolete=False)
-    entities_array = []
 
-    for e in entities:
+    entities_array = entities.values(
+        'pk', 'string', 'string_plural', 'key', 'resource__path',
+        'resource__format', 'comment', 'order', 'source', 'obsolete'
+    )
+
+    translations_array = Translation.objects.filter(locale=locale, entity__in=entities).values()
+    translations_dict = {}
+
+    for t in translations_array:
+        translations_dict.setdefault(t['entity_id'], []).append(t)
+
+    for e in entities_array:
+        # Rename fields
+        e['original'] = e.pop('string')
+        e['original_plural'] = e.pop('string_plural')
+        e['format'] = e.pop('resource__format')
+        e['path'] = e.pop('resource__path')
+
+        # Mark placeables
+        e['marked'] = utils.mark_placeables(e['original'])
+        e['marked_plural'] = utils.mark_placeables(e['original_plural'])
+
+        # Set source
+        try:
+            e['source'] = eval(e['source'])
+        except SyntaxError:
+            pass
+
+        # Set translations
         translation_array = []
 
-        # Entities without plurals
-        if e.string_plural == "":
-            translation = get_translation(entity=e, locale=locale)
-            translation_array.append(translation.serialize())
+        # Singular
+        if e['original_plural'] == u'':
+            translation_array.append(
+                get_translation_dict(e['pk'], translations_dict)
+            )
 
-        # Pluralized entities
+        # Plural
         else:
             for i in range(0, locale.nplurals or 1):
-                translation = get_translation(
-                    entity=e, locale=locale, plural_form=i)
-                translation_array.append(translation.serialize())
+                translation_array.append(
+                    get_translation_dict(e['pk'], translations_dict, i)
+                )
 
-        obj = e.serialize()
-        obj["translation"] = translation_array
+        e['translation'] = translation_array
 
-        entities_array.append(obj)
     return sorted(entities_array, key=lambda k: k['order'])
 
 
