@@ -300,7 +300,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     key = models.TextField(blank=True)  # Needed for webL10n
     comment = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
-    source = models.TextField(blank=True)  # Path to source code file
+    source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
 
     changed_locales = models.ManyToManyField(
@@ -401,12 +401,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         entities_array = []
 
         for entity in entities:
-
-            try:
-                source = eval(entity.source)
-            except SyntaxError:
-                source = entity.source
-
             translation_array = []
 
             if entity.string_plural == "":
@@ -427,7 +421,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'format': entity.resource.format,
                 'comment': entity.comment,
                 'order': entity.order,
-                'source': source,
+                'source': entity.source,
                 'obsolete': entity.obsolete,
                 'translation': translation_array,
             })
@@ -652,8 +646,9 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
 
 
 def save_entity(resource, string, string_plural="", comment="",
-                order=0, key="", source=""):
+                order=0, key="", source=None):
     """Add new or update existing entity."""
+    source = source or []
 
     # Update existing entity
     try:
