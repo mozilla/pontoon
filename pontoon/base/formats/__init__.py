@@ -5,14 +5,16 @@ See base.py for the ParsedResource base class.
 """
 import os.path
 
-from pontoon.base.formats import lang
+from pontoon.base.formats import lang, po
 
 
 # To add support for a new resource format, add an entry to this dict
 # where the key is the extension you're parsing and the value is a
 # callable returning an instance of a ParsedResource subclass.
 SUPPORTED_FORMAT_PARSERS = {
-    '.lang': lang.parse
+    '.lang': lang.parse,
+    '.po': po.parse,
+    '.pot': po.parse,
 }
 
 

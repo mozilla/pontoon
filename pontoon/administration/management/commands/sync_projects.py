@@ -1,4 +1,5 @@
 from collections import Counter
+from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
@@ -159,7 +160,7 @@ class Command(BaseCommand):
                 # We only want to create/update the stats object if the resource
                 # exists in the current locale, UNLESS the file is asymmetric.
                 vcs_resource = vcs_project.resources[resource.path]
-                resource_exists = vcs_resource.files.get(locale.code) is not None
+                resource_exists = vcs_resource.files.get(locale) is not None
                 if resource_exists or resource.is_asymmetric:
                     update_stats(resource, locale)
 
@@ -331,6 +332,11 @@ class ChangeSet(object):
             # Otherwise, it's true.
             vcs_translation.fuzzy = any(t for t in db_translations if t.fuzzy)
 
+            if len(db_translations) > 0:
+                last_translation = max(db_translations, key=lambda t: t.date or datetime.min)
+                vcs_translation.last_updated = last_translation.date
+                vcs_translation.last_translator = last_translation.user
+
             # Replace existing translations with ones from the database.
             vcs_translation.strings = {
                 db.plural_form: db.string for db in db_translations
@@ -350,11 +356,11 @@ class ChangeSet(object):
         return {
             'resource': self.resources[vcs_entity.resource.path],
             'string': vcs_entity.string,
-            'string_plural': '',  # TODO: Support plural source.
+            'string_plural': vcs_entity.string_plural,
             'key': vcs_entity.key,
             'comment': '\n'.join(vcs_entity.comments),
             'order': vcs_entity.order,
-            'source': ''  # TODO: Support source
+            'source': vcs_entity.source
         }
 
     def execute_create_db(self):

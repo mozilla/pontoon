@@ -14,12 +14,12 @@ class ParsedResource(object):
         """
         raise NotImplementedError()
 
-    def save(self, path=None):
+    def save(self, locale):
         """
         Save any changes made the the VCSTranslation objects from
         self.translations back to the originally parsed resource file.
 
-        If path is not None, save changes to the given path instead of
-        the original file.
+        :param Locale locale:
+            Locale of the file being saved.
         """
         raise NotImplementedError()

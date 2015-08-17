@@ -54,7 +54,7 @@ class VCSResource(object):
             except IOError:
                 continue  # File doesn't exist, let's move on
 
-            self.files[locale.code] = resource_file
+            self.files[locale] = resource_file
             for index, translation in enumerate(resource_file.translations):
                 # Create the entity if it doesn't yet exist, otherwise
                 # append to it.
@@ -65,8 +65,10 @@ class VCSResource(object):
                         resource=self,
                         key=translation.key,
                         string=translation.source_string,
+                        string_plural=translation.source_string_plural,
                         comments=translation.comments,
-                        order=index
+                        source=translation.source,
+                        order=translation.order or index
                     )
                     self.entities[vcs_entity.key] = vcs_entity
 
@@ -77,8 +79,8 @@ class VCSResource(object):
         Save changes made to any of the translations in this resource
         back to the filesystem for all locales.
         """
-        for locale_code, resource_file in self.files.items():
-            resource_file.save()
+        for locale, resource_file in self.files.items():
+            resource_file.save(locale)
 
 
 class VCSEntity(object):
@@ -86,12 +88,15 @@ class VCSEntity(object):
     An Entity is a single string to be translated, and a VCSEntity
     stores the translations for an entity from several locales.
     """
-    def __init__(self, resource, key, string, comments, order):
+    def __init__(self, resource, key, string, comments, source, string_plural='',
+                 order=0):
         self.resource = resource
         self.key = key
         self.string = string
+        self.string_plural = string_plural
         self.translations = {}
         self.comments = comments
+        self.source = source
         self.order = order
 
     def has_translation_for(self, locale_code):
@@ -109,12 +114,19 @@ class VCSTranslation(object):
     pontoon.base.models.Translation.plural_form and the values equal the
     translation for that plural form.
     """
-    def __init__(self, key, source_string, strings, comments, fuzzy):
+    def __init__(self, key, source_string, strings, comments, fuzzy,
+                 source_string_plural='', order=0, source=None, last_translator=None,
+                 last_updated=None):
         self.key = key
         self.source_string = source_string
+        self.source_string_plural = source_string_plural
         self.strings = strings
         self.comments = comments
         self.fuzzy = fuzzy
+        self.order = order
+        self.source = source or []
+        self.last_translator = last_translator
+        self.last_updated = last_updated
 
     @property
     def extra(self):

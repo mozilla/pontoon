@@ -211,6 +211,11 @@ class Project(models.Model):
         """
         path = self.source_directory_path()
         for absolute_path in self.resources_for_path(path):
+            # .pot files in the source directory need to be renamed to
+            # .po files for the locale directories.
+            if absolute_path.endswith('.pot'):
+                absolute_path = absolute_path[:-1]
+
             yield os.path.relpath(absolute_path, path)
 
     def resources_for_path(self, path):
