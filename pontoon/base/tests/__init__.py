@@ -23,6 +23,14 @@ class TestCase(BaseTestCase):
     pass
 
 
+class UserFactory(DjangoModelFactory):
+    username = Sequence(lambda n: 'test%s' % n)
+    email = Sequence(lambda n: 'test%s@example.com' % n)
+
+    class Meta:
+        model = User
+
+
 class ProjectFactory(DjangoModelFactory):
     name = Sequence(lambda n: 'Project {0}'.format(n))
     slug = LazyAttribute(lambda p: slugify(p.name))
@@ -78,24 +86,19 @@ class TranslationFactory(DjangoModelFactory):
     entity = SubFactory(EntityFactory)
     locale = SubFactory(LocaleFactory)
     string = Sequence(lambda n: 'translation {0}'.format(n))
+    user = SubFactory(UserFactory)
 
     class Meta:
         model = Translation
-
-
-class UserFactory(DjangoModelFactory):
-    username = Sequence(lambda n: 'test%s' % n)
-    email = Sequence(lambda n: 'test%s@example.com' % n)
-
-    class Meta:
-        model = User
 
 
 class VCSEntityFactory(factory.Factory):
     resource = None
     key = 'key'
     string = 'string'
+    string_plural = ''
     comments = factory.List([])
+    source = factory.List([])
     order = Sequence(lambda n: n)
 
     class Meta:
@@ -120,7 +123,13 @@ def assert_attributes_equal(original, **expected_attrs):
     values.
     """
     for key, value in expected_attrs.items():
-        assert_equal(getattr(original, key), value)
+        original_value = getattr(original, key)
+        assert_equal(
+            original_value,
+            value,
+            ('Attribute `{key}` does not match: {original_value} != {value}'
+             .format(key=key, original_value=original_value, value=value)),
+        )
 
 
 class NOT(object):
@@ -136,7 +145,7 @@ class NOT(object):
         self.values = values
 
     def __eq__(self, other):
-        return not other in self.values
+        return other not in self.values
 
     def __ne__(self, other):
         return other in self.values

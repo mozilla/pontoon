@@ -114,6 +114,7 @@ class FakeCheckoutTestCase(TestCase):
             plural_form=None,
             locale=self.translated_locale,
             string='Translated String',
+            date=datetime(1970, 1, 1),
             approved=True,
             extra={'tags': []}
         )
@@ -452,6 +453,11 @@ class ChangeSetTests(FakeCheckoutTestCase):
         assert_true(self.main_vcs_resource.save.called)
         assert_false(self.other_vcs_resource.save.called)
 
+        # Update the VCS translation with info about the last
+        # translation.
+        assert_equal(self.main_vcs_translation.last_updated, self.main_db_translation.date)
+        assert_equal(self.main_vcs_translation.last_translator, self.main_db_translation.user)
+
     def test_update_vcs_entity_unapproved(self):
         """
         Do not update VCS with unapproved translations. If no approved
@@ -470,6 +476,24 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.update_main_vcs_entity(fuzzy=False)
         assert_equal(self.main_vcs_translation.fuzzy, False)
 
+    def test_update_vcs_last_translation_no_translations(self):
+        """
+        If there are no translations in the database, do not set the
+        last_updated and last_translator fields on the VCS translation.
+        """
+        self.create_db_entities_translations()
+        self.main_db_translation.delete()
+
+        self.changeset.update_vcs_entity(
+            self.translated_locale.code,
+            self.main_db_entity,
+            self.main_vcs_entity
+        )
+        self.changeset.execute()
+
+        assert_equal(self.main_vcs_translation.last_updated, None)
+        assert_equal(self.main_vcs_translation.last_translator, None)
+
     def test_update_vcs_entity_user(self):
         """Track translation authors for use in the commit message."""
         user = UserFactory.create()
@@ -482,6 +506,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_vcs_entity.comments = ['first comment', 'second']
         self.main_vcs_entity.order = 7
         self.main_vcs_translation.fuzzy = False
+        self.main_vcs_entity.string_plural = 'plural string'
+        self.main_vcs_entity.source = ['foo.py:87']
 
         self.changeset.create_db_entity(self.main_vcs_entity)
         self.changeset.execute()
@@ -495,7 +521,9 @@ class ChangeSetTests(FakeCheckoutTestCase):
             string='Source String',
             key='string-key',
             comment='first comment\nsecond',
-            order=7
+            order=7,
+            string_plural='plural string',
+            source=['foo.py:87'],
         )
 
         new_translation = new_entity.translation_set.all()[0]
@@ -531,6 +559,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_vcs_entity.key = 'string-key'
         self.main_vcs_entity.comments = ['first comment', 'second']
         self.main_vcs_entity.order = 7
+        self.main_vcs_entity.string_plural = 'plural string'
+        self.main_vcs_entity.source = ['foo.py:87']
         self.main_vcs_translation.fuzzy = False
         # The test translation is from a langfile so we can use tags
         # for testing extra.
@@ -542,7 +572,9 @@ class ChangeSetTests(FakeCheckoutTestCase):
             self.main_db_entity,
             key='string-key',
             comment='first comment\nsecond',
-            order=7
+            order=7,
+            string_plural='plural string',
+            source=['foo.py:87'],
         )
 
         self.main_db_translation.refresh_from_db()
