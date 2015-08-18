@@ -43,7 +43,7 @@ class LangEntity(VCSTranslation):
         return {'tags': list(self.tags)}
 
 
-class LangFile(ParsedResource):
+class LangResource(ParsedResource):
     def __init__(self, path, children):
         self.path = path
         self.children = children
@@ -157,4 +157,4 @@ def parse(path):
         content = f.read()
 
     children = LangVisitor().parse(content)
-    return LangFile(path, children)
+    return LangResource(path, children)
