@@ -32,10 +32,13 @@ class POEntity(VCSTranslation):
             source=po_entry.occurrences
         )
 
-    def update_entry(self):
+    def update_entry(self, locale):
         """Update the POEntry associated with this translation."""
         if self.po_entry.msgstr_plural:
-            self.po_entry.msgstr_plural = self.strings
+            self.po_entry.msgstr_plural = {
+                plural_form: self.strings.get(plural_form, '')
+                for plural_form in range(locale.nplurals or 1)
+            }
         else:
             self.po_entry.msgstr = self.strings.get(None, '')
 
@@ -62,7 +65,7 @@ class POResource(ParsedResource):
 
     def save(self, locale):
         for entity in self.translations:
-            entity.update_entry()
+            entity.update_entry(locale)
 
         metadata = self.pofile.metadata
         if len(self.translations) > 0:

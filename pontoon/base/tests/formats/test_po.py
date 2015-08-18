@@ -289,7 +289,10 @@ class POTests(TestCase):
         """)))
 
     def test_save_plural_remove(self):
-        """Any missing plurals should be removed from the pofile."""
+        """
+        Any missing plurals should be set to an empty string in the
+        pofile.
+        """
         test_input = self.generate_pofile(dedent("""
             msgid "Plural %(count)s string"
             msgid_plural "Plural %(count)s strings"
@@ -307,6 +310,7 @@ class POTests(TestCase):
             msgid "Plural %(count)s string"
             msgid_plural "Plural %(count)s strings"
             msgstr[0] "New Plural"
+            msgstr[1] ""
         """)))
 
     def test_save_remove_fuzzy(self):
