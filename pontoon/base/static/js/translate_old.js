@@ -215,7 +215,7 @@ var Pontoon = (function (my) {
       if (entity.path) {
         $('#metadata').append('<span>' + entity.path + '</span>');
       }
-      if (entity.key) {
+      if (entity.key && entity.key != entity.original) {
         $('#metadata').append('<span>Key: ' + entity.key + '</span>');
       }
 
