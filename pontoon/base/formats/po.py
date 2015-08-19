@@ -42,7 +42,7 @@ class POEntity(VCSTranslation):
         else:
             self.po_entry.msgstr = self.strings.get(None, '')
 
-        if self.fuzzy:
+        if self.fuzzy and 'fuzzy' not in self.po_entry.flags:
             self.po_entry.flags.append('fuzzy')
         elif 'fuzzy' in self.po_entry.flags:
             self.po_entry.flags.remove('fuzzy')
