@@ -240,7 +240,7 @@ body > header .locale.select {
 
 .unchanged .status:before {
   color: #AAAAAA;
-  content: "";
+  content: "";
 }
 
 .all .status {
