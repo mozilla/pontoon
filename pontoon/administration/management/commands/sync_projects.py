@@ -375,8 +375,8 @@ class ChangeSet(object):
                         locale=self.locales[locale_code],
                         string=string,
                         plural_form=plural_form,
-                        approved=True,
-                        approved_date=timezone.now(),
+                        approved=not vcs_translation.fuzzy,
+                        approved_date=timezone.now() if not vcs_translation.fuzzy else None,
                         fuzzy=vcs_translation.fuzzy
                     ))
 
@@ -408,15 +408,16 @@ class ChangeSet(object):
 
                     if db_translation.is_dirty():
                         self.translations_to_update.append(db_translation)
-                    approved_translations.append(db_translation)
+                    if not db_translation.fuzzy:
+                        approved_translations.append(db_translation)
                 else:
                     self.translations_to_create.append(Translation(
                         entity=db_entity,
                         locale=self.locales[locale_code],
                         string=string,
                         plural_form=plural_form,
-                        approved=True,
-                        approved_date=timezone.now(),
+                        approved=not vcs_translation.fuzzy,
+                        approved_date=timezone.now() if not vcs_translation.fuzzy else None,
                         fuzzy=vcs_translation.fuzzy,
                         extra=vcs_translation.extra
                     ))
