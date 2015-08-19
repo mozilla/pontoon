@@ -19,7 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.db.models import Count
+from django.db.models import Count, F
 
 from django.http import (
     Http404,
@@ -313,7 +313,12 @@ def contributor(request, email, template='user.html'):
     except User.DoesNotExist:
         raise Http404
 
-    translations = Translation.objects.filter(user=user)
+    translations = (
+        Translation.objects.filter(user=user)
+        .exclude(string=F('entity__string'))
+        .exclude(string=F('entity__string_plural'))
+    )
+
     current = translations.exclude(entity__obsolete=True) \
         .extra({'day': "date(date)"})
 
@@ -357,7 +362,11 @@ def contributors(request, template='users.html'):
         .order_by('-translation_count')[:100]
 
     for user in users:
-        user.translations = Translation.objects.filter(user=user)
+        user.translations = (
+            Translation.objects.filter(user=user)
+            .exclude(string=F('entity__string'))
+            .exclude(string=F('entity__string_plural'))
+        )
         user.gravatar_url = get_gravatar_url(user.email, 44)
 
     data = {
