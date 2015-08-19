@@ -178,7 +178,10 @@ class Project(models.Model):
         for root, dirnames, filenames in os.walk(self.checkout_path):
             for dirname in dirnames:
                 if dirname in ('templates', 'en-US', 'en'):
-                    return os.path.join(root, dirname)
+                    # Ensure the matched directory contains resources.
+                    directory_path = os.path.join(root, dirname)
+                    if Resource.directory_contains_resources(directory_path):
+                        return directory_path
 
         raise Exception('No source directory found for project {0}'.format(self.slug))
 
@@ -286,6 +289,20 @@ class Resource(models.Model):
 
         # Special case: pot files are considered the po format
         return 'po' if path_format == 'pot' else path_format
+
+    @classmethod
+    def directory_contains_resources(self, directory_path):
+        """
+        Return True if the given directory contains at least one
+        supported resource file (checked via file extension), or False
+        otherwise.
+        """
+        for root, dirnames, filenames in os.walk(directory_path):
+            for filename in filenames:
+                filename, extension = os.path.splitext(filename)
+                if extension and extension[1:] in self.ALLOWED_EXTENSIONS:
+                    return True
+        return False
 
 
 class Subpage(models.Model):
