@@ -104,7 +104,7 @@ def locale(request, locale, template='locale.html'):
     return render(request, template, data)
 
 
-def locales(request, template='locales.html'):
+def locales(request):
     """Localization teams."""
     log.debug("Localization teams.")
 
@@ -112,7 +112,7 @@ def locales(request, template='locales.html'):
         'locales': get_locales_with_stats(),
     }
 
-    return render(request, template, data)
+    return render(request, 'locales.html', data)
 
 
 def project(request, slug, template='project.html'):
