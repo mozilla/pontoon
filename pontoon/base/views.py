@@ -47,7 +47,6 @@ from pontoon.base.models import (
     Translation,
     Stats,
     UserProfile,
-    get_entities,
     get_locales_with_project_stats,
     get_locales_with_stats,
     get_projects_with_stats,
@@ -427,7 +426,7 @@ def entities(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    entities = get_entities(project, locale, paths)
+    entities = Entity.for_project_locale(project, locale, paths)
     return HttpResponse(json.dumps(entities), content_type='application/json')
 
 

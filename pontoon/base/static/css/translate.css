@@ -240,7 +240,7 @@ body > header .locale.select {
 
 .unchanged .status:before {
   color: #AAAAAA;
-  content: "";
+  content: "";
 }
 
 .all .status {
@@ -718,6 +718,7 @@ body > header aside p {
 
 #entitylist .no-match div  {
   color: #7BC876;
+  display: block;
   font-size: 128px;
   margin-bottom: 20px;
 }
@@ -751,7 +752,12 @@ body > header aside p {
 
 #editor p {
   text-align: left;
-  white-space: normal;
+}
+
+#editor p#original,
+#editor p.original,
+#editor p.translation {
+  white-space: pre-wrap;
 }
 
 #topbar {

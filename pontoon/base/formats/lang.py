@@ -43,7 +43,7 @@ class LangEntity(VCSTranslation):
         return {'tags': list(self.tags)}
 
 
-class LangFile(ParsedResource):
+class LangResource(ParsedResource):
     def __init__(self, path, children):
         self.path = path
         self.children = children
@@ -52,9 +52,8 @@ class LangFile(ParsedResource):
     def translations(self):
         return [c for c in self.children if isinstance(c, LangEntity)]
 
-    def save(self, path=None):
-        path = path or self.path
-        with codecs.open(path, 'w', 'utf-8') as f:
+    def save(self, locale):
+        with codecs.open(self.path, 'w', 'utf-8') as f:
             for child in self.children:
                 if isinstance(child, LangEntity):
                     self.write_entity(f, child)
@@ -158,4 +157,4 @@ def parse(path):
         content = f.read()
 
     children = LangVisitor().parse(content)
-    return LangFile(path, children)
+    return LangResource(path, children)

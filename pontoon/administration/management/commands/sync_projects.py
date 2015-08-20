@@ -1,4 +1,5 @@
 from collections import Counter
+from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
@@ -62,7 +63,11 @@ class Command(BaseCommand):
             raise CommandError('No matching projects found.')
 
         for project in projects:
-            self.handle_project(project)
+            if not project.can_commit:
+                self.log(u'Skipping project {0}, cannot commit to repository.'
+                         .format(project.name))
+            else:
+                self.handle_project(project)
         self.log('SYNC PROJECTS: done')
 
         # Once we've synced, we can delete all translations scheduled
@@ -70,11 +75,6 @@ class Command(BaseCommand):
         Translation.deleted_objects.all().delete()
 
     def handle_project(self, db_project):
-        if not db_project.can_commit:
-            self.log(u'Skipping project {0}, cannot commit to repository.'
-                     .format(db_project.name))
-            return
-
         # Pull changes from VCS and update what we know about the files.
         update_from_repository(db_project)
         vcs_project = VCSProject(db_project)
@@ -95,7 +95,8 @@ class Command(BaseCommand):
         # Apply the changeset to the files, commit them, and update stats
         # entries in the DB.
         changeset.execute()
-        self.commit_changes(db_project, changeset)
+        if not self.no_commit:
+            self.commit_changes(db_project, changeset)
         self.update_stats(db_project, vcs_project, changeset)
 
         # Clear out the list of changed locales for entity in this
@@ -157,9 +158,9 @@ class Command(BaseCommand):
         for resource in db_project.resource_set.all():
             for locale in changeset.updated_locales:
                 # We only want to create/update the stats object if the resource
-                # exists in the current locale, UNLESS the file is asynmmetric.
+                # exists in the current locale, UNLESS the file is asymmetric.
                 vcs_resource = vcs_project.resources[resource.path]
-                resource_exists = vcs_resource.files.get(locale.code) is not None
+                resource_exists = vcs_resource.files.get(locale) is not None
                 if resource_exists or resource.is_asymmetric:
                     update_stats(resource, locale)
 
@@ -183,9 +184,6 @@ class Command(BaseCommand):
 
     def commit_changes(self, db_project, changeset):
         """Commit the changes we've made back to the VCS."""
-        if self.no_commit:
-            return
-
         for locale in db_project.locales.all():
             authors = changeset.commit_authors_per_locale.get(locale.code, [])
 
@@ -309,7 +307,7 @@ class ChangeSet(object):
                 'string',
                 'plural_form',
                 'approved',
-                'approved_user',
+                'approved_user_id',
                 'approved_date',
                 'fuzzy',
                 'extra'
@@ -334,6 +332,11 @@ class ChangeSet(object):
             # Otherwise, it's true.
             vcs_translation.fuzzy = any(t for t in db_translations if t.fuzzy)
 
+            if len(db_translations) > 0:
+                last_translation = max(db_translations, key=lambda t: t.date or datetime.min)
+                vcs_translation.last_updated = last_translation.date
+                vcs_translation.last_translator = last_translation.user
+
             # Replace existing translations with ones from the database.
             vcs_translation.strings = {
                 db.plural_form: db.string for db in db_translations
@@ -353,11 +356,11 @@ class ChangeSet(object):
         return {
             'resource': self.resources[vcs_entity.resource.path],
             'string': vcs_entity.string,
-            'string_plural': '',  # TODO: Support plural source.
+            'string_plural': vcs_entity.string_plural,
             'key': vcs_entity.key,
             'comment': '\n'.join(vcs_entity.comments),
             'order': vcs_entity.order,
-            'source': ''  # TODO: Support source
+            'source': vcs_entity.source
         }
 
     def execute_create_db(self):
@@ -372,8 +375,8 @@ class ChangeSet(object):
                         locale=self.locales[locale_code],
                         string=string,
                         plural_form=plural_form,
-                        approved=True,
-                        approved_date=timezone.now(),
+                        approved=not vcs_translation.fuzzy,
+                        approved_date=timezone.now() if not vcs_translation.fuzzy else None,
                         fuzzy=vcs_translation.fuzzy
                     ))
 
@@ -405,15 +408,16 @@ class ChangeSet(object):
 
                     if db_translation.is_dirty():
                         self.translations_to_update.append(db_translation)
-                    approved_translations.append(db_translation)
+                    if not db_translation.fuzzy:
+                        approved_translations.append(db_translation)
                 else:
                     self.translations_to_create.append(Translation(
                         entity=db_entity,
                         locale=self.locales[locale_code],
                         string=string,
                         plural_form=plural_form,
-                        approved=True,
-                        approved_date=timezone.now(),
+                        approved=not vcs_translation.fuzzy,
+                        approved_date=timezone.now() if not vcs_translation.fuzzy else None,
                         fuzzy=vcs_translation.fuzzy,
                         extra=vcs_translation.extra
                     ))

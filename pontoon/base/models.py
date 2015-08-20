@@ -1,3 +1,4 @@
+import collections
 import datetime
 import json
 import logging
@@ -7,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Prefetch
 from django.db.models.signals import post_save
 from django.forms import ModelForm
 from django.utils import timezone
@@ -210,6 +211,11 @@ class Project(models.Model):
         """
         path = self.source_directory_path()
         for absolute_path in self.resources_for_path(path):
+            # .pot files in the source directory need to be renamed to
+            # .po files for the locale directories.
+            if absolute_path.endswith('.pot'):
+                absolute_path = absolute_path[:-1]
+
             yield os.path.relpath(absolute_path, path)
 
     def resources_for_path(self, path):
@@ -299,7 +305,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     key = models.TextField(blank=True)  # Needed for webL10n
     comment = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
-    source = models.TextField(blank=True)  # Path to source code file
+    source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
 
     changed_locales = models.ManyToManyField(
@@ -319,27 +325,6 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     def __unicode__(self):
         return self.string
-
-    def serialize(self):
-        try:
-            source = eval(self.source)
-        except SyntaxError:
-            source = self.source
-
-        return {
-            'pk': self.pk,
-            'original': self.string,
-            'marked': self.marked,
-            'original_plural': self.string_plural,
-            'marked_plural': self.marked_plural,
-            'key': self.key,
-            'path': self.resource.path,
-            'format': self.resource.format,
-            'comment': self.comment,
-            'order': self.order,
-            'source': source,
-            'obsolete': self.obsolete,
-        }
 
     def has_changed(self, locale):
         """
@@ -376,6 +361,77 @@ class Entity(DirtyFieldsMixin, models.Model):
             translation.approved_date = datetime.datetime.now()
 
         translation.save()
+
+    def get_translation(self, plural_form=None):
+        """Get fetched translation of a given entity."""
+        translations = self.fetched_translations
+
+        if plural_form:
+            translations = [t for t in translations if t.plural_form == plural_form]
+
+        if translations:
+            translation = sorted(translations, key=lambda k: (not k.approved, k.date))[0]
+            return {
+                'fuzzy': translation.fuzzy,
+                'string': translation.string,
+                'approved': translation.approved,
+                'pk': translation.pk
+            }
+
+        else:
+            return {
+                'fuzzy': False,
+                'string': u'',
+                'approved': False,
+                'pk': None
+            }
+
+    @classmethod
+    def for_project_locale(self, project, locale, paths=None):
+        """Get project entities with locale translations."""
+        entities = self.objects.filter(resource__project=project, obsolete=False)
+
+        if paths:
+            entities = entities.filter(resource__path__in=paths) or entities
+
+        entities = entities.prefetch_related(
+            'resource',
+            Prefetch(
+                'translation_set',
+                queryset=Translation.objects.filter(locale=locale),
+                to_attr='fetched_translations'
+            )
+        )
+
+        entities_array = []
+
+        for entity in entities:
+            translation_array = []
+
+            if entity.string_plural == "":
+                translation_array.append(entity.get_translation())
+
+            else:
+                for plural_form in range(0, locale.nplurals or 1):
+                    translation_array.append(entity.get_translation(plural_form))
+
+            entities_array.append({
+                'pk': entity.pk,
+                'original': entity.string,
+                'marked': entity.marked,
+                'original_plural': entity.string_plural,
+                'marked_plural': entity.marked_plural,
+                'key': entity.key,
+                'path': entity.resource.path,
+                'format': entity.resource.format,
+                'comment': entity.comment,
+                'order': entity.order,
+                'source': entity.source,
+                'obsolete': entity.obsolete,
+                'translation': translation_array,
+            })
+
+        return sorted(entities_array, key=lambda k: k['order'])
 
 
 class ChangedEntityLocale(models.Model):
@@ -531,39 +587,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 post_save.connect(create_user_profile, sender=User)
 
 
-def get_entities(project, locale, paths=None):
-    """Load project entities with locale translations."""
-
-    resources = Resource.objects.filter(project=project)
-    if paths:
-        resource_with_paths = resources.filter(path__in=paths)
-        resources = resource_with_paths or resources
-
-    entities = Entity.objects.filter(resource__in=resources, obsolete=False)
-    entities_array = []
-
-    for e in entities:
-        translation_array = []
-
-        # Entities without plurals
-        if e.string_plural == "":
-            translation = get_translation(entity=e, locale=locale)
-            translation_array.append(translation.serialize())
-
-        # Pluralized entities
-        else:
-            for i in range(0, locale.nplurals or 1):
-                translation = get_translation(
-                    entity=e, locale=locale, plural_form=i)
-                translation_array.append(translation.serialize())
-
-        obj = e.serialize()
-        obj["translation"] = translation_array
-
-        entities_array.append(obj)
-    return sorted(entities_array, key=lambda k: k['order'])
-
-
 def get_chart_data(stats):
     """Get chart data for stats."""
 
@@ -645,8 +668,9 @@ def get_translation(entity, locale, plural_form=None, fuzzy=None):
 
 
 def save_entity(resource, string, string_plural="", comment="",
-                order=0, key="", source=""):
+                order=0, key="", source=None):
     """Add new or update existing entity."""
+    source = source or []
 
     # Update existing entity
     try:
