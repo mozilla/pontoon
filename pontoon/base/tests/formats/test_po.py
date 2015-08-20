@@ -86,6 +86,7 @@ class POTests(FormatTestsMixin, TestCase):
     parse = staticmethod(po.parse)
     supports_keys = False
     supports_source = True
+    supports_source_string = True
 
     def test_parse_basic(self):
         self.run_parse_basic(BASE_POFILE, 0)

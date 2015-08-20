@@ -95,6 +95,6 @@ class POResource(ParsedResource):
         return '<POResource {self.pofile.fpath}>'.format(self=self)
 
 
-def parse(path):
+def parse(path, source_path=None):
     pofile = polib.pofile(path)
     return POResource(pofile)
