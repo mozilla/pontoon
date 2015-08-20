@@ -252,7 +252,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
                     )
             else:
                 locale_details = pages.values('name')
-                if len(pages) > 0 and pages[0].resource is not None:
+                if len(pages) > 0 and pages[0].resource.exists():
                     locale_details = pages.filter(
                         resource__stats=stats).values('name')
 
