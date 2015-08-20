@@ -27,7 +27,7 @@
       {% for l in locales %}
       <li class="clearfix{% if locale and locale == l %} current{% endif %}{% if l and l.chart %} filter{% endif %}">
         {% if l and l.chart %}
-        <a href="/{{ l.code|lower }}/{{ project.slug }}/" class="clearfix">
+        <a href="{% if project %}{{ url('pontoon.translate', l.code, project.slug) }}{% else %}{{ url('pontoon.locale', l.code) }}{% endif %}" class="clearfix">
         {% endif %}
           <span class="language {{ l.code|lower }}">{{ l.name }}</span>
           <span class="code">{{ l.code }}</span>

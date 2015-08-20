@@ -97,7 +97,7 @@ class Locale(models.Model):
                 return i[0]
 
     class Meta:
-        ordering = ['name']
+        ordering = ['name', 'code']
 
 
 class ProjectQuerySet(models.QuerySet):
@@ -615,16 +615,33 @@ def get_chart_data(stats):
     )
 
 
-def get_locales_with_stats(project):
+def get_locales_with_stats():
+    """Add chart data to locales."""
+
+    locales = Locale.objects.filter(stats__isnull=False).distinct()
+
+    for locale in locales:
+        stats = Stats.objects.filter(
+            resource__entity__obsolete=False,
+            locale=locale).distinct()
+
+        locale.chart = get_chart_data(stats)
+
+    return locales
+
+
+def get_locales_with_project_stats(project):
     """Add chart data to locales for specified project."""
 
     locales = Locale.objects.all()
 
     for locale in locales:
         if locale in project.locales.all():
-            r = Entity.objects.filter(obsolete=False).values('resource')
-            resources = Resource.objects.filter(project=project, pk__in=r)
-            stats = Stats.objects.filter(resource__in=resources, locale=locale)
+
+            stats = Stats.objects.filter(
+                resource__project=project,
+                resource__entity__obsolete=False,
+                locale=locale).distinct()
 
             locale.chart = get_chart_data(stats)
 

@@ -200,6 +200,12 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/admin_project.min.css',
     },
+    'locales': {
+        'source_filenames': (
+            'css/locales.css',
+        ),
+        'output_filename': 'css/locales.min.css',
+    },
     'project': {
         'source_filenames': (
             'css/project.css',
