@@ -30,7 +30,6 @@ from pontoon.base import MOZILLA_REPOS
 from pontoon.base.models import (
     Entity,
     Locale,
-    Project,
     Resource,
     Stats,
     Translation,
@@ -41,89 +40,6 @@ from pontoon.base.models import (
 )
 
 log = logging.getLogger('pontoon')
-
-
-""" Start monkeypatching """
-import re
-from silme.core.structure import Structure, Comment
-from silme.format.properties.parser import PropertiesParser
-from silme.format.ini.parser import Parser as IniParser
-
-
-@classmethod
-def split_comments_pro(cls, text, object, code='default', pointer=0, end=None):
-    pattern = cls.patterns['comment']
-    if end:
-        match = pattern.search(text, pointer, end)
-    else:
-        match = pattern.search(text, pointer)
-    while match:
-        st0 = match.start(0)
-        if st0 > pointer:
-            cls.split_entities(
-                text, object, code=code, pointer=pointer, end=st0)
-        groups = match.groups()
-        comment = Comment()
-        comment.add(match.group(0)[1:].replace('\n#', '\n'))
-        object.append(comment)
-        pointer = match.end(0)
-        if end:
-            match = pattern.search(text, pointer, end)
-        else:
-            match = pattern.search(text, pointer)
-    if (not end or (end > pointer)) and len(text) > pointer:
-        cls.split_entities(text, object, code=code, pointer=pointer)
-
-PropertiesParser.split_comments = split_comments_pro
-
-
-@classmethod
-def split_comments_ini(cls, text, object, pointer=0, end=None):
-    pattern = cls.patterns['comment']
-    if end:
-        match = pattern.search(text, pointer, end)
-    else:
-        match = pattern.search(text, pointer)
-    while match:
-        st0 = match.start(0)
-        if st0 > pointer:
-            cls.split_entities(text, object, pointer=pointer, end=st0)
-        comment = Comment()
-        comment.add(
-            match.group(0)[1:].replace('\n;', '\n').replace('\n#', '\n'))
-        object.append(comment)
-        pointer = match.end(0)
-        if end:
-            match = pattern.search(text, pointer, end)
-        else:
-            match = pattern.search(text, pointer)
-    if (not end or (end > pointer)) and len(text) > pointer:
-        cls.split_entities(text, object, pointer=pointer, end=end)
-
-IniParser.split_comments = split_comments_ini
-
-IniParser.patterns['entity'] = re.compile(
-    '^[ \t]*([^#!\s\n][^=:\n]*?)[ \t]*[:=][ \t]*(.*?)(?<!\\\)(?=\n|\Z)',
-    re.S | re.M)
-
-
-def modify_entity_mine(self, id, value):
-    """
-    modifies as entity value; supports duplicate keys
-    """
-    found = False
-    for item in self:
-        if isinstance(item, silme.core.entity.Entity) and item.id == id:
-            item.value = value
-            found = True
-
-    if found:
-        return True
-    else:
-        raise KeyError('No such entity')
-
-Structure.modify_entity = modify_entity_mine
-""" End monkeypatching """
 
 
 def get_locale_paths(project, locale, source_paths, source_directory):
