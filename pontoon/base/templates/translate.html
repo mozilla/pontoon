@@ -118,7 +118,6 @@
             {% endif %}
 
             <li class="download">Download
-              {% if user.is_authenticated() and project.repository_path and project.repository_type != 'file' %}<i class="file-format zip">ZIP</i>{% endif %}
               {% if project.url %}<i class="file-format html">HTML</i>{% endif %}
               <i class="file-format json">JSON</i>
             </li>
