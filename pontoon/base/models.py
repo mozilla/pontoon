@@ -309,7 +309,7 @@ class Subpage(models.Model):
     project = models.ForeignKey(Project)
     name = models.CharField(max_length=128)
     url = models.URLField("URL", blank=True)  # Firefox OS Hack
-    resource = models.ManyToManyField(Resource, blank=True)
+    resources = models.ManyToManyField(Resource, blank=True)
 
     def __unicode__(self):
         return self.name
