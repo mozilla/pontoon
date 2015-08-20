@@ -106,7 +106,6 @@ def locale(request, locale, template='locale.html'):
 
 def locales(request):
     """Localization teams."""
-    log.debug("Localization teams.")
 
     data = {
         'locales': get_locales_with_stats(),
