@@ -252,9 +252,9 @@ def translate(request, locale, slug, part=None, template='translate.html'):
                     )
             else:
                 locale_details = pages.values('name')
-                if len(pages) > 0 and pages[0].resource.exists():
+                if len(pages) > 0 and pages[0].resources.exists():
                     locale_details = pages.filter(
-                        resource__stats=stats).values('name')
+                        resources__stats=stats).values('name')
 
             details[loc.code.lower()] = list(locale_details)
 
@@ -278,7 +278,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
         except Subpage.DoesNotExist:
             # If page not specified or doesn't exist
             page = pages[0]
-            locale_pages = pages.filter(resource__stats__locale=l)
+            locale_pages = pages.filter(resources__stats__locale=l)
             if locale_pages:
                 page = locale_pages[0]
 
