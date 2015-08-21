@@ -6,6 +6,7 @@
 <!-- Server data -->
 <div id="server"
      class="hidden"
+     data-site-url="{{ settings.SITE_URL }}"
      {% if accept_language %}data-accept-language="{{ accept_language }}"{% endif %}
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      {% if locale %}data-locale="{{ locale.stringify() }}"{% endif %}
