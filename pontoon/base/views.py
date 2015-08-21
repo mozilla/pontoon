@@ -368,16 +368,24 @@ def contributors(request, template='users.html'):
     """Top contributors view."""
     log.debug("Top contributors view.")
 
-    users = User.objects.annotate(translation_count=Count('translation')) \
-        .exclude(translation_count=0).exclude(email__in=settings.EXCLUDE) \
+    translations = (
+        Translation.objects
+        .exclude(user=None)
+        .exclude(string=F('entity__string'))
+        .exclude(string=F('entity__string_plural'))
+    )
+
+    users = (
+        User.objects
+        .filter(translation__in=translations).distinct()
+        .exclude(email__in=settings.EXCLUDE)
+        .annotate(translation_count=Count('translation'))
+        .exclude(translation_count=0)
         .order_by('-translation_count')[:100]
+    )
 
     for user in users:
-        user.translations = (
-            Translation.objects.filter(user=user)
-            .exclude(string=F('entity__string'))
-            .exclude(string=F('entity__string_plural'))
-        )
+        user.translations = translations.filter(user=user)
         user.gravatar_url = get_gravatar_url(user.email, 44)
 
     data = {
