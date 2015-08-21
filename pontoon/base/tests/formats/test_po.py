@@ -1,15 +1,12 @@
-import os
-import tempfile
 from datetime import datetime
 from textwrap import dedent
 
 from pontoon.base.formats import po
 from pontoon.base.tests import (
-    assert_attributes_equal,
-    LocaleFactory,
     TestCase,
     UserFactory
 )
+from pontoon.base.tests.formats import FormatTestsMixin
 
 
 BASE_POFILE = """
@@ -85,141 +82,34 @@ msgstr ""
 """
 
 
-class POTests(TestCase):
-    maxDiff = None
-
-    def setUp(self):
-        self.locale = LocaleFactory.create(
-            code='test-locale',
-            name='Test Locale',
-            nplurals=2,
-            plural_rule='(n != 1)',
-        )
-
-    def parse_string(self, string):
-        fd, path = tempfile.mkstemp()
-        with os.fdopen(fd, 'w') as f:
-            f.write(string)
-
-        return path, po.parse(path)
+class POTests(FormatTestsMixin, TestCase):
+    parse = staticmethod(po.parse)
+    supports_keys = False
+    supports_source = True
 
     def test_parse_basic(self):
-        """Basic translation with a comment and source."""
-        path, resource = self.parse_string(BASE_POFILE)
-        assert_attributes_equal(
-            resource.translations[0],
-            comments=['Sample comment'],
-            source=[('file.py', '1')],
-            key='Source String',
-            source_string='Source String',
-            source_string_plural='',
-            strings={None: 'Translated String'},
-            fuzzy=False,
-            order=0,
-        )
+        self.run_parse_basic(BASE_POFILE, 0)
 
     def test_parse_multiple_comments(self):
-        path, resource = self.parse_string(BASE_POFILE)
-        assert_attributes_equal(
-            resource.translations[1],
-            comments=['First comment', 'Second comment'],
-            source=[],
-            key='Multiple Comments',
-            source_string='Multiple Comments',
-            source_string_plural='',
-            strings={None: 'Translated Multiple Comments'},
-            fuzzy=False,
-            order=1,
-        )
+        self.run_parse_multiple_comments(BASE_POFILE, 1)
 
     def test_parse_multiple_sources(self):
-        path, resource = self.parse_string(BASE_POFILE)
-        assert_attributes_equal(
-            resource.translations[2],
-            comments=[],
-            source=[('file.py', '2'), ('file.py', '3')],
-            key='Multiple Sources',
-            source_string='Multiple Sources',
-            source_string_plural='',
-            strings={None: 'Translated Multiple Sources'},
-            fuzzy=False,
-            order=2,
-        )
+        self.run_parse_multiple_sources(BASE_POFILE, 2)
 
     def test_parse_fuzzy(self):
-        path, resource = self.parse_string(BASE_POFILE)
-        assert_attributes_equal(
-            resource.translations[3],
-            comments=[],
-            source=[],
-            key='Fuzzy',
-            source_string='Fuzzy',
-            source_string_plural='',
-            strings={None: 'Translated Fuzzy'},
-            fuzzy=True,
-            order=3,
-        )
+        self.run_parse_fuzzy(BASE_POFILE, 3)
 
     def test_parse_no_comments_no_sources(self):
-        path, resource = self.parse_string(BASE_POFILE)
-        assert_attributes_equal(
-            resource.translations[4],
-            comments=[],
-            source=[],
-            key='No Comments or Sources',
-            source_string='No Comments or Sources',
-            source_string_plural='',
-            strings={None: 'Translated No Comments or Sources'},
-            fuzzy=False,
-            order=4,
-        )
+        self.run_parse_no_comments_no_sources(BASE_POFILE, 4)
 
     def test_parse_missing_traslation(self):
-        path, resource = self.parse_string(BASE_POFILE)
-        assert_attributes_equal(
-            resource.translations[5],
-            comments=[],
-            source=[],
-            key='Missing Translation',
-            source_string='Missing Translation',
-            source_string_plural='',
-            strings={},
-            fuzzy=False,
-            order=5,
-        )
+        self.run_parse_missing_traslation(BASE_POFILE, 5)
 
     def test_parse_plural_translation(self):
-        path, resource = self.parse_string(BASE_POFILE)
-        assert_attributes_equal(
-            resource.translations[6],
-            comments=[],
-            source=[],
-            key='Plural %(count)s string',
-            source_string='Plural %(count)s string',
-            source_string_plural='Plural %(count)s strings',
-            strings={
-                0: 'Translated Plural %(count)s string',
-                1: 'Translated Plural %(count)s strings'
-            },
-            fuzzy=False,
-            order=6,
-        )
+        self.run_parse_plural_translation(BASE_POFILE, 6)
 
     def test_parse_plural_translation_missing(self):
-        path, resource = self.parse_string(BASE_POFILE)
-        assert_attributes_equal(
-            resource.translations[7],
-            comments=[],
-            source=[],
-            key='Plural %(count)s string with missing translations',
-            source_string='Plural %(count)s string with missing translations',
-            source_string_plural='Plural %(count)s strings with missing translations',
-            strings={
-                1: 'Translated Plural %(count)s strings with missing translations'
-            },
-            fuzzy=False,
-            order=7,
-        )
+        self.run_parse_plural_translation_missing(BASE_POFILE, 7)
 
     def generate_pofile(
         self, body,
@@ -238,96 +128,95 @@ class POTests(TestCase):
         )
         return header + body
 
-    def assert_pofile_equal(self, pofile_path, expected_content):
-        with open(pofile_path) as f:
-            self.assertMultiLineEqual(f.read(), expected_content)
-
     def test_save_basic(self):
         """
         Test saving changes to an entity with a single translation.
         """
-        test_input = self.generate_pofile(dedent("""
+        input_string = self.generate_pofile(dedent("""
             #. Comment
             #: file.py:1
             msgid "Source String"
             msgstr "Translated String"
         """))
-        path, resource = self.parse_string(test_input)
 
-        translation = resource.translations[0]
-        translation.strings[None] = 'New Translated String'
-        translation.fuzzy = True
-        resource.save(self.locale)
-
-        self.assert_pofile_equal(path, self.generate_pofile(dedent("""
+        expected_string = self.generate_pofile(dedent("""
             #. Comment
             #: file.py:1
             #, fuzzy
             msgid "Source String"
             msgstr "New Translated String"
-        """)))
+        """))
+
+        self.run_save_basic(input_string, expected_string)
+
+    def test_save_remove(self):
+        input_string = self.generate_pofile(dedent("""
+            #. Comment
+            #: file.py:1
+            msgid "Source String"
+            msgstr "Translated String"
+        """))
+
+        expected_string = self.generate_pofile(dedent("""
+            #. Comment
+            #: file.py:1
+            msgid "Source String"
+            msgstr ""
+        """))
+
+        self.run_save_remove(input_string, expected_string)
 
     def test_save_plural(self):
-        test_input = self.generate_pofile(dedent("""
+        input_string = self.generate_pofile(dedent("""
             msgid "Plural %(count)s string"
             msgid_plural "Plural %(count)s strings"
             msgstr[0] "Translated Plural %(count)s string"
             msgstr[1] "Translated Plural %(count)s strings"
         """))
-        path, resource = self.parse_string(test_input)
 
-        translation = resource.translations[0]
-        translation.strings[0] = 'New Plural'
-        translation.strings[1] = 'New Plurals'
-        resource.save(self.locale)
-
-        self.assert_pofile_equal(path, self.generate_pofile(dedent("""
+        expected_string = self.generate_pofile(dedent("""
             msgid "Plural %(count)s string"
             msgid_plural "Plural %(count)s strings"
             msgstr[0] "New Plural"
             msgstr[1] "New Plurals"
-        """)))
+        """))
+
+        self.run_save_plural(input_string, expected_string)
 
     def test_save_plural_remove(self):
         """
         Any missing plurals should be set to an empty string in the
         pofile.
         """
-        test_input = self.generate_pofile(dedent("""
+        input_string = self.generate_pofile(dedent("""
             msgid "Plural %(count)s string"
             msgid_plural "Plural %(count)s strings"
             msgstr[0] "Translated Plural %(count)s string"
             msgstr[1] "Translated Plural %(count)s strings"
         """))
-        path, resource = self.parse_string(test_input)
 
-        translation = resource.translations[0]
-        translation.strings[0] = 'New Plural'
-        del translation.strings[1]
-        resource.save(self.locale)
-
-        self.assert_pofile_equal(path, self.generate_pofile(dedent("""
+        expected_string = self.generate_pofile(dedent("""
             msgid "Plural %(count)s string"
             msgid_plural "Plural %(count)s strings"
             msgstr[0] "New Plural"
             msgstr[1] ""
-        """)))
+        """))
+
+        self.run_save_plural_remove(input_string, expected_string)
 
     def test_save_remove_fuzzy(self):
-        test_input = self.generate_pofile(dedent("""
+        input_string = self.generate_pofile(dedent("""
             #, fuzzy
             msgid "Source String"
             msgstr "Translated String"
         """))
-        path, resource = self.parse_string(test_input)
 
-        resource.translations[0].fuzzy = False
-        resource.save(self.locale)
-
-        self.assert_pofile_equal(path, self.generate_pofile(dedent("""
+        expected_string = self.generate_pofile(dedent("""
             msgid "Source String"
             msgstr "Translated String"
-        """)))
+        """))
+
+        self.run_save_remove_fuzzy(input_string, expected_string)
 
     def test_save_metadata(self):
         """Ensure pofile metadata is updated correctly."""
@@ -339,7 +228,7 @@ class POTests(TestCase):
         path, resource = self.parse_string(test_input)
 
         resource.save(self.locale)
-        self.assert_pofile_equal(path, self.generate_pofile('',
+        self.assert_file_content(path, self.generate_pofile('',
             language='test_locale',
             generator='Pontoon',
             plural_forms='nplurals=2; plural=(n != 1);'
@@ -376,7 +265,7 @@ class POTests(TestCase):
         )
         resource.save(self.locale)
 
-        self.assert_pofile_equal(path, self.generate_pofile(
+        self.assert_file_content(path, self.generate_pofile(
             dedent("""
                 msgid "Latest"
                 msgstr "Latest"
