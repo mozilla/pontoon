@@ -34,17 +34,15 @@ User.add_to_class('display_name', user_display_name)
 
 
 def user_gravatar_url(self, size):
-    gravatar_url = "//www.gravatar.com/avatar/" + \
-        hashlib.md5(self.email.lower()).hexdigest() + "?"
+    email = hashlib.md5(self.email.lower()).hexdigest()
     data = {'s': str(size)}
 
     if not settings.DEBUG:
         append = '_big' if size > 44 else ''
-        default = settings.SITE_URL + static('img/anonymous' + append + '.jpg')
-        data['d'] = default
+        data['d'] = settings.SITE_URL + static('img/anonymous' + append + '.jpg')
 
-    gravatar_url += urllib.urlencode(data)
-    return gravatar_url
+    return '//www.gravatar.com/avatar/{email}?{data}'.format(
+        email=email, data=urllib.urlencode(data))
 User.add_to_class('gravatar_url', user_gravatar_url)
 
 
