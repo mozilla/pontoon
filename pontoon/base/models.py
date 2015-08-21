@@ -1,8 +1,10 @@
 import collections
 import datetime
+import hashlib
 import json
 import logging
 import os.path
+import urllib
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -11,6 +13,7 @@ from django.db import models
 from django.db.models import Sum, Prefetch
 from django.db.models.signals import post_save
 from django.forms import ModelForm
+from django.templatetags.static import static
 from django.utils import timezone
 
 from dirtyfields import DirtyFieldsMixin
@@ -28,6 +31,19 @@ def user_display_name(self):
     name = self.first_name or self.email.split('@')[0]
     return u'{name} <{email}>'.format(name=name, email=self.email)
 User.add_to_class('display_name', user_display_name)
+
+
+def user_gravatar_url(self, size):
+    email = hashlib.md5(self.email.lower()).hexdigest()
+    data = {'s': str(size)}
+
+    if not settings.DEBUG:
+        append = '_big' if size > 44 else ''
+        data['d'] = settings.SITE_URL + static('img/anonymous' + append + '.jpg')
+
+    return '//www.gravatar.com/avatar/{email}?{data}'.format(
+        email=email, data=urllib.urlencode(data))
+User.add_to_class('gravatar_url', user_gravatar_url)
 
 
 class UserProfile(models.Model):

@@ -30,7 +30,6 @@ from django.http import (
 )
 
 from django.shortcuts import render
-from django.templatetags.static import static
 from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid.views import Verify as BrowserIDVerifyBase
 from operator import itemgetter
@@ -157,22 +156,6 @@ def projects(request, template='projects.html'):
     return render(request, template, data)
 
 
-def get_gravatar_url(email, size):
-    """Get gravatar URL."""
-
-    gravatar_url = "//www.gravatar.com/avatar/" + \
-        hashlib.md5(email.lower()).hexdigest() + "?"
-    data = {'s': str(size)}
-
-    if not settings.DEBUG:
-        append = '_big' if size > 44 else ''
-        default = settings.SITE_URL + static('img/anonymous' + append + '.jpg')
-        data['d'] = default
-
-    gravatar_url += urllib.urlencode(data)
-    return gravatar_url
-
-
 def translate(request, locale, slug, part=None, template='translate.html'):
     """Translate view."""
     log.debug("Translate view.")
@@ -294,10 +277,6 @@ def translate(request, locale, slug, part=None, template='translate.html'):
                 .order_by('path').values_list('path', flat=True)
             data['part'] = part if part in paths else paths[0]
 
-    # Set profile image from Gravatar
-    if request.user.is_authenticated():
-        data['gravatar_url'] = get_gravatar_url(request.user.email, 44)
-
     # Set error data
     translate_error = request.session.pop('translate_error', {})
     if translate_error:
@@ -356,7 +335,6 @@ def contributor(request, email, template='user.html'):
 
     data = {
         'contributor': user,
-        'gravatar_url': get_gravatar_url(user.email, 200),
         'timeline': timeline,
         'translations': translations,
     }
@@ -378,7 +356,6 @@ def contributors(request, template='users.html'):
             .exclude(string=F('entity__string'))
             .exclude(string=F('entity__string_plural'))
         )
-        user.gravatar_url = get_gravatar_url(user.email, 44)
 
     data = {
         'contributors': users,

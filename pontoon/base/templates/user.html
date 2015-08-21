@@ -20,7 +20,7 @@
 
 {% block heading %}
 {% if user.is_authenticated() and user.email == contributor.email %}<div class="desc">Update profile picture</div>{% endif %}
-<img class="rounded" src="{% if gravatar_url %}{{ gravatar_url }}{% else %}{{ static('img/anonymous.jpg') }}{% endif %}">
+<img class="rounded" src="{{ contributor.gravatar_url(200) }}">
 {% endblock %}
 
 {% block subtitle %}
