@@ -75,9 +75,13 @@ urlpatterns = patterns(
         name='pontoon.profile'),
 
     # Terminology Search
-    url(r'^search/$',
+    url(r'^terminology/$',
         views.search,
         name='pontoon.search'),
+
+    # Legacy: Redirect to /terminology
+    url(r'^search/$',
+        RedirectView.as_view(url="/terminology/", permanent=True)),
 
     # AJAX
     url(r'^get-entities/', views.entities,
