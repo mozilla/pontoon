@@ -525,8 +525,7 @@ def extract_lang(project, locale, path, entities=False):
                 except Entity.DoesNotExist:
                     continue
 
-                except Exception as e:
-                    print(e)
+                except Exception:
                     continue
 
         update_stats(resource, locale)
