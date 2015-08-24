@@ -726,6 +726,11 @@ def save_entity(resource, string, string_plural="", comment="",
         e = Entity(resource=resource, string=string,
                    string_plural=string_plural, key=key, source=source)
 
+    except Exception:
+        print string
+        log.debug(string)
+        return False
+
     if len(comment) > 0:
         e.comment = comment
 
