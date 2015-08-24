@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.test import TestCase as BaseTestCase
 
+from django_browserid.tests import mock_browserid
 from django_nose.tools import assert_equal
 
 from pontoon.base.models import (
@@ -14,13 +15,25 @@ from pontoon.base.models import (
     Locale,
     Project,
     Resource,
+    Stats,
     Translation,
 )
 from pontoon.base.vcs_models import VCSEntity
 
 
 class TestCase(BaseTestCase):
-    pass
+    def client_login(self, user=None):
+        """
+        Authenticate the test client as the given user. If no user is
+        given, a test user is created and returned.
+        """
+        if user is None:
+            user = UserFactory.create()
+
+        with mock_browserid(user.email):
+            self.client.login(assertion='asdf', audience='asdf')
+
+        return user
 
 
 class UserFactory(DjangoModelFactory):
@@ -90,6 +103,14 @@ class TranslationFactory(DjangoModelFactory):
 
     class Meta:
         model = Translation
+
+
+class StatsFactory(DjangoModelFactory):
+    resource = SubFactory(ResourceFactory)
+    locale = SubFactory(LocaleFactory)
+
+    class Meta:
+        model = Stats
 
 
 class VCSEntityFactory(factory.Factory):

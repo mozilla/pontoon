@@ -1,6 +1,8 @@
 from django.core.urlresolvers import reverse
+from django.shortcuts import render
 
-from django_nose.tools import assert_equal
+from django_nose.tools import assert_equal, assert_true
+from mock import patch
 
 from pontoon.base.models import Project
 from pontoon.base.tests import (
@@ -8,6 +10,7 @@ from pontoon.base.tests import (
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
+    StatsFactory,
     TestCase
 )
 
@@ -79,3 +82,41 @@ class TranslateTests(TestCase):
         response = self.client.get('/fakelocale/valid-project/')
         assert_redirects(response, reverse('pontoon.home'))
         assert_equal(self.client.session['translate_error'], {'redirect': '/fakelocale/valid-project/'})
+
+    def test_no_subpage_stats_in_current_locale(self):
+        """
+        If there are stats for a resource available in the current
+        locale and no subpages, set the part to the resource path.
+        """
+        locale = LocaleFactory.create()
+        project = ProjectFactory.create(locales=[locale])
+
+        # Need two resources to trigger setting the part value.
+        resource = ResourceFactory.create(project=project, path='foo.lang', entity_count=1)
+        ResourceFactory.create(project=project, entity_count=1)
+        StatsFactory.create(resource=resource, locale=locale)
+
+        self.client_login()
+        url = '/{locale.code}/{project.slug}/'.format(locale=locale, project=project)
+        with patch('pontoon.base.views.render', wraps=render) as mock_render:
+            self.client.get(url)
+            assert_equal(mock_render.call_args[0][2]['part'], 'foo.lang')
+
+    def test_no_subpage_no_resources_in_current_locale(self):
+        """
+        If there are stats for a resource available in other locales but
+        not in the current one, and no subpages, do not set ctx['part'].
+        """
+        locale, locale_no_stats = LocaleFactory.create_batch(2)
+        project = ProjectFactory.create(locales=[locale, locale_no_stats])
+
+        # Need two resources to trigger setting the part value.
+        resource = ResourceFactory.create(project=project, path='foo.lang', entity_count=1)
+        ResourceFactory.create(project=project, entity_count=1)
+        StatsFactory.create(resource=resource, locale=locale)
+
+        self.client_login()
+        url = '/{locale.code}/{project.slug}/'.format(locale=locale_no_stats, project=project)
+        with patch('pontoon.base.views.render', wraps=render) as mock_render:
+            self.client.get(url)
+            assert_true('part' not in mock_render.call_args[0][2])
