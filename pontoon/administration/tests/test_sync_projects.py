@@ -44,6 +44,7 @@ class FakeCheckoutTestCase(TestCase):
         self.mock_timezone.now.return_value = datetime(1970, 1, 1)
 
         self.translated_locale = LocaleFactory.create(code='translated-locale')
+        self.inactive_locale = LocaleFactory.create(code='inactive-locale')
 
         self.db_project = ProjectFactory.create(
             name='db-project',
@@ -324,7 +325,6 @@ class CommandTests(FakeCheckoutTestCase):
         Call update_stats on all resources available in the current
         locale.
         """
-        self.changeset.updated_locales = set([self.translated_locale])
         with patch.object(sync_projects, 'update_stats') as update_stats:
             self.command.update_stats(self.db_project, self.vcs_project, self.changeset)
 
@@ -340,8 +340,6 @@ class CommandTests(FakeCheckoutTestCase):
         Call update_stats on asymmetric resources even if they don't
         exist in the target locale.
         """
-        self.changeset.updated_locales = set([self.translated_locale])
-
         update_stats_patch = patch.object(sync_projects, 'update_stats')
         is_asymmetric_patch = patch.object(Resource, 'is_asymmetric', new_callable=PropertyMock)
         with update_stats_patch as update_stats, is_asymmetric_patch as is_asymmetric:
@@ -351,6 +349,25 @@ class CommandTests(FakeCheckoutTestCase):
             update_stats.assert_any_call(self.main_db_resource, self.translated_locale)
             update_stats.assert_any_call(self.other_db_resource, self.translated_locale)
             update_stats.assert_any_call(self.missing_db_resource, self.translated_locale)
+
+    def test_update_stats_extra_locales(self):
+        """
+        Only update stats for active locales, even if the inactive
+        locale has a resource.
+        """
+        with patch.object(sync_projects, 'update_stats') as update_stats:
+            self.command.update_stats(self.db_project, self.vcs_project, self.changeset)
+
+            update_stats.assert_any_call(self.main_db_resource, self.translated_locale)
+            update_stats.assert_any_call(self.other_db_resource, self.translated_locale)
+            assert_not_in(
+                call(self.main_db_resource, self.inactive_locale),
+                update_stats.mock_calls
+            )
+            assert_not_in(
+                call(self.other_db_resource, self.inactive_locale),
+                update_stats.mock_calls
+            )
 
     def test_entity_key_common_string(self):
         """
@@ -681,16 +698,3 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.changeset.execute()
         self.main_db_entity.refresh_from_db()
         assert_true(self.main_db_entity.obsolete)
-
-    def test_updated_locales(self):
-        """
-        If a translation was updated, store which locale it belonged to in
-        changeset.updated_locales.
-        """
-        self.create_db_entities_translations()
-        self.main_db_translation.approved = False
-        self.main_db_translation.approved_date = None
-        self.main_db_translation.save()
-
-        self.update_main_db_entity()
-        assert_equal(self.changeset.updated_locales, set([self.translated_locale]))

@@ -151,12 +151,9 @@ class Command(BaseCommand):
             resource.save()
 
     def update_stats(self, db_project, vcs_project, changeset):
-        """
-        Update the Stats entries in the database for locales that had
-        translation updates.
-        """
+        """Update the Stats entries in the database."""
         for resource in db_project.resource_set.all():
-            for locale in changeset.updated_locales:
+            for locale in db_project.locales.all():
                 # We only want to create/update the stats object if the resource
                 # exists in the current locale, UNLESS the file is asymmetric.
                 vcs_resource = vcs_project.resources[resource.path]
@@ -244,7 +241,6 @@ class ChangeSet(object):
         self.translations_to_create = []
 
         self.commit_authors_per_locale = {}
-        self.updated_locales = set()
 
     def update_vcs_entity(self, locale_code, db_entity, vcs_entity):
         """
@@ -312,10 +308,6 @@ class ChangeSet(object):
                 'fuzzy',
                 'extra'
             ])
-
-            # Track which locales were updated.
-            for translation in self.translations_to_update:
-                self.updated_locales.add(translation.locale)
 
     def execute_update_vcs(self):
         resources = self.vcs_project.resources
