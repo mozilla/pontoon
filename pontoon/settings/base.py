@@ -54,8 +54,9 @@ BROWSERID_AUDIENCES = [SITE_URL]
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
 
-# Disable forced SSL if debug mode is enabled.
-SSLIFY_DISABLE = DEBUG
+# Disable forced SSL if debug mode is enabled or if CI is running the
+# tests.
+SSLIFY_DISABLE = DEBUG or os.environ.get('CI', False)
 
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')
@@ -395,8 +396,11 @@ LOGGING = {
 ## Tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = ['--logging-filter=-django_browserid,-factory,-django.db',
-             '--logging-clear-handlers',
-             '--with-progressive']
+             '--logging-clear-handlers']
+
+# Disable nose-progressive on CI due to ugly output.
+if not os.environ.get('CI', False):
+    NOSE_ARGS.append('--with-progressive')
 
 # Set X-Frame-Options to DENY by default on all responses.
 X_FRAME_OPTIONS = 'DENY'

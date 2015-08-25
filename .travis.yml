@@ -1,0 +1,19 @@
+sudo: false
+language: python
+python:
+  - '2.7'
+before_install:
+  - git submodule update --init --recursive
+install:
+  - pip install -r requirements.txt
+before_script:
+  - psql -c 'create database pontoon;' -U postgres
+script:
+  - python manage.py test
+addons:
+  postgresql: "9.4"
+env:
+  global:
+    - SECRET_KEY=asdf
+    - DATABASE_URL=postgres://postgres@localhost/pontoon
+    - HMAC_KEY=asdf
