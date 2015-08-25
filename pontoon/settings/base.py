@@ -24,7 +24,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # Is this a dev instance?
 DEV = os.environ.get('DJANGO_DEV', 'False') != 'False'
 
-DEBUG = TEMPLATE_DEBUG = os.environ.get('DJANGO_DEBUG', 'False') != 'False'
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') != 'False'
 
 ADMINS = MANAGERS = (
     (os.environ.get('ADMIN_NAME', ''),
@@ -119,7 +119,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
+CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.debug',
     'django.core.context_processors.media',
@@ -136,7 +136,7 @@ TEMPLATES = [
         'OPTIONS': {
             'match_extension': '',
             'match_regex': r'^(?!(admin|registration)/).*\.(html|jinja)$',
-            'context_processors': TEMPLATE_CONTEXT_PROCESSORS,
+            'context_processors': CONTEXT_PROCESSORS,
             'extensions': [
                 'jinja2.ext.do',
                 'jinja2.ext.loopcontrols',
@@ -161,7 +161,8 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': TEMPLATE_CONTEXT_PROCESSORS
+            'debug': DEBUG,
+            'context_processors': CONTEXT_PROCESSORS
         }
     },
 ]
