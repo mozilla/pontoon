@@ -22,6 +22,25 @@ tr:nth-child(even) {
   background: #333941;
 }
 
+tfoot tr {
+  border-top: 1px solid #4D5967;
+}
+
+tfoot td {
+  padding: 10px 0px;
+  text-align: right;
+  font-style: italic;
+}
+
+tfoot td a {
+  font-style: normal;
+}
+
+sup a:link,
+sup a:visited {
+  color: #7BC876;
+}
+
 .rank {
   font-size: 36px;
   text-align: center;

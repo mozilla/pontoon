@@ -1810,7 +1810,7 @@ var Pontoon = (function (my) {
       this.app = {
         win: window,
         advanced: advanced,
-        path: $('base').attr('href') // pontoon.css injection
+        path: $('#server').data('site-url') + '/' // pontoon.css injection
       };
 
       this.project = {
