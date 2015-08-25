@@ -5,7 +5,7 @@ $(function() {
   // Save user name handler
   function save() {
     $.ajax({
-      url: 'save-user-name/',
+      url: '/save-user-name/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('#server').data('csrf'),

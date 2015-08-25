@@ -73,7 +73,7 @@ var Pontoon = (function (my) {
       }
 
       self.XHRgetOtherLocales = $.ajax({
-        url: 'other-locales/',
+        url: '/other-locales/',
         data: {
           entity: entity.pk,
           locale: self.locale.code
@@ -134,7 +134,7 @@ var Pontoon = (function (my) {
       }
 
       self.XHRgetHistory = $.ajax({
-        url: 'get-history/',
+        url: '/get-history/',
         data: {
           entity: entity.pk,
           locale: self.locale.code,
@@ -898,7 +898,7 @@ var Pontoon = (function (my) {
         }
 
         $.ajax({
-          url: 'delete-translation/',
+          url: '/delete-translation/',
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),
@@ -1183,7 +1183,7 @@ var Pontoon = (function (my) {
       }
 
       $.ajax({
-        url: 'update/',
+        url: '/update/',
         type: 'POST',
         data: {
           csrfmiddlewaretoken: $('#server').data('csrf'),
@@ -1843,7 +1843,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       $.ajax({
-        url: 'get-entities/',
+        url: '/get-entities/',
         data: {
           project: $('#server').data('id'),
           locale: $('#server').data('locale').code,

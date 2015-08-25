@@ -68,7 +68,7 @@ var Pontoon = (function (my) {
      */
     requestLocale: function(locale, project) {
       $.ajax({
-        url: 'request-locale/',
+        url: '/request-locale/',
         type: 'POST',
         data: {
           csrfmiddlewaretoken: $('#server').data('csrf'),
@@ -210,7 +210,7 @@ var Pontoon = (function (my) {
       }
 
       self.XHRtranslationMemory = $.ajax({
-        url: 'translation-memory/',
+        url: '/translation-memory/',
         data: {
           text: original,
           locale: self.locale.code,
@@ -242,7 +242,7 @@ var Pontoon = (function (my) {
         }
 
         self.XHRmachineTranslation = $.ajax({
-          url: 'machine-translation/',
+          url: '/machine-translation/',
           data: {
             text: original,
             // On first run, check if target locale supported
@@ -278,7 +278,7 @@ var Pontoon = (function (my) {
         }
 
         self.XHRmicrosoftTerminology = $.ajax({
-          url: 'microsoft-terminology/',
+          url: '/microsoft-terminology/',
           data: {
             text: original,
             // On first run, check if target locale supported
@@ -318,7 +318,7 @@ var Pontoon = (function (my) {
       }
 
       self.XHRamagama = $.ajax({
-        url: 'amagama/',
+        url: '/amagama/',
         data: {
           text: original,
           locale: self.locale.code
@@ -348,7 +348,7 @@ var Pontoon = (function (my) {
         }
 
         self["XHRtransvision" + v] = $.ajax({
-          url: 'transvision' + '-' + v + '/',
+          url: '/transvision' + '-' + v + '/',
           data: {
             text: encodeURIComponent(original),
             locale: self.locale.code
@@ -519,7 +519,7 @@ $(function() {
     Pontoon.startLoader();
 
     $.ajax({
-      url: 'quality-checks-switch/',
+      url: '/quality-checks-switch/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('#server').data('csrf')
