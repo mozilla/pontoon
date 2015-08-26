@@ -275,7 +275,7 @@ def translate(request, locale, slug, part=None, template='translate.html'):
                     .order_by('path')
                     .values_list('path', flat=True))
 
-        if paths:
+        if len(paths) > 1:
             data['part'] = part if part in paths else paths[0]
 
     # Set error data
