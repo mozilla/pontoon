@@ -395,7 +395,7 @@ LOGGING = {
 
 ## Tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_ARGS = ['--logging-filter=-django_browserid,-factory,-django.db',
+NOSE_ARGS = ['--logging-filter=-django_browserid,-factory,-django.db,-raygun4py',
              '--logging-clear-handlers']
 
 # Disable nose-progressive on CI due to ugly output.
