@@ -1446,7 +1446,7 @@ var Pontoon = (function (my) {
         var locale = $('.locale .selector .language').attr('class').split(' ')[1],
             project = $('.project .selector .title').data('slug'),
             part = $('.part .selector:visible').attr('title'),
-            loc = locale + '/' + project;
+            loc = '/' + locale + '/' + project;
 
         if (part) {
           loc += '/' + part;
@@ -1461,7 +1461,7 @@ var Pontoon = (function (my) {
           e.preventDefault();
 
           if ($(this).is(".sign-out")) {
-            window.location = 'signout/';
+            window.location = '/signout/';
 
           } else if ($(this).is(".sign-in")) {
             self.startLoader();
