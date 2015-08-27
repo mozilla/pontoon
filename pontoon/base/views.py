@@ -304,14 +304,16 @@ def contributor(request, email, template='user.html'):
     except User.DoesNotExist:
         raise Http404
 
+    # Exclude unchanged translations
     translations = (
         Translation.objects.filter(user=user)
         .exclude(string=F('entity__string'))
         .exclude(string=F('entity__string_plural'))
     )
 
+    # Exclude obsolete translations
     current = translations.exclude(entity__obsolete=True) \
-        .extra({'day': "date(date)"})
+        .extra({'day': "date(date)"}).order_by('day')
 
     # Timeline
     timeline = [{
@@ -322,13 +324,12 @@ def contributor(request, email, template='user.html'):
     for event in current.values('day').annotate(count=Count('id')):
         daily = current.filter(date__startswith=event['day'])
         example = daily[0]
-        project = example.entity.resource.project
 
         timeline.append({
             'date': example.date,
             'type': 'translation',
             'count': event['count'],
-            'project': project,
+            'project': example.entity.resource.project,
             'translation': example,
         })
 
