@@ -980,7 +980,7 @@ var Pontoon = (function (my) {
             fuzzy: all ? fuzzy / all : 0,
             untranslated: all ? untranslated / all : 0
           },
-          number = Math.floor(fraction.approved*100 + fraction.translated*100);
+          number = Math.floor(fraction.approved * 100);
 
       // Update graph
       $('#progress .graph').each(function() {
