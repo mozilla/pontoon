@@ -83,10 +83,30 @@ class TranslateTests(TestCase):
         assert_redirects(response, reverse('pontoon.home'))
         assert_equal(self.client.session['translate_error'], {'redirect': '/fakelocale/valid-project/'})
 
-    def test_no_subpage_stats_in_current_locale(self):
+    def test_no_subpage_multiple_stats_in_current_locale(self):
         """
-        If there are stats for a resource available in the current
-        locale and no subpages, set the part to the resource path.
+        If there are multiple stats for a resource available in the current
+        locale, and no subpages, set the part to the resource path.
+        """
+        locale = LocaleFactory.create()
+        project = ProjectFactory.create(locales=[locale])
+
+        # Need at least two resources and stats to trigger setting the part value.
+        resource1 = ResourceFactory.create(project=project, path='foo1.lang', entity_count=1)
+        resource2 = ResourceFactory.create(project=project, path='foo2.lang', entity_count=1)
+        StatsFactory.create(resource=resource1, locale=locale)
+        StatsFactory.create(resource=resource2, locale=locale)
+
+        self.client_login()
+        url = '/{locale.code}/{project.slug}/'.format(locale=locale, project=project)
+        with patch('pontoon.base.views.render', wraps=render) as mock_render:
+            self.client.get(url)
+            assert_equal(mock_render.call_args[0][2]['part'], 'foo1.lang')
+
+    def test_no_subpage_one_stats_in_current_locale(self):
+        """
+        If there is just one stats for a resource available in the current
+        locale, and no subpages, do not set ctx['part'].
         """
         locale = LocaleFactory.create()
         project = ProjectFactory.create(locales=[locale])
@@ -100,9 +120,9 @@ class TranslateTests(TestCase):
         url = '/{locale.code}/{project.slug}/'.format(locale=locale, project=project)
         with patch('pontoon.base.views.render', wraps=render) as mock_render:
             self.client.get(url)
-            assert_equal(mock_render.call_args[0][2]['part'], 'foo.lang')
+            assert_true('part' not in mock_render.call_args[0][2])
 
-    def test_no_subpage_no_resources_in_current_locale(self):
+    def test_no_subpage_no_stats_in_current_locale(self):
         """
         If there are stats for a resource available in other locales but
         not in the current one, and no subpages, do not set ctx['part'].
