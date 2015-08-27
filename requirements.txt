@@ -26,6 +26,15 @@ django-sha2==0.4
 # sha256: x9txeBCraWX2bIzwOYqYydjfmC2jm0zX8WKRHriVlvo
 docutils==0.12
 
+# sha256: P1c6GL6U3ohtEZHyfBaEJ-9pPo3Pzs-VsXBXey62nLs
+mock==1.3.0
+
+# sha256: bQ9HwFDM7R2av8iak3rQaHCil0_aMewK38r8JgC5R84
+pbr==1.6.0
+
+# sha256: _1rZ4vjZ5dHou_vPR3IqtSfPDVHK7u2dptD0B5k4P94
+funcsigs==0.4
+
 # sha256: YGbJwKsHlT-YhwvJfSn23v0Ga2whXedLmXZmbz9sPUA
 oauthlib==0.1.3
 
