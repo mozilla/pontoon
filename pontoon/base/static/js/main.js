@@ -420,7 +420,7 @@ $(function() {
           untranslated = data.total - data.approved - data.translated - data.fuzzy,
           rect = chart[0].getBoundingClientRect(),
           height = $('.tooltip').outerHeight() + 15,
-          width = ($('.tooltip').outerWidth() - chart.outerWidth()) / 2,
+          width = ($('.tooltip').outerWidth() - $(this).outerWidth()) / 2,
           left = rect.left + window.scrollX - width,
           top = rect.top + window.scrollY - height;
 
