@@ -532,10 +532,6 @@ label {
   text-align: left;
 }
 
-.select .menu ul li span:nth-child(2) {
-  color: #7BC876;
-}
-
 .select .menu ul li .chart-wrapper {
   float: right;
   height: 17px;
@@ -635,7 +631,7 @@ label {
   width: 200px;
 }
 
-.menu .sort span:nth-child(3) {
+.menu .sort span:last-child {
   float: right;
   width: 160px;
 }
