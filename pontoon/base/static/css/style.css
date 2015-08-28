@@ -483,9 +483,10 @@ label {
 
 .project.select .menu ul li .name {
   overflow: hidden;
+  padding-left: 1px; /* Insted of 0; because of overflow */
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 200px;
+  width: 199px; /* Instead of 200px; because of padding */
 }
 
 .project.select .menu ul li .url {
