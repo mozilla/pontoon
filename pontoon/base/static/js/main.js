@@ -486,17 +486,17 @@ $(function() {
     }
 
     var index = $(this).index(),
-        current = $(this).attr('class'),
+        progress = $(this).is('.progress'),
         ul = $(this).parents('.sort').next(),
         listitems = ul.children("li:not('.no-match')"),
-        dir = (current === 'asc') ? -1 : 1,
-        cls = (current === 'asc') ? 'desc' : 'asc';
+        dir = $(this).hasClass('asc') ? -1 : 1,
+        cls = $(this).hasClass('asc') ? 'desc' : 'asc';
 
-    $('.menu .sort span').removeClass();
+    $('.menu .sort span').removeClass('asc desc');
     $(this).addClass(cls);
 
     listitems.sort(function(a, b) {
-      if (index !== 2) {
+      if (!progress) {
         // Sort by alphabetical order
         return getString(a).localeCompare(getString(b)) * dir;
 

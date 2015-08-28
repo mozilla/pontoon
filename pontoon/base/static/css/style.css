@@ -532,6 +532,14 @@ label {
   text-align: left;
 }
 
+.locale.select .menu ul li span.language {
+  width: 140px;
+}
+
+.locale.select .menu ul li span.code {
+  width: 60px;
+}
+
 .select .menu ul li .chart-wrapper {
   float: right;
   height: 17px;
@@ -631,6 +639,14 @@ label {
   width: 200px;
 }
 
+.menu .sort span.language {
+  width: 140px;
+}
+
+.menu .sort span.locale {
+  width: 60px;
+}
+
 .menu .sort span:last-child {
   float: right;
   width: 160px;
@@ -706,6 +722,7 @@ label {
 .locale .code {
   color: #7BC876;
   float: right;
+  text-align: left;
 }
 
 .tooltip {

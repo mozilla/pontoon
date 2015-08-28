@@ -137,6 +137,10 @@ body > header .loader {
 }
 
 .locale .code {
+  text-align: right;
+}
+
+.locale .button .code {
   margin-left: 10px;
 }
 
@@ -177,7 +181,7 @@ body > header .locale.select {
 .locale.select .menu {
   display: none;
   position: absolute;
-  width: 236px;
+  width: 232px;
 }
 
 .menu ul,

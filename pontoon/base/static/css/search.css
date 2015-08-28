@@ -8,7 +8,7 @@
   margin: 0;
   padding: 10px;
   text-align: left;
-  width: 216px;
+  width: 212px;
 }
 
 .locale.select .selector:before,
@@ -24,7 +24,7 @@
   margin: 0 auto;
   position: absolute;
   right: 0;
-  width: 236px;
+  width: 232px;
 }
 
 .locale.select .menu .search-wrapper {
@@ -37,6 +37,10 @@
 
 .locale.select .menu li {
   color: #CCCCCC;
+}
+
+.locale .code {
+  text-align: right;
 }
 
 #search.search-wrapper {
