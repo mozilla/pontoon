@@ -11,6 +11,9 @@ urlpatterns = patterns('',
     # Admin
     (r'admin/', include('pontoon.administration.urls')),
 
+    # Sites
+    (r'sites/', include('pontoon.sites.urls')),
+
     # Django admin
     (r'^a/', include(admin.site.urls)),
 
