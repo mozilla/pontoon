@@ -1389,7 +1389,7 @@ var Pontoon = (function (my) {
               .find('.code').html().toLowerCase();
 
         // Fallback if selected part not available for the selected project
-        if (details[locale].length > 0) {
+        if (details[locale].length > 1) {
           var detail = details[locale][0],
               isPath = Object.keys(detail).indexOf("name") === -1,
               type = isPath ? 'resource__path' : 'name';
