@@ -422,7 +422,11 @@ class Entity(DirtyFieldsMixin, models.Model):
     @classmethod
     def for_project_locale(self, project, locale, paths=None):
         """Get project entities with locale translations."""
-        entities = self.objects.filter(resource__project=project, obsolete=False)
+        entities = self.objects.filter(
+            resource__project=project,
+            resource__stats__locale=locale,
+            obsolete=False
+        )
 
         if paths:
             entities = entities.filter(resource__path__in=paths) or entities
