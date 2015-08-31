@@ -655,7 +655,7 @@
       var entities = Pontoon.entities;
       if (entities.length > 0) {
 
-        if (entities[0].format === 'properties') {
+        if (entities[0].format === 'properties' && $('[data-l10n-id]').length) {
           var localized = false;
           window.addEventListener("localized", function() {
             if (!localized) {
