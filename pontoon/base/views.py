@@ -255,18 +255,25 @@ def translate(request, locale, slug, part=None, template='translate.html'):
 
     # Set subpage
     pages = Subpage.objects.filter(project=p)
+    setPart = False
     if len(pages) > 0:
         try:
             page = pages.get(name=part)
+            if pages.count() > 1:
+                setPart = True
+
+        # If page not specified or doesn't exist
         except Subpage.DoesNotExist:
-            # If page not specified or doesn't exist
             page = pages[0]
-            pages = pages.filter(resources__stats__locale=l)
-            if pages:
-                page = pages[0]
+            if pages.count() > 1:
+                setPart = True
+            locale_pages = pages.filter(resources__stats__locale=l)
+            if locale_pages:
+                page = locale_pages[0]
+                setPart = True if locale_pages.count() > 1 else False
 
         data['page_url'] = page.url
-        if len(pages) > 1:
+        if setPart:
             data['part'] = page.name
 
     # Set part if subpages not defined and entities in more than one file
