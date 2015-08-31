@@ -207,10 +207,16 @@
 
         $(':not("script, style, iframe, noscript, [translate=\'no\']")')
           .children().each(function() {
-            elements[$.trim($(this).html())] = {
-              node: $(this),
-              body: !$(this).parents('head').length
-            };
+            var text = $.trim($(this).html());
+            if (!elements[text]) {
+              elements[text] = {
+                node: [$(this)],
+                body: [!$(this).parents('head').length]
+              };
+            } else {
+              elements[text].node.push($(this));
+              elements[text].body.push(!$(this).parents('head').length);
+            }
         });
 
         $(Pontoon.entities).each(function(i, entity) {
@@ -221,19 +227,21 @@
           entity.id = counter;
 
           if (element) {
-            if (translation) {
-              element.node.html(translation);
-            }
-
-            // Head entities cannot be edited in place
-            if (element.body) {
-              if (!entity.node) {
-                entity.node = [element.node];
-              } else {
-                entity.node.push(element.node);
+            $(element.node).each(function(i) {
+              if (translation) {
+                this.html(translation);
               }
-              makeEditable(entity);
-            }
+
+              // Head entities cannot be edited in place
+              if (element.body[i]) {
+                if (!entity.node) {
+                  entity.node = [this];
+                } else {
+                  entity.node.push(this);
+                }
+                makeEditable(entity);
+              }
+            });
           }
 
           counter++;
