@@ -136,7 +136,7 @@ body > header .loader {
   text-align: left;
 }
 
-.locale .code {
+.select .menu ul li span.code {
   text-align: right;
 }
 
@@ -175,13 +175,13 @@ body > header .locale.select {
 .part.select .menu {
   display: none;
   position: absolute;
-  width: auto;
+  width: 248px;
 }
 
 .locale.select .menu {
   display: none;
   position: absolute;
-  width: 232px;
+  width: 252px;
 }
 
 .menu ul,

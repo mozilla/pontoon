@@ -250,6 +250,7 @@ PIPELINE_JS = {
     'main': {
         'source_filenames': (
             'js/main.js',
+            'js/jquery.timeago.js',
         ),
         'output_filename': 'js/main.min.js',
     },
@@ -263,7 +264,6 @@ PIPELINE_JS = {
         'source_filenames': (
             'browserid/api.js',
             'js/translate_old.js',
-            'js/jquery.timeago.js',
         ),
         'output_filename': 'js/translate.min.js',
     },

@@ -69,6 +69,28 @@ def validate_cldr(value):
                 '%s must be a list of integers between 0 and 5' % value)
 
 
+def get_latest_activity(translations):
+    """Get latest activity data from provided translations."""
+    if not translations.exists():
+        return
+
+    latest_translation = translations.order_by('-date')[0]
+    latest_approval = translations.order_by('-approved_date')[0]
+
+    if latest_approval.approved_date and latest_translation.date < latest_approval.approved_date:
+        latest = latest_approval
+        user = latest_approval.approved_user
+
+    else:
+        latest = latest_translation
+        user = latest_translation.user
+
+    return {
+        'date': latest.date,
+        'user': user
+    }
+
+
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
@@ -115,6 +137,13 @@ class Locale(models.Model):
     class Meta:
         ordering = ['name', 'code']
 
+    def latest_activity(self, project=None):
+        """Get latest activity for locale and project if provided."""
+        translations = Translation.objects.filter(locale=self)
+        if project:
+            translations = translations.filter(entity__resource__project=project)
+
+        return get_latest_activity(translations)
 
 class ProjectQuerySet(models.QuerySet):
     def available(self):
@@ -188,6 +217,14 @@ class Project(models.Model):
     def checkout_path(self):
         """Path that this project's VCS checkout is located."""
         return os.path.join(settings.MEDIA_ROOT, self.repository_type, self.slug)
+
+    def latest_activity(self, locale=None):
+        """Get latest activity for project and locale if provided."""
+        translations = Translation.objects.filter(entity__resource__project=self)
+        if locale:
+            translations = translations.filter(locale=locale)
+
+        return get_latest_activity(translations)
 
     def source_directory_path(self):
         """Path to the directory where source strings are stored."""

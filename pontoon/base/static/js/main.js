@@ -9,7 +9,7 @@ var Pontoon = (function (my) {
       var resources = null;
 
       $('.project .menu li .name').each(function() {
-        if ($('.project .button .title').html() === $(this).html()) {
+        if ($.trim($('.project .button .title').html()) === $.trim($(this).html())) {
           resources = $(this).data('details');
           return false;
         }
@@ -470,10 +470,6 @@ $(function() {
 
   // Menu sort
   $('.menu .sort span').click(function (e) {
-    function getString(el) {
-      return $(el).find('span:eq(' + index + ')').html();
-    }
-
     function getChart(el) {
       var data = $(el).find('.chart').data('chart'),
           approved = data ? data.approved/data.total : 0,
@@ -485,8 +481,17 @@ $(function() {
       };
     }
 
-    var index = $(this).index(),
-        progress = $(this).is('.progress'),
+    function getDate(el) {
+      var date = $(el).find('time').attr('datetime') || 0;
+      return new Date(date).getTime().toString();
+    }
+
+    function getString(el) {
+      return $(el).find('span:eq(' + index + ')').html();
+    }
+
+    var node = $(this),
+        index = $(this).index(),
         ul = $(this).parents('.sort').next(),
         listitems = ul.children("li:not('.no-match')"),
         dir = $(this).hasClass('asc') ? -1 : 1,
@@ -496,17 +501,21 @@ $(function() {
     $(this).addClass(cls);
 
     listitems.sort(function(a, b) {
-      if (!progress) {
-        // Sort by alphabetical order
-        return getString(a).localeCompare(getString(b)) * dir;
-
-      } else {
-        // Sort by approved, then by unapproved percentage
+      // Sort by approved, then by unapproved percentage
+      if (node.is('.progress')) {
         var chartA = getChart(a),
             chartB = getChart(b);
 
         return (chartA.approved - chartB.approved) * dir ||
           (chartA.translated - chartB.translated) * dir;
+
+      // Sort by date
+      } else if (node.is('.latest')) {
+        return getDate(a).localeCompare(getDate(b)) * dir;
+
+      // Sort by alphabetical order
+      } else {
+        return getString(a).localeCompare(getString(b)) * dir;
       }
     });
 
