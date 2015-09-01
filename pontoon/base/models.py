@@ -414,7 +414,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         else:
             return {
                 'fuzzy': False,
-                'string': u'',
+                'string': None,
                 'approved': False,
                 'pk': None
             }

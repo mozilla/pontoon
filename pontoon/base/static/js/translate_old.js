@@ -271,7 +271,8 @@ var Pontoon = (function (my) {
 
       // Length
       var original = entity['original' + this.isPluralized()].length,
-          translation = entity.translation[0].string.length;
+          translationString = entity.translation[0].string,
+          translation = translationString ? translationString.length : 0;
 
       $('#translation-length')
         .show() // Needed if sidebar opened by default
@@ -343,7 +344,7 @@ var Pontoon = (function (my) {
           translation = entity.translation[pluralForm].string,
           source = $('#translation').val();
 
-      if (translation !== source) {
+      if ((translation !== null) && (translation !== source)) {
         $('#unsaved').show();
         $("#translation").focus();
         this.checkUnsavedChangesCallback = callback;
@@ -941,7 +942,7 @@ var Pontoon = (function (my) {
                         self.postMessage("DELETE");
                       } else {
                         entity.translation[pluralForm].pk = null;
-                        entity.translation[pluralForm].string = '';
+                        entity.translation[pluralForm].string = null;
                         entity.translation[pluralForm].approved = false;
                         entity.translation[pluralForm].fuzzy = false;
                         self.updateEntityUI(entity);
