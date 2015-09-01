@@ -90,6 +90,10 @@ you create:
 .. _Babel: http://babeljs.io/
 .. _Yuglify: https://github.com/yui/yuglify
 
+``TZ``
+   Timezone for the dynos that will run the app. Pontoon operates in UTC, so set
+   this to ``UTC``.
+
 Add-ons
 -------
 Pontoon is designed to run with the following add-ons enabled:

@@ -391,7 +391,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         if user.has_perm('base.can_localize') and not translation.approved:
             translation.approved = True
             translation.approved_user = user
-            translation.approved_date = datetime.datetime.now()
+            translation.approved_date = timezone.now()
 
         translation.save()
 
@@ -741,7 +741,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
     """Add new or update existing translation."""
 
     approved = not fuzzy
-    now = datetime.datetime.now()
+    now = timezone.now()
     translations = Translation.objects.filter(
         entity=entity, locale=locale, plural_form=plural_form)
     translations_equal = translations.filter(string=string)

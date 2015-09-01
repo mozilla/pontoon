@@ -4,11 +4,14 @@ import os
 import re
 import requests
 import traceback
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.http import HttpResponse
+from django.utils import timezone
 from django.utils.translation import trans_real
+
 from translate.filters import checks
 from translate.storage import base as storage_base
 from translate.storage.placeables import base, general, parse
@@ -354,3 +357,8 @@ def match_attr(collection, **attributes):
                       for attrib, value in attributes.items()),
         default=None
     )
+
+
+def aware_datetime(*args, **kwargs):
+    """Return an aware datetime using Django's configured timezone."""
+    return timezone.make_aware(datetime(*args, **kwargs))

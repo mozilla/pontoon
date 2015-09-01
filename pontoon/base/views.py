@@ -30,6 +30,7 @@ from django.http import (
 )
 
 from django.shortcuts import render
+from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid.views import Verify as BrowserIDVerifyBase
 from operator import itemgetter
@@ -527,8 +528,7 @@ def get_translation_history(request, template=None):
 
     if len(translations) > 0:
         payload = []
-        zone = pytz.timezone(settings.TIME_ZONE)
-        offset = datetime.datetime.now(zone).strftime('%z')
+        offset = timezone.now().strftime('%z')
 
         for t in translations:
             u = t.user
@@ -599,7 +599,7 @@ def delete_translation(request, template=None):
     if next.pk is not None and request.user.has_perm('base.can_localize'):
         next.approved = True
         next.approved_user = request.user
-        next.approved_date = datetime.datetime.now()
+        next.approved_date = timezone.now()
         next.save()
 
     return HttpResponse(json.dumps({
@@ -668,7 +668,7 @@ def update_translation(request, template=None):
     if ignore_check == 'true' or not quality_checks:
         ignore = True
 
-    now = datetime.datetime.now()
+    now = timezone.now()
     can_localize = request.user.has_perm('base.can_localize')
     translations = Translation.objects.filter(
         entity=e, locale=l, plural_form=plural_form)
@@ -703,7 +703,7 @@ def update_translation(request, template=None):
                     t.user = user
 
                 t.approved = True
-                t.approved_date = datetime.datetime.now()
+                t.approved_date = timezone.now()
                 t.fuzzy = False
 
                 if t.approved_user is None:

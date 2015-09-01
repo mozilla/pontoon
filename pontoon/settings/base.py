@@ -436,6 +436,9 @@ SLAVE_DATABASES = []
 
 ## Internationalization.
 
+# Enable timezone-aware datetimes.
+USE_TZ = True
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -443,7 +446,7 @@ SLAVE_DATABASES = []
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = os.environ.get('TZ', 'UTC')
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
