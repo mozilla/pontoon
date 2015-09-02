@@ -542,12 +542,18 @@ label {
   width: 160px;
 }
 
+.select .menu ul li .chart-wrapper .percent {
+  font-size: 12px;
+  margin-top: 1px;
+  text-align: right;
+}
+
 .select .menu ul li .chart {
   background: #FD5F60;
   float: right;
   height: 5px;
   margin-top: 6px;
-  width: 100%;
+  width: 120px;
 }
 
 .select .menu ul li .chart span {

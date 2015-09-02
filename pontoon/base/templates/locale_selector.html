@@ -38,6 +38,7 @@
               <span class="translated" style="width:{{ l.chart.translated / l.chart.total * 100 }}%;"></span>
               <span class="fuzzy" style="width:{{ l.chart.fuzzy / l.chart.total * 100 }}%;"></span>
             </span>
+            <p class="percent">{{ (l.chart.approved / l.chart.total * 100) | round(0, 'floor') | int }}%</p>
           </span>
         </a>
           {% endif %}

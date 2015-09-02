@@ -200,7 +200,6 @@ body > header .locale.select {
 .part.select .menu ul li > span:nth-child(2),
 .project.select .menu ul li > span:nth-child(2) {
   float: right;
-  text-align: right;
 }
 
 .menu li.horizontal-separator {

@@ -35,6 +35,7 @@
               <span class="translated" style="width:{{ p.chart.translated / p.chart.total * 100 }}%;"></span>
               <span class="fuzzy" style="width:{{ p.chart.fuzzy / p.chart.total * 100 }}%;"></span>
             </span>
+            <p class="percent">{{ (p.chart.approved / p.chart.total * 100) | round(0, 'floor') | int }}%</p>
           </span>
           {% endif %}
         {% if url_prefix %}
