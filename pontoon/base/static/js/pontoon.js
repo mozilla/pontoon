@@ -58,9 +58,10 @@
         // Do not change anything when cancelled
         $(".pontoon-editable-toolbar > .cancel").click(function () {
           var element = $(this).parent()[0].target,
-              entity = element.entity;
+              entity = element.entity,
+              string = entity.translation[0].string;
 
-          $(element).html(entity.translation[0].string || entity.original);
+          $(element).html(string !== null ? string : entity.original);
           postMessage("INACTIVE", entity.id);
         });
 
@@ -228,7 +229,7 @@
 
           if (element) {
             $(element.node).each(function(i) {
-              if (translation) {
+              if (translation !== null) {
                 this.html(translation);
               }
 
@@ -284,7 +285,7 @@
 
           // Head strings cannot be edited in place
           $(parent).each(function() {
-            if (translation) {
+            if (translation !== null) {
               this.html(translation);
             }
             if (this.parents('head').length === 0) {
@@ -322,7 +323,7 @@
           entity.id = counter;
 
           $('[data-l10n-id="' + key + '"]').each(function() {
-            if (translation) {
+            if (translation !== null) {
               if (!attribute) {
                 $(this).html(translation);
               } else {
@@ -509,11 +510,13 @@
             // Stop editing old entity
             var target = $('.pontoon-editable-toolbar')[0].target;
             if (target) {
-              var entity = target.entity;
+              var entity = target.entity,
+                  string = entity.translation[0].string;
               $(target).attr('contentEditable', false);
-              $(target).html(entity.translation[0].string || entity.original);
+              $(target).html(string !== null ? string : entity.original);
               hideToolbar(target);
             }
+
             // Start editing new entity
             var entity = Pontoon.entities[message.value];
             if (entity.body) {
@@ -524,7 +527,8 @@
 
           case "SAVE":
             var entity = null,
-                translation = message.value.translation || message.value;
+                translationValue = message.value.translation,
+                translation = translationValue !== null ? translationValue : message.value;
             if (message.value.id) {
               entity = Pontoon.entities[message.value.id];
             } else {
@@ -545,7 +549,7 @@
             });
             selectNodeContents(target);
             entity.translation[0].pk = null;
-            entity.translation[0].string = '';
+            entity.translation[0].string = null;
             entity.translation[0].approved = false;
             entity.translation[0].fuzzy = false;
             sendData();
