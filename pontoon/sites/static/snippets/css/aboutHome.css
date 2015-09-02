@@ -160,14 +160,6 @@ a {
   background-position: right 30px center;
 }
 
-#defaultSnippet1 {
-  background-image: url("../images/snippet1.png");
-}
-
-#defaultSnippet2 {
-  background-image: url("../images/snippet2.png");
-}
-
 #snippets {
   display: inline-block;
   text-align: start;
@@ -294,10 +286,6 @@ body[narrow] #restorePreviousSession {
   content: url("../images/history.png");
 }
 
-#apps::before {
-  content: url("../images/apps.png");
-}
-
 #addons::before {
   content: url("../images/addons.png");
 }
@@ -311,7 +299,6 @@ body[narrow] #restorePreviousSession {
 }
 
 #restorePreviousSession::before {
-  content: url("restore-../images/large.png");
   height: 48px;
   width: 48px;
   display: inline-block; /* display on same line as text label */
@@ -325,7 +312,6 @@ body[narrow] #restorePreviousSession {
 }
 
 body[narrow] #restorePreviousSession::before {
-  content: url("../images/restore.png");
   height: 32px;
   width: 32px;
 }
@@ -386,22 +372,10 @@ body[narrow] #restorePreviousSession::before {
  * rather than upscaling the original-size ones (bug 818940).
  */
 @media not all and (max-resolution: 1dppx) {
-  #brandLogo {
-    background-image: url("chrome://branding/content/about-logo@2x.png");
-  }
-
   #defaultSnippet1,
   #defaultSnippet2,
   #rightsSnippet {
     background-size: 40px;
-  }
-
-  #defaultSnippet1 {
-    background-image: url("snippet1@2x.png");
-  }
-
-  #defaultSnippet2 {
-    background-image: url("snippet2@2x.png");
   }
 
   .launchButton::before,
@@ -411,43 +385,30 @@ body[narrow] #restorePreviousSession::before {
   }
 
   #downloads::before {
-    content: url("downloads@2x.png");
+    content: url("../images/downloads.png");
   }
 
   #bookmarks::before {
-    content: url("bookmarks@2x.png");
+    content: url("../images/bookmarks.png");
   }
 
   #history::before {
-    content: url("history@2x.png");
-  }
-
-  #apps::before {
-    content: url("apps@2x.png");
+    content: url("../images/history.png");
   }
 
   #addons::before {
-    content: url("addons@2x.png");
+    content: url("../images/addons.png");
   }
 
   #sync::before {
-    content: url("sync@2x.png");
+    content: url("../images/sync.png");
   }
 
   #settings::before {
-    content: url("settings@2x.png");
-  }
-
-  #restorePreviousSession::before {
-    content: url("restore-large@2x.png");
-  }
-
-  body[narrow] #restorePreviousSession::before {
-    content: url("restore@2x.png");
+    content: url("../images/settings.png");
   }
 
   #aboutMozilla::before {
-    content: url("mozilla@2x.png");
+    content: url("../images/mozilla.png");
   }
 }
-
