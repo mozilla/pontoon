@@ -64,7 +64,6 @@
 /* CUSTOMIZE */
 #newtab-customize-button,
 .newtab-customize {
-  background-image: -moz-image-rect(url(chrome://browser/skin/newtab/controls.svg), 0, 32, 32, 0);
   background-size: 28px;
   height: 38px;
   width: 38px;
@@ -80,7 +79,6 @@
 }
 
 #newtab-customize-button:-moz-any(:hover, :active, [active]) {
-  background-image: -moz-image-rect(url(chrome://browser/skin/newtab/controls.svg), 0, 64, 32, 32);
   background-color: #FFFFFF;
   border: solid 1px #CCCCCC;
   border-radius: 2px;
@@ -119,7 +117,7 @@
 .newtab-intro-cell .newtab-thumbnail,
 .newtab-intro-cell-hover .newtab-thumbnail {
   background-color: #cae1f4;
-  background-image: url("chrome://browser/skin/newtab/../images/whimsycorn.png");
+  background-image: url(../images/whimsycorn.png);
 }
 
 .newtab-site[dragged] {
@@ -178,7 +176,6 @@
 }
 
 .newtab-site[pinned] .newtab-title::before {
-  background-image: -moz-image-rect(url("chrome://browser/skin/newtab/controls.svg"), 7, 278, 28, 266);
   background-size: 10px;
   content: "";
   height: 17px;
@@ -201,31 +198,4 @@
   border: none;
   height: 24px;
   width: 24px;
-}
-
-.newtab-control-pin,
-.newtab-site[pinned] .newtab-control-pin:hover:active {
-  background-image: -moz-image-rect(url(chrome://browser/skin/newtab/controls.svg), 0, 96, 32, 64);
-}
-
-.newtab-control-pin:hover,
-.newtab-site[pinned] .newtab-control-pin:hover {
-  background-image: -moz-image-rect(url(chrome://browser/skin/newtab/controls.svg), 0, 160, 32, 128);
-}
-
-.newtab-control-pin:hover:active,
-.newtab-site[pinned] .newtab-control-pin {
-  background-image: -moz-image-rect(url(chrome://browser/skin/newtab/controls.svg), 0, 128, 32, 96);
-}
-
-.newtab-control-block {
-  background-image: -moz-image-rect(url(chrome://browser/skin/newtab/controls.svg), 0, 192, 32, 160);
-}
-
-.newtab-control-block:hover {
-  background-image: -moz-image-rect(url(chrome://browser/skin/newtab/controls.svg), 0, 224, 32, 192);
-}
-
-.newtab-control-block:hover:active {
-  background-image: -moz-image-rect(url(chrome://browser/skin/newtab/controls.svg), 0, 256, 32, 224);
 }

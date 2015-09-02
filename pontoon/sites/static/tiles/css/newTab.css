@@ -357,7 +357,6 @@ input[type=button] {
   -moz-margin-end: 8px;
   background-repeat: no-repeat;
   background-position: center;
-  background-image: url(chrome://global/skin/icons/autocomplete-search.svg#search-icon);
   background-size: 26px 26px;
 }
 
@@ -365,12 +364,10 @@ input[type=button] {
   width: 38px; /* 26 image width + 6 left "padding" + 6 right "padding" */
   -moz-margin-end: 5px;
   background-size: 26px;
-  background-image: url("chrome://browser/skin/magnifier.png");
 }
 
 @media not all and (max-resolution: 1dppx) {
   #newtab-search-logo.magnifier {
-    background-image: url("chrome://browser/skin/magnifier@2x.png");
   }
 }
 
@@ -569,7 +566,6 @@ input[type=button] {
   -moz-margin-end: 8px;
   width: 16px;
   height: 16px;
-  list-style-image: url("chrome://mozapps/skin/places/defaultFavicon.png");
 }
 
 .newtab-customize-panel-subitem > label,
@@ -615,7 +611,7 @@ input[type=button] {
 
 .newtab-customize-complex-option:hover > .selectable:not([selected]),
 .selectable:not([selected]):hover {
-  background: url("chrome://global/skin/menu/shared-menu-check-hover.svg") no-repeat #FFFFFF;
+  background: #FFFFFF;
   background-size: 16px 16px;
   background-position: 15px 15px;
   color: #171F26;
@@ -627,7 +623,7 @@ input[type=button] {
 
 .newtab-customize-panel-item[selected],
 .newtab-search-panel-engine[selected] {
-  background: url("chrome://global/skin/menu/shared-menu-check-active.svg") no-repeat transparent;
+  background: transparent;
   background-size: 16px 16px;
   background-position: 15px 15px;
   color: black;
@@ -642,7 +638,7 @@ input[type=button] {
 }
 
 .newtab-customize-panel-subitem[selected] > .checkbox {
-  background: url("chrome://global/skin/menu/shared-menu-check-black.svg") no-repeat #FFFFFF;
+  background: #FFFFFF;
   background-size: 9px 9px;
   background-position: center;
   color: #333333;
