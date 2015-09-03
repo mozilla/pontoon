@@ -36,7 +36,7 @@ var Pontoon = (function (my) {
         params.csrfmiddlewaretoken = $('#server').data('csrf');
         var post = $('<form>', {
           method: 'post',
-          action: 'download/'
+          action: '/download/'
         });
         for(var key in params) {
           $('<input>', {
@@ -154,7 +154,7 @@ var Pontoon = (function (my) {
                     '">' +
                     '<div class="info">' +
                       ((!this.email) ? this.user :
-                        '<a href="contributors/' + this.email + '">' + this.user + '</a>') +
+                        '<a href="/contributors/' + this.email + '">' + this.user + '</a>') +
                       '<time class="stress" datetime="' + this.date_iso + '">' + this.date + '</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
