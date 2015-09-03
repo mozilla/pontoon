@@ -9,3 +9,7 @@ MOZILLA_REPOS = (
     'ssh://hg.mozilla.org/users/m_owca.info/lightning-aurora/',
     'ssh://hg.mozilla.org/users/m_owca.info/seamonkey-aurora/',
 )
+
+
+class SyncError(RuntimeError):
+    """Error class for errors relating to the project sync process."""
