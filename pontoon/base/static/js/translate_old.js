@@ -270,6 +270,7 @@ var Pontoon = (function (my) {
       }
 
       // Length
+      console.log(this.isPluralized());
       var original = entity['original' + this.isPluralized()].length,
           translationString = entity.translation[0].string,
           translation = translationString ? translationString.length : 0;
@@ -476,7 +477,7 @@ var Pontoon = (function (my) {
           '<p class="string-wrapper">' +
             '<span class="source-string">' + this.marked + '</span>' +
             '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
-              self.doNotRender(this.translation[0].string) +
+              self.doNotRender(this.translation[0].string || '') +
             '</span>' +
           '</p>' +
           '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
@@ -620,7 +621,7 @@ var Pontoon = (function (my) {
         $('#translation').val(source).focus();
         $('#translation-length')
           .find('.original-length').html(original.length).end()
-          .find('.current-length').html(source.length);
+          .find('.current-length').html($('#translation').val().length);
 
         $('#quality:visible .cancel').click();
         $("#helpers nav .active a").click();
@@ -1044,7 +1045,7 @@ var Pontoon = (function (my) {
           translation = entity.translation[0].string;
       entity.ui.addClass(status);
       entity.ui.find('.translation-string')
-        .html(this.doNotRender(translation));
+        .html(this.doNotRender(translation || ''));
 
       this.updateProgress();
     },
