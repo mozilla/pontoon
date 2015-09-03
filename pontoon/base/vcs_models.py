@@ -1,8 +1,14 @@
 """
 Models for working with remote translation data stored in a VCS.
 """
+import logging
 import os.path
 from itertools import chain
+
+from pontoon.base import SyncError
+
+
+log = logging.getLogger(__name__)
 
 
 class VCSProject(object):
@@ -44,35 +50,41 @@ class VCSResource(object):
         self.entities = {}
 
         db_project = vcs_project.db_project
+
+        # Create entities using resources from the source directory,
+        source_resource_path = os.path.join(db_project.source_directory_path(), self.path)
+        source_resource_file = formats.parse(source_resource_path)
+        for index, translation in enumerate(source_resource_file.translations):
+            vcs_entity = VCSEntity(
+                resource=self,
+                key=translation.key,
+                string=translation.source_string,
+                string_plural=translation.source_string_plural,
+                comments=translation.comments,
+                source=translation.source,
+                order=translation.order or index
+            )
+            self.entities[vcs_entity.key] = vcs_entity
+
+        # Fill in translations from the locale resources.
         for locale in db_project.locales.all():
             resource_path = os.path.join(
                 db_project.locale_directory_path(locale.code),
                 self.path
             )
             try:
-                resource_file = formats.parse(resource_path)
+                resource_file = formats.parse(resource_path, source_resource_path)
             except IOError:
                 continue  # File doesn't exist, let's move on
 
             self.files[locale] = resource_file
-            for index, translation in enumerate(resource_file.translations):
-                # Create the entity if it doesn't yet exist, otherwise
-                # append to it.
-                if translation.key in self.entities:
-                    vcs_entity = self.entities[translation.key]
-                else:
-                    vcs_entity = VCSEntity(
-                        resource=self,
-                        key=translation.key,
-                        string=translation.source_string,
-                        string_plural=translation.source_string_plural,
-                        comments=translation.comments,
-                        source=translation.source,
-                        order=translation.order or index
-                    )
-                    self.entities[vcs_entity.key] = vcs_entity
-
-                vcs_entity.translations[locale.code] = translation
+            for translation in resource_file.translations:
+                try:
+                    self.entities[translation.key].translations[locale.code] = translation
+                except KeyError:
+                    # If the source is missing an entity, we consider it
+                    # deleted and don't add it.
+                    pass
 
     def save(self):
         """
@@ -114,9 +126,15 @@ class VCSTranslation(object):
     pontoon.base.models.Translation.plural_form and the values equal the
     translation for that plural form.
     """
-    def __init__(self, key, source_string, strings, comments, fuzzy,
-                 source_string_plural='', order=0, source=None, last_translator=None,
-                 last_updated=None):
+    def __init__(
+        self, key, strings, comments, fuzzy,
+        source_string='',
+        source_string_plural='',
+        order=0,
+        source=None,
+        last_translator=None,
+        last_updated=None
+    ):
         self.key = key
         self.source_string = source_string
         self.source_string_plural = source_string_plural

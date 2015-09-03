@@ -152,7 +152,7 @@ class LangVisitor(NodeVisitor):
             return []
 
 
-def parse(path):
+def parse(path, source_path=None):
     # Read as utf-8-sig in case there's a BOM at the start of the file
     # that we want to remove.
     with codecs.open(path, 'r', 'utf-8-sig') as f:
