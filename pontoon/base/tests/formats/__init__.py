@@ -7,6 +7,7 @@ from pontoon.base.tests import (
     assert_attributes_equal,
     LocaleFactory,
 )
+from pontoon.base.utils import match_attr
 
 
 class FormatTestsMixin(object):
@@ -297,6 +298,55 @@ class FormatTestsMixin(object):
         path, resource = self.parse_string(input_string, source_string=source_string)
 
         resource.translations[0].fuzzy = False
+        resource.save(self.locale)
+
+        self.assert_file_content(path, expected_string)
+
+    # Save tests specifically for asymmetric formats.
+
+    def run_save_translation_missing(self, source_string, input_string, expected_string):
+        """
+        If the source resource has a string but the translated resource
+        doesn't, the returned resource should have an empty translation
+        that can be modified and saved.
+
+        Source Example:
+            String=Source String
+            MissingString=Missing Source String
+
+        Input Example:
+            String=Translated String
+
+        Expected Example:
+            String=Translated String
+            MissingString=Translated Missing String
+        """
+        path, resource = self.parse_string(input_string, source_string=source_string)
+
+        missing_translation = match_attr(resource.translations, key='MissingString')
+        missing_translation.strings = {None: 'Translated Missing String'}
+        resource.save(self.locale)
+
+        self.assert_file_content(path, expected_string)
+
+    def run_save_translation_identical(self, source_string, input_string, expected_string):
+        """
+        If the updated translation is identical to the source
+        translation, keep it.
+
+        Source Example:
+            String=Source String
+
+        Input Example:
+            String=Translated String
+
+        Expected Example:
+            String=Source String
+        """
+        path, resource = self.parse_string(input_string, source_string=source_string)
+
+        translation = match_attr(resource.translations, key='String')
+        translation.strings = {None: 'Source String'}
         resource.save(self.locale)
 
         self.assert_file_content(path, expected_string)

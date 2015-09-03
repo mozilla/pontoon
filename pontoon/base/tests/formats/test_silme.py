@@ -93,6 +93,34 @@ class DTDTests(FormatTestsMixin, TestCase):
 
         self.run_save_source_no_changes(source_string, input_string, input_string)
 
+    def test_save_translation_missing(self):
+        source_string = dedent("""
+            <!ENTITY String "Source String">
+            <!ENTITY MissingString "Missing Source String">
+        """)
+        input_string = dedent("""
+            <!ENTITY String "Translated String">
+        """)
+        expected_string = dedent("""
+            <!ENTITY String "Translated String">
+            <!ENTITY MissingString "Translated Missing String">
+        """)
+
+        self.run_save_translation_missing(source_string, input_string, expected_string)
+
+    def test_save_translation_identical(self):
+        source_string = dedent("""
+            <!ENTITY String "Source String">
+        """)
+        input_string = dedent("""
+            <!ENTITY String "Translated String">
+        """)
+        expected_string = dedent("""
+            <!ENTITY String "Source String">
+        """)
+
+        self.run_save_translation_identical(source_string, input_string, expected_string)
+
 
 BASE_PROPERTIES_FILE = """
 # Sample comment
@@ -185,6 +213,34 @@ class PropertiesTests(FormatTestsMixin, TestCase):
         """)
 
         self.run_save_source_no_changes(source_string, input_string, input_string)
+
+    def test_save_translation_missing(self):
+        source_string = dedent("""
+            String=Source String
+            MissingString=Missing Source String
+        """)
+        input_string = dedent("""
+            String=Translated String
+        """)
+        expected_string = dedent("""
+            String=Translated String
+            MissingString=Translated Missing String
+        """)
+
+        self.run_save_translation_missing(source_string, input_string, expected_string)
+
+    def test_save_translation_identical(self):
+        source_string = dedent("""
+            String=Source String
+        """)
+        input_string = dedent("""
+            String=Translated String
+        """)
+        expected_string = dedent("""
+            String=Source String
+        """)
+
+        self.run_save_translation_identical(source_string, input_string, expected_string)
 
 
 BASE_INI_FILE = """
@@ -287,3 +343,37 @@ class IniTests(FormatTestsMixin, TestCase):
         """)
 
         self.run_save_source_no_changes(source_string, input_string, input_string)
+
+    def test_save_translation_missing(self):
+        source_string = dedent("""
+            [Strings]
+            String=Source String
+            MissingString=Missing Source String
+        """)
+        input_string = dedent("""
+            [Strings]
+            String=Translated String
+        """)
+        expected_string = dedent("""
+            [Strings]
+            String=Translated String
+            MissingString=Translated Missing String
+        """)
+
+        self.run_save_translation_missing(source_string, input_string, expected_string)
+
+    def test_save_translation_identical(self):
+        source_string = dedent("""
+            [Strings]
+            String=Source String
+        """)
+        input_string = dedent("""
+            [Strings]
+            String=Translated String
+        """)
+        expected_string = dedent("""
+            [Strings]
+            String=Source String
+        """)
+
+        self.run_save_translation_identical(source_string, input_string, expected_string)
