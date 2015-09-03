@@ -4,6 +4,7 @@ Parser for silme-compatible translation formats.
 """
 import codecs
 from collections import OrderedDict
+from copy import copy
 
 import silme
 from silme.format.dtd import FormatParser as DTDParser
@@ -16,13 +17,24 @@ from pontoon.base.vcs_models import VCSTranslation
 
 
 class SilmeEntity(VCSTranslation):
-    def __init__(self, silme_object, comments=None, order=0):
+    def __init__(self, silme_object, comments=None, order=0, copy_string=True):
+        """
+        :param copy_string:
+            If True, copy the string from the silme_object. Otherwise,
+            self.strings will be an empty dict. Used for creating empty
+            copies of translations from source resources.
+        """
         self.silme_object = silme_object
-        self.strings = {None: self.silme_object.value} if self.silme_object.value else {}
         self.comments = comments or []
         self.order = order
         self.last_translator = None
         self.last_update = None
+
+        if copy_string and self.silme_object.value:
+            self.strings = {None: self.silme_object.value}
+        else:
+            self.strings = {}
+
 
     @property
     def key(self):
@@ -60,12 +72,12 @@ class SilmeResource(ParsedResource):
         self.parser = parser
         self.path = path
         self.source_resource = source_resource
+        self.entities = OrderedDict()  # Preserve entity order.
 
-        # Preserve entity order via an OrderedDict.
+        # Copy entities from the source_resource if it's available.
         if source_resource:
-            self.entities = source_resource.entities
-        else:
-            self.entities = OrderedDict()
+            for key, entity in source_resource.entities.items():
+                self.entities[key] = copy_source_entity(entity)
 
         with codecs.open(path, 'r', 'utf-8') as f:
             self.structure = parser.get_structure(f.read())
@@ -110,13 +122,7 @@ class SilmeResource(ParsedResource):
             key = silme_entity.key
 
             translated_entity = self.entities.get(key)
-
-            have_translation = (
-                translated_entity
-                and None in translated_entity.strings
-                and translated_entity != silme_entity
-            )
-            if have_translation:
+            if translated_entity and None in translated_entity.strings:
                 new_structure.modify_entity(key, translated_entity.strings[None])
             else:
                 # Remove untranslated entity and following newline
@@ -137,6 +143,21 @@ class SilmeResource(ParsedResource):
 
         with codecs.open(self.path, 'w', 'utf-8') as f:
             f.write(self.parser.dump_structure(new_structure))
+
+
+def copy_source_entity(entity):
+    """
+    Copy an entity from a source file to a new SilmeEntity instance.
+    The new copy will have an empty strings attribute so that entities
+    that are copied but not modified during sync will not be saved in
+    the translated resource.
+    """
+    return SilmeEntity(
+        entity.silme_object,
+        copy(entity.comments),  # Members are strings, shallow is fine.
+        entity.order,
+        copy_string=False
+    )
 
 
 def parse(parser, path, source_path=None):
