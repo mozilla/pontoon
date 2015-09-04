@@ -1375,7 +1375,7 @@ var Pontoon = (function (my) {
             language = $('.locale .menu .language.' + code).parent().html();
 
         // Request new locale
-        if ($('.locale .menu .search-wrapper > a').is('.back')) {
+        if ($('.locale .menu .search-wrapper > a').is('.back:visible')) {
           var project = $('.project .title').data('slug');
           Pontoon.requestLocale(locale, project);
 
