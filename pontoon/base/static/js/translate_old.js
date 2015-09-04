@@ -236,16 +236,16 @@ var Pontoon = (function (my) {
 
           // Get example number for each plural form based on locale plural rule
           if (!this.locale.examples) {
-            var examples = this.locale.examples = {},
-                rule = null,
+            var CLDR_PLURALS = ['zero', 'one', 'two', 'few', 'many', 'other'],
+                examples = this.locale.examples = {},
                 n = 0;
 
             if (nplurals === 2) {
-              examples[0] = 1;
-              examples[1] = 2;
+              examples = {0: 1, 1: 2};
+
             } else {
               while (Object.keys(examples).length < nplurals) {
-                rule = eval(this.locale.plural_rule);
+                var rule = eval(this.locale.plural_rule);
                 if (!examples[rule]) {
                   examples[rule] = n;
                 }
@@ -253,9 +253,10 @@ var Pontoon = (function (my) {
               }
             }
 
-            $('#plural-tabs li a span').each(function(i) {
-              $(this).html(examples[i]);
-              return i < nplurals-1;
+            $.each(this.locale.cldr_plurals, function(i) {
+              $('#plural-tabs li:eq(' + i + ') a')
+                .find('span').html(CLDR_PLURALS[this]).end()
+                .find('sup').html(examples[i]);
             });
           }
           $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
