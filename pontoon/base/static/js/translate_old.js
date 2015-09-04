@@ -270,7 +270,6 @@ var Pontoon = (function (my) {
       }
 
       // Length
-      console.log(this.isPluralized());
       var original = entity['original' + this.isPluralized()].length,
           translationString = entity.translation[0].string,
           translation = translationString ? translationString.length : 0;
@@ -611,12 +610,13 @@ var Pontoon = (function (my) {
 
         var entity = $('#editor')[0].entity,
             i = tab.index(),
-            original = entity['marked' + self.isPluralized()],
+            original = entity['original' + self.isPluralized()],
+            marked = entity['marked' + self.isPluralized()],
             title = !self.isPluralized() ? "Singular" : "Plural",
             source = entity.translation[i].string;
 
         $('#source-pane h2').html(title).show();
-        $('#original').html(original);
+        $('#original').html(marked);
 
         $('#translation').val(source).focus();
         $('#translation-length')
