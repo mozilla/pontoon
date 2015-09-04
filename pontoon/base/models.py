@@ -72,7 +72,6 @@ def validate_cldr(value):
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
-    nplurals = models.SmallIntegerField(null=True, blank=True)
     plural_rule = models.CharField(max_length=128, blank=True)
 
     # CLDR Plurals
@@ -94,6 +93,16 @@ class Locale(models.Model):
         else:
             return map(int, self.cldr_plurals.split(','))
 
+    @classmethod
+    def cldr_plural_to_id(self, cldr_plural):
+        for i in self.CLDR_PLURALS:
+            if i[1] == cldr_plural:
+                return i[0]
+
+    @property
+    def nplurals(self):
+        return len(self.cldr_plurals_list())
+
     def __unicode__(self):
         return self.name
 
@@ -105,12 +114,6 @@ class Locale(models.Model):
             'plural_rule': self.plural_rule,
             'cldr_plurals': self.cldr_plurals_list(),
         })
-
-    @classmethod
-    def cldr_plural_to_id(self, cldr_plural):
-        for i in self.CLDR_PLURALS:
-            if i[1] == cldr_plural:
-                return i[0]
 
     class Meta:
         ordering = ['name', 'code']
