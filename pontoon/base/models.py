@@ -399,7 +399,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         """Get fetched translation of a given entity."""
         translations = self.fetched_translations
 
-        if plural_form:
+        if plural_form is not None:
             translations = [t for t in translations if t.plural_form == plural_form]
 
         if translations:
