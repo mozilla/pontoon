@@ -1323,8 +1323,7 @@ var Pontoon = (function (my) {
                   share = 0;
 
               if (this.resource__entity_count > 0) {
-                share = (this.approved_count + this.translated_count) /
-                        this.resource__entity_count * 100;
+                share = this.approved_count / this.resource__entity_count * 100;
               }
 
               percent = Math.floor(share) + '%';
