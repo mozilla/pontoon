@@ -429,6 +429,11 @@ class Entity(DirtyFieldsMixin, models.Model):
         )
 
         if paths:
+            try:
+                subpage = Subpage.objects.get(project=project, name__in=paths)
+                paths = subpage.resources.values_list("path")
+            except Subpage.DoesNotExist:
+                pass
             entities = entities.filter(resource__path__in=paths) or entities
 
         entities = entities.prefetch_related(
