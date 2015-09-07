@@ -44,8 +44,8 @@ class FormatTestsMixin(object):
         self.locale = LocaleFactory.create(
             code='test-locale',
             name='Test Locale',
-            nplurals=2,
             plural_rule='(n != 1)',
+            cldr_plurals='1,5',
         )
 
     def parse_string(self, string, source_string=None):
