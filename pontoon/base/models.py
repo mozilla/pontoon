@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum, Prefetch
+from django.db.models import Sum, Prefetch, F, Count, Q, Case, When
 from django.db.models.signals import post_save
 from django.forms import ModelForm
 from django.templatetags.static import static
@@ -23,12 +23,70 @@ from pontoon.base import utils
 log = logging.getLogger('pontoon')
 
 
+class UserTranslationsManager(models.Manager):
+    """
+    Provides various method to interact with larger sets of translations and their stats for user.
+    """
+
+    def _changed_translations_count(self, *args):
+        """
+        Helper method, returns expression object which allows us to annotate querysets
+        with counts of translations.
+        """
+        translation_query = (
+            ~Q(translation__string=F('translation__entity__string'))
+            & ~Q(translation__string=F('translation__entity__string_plural'))
+            & Q(translation__user__isnull=False)
+        )
+        for arg in args:
+            translation_query &= arg
+
+        # For each translation that matches the filter, return 1. Aggregate
+        # the sum of all those results to count the number of matching
+        # translations.
+        return Sum(
+            Case(
+                When(translation_query, then=1), output_field=models.IntegerField(), default=0))
+
+    def with_translation_counts(self, start_date=None, limit=100):
+        """
+        Returns contributors list, sorted by count of their translations.
+        Every user instance has added following properties:
+        * translations_count
+        * translations_approved_count
+        * translations_unapproved_count
+        * translations_needs_work_count
+        Method has been created mainly to improve performance and to optimize
+        count of sql queries during generation of metrics.
+        All counts will be returned from start_date to now().
+        :param date start_date: start date for translations.
+        """
+        def translations_count(query=None):
+            """Short helper to avoid duplication of passing dates."""
+            query = query or Q()
+            if start_date:
+                query &= Q(translation__date__gte=start_date)
+            return self._changed_translations_count(query)
+        return (
+            self
+            .exclude(email__in=settings.EXCLUDE)
+            .annotate(translations_count=translations_count(),
+                      translations_approved_count=translations_count(Q(translation__approved=True)),
+                      translations_unapproved_count=translations_count(Q(translation__approved=False, translation__fuzzy=False)),
+                      translations_needs_work_count=translations_count(Q(translation__fuzzy=True)))
+            .exclude(translations_count=0)
+            .distinct().order_by('-translations_count')[:limit]
+        )
+
+
 # User class extensions
 @property
 def user_display_name(self):
     name = self.first_name or self.email.split('@')[0]
     return u'{name} <{email}>'.format(name=name, email=self.email)
+
 User.add_to_class('display_name', user_display_name)
+User.add_to_class('translators', UserTranslationsManager())
 
 
 def user_gravatar_url(self, size):

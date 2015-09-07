@@ -1,5 +1,9 @@
+from contextlib import nested
+from datetime import datetime
+
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
+from django.utils.timezone import now
 
 from django_nose.tools import assert_equal, assert_true
 from mock import patch
@@ -7,11 +11,13 @@ from mock import patch
 from pontoon.base.models import Project
 from pontoon.base.tests import (
     assert_redirects,
+    UserFactory,
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
     StatsFactory,
-    TestCase
+    TranslationFactory,
+    TestCase,
 )
 
 
@@ -140,3 +146,42 @@ class TranslateTests(TestCase):
         with patch('pontoon.base.views.render', wraps=render) as mock_render:
             self.client.get(url)
             assert_true('part' not in mock_render.call_args[0][2])
+
+
+class ContributorsTests(TestCase):
+    @patch('pontoon.base.models.UserTranslationsManager.with_translation_counts')
+    @patch('pontoon.base.views.render', wraps=render)
+    def test_default_period(self, mock_render, mock_translations_manager):
+        """
+        Checks how view handles default period.
+        """
+        response = self.client.get('/contributors/')
+        assert_true(mock_render.call_args[0][2]['period'] == None)
+        assert_true(mock_translations_manager.call_args[0][0] == None)
+
+    @patch('pontoon.base.models.UserTranslationsManager.with_translation_counts')
+    @patch('pontoon.base.views.render', wraps=render)
+    def test_invalid_period(self, mock_render, mock_translations_manager):
+        """
+        Checks how view handles invalid period, it result in period being None - displays all data.
+        """
+        # If period parameter is invalid value
+        response = self.client.get('/contributors/?period=invalidperiod')
+        assert_true(mock_render.call_args[0][2]['period'] is None)
+        assert_true(mock_translations_manager.call_args[0][0] == None)
+
+        # Period shouldn't be negative integer
+        response = self.client.get('/contributors/?period=-6')
+        assert_true(mock_render.call_args[0][2]['period'] is None)
+        assert_true(mock_translations_manager.call_args[0][0] == None)
+
+    @patch('pontoon.base.models.UserTranslationsManager.with_translation_counts')
+    @patch('django.utils.timezone.now', wraps=now, return_value=datetime(2015, 7, 5))
+    @patch('pontoon.base.views.render', wraps=render)
+    def test_given_period(self, mock_render, mock_now, mock_translations_manager):
+        """
+        Checks if view sets and returns data for right period.
+        """
+        response = self.client.get('/contributors/?period=6')
+        assert_true(mock_render.call_args[0][2]['period'] == 6)
+        assert_true(mock_translations_manager.call_args[0][0] == datetime(2015, 1, 5))
