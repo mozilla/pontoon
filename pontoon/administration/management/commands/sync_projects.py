@@ -96,7 +96,7 @@ class Command(BaseCommand):
         # entries in the DB.
         changeset.execute()
         if not self.no_commit:
-            self.commit_changes(db_project, changeset)
+            self.commit_changes(db_project, vcs_project, changeset)
         self.update_stats(db_project, vcs_project, changeset)
 
         # Clear out the list of changed locales for entity in this
@@ -179,7 +179,7 @@ class Command(BaseCommand):
         key = entity.key or entity.string
         return ':'.join([entity.resource.path, key])
 
-    def commit_changes(self, db_project, changeset):
+    def commit_changes(self, db_project, vcs_project, changeset):
         """Commit the changes we've made back to the VCS."""
         for locale in db_project.locales.all():
             authors = changeset.commit_authors_per_locale.get(locale.code, [])
@@ -200,7 +200,7 @@ class Command(BaseCommand):
             try:
                 result = commit_to_vcs(
                     db_project.repository_type,
-                    db_project.locale_directory_path(locale.code),
+                    vcs_project.locale_directory_path(locale.code),
                     commit_message,
                     commit_author,
                     db_project.repository_url

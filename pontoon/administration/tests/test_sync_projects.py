@@ -69,13 +69,14 @@ class FakeCheckoutTestCase(TestCase):
         )
 
         # Load paths from the fake locale directory.
-        def locale_directory_path(locale_code):
-            return os.path.join(FAKE_CHECKOUT_PATH, locale_code)
-        self.db_project.locale_directory_path = locale_directory_path
-
-        def source_directory_path():
-            return locale_directory_path('source-locale')
-        self.db_project.source_directory_path = source_directory_path
+        checkout_path_patch = patch.object(
+            Project,
+            'checkout_path',
+            new_callable=PropertyMock,
+            return_value=FAKE_CHECKOUT_PATH
+        )
+        checkout_path_patch.start()
+        self.addCleanup(checkout_path_patch.stop)
 
         self.vcs_project = VCSProject(self.db_project)
         self.main_vcs_resource = self.vcs_project.resources[self.main_db_resource.path]
@@ -385,7 +386,7 @@ class CommandTests(FakeCheckoutTestCase):
             self.translated_locale.code: [user]
         }
 
-        self.command.commit_changes(self.db_project, self.changeset)
+        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.mock_commit_to_vcs.assert_called_with(
             'git',
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code),
@@ -403,7 +404,7 @@ class CommandTests(FakeCheckoutTestCase):
             self.translated_locale.code: []
         }
 
-        self.command.commit_changes(self.db_project, self.changeset)
+        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.mock_commit_to_vcs.assert_called_with(
             'git',
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code),
@@ -420,7 +421,7 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.stdout = Mock()
         self.mock_commit_to_vcs.return_value = {'message': 'Whoops!'}
 
-        self.command.commit_changes(self.db_project, self.changeset)
+        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.command.stdout.write.assert_called_with(
             CONTAINS('db-project', 'failed', 'Whoops!')
         )
@@ -432,7 +433,7 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.stdout = Mock()
         self.mock_commit_to_vcs.side_effect = CommitToRepositoryException('Whoops!')
 
-        self.command.commit_changes(self.db_project, self.changeset)
+        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.command.stdout.write.assert_called_with(
             CONTAINS('db-project', 'failed', 'Whoops!')
         )

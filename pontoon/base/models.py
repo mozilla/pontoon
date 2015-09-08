@@ -1,5 +1,3 @@
-import collections
-import datetime
 import hashlib
 import json
 import logging
@@ -19,7 +17,7 @@ from django.utils import timezone
 from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
 
-from pontoon.base import MOZILLA_REPOS, utils
+from pontoon.base import utils
 
 
 log = logging.getLogger('pontoon')
@@ -192,69 +190,6 @@ class Project(models.Model):
         """Path that this project's VCS checkout is located."""
         return os.path.join(settings.MEDIA_ROOT, self.repository_type, self.slug)
 
-    def source_directory_path(self):
-        """Path to the directory where source strings are stored."""
-        for root, dirnames, filenames in os.walk(self.checkout_path):
-            for dirname in dirnames:
-                if dirname in ('templates', 'en-US', 'en'):
-                    # Ensure the matched directory contains resources.
-                    directory_path = os.path.join(root, dirname)
-                    if Resource.directory_contains_resources(directory_path):
-                        return directory_path
-
-        raise Exception('No source directory found for project {0}'.format(self.slug))
-
-    def locale_directory_path(self, locale_code=None):
-        """
-        Path to the directory where strings for the given locale are
-        stored.
-
-        If locale_code is None, return the path to the directory where
-        source strings are stored.
-        """
-        path = self.checkout_path
-        locale_code = locale_code or self.source_directory_name()
-        if locale_code is not None:
-            for root, dirnames, filenames in os.walk(path):
-                if locale_code in dirnames:
-                    return os.path.join(root, locale_code)
-
-                locale_variant = locale_code.replace('-', '_')
-                if locale_variant in dirnames:
-                    return os.path.join(root, locale_variant)
-
-        raise Exception('Directory for locale `{0}` not found'.format(
-                        locale_code or 'source'))
-
-    def relative_resource_paths(self):
-        """
-        List of paths relative to the locale directories returned by
-        self.locale_directory_path() for each resource in this project.
-        """
-        path = self.source_directory_path()
-        for absolute_path in self.resources_for_path(path):
-            # .pot files in the source directory need to be renamed to
-            # .po files for the locale directories.
-            if absolute_path.endswith('.pot'):
-                absolute_path = absolute_path[:-1]
-
-            yield os.path.relpath(absolute_path, path)
-
-    def resources_for_path(self, path):
-        """
-        List of paths for all supported resources found within the given
-        path.
-        """
-        for root, dirnames, filenames in os.walk(path):
-            # Ignore certain files in Mozilla repositories.
-            if self.repository_url in MOZILLA_REPOS:
-                filenames = [f for f in filenames if f.endswith('region.properties')]
-
-            for filename in filenames:
-                base, extension = os.path.splitext(filename)
-                if extension[1:].lower() in Resource.ALLOWED_EXTENSIONS:
-                    yield os.path.join(root, filename)
-
     def __unicode__(self):
         return self.name
 
@@ -308,20 +243,6 @@ class Resource(models.Model):
 
         # Special case: pot files are considered the po format
         return 'po' if path_format == 'pot' else path_format
-
-    @classmethod
-    def directory_contains_resources(self, directory_path):
-        """
-        Return True if the given directory contains at least one
-        supported resource file (checked via file extension), or False
-        otherwise.
-        """
-        for root, dirnames, filenames in os.walk(directory_path):
-            for filename in filenames:
-                filename, extension = os.path.splitext(filename)
-                if extension and extension[1:] in self.ALLOWED_EXTENSIONS:
-                    return True
-        return False
 
 
 class Subpage(models.Model):
