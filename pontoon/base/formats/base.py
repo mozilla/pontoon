@@ -1,3 +1,7 @@
+class ParseError(RuntimeError):
+    """Exception to raise when parsing fails."""
+
+
 class ParsedResource(object):
     """
     Parent class for parsed resources as returned by parse.
