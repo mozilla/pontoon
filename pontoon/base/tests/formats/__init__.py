@@ -351,12 +351,8 @@ class FormatTestsMixin(object):
 
         self.assert_file_content(path, expected_string)
 
-    def run_save_source_no_changes(self, source_string, input_string, expected_string):
-        """
-        Test what happens when no changes are made. Useful for tests
-        that check different combinations of an entity in the source vs.
-        the translated resource.
-        """
+    def run_save_no_changes(self, input_string, expected_string, source_string=None):
+        """Test what happens when no changes are made."""
         path, resource = self.parse_string(input_string, source_string=source_string)
         resource.save(self.locale)
 

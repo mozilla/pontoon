@@ -219,6 +219,20 @@ class POTests(FormatTestsMixin, TestCase):
 
         self.run_save_remove_fuzzy(input_string, expected_string)
 
+    def test_save_preserve_fuzzy(self):
+        """
+        If the fuzzy status of an entity doesn't change, make sure to
+        not remove it.
+        """
+        input_string = self.generate_pofile(dedent("""
+            #, fuzzy
+            msgid "Source String"
+            msgstr "Translated String"
+        """))
+
+        # String should be unchanged.
+        self.run_save_no_changes(input_string, input_string)
+
     def test_save_metadata(self):
         """Ensure pofile metadata is updated correctly."""
         test_input = self.generate_pofile('',

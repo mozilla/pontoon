@@ -76,7 +76,7 @@ class DTDTests(FormatTestsMixin, TestCase):
             <!ENTITY SourceString "Translated String">
         """)
 
-        self.run_save_source_no_changes(source_string, input_string, expected_string)
+        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
 
     def test_save_source_no_translation(self):
         """
@@ -91,7 +91,7 @@ class DTDTests(FormatTestsMixin, TestCase):
             <!ENTITY OtherSourceString "Translated Other String">
         """)
 
-        self.run_save_source_no_changes(source_string, input_string, input_string)
+        self.run_save_no_changes(input_string, input_string, source_string=source_string)
 
     def test_save_translation_missing(self):
         source_string = dedent("""
@@ -197,7 +197,7 @@ class PropertiesTests(FormatTestsMixin, TestCase):
             SourceString=Translated String
         """)
 
-        self.run_save_source_no_changes(source_string, input_string, expected_string)
+        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
 
     def test_save_source_no_translation(self):
         """
@@ -212,7 +212,7 @@ class PropertiesTests(FormatTestsMixin, TestCase):
             OtherSourceString=Translated Other String
         """)
 
-        self.run_save_source_no_changes(source_string, input_string, input_string)
+        self.run_save_no_changes(input_string, input_string, source_string=source_string)
 
     def test_save_translation_missing(self):
         source_string = dedent("""
@@ -325,7 +325,7 @@ class IniTests(FormatTestsMixin, TestCase):
             SourceString=Translated String
         """)
 
-        self.run_save_source_no_changes(source_string, input_string, expected_string)
+        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
 
     def test_save_source_no_translation(self):
         """
@@ -342,7 +342,7 @@ class IniTests(FormatTestsMixin, TestCase):
             OtherSourceString=Translated Other String
         """)
 
-        self.run_save_source_no_changes(source_string, input_string, input_string)
+        self.run_save_no_changes(input_string, input_string, source_string=source_string)
 
     def test_save_translation_missing(self):
         source_string = dedent("""

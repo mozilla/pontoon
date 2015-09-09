@@ -46,7 +46,7 @@ class POEntity(VCSTranslation):
 
         if self.fuzzy and 'fuzzy' not in self.po_entry.flags:
             self.po_entry.flags.append('fuzzy')
-        elif 'fuzzy' in self.po_entry.flags:
+        elif not self.fuzzy and 'fuzzy' in self.po_entry.flags:
             self.po_entry.flags.remove('fuzzy')
 
     def __repr__(self):
