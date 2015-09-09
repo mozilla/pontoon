@@ -6,8 +6,9 @@ from datetime import datetime
 from django.utils import timezone
 
 import polib
+import sys
 
-from pontoon.base.formats.base import ParsedResource
+from pontoon.base.formats.base import ParseError, ParsedResource
 from pontoon.base.vcs_models import VCSTranslation
 
 
@@ -96,5 +97,10 @@ class POResource(ParsedResource):
 
 
 def parse(path, source_path=None):
-    pofile = polib.pofile(path)
+    try:
+        pofile = polib.pofile(path)
+    except IOError as err:
+        wrapped = ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
+        raise wrapped, None, sys.exc_info()[2]
+
     return POResource(pofile)
