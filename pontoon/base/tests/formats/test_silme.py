@@ -14,6 +14,8 @@ BASE_DTD_FILE = """
 <!ENTITY MultipleComments "Translated Multiple Comments">
 
 <!ENTITY NoCommentsorSources "Translated No Comments or Sources">
+
+<!ENTITY EmptyTranslation "">
 """
 
 
@@ -35,6 +37,9 @@ class DTDTests(FormatTestsMixin, TestCase):
 
     def test_parse_no_comments_no_sources(self):
         self.run_parse_no_comments_no_sources(BASE_DTD_FILE, 2)
+
+    def test_parse_empty_translation(self):
+        self.run_parse_empty_translation(BASE_DTD_FILE, 3)
 
     def test_save_basic(self):
         input_string = dedent("""
@@ -131,6 +136,8 @@ SourceString=Translated String
 MultipleComments=Translated Multiple Comments
 
 NoCommentsorSources=Translated No Comments or Sources
+
+EmptyTranslation=
 """
 
 
@@ -153,6 +160,9 @@ class PropertiesTests(FormatTestsMixin, TestCase):
 
     def test_parse_no_comments_no_sources(self):
         self.run_parse_no_comments_no_sources(BASE_PROPERTIES_FILE, 2)
+
+    def test_parse_empty_translation(self):
+        self.run_parse_empty_translation(BASE_PROPERTIES_FILE, 3)
 
     def test_save_basic(self):
         input_string = dedent("""
@@ -253,6 +263,8 @@ SourceString=Translated String
 MultipleComments=Translated Multiple Comments
 
 NoCommentsorSources=Translated No Comments or Sources
+
+EmptyTranslation=
 """
 
 
@@ -270,11 +282,13 @@ class IniTests(FormatTestsMixin, TestCase):
         self.run_parse_basic(BASE_INI_FILE, 0)
 
     def test_parse_multiple_comments(self):
-        #import ipdb; ipdb.set_trace()
         self.run_parse_multiple_comments(BASE_INI_FILE, 1)
 
     def test_parse_no_comments_no_sources(self):
         self.run_parse_no_comments_no_sources(BASE_INI_FILE, 2)
+
+    def test_parse_empty_translation(self):
+        self.run_parse_empty_translation(BASE_INI_FILE, 3)
 
     def test_save_basic(self):
         input_string = dedent("""

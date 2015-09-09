@@ -30,11 +30,10 @@ class SilmeEntity(VCSTranslation):
         self.last_translator = None
         self.last_update = None
 
-        if copy_string and self.silme_object.value:
+        if copy_string:
             self.strings = {None: self.silme_object.value}
         else:
             self.strings = {}
-
 
     @property
     def key(self):
@@ -42,7 +41,7 @@ class SilmeEntity(VCSTranslation):
 
     @property
     def source_string(self):
-        return self.silme_object.value or ''
+        return self.silme_object.value
 
     @property
     def source_string_plural(self):
