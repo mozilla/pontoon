@@ -128,6 +128,7 @@ class CommandTests(FakeCheckoutTestCase):
         self.command = sync_projects.Command()
         self.command.verbosity = 0
         self.command.no_commit = False
+        self.command.no_pull = False
 
         update_from_repo_patch = patch.object(sync_projects, 'update_from_repository')
         self.mock_update_from_repository = update_from_repo_patch.start()
@@ -140,6 +141,7 @@ class CommandTests(FakeCheckoutTestCase):
     def execute_command(self, *args, **kwargs):
         kwargs.setdefault('verbosity', 0)
         kwargs.setdefault('no_commit', False)
+        kwargs.setdefault('no_pull', False)
         return self.command.handle(*args, **kwargs)
 
     def test_handle_disabled_projects(self):
@@ -240,6 +242,15 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.no_commit = True
         self.command.handle_project(self.db_project)
         assert_false(self.command.commit_projects.called)
+
+    def test_handle_project_no_pull(self):
+        """
+        Don't call update_from_repository if command.no_pull is True.
+        """
+        with patch.object(sync_projects, 'update_from_repository') as update_from_repository:
+            self.command.no_pull = True
+            self.command.handle_project(self.db_project)
+        assert_false(update_from_repository.called)
 
     def call_handle_entity(self, key, db_entity, vcs_entity):
         return self.command.handle_entity(
