@@ -1,4 +1,3 @@
-from datetime import datetime
 from textwrap import dedent
 
 from pontoon.base.formats import po
@@ -7,6 +6,7 @@ from pontoon.base.tests import (
     UserFactory
 )
 from pontoon.base.tests.formats import FormatTestsMixin
+from pontoon.base.utils import aware_datetime
 
 
 BASE_POFILE = """
@@ -253,12 +253,12 @@ class POTests(FormatTestsMixin, TestCase):
         path, resource = self.parse_string(test_input)
 
         latest_translation, older_translation = resource.translations
-        latest_translation.last_updated = datetime(2015, 1, 1, 0, 0, 0)
+        latest_translation.last_updated = aware_datetime(2015, 1, 1, 0, 0, 0)
         latest_translation.last_translator = UserFactory(
             first_name='New',
             email='new@example.com'
         )
-        older_translation.last_updated = datetime(1970, 1, 1, 0, 0, 0)
+        older_translation.last_updated = aware_datetime(1970, 1, 1, 0, 0, 0)
         older_translation.last_translator = UserFactory(
             first_name='Old',
             email='old@example.com'
@@ -273,6 +273,6 @@ class POTests(FormatTestsMixin, TestCase):
                 msgid "Older"
                 msgstr "Older"
             """),
-            revision_date='2015-01-01 00:00',
+            revision_date='2015-01-01 00:00+0000',
             last_translator='New <new@example.com>'
         ))

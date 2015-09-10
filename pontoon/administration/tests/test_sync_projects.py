@@ -1,5 +1,4 @@
 import os.path
-from datetime import datetime
 
 from django.core.management.base import CommandError
 from django_nose.tools import (
@@ -29,6 +28,7 @@ from pontoon.base.tests import (
     UserFactory,
     VCSEntityFactory,
 )
+from pontoon.base.utils import aware_datetime
 from pontoon.base.vcs_models import VCSProject
 
 
@@ -41,7 +41,7 @@ class FakeCheckoutTestCase(TestCase):
         timezone_patch = patch.object(sync_projects, 'timezone')
         self.mock_timezone = timezone_patch.start()
         self.addCleanup(timezone_patch.stop)
-        self.mock_timezone.now.return_value = datetime(1970, 1, 1)
+        self.mock_timezone.now.return_value = aware_datetime(1970, 1, 1)
 
         self.translated_locale = LocaleFactory.create(code='translated-locale')
         self.inactive_locale = LocaleFactory.create(code='inactive-locale')
@@ -115,7 +115,7 @@ class FakeCheckoutTestCase(TestCase):
             plural_form=None,
             locale=self.translated_locale,
             string='Translated String',
-            date=datetime(1970, 1, 1),
+            date=aware_datetime(1970, 1, 1),
             approved=True,
             extra={'tags': []}
         )
@@ -179,7 +179,7 @@ class CommandTests(FakeCheckoutTestCase):
         deletion.
         """
         self.create_db_entities_translations()
-        self.main_db_translation.deleted = datetime(1970, 1, 1)
+        self.main_db_translation.deleted = aware_datetime(1970, 1, 1)
         self.main_db_translation.save()
 
         self.command.handle_project = Mock()
@@ -550,7 +550,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
             string='Translated String',
             plural_form=None,
             approved=True,
-            approved_date=datetime(1970, 1, 1),
+            approved_date=aware_datetime(1970, 1, 1),
             fuzzy=False
         )
 
@@ -629,7 +629,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         assert_attributes_equal(
             self.main_db_translation,
             approved=True,
-            approved_date=datetime(1970, 1, 1)
+            approved_date=aware_datetime(1970, 1, 1)
         )
 
     def test_update_db_new_translation(self):
@@ -648,7 +648,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
             string='Translated String',
             plural_form=None,
             approved=True,
-            approved_date=datetime(1970, 1, 1),
+            approved_date=aware_datetime(1970, 1, 1),
             fuzzy=False,
             extra={'tags': []}
         )
@@ -661,7 +661,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.create_db_entities_translations()
 
         self.main_db_translation.approved = True
-        self.main_db_translation.approved_date = datetime(1970, 1, 1)
+        self.main_db_translation.approved_date = aware_datetime(1970, 1, 1)
         self.main_db_translation.approved_user = UserFactory.create()
         self.main_db_translation.save()
         self.main_vcs_translation.strings[None] = 'New Translated String'

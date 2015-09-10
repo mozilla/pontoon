@@ -119,7 +119,7 @@
             {% endif %}
 
             <li class="download">Download
-              {% if project.url %}<i class="file-format html">HTML</i>{% endif %}
+              {% if page_url %}<i class="file-format html">HTML</i>{% endif %}
               <i class="file-format json">JSON</i>
             </li>
 
@@ -223,11 +223,11 @@
     </div>
     <div class="wrapper">
       <ul class="editables"></ul>
-      {% if project.url %}
+      {% if page_url %}
       <h2 id="not-on-page">Not on the current page</h2>
       {% endif %}
       <ul class="uneditables"></ul>
-      <h3 class="no-match"><div class="fa fa-thumbs-down"></div>No results</h3>
+      <h3 class="no-match"><div class="fa fa-exclamation-circle"></div>No results</h3>
     </div>
   </div>
 
@@ -319,7 +319,7 @@
   <div id="drag" draggable="true"></div>
 </aside>
 
-{% if project.url %}
+{% if page_url %}
 <!-- Website placeholder + iframe fix: prevent iframes from capturing the mousemove events during a drag -->
 <iframe id="source"></iframe>
 <div id="iframe-cover"></div>

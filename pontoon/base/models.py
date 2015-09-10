@@ -428,7 +428,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         if user.has_perm('base.can_localize') and not translation.approved:
             translation.approved = True
             translation.approved_user = user
-            translation.approved_date = datetime.datetime.now()
+            translation.approved_date = timezone.now()
 
         translation.save()
 
@@ -436,7 +436,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         """Get fetched translation of a given entity."""
         translations = self.fetched_translations
 
-        if plural_form:
+        if plural_form is not None:
             translations = [t for t in translations if t.plural_form == plural_form]
 
         if translations:
@@ -451,7 +451,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         else:
             return {
                 'fuzzy': False,
-                'string': u'',
+                'string': None,
                 'approved': False,
                 'pk': None
             }
@@ -459,7 +459,11 @@ class Entity(DirtyFieldsMixin, models.Model):
     @classmethod
     def for_project_locale(self, project, locale, paths=None):
         """Get project entities with locale translations."""
-        entities = self.objects.filter(resource__project=project, obsolete=False)
+        entities = self.objects.filter(
+            resource__project=project,
+            resource__stats__locale=locale,
+            obsolete=False
+        )
 
         if paths:
             entities = entities.filter(resource__path__in=paths) or entities
@@ -774,7 +778,7 @@ def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
     """Add new or update existing translation."""
 
     approved = not fuzzy
-    now = datetime.datetime.now()
+    now = timezone.now()
     translations = Translation.objects.filter(
         entity=entity, locale=locale, plural_form=plural_form)
     translations_equal = translations.filter(string=string)

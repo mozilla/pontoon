@@ -36,7 +36,7 @@ var Pontoon = (function (my) {
         params.csrfmiddlewaretoken = $('#server').data('csrf');
         var post = $('<form>', {
           method: 'post',
-          action: 'download/'
+          action: '/download/'
         });
         for(var key in params) {
           $('<input>', {
@@ -154,7 +154,7 @@ var Pontoon = (function (my) {
                     '">' +
                     '<div class="info">' +
                       ((!this.email) ? this.user :
-                        '<a href="contributors/' + this.email + '">' + this.user + '</a>') +
+                        '<a href="/contributors/' + this.email + '">' + this.user + '</a>') +
                       '<time class="stress" datetime="' + this.date_iso + '">' + this.date + '</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
@@ -271,7 +271,8 @@ var Pontoon = (function (my) {
 
       // Length
       var original = entity['original' + this.isPluralized()].length,
-          translation = entity.translation[0].string.length;
+          translationString = entity.translation[0].string,
+          translation = translationString ? translationString.length : 0;
 
       $('#translation-length')
         .show() // Needed if sidebar opened by default
@@ -343,7 +344,7 @@ var Pontoon = (function (my) {
           translation = entity.translation[pluralForm].string,
           source = $('#translation').val();
 
-      if (translation !== source) {
+      if ((translation !== null) && (translation !== source)) {
         $('#unsaved').show();
         $("#translation").focus();
         this.checkUnsavedChangesCallback = callback;
@@ -475,7 +476,7 @@ var Pontoon = (function (my) {
           '<p class="string-wrapper">' +
             '<span class="source-string">' + this.marked + '</span>' +
             '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
-              self.doNotRender(this.translation[0].string) +
+              self.doNotRender(this.translation[0].string || '') +
             '</span>' +
           '</p>' +
           '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
@@ -609,17 +610,18 @@ var Pontoon = (function (my) {
 
         var entity = $('#editor')[0].entity,
             i = tab.index(),
-            original = entity['marked' + self.isPluralized()],
+            original = entity['original' + self.isPluralized()],
+            marked = entity['marked' + self.isPluralized()],
             title = !self.isPluralized() ? "Singular" : "Plural",
             source = entity.translation[i].string;
 
         $('#source-pane h2').html(title).show();
-        $('#original').html(original);
+        $('#original').html(marked);
 
         $('#translation').val(source).focus();
         $('#translation-length')
           .find('.original-length').html(original.length).end()
-          .find('.current-length').html(source.length);
+          .find('.current-length').html($('#translation').val().length);
 
         $('#quality:visible .cancel').click();
         $("#helpers nav .active a").click();
@@ -941,7 +943,7 @@ var Pontoon = (function (my) {
                         self.postMessage("DELETE");
                       } else {
                         entity.translation[pluralForm].pk = null;
-                        entity.translation[pluralForm].string = '';
+                        entity.translation[pluralForm].string = null;
                         entity.translation[pluralForm].approved = false;
                         entity.translation[pluralForm].fuzzy = false;
                         self.updateEntityUI(entity);
@@ -1043,7 +1045,7 @@ var Pontoon = (function (my) {
           translation = entity.translation[0].string;
       entity.ui.addClass(status);
       entity.ui.find('.translation-string')
-        .html(this.doNotRender(translation));
+        .html(this.doNotRender(translation || ''));
 
       this.updateProgress();
     },
@@ -1321,8 +1323,7 @@ var Pontoon = (function (my) {
                   share = 0;
 
               if (this.resource__entity_count > 0) {
-                share = (this.approved_count + this.translated_count) /
-                        this.resource__entity_count * 100;
+                share = this.approved_count / this.resource__entity_count * 100;
               }
 
               percent = Math.floor(share) + '%';
@@ -1373,7 +1374,7 @@ var Pontoon = (function (my) {
             language = $('.locale .menu .language.' + code).parent().html();
 
         // Request new locale
-        if ($('.locale .menu .search-wrapper > a').is('.back')) {
+        if ($('.locale .menu .search-wrapper > a').is('.back:visible')) {
           var project = $('.project .title').data('slug');
           Pontoon.requestLocale(locale, project);
 
@@ -1389,7 +1390,7 @@ var Pontoon = (function (my) {
               .find('.code').html().toLowerCase();
 
         // Fallback if selected part not available for the selected project
-        if (details[locale].length > 0) {
+        if (details[locale].length > 1) {
           var detail = details[locale][0],
               isPath = Object.keys(detail).indexOf("name") === -1,
               type = isPath ? 'resource__path' : 'name';

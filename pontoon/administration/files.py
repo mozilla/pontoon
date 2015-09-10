@@ -16,6 +16,7 @@ import urllib2
 import zipfile
 
 from django.conf import settings
+from django.utils import timezone
 from pontoon.administration.vcs import update_from_vcs
 from translate.storage import xliff
 
@@ -809,7 +810,7 @@ def dump_po(project, locale, relative_path):
     locale_directory_path = get_locale_directory(project, locale)["path"]
     path = os.path.join(locale_directory_path, relative_path)
     po = polib.pofile(path)
-    date = datetime.datetime(1, 1, 1)
+    date = timezone.make_aware(datetime.min)
     newest = Translation()
     resource = Resource.objects.filter(project=project, path=relative_path)
     entities = Entity.objects.filter(resource=resource, obsolete=False)

@@ -58,9 +58,10 @@
         // Do not change anything when cancelled
         $(".pontoon-editable-toolbar > .cancel").click(function () {
           var element = $(this).parent()[0].target,
-              entity = element.entity;
+              entity = element.entity,
+              string = entity.translation[0].string;
 
-          $(element).html(entity.translation[0].string || entity.original);
+          $(element).html(string !== null ? string : entity.original);
           postMessage("INACTIVE", entity.id);
         });
 
@@ -207,10 +208,16 @@
 
         $(':not("script, style, iframe, noscript, [translate=\'no\']")')
           .children().each(function() {
-            elements[$.trim($(this).html())] = {
-              node: $(this),
-              body: !$(this).parents('head').length
-            };
+            var text = $.trim($(this).html());
+            if (!elements[text]) {
+              elements[text] = {
+                node: [$(this)],
+                body: [!$(this).parents('head').length]
+              };
+            } else {
+              elements[text].node.push($(this));
+              elements[text].body.push(!$(this).parents('head').length);
+            }
         });
 
         $(Pontoon.entities).each(function(i, entity) {
@@ -221,19 +228,21 @@
           entity.id = counter;
 
           if (element) {
-            if (translation) {
-              element.node.html(translation);
-            }
-
-            // Head entities cannot be edited in place
-            if (element.body) {
-              if (!entity.node) {
-                entity.node = [element.node];
-              } else {
-                entity.node.push(element.node);
+            $(element.node).each(function(i) {
+              if (translation !== null) {
+                this.html(translation);
               }
-              makeEditable(entity);
-            }
+
+              // Head entities cannot be edited in place
+              if (element.body[i]) {
+                if (!entity.node) {
+                  entity.node = [this];
+                } else {
+                  entity.node.push(this);
+                }
+                makeEditable(entity);
+              }
+            });
           }
 
           counter++;
@@ -276,7 +285,7 @@
 
           // Head strings cannot be edited in place
           $(parent).each(function() {
-            if (translation) {
+            if (translation !== null) {
               this.html(translation);
             }
             if (this.parents('head').length === 0) {
@@ -314,7 +323,7 @@
           entity.id = counter;
 
           $('[data-l10n-id="' + key + '"]').each(function() {
-            if (translation) {
+            if (translation !== null) {
               if (!attribute) {
                 $(this).html(translation);
               } else {
@@ -501,11 +510,13 @@
             // Stop editing old entity
             var target = $('.pontoon-editable-toolbar')[0].target;
             if (target) {
-              var entity = target.entity;
+              var entity = target.entity,
+                  string = entity.translation[0].string;
               $(target).attr('contentEditable', false);
-              $(target).html(entity.translation[0].string || entity.original);
+              $(target).html(string !== null ? string : entity.original);
               hideToolbar(target);
             }
+
             // Start editing new entity
             var entity = Pontoon.entities[message.value];
             if (entity.body) {
@@ -516,7 +527,8 @@
 
           case "SAVE":
             var entity = null,
-                translation = message.value.translation || message.value;
+                translationValue = message.value.translation,
+                translation = translationValue !== null ? translationValue : message.value;
             if (message.value.id) {
               entity = Pontoon.entities[message.value.id];
             } else {
@@ -537,7 +549,7 @@
             });
             selectNodeContents(target);
             entity.translation[0].pk = null;
-            entity.translation[0].string = '';
+            entity.translation[0].string = null;
             entity.translation[0].approved = false;
             entity.translation[0].fuzzy = false;
             sendData();
@@ -655,7 +667,7 @@
       var entities = Pontoon.entities;
       if (entities.length > 0) {
 
-        if (entities[0].format === 'properties') {
+        if (entities[0].format === 'properties' && $('[data-l10n-id]').length) {
           var localized = false;
           window.addEventListener("localized", function() {
             if (!localized) {

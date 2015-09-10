@@ -3,6 +3,8 @@ Parser for to pofile translation format.
 """
 from datetime import datetime
 
+from django.utils import timezone
+
 import polib
 
 from pontoon.base.formats.base import ParsedResource
@@ -71,7 +73,7 @@ class POResource(ParsedResource):
         if len(self.translations) > 0:
             latest_translation = max(
                 self.translations,
-                key=lambda t: t.last_updated or datetime.min
+                key=lambda t: t.last_updated or timezone.make_aware(datetime.min)
             )
             if latest_translation.last_updated:
                 metadata['PO-Revision-Date'] = latest_translation.last_updated.strftime(

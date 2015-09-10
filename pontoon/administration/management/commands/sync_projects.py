@@ -325,7 +325,10 @@ class ChangeSet(object):
             vcs_translation.fuzzy = any(t for t in db_translations if t.fuzzy)
 
             if len(db_translations) > 0:
-                last_translation = max(db_translations, key=lambda t: t.date or datetime.min)
+                last_translation = max(
+                    db_translations,
+                    key=lambda t: t.date or timezone.make_aware(datetime.min)
+                )
                 vcs_translation.last_updated = last_translation.date
                 vcs_translation.last_translator = last_translation.user
 

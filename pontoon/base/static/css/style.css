@@ -772,6 +772,9 @@ label {
   border-color: #3F4752 transparent transparent transparent;
   bottom: -16px;
   left: 92px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
+  clip: rect(0 16px 8px 0px);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
 }
 
 .tooltip div {
