@@ -231,6 +231,25 @@ class FormatTestsMixin(object):
                 source_string_plural='Plural %(count)s strings with missing translations',
             )
 
+    def run_parse_empty_translation(self, input_string, translation_index):
+        """Test that empty translations are parsed properly."""
+        path, resource = self.parse_string(input_string)
+        assert_attributes_equal(
+            resource.translations[translation_index],
+            comments=[],
+            source=[],
+            key=self.key('Empty Translation'),
+            strings={None: u''},
+            fuzzy=False,
+            order=translation_index,
+        )
+
+        if self.supports_source_string:
+            assert_attributes_equal(
+                resource.translations[translation_index],
+                source_string='Empty Translation',
+            )
+
     def assert_file_content(self, file_path, expected_content, strip=True):
         with open(file_path) as f:
             actual_content = f.read()
