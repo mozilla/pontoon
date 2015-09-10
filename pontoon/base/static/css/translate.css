@@ -136,6 +136,10 @@ body > header .loader {
   text-align: left;
 }
 
+.select .menu ul li {
+  cursor: pointer;
+}
+
 .select .menu ul li span.code {
   text-align: right;
 }

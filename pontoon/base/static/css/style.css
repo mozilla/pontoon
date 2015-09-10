@@ -620,7 +620,6 @@ label {
 }
 
 .menu li.hover {
-  cursor: pointer;
   color: #FFFFFF;
   background: #3F4752;
 }
@@ -750,7 +749,6 @@ label {
 
 .locale .code {
   color: #7BC876;
-  float: right;
   text-align: left;
 }
 

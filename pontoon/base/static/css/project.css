@@ -22,10 +22,6 @@
   text-align: center;
 }
 
-.locale .code {
-  float: left;
-}
-
 .locale .menu li:not(.filter) {
   display: none;
 }

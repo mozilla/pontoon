@@ -37,6 +37,11 @@
 
 .locale.select .menu li {
   color: #CCCCCC;
+  cursor: pointer;
+}
+
+.locale .code {
+  float: right;
 }
 
 .select .menu ul li span.code {
