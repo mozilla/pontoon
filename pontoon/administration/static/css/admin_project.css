@@ -169,6 +169,11 @@ form a.add-subpage {
   margin-bottom: 0;
 }
 
+.locale.select .menu ul li span.code {
+  float: right;
+  text-align: right;
+}
+
 #id_locales {
   display: none;
 }
