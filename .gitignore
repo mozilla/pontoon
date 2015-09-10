@@ -25,3 +25,4 @@ tmp/*
 .env
 docs/_build
 venv
+/media/

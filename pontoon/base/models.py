@@ -3,6 +3,7 @@ import json
 import logging
 import os.path
 import urllib
+from urlparse import urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -10,13 +11,13 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum, Prefetch, F, Count, Q, Case, When
 from django.db.models.signals import post_save
-from django.forms import ModelForm
 from django.templatetags.static import static
 from django.utils import timezone
 
 from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
 
+from pontoon.administration.vcs import commit_to_vcs, update_from_vcs
 from pontoon.base import utils
 
 
@@ -199,25 +200,6 @@ class Project(models.Model):
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale)
 
-    # Repositories
-    REPOSITORY_TYPE_CHOICES = (
-        ('file', 'File'),
-        ('git', 'Git'),
-        ('hg', 'HG'),
-        ('svn', 'SVN'),
-        ('transifex', 'Transifex'),
-    )
-
-    repository_type = models.CharField(
-        "Type", max_length=20, blank=False, default='File',
-        choices=REPOSITORY_TYPE_CHOICES)
-
-    # URLField does not take git@github.com:user/project.git URLs
-    repository_url = models.CharField("URL", max_length=2000, blank=True)
-
-    # Includes source directory in one-locale repositories
-    repository_path = models.TextField(blank=True)
-
     transifex_project = models.CharField(
         "Project", max_length=128, blank=True)
     transifex_resource = models.CharField(
@@ -251,12 +233,48 @@ class Project(models.Model):
         True if we can commit strings back to the repository this
         project is hosted in, False otherwise.
         """
-        return self.repository_type in ('git', 'hg', 'svn')
+        return utils.first(
+            self.repositories.all(),
+            lambda r: r.can_commit
+        ) is not None
 
     @property
     def checkout_path(self):
-        """Path that this project's VCS checkout is located."""
-        return os.path.join(settings.MEDIA_ROOT, self.repository_type, self.slug)
+        """Path where this project's VCS checkouts are located."""
+        return os.path.join(settings.MEDIA_ROOT, 'projects', self.slug)
+
+    # For compatibility with the old sync, these properties refer to the
+    # first repository by ID.
+    def _repo_compat_attr(self, attribute):
+        repo = self.repositories.first()
+        return getattr(repo, attribute) if repo is not None else None
+
+    @property
+    def repository_type(self):
+        return self._repo_compat_attr('type')
+
+    @property
+    def repository_url(self):
+        return self._repo_compat_attr('url')
+
+    @property
+    def repository_path(self):
+        return self._repo_compat_attr('checkout_path')
+
+    def repository_for_path(self, path):
+        """
+        Return the repository instance whose checkout contains the given
+        path. If no matching repo is found, raise a ValueError.
+        """
+        repo = utils.first(
+            self.repositories.all(),
+            lambda r: path.startswith(r.checkout_path)
+        )
+
+        if repo is None:
+            raise ValueError('Could not find repo matching path {path}.'.format(path=path))
+        else:
+            return repo
 
     def latest_activity(self, locale=None):
         """Get latest activity for project and locale if provided."""
@@ -279,6 +297,132 @@ class Project(models.Model):
 
     def as_json(self):
         return json.dumps(self.serialize())
+
+
+class Repository(models.Model):
+    """
+    A remote VCS repository that stores resource files for a project.
+    """
+    FILE = 'file'
+    GIT = 'git'
+    HG = 'hg'
+    SVN = 'svn'
+    TRANSIFEX = 'transifex'
+    TYPE_CHOICES = (
+        (FILE, 'File'),
+        (GIT, 'Git'),
+        (HG, 'HG'),
+        (SVN, 'SVN'),
+        (TRANSIFEX, 'Transifex'),
+    )
+
+    project = models.ForeignKey(Project, related_name='repositories')
+    type = models.CharField(
+        max_length=255,
+        blank=False,
+        default='file',
+        choices=TYPE_CHOICES
+    )
+    url = models.CharField("URL", max_length=2000, blank=True)
+    source_repo = models.BooleanField(default=False, help_text="""
+        If true, this repo contains the source strings directly in the
+        root of the repo. Checkouts of this repo will have "en-US"
+        appended to the end of their path so that they are detected as
+        source directories.
+    """)
+    multi_locale = models.BooleanField(default=False, help_text="""
+        If true, this repo corresponds to multiple locale-specific repos. The
+        URL should have the string "{locale_code}" in it, which will be replaced
+        by the locale codes of all enabled locales for the project during pulls
+        and and commits.
+    """)
+
+    @property
+    def checkout_path(self):
+        """
+        Path where the checkout for this repo is located. Does not
+        include a trailing path separator.
+        """
+        path_components = [self.project.checkout_path]
+
+        # Include path components from the URL in case it has locale
+        # information, like https://hg.mozilla.org/gaia-l10n/fr/.
+        # No worry about overlap between repos, any overlap of locale
+        # directories is an error already.
+        path_components += urlparse(self.url).path.split('/')
+        if self.multi_locale:
+            path_components = [c for c in path_components if c != '{locale_code}']
+
+        if self.source_repo:
+            path_components.append('en-US')
+
+        # Remove trailing separator for consistency.
+        return os.path.join(*path_components).rstrip(os.sep)
+
+    @property
+    def can_commit(self):
+        """True if we can commit strings back to this repo."""
+        return self.type in ('svn', 'git', 'hg')
+
+    def locale_checkout_path(self, locale):
+        """
+        Path where the checkout for the given locale for this repo is
+        located. If this repo is not a multi-locale repo, a ValueError
+        is raised.
+        """
+        if not self.multi_locale:
+            raise ValueError('Cannot get locale_checkout_path for non-multi-locale repos.')
+
+        return os.path.join(self.checkout_path, locale.code)
+
+    def locale_url(self, locale):
+        """
+        URL for the repo for the given locale. If this repo is not a
+        multi-locale repo, a ValueError is raised.
+        """
+        if not self.multi_locale:
+            raise ValueError('Cannot get locale_url for non-multi-locale repos.')
+
+        return self.url.format(locale_code=locale.code)
+
+    def url_for_path(self, path):
+        """
+        Determine the locale-specific repo URL for the given path.
+
+        If this is not a multi-locale repo, raise a ValueError. If no
+        repo is found for the given path, also raise a ValueError.
+        """
+        for locale in self.project.locales.all():
+            if path.startswith(self.locale_checkout_path(locale)):
+                return self.locale_url(locale)
+
+        raise ValueError('No repo found for path: {0}'.format(path))
+
+    def pull(self):
+        """Pull changes from VCS."""
+        if not self.multi_locale:
+            update_from_vcs(self.type, self.url, self.checkout_path)
+        else:
+            for locale in self.project.locales.all():
+                update_from_vcs(
+                    self.type,
+                    self.locale_url(locale),
+                    self.locale_checkout_path(locale)
+                )
+
+    def commit(self, message, author, path):
+        """Commit changes to VCS."""
+        # For multi-locale repos, figure out which sub-repo corresponds
+        # to the given path.
+        url = self.url
+        if self.multi_locale:
+            url = self.url_for_path(path)
+
+        return commit_to_vcs(self.type, path, message, author, url)
+
+    class Meta:
+        unique_together = ('project', 'url')
+        ordering = ['id']
 
 
 class Resource(models.Model):
@@ -608,39 +752,6 @@ class Stats(models.Model):
         if self.resource.entity_count > 0:
             percent = translated * 100 / self.resource.entity_count
         return str(int(round(percent)))
-
-
-class ProjectForm(ModelForm):
-    class Meta:
-        model = Project
-        fields = ('name', 'slug', 'locales', 'repository_type',
-                  'repository_url', 'repository_path', 'transifex_project',
-                  'transifex_resource', 'info_brief', 'url', 'width',
-                  'links', 'disabled')
-
-    def clean(self):
-        cleaned_data = super(ProjectForm, self).clean()
-        repository_url = cleaned_data.get("repository_url")
-        repository_type = cleaned_data.get("repository_type")
-        transifex_project = cleaned_data.get("transifex_project")
-        transifex_resource = cleaned_data.get("transifex_resource")
-
-        if repository_type == 'transifex':
-            if not transifex_project:
-                self._errors["repository_url"] = self.error_class(
-                    [u"You need to provide Transifex project and resource."])
-                del cleaned_data["transifex_resource"]
-
-            if not transifex_resource:
-                self._errors["repository_url"] = self.error_class(
-                    [u"You need to provide Transifex project and resource."])
-                del cleaned_data["transifex_project"]
-
-        elif not repository_url:
-            self._errors["repository_url"] = self.error_class(
-                [u"You need to provide a valid URL."])
-
-        return cleaned_data
 
 
 def create_user_profile(sender, instance, created, **kwargs):

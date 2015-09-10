@@ -1,15 +1,269 @@
-from django_nose.tools import assert_equal, assert_true
+import os.path
+
+from django_nose.tools import assert_equal, assert_false, assert_raises, assert_true
 from django.test.utils import override_settings
 
-from pontoon.base.models import Translation, User
+from mock import call, Mock, patch
+
+from pontoon.base.models import Repository, Translation, User
 from pontoon.base.tests import (
     assert_attributes_equal,
     IdenticalTranslationFactory,
+    LocaleFactory,
+    ProjectFactory,
+    RepositoryFactory,
     TranslationFactory,
     UserFactory,
     TestCase
 )
 from pontoon.base.utils import aware_datetime
+
+
+class ProjectTests(TestCase):
+    def test_can_commit_no_repos(self):
+        """can_commit should be False if there are no repos."""
+        project = ProjectFactory.create(repositories=[])
+        assert_false(project.can_commit)
+
+    def test_can_commit_false(self):
+        """
+        can_commit should be False if there are no repo that can be
+        committed to.
+        """
+        repo = RepositoryFactory.build(type=Repository.FILE)
+        project = ProjectFactory.create(repositories=[repo])
+        assert_false(project.can_commit)
+
+    def test_can_commit_true(self):
+        """
+        can_commit should be True if there is a repo that can be
+        committed to.
+        """
+        repo = RepositoryFactory.build(type=Repository.GIT)
+        project = ProjectFactory.create(repositories=[repo])
+        assert_true(project.can_commit)
+
+    # We only test type here because the other compatibility methods are
+    # basically the same, and they're meant to be removed in the future
+    # anyway.
+
+    def test_repository_type_no_repo(self):
+        """If a project has no repos, repository_type should be None."""
+        project = ProjectFactory.create(repositories=[])
+        assert_equal(project.repository_type, None)
+
+    def test_repository_type_first(self):
+        """
+        If a project has repos, return the type of the repo created
+        first.
+        """
+        project = ProjectFactory.create(repositories=[])
+        RepositoryFactory.create(project=project, type=Repository.GIT)
+        RepositoryFactory.create(project=project, type=Repository.HG)
+        assert_equal(project.repository_type, Repository.GIT)
+
+    def test_repository_for_path_none(self):
+        """
+        If the project has no matching repositories, raise a ValueError.
+        """
+        project = ProjectFactory.create(repositories=[])
+        with assert_raises(ValueError):
+            project.repository_for_path('doesnt/exist')
+
+    def test_repository_for_path(self):
+        """
+        Return the first repo found with a checkout path that contains
+        the given path.
+        """
+        repo1, repo2, repo3 = RepositoryFactory.build_batch(3)
+        project = ProjectFactory.create(repositories=[repo1, repo2, repo3])
+        path = os.path.join(repo2.checkout_path, 'foo', 'bar')
+        assert_equal(project.repository_for_path(path), repo2)
+
+
+class RepositoryTests(TestCase):
+    def test_checkout_path(self):
+        """checkout_path should be determined by the repo URL."""
+        repo = RepositoryFactory.create(
+            url='https://example.com/path/to/locale/',
+            project__slug='test-project'
+        )
+        with self.settings(MEDIA_ROOT='/media/root'):
+            assert_equal(
+                repo.checkout_path,
+                '/media/root/projects/test-project/path/to/locale'
+            )
+
+    def test_checkout_path_multi_locale(self):
+        """
+        The checkout_path for multi-locale repos should not include the
+        locale_code variable.
+        """
+        repo = RepositoryFactory.create(
+            url='https://example.com/path/to/{locale_code}/',
+            project__slug='test-project',
+            multi_locale=True
+        )
+        with self.settings(MEDIA_ROOT='/media/root'):
+            assert_equal(
+                repo.checkout_path,
+                '/media/root/projects/test-project/path/to'
+            )
+
+    def test_checkout_path_source_repo(self):
+        """
+        The checkout_path for a source repo should end with an en-US
+        directory.
+        """
+        repo = RepositoryFactory.create(
+            url='https://example.com/path/to/locale/',
+            project__slug='test-project',
+            source_repo=True
+        )
+        with self.settings(MEDIA_ROOT='/media/root'):
+            assert_equal(
+                repo.checkout_path,
+                '/media/root/projects/test-project/path/to/locale/en-US'
+            )
+
+    def test_locale_checkout_path(self):
+        """Append the locale code the the project's checkout_path."""
+        repo = RepositoryFactory.create(
+            url='https://example.com/path/',
+            project__slug='test-project',
+            multi_locale=True
+        )
+        locale = LocaleFactory.create(code='test-locale')
+
+        with self.settings(MEDIA_ROOT='/media/root'):
+            assert_equal(
+                repo.locale_checkout_path(locale),
+                '/media/root/projects/test-project/path/test-locale'
+            )
+
+    def test_locale_checkout_path_non_multi_locale(self):
+        """If the repo isn't multi-locale, throw a ValueError."""
+        repo = RepositoryFactory.create(multi_locale=False)
+        locale = LocaleFactory.create()
+        with assert_raises(ValueError):
+            repo.locale_checkout_path(locale)
+
+    def test_locale_url(self):
+        """Fill in the {locale_code} variable in the URL."""
+        repo = RepositoryFactory.create(
+            url='https://example.com/path/to/{locale_code}/',
+            multi_locale=True
+        )
+        locale = LocaleFactory.create(code='test-locale')
+
+        assert_equal(repo.locale_url(locale), 'https://example.com/path/to/test-locale/')
+
+    def test_locale_url_non_multi_locale(self):
+        """If the repo isn't multi-locale, throw a ValueError."""
+        repo = RepositoryFactory.create(multi_locale=False)
+        locale = LocaleFactory.create()
+        with assert_raises(ValueError):
+            repo.locale_url(locale)
+
+    def test_url_for_path(self):
+        """
+        Return the first locale_checkout_path for locales active for the
+        repo's project that matches the given path.
+        """
+        matching_locale = LocaleFactory.create(code='match')
+        non_matching_locale = LocaleFactory.create(code='nomatch')
+        repo = RepositoryFactory.create(
+            project__locales=[matching_locale, non_matching_locale],
+            project__slug='test-project',
+            url='https://example.com/path/to/{locale_code}/',
+            multi_locale=True
+        )
+
+        with self.settings(MEDIA_ROOT='/media/root'):
+            test_path = '/media/root/projects/test-project/path/to/match/foo/bar.po'
+            assert_equal(repo.url_for_path(test_path), 'https://example.com/path/to/match/')
+
+    def test_url_for_path_no_match(self):
+        """
+        If no active locale matches the given path, raise a ValueError.
+        """
+        repo = RepositoryFactory.create(
+            project__locales=[],
+            url='https://example.com/path/to/{locale_code}/',
+            multi_locale=True
+        )
+
+        with assert_raises(ValueError):
+            repo.url_for_path('/media/root/path/to/match/foo/bar.po')
+
+    def test_pull(self):
+        repo = RepositoryFactory.create(type=Repository.GIT, url='https://example.com')
+        with patch('pontoon.base.models.update_from_vcs') as update_from_vcs:
+            repo.pull()
+            update_from_vcs.assert_called_with(
+                Repository.GIT,
+                'https://example.com',
+                repo.checkout_path
+            )
+
+    def test_pull_multi_locale(self):
+        """
+        If the repo is multi-locale, pull all of the repos for the
+        active locales.
+        """
+        locale1 = LocaleFactory.create(code='locale1')
+        locale2 = LocaleFactory.create(code='locale2')
+        repo = RepositoryFactory.create(
+            type=Repository.GIT,
+            url='https://example.com/{locale_code}/',
+            multi_locale=True,
+            project__locales=[locale1, locale2]
+        )
+
+        repo.locale_url = lambda locale: 'https://example.com/' + locale.code
+        repo.locale_checkout_path = lambda locale: '/media/' + locale.code
+
+        with patch('pontoon.base.models.update_from_vcs') as update_from_vcs:
+            repo.pull()
+            update_from_vcs.assert_has_calls([
+                call(Repository.GIT, 'https://example.com/locale1', '/media/locale1'),
+                call(Repository.GIT, 'https://example.com/locale2', '/media/locale2')
+            ])
+
+    def test_commit(self):
+        repo = RepositoryFactory.create(type=Repository.GIT, url='https://example.com')
+        with patch('pontoon.base.models.commit_to_vcs') as commit_to_vcs:
+            repo.commit('message', 'author', 'path')
+            commit_to_vcs.assert_called_with(
+                Repository.GIT,
+                'path',
+                'message',
+                'author',
+                'https://example.com',
+            )
+
+    def test_commit_multi_locale(self):
+        """
+        If the repo is multi-locale, use the url from url_for_path for
+        committing.
+        """
+        repo = RepositoryFactory.create(
+            type=Repository.GIT,
+            url='https://example.com/{locale_code}/',
+            multi_locale=True
+        )
+
+        repo.url_for_path = Mock(return_value='https://example.com/for_path')
+        with patch('pontoon.base.models.commit_to_vcs') as commit_to_vcs:
+            repo.commit('message', 'author', 'path')
+            commit_to_vcs.assert_called_with(
+                Repository.GIT,
+                'path',
+                'message',
+                'author',
+                'https://example.com/for_path',
+            )
+            repo.url_for_path.assert_called_with('path')
 
 
 class TranslationQuerySetTests(TestCase):

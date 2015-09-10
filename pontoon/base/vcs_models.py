@@ -86,24 +86,19 @@ class VCSProject(object):
         raise Exception('No source directory found for project {0}'
                         .format(self.db_project.slug))
 
-    def locale_directory_path(self, locale_code=None):
+    def locale_directory_path(self, locale_code):
         """
         Path to the directory where strings for the given locale are
         stored.
-
-        If locale_code is None, return the path to the directory where
-        source strings are stored.
         """
         path = self.checkout_path
-        locale_code = locale_code or self.source_directory_name()
-        if locale_code is not None:
-            for root, dirnames, filenames in os.walk(path):
-                if locale_code in dirnames:
-                    return os.path.join(root, locale_code)
+        for root, dirnames, filenames in os.walk(path):
+            if locale_code in dirnames:
+                return os.path.join(root, locale_code)
 
-                locale_variant = locale_code.replace('-', '_')
-                if locale_variant in dirnames:
-                    return os.path.join(root, locale_variant)
+            locale_variant = locale_code.replace('-', '_')
+            if locale_variant in dirnames:
+                return os.path.join(root, locale_variant)
 
         raise Exception('Directory for locale `{0}` not found'.format(
                         locale_code or 'source'))

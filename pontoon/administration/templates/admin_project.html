@@ -30,7 +30,6 @@
   <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
   {% if pk %}
   <input type="hidden" value="{{ pk }}" name="pk">
-  {{ form.repository_path.as_hidden() }}
   {% endif %}
 
   <div class="clearfix">
@@ -78,64 +77,62 @@
       {{ form.locales.errors }}
   </div>
 
-  <h2>Repository</h2>
+  <h2>
+    <span>Repositories</span>
+    <a href="#add-subpage" class="add-repo">Add more</a>
+  </h2>
 
-  <div class="repository clearfix{% if autoupdate %} autoupdate{% endif %}">
+  {{ repo_formset.management_form }}
+  {{ repo_formset.non_form_errors() }}
+  {% for repo_form in repo_formset %}
+    <div class="repository clearfix">
+      {{ repo_form.id }}
       <section class="type-wrapper">
-          {{ form.repository_type.label_tag() }}
-          <div class="type select">
-            <div class="hidden">
-              {{ form.repository_type }}
-            </div>
-            <div class="button selector">
-              <span class="title"></span>
-              <span> &#9652;</span>
-            </div>
-            <ul class="menu">
-              {% for choice in REPOSITORY_TYPE_CHOICES %}
-                  <li data-type="{{ choice[0] }}">{{ choice[1] }}</li>
-              {% endfor %}
-            </ul>
-          </div>
-          <p class="authentication-title">Please sign in</p>
+        {{ repo_form.type.label_tag() }}
+        {{ repo_form.type }}
       </section>
-      <section class="details-wrapper" data-repository-type="{{ form.repository_type.value()|lower }}">
-          <div class="repo">
-              {{ form.repository_url.label_tag() }}
-              {{ form.repository_url }}
-              {% if pk %}
-              <button title="Update all locales from repository" data-source="repository" class="button update">
-                  <span class="fa fa-refresh"></span>
-              </button>
-              {% endif %}
-          </div>
-          <div class="transifex clearfix">
-              {{ form.transifex_project.label_tag() }}
-              {{ form.transifex_resource.label_tag() }}
-              {{ form.transifex_project }}
-              {{ form.transifex_resource }}
-              {% if pk %}
-              <button title="Update all locales from Transifex" data-source="transifex" class="button update">
-                  <span class="fa fa-refresh"></span>
-              </button>
-              <section class="authentication-form">
-                  <label for="id_transifex_username">Username or email</label>
-                  <label for="id_transifex_password">Password</label>
-                  <input id="id_transifex_username" name="transifex_username" type="text" />
-                  <input id="id_transifex_password" name="transifex_password" type="password" />
-              </section>
-              <div class="bottom">
-                  <label class="remember">
-                      <input name="remember" type="checkbox" />Remember me
-                  </label>
-                  <a class="new" target="_blank" href="http://www.transifex.com/signup/">New to Transifex?</a>
-              </div>
-              {% endif %}
-          </div>
+      <section class="details-wrapper">
+        <div class="repo">
+          {{ repo_form.url.label_tag() }}
+          {{ repo_form.url }}
+        </div>
       </section>
-      {{ form.repository_url.errors }}
-      {{ form.transifex_project.errors }}
-      {{ form.transifex_resource.errors }}
+      <section class="locale-wrapper">
+        {{ repo_form.multi_locale.label_tag() }}
+        {{ repo_form.multi_locale }}
+      </section>
+      <section class="source-wrapper">
+        {{ repo_form.source_repo.label_tag() }}
+        {{ repo_form.source_repo }}
+      </section>
+      <section class="delete-wrapper">
+        <div class="delete">
+          {{ repo_form.DELETE.label_tag() }}
+          {{ repo_form.DELETE }}
+        </div>
+      </section>
+      {{ repo_form.errors }}
+    </div>
+  {% endfor %}
+  <div class="repository-empty clearfix">
+    {{ repo_formset.empty_form.id }}
+    <section class="type-wrapper">
+      {{ repo_formset.empty_form.type.label_tag() }}
+      {{ repo_formset.empty_form.type }}
+    </section>
+    <section class="details-wrapper">
+      <div class="repo">
+        {{ repo_formset.empty_form.url.label_tag() }}
+        {{ repo_formset.empty_form.url }}
+      </div>
+    </section>
+    <section class="delete-wrapper">
+      <div class="delete">
+        {{ repo_formset.empty_form.DELETE.label_tag() }}
+        {{ repo_formset.empty_form.DELETE }}
+      </div>
+    </section>
+    {{ repo_formset.empty_form.errors }}
   </div>
 
   <h2>Website</h2>
@@ -161,8 +158,8 @@
       <a href="#add-subpage" class="add-subpage">Add more</a>
   </h2>
 
-  {{ formset.management_form }}
-  {% for form in formset %}
+  {{ subpage_formset.management_form }}
+  {% for form in subpage_formset %}
       {{ form.id }}
   <div class="subpages clearfix">
       {{ form.name.label_tag(label_suffix='') }}
@@ -175,15 +172,15 @@
       {{ form.url.errors }}
   </div>
   {% endfor %}
-  <div class="subpages clearfix" data-count="{{ formset.total_form_count() }}">
-      {{ formset.empty_form.name.label_tag(label_suffix='') }}
-      {{ formset.empty_form.url.label_tag(label_suffix='') }}
-      {{ formset.empty_form.name }}
-      {{ formset.empty_form.url }}
+  <div class="subpages clearfix" data-count="{{ subpage_formset.total_form_count() }}">
+      {{ subpage_formset.empty_form.name.label_tag(label_suffix='') }}
+      {{ subpage_formset.empty_form.url.label_tag(label_suffix='') }}
+      {{ subpage_formset.empty_form.name }}
+      {{ subpage_formset.empty_form.url }}
       <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
-      {{ formset.empty_form.DELETE }}
-      {{ formset.empty_form.name.errors }}
-      {{ formset.empty_form.url.errors }}
+      {{ subpage_formset.empty_form.DELETE }}
+      {{ subpage_formset.empty_form.name.errors }}
+      {{ subpage_formset.empty_form.url.errors }}
   </div>
 
   <h2>Project info <span class="small">(optional)</span></h2>

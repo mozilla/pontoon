@@ -8,8 +8,7 @@ from django.utils import timezone
 
 from bulk_update.helper import bulk_update
 
-from pontoon.administration.files import update_from_repository
-from pontoon.administration.vcs import commit_to_vcs, CommitToRepositoryException
+from pontoon.administration.vcs import CommitToRepositoryException
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
@@ -86,7 +85,7 @@ class Command(BaseCommand):
     def handle_project(self, db_project):
         # Pull changes from VCS and update what we know about the files.
         if not self.no_pull:
-            update_from_repository(db_project)
+            self.pull_changes(db_project)
         vcs_project = VCSProject(db_project)
         self.update_resources(db_project, vcs_project)
 
@@ -189,6 +188,11 @@ class Command(BaseCommand):
         key = entity.key or entity.string
         return ':'.join([entity.resource.path, key])
 
+    def pull_changes(self, db_project):
+        """Update the local files with changes from the VCS."""
+        for repo in db_project.repositories.all():
+            repo.pull()
+
     def commit_changes(self, db_project, vcs_project, changeset):
         """Commit the changes we've made back to the VCS."""
         for locale in db_project.locales.all():
@@ -207,15 +211,11 @@ class Command(BaseCommand):
                 'authors': authors
             })
 
+            locale_path = vcs_project.locale_directory_path(locale.code)
             try:
-                result = commit_to_vcs(
-                    db_project.repository_type,
-                    vcs_project.locale_directory_path(locale.code),
-                    commit_message,
-                    commit_author,
-                    db_project.repository_url
-                )
-            except CommitToRepositoryException as err:
+                repo = db_project.repository_for_path(locale_path)
+                result = repo.commit(commit_message, commit_author, locale_path)
+            except (CommitToRepositoryException, ValueError) as err:
                 result = {'message': unicode(err)}
 
             if result is not None:

@@ -715,10 +715,6 @@ def update_from_repository(project):
                     os.path.join(repository_url_master, l.code),
                     os.path.join(repository_path_master, l.code))
 
-    # Store project repository_path
-    project.repository_path = repository_path
-    project.save()
-
 
 def dump_po(project, locale, relative_path):
     """Dump .po (gettext) file with relative path from database."""

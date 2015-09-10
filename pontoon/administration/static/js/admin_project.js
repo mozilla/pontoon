@@ -22,7 +22,7 @@ $(function() {
     if ($('input[type=text]:not("input[type=search], #id_transifex_username, #id_transifex_password"):focus').length > 0) {
       var key = e.keyCode || e.which;
       if (key === 13) { // Enter
-        // A short delay to allow digest of autocomplete before submit 
+        // A short delay to allow digest of autocomplete before submit
         setTimeout(function() {
           $('form').submit();
         }, 1);
@@ -168,6 +168,19 @@ $(function() {
     $('.subpages:last').before('<div class="subpages clearfix">' + form + '</div>');
     count++;
     $('#id_subpage_set-TOTAL_FORMS').val(count);
+  });
+
+  // Add repo
+  $('.add-repo').click(function(e) {
+    e.preventDefault();
+    var $totalForms = $('#id_repositories-TOTAL_FORMS');
+    var count = parseInt($totalForms.val(), 10);
+
+    var $emptyForm = $('.repository-empty');
+    var form = $emptyForm.html().replace(/__prefix__/g, count);
+    $('.repository:last').after('<div class="repository clearfix">' + form + '</div>');
+
+    $totalForms.val(count + 1);
   });
 
   // Delete project

@@ -8,22 +8,24 @@ import traceback
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db import transaction
-from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
 from django.utils.datastructures import MultiValueDictKeyError
-from pontoon.administration import files
-from pontoon.base import utils
 
+from pontoon.administration import files
+from pontoon.administration.forms import (
+    ProjectForm,
+    RepositoryInlineFormSet,
+    SubpageInlineFormSet,
+)
+from pontoon.base import utils
 from pontoon.base.models import (
     Entity,
     Locale,
     Project,
-    ProjectForm,
+    Repository,
     Resource,
-    Subpage,
-    Translation,
     UserProfile,
     get_projects_with_stats,
 )
@@ -81,17 +83,14 @@ def manage_project(request, slug=None, template='admin_project.html'):
     if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
 
-    SubpageInlineFormSet = inlineformset_factory(
-        Project, Subpage, extra=1, fields=('project', 'name', 'url'))
-
     form = ProjectForm()
-    formset = SubpageInlineFormSet()
+    subpage_formset = SubpageInlineFormSet()
+    repo_formset = RepositoryInlineFormSet()
     locales_selected = []
     subtitle = 'Add project'
     pk = None
     project = None
     message = 'Please wait while strings are imported from the repository.'
-    autoupdate = False
 
     # Save project
     if request.method == 'POST':
@@ -104,33 +103,33 @@ def manage_project(request, slug=None, template='admin_project.html'):
             project = Project.objects.get(pk=pk)
             form = ProjectForm(request.POST, instance=project)
             # Needed if form invalid
-            formset = SubpageInlineFormSet(request.POST, instance=project)
+            subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
+            repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
             subtitle = 'Edit project'
 
         # Add a new project
         except MultiValueDictKeyError:
             form = ProjectForm(request.POST)
             # Needed if form invalid
-            formset = SubpageInlineFormSet(request.POST)
-            autoupdate = True
+            subpage_formset = SubpageInlineFormSet(request.POST)
+            repo_formset = RepositoryInlineFormSet(request.POST)
 
         if form.is_valid():
-            if project and set(project.locales.all()) != set(locales_selected):
-                autoupdate = True
-
             project = form.save(commit=False)
-            formset = SubpageInlineFormSet(request.POST, instance=project)
-            if formset.is_valid():
+            subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
+            repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
+
+            if subpage_formset.is_valid() and repo_formset.is_valid():
                 project.save()
                 # http://bit.ly/1glKN50
                 form.save_m2m()
-                formset.save()
-                # Properly displays formset, but removes errors (if valid only)
-                formset = SubpageInlineFormSet(instance=project)
+                subpage_formset.save()
+                repo_formset.save()
+                # Properly displays formsets, but removes errors (if valid only)
+                subpage_formset = SubpageInlineFormSet(instance=project)
+                repo_formset = RepositoryInlineFormSet(instance=project)
                 subtitle += '. Saved.'
                 pk = project.pk
-                if autoupdate:
-                    messages.warning(request, message)
             else:
                 subtitle += '. Error.'
         else:
@@ -142,12 +141,10 @@ def manage_project(request, slug=None, template='admin_project.html'):
             project = Project.objects.get(slug=slug)
             pk = project.pk
             form = ProjectForm(instance=project)
-            formset = SubpageInlineFormSet(instance=project)
+            subpage_formset = SubpageInlineFormSet(instance=project)
+            repo_formset = RepositoryInlineFormSet(instance=project)
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
-            if not Resource.objects.filter(project=project).exists():
-                autoupdate = True
-                messages.warning(request, message)
         except Project.DoesNotExist:
             form = ProjectForm(initial={'slug': slug})
 
@@ -156,13 +153,12 @@ def manage_project(request, slug=None, template='admin_project.html'):
 
     data = {
         'form': form,
-        'formset': formset,
+        'subpage_formset': subpage_formset,
+        'repo_formset': repo_formset,
         'locales_selected': locales_selected,
         'locales_available': Locale.objects.exclude(pk__in=locales_selected),
-        'REPOSITORY_TYPE_CHOICES': Project.REPOSITORY_TYPE_CHOICES,
         'subtitle': subtitle,
         'pk': pk,
-        'autoupdate': autoupdate,
     }
 
     # Set locale in Translate link
@@ -189,10 +185,6 @@ def delete_project(request, pk, template=None):
         with transaction.atomic():
             project = Project.objects.get(pk=pk)
             project.delete()
-
-            path = files.get_repository_path_master(project)
-            if os.path.exists(path):
-                shutil.rmtree(path)
 
         return HttpResponseRedirect(reverse('pontoon.admin'))
     except Exception as e:

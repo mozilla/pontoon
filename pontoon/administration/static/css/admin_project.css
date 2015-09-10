@@ -131,7 +131,8 @@ form a:link, form a:visited {
   text-transform: uppercase;
 }
 
-form a.add-subpage {
+form a.add-subpage,
+form a.add-repo {
   font-size: 14px;
   letter-spacing: 0;
   margin-top: 17px;
@@ -185,6 +186,16 @@ form a.add-subpage {
 .checkbox label {
   float: left;
   padding: 6px 0 0 13px;
+}
+
+.repository .locale-wrapper {
+  padding-top: 20px;
+}
+
+.repository .locale-wrapper label,
+.repository .source-wrapper label,
+.repository .delete-wrapper label {
+  display: inline;
 }
 
 .repository.authenticate .bottom label {
@@ -328,7 +339,8 @@ form a.add-subpage {
   text-transform: uppercase;
 }
 
-.subpages[data-count] {
+.subpages[data-count],
+.repository-empty {
   display: none;
 }
 

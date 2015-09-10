@@ -18,6 +18,7 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Project,
+    Repository,
     Resource,
     Stats,
     Translation,
@@ -64,6 +65,26 @@ class ProjectFactory(DjangoModelFactory):
         if extracted:
             for locale in extracted:
                 self.locales.add(locale)
+
+    @factory.post_generation
+    def repositories(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted is not None:
+            for repository in extracted:
+                self.repositories.add(repository)
+        else:  # Default to a single valid repo.
+            self.repositories.add(RepositoryFactory.build())
+
+
+class RepositoryFactory(DjangoModelFactory):
+    project = SubFactory(ProjectFactory)
+    type = Repository.GIT
+    url = Sequence(lambda n: 'https://example.com/url_{0}.git'.format(n))
+
+    class Meta:
+        model = Repository
 
 
 class ResourceFactory(DjangoModelFactory):

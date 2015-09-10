@@ -13,7 +13,14 @@ from mock import ANY, call, Mock, patch, PropertyMock
 
 from pontoon.administration.management.commands import sync_projects
 from pontoon.administration.vcs import CommitToRepositoryException
-from pontoon.base.models import ChangedEntityLocale, Entity, Project, Resource, Translation
+from pontoon.base.models import (
+    ChangedEntityLocale,
+    Entity,
+    Project,
+    Repository,
+    Resource,
+    Translation,
+)
 from pontoon.base.tests import (
     assert_attributes_equal,
     ChangedEntityLocaleFactory,
@@ -22,6 +29,7 @@ from pontoon.base.tests import (
     LocaleFactory,
     NOT,
     ProjectFactory,
+    RepositoryFactory,
     ResourceFactory,
     TestCase,
     TranslationFactory,
@@ -45,12 +53,12 @@ class FakeCheckoutTestCase(TestCase):
 
         self.translated_locale = LocaleFactory.create(code='translated-locale')
         self.inactive_locale = LocaleFactory.create(code='inactive-locale')
+        self.repository = RepositoryFactory()
 
         self.db_project = ProjectFactory.create(
             name='db-project',
             locales=[self.translated_locale],
-            repository_type='git',
-            repository_url='https://example.com/git'
+            repositories=[self.repository]
         )
         self.main_db_resource = ResourceFactory.create(
             project=self.db_project,
@@ -130,13 +138,14 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.no_commit = False
         self.command.no_pull = False
 
-        update_from_repo_patch = patch.object(sync_projects, 'update_from_repository')
-        self.mock_update_from_repository = update_from_repo_patch.start()
-        self.addCleanup(update_from_repo_patch.stop)
+        # Avoid hitting VCS during tests by mocking out pull and commit.
+        repo_pull_patch = patch.object(Repository, 'pull')
+        self.mock_repo_pull = repo_pull_patch.start()
+        self.addCleanup(repo_pull_patch.stop)
 
-        commit_to_vcs_patch = patch.object(sync_projects, 'commit_to_vcs', return_value=None)
-        self.mock_commit_to_vcs = commit_to_vcs_patch.start()
-        self.addCleanup(commit_to_vcs_patch.stop)
+        repo_commit_patch = patch.object(Repository, 'commit', return_value=None)
+        self.mock_repo_commit = repo_commit_patch.start()
+        self.addCleanup(repo_commit_patch.stop)
 
     def execute_command(self, *args, **kwargs):
         kwargs.setdefault('verbosity', 0)
@@ -146,8 +155,8 @@ class CommandTests(FakeCheckoutTestCase):
 
     def test_handle_disabled_projects(self):
         """Only sync projects that aren't disabled."""
-        disabled_project = ProjectFactory.create(disabled=True, repository_type='git')
-        active_project = ProjectFactory.create(disabled=False, repository_type='git')
+        disabled_project = ProjectFactory.create(disabled=True)
+        active_project = ProjectFactory.create(disabled=False)
         self.command.handle_project = Mock()
         self.execute_command()
 
@@ -159,9 +168,7 @@ class CommandTests(FakeCheckoutTestCase):
         If project slugs are passed to Command.handle, only sync projects
         matching those slugs.
         """
-        ignore_project, handle_project = ProjectFactory.create_batch(2,
-            repository_type='git'
-        )
+        ignore_project, handle_project = ProjectFactory.create_batch(2)
         self.command.handle_project = Mock()
         self.execute_command(handle_project.slug)
 
@@ -245,12 +252,11 @@ class CommandTests(FakeCheckoutTestCase):
 
     def test_handle_project_no_pull(self):
         """
-        Don't call update_from_repository if command.no_pull is True.
+        Don't call repo.pull if command.no_pull is True.
         """
-        with patch.object(sync_projects, 'update_from_repository') as update_from_repository:
-            self.command.no_pull = True
-            self.command.handle_project(self.db_project)
-        assert_false(update_from_repository.called)
+        self.command.no_pull = True
+        self.command.handle_project(self.db_project)
+        assert_false(self.mock_repo_pull.called)
 
     def call_handle_entity(self, key, db_entity, vcs_entity):
         return self.command.handle_entity(
@@ -396,14 +402,13 @@ class CommandTests(FakeCheckoutTestCase):
         self.changeset.commit_authors_per_locale = {
             self.translated_locale.code: [user]
         }
+        self.db_project.repository_for_path = Mock(return_value=self.repository)
 
         self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
-        self.mock_commit_to_vcs.assert_called_with(
-            'git',
-            os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code),
+        self.repository.commit.assert_called_with(
             CONTAINS(user.display_name),
             user,
-            'https://example.com/git'
+            os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code)
         )
 
     def test_commit_changes_no_authors(self):
@@ -414,35 +419,48 @@ class CommandTests(FakeCheckoutTestCase):
         self.changeset.commit_authors_per_locale = {
             self.translated_locale.code: []
         }
+        self.db_project.repository_for_path = Mock(return_value=self.repository)
 
         self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
-        self.mock_commit_to_vcs.assert_called_with(
-            'git',
-            os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code),
+        self.repository.commit.assert_called_with(
             NOT(CONTAINS('Authors:')),  # Don't list authors in commit
             ANY,
-            'https://example.com/git'
+            os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code)
         )
-        user = self.mock_commit_to_vcs.call_args[0][3]
+        user = self.mock_repo_commit.call_args[0][1]
         assert_equal(user.first_name, 'Pontoon')
         assert_equal(user.email, 'pontoon@mozilla.com')
 
     def test_commit_changes_error(self):
         """If commit_changes returns an error object, log it."""
         self.command.stdout = Mock()
-        self.mock_commit_to_vcs.return_value = {'message': 'Whoops!'}
+        self.repository.commit.return_value = {'message': 'Whoops!'}
+        self.db_project.repository_for_path = Mock(return_value=self.repository)
 
         self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.command.stdout.write.assert_called_with(
             CONTAINS('db-project', 'failed', 'Whoops!')
         )
 
-    def test_commit_changes_raised_exception(self):
+    def test_commit_changes_raised_committorepositoryexception(self):
         """
-        If commit_changes raises a CommitToRepositoryException, log it.
+        If repo.commit raises a CommitToRepositoryException, log it.
         """
         self.command.stdout = Mock()
-        self.mock_commit_to_vcs.side_effect = CommitToRepositoryException('Whoops!')
+        self.repository.commit.side_effect = CommitToRepositoryException('Whoops!')
+        self.db_project.repository_for_path = Mock(return_value=self.repository)
+
+        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
+        self.command.stdout.write.assert_called_with(
+            CONTAINS('db-project', 'failed', 'Whoops!')
+        )
+
+    def test_commit_changes_raised_valueerror(self):
+        """
+        If db_project.repository_for_path raises a ValueError, log it.
+        """
+        self.command.stdout = Mock()
+        self.db_project.repository_for_path = Mock(side_effect=ValueError('Whoops!'))
 
         self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.command.stdout.write.assert_called_with(
