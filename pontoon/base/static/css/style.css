@@ -489,15 +489,6 @@ label {
   width: 219px; /* Instead of 220px; because of padding */
 }
 
-.project.select .menu ul li .url {
-  float: left;
-  overflow: hidden;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 330px;
-}
-
 .locale.select {
   padding-left: 0;
   width: 100%;
