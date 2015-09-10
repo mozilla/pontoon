@@ -36,6 +36,14 @@ class Command(BaseCommand):
             help='Do not commit changes to VCS'
         )
 
+        parser.add_argument(
+            '--no-pull',
+            action='store_true',
+            dest='no_pull',
+            default=False,
+            help='Do not pull new commits from VCS'
+        )
+
     def log(self, msg, *args, **kwargs):
         """Log a message to the console."""
         self.stdout.write(msg.format(*args, **kwargs))
@@ -53,6 +61,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.verbosity = options['verbosity']
         self.no_commit = options['no_commit']
+        self.no_pull = options['no_pull']
 
         self.log('SYNC PROJECTS: start')
         projects = Project.objects.filter(disabled=False)
@@ -76,7 +85,8 @@ class Command(BaseCommand):
 
     def handle_project(self, db_project):
         # Pull changes from VCS and update what we know about the files.
-        update_from_repository(db_project)
+        if not self.no_pull:
+            update_from_repository(db_project)
         vcs_project = VCSProject(db_project)
         self.update_resources(db_project, vcs_project)
 
@@ -96,7 +106,7 @@ class Command(BaseCommand):
         # entries in the DB.
         changeset.execute()
         if not self.no_commit:
-            self.commit_changes(db_project, changeset)
+            self.commit_changes(db_project, vcs_project, changeset)
         self.update_stats(db_project, vcs_project, changeset)
 
         # Clear out the list of changed locales for entity in this
@@ -179,7 +189,7 @@ class Command(BaseCommand):
         key = entity.key or entity.string
         return ':'.join([entity.resource.path, key])
 
-    def commit_changes(self, db_project, changeset):
+    def commit_changes(self, db_project, vcs_project, changeset):
         """Commit the changes we've made back to the VCS."""
         for locale in db_project.locales.all():
             authors = changeset.commit_authors_per_locale.get(locale.code, [])
@@ -200,7 +210,7 @@ class Command(BaseCommand):
             try:
                 result = commit_to_vcs(
                     db_project.repository_type,
-                    db_project.locale_directory_path(locale.code),
+                    vcs_project.locale_directory_path(locale.code),
                     commit_message,
                     commit_author,
                     db_project.repository_url

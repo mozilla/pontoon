@@ -5,10 +5,12 @@ import urllib2
 from django.shortcuts import render
 
 from django.http import HttpResponseBadRequest
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 log = logging.getLogger('pontoon')
 
 
+@xframe_options_sameorigin
 def sites_snippet_page(request, template, repository_url, default_filename):
     """Downloads snippets file from given repository_url and passes it to given template."""
     try:

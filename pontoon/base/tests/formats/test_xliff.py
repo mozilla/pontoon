@@ -49,6 +49,7 @@ class XLIFFTests(FormatTestsMixin, TestCase):
     parse = staticmethod(xliff.parse)
     supports_keys = True
     supports_source = False
+    supports_source_string = True
 
     def key(self, source_string):
         """XLIFF keys are prefixed with the file name."""

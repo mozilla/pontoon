@@ -69,13 +69,14 @@ class FakeCheckoutTestCase(TestCase):
         )
 
         # Load paths from the fake locale directory.
-        def locale_directory_path(locale_code):
-            return os.path.join(FAKE_CHECKOUT_PATH, locale_code)
-        self.db_project.locale_directory_path = locale_directory_path
-
-        def source_directory_path():
-            return locale_directory_path('source-locale')
-        self.db_project.source_directory_path = source_directory_path
+        checkout_path_patch = patch.object(
+            Project,
+            'checkout_path',
+            new_callable=PropertyMock,
+            return_value=FAKE_CHECKOUT_PATH
+        )
+        checkout_path_patch.start()
+        self.addCleanup(checkout_path_patch.stop)
 
         self.vcs_project = VCSProject(self.db_project)
         self.main_vcs_resource = self.vcs_project.resources[self.main_db_resource.path]
@@ -127,6 +128,7 @@ class CommandTests(FakeCheckoutTestCase):
         self.command = sync_projects.Command()
         self.command.verbosity = 0
         self.command.no_commit = False
+        self.command.no_pull = False
 
         update_from_repo_patch = patch.object(sync_projects, 'update_from_repository')
         self.mock_update_from_repository = update_from_repo_patch.start()
@@ -139,6 +141,7 @@ class CommandTests(FakeCheckoutTestCase):
     def execute_command(self, *args, **kwargs):
         kwargs.setdefault('verbosity', 0)
         kwargs.setdefault('no_commit', False)
+        kwargs.setdefault('no_pull', False)
         return self.command.handle(*args, **kwargs)
 
     def test_handle_disabled_projects(self):
@@ -239,6 +242,15 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.no_commit = True
         self.command.handle_project(self.db_project)
         assert_false(self.command.commit_projects.called)
+
+    def test_handle_project_no_pull(self):
+        """
+        Don't call update_from_repository if command.no_pull is True.
+        """
+        with patch.object(sync_projects, 'update_from_repository') as update_from_repository:
+            self.command.no_pull = True
+            self.command.handle_project(self.db_project)
+        assert_false(update_from_repository.called)
 
     def call_handle_entity(self, key, db_entity, vcs_entity):
         return self.command.handle_entity(
@@ -385,7 +397,7 @@ class CommandTests(FakeCheckoutTestCase):
             self.translated_locale.code: [user]
         }
 
-        self.command.commit_changes(self.db_project, self.changeset)
+        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.mock_commit_to_vcs.assert_called_with(
             'git',
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code),
@@ -403,7 +415,7 @@ class CommandTests(FakeCheckoutTestCase):
             self.translated_locale.code: []
         }
 
-        self.command.commit_changes(self.db_project, self.changeset)
+        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.mock_commit_to_vcs.assert_called_with(
             'git',
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code),
@@ -420,7 +432,7 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.stdout = Mock()
         self.mock_commit_to_vcs.return_value = {'message': 'Whoops!'}
 
-        self.command.commit_changes(self.db_project, self.changeset)
+        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.command.stdout.write.assert_called_with(
             CONTAINS('db-project', 'failed', 'Whoops!')
         )
@@ -432,7 +444,7 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.stdout = Mock()
         self.mock_commit_to_vcs.side_effect = CommitToRepositoryException('Whoops!')
 
-        self.command.commit_changes(self.db_project, self.changeset)
+        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.command.stdout.write.assert_called_with(
             CONTAINS('db-project', 'failed', 'Whoops!')
         )
