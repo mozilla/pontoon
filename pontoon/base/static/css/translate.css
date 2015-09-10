@@ -182,6 +182,10 @@ body > header .locale.select {
   width: 248px;
 }
 
+.part.select .menu {
+  width: 580px;
+}
+
 .locale.select .menu {
   display: none;
   position: absolute;
@@ -207,6 +211,7 @@ body > header .locale.select {
 
 .part.select .menu ul li > span:nth-child(2),
 .project.select .menu ul li > span:nth-child(2) {
+  color: #7BC876;
   float: right;
 }
 
