@@ -146,6 +146,7 @@ class Locale(models.Model):
 
         return get_latest_activity(translations)
 
+
 class ProjectQuerySet(models.QuerySet):
     def available(self):
         """
@@ -218,6 +219,14 @@ class Project(models.Model):
     def checkout_path(self):
         """Path that this project's VCS checkout is located."""
         return os.path.join(settings.MEDIA_ROOT, self.repository_type, self.slug)
+
+    def latest_activity(self, locale=None):
+        """Get latest activity for project and locale if provided."""
+        translations = Translation.objects.filter(entity__resource__project=self)
+        if locale:
+            translations = translations.filter(locale=locale)
+
+        return get_latest_activity(translations)
 
     def __unicode__(self):
         return self.name
