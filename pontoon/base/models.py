@@ -76,17 +76,16 @@ def get_latest_activity(translations):
     latest_approval = translations.order_by('-approved_date')[0]
 
     if latest_approval.approved_date and latest_translation.date < latest_approval.approved_date:
-        latest = latest_approval
-        user = latest_approval.approved_user
+        return {
+            'date': latest_approval.date,
+            'user': latest_approval.approved_user
+        }
 
     else:
-        latest = latest_translation
-        user = latest_translation.user
-
-    return {
-        'date': latest.date,
-        'user': user
-    }
+        return {
+            'date': latest_translation.date,
+            'user': latest_translation.user
+        }
 
 
 class Locale(models.Model):
