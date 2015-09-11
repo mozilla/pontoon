@@ -1,3 +1,5 @@
+{% import 'latest_activity.html' as latest_activity %}
+
 {% if projects|length > 0 %}
 <!-- Project select -->
 <div class="project select">
@@ -29,10 +31,7 @@
           {% if p and p.chart %}</a>{% endif %}
         </span>
         {% if not project %}
-        <span class="latest">
-          {% set latest_activity = p.latest_activity(locale) if locale else p.latest_activity() %}
-          {% include 'latest_activity.html' %}
-        </span>
+          {{ latest_activity.span(p.latest_activity(locale)) }}
         {% endif %}
         {% if p and p.chart and p.chart.total %}
         <span class="chart-wrapper">
