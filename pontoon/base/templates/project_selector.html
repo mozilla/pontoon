@@ -24,7 +24,7 @@
         <span class="name"
           data-slug="{{ p.slug }}"
           {% if p.details %}data-details="{{ p.details }}"{% endif %}>
-          {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.translate', locale, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
+          {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.translate', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
             {{ p.name }}
           {% if p and p.chart %}</a>{% endif %}
         </span>
