@@ -67,27 +67,6 @@ def validate_cldr(value):
                 '%s must be a list of integers between 0 and 5' % value)
 
 
-def get_latest_activity(translations):
-    """Get latest activity data from provided translations."""
-    if not translations.exists():
-        return None
-
-    latest_translation = translations.order_by('-date')[0]
-    latest_approval = translations.order_by('-approved_date')[0]
-
-    if latest_approval.approved_date and latest_translation.date < latest_approval.approved_date:
-        return {
-            'date': latest_approval.date,
-            'user': latest_approval.approved_user
-        }
-
-    else:
-        return {
-            'date': latest_translation.date,
-            'user': latest_translation.user
-        }
-
-
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
@@ -143,7 +122,7 @@ class Locale(models.Model):
         if project:
             translations = translations.filter(entity__resource__project=project)
 
-        return get_latest_activity(translations)
+        return translations.latest_activity()
 
 
 class ProjectQuerySet(models.QuerySet):
@@ -225,7 +204,7 @@ class Project(models.Model):
         if locale:
             translations = translations.filter(locale=locale)
 
-        return get_latest_activity(translations)
+        return translations.latest_activity()
 
     def __unicode__(self):
         return self.name
@@ -449,9 +428,31 @@ class ChangedEntityLocale(models.Model):
         unique_together = ('entity', 'locale')
 
 
+class TranslationQuerySet(models.QuerySet):
+    def latest_activity(self):
+        """Find latest activity in given translations."""
+        if not self.exists():
+            return None
+
+        latest_translation = self.order_by('-date')[0]
+        latest_approval = self.order_by('-approved_date')[0]
+
+        if latest_approval.approved_date and latest_translation.date < latest_approval.approved_date:
+            return {
+                'date': latest_approval.date,
+                'user': latest_approval.approved_user
+            }
+
+        else:
+            return {
+                'date': latest_translation.date,
+                'user': latest_translation.user
+            }
+
+
 class TranslationManager(models.Manager):
     def get_queryset(self):
-        return (super(TranslationManager, self).get_queryset()
+        return (TranslationQuerySet(self.model, using=self._db)
                 .filter(deleted__isnull=True))
 
 
