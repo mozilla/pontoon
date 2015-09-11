@@ -483,7 +483,7 @@ $(function() {
 
     function getDate(el) {
       var date = $(el).find('time').attr('datetime') || 0;
-      return new Date(date).getTime().toString();
+      return new Date(date);
     }
 
     function getString(el) {
@@ -511,7 +511,7 @@ $(function() {
 
       // Sort by date
       } else if (node.is('.latest')) {
-        return getDate(a).localeCompare(getDate(b)) * dir;
+        return (getDate(b) - getDate(a)) * dir;
 
       // Sort by alphabetical order
       } else {
