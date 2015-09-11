@@ -70,7 +70,7 @@ def validate_cldr(value):
 def get_latest_activity(translations):
     """Get latest activity data from provided translations."""
     if not translations.exists():
-        return
+        return None
 
     latest_translation = translations.order_by('-date')[0]
     latest_approval = translations.order_by('-approved_date')[0]
