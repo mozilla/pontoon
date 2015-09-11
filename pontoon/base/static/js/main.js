@@ -491,14 +491,14 @@ $(function() {
     }
 
     var node = $(this),
-        index = $(this).index(),
-        ul = $(this).parents('.sort').next(),
+        index = node.index(),
+        ul = node.parents('.sort').next(),
         listitems = ul.children("li:not('.no-match')"),
-        dir = $(this).hasClass('asc') ? -1 : 1,
-        cls = $(this).hasClass('asc') ? 'desc' : 'asc';
+        dir = node.hasClass('asc') ? -1 : 1,
+        cls = node.hasClass('asc') ? 'desc' : 'asc';
 
     $('.menu .sort span').removeClass('asc desc');
-    $(this).addClass(cls);
+    node.addClass(cls);
 
     listitems.sort(function(a, b) {
       // Sort by approved, then by unapproved percentage
