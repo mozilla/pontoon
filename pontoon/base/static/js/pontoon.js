@@ -262,7 +262,7 @@
             l10n = {};
 
         // Create object with l10n comment nodes
-        $('*').contents().each(function () {
+        $(':not("script, style, iframe, noscript, [translate=\'no\']")').contents().each(function () {
           if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
             var element = $(this).parent();
             $(this).remove();
@@ -688,7 +688,7 @@
           var hooks = false;
 
           // Detect hooks
-          $("*").contents().filter(function () {
+          $(':not("script, style, iframe, noscript, [translate=\'no\']")').contents().filter(function () {
             return this.nodeType == 8;
           }).each(function (i, e) {
             if (e.nodeValue.indexOf('l10n') !== -1) {
