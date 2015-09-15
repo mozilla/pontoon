@@ -14,12 +14,23 @@ from pontoon.base.formats.base import ParseError, ParsedResource
 from pontoon.base.vcs_models import VCSTranslation
 
 
-# Use a class to store comments so we can distinguish them from entities.
-LangComment = namedtuple('LangComment', ['content'])
-
-
 BLANK_LINE = 'blank_line'
 TAG_REGEX = re.compile(r'\{(ok|l10n-extra)\}')
+
+
+class LangComment(object):
+    def __init__(self, marker, content, end):
+        self.marker = marker
+        self.raw_content = content
+        self.end = end
+
+    @property
+    def content(self):
+        return self.raw_content.strip()
+
+    @property
+    def raw(self):
+        return self.marker + self.raw_content + self.end
 
 
 class LangEntity(VCSTranslation):
@@ -60,13 +71,11 @@ class LangResource(ParsedResource):
                 if isinstance(child, LangEntity):
                     self.write_entity(f, child)
                 elif isinstance(child, LangComment):
-                    self.write_comment(f, child)
+                    f.write(child.raw)
                 elif child == BLANK_LINE:
                     f.write(u'\n')
 
     def write_entity(self, f, entity):
-        for comment in entity.comments:
-            f.write(u'# {0}\n'.format(comment))
         f.write(u';{0}\n'.format(entity.source_string))
 
         translation = entity.strings.get(None, None)
@@ -90,9 +99,6 @@ class LangResource(ParsedResource):
 
         f.write(u'{0}\n'.format(translation))
 
-    def write_comment(self, f, comment):
-        f.write(u'## {0}\n'.format(comment.content))
-
 
 class LangVisitor(NodeVisitor):
     grammar = Grammar(r"""
@@ -111,30 +117,24 @@ class LangVisitor(NodeVisitor):
 
     def visit_lang_file(self, node, children):
         """
-        Remove comments that are associated with an entity and add them
-        to the entity's comments list instead.
+        Find comments that are associated with an entity and add them
+        to the entity's comments list.
         """
-        new_children = []
         comments = []
         for child in children:
             if isinstance(child, LangComment):
                 comments.append(child)
                 continue
 
-            # Add comments to entity, or if there is no entity, leave
-            # them in the list of children.
             if isinstance(child, LangEntity):
                 child.comments = [c.content for c in comments]
-            else:
-                new_children += comments
 
             comments = []
-            new_children.append(child)
 
-        return new_children
+        return children
 
     def visit_comment(self, node, (marker, content, end)):
-        return LangComment(content.text.strip())
+        return LangComment(node_text(marker), node_text(content), node_text(end))
 
     def visit_blank_line(self, node, (whitespace, newline)):
         return BLANK_LINE
@@ -149,9 +149,6 @@ class LangVisitor(NodeVisitor):
 
         return LangEntity(string, translation, tags)
 
-    def visit_entity_comment(self, node, (marker, content, end)):
-        return content.text.strip()
-
     def visit_string(self, node, (marker, content, end)):
         return content.text.strip()
 
@@ -163,6 +160,19 @@ class LangVisitor(NodeVisitor):
             return children[0]
         else:
             return children or node
+
+
+def node_text(node):
+    """
+    Convert a Parsimonious node into text, including nodes that may
+    actually be a list of nodes due to repetition.
+    """
+    if node is None:
+        return u''
+    elif isinstance(node, list):
+        return ''.join([n.text for n in node])
+    else:
+        return node.text
 
 
 def parse(path, source_path=None):
