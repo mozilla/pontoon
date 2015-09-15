@@ -42,9 +42,9 @@ class LangTests(FormatTestsMixin, TestCase):
             Translated
         """))
 
-        assert_equal(resource.children[1], lang.LangComment('1 hash'))
-        assert_equal(resource.children[2], lang.LangComment('2 hash'))
-        assert_equal(resource.children[3], lang.LangComment('3 hash'))
+        assert_equal(resource.children[1].content, '1 hash')
+        assert_equal(resource.children[2].content, '2 hash')
+        assert_equal(resource.children[3].content, '3 hash')
         assert_equal(resource.translations[0].comments, ['1 hash', '2 hash', '3 hash'])
 
     def test_parse_eof(self):
@@ -52,3 +52,27 @@ class LangTests(FormatTestsMixin, TestCase):
         path, resource = self.parse_string(';Source\nTranslation')
         assert_equal(resource.translations[0].source_string, 'Source')
         assert_equal(resource.translations[0].strings, {None: 'Translation'})
+
+    def test_preserve_comment_hashes(self):
+        """
+        If a langfile is parsed and then saved without being modified,
+        it should not modify the contents of the file.
+        """
+        expected = dedent("""
+            ## Example langfile with a few constructs that might break
+
+            # Entity comment
+            ;Source
+            Translated
+
+            # Single hash standalone comment
+
+            ### Entity comment with multiple hashes
+            ;Identical
+            Identical {ok}
+
+            ###Free standing comment at the end. WOW
+        """)
+        path, resource = self.parse_string(expected)
+        resource.save(self.locale)
+        self.assert_file_content(path, expected)
