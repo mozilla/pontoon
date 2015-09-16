@@ -116,6 +116,14 @@ class Locale(models.Model):
     class Meta:
         ordering = ['name', 'code']
 
+    def latest_activity(self, project=None):
+        """Get latest activity for locale and project if provided."""
+        translations = Translation.objects.filter(locale=self)
+        if project:
+            translations = translations.filter(entity__resource__project=project)
+
+        return translations.latest_activity()
+
 
 class ProjectQuerySet(models.QuerySet):
     def available(self):
@@ -189,6 +197,14 @@ class Project(models.Model):
     def checkout_path(self):
         """Path that this project's VCS checkout is located."""
         return os.path.join(settings.MEDIA_ROOT, self.repository_type, self.slug)
+
+    def latest_activity(self, locale=None):
+        """Get latest activity for project and locale if provided."""
+        translations = Translation.objects.filter(entity__resource__project=self)
+        if locale:
+            translations = translations.filter(locale=locale)
+
+        return translations.latest_activity()
 
     def __unicode__(self):
         return self.name
@@ -412,9 +428,31 @@ class ChangedEntityLocale(models.Model):
         unique_together = ('entity', 'locale')
 
 
+class TranslationQuerySet(models.QuerySet):
+    def latest_activity(self):
+        """Find latest activity in given translations."""
+        if not self.exists():
+            return None
+
+        latest_translation = self.order_by('-date')[0]
+        latest_approval = self.order_by('-approved_date')[0]
+
+        if latest_approval.approved_date and latest_translation.date < latest_approval.approved_date:
+            return {
+                'date': latest_approval.date,
+                'user': latest_approval.approved_user
+            }
+
+        else:
+            return {
+                'date': latest_translation.date,
+                'user': latest_translation.user
+            }
+
+
 class TranslationManager(models.Manager):
     def get_queryset(self):
-        return (super(TranslationManager, self).get_queryset()
+        return (TranslationQuerySet(self.model, using=self._db)
                 .filter(deleted__isnull=True))
 
 
@@ -436,7 +474,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     string = models.TextField()
     # 0=zero, 1=one, 2=two, 3=few, 4=many, 5=other, null=no plural forms
     plural_form = models.SmallIntegerField(null=True, blank=True)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)
     approved = models.BooleanField(default=False)
     approved_user = models.ForeignKey(
         User, related_name='approvers', null=True, blank=True)

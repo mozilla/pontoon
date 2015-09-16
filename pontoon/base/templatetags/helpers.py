@@ -3,6 +3,7 @@ import json
 import urllib
 import urlparse
 
+from django.contrib.humanize.templatetags import humanize
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse
 from django.utils.encoding import smart_str
@@ -69,3 +70,13 @@ def static(path):
 @library.filter
 def to_json(value):
     return json.dumps(value)
+
+
+@library.filter
+def naturalday(source, arg=None):
+    return humanize.naturalday(source, arg)
+
+
+@library.filter
+def naturaltime(source):
+    return humanize.naturaltime(source)

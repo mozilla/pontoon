@@ -483,18 +483,10 @@ label {
 
 .project.select .menu ul li .name {
   overflow: hidden;
+  padding-left: 1px; /* Insted of 0; because of overflow */
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 200px;
-}
-
-.project.select .menu ul li .url {
-  float: left;
-  overflow: hidden;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 330px;
+  width: 219px; /* Instead of 220px; because of padding */
 }
 
 .locale.select {
@@ -527,22 +519,32 @@ label {
   max-height: none;
 }
 
-.select .menu ul li span:first-child {
+.locale.select .menu ul li span.language {
+  width: 140px;
+}
+
+.locale.select .menu ul li span.code {
+  width: 80px;
+}
+
+.select .menu ul li span {
   float: left;
   text-align: left;
 }
 
-.select .menu ul li span:nth-child(2) {
-  color: #7BC876;
+.select .menu ul li span a {
+  display: block;
+  height: 100%;
 }
 
 .select .menu ul li .chart-wrapper {
-  float: right;
+  display: inline-block;
   height: 17px;
-  width: 160px;
+  width: 180px;
 }
 
 .select .menu ul li .chart-wrapper .percent {
+  float: right;
   font-size: 12px;
   margin-top: 1px;
   text-align: right;
@@ -550,10 +552,9 @@ label {
 
 .select .menu ul li .chart {
   background: #FD5F60;
-  float: right;
   height: 5px;
   margin-top: 6px;
-  width: 120px;
+  width: 140px;
 }
 
 .select .menu ul li .chart span {
@@ -571,6 +572,23 @@ label {
 
 .select .menu ul li .chart span.fuzzy {
   background: #FED271;
+}
+
+.select .menu ul li .latest {
+  font-size: 12px;
+  margin-right: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 293px;
+}
+
+.select .menu ul li .latest time {
+  display: inline-block;
+}
+
+.select .menu ul li .latest a {
+  color: #7BC876;
+  display: inline-block;
 }
 
 .locale .selector,
@@ -593,12 +611,11 @@ label {
 }
 
 .menu li.hover {
-  cursor: pointer;
   color: #FFFFFF;
   background: #3F4752;
 }
 
-.menu li.hover > a  {
+.menu li.hover a {
   color: #FFFFFF;
 }
 
@@ -632,12 +649,26 @@ label {
   cursor: pointer;
   float: left;
   position: relative;
-  width: 200px;
 }
 
-.menu .sort span:nth-child(3) {
-  float: right;
-  width: 160px;
+.menu .sort span.name {
+  width: 220px;
+}
+
+.menu .sort span.language {
+  width: 140px;
+}
+
+.menu .sort span.locale {
+  width: 80px;
+}
+
+.menu .sort span.progress {
+  width: 180px;
+}
+
+.menu .sort span.latest {
+  width: 303px;
 }
 
 .menu .sort span i {
@@ -709,7 +740,7 @@ label {
 
 .locale .code {
   color: #7BC876;
-  float: right;
+  text-align: left;
 }
 
 .tooltip {
@@ -719,7 +750,7 @@ label {
   height: 104px;
   padding: 10px;
   position: absolute;
-  width: 160px;
+  width: 180px;
   z-index: 25;
 }
 
@@ -729,7 +760,7 @@ label {
   border: 8px solid;
   border-color: #3F4752 transparent transparent transparent;
   bottom: -16px;
-  left: 82px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
+  left: 92px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
   clip: rect(0 16px 8px 0px);
   -webkit-clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
   clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
@@ -935,7 +966,7 @@ body > form {
   margin: 0 auto;
   padding: 50px 0 100px;
   position: relative;
-  width: 730px;
+  width: 735px;
 }
 
 #source {
