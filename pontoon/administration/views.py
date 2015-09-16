@@ -43,7 +43,7 @@ def admin(request, template='admin.html'):
 
     data = {
         'projects': get_projects_with_stats(projects),
-        'url_prefix': 'admin/projects',
+        'admin': True,
     }
 
     return render(request, template, data)

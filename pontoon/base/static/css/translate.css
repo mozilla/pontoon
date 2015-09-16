@@ -136,7 +136,15 @@ body > header .loader {
   text-align: left;
 }
 
-.locale .code {
+.select .menu ul li {
+  cursor: pointer;
+}
+
+.select .menu ul li span.code {
+  text-align: right;
+}
+
+.locale .button .code {
   margin-left: 10px;
 }
 
@@ -171,13 +179,17 @@ body > header .locale.select {
 .part.select .menu {
   display: none;
   position: absolute;
+  width: 248px;
+}
+
+.part.select .menu {
   width: 580px;
 }
 
 .locale.select .menu {
   display: none;
   position: absolute;
-  width: 236px;
+  width: 252px;
 }
 
 .menu ul,
@@ -199,6 +211,7 @@ body > header .locale.select {
 
 .part.select .menu ul li > span:nth-child(2),
 .project.select .menu ul li > span:nth-child(2) {
+  color: #7BC876;
   float: right;
 }
 

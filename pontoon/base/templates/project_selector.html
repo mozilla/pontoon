@@ -1,3 +1,5 @@
+{% import 'latest_activity.html' as latest_activity %}
+
 {% if projects|length > 0 %}
 <!-- Project select -->
 <div class="project select">
@@ -13,33 +15,35 @@
     </div>
     {% if not project %}
     <div class="sort clearfix">
-      <span class="asc">Name<i class="fa"></i></span>
-      <span>Website<i class="fa"></i></span>
-      <span>Progress<i class="fa"></i></span>
+      <span class="name asc">Name<i class="fa"></i></span>
+      <span class="latest">Latest activity<i class="fa"></i></span>
+      <span class="progress">Progress<i class="fa"></i></span>
     </div>
     {% endif %}
     <ul>
       {% for p in projects %}
       <li class="clearfix{% if project and project == p %} current{% endif %}">
-        {% if url_prefix %}
-        <a href="/{{ url_prefix }}/{{ p.slug }}/" class="clearfix">
+        <span class="name"
+          data-slug="{{ p.slug }}"
+          {% if p.details %}data-details="{{ p.details }}"{% endif %}>
+          {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.translate', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
+            {{ p.name }}
+          {% if p and p.chart %}</a>{% endif %}
+        </span>
+        {% if not project %}
+          {{ latest_activity.span(p.latest_activity(locale)) }}
         {% endif %}
-          <span class="name"
-            data-slug="{{ p.slug }}"
-            {% if p.details %}data-details="{{ p.details }}"{% endif %}>{{ p.name }}</span>
-          <span class="url">{{ p.url }}</span>
-          {% if p and p.chart and p.chart.total %}
-          <span class="chart-wrapper">
-            <span class="chart" data-chart="{{ p.chart|to_json }}">
-              <span class="approved" style="width:{{ p.chart.approved / p.chart.total * 100 }}%;"></span>
-              <span class="translated" style="width:{{ p.chart.translated / p.chart.total * 100 }}%;"></span>
-              <span class="fuzzy" style="width:{{ p.chart.fuzzy / p.chart.total * 100 }}%;"></span>
-            </span>
-            <p class="percent">{{ (p.chart.approved / p.chart.total * 100) | round(0, 'floor') | int }}%</p>
+        {% if p and p.chart and p.chart.total %}
+        <span class="chart-wrapper">
+          {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.translate', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
+          <span class="chart" data-chart="{{ p.chart|to_json }}">
+            <span class="approved" style="width:{{ p.chart.approved / p.chart.total * 100 }}%;"></span>
+            <span class="translated" style="width:{{ p.chart.translated / p.chart.total * 100 }}%;"></span>
+            <span class="fuzzy" style="width:{{ p.chart.fuzzy / p.chart.total * 100 }}%;"></span>
           </span>
-          {% endif %}
-        {% if url_prefix %}
-        </a>
+          <span class="percent">{{ (p.chart.approved / p.chart.total * 100) | round(0, 'floor') | int }}%</span>
+          {% if p and p.chart %}</a>{% endif %}
+        </span>
         {% endif %}
       </li>
       {% endfor %}
