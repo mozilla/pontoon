@@ -13,26 +13,24 @@ class TranslationQuerySetTests(TestCase):
     def setUp(self):
         self.user0, self.user1 = UserFactory.create_batch(2)
 
+    def _translation(self, user, submitted, approved):
+        return TranslationFactory.create(
+            date=aware_datetime(*submitted),
+            user=user,
+            approved_date=aware_datetime(*approved) if approved else None,
+            approved_user=user
+        )
+
     def test_latest_activity_translated(self):
         """
         If latest activity in Translation QuerySet is translation submission,
         return submission date and user.
         """
-        translation0 = TranslationFactory.create(
-            date=aware_datetime(1970, 1, 3),
-            user=self.user0
-        )
-        translation1 = TranslationFactory.create(
-            date=aware_datetime(1970, 1, 1),
-            user=self.user1,
-            approved_date=aware_datetime(1970, 1, 2),
-            approved_user=self.user1
-        )
-
-        translations = Translation.objects.filter(id__in=[translation0.id, translation1.id])
-        assert_equal(translations.latest_activity(), {
-            'date': translation0.date,
-            'user': translation0.user
+        latest_submission = self._translation(self.user0, submitted=(1970, 1, 3), approved=None)
+        latest_approval = self._translation(self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 2))
+        assert_equal(Translation.objects.all().latest_activity(), {
+            'date': latest_submission.date,
+            'user': latest_submission.user
         })
 
     def test_latest_activity_approved(self):
@@ -40,26 +38,13 @@ class TranslationQuerySetTests(TestCase):
         If latest activity in Translation QuerySet is translation approval,
         return approval date and user.
         """
-        translation0 = TranslationFactory.create(
-            date=aware_datetime(1970, 1, 2),
-            user=self.user0,
-            approved_date=aware_datetime(1970, 1, 2),
-            approved_user=self.user0
-        )
-        translation1 = TranslationFactory.create(
-            date=aware_datetime(1970, 1, 1),
-            user=self.user1,
-            approved_date=aware_datetime(1970, 1, 3),
-            approved_user=self.user1
-        )
-
-        translations = Translation.objects.filter(id__in=[translation0.id, translation1.id])
-        assert_equal(translations.latest_activity(), {
-            'date': translation1.date,
-            'user': translation1.user
+        latest_submission = self._translation(self.user0, submitted=(1970, 1, 2), approved=(1970, 1, 2))
+        latest_approval = self._translation(self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 3))
+        assert_equal(Translation.objects.all().latest_activity(), {
+            'date': latest_approval.date,
+            'user': latest_approval.user
         })
 
     def test_latest_activity_none(self):
         """If empty Translation QuerySet, return None."""
-        translations = Translation.objects.none()
-        assert_equal(translations.latest_activity(), None)
+        assert_equal(Translation.objects.none().latest_activity(), None)
