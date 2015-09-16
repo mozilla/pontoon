@@ -474,7 +474,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     string = models.TextField()
     # 0=zero, 1=one, 2=two, 3=few, 4=many, 5=other, null=no plural forms
     plural_form = models.SmallIntegerField(null=True, blank=True)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)
     approved = models.BooleanField(default=False)
     approved_user = models.ForeignKey(
         User, related_name='approvers', null=True, blank=True)

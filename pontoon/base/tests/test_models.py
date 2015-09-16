@@ -2,11 +2,6 @@ from django_nose.tools import assert_equal
 
 from pontoon.base.models import Translation
 from pontoon.base.tests import (
-    assert_redirects,
-    EntityFactory,
-    LocaleFactory,
-    ProjectFactory,
-    ResourceFactory,
     TranslationFactory,
     UserFactory,
     TestCase
@@ -14,32 +9,30 @@ from pontoon.base.tests import (
 from pontoon.base.utils import aware_datetime
 
 
-class LocaleTests(TestCase):
+class TranslationQuerySetTests(TestCase):
+    def setUp(self):
+        self.user0, self.user1 = UserFactory.create_batch(2)
+
     def test_latest_activity_translated(self):
         """
         If latest activity in Translation QuerySet is translation submission,
         return submission date and user.
         """
-        user0 = UserFactory.create()
-        user1 = UserFactory.create()
-
         translation0 = TranslationFactory.create(
-            date=aware_datetime(1970, 1, 1),
-            user=user0,
-            approved_date=aware_datetime(1970, 1, 1),
-            approved_user=user0
+            date=aware_datetime(1970, 1, 3),
+            user=self.user0
         )
         translation1 = TranslationFactory.create(
-            date=aware_datetime(1970, 1, 2),
-            user=user1,
+            date=aware_datetime(1970, 1, 1),
+            user=self.user1,
             approved_date=aware_datetime(1970, 1, 2),
-            approved_user=user1
+            approved_user=self.user1
         )
 
         translations = Translation.objects.filter(id__in=[translation0.id, translation1.id])
         assert_equal(translations.latest_activity(), {
-            'date': translation1.date,
-            'user': translation1.user
+            'date': translation0.date,
+            'user': translation0.user
         })
 
     def test_latest_activity_approved(self):
@@ -47,20 +40,17 @@ class LocaleTests(TestCase):
         If latest activity in Translation QuerySet is translation approval,
         return approval date and user.
         """
-        user0 = UserFactory.create()
-        user1 = UserFactory.create()
-
         translation0 = TranslationFactory.create(
             date=aware_datetime(1970, 1, 2),
-            user=user0,
+            user=self.user0,
             approved_date=aware_datetime(1970, 1, 2),
-            approved_user=user0
+            approved_user=self.user0
         )
         translation1 = TranslationFactory.create(
             date=aware_datetime(1970, 1, 1),
-            user=user1,
+            user=self.user1,
             approved_date=aware_datetime(1970, 1, 3),
-            approved_user=user1
+            approved_user=self.user1
         )
 
         translations = Translation.objects.filter(id__in=[translation0.id, translation1.id])
