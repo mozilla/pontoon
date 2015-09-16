@@ -8,6 +8,10 @@ body {
   text-align: left;
 }
 
+.select .menu li {
+  cursor: pointer;
+}
+
 #title {
   display: block;
   font-size: 50px;
@@ -167,6 +171,11 @@ form a.add-subpage {
 .locale.select .menu ul {
   height: 170px;
   margin-bottom: 0;
+}
+
+.locale.select .menu ul li span.code {
+  float: right;
+  text-align: right;
 }
 
 #id_locales {

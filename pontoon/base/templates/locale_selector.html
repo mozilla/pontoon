@@ -1,3 +1,5 @@
+{% import 'latest_activity.html' as latest_activity %}
+
 <!-- Locale selector -->
 <div class="locale select">
   {% if locale and locale.code != '' %}
@@ -18,30 +20,32 @@
     </div>
     {% if not locale %}
     <div class="sort clearfix">
-      <span class="asc">Language<i class="fa"></i></span>
-      <span>Locale<i class="fa"></i></span>
-      <span>Progress<i class="fa"></i></span>
+      <span class="language asc">Language<i class="fa"></i></span>
+      <span class="locale">Locale<i class="fa"></i></span>
+      <span class="latest">Latest activity<i class="fa"></i></span>
+      <span class="progress">Progress<i class="fa"></i></span>
     </div>
     {% endif %}
     <ul>
       {% for l in locales %}
       <li class="clearfix{% if locale and locale == l %} current{% endif %}{% if l and l.chart %} filter{% endif %}">
-        {% if l and l.chart %}
-        <a href="{% if project %}{{ url('pontoon.translate', l.code, project.slug) }}{% else %}{{ url('pontoon.locale', l.code) }}{% endif %}" class="clearfix">
+        <span class="language {{ l.code|lower }}">{% if l and l.chart %}<a href="{% if project %}{{ url('pontoon.translate', l.code, project.slug) }}{% else %}{{ url('pontoon.locale', l.code) }}{% endif %}" class="clearfix">{% endif %}{{ l.name }}{% if l and l.chart %}</a>{% endif %}</span>
+        <span class="code">{% if l and l.chart %}<a class="code" href="{% if project %}{{ url('pontoon.translate', l.code, project.slug) }}{% else %}{{ url('pontoon.locale', l.code) }}{% endif %}" class="clearfix">{% endif %}{{ l.code }}{% if l and l.chart %}</a>{% endif %}</span>
+        {% if not locale %}
+          {{ latest_activity.span(l.latest_activity(project)) }}
         {% endif %}
-          <span class="language {{ l.code|lower }}">{{ l.name }}</span>
-          <span class="code">{{ l.code }}</span>
-          {% if l and l.chart %}
-          <span class="chart-wrapper">
-            <span class="chart" data-chart="{{ l.chart|to_json }}">
-              <span class="approved" style="width:{{ l.chart.approved / l.chart.total * 100 }}%;"></span>
-              <span class="translated" style="width:{{ l.chart.translated / l.chart.total * 100 }}%;"></span>
-              <span class="fuzzy" style="width:{{ l.chart.fuzzy / l.chart.total * 100 }}%;"></span>
-            </span>
-            <p class="percent">{{ (l.chart.approved / l.chart.total * 100) | round(0, 'floor') | int }}%</p>
+        {% if l and l.chart %}
+        <span class="chart-wrapper">
+          {% if l and l.chart %}<a href="{% if project %}{{ url('pontoon.translate', l.code, project.slug) }}{% else %}{{ url('pontoon.locale', l.code) }}{% endif %}" class="clearfix">{% endif %}
+          <span class="chart" data-chart="{{ l.chart|to_json }}">
+            <span class="approved" style="width:{{ l.chart.approved / l.chart.total * 100 }}%;"></span>
+            <span class="translated" style="width:{{ l.chart.translated / l.chart.total * 100 }}%;"></span>
+            <span class="fuzzy" style="width:{{ l.chart.fuzzy / l.chart.total * 100 }}%;"></span>
           </span>
-        </a>
-          {% endif %}
+          <span class="percent">{{ (l.chart.approved / l.chart.total * 100) | round(0, 'floor') | int }}%</span>
+          {% if l and l.chart %}</a>{% endif %}
+        </span>
+        {% endif %}
       </li>
       {% endfor %}
       <li class="no-match">No results</li>
