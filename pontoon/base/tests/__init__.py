@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from itertools import cycle
 
 import factory
-from factory import LazyAttribute, Sequence, SubFactory
+from factory import LazyAttribute, Sequence, SubFactory, SelfAttribute
 from factory.django import DjangoModelFactory
 
 from django.contrib.auth.models import User
@@ -109,9 +109,7 @@ class TranslationFactory(DjangoModelFactory):
 
 
 class IdenticalTranslationFactory(TranslationFactory):
-    @factory.sequence
-    def entity(n):
-        return EntityFactory.create(string='translation {}'.format(n))
+    entity = SubFactory(EntityFactory, string=SelfAttribute('..string'))
 
 
 class StatsFactory(DjangoModelFactory):

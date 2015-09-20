@@ -1,8 +1,11 @@
-from django_nose.tools import assert_equal
+from datetime import datetime
+
+from django_nose.tools import assert_equal, assert_true
 from django.test.utils import override_settings
 
-from pontoon.base.models import Translation
+from pontoon.base.models import Translation, User
 from pontoon.base.tests import (
+    assert_attributes_equal,
     IdenticalTranslationFactory,
     TranslationFactory,
     UserFactory,
@@ -68,7 +71,7 @@ class UserTranslationManagerTests(TestCase):
 
     def test_users_without_translations(self):
         """
-        Checks if user contributors without translations are returned.
+        Checks if user contributors without translations aren't returned.
         """
         active_contributor = TranslationFactory.create(user__email='active@example.com').user
         inactive_contributor = UserFactory.create(email='inactive@example.com')
@@ -80,7 +83,7 @@ class UserTranslationManagerTests(TestCase):
     def test_unique_translations(self):
         """
         Checks if contributors with identical translations are returned.
-            """
+        """
 
         unique_translator = TranslationFactory.create().user
         identical_translator = IdenticalTranslationFactory.create().user
@@ -94,14 +97,20 @@ class UserTranslationManagerTests(TestCase):
         """
         Checks if users are ordered by count of contributions.
         """
-        users = UserFactory.create_batch(5)
+        contributors = [
+            self.create_contributor_with_translation_counts(2),
+            self.create_contributor_with_translation_counts(4),
+            self.create_contributor_with_translation_counts(9),
+            self.create_contributor_with_translation_counts(1),
+            self.create_contributor_with_translation_counts(6),
+        ]
 
-        for i, user in enumerate(users):
-            TranslationFactory.create_batch(5-i, user=user)
-
-        top_translations_totals = [user.translations_count for user in User.translators.with_translation_counts()]
-        assert_equal(top_translations_totals, [5, 4, 3, 2, 1])
-
+        assert_equal(list(User.translators.with_translation_counts()), [
+            contributors[2],
+            contributors[4],
+            contributors[1],
+            contributors[0],
+            contributors[3]])
 
     def test_contributors_limit(self):
         """
@@ -111,9 +120,9 @@ class UserTranslationManagerTests(TestCase):
 
         top_contributors = User.translators.with_translation_counts()
 
-        assert_true(len(top_contributors) == 100)
+        assert_equal(top_contributors.count(), 100)
 
-    def create_contributor_with_translation_counts(self, approved, unapproved, needs_work, **kwargs):
+    def create_contributor_with_translation_counts(self, approved=0, unapproved=0, needs_work=0, **kwargs):
         """
         Helper method, creates contributor with given translations counts.
         """
@@ -135,24 +144,27 @@ class UserTranslationManagerTests(TestCase):
 
         top_contributors = User.translators.with_translation_counts()
 
-        assert_equal(top_contributors.count(), 3)
-        assert_equal(top_contributors[0], second_contributor)
-        assert_equal(top_contributors[0].translations_count, 16)
-        assert_equal(top_contributors[0].translations_approved_count, 5)
-        assert_equal(top_contributors[0].translations_unapproved_count, 9)
-        assert_equal(top_contributors[0].translations_needs_work_count, 2)
+        assert_attributes_equal({
+            top_contributors.count(): 3,
 
-        assert_equal(top_contributors[1], first_contributor)
-        assert_equal(top_contributors[1].translations_count, 12)
-        assert_equal(top_contributors[1].translations_approved_count, 7)
-        assert_equal(top_contributors[1].translations_unapproved_count, 3)
-        assert_equal(top_contributors[1].translations_needs_work_count, 2)
+            top_contributors[0]: second_contributor,
+            top_contributors[0].translations_count: 16,
+            top_contributors[0].translations_approved_count: 5,
+            top_contributors[0].translations_unapproved_count: 9,
+            top_contributors[0].translations_needs_work_count: 2,
 
-        assert_equal(top_contributors[2], third_contributor)
-        assert_equal(top_contributors[2].translations_count, 8)
-        assert_equal(top_contributors[2].translations_approved_count, 1)
-        assert_equal(top_contributors[2].translations_unapproved_count, 2)
-        assert_equal(top_contributors[2].translations_needs_work_count, 5)
+            top_contributors[1]: first_contributor,
+            top_contributors[1].translations_count: 12,
+            top_contributors[1].translations_approved_count: 7,
+            top_contributors[1].translations_unapproved_count: 3,
+            top_contributors[1].translations_needs_work_count: 2,
+
+            top_contributors[2]: third_contributor,
+            top_contributors[2].translations_count: 8,
+            top_contributors[2].translations_approved_count: 1,
+            top_contributors[2].translations_unapproved_count: 2,
+            top_contributors[2].translations_needs_work_count: 5,
+        })
 
 
     def test_period_filters(self):
@@ -170,39 +182,48 @@ class UserTranslationManagerTests(TestCase):
 
         top_contributors = User.translators.with_translation_counts(datetime(2015, 6, 10))
 
-        assert_equal(top_contributors.count(), 1)
-        assert_equal(top_contributors[0], first_contributor)
-        assert_equal(top_contributors[0].translations_count, 5)
-        assert_equal(top_contributors[0].translations_approved_count, 5)
-        assert_equal(top_contributors[0].translations_unapproved_count, 0)
-        assert_equal(top_contributors[0].translations_needs_work_count, 0)
+        assert_attributes_equal({
+            top_contributors.count(): 1,
+
+            top_contributors[0]: first_contributor,
+            top_contributors[0].translations_count: 5,
+            top_contributors[0].translations_approved_count: 5,
+            top_contributors[0].translations_unapproved_count: 0,
+            top_contributors[0].translations_needs_work_count: 0,
+        })
 
         top_contributors = User.translators.with_translation_counts(datetime(2015, 5, 10))
 
-        assert_equal(top_contributors.count(), 2)
-        assert_equal(top_contributors[0], second_contributor)
-        assert_equal(top_contributors[0].translations_count, 15)
-        assert_equal(top_contributors[0].translations_approved_count, 2)
-        assert_equal(top_contributors[0].translations_unapproved_count, 11)
-        assert_equal(top_contributors[0].translations_needs_work_count, 2)
+        assert_attributes_equal({
+            top_contributors.count(): 2,
 
-        assert_equal(top_contributors[1], first_contributor)
-        assert_equal(top_contributors[1].translations_count, 5)
-        assert_equal(top_contributors[1].translations_approved_count, 5)
-        assert_equal(top_contributors[1].translations_unapproved_count, 0)
-        assert_equal(top_contributors[1].translations_needs_work_count, 0)
+            top_contributors[0]: second_contributor,
+            top_contributors[0].translations_count: 15,
+            top_contributors[0].translations_approved_count: 2,
+            top_contributors[0].translations_unapproved_count: 11,
+            top_contributors[0].translations_needs_work_count: 2,
+
+            top_contributors[1]: first_contributor,
+            top_contributors[1].translations_count: 5,
+            top_contributors[1].translations_approved_count: 5,
+            top_contributors[1].translations_unapproved_count: 0,
+            top_contributors[1].translations_needs_work_count: 0,
+        })
 
         top_contributors = User.translators.with_translation_counts(datetime(2015, 1, 10))
 
-        assert_equal(top_contributors.count(), 2)
-        assert_equal(top_contributors[0], first_contributor)
-        assert_equal(top_contributors[0].translations_count, 20)
-        assert_equal(top_contributors[0].translations_approved_count, 17)
-        assert_equal(top_contributors[0].translations_unapproved_count, 1)
-        assert_equal(top_contributors[0].translations_needs_work_count, 2)
+        assert_attributes_equal({
+            top_contributors.count(): 2,
 
-        assert_equal(top_contributors[1], second_contributor)
-        assert_equal(top_contributors[1].translations_count, 15)
-        assert_equal(top_contributors[1].translations_approved_count, 2)
-        assert_equal(top_contributors[1].translations_unapproved_count, 11)
-        assert_equal(top_contributors[1].translations_needs_work_count, 2)
+            top_contributors[0]: first_contributor,
+            top_contributors[0].translations_count: 20,
+            top_contributors[0].translations_approved_count: 17,
+            top_contributors[0].translations_unapproved_count: 1,
+            top_contributors[0].translations_needs_work_count: 2,
+
+            top_contributors[1]: second_contributor,
+            top_contributors[1].translations_count: 15,
+            top_contributors[1].translations_approved_count: 2,
+            top_contributors[1].translations_unapproved_count: 11,
+            top_contributors[1].translations_needs_work_count: 2,
+        })
