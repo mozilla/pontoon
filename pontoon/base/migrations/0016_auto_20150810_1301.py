@@ -14,10 +14,6 @@ def add_tagalog_locale(apps, schema_editor):
         cldr_plurals='1,5'
     )
 
-    Project = apps.get_model('base', 'Project')
-    project = Project.objects.get(slug="pontoon-intro")
-    project.locales.add(locale)
-
 
 class Migration(migrations.Migration):
 
