@@ -743,6 +743,21 @@ label {
   text-align: left;
 }
 
+form .about {
+  padding: 0 12px;
+  text-align: left;
+}
+
+form .about p {
+  font-weight: 300;
+  padding: 12px 0;
+}
+
+form .about p a:link,
+form .about p a:visited {
+  color: #7BC876;
+}
+
 .tooltip {
   background: #3F4752;
   border-radius: 5px;
