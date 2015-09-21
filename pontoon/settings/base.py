@@ -411,6 +411,7 @@ LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
 BROWSERID_VERIFY_CLASS = 'pontoon.base.views.BrowserIDVerify'
+BROWSERID_REQUEST_ARGS ={'siteName': 'Pontoon'}
 
 # Should robots.txt deny everything or disallow a calculated list of
 # URLs we don't want to be crawled?  Default is false, disallow
