@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
+from django.db import connection, transaction
 from django.template.loader import render_to_string
 from django.utils import timezone
 
@@ -63,6 +64,7 @@ class Command(BaseCommand):
         self.no_pull = options['no_pull']
 
         self.log('SYNC PROJECTS: start')
+
         projects = Project.objects.filter(disabled=False)
         if args:
             projects = projects.filter(slug__in=args)
@@ -82,7 +84,12 @@ class Command(BaseCommand):
         # for deletion.
         Translation.deleted_objects.all().delete()
 
+    @transaction.atomic
     def handle_project(self, db_project):
+        # Mark "now" at the start of sync to avoid messing with
+        # translations submitted during sync.
+        now = timezone.now()
+
         # Pull changes from VCS and update what we know about the files.
         if not self.no_pull:
             self.pull_changes(db_project)
@@ -95,7 +102,7 @@ class Command(BaseCommand):
         db_entities = self.get_db_entities(db_project)
         entity_keys = set().union(db_entities.keys(), vcs_entities.keys())
 
-        changeset = ChangeSet(db_project, vcs_project)
+        changeset = ChangeSet(db_project, vcs_project, now)
         for key in entity_keys:
             db_entity = db_entities.get(key, None)
             vcs_entity = vcs_entities.get(key, None)
@@ -111,8 +118,24 @@ class Command(BaseCommand):
         # Clear out the list of changed locales for entity in this
         # project now that we've finished syncing.
         (ChangedEntityLocale.objects
-            .filter(entity__resource__project=db_project)
+            .filter(entity__resource__project=db_project, when__lte=now)
             .delete())
+
+        # Clean up any duplicate approvals at the end of sync right
+        # before we commit the transaction to avoid race conditions.
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE base_translation AS b
+                SET approved = FALSE, approved_date = NULL
+                WHERE deleted IS NULL
+                  AND approved_date !=
+                    (SELECT max(approved_date)
+                     FROM base_translation
+                     WHERE entity_id = b.entity_id
+                       AND deleted IS NULL
+                       AND locale_id = b.locale_id
+                       AND (plural_form = b.plural_form OR plural_form IS NULL));
+            """)
 
         self.log(u'Synced project {0}', db_project.slug)
 
@@ -234,9 +257,14 @@ class ChangeSet(object):
     translations stored in VCS. Once all the necessary changes have been
     stored, execute all the changes at once efficiently.
     """
-    def __init__(self, db_project, vcs_project):
+    def __init__(self, db_project, vcs_project, now):
+        """
+        :param now:
+            Datetime to use for marking when approvals happened.
+        """
         self.db_project = db_project
         self.vcs_project = vcs_project
+        self.now = now
 
         self.executed = False
         self.changes = {
@@ -381,7 +409,7 @@ class ChangeSet(object):
                         string=string,
                         plural_form=plural_form,
                         approved=not vcs_translation.fuzzy,
-                        approved_date=timezone.now() if not vcs_translation.fuzzy else None,
+                        approved_date=self.now if not vcs_translation.fuzzy else None,
                         fuzzy=vcs_translation.fuzzy
                     ))
 
@@ -395,7 +423,9 @@ class ChangeSet(object):
 
             # Update translations for the entity.
             vcs_translation = vcs_entity.translations[locale_code]
-            db_translations = db_entity.translation_set.filter(locale__code=locale_code)
+            db_translations = db_entity.translation_set.filter(
+                locale__code=locale_code,
+            )
             approved_translations = []
 
             for plural_form, string in vcs_translation.strings.items():
@@ -407,7 +437,7 @@ class ChangeSet(object):
                 if db_translation:
                     if not db_translation.approved:
                         db_translation.approved = True
-                        db_translation.approved_date = timezone.now()
+                        db_translation.approved_date = self.now
                     db_translation.fuzzy = vcs_translation.fuzzy
                     db_translation.extra = vcs_translation.extra
 
@@ -422,13 +452,13 @@ class ChangeSet(object):
                         string=string,
                         plural_form=plural_form,
                         approved=not vcs_translation.fuzzy,
-                        approved_date=timezone.now() if not vcs_translation.fuzzy else None,
+                        approved_date=self.now if not vcs_translation.fuzzy else None,
                         fuzzy=vcs_translation.fuzzy,
                         extra=vcs_translation.extra
                     ))
 
             # Any existing translations that were not approved get unapproved.
-            for translation in db_translations:
+            for translation in db_translations.filter(approved_date__lte=self.now):
                 if translation not in approved_translations:
                     translation.approved = False
                     translation.approved_user = None

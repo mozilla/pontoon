@@ -37,7 +37,7 @@ from pontoon.base.tests import (
     VCSEntityFactory,
 )
 from pontoon.base.utils import aware_datetime
-from pontoon.base.vcs_models import VCSProject
+from pontoon.base.vcs_models import VCSProject, VCSResource
 
 
 FAKE_CHECKOUT_PATH = os.path.join(os.path.dirname(__file__), 'fake-checkout')
@@ -95,12 +95,15 @@ class FakeCheckoutTestCase(TestCase):
 
         # Mock VCSResource.save() for each resource to avoid altering
         # the filesystem.
-        for resource in self.vcs_project.resources.values():
-            save_patch = patch.object(resource, 'save')
-            save_patch.start()
-            self.addCleanup(save_patch.stop)
+        resource_save_patch = patch.object(VCSResource, 'save')
+        resource_save_patch.start()
+        self.addCleanup(resource_save_patch.stop)
 
-        self.changeset = sync_projects.ChangeSet(self.db_project, self.vcs_project)
+        self.changeset = sync_projects.ChangeSet(
+            self.db_project,
+            self.vcs_project,
+            aware_datetime(1970, 1, 1)
+        )
 
     def create_db_entities_translations(self):
         """
@@ -229,19 +232,25 @@ class CommandTests(FakeCheckoutTestCase):
 
     def test_handle_project_clear_changed_entities(self):
         """
-        Delete all ChangedEntityLocale objects for the project after
-        handling it.
+        Delete all ChangedEntityLocale objects for the project created
+        before the sync started after handling it.
         """
-        changed1, changed2 = ChangedEntityLocaleFactory.create_batch(2,
+        self.mock_timezone.return_value = aware_datetime(1970, 1, 2)
+        changed1, changed2, changed_after = ChangedEntityLocaleFactory.create_batch(3,
             locale=self.translated_locale,
-            entity__resource__project=self.db_project
+            entity__resource=self.main_db_resource,
+            entity__resource__project=self.db_project,
+            when=aware_datetime(1970, 1, 1)
         )
+        changed_after.when = aware_datetime(1970, 1, 3)
+        changed_after.save()
 
         self.command.handle_project(self.db_project)
         with assert_raises(ChangedEntityLocale.DoesNotExist):
             changed1.refresh_from_db()
         with assert_raises(ChangedEntityLocale.DoesNotExist):
             changed2.refresh_from_db()
+        changed_after.refresh_from_db()  # Should not raise
 
     def test_handle_project_no_commit(self):
         """Don't call commit_projects if command.no_commit is True."""
@@ -257,6 +266,42 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.no_pull = True
         self.command.handle_project(self.db_project)
         assert_false(self.mock_repo_pull.called)
+
+    def test_handle_project_remove_duplicate_approvals(self):
+        """
+        Ensure that duplicate approvals are removed.
+        """
+        self.create_db_entities_translations()
+
+        # Trigger creation of new approved translation.
+        self.main_vcs_translation.strings[None] = 'New Translated String'
+        self.main_vcs_translation.fuzzy = False
+
+        # Translation approved after the sync started simulates the race
+        # where duplicate translations occur.
+        duplicate_translation = TranslationFactory.create(
+            entity=self.main_db_entity,
+            locale=self.translated_locale,
+            string='Other New Translated String',
+            approved=True,
+            approved_date=aware_datetime(1970, 1, 3)
+        )
+        ChangedEntityLocale.objects.filter(entity=self.main_db_entity).delete()
+
+        with patch.object(sync_projects, 'VCSProject', return_value=self.vcs_project):
+            self.command.handle_project(self.db_project)
+
+        # Only one translation should be approved: the duplicate_translation.
+        assert_equal(self.main_db_entity.translation_set.filter(approved=True).count(), 1)
+        new_translation = self.main_db_entity.translation_set.get(
+            string='New Translated String'
+        )
+        assert_false(new_translation.approved)
+        assert_true(new_translation.approved_date is None)
+
+        duplicate_translation.refresh_from_db()
+        assert_true(duplicate_translation.approved)
+        assert_equal(duplicate_translation.approved_date, aware_datetime(1970, 1, 3))
 
     def call_handle_entity(self, key, db_entity, vcs_entity):
         return self.command.handle_entity(
@@ -493,6 +538,9 @@ class ChangeSetTests(FakeCheckoutTestCase):
         """
         Update the VCS translations with translations in the database.
         """
+        self.main_vcs_resource.save = Mock()
+        self.other_vcs_resource.save = Mock()
+
         self.update_main_vcs_entity(string='New Translated String')
         assert_equal(self.main_vcs_translation.strings, {None: 'New Translated String'})
 
@@ -686,7 +734,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
     def test_update_db_unapprove_existing(self):
         """
         Any existing translations that don't match anything in VCS get
-        unapproved.
+        unapproved, unless they were created after self.now.
         """
         self.create_db_entities_translations()
 
@@ -696,6 +744,12 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_db_translation.save()
         self.main_vcs_translation.strings[None] = 'New Translated String'
 
+        created_after_translation = TranslationFactory.create(
+            entity=self.main_db_entity,
+            approved=True,
+            approved_date=aware_datetime(1970, 1, 3)
+        )
+
         self.update_main_db_entity()
         self.main_db_translation.refresh_from_db()
         assert_attributes_equal(
@@ -703,6 +757,13 @@ class ChangeSetTests(FakeCheckoutTestCase):
             approved=False,
             approved_user=None,
             approved_date=None
+        )
+
+        created_after_translation.refresh_from_db()
+        assert_attributes_equal(
+            created_after_translation,
+            approved=True,
+            approved_date=aware_datetime(1970, 1, 3)
         )
 
     def test_update_db_unapprove_clean(self):

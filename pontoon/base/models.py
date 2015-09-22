@@ -627,6 +627,7 @@ class ChangedEntityLocale(models.Model):
     """
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
+    when = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('entity', 'locale')
