@@ -1,5 +1,4 @@
 from contextlib import nested
-from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
@@ -9,6 +8,7 @@ from django_nose.tools import assert_equal, assert_true
 from mock import patch
 
 from pontoon.base.models import Project
+from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import (
     assert_redirects,
     UserFactory,
@@ -184,7 +184,7 @@ class ContributorsTests(TestCase):
         """
         Checks if view sets and returns data for right period.
         """
-        with patch('django.utils.timezone.now', wraps=now, return_value=datetime(2015, 7, 5)):
+        with patch('django.utils.timezone.now', wraps=now, return_value=aware_datetime(2015, 7, 5)):
             response = self.client.get('/contributors/?period=6')
             assert_equal(self.mock_render.call_args[0][2]['period'], 6)
-            assert_equal(self.mock_translations_manager.call_args[0][0], datetime(2015, 1, 5))
+            assert_equal(self.mock_translations_manager.call_args[0][0], aware_datetime(2015, 1, 5))

@@ -150,6 +150,8 @@ def assert_attributes_equal(original, **expected_attrs):
     Assert that the given object has attributes matching the given
     values.
     """
+    if not expected_attrs:
+        raise ValueError('Expected some attributes to check.')
     for key, value in expected_attrs.items():
         original_value = getattr(original, key)
         assert_equal(
