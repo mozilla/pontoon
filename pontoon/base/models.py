@@ -85,6 +85,8 @@ class Locale(models.Model):
     cldr_plurals = models.CommaSeparatedIntegerField(
         "CLDR Plurals", blank=True, max_length=11, validators=[validate_cldr])
 
+    team_description = models.TextField(blank=True)
+
     def cldr_plurals_list(self):
         if self.cldr_plurals == '':
             return [1]

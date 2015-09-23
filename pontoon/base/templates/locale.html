@@ -8,6 +8,12 @@
 
 {% block middle %}
 <form>
-  {% include 'project_selector.html' %}
+	{% if locale.team_description %}
+		<div class="about">
+			<p>{{ locale.team_description|safe }}</p>
+		</div>
+	{% endif %}
+
+	{% include 'project_selector.html' %}
 </form>
 {% endblock %}
