@@ -1,10 +1,14 @@
+from datetime import datetime, timedelta
+from itertools import cycle
+
 import factory
-from factory import LazyAttribute, Sequence, SubFactory
+from factory import LazyAttribute, Sequence, SubFactory, SelfAttribute
 from factory.django import DjangoModelFactory
 
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.test import TestCase as BaseTestCase
+from django.utils import timezone
 
 from django_browserid.tests import mock_browserid
 from django_nose.tools import assert_equal
@@ -100,9 +104,12 @@ class TranslationFactory(DjangoModelFactory):
     locale = SubFactory(LocaleFactory)
     string = Sequence(lambda n: 'translation {0}'.format(n))
     user = SubFactory(UserFactory)
-
     class Meta:
         model = Translation
+
+
+class IdenticalTranslationFactory(TranslationFactory):
+    entity = SubFactory(EntityFactory, string=SelfAttribute('..string'))
 
 
 class StatsFactory(DjangoModelFactory):
@@ -143,6 +150,8 @@ def assert_attributes_equal(original, **expected_attrs):
     Assert that the given object has attributes matching the given
     values.
     """
+    if not expected_attrs:
+        raise ValueError('Expected some attributes to check.')
     for key, value in expected_attrs.items():
         original_value = getattr(original, key)
         assert_equal(

@@ -7,6 +7,25 @@
 {% block subtitle %}Top Contributors{% endblock %}
 
 {% block middle %}
+<div class="contributors">
+  <ul class="links">
+    <li {% if not period %}class="active"{% endif %}>
+      <a href="{{ url('pontoon.contributors') }}">All time</a>
+    </li>
+    <li {% if period == 12 %}class="active"{% endif %}>
+      <a href="{{ url('pontoon.contributors') }}?period=12">12 months</a>
+    </li>
+    <li {% if period == 6 %}class="active"{% endif %}>
+      <a href="{{ url('pontoon.contributors') }}?period=6">6 months</a>
+    </li>
+    <li {% if period == 3 %}class="active"{% endif %}>
+      <a href="{{ url('pontoon.contributors') }}?period=3">3 months</a>
+    </li>
+    <li {% if period == 1 %}class="active"{% endif %}>
+      <a href="{{ url('pontoon.contributors') }}?period=1">Last month</a>
+    </li>
+  </ul>
+</div>
 <form>
   <table>
     <thead>
@@ -31,16 +50,16 @@
           <div class="details">
             <div class="total">
               <span>Total</span>
-              <p>{{ contributor.translations.count() }}</p>
+              <p>{{ contributor.translations_count }}</p>
             </div><div class="approved">
               <span>Approved</span>
-              <p>{{ contributor.translations.filter(approved=True).count() }}</p>
+              <p>{{ contributor.translations_approved_count }}</p>
             </div><div class="translated">
               <span>Unapproved</span>
-              <p>{{ contributor.translations.exclude(approved=True).exclude(fuzzy=True).count() }}</p>
+              <p>{{ contributor.translations_unapproved_count }}</p>
             </div><div class="fuzzy">
               <span>Needs work</span>
-              <p>{{ contributor.translations.filter(fuzzy=True).count() }}</p>
+              <p>{{ contributor.translations_needs_work_count }}</p>
             </div>
           </div>
         </td>

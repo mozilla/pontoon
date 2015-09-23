@@ -1,17 +1,23 @@
+from contextlib import nested
+
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
+from django.utils.timezone import now
 
 from django_nose.tools import assert_equal, assert_true
 from mock import patch
 
 from pontoon.base.models import Project
+from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import (
     assert_redirects,
+    UserFactory,
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
     StatsFactory,
-    TestCase
+    TranslationFactory,
+    TestCase,
 )
 
 
@@ -140,3 +146,45 @@ class TranslateTests(TestCase):
         with patch('pontoon.base.views.render', wraps=render) as mock_render:
             self.client.get(url)
             assert_true('part' not in mock_render.call_args[0][2])
+
+
+class ContributorsTests(TestCase):
+    def setUp(self):
+        mock_render = patch('pontoon.base.views.render', wraps=render)
+        self.mock_render = mock_render.start()
+        self.addCleanup(mock_render.stop)
+
+        mock_translations_manager = patch('pontoon.base.models.UserTranslationsManager.with_translation_counts')
+        self.mock_translations_manager = mock_translations_manager.start()
+        self.addCleanup(mock_translations_manager.stop)
+
+    def test_default_period(self):
+        """
+        Calling the top_contributors should result in period being None.
+        """
+        response = self.client.get('/contributors/')
+        assert_true(self.mock_render.call_args[0][2]['period'] is None)
+        assert_true(self.mock_translations_manager.call_args[0][0] is None)
+
+    def test_invalid_period(self):
+        """
+        Checks how view handles invalid period, it result in period being None - displays all data.
+        """
+        # If period parameter is invalid value
+        response = self.client.get('/contributors/?period=invalidperiod')
+        assert_true(self.mock_render.call_args[0][2]['period'] is None)
+        assert_true(self.mock_translations_manager.call_args[0][0] is None)
+
+        # Period shouldn't be negative integer
+        response = self.client.get('/contributors/?period=-6')
+        assert_true(self.mock_render.call_args[0][2]['period'] is None)
+        assert_true(self.mock_translations_manager.call_args[0][0] is None)
+
+    def test_given_period(self):
+        """
+        Checks if view sets and returns data for right period.
+        """
+        with patch('django.utils.timezone.now', wraps=now, return_value=aware_datetime(2015, 7, 5)):
+            response = self.client.get('/contributors/?period=6')
+            assert_equal(self.mock_render.call_args[0][2]['period'], 6)
+            assert_equal(self.mock_translations_manager.call_args[0][0], aware_datetime(2015, 1, 5))

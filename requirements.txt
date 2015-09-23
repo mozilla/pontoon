@@ -196,3 +196,5 @@ pylibmc==1.5.0
 django-pylibmc==0.6.0
 # sha256: U_5sxKvAXajw8DIgLVoQ298q3k1CvHD1ZVeykr8ycok
 django-dirtyfields==0.7
+# sha256: fvosoXFZxZBAjLYk3pqhDTYPFAl8tw3XVZ5jLyz0sEg
+py-dateutil==2.2

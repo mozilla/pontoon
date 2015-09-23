@@ -930,6 +930,19 @@ body > nav,
   color: #7BC876;
 }
 
+.contributors .links {
+  margin-top: 50px;
+}
+
+.contributors .links a {
+  padding: 10px;
+  border-radius: 3px;
+}
+
+.contributors .links li.active a {
+  background-color: #3F4752;
+}
+
 noscript p {
   text-transform: uppercase;
 }

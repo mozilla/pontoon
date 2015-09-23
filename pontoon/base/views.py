@@ -1,4 +1,5 @@
 import base64
+from collections import defaultdict
 import datetime
 import hashlib
 import json
@@ -11,6 +12,8 @@ import requests
 import traceback
 import xml.etree.ElementTree as ET
 import urllib
+
+from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 from django.contrib import messages
@@ -302,8 +305,8 @@ def profile(request):
 
 
 def contributor(request, email, template='user.html'):
-    """Contirbutor profile."""
-    log.debug("Contirbutor profile.")
+    """Contributor profile."""
+    log.debug("Contributor profile.")
 
     # Validate user
     try:
@@ -355,29 +358,19 @@ def contributors(request, template='users.html'):
     """Top contributors view."""
     log.debug("Top contributors view.")
 
-    translations = (
-        Translation.objects
-        .exclude(user=None)
-        .exclude(string=F('entity__string'))
-        .exclude(string=F('entity__string_plural'))
-    )
-
-    users = (
-        User.objects
-        .filter(translation__in=translations).distinct()
-        .exclude(email__in=settings.EXCLUDE)
-        .annotate(translation_count=Count('translation'))
-        .exclude(translation_count=0)
-        .order_by('-translation_count')[:100]
-    )
-
-    for user in users:
-        user.translations = translations.filter(user=user)
+    try:
+        period = int(request.GET['period'])
+        if period <= 0:
+            raise ValueError
+        start_date = (timezone.now() + relativedelta(months=-period))
+    except (KeyError, ValueError):
+        period = None
+        start_date = None
 
     data = {
-        'contributors': users,
+        'contributors': User.translators.with_translation_counts(start_date),
+        'period': period,
     }
-
     return render(request, template, data)
 
 
