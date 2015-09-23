@@ -5,20 +5,20 @@ from django.test.utils import override_settings
 
 from mock import call, Mock, patch
 
-from pontoon.base.models import Repository, Translation, User
+from pontoon.base.models import Entity, Repository, Translation, User
 from pontoon.base.tests import (
     assert_attributes_equal,
-    IdenticalTranslationFactory,
     EntityFactory,
+    IdenticalTranslationFactory,
     LocaleFactory,
     ProjectFactory,
     RepositoryFactory,
     ResourceFactory,
     StatsFactory,
     SubpageFactory,
+    TestCase,
     TranslationFactory,
-    UserFactory,
-    TestCase
+    UserFactory
 )
 from pontoon.base.utils import aware_datetime
 
@@ -440,7 +440,6 @@ class UserTranslationManagerTests(TestCase):
         assert_true(unique_translator in top_contributors)
         assert_true(identical_translator not in top_contributors)
 
-
     def test_contributors_order(self):
         """
         Checks if users are ordered by count of contributions.
@@ -546,3 +545,172 @@ class UserTranslationManagerTests(TestCase):
         assert_attributes_equal(top_contributors[1], translations_count=15,
             translations_approved_count=2, translations_unapproved_count=11,
             translations_needs_work_count=2)
+
+
+class EntityTests(TestCase):
+    def setUp(self):
+        self.locale = LocaleFactory.create(
+            cldr_plurals="0,1"
+        )
+        self.project = ProjectFactory.create(
+            locales=[self.locale]
+        )
+        self.main_resource = ResourceFactory.create(
+            project=self.project,
+            path='main.lang'
+        )
+        self.other_resource = ResourceFactory.create(
+            project=self.project,
+            path='other.lang'
+        )
+        self.main_entity = EntityFactory.create(
+            resource=self.main_resource,
+            string='Source String',
+            string_plural='Plural Source String'
+        )
+        self.other_entity = EntityFactory.create(
+            resource=self.other_resource,
+            string='Other Source String'
+        )
+        self.main_translation = TranslationFactory.create(
+            entity=self.main_entity,
+            locale=self.locale,
+            plural_form=0,
+            string='Translated String'
+        )
+        self.main_translation_plural = TranslationFactory.create(
+            entity=self.main_entity,
+            locale=self.locale,
+            plural_form=1,
+            string='Translated Plural String'
+        )
+        self.other_translation = TranslationFactory.create(
+            entity=self.other_entity,
+            locale=self.locale,
+            string='Other Translated String'
+        )
+        self.subpage = SubpageFactory.create(
+            project=self.project,
+            name='Subpage',
+            resources=[self.main_resource]
+        )
+
+    def assert_serialized_entity(self, entity, path, original, translation):
+        assert_equal(entity['path'], path)
+        assert_equal(entity['original'], original)
+        assert_equal(entity['translation'][0]['string'], translation)
+
+    def test_for_project_locale_filter(self):
+        """
+        Evaluate entities filtering by locale, project, obsolete.
+        """
+        other_locale = LocaleFactory.create()
+        other_project = ProjectFactory.create(
+            locales=[self.locale, other_locale]
+        )
+        obsolete_entity = EntityFactory.create(
+            obsolete=True,
+            resource=self.main_resource,
+            string='Obsolete String'
+        )
+        entities = Entity.for_project_locale(self.project, other_locale)
+        assert_equal(len(entities), 0)
+        entities = Entity.for_project_locale(other_project, self.locale)
+        assert_equal(len(entities), 0)
+        entities = Entity.for_project_locale(self.project, self.locale)
+        assert_equal(len(entities), 2)
+
+    def test_for_project_locale_no_paths(self):
+        """
+        If paths not specified, return all project entities along with their
+        translations for locale.
+        """
+        entities = Entity.for_project_locale(self.project, self.locale)
+
+        assert_equal(len(entities), 2)
+        self.assert_serialized_entity(
+            entities[0], 'main.lang', 'Source String', 'Translated String')
+        self.assert_serialized_entity(
+            entities[1], 'other.lang', 'Other Source String', 'Other Translated String')
+
+        # Ensure all attributes are assigned correctly
+        assert_equal(entities[0], {
+            'comment': '',
+            'format': 'po',
+            'obsolete': False,
+            'marked': 'Source String',
+            'key': '',
+            'path': 'main.lang',
+            'translation': [{
+                'pk': 4,
+                'fuzzy': False,
+                'string': 'Translated String',
+                'approved': False
+            }, {
+                'pk': 5,
+                'fuzzy': False,
+                'string': 'Translated Plural String',
+                'approved': False
+            }],
+            'order': 0,
+            'source': [],
+            'original_plural': 'Plural Source String',
+            'marked_plural': 'Plural Source String',
+            'pk': 4,
+            'original': 'Source String'
+        })
+
+    def test_for_project_locale_paths(self):
+        """
+        If paths specified, return project entities from these paths only along
+        with their translations for locale.
+        """
+        paths = ['other.lang']
+        entities = Entity.for_project_locale(self.project, self.locale, paths)
+
+        assert_equal(len(entities), 1)
+        self.assert_serialized_entity(
+            entities[0], 'other.lang', 'Other Source String', 'Other Translated String')
+
+    def test_for_project_locale_subpages(self):
+        """
+        If paths specified as subpages, return project entities from paths
+        assigned to these subpages only along with their translations for
+        locale.
+        """
+        subpages = [self.subpage.name]
+        entities = Entity.for_project_locale(self.project, self.locale, subpages)
+
+        assert_equal(len(entities), 1)
+        self.assert_serialized_entity(
+            entities[0], 'main.lang', 'Source String', 'Translated String')
+
+    def test_for_project_locale_plurals(self):
+        """
+        For pluralized strings, return all available plural forms.
+        """
+        entities = Entity.for_project_locale(self.project, self.locale)
+
+        assert_equal(entities[0]['original'], 'Source String')
+        assert_equal(entities[0]['original_plural'], 'Plural Source String')
+        assert_equal(entities[0]['translation'][0]['string'], 'Translated String')
+        assert_equal(entities[0]['translation'][1]['string'], 'Translated Plural String')
+
+    def test_for_project_locale_order(self):
+        """
+        Return entities in correct order.
+        """
+        entity_second = EntityFactory.create(
+            order=1,
+            resource=self.main_resource,
+            string='Second String'
+        )
+        entity_first = EntityFactory.create(
+            order=0,
+            resource=self.main_resource,
+            string='First String'
+        )
+        entities = Entity.for_project_locale(self.project, self.locale)
+
+        assert_equal(entities[2]['original'], 'First String')
+        assert_equal(entities[3]['original'], 'Second String')
