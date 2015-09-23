@@ -30,9 +30,8 @@ def load_initial_data(apps, schema_editor):
     # uses has trouble working with the ManyToManyField on the Project
     # model. Our workaround is to use the auto-generated intermediate
     # model directly to create the relation between project and locales.
-    ThroughModel = Project.locales.through
-    for locale in Locale.objects.filter(code__in=PROJECT_LOCALES):
-        ThroughModel.objects.create(project_id=project.id, locale_id=locale.id)
+    locale = Locale.objects.get(code='en-GB')
+    Project.locales.through.objects.create(project_id=project.id, locale_id=locale.id)
 
 
 class Migration(migrations.Migration):
@@ -44,22 +43,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(load_initial_data),
     ]
-
-
-PROJECT_LOCALES = [
-    u'af', u'ak', u'sq', u'ar', u'an', u'hy-AM', u'as', u'ast', u'az', u'eu',
-    u'be', u'bn-BD', u'bn-IN', u'bs', u'br', u'bg', u'my', u'ca', u'zh-CN',
-    u'zh-TW', u'hr', u'cs', u'da', u'nl', u'en-ZA', u'en-GB', u'eo', u'et',
-    u'fi', u'fr', u'fur', u'ff', u'gd', u'gl', u'ka', u'de', u'el', u'gu-IN',
-    u'ht', u'he', u'hi-IN', u'hu', u'is', u'ilo', u'id', u'ga', u'ga-IE',
-    u'it', u'ja', u'kn', u'csb', u'kk', u'km', u'ko', u'ku', u'lv', u'lij',
-    u'lt', u'mk', u'mai', u'ms', u'ml', u'mr', u'mn', u'ne-NP', u'nso',
-    u'nb-NO', u'nn-NO', u'oc', u'or', u'pa', u'pa-IN', u'fa', u'pl', u'pt',
-    u'pt-BR', u'pt-PT', u'ro', u'rm', u'ru', u'sr', u'si', u'sk', u'sl',
-    u'son', u'es-AR', u'es', u'es-CL', u'es-MX', u'es-ES', u'sw', u'sv-SE',
-    u'ta', u'ta-LK', u'te', u'th', u'tr', u'uk', u'hsb', u'ur', u'vi', u'cy',
-    u'fy', u'fy-NL', u'wo', u'xh', u'zu', u'dsb',
-]
 
 
 LOCALES = [
