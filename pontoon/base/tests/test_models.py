@@ -1,7 +1,12 @@
 from django_nose.tools import assert_equal
 
-from pontoon.base.models import Translation
+from pontoon.base.models import Entity, Translation
 from pontoon.base.tests import (
+    EntityFactory,
+    LocaleFactory,
+    ProjectFactory,
+    ResourceFactory,
+    SubpageFactory,
     TranslationFactory,
     UserFactory,
     TestCase
@@ -48,3 +53,85 @@ class TranslationQuerySetTests(TestCase):
     def test_latest_activity_none(self):
         """If empty Translation QuerySet, return None."""
         assert_equal(Translation.objects.none().latest_activity(), None)
+
+
+class EntityTests(TestCase):
+    def setUp(self):
+        self.locale = LocaleFactory.create()
+        self.project = ProjectFactory.create(
+            locales=[self.locale]
+        )
+        self.main_resource = ResourceFactory.create(
+            project=self.project,
+            path='main.lang'
+        )
+        self.other_resource = ResourceFactory.create(
+            project=self.project,
+            path='other.lang'
+        )
+        self.main_entity = EntityFactory.create(
+            resource=self.main_resource,
+            string='Source String'
+        )
+        self.other_entity = EntityFactory.create(
+            resource=self.other_resource,
+            string='Other Source String'
+        )
+        self.main_translation = TranslationFactory.create(
+            entity=self.main_entity,
+            locale=self.locale,
+            string='Translated String'
+        )
+        self.other_translation = TranslationFactory.create(
+            entity=self.other_entity,
+            locale=self.locale,
+            string='Other Translated String'
+        )
+        self.subpage = SubpageFactory.create(
+            project=self.project,
+            name='Subpage',
+            resources=[self.main_resource]
+        )
+
+    def assert_entities_equal(self, entity, path, original, translation):
+        assert_equal(entity['path'], path)
+        assert_equal(entity['original'], original)
+        assert_equal(entity['translation'][0]['string'], translation)
+
+    def test_for_project_locale_no_paths(self):
+        """
+        If paths not specified, return all project entities along with their
+        translations for locale.
+        """
+        entities = Entity.for_project_locale(self.project, self.locale)
+
+        assert_equal(len(entities), 2)
+        self.assert_entities_equal(
+            entities[0], 'main.lang', 'Source String', 'Translated String')
+        self.assert_entities_equal(
+            entities[1], 'other.lang', 'Other Source String', 'Other Translated String')
+
+    def test_for_project_locale_paths(self):
+        """
+        If paths specified, return project entities from these paths only along
+        with their translations for locale.
+        """
+        paths = ['other.lang']
+        entities = Entity.for_project_locale(self.project, self.locale, paths)
+
+        assert_equal(len(entities), 1)
+        self.assert_entities_equal(
+            entities[0], 'other.lang', 'Other Source String', 'Other Translated String')
+
+    def test_for_project_locale_subpages(self):
+        """
+        If paths specified as subpages, return project entities from paths
+        assigned to these subpages only along with their translations for
+        locale.
+        """
+        subpages = [self.subpage.name]
+        entities = Entity.for_project_locale(self.project, self.locale, subpages)
+
+        assert_equal(len(entities), 1)
+        self.assert_entities_equal(
+            entities[0], 'main.lang', 'Source String', 'Translated String')
