@@ -72,7 +72,7 @@ def get_locale_directory(project, locale):
         Dict with directory name and path as keys.
     """
 
-    path = get_repository_path_master(project)
+    path = project.repository_path
 
     for root, dirnames, filenames in os.walk(path):
         # Ignore hidden folders
