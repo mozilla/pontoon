@@ -3,6 +3,7 @@ from __future__ import absolute_import  # Same name as silme library.
 Parser for silme-compatible translation formats.
 """
 import codecs
+import os
 from collections import OrderedDict
 from copy import copy
 
@@ -78,8 +79,16 @@ class SilmeResource(ParsedResource):
             for key, entity in source_resource.entities.items():
                 self.entities[key] = copy_source_entity(entity)
 
-        with codecs.open(path, 'r', 'utf-8') as f:
-            self.structure = parser.get_structure(f.read())
+        try:
+            with codecs.open(path, 'r', 'utf-8') as f:
+                self.structure = parser.get_structure(f.read())
+        except IOError:
+            # If the file doesn't exist, but we have a source resource,
+            # we can keep going, we'll just not have any translations.
+            if source_resource:
+                return
+            else:
+                raise
 
         comments = []
         current_order = 0
@@ -139,6 +148,12 @@ class SilmeResource(ParsedResource):
                     new_structure[pos] = line
                     if len(line) is 0:
                         new_structure.remove_element(pos)
+
+        # Create parent directory if it doesn't exist.
+        try:
+            os.makedirs(os.path.dirname(self.path))
+        except OSError:
+            pass  # Already exists, phew!
 
         with codecs.open(self.path, 'w', 'utf-8') as f:
             f.write(self.parser.dump_structure(new_structure))

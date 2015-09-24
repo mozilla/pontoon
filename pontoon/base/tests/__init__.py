@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
-from itertools import cycle
+import os
+import tempfile
 
 import factory
 from factory import LazyAttribute, Sequence, SubFactory, SelfAttribute
@@ -8,7 +8,6 @@ from factory.django import DjangoModelFactory
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.test import TestCase as BaseTestCase
-from django.utils import timezone
 
 from django_browserid.tests import mock_browserid
 from django_nose.tools import assert_equal
@@ -125,6 +124,7 @@ class TranslationFactory(DjangoModelFactory):
     locale = SubFactory(LocaleFactory)
     string = Sequence(lambda n: 'translation {0}'.format(n))
     user = SubFactory(UserFactory)
+
     class Meta:
         model = Translation
 
@@ -227,3 +227,14 @@ class CONTAINS(object):
 
     def __repr__(self):
         return '<CONTAINS {0}>'.format(','.join(repr(item) for item in self.items))
+
+
+def create_tempfile(contents):
+    """
+    Create a temporary file with the given contents, and return the path
+    to the created file.
+    """
+    fd, path = tempfile.mkstemp()
+    with os.fdopen(fd, 'w') as f:
+        f.write(contents)
+    return path
