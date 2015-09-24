@@ -671,8 +671,7 @@ def update_from_repository(project):
 
     repository_type = project.repository_type
     repository_url = project.repository_url
-    repository_path = repository_path_master = \
-        get_repository_path_master(project)
+    repository_path = repository_path_master = project.repository_path
 
     # If one-locale repo, set repository_url_master and update repository_path
     repository_url_master = False
