@@ -1,8 +1,62 @@
+from __future__ import absolute_import  # Same name as silme library.
+
+import os.path
+import tempfile
 from textwrap import dedent
 
+from django_nose.tools import assert_equal, assert_raises, assert_true
+from silme.format.dtd import FormatParser as DTDParser
+
 from pontoon.base.formats import silme
-from pontoon.base.tests import TestCase
+from pontoon.base.tests import create_tempfile, LocaleFactory, TestCase
 from pontoon.base.tests.formats import FormatTestsMixin
+
+
+class SilmeResourceTests(TestCase):
+    def test_init_missing_resource(self):
+        """
+        If the translated resource doesn't exist and no source resource
+        is given, raise an IOError.
+        """
+        path = os.path.join(tempfile.mkdtemp(), 'does', 'not', 'exist.dtd')
+        with assert_raises(IOError):
+            silme.SilmeResource(DTDParser, path, source_resource=None)
+
+    def create_nonexistant_resource(self, path):
+        source_path = create_tempfile(dedent("""
+            <!ENTITY SourceString "Source String">
+        """))
+        source_resource = silme.SilmeResource(DTDParser, source_path)
+
+        return silme.SilmeResource(
+            DTDParser, path,
+            source_resource=source_resource
+        )
+
+    def test_init_missing_resource_with_source(self):
+        """
+        If the translated resource doesn't exist but a source resource
+        is given, return a resource with empty translations.
+        """
+        path = os.path.join(tempfile.mkdtemp(), 'does', 'not', 'exist.dtd')
+        translated_resource = self.create_nonexistant_resource(path)
+
+        assert_equal(len(translated_resource.translations), 1)
+        translation = translated_resource.translations[0]
+        assert_equal(translation.strings, {})
+
+    def test_save_create_dirs(self):
+        """
+        If the directories in a resource's path don't exist, create them
+        on save.
+        """
+        path = os.path.join(tempfile.mkdtemp(), 'does', 'not', 'exist.dtd')
+        translated_resource = self.create_nonexistant_resource(path)
+
+        translated_resource.translations[0].strings = {None: 'New Translated String'}
+        translated_resource.save(LocaleFactory.create())
+
+        assert_true(os.path.exists(path))
 
 
 BASE_DTD_FILE = """

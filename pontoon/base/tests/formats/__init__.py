@@ -5,6 +5,7 @@ from django_nose.tools import assert_equal
 
 from pontoon.base.tests import (
     assert_attributes_equal,
+    create_tempfile,
     LocaleFactory,
 )
 from pontoon.base.utils import match_attr
@@ -49,12 +50,10 @@ class FormatTestsMixin(object):
         )
 
     def parse_string(self, string, source_string=None):
-        fd, path = tempfile.mkstemp()
-        with os.fdopen(fd, 'w') as f:
-            f.write(string)
+        path = create_tempfile(string)
 
         if source_string is not None:
-            source_path, source_resource = self.parse_string(source_string)
+            source_path = create_tempfile(source_string)
             return path, self.parse(path, source_path=source_path)
         else:
             return path, self.parse(path)
