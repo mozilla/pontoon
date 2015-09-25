@@ -67,8 +67,8 @@ requests==2.6.2
 # sha256: 4rCwWTbCdrHt0uFSVVMjO2Zt-eKbXDuiI-7XOCd8gqA
 rsa==3.1.4
 
-# sha256: bt5oqLoOA4Aee1HKWrheVQ_071HioK6CY7bg-KwEouQ
-https://github.com/Osmose/silme/archive/v0.9.1.zip#egg=silme==0.9.1
+# sha256: 885mT4MGch1f7eqUp8OT4c95tnWADOt_ZwndUcezuJA
+https://github.com/Osmose/silme/archive/v0.9.2.zip#egg=silme==0.9.2
 
 # sha256: QYqTw5en7asj5ViNvAZ6x0pyPts9VBvUk295R252Rdo
 # sha256: 4kBSQR_E-9H2cmNVN8P8IzDZSBsYwDF2lbRiWVEskdU

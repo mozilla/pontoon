@@ -19,6 +19,7 @@ SUPPORTED_FORMAT_PARSERS = {
     '.dtd': silme.parse_dtd,
     '.properties': silme.parse_properties,
     '.ini': silme.parse_ini,
+    '.inc': silme.parse_inc,
 }
 
 

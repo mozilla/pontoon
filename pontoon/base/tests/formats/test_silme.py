@@ -8,7 +8,12 @@ from django_nose.tools import assert_equal, assert_raises, assert_true
 from silme.format.dtd import FormatParser as DTDParser
 
 from pontoon.base.formats import silme
-from pontoon.base.tests import create_tempfile, LocaleFactory, TestCase
+from pontoon.base.tests import (
+    assert_attributes_equal,
+    create_tempfile,
+    LocaleFactory,
+    TestCase,
+)
 from pontoon.base.tests.formats import FormatTestsMixin
 
 
@@ -445,3 +450,147 @@ class IniTests(FormatTestsMixin, TestCase):
         """)
 
         self.run_save_translation_identical(source_string, input_string, expected_string)
+
+
+BASE_INC_FILE = """
+# Sample comment
+#define SourceString Translated String
+
+# First comment
+# Second comment
+#define MultipleComments Translated Multiple Comments
+
+#define NoCommentsorSources Translated No Comments or Sources
+
+#define EmptyTranslation\x20
+"""
+
+
+class IncTests(FormatTestsMixin, TestCase):
+    parse = staticmethod(silme.parse_inc)
+    supports_keys = False
+    supports_source = False
+    supports_source_string = False
+
+    def key(self, source_string):
+        """Inc keys can't contain spaces."""
+        return super(IncTests, self).key(source_string).replace(' ', '')
+
+    def test_parse_basic(self):
+        self.run_parse_basic(BASE_INC_FILE, 0)
+
+    def test_parse_multiple_comments(self):
+        self.run_parse_multiple_comments(BASE_INC_FILE, 1)
+
+    def test_parse_no_comments_no_sources(self):
+        self.run_parse_no_comments_no_sources(BASE_INC_FILE, 2)
+
+    def test_parse_empty_translation(self):
+        self.run_parse_empty_translation(BASE_INC_FILE, 3)
+
+    def test_save_basic(self):
+        input_string = dedent("""
+            # Comment
+            #define SourceString Source String
+        """)
+        expected_string = dedent("""
+            # Comment
+            #define SourceString New Translated String
+        """)
+
+        self.run_save_basic(input_string, expected_string, source_string=input_string)
+
+    def test_save_remove(self):
+        """
+        Deleting strings removes them completely from the inc file.
+        """
+        input_string = dedent("""
+            # Comment
+            #define SourceString Source String
+        """)
+        expected_string = dedent("""
+            # Comment
+        """)
+
+        self.run_save_remove(input_string, expected_string, source_string=input_string)
+
+    def test_save_source_removed(self):
+        """
+        If an entity is missing from the source resource, remove it from
+        the translated resource.
+        """
+        source_string = dedent("""
+            #define SourceString Source String
+        """)
+        input_string = dedent("""
+            #define MissingSourceString Translated Missing String
+            #define SourceString Translated String
+        """)
+        expected_string = dedent("""
+            #define SourceString Translated String
+        """)
+
+        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
+
+    def test_save_source_no_translation(self):
+        """
+        If an entity is missing from the translated resource and has no
+        translation, do not add it back in.
+        """
+        source_string = dedent("""
+            #define SourceString Source String
+            #define OtherSourceString Other String
+        """)
+        input_string = dedent("""
+            #define OtherSourceString Translated Other String
+        """)
+
+        self.run_save_no_changes(input_string, input_string, source_string=source_string)
+
+    def test_save_translation_missing(self):
+        source_string = dedent("""
+            #define String Source String
+            #define MissingString Missing Source String
+        """)
+        input_string = dedent("""
+            #define String Translated String
+        """)
+        expected_string = dedent("""
+            #define String Translated String
+            #define MissingString Translated Missing String
+        """)
+
+        self.run_save_translation_missing(source_string, input_string, expected_string)
+
+    def test_save_translation_identical(self):
+        source_string = dedent("""
+            #define String Source String
+        """)
+        input_string = dedent("""
+            #define String Translated String
+        """)
+        expected_string = dedent("""
+            #define String Source String
+        """)
+
+        self.run_save_translation_identical(source_string, input_string, expected_string)
+
+    def test_moz_langpack_contributors(self):
+        """
+        If a .inc file has a commented-out entity named
+        MOZ_LANGPACK_CONTRIBUTORS, the parser should un-comment it and
+        process it as an entity.
+        """
+        input_string = dedent("""
+            #define String Some String
+
+            # #define MOZ_LANGPACK_CONTRIBUTORS Contributor list
+        """)
+
+        path, resource = self.parse_string(input_string)
+        assert_equal(len(resource.translations), 2)
+        assert_attributes_equal(
+            resource.translations[1],
+            key='MOZ_LANGPACK_CONTRIBUTORS',
+            strings={None: 'Contributor list'}
+        )

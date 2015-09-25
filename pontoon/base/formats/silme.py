@@ -10,6 +10,7 @@ from copy import copy
 import silme
 from silme.format.dtd import FormatParser as DTDParser
 from silme.format.ini import FormatParser as IniParser
+from silme.format.inc import FormatParser as IncParser
 from silme.format.properties import FormatParser as PropertiesParser
 
 from pontoon.base import SyncError
@@ -81,7 +82,18 @@ class SilmeResource(ParsedResource):
 
         try:
             with codecs.open(path, 'r', 'utf-8') as f:
-                self.structure = parser.get_structure(f.read())
+                # .inc files have a special commented-out entity called
+                # MOZ_LANGPACK_CONTRIBUTORS. We un-comment it before
+                # parsing so locales can translate it.
+                if self.parser is IncParser:
+                    inc_lines = []
+                    for inc_line in f:
+                        if inc_line.startswith('# #define MOZ_LANGPACK_CONTRIBUTORS'):
+                            inc_line = inc_line[2:]
+                        inc_lines.append(inc_line)
+                    content = '\n'.join(inc_lines)
+                else:
+                    content = f.read()
         except IOError:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
@@ -89,6 +101,8 @@ class SilmeResource(ParsedResource):
                 return
             else:
                 raise
+
+        self.structure = parser.get_structure(content)
 
         comments = []
         current_order = 0
@@ -190,6 +204,10 @@ def parse_properties(path, source_path=None):
 
 def parse_ini(path, source_path=None):
     return parse(IniParser, path, source_path)
+
+
+def parse_inc(path, source_path=None):
+    return parse(IncParser, path, source_path)
 
 
 def parse_dtd(path, source_path=None):
