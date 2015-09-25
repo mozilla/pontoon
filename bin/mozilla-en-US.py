@@ -9,35 +9,35 @@ import shutil
 import subprocess
 
 TARGET_REPOS = {
-    'firefox-aurora': {
+    'firefox': {
         'folders': [
             'browser', 'browser/branding/official', 'dom', 'netwerk',
             'security/manager', 'services/sync', 'toolkit', 'webapprt',
         ],
-        'repository': 'mozilla-aurora',
+        'source': 'mozilla',
     },
-    'firefox-for-android-aurora': {
+    'firefox-for-android': {
         'folders': ['mobile', 'mobile/android', 'mobile/android/base'],
-        'repository': 'mozilla-aurora',
+        'source': 'mozilla',
     },
-    'thunderbird-aurora': {
+    'thunderbird': {
         'folders': [
             'chat', 'editor/ui', 'mail',
             'other-licenses/branding/thunderbird'
         ],
-        'repository': 'comm-aurora',
+        'source': 'comm',
     },
-    'lightning-aurora': {
+    'lightning': {
         'folders': ['calendar'],
-        'repository': 'comm-aurora',
+        'source': 'comm',
     },
-    'seamonkey-aurora': {
+    'seamonkey': {
         'folders': ['suite'],
-        'repository': 'comm-aurora',
+        'source': 'comm',
     },
 }
 
-SOURCE_REPOS = set(v["repository"] for v in TARGET_REPOS.values())
+SOURCE_REPOS = set(v["source"] for v in TARGET_REPOS.values())
 
 
 def execute(command, cwd=None):
@@ -96,33 +96,35 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-# Clone or update source repositories
-for repo in SOURCE_REPOS:
-    base = 'ssh://hg.mozilla.org/releases/'
-    url = os.path.join(base, repo)
-    target = os.path.join('source', repo)
-    pull(url, target)
+for channel in ['aurora', 'beta']:
+    for repo in SOURCE_REPOS:
+        ending = repo + '-' + channel
+        url = 'ssh://hg.mozilla.org/releases/' + ending
+        target = os.path.join('source', ending)
 
-for repo in TARGET_REPOS.keys():
-    base = 'ssh://hg.mozilla.org/users/m_owca.info/'
-    url = os.path.join(base, repo)
-    target = os.path.join('target', repo)
+        # Clone or update source repositories
+        pull(url, target)
 
-    # Clone or update target repositories
-    pull(url, target)
+    for repo in TARGET_REPOS.keys():
+        ending = repo + '-' + channel
+        url = 'ssh://hg.mozilla.org/users/m_owca.info/' + ending
+        target = os.path.join('target', ending)
 
-    # Copy folders from source to target
-    folders = TARGET_REPOS[repo]['folders']
-    source = TARGET_REPOS[repo]['repository']
+        # Clone or update target repositories
+        pull(url, target)
 
-    for folder in folders:
-        origin = os.path.join('source', source, folder, 'locales/en-US')
-        destination = os.path.join('target', repo, folder)
+        # Copy folders from source to target
+        folders = TARGET_REPOS[repo]['folders']
+        source = TARGET_REPOS[repo]['source'] + '-' + channel
 
-        if os.path.exists(destination):
-            shutil.rmtree(destination)
+        for folder in folders:
+            origin = os.path.join('source', source, folder, 'locales/en-US')
+            destination = os.path.join('target', ending, folder)
 
-        shutil.copytree(origin, destination)
+            if os.path.exists(destination):
+                shutil.rmtree(destination)
 
-    # Commit and push target repositories
-    push(target)
+            shutil.copytree(origin, destination)
+
+        # Commit and push target repositories
+        push(target)
