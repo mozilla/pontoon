@@ -118,9 +118,10 @@ class LangVisitor(NodeVisitor):
     def visit_lang_file(self, node, children):
         """
         Find comments that are associated with an entity and add them
-        to the entity's comments list.
+        to the entity's comments list. Also assign order to entities.
         """
         comments = []
+        order = 0
         for child in children:
             if isinstance(child, LangComment):
                 comments.append(child)
@@ -128,6 +129,8 @@ class LangVisitor(NodeVisitor):
 
             if isinstance(child, LangEntity):
                 child.comments = [c.content for c in comments]
+                child.order = order
+                order += 1
 
             comments = []
 
