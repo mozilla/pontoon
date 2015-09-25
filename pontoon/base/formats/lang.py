@@ -4,9 +4,8 @@ Parser for the .lang translation format.
 import codecs
 import re
 import sys
-from collections import namedtuple
 
-from parsimonious.exceptions import ParseError as ParsimoniousParseError
+from parsimonious.exceptions import ParseError as ParsimoniousParseError, VisitationError
 from parsimonious.grammar import Grammar
 from parsimonious.nodes import NodeVisitor
 
@@ -150,6 +149,10 @@ class LangVisitor(NodeVisitor):
             tags = [m.group(1) for m in tag_matches]
             translation = translation[:tag_matches[0].start()].strip()
 
+        if translation == '':
+            raise Exception('Blank translation for key {key} is not allowed in '
+                            'langfiles.'.format(key=string))
+
         return LangEntity(string, translation, tags)
 
     def visit_string(self, node, (marker, content, end)):
@@ -186,8 +189,8 @@ def parse(path, source_path=None):
 
     try:
         children = LangVisitor().parse(content)
-    except ParsimoniousParseError as err:
+    except (ParsimoniousParseError, VisitationError) as err:
         wrapped = ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
-        raise wrapped, None, sys.exc_info()[2]
+        raise wrapped, None, sys.exc_info()[2]  # NOQA
 
     return LangResource(path, children)

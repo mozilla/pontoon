@@ -1,9 +1,10 @@
 import os.path
 from textwrap import dedent
 
-from django_nose.tools import assert_equal
+from django_nose.tools import assert_equal, assert_raises
 
 from pontoon.base.formats import lang
+from pontoon.base.formats.base import ParseError
 from pontoon.base.tests import assert_attributes_equal, TestCase
 from pontoon.base.tests.formats import FormatTestsMixin
 
@@ -135,3 +136,20 @@ class LangTests(FormatTestsMixin, TestCase):
         path, resource = self.parse_string(expected)
         resource.save(self.locale)
         self.assert_file_content(path, expected)
+
+    def test_parse_empty_translation(self):
+        """
+        If an entity has an empty translation, parse should raise a
+        ParseError.
+        """
+        with assert_raises(ParseError):
+            self.parse_string(dedent("""
+                # Comment
+                ;Source
+                Translated
+
+                ;Empty
+
+                ;Not Empty
+                Nope
+            """))

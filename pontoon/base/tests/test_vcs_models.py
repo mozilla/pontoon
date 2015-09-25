@@ -4,7 +4,8 @@ from django_nose.tools import assert_equal
 from mock import Mock, patch, PropertyMock
 
 from pontoon.base.models import Project
-from pontoon.base.tests import ProjectFactory, TestCase
+from pontoon.base.tests import CONTAINS, ProjectFactory, TestCase
+from pontoon.base.formats.base import ParseError
 from pontoon.base.vcs_models import VCSProject
 
 
@@ -65,3 +66,24 @@ class VCSProjectTests(TestCase):
             self.vcs_project.source_directory_path(),
             os.path.join(TEST_CHECKOUT_PATH, 'real_resources', 'templates')
         )
+
+    def test_resources_parse_error(self):
+        """
+        If VCSResource() raises a ParseError while loading, log an error
+        and skip the resource.
+        """
+        self.vcs_project.relative_resource_paths = Mock(return_value=['failure', 'success'])
+
+        # Fail only if the path is failure so we can test the ignore.
+        def vcs_resource_constructor(project, path):
+            if path == 'failure':
+                raise ParseError('error message')
+            else:
+                return 'successful resource'
+
+        with patch('pontoon.base.vcs_models.VCSResource') as MockVCSResource, \
+             patch('pontoon.base.vcs_models.log') as mock_log:
+            MockVCSResource.side_effect = vcs_resource_constructor
+
+            assert_equal(self.vcs_project.resources, {'success': 'successful resource'})
+            mock_log.error.assert_called_with(CONTAINS('failure', 'error message'))
