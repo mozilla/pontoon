@@ -3,10 +3,14 @@ body {
 }
 
 mark.placeable {
-  background: transparent;
-  color: #FE8388;
+  background: #4D5967;
+  border: 1px solid #5E6475;
+  border-radius: 2px;
+  color: #CCCCCC;
   font-style: normal;
   font-weight: normal;
+  margin: 0 1px;
+  padding: 0 2px;
 }
 
 #project-load {
@@ -857,6 +861,10 @@ body > header aside p {
 
 #source-pane #original mark.placeable {
   cursor: pointer;
+}
+
+#source-pane #original mark.placeable:hover {
+  color: #7BC876;
 }
 
 #editor nav ul {
