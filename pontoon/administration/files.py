@@ -611,7 +611,7 @@ def extract_to_database(project, locales=None):
     """Extract data from project files and save or update in DB."""
     log.debug("Extract data from project files and save or update in DB.")
 
-    repository_path_master = get_repository_path_master(project)
+    repository_path_master = project.repository_path
     source_directory = get_source_directory(repository_path_master)
 
     source_locale = 'en-US'
