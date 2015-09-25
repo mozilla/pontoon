@@ -1,0 +1,97 @@
+{% import 'latest_activity.html' as latest_activity %}
+{% set search = request.GET.urlencode() %}
+
+<!-- Part selector -->
+<div class="part select">
+  {% if part %}
+  <div class="button breadcrumbs selector" title="{% if not search %}{{ part }}{% endif %}">
+    <div class="icon fa {% if search %}fa-search{% else %}fa-file-o{% endif %}"></div>
+    <span class="title noselect">{% if search %}{{ request.GET['keyword'] }}{% else %}{{ part.rsplit('/')[-1] }}{% endif %}</span>
+  </div>
+  {% endif %}
+
+  <div class="menu tabs">
+    <nav>
+      <ul>
+        <li class="active"><a href="#resources"><span class="fa fa-file-o"></span>Resources</a></li>
+        <li><a href="#search-project"><span class="fa fa-search"></span>Search</a></li>
+      </ul>
+    </nav>
+
+    <section class="resources">
+      <div class="search-wrapper clearfix">
+        <div class="icon fa fa-search"></div>
+        <input type="search" autocomplete="off" autofocus>
+      </div>
+
+      {% if not part %}
+      <div class="sort clearfix">
+        <span class="name asc">File Name<i class="fa"></i></span>
+        <span class="latest">Latest activity<i class="fa"></i></span>
+        <span class="progress">Progress<i class="fa"></i></span>
+      </div>
+      {% endif %}
+
+      <ul>
+        {% if not part %}
+        {% for p in parts %}
+        <li class="clearfix">
+          <span class="name">
+            <a href="{{ url('pontoon.translate', locale.code, project.slug, p['resource__path']) }}" class="clearfix">
+              {{ p['resource__path'] }}
+            </a>
+          </span>
+
+          {{ latest_activity.span(project.latest_activity(locale, p['resource__path'])) }}
+
+          <span class="chart-wrapper">
+            <a href="{{ url('pontoon.translate', locale.code, project.slug, p['resource__path']) }}" class="clearfix">
+              <span class="chart" data-chart="{{ {'translated': p['translated_count'], 'fuzzy': p['fuzzy_count'], 'total': p['resource__entity_count'], 'approved': p['approved_count']}|to_json }}">
+                <span class="approved" style="width:{{ p['approved_count'] / p['resource__entity_count'] * 100 }}%;"></span>
+                <span class="translated" style="width:{{ p['translated_count'] / p['resource__entity_count'] * 100 }}%;"></span>
+                <span class="fuzzy" style="width:{{ p['fuzzy_count'] / p['resource__entity_count'] * 100 }}%;"></span>
+              </span>
+              <span class="percent">{{ (p['approved_count'] / p['resource__entity_count'] * 100) | round(0, 'floor') | int }}%</span>
+            </a>
+          </span>
+        </li>
+        {% endfor %}
+        {% endif %}
+
+        <li class="no-match">No results</li>
+      </ul>
+    </section>
+
+    <section class="search-project">
+      <form class="search-form" method="get">
+        <div class="search-wrapper clearfix">
+          <div class="icon fa fa-search"></div>
+          <input type="search" autocomplete="off" autofocus name="keyword" value="{% if search %}{{ request.GET['keyword'] }}{% endif %}" placeholder="Search entire project">
+        </div>
+
+        <ul class="options">
+          <li data-name="sources" class="check-box{% if request.GET.get('sources', None) or not search %}{{ ' enabled' }}{% endif %}">
+            <i class="fa fa-fw"></i>Source strings
+            <input type="checkbox" name="sources"{% if request.GET.get('sources', None) or not search %}{{ ' checked' }}{% endif %}>
+          </li>
+          <li data-name="translations" class="check-box{% if request.GET.get('translations', None) or not search %}{{ ' enabled' }}{% endif %}">
+            <i class="fa fa-fw"></i>Translations
+            <input type="checkbox" name="translations"{% if request.GET.get('translations', None) or not search %}{{ ' checked' }}{% endif %}>
+          </li>
+          <li data-name="comments" class="check-box{% if request.GET.get('comments', None) %}{{ ' enabled' }}{% endif %}">
+            <i class="fa fa-fw"></i>Comments
+            <input type="checkbox" name="comments"{% if request.GET.get('comments', None) %}{{ ' checked' }}{% endif %}>
+          </li>
+          <li data-name="keys" class="check-box{% if request.GET.get('keys', None) %}{{ ' enabled' }}{% endif %}">
+            <i class="fa fa-fw"></i>Keys
+            <input type="checkbox" name="keys"{% if request.GET.get('keys', None) %}{{ ' checked' }}{% endif %}>
+          </li>
+          <li data-name="casesensitive" class="check-box{% if request.GET.get('casesensitive', None) %}{{ ' enabled' }}{% endif %}">
+            <i class="fa fa-fw"></i>Case sensitive
+            <input type="checkbox" name="casesensitive"{% if request.GET.get('casesensitive', None) %}{{ ' checked' }}{% endif %}>
+          </li>
+        </ul>
+      </form>
+    </section>
+  </div>
+</div>

@@ -117,16 +117,18 @@ class ProjectPartsTests(TestCase):
             pk__in=resources
         )
 
-        return self.project.locales_parts_stats
+        return self.project.locales_parts_stats()
 
     def test_locales_parts_stats_no_page_one_resource(self):
         """
-        Return empty list in no subpage and only one resource defined.
+        Return resource paths and stats in no subpage and one resource defined.
         """
         project_details = self._fetch_locales_parts_stats()
         details = project_details.get(self.locale.code)
 
-        assert_equal(details, [])
+        assert_equal(len(details), 1)
+        assert_equal(details[0]['resource__path'], '/main/path.po')
+        assert_equal(details[0]['translated_count'], 0)
 
     def test_locales_parts_stats_no_page_multiple_resources(self):
         """

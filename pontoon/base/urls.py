@@ -49,15 +49,15 @@ urlpatterns = patterns(
         views.project,
         name='pontoon.project'),
 
-    # Translate project's part
+    # Translate project
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',
         views.translate,
-        name='pontoon.translate.part'),
-
-    # Translate project
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/$',
-        views.translate,
         name='pontoon.translate'),
+
+    # Locale-project dashboard
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/$',
+        views.locale_project,
+        name='pontoon.locale.project'),
 
     # List contributors
     url(r'^contributors/$',

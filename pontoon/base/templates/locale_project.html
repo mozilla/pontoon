@@ -1,0 +1,29 @@
+{% extends "landing.html" %}
+
+{% block title %}Pontoon &middot; {{ project.name }} &middot; {{ locale.name }} ({{ locale.code }}){% endblock %}
+
+{% block class %}locale-project{% endblock %}
+
+{% block before %}
+<!-- Server data -->
+<div id="server" class="hidden"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+     >
+</div>
+{% endblock %}
+
+{% block subtitle %}{{ project.name }} &middot; {{ locale.name }} ({{ locale.code }}){% endblock %}
+
+{% block middle %}
+<div class="container">
+    {% include 'part_selector.html' %}
+</div>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'locale_project' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'locale_project' %}
+{% endblock %}

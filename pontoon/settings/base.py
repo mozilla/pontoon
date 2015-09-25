@@ -210,6 +210,12 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/admin_project.min.css',
     },
+    'locale_project': {
+        'source_filenames': (
+            'css/locale_project.css',
+        ),
+        'output_filename': 'css/locale_project.min.css',
+    },
     'locales': {
         'source_filenames': (
             'css/locales.css',
@@ -255,6 +261,12 @@ PIPELINE_JS = {
             'js/jquery.timeago.js',
         ),
         'output_filename': 'js/main.min.js',
+    },
+    'locale_project': {
+        'source_filenames': (
+            'js/locale_project.js',
+        ),
+        'output_filename': 'js/locale_project.min.js',
     },
     'project': {
         'source_filenames': (

@@ -152,13 +152,14 @@ body > header .loader {
   margin-left: 10px;
 }
 
-body > header .project.select {
-  margin-left: 10px;
+body > header .project.select,
+body > header .locale.select,
+body > header .part.select {
   width: auto;
 }
 
-body > header .locale.select {
-  width: auto;
+body > header .project.select {
+  margin-left: 10px;
 }
 
 .select > .button.breadcrumbs {
@@ -179,6 +180,12 @@ body > header .locale.select {
   top: 60px;
 }
 
+.part .selector .icon {
+  float: left;
+  margin: 1px 10px 0 0;
+  color: #7BC876;
+}
+
 .project.select .menu,
 .part.select .menu {
   display: none;
@@ -187,7 +194,14 @@ body > header .locale.select {
 }
 
 .part.select .menu {
-  width: 580px;
+  width: 600px;
+}
+
+.part .menu section {
+  border: 1px solid #5E6475;
+  border-top: transparent;
+  margin-top: -1px;
+  padding: 20px 10px 10px;
 }
 
 .locale.select .menu {
@@ -198,7 +212,8 @@ body > header .locale.select {
 
 .menu ul,
 .project.select .menu ul,
-.locale.select .menu ul {
+.locale.select .menu ul,
+.part.select .menu ul {
   margin: 0;
   max-height: 318px;
 }
@@ -374,6 +389,7 @@ body > header .notification {
   top: 70px;
   visibility: visible;
   width: auto;
+  z-index: 25;
 }
 
 body > header .notification.hide {
@@ -644,7 +660,7 @@ body > header aside p {
 }
 
 #entitylist > .wrapper {
-  bottom: 0px;
+  bottom: 0;
   overflow-y: auto;
   position: absolute;
   top: 44px;
@@ -877,7 +893,7 @@ body > header aside p {
   border-bottom: 1px solid #5E6475;
   border-right: 1px solid #5E6475;
   display: table-cell;
-  text-align: center;
+  float: none;
 }
 
 #editor nav li:last-child {
@@ -895,16 +911,12 @@ body > header aside p {
 
 #editor nav li a {
   color: #CCCCCC;
-  display: block;
-  outline: none;
-  padding: 10px;
-  text-transform: uppercase;
 }
 
 #editor nav li a > span > span {
-  left: 0px;
+  left: 0;
   position: absolute;
-  right: 0px;
+  right: 0;
   top: 2px;
   vertical-align: 0;
   visibility: hidden;
@@ -939,6 +951,12 @@ body > header aside p {
 
 #plural-tabs ul li {
   display: none;
+  text-transform: uppercase;
+}
+
+#plural-tabs ul li a {
+  display: inline-block;
+  padding: 10px;
 }
 
 #plural-tabs ul li a sup {
@@ -1058,7 +1076,6 @@ body > header aside p {
 
 #helpers > section {
   bottom: 0;
-  display: none;
   left: 0;
   overflow-y: auto;
   padding-top: 25px;
@@ -1067,26 +1084,27 @@ body > header aside p {
   top: 43px;
 }
 
-#helpers > section#custom-search .search-wrapper {
-  margin-bottom: 0;
+#helpers > section.custom-search .search-wrapper {
+  margin: 0 10px 10px;
 }
 
-#helpers > section#custom-search .icon {
-  right: 10px;
+#helpers > section.custom-search .icon {
+  left: 2px;
+  right: auto;
 }
 
-#helpers > section#custom-search.loading .icon,
-#helpers > section#custom-search .icon.fa-cog {
+#helpers > section.custom-search.loading .icon,
+#helpers > section.custom-search .icon.fa-cog {
   display: none;
 }
 
-#helpers > section#custom-search.loading .icon.fa-cog {
+#helpers > section.custom-search.loading .icon.fa-cog {
   display: block;
 }
 
-#helpers > section#custom-search input[type=search] {
+#helpers > section.custom-search input[type=search] {
   background: transparent;
-  padding-left: 10px;
+  padding: 10px 10px 5px 25px;
 }
 
 #helpers > section ul li {
@@ -1119,8 +1137,8 @@ body > header aside p {
   float: right;
 }
 
-#helpers > section#history ul li > header .stress,
-#helpers > section#other-locales ul li > header .stress {
+#helpers > section.history ul li > header .stress,
+#helpers > section.other-locales ul li > header .stress {
   padding-right: 0;
 }
 

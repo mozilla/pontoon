@@ -39,7 +39,7 @@
   <li><span class="fa fa-fw fa-envelope"></span><a href="mailto:{{ contributor.email }}">{{ contributor.email }}</a></li>
   <li><span class="fa fa-fw fa-lock"></span>Can submit {% if contributor.has_perm('base.can_localize') %}and approve {% endif %}translations</li>
   {% if user.is_authenticated() and user.email == contributor.email %}
-  <li class="quality-checks{% if user.profile.quality_checks %} enabled{% endif %}"><span class="fa fa-fw"></span>Quality checks</li>
+  <li class="check-box quality-checks{% if user.profile.quality_checks %} enabled{% endif %}"><span class="fa fa-fw"></span>Quality checks</li>
   {% endif %}
 </ul>
 
@@ -95,7 +95,7 @@
             <figcaption>{{ event.date.strftime('%H:%M') }}</figcaption>
           </figure>
           {% if event.project %}
-            <a href="{{ url('pontoon.translate', event.translation.locale.code, event.project.slug) }}">{{ event.project.name }}</a>
+            <a href="{{ url('pontoon.translate', event.translation.locale.code, event.project.slug, event.translation.entity.resource.path) }}">{{ event.project.name }}</a>
           {% endif %}
         </div>
       </div>

@@ -104,10 +104,10 @@
 }
 
 .info .fa {
-  padding-right: 6px;
+  margin-right: 6px;
 }
 
-.info li.quality-checks {
+.info li.check-box {
   cursor: pointer;
   display: inline-block;
 }

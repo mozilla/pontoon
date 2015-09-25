@@ -15,6 +15,7 @@
      {% if project.width %}data-width="{{ project.width }}"{% endif %}
      {% if project.links %}data-links="{{ project.links|lower }}"{% endif %}
      {% if part %}data-part="{{ part }}"{% endif %}
+     {% if search %}data-search="{{ search }}"{% endif %}
      {% if redirect %}data-redirect="{{ redirect }}"{% endif %}
      {% if user.email %}data-email="{{ user.email }}"{% endif %}
      {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}
@@ -32,21 +33,7 @@
 
     {% include 'locale_selector.html' %}
 
-    <!-- Part selector -->
-    <div class="part select{% if not part %} hidden{% endif %}">
-      <div class="button breadcrumbs selector" title="{{ part }}">
-        <span class="title noselect">{% if part %}{{ part.rsplit('/')[-1] }}{% endif %}</span>
-      </div>
-      <div class="menu">
-        <div class="search-wrapper clearfix">
-          <div class="icon fa fa-search"></div>
-          <input type="search" autocomplete="off">
-        </div>
-        <ul>
-          <li class="no-match">No results</li>
-        </ul>
-      </div>
-    </div>
+    {% include 'part_selector.html' %}
 
     <!-- Go -->
     <div class="go select">
@@ -114,7 +101,7 @@
           <ul>
             {% if user.is_authenticated() %}
             <li data-url="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View profile</li>
-            <li class="quality-checks{% if user.profile.quality_checks %} enabled{% endif %}"><i class="fa fa-fw"></i>Quality checks</li>
+            <li class="quality-checks check-box{% if user.profile.quality_checks %} enabled{% endif %}"><i class="fa fa-fw"></i>Quality checks</li>
             <li class="horizontal-separator"></li>
             {% endif %}
 
@@ -144,7 +131,6 @@
             {% else %}
             <li class="sign-in"><i class="fa fa-sign-in fa-fw"></i>Sign in</li>
             {% endif %}
-
           </ul>
         </div>
 
@@ -282,29 +268,29 @@
       <button id="save">Save</button>
     </menu>
 
-    <div id="helpers">
+    <div id="helpers" class="tabs">
       <nav>
         <ul>
-          <li class="active"><a href="#history"><span>History<span class="fa fa-cog fa-lg fa-spin"></span></a></span></li>
-          <li><a href="#machinery"><span>Machinery<span class="fa fa-cog fa-lg fa-spin"></span></a></span></li>
-          <li><a href="#other-locales"><span>Locales<span class="fa fa-cog fa-lg fa-spin"></span></a></span></li>
-          <li><a href="#custom-search"><span>Search<span class="fa fa-cog fa-lg fa-spin"></span></a></span></li>
+          <li class="active"><a href="#history"><span>History<span class="fa fa-cog fa-lg fa-spin"></span></span></a></li>
+          <li><a href="#machinery"><span>Machinery<span class="fa fa-cog fa-lg fa-spin"></span></span></a></li>
+          <li><a href="#other-locales"><span>Locales<span class="fa fa-cog fa-lg fa-spin"></span></span></a></li>
+          <li><a href="#custom-search"><span>Search<span class="fa fa-cog fa-lg fa-spin"></span></span></a></li>
         </ul>
       </nav>
 
-      <section id="history">
+      <section class="history">
         <ul></ul>
       </section>
 
-      <section id="machinery">
+      <section class="machinery">
         <ul></ul>
       </section>
 
-      <section id="other-locales">
+      <section class="other-locales">
         <ul></ul>
       </section>
 
-      <section id="custom-search">
+      <section class="custom-search">
         <div class="search-wrapper clearfix">
           <div class="icon fa fa-search"></div>
           <div class="icon fa fa-cog fa-spin"></div>
@@ -346,6 +332,7 @@
 
 {% block extend_js %}
   {% javascript 'translate' %}
+  {% javascript 'locale_project' %}
 
   <script src="https://login.persona.org/include.js"></script>
 {% endblock %}

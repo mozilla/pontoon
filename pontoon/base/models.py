@@ -194,6 +194,20 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.filter(disabled=False, resource__isnull=False)
 
+    def prefetch_parts(self):
+        """
+        Prefetch subpages and resources for locales_parts_stats().
+        """
+        return self.prefetch_related(
+            'subpage_set',
+            Prefetch(
+                'resource_set',
+                queryset=Resource.objects.filter(
+                    pk__in=Entity.objects.filter(obsolete=False).values('resource')
+                ),
+                to_attr='active_resources'
+            )
+        )
 
 class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
@@ -288,36 +302,39 @@ class Project(models.Model):
         else:
             return repo
 
-    def latest_activity(self, locale=None):
+    def latest_activity(self, locale=None, path=None):
         """Get latest activity for project and locale if provided."""
         translations = Translation.objects.filter(entity__resource__project=self)
         if locale:
             translations = translations.filter(locale=locale)
+            if path:
+                translations = translations.filter(entity__resource__path=path)
 
         return translations.latest_activity()
 
-    @property
-    def locales_parts_stats(self):
+    def locales_parts_stats(self, loc=None):
         """Get project locales with their pages/paths and stats."""
         def get_details(stats):
             return stats.order_by('resource__path').values(
                 'resource__path',
                 'resource__entity_count',
+                'fuzzy_count',
                 'translated_count',
                 'approved_count',
             )
 
+        details = {}
         pages = self.subpage_set.all()
         resources = self.active_resources
-        details = {}
+        locales = [loc] if loc else self.locales.all()
 
-        for locale in self.locales.all():
+        for locale in locales:
             stats = Stats.objects.filter(resource__in=resources, locale=locale)
             locale_details = []
 
             # Is subpages aren't defined and project uses more than one
             # resource, return resource paths with corresponding resource stats
-            if len(pages) == 0 and len(resources) > 1:
+            if len(pages) == 0:
                 locale_details = get_details(stats)
 
             # If project has defined subpages, return their names with
@@ -331,6 +348,7 @@ class Project(models.Model):
                         pages.filter(resources__stats__locale=locale).annotate(
                             resource__path=F('name'),
                             resource__entity_count=F('resources__entity_count'),
+                            fuzzy_count=F('resources__stats__fuzzy_count'),
                             translated_count=F('resources__stats__translated_count'),
                             approved_count=F('resources__stats__approved_count')
                         )
@@ -341,12 +359,16 @@ class Project(models.Model):
                         pages.annotate(
                             resource__path=F('name'),
                             resource__entity_count=F('project__resource__entity_count'),
+                            fuzzy_count=F('project__resource__stats__fuzzy_count'),
                             translated_count=F('project__resource__stats__translated_count'),
                             approved_count=F('project__resource__stats__approved_count')
                         )
                     )
 
             details[locale.code.lower()] = list(locale_details)
+
+        if loc:
+            details = list(locale_details)
 
         return details
 
@@ -557,7 +579,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource)
     string = models.TextField()
     string_plural = models.TextField(blank=True)
-    key = models.TextField(blank=True)  # Needed for webL10n
+    key = models.TextField(blank=True)
     comment = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
     source = JSONField(blank=True, default=list)  # List of paths to source code files
@@ -620,7 +642,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             }
 
     @classmethod
-    def for_project_locale(self, project, locale, paths=None):
+    def for_project_locale(self, project, locale, paths=None, search=None):
         """Get project entities with locale translations."""
         entities = self.objects.filter(
             resource__project=project,
@@ -628,7 +650,28 @@ class Entity(DirtyFieldsMixin, models.Model):
             obsolete=False
         )
 
-        if paths:
+        # Filter by search parameters
+        if search:
+            keyword = search.get('keyword', None)
+            i = '' if search.get('casesensitive', None) else 'i'
+
+            entity_query = Q()  # Empty object
+            if search.get('sources', None):
+                entity_query |= Q(**{'string__%scontains' % i: keyword}) | Q(**{'string_plural__%scontains' % i: keyword})
+
+            if search.get('translations', None):
+                entity_query |= Q(**{'translation__string__%scontains' % i: keyword})
+
+            if search.get('comments', None):
+                entity_query |= Q(**{'comment__%scontains' % i: keyword})
+
+            if search.get('keys', None):
+                entity_query |= Q(**{'key__%scontains' % i: keyword})
+
+            entities = entities.filter(entity_query).distinct()
+
+        # Filter by path
+        elif paths:
             try:
                 subpage = Subpage.objects.get(project=project, name__in=paths)
                 paths = subpage.resources.values_list("path")

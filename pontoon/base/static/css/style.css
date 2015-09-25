@@ -388,7 +388,7 @@ label {
   background: #3f4752;
   font-size: 16px;
   height: 20px;
-  margin: 10px 10px 10px 0px;
+  margin: 10px 10px 10px 0;
   overflow: hidden;
   padding: 10px 20px 10px 40px;
   text-overflow: ellipsis;
@@ -455,12 +455,16 @@ label {
   color: #272A2F;
 }
 
-.project.select {
+.project.select,
+.locale.select,
+.part.select {
   padding-left: 0;
   width: 100%;
 }
 
-.project.select .menu {
+.project.select .menu,
+.locale.select .menu,
+.part.select .menu {
   bottom: auto;
   display: inline-block;
   position: relative;
@@ -470,18 +474,23 @@ label {
   box-sizing: border-box;
 }
 
-.project.select input[type="search"] {
+.project.select input[type="search"],
+.locale.select input[type="search"],
+.part.select input[type="search"] {
   width: 100%;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
-.project.select .menu ul {
+.project.select .menu ul,
+.locale.select .menu ul,
+.part.select .menu ul {
   max-height: none;
 }
 
-.project.select .menu ul li .name {
+.project.select .menu ul li .name,
+.part.select .menu ul li .name {
   overflow: hidden;
   padding-left: 1px; /* Insted of 0; because of overflow */
   text-overflow: ellipsis;
@@ -489,34 +498,53 @@ label {
   width: 219px; /* Instead of 220px; because of padding */
 }
 
-.locale.select {
-  padding-left: 0;
-  width: 100%;
+.part .menu nav ul li {
+  border: 1px solid transparent;
+  border-bottom-color: #5E6475;
 }
 
-.locale.select .menu {
-  bottom: auto;
-  display: inline-block;
-  position: relative;
-  width: 100%;
-
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+.part .menu nav ul li.hover {
+  background: transparent;
 }
 
-.locale.select input[type="search"] {
-  width: 100%;
+.part .menu nav ul li.active {
+  border-color: #5E6475;
+  border-bottom-color: transparent;
+}
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+/* TODO: this is needed (but shouldn't be) for pixel perfect tab borders */
+.part .menu nav ul li:last-child.active {
+  width: calc(50% + 2px);
+  margin-left: -2px;
+  padding-left: 2px;
+}
+
+.part .menu section {
+  padding-top: 20px;
+}
+
+.part .menu section .check-box {
+  cursor: pointer;
+  display: table;
+  padding-left: 1px;
+  text-align: left;
+}
+
+.part .menu section .check-box.hover {
+  background: transparent;
+  color: inherit;
+}
+
+.part .menu section .check-box:hover {
+  color: #FFFFFF;
+}
+
+.part .menu section .check-box input[type="checkbox"] {
+  display: none;
 }
 
 .locale.select .new ~ input[type="search"] {
   padding-right: 50px;
-}
-
-.locale.select .menu ul {
-  max-height: none;
 }
 
 .locale.select .menu ul li span.language {
@@ -578,6 +606,7 @@ label {
   font-size: 12px;
   margin-right: 10px;
   overflow: hidden;
+  padding-top: 2px;
   white-space: nowrap;
   width: 293px;
 }
@@ -715,7 +744,7 @@ label {
   content: "Add";
 }
 
-.search-wrapper > a.back:after {
+.locale .search-wrapper > a.back:after {
   content: "Back";
 }
 
@@ -729,6 +758,7 @@ label {
   background: transparent;
   color: #FFFFFF;
   float: none;
+  font-weight: 300;
   padding-left: 25px;
   padding-right: 0;
   width: 200px;
@@ -776,7 +806,7 @@ form .about p a:visited {
   border-color: #3F4752 transparent transparent transparent;
   bottom: -16px;
   left: 92px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
-  clip: rect(0 16px 8px 0px);
+  clip: rect(0 16px 8px 0);
   -webkit-clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
   clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
 }
@@ -828,6 +858,10 @@ form .about p a:visited {
   opacity: 0;
 }
 
+.notification.menu-open {
+  right: 240px;
+}
+
 .notification li {
   list-style: none;
   text-align: left;
@@ -836,6 +870,10 @@ form .about p a:visited {
 .notification li.error,
 .notification li.warning {
   color: #FD5F60;
+}
+
+.notification li.right240{
+  right: 240px;
 }
 
 img.rounded {
@@ -989,7 +1027,8 @@ noscript p {
   width: 20px;
 }
 
-body > form {
+body > form,
+body > .container {
   height: auto;
   margin: 0 auto;
   padding: 50px 0 100px;
@@ -1021,14 +1060,17 @@ body > form {
   user-select: none;
 }
 
-.quality-checks .fa:before,
-.quality-checks.enabled:hover .fa:before {
-  color: #FD5F60;
-  content: "";
+.check-box .fa {
+  margin-right: 6px;
 }
 
-.quality-checks:hover .fa:before,
-.quality-checks.enabled .fa:before {
+.check-box .fa:before {
+  color: #FD5F60;
+  content: "";
+
+}
+
+.check-box.enabled .fa:before {
   color: #7BC876;
   content: "";
 }
@@ -1072,4 +1114,37 @@ body > form {
 
 #helpers > section ul li p.original {
   color: #AAAAAA;
+}
+
+.tabs nav ul li {
+  float: left;
+  padding: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.part .tabs nav ul li {
+  width: 50%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.tabs nav ul li a {
+  display: inline-block;
+  outline: none;
+  padding: 10px;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.part .tabs nav ul li a span.fa {
+  float: none;
+  padding-right: 5px;
+}
+
+.tabs > section {
+  display: none;
 }
