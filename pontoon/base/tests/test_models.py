@@ -207,7 +207,6 @@ class RepositoryTests(TestCase):
         repo = RepositoryFactory.create(
             url='https://example.com/path/to/{locale_code}/',
             project__slug='test-project',
-            multi_locale=True
         )
         with self.settings(MEDIA_ROOT='/media/root'):
             assert_equal(
@@ -234,21 +233,20 @@ class RepositoryTests(TestCase):
     def test_locale_checkout_path(self):
         """Append the locale code the the project's checkout_path."""
         repo = RepositoryFactory.create(
-            url='https://example.com/path/',
+            url='https://example.com/{locale_code}/path/',
             project__slug='test-project',
-            multi_locale=True
         )
         locale = LocaleFactory.create(code='test-locale')
 
         with self.settings(MEDIA_ROOT='/media/root'):
             assert_equal(
                 repo.locale_checkout_path(locale),
-                '/media/root/projects/test-project/path/test-locale'
+                '/media/root/projects/test-project/test-locale/path/'
             )
 
     def test_locale_checkout_path_non_multi_locale(self):
         """If the repo isn't multi-locale, throw a ValueError."""
-        repo = RepositoryFactory.create(multi_locale=False)
+        repo = RepositoryFactory.create()
         locale = LocaleFactory.create()
         with assert_raises(ValueError):
             repo.locale_checkout_path(locale)
@@ -257,7 +255,6 @@ class RepositoryTests(TestCase):
         """Fill in the {locale_code} variable in the URL."""
         repo = RepositoryFactory.create(
             url='https://example.com/path/to/{locale_code}/',
-            multi_locale=True
         )
         locale = LocaleFactory.create(code='test-locale')
 
@@ -265,7 +262,7 @@ class RepositoryTests(TestCase):
 
     def test_locale_url_non_multi_locale(self):
         """If the repo isn't multi-locale, throw a ValueError."""
-        repo = RepositoryFactory.create(multi_locale=False)
+        repo = RepositoryFactory.create()
         locale = LocaleFactory.create()
         with assert_raises(ValueError):
             repo.locale_url(locale)
@@ -281,7 +278,6 @@ class RepositoryTests(TestCase):
             project__locales=[matching_locale, non_matching_locale],
             project__slug='test-project',
             url='https://example.com/path/to/{locale_code}/',
-            multi_locale=True
         )
 
         with self.settings(MEDIA_ROOT='/media/root'):
@@ -295,7 +291,6 @@ class RepositoryTests(TestCase):
         repo = RepositoryFactory.create(
             project__locales=[],
             url='https://example.com/path/to/{locale_code}/',
-            multi_locale=True
         )
 
         with assert_raises(ValueError):
@@ -323,7 +318,6 @@ class RepositoryTests(TestCase):
         repo = RepositoryFactory.create(
             type=Repository.GIT,
             url='https://example.com/{locale_code}/',
-            multi_locale=True,
             project__locales=[locale1, locale2]
         )
 
@@ -365,7 +359,6 @@ class RepositoryTests(TestCase):
         repo = RepositoryFactory.create(
             type=Repository.GIT,
             url='https://example.com/{locale_code}/',
-            multi_locale=True
         )
 
         repo.url_for_path = Mock(return_value='https://example.com/for_path')
