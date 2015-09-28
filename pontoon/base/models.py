@@ -17,7 +17,7 @@ from django.utils import timezone
 from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
 
-from pontoon.administration.vcs import commit_to_vcs, update_from_vcs
+from pontoon.administration.vcs import commit_to_vcs, get_revision, update_from_vcs
 from pontoon.base import utils
 
 
@@ -378,6 +378,14 @@ class Repository(models.Model):
         choices=TYPE_CHOICES
     )
     url = models.CharField("URL", max_length=2000, blank=True)
+
+    """
+    Mapping of locale codes to VCS revisions of each repo at the last
+    sync. If this isn't a multi-locale repo, the mapping has a single
+    key named "single_locale" with the revision.
+    """
+    last_synced_revisions = JSONField(blank=True, default=dict)
+
     source_repo = models.BooleanField(default=False, help_text="""
         If true, this repo contains the source strings directly in the
         root of the repo. Checkouts of this repo will have "templates"
@@ -453,16 +461,27 @@ class Repository(models.Model):
         raise ValueError('No repo found for path: {0}'.format(path))
 
     def pull(self):
-        """Pull changes from VCS."""
+        """
+        Pull changes from VCS. Returns the revision(s) of the repo after
+        pulling.
+        """
         if not self.multi_locale:
             update_from_vcs(self.type, self.url, self.checkout_path)
+            return {
+                'single_locale': get_revision(self.type, self.checkout_path)
+            }
         else:
+            current_revisions = {}
             for locale in self.project.locales.all():
+                checkout_path = self.locale_checkout_path(locale)
                 update_from_vcs(
                     self.type,
                     self.locale_url(locale),
-                    self.locale_checkout_path(locale)
+                    checkout_path
                 )
+                current_revisions[locale.code] = get_revision(self.type, checkout_path)
+
+            return current_revisions
 
     def commit(self, message, author, path):
         """Commit changes to VCS."""

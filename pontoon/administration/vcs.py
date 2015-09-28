@@ -275,3 +275,69 @@ def get_svn_env():
         return env
     else:
         return None
+
+
+class VCSRepository(object):
+    @classmethod
+    def for_type(cls, repo_type, path):
+        SubClass = cls.REPO_TYPES.get(repo_type)
+        if SubClass is None:
+            raise ValueError('No subclass found for repo type {0}.'.format(repo_type))
+
+        return SubClass(path)
+
+    def __init__(self, path):
+        self.path = path
+
+    def execute(self, cmd, cwd=None, env=None, log_errors=False):
+        code, output, error = execute(cmd, cwd=cwd, env=env)
+        if log_errors and code != 0:
+            log.error('Error while executing command `{cmd}` in `{cwd}`: {stderr}'.format(
+                cmd=unicode(cmd), cwd=cwd, stderr=error
+            ))
+        return code, output, error
+
+
+class SvnRepository(VCSRepository):
+    def execute(self, cmd, cwd=None, env=None, log_errors=False):
+        return execute(cmd, cwd=cwd, env=get_svn_env())
+
+    @property
+    def revision(self):
+        code, output, error = self.execute(['svnversion', self.path], log_errors=True)
+        return output.strip() if code == 0 else None
+
+
+class GitRepository(VCSRepository):
+    @property
+    def revision(self):
+        code, output, error = self.execute(
+            ['git', 'rev-parse', 'master'],
+            cwd=self.path,
+            log_errors=True
+        )
+        return output.strip() if code == 0 else None
+
+
+class HgRepository(VCSRepository):
+    @property
+    def revision(self):
+        code, output, error = self.execute(
+            ['hg', 'identify', '--id'],
+            cwd=self.path,
+            log_errors=True
+        )
+        return output.strip() if code == 0 else None
+
+
+# TODO: Tie these to the same constants that the Repository model uses.
+VCSRepository.REPO_TYPES = {
+    'hg': HgRepository,
+    'svn': SvnRepository,
+    'git': GitRepository,
+}
+
+
+def get_revision(repo_type, path):
+    repo = VCSRepository.for_type(repo_type, path)
+    return repo.revision

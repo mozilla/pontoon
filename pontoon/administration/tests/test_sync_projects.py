@@ -142,7 +142,7 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.no_pull = False
 
         # Avoid hitting VCS during tests by mocking out pull and commit.
-        repo_pull_patch = patch.object(Repository, 'pull')
+        repo_pull_patch = patch.object(Repository, 'pull', return_value={'single_locale': None})
         self.mock_repo_pull = repo_pull_patch.start()
         self.addCleanup(repo_pull_patch.stop)
 
@@ -208,6 +208,43 @@ class CommandTests(FakeCheckoutTestCase):
 
             self.execute_command(self.db_project.slug)
             assert_false(self.command.handle_project.called)
+
+    def test_handle_project_db_changed_no_repo_changed(self):
+        """
+        If the database has changes and VCS doesn't, do not skip syncing
+        the project.
+        """
+        self.create_db_entities_translations()
+
+        self.command.pull_changes = Mock(return_value=False)
+        ChangedEntityLocale.objects.all().delete()
+        ChangedEntityLocaleFactory.create(
+            entity=self.main_db_entity,
+            locale=self.translated_locale
+        )
+
+        self.command.handle_entity = Mock()
+        self.command.handle_project(self.db_project)
+        assert_true(self.command.handle_entity.called)
+
+    def test_handle_project_no_changes_skip(self):
+        """
+        If the database and VCS both have no changes, skip sync and log
+        a message.
+        """
+        self.create_db_entities_translations()
+
+        self.command.stdout = Mock()
+        self.command.pull_changes = Mock(return_value=False)
+        ChangedEntityLocale.objects.all().delete()
+
+        self.command.handle_entity = Mock()
+        self.command.handle_project(self.db_project)
+
+        assert_false(self.command.handle_entity.called)
+        self.command.stdout.write.assert_called_with(
+            CONTAINS('Skipping', self.db_project.slug)
+        )
 
     def test_handle_project_handle_entities(self):
         """Call handle_entity on all matching Entity and VCSEntity pairs."""
@@ -511,6 +548,39 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.stdout.write.assert_called_with(
             CONTAINS('db-project', 'failed', 'Whoops!')
         )
+
+    def test_pull_changes(self):
+        """
+        Pull_changes should call repo.pull for each repo for the
+        project, save the return value to repo.last_synced_revisions,
+        and return whether any changes happened in VCS.
+        """
+        self.mock_repo_pull.return_value = {'single_locale': 'asdf'}
+        assert_true(self.command.pull_changes(self.db_project))
+        self.repository.refresh_from_db()
+        assert_equal(self.repository.last_synced_revisions, {'single_locale': 'asdf'})
+
+    def test_pull_changes_unsure_changes(self):
+        """
+        If any of the repos returns None as a revision number, consider
+        the VCS as changed even if the revisions match the last sync.
+        """
+        self.mock_repo_pull.return_value = {'single_locale': None}
+        self.repository.last_synced_revisions = {'single_locale': None}
+        self.repository.save()
+
+        assert_true(self.command.pull_changes(self.db_project))
+
+    def test_pull_changes_unchanged(self):
+        """
+        If the revisions returned by repo.pull match those from the last
+        sync, consider the VCS unchanged and return False.
+        """
+        self.mock_repo_pull.return_value = {'single_locale': 'asdf'}
+        self.repository.last_synced_revisions = {'single_locale': 'asdf'}
+        self.repository.save()
+
+        assert_false(self.command.pull_changes(self.db_project))
 
 
 class ChangeSetTests(FakeCheckoutTestCase):

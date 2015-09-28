@@ -303,8 +303,10 @@ class RepositoryTests(TestCase):
 
     def test_pull(self):
         repo = RepositoryFactory.create(type=Repository.GIT, url='https://example.com')
-        with patch('pontoon.base.models.update_from_vcs') as update_from_vcs:
-            repo.pull()
+        with patch('pontoon.base.models.update_from_vcs') as update_from_vcs, \
+             patch('pontoon.base.models.get_revision') as mock_get_revision:
+            mock_get_revision.return_value = 'asdf'
+            assert_equal(repo.pull(), {'single_locale': 'asdf'})
             update_from_vcs.assert_called_with(
                 Repository.GIT,
                 'https://example.com',
@@ -328,8 +330,16 @@ class RepositoryTests(TestCase):
         repo.locale_url = lambda locale: 'https://example.com/' + locale.code
         repo.locale_checkout_path = lambda locale: '/media/' + locale.code
 
-        with patch('pontoon.base.models.update_from_vcs') as update_from_vcs:
-            repo.pull()
+        with patch('pontoon.base.models.update_from_vcs') as update_from_vcs, \
+             patch('pontoon.base.models.get_revision') as mock_get_revision:
+            # Return path as the revision so different locales return
+            # different values.
+            mock_get_revision.side_effect = lambda type, path: path
+
+            assert_equal(repo.pull(), {
+                'locale1': '/media/locale1',
+                'locale2': '/media/locale2'
+            })
             update_from_vcs.assert_has_calls([
                 call(Repository.GIT, 'https://example.com/locale1', '/media/locale1'),
                 call(Repository.GIT, 'https://example.com/locale2', '/media/locale2')

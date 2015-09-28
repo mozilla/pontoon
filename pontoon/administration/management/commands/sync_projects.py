@@ -92,7 +92,19 @@ class Command(BaseCommand):
 
         # Pull changes from VCS and update what we know about the files.
         if not self.no_pull:
-            self.pull_changes(db_project)
+            repos_changed = self.pull_changes(db_project)
+        else:
+            repos_changed = True  # Assume changed.
+
+        # If the repos haven't changed since the last sync and there are
+        # no Pontoon-side changes for this project, quit early.
+        db_changed = (ChangedEntityLocale.objects
+                      .filter(entity__resource__project=db_project)
+                      .exists())
+        if not repos_changed and not db_changed:
+            self.log('Skipping project {0}, no changes detected.'.format(db_project.slug))
+            return
+
         vcs_project = VCSProject(db_project)
         self.update_resources(db_project, vcs_project)
 
@@ -212,9 +224,25 @@ class Command(BaseCommand):
         return ':'.join([entity.resource.path, key])
 
     def pull_changes(self, db_project):
-        """Update the local files with changes from the VCS."""
+        """
+        Update the local files with changes from the VCS. Returns
+        whether any of the updated repos have changed since the last
+        sync, based on the revision numbers.
+        """
+        changed = False
         for repo in db_project.repositories.all():
-            repo.pull()
+            repo_revisions = repo.pull()
+
+            # If any revision is None, we can't be sure if a change
+            # happened or not, so we default to assuming it did.
+            unsure_change = None in repo_revisions.values()
+            if unsure_change or repo_revisions != repo.last_synced_revisions:
+                changed = True
+
+            repo.last_synced_revisions = repo_revisions
+            repo.save()
+
+        return changed
 
     def commit_changes(self, db_project, vcs_project, changeset):
         """Commit the changes we've made back to the VCS."""
