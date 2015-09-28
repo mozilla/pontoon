@@ -4,9 +4,8 @@ Parser for the .lang translation format.
 import codecs
 import re
 import sys
-from collections import namedtuple
 
-from parsimonious.exceptions import ParseError as ParsimoniousParseError
+from parsimonious.exceptions import ParseError as ParsimoniousParseError, VisitationError
 from parsimonious.grammar import Grammar
 from parsimonious.nodes import NodeVisitor
 
@@ -118,9 +117,10 @@ class LangVisitor(NodeVisitor):
     def visit_lang_file(self, node, children):
         """
         Find comments that are associated with an entity and add them
-        to the entity's comments list.
+        to the entity's comments list. Also assign order to entities.
         """
         comments = []
+        order = 0
         for child in children:
             if isinstance(child, LangComment):
                 comments.append(child)
@@ -128,6 +128,8 @@ class LangVisitor(NodeVisitor):
 
             if isinstance(child, LangEntity):
                 child.comments = [c.content for c in comments]
+                child.order = order
+                order += 1
 
             comments = []
 
@@ -146,6 +148,10 @@ class LangVisitor(NodeVisitor):
         if tag_matches:
             tags = [m.group(1) for m in tag_matches]
             translation = translation[:tag_matches[0].start()].strip()
+
+        if translation == '':
+            raise Exception('Blank translation for key {key} is not allowed in '
+                            'langfiles.'.format(key=string))
 
         return LangEntity(string, translation, tags)
 
@@ -183,8 +189,8 @@ def parse(path, source_path=None):
 
     try:
         children = LangVisitor().parse(content)
-    except ParsimoniousParseError as err:
+    except (ParsimoniousParseError, VisitationError) as err:
         wrapped = ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
-        raise wrapped, None, sys.exc_info()[2]
+        raise wrapped, None, sys.exc_info()[2]  # NOQA
 
     return LangResource(path, children)

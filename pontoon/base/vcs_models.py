@@ -61,7 +61,18 @@ class VCSProject(object):
         and allows tests that don't need to touch the resources to run
         with less mocking.
         """
-        return {path: VCSResource(self, path) for path in self.relative_resource_paths()}
+        # Avoid circular import; someday we should refactor to avoid.
+        from pontoon.base.formats.base import ParseError
+
+        resources = {}
+        for path in self.relative_resource_paths():
+            try:
+                resources[path] = VCSResource(self, path)
+            except ParseError as err:
+                log.error('Skipping resource {path} due to ParseError: {err}'.format(
+                    path=path, err=err
+                ))
+        return resources
 
     @property
     def entities(self):

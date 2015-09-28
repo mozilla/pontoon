@@ -1,15 +1,75 @@
 import os.path
 from textwrap import dedent
 
-from django_nose.tools import assert_equal
+from django_nose.tools import assert_equal, assert_raises
 
 from pontoon.base.formats import lang
+from pontoon.base.formats.base import ParseError
 from pontoon.base.tests import assert_attributes_equal, TestCase
 from pontoon.base.tests.formats import FormatTestsMixin
 
 
+BASE_LANG_FILE = """
+# Sample comment
+;Source String
+Translated String
+
+# First comment
+# Second comment
+;Multiple Comments
+Translated Multiple Comments
+
+;No Comments or Sources
+Translated No Comments or Sources
+"""
+
+
 class LangTests(FormatTestsMixin, TestCase):
     parse = staticmethod(lang.parse)
+    supports_source = False
+    supports_keys = False
+    supports_source_string = True
+
+    def test_parse_basic(self):
+        self.run_parse_basic(BASE_LANG_FILE, 0)
+
+    def test_parse_multiple_comments(self):
+        self.run_parse_multiple_comments(BASE_LANG_FILE, 1)
+
+    def test_parse_no_comments_no_sources(self):
+        self.run_parse_no_comments_no_sources(BASE_LANG_FILE, 2)
+
+    def test_save_basic(self):
+        input_string = dedent("""
+            # Comment
+            ;SourceString
+            Source String
+        """)
+        expected_string = dedent("""
+            # Comment
+            ;SourceString
+            New Translated String
+        """)
+
+        self.run_save_basic(input_string, expected_string)
+
+    def test_save_remove(self):
+        """
+        Deleting strings shouled replace the translation with the source
+        string.
+        """
+        input_string = dedent("""
+            # Comment
+            ;SourceString
+            Translated String
+        """)
+        expected_string = dedent("""
+            # Comment
+            ;SourceString
+            SourceString
+        """)
+
+        self.run_save_remove(input_string, expected_string)
 
     def test_load_utf8_bom(self):
         """
@@ -76,3 +136,20 @@ class LangTests(FormatTestsMixin, TestCase):
         path, resource = self.parse_string(expected)
         resource.save(self.locale)
         self.assert_file_content(path, expected)
+
+    def test_parse_empty_translation(self):
+        """
+        If an entity has an empty translation, parse should raise a
+        ParseError.
+        """
+        with assert_raises(ParseError):
+            self.parse_string(dedent("""
+                # Comment
+                ;Source
+                Translated
+
+                ;Empty
+
+                ;Not Empty
+                Nope
+            """))
