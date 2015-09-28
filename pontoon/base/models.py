@@ -284,6 +284,56 @@ class Project(models.Model):
 
         return translations.latest_activity()
 
+    @property
+    def locales_parts_stats(self):
+        """Get project locales with their pages/paths and stats."""
+        pages = self.subpage_set.all()
+        resources = self.resource_set.filter(entity__obsolete=False).distinct()
+        details = {}
+
+        for locale in self.locales.all():
+            stats = Stats.objects.filter(resource__in=resources, locale=locale)
+            locale_details = []
+
+            # Get subpage name and stats if subpages defined
+            if pages.exists():
+
+                # List only subpages, whose resources are available for locale
+                pages = pages.filter(resources__stats=stats) or pages
+
+                for page in pages:
+
+                    # Stats for subpage resources only if defined
+                    if page.resources.exists():
+                        page_stats = stats.filter(resource__in=page.resources.all())
+
+                    # Or for the entire project
+                    else:
+                        page_stats = stats
+
+                    dictionary = {
+                        'resource__path': page.name
+                    }
+                    dictionary.update(page_stats.aggregate(
+                        resource__entity_count=Sum('resource__entity_count'),
+                        translated_count=Sum('translated_count'),
+                        approved_count=Sum('approved_count')
+                    ))
+                    locale_details.append(dictionary)
+
+            # Get resource paths and stats if more than one resource present
+            elif resources.count() > 1:
+                locale_details = stats.order_by('resource__path').values(
+                    'resource__path',
+                    'resource__entity_count',
+                    'translated_count',
+                    'approved_count',
+                )
+
+            details[locale.code.lower()] = list(locale_details)
+
+        return details
+
     def __unicode__(self):
         return self.name
 

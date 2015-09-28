@@ -213,37 +213,9 @@ def translate(request, locale, slug, part=None, template='translate.html'):
             }
             return HttpResponseRedirect(reverse('pontoon.home'))
 
-    # Set project details (locales and pages or paths + stats)
     projects = Project.objects.filter(
-        disabled=False, pk__in=Resource.objects.values('project')) \
-        .order_by("name")
-
-    for project in projects:
-        pages = Subpage.objects.filter(project=project)
-        r = Entity.objects.filter(obsolete=False).values('resource')
-        resources = Resource.objects.filter(project=project, pk__in=r)
-        details = {}
-
-        for loc in project.locales.all():
-            stats = Stats.objects.filter(resource__in=resources, locale=loc)
-
-            if len(pages) == 0 and len(resources) > 1:
-                locale_details = stats.order_by('resource__path') \
-                    .values(
-                        'resource__path',
-                        'resource__entity_count',
-                        'translated_count',
-                        'approved_count',
-                    )
-            else:
-                locale_details = pages.values('name')
-                if len(pages) > 0 and pages[0].resources.exists():
-                    locale_details = pages.filter(
-                        resources__stats=stats).values('name')
-
-            details[loc.code.lower()] = list(locale_details)
-
-        project.details = json.dumps(details)
+        disabled=False, pk__in=Resource.objects.values('project')
+    ).order_by("name")
 
     data = {
         'accept_language': utils.get_project_locale_from_request(
