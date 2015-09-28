@@ -392,12 +392,15 @@ class Repository(models.Model):
         appended to the end of their path so that they are detected as
         source directories.
     """)
-    multi_locale = models.BooleanField(default=False, help_text="""
-        If true, this repo corresponds to multiple locale-specific repos. The
-        URL should have the string "{locale_code}" in it, which will be replaced
-        by the locale codes of all enabled locales for the project during pulls
-        and and commits.
-    """)
+
+    @property
+    def multi_locale(self):
+        """
+        Checks if url contains locale code variable. System will replace
+        this variable by the locale codes of all enabled locales for the
+        project during pulls and commits.
+        """
+        return '{locale_code}' in self.url
 
     @property
     def checkout_path(self):
