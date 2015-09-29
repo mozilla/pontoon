@@ -127,9 +127,7 @@ class ProjectPartsTests(TestCase):
         assert_equal(details[0]['translated_count'], 0)
         assert_equal(details[1]['resource__path'], '/other/path.po')
         assert_equal(details[1]['translated_count'], 0)
-        assert_equal(len(details_other), 1)
-        assert_equal(details_other[0]['resource__path'], '/other/path.po')
-        assert_equal(details_other[0]['translated_count'], 0)
+        assert_equal(len(details_other), 0)
 
     def test_locales_parts_stats_pages_not_tied_to_resources(self):
         """
@@ -169,9 +167,9 @@ class ProjectPartsTests(TestCase):
         details = project_details.get(self.locale.code)
         details_other = project_details.get(self.locale_other.code)
 
-        assert_equal(details[0]['resource__path'], 'Subpage')
+        assert_equal(details[0]['resource__path'], 'Other Subpage')
         assert_equal(details[0]['translated_count'], 0)
-        assert_equal(details[1]['resource__path'], 'Other Subpage')
+        assert_equal(details[1]['resource__path'], 'Subpage')
         assert_equal(details[1]['translated_count'], 0)
         assert_equal(details_other[0]['resource__path'], 'Other Subpage')
         assert_equal(details_other[0]['translated_count'], 0)
