@@ -1,10 +1,11 @@
+import os
 import os.path
 
 from django_nose.tools import assert_equal
 from mock import Mock, patch, PropertyMock
 
 from pontoon.base.models import Project
-from pontoon.base.tests import CONTAINS, ProjectFactory, TestCase
+from pontoon.base.tests import CONTAINS, ProjectFactory, RepositoryFactory, TestCase
 from pontoon.base.formats.base import ParseError
 from pontoon.base.vcs_models import VCSProject
 
@@ -87,3 +88,24 @@ class VCSProjectTests(TestCase):
 
             assert_equal(self.vcs_project.resources, {'success': 'successful resource'})
             mock_log.error.assert_called_with(CONTAINS('failure', 'error message'))
+
+    def test_resource_for_path_region_properties(self):
+        """
+        If a project has a repository_url in pontoon.base.MOZILLA_REPOS,
+        resources_for_path should ignore files named
+        "region.properties".
+        """
+        url = 'https://moz.example.com'
+        self.project.repositories.all().delete()
+        self.project.repositories.add(RepositoryFactory.build(url=url))
+
+        with patch('pontoon.base.vcs_models.os', wraps=os) as mock_os, \
+             patch('pontoon.base.vcs_models.MOZILLA_REPOS', [url]):
+            mock_os.walk.return_value = [
+                ('/root', [], ['foo.pot', 'region.properties'])
+            ]
+
+            assert_equal(
+                list(self.vcs_project.resources_for_path('/root')),
+                [os.path.join('/root', 'foo.pot')]
+            )

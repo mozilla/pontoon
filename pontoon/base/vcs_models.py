@@ -136,7 +136,7 @@ class VCSProject(object):
         for root, dirnames, filenames in os.walk(path):
             # Ignore certain files in Mozilla repositories.
             if self.db_project.repository_url in MOZILLA_REPOS:
-                filenames = [f for f in filenames if f.endswith('region.properties')]
+                filenames = [f for f in filenames if not f.endswith('region.properties')]
 
             for filename in filenames:
                 if is_resource(filename):
