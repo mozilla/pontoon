@@ -20,7 +20,6 @@ from pontoon.base.models import (
     Repository,
     Resource,
     Stats,
-    Subpage,
     Translation,
 )
 from pontoon.base.vcs_models import VCSEntity
@@ -140,23 +139,6 @@ class StatsFactory(DjangoModelFactory):
 
     class Meta:
         model = Stats
-
-
-class SubpageFactory(DjangoModelFactory):
-    project = SubFactory(ProjectFactory)
-    name = Sequence(lambda n: 'subpage {0}'.format(n))
-
-    class Meta:
-        model = Subpage
-
-    @factory.post_generation
-    def resources(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        if extracted:
-            for resource in extracted:
-                self.resources.add(resource)
 
 
 class VCSEntityFactory(factory.Factory):

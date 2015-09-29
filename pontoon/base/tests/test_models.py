@@ -9,13 +9,9 @@ from pontoon.base.models import Repository, Translation, User
 from pontoon.base.tests import (
     assert_attributes_equal,
     IdenticalTranslationFactory,
-    EntityFactory,
     LocaleFactory,
     ProjectFactory,
     RepositoryFactory,
-    ResourceFactory,
-    StatsFactory,
-    SubpageFactory,
     TranslationFactory,
     UserFactory,
     TestCase
@@ -83,98 +79,6 @@ class ProjectTests(TestCase):
         project = ProjectFactory.create(repositories=[repo1, repo2, repo3])
         path = os.path.join(repo2.checkout_path, 'foo', 'bar')
         assert_equal(project.repository_for_path(path), repo2)
-
-
-class ProjectPartsTests(TestCase):
-    def setUp(self):
-        self.locale, self.locale_other = LocaleFactory.create_batch(2)
-        self.project = ProjectFactory.create(
-            locales=[self.locale, self.locale_other]
-        )
-        self.resource = ResourceFactory.create(
-            project=self.project,
-            path='/main/path.po'
-        )
-        EntityFactory.create(resource=self.resource)
-        StatsFactory.create(resource=self.resource, locale=self.locale)
-
-    def test_locales_parts_stats_no_page_one_resource(self):
-        """
-        Return empty list in no subpage and only one resource defined.
-        """
-        project_details = self.project.locales_parts_stats
-        details = project_details.get(self.locale.code)
-
-        assert_equal(details, [])
-
-    def test_locales_parts_stats_no_page_multiple_resources(self):
-        """
-        Return resource paths and stats for locales resources are available for.
-        """
-        resource_other = ResourceFactory.create(
-            project=self.project,
-            path='/other/path.po'
-        )
-        EntityFactory.create(resource=resource_other)
-        StatsFactory.create(resource=resource_other, locale=self.locale)
-        StatsFactory.create(resource=resource_other, locale=self.locale_other)
-
-        project_details = self.project.locales_parts_stats
-        details = project_details.get(self.locale.code)
-        details_other = project_details.get(self.locale_other.code)
-
-        assert_equal(details[0]['resource__path'], '/main/path.po')
-        assert_equal(details[0]['translated_count'], 0)
-        assert_equal(details[1]['resource__path'], '/other/path.po')
-        assert_equal(details[1]['translated_count'], 0)
-        assert_equal(len(details_other), 1)
-        assert_equal(details_other[0]['resource__path'], '/other/path.po')
-        assert_equal(details_other[0]['translated_count'], 0)
-
-    def test_locales_parts_stats_pages_not_tied_to_resources(self):
-        """
-        Return subpage name and stats.
-        """
-        SubpageFactory.create(project=self.project, name='Subpage')
-
-        project_details = self.project.locales_parts_stats
-        details = project_details.get(self.locale.code)
-
-        assert_equal(details[0]['resource__path'], 'Subpage')
-        assert_equal(details[0]['translated_count'], 0)
-
-    def test_locales_parts_stats_pages_tied_to_resources(self):
-        """
-        Return subpage name and stats for locales resources are available for.
-        """
-        resource_other = ResourceFactory.create(
-            project=self.project,
-            path='/other/path.po'
-        )
-        EntityFactory.create(resource=resource_other)
-        StatsFactory.create(resource=resource_other, locale=self.locale)
-        StatsFactory.create(resource=resource_other, locale=self.locale_other)
-        SubpageFactory.create(
-            project=self.project,
-            name='Subpage',
-            resources=[self.resource]
-        )
-        SubpageFactory.create(
-            project=self.project,
-            name='Other Subpage',
-            resources=[resource_other]
-        )
-
-        project_details = self.project.locales_parts_stats
-        details = project_details.get(self.locale.code)
-        details_other = project_details.get(self.locale_other.code)
-
-        assert_equal(details[0]['resource__path'], 'Subpage')
-        assert_equal(details[0]['translated_count'], 0)
-        assert_equal(details[1]['resource__path'], 'Other Subpage')
-        assert_equal(details[1]['translated_count'], 0)
-        assert_equal(details_other[0]['resource__path'], 'Other Subpage')
-        assert_equal(details_other[0]['translated_count'], 0)
 
 
 class RepositoryTests(TestCase):
