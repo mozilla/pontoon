@@ -284,6 +284,83 @@ class Project(models.Model):
 
         return translations.latest_activity()
 
+    @property
+    def locales_parts_stats(self):
+        """Get project locales with their pages/paths and stats."""
+        details = {}
+
+        def add_detail(array, path, entity, translated, approved):
+            return array.append({
+                'resource__path': path,
+                'resource__entity_count': entity,
+                'translated_count': translated,
+                'approved_count': approved
+            })
+
+        # Project Locales with prefetched Stats and Resources
+        qs = (
+            Stats.objects
+            .select_related('resource')
+            .filter(resource__project=self, resource__entity__obsolete=False)
+            .distinct()
+        )
+        locales = self.locales.prefetch_related(
+            Prefetch(
+                'stats_set',
+                queryset=qs
+            )
+        )
+
+        # Project Pages with prefetched Resources
+        pages = self.subpage_set.prefetch_related(
+            'resources'
+        )
+
+        has_pages = pages.exists()
+
+        for locale in locales:
+            locale_details = []
+
+            # If project has defined subpages, return their names with
+            # corresponding project stats. If subpages have defined resources,
+            # only include stats for page resources.
+            if has_pages:
+
+                # List only subpages, whose resources are available for locale
+                pages = pages.filter(resources__stats__in=locale.stats_set.all()) or pages
+
+                for page in pages:
+                    entity_count, translated_count, approved_count = 0, 0, 0
+                    paths = page.resources.values_list('path', flat=True)
+                    page_stats = locale.stats_set.all()[:]  # Clone
+
+                    # Only include stats for page resources (if defined)
+                    if page.resources.exists():
+                        for stats in locale.stats_set.all():
+                            if stats.resource.path not in paths:
+                                page_stats.remove(stats)
+
+                    # Aggregate Stats for the same page
+                    for stats in page_stats:
+                        entity_count += stats.resource.entity_count
+                        translated_count += stats.translated_count
+                        approved_count += stats.approved_count
+
+                    add_detail(locale_details, page.name, entity_count, translated_count, approved_count)
+
+            # Is subpages aren't defined and project uses more than one
+            # resource, return resource paths with corresponding resource stats
+            elif len(locale.stats_set.all()) > 1:
+                for stats in locale.stats_set.all():
+                    add_detail(locale_details, stats.resource.path, stats.resource.entity_count, stats.translated_count, stats.approved_count)
+
+            # Order by page name or resource path
+            details[locale.code.lower()] = sorted(
+                locale_details, key=lambda k: k['resource__path']
+            )
+
+        return details
+
     def __unicode__(self):
         return self.name
 
