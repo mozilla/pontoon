@@ -67,6 +67,9 @@ class SilmeEntity(VCSTranslation):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __nonzero__(self):
+        return bool(self.strings)
+
 
 class SilmeResource(ParsedResource):
     def __init__(self, parser, path, source_resource=None):
@@ -81,19 +84,13 @@ class SilmeResource(ParsedResource):
                 self.entities[key] = copy_source_entity(entity)
 
         try:
-            with codecs.open(path, 'r', 'utf-8') as f:
-                # .inc files have a special commented-out entity called
-                # MOZ_LANGPACK_CONTRIBUTORS. We un-comment it before
-                # parsing so locales can translate it.
-                if self.parser is IncParser:
-                    inc_lines = []
-                    for inc_line in f:
-                        if inc_line.startswith('# #define MOZ_LANGPACK_CONTRIBUTORS'):
-                            inc_line = inc_line[2:]
-                        inc_lines.append(inc_line)
-                    content = '\n'.join(inc_lines)
-                else:
-                    content = f.read()
+            # Only uncomment MOZ_LANGPACK_CONTRIBUTORS if this is a .inc
+            # file and a source resource (i.e. it has no source resource
+            # itself).
+            self.structure = parser.get_structure(read_file(
+                path,
+                uncomment_moz_langpack=parser is IncParser and not source_resource
+            ))
         except IOError:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
@@ -101,8 +98,6 @@ class SilmeResource(ParsedResource):
                 return
             else:
                 raise
-
-        self.structure = parser.get_structure(content)
 
         comments = []
         current_order = 0
@@ -133,8 +128,12 @@ class SilmeResource(ParsedResource):
             raise SyncError('Cannot save silme resource {0}: No source resource given.'
                             .format(self.path))
 
-        with codecs.open(self.source_resource.path, 'r', 'utf-8') as f:
-            new_structure = self.parser.get_structure(f.read())
+        # Only uncomment MOZ_LANGPACK_CONTRIBUTORS if we have a
+        # translation for it
+        new_structure = self.parser.get_structure(read_file(
+            self.source_resource.path,
+            uncomment_moz_langpack=self.entities.get('MOZ_LANGPACK_CONTRIBUTORS', False)
+        ))
 
         # Update translations in the copied resource.
         entities = [
@@ -171,6 +170,25 @@ class SilmeResource(ParsedResource):
 
         with codecs.open(self.path, 'w', 'utf-8') as f:
             f.write(self.parser.dump_structure(new_structure))
+
+
+def read_file(path, uncomment_moz_langpack=False):
+    """Read the resource at the given path."""
+    with codecs.open(path, 'r', 'utf-8') as f:
+        # .inc files have a special commented-out entity called
+        # MOZ_LANGPACK_CONTRIBUTORS. We optionally un-comment it before
+        # parsing so locales can translate it.
+        if uncomment_moz_langpack:
+            lines = []
+            for line in f:
+                if line.startswith('# #define MOZ_LANGPACK_CONTRIBUTORS'):
+                    line = line[2:]
+                lines.append(line)
+            content = ''.join(lines)
+        else:
+            content = f.read()
+
+    return content
 
 
 def copy_source_entity(entity):

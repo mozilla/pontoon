@@ -225,7 +225,7 @@ class VCSEntity(object):
 
     def has_translation_for(self, locale_code):
         """Return True if a translation exists for the given locale."""
-        return bool(self.translations.get(locale_code, False))
+        return locale_code in self.translations
 
 
 class VCSTranslation(object):

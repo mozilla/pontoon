@@ -594,3 +594,79 @@ class IncTests(FormatTestsMixin, TestCase):
             key='MOZ_LANGPACK_CONTRIBUTORS',
             strings={None: 'Contributor list'}
         )
+
+    def test_moz_langpack_contributors_source(self):
+        """
+        If a source resource was provided, meaning that we're parsing a
+        translated resource, do not uncomment MOZ_LANGPACK_CONTRIBUTORS.
+        """
+        input_string = dedent("""
+            #define String Some String
+
+            # #define MOZ_LANGPACK_CONTRIBUTORS Contributor list
+        """)
+        source_string = dedent("""
+            #define String Translated String
+
+            # #define MOZ_LANGPACK_CONTRIBUTORS Other Contributors
+        """)
+
+        path, resource = self.parse_string(input_string, source_string=source_string)
+        assert_equal(len(resource.translations), 2)
+        assert_attributes_equal(
+            resource.translations[1],
+            key='MOZ_LANGPACK_CONTRIBUTORS',
+            strings={}  # Imported from source == no translations
+        )
+
+    def test_save_moz_langpack_contributors(self):
+        """
+        When saving, if a translation exists for
+        MOZ_LANGPACK_CONTRIBUTORS, uncomment it.
+        """
+        input_string = dedent("""
+            #define String Some String
+
+            # #define MOZ_LANGPACK_CONTRIBUTORS Contributor list
+        """)
+        source_string = dedent("""
+            #define String Translated String
+
+            # #define MOZ_LANGPACK_CONTRIBUTORS Contributor list
+        """)
+
+        path, resource = self.parse_string(input_string, source_string=source_string)
+        resource.entities['MOZ_LANGPACK_CONTRIBUTORS'].strings = {None: 'New Contributor list'}
+        resource.save(self.locale)
+
+        self.assert_file_content(path, dedent("""
+            #define String Some String
+
+            #define MOZ_LANGPACK_CONTRIBUTORS New Contributor list
+        """))
+
+    def test_save_moz_langpack_contributors_no_translations(self):
+        """
+        When saving, if a translation does not exist for
+        MOZ_LANGPACK_CONTRIBUTORS, leave it commented.
+        """
+        input_string = dedent("""
+            #define String Some String
+
+            #define MOZ_LANGPACK_CONTRIBUTORS Modified contributor list
+        """)
+        source_string = dedent("""
+            #define String Translated String
+
+            # #define MOZ_LANGPACK_CONTRIBUTORS Contributor list
+        """)
+
+        path, resource = self.parse_string(input_string, source_string=source_string)
+        resource.entities['MOZ_LANGPACK_CONTRIBUTORS'].strings = {}
+        resource.save(self.locale)
+
+        self.assert_file_content(path, dedent("""
+            #define String Some String
+
+            # #define MOZ_LANGPACK_CONTRIBUTORS Contributor list
+        """))
