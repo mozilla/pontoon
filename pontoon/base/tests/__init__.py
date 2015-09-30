@@ -23,7 +23,7 @@ from pontoon.base.models import (
     Subpage,
     Translation,
 )
-from pontoon.base.vcs_models import VCSEntity
+from pontoon.base.vcs_models import VCSEntity, VCSTranslation
 
 
 class TestCase(BaseTestCase):
@@ -170,6 +170,16 @@ class VCSEntityFactory(factory.Factory):
 
     class Meta:
         model = VCSEntity
+
+
+class VCSTranslationFactory(factory.Factory):
+    key = Sequence(lambda n: 'key-{0}'.format(n))
+    strings = factory.Dict({})
+    comments = factory.List([])
+    fuzzy = False
+
+    class Meta:
+        model = VCSTranslation
 
 
 def assert_redirects(response, expected_url, status_code=302, host=None):

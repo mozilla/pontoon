@@ -1,11 +1,18 @@
 import os
 import os.path
 
-from django_nose.tools import assert_equal
+from django_nose.tools import assert_equal, assert_false, assert_true
 from mock import Mock, patch, PropertyMock
 
 from pontoon.base.models import Project
-from pontoon.base.tests import CONTAINS, ProjectFactory, RepositoryFactory, TestCase
+from pontoon.base.tests import (
+    CONTAINS,
+    ProjectFactory,
+    RepositoryFactory,
+    TestCase,
+    VCSEntityFactory,
+    VCSTranslationFactory,
+)
 from pontoon.base.formats.base import ParseError
 from pontoon.base.vcs_models import VCSProject
 
@@ -109,3 +116,19 @@ class VCSProjectTests(TestCase):
                 list(self.vcs_project.resources_for_path('/root')),
                 [os.path.join('/root', 'foo.pot')]
             )
+
+
+class VCSEntityTests(TestCase):
+    def test_has_translation_for(self):
+        """
+        Return True if a translation exists for the given locale, even
+        if the translation is empty/falsey.
+        """
+        empty_translation = VCSTranslationFactory(strings={})
+        full_translation = VCSTranslationFactory(strings={None: 'TRANSLATED'})
+        entity = VCSEntityFactory()
+        entity.translations = {'empty': empty_translation, 'full': full_translation}
+
+        assert_false(entity.has_translation_for('missing'))
+        assert_true(entity.has_translation_for('empty'))
+        assert_true(entity.has_translation_for('full'))
