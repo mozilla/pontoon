@@ -640,12 +640,12 @@ class EntityTests(TestCase):
             'key': '',
             'path': 'main.lang',
             'translation': [{
-                'pk': 4,
+                'pk': self.main_translation.pk,
                 'fuzzy': False,
                 'string': 'Translated String',
                 'approved': False
             }, {
-                'pk': 5,
+                'pk': self.main_translation_plural.pk,
                 'fuzzy': False,
                 'string': 'Translated Plural String',
                 'approved': False
@@ -654,7 +654,7 @@ class EntityTests(TestCase):
             'source': [],
             'original_plural': 'Plural Source String',
             'marked_plural': 'Plural Source String',
-            'pk': 4,
+            'pk': self.main_entity.pk,
             'original': 'Source String'
         })
 
