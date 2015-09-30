@@ -98,11 +98,20 @@ class ProjectPartsTests(TestCase):
         EntityFactory.create(resource=self.resource)
         StatsFactory.create(resource=self.resource, locale=self.locale)
 
+    def _fetch_locales_parts_stats(self):
+        # Fake Prefetch
+        resources = Entity.objects.filter(obsolete=False).values('resource')
+        self.project.active_resources = self.project.resource_set.filter(
+            pk__in=resources
+        )
+
+        return self.project.locales_parts_stats
+
     def test_locales_parts_stats_no_page_one_resource(self):
         """
         Return empty list in no subpage and only one resource defined.
         """
-        project_details = self.project.locales_parts_stats
+        project_details = self._fetch_locales_parts_stats()
         details = project_details.get(self.locale.code)
 
         assert_equal(details, [])
@@ -119,7 +128,7 @@ class ProjectPartsTests(TestCase):
         StatsFactory.create(resource=resource_other, locale=self.locale)
         StatsFactory.create(resource=resource_other, locale=self.locale_other)
 
-        project_details = self.project.locales_parts_stats
+        project_details = self._fetch_locales_parts_stats()
         details = project_details.get(self.locale.code)
         details_other = project_details.get(self.locale_other.code)
 
@@ -127,7 +136,9 @@ class ProjectPartsTests(TestCase):
         assert_equal(details[0]['translated_count'], 0)
         assert_equal(details[1]['resource__path'], '/other/path.po')
         assert_equal(details[1]['translated_count'], 0)
-        assert_equal(len(details_other), 0)
+        assert_equal(len(details_other), 1)
+        assert_equal(details_other[0]['resource__path'], '/other/path.po')
+        assert_equal(details_other[0]['translated_count'], 0)
 
     def test_locales_parts_stats_pages_not_tied_to_resources(self):
         """
@@ -135,7 +146,7 @@ class ProjectPartsTests(TestCase):
         """
         SubpageFactory.create(project=self.project, name='Subpage')
 
-        project_details = self.project.locales_parts_stats
+        project_details = self._fetch_locales_parts_stats()
         details = project_details.get(self.locale.code)
 
         assert_equal(details[0]['resource__path'], 'Subpage')
@@ -163,7 +174,7 @@ class ProjectPartsTests(TestCase):
             resources=[resource_other]
         )
 
-        project_details = self.project.locales_parts_stats
+        project_details = self._fetch_locales_parts_stats()
         details = project_details.get(self.locale.code)
         details_other = project_details.get(self.locale_other.code)
 

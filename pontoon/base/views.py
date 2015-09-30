@@ -22,7 +22,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.db.models import Count, F
+from django.db.models import Count, F, Prefetch
 
 from django.http import (
     Http404,
@@ -213,9 +213,24 @@ def translate(request, locale, slug, part=None, template='translate.html'):
             }
             return HttpResponseRedirect(reverse('pontoon.home'))
 
-    projects = Project.objects.filter(
-        disabled=False, pk__in=Resource.objects.values('project')
-    ).order_by("name")
+    # Prefetch subpages and resources for locales_parts_stats()
+    projects = (
+        Project.objects.filter(
+            disabled=False,
+            pk__in=Resource.objects.values('project')
+        )
+        .prefetch_related(
+            'subpage_set',
+            Prefetch(
+                'resource_set',
+                queryset=Resource.objects.filter(
+                    pk__in=Entity.objects.filter(obsolete=False).values('resource')
+                ),
+                to_attr='active_resources'
+            )
+        )
+        .order_by("name")
+    )
 
     data = {
         'accept_language': utils.get_project_locale_from_request(
