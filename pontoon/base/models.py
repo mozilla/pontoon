@@ -49,7 +49,7 @@ class UserTranslationsManager(models.Manager):
             Case(
                 When(translation_query, then=1), output_field=models.IntegerField(), default=0))
 
-    def with_translation_counts(self, start_date=None, limit=100):
+    def with_translation_counts(self, start_date=None, query_filters=None, limit=100):
         """
         Returns contributors list, sorted by count of their translations.
         Every user instance has added following properties:
@@ -61,12 +61,18 @@ class UserTranslationsManager(models.Manager):
         count of sql queries during generation of metrics.
         All counts will be returned from start_date to now().
         :param date start_date: start date for translations.
+        :param django.db.models.Q query_filters: filters contributors by given query_filters.
+        :param int limit: limit results to this number.
         """
         def translations_count(query=None):
             """Short helper to avoid duplication of passing dates."""
             query = query or Q()
             if start_date:
                 query &= Q(translation__date__gte=start_date)
+        
+            if query_filters:
+                query &= query_filters
+
             return self._changed_translations_count(query)
         return (
             self

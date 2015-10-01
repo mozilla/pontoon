@@ -1,4 +1,5 @@
 {% extends "landing.html" %}
+{% import "widgets/menu.html" as Menu %}
 
 {% block title %}Pontoon &middot; {{ project.name }}{% endblock %}
 
@@ -24,7 +25,17 @@
 	{% if project.info_brief %}<p>{{ project.info_brief|safe }}</p>{% endif %}
 	{% if project.url %}<p><span>Website: </span><a href="{{ project.url }}">{{ project.url }}</a></p>{% endif %}
   </div>
-  {% include 'locale_selector.html' %}
+</form>
+
+{{ Menu.submenu((
+  (url('pontoon.project', project.slug), 'Teams', ''),
+  (url('pontoon.project.contributors', project.slug), 'Contributors', 'contributors')
+), request.path.split('/')[3]|default('')) }}
+
+<form>
+  {% block project_subpage %}
+    {% include 'locale_selector.html' %}
+  {% endblock %}
 </form>
 {% endblock %}
 

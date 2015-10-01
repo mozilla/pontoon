@@ -1,6 +1,7 @@
 import os.path
 
 from django_nose.tools import assert_equal, assert_false, assert_raises, assert_true
+from django.db.models import Q
 from django.test.utils import override_settings
 
 from mock import call, Mock, patch
@@ -578,6 +579,40 @@ class UserTranslationManagerTests(TestCase):
             translations_approved_count=2, translations_unapproved_count=11,
             translations_needs_work_count=2)
 
+    def test_query_args_filtering(self):
+        """
+        Tests if query args are honored properly and contributors are filtered.
+        """
+        locale_first, locale_second = LocaleFactory.create_batch(2)
+
+        first_contributor = self.create_contributor_with_translation_counts(
+            approved=12, unapproved=1, needs_work=2, locale=locale_first)
+        second_contributor = self.create_contributor_with_translation_counts(
+            approved=11, unapproved=1, needs_work=2, locale=locale_second)
+        third_contributor = self.create_contributor_with_translation_counts(
+            approved=10, unapproved=12, needs_work=2, locale=locale_first)
+
+        # Testing filtering for the first locale
+        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 1), Q(translation__locale=locale_first))
+        assert_equal(top_contributors.count(), 2)
+        assert_equal(top_contributors[0], third_contributor)
+        assert_attributes_equal(top_contributors[0], translations_count=24,
+            translations_approved_count=10, translations_unapproved_count=12,
+            translations_needs_work_count=2)
+
+        assert_equal(top_contributors[1], first_contributor)
+        assert_attributes_equal(top_contributors[1], translations_count=15,
+            translations_approved_count=12, translations_unapproved_count=1,
+            translations_needs_work_count=2)
+
+        # Testing filtering for the second locale
+        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 1), Q(translation__locale=locale_second))
+
+        assert_equal(top_contributors.count(), 1)
+        assert_equal(top_contributors[0], second_contributor)
+        assert_attributes_equal(top_contributors[0], translations_count=14,
+            translations_approved_count=11, translations_unapproved_count=1,
+            translations_needs_work_count=2)
 
 class EntityTests(TestCase):
     def setUp(self):

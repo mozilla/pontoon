@@ -1,5 +1,7 @@
 {% extends "landing.html" %}
 
+{% import "widgets/menu.html" as Menu %}
+
 {% block title %}Pontoon &middot; {{ locale.name }} ({{ locale.code }}){% endblock %}
 
 {% block class %}locale{% endblock %}
@@ -13,7 +15,16 @@
 			<p>{{ locale.team_description|safe }}</p>
 		</div>
 	{% endif %}
+</form>
 
-	{% include 'project_selector.html' %}
+{{ Menu.submenu((
+	(url('pontoon.locale', locale.code), 'Projects', ''),
+	(url('pontoon.locale.contributors', locale.code), 'Contributors', 'contributors')
+), request.path.split('/')[2]|default('')) }}
+
+<form>
+	{% block locale_subpage %}
+		{% include 'project_selector.html' %}
+	{% endblock %}
 </form>
 {% endblock %}

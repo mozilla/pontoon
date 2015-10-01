@@ -49,7 +49,10 @@ urlpatterns = patterns(
         views.project,
         name='pontoon.project'),
 
-    # Translate project
+    url(r'^projects/(?P<slug>[\w-]+)/contributors$',
+        views.ProjectContributorsView.as_view(),
+        name='pontoon.project.contributors'),
+
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',
         views.translate,
         name='pontoon.translate'),
@@ -61,7 +64,7 @@ urlpatterns = patterns(
 
     # List contributors
     url(r'^contributors/$',
-        views.contributors,
+        views.ContributorsView.as_view(),
         name='pontoon.contributors'),
 
     # Contributor profile
@@ -125,4 +128,9 @@ urlpatterns = patterns(
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
         views.locale,
         name='pontoon.locale'),
+
+    url(r'^(?P<code>[A-Za-z0-9\-\@\.]+)/contributors$',
+        views.LocaleContributorsView.as_view(),
+        name='pontoon.locale.contributors'),
+
 )
