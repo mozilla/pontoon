@@ -1,0 +1,284 @@
+from django_nose.tools import (
+    assert_equal,
+    assert_false,
+    assert_not_in,
+    assert_raises,
+    assert_true
+)
+from mock import Mock
+
+from pontoon.base.models import Entity
+from pontoon.base.tests import (
+    assert_attributes_equal,
+    TranslationFactory,
+    UserFactory,
+)
+from pontoon.base.utils import aware_datetime
+from pontoon.sync.tests import FakeCheckoutTestCase
+
+
+class ChangeSetTests(FakeCheckoutTestCase):
+    def test_execute_called_once(self):
+        """Raise a RuntimeError if execute is called more than once."""
+        self.changeset.execute()
+        with assert_raises(RuntimeError):
+            self.changeset.execute()
+
+    def update_main_vcs_entity(self, **translation_changes):
+        for key, value in translation_changes.items():
+            setattr(self.main_db_translation, key, value)
+        self.main_db_translation.save()
+
+        self.changeset.update_vcs_entity(
+            self.translated_locale.code,
+            self.main_db_entity,
+            self.main_vcs_entity
+        )
+        self.changeset.execute()
+
+    def test_update_vcs_entity(self):
+        """
+        Update the VCS translations with translations in the database.
+        """
+        self.main_vcs_resource.save = Mock()
+        self.other_vcs_resource.save = Mock()
+
+        self.update_main_vcs_entity(string='New Translated String')
+        assert_equal(self.main_vcs_translation.strings, {None: 'New Translated String'})
+
+        # Ensure only resources that were updated are saved.
+        assert_true(self.main_vcs_resource.save.called)
+        assert_false(self.other_vcs_resource.save.called)
+
+        # Update the VCS translation with info about the last
+        # translation.
+        assert_equal(self.main_vcs_translation.last_updated, self.main_db_translation.date)
+        assert_equal(self.main_vcs_translation.last_translator, self.main_db_translation.user)
+
+    def test_update_vcs_entity_unapproved(self):
+        """
+        Do not update VCS with unapproved translations. If no approved
+        translations exist, delete existing ones.
+        """
+        self.update_main_vcs_entity(approved=False)
+        assert_equal(self.main_vcs_translation.strings, {})
+
+    def test_update_vcs_entity_fuzzy(self):
+        self.main_vcs_translation.fuzzy = False
+        self.update_main_vcs_entity(fuzzy=True)
+        assert_equal(self.main_vcs_translation.fuzzy, True)
+
+    def test_update_vcs_entity_not_fuzzy(self):
+        self.main_vcs_translation.fuzzy = True
+        self.update_main_vcs_entity(fuzzy=False)
+        assert_equal(self.main_vcs_translation.fuzzy, False)
+
+    def test_update_vcs_last_translation_no_translations(self):
+        """
+        If there are no translations in the database, do not set the
+        last_updated and last_translator fields on the VCS translation.
+        """
+        self.main_db_translation.delete()
+
+        self.changeset.update_vcs_entity(
+            self.translated_locale.code,
+            self.main_db_entity,
+            self.main_vcs_entity
+        )
+        self.changeset.execute()
+
+        assert_equal(self.main_vcs_translation.last_updated, None)
+        assert_equal(self.main_vcs_translation.last_translator, None)
+
+    def test_update_vcs_entity_user(self):
+        """Track translation authors for use in the commit message."""
+        user = UserFactory.create()
+        self.update_main_vcs_entity(user=user)
+        assert_equal(self.changeset.commit_authors_per_locale['translated-locale'], [user])
+
+    def test_create_db(self):
+        """Create new entity in the database."""
+        self.main_db_entity.delete()
+
+        self.main_vcs_entity.key = 'string-key'
+        self.main_vcs_entity.comments = ['first comment', 'second']
+        self.main_vcs_entity.order = 7
+        self.main_vcs_translation.fuzzy = False
+        self.main_vcs_entity.string_plural = 'plural string'
+        self.main_vcs_entity.source = ['foo.py:87']
+
+        self.changeset.create_db_entity(self.main_vcs_entity)
+        self.changeset.execute()
+        new_entity = Entity.objects.get(
+            resource__path=self.main_vcs_resource.path,
+            string=self.main_vcs_entity.string
+        )
+        assert_attributes_equal(
+            new_entity,
+            resource=self.main_db_resource,
+            string='Source String',
+            key='string-key',
+            comment='first comment\nsecond',
+            order=7,
+            string_plural='plural string',
+            source=['foo.py:87'],
+        )
+
+        new_translation = new_entity.translation_set.all()[0]
+        assert_attributes_equal(
+            new_translation,
+            locale=self.translated_locale,
+            string='Translated String',
+            plural_form=None,
+            approved=True,
+            approved_date=aware_datetime(1970, 1, 1),
+            fuzzy=False
+        )
+
+    def update_main_db_entity(self):
+        self.changeset.update_db_entity(
+            self.translated_locale.code,
+            self.main_db_entity,
+            self.main_vcs_entity
+        )
+        self.changeset.execute()
+
+    def test_update_db_existing_translation(self):
+        """
+        Update an existing translation in the DB with changes from VCS.
+        """
+        # Set up DB and VCS to differ and require an update.
+        self.main_db_translation.fuzzy = True
+        self.main_db_translation.extra = {}
+        self.main_db_translation.save()
+
+        self.main_vcs_entity.key = 'string-key'
+        self.main_vcs_entity.comments = ['first comment', 'second']
+        self.main_vcs_entity.order = 7
+        self.main_vcs_entity.string_plural = 'plural string'
+        self.main_vcs_entity.source = ['foo.py:87']
+        self.main_vcs_translation.fuzzy = False
+        # The test translation is from a langfile so we can use tags
+        # for testing extra.
+        self.main_vcs_translation.tags = set(['ok'])
+
+        self.update_main_db_entity()
+        self.main_db_entity.refresh_from_db()
+        assert_attributes_equal(
+            self.main_db_entity,
+            key='string-key',
+            comment='first comment\nsecond',
+            order=7,
+            string_plural='plural string',
+            source=['foo.py:87'],
+        )
+
+        self.main_db_translation.refresh_from_db()
+        assert_attributes_equal(
+            self.main_db_translation,
+            fuzzy=False,
+            extra={'tags': ['ok']}
+        )
+
+    def test_update_db_clean_entity_translation(self):
+        """
+        If no changes have been made to the database entity or the
+        translation, do not bother updating them in the database.
+        """
+        self.update_main_db_entity()
+
+        # TODO: It'd be nice if we didn't rely on internal changeset
+        # attributes to check this, but not vital.
+        assert_not_in(self.main_db_entity, self.changeset.entities_to_update)
+        assert_not_in(self.main_db_translation, self.changeset.translations_to_update)
+
+    def test_update_db_approve_translation(self):
+        """
+        Approve any un-approved translations that have counterparts in
+        VCS.
+        """
+        self.main_db_translation.approved = False
+        self.main_db_translation.approved_date = None
+        self.main_db_translation.save()
+
+        self.update_main_db_entity()
+        self.main_db_translation.refresh_from_db()
+        assert_attributes_equal(
+            self.main_db_translation,
+            approved=True,
+            approved_date=aware_datetime(1970, 1, 1)
+        )
+
+    def test_update_db_new_translation(self):
+        """
+        If a matching translation does not exist in the database, create a new
+        one.
+        """
+        self.main_db_translation.delete()
+        self.update_main_db_entity()
+
+        translation = self.main_db_entity.translation_set.all()[0]
+        assert_attributes_equal(
+            translation,
+            locale=self.translated_locale,
+            string='Translated String',
+            plural_form=None,
+            approved=True,
+            approved_date=aware_datetime(1970, 1, 1),
+            fuzzy=False,
+            extra={'tags': []}
+        )
+
+    def test_update_db_unapprove_existing(self):
+        """
+        Any existing translations that don't match anything in VCS get
+        unapproved, unless they were created after self.now.
+        """
+        self.main_db_translation.approved = True
+        self.main_db_translation.approved_date = aware_datetime(1970, 1, 1)
+        self.main_db_translation.approved_user = UserFactory.create()
+        self.main_db_translation.save()
+        self.main_vcs_translation.strings[None] = 'New Translated String'
+
+        created_after_translation = TranslationFactory.create(
+            entity=self.main_db_entity,
+            approved=True,
+            approved_date=aware_datetime(1970, 1, 3)
+        )
+
+        self.update_main_db_entity()
+        self.main_db_translation.refresh_from_db()
+        assert_attributes_equal(
+            self.main_db_translation,
+            approved=False,
+            approved_user=None,
+            approved_date=None
+        )
+
+        created_after_translation.refresh_from_db()
+        assert_attributes_equal(
+            created_after_translation,
+            approved=True,
+            approved_date=aware_datetime(1970, 1, 3)
+        )
+
+    def test_update_db_unapprove_clean(self):
+        """
+        If translations that are set to be unapproved were already unapproved,
+        don't bother updating them.
+        """
+        self.main_db_translation.approved = False
+        self.main_db_translation.approved_date = None
+        self.main_db_translation.approved_user = None
+        self.main_db_translation.save()
+        self.main_vcs_translation.strings[None] = 'New Translated String'
+
+        self.update_main_db_entity()
+        self.main_db_translation.refresh_from_db()
+        assert_not_in(self.main_db_translation, self.changeset.translations_to_update)
+
+    def test_obsolete_db(self):
+        self.changeset.obsolete_db_entity(self.main_db_entity)
+        self.changeset.execute()
+        self.main_db_entity.refresh_from_db()
+        assert_true(self.main_db_entity.obsolete)

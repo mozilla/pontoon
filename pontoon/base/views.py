@@ -568,7 +568,7 @@ def delete_translation(request, template=None):
     locale = translation.locale
     plural_form = translation.plural_form
 
-    translation.mark_for_deletion()
+    translation.delete()
 
     # Mark next translation approved if needed
     next = get_translation(

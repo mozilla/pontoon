@@ -31,3 +31,4 @@ Contents
    dev/install
    dev/workflow
    admin/deployment
+   admin/maintenance

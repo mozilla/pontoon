@@ -58,6 +58,13 @@ SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
 # tests.
 SSLIFY_DISABLE = DEBUG or os.environ.get('CI', False)
 
+# URL to the RabbitMQ server
+BROKER_URL = os.environ.get('RABBITMQ_URL', None)
+
+# Execute celery tasks locally instead of in a worker unless the
+# environment is configured.
+CELERY_ALWAYS_EAGER = os.environ.get('CELERY_ALWAYS_EAGER', 'False') != 'False'
+
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')
 

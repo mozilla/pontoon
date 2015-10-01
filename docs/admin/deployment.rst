@@ -30,6 +30,11 @@ you create:
 ``ADMIN_NAME``
    Optional. Name for the ``ADMINS`` setting.
 
+``CELERY_ALWAYS_EAGER``
+   Controls whether asynchronous tasks (mainly used during sync) are sent to
+   Celery or executed immediately and synchronously. Set this to ``False`` on
+   production.
+
 ``DISABLE_COLLECTSTATIC``
    Disables running ``./manage.py collectstatic`` during the build. Should be
    set to ``1``.
@@ -94,6 +99,19 @@ you create:
    Timezone for the dynos that will run the app. Pontoon operates in UTC, so set
    this to ``UTC``.
 
+Provisioning Workers
+--------------------
+Pontoon executes asynchronous jobs using `Celery`_. These jobs are handled by
+the ``worker`` process type. You'll need to manually provision workers based on
+how many projects you plan to support and how complex they are. At a minimum,
+you'll want to provision at least one ``worker`` dyno:
+
+.. code-block:: bash
+
+   heroku ps:scale worker=1
+
+.. _Celery: http://www.celeryproject.org/
+
 Add-ons
 -------
 Pontoon is designed to run with the following add-ons enabled:
@@ -105,6 +123,7 @@ Pontoon is designed to run with the following add-ons enabled:
 - Email: Sendgrid
 - Scheduled Jobs: Heroku Scheduler
 - Cache: Memcached Cloud
+- RabbitMQ: CloudAMQP
 
 It's possible to run with the free tiers of all of these add-ons, but it is
 recommended that, at a minimum, you run the "Standard 0" tier of Postgres.
@@ -137,6 +156,22 @@ variables from the cache add-on:
    ``heroku addons`` command to see a list of resource names that are available.
 
 .. _django-pylibmc: https://github.com/django-pylibmc/django-pylibmc/
+
+RabbitMQ Add-ons
+~~~~~~~~~~~~~~~~
+Similar to the cache add-ons, Pontoon expects environment variables from the
+RabbitMQ add-on:
+
+``RABBITMQ_URL``
+   URL for connecting to the RabbitMQ server. This should be in the format for
+   Celery's `BROKER_URL`_ setting.
+
+.. note::
+
+   Again, you must attach the resource for RabbitMQ as ``RABBITMQ``. See the
+   note in the Cache Add-ons section for details.
+
+.. _BROKER_URL: http://celery.readthedocs.org/en/latest/configuration.html#broker-url
 
 Scheduled Jobs
 --------------

@@ -1,16 +1,16 @@
 import os
 import tempfile
 
-import factory
-from factory import LazyAttribute, Sequence, SubFactory, SelfAttribute
-from factory.django import DjangoModelFactory
-
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.test import TestCase as BaseTestCase
 
+import factory
 from django_browserid.tests import mock_browserid
 from django_nose.tools import assert_equal
+from factory import LazyAttribute, Sequence, SubFactory, SelfAttribute
+from factory.django import DjangoModelFactory
+from mock import patch
 
 from pontoon.base.models import (
     ChangedEntityLocale,
@@ -38,6 +38,24 @@ class TestCase(BaseTestCase):
             self.client.login(assertion='asdf', audience='asdf')
 
         return user
+
+    def patch(self, *args, **kwargs):
+        """
+        Wrapper around mock.patch that automatically cleans up the patch
+        in the test cleanup phase.
+        """
+        patch_obj = patch(*args, **kwargs)
+        self.addCleanup(patch_obj.stop)
+        return patch_obj.start()
+
+    def patch_object(self, *args, **kwargs):
+        """
+        Wrapper around mock.patch.object that automatically cleans up
+        the patch in the test cleanup phase.
+        """
+        patch_obj = patch.object(*args, **kwargs)
+        self.addCleanup(patch_obj.stop)
+        return patch_obj.start()
 
 
 class UserFactory(DjangoModelFactory):

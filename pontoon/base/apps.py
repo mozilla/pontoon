@@ -16,6 +16,10 @@ class BaseConfig(AppConfig):
         super(BaseConfig, self).ready()
         self.monkeypatch()
 
+        # Load celery app so celery.shared_task uses it for executing
+        # tasks.
+        from pontoon.base.celery import app as celery_app  # NOQA
+
     def monkeypatch(self):
         # Only patch once, ever.
         if BaseConfig._has_patched:

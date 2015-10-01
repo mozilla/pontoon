@@ -732,18 +732,6 @@ class TranslationQuerySet(models.QuerySet):
             }
 
 
-class TranslationManager(models.Manager):
-    def get_queryset(self):
-        return (TranslationQuerySet(self.model, using=self._db)
-                .filter(deleted__isnull=True))
-
-
-class DeletedTranslationManager(models.Manager):
-    def get_queryset(self):
-        return (super(DeletedTranslationManager, self).get_queryset()
-                .filter(deleted__isnull=False))
-
-
 def extra_default():
     """Default value for the Translation.extra field."""
     return {}
@@ -762,19 +750,13 @@ class Translation(DirtyFieldsMixin, models.Model):
         User, related_name='approvers', null=True, blank=True)
     approved_date = models.DateTimeField(null=True, blank=True)
     fuzzy = models.BooleanField(default=False)
-    deleted = models.DateTimeField(default=None, null=True)
 
     # extra stores data that we want to save for the specific format
     # this translation is stored in, but that we otherwise don't care
     # about.
     extra = JSONField(default=extra_default)
 
-    # Due to https://code.djangoproject.com/ticket/14891,
-    # TranslationManager will be used for the reverse FK from entities,
-    # e.g. entity.translation_set. Deleted translations cannot be
-    # accessed via that relation.
-    objects = TranslationManager()
-    deleted_objects = DeletedTranslationManager()
+    objects = TranslationQuerySet.as_manager()
 
     def __unicode__(self):
         return self.string
@@ -799,14 +781,15 @@ class Translation(DirtyFieldsMixin, models.Model):
             # this but for now this is fine.
             self.entity.mark_changed(self.locale)
 
-    def mark_for_deletion(self):
-        self.deleted = timezone.now()
-        self.save()
-
     def delete(self, stats=True, *args, **kwargs):
         super(Translation, self).delete(*args, **kwargs)
         if stats:
             update_stats(self.entity.resource, self.locale)
+
+        # Mark entity as changed before deleting. This is skipped during
+        # bulk delete operations, but we shouldn't be bulk-deleting
+        # translations anyway.
+        self.entity.mark_changed(self.locale)
 
     def serialize(self):
         return {
