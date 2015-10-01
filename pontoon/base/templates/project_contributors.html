@@ -4,13 +4,15 @@
 {% block title %}{{ super() }} &middot; Contributors {% endblock %}
 
 {% block project_subpage %}
-{{ Contributors.select_period(period, url('pontoon.project.contributors', project.slug)) }}
-
-<form>
-  {{ Contributors.list_contributors(contributors) }}
-</form>
+  {% if contributors %}
+    {{ Contributors.select_period(period, url('pontoon.project.contributors', project.slug)) }}
+    {{ Contributors.list_contributors(contributors) }}
+  {% else %}
+    {{ Contributors.no_contributors() }}
+  {% endif %}
 {% endblock %}
 
 {% block extend_css %}
+  {% stylesheet 'project' %}
   {% stylesheet 'users' %}
 {% endblock %}

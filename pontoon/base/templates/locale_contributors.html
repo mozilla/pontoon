@@ -6,11 +6,12 @@
 {% block class %}locale{% endblock %}
 
 {% block locale_subpage %}
-	{{ Contributors.select_period(period, url('pontoon.locale.contributors', locale.code)) }}
-
-	<form>
-	  {{ Contributors.list_contributors(contributors) }}
-	</form>
+  {% if contributors %}
+    {{ Contributors.select_period(period, url('pontoon.locale.contributors', locale.code)) }}
+    {{ Contributors.list_contributors(contributors) }}
+  {% else %}
+    {{ Contributors.no_contributors() }}
+  {% endif %}
 {% endblock %}
 
 {% block extend_css %}

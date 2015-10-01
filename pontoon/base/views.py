@@ -81,7 +81,7 @@ def locale(request, locale, template='locale.html'):
         .order_by("name")
 
     if not projects:
-        return Http404()
+        raise Http404
 
     data = {
         'projects': get_projects_with_stats(projects, l),

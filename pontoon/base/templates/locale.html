@@ -9,22 +9,20 @@
 {% block subtitle %}{{ locale.name }} ({{ locale.code }}){% endblock %}
 
 {% block middle %}
-<form>
+<div class="container">
 	{% if locale.team_description %}
 		<div class="about">
 			<p>{{ locale.team_description|safe }}</p>
 		</div>
 	{% endif %}
-</form>
 
-{{ Menu.submenu((
-	(url('pontoon.locale', locale.code), 'Projects', ''),
-	(url('pontoon.locale.contributors', locale.code), 'Contributors', 'contributors')
-), request.path.split('/')[2]|default('')) }}
+	{{ Menu.submenu((
+		(url('pontoon.locale', locale.code), 'Projects', ''),
+		(url('pontoon.locale.contributors', locale.code), 'Contributors', 'contributors')
+	), request.path.split('/')[2]|default(''), 'submenu tabs') }}
 
-<form>
 	{% block locale_subpage %}
 		{% include 'project_selector.html' %}
 	{% endblock %}
-</form>
+</div>
 {% endblock %}

@@ -7,7 +7,7 @@
 {% block subtitle %}Terminology Search{% endblock %}
 
 {% block middle %}
-<form>
+<div class="container">
   {% include 'locale_selector.html' %}
   <div id="search" class="search-wrapper clearfix">
     <div class="icon fa fa-search"></div>
@@ -19,7 +19,7 @@
       <ul></ul>
     </section>
   </div>
-</form>
+</div>
 {% endblock %}
 
 {% block extend_css %}
