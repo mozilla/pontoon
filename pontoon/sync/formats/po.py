@@ -8,8 +8,8 @@ from django.utils import timezone
 import polib
 import sys
 
-from pontoon.base.formats.base import ParseError, ParsedResource
-from pontoon.base.vcs_models import VCSTranslation
+from pontoon.sync.formats.base import ParseError, ParsedResource
+from pontoon.sync.vcs_models import VCSTranslation
 
 
 class POEntity(VCSTranslation):

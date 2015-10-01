@@ -7,14 +7,14 @@ from textwrap import dedent
 from django_nose.tools import assert_equal, assert_raises, assert_true
 from silme.format.dtd import FormatParser as DTDParser
 
-from pontoon.base.formats import silme
 from pontoon.base.tests import (
     assert_attributes_equal,
     create_tempfile,
     LocaleFactory,
     TestCase,
 )
-from pontoon.base.tests.formats import FormatTestsMixin
+from pontoon.sync.formats import silme
+from pontoon.sync.tests.formats import FormatTestsMixin
 
 
 class SilmeResourceTests(TestCase):

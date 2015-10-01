@@ -5,7 +5,7 @@ See base.py for the ParsedResource base class.
 """
 import os.path
 
-from pontoon.base.formats import lang, po, silme, xliff
+from pontoon.sync.formats import lang, po, silme, xliff
 
 
 # To add support for a new resource format, add an entry to this dict

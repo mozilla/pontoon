@@ -1,9 +1,9 @@
 from difflib import Differ
 from textwrap import dedent
 
-from pontoon.base.formats import xliff
 from pontoon.base.tests import TestCase
-from pontoon.base.tests.formats import FormatTestsMixin
+from pontoon.sync.formats import xliff
+from pontoon.sync.tests.formats import FormatTestsMixin
 
 
 BASE_XLIFF_FILE = """

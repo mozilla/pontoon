@@ -77,7 +77,7 @@ class VCSProject(object):
         with less mocking.
         """
         # Avoid circular import; someday we should refactor to avoid.
-        from pontoon.base.formats.base import ParseError
+        from pontoon.sync.formats.base import ParseError
 
         resources = {}
         for path in self.relative_resource_paths():
@@ -182,7 +182,7 @@ class VCSResource(object):
         Load the resource file for each enabled locale and store its
         translations in VCSEntity instances.
         """
-        from pontoon.base import formats  # Avoid circular import.
+        from pontoon.sync import formats  # Avoid circular import.
 
         self.vcs_project = vcs_project
         self.path = path

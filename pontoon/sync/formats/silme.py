@@ -13,9 +13,9 @@ from silme.format.ini import FormatParser as IniParser
 from silme.format.inc import FormatParser as IncParser
 from silme.format.properties import FormatParser as PropertiesParser
 
-from pontoon.base import SyncError
-from pontoon.base.formats.base import ParsedResource
-from pontoon.base.vcs_models import VCSTranslation
+from pontoon.sync import SyncError
+from pontoon.sync.formats.base import ParsedResource
+from pontoon.sync.vcs_models import VCSTranslation
 
 
 class SilmeEntity(VCSTranslation):

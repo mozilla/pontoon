@@ -1,12 +1,12 @@
 from textwrap import dedent
 
-from pontoon.base.formats import po
 from pontoon.base.tests import (
     TestCase,
     UserFactory
 )
-from pontoon.base.tests.formats import FormatTestsMixin
 from pontoon.base.utils import aware_datetime
+from pontoon.sync.formats import po
+from pontoon.sync.tests.formats import FormatTestsMixin
 
 
 BASE_POFILE = """

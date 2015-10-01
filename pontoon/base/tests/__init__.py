@@ -23,7 +23,6 @@ from pontoon.base.models import (
     Subpage,
     Translation,
 )
-from pontoon.base.vcs_models import VCSEntity, VCSTranslation
 
 
 class TestCase(BaseTestCase):
@@ -157,29 +156,6 @@ class SubpageFactory(DjangoModelFactory):
         if extracted:
             for resource in extracted:
                 self.resources.add(resource)
-
-
-class VCSEntityFactory(factory.Factory):
-    resource = None
-    key = 'key'
-    string = 'string'
-    string_plural = ''
-    comments = factory.List([])
-    source = factory.List([])
-    order = Sequence(lambda n: n)
-
-    class Meta:
-        model = VCSEntity
-
-
-class VCSTranslationFactory(factory.Factory):
-    key = Sequence(lambda n: 'key-{0}'.format(n))
-    strings = factory.Dict({})
-    comments = factory.List([])
-    fuzzy = False
-
-    class Meta:
-        model = VCSTranslation
 
 
 def assert_redirects(response, expected_url, status_code=302, host=None):

@@ -3,10 +3,10 @@ from textwrap import dedent
 
 from django_nose.tools import assert_equal, assert_raises
 
-from pontoon.base.formats import lang
-from pontoon.base.formats.base import ParseError
 from pontoon.base.tests import assert_attributes_equal, TestCase
-from pontoon.base.tests.formats import FormatTestsMixin
+from pontoon.sync.formats import lang
+from pontoon.sync.formats.base import ParseError
+from pontoon.sync.tests.formats import FormatTestsMixin
 
 
 BASE_LANG_FILE = """

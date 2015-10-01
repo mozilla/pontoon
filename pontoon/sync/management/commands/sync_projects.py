@@ -20,7 +20,7 @@ from pontoon.base.models import (
     update_stats
 )
 from pontoon.base.utils import match_attr
-from pontoon.base.vcs_models import VCSProject
+from pontoon.sync.vcs_models import VCSProject
 
 
 class Command(BaseCommand):

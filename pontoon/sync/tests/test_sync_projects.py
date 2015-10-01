@@ -11,7 +11,6 @@ from django_nose.tools import (
 )
 from mock import ANY, call, Mock, patch, PropertyMock
 
-from pontoon.administration.management.commands import sync_projects
 from pontoon.administration.vcs import CommitToRepositoryException
 from pontoon.base.models import (
     ChangedEntityLocale,
@@ -34,10 +33,11 @@ from pontoon.base.tests import (
     TestCase,
     TranslationFactory,
     UserFactory,
-    VCSEntityFactory,
 )
 from pontoon.base.utils import aware_datetime
-from pontoon.base.vcs_models import VCSProject, VCSResource
+from pontoon.sync.management.commands import sync_projects
+from pontoon.sync.tests import VCSEntityFactory
+from pontoon.sync.vcs_models import VCSProject, VCSResource
 
 
 FAKE_CHECKOUT_PATH = os.path.join(os.path.dirname(__file__), 'fake-checkout')

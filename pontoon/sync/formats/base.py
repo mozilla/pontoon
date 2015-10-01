@@ -12,9 +12,8 @@ class ParsedResource(object):
     @property
     def translations(self):
         """
-        Return a list of pontoon.base.vcs_models.VCSTranslation
-        instances or subclasses that represent the translations in the
-        resource.
+        Return a list of VCSTranslation instances or subclasses that
+        represent the translations in the resource.
         """
         raise NotImplementedError()
 

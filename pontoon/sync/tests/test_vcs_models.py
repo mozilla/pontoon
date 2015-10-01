@@ -10,11 +10,10 @@ from pontoon.base.tests import (
     ProjectFactory,
     RepositoryFactory,
     TestCase,
-    VCSEntityFactory,
-    VCSTranslationFactory,
 )
-from pontoon.base.formats.base import ParseError
-from pontoon.base.vcs_models import VCSProject
+from pontoon.sync.formats.base import ParseError
+from pontoon.sync.tests import VCSEntityFactory, VCSTranslationFactory
+from pontoon.sync.vcs_models import VCSProject
 
 
 TEST_CHECKOUT_PATH = os.path.join(os.path.dirname(__file__), 'directory_detection_tests')
@@ -131,8 +130,8 @@ class VCSProjectTests(TestCase):
             else:
                 return 'successful resource'
 
-        with patch('pontoon.base.vcs_models.VCSResource') as MockVCSResource, \
-             patch('pontoon.base.vcs_models.log') as mock_log:
+        with patch('pontoon.sync.vcs_models.VCSResource') as MockVCSResource, \
+             patch('pontoon.sync.vcs_models.log') as mock_log:
             MockVCSResource.side_effect = vcs_resource_constructor
 
             assert_equal(self.vcs_project.resources, {'success': 'successful resource'})
@@ -148,8 +147,8 @@ class VCSProjectTests(TestCase):
         self.project.repositories.all().delete()
         self.project.repositories.add(RepositoryFactory.build(url=url))
 
-        with patch('pontoon.base.vcs_models.os', wraps=os) as mock_os, \
-             patch('pontoon.base.vcs_models.MOZILLA_REPOS', [url]):
+        with patch('pontoon.sync.vcs_models.os', wraps=os) as mock_os, \
+             patch('pontoon.sync.vcs_models.MOZILLA_REPOS', [url]):
             mock_os.walk.return_value = [
                 ('/root', [], ['foo.pot', 'region.properties'])
             ]

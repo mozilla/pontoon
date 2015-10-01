@@ -9,8 +9,8 @@ from parsimonious.exceptions import ParseError as ParsimoniousParseError, Visita
 from parsimonious.grammar import Grammar
 from parsimonious.nodes import NodeVisitor
 
-from pontoon.base.formats.base import ParseError, ParsedResource
-from pontoon.base.vcs_models import VCSTranslation
+from pontoon.sync.formats.base import ParseError, ParsedResource
+from pontoon.sync.vcs_models import VCSTranslation
 
 
 BLANK_LINE = 'blank_line'
