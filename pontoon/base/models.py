@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum, Prefetch, F, Count, Q, Case, When
+from django.db.models import Sum, Prefetch, F, Q, Case, When
 from django.db.models.signals import post_save
 from django.templatetags.static import static
 from django.utils import timezone
@@ -380,7 +380,7 @@ class Repository(models.Model):
     url = models.CharField("URL", max_length=2000, blank=True)
     source_repo = models.BooleanField(default=False, help_text="""
         If true, this repo contains the source strings directly in the
-        root of the repo. Checkouts of this repo will have "en-US"
+        root of the repo. Checkouts of this repo will have "templates"
         appended to the end of their path so that they are detected as
         source directories.
     """)
@@ -408,7 +408,7 @@ class Repository(models.Model):
             path_components = [c for c in path_components if c != '{locale_code}']
 
         if self.source_repo:
-            path_components.append('en-US')
+            path_components.append('templates')
 
         # Remove trailing separator for consistency.
         return os.path.join(*path_components).rstrip(os.sep)
@@ -498,7 +498,8 @@ class Resource(models.Model):
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
 
-    ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + ['pot']
+    SOURCE_EXTENSIONS = ['pot']  # Extensions of source-only formats.
+    ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + SOURCE_EXTENSIONS
 
     ASYMMETRIC_FORMATS = ('dtd', 'properties', 'ini', 'inc', 'l20n')
 

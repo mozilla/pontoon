@@ -1,0 +1,2 @@
+# This file should signal to the source directory detection that this is
+# actually a real l10n source directory.

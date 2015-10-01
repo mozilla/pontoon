@@ -217,7 +217,7 @@ class RepositoryTests(TestCase):
 
     def test_checkout_path_source_repo(self):
         """
-        The checkout_path for a source repo should end with an en-US
+        The checkout_path for a source repo should end with a templates
         directory.
         """
         repo = RepositoryFactory.create(
@@ -228,7 +228,7 @@ class RepositoryTests(TestCase):
         with self.settings(MEDIA_ROOT='/media/root'):
             assert_equal(
                 repo.checkout_path,
-                '/media/root/projects/test-project/path/to/locale/en-US'
+                '/media/root/projects/test-project/path/to/locale/templates'
             )
 
     def test_locale_checkout_path(self):

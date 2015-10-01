@@ -362,3 +362,16 @@ def match_attr(collection, **attributes):
 def aware_datetime(*args, **kwargs):
     """Return an aware datetime using Django's configured timezone."""
     return timezone.make_aware(datetime(*args, **kwargs))
+
+
+def extension_in(filename, extensions):
+    """
+    Check if the extension for the given filename is in the list of
+    allowed extensions. Uses os.path.splitext rules for getting the
+    extension.
+    """
+    filename, extension = os.path.splitext(filename)
+    if extension and extension[1:] in extensions:
+        return True
+    else:
+        return False
