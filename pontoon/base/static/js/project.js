@@ -24,7 +24,7 @@ $(function() {
     e.preventDefault();
 
     var menu = $(this).parents('.menu');
-    menu.find('.sort span:eq(2)').toggle();
+    menu.find('.sort .progress, .latest').toggle();
     $(this).toggleClass('back')
       .find('span').toggleClass('fa-plus-square fa-chevron-left');
 
