@@ -9,7 +9,7 @@ from django.utils.functional import cached_property
 
 from pontoon.base import MOZILLA_REPOS
 from pontoon.base.models import Resource
-from pontoon.base.utils import first
+from pontoon.base.utils import extension_in, first
 
 
 log = logging.getLogger(__name__)
@@ -20,22 +20,30 @@ def is_resource(filename):
     Return True if the filename's extension is a supported Resource
     format.
     """
-    filename, extension = os.path.splitext(filename)
-    if extension and extension[1:] in Resource.ALLOWED_EXTENSIONS:
-        return True
-    else:
-        return False
+    return extension_in(filename, Resource.ALLOWED_EXTENSIONS)
 
 
-def directory_contains_resources(directory_path):
+def is_source_resource(filename):
+    """
+    Return True if the filename's extension is a source-only Resource
+    format.
+    """
+    return extension_in(filename, Resource.SOURCE_EXTENSIONS)
+
+
+def directory_contains_resources(directory_path, source_only=False):
     """
     Return True if the given directory contains at least one
     supported resource file (checked via file extension), or False
     otherwise.
+
+    :param source_only:
+        If True, only check for source-only formats.
     """
+    resource_check = is_source_resource if source_only else is_resource
     for root, dirnames, filenames in os.walk(directory_path):
         # first() avoids checking past the first matching resouce.
-        if first(filenames, is_resource) is not None:
+        if first(filenames, resource_check) is not None:
             return True
     return False
 
@@ -45,6 +53,13 @@ class VCSProject(object):
     Container for project data that is stored on the filesystem and
     pulled from a remote VCS.
     """
+    SOURCE_DIR_SCORES = {
+        'templates': 3,
+        'en-US': 2,
+        'en': 1
+    }
+    SOURCE_DIR_NAMES = SOURCE_DIR_SCORES.keys()
+
     def __init__(self, db_project):
         """
         Load resource paths from the given db_project and parse them
@@ -85,17 +100,33 @@ class VCSProject(object):
         return self.db_project.checkout_path
 
     def source_directory_path(self):
-        """Path to the directory where source strings are stored."""
+        """
+        Path to the directory where source strings are stored.
+
+        Paths are identified using a scoring system; more likely
+        directory names get higher scores, as do directories with
+        formats that only used for source strings.
+        """
+        possible_sources = []
         for root, dirnames, filenames in os.walk(self.checkout_path):
             for dirname in dirnames:
-                if dirname in ('templates', 'en-US', 'en'):
+                if dirname in self.SOURCE_DIR_NAMES:
+                    score = self.SOURCE_DIR_SCORES[dirname]
+
                     # Ensure the matched directory contains resources.
                     directory_path = os.path.join(root, dirname)
                     if directory_contains_resources(directory_path):
-                        return directory_path
+                        # Extra points for source resources!
+                        if directory_contains_resources(directory_path, source_only=True):
+                            score += 3
 
-        raise Exception('No source directory found for project {0}'
-                        .format(self.db_project.slug))
+                        possible_sources.append((directory_path, score))
+
+        if possible_sources:
+            return max(possible_sources, key=lambda s: s[1])[0]
+        else:
+            raise Exception('No source directory found for project {0}'
+                            .format(self.db_project.slug))
 
     def locale_directory_path(self, locale_code):
         """

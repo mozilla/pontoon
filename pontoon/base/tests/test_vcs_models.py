@@ -17,7 +17,7 @@ from pontoon.base.formats.base import ParseError
 from pontoon.base.vcs_models import VCSProject
 
 
-TEST_CHECKOUT_PATH = os.path.join(os.path.dirname(__file__), 'directory_detection_test')
+TEST_CHECKOUT_PATH = os.path.join(os.path.dirname(__file__), 'directory_detection_tests')
 
 
 class VCSProjectTests(TestCase):
@@ -28,9 +28,9 @@ class VCSProjectTests(TestCase):
             Project,
             'checkout_path',
             new_callable=PropertyMock,
-            return_value=TEST_CHECKOUT_PATH
+            return_value=os.path.join(TEST_CHECKOUT_PATH, 'no_resources_test')
         )
-        checkout_path_patch.start()
+        self.mock_checkout_path = checkout_path_patch.start()
         self.addCleanup(checkout_path_patch.stop)
 
         self.project = ProjectFactory.create()
@@ -70,9 +70,51 @@ class VCSProjectTests(TestCase):
         When searching for source directories, do not match directories that
         do not contain resource files.
         """
+        checkout_path = os.path.join(TEST_CHECKOUT_PATH, 'no_resources_test')
+        self.mock_checkout_path.return_value = checkout_path
+
         assert_equal(
             self.vcs_project.source_directory_path(),
-            os.path.join(TEST_CHECKOUT_PATH, 'real_resources', 'templates')
+            os.path.join(checkout_path, 'real_resources', 'templates')
+        )
+
+    def test_source_directory_scoring_templates(self):
+        """
+        When searching for source directories, prefer directories named
+        `templates` over all others.
+        """
+        checkout_path = os.path.join(TEST_CHECKOUT_PATH, 'scoring_templates_test')
+        self.mock_checkout_path.return_value = checkout_path
+
+        assert_equal(
+            self.vcs_project.source_directory_path(),
+            os.path.join(checkout_path, 'templates')
+        )
+
+    def test_source_directory_scoring_en_US(self):
+        """
+        When searching for source directories, prefer directories named
+        `en-US` over others besides `templates`.
+        """
+        checkout_path = os.path.join(TEST_CHECKOUT_PATH, 'scoring_en_US_test')
+        self.mock_checkout_path.return_value = checkout_path
+
+        assert_equal(
+            self.vcs_project.source_directory_path(),
+            os.path.join(checkout_path, 'en-US')
+        )
+
+    def test_source_directory_scoring_source_files(self):
+        """
+        When searching for source directories, prefer directories with
+        source-only formats over all others.
+        """
+        checkout_path = os.path.join(TEST_CHECKOUT_PATH, 'scoring_source_files_test')
+        self.mock_checkout_path.return_value = checkout_path
+
+        assert_equal(
+            self.vcs_project.source_directory_path(),
+            os.path.join(checkout_path, 'en')  # en has pot files in it
         )
 
     def test_resources_parse_error(self):
