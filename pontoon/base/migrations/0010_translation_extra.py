@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations
 import jsonfield.fields
 import pontoon.base.models
 
@@ -16,6 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='translation',
             name='extra',
-            field=jsonfield.fields.JSONField(default=pontoon.base.models.extra_default),
+            field=jsonfield.fields.JSONField(
+                default=pontoon.base.models.extra_default),
         ),
     ]

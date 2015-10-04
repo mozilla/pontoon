@@ -1,5 +1,4 @@
 import codecs
-import configparser
 import datetime
 import fnmatch
 import logging
@@ -91,9 +90,6 @@ def get_locale_directory(project, locale):
                 'path': os.path.join(root, dirname),
             }
 
-    # Projects not using locale directories (format=file)
-    formats = Resource.objects.filter(project=project).values_list(
-        'format', flat=True).distinct()
     if project.repository_type == 'file':
         return {
             'name': '',
@@ -308,7 +304,7 @@ def extract_po(project, locale, path, entities=False):
             update_stats(resource, locale)
 
         log.debug("[" + locale.code + "]: " + path + " saved to DB.")
-    except Exception as e:
+    except Exception:
         log.critical('PoExtractError for %s: %s' % (path, e))
 
 
@@ -651,7 +647,8 @@ def extract_to_database(project, locales=None):
             paths = source_paths
             entities = True
         else:
-            paths = get_locale_paths(project, locale, source_paths, source_directory['name'])
+            paths = get_locale_paths(
+                project, locale, source_paths, source_directory['name'])
             entities = isFile
 
         for path in paths:
@@ -742,7 +739,7 @@ def dump_po(project, locale, relative_path):
                     if 'fuzzy' in entry.flags:
                         entry.flags.remove('fuzzy')
 
-                except Translation.DoesNotExist as e:
+                except Translation.DoesNotExist:
                     pass
 
             else:
@@ -760,7 +757,7 @@ def dump_po(project, locale, relative_path):
                             if 'fuzzy' in entry.flags:
                                 entry.flags.remove('fuzzy')
 
-                        except Translation.DoesNotExist as e:
+                        except Translation.DoesNotExist:
                             pass
 
                     # Remove obsolete plural forms if exist
@@ -791,7 +788,6 @@ def dump_xliff(project, locale, relative_path):
     locale_directory_path = get_locale_directory(project, locale)["path"]
     path = os.path.join(locale_directory_path, relative_path)
     resource = Resource.objects.filter(project=project, path=relative_path)
-    entities = Entity.objects.filter(resource=resource, obsolete=False)
 
     with open(path, 'r+') as f:
         xf = xliff.xlifffile(f)
@@ -806,7 +802,7 @@ def dump_xliff(project, locale, relative_path):
             try:
                 entity = Entity.objects.get(resource=resource, key=key)
 
-            except Entity.DoesNotExist as e:
+            except Entity.DoesNotExist:
                 log.error('%s: Entity "%s" does not exist' % (path, original))
                 continue
 
@@ -816,7 +812,7 @@ def dump_xliff(project, locale, relative_path):
                     .latest('date').string
                 unit.settarget(translation)
 
-            except Translation.DoesNotExist as e:
+            except Translation.DoesNotExist:
                 # Remove "approved" attribute
                 try:
                     del unit.xmlelement.attrib['approved']
@@ -861,7 +857,7 @@ def dump_silme(parser, project, locale, relative_path):
                         .latest('date')
                     structure.modify_entity(key, translation.string)
 
-                except Translation.DoesNotExist as e:
+                except Translation.DoesNotExist:
                     # Remove untranslated and following newline
                     pos = structure.entity_pos(key)
                     structure.remove_entity(key)
@@ -879,7 +875,7 @@ def dump_silme(parser, project, locale, relative_path):
                             structure.remove_element(pos)
 
             # Obsolete entities
-            except KeyError as e:
+            except KeyError:
                 pass
 
         # Erase file and then write, otherwise content gets appended
@@ -924,7 +920,7 @@ def dump_lang(project, locale, relative_path):
 
     try:
         resource = Resource.objects.get(project=project, path=relative_path)
-    except Resource.DoesNotExist as e:
+    except Resource.DoesNotExist:
         log.info("Resource does not exist")
         return
 
@@ -952,7 +948,7 @@ def dump_lang(project, locale, relative_path):
                 try:
                     entity = Entity.objects.get(
                         resource=resource, string=original)
-                except Entity.DoesNotExist as e:
+                except Entity.DoesNotExist:
                     log.error('%s: Entity "%s" does not exist' %
                               (path, original))
                     continue
@@ -965,7 +961,7 @@ def dump_lang(project, locale, relative_path):
                     if translation == original:
                         translation += ' {ok}'
 
-                except Translation.DoesNotExist as e:
+                except Translation.DoesNotExist:
                     translation = original
 
         # Erase file and then write, otherwise content gets appended
@@ -989,9 +985,6 @@ def dump_l20n(project, locale, relative_path):
         structure = parser.parse(f.read())
         ast = L20nast
 
-        resource = Resource.objects.filter(project=project, path=relative_path)
-        entities = Entity.objects.filter(resource=resource, obsolete=False)
-
         for obj in structure.body:
             if obj.type == "Entity":
 
@@ -1006,7 +999,7 @@ def dump_l20n(project, locale, relative_path):
                             .latest('date')
                         attr.value.content[0] = translation.string
 
-                    except Translation.DoesNotExist as e:
+                    except Translation.DoesNotExist:
                         # Remove untranslated
                         obj.attrs.remove(attr)
 
@@ -1021,7 +1014,7 @@ def dump_l20n(project, locale, relative_path):
                             .latest('date')
                         obj.value.content[0] = translation.string
 
-                    except Translation.DoesNotExist as e:
+                    except Translation.DoesNotExist:
                         # Remove untranslated
                         obj.value = None
 
@@ -1053,7 +1046,7 @@ def dump_l20n(project, locale, relative_path):
                             )
                             obj.value.items.append(hashItem)
 
-                        except Translation.DoesNotExist as e:
+                        except Translation.DoesNotExist:
                             # Untranslated already removed on empty items
                             pass
 
@@ -1107,7 +1100,7 @@ def dump_inc(project, locale, relative_path):
                         entity=e, locale=locale, approved=True) \
                         .latest('date').string
                     line = '#define %s %s\n' % (key, translation)
-                except Translation.DoesNotExist as e:
+                except Translation.DoesNotExist:
                     line = original
                     pass
 

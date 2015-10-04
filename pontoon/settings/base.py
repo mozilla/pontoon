@@ -3,7 +3,7 @@ import os
 import socket
 
 from django.utils.functional import lazy
-
+from django_sha2 import get_password_hashers
 import dj_database_url
 
 
@@ -321,7 +321,7 @@ else:
 # Site ID is used by Django's Sites framework.
 SITE_ID = 1
 
-## Media and templates.
+# Media and templates.
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -354,7 +354,7 @@ def _allowed_hosts():
     return [host]
 ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
 
-## Auth
+# Auth
 # The first hasher in this list will be used for new passwords.
 # Any other hasher in the list can be used for existing passwords.
 # Playdoh ships with Bcrypt+HMAC by default because it's the most secure.
@@ -368,10 +368,9 @@ BASE_PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
 )
 
-from django_sha2 import get_password_hashers
 PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
 
-## Logging
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -394,7 +393,7 @@ LOGGING = {
     }
 }
 
-## Tests
+# Tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = ['--logging-filter=-django_browserid,-factory,-django.db,-raygun4py',
              '--logging-clear-handlers']
@@ -435,7 +434,7 @@ PORT = 80
 # Names for slave databases from the DATABASES setting.
 SLAVE_DATABASES = []
 
-## Internationalization.
+# Internationalization.
 
 # Enable timezone-aware datetimes.
 USE_TZ = True

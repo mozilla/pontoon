@@ -1,8 +1,6 @@
 import base64
 import json
 import logging
-import os
-import shutil
 import traceback
 
 from django.core.urlresolvers import reverse
@@ -24,7 +22,6 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Project,
-    Repository,
     Resource,
     UserProfile,
     get_projects_with_stats,
@@ -90,7 +87,6 @@ def manage_project(request, slug=None, template='admin_project.html'):
     subtitle = 'Add project'
     pk = None
     project = None
-    message = 'Please wait while strings are imported from the repository.'
 
     # Save project
     if request.method == 'POST':
@@ -103,8 +99,10 @@ def manage_project(request, slug=None, template='admin_project.html'):
             project = Project.objects.get(pk=pk)
             form = ProjectForm(request.POST, instance=project)
             # Needed if form invalid
-            subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
-            repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
+            subpage_formset = SubpageInlineFormSet(
+                request.POST, instance=project)
+            repo_formset = RepositoryInlineFormSet(
+                request.POST, instance=project)
             subtitle = 'Edit project'
 
         # Add a new project
@@ -116,8 +114,10 @@ def manage_project(request, slug=None, template='admin_project.html'):
 
         if form.is_valid():
             project = form.save(commit=False)
-            subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
-            repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
+            subpage_formset = SubpageInlineFormSet(
+                request.POST, instance=project)
+            repo_formset = RepositoryInlineFormSet(
+                request.POST, instance=project)
 
             if subpage_formset.is_valid() and repo_formset.is_valid():
                 project.save()
@@ -125,7 +125,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 form.save_m2m()
                 subpage_formset.save()
                 repo_formset.save()
-                # Properly displays formsets, but removes errors (if valid only)
+                # Properly displays formsets, but removes errors (if valid
+                # only)
                 subpage_formset = SubpageInlineFormSet(instance=project)
                 repo_formset = RepositoryInlineFormSet(instance=project)
                 subtitle += '. Saved.'
