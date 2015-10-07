@@ -219,6 +219,9 @@ class Project(models.Model):
     # Disable project instead of deleting to keep translation memory & stats
     disabled = models.BooleanField(default=False)
 
+    # Whether this project has changed since the last sync.
+    has_changed = models.BooleanField(default=False)
+
     objects = ProjectQuerySet.as_manager()
 
     class Meta:
@@ -226,6 +229,15 @@ class Project(models.Model):
             ("can_manage", "Can manage projects"),
             ("can_localize", "Can localize projects"),
         )
+
+    @property
+    def needs_sync(self):
+        """
+        True if the project has changed since the last sync such that
+        another sync is required.
+        """
+        changes = ChangedEntityLocale.objects.filter(entity__resource__project=self)
+        return self.has_changed or changes.exists()
 
     @property
     def can_commit(self):

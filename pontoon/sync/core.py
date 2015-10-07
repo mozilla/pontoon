@@ -40,10 +40,7 @@ def sync_project(db_project, no_pull=False, no_commit=False):
 
     # If the repos haven't changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
-    db_changed = (ChangedEntityLocale.objects
-                  .filter(entity__resource__project=db_project)
-                  .exists())
-    if not repos_changed and not db_changed:
+    if not repos_changed and not db_project.needs_sync:
         log.info('Skipping project {0}, no changes detected.'.format(db_project.slug))
         return
 
@@ -69,11 +66,13 @@ def sync_project(db_project, no_pull=False, no_commit=False):
         commit_changes(db_project, vcs_project, changeset)
     update_project_stats(db_project, vcs_project, changeset)
 
-    # Clear out the list of changed locales for entity in this
-    # project now that we've finished syncing.
+    # Clear out the "has_changed" markers now that we've finished
+    # syncing.
     (ChangedEntityLocale.objects
         .filter(entity__resource__project=db_project, when__lte=now)
         .delete())
+    db_project.has_changed = False
+    db_project.save()
 
     # Clean up any duplicate approvals at the end of sync right
     # before we commit the transaction to avoid race conditions.

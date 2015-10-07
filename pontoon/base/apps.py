@@ -20,6 +20,9 @@ class BaseConfig(AppConfig):
         # tasks.
         from pontoon.base.celery import app as celery_app  # NOQA
 
+        # Load and register signals.
+        from pontoon.base import signals  # NOQA
+
     def monkeypatch(self):
         # Only patch once, ever.
         if BaseConfig._has_patched:

@@ -8,6 +8,7 @@ from mock import call, Mock, patch
 from pontoon.base.models import Entity, Repository, Translation, User
 from pontoon.base.tests import (
     assert_attributes_equal,
+    ChangedEntityLocaleFactory,
     EntityFactory,
     IdenticalTranslationFactory,
     LocaleFactory,
@@ -83,6 +84,17 @@ class ProjectTests(TestCase):
         project = ProjectFactory.create(repositories=[repo1, repo2, repo3])
         path = os.path.join(repo2.checkout_path, 'foo', 'bar')
         assert_equal(project.repository_for_path(path), repo2)
+
+    def test_needs_sync(self):
+        """
+        Project.needs_sync should be True if ChangedEntityLocale objects
+        exist for its entities or if Project.has_changed is True.
+        """
+        assert_true(ProjectFactory.create(has_changed=True).needs_sync)
+
+        project = ProjectFactory.create(has_changed=False)
+        ChangedEntityLocaleFactory.create(entity__resource__project=project)
+        assert_true(project.needs_sync)
 
 
 class ProjectPartsTests(TestCase):

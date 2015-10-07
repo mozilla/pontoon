@@ -14,6 +14,7 @@ from pontoon.administration.vcs import CommitToRepositoryException
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
+    Project,
     Repository,
     Resource,
 )
@@ -43,6 +44,8 @@ class SyncProjectTests(FakeCheckoutTestCase):
         super(SyncProjectTests, self).setUp()
         self.mock_pull_changes = self.patch('pontoon.sync.core.pull_changes', return_value=True)
         self.mock_commit_changes = self.patch('pontoon.sync.core.commit_changes')
+        self.mock_project_needs_sync = self.patch_object(
+            Project, 'needs_sync', new_callable=PropertyMock, return_value=True)
 
     def test_db_changed_no_repo_changed(self):
         """
@@ -50,11 +53,7 @@ class SyncProjectTests(FakeCheckoutTestCase):
         the project.
         """
         self.mock_pull_changes.return_value = False
-        ChangedEntityLocale.objects.all().delete()
-        ChangedEntityLocaleFactory.create(
-            entity=self.main_db_entity,
-            locale=self.translated_locale
-        )
+        self.mock_project_needs_sync.return_value = True
 
         with patch('pontoon.sync.core.handle_entity') as mock_handle_entity:
             sync_project(self.db_project)
@@ -66,7 +65,7 @@ class SyncProjectTests(FakeCheckoutTestCase):
         a message.
         """
         self.mock_pull_changes.return_value = False
-        ChangedEntityLocale.objects.all().delete()
+        self.mock_project_needs_sync.return_value = False
 
         with patch('pontoon.sync.core.log') as mock_log, \
              patch('pontoon.sync.core.handle_entity') as mock_handle_entity:
@@ -120,6 +119,15 @@ class SyncProjectTests(FakeCheckoutTestCase):
         with assert_raises(ChangedEntityLocale.DoesNotExist):
             changed2.refresh_from_db()
         changed_after.refresh_from_db()  # Should not raise
+
+    def test_reset_project_has_changed(self):
+        """After syncing, set db_project.has_changed to False."""
+        self.db_project.has_changed = True
+        self.db_project.save()
+
+        sync_project(self.db_project)
+        self.db_project.refresh_from_db()
+        assert_false(self.db_project.has_changed)
 
     def test_no_commit(self):
         """Don't call commit_changes if command.no_commit is True."""
