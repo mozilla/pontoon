@@ -341,17 +341,6 @@ class Project(models.Model):
     def __unicode__(self):
         return self.name
 
-    def serialize(self):
-        return {
-            'pk': self.pk,
-            'name': self.name,
-            'slug': self.slug,
-            'url': self.url,
-        }
-
-    def as_json(self):
-        return json.dumps(self.serialize())
-
 
 class Repository(models.Model):
     """
@@ -593,28 +582,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         last sync.
         """
         ChangedEntityLocale.objects.get_or_create(entity=self, locale=locale)
-
-    def add_translation(self, string, locale, user):
-        """
-        Add a new translation for this entity. If a matching translation
-        already exists, mark it as unfuzzy, and if the given user is a
-        translator, approve it.
-        """
-        try:
-            translation = self.translation_set.get(locale=locale, string=string)
-        except Translation.DoesNotExist:
-            translation = Translation(entity=self, locale=locale, user=user, string=string,
-                                      fuzzy=True)
-
-        if translation.pk:
-            translation.fuzzy = False
-
-        if user.has_perm('base.can_localize') and not translation.approved:
-            translation.approved = True
-            translation.approved_user = user
-            translation.approved_date = timezone.now()
-
-        translation.save()
 
     def get_translation(self, plural_form=None):
         """Get fetched translation of a given entity."""
