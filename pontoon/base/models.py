@@ -396,8 +396,9 @@ class Repository(models.Model):
     @property
     def multi_locale(self):
         """
-        Checks if url contains locale code variable. System will replace this variable by the locale codes
-        of all enabled locales for the project during pulls and commits.
+        Checks if url contains locale code variable. System will replace
+        this variable by the locale codes of all enabled locales for the
+        project during pulls and commits.
         """
         return '{locale_code}' in self.url
 
@@ -437,8 +438,7 @@ class Repository(models.Model):
         if not self.multi_locale:
             raise ValueError('Cannot get locale_checkout_path for non-multi-locale repos.')
 
-        path_components = [self.project.checkout_path] + urlparse(self.url).path.split('/')
-        return os.path.join(*path_components).format(locale_code=locale.code)
+        return os.path.join(self.checkout_path, locale.code)
 
     def locale_url(self, locale):
         """

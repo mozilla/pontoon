@@ -233,7 +233,7 @@ class RepositoryTests(TestCase):
     def test_locale_checkout_path(self):
         """Append the locale code the the project's checkout_path."""
         repo = RepositoryFactory.create(
-            url='https://example.com/{locale_code}/path/',
+            url='https://example.com/path/{locale_code}/',
             project__slug='test-project',
         )
         locale = LocaleFactory.create(code='test-locale')
@@ -241,7 +241,7 @@ class RepositoryTests(TestCase):
         with self.settings(MEDIA_ROOT='/media/root'):
             assert_equal(
                 repo.locale_checkout_path(locale),
-                '/media/root/projects/test-project/test-locale/path/'
+                '/media/root/projects/test-project/path/test-locale'
             )
 
     def test_locale_checkout_path_non_multi_locale(self):
