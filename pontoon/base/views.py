@@ -32,7 +32,6 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django_browserid.views import Verify as BrowserIDVerifyBase
 from operator import itemgetter
-from pontoon.administration import files
 from pontoon.base import utils
 
 from pontoon.base.models import (
@@ -1174,12 +1173,7 @@ def download(request, template=None):
         response['Content-Type'] = 'application/json'
 
     elif format == 'zip':
-        content = files.generate_zip(p, locale)
-
-        if content is False:
-            raise Http404
-
-        response['Content-Type'] = 'application/x-zip-compressed'
+        raise Http404  # TODO: Re-add zip support
 
     response.content = content
     response['Content-Disposition'] = \

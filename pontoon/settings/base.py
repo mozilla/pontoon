@@ -99,13 +99,13 @@ ROOT_URLCONF = 'pontoon.urls'
 
 INSTALLED_APPS = (
     'pontoon.base',
-    'pontoon.administration',
+    'pontoon.admin',
     'pontoon.intro',
     'pontoon.sites',
     'pontoon.sync',
 
     # Django contrib apps
-    'django.contrib.admin',
+    'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -147,7 +147,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'match_extension': '',
-            'match_regex': r'^(?!(admin|registration)/).*\.(html|jinja)$',
+            'match_regex': r'^(?!(admin|registration|browserid)/).*\.(html|jinja)$',
             'context_processors': CONTEXT_PROCESSORS,
             'extensions': [
                 'jinja2.ext.do',

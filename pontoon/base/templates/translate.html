@@ -122,8 +122,8 @@
             <li class="horizontal-separator"></li>
 
             {% if perms.base.can_manage %}
-            <li data-url="{{ url('pontoon.admin') }}"></i>Admin</li>
-            <li data-url="{{ url('pontoon.admin.project', project.slug) }}"></i>Admin &middot; Current project</li>
+            <li data-url="{{ url('admin:index') }}"></i>Admin</li>
+            <li data-url="{{ url('admin:base_project_change', project.pk) }}"></i>Admin &middot; Current project</li>
             {% endif %}
 
             {% if user.is_authenticated() %}

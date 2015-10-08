@@ -1,5 +1,4 @@
 from django.conf.urls import patterns, include, url
-from django.contrib import admin
 from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 
@@ -13,13 +12,10 @@ urlpatterns = patterns('',
     (r'^pt/(?P<url>.*)$', RedirectView.as_view(url="/pt-PT/%(url)s", permanent=True)),
 
     # Admin
-    (r'admin/', include('pontoon.administration.urls')),
+    (r'admin/', include('pontoon.admin.urls')),
 
     # Sites
     (r'sites/', include('pontoon.sites.urls')),
-
-    # Django admin
-    (r'^a/', include(admin.site.urls)),
 
     # Test project: Pontoon Intro
     url(r'^intro/$', 'pontoon.intro.views.intro'),

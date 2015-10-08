@@ -1,7 +1,8 @@
 from django.conf.urls import patterns, url
 from django.views.generic import RedirectView
 
-import views
+from pontoon.base import views
+
 
 urlpatterns = patterns(
     '',
