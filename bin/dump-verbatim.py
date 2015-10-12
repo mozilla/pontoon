@@ -26,9 +26,23 @@ class Command(BaseCommand):
         project = options.get('project', False)
         locale = options.get('locale', False)
 
-        if not project or not locale:
-            raise CommandError('You must provide project and locale.')
+        if not project:
+            raise CommandError('You must provide a project.')
 
+        if not locale:
+            locales = (
+                Store.objects.filter(translation_project__project__code=project)
+                .exclude(translation_project__language__code='templates')
+                .values_list('translation_project__language__code', flat=True)
+                .distinct()
+            )
+        else:
+            locales = [locale]
+
+        for locale in locales:
+            self.handle_project_locale(project, locale)
+
+    def handle_project_locale(self, project, locale):
         output = {}
 
         # Loop stores (files)
