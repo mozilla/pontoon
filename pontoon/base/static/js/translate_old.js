@@ -1185,6 +1185,15 @@ var Pontoon = (function (my) {
         }
       }
 
+      // If the entity has a plural string, but the locale has nplurals == 1,
+      // then pluralForm is -1 and needs to be normalized to 0 so that it is
+      // stored in the database as a pluralized string.
+      // TODO: Get a better flag for pluralized strings than original_plural.
+      var submittedPluralForm = pluralForm;
+      if (entity.original_plural && submittedPluralForm === -1) {
+        submittedPluralForm = 0;
+      }
+
       $.ajax({
         url: '/update/',
         type: 'POST',
@@ -1193,7 +1202,7 @@ var Pontoon = (function (my) {
           locale: self.locale.code,
           entity: entity.pk,
           translation: translation,
-          plural_form: pluralForm,
+          plural_form: submittedPluralForm,
           original: entity['original' + self.isPluralized()],
           ignore_check: inplace || $('#quality').is(':visible') || !syncLocalStorage
         },
