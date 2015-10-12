@@ -1,15 +1,10 @@
 import base64
-from collections import defaultdict
-import datetime
 import hashlib
 import json
 import Levenshtein
 import logging
 import math
-import os
-import pytz
 import requests
-import traceback
 import xml.etree.ElementTree as ET
 import urllib
 
@@ -17,7 +12,6 @@ from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
@@ -27,8 +21,6 @@ from django.db.models import Count, F, Prefetch
 from django.http import (
     Http404,
     HttpResponse,
-    HttpResponseBadRequest,
-    HttpResponseForbidden,
     HttpResponseRedirect,
 )
 
@@ -37,7 +29,6 @@ from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid.views import Verify as BrowserIDVerifyBase
 from operator import itemgetter
-from pontoon.administration.vcs import commit_to_vcs
 from pontoon.administration import files
 from pontoon.base import utils
 
@@ -48,7 +39,6 @@ from pontoon.base.models import (
     Resource,
     Subpage,
     Translation,
-    Stats,
     UserProfile,
     get_locales_with_project_stats,
     get_locales_with_stats,
@@ -130,8 +120,6 @@ def project(request, slug, template='project.html'):
             'none': None,
         }
         return HttpResponseRedirect(reverse('pontoon.home'))
-
-    locales = p.locales.all().order_by("name")
 
     data = {
         'locales': get_locales_with_project_stats(p),
@@ -224,7 +212,8 @@ def translate(request, locale, slug, part=None, template='translate.html'):
             Prefetch(
                 'resource_set',
                 queryset=Resource.objects.filter(
-                    pk__in=Entity.objects.filter(obsolete=False).values('resource')
+                    pk__in=Entity.objects.filter(
+                        obsolete=False).values('resource')
                 ),
                 to_attr='active_resources'
             )
@@ -268,9 +257,9 @@ def translate(request, locale, slug, part=None, template='translate.html'):
     # Set part if subpages not defined and entities in more than one file
     else:
         paths = (Resource.objects
-                    .filter(project=p, entity_count__gt=0, stats__locale=l)
-                    .order_by('path')
-                    .values_list('path', flat=True))
+                 .filter(project=p, entity_count__gt=0, stats__locale=l)
+                 .order_by('path')
+                 .values_list('path', flat=True))
 
         if len(paths) > 1:
             data['part'] = part if part in paths else paths[0]
@@ -1285,6 +1274,7 @@ def request_locale(request):
 
 
 class BrowserIDVerify(BrowserIDVerifyBase):
+
     def login_success(self):
         # Check for permission to localize if not granted on every login
         if not self.user.has_perm('base.can_localize'):

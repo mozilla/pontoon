@@ -17,10 +17,12 @@ from pontoon.base.formats.base import ParseError
 from pontoon.base.vcs_models import VCSProject
 
 
-TEST_CHECKOUT_PATH = os.path.join(os.path.dirname(__file__), 'directory_detection_tests')
+TEST_CHECKOUT_PATH = os.path.join(
+    os.path.dirname(__file__), 'directory_detection_tests')
 
 
 class VCSProjectTests(TestCase):
+
     def setUp(self):
         # Force the checkout path to point to a test directory to make
         # resource file loading pass during tests.
@@ -83,7 +85,8 @@ class VCSProjectTests(TestCase):
         When searching for source directories, prefer directories named
         `templates` over all others.
         """
-        checkout_path = os.path.join(TEST_CHECKOUT_PATH, 'scoring_templates_test')
+        checkout_path = os.path.join(
+            TEST_CHECKOUT_PATH, 'scoring_templates_test')
         self.mock_checkout_path.return_value = checkout_path
 
         assert_equal(
@@ -109,7 +112,8 @@ class VCSProjectTests(TestCase):
         When searching for source directories, prefer directories with
         source-only formats over all others.
         """
-        checkout_path = os.path.join(TEST_CHECKOUT_PATH, 'scoring_source_files_test')
+        checkout_path = os.path.join(
+            TEST_CHECKOUT_PATH, 'scoring_source_files_test')
         self.mock_checkout_path.return_value = checkout_path
 
         assert_equal(
@@ -122,7 +126,8 @@ class VCSProjectTests(TestCase):
         If VCSResource() raises a ParseError while loading, log an error
         and skip the resource.
         """
-        self.vcs_project.relative_resource_paths = Mock(return_value=['failure', 'success'])
+        self.vcs_project.relative_resource_paths = Mock(
+            return_value=['failure', 'success'])
 
         # Fail only if the path is failure so we can test the ignore.
         def vcs_resource_constructor(project, path):
@@ -132,11 +137,13 @@ class VCSProjectTests(TestCase):
                 return 'successful resource'
 
         with patch('pontoon.base.vcs_models.VCSResource') as MockVCSResource, \
-             patch('pontoon.base.vcs_models.log') as mock_log:
+                patch('pontoon.base.vcs_models.log') as mock_log:
             MockVCSResource.side_effect = vcs_resource_constructor
 
-            assert_equal(self.vcs_project.resources, {'success': 'successful resource'})
-            mock_log.error.assert_called_with(CONTAINS('failure', 'error message'))
+            assert_equal(self.vcs_project.resources, {
+                         'success': 'successful resource'})
+            mock_log.error.assert_called_with(
+                CONTAINS('failure', 'error message'))
 
     def test_resource_for_path_region_properties(self):
         """
@@ -149,7 +156,7 @@ class VCSProjectTests(TestCase):
         self.project.repositories.add(RepositoryFactory.build(url=url))
 
         with patch('pontoon.base.vcs_models.os', wraps=os) as mock_os, \
-             patch('pontoon.base.vcs_models.MOZILLA_REPOS', [url]):
+                patch('pontoon.base.vcs_models.MOZILLA_REPOS', [url]):
             mock_os.walk.return_value = [
                 ('/root', [], ['foo.pot', 'region.properties'])
             ]
@@ -161,6 +168,7 @@ class VCSProjectTests(TestCase):
 
 
 class VCSEntityTests(TestCase):
+
     def test_has_translation_for(self):
         """
         Return True if a translation exists for the given locale, even
@@ -169,7 +177,8 @@ class VCSEntityTests(TestCase):
         empty_translation = VCSTranslationFactory(strings={})
         full_translation = VCSTranslationFactory(strings={None: 'TRANSLATED'})
         entity = VCSEntityFactory()
-        entity.translations = {'empty': empty_translation, 'full': full_translation}
+        entity.translations = {
+            'empty': empty_translation, 'full': full_translation}
 
         assert_false(entity.has_translation_for('missing'))
         assert_true(entity.has_translation_for('empty'))

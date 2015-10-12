@@ -44,6 +44,8 @@ oauthlib==0.1.3
 # sha256: INKg1YmmksEd9Um9fNqDxmXu8qg-AXuEP-zflW7brXQ
 polib==1.0.6
 
+pylama==7.0.4
+
 # sha256: rxL5lFTolenkMMdXI8O5QZwLzNDqd4A2YtaprFb2Qls
 py-bcrypt==0.3
 

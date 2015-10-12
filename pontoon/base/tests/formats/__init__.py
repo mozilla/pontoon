@@ -1,6 +1,3 @@
-import os
-import tempfile
-
 from django_nose.tools import assert_equal
 
 from pontoon.base.tests import (

@@ -1,5 +1,3 @@
-from contextlib import nested
-
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.utils.timezone import now
@@ -11,17 +9,16 @@ from pontoon.base.models import Project
 from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import (
     assert_redirects,
-    UserFactory,
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
     StatsFactory,
-    TranslationFactory,
     TestCase,
 )
 
 
 class TranslateTests(TestCase):
+
     def test_invalid_locale_and_project(self):
         """If the locale and project are both invalid, return a 404."""
         response = self.client.get('/invalid-locale/invalid-project/')
@@ -66,7 +63,8 @@ class TranslateTests(TestCase):
         # Clear out existing project with ID=1 if necessary.
         Project.objects.filter(id=1).delete()
         locale = LocaleFactory.create(code='fakelocale')
-        project = ProjectFactory.create(id=1, slug='valid-project', locales=[locale])
+        project = ProjectFactory.create(
+            id=1, slug='valid-project', locales=[locale])
         ResourceFactory.create(project=project)
 
         response = self.client.get('/fakelocale/valid-project/')
@@ -82,12 +80,14 @@ class TranslateTests(TestCase):
         # Clear out existing project with ID=1 if necessary.
         Project.objects.filter(id=2).delete()
         locale = LocaleFactory.create(code='fakelocale')
-        project = ProjectFactory.create(id=2, slug='valid-project', locales=[locale])
+        project = ProjectFactory.create(
+            id=2, slug='valid-project', locales=[locale])
         ResourceFactory.create(project=project)
 
         response = self.client.get('/fakelocale/valid-project/')
         assert_redirects(response, reverse('pontoon.home'))
-        assert_equal(self.client.session['translate_error'], {'redirect': '/fakelocale/valid-project/'})
+        assert_equal(self.client.session['translate_error'], {
+                     'redirect': '/fakelocale/valid-project/'})
 
     def test_no_subpage_multiple_stats_in_current_locale(self):
         """
@@ -97,14 +97,18 @@ class TranslateTests(TestCase):
         locale = LocaleFactory.create()
         project = ProjectFactory.create(locales=[locale])
 
-        # Need at least two resources and stats to trigger setting the part value.
-        resource1 = ResourceFactory.create(project=project, path='foo1.lang', entity_count=1)
-        resource2 = ResourceFactory.create(project=project, path='foo2.lang', entity_count=1)
+        # Need at least two resources and stats to trigger setting the part
+        # value.
+        resource1 = ResourceFactory.create(
+            project=project, path='foo1.lang', entity_count=1)
+        resource2 = ResourceFactory.create(
+            project=project, path='foo2.lang', entity_count=1)
         StatsFactory.create(resource=resource1, locale=locale)
         StatsFactory.create(resource=resource2, locale=locale)
 
         self.client_login()
-        url = '/{locale.code}/{project.slug}/'.format(locale=locale, project=project)
+        url = '/{locale.code}/{project.slug}/'.format(
+            locale=locale, project=project)
         with patch('pontoon.base.views.render', wraps=render) as mock_render:
             self.client.get(url)
             assert_equal(mock_render.call_args[0][2]['part'], 'foo1.lang')
@@ -118,12 +122,14 @@ class TranslateTests(TestCase):
         project = ProjectFactory.create(locales=[locale])
 
         # Need two resources to trigger setting the part value.
-        resource = ResourceFactory.create(project=project, path='foo.lang', entity_count=1)
+        resource = ResourceFactory.create(
+            project=project, path='foo.lang', entity_count=1)
         ResourceFactory.create(project=project, entity_count=1)
         StatsFactory.create(resource=resource, locale=locale)
 
         self.client_login()
-        url = '/{locale.code}/{project.slug}/'.format(locale=locale, project=project)
+        url = '/{locale.code}/{project.slug}/'.format(
+            locale=locale, project=project)
         with patch('pontoon.base.views.render', wraps=render) as mock_render:
             self.client.get(url)
             assert_true('part' not in mock_render.call_args[0][2])
@@ -137,24 +143,28 @@ class TranslateTests(TestCase):
         project = ProjectFactory.create(locales=[locale, locale_no_stats])
 
         # Need two resources to trigger setting the part value.
-        resource = ResourceFactory.create(project=project, path='foo.lang', entity_count=1)
+        resource = ResourceFactory.create(
+            project=project, path='foo.lang', entity_count=1)
         ResourceFactory.create(project=project, entity_count=1)
         StatsFactory.create(resource=resource, locale=locale)
 
         self.client_login()
-        url = '/{locale.code}/{project.slug}/'.format(locale=locale_no_stats, project=project)
+        url = '/{locale.code}/{project.slug}/'.format(
+            locale=locale_no_stats, project=project)
         with patch('pontoon.base.views.render', wraps=render) as mock_render:
             self.client.get(url)
             assert_true('part' not in mock_render.call_args[0][2])
 
 
 class ContributorsTests(TestCase):
+
     def setUp(self):
         mock_render = patch('pontoon.base.views.render', wraps=render)
         self.mock_render = mock_render.start()
         self.addCleanup(mock_render.stop)
 
-        mock_translations_manager = patch('pontoon.base.models.UserTranslationsManager.with_translation_counts')
+        mock_translations_manager = patch(
+            'pontoon.base.models.UserTranslationsManager.with_translation_counts')
         self.mock_translations_manager = mock_translations_manager.start()
         self.addCleanup(mock_translations_manager.stop)
 
@@ -162,7 +172,7 @@ class ContributorsTests(TestCase):
         """
         Calling the top_contributors should result in period being None.
         """
-        response = self.client.get('/contributors/')
+        self.client.get('/contributors/')
         assert_true(self.mock_render.call_args[0][2]['period'] is None)
         assert_true(self.mock_translations_manager.call_args[0][0] is None)
 
@@ -171,12 +181,12 @@ class ContributorsTests(TestCase):
         Checks how view handles invalid period, it result in period being None - displays all data.
         """
         # If period parameter is invalid value
-        response = self.client.get('/contributors/?period=invalidperiod')
+        self.client.get('/contributors/?period=invalidperiod')
         assert_true(self.mock_render.call_args[0][2]['period'] is None)
         assert_true(self.mock_translations_manager.call_args[0][0] is None)
 
         # Period shouldn't be negative integer
-        response = self.client.get('/contributors/?period=-6')
+        self.client.get('/contributors/?period=-6')
         assert_true(self.mock_render.call_args[0][2]['period'] is None)
         assert_true(self.mock_translations_manager.call_args[0][0] is None)
 
@@ -185,6 +195,7 @@ class ContributorsTests(TestCase):
         Checks if view sets and returns data for right period.
         """
         with patch('django.utils.timezone.now', wraps=now, return_value=aware_datetime(2015, 7, 5)):
-            response = self.client.get('/contributors/?period=6')
+            self.client.get('/contributors/?period=6')
             assert_equal(self.mock_render.call_args[0][2]['period'], 6)
-            assert_equal(self.mock_translations_manager.call_args[0][0], aware_datetime(2015, 1, 5))
+            assert_equal(self.mock_translations_manager.call_args[
+                         0][0], aware_datetime(2015, 1, 5))

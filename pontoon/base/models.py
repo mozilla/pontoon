@@ -35,9 +35,9 @@ class UserTranslationsManager(models.Manager):
         with counts of translations.
         """
         translation_query = (
-            ~Q(translation__string=F('translation__entity__string'))
-            & ~Q(translation__string=F('translation__entity__string_plural'))
-            & Q(translation__user__isnull=False)
+            ~Q(translation__string=F('translation__entity__string')) & ~
+            Q(translation__string=F('translation__entity__string_plural')) &
+            Q(translation__user__isnull=False)
         )
         for arg in args:
             translation_query &= arg

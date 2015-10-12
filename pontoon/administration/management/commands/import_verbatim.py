@@ -2,8 +2,6 @@ from datetime import datetime
 from django.contrib.auth.models import Permission, User
 from django.core.management.base import (
     BaseCommand,
-    CommandError,
-    NoArgsCommand,
 )
 from pontoon.base.models import Translation
 

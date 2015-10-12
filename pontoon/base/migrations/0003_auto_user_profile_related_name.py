@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userprofile',
             name='user',
-            field=models.OneToOneField(related_name='profile', to=settings.AUTH_USER_MODEL),
+            field=models.OneToOneField(
+                related_name='profile', to=settings.AUTH_USER_MODEL),
         ),
     ]

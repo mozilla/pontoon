@@ -100,7 +100,6 @@ def parse(path, source_path=None):
     try:
         pofile = polib.pofile(path)
     except IOError as err:
-        wrapped = ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
-        raise wrapped, None, sys.exc_info()[2]
+        raise ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err)), None, sys.exc_info()[2]
 
     return POResource(pofile)

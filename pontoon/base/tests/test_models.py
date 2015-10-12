@@ -24,6 +24,7 @@ from pontoon.base.utils import aware_datetime
 
 
 class ProjectTests(TestCase):
+
     def test_can_commit_no_repos(self):
         """can_commit should be False if there are no repos."""
         project = ProjectFactory.create(repositories=[])
@@ -86,6 +87,7 @@ class ProjectTests(TestCase):
 
 
 class ProjectPartsTests(TestCase):
+
     def setUp(self):
         self.locale, self.locale_other = LocaleFactory.create_batch(2)
         self.project = ProjectFactory.create(
@@ -187,6 +189,7 @@ class ProjectPartsTests(TestCase):
 
 
 class RepositoryTests(TestCase):
+
     def test_checkout_path(self):
         """checkout_path should be determined by the repo URL."""
         repo = RepositoryFactory.create(
@@ -258,7 +261,8 @@ class RepositoryTests(TestCase):
         )
         locale = LocaleFactory.create(code='test-locale')
 
-        assert_equal(repo.locale_url(locale), 'https://example.com/path/to/test-locale/')
+        assert_equal(repo.locale_url(locale),
+                     'https://example.com/path/to/test-locale/')
 
     def test_locale_url_non_multi_locale(self):
         """If the repo isn't multi-locale, throw a ValueError."""
@@ -282,7 +286,8 @@ class RepositoryTests(TestCase):
 
         with self.settings(MEDIA_ROOT='/media/root'):
             test_path = '/media/root/projects/test-project/path/to/match/foo/bar.po'
-            assert_equal(repo.url_for_path(test_path), 'https://example.com/path/to/match/')
+            assert_equal(repo.url_for_path(test_path),
+                         'https://example.com/path/to/match/')
 
     def test_url_for_path_no_match(self):
         """
@@ -297,9 +302,10 @@ class RepositoryTests(TestCase):
             repo.url_for_path('/media/root/path/to/match/foo/bar.po')
 
     def test_pull(self):
-        repo = RepositoryFactory.create(type=Repository.GIT, url='https://example.com')
+        repo = RepositoryFactory.create(
+            type=Repository.GIT, url='https://example.com')
         with patch('pontoon.base.models.update_from_vcs') as update_from_vcs, \
-             patch('pontoon.base.models.get_revision') as mock_get_revision:
+                patch('pontoon.base.models.get_revision') as mock_get_revision:
             mock_get_revision.return_value = 'asdf'
             assert_equal(repo.pull(), {'single_locale': 'asdf'})
             update_from_vcs.assert_called_with(
@@ -325,7 +331,7 @@ class RepositoryTests(TestCase):
         repo.locale_checkout_path = lambda locale: '/media/' + locale.code
 
         with patch('pontoon.base.models.update_from_vcs') as update_from_vcs, \
-             patch('pontoon.base.models.get_revision') as mock_get_revision:
+                patch('pontoon.base.models.get_revision') as mock_get_revision:
             # Return path as the revision so different locales return
             # different values.
             mock_get_revision.side_effect = lambda type, path: path
@@ -340,7 +346,8 @@ class RepositoryTests(TestCase):
             ])
 
     def test_commit(self):
-        repo = RepositoryFactory.create(type=Repository.GIT, url='https://example.com')
+        repo = RepositoryFactory.create(
+            type=Repository.GIT, url='https://example.com')
         with patch('pontoon.base.models.commit_to_vcs') as commit_to_vcs:
             repo.commit('message', 'author', 'path')
             commit_to_vcs.assert_called_with(
@@ -375,6 +382,7 @@ class RepositoryTests(TestCase):
 
 
 class TranslationQuerySetTests(TestCase):
+
     def setUp(self):
         self.user0, self.user1 = UserFactory.create_batch(2)
 
@@ -391,8 +399,12 @@ class TranslationQuerySetTests(TestCase):
         If latest activity in Translation QuerySet is translation submission,
         return submission date and user.
         """
-        latest_submission = self._translation(self.user0, submitted=(1970, 1, 3), approved=None)
-        latest_approval = self._translation(self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 2))
+        latest_submission = self._translation(
+            self.user0, submitted=(1970, 1, 3), approved=None)
+
+        self._translation(self.user1, submitted=(
+            1970, 1, 1), approved=(1970, 1, 2))
+
         assert_equal(Translation.objects.all().latest_activity(), {
             'date': latest_submission.date,
             'user': latest_submission.user
@@ -403,8 +415,12 @@ class TranslationQuerySetTests(TestCase):
         If latest activity in Translation QuerySet is translation approval,
         return approval date and user.
         """
-        latest_submission = self._translation(self.user0, submitted=(1970, 1, 2), approved=(1970, 1, 2))
-        latest_approval = self._translation(self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 3))
+        # Latest submission
+        self._translation(
+            self.user0, submitted=(1970, 1, 2), approved=(1970, 1, 2))
+
+        latest_approval = self._translation(
+            self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 3))
         assert_equal(Translation.objects.all().latest_activity(), {
             'date': latest_approval.date,
             'user': latest_approval.user
@@ -416,14 +432,17 @@ class TranslationQuerySetTests(TestCase):
 
 
 class UserTranslationManagerTests(TestCase):
+
     @override_settings(EXCLUDE=('excluded@example.com',))
     def test_excluded_contributors(self):
         """
         Checks if contributors with mails in settings.EXCLUDE are excluded
         from top contributors list.
         """
-        included_contributor = TranslationFactory.create(user__email='included@example.com').user
-        excluded_contributor = TranslationFactory.create(user__email='excluded@example.com').user
+        included_contributor = TranslationFactory.create(
+            user__email='included@example.com').user
+        excluded_contributor = TranslationFactory.create(
+            user__email='excluded@example.com').user
 
         top_contributors = User.translators.with_translation_counts()
         assert_true(included_contributor in top_contributors)
@@ -433,7 +452,8 @@ class UserTranslationManagerTests(TestCase):
         """
         Checks if user contributors without translations aren't returned.
         """
-        active_contributor = TranslationFactory.create(user__email='active@example.com').user
+        active_contributor = TranslationFactory.create(
+            user__email='active@example.com').user
         inactive_contributor = UserFactory.create(email='inactive@example.com')
 
         top_contributors = User.translators.with_translation_counts()
@@ -486,9 +506,12 @@ class UserTranslationManagerTests(TestCase):
         Helper method, creates contributor with given translations counts.
         """
         contributor = UserFactory.create()
-        TranslationFactory.create_batch(approved, user=contributor, approved=True, **kwargs)
-        TranslationFactory.create_batch(unapproved, user=contributor, approved=False, fuzzy=False, **kwargs)
-        TranslationFactory.create_batch(needs_work, user=contributor, fuzzy=True, **kwargs)
+        TranslationFactory.create_batch(
+            approved, user=contributor, approved=True, **kwargs)
+        TranslationFactory.create_batch(
+            unapproved, user=contributor, approved=False, fuzzy=False, **kwargs)
+        TranslationFactory.create_batch(
+            needs_work, user=contributor, fuzzy=True, **kwargs)
         return contributor
 
     def test_translation_counts(self):
@@ -497,9 +520,12 @@ class UserTranslationManagerTests(TestCase):
         Tests creates 3 contributors with different numbers translations and checks if their counts match.
         """
 
-        first_contributor = self.create_contributor_with_translation_counts(approved=7, unapproved=3, needs_work=2)
-        second_contributor = self.create_contributor_with_translation_counts(approved=5, unapproved=9, needs_work=2)
-        third_contributor = self.create_contributor_with_translation_counts(approved=1, unapproved=2, needs_work=5)
+        first_contributor = self.create_contributor_with_translation_counts(
+            approved=7, unapproved=3, needs_work=2)
+        second_contributor = self.create_contributor_with_translation_counts(
+            approved=5, unapproved=9, needs_work=2)
+        third_contributor = self.create_contributor_with_translation_counts(
+            approved=1, unapproved=2, needs_work=5)
 
         top_contributors = User.translators.with_translation_counts()
         assert_equal(top_contributors.count(), 3)
@@ -509,14 +535,14 @@ class UserTranslationManagerTests(TestCase):
         assert_equal(top_contributors[2], third_contributor)
 
         assert_attributes_equal(top_contributors[0], translations_count=16,
-            translations_approved_count=5, translations_unapproved_count=9,
-            translations_needs_work_count=2)
+                                translations_approved_count=5, translations_unapproved_count=9,
+                                translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[1], translations_count=12,
-            translations_approved_count=7, translations_unapproved_count=3,
-            translations_needs_work_count=2)
+                                translations_approved_count=7, translations_unapproved_count=3,
+                                translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[2], translations_count=8,
-            translations_approved_count=1, translations_unapproved_count=2,
-            translations_needs_work_count=5)
+                                translations_approved_count=1, translations_unapproved_count=2,
+                                translations_needs_work_count=5)
 
     def test_period_filters(self):
         """
@@ -525,41 +551,47 @@ class UserTranslationManagerTests(TestCase):
         """
 
         first_contributor = self.create_contributor_with_translation_counts(approved=12, unapproved=1, needs_work=2,
-            date=aware_datetime(2015, 3, 2))
-        second_contributor = self.create_contributor_with_translation_counts(approved=2, unapproved=11, needs_work=2,
-            date=aware_datetime(2015, 6, 1))
+                                                                            date=aware_datetime(2015, 3, 2))
+        # Second contributor
+        self.create_contributor_with_translation_counts(approved=2, unapproved=11, needs_work=2,
+                                                        date=aware_datetime(2015, 6, 1))
 
-        TranslationFactory.create_batch(5, approved=True, user=first_contributor, date=aware_datetime(2015, 7, 2))
+        TranslationFactory.create_batch(
+            5, approved=True, user=first_contributor, date=aware_datetime(2015, 7, 2))
 
-        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 6, 10))
+        top_contributors = User.translators.with_translation_counts(
+            aware_datetime(2015, 6, 10))
 
         assert_equal(top_contributors.count(), 1)
         assert_attributes_equal(top_contributors[0], translations_count=5,
-            translations_approved_count=5, translations_unapproved_count=0,
-            translations_needs_work_count=0)
+                                translations_approved_count=5, translations_unapproved_count=0,
+                                translations_needs_work_count=0)
 
-        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 5, 10))
+        top_contributors = User.translators.with_translation_counts(
+            aware_datetime(2015, 5, 10))
 
         assert_equal(top_contributors.count(), 2)
         assert_attributes_equal(top_contributors[0], translations_count=15,
-            translations_approved_count=2, translations_unapproved_count=11,
-            translations_needs_work_count=2)
+                                translations_approved_count=2, translations_unapproved_count=11,
+                                translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[1], translations_count=5,
-            translations_approved_count=5, translations_unapproved_count=0,
-            translations_needs_work_count=0)
+                                translations_approved_count=5, translations_unapproved_count=0,
+                                translations_needs_work_count=0)
 
-        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 10))
+        top_contributors = User.translators.with_translation_counts(
+            aware_datetime(2015, 1, 10))
 
         assert_equal(top_contributors.count(), 2)
         assert_attributes_equal(top_contributors[0], translations_count=20,
-            translations_approved_count=17, translations_unapproved_count=1,
-            translations_needs_work_count=2)
+                                translations_approved_count=17, translations_unapproved_count=1,
+                                translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[1], translations_count=15,
-            translations_approved_count=2, translations_unapproved_count=11,
-            translations_needs_work_count=2)
+                                translations_approved_count=2, translations_unapproved_count=11,
+                                translations_needs_work_count=2)
 
 
 class EntityTests(TestCase):
+
     def setUp(self):
         self.locale = LocaleFactory.create(
             cldr_plurals="0,1"
@@ -620,11 +652,14 @@ class EntityTests(TestCase):
         other_project = ProjectFactory.create(
             locales=[self.locale, other_locale]
         )
-        obsolete_entity = EntityFactory.create(
+
+        # Obsolete entity
+        EntityFactory.create(
             obsolete=True,
             resource=self.main_resource,
             string='Obsolete String'
         )
+
         entities = Entity.for_project_locale(self.project, other_locale)
         assert_equal(len(entities), 0)
         entities = Entity.for_project_locale(other_project, self.locale)
@@ -691,7 +726,8 @@ class EntityTests(TestCase):
         locale.
         """
         subpages = [self.subpage.name]
-        entities = Entity.for_project_locale(self.project, self.locale, subpages)
+        entities = Entity.for_project_locale(
+            self.project, self.locale, subpages)
 
         assert_equal(len(entities), 1)
         self.assert_serialized_entity(
@@ -705,19 +741,24 @@ class EntityTests(TestCase):
 
         assert_equal(entities[0]['original'], 'Source String')
         assert_equal(entities[0]['original_plural'], 'Plural Source String')
-        assert_equal(entities[0]['translation'][0]['string'], 'Translated String')
-        assert_equal(entities[0]['translation'][1]['string'], 'Translated Plural String')
+        assert_equal(entities[0]['translation'][0][
+                     'string'], 'Translated String')
+        assert_equal(entities[0]['translation'][1][
+                     'string'], 'Translated Plural String')
 
     def test_for_project_locale_order(self):
         """
         Return entities in correct order.
         """
-        entity_second = EntityFactory.create(
+        # Entity second
+        EntityFactory.create(
             order=1,
             resource=self.main_resource,
             string='Second String'
         )
-        entity_first = EntityFactory.create(
+
+        # Entity first
+        EntityFactory.create(
             order=0,
             resource=self.main_resource,
             string='First String'

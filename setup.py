@@ -1,5 +1,3 @@
-import os
-
 from setuptools import setup, find_packages
 
 
@@ -12,6 +10,6 @@ setup(name='pontoon',
       license='',
       url='',
       include_package_data=True,
-      classifiers = [],
+      classifiers=[],
       packages=find_packages(exclude=['tests']),
       install_requires=[])

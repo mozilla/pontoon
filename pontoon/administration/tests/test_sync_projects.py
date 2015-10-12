@@ -45,6 +45,7 @@ FAKE_CHECKOUT_PATH = os.path.join(os.path.dirname(__file__), 'fake-checkout')
 
 class FakeCheckoutTestCase(TestCase):
     """Parent class for tests that use the fake l10n repo checkout."""
+
     def setUp(self):
         timezone_patch = patch.object(sync_projects, 'timezone')
         self.mock_timezone = timezone_patch.start()
@@ -87,11 +88,15 @@ class FakeCheckoutTestCase(TestCase):
         self.addCleanup(checkout_path_patch.stop)
 
         self.vcs_project = VCSProject(self.db_project)
-        self.main_vcs_resource = self.vcs_project.resources[self.main_db_resource.path]
-        self.other_vcs_resource = self.vcs_project.resources[self.other_db_resource.path]
-        self.missing_vcs_resource = self.vcs_project.resources[self.missing_db_resource.path]
+        self.main_vcs_resource = self.vcs_project.resources[
+            self.main_db_resource.path]
+        self.other_vcs_resource = self.vcs_project.resources[
+            self.other_db_resource.path]
+        self.missing_vcs_resource = self.vcs_project.resources[
+            self.missing_db_resource.path]
         self.main_vcs_entity = self.main_vcs_resource.entities['Source String']
-        self.main_vcs_translation = self.main_vcs_entity.translations['translated-locale']
+        self.main_vcs_translation = self.main_vcs_entity.translations[
+            'translated-locale']
 
         # Mock VCSResource.save() for each resource to avoid altering
         # the filesystem.
@@ -134,6 +139,7 @@ class FakeCheckoutTestCase(TestCase):
 
 
 class CommandTests(FakeCheckoutTestCase):
+
     def setUp(self):
         super(CommandTests, self).setUp()
         self.command = sync_projects.Command()
@@ -142,11 +148,13 @@ class CommandTests(FakeCheckoutTestCase):
         self.command.no_pull = False
 
         # Avoid hitting VCS during tests by mocking out pull and commit.
-        repo_pull_patch = patch.object(Repository, 'pull', return_value={'single_locale': None})
+        repo_pull_patch = patch.object(
+            Repository, 'pull', return_value={'single_locale': None})
         self.mock_repo_pull = repo_pull_patch.start()
         self.addCleanup(repo_pull_patch.stop)
 
-        repo_commit_patch = patch.object(Repository, 'commit', return_value=None)
+        repo_commit_patch = patch.object(
+            Repository, 'commit', return_value=None)
         self.mock_repo_commit = repo_commit_patch.start()
         self.addCleanup(repo_commit_patch.stop)
 
@@ -164,7 +172,8 @@ class CommandTests(FakeCheckoutTestCase):
         self.execute_command()
 
         self.command.handle_project.assert_any_call(active_project)
-        assert_not_in(call(disabled_project), self.command.handle_project.mock_calls)
+        assert_not_in(call(disabled_project),
+                      self.command.handle_project.mock_calls)
 
     def test_handle_project_slugs(self):
         """
@@ -176,7 +185,8 @@ class CommandTests(FakeCheckoutTestCase):
         self.execute_command(handle_project.slug)
 
         self.command.handle_project.assert_called_with(handle_project)
-        assert_not_in(call(ignore_project), self.command.handle_project.mock_calls)
+        assert_not_in(call(ignore_project),
+                      self.command.handle_project.mock_calls)
 
     def test_handle_no_matching_projects(self):
         """
@@ -262,9 +272,12 @@ class CommandTests(FakeCheckoutTestCase):
 
         self.command.handle_project(self.db_project)
         self.command.handle_entity.assert_has_calls([
-            call(ANY, self.db_project, 'match', db_entities['match'], vcs_entities['match']),
-            call(ANY, self.db_project, 'no_vcs_match', db_entities['no_vcs_match'], None),
-            call(ANY, self.db_project, 'no_db_match', None, vcs_entities['no_db_match']),
+            call(ANY, self.db_project, 'match', db_entities[
+                 'match'], vcs_entities['match']),
+            call(ANY, self.db_project, 'no_vcs_match',
+                 db_entities['no_vcs_match'], None),
+            call(ANY, self.db_project, 'no_db_match',
+                 None, vcs_entities['no_db_match']),
         ], any_order=True)
 
     def test_handle_project_clear_changed_entities(self):
@@ -274,11 +287,12 @@ class CommandTests(FakeCheckoutTestCase):
         """
         self.mock_timezone.return_value = aware_datetime(1970, 1, 2)
         changed1, changed2, changed_after = ChangedEntityLocaleFactory.create_batch(3,
-            locale=self.translated_locale,
-            entity__resource=self.main_db_resource,
-            entity__resource__project=self.db_project,
-            when=aware_datetime(1970, 1, 1)
-        )
+                                                                                    locale=self.translated_locale,
+                                                                                    entity__resource=self.main_db_resource,
+                                                                                    entity__resource__project=self.db_project,
+                                                                                    when=aware_datetime(
+                                                                                        1970, 1, 1)
+                                                                                    )
         changed_after.when = aware_datetime(1970, 1, 3)
         changed_after.save()
 
@@ -329,7 +343,8 @@ class CommandTests(FakeCheckoutTestCase):
             self.command.handle_project(self.db_project)
 
         # Only one translation should be approved: the duplicate_translation.
-        assert_equal(self.main_db_entity.translation_set.filter(approved=True).count(), 1)
+        assert_equal(self.main_db_entity.translation_set.filter(
+            approved=True).count(), 1)
         new_translation = self.main_db_entity.translation_set.get(
             string='New Translated String'
         )
@@ -338,7 +353,8 @@ class CommandTests(FakeCheckoutTestCase):
 
         duplicate_translation.refresh_from_db()
         assert_true(duplicate_translation.approved)
-        assert_equal(duplicate_translation.approved_date, aware_datetime(1970, 1, 3))
+        assert_equal(duplicate_translation.approved_date,
+                     aware_datetime(1970, 1, 3))
 
     def call_handle_entity(self, key, db_entity, vcs_entity):
         return self.command.handle_entity(
@@ -358,14 +374,16 @@ class CommandTests(FakeCheckoutTestCase):
         self.create_db_entities_translations()
         self.changeset.obsolete_db_entity = Mock()
         self.call_handle_entity('key', self.main_db_entity, None)
-        self.changeset.obsolete_db_entity.assert_called_with(self.main_db_entity)
+        self.changeset.obsolete_db_entity.assert_called_with(
+            self.main_db_entity)
 
     def test_handle_entity_create(self):
         """If the DB is missing an entity in VCS, create it."""
         self.create_db_entities_translations()
         self.changeset.create_db_entity = Mock()
         self.call_handle_entity('key', None, self.main_vcs_entity)
-        self.changeset.create_db_entity.assert_called_with(self.main_vcs_entity)
+        self.changeset.create_db_entity.assert_called_with(
+            self.main_vcs_entity)
 
     def test_handle_entity_no_translation(self):
         """If no translation exists for a specific locale, skip it."""
@@ -374,7 +392,8 @@ class CommandTests(FakeCheckoutTestCase):
         self.changeset.update_db_entity = Mock()
         self.main_vcs_entity.has_translation_for = Mock(return_value=False)
 
-        self.call_handle_entity('key', self.main_db_entity, self.main_vcs_entity)
+        self.call_handle_entity(
+            'key', self.main_db_entity, self.main_vcs_entity)
         assert_false(self.changeset.update_vcs_entity.called)
         assert_false(self.changeset.update_db_entity.called)
 
@@ -386,7 +405,8 @@ class CommandTests(FakeCheckoutTestCase):
         self.create_db_entities_translations()
         self.changeset.update_vcs_entity = Mock()
         with patch.object(Entity, 'has_changed', return_value=True):
-            self.call_handle_entity('key', self.main_db_entity, self.main_vcs_entity)
+            self.call_handle_entity(
+                'key', self.main_db_entity, self.main_vcs_entity)
 
         self.changeset.update_vcs_entity.assert_called_with(
             self.translated_locale.code, self.main_db_entity, self.main_vcs_entity
@@ -400,7 +420,8 @@ class CommandTests(FakeCheckoutTestCase):
         self.create_db_entities_translations()
         self.changeset.update_db_entity = Mock()
         with patch.object(Entity, 'has_changed', return_value=False):
-            self.call_handle_entity('key', self.main_db_entity, self.main_vcs_entity)
+            self.call_handle_entity(
+                'key', self.main_db_entity, self.main_vcs_entity)
 
         self.changeset.update_db_entity.assert_called_with(
             self.translated_locale.code, self.main_db_entity, self.main_vcs_entity
@@ -415,10 +436,13 @@ class CommandTests(FakeCheckoutTestCase):
 
         self.command.update_resources(self.db_project, self.vcs_project)
         self.main_db_resource.refresh_from_db()
-        assert_equal(self.main_db_resource.entity_count, len(self.main_vcs_resource.entities))
+        assert_equal(self.main_db_resource.entity_count,
+                     len(self.main_vcs_resource.entities))
 
-        other_db_resource = Resource.objects.get(path=self.other_vcs_resource.path)
-        assert_equal(other_db_resource.entity_count, len(self.other_vcs_resource.entities))
+        other_db_resource = Resource.objects.get(
+            path=self.other_vcs_resource.path)
+        assert_equal(other_db_resource.entity_count,
+                     len(self.other_vcs_resource.entities))
 
     def test_update_stats(self):
         """
@@ -426,10 +450,13 @@ class CommandTests(FakeCheckoutTestCase):
         locale.
         """
         with patch.object(sync_projects, 'update_stats') as update_stats:
-            self.command.update_stats(self.db_project, self.vcs_project, self.changeset)
+            self.command.update_stats(
+                self.db_project, self.vcs_project, self.changeset)
 
-            update_stats.assert_any_call(self.main_db_resource, self.translated_locale)
-            update_stats.assert_any_call(self.other_db_resource, self.translated_locale)
+            update_stats.assert_any_call(
+                self.main_db_resource, self.translated_locale)
+            update_stats.assert_any_call(
+                self.other_db_resource, self.translated_locale)
             assert_not_in(
                 call(self.missing_db_resource, self.translated_locale),
                 update_stats.mock_calls
@@ -441,14 +468,19 @@ class CommandTests(FakeCheckoutTestCase):
         exist in the target locale.
         """
         update_stats_patch = patch.object(sync_projects, 'update_stats')
-        is_asymmetric_patch = patch.object(Resource, 'is_asymmetric', new_callable=PropertyMock)
+        is_asymmetric_patch = patch.object(
+            Resource, 'is_asymmetric', new_callable=PropertyMock)
         with update_stats_patch as update_stats, is_asymmetric_patch as is_asymmetric:
             is_asymmetric.return_value = True
 
-            self.command.update_stats(self.db_project, self.vcs_project, self.changeset)
-            update_stats.assert_any_call(self.main_db_resource, self.translated_locale)
-            update_stats.assert_any_call(self.other_db_resource, self.translated_locale)
-            update_stats.assert_any_call(self.missing_db_resource, self.translated_locale)
+            self.command.update_stats(
+                self.db_project, self.vcs_project, self.changeset)
+            update_stats.assert_any_call(
+                self.main_db_resource, self.translated_locale)
+            update_stats.assert_any_call(
+                self.other_db_resource, self.translated_locale)
+            update_stats.assert_any_call(
+                self.missing_db_resource, self.translated_locale)
 
     def test_update_stats_extra_locales(self):
         """
@@ -456,10 +488,13 @@ class CommandTests(FakeCheckoutTestCase):
         locale has a resource.
         """
         with patch.object(sync_projects, 'update_stats') as update_stats:
-            self.command.update_stats(self.db_project, self.vcs_project, self.changeset)
+            self.command.update_stats(
+                self.db_project, self.vcs_project, self.changeset)
 
-            update_stats.assert_any_call(self.main_db_resource, self.translated_locale)
-            update_stats.assert_any_call(self.other_db_resource, self.translated_locale)
+            update_stats.assert_any_call(
+                self.main_db_resource, self.translated_locale)
+            update_stats.assert_any_call(
+                self.other_db_resource, self.translated_locale)
             assert_not_in(
                 call(self.main_db_resource, self.inactive_locale),
                 update_stats.mock_calls
@@ -475,8 +510,10 @@ class CommandTests(FakeCheckoutTestCase):
         same key from entity_key.
         """
         assert_not_equal(
-            self.command.entity_key(self.main_vcs_resource.entities['Common String']),
-            self.command.entity_key(self.other_vcs_resource.entities['Common String'])
+            self.command.entity_key(
+                self.main_vcs_resource.entities['Common String']),
+            self.command.entity_key(
+                self.other_vcs_resource.entities['Common String'])
         )
 
     def test_commit_changes(self):
@@ -484,9 +521,11 @@ class CommandTests(FakeCheckoutTestCase):
         self.changeset.commit_authors_per_locale = {
             self.translated_locale.code: [user]
         }
-        self.db_project.repository_for_path = Mock(return_value=self.repository)
+        self.db_project.repository_for_path = Mock(
+            return_value=self.repository)
 
-        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
+        self.command.commit_changes(
+            self.db_project, self.vcs_project, self.changeset)
         self.repository.commit.assert_called_with(
             CONTAINS(user.display_name),
             user,
@@ -501,9 +540,11 @@ class CommandTests(FakeCheckoutTestCase):
         self.changeset.commit_authors_per_locale = {
             self.translated_locale.code: []
         }
-        self.db_project.repository_for_path = Mock(return_value=self.repository)
+        self.db_project.repository_for_path = Mock(
+            return_value=self.repository)
 
-        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
+        self.command.commit_changes(
+            self.db_project, self.vcs_project, self.changeset)
         self.repository.commit.assert_called_with(
             NOT(CONTAINS('Authors:')),  # Don't list authors in commit
             ANY,
@@ -517,9 +558,11 @@ class CommandTests(FakeCheckoutTestCase):
         """If commit_changes returns an error object, log it."""
         self.command.stdout = Mock()
         self.repository.commit.return_value = {'message': 'Whoops!'}
-        self.db_project.repository_for_path = Mock(return_value=self.repository)
+        self.db_project.repository_for_path = Mock(
+            return_value=self.repository)
 
-        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
+        self.command.commit_changes(
+            self.db_project, self.vcs_project, self.changeset)
         self.command.stdout.write.assert_called_with(
             CONTAINS('db-project', 'failed', 'Whoops!')
         )
@@ -529,10 +572,13 @@ class CommandTests(FakeCheckoutTestCase):
         If repo.commit raises a CommitToRepositoryException, log it.
         """
         self.command.stdout = Mock()
-        self.repository.commit.side_effect = CommitToRepositoryException('Whoops!')
-        self.db_project.repository_for_path = Mock(return_value=self.repository)
+        self.repository.commit.side_effect = CommitToRepositoryException(
+            'Whoops!')
+        self.db_project.repository_for_path = Mock(
+            return_value=self.repository)
 
-        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
+        self.command.commit_changes(
+            self.db_project, self.vcs_project, self.changeset)
         self.command.stdout.write.assert_called_with(
             CONTAINS('db-project', 'failed', 'Whoops!')
         )
@@ -542,9 +588,11 @@ class CommandTests(FakeCheckoutTestCase):
         If db_project.repository_for_path raises a ValueError, log it.
         """
         self.command.stdout = Mock()
-        self.db_project.repository_for_path = Mock(side_effect=ValueError('Whoops!'))
+        self.db_project.repository_for_path = Mock(
+            side_effect=ValueError('Whoops!'))
 
-        self.command.commit_changes(self.db_project, self.vcs_project, self.changeset)
+        self.command.commit_changes(
+            self.db_project, self.vcs_project, self.changeset)
         self.command.stdout.write.assert_called_with(
             CONTAINS('db-project', 'failed', 'Whoops!')
         )
@@ -558,7 +606,8 @@ class CommandTests(FakeCheckoutTestCase):
         self.mock_repo_pull.return_value = {'single_locale': 'asdf'}
         assert_true(self.command.pull_changes(self.db_project))
         self.repository.refresh_from_db()
-        assert_equal(self.repository.last_synced_revisions, {'single_locale': 'asdf'})
+        assert_equal(self.repository.last_synced_revisions,
+                     {'single_locale': 'asdf'})
 
     def test_pull_changes_unsure_changes(self):
         """
@@ -584,6 +633,7 @@ class CommandTests(FakeCheckoutTestCase):
 
 
 class ChangeSetTests(FakeCheckoutTestCase):
+
     def test_execute_called_once(self):
         """Raise a RuntimeError if execute is called more than once."""
         self.changeset.execute()
@@ -612,7 +662,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.other_vcs_resource.save = Mock()
 
         self.update_main_vcs_entity(string='New Translated String')
-        assert_equal(self.main_vcs_translation.strings, {None: 'New Translated String'})
+        assert_equal(self.main_vcs_translation.strings,
+                     {None: 'New Translated String'})
 
         # Ensure only resources that were updated are saved.
         assert_true(self.main_vcs_resource.save.called)
@@ -620,8 +671,10 @@ class ChangeSetTests(FakeCheckoutTestCase):
 
         # Update the VCS translation with info about the last
         # translation.
-        assert_equal(self.main_vcs_translation.last_updated, self.main_db_translation.date)
-        assert_equal(self.main_vcs_translation.last_translator, self.main_db_translation.user)
+        assert_equal(self.main_vcs_translation.last_updated,
+                     self.main_db_translation.date)
+        assert_equal(self.main_vcs_translation.last_translator,
+                     self.main_db_translation.user)
 
     def test_update_vcs_entity_unapproved(self):
         """
@@ -663,7 +716,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         """Track translation authors for use in the commit message."""
         user = UserFactory.create()
         self.update_main_vcs_entity(user=user)
-        assert_equal(self.changeset.commit_authors_per_locale['translated-locale'], [user])
+        assert_equal(self.changeset.commit_authors_per_locale[
+                     'translated-locale'], [user])
 
     def test_create_db(self):
         """Create new entity in the database."""
@@ -760,7 +814,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         # TODO: It'd be nice if we didn't rely on internal changeset
         # attributes to check this, but not vital.
         assert_not_in(self.main_db_entity, self.changeset.entities_to_update)
-        assert_not_in(self.main_db_translation, self.changeset.translations_to_update)
+        assert_not_in(self.main_db_translation,
+                      self.changeset.translations_to_update)
 
     def test_update_db_approve_translation(self):
         """
@@ -851,7 +906,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
 
         self.update_main_db_entity()
         self.main_db_translation.refresh_from_db()
-        assert_not_in(self.main_db_translation, self.changeset.translations_to_update)
+        assert_not_in(self.main_db_translation,
+                      self.changeset.translations_to_update)
 
     def test_obsolete_db(self):
         self.create_db_entities_translations()

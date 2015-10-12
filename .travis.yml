@@ -9,6 +9,7 @@ install:
 before_script:
   - psql -c 'create database pontoon;' -U postgres
 script:
+  - pylama
   - python manage.py test
 addons:
   postgresql: "9.4"
