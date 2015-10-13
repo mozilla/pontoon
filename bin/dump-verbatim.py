@@ -7,7 +7,6 @@ from optparse import make_option
 from pootle_store.models import Store, Unit
 
 import codecs
-import io
 import json
 import subprocess
 

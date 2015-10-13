@@ -404,7 +404,9 @@ class TranslationQuerySetTests(TestCase):
         return submission date and user.
         """
         latest_submission = self._translation(self.user0, submitted=(1970, 1, 3), approved=None)
-        latest_approval = self._translation(self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 2))
+        
+        # latest approval
+        self._translation(self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 2))
         assert_equal(Translation.objects.all().latest_activity(), {
             'date': latest_submission.date,
             'user': latest_submission.user
@@ -415,7 +417,9 @@ class TranslationQuerySetTests(TestCase):
         If latest activity in Translation QuerySet is translation approval,
         return approval date and user.
         """
-        latest_submission = self._translation(self.user0, submitted=(1970, 1, 2), approved=(1970, 1, 2))
+        # latest submission
+        self._translation(self.user0, submitted=(1970, 1, 2), approved=(1970, 1, 2))
+
         latest_approval = self._translation(self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 3))
         assert_equal(Translation.objects.all().latest_activity(), {
             'date': latest_approval.date,
@@ -538,7 +542,9 @@ class UserTranslationManagerTests(TestCase):
 
         first_contributor = self.create_contributor_with_translation_counts(approved=12, unapproved=1, needs_work=2,
             date=aware_datetime(2015, 3, 2))
-        second_contributor = self.create_contributor_with_translation_counts(approved=2, unapproved=11, needs_work=2,
+
+        # Second contributor
+        self.create_contributor_with_translation_counts(approved=2, unapproved=11, needs_work=2,
             date=aware_datetime(2015, 6, 1))
 
         TranslationFactory.create_batch(5, approved=True, user=first_contributor, date=aware_datetime(2015, 7, 2))
@@ -632,7 +638,8 @@ class EntityTests(TestCase):
         other_project = ProjectFactory.create(
             locales=[self.locale, other_locale]
         )
-        obsolete_entity = EntityFactory.create(
+        # Obsolete_entity
+        EntityFactory.create(
             obsolete=True,
             resource=self.main_resource,
             string='Obsolete String'
@@ -724,12 +731,14 @@ class EntityTests(TestCase):
         """
         Return entities in correct order.
         """
-        entity_second = EntityFactory.create(
+        # First entity
+        EntityFactory.create(
             order=1,
             resource=self.main_resource,
             string='Second String'
         )
-        entity_first = EntityFactory.create(
+        # Second entity
+        EntityFactory.create(
             order=0,
             resource=self.main_resource,
             string='First String'
