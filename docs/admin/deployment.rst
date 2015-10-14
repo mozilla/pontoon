@@ -179,7 +179,7 @@ Pontoon requires a single scheduled job that runs the following command:
 
 .. code-block:: bash
 
-   ./bin/sync_projects.sh
+   ./manage.py sync_projects
 
 It's recommended to run this job once an hour. It commits any string changes in
 the database to the remote VCS servers associated with each project, and pulls

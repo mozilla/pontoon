@@ -30,5 +30,6 @@ Contents
 
    dev/install
    dev/workflow
+   dev/sync
    admin/deployment
    admin/maintenance

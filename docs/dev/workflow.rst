@@ -46,6 +46,13 @@ You can build the documentation with the following command:
 After running this command, the documentation should be available at
 ``docs/_build/html/index.html``.
 
+.. note:: Pontoon uses `GraphViz`_ as part of the documentation generation, so
+   you'll need to install it to generate graphs that use it. Most package
+   managers, including `Homebrew`_, have a package available for install.
+
+.. _GraphViz: http://www.graphviz.org/
+.. _Homebrew: http://brew.sh/
+
 Adding New Dependencies
 -----------------------
 Pontoon uses peep_ to install dependencies. Peep is a wrapper around pip that
