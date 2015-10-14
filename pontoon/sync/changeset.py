@@ -73,7 +73,7 @@ class ChangeSet(object):
 
         # Store locales and resources for FK relationships.
         self.locales = {l.code: l for l in Locale.objects.all()}
-        self.resources = {r.path: r for r in self.db_project.resource_set.all()}
+        self.resources = {r.path: r for r in self.db_project.resources.all()}
 
         # Perform the changes and fill the lists for bulk creation and
         # updating.
