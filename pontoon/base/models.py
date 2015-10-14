@@ -69,7 +69,7 @@ class UserTranslationsManager(models.Manager):
             query = query or Q()
             if start_date:
                 query &= Q(translation__date__gte=start_date)
-        
+
             if query_filters:
                 query &= query_filters
 
@@ -207,10 +207,8 @@ class ProjectQuerySet(models.QuerySet):
         return self.prefetch_related(
             'subpage_set',
             Prefetch(
-                'resource_set',
-                queryset=Resource.objects.filter(
-                    pk__in=Entity.objects.filter(obsolete=False).values('resource')
-                ),
+                'resources',
+                queryset=Resource.objects.filter(entities__obsolete=False),
                 to_attr='active_resources'
             )
         )
@@ -364,10 +362,10 @@ class Project(models.Model):
                     locale_details = get_details(
                         pages.annotate(
                             resource__path=F('name'),
-                            resource__entity_count=F('project__resource__entity_count'),
-                            fuzzy_count=F('project__resource__stats__fuzzy_count'),
-                            translated_count=F('project__resource__stats__translated_count'),
-                            approved_count=F('project__resource__stats__approved_count')
+                            resource__entity_count=F('project__resources__entity_count'),
+                            fuzzy_count=F('project__resources__stats__fuzzy_count'),
+                            translated_count=F('project__resources__stats__translated_count'),
+                            approved_count=F('project__resources__stats__approved_count')
                         )
                     )
 
@@ -531,7 +529,7 @@ class Repository(models.Model):
 
 
 class Resource(models.Model):
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, related_name='resources')
     path = models.TextField()  # Path to localization file
     entity_count = models.PositiveIntegerField(default=0)
 
@@ -582,7 +580,7 @@ class Subpage(models.Model):
 
 
 class Entity(DirtyFieldsMixin, models.Model):
-    resource = models.ForeignKey(Resource)
+    resource = models.ForeignKey(Resource, related_name='entities')
     string = models.TextField()
     string_plural = models.TextField(blank=True)
     key = models.TextField(blank=True)
@@ -869,7 +867,7 @@ def get_locales_with_stats():
 
     for locale in locales:
         stats = Stats.objects.filter(
-            resource__entity__obsolete=False,
+            resource__entities__obsolete=False,
             locale=locale).distinct()
 
         locale.chart = get_chart_data(stats)
@@ -879,16 +877,16 @@ def get_locales_with_stats():
 
 def get_locales_with_project_stats(project):
     """Add chart data to locales for specified project."""
-
     locales = Locale.objects.all()
+    project_locales = project.locales.all()
 
     for locale in locales:
-        if locale in project.locales.all():
-
+        if locale in project_locales:
             stats = Stats.objects.filter(
                 resource__project=project,
-                resource__entity__obsolete=False,
-                locale=locale).distinct()
+                resource__entities__obsolete=False,
+                locale=locale,
+            ).distinct()
 
             locale.chart = get_chart_data(stats)
 
@@ -899,11 +897,11 @@ def get_projects_with_stats(projects, locale=None):
     """Add chart data to projects (for specified locale)."""
 
     for project in projects:
-        r = Entity.objects.filter(obsolete=False).values('resource')
-        resources = Resource.objects.filter(project=project, pk__in=r)
-        locales = project.locales.all()
         stats = Stats.objects.filter(
-            resource__in=resources, locale__in=locales)
+            resource__project=project,
+            resource__entities__obsolete=False,
+            locale__in=project.locales.all(),
+        )
 
         if locale:
             stats = stats.filter(locale=locale)
