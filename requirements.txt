@@ -206,3 +206,6 @@ kombu==3.0.26
 amqp==1.4.6
 # sha256: N4Ethjya0-NcBzTELgvwMgzow77YLNIK1UyzTRWBV7o
 anyjson==0.3.3
+
+# sha256: 8Q40TOv5GQPKIK20kXYNt01sQ7bwHFfld9L5HavACqg
+pylama==6.4.0

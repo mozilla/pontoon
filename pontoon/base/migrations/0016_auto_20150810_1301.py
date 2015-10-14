@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations
 
 
 def add_tagalog_locale(apps, schema_editor):
     Locale = apps.get_model('base', 'Locale')
-    locale = Locale.objects.create(
+    Locale.objects.create(
         code='tl',
         name='Tagalog',
         nplurals=2,

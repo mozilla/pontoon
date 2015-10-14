@@ -1,8 +1,5 @@
-import base64
 import json
 import logging
-import os
-import shutil
 import traceback
 
 from django.core.urlresolvers import reverse
@@ -21,12 +18,9 @@ from pontoon.administration.forms import (
 )
 from pontoon.base import utils
 from pontoon.base.models import (
-    Entity,
     Locale,
     Project,
-    Repository,
     Resource,
-    UserProfile,
     get_projects_with_stats,
 )
 
@@ -90,7 +84,6 @@ def manage_project(request, slug=None, template='admin_project.html'):
     subtitle = 'Add project'
     pk = None
     project = None
-    message = 'Please wait while strings are imported from the repository.'
 
     # Save project
     if request.method == 'POST':
@@ -249,67 +242,3 @@ def update_from_repository(request, template=None):
         }), content_type='application/json')
 
     return HttpResponse("200")
-
-
-def update_from_transifex(request, template=None):
-    """Update all project locales from Transifex repository."""
-    log.debug("Update all project locales from Transifex repository.")
-
-    if not request.user.has_perm('base.can_manage'):
-        return render(request, '403.html', status=403)
-
-    if request.method != 'POST':
-        log.error("Non-POST request")
-        raise Http404
-
-    try:
-        pk = request.POST['pk']
-        transifex_project = request.POST['transifex_project']
-        transifex_resource = request.POST['transifex_resource']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    try:
-        p = Project.objects.get(pk=pk)
-    except Project.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    """Check if user authenticated to Transifex."""
-    profile = UserProfile.objects.get(user=request.user)
-    username = request.POST.get(
-        'transifex_username', profile.transifex_username)
-    password = request.POST.get(
-        'transifex_password', base64.decodestring(profile.transifex_password))
-
-    if len(username) == 0 or len(password) == 0:
-        return HttpResponse("authenticate")
-
-    for l in p.locales.all():
-        """Make GET request to Transifex API."""
-        response = utils.req('get', transifex_project, transifex_resource,
-                             l.code, username, password)
-
-        """Save or update Transifex data to DB."""
-        if hasattr(response, 'status_code') and response.status_code == 200:
-            entities = json.loads(response.content)
-            for entity in entities:
-                _save_entity(project=p, string=entity["key"],
-                             comment=entity["comment"])
-                if len(entity["translation"]) > 0:
-                    e = Entity.objects.get(project=p, string=entity["key"])
-                    _save_translation(
-                        entity=e, locale=l, string=entity["translation"])
-            log.debug("Transifex data for " + l.name + " saved to DB.")
-        else:
-            return HttpResponse(response)
-
-    """Save Transifex username and password."""
-    if 'remember' in request.POST and request.POST['remember'] == "on":
-        profile.transifex_username = request.POST['transifex_username']
-        profile.transifex_password = base64.encodestring(
-            request.POST['transifex_password'])
-        profile.save()
-
-    return HttpResponse(response.status_code)
