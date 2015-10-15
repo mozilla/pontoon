@@ -1,0 +1,16 @@
+{% extends "project.html" %}
+{% import 'widgets/contributors.html' as Contributors %}
+
+{% block title %}{{ super() }} &middot; Contributors {% endblock %}
+
+{% block project_subpage %}
+{{ Contributors.select_period(period, url('pontoon.project.contributors', project.slug)) }}
+
+<form>
+  {{ Contributors.list_contributors(contributors) }}
+</form>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'users' %}
+{% endblock %}

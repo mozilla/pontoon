@@ -1,0 +1,12 @@
+{# defines menu widget #}
+{% macro submenu(choices=(), value=None, menuclass='submenu') %}
+<div class="{{ menuclass }}">
+  <ul class="links">
+    {% for choiceurl, label, val in choices %}
+    <li {% if val == value %}class="active"{% endif %}>
+      <a href="{{ choiceurl }}">{{ label }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endmacro %}

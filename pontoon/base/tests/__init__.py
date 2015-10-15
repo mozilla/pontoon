@@ -108,6 +108,7 @@ class ResourceFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
     path = '/fake/path.po'
     format = 'po'
+    entity_count = 1
 
     class Meta:
         model = Resource
@@ -203,7 +204,6 @@ def assert_attributes_equal(original, **expected_attrs):
             ('Attribute `{key}` does not match: {original_value} != {value}'
              .format(key=key, original_value=original_value, value=value)),
         )
-
 
 class NOT(object):
     """

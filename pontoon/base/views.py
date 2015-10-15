@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.db.models import Count, F
+from django.db.models import Count, F, Q
 
 from django.http import (
     Http404,
@@ -27,6 +27,8 @@ from django.http import (
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
+from django.views.generic import TemplateView
+from django.views.generic.detail import DetailView
 from django_browserid.views import Verify as BrowserIDVerifyBase
 from operator import itemgetter
 from pontoon.administration import files
@@ -72,22 +74,14 @@ def locale(request, locale, template='locale.html'):
     log.debug("Locale view.")
 
     # Validate locale
-    try:
-        l = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist:
-        raise Http404
+    l = get_object_or_404(Locale, code__iexact=locale)
 
     projects = Project.objects.filter(
         disabled=False, pk__in=Resource.objects.values('project'), locales=l) \
         .order_by("name")
 
     if not projects:
-        messages.error(
-            request, "Oops, no projects available for this locale.")
-        request.session['translate_error'] = {
-            'none': None,
-        }
-        return HttpResponseRedirect(reverse('pontoon.home'))
+        return Http404()
 
     data = {
         'projects': get_projects_with_stats(projects, l),
@@ -111,16 +105,8 @@ def project(request, slug, template='project.html'):
     """Project view."""
     log.debug("Project view.")
 
-    # Validate project
-    try:
-        p = Project.objects.get(slug=slug, disabled=False,
-                                pk__in=Resource.objects.values('project'))
-    except Project.DoesNotExist:
-        messages.error(request, "Oops, project could not be found.")
-        request.session['translate_error'] = {
-            'none': None,
-        }
-        return HttpResponseRedirect(reverse('pontoon.home'))
+    p = get_object_or_404(Project, slug=slug, disabled=False,
+            pk__in=Resource.objects.values('project'))
 
     data = {
         'locales': get_locales_with_project_stats(p),
@@ -334,24 +320,67 @@ def contributor(request, email, template='user.html'):
     return render(request, template, data)
 
 
-def contributors(request, template='users.html'):
-    """Top contributors view."""
-    log.debug("Top contributors view.")
+class ContributorsMixin(object):
+    def contributors_filter(self, **kwargs):
+        """
+        Return Q() filters for fetching contributors. Fetches all by default.
+        """
+        return None
 
-    try:
-        period = int(request.GET['period'])
-        if period <= 0:
-            raise ValueError
-        start_date = (timezone.now() + relativedelta(months=-period))
-    except (KeyError, ValueError):
-        period = None
-        start_date = None
+    def get_context_data(self, **kwargs):
+        """Top contributors view."""
+        log.debug("Top contributors view.")
 
-    data = {
-        'contributors': User.translators.with_translation_counts(start_date),
-        'period': period,
-    }
-    return render(request, template, data)
+        context = super(ContributorsMixin, self).get_context_data(**kwargs)
+        try:
+            period = int(self.request.GET['period'])
+            if period <= 0:
+                raise ValueError
+            start_date = (timezone.now() + relativedelta(months=-period))
+        except (KeyError, ValueError):
+            period = None
+            start_date = None
+
+        context['contributors'] = User.translators.with_translation_counts(start_date, self.contributors_filter(**kwargs))
+        context['period'] = period
+        return context
+
+
+class ContributorsView(ContributorsMixin, TemplateView):
+    """
+    View returns top contributors.
+    """
+    template_name = 'users.html'
+
+
+class LocaleContributorsView(ContributorsMixin, DetailView):
+    """
+    View renders page of the contributors for the locale.
+    """
+    template_name = 'locale_contributors.html'
+    model = Locale
+    slug_field = 'code__iexact'
+    slug_url_kwarg = 'code'
+
+    def get_context_object_name(self, obj):
+        return 'locale'
+
+    def contributors_filter(self, **kwargs):
+        return Q(translation__locale=self.object)
+
+
+class ProjectContributorsView(ContributorsMixin, DetailView):
+    """
+    Renders an subpage of the project and displays its contributors.
+    """
+    template_name = 'project_contributors.html'
+    model = Project
+
+    def get_context_object_name(self, obj):
+        return 'project'
+
+    def contributors_filter(self, **kwargs):
+        return Q(translation__entity__resource__project=self.object)
 
 
 def search(request, template='search.html'):

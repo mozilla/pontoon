@@ -968,16 +968,16 @@ body > nav,
   color: #7BC876;
 }
 
-.contributors .links {
+.submenu .links {
   margin-top: 50px;
 }
 
-.contributors .links a {
+.submenu .links a {
   padding: 10px;
   border-radius: 3px;
 }
 
-.contributors .links li.active a {
+.submenu .links li.active a {
   background-color: #3F4752;
 }
 
