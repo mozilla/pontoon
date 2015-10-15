@@ -47,7 +47,7 @@ var Pontoon = (function (my) {
         $('.notification')
           .html('<li class="' + (type || "") + '">' + text + '</li>')
           .css('opacity', 100)
-          .removeClass('hide');
+          .removeClass('hide menu-open');
       }
 
       if (!persist) {
@@ -146,8 +146,8 @@ var Pontoon = (function (my) {
      */
     getMachinery: function (original, target, loader) {
       var self = this,
-          tab_id = target || 'machinery',
-          loader = loader || 'helpers li a[href="#' + tab_id + '"]',
+          tab_id = target || 'helpers > .machinery',
+          loader = loader || 'helpers li a[href="#machinery"]',
           ul = $('#' + tab_id).find('ul').empty(),
           tab = $('#' + loader).addClass('loading'),
           requests = 0;
@@ -447,7 +447,7 @@ $(function() {
   // Menu search
   $('.menu input[type=search]').click(function (e) {
     e.stopPropagation();
-  }).keyup(function(e) {
+  }).on('keyup.search', function(e) {
     if (e.which === 9) {
       return;
     }
@@ -522,8 +522,26 @@ $(function() {
     ul.append(listitems);
   });
 
+  // Tabs
+  $(".tabs nav a").click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    var tab = $(this),
+        section = tab.attr('href').substr(1);
+
+    tab
+      .parents("li")
+        .siblings().removeClass('active').end()
+        .addClass('active').end()
+
+      .parents(".tabs")
+        .find('section').hide().end()
+        .find('section.' + section).show();
+  });
+
   // Toggle quality checks
-  $('.quality-checks').click(function() {
+  $('.check-box.quality-checks').click(function() {
     var self = $(this);
     Pontoon.startLoader();
 
@@ -538,6 +556,7 @@ $(function() {
           self.toggleClass('enabled');
           var status = self.is('.enabled') ? 'enabled' : 'disabled';
           Pontoon.endLoader('Quality checks ' + status + '.');
+          $('.notification').addClass('menu-open');
         }
       },
       error: function() {
@@ -573,6 +592,16 @@ $(function() {
     if ($('.menu').is(':visible')) {
       var menu = $('.menu:visible'),
           hovered = menu.find('li.hover');
+
+      // Skip for the Search project menu
+      if (menu.is('.search-project:visible').length) {
+        return;
+      }
+
+      // Skip for the tabs
+      if (menu.is('.tabs')) {
+        return;
+      }
 
       // Up arrow
       if (key === 38) {

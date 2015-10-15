@@ -1,0 +1,11 @@
+body > .container {
+  width: 1035px;
+}
+
+.menu .sort span.name {
+    width: 520px;
+}
+
+.part.select .menu ul li .name {
+  width: 519px; /* Instead of 520px; because of padding */
+}

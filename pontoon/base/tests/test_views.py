@@ -30,7 +30,7 @@ class TranslateTests(TestCase):
         project = ProjectFactory.create(slug='valid-project')
         ResourceFactory.create(project=project)
 
-        response = self.client.get('/invalid-locale/valid-project/')
+        response = self.client.get('/invalid-locale/valid-project/path/')
         assert_redirects(response, reverse('pontoon.home'))
         assert_equal(self.client.session['translate_error'], {'none': None})
 
@@ -38,7 +38,7 @@ class TranslateTests(TestCase):
         """If the project is invalid, redirect home."""
         LocaleFactory.create(code='fakelocale')
 
-        response = self.client.get('/fakelocale/invalid-project/')
+        response = self.client.get('/fakelocale/invalid-project/path/')
         assert_redirects(response, reverse('pontoon.home'))
         assert_equal(self.client.session['translate_error'], {'none': None})
 
@@ -50,7 +50,7 @@ class TranslateTests(TestCase):
         LocaleFactory.create(code='fakelocale')
         ProjectFactory.create(slug='valid-project')
 
-        response = self.client.get('/fakelocale/valid-project/')
+        response = self.client.get('/fakelocale/valid-project/path/')
         assert_redirects(response, reverse('pontoon.home'))
         assert_equal(self.client.session['translate_error'], {'none': None})
 
@@ -63,9 +63,10 @@ class TranslateTests(TestCase):
         Project.objects.filter(id=1).delete()
         locale = LocaleFactory.create(code='fakelocale')
         project = ProjectFactory.create(id=1, slug='valid-project', locales=[locale])
-        ResourceFactory.create(project=project)
+        resource = ResourceFactory.create(project=project, path='foo.lang', entity_count=1)
+        StatsFactory.create(resource=resource, locale=locale)
 
-        response = self.client.get('/fakelocale/valid-project/')
+        response = self.client.get('/fakelocale/valid-project/foo.lang/')
         assert_equal(response.status_code, 200)
         # I'd assertTemplateUsed here but it doesn't work on non-DTL
         # templates.
@@ -81,9 +82,9 @@ class TranslateTests(TestCase):
         project = ProjectFactory.create(id=2, slug='valid-project', locales=[locale])
         ResourceFactory.create(project=project)
 
-        response = self.client.get('/fakelocale/valid-project/')
+        response = self.client.get('/fakelocale/valid-project/path/')
         assert_redirects(response, reverse('pontoon.home'))
-        assert_equal(self.client.session['translate_error'], {'redirect': '/fakelocale/valid-project/'})
+        assert_equal(self.client.session['translate_error'], {'redirect': '/fakelocale/valid-project/path/'})
 
     def test_no_subpage_multiple_stats_in_current_locale(self):
         """
@@ -93,14 +94,13 @@ class TranslateTests(TestCase):
         locale = LocaleFactory.create()
         project = ProjectFactory.create(locales=[locale])
 
-        # Need at least two resources and stats to trigger setting the part value.
         resource1 = ResourceFactory.create(project=project, path='foo1.lang', entity_count=1)
         resource2 = ResourceFactory.create(project=project, path='foo2.lang', entity_count=1)
         StatsFactory.create(resource=resource1, locale=locale)
         StatsFactory.create(resource=resource2, locale=locale)
 
         self.client_login()
-        url = '/{locale.code}/{project.slug}/'.format(locale=locale, project=project)
+        url = '/' + '/'.join([locale.code, project.slug, resource1.path]) + '/'
         with patch('pontoon.base.views.render', wraps=render) as mock_render:
             self.client.get(url)
             assert_equal(mock_render.call_args[0][2]['part'], 'foo1.lang')
@@ -108,21 +108,19 @@ class TranslateTests(TestCase):
     def test_no_subpage_one_stats_in_current_locale(self):
         """
         If there is just one stats for a resource available in the current
-        locale, and no subpages, do not set ctx['part'].
+        locale, and no subpages, set the part to the resource path.
         """
         locale = LocaleFactory.create()
         project = ProjectFactory.create(locales=[locale])
 
-        # Need two resources to trigger setting the part value.
         resource = ResourceFactory.create(project=project, path='foo.lang', entity_count=1)
-        ResourceFactory.create(project=project, entity_count=1)
         StatsFactory.create(resource=resource, locale=locale)
 
         self.client_login()
-        url = '/{locale.code}/{project.slug}/'.format(locale=locale, project=project)
+        url = '/{}/'.format('/'.join([locale.code, project.slug, resource.path]))
         with patch('pontoon.base.views.render', wraps=render) as mock_render:
             self.client.get(url)
-            assert_true('part' not in mock_render.call_args[0][2])
+            assert_equal(mock_render.call_args[0][2]['part'], 'foo.lang')
 
     def test_no_subpage_no_stats_in_current_locale(self):
         """
@@ -132,13 +130,12 @@ class TranslateTests(TestCase):
         locale, locale_no_stats = LocaleFactory.create_batch(2)
         project = ProjectFactory.create(locales=[locale, locale_no_stats])
 
-        # Need two resources to trigger setting the part value.
         resource = ResourceFactory.create(project=project, path='foo.lang', entity_count=1)
         ResourceFactory.create(project=project, entity_count=1)
         StatsFactory.create(resource=resource, locale=locale)
 
         self.client_login()
-        url = '/{locale.code}/{project.slug}/'.format(locale=locale_no_stats, project=project)
+        url = '/{}/'.format('/'.join([locale_no_stats.code, project.slug, resource.path]))
         with patch('pontoon.base.views.render', wraps=render) as mock_render:
             self.client.get(url)
             assert_true('part' not in mock_render.call_args[0][2])

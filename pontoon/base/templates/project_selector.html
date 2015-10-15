@@ -1,7 +1,7 @@
 {% import 'latest_activity.html' as latest_activity %}
 
 {% if projects|length > 0 %}
-<!-- Project select -->
+<!-- Project selector -->
 <div class="project select">
   {% if project and project.name != '' %}
   <div class="button breadcrumbs selector">
@@ -25,8 +25,8 @@
       <li class="clearfix{% if project and project == p %} current{% endif %}">
         <span class="name"
           data-slug="{{ p.slug }}"
-          {% if project %}data-details="{{ p.locales_parts_stats|to_json }}"{% endif %}>
-          {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.translate', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
+          {% if project %}data-details="{{ p.locales_parts_stats()|to_json }}"{% endif %}>
+          {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.locale.project', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
             {{ p.name }}
           {% if p and p.chart %}</a>{% endif %}
         </span>
@@ -35,7 +35,7 @@
         {% endif %}
         {% if p and p.chart and p.chart.total %}
         <span class="chart-wrapper">
-          {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.translate', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
+          {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.locale.project', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
           <span class="chart" data-chart="{{ p.chart|to_json }}">
             <span class="approved" style="width:{{ p.chart.approved / p.chart.total * 100 }}%;"></span>
             <span class="translated" style="width:{{ p.chart.translated / p.chart.total * 100 }}%;"></span>

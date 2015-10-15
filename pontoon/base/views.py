@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.db.models import Count, F, Prefetch
+from django.db.models import Count, F
 
 from django.http import (
     Http404,
@@ -24,7 +24,7 @@ from django.http import (
     HttpResponseRedirect,
 )
 
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django_browserid.views import Verify as BrowserIDVerifyBase
@@ -62,8 +62,9 @@ def home(request):
     project = Project.objects.get(id=1)
     locale = utils.get_project_locale_from_request(
         request, project.locales) or 'en-GB'
+    path = Resource.objects.filter(project=project, stats__locale__code=locale)[0].path
 
-    return translate(request, locale, project.slug)
+    return translate(request, locale, project.slug, path)
 
 
 def locale(request, locale, template='locale.html'):
@@ -146,9 +147,30 @@ def projects(request, template='projects.html'):
     return render(request, template, data)
 
 
-def translate(request, locale, slug, part=None, template='translate.html'):
+def locale_project(request, locale, slug):
+    """Locale-project overview."""
+    l = get_object_or_404(Locale, code__iexact=locale)
+
+    project = (
+        get_object_or_404(
+            Project.objects.prefetch_parts(),
+            disabled=False,
+            slug=slug,
+            pk__in=Resource.objects.values('project')
+        )
+    )
+
+    data = {
+        'locale': l,
+        'project': project,
+        'parts': project.locales_parts_stats(l),
+    }
+
+    return render(request, 'locale_project.html', data)
+
+
+def translate(request, locale, slug, part, template='translate.html'):
     """Translate view."""
-    log.debug("Translate view.")
 
     invalid_locale = invalid_project = False
 
@@ -201,22 +223,12 @@ def translate(request, locale, slug, part=None, template='translate.html'):
             }
             return HttpResponseRedirect(reverse('pontoon.home'))
 
-    # Prefetch subpages and resources for locales_parts_stats()
     projects = (
         Project.objects.filter(
             disabled=False,
             pk__in=Resource.objects.values('project')
         )
-        .prefetch_related(
-            'subpage_set',
-            Prefetch(
-                'resource_set',
-                queryset=Resource.objects.filter(
-                    pk__in=Entity.objects.filter(obsolete=False).values('resource')
-                ),
-                to_attr='active_resources'
-            )
-        )
+        .prefetch_parts()
         .order_by("name")
     )
 
@@ -232,35 +244,28 @@ def translate(request, locale, slug, part=None, template='translate.html'):
 
     # Set subpage
     pages = Subpage.objects.filter(project=p)
-    setPart = False
     if len(pages) > 0:
         try:
             page = pages.get(name=part)
-            if pages.count() > 1:
-                setPart = True
 
         # If page not specified or doesn't exist
         except Subpage.DoesNotExist:
             page = pages[0]
-            if pages.count() > 1:
-                setPart = True
             locale_pages = pages.filter(resources__stats__locale=l)
             if locale_pages:
                 page = locale_pages[0]
-                setPart = True if locale_pages.count() > 1 else False
 
         data['page_url'] = page.url
-        if setPart:
-            data['part'] = page.name
+        data['part'] = page.name
 
-    # Set part if subpages not defined and entities in more than one file
+    # Set path if subpages not defined
     else:
         paths = (Resource.objects
                     .filter(project=p, entity_count__gt=0, stats__locale=l)
                     .order_by('path')
                     .values_list('path', flat=True))
 
-        if len(paths) > 1:
+        if paths:
             data['part'] = part if part in paths else paths[0]
 
     # Set error data
@@ -396,7 +401,11 @@ def entities(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    entities = Entity.for_project_locale(project, locale, paths)
+    search = None
+    if request.GET.get('keyword', None):
+        search = request.GET
+
+    entities = Entity.for_project_locale(project, locale, paths, search)
     return HttpResponse(json.dumps(entities), content_type='application/json')
 
 

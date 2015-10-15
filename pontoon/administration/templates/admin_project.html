@@ -15,7 +15,7 @@
   <aside>
     <a href="{{ url('pontoon.admin.project.new') }}">Add new</a>
     {% if translate_locale and form.slug.value() != '' %}
-    <a class="translate{% if not ready %} hidden{% endif %}" href="{{ url('pontoon.translate', translate_locale, form.slug.value()) }}">Translate</a>
+    <a class="translate{% if not ready %} hidden{% endif %}" href="{{ url('pontoon.locale.project', translate_locale, form.slug.value()) }}">Translate</a>
     {% endif %}
   </aside>
   {% endif %}
