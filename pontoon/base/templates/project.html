@@ -18,25 +18,25 @@
 {% block subtitle %}{{ project.name }}{% endblock %}
 
 {% block middle %}
-<form>
+<div class="container">
   <ul class="notification"></ul>
 
-  <div class="about">
-	{% if project.info_brief %}<p>{{ project.info_brief|safe }}</p>{% endif %}
-	{% if project.url %}<p><span>Website: </span><a href="{{ project.url }}">{{ project.url }}</a></p>{% endif %}
-  </div>
-</form>
+  {% if project.info_brief or project.url %}
+    <div class="about">
+      {% if project.info_brief %}<p>{{ project.info_brief|safe }}</p>{% endif %}
+      {% if project.url %}<p><span>Website: </span><a href="{{ project.url }}">{{ project.url }}</a></p>{% endif %}
+    </div>
+  {% endif %}
 
-{{ Menu.submenu((
-  (url('pontoon.project', project.slug), 'Teams', ''),
-  (url('pontoon.project.contributors', project.slug), 'Contributors', 'contributors')
-), request.path.split('/')[3]|default('')) }}
+  {{ Menu.submenu((
+    (url('pontoon.project', project.slug), 'Teams', ''),
+    (url('pontoon.project.contributors', project.slug), 'Contributors', 'contributors')
+  ), request.path.split('/')[3]|default(''), 'submenu tabs') }}
 
-<form>
   {% block project_subpage %}
     {% include 'locale_selector.html' %}
   {% endblock %}
-</form>
+</div>
 {% endblock %}
 
 {% block extend_css %}

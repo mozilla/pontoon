@@ -49,10 +49,12 @@ urlpatterns = patterns(
         views.project,
         name='pontoon.project'),
 
+    # List project contributors
     url(r'^projects/(?P<slug>[\w-]+)/contributors$',
         views.ProjectContributorsView.as_view(),
         name='pontoon.project.contributors'),
 
+    # Translate project
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',
         views.translate,
         name='pontoon.translate'),
@@ -129,6 +131,7 @@ urlpatterns = patterns(
         views.locale,
         name='pontoon.locale'),
 
+    # List team contributors
     url(r'^(?P<code>[A-Za-z0-9\-\@\.]+)/contributors$',
         views.LocaleContributorsView.as_view(),
         name='pontoon.locale.contributors'),

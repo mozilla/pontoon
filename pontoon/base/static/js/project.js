@@ -23,7 +23,7 @@ $(function() {
   $('.locale .menu .search-wrapper > a').click(function (e) {
     e.preventDefault();
 
-    var menu = $(this).parents('.menu');
+    var menu = $(this).parents('.menu').toggleClass('request');
     menu.find('.sort .progress, .latest').toggle();
     $(this).toggleClass('back')
       .find('span').toggleClass('fa-plus-square fa-chevron-left');

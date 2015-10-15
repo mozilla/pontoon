@@ -1,21 +1,5 @@
-.about {
-  padding: 0 12px;
-  text-align: left;
-}
-
-.about p {
-  font-weight: 300;
-  padding: 12px 0;
-}
-
-.about p a:link,
-.about p a:visited {
-  color: #7BC876;
-}
-
 .notification {
-  line-height: 17px;
-  margin: -17px 12px 0px;
+  margin: -37px 12px 20px;
 }
 
 .notification li {
@@ -28,4 +12,8 @@
 
 .locale .menu li a {
   display: block;
+}
+
+.locale .menu.request li {
+  cursor: pointer;
 }

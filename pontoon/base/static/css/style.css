@@ -773,18 +773,18 @@ label {
   text-align: left;
 }
 
-form .about {
-  padding: 0 12px;
+body > .container .about {
+  padding: 0 12px 50px;
   text-align: left;
 }
 
-form .about p {
+body > .container .about p {
   font-weight: 300;
   padding: 12px 0;
 }
 
-form .about p a:link,
-form .about p a:visited {
+body > .container .about p a:link,
+body > .container .about p a:visited {
   color: #7BC876;
 }
 
@@ -969,7 +969,7 @@ body > nav,
 }
 
 .submenu .links {
-  margin-top: 50px;
+  margin: 0 0 50px;
 }
 
 .submenu .links a {
@@ -979,6 +979,58 @@ body > nav,
 
 .submenu .links li.active a {
   background-color: #3F4752;
+}
+
+.submenu.tabs .links {
+  display: inline-block;
+  padding: 12px;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.submenu.tabs .links li {
+  border: 1px solid transparent;
+  border-bottom-color: #5E6475;
+  float: left;
+  margin: 0;
+  width: 50%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.submenu.tabs .links li.active {
+  border-color: #5E6475;
+  border-bottom-color: transparent;
+}
+
+/* TODO: this is needed (but shouldn't be) for pixel perfect tab borders */
+.submenu.tabs .links li:last-child.active {
+  width: calc(50% + 2px);
+  margin-left: -2px;
+  padding-left: 2px;
+}
+
+.submenu.tabs .links a {
+  color: #AAAAAA;
+  display: inline-block;
+  padding: 10px;
+  text-transform: uppercase;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.submenu.tabs .links a:hover {
+  color: #FFFFFF;
+}
+
+.submenu.tabs .links li.active a {
+  background-color: transparent;
+  color: #FFFFFF;
 }
 
 noscript p {
@@ -1147,4 +1199,9 @@ body > .container {
 
 .tabs > section {
   display: none;
+}
+
+.no-contributors {
+  font-style: italic;
+  color: #AAAAAA;
 }
