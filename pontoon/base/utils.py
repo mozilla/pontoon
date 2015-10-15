@@ -375,3 +375,14 @@ def extension_in(filename, extensions):
         return True
     else:
         return False
+
+
+def get_object_or_none(model, *args, **kwargs):
+    """
+    Get an instance of the given model, returning None instead of
+    raising an error if an instance cannot be found.
+    """
+    try:
+        return model.objects.get(*args, **kwargs)
+    except model.DoesNotExist:
+        return None

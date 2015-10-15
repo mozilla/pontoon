@@ -39,6 +39,7 @@ from pontoon.base.models import (
     Locale,
     Project,
     Resource,
+    Stats,
     Subpage,
     Translation,
     UserProfile,
@@ -122,10 +123,13 @@ def projects(request, template='projects.html'):
     """Project overview."""
     log.debug("Project overview.")
 
-    projects = Project.objects.filter(
-        disabled=False,
-        resources__isnull=False,
-    ).distinct().order_by("name")
+    projects = (
+        Project.objects
+        .filter(disabled=False, resources__isnull=False)
+        .select_related('latest_translation')
+        .distinct()
+        .order_by("name")
+    )
 
     data = {
         'projects': get_projects_with_stats(projects),
@@ -138,19 +142,25 @@ def locale_project(request, locale, slug):
     """Locale-project overview."""
     l = get_object_or_404(Locale, code__iexact=locale)
 
-    project = (
-        get_object_or_404(
-            Project.objects.prefetch_related('subpage_set'),
-            disabled=False,
-            slug=slug,
-            pk__in=Resource.objects.values('project')
-        )
+    projects = Project.objects.prefetch_related('subpage_set').distinct()
+    project = get_object_or_404(projects, disabled=False, slug=slug, resources__isnull=False)
+
+    # Amend the parts dict with latest activity info.
+    stats_qs = (
+        Stats.objects
+        .filter(resource__project=project, locale=l)
+        .select_related('resource', 'latest_translation')
     )
+    stats = {s.resource.path: s for s in stats_qs}
+    parts = project.locales_parts_stats(l)
+    for part in parts:
+        stat = stats.get(part['resource__path'], None)
+        part['latest_activity'] = stat.latest_translation if stat else None
 
     data = {
         'locale': l,
         'project': project,
-        'parts': project.locales_parts_stats(l),
+        'parts': parts,
     }
 
     return render(request, 'locale_project.html', data)

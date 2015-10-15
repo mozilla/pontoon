@@ -19,6 +19,7 @@ from jsonfield import JSONField
 
 from pontoon.administration.vcs import commit_to_vcs, get_revision, update_from_vcs
 from pontoon.base import utils
+from pontoon.base.utils import get_object_or_none
 
 
 log = logging.getLogger('pontoon')
@@ -152,6 +153,15 @@ class Locale(models.Model):
 
     team_description = models.TextField(blank=True)
 
+    #: Most recent translation approved or created for this locale.
+    latest_translation = models.ForeignKey(
+        'Translation',
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+
     def cldr_plurals_list(self):
         if self.cldr_plurals == '':
             return [1]
@@ -183,13 +193,15 @@ class Locale(models.Model):
     class Meta:
         ordering = ['name', 'code']
 
-    def latest_activity(self, project=None):
-        """Get latest activity for locale and project if provided."""
-        translations = Translation.objects.filter(locale=self)
-        if project:
-            translations = translations.filter(entity__resource__project=project)
-
-        return translations.latest_activity()
+    def get_latest_activity(self, project=None):
+        """Get latest activity for project and locale if provided."""
+        if project is None:
+            if self.latest_translation is not None:
+                return self.latest_translation.latest_activity
+            else:
+                return None
+        else:
+            return ProjectLocale.get_latest_activity(project, self)
 
 
 class ProjectQuerySet(models.QuerySet):
@@ -204,7 +216,7 @@ class ProjectQuerySet(models.QuerySet):
 class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
-    locales = models.ManyToManyField(Locale)
+    locales = models.ManyToManyField(Locale, through='ProjectLocale')
 
     transifex_project = models.CharField(
         "Project", max_length=128, blank=True)
@@ -227,6 +239,15 @@ class Project(models.Model):
 
     # Whether this project has changed since the last sync.
     has_changed = models.BooleanField(default=False)
+
+    # Most recent translation approved or created for this project.
+    latest_translation = models.ForeignKey(
+        'Translation',
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
 
     objects = ProjectQuerySet.as_manager()
 
@@ -294,15 +315,15 @@ class Project(models.Model):
         else:
             return repo
 
-    def latest_activity(self, locale=None, path=None):
+    def get_latest_activity(self, locale=None):
         """Get latest activity for project and locale if provided."""
-        translations = Translation.objects.filter(entity__resource__project=self)
-        if locale:
-            translations = translations.filter(locale=locale)
-            if path:
-                translations = translations.filter(entity__resource__path=path)
-
-        return translations.latest_activity()
+        if locale is None:
+            if self.latest_translation is not None:
+                return self.latest_translation.latest_activity
+            else:
+                return None
+        else:
+            return ProjectLocale.get_latest_activity(self, locale)
 
     def locales_parts_stats(self, loc=None):
         """Get project locales with their pages/paths and stats."""
@@ -369,6 +390,34 @@ class Project(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class ProjectLocale(models.Model):
+    """Link between a project and a locale that is active for it."""
+    project = models.ForeignKey(Project)
+    locale = models.ForeignKey(Locale)
+
+    #: Most recent translation approved or created for this project in
+    #: this locale.
+    latest_translation = models.ForeignKey(
+        'Translation',
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+
+    class Meta:
+        unique_together = ('project', 'locale')
+
+    @classmethod
+    def get_latest_activity(cls, project, locale):
+        """Get the latest activity within this project and locale."""
+        project_locale = get_object_or_none(ProjectLocale, project=project, locale=locale)
+        if project_locale is not None and project_locale.latest_translation is not None:
+            return project_locale.latest_translation.latest_activity
+        else:
+            return None
 
 
 class Repository(models.Model):
@@ -727,28 +776,6 @@ class ChangedEntityLocale(models.Model):
         unique_together = ('entity', 'locale')
 
 
-class TranslationQuerySet(models.QuerySet):
-    def latest_activity(self):
-        """Find latest activity in given translations."""
-        if not self.exists():
-            return None
-
-        latest_translation = self.order_by('-date')[0]
-        latest_approval = self.order_by('-approved_date')[0]
-
-        if latest_approval.approved_date and latest_translation.date < latest_approval.approved_date:
-            return {
-                'date': latest_approval.date,
-                'user': latest_approval.approved_user
-            }
-
-        else:
-            return {
-                'date': latest_translation.date,
-                'user': latest_translation.user
-            }
-
-
 def extra_default():
     """Default value for the Translation.extra field."""
     return {}
@@ -773,7 +800,16 @@ class Translation(DirtyFieldsMixin, models.Model):
     # about.
     extra = JSONField(default=extra_default)
 
-    objects = TranslationQuerySet.as_manager()
+    @property
+    def latest_activity(self):
+        """
+        Return the date and user associated with the latest activity on
+        this translation.
+        """
+        if self.approved_date is not None and self.approved_date > self.date:
+            return {'date': self.approved_date, 'user': self.approved_user}
+        else:
+            return {'date': self.date, 'user': self.user}
 
     def __unicode__(self):
         return self.string
@@ -791,12 +827,36 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         if not imported:
             # Update stats AFTER changing approval status.
-            update_stats(self.entity.resource, self.locale)
+            stats = update_stats(self.entity.resource, self.locale)
 
             # Whenever a translation changes, mark the entity as having
             # changed in the appropriate locale. We could be smarter about
             # this but for now this is fine.
             self.entity.mark_changed(self.locale)
+
+            # Check and update the latest translation where necessary.
+            self.check_latest_translation(self.entity.resource.project)
+            self.check_latest_translation(self.locale)
+            self.check_latest_translation(stats)
+
+            project_locale = get_object_or_none(
+                ProjectLocale,
+                project=self.entity.resource.project,
+                locale=self.locale
+            )
+            if project_locale:
+                self.check_latest_translation(project_locale)
+
+    def check_latest_translation(self, instance):
+        """
+        Check if the given model instance has a `latest_activity`
+        attribute and, if it does, see if this translation is more
+        recent than it. If so, replace it and save.
+        """
+        latest = instance.latest_translation
+        if latest is None or self.latest_activity['date'] > latest.latest_activity['date']:
+            instance.latest_translation = self
+            instance.save(update_fields=['latest_translation'])
 
     def delete(self, stats=True, *args, **kwargs):
         super(Translation, self).delete(*args, **kwargs)
@@ -818,11 +878,24 @@ class Translation(DirtyFieldsMixin, models.Model):
 
 
 class Stats(models.Model):
+    """
+    Statistics related to a translated resource in a specific locale.
+    """
     resource = models.ForeignKey(Resource)
     locale = models.ForeignKey(Locale)
     translated_count = models.PositiveIntegerField(default=0)
     approved_count = models.PositiveIntegerField(default=0)
     fuzzy_count = models.PositiveIntegerField(default=0)
+
+    #: Most recent translation approved or created for the translated
+    #: resource.
+    latest_translation = models.ForeignKey(
+        'Translation',
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
 
     def __unicode__(self):
         translated = float(self.translated_count + self.approved_count)
@@ -1061,3 +1134,5 @@ def update_stats(resource, locale):
     stats.fuzzy_count = fuzzy
     stats.translated_count = max(translated_entities.count() - approved - fuzzy, 0)
     stats.save()
+
+    return stats

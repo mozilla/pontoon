@@ -31,7 +31,7 @@
           {% if p and p.chart %}</a>{% endif %}
         </span>
         {% if not project %}
-          {{ latest_activity.span(p.latest_activity(locale)) }}
+          {{ latest_activity.span(p.get_latest_activity(locale|default(none))) }}
         {% endif %}
         {% if p and p.chart and p.chart.total %}
         <span class="chart-wrapper">

@@ -1,12 +1,18 @@
 import os.path
 
-from django_nose.tools import assert_equal, assert_false, assert_raises, assert_true
+from django_nose.tools import (
+    assert_equal,
+    assert_false,
+    assert_is_none,
+    assert_raises,
+    assert_true,
+)
 from django.db.models import Q
 from django.test.utils import override_settings
 
 from mock import call, Mock, patch
 
-from pontoon.base.models import Entity, Repository, Translation, User
+from pontoon.base.models import Entity, ProjectLocale, Repository, User
 from pontoon.base.tests import (
     assert_attributes_equal,
     ChangedEntityLocaleFactory,
@@ -14,6 +20,7 @@ from pontoon.base.tests import (
     IdenticalTranslationFactory,
     LocaleFactory,
     ProjectFactory,
+    ProjectLocaleFactory,
     RepositoryFactory,
     ResourceFactory,
     StatsFactory,
@@ -96,6 +103,39 @@ class ProjectTests(TestCase):
         project = ProjectFactory.create(has_changed=False)
         ChangedEntityLocaleFactory.create(entity__resource__project=project)
         assert_true(project.needs_sync)
+
+    def test_get_latest_activity_with_latest(self):
+        """
+        If the project has a latest_translation and no locale is given,
+        return it.
+        """
+        project = ProjectFactory.create()
+        translation = TranslationFactory.create(entity__resource__project=project)
+        project.latest_translation = translation
+        project.save()
+
+        assert_equal(project.get_latest_activity(), translation.latest_activity)
+
+    def test_get_latest_activity_without_latest(self):
+        """
+        If the project doesn't have a latest_translation and no locale
+        is given, return None.
+        """
+        project = ProjectFactory.create(latest_translation=None)
+        assert_is_none(project.get_latest_activity())
+
+    def test_get_latest_activity_with_locale(self):
+        """
+        If a locale is given, defer to
+        ProjectLocale.get_latest_activity.
+        """
+        locale = LocaleFactory.create()
+        project = ProjectFactory.create(locales=[locale])
+
+        with patch.object(ProjectLocale, 'get_latest_activity') as mock_get_latest_activity:
+            mock_get_latest_activity.return_value = 'latest'
+            assert_equal(project.get_latest_activity(locale=locale), 'latest')
+            mock_get_latest_activity.assert_called_with(project, locale)
 
 
 class ProjectPartsTests(TestCase):
@@ -388,51 +428,6 @@ class RepositoryTests(TestCase):
             repo.url_for_path.assert_called_with('path')
 
 
-class TranslationQuerySetTests(TestCase):
-    def setUp(self):
-        self.user0, self.user1 = UserFactory.create_batch(2)
-
-    def _translation(self, user, submitted, approved):
-        return TranslationFactory.create(
-            date=aware_datetime(*submitted),
-            user=user,
-            approved_date=aware_datetime(*approved) if approved else None,
-            approved_user=user
-        )
-
-    def test_latest_activity_translated(self):
-        """
-        If latest activity in Translation QuerySet is translation submission,
-        return submission date and user.
-        """
-        latest_submission = self._translation(self.user0, submitted=(1970, 1, 3), approved=None)
-
-        # latest approval
-        self._translation(self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 2))
-        assert_equal(Translation.objects.all().latest_activity(), {
-            'date': latest_submission.date,
-            'user': latest_submission.user
-        })
-
-    def test_latest_activity_approved(self):
-        """
-        If latest activity in Translation QuerySet is translation approval,
-        return approval date and user.
-        """
-        # latest submission
-        self._translation(self.user0, submitted=(1970, 1, 2), approved=(1970, 1, 2))
-
-        latest_approval = self._translation(self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 3))
-        assert_equal(Translation.objects.all().latest_activity(), {
-            'date': latest_approval.date,
-            'user': latest_approval.user
-        })
-
-    def test_latest_activity_none(self):
-        """If empty Translation QuerySet, return None."""
-        assert_equal(Translation.objects.none().latest_activity(), None)
-
-
 class UserTranslationManagerTests(TestCase):
     @override_settings(EXCLUDE=('excluded@example.com',))
     def test_excluded_contributors(self):
@@ -613,6 +608,7 @@ class UserTranslationManagerTests(TestCase):
             translations_approved_count=11, translations_unapproved_count=1,
             translations_needs_work_count=2)
 
+
 class EntityTests(TestCase):
     def setUp(self):
         self.locale = LocaleFactory.create(
@@ -783,3 +779,175 @@ class EntityTests(TestCase):
 
         assert_equal(entities[2]['original'], 'First String')
         assert_equal(entities[3]['original'], 'Second String')
+
+
+class LocaleTests(TestCase):
+    def test_get_latest_activity_with_latest(self):
+        """
+        If the locale has a latest_translation and no project is given,
+        return it.
+        """
+        translation = TranslationFactory.create()
+        locale = LocaleFactory.create(latest_translation=translation)
+
+        assert_equal(locale.get_latest_activity(), translation.latest_activity)
+
+    def test_get_latest_activity_without_latest(self):
+        """
+        If the locale doesn't have a latest_translation and no project
+        is given, return None.
+        """
+        locale = LocaleFactory.create(latest_translation=None)
+        assert_is_none(locale.get_latest_activity())
+
+    def test_get_latest_activity_with_locale(self):
+        """
+        If a locale is given, defer to
+        ProjectLocale.get_latest_activity.
+        """
+        locale = LocaleFactory.create()
+        project = ProjectFactory.create(locales=[locale])
+
+        with patch.object(ProjectLocale, 'get_latest_activity') as mock_get_latest_activity:
+            mock_get_latest_activity.return_value = 'latest'
+            assert_equal(locale.get_latest_activity(project=project), 'latest')
+            mock_get_latest_activity.assert_called_with(project, locale)
+
+
+class ProjectLocaleTests(TestCase):
+    def setUp(self):
+        super(ProjectLocaleTests, self).setUp()
+
+        self.locale = LocaleFactory.create()
+        self.project = ProjectFactory.create()
+
+    def test_get_latest_activity_doesnt_exist(self):
+        """
+        If no ProjectLocale exists with the given project/locale,
+        return None.
+        """
+        assert_false(ProjectLocale.objects
+                     .filter(project=self.project, locale=self.locale)
+                     .exists())
+        assert_is_none(ProjectLocale.get_latest_activity(self.project, self.locale))
+
+    def test_get_latest_activity_no_latest(self):
+        """
+        If the matching ProjectLocale has no latest_translation, return
+        None.
+        """
+        ProjectLocaleFactory.create(
+            project=self.project,
+            locale=self.locale,
+            latest_translation=None
+        )
+
+        assert_is_none(ProjectLocale.get_latest_activity(self.project, self.locale))
+
+    def test_get_latest_activity_success(self):
+        """
+        If the matching ProjectLocale has a latest_translation, return
+        it's latest_activity.
+        """
+        translation = TranslationFactory.create(
+            locale=self.locale,
+            entity__resource__project=self.project
+        )
+        ProjectLocaleFactory.create(
+            project=self.project,
+            locale=self.locale,
+            latest_translation=translation
+        )
+
+        assert_equal(
+            ProjectLocale.get_latest_activity(self.project, self.locale),
+            translation.latest_activity
+        )
+
+
+class TranslationTests(TestCase):
+    def assert_latest_translation(self, instance, translation):
+        instance.refresh_from_db()
+        assert_equal(instance.latest_translation, translation)
+
+    def test_save_latest_translation_update(self):
+        """
+        When a translation is saved, update the latest_translation
+        attribute on the related project, locale, stats, and
+        project_locale objects.
+        """
+        locale = LocaleFactory.create(latest_translation=None)
+        project = ProjectFactory.create(locales=[locale], latest_translation=None)
+        resource = ResourceFactory.create(project=project)
+        stats = StatsFactory.create(locale=locale, resource=resource, latest_translation=None)
+        project_locale = ProjectLocale.objects.get(locale=locale, project=project)
+
+        assert_is_none(locale.latest_translation)
+        assert_is_none(project.latest_translation)
+        assert_is_none(stats.latest_translation)
+        assert_is_none(project_locale.latest_translation)
+
+        translation = TranslationFactory.create(
+            locale=locale,
+            entity__resource=resource,
+            date=aware_datetime(1970, 1, 1)
+        )
+        self.assert_latest_translation(locale, translation)
+        self.assert_latest_translation(project, translation)
+        self.assert_latest_translation(stats, translation)
+        self.assert_latest_translation(project_locale, translation)
+
+        # Ensure translation is replaced for newer translations
+        newer_translation = TranslationFactory.create(
+            locale=locale,
+            entity__resource=resource,
+            date=aware_datetime(1970, 2, 1)
+        )
+        self.assert_latest_translation(locale, newer_translation)
+        self.assert_latest_translation(project, newer_translation)
+        self.assert_latest_translation(stats, newer_translation)
+        self.assert_latest_translation(project_locale, newer_translation)
+
+        # Ensure translation isn't replaced for older translations.
+        TranslationFactory.create(
+            locale=locale,
+            entity__resource=resource,
+            date=aware_datetime(1970, 1, 5)
+        )
+        self.assert_latest_translation(locale, newer_translation)
+        self.assert_latest_translation(project, newer_translation)
+        self.assert_latest_translation(stats, newer_translation)
+        self.assert_latest_translation(project_locale, newer_translation)
+
+        # Ensure approved_date is taken into consideration as well.
+        newer_approved_translation = TranslationFactory.create(
+            locale=locale,
+            entity__resource=resource,
+            approved_date=aware_datetime(1970, 3, 1)
+        )
+        self.assert_latest_translation(locale, newer_approved_translation)
+        self.assert_latest_translation(project, newer_approved_translation)
+        self.assert_latest_translation(stats, newer_approved_translation)
+        self.assert_latest_translation(project_locale, newer_approved_translation)
+
+    def test_save_latest_translation_missing_project_locale(self):
+        """
+        If a translation is saved for a locale that isn't active on the
+        project, do not fail due to a missing ProjectLocale.
+        """
+        locale = LocaleFactory.create(latest_translation=None)
+        project = ProjectFactory.create(latest_translation=None)
+        resource = ResourceFactory.create(project=project)
+        stats = StatsFactory.create(locale=locale, resource=resource, latest_translation=None)
+
+        # This calls .save, this should fail if we're not properly
+        # handling the missing ProjectLocale.
+        translation = TranslationFactory.create(
+            locale=locale,
+            entity__resource=resource,
+            date=aware_datetime(1970, 1, 1)
+        )
+
+        self.assert_latest_translation(locale, translation)
+        self.assert_latest_translation(project, translation)
+        self.assert_latest_translation(stats, translation)

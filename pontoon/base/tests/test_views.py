@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
+from django.test import RequestFactory
 from django.utils.timezone import now
 
 from django_nose.tools import assert_equal, assert_true, assert_code
@@ -194,6 +195,8 @@ class ViewTestCase(TestCase):
         """
         ResourceFactory.create(project=Project.objects.get(pk=1))
 
+        self.factory = RequestFactory()
+
 
 class ProjectTests(ViewTestCase):
     def test_project_doesnt_exist(self):
@@ -293,3 +296,26 @@ class LocaleContributorsTests(ViewTestCase):
             assert_equal(mock_render.call_args[0][0]['locale'], second_locale)
             assert_equal(list(mock_render.call_args[0][0]['contributors']), [second_locale_contributor])
 
+
+class LocaleProjectTests(ViewTestCase):
+    def test_latest_activity(self):
+        """Ensure that the latest_activity field is added to parts."""
+        locale = LocaleFactory.create(code='test')
+        project = ProjectFactory.create(locales=[locale], slug='test-project')
+        resource = ResourceFactory.create(project=project, path='has/stats.po')
+        translation = TranslationFactory.create(entity__resource=resource, locale=locale)
+        StatsFactory.create(resource=resource, locale=locale, latest_translation=translation)
+
+        with patch.object(Project, 'locales_parts_stats') as mock_locales_parts_stats, \
+                patch('pontoon.base.views.render') as mock_render:
+            mock_locales_parts_stats.return_value = [
+                {'resource__path': 'has/stats.po'},
+                {'resource__path': 'no/stats.po'}
+            ]
+
+            views.locale_project(self.factory.get('/'), locale='test', slug='test-project')
+            ctx = mock_render.call_args[0][2]
+            assert_equal(ctx['parts'], [
+                {'resource__path': 'has/stats.po', 'latest_activity': translation},
+                {'resource__path': 'no/stats.po', 'latest_activity': None}
+            ])
