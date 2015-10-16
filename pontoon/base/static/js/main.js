@@ -487,7 +487,7 @@ $(function() {
     }
 
     function getString(el) {
-      return $(el).find('span:eq(' + index + ')').html();
+      return $(el).find('span:eq(' + index + ')').text();
     }
 
     var node = $(this),
