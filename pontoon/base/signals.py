@@ -1,8 +1,8 @@
 from guardian.models import GroupObjectPermission
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
@@ -35,6 +35,7 @@ def create_locale_translators_group(sender, **kwargs):
 
     if kwargs['raw'] or instance.translators_group is not None:
         return
+
     try:
         locale_ct = ContentType.objects.get(app_label='base', model='locale')
         locale_group, _ = Group.objects.get_or_create(name='{} translators'.format(instance.code))
@@ -77,6 +78,7 @@ def assign_group_permissions(sender, **kwargs):
         return
 
     instance = kwargs['instance']
+
     try:
         locale_ct = ContentType.objects.get(app_label='base', model='locale')
         can_translate = Permission.objects.get(content_type=locale_ct, codename='can_translate_locale')

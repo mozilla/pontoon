@@ -336,7 +336,7 @@ class CommitChangesTests(FakeCheckoutTestCase):
         commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.repository.commit.assert_called_with(
             CONTAINS(first_author.display_name, second_author.display_name),
-            first_author,
+            second_author,
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code)
         )
 

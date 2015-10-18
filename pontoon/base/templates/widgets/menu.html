@@ -1,12 +1,15 @@
-{# defines menu widget #}
-{% macro submenu(choices=(), value=None, menuclass='submenu') %}
-<div class="{{ menuclass }}">
+{# Menu widget #}
+{% macro submenu(class='submenu') %}
+<div class="{{ class }}">
   <ul class="links">
-    {% for choiceurl, label, val in choices %}
-    <li {% if val == value %}class="active"{% endif %}>
-      <a href="{{ choiceurl }}">{{ label }}</a>
-    </li>
-    {% endfor %}
+    {{ caller() }}
   </ul>
 </div>
+{% endmacro %}
+
+{# Menu item #}
+{% macro item(label, url, is_active) %}
+  <li {% if is_active %}class="active"{% endif %}>
+    <a href="{{ url }}">{{ label }}</a>
+  </li>
 {% endmacro %}

@@ -14,8 +14,10 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.core.validators import validate_comma_separated_integer_list
 from django.db.models import Count, F, Q
 
 from django.http import (
@@ -30,6 +32,7 @@ from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
+from guardian.decorators import permission_required_or_403
 from operator import itemgetter
 from pontoon.administration import files
 from pontoon.base import utils
@@ -90,6 +93,44 @@ def locale(request, locale, template='locale.html'):
     }
 
     return render(request, template, data)
+
+
+@login_required(redirect_field_name='', login_url='/403')
+@permission_required_or_403('base.can_translate_locale', (Locale, 'code', 'locale'))
+def locale_admin(request, locale):
+    l = get_object_or_404(Locale, code__iexact=locale)
+    users_translators = l.translators_group.user_set.all()
+
+    if request.method == 'POST':
+        current = set(users_translators.values_list("id", flat=True))
+        selected = request.POST['users-selected']
+
+        new = set()
+        if selected:
+            try:
+                # TODO: Use ModelMultipleChoiceField
+                validate_comma_separated_integer_list(selected)
+                new = set(map(int, selected.split(',')))
+            except ValidationError as e:
+                log.debug(e)
+                return HttpResponseBadRequest(e)
+
+        if current != new:
+            l.translators_group.user_set = User.objects.filter(pk__in=new)
+            l.translators_group.save()
+
+    users_translators = l.translators_group.user_set.all()
+    users_all = User.objects.exclude(pk__in=users_translators).exclude(email="")
+    users_contributors = User.translators.filter(translation__locale=l).distinct()
+
+    data = {
+        'locale': l,
+        'users_translators': users_translators,
+        'users_all': users_all,
+        'users_contributors': users_contributors,
+    }
+
+    return render(request, 'locale_admin.html', data)
 
 
 def locales(request):

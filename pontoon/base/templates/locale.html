@@ -10,19 +10,23 @@
 
 {% block middle %}
 <div class="container">
-	{% if locale.team_description %}
-		<div class="about">
-			<p>{{ locale.team_description|safe }}</p>
-		</div>
-	{% endif %}
+    {% if locale.team_description %}
+        <div class="about">
+            <p>{{ locale.team_description|safe }}</p>
+        </div>
+    {% endif %}
 
-	{{ Menu.submenu((
-		(url('pontoon.locale', locale.code), 'Projects', ''),
-		(url('pontoon.locale.contributors', locale.code), 'Contributors', 'contributors')
-	), request.path.split('/')[2]|default(''), 'submenu tabs') }}
+    {% set current_page = request.path.split('/')[2]|default('') %}
+    {% call Menu.submenu(class='submenu tabs') %}
+        {{ Menu.item('Projects', url('pontoon.locale', locale.code), is_active = (current_page == '')) }}
+        {{ Menu.item('Contributors', url('pontoon.locale.contributors', locale.code), is_active = (current_page == 'contributors')) }}
+        {% if request.user.has_perm('base.can_manage_locale', locale) %}
+            {{ Menu.item('Admin', url('pontoon.locale.admin', locale.code), is_active = (current_page == 'admin')) }}
+        {% endif %}
+    {% endcall %}
 
-	{% block locale_subpage %}
-		{% include 'project_selector.html' %}
-	{% endblock %}
+    {% block locale_subpage %}
+        {% include 'project_selector.html' %}
+    {% endblock %}
 </div>
 {% endblock %}

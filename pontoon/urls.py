@@ -13,10 +13,10 @@ urlpatterns = patterns('',
     (r'^pt/(?P<url>.*)$', RedirectView.as_view(url="/pt-PT/%(url)s", permanent=True)),
 
     # Admin
-    (r'admin/', include('pontoon.administration.urls')),
+    (r'^admin/', include('pontoon.administration.urls')),
 
     # Sites
-    (r'sites/', include('pontoon.sites.urls')),
+    (r'^sites/', include('pontoon.sites.urls')),
 
     # Django admin
     (r'^a/', include(admin.site.urls)),

@@ -1,0 +1,62 @@
+{% extends 'locale.html' %}
+
+{% block title %}{{ super() }} &middot; Admin {% endblock %}
+
+{% block locale_subpage %}
+<form method="POST" action="{{ url('pontoon.locale.admin', locale.code) }}">
+  <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+  <input type="hidden" name="users-selected">
+
+  <p class="intro">Translators can submit and approve translations in projects available for your team.</p>
+
+  <div class="clearfix">
+      <div class="user select available">
+        <label for="available"><a class="all active" href="#">All users</a> | <a class="contributors" href="#">Contributors</a></label>
+        <div class="menu">
+
+          <div class="search-wrapper clearfix">
+            <div class="icon fa fa-search"></div>
+            <input id="available" type="search" autocomplete="off">
+          </div>
+
+          <ul>
+            {% for user in users_all %}
+            <li class="clearfix{% if user in users_contributors %} contributor{% endif %}" data-id="{{ user.id }}" title="{{ user.first_name }}">{{ user.email }}<span class="arrow fa"></span></li>
+            {% endfor %}
+          </ul>
+
+        </div>
+      </div>
+
+      <div class="user select selected">
+        <label for="selected">Translators</label>
+        <div class="menu">
+
+          <div class="search-wrapper clearfix">
+            <div class="icon fa fa-search"></div>
+            <input id="selected" type="search" autocomplete="off">
+          </div>
+
+          <ul>
+            {% for user in users_translators %}
+            <li class="clearfix{% if user in users_contributors %} contributor{% endif %}" data-id="{{ user.id }}" title="{{ user.first_name }}"><span class="arrow fa"></span>{{ user.email }}</li>
+            {% endfor %}
+          </ul>
+
+        </div>
+
+        <a class="remove-all" href="#remove-all">&larr; Remove all</a>
+      </div>
+  </div>
+
+  <button class="button">Save</button>
+</form>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'locale_admin' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'locale_admin' %}
+{% endblock %}

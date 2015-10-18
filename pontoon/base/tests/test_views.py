@@ -222,7 +222,7 @@ class ProjectContributorsTests(ViewTestCase):
         """
         Checks if view handles invalid project.
         """
-        assert_code(self.client.get('/projects/project_doesnt_exist/contributors'), 404)
+        assert_code(self.client.get('/projects/project_doesnt_exist/contributors/'), 404)
 
     def test_project_top_contributors(self):
         """
@@ -238,11 +238,11 @@ class ProjectContributorsTests(ViewTestCase):
 
         with patch.object(views.ProjectContributorsView, 'render_to_response', return_value=HttpResponse('')) as mock_render:
 
-            self.client.get('/projects/{}/contributors'.format(first_project.slug))
+            self.client.get('/projects/{}/contributors/'.format(first_project.slug))
             assert_equal(mock_render.call_args[0][0]['project'], first_project)
             assert_equal(list(mock_render.call_args[0][0]['contributors']), [first_project_contributor])
 
-            self.client.get('/projects/{}/contributors'.format(second_project.slug))
+            self.client.get('/projects/{}/contributors/'.format(second_project.slug))
             assert_equal(mock_render.call_args[0][0]['project'], second_project)
             assert_equal(list(mock_render.call_args[0][0]['contributors']), [second_project_contributor])
 
@@ -273,7 +273,7 @@ class LocaleContributorsTests(ViewTestCase):
         """
         Tests if view is returning an error on the missing locale.
         """
-        assert_code(self.client.get('/missing-locale/contributors'), 404)
+        assert_code(self.client.get('/missing-locale/contributors/'), 404)
 
     def test_locale_top_contributors(self):
         """
@@ -288,11 +288,11 @@ class LocaleContributorsTests(ViewTestCase):
             entity__resource__project__locales=[second_locale]).user
 
         with patch.object(views.LocaleContributorsView, 'render_to_response', return_value=HttpResponse('')) as mock_render:
-            self.client.get('/{}/contributors'.format(first_locale.code))
+            self.client.get('/{}/contributors/'.format(first_locale.code))
             assert_equal(mock_render.call_args[0][0]['locale'], first_locale)
             assert_equal(list(mock_render.call_args[0][0]['contributors']), [first_locale_contributor])
 
-            self.client.get('/{}/contributors'.format(second_locale.code))
+            self.client.get('/{}/contributors/'.format(second_locale.code))
             assert_equal(mock_render.call_args[0][0]['locale'], second_locale)
             assert_equal(list(mock_render.call_args[0][0]['contributors']), [second_locale_contributor])
 
