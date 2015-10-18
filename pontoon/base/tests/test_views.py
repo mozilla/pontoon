@@ -158,7 +158,7 @@ class ContributorsTests(TestCase):
 
     def test_default_period(self):
         """
-        Calling the top_contributors should result in period being None.
+        Calling the top contributors should result in period being None.
         """
         self.client.get('/contributors/')
         assert_true(self.mock_render.call_args[0][0]['period'] is None)
@@ -224,9 +224,9 @@ class ProjectContributorsTests(ViewTestCase):
         """
         assert_code(self.client.get('/projects/project_doesnt_exist/contributors'), 404)
 
-    def test_project_contributors(self):
+    def test_project_top_contributors(self):
         """
-        Tests if view returns contributors specific for given project.
+        Tests if view returns top contributors specific for given project.
         """
         first_project = ProjectFactory.create()
         ResourceFactory.create(project=first_project)
@@ -275,9 +275,9 @@ class LocaleContributorsTests(ViewTestCase):
         """
         assert_code(self.client.get('/missing-locale/contributors'), 404)
 
-    def test_locale_contributors(self):
+    def test_locale_top_contributors(self):
         """
-        Tests if view returns contributors specific for given locale.
+        Tests if view returns top contributors specific for given locale.
         """
         first_locale = LocaleFactory.create()
         first_locale_contributor = TranslationFactory.create(locale=first_locale,

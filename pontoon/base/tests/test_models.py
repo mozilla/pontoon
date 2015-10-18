@@ -12,7 +12,12 @@ from django.test.utils import override_settings
 
 from mock import call, Mock, patch
 
-from pontoon.base.models import Entity, ProjectLocale, Repository, User
+from pontoon.base.models import (
+    Entity,
+    ProjectLocale,
+    Repository,
+    User
+)
 from pontoon.base.tests import (
     assert_attributes_equal,
     ChangedEntityLocaleFactory,
@@ -825,6 +830,61 @@ class LocaleTests(TestCase):
             mock_get_latest_activity.return_value = 'latest'
             assert_equal(locale.get_latest_activity(project=project), 'latest')
             mock_get_latest_activity.assert_called_with(project, locale)
+
+    def test_translators_group(self):
+        """
+        Tests if user has permission to translate locales after assigment.
+        """
+        user = UserFactory.create()
+        [first_locale, second_locale] = LocaleFactory.create_batch(2)
+
+        assert_equal(user.has_perm('base.can_translate_locale'), False)
+        assert_equal(user.has_perm('base.can_translate_locale', first_locale), False)
+        assert_equal(user.has_perm('base.can_translate_locale', second_locale), False)
+
+        user.groups.add(second_locale.translators_group)
+
+        assert_equal(user.has_perm('base.can_translate_locale'), False)
+        assert_equal(user.has_perm('base.can_translate_locale', first_locale), False)
+        assert_equal(user.has_perm('base.can_translate_locale', second_locale), True)
+
+        user.groups.add(first_locale.translators_group)
+
+        assert_equal(user.has_perm('base.can_translate_locale'), False)
+        assert_equal(user.has_perm('base.can_translate_locale', first_locale), True)
+        assert_equal(user.has_perm('base.can_translate_locale', second_locale), True)
+
+    def test_managers_group(self):
+        """
+        Tests if user has permission to manage and translate locales after assigment.
+        """
+        user = UserFactory.create()
+        [first_locale, second_locale] = LocaleFactory.create_batch(2)
+
+        assert_equal(user.has_perm('base.can_translate_locale'), False)
+        assert_equal(user.has_perm('base.can_translate_locale', first_locale), False)
+        assert_equal(user.has_perm('base.can_translate_locale', second_locale), False)
+        assert_equal(user.has_perm('base.can_manage_locale'), False)
+        assert_equal(user.has_perm('base.can_manage_locale', first_locale), False)
+        assert_equal(user.has_perm('base.can_manage_locale', second_locale), False)
+
+        user.groups.add(second_locale.managers_group)
+
+        assert_equal(user.has_perm('base.can_translate_locale'), False)
+        assert_equal(user.has_perm('base.can_translate_locale', first_locale), False)
+        assert_equal(user.has_perm('base.can_translate_locale', second_locale), True)
+        assert_equal(user.has_perm('base.can_manage_locale'), False)
+        assert_equal(user.has_perm('base.can_manage_locale', first_locale), False)
+        assert_equal(user.has_perm('base.can_manage_locale', second_locale), True)
+
+        user.groups.add(first_locale.managers_group)
+
+        assert_equal(user.has_perm('base.can_translate_locale'), False)
+        assert_equal(user.has_perm('base.can_translate_locale', first_locale), True)
+        assert_equal(user.has_perm('base.can_translate_locale', second_locale), True)
+        assert_equal(user.has_perm('base.can_manage_locale'), False)
+        assert_equal(user.has_perm('base.can_manage_locale', first_locale), True)
+        assert_equal(user.has_perm('base.can_manage_locale', second_locale), True)
 
 
 class ProjectLocaleTests(TestCase):

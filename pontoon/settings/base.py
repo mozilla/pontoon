@@ -74,9 +74,6 @@ MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', ''
 # Google Analytics Key
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY', '')
 
-# Mozillians API Key
-MOZILLIANS_API_KEY = os.environ.get('MOZILLIANS_API_KEY', '')
-
 # Raygun.io API Key
 RAYGUN4PY_API_KEY = os.environ.get('RAYGUN_APIKEY', '')
 
@@ -118,6 +115,7 @@ INSTALLED_APPS = (
     'django_nose',
     'pipeline',
     'session_csrf',
+    'guardian',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -182,7 +180,12 @@ TEMPLATES = [
 AUTHENTICATION_BACKENDS = [
     'django_browserid.auth.BrowserIDBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
 ]
+
+# This variable is required by django-guardian.
+# App supports giving permissions for anonymous users.
+ANONYMOUS_USER_ID = -1
 
 PIPELINE_COMPILERS = (
     'pipeline.compilers.es6.ES6Compiler',
@@ -437,7 +440,6 @@ X_FRAME_OPTIONS = 'DENY'
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
-BROWSERID_VERIFY_CLASS = 'pontoon.base.views.BrowserIDVerify'
 BROWSERID_REQUEST_ARGS = {'siteName': 'Pontoon'}
 
 # Should robots.txt deny everything or disallow a calculated list of

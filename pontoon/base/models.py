@@ -6,11 +6,12 @@ import urllib
 from urlparse import urlparse
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum, Prefetch, F, Q, Case, When
 from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.templatetags.static import static
 from django.utils import timezone
 
@@ -94,6 +95,7 @@ def user_display_name(self):
     name = self.first_name or self.email.split('@')[0]
     return u'{name} <{email}>'.format(name=name, email=self.email)
 
+
 User.add_to_class('display_name', user_display_name)
 User.add_to_class('translators', UserTranslationsManager())
 
@@ -138,6 +140,13 @@ class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
     plural_rule = models.CharField(max_length=128, blank=True)
+
+    # Locale contains references to user groups who translate or manage them.
+    # Groups also store respective permissions for users.
+    translators_group = models.ForeignKey(Group, related_name='translated_locales', null=True,
+        on_delete=models.SET_NULL)
+    managers_group = models.ForeignKey(Group, related_name='managed_locales', null=True,
+        on_delete=models.SET_NULL)
 
     # CLDR Plurals
     CLDR_PLURALS = (
@@ -193,6 +202,10 @@ class Locale(models.Model):
 
     class Meta:
         ordering = ['name', 'code']
+        permissions = (
+            ('can_translate_locale', 'Can add translations'),
+            ('can_manage_locale', 'Can manage locale')
+        )
 
     def get_latest_activity(self, project=None):
         """Get latest activity for project and locale if provided."""
@@ -212,6 +225,7 @@ class ProjectQuerySet(models.QuerySet):
         resource defined.
         """
         return self.filter(disabled=False, resource__isnull=False)
+
 
 
 class Project(models.Model):
@@ -255,6 +269,9 @@ class Project(models.Model):
     class Meta:
         permissions = (
             ("can_manage", "Can manage projects"),
+
+            # @TODO: This permission should be removed after we'll migrate all users to new
+            # object-based permission system.
             ("can_localize", "Can localize projects"),
         )
 
@@ -918,12 +935,10 @@ class Stats(models.Model):
         return str(int(round(percent)))
 
 
+@receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
-
-# For every newly created user
-post_save.connect(create_user_profile, sender=User)
 
 
 def get_chart_data(stats):

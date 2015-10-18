@@ -6,8 +6,6 @@ import requests
 import traceback
 from datetime import datetime
 
-from django.conf import settings
-from django.contrib.auth.models import Permission
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import trans_real
@@ -20,40 +18,6 @@ from translate.lang import data as lang_data
 
 
 log = logging.getLogger('pontoon')
-
-
-def add_can_localize(user):
-
-    email = user.email
-    log.debug(email)
-
-    # Grant permission to Mozilla localizers
-    url = "https://mozillians.org/api/v1/users/"
-    payload = {
-        "app_name": "pontoon",
-        "app_key": settings.MOZILLIANS_API_KEY,
-        "email": email,
-        "is_vouched": True,
-        "groups": "localization",
-    }
-
-    try:
-        response = requests.get(url, params=payload)
-        mozillians = response.json()["objects"]
-
-        if len(mozillians) > 0:
-            can_localize = Permission.objects.get(codename="can_localize")
-            user.user_permissions.add(can_localize)
-            log.debug("Permission can_localize set.")
-
-            # Fallback if profile does not allow accessing data
-            user.first_name = mozillians[0].get("full_name", email)
-            user.save()
-
-    except Exception as e:
-        log.debug(e)
-        log.debug("Is your MOZILLIANS_API_KEY set?")
-        user.save()
 
 
 def get_project_locale_from_request(request, locales):
