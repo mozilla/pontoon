@@ -113,8 +113,9 @@ class ProjectPartsTests(TestCase):
 
     def _fetch_locales_parts_stats(self):
         # Fake Prefetch
-        self.project.active_resources = self.project.resources.filter(
-            entities__obsolete=False
+        resources = Entity.objects.filter(obsolete=False).values('resource')
+        self.project.active_resources = self.project.resource_set.filter(
+            pk__in=resources
         )
 
         return self.project.locales_parts_stats()
@@ -406,7 +407,7 @@ class TranslationQuerySetTests(TestCase):
         return submission date and user.
         """
         latest_submission = self._translation(self.user0, submitted=(1970, 1, 3), approved=None)
-
+        
         # latest approval
         self._translation(self.user1, submitted=(1970, 1, 1), approved=(1970, 1, 2))
         assert_equal(Translation.objects.all().latest_activity(), {

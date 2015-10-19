@@ -123,9 +123,8 @@ def projects(request, template='projects.html'):
     log.debug("Project overview.")
 
     projects = Project.objects.filter(
-        disabled=False,
-        resources__isnull=False,
-    ).distinct().order_by("name")
+        disabled=False, pk__in=Resource.objects.values('project')) \
+        .order_by("name")
 
     data = {
         'projects': get_projects_with_stats(projects),

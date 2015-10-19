@@ -31,7 +31,7 @@
       <li class="clearfix{% if locale and locale == l %} current{% endif %}{% if l and l.chart %} filter{% endif %}">
         <span class="language {{ l.code|lower }}">{% if l and l.chart %}<a href="{% if project %}{{ url('pontoon.locale.project', l.code, project.slug) }}{% else %}{{ url('pontoon.locale', l.code) }}{% endif %}" class="clearfix">{% endif %}{{ l.name }}{% if l and l.chart %}</a>{% endif %}</span>
         <span class="code">{% if l and l.chart %}<a class="code" href="{% if project %}{{ url('pontoon.locale.project', l.code, project.slug) }}{% else %}{{ url('pontoon.locale', l.code) }}{% endif %}" class="clearfix">{% endif %}{{ l.code }}{% if l and l.chart %}</a>{% endif %}</span>
-        {% if not locale and l.chart %}
+        {% if not locale %}
           {{ latest_activity.span(l.latest_activity(project)) }}
         {% endif %}
         {% if l and l.chart and l.chart.total %}

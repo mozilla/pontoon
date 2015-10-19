@@ -127,10 +127,10 @@ def handle_entity(changeset, db_project, key, db_entity, vcs_entity):
 def update_resources(db_project, vcs_project):
     """Update the database on what resource files exist in VCS."""
     relative_paths = vcs_project.resources.keys()
-    db_project.resources.exclude(path__in=relative_paths).delete()
+    db_project.resource_set.exclude(path__in=relative_paths).delete()
 
     for relative_path, vcs_resource in vcs_project.resources.items():
-        resource, created = db_project.resources.get_or_create(path=relative_path)
+        resource, created = db_project.resource_set.get_or_create(path=relative_path)
         resource.format = Resource.get_path_format(relative_path)
         resource.entity_count = len(vcs_resource.entities)
         resource.save()
@@ -138,7 +138,7 @@ def update_resources(db_project, vcs_project):
 
 def update_project_stats(db_project, vcs_project, changeset):
     """Update the Stats entries in the database."""
-    for resource in db_project.resources.all():
+    for resource in db_project.resource_set.all():
         for locale in db_project.locales.all():
             # We only want to create/update the stats object if the resource
             # exists in the current locale, UNLESS the file is asymmetric.
