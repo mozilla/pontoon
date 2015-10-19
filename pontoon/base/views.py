@@ -140,7 +140,7 @@ def locale_project(request, locale, slug):
 
     project = (
         get_object_or_404(
-            Project.objects.prefetch_parts(),
+            Project.objects.prefetch_related('subpage_set'),
             disabled=False,
             slug=slug,
             pk__in=Resource.objects.values('project')
@@ -215,7 +215,7 @@ def translate(request, locale, slug, part, template='translate.html'):
             disabled=False,
             pk__in=Resource.objects.values('project')
         )
-        .prefetch_parts()
+        .prefetch_related('subpage_set')
         .order_by("name")
     )
 

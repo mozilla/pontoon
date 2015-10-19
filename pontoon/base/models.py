@@ -200,18 +200,6 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.filter(disabled=False, resource__isnull=False)
 
-    def prefetch_parts(self):
-        """
-        Prefetch subpages and resources for locales_parts_stats().
-        """
-        return self.prefetch_related(
-            'subpage_set',
-            Prefetch(
-                'resources',
-                queryset=Resource.objects.filter(entities__obsolete=False),
-                to_attr='active_resources'
-            )
-        )
 
 class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
@@ -329,11 +317,14 @@ class Project(models.Model):
 
         details = {}
         pages = self.subpage_set.all()
-        resources = self.active_resources
         locales = [loc] if loc else self.locales.all()
 
         for locale in locales:
-            stats = Stats.objects.filter(resource__in=resources, locale=locale)
+            stats = Stats.objects.filter(
+                resource__project=self,
+                resource__entities__obsolete=False,
+                locale=locale
+            ).distinct()
             locale_details = []
 
             # Is subpages aren't defined and project uses more than one
