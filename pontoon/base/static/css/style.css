@@ -604,6 +604,7 @@ label {
 
 .select .menu ul li .latest {
   font-size: 12px;
+  height: 15px;
   margin-right: 10px;
   overflow: hidden;
   padding-top: 2px;
