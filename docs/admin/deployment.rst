@@ -187,9 +187,8 @@ down the latest changes to keep the database in sync.
 
 Database Migrations
 -------------------
-After deploying Pontoon for the first time, and during any upgrade that involves
-a change to the database, you must run the database migrations. This can be done
-via the toolbelt:
+After deploying Pontoon for the first time, you must run the database
+migrations. This can be done via the toolbelt:
 
 .. code-block:: bash
 
