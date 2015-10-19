@@ -11,6 +11,7 @@ docs/_gh-pages
 build.py
 build
 .DS_Store
+node_modules/
 *-min.css
 *-all.css
 *-min.js
