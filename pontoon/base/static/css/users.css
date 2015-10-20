@@ -6,6 +6,10 @@
   margin-top: 40px;
 }
 
+.notification {
+  display: none;
+}
+
 table {
   font-size: 14px;
   text-align: left;
