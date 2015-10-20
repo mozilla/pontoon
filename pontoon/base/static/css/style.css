@@ -984,7 +984,8 @@ body > nav,
 
 .submenu.tabs .links {
   display: inline-block;
-  padding: 12px;
+  margin-bottom: 3px;
+  padding: 10px 12px;
   width: 100%;
 
   -moz-box-sizing: border-box;
@@ -1185,6 +1186,7 @@ body > .container {
 
 .tabs nav ul li a {
   display: inline-block;
+  line-height: 14px;
   outline: none;
   padding: 10px;
   width: 100%;
@@ -1194,7 +1196,9 @@ body > .container {
 }
 
 .part .tabs nav ul li a span.fa {
+  color: #7BC876;
   float: none;
+  line-height: 12px;
   padding-right: 5px;
 }
 
