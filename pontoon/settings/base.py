@@ -63,7 +63,7 @@ BROKER_URL = os.environ.get('RABBITMQ_URL', None)
 
 # Execute celery tasks locally instead of in a worker unless the
 # environment is configured.
-CELERY_ALWAYS_EAGER = os.environ.get('CELERY_ALWAYS_EAGER', 'False') != 'False'
+CELERY_ALWAYS_EAGER = os.environ.get('CELERY_ALWAYS_EAGER', 'True') != 'False'
 
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')
