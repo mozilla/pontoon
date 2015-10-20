@@ -892,7 +892,7 @@ def get_projects_with_stats(projects, locale=None):
             resource__project=project,
             resource__entities__obsolete=False,
             locale__in=project.locales.all(),
-        )
+        ).distinct()
 
         if locale:
             stats = stats.filter(locale=locale)
