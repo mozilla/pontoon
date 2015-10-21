@@ -1195,13 +1195,16 @@ body > .container {
 
 .tabs nav ul li a {
   display: inline-block;
-  line-height: 14px;
   outline: none;
   padding: 10px;
   width: 100%;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+.part .tabs nav ul li a {
+  line-height: 14px;
 }
 
 .part .tabs nav ul li a span.fa {
@@ -1216,6 +1219,7 @@ body > .container {
 }
 
 .no-contributors {
-  font-style: italic;
   color: #AAAAAA;
+  font-style: italic;
+  margin-top: 20px;
 }
