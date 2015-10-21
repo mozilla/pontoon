@@ -42,7 +42,7 @@
             </a>
           </span>
 
-          {{ latest_activity.span(project.latest_activity(locale, p['resource__path'])) }}
+          {{ latest_activity.span(p['latest_activity']) }}
 
           <span class="chart-wrapper">
             <a href="{{ url('pontoon.translate', locale.code, project.slug, p['resource__path']) }}" class="clearfix">

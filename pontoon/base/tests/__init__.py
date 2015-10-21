@@ -17,6 +17,7 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Project,
+    ProjectLocale,
     Repository,
     Resource,
     Stats,
@@ -81,7 +82,7 @@ class ProjectFactory(DjangoModelFactory):
 
         if extracted:
             for locale in extracted:
-                self.locales.add(locale)
+                ProjectLocaleFactory.create(project=self, locale=locale)
 
     @factory.post_generation
     def repositories(self, create, extracted, **kwargs):
@@ -93,6 +94,11 @@ class ProjectFactory(DjangoModelFactory):
                 self.repositories.add(repository)
         else:  # Default to a single valid repo.
             self.repositories.add(RepositoryFactory.build())
+
+
+class ProjectLocaleFactory(DjangoModelFactory):
+    class Meta:
+        model = ProjectLocale
 
 
 class RepositoryFactory(DjangoModelFactory):

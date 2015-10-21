@@ -20,6 +20,7 @@ from pontoon.base import utils
 from pontoon.base.models import (
     Locale,
     Project,
+    ProjectLocale,
     Resource,
     get_projects_with_stats,
 )
@@ -114,8 +115,17 @@ def manage_project(request, slug=None, template='admin_project.html'):
 
             if subpage_formset.is_valid() and repo_formset.is_valid():
                 project.save()
-                # http://bit.ly/1glKN50
-                form.save_m2m()
+
+                # Manually save ProjectLocales due to intermediary
+                # model.
+                locales = form.cleaned_data.get('locales', [])
+                (ProjectLocale.objects
+                    .filter(project=project)
+                    .exclude(locale__pk__in=[l.pk for l in locales])
+                    .delete())
+                for locale in locales:
+                    ProjectLocale.objects.get_or_create(project=project, locale=locale)
+
                 subpage_formset.save()
                 repo_formset.save()
                 # Properly displays formsets, but removes errors (if valid only)
