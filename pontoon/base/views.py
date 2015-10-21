@@ -21,6 +21,7 @@ from django.db.models import Count, F, Q
 from django.http import (
     Http404,
     HttpResponse,
+    HttpResponseBadRequest,
     HttpResponseRedirect,
 )
 
@@ -397,6 +398,21 @@ def search(request, template='search.html'):
     }
 
     return render(request, template, data)
+
+
+def get_project_details(request, slug):
+    """Get project locales with their pages/paths and stats."""
+    if not request.is_ajax():
+        raise HttpResponseBadRequest
+
+    project = get_object_or_404(Project, slug=slug)
+
+    data = {
+        "slug": slug,
+        "details": project.locales_parts_stats(),
+    }
+
+    return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 def entities(request, template=None):

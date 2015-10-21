@@ -1541,6 +1541,23 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Load project details to main menu
+     */
+    loadMainMenu: function () {
+      $('.project .menu .name:not([data-details])').each(function() {
+        $.ajax({
+          url: '/projects/' + $(this).data('slug') + '/details/',
+          success: function(data) {
+            $('.project .menu .name[data-slug=' + data.slug + ']')
+              .data('details', data.details)
+              .parent('li').show();
+          }
+        });
+      });
+    },
+
+
+    /*
      * Create user interface
      */
     createUI: function () {
@@ -1551,6 +1568,7 @@ var Pontoon = (function (my) {
         $('.notification').css('opacity', 100);
       }
 
+      self.loadMainMenu();
       self.attachMainHandlers();
       self.renderEntityList();
       self.updateProgress();

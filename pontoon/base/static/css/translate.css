@@ -234,6 +234,10 @@ body > header .project.select {
   float: right;
 }
 
+.project.select .menu ul li:not(.current) {
+  display: none;
+}
+
 .menu li.horizontal-separator {
   border-top: 1px solid #525A65;
   height: 0;

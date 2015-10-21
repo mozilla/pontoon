@@ -54,6 +54,10 @@ urlpatterns = patterns(
         views.ProjectContributorsView.as_view(),
         name='pontoon.project.contributors'),
 
+    # AJAX: Get project details
+    url(r'^projects/(?P<slug>[\w-]+)/details/$', views.get_project_details,
+        name='pontoon.project.details'),
+
     # Translate project
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',
         views.translate,
