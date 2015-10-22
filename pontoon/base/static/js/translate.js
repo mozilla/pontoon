@@ -187,36 +187,46 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Append source string metadata
+     *
+     * title Metadata title
+     * text Metadata text
+     */
+    appendMetaData: function (title, text) {
+      $('#metadata').append('<p><span class="title">' + title + '</span>' + text + '</p>');
+    },
+
+
+    /*
      * Open translation editor in the main UI
      *
      * entity Entity
      * inplace Was editor opened from in place?
      */
     openEditor: function (entity, inplace) {
+      var self = this;
       $("#editor")[0].entity = entity;
 
       // Metadata: comments, sources, keys
-      $('#metadata').empty().hide();
+      $('#metadata').empty();
       if (entity.comment) {
-        $('#metadata').html('<span id="comment">' + this.doNotRender(entity.comment) + '</span>').show();
+        self.appendMetaData('Comment', this.doNotRender(entity.comment));
       }
-      if (entity.source || entity.path || entity.key) {
-        $('#metadata').append('<a href="#" class="details">More details</a>').show();
+      if (entity.key && entity.key != entity.original) {
+        // Only show the actual key, the second part is the source string
+        self.appendMetaData('Context', entity.key.split('\x04')[0]);
       }
       if (entity.source) {
         if (typeof(entity.source) === 'object') {
           $.each(entity.source, function() {
-            $('#metadata').append('<span>#: ' + this.join(':') + '</span>');
+            self.appendMetaData('#:', this.join(':'));
           });
         } else {
-          $('#metadata').append('<span>' + entity.source + '</span>');
+          self.appendMetaData('Source', entity.source);
         }
       }
       if (entity.path) {
-        $('#metadata').append('<span>' + entity.path + '</span>');
-      }
-      if (entity.key && entity.key != entity.original) {
-        $('#metadata').append('<span>Key: ' + entity.key + '</span>');
+        self.appendMetaData('Resource path', entity.path);
       }
 
       // Translation area (must be set before unsaved changes check)
@@ -581,13 +591,13 @@ var Pontoon = (function (my) {
         e.stopPropagation();
         e.preventDefault();
 
-        var details = $("#metadata span:not('#comment')");
+        var more = $("#metadata .more");
         if ($(this).is(':contains("Less")')) {
           $(this).html('More details');
-          details.css('display', 'none');
+          more.css('display', 'none');
         } else {
           $(this).html('Less details');
-          details.css('display', 'block');
+          more.css('display', 'block');
         }
       });
 
