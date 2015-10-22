@@ -209,6 +209,24 @@ class ChangeSetTests(FakeCheckoutTestCase):
             approved_date=aware_datetime(1970, 1, 1)
         )
 
+    def test_update_db_dont_approve_fuzzy(self):
+        """
+        Do not approve un-approved translations that have non-fuzzy
+        counterparts in VCS.
+        """
+        self.main_db_translation.approved = False
+        self.main_db_translation.approved_date = None
+        self.main_db_translation.save()
+        self.main_vcs_translation.fuzzy = True
+
+        self.update_main_db_entity()
+        self.main_db_translation.refresh_from_db()
+        assert_attributes_equal(
+            self.main_db_translation,
+            approved=False,
+            approved_date=None
+        )
+
     def test_update_db_new_translation(self):
         """
         If a matching translation does not exist in the database, create a new
