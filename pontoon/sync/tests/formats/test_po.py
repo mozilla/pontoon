@@ -1,10 +1,12 @@
 from textwrap import dedent
 
 from pontoon.base.tests import (
+    assert_attributes_equal,
     TestCase,
     UserFactory
 )
 from pontoon.base.utils import aware_datetime
+from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.formats import po
 from pontoon.sync.tests.formats import FormatTestsMixin
 
@@ -111,6 +113,44 @@ class POTests(FormatTestsMixin, TestCase):
 
     def test_parse_plural_translation_missing(self):
         self.run_parse_plural_translation_missing(BASE_POFILE, 7)
+
+    def test_parse_context(self):
+        """
+        Test that entities with different context are parsed as separate.
+        """
+        test_input = self.generate_pofile(
+            dedent("""
+                msgctxt "Main context"
+                msgid "Source"
+                msgstr ""
+
+                msgctxt "Other context"
+                msgid "Source"
+                msgstr ""
+
+                msgid "Source"
+                msgstr ""
+            """)
+        )
+        path, resource = self.parse_string(test_input)
+
+        assert_attributes_equal(
+            resource.translations[0],
+            source_string='Source',
+            key=self.key('Main context' + KEY_SEPARATOR + 'Source'),
+        )
+
+        assert_attributes_equal(
+            resource.translations[1],
+            source_string='Source',
+            key=self.key('Other context' + KEY_SEPARATOR + 'Source'),
+        )
+
+        assert_attributes_equal(
+            resource.translations[2],
+            source_string='Source',
+            key=self.key('Source'),
+        )
 
     def generate_pofile(
         self, body,

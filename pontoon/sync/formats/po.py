@@ -8,6 +8,7 @@ from django.utils import timezone
 import polib
 import sys
 
+from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.formats.base import ParseError, ParsedResource
 from pontoon.sync.vcs_models import VCSTranslation
 
@@ -24,8 +25,13 @@ class POEntity(VCSTranslation):
         # Remove empty strings from the string dict.
         strings = {key: value for key, value in strings.items() if value}
 
+        # Pofiles use the source as the key prepended with context if available.
+        key = po_entry.msgid
+        if po_entry.msgctxt:
+            key = po_entry.msgctxt + KEY_SEPARATOR + key
+
         super(POEntity, self).__init__(
-            key=po_entry.msgid,  # Pofiles use the source as the key.
+            key=key,
             source_string=po_entry.msgid,
             source_string_plural=po_entry.msgid_plural,
             strings=strings,
