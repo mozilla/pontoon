@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+
+# Compile static assets
 export PATH=/app/.heroku/node/bin:$PATH
 ./manage.py migrate --noinput
 ./manage.py collectstatic --noinput
+
+# Inform New Relic that a deploy is happening.
+if [ -n "${NEW_RELIC_API_KEY}" ] && [ -n "${NEW_RELIC_APP_NAME}" ]; then
+    echo "Sending deploy notification to New Relic...."
+    curl -sS -H "x-api-key:${NEW_RELIC_API_KEY}" \
+         -d "deployment[app_name]=${NEW_RELIC_APP_NAME}" \
+         -d "deployment[revision]=${SOURCE_VERSION}" \
+         https://api.newrelic.com/deployments.xml > /dev/null
+fi

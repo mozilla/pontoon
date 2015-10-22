@@ -55,6 +55,14 @@ you create:
 ``HMAC_KEY``
    Required. Secret key used for hashing passwords.
 
+``NEW_RELIC_API_KEY``
+   Optional. API key for accessing the New Relic REST API. Used to mark deploys
+   on New Relic.
+
+``NEW_RELIC_APP_NAME``
+   Optional. Name to give to this app on New Relic. Required if you're using
+   New Relic.
+
 ``SECRET_KEY``
    Required. Secret key used for sessions, cryptographic signing, etc.
 
