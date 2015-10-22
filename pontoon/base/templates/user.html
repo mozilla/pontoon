@@ -53,7 +53,7 @@
     <span>Approved</span>
     <p>{{ translations.filter(approved=True).count() }}</p>
   </div><div class="translated">
-    <span>Unapproved</span>
+    <span>Suggested</span>
     <p>{{ translations.exclude(approved=True).exclude(fuzzy=True).count() }}</p>
   </div><div class="fuzzy">
     <span>Needs work</span>
