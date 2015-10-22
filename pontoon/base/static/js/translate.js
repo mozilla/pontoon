@@ -214,7 +214,7 @@ var Pontoon = (function (my) {
       }
       if (entity.key && entity.key != entity.original) {
         // Only show the actual key, the second part is the source string
-        self.appendMetaData('Context', entity.key.split('\x04')[0]);
+        self.appendMetaData('Context', entity.key);
       }
       if (entity.source) {
         if (typeof(entity.source) === 'object') {
@@ -408,9 +408,14 @@ var Pontoon = (function (my) {
             val = $('#search').val();
 
         ul
-          .find('.limited').show()
-            .find('.string-wrapper' + ':not(":containsi(\'' + val + '\')")')
-          .parent().hide();
+          .find('.limited').hide()
+            .find('.string-wrapper:containsi("' + val + '")')
+          .parents('.limited').show();
+
+        // Also search by key - separate selector for case-insensitivity
+        ul.find('.limited .source-string').filter(function() {
+          return this.dataset.key.toLowerCase().indexOf(val.toLowerCase()) > -1;
+        }).parents('.limited').show();
 
         if ($('.uneditables li:visible').length === 0) {
           $('#not-on-page').hide();
@@ -485,7 +490,7 @@ var Pontoon = (function (my) {
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status fa"></span>' +
           '<p class="string-wrapper">' +
-            '<span class="source-string">' + this.marked + '</span>' +
+            '<span class="source-string" data-key="' + this.key + '">' + this.marked + '</span>' +
             '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
               self.doNotRender(this.translation[0].string || '') +
             '</span>' +

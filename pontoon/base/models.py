@@ -750,7 +750,9 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'marked': entity.marked,
                 'original_plural': entity.string_plural,
                 'marked_plural': entity.marked_plural,
-                'key': entity.key,
+                # Remove source string from the key and the delimiter
+                # as required by Translate Toolkit
+                'key': entity.key.split('\x04')[0],
                 'path': entity.resource.path,
                 'format': entity.resource.format,
                 'comment': entity.comment,
