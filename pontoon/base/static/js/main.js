@@ -410,7 +410,7 @@ $(function() {
           '<aside class="tooltip">' +
             '<div class="total">Total<span></span></div>' +
             '<div class="approved">Approved<span></span></div>' +
-            '<div class="translated">Unapproved<span></span></div>' +
+            '<div class="translated">Suggested<span></span></div>' +
             '<div class="fuzzy">Needs work<span></span></div>' +
             '<div class="untranslated">Untranslated<span></span></div>' +
           '</aside>');
