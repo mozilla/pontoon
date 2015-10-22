@@ -4,6 +4,7 @@ from django.core.management.base import (
     BaseCommand,
 )
 from pontoon.base.models import Translation
+from django.utils import timezone
 
 import requests
 
@@ -62,7 +63,7 @@ class Command(BaseCommand):
 
                         # Save date
                         date = verbatim[path][source]["date"].split("+")[0]
-                        dateObj = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+                        dateObj = timezone.make_aware(datetime.strptime(date, "%Y-%m-%d %H:%M:%S"))
                         t.date = dateObj
                         t.approved_date = dateObj
 
