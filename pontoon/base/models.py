@@ -20,6 +20,7 @@ from jsonfield import JSONField
 from pontoon.administration.vcs import commit_to_vcs, get_revision, update_from_vcs
 from pontoon.base import utils
 from pontoon.base.utils import get_object_or_none
+from pontoon.sync import KEY_SEPARATOR
 
 
 log = logging.getLogger('pontoon')
@@ -752,7 +753,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'marked_plural': entity.marked_plural,
                 # Remove source string from the key and the delimiter
                 # as required by Translate Toolkit
-                'key': entity.key.split('\x04')[0],
+                'key': entity.key.split(KEY_SEPARATOR)[0],
                 'path': entity.resource.path,
                 'format': entity.resource.format,
                 'comment': entity.comment,
