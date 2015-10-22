@@ -196,7 +196,7 @@ class ChangeSet(object):
                                             plural_form=plural_form,
                                             string=string)
                 if db_translation:
-                    if not db_translation.approved:
+                    if not db_translation.approved and not vcs_translation.fuzzy:
                         db_translation.approved = True
                         db_translation.approved_date = self.now
                     db_translation.fuzzy = vcs_translation.fuzzy
