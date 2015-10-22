@@ -413,7 +413,7 @@ def search(request, template='search.html'):
 def get_project_details(request, slug):
     """Get project locales with their pages/paths and stats."""
     if not request.is_ajax():
-        raise HttpResponseBadRequest
+        return HttpResponseBadRequest('Bad Request: Request must be AJAX')
 
     project = get_object_or_404(Project, slug=slug)
 
