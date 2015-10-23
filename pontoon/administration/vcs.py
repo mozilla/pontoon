@@ -148,8 +148,8 @@ class CommitToGit(CommitToRepository):
         author = self.get_author(user)
 
         # Embed git identity info into commands.
-        git_cmd = ['git', '-c', 'user.name=Pontoon', '-c',
-                   'user.email=pontoon@pontoon.mozilla.org']
+        git_cmd = ['git', '-c', 'user.name=Mozilla Pontoon', '-c',
+                   'user.email=pontoon@mozilla.com']
 
         # Add
         execute(git_cmd + ['add', '-A', '--', path], path)
