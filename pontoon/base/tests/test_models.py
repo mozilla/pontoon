@@ -30,6 +30,7 @@ from pontoon.base.tests import (
     UserFactory
 )
 from pontoon.base.utils import aware_datetime
+from pontoon.sync import KEY_SEPARATOR
 
 
 class ProjectTests(TestCase):
@@ -628,11 +629,13 @@ class EntityTests(TestCase):
         self.main_entity = EntityFactory.create(
             resource=self.main_resource,
             string='Source String',
-            string_plural='Plural Source String'
+            string_plural='Plural Source String',
+            key='Source String'
         )
         self.other_entity = EntityFactory.create(
             resource=self.other_resource,
-            string='Other Source String'
+            string='Other Source String',
+            key='Key' + KEY_SEPARATOR + 'Other Source String'
         )
         self.main_translation = TranslationFactory.create(
             entity=self.main_entity,
@@ -779,6 +782,16 @@ class EntityTests(TestCase):
 
         assert_equal(entities[2]['original'], 'First String')
         assert_equal(entities[3]['original'], 'Second String')
+
+    def test_for_project_locale_cleaned_key(self):
+        """
+        If key contais source string and Translate Toolkit separator,
+        remove them.
+        """
+        entities = Entity.for_project_locale(self.project, self.locale)
+
+        assert_equal(entities[0]['key'], '')
+        assert_equal(entities[1]['key'], 'Key')
 
 
 class LocaleTests(TestCase):

@@ -212,8 +212,7 @@ var Pontoon = (function (my) {
       if (entity.comment) {
         self.appendMetaData('Comment', this.doNotRender(entity.comment));
       }
-      if (entity.key && entity.key != entity.original) {
-        // Only show the actual key, the second part is the source string
+      if (entity.key) {
         self.appendMetaData('Context', entity.key);
       }
       if (entity.source) {
@@ -490,8 +489,7 @@ var Pontoon = (function (my) {
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status fa"></span>' +
           '<p class="string-wrapper">' +
-            '<span class="source-string" data-key="' +
-            ((this.key !== this.original) ? self.doNotRender(this.key) : '') + '">' + this.marked + '</span>' +
+            '<span class="source-string" data-key="' + self.doNotRender(this.key) + '">' + this.marked + '</span>' +
             '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
               self.doNotRender(this.translation[0].string || '') +
             '</span>' +
