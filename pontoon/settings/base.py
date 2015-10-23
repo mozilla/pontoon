@@ -246,6 +246,14 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/users.min.css',
     },
+    'intro': {
+        'source_filenames': (
+            'css/bootstrap.min.css',
+            'css/agency.css',
+            'css/font-awesome.min.css',
+        ),
+        'output_filename': 'css/intro.min.css',
+    },
 }
 
 PIPELINE_JS = {
@@ -278,6 +286,7 @@ PIPELINE_JS = {
         'source_filenames': (
             'browserid/api.js',
             'js/translate.js',
+            'js/locale_project.js',
         ),
         'output_filename': 'js/translate.min.js',
     },
@@ -292,6 +301,18 @@ PIPELINE_JS = {
             'js/search.js',
         ),
         'output_filename': 'js/search.min.js',
+    },
+    'intro': {
+        'source_filenames': (
+            'js/l10n.js',
+            'js/jquery-1.11.1.min.js',
+            'js/bootstrap.min.js',
+            'js/pontoon.js',
+            'js/jquery.easing.1.3.js',
+            'js/cbpAnimatedHeader.min.js',
+            'js/agency.js',
+        ),
+        'output_filename': 'js/intro.min.js',
     },
 }
 
