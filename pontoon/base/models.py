@@ -694,24 +694,30 @@ class Entity(DirtyFieldsMixin, models.Model):
             resource__stats__locale=locale,
             obsolete=False
         )
-
         # Filter by search parameters
         if search:
-            keyword = search.get('keyword', None)
+            keyword = search.get('keyword', None) or None
             i = '' if search.get('casesensitive', None) else 'i'
 
             entity_query = Q()  # Empty object
-            if search.get('sources', None):
-                entity_query |= Q(**{'string__%scontains' % i: keyword}) | Q(**{'string_plural__%scontains' % i: keyword})
 
-            if search.get('translations', None):
-                entity_query |= Q(**{'translation__string__%scontains' % i: keyword})
+            if keyword:
+                if 'sources' in search:
+                    entity_query |= Q(**{'string__%scontains' % i: keyword}) | Q(**{'string_plural__%scontains' % i: keyword})
 
-            if search.get('comments', None):
-                entity_query |= Q(**{'comment__%scontains' % i: keyword})
+                if 'translations' in search:
+                    entity_query |= Q(**{'translation__string__%scontains' % i: keyword})
 
-            if search.get('keys', None):
-                entity_query |= Q(**{'key__%scontains' % i: keyword})
+                if 'comments' in search:
+                    entity_query |= Q(**{'comment__%scontains' % i: keyword})
+
+                if 'keys' in search:
+                    entity_query |= Q(**{'key__%scontains' % i: keyword})
+
+            if 'unchanged' in search:
+                entity_query &= Q(
+                        Q(**{'translation__string': F('string')}) | Q(**{'translation__string': F('string_plural')})
+                )
 
             entities = entities.filter(entity_query).distinct()
 

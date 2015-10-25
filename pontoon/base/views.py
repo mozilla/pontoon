@@ -458,7 +458,7 @@ def entities(request, template=None):
         return HttpResponse("error")
 
     search = None
-    if request.GET.get('keyword', None):
+    if 'keyword' in request.GET:
         search = request.GET
 
     entities = Entity.for_project_locale(project, locale, paths, search)

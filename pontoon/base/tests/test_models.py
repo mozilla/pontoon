@@ -626,28 +626,37 @@ class EntityTests(TestCase):
             path='other.lang'
         )
         self.main_entity = EntityFactory.create(
+            order=0,
             resource=self.main_resource,
+            key='MAIN_ENTITY',
             string='Source String',
-            string_plural='Plural Source String'
+            string_plural='Plural Source String',
+            comment='Comment Source String'
         )
         self.other_entity = EntityFactory.create(
+            order=1,
             resource=self.other_resource,
-            string='Other Source String'
+            key='OTHER_ENTITY',
+            string='Other Source String',
+            comment='Comment Other Source String'
         )
         self.main_translation = TranslationFactory.create(
             entity=self.main_entity,
+            entity__order=0,
             locale=self.locale,
             plural_form=0,
             string='Translated String'
         )
         self.main_translation_plural = TranslationFactory.create(
             entity=self.main_entity,
+            entity__order=1,
             locale=self.locale,
             plural_form=1,
             string='Translated Plural String'
         )
         self.other_translation = TranslationFactory.create(
             entity=self.other_entity,
+            entity__order=1,
             locale=self.locale,
             string='Other Translated String'
         )
@@ -698,11 +707,11 @@ class EntityTests(TestCase):
 
         # Ensure all attributes are assigned correctly
         assert_equal(entities[0], {
-            'comment': '',
+            'comment': 'Comment Source String',
             'format': 'po',
             'obsolete': False,
             'marked': 'Source String',
-            'key': '',
+            'key': 'MAIN_ENTITY',
             'path': 'main.lang',
             'translation': [{
                 'pk': self.main_translation.pk,
@@ -765,20 +774,260 @@ class EntityTests(TestCase):
         """
         # First entity
         EntityFactory.create(
-            order=1,
+            order=2,
             resource=self.main_resource,
             string='Second String'
         )
         # Second entity
         EntityFactory.create(
-            order=0,
+            order=3,
             resource=self.main_resource,
             string='First String'
         )
         entities = Entity.for_project_locale(self.project, self.locale)
+        assert_equal(entities[3]['original'], 'First String')
+        assert_equal(entities[2]['original'], 'Second String')
 
-        assert_equal(entities[2]['original'], 'First String')
-        assert_equal(entities[3]['original'], 'Second String')
+    def test_for_project_search_empty_keyword(self):
+        """
+        Return all entities if search keyword is empty.
+        """
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': '',
+        })
+
+        assert_equal(len(entities), 2)
+        assert_equal(entities[0]['original'], 'Source String')
+        assert_equal(entities[1]['original'], 'Other Source String')
+
+    def test_for_project_search_sources(self):
+        """
+        Return entities matching keyword parameter, search through entity source.
+        Tests against sensitive and insensitive filtering.
+        """
+        # insensitive query
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'other',
+            'sources': 'on'
+        })
+        assert_equal(len(entities), 1)
+        assert_equal(entities[0]['original'], 'Other Source String')
+
+        # sensitive query - query should fail
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'other',
+            'sources': 'on',
+            'casesensitive': 'on',
+        })
+        assert_equal(len(entities), 0)
+
+        # sensitive query - query should return result
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'Other',
+            'sources': 'on',
+            'casesensitive': 'on'
+        })
+        assert_equal(len(entities), 1)
+        assert_equal(entities[0]['original'], 'Other Source String')
+
+    def test_for_project_search_translations(self):
+        """
+        Return entities matching keyword parameter, search through translation contents.
+        Tests against sensitive and insensitive filtering.
+        """
+        # insensitive query
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'other',
+            'translations': 'on'
+        })
+        assert_equal(len(entities), 1)
+        assert_equal(entities[0]['translation'][0]['string'], 'Other Translated String')
+
+        # sensitive query - query should fail
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'other',
+            'translations': 'on',
+            'casesensitive': 'on',
+        })
+        assert_equal(len(entities), 0)
+
+        # sensitive query - query should return result
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'Other',
+            'translations': 'on',
+            'casesensitive': 'on'
+        })
+        assert_equal(len(entities), 1)
+        assert_equal(entities[0]['translation'][0]['string'], 'Other Translated String')
+
+    def test_for_project_search_comments(self):
+        """
+        Return entities matching keyword parameter, search through comments.
+        Tests against sensitive and insensitive filtering.
+        """
+        # insensitive query
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'other',
+            'comments': 'on'
+        })
+        assert_equal(len(entities), 1)
+        assert_equal(entities[0]['comment'], 'Comment Other Source String')
+
+        # sensitive query - query should fail
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'other',
+            'comments': 'on',
+            'casesensitive': 'on',
+        })
+        assert_equal(len(entities), 0)
+
+        # sensitive query - query should return result
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'Other',
+            'comments': 'on',
+            'casesensitive': 'on'
+        })
+        assert_equal(len(entities), 1)
+        assert_equal(entities[0]['comment'], 'Comment Other Source String')
+
+    def test_for_project_search_keys(self):
+        """
+        Return entities matching keyword parameter, search through entity's key.
+        Tests against sensitive and insensitive filtering.
+        """
+        # insensitive query
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'other',
+            'keys': 'on'
+        })
+        assert_equal(len(entities), 1)
+        assert_equal(entities[0]['key'], 'OTHER_ENTITY')
+
+        # sensitive query - query should fail
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'other',
+            'keys': 'on',
+            'casesensitive': 'on',
+        })
+        assert_equal(len(entities), 0)
+
+        # sensitive query - query should return result
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'OTHER',
+            'keys': 'on',
+            'casesensitive': 'on'
+        })
+        assert_equal(len(entities), 1)
+        assert_equal(entities[0]['key'], 'OTHER_ENTITY')
+
+    def test_for_project_search_filter_unchanged(self):
+        """
+        Return entities matching keyword parameter and unchanged during translation.
+        Tests against sensitive and insensitive filtering.
+        """
+        IdenticalTranslationFactory.create(
+            string='Identical String',
+            locale=self.locale,
+            entity__resource__project=self.project,
+        )
+
+        # insensitive query
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'identical',
+            'sources': 'on',
+            'unchanged': 'on'
+        })
+        assert_equal(len(entities), 1)
+        assert_equal(entities[0]['original'], 'Identical String')
+
+        # sensitive query - query should fail
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'identical',
+            'sources': 'on',
+            'unchanged': 'on',
+            'casesensitive': 'on',
+        })
+        assert_equal(len(entities), 0)
+
+        # sensitive query - query should return result
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'Identical',
+            'sources': 'on',
+            'unchanged': 'on',
+            'casesensitive': 'on'
+        })
+        assert_equal(len(entities), 1)
+        assert_equal(entities[0]['original'], 'Identical String')
+
+    def test_for_project_search_all_unchanged(self):
+        """
+        Return all entities unchanged during translation.
+        """
+        IdenticalTranslationFactory.create(
+            string='Identical String',
+            locale=self.locale,
+            entity__resource__project=self.project,
+        )
+
+        IdenticalTranslationFactory.create(
+            string='Other Identical String',
+            locale=self.locale,
+            entity__resource__project=self.project,
+        )
+
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'unchanged': 'on'
+        })
+        assert_equal(len(entities), 2)
+        assert_equal(entities[0]['original'], 'Identical String')
+        assert_equal(entities[1]['original'], 'Other Identical String')
+
+    def test_for_project_mixed_sources_translations(self):
+        """
+        Return entities matching keyword parameter, search through entity's source and translation.
+        Tests against sensitive and insensitive filtering.
+        """
+        TranslationFactory.create(
+            string='Mixed String',
+            locale=self.locale,
+            entity__resource__project=self.project,
+        )
+
+        TranslationFactory.create(
+            entity__string='Mixed String',
+            locale=self.locale,
+            entity__resource__project=self.project,
+        )
+
+        # insensitive query
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'mixed',
+            'sources': 'on',
+            'translations': 'on'
+        })
+        assert_equal(len(entities), 2)
+        assert_equal(entities[0]['translation'][0]['string'], 'Mixed String')
+        assert_equal(entities[1]['original'], 'Mixed String')
+
+        # sensitive query - query should fail
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'mixed',
+            'sources': 'on',
+            'translations': 'on',
+            'casesensitive': 'on',
+        })
+        assert_equal(len(entities), 0)
+
+        # sensitive query - query should return result
+        entities = Entity.for_project_locale(self.project, self.locale, search={
+            'keyword': 'Mixed',
+            'sources': 'on',
+            'translations': 'on',
+            'casesensitive': 'on'
+        })
+        assert_equal(len(entities), 2)
+        assert_equal(entities[0]['translation'][0]['string'], 'Mixed String')
+        assert_equal(entities[1]['original'], 'Mixed String')
 
 
 class LocaleTests(TestCase):

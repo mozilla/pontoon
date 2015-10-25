@@ -7,7 +7,6 @@ $(function() {
     var action = 'search/',
         keyword = $(this).find('[type="search"]').val();
 
-    if (keyword.length > 0) {
       if ($('.locale .selector .language').length) {
         var locale = $('.locale .selector .language').attr('class').split(' ')[1],
             project = $('.project .selector .title').data('slug'),
@@ -19,7 +18,7 @@ $(function() {
         $(this).attr('action', action);
         return;
       }
-    }
+
 
     return false;
   });
