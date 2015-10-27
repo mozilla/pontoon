@@ -323,17 +323,20 @@ class CommitChangesTests(FakeCheckoutTestCase):
         super(CommitChangesTests, self).setUp()
         self.mock_repo_commit = self.patch_object(Repository, 'commit')
 
-    def test_basic(self):
-        user = UserFactory.create()
+    def test_multiple_authors(self):
+        """
+        Tests if multiple authors are passed to commit message.
+        """
+        first_author, second_author = UserFactory.create_batch(2)
         self.changeset.commit_authors_per_locale = {
-            self.translated_locale.code: [user]
+            self.translated_locale.code: [first_author, second_author]
         }
         self.db_project.repository_for_path = Mock(return_value=self.repository)
 
         commit_changes(self.db_project, self.vcs_project, self.changeset)
         self.repository.commit.assert_called_with(
-            CONTAINS(user.display_name),
-            user,
+            CONTAINS(first_author.display_name, second_author.display_name),
+            first_author,
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code)
         )
 

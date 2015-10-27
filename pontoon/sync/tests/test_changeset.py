@@ -5,7 +5,7 @@ from django_nose.tools import (
     assert_raises,
     assert_true
 )
-from mock import Mock
+from mock import Mock, MagicMock
 
 from pontoon.base.models import Entity
 from pontoon.base.tests import (
@@ -15,7 +15,6 @@ from pontoon.base.tests import (
 )
 from pontoon.base.utils import aware_datetime
 from pontoon.sync.tests import FakeCheckoutTestCase
-
 
 class ChangeSetTests(FakeCheckoutTestCase):
     def test_execute_called_once(self):
@@ -300,3 +299,72 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.changeset.execute()
         self.main_db_entity.refresh_from_db()
         assert_true(self.main_db_entity.obsolete)
+
+
+class AuthorsTests(FakeCheckoutTestCase):
+    """
+    Tests authors of translations passed to the final commit message.
+    """
+    def test_multiple_authors(self):
+        """
+        Commit message should include authors from translations of separate
+        entities.
+        """
+        first_author, second_author = UserFactory.create_batch(2)
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            user=first_author, approved=True)
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            approved=False)
+        TranslationFactory.create(locale=self.translated_locale, entity=self.other_db_entity,
+            user=second_author, approved=True)
+        TranslationFactory.create(locale=self.translated_locale, entity=self.other_db_entity,
+            approved=False)
+
+        self.changeset.update_vcs_entity(self.translated_locale.code, self.main_db_entity, MagicMock())
+        self.changeset.update_vcs_entity(self.translated_locale.code, self.other_db_entity, MagicMock())
+
+        self.changeset.execute_update_vcs()
+
+        assert_equal(self.changeset.commit_authors_per_locale[self.translated_locale.code],
+            [first_author, second_author]
+        )
+
+    def test_plural_translations(self):
+        """
+        If entity has some plural translations and approved translations their authors
+        should be included in commit message.
+        """
+        first_author, second_author, third_author = UserFactory.create_batch(3)
+
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            user=first_author, approved=True)
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            user=third_author, approved=True, plural_form=1)
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            user=second_author, approved=False)
+
+        self.changeset.update_vcs_entity(self.translated_locale.code, self.main_db_entity, MagicMock())
+
+        self.changeset.execute_update_vcs()
+
+        assert_equal(self.changeset.commit_authors_per_locale[self.translated_locale.code],
+            [first_author, third_author])
+
+    def test_multiple_translations(self):
+        """
+        If there are multiple translations to the same locale, only authors of
+        the final approved version should be returned.
+        """
+        first_author, second_author = UserFactory.create_batch(2)
+
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            user=first_author, approved=True)
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            user=second_author, approved=False)
+
+        self.changeset.update_vcs_entity(self.translated_locale.code, self.main_db_entity, MagicMock())
+
+        self.changeset.execute_update_vcs()
+
+        assert_equal(self.changeset.commit_authors_per_locale[self.translated_locale.code],
+            [first_author])
