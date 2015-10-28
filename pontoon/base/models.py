@@ -645,6 +645,18 @@ class Entity(DirtyFieldsMixin, models.Model):
     def marked_plural(self):
         return utils.mark_placeables(self.string_plural)
 
+    @property
+    def cleaned_key(self):
+        """
+        Get cleaned key, without the source string and Translate Toolkit
+        separator.
+        """
+        key = self.key.split(KEY_SEPARATOR)[0]
+        if key == self.string:
+            key = ''
+
+        return key
+
     def __unicode__(self):
         return self.string
 
@@ -751,9 +763,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'marked': entity.marked,
                 'original_plural': entity.string_plural,
                 'marked_plural': entity.marked_plural,
-                # Remove source string from the key and the delimiter
-                # as required by Translate Toolkit
-                'key': entity.key.split(KEY_SEPARATOR)[0],
+                'key': entity.cleaned_key,
                 'path': entity.resource.path,
                 'format': entity.resource.format,
                 'comment': entity.comment,
