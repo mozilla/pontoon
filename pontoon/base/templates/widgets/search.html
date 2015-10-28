@@ -1,0 +1,18 @@
+{# Macro generates options for search input.
+Params:
+* choices - tuple of: option_name, option_label, enabled_default
+** option_name - name of option in request object
+** option_label - human friendly label displayed to the user
+** enabled_default - enables or disables option by default.
+* request - request object used for retrieval of set options.
+#}
+{% macro options(choices, request) %}
+<ul class="options">
+	{% for option_name, option_label, enabled_default in choices %}
+  <li data-name="{{ option_name }}" class="check-box{% if request.GET.get(option_name, None) or (enabled_default and not search) %}{{ ' enabled' }}{% endif %}">
+    <i class="fa fa-fw"></i>{{ option_label }}
+    <input type="checkbox" name="{{ option_name }}"{% if request.GET.get(option_name, None) or (enabled_default and not search) %}{{ ' checked' }}{% endif %}>
+  </li>
+  {% endfor %}
+</ul>
+{% endmacro %}
