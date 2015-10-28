@@ -41,6 +41,9 @@ DATABASES = {
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = os.environ.get('STATIC_ROOT', path('static'))
 
+# Optional CDN hostname for static files, e.g. '//asdf.cloudfront.net'
+STATIC_HOST = os.environ.get('STATIC_HOST', '')
+
 SESSION_COOKIE_HTTPONLY = os.environ.get('SESSION_COOKIE_HTTPONLY', 'True') != 'False'
 SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') != 'False'
 
@@ -353,7 +356,7 @@ MEDIA_URL = '/media/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = STATIC_HOST + '/static/'
 
 STATICFILES_STORAGE = 'pontoon.base.storage.GzipManifestPipelineStorage'
 STATICFILES_FINDERS = (

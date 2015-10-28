@@ -87,6 +87,10 @@ you create:
    SSH private key to use for authentication when Pontoon connects to VCS
    servers via SSH.
 
+``STATIC_HOST``
+   Optional. Hostname to prepend to static resources paths. Useful for serving
+   static files from a CDN. Example: ``//asdf.cloudfront.net``.
+
 ``SVN_LD_LIBRARY_PATH``
    Path to prepend to ``LD_LIBRARY_PATH`` when running SVN. This is necessary
    on Heroku because the Python buildpack alters the path in a way that breaks
