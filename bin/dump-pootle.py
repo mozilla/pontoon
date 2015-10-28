@@ -26,7 +26,7 @@ class Command(BaseCommand):
         locale = options.get('locale', False)
 
         if not project and not locale:
-            raise CommandError('You must provide a project.')
+            raise CommandError('You must provide a project or a locale.')
 
         # For all projects enabled for locale
         if not project:
