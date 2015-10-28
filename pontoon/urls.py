@@ -8,6 +8,10 @@ urlpatterns = patterns('',
     # Legacy: Locale redirect for compatibility with i18n ready URL scheme
     (r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s", permanent=True)),
 
+    # Redirect similar locales
+    (r'^ga/(?P<url>.*)$', RedirectView.as_view(url="/ga-IE/%(url)s", permanent=True)),
+    (r'^pt/(?P<url>.*)$', RedirectView.as_view(url="/pt-PT/%(url)s", permanent=True)),
+
     # Admin
     (r'admin/', include('pontoon.administration.urls')),
 
