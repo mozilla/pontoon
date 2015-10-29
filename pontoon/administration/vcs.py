@@ -147,11 +147,11 @@ class CommitToGit(CommitToRepository):
         user = user or self.user
         author = self.get_author(user)
 
-        # Embed git identity info into commands.
+        # Embed git identity info into commands
         git_cmd = ['git', '-c', 'user.name=Mozilla Pontoon', '-c',
                    'user.email=pontoon@mozilla.com']
 
-        # Add
+        # Add new and remove missing paths
         execute(git_cmd + ['add', '-A', '--', path], path)
 
         # Commit
@@ -182,7 +182,7 @@ class CommitToHg(CommitToRepository):
         user = user or self.user
         author = self.get_author(user)
 
-        # Add new and remove missing
+        # Add new and remove missing paths
         add = ["hg", "addremove"]
         execute(add, path)
 
