@@ -161,7 +161,7 @@ class CommitToGit(CommitToRepository):
             raise CommitToRepositoryException(unicode(error))
 
         # Push
-        push = ["git", "push", self.url]
+        push = ["git", "push", self.url, 'master']
         code, output, error = execute(push, path)
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
