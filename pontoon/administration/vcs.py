@@ -182,8 +182,8 @@ class CommitToHg(CommitToRepository):
         user = user or self.user
         author = self.get_author(user)
 
-        # Add
-        add = ["hg", "add"]
+        # Add new and remove missing
+        add = ["hg", "addremove"]
         execute(add, path)
 
         # Commit

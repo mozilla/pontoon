@@ -76,8 +76,8 @@ def pull(url, target):
 
 
 def push(path):
-    # Add
-    execute(['hg', 'add'], path)
+    # Add new and remove missing
+    execute(['hg', 'addremove'], path)
 
     # Commit
     code, output, error = execute(['hg', 'commit', '-m', 'Update'], path)
