@@ -499,8 +499,9 @@ label {
 }
 
 .part .menu nav ul li {
-  border: 1px solid transparent;
-  border-bottom-color: #5E6475;
+  border-color: transparent;
+  border-style: solid solid none;
+  border-width: 1px 1px 0;
 }
 
 .part .menu nav ul li.hover {
@@ -508,8 +509,8 @@ label {
 }
 
 .part .menu nav ul li.active {
+  background: #272A2F;
   border-color: #5E6475;
-  border-bottom-color: transparent;
 }
 
 .part .menu nav ul li.hover a {
@@ -519,13 +520,6 @@ label {
 .part .menu nav ul li.active a,
 .part .menu nav ul li:hover a {
   color: #FFFFFF;
-}
-
-/* TODO: this is needed (but shouldn't be) for pixel perfect tab borders */
-.part .menu nav ul li:last-child.active {
-  width: calc(50% + 2px);
-  margin-left: -2px;
-  padding-left: 2px;
 }
 
 .part .menu section {

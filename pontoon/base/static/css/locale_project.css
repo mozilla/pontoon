@@ -3,7 +3,16 @@ body > .container {
 }
 
 .menu .sort span.name {
-    width: 520px;
+  width: 520px;
+}
+
+.part .menu ul {
+  margin-bottom: -1px;
+}
+
+.part .menu section {
+  border-top: 1px solid #5E6475;
+  padding-top: 27px;
 }
 
 .part.select .menu ul li .name {
