@@ -59,7 +59,8 @@ def pull(url, target):
     execute(['hg', 'revert', '--all', '--no-backup'], target)
 
     # Pull
-    code, output, error = execute(['hg', 'pull', '-u'], target)
+    code, output, error = execute(['hg', 'pull'], target)
+    code, output, error = execute(['hg', 'update', '-c'], target)
     if code == 0:
         print('Repository at ' + url + ' updated.')
 
