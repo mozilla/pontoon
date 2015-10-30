@@ -10,6 +10,11 @@
   display: none;
 }
 
+.about {
+  margin-top: 40px;
+  margin-bottom: -40px;
+}
+
 table {
   font-size: 14px;
   text-align: left;
