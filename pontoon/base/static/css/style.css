@@ -745,7 +745,7 @@ label {
 }
 
 .search-wrapper > a.new:after {
-  content: "Add";
+  content: "Request";
 }
 
 .locale .search-wrapper > a.back:after {

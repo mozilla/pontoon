@@ -78,7 +78,7 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data !== "error") {
             Pontoon.endLoader(
-              'New locale (' + locale + ') requested.', '', true);
+              "New locale (" + locale + ") requested. We'll send you an email once it gets enabled.", "", true);
           } else {
             Pontoon.endLoader('Oops, something went wrong.', 'error');
           }
@@ -88,6 +88,7 @@ var Pontoon = (function (my) {
         },
         complete: function() {
           $('.locale .menu .search-wrapper > a').click();
+          window.scrollTo(0, 0);
         }
       });
     },
