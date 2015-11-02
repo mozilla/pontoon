@@ -16,6 +16,7 @@ from pontoon.base.tests import (
 from pontoon.base.utils import aware_datetime
 from pontoon.sync.tests import FakeCheckoutTestCase
 
+
 class ChangeSetTests(FakeCheckoutTestCase):
     def test_execute_called_once(self):
         """Raise a RuntimeError if execute is called more than once."""
@@ -29,7 +30,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_db_translation.save()
 
         self.changeset.update_vcs_entity(
-            self.translated_locale.code,
+            self.translated_locale,
             self.main_db_entity,
             self.main_vcs_entity
         )
@@ -80,7 +81,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_db_translation.delete()
 
         self.changeset.update_vcs_entity(
-            self.translated_locale.code,
+            self.translated_locale,
             self.main_db_entity,
             self.main_vcs_entity
         )
@@ -136,7 +137,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
 
     def update_main_db_entity(self):
         self.changeset.update_db_entity(
-            self.translated_locale.code,
+            self.translated_locale,
             self.main_db_entity,
             self.main_vcs_entity
         )
@@ -320,8 +321,8 @@ class AuthorsTests(FakeCheckoutTestCase):
         TranslationFactory.create(locale=self.translated_locale, entity=self.other_db_entity,
             approved=False)
 
-        self.changeset.update_vcs_entity(self.translated_locale.code, self.main_db_entity, MagicMock())
-        self.changeset.update_vcs_entity(self.translated_locale.code, self.other_db_entity, MagicMock())
+        self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
+        self.changeset.update_vcs_entity(self.translated_locale, self.other_db_entity, MagicMock())
 
         self.changeset.execute_update_vcs()
 
@@ -343,7 +344,7 @@ class AuthorsTests(FakeCheckoutTestCase):
         TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
             user=second_author, approved=False)
 
-        self.changeset.update_vcs_entity(self.translated_locale.code, self.main_db_entity, MagicMock())
+        self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
 
         self.changeset.execute_update_vcs()
 
@@ -362,7 +363,7 @@ class AuthorsTests(FakeCheckoutTestCase):
         TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
             user=second_author, approved=False)
 
-        self.changeset.update_vcs_entity(self.translated_locale.code, self.main_db_entity, MagicMock())
+        self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
 
         self.changeset.execute_update_vcs()
 

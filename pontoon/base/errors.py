@@ -1,9 +1,19 @@
-from raygun4py import raygunprovider
+import logging
 
 from django.conf import settings
 
-def send_exception(exc):
+from raygun4py import raygunprovider
+
+
+log = logging.getLogger(__name__)
+
+
+def send_exception(exception, exc_info=None):
     """
     Function sends exception to selected provider.
     """
-    raygunprovider.RaygunSender(settings.RAYGUN4PY_API_KEY).send_exception(exc)
+    if settings.RAYGUN4PY_API_KEY:
+        provider = raygunprovider.RaygunSender(settings.RAYGUN4PY_API_KEY)
+        provider.send_exception(exception, exc_info=exc_info)
+    else:
+        log.error(exception, exc_info=exc_info)

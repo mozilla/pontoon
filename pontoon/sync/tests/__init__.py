@@ -47,10 +47,12 @@ class VCSTranslationFactory(factory.Factory):
 class FakeCheckoutTestCase(TestCase):
     """Parent class for tests that use the fake l10n repo checkout."""
     def setUp(self):
-        timezone_patch = patch('pontoon.sync.core.timezone')
+        self.now = aware_datetime(1970, 1, 1)
+
+        timezone_patch = patch('pontoon.sync.tasks.timezone')
         self.mock_timezone = timezone_patch.start()
         self.addCleanup(timezone_patch.stop)
-        self.mock_timezone.now.return_value = aware_datetime(1970, 1, 1)
+        self.mock_timezone.now.return_value = self.now
 
         self.translated_locale = LocaleFactory.create(code='translated-locale')
         self.inactive_locale = LocaleFactory.create(code='inactive-locale')

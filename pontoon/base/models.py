@@ -14,6 +14,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.templatetags.static import static
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
@@ -225,7 +226,6 @@ class ProjectQuerySet(models.QuerySet):
         resource defined.
         """
         return self.filter(disabled=False, resource__isnull=False)
-
 
 
 class Project(models.Model):
@@ -513,6 +513,24 @@ class Repository(models.Model):
     def can_commit(self):
         """True if we can commit strings back to this repo."""
         return self.type in ('svn', 'git', 'hg')
+
+    @cached_property
+    def locales(self):
+        """
+        Yield an iterable of Locales whose strings are stored within
+        this repo.
+        """
+        from pontoon.sync.utils import locale_directory_path
+
+        locales = []  # Use list since we're caching the result.
+        for locale in self.project.locales.all():
+            try:
+                locale_directory_path(self.checkout_path, locale.code)
+                locales.append(locale)
+            except IOError:
+                pass  # Directory missing, not in this repo.
+
+        return locales
 
     def locale_checkout_path(self, locale):
         """

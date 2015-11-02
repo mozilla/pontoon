@@ -260,10 +260,7 @@ def commit_to_vcs(repo_type, path, message, user, url):
 
     except CommitToRepositoryException as e:
         log.debug('%s Commit Error for %s: %s' % (repo_type.upper(), path, e))
-        return {
-            'type': 'error',
-            'message': unicode(e)
-        }
+        raise e
 
 
 def get_svn_env():

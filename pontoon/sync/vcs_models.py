@@ -8,44 +8,14 @@ from itertools import chain
 from django.utils.functional import cached_property
 
 from pontoon.base import MOZILLA_REPOS
-from pontoon.base.models import Resource
-from pontoon.base.utils import extension_in, first
+from pontoon.sync.utils import (
+    directory_contains_resources,
+    is_resource,
+    locale_directory_path,
+)
 
 
 log = logging.getLogger(__name__)
-
-
-def is_resource(filename):
-    """
-    Return True if the filename's extension is a supported Resource
-    format.
-    """
-    return extension_in(filename, Resource.ALLOWED_EXTENSIONS)
-
-
-def is_source_resource(filename):
-    """
-    Return True if the filename's extension is a source-only Resource
-    format.
-    """
-    return extension_in(filename, Resource.SOURCE_EXTENSIONS)
-
-
-def directory_contains_resources(directory_path, source_only=False):
-    """
-    Return True if the given directory contains at least one
-    supported resource file (checked via file extension), or False
-    otherwise.
-
-    :param source_only:
-        If True, only check for source-only formats.
-    """
-    resource_check = is_source_resource if source_only else is_resource
-    for root, dirnames, filenames in os.walk(directory_path):
-        # first() avoids checking past the first matching resouce.
-        if first(filenames, resource_check) is not None:
-            return True
-    return False
 
 
 class VCSProject(object):
@@ -60,12 +30,21 @@ class VCSProject(object):
     }
     SOURCE_DIR_NAMES = SOURCE_DIR_SCORES.keys()
 
-    def __init__(self, db_project):
+    def __init__(self, db_project, locales=None):
         """
         Load resource paths from the given db_project and parse them
         for translation data.
+
+        :param Project db_project:
+            Project model instance for the project we're going to be
+            reading files for.
+        :param list locales:
+            List of Locale model instances for the locales that we want
+            to parse. Defaults to parsing resources for all enabled
+            locales on the project.
         """
         self.db_project = db_project
+        self.locales = locales if locales is not None else db_project.locales.all()
 
     @cached_property
     def resources(self):
@@ -82,7 +61,7 @@ class VCSProject(object):
         resources = {}
         for path in self.relative_resource_paths():
             try:
-                resources[path] = VCSResource(self, path)
+                resources[path] = VCSResource(self, path, locales=self.locales)
             except ParseError as err:
                 log.error('Skipping resource {path} due to ParseError: {err}'.format(
                     path=path, err=err
@@ -128,23 +107,6 @@ class VCSProject(object):
             raise Exception('No source directory found for project {0}'
                             .format(self.db_project.slug))
 
-    def locale_directory_path(self, locale_code):
-        """
-        Path to the directory where strings for the given locale are
-        stored.
-        """
-        path = self.checkout_path
-        for root, dirnames, filenames in os.walk(path):
-            if locale_code in dirnames:
-                return os.path.join(root, locale_code)
-
-            locale_variant = locale_code.replace('-', '_')
-            if locale_variant in dirnames:
-                return os.path.join(root, locale_variant)
-
-        raise Exception('Directory for locale `{0}` not found'.format(
-                        locale_code or 'source'))
-
     def relative_resource_paths(self):
         """
         List of paths relative to the locale directories returned by
@@ -177,7 +139,7 @@ class VCSProject(object):
 class VCSResource(object):
     """Represents a single resource across multiple locales."""
 
-    def __init__(self, vcs_project, path):
+    def __init__(self, vcs_project, path, locales=None):
         """
         Load the resource file for each enabled locale and store its
         translations in VCSEntity instances.
@@ -186,6 +148,7 @@ class VCSResource(object):
 
         self.vcs_project = vcs_project
         self.path = path
+        self.locales = locales or []
         self.files = {}
         self.entities = {}
 
@@ -210,9 +173,9 @@ class VCSResource(object):
             self.entities[vcs_entity.key] = vcs_entity
 
         # Fill in translations from the locale resources.
-        for locale in vcs_project.db_project.locales.all():
+        for locale in locales:
             resource_path = os.path.join(
-                vcs_project.locale_directory_path(locale.code),
+                locale_directory_path(vcs_project.checkout_path, locale.code),
                 self.path
             )
             try:

@@ -40,21 +40,23 @@ class ChangeSet(object):
         self.translations_to_update = []
         self.translations_to_create = []
         self.commit_authors_per_locale = defaultdict(list)
+        self.locales_to_commit = set()
 
-    def update_vcs_entity(self, locale_code, db_entity, vcs_entity):
+    def update_vcs_entity(self, locale, db_entity, vcs_entity):
         """
         Replace the translations in VCS with the translations from the
         database.
         """
-        self.changes['update_vcs'].append((locale_code, db_entity, vcs_entity))
+        self.changes['update_vcs'].append((locale.code, db_entity, vcs_entity))
+        self.locales_to_commit.add(locale)
 
     def create_db_entity(self, vcs_entity):
         """Create a new entity in the database."""
         self.changes['create_db'].append(vcs_entity)
 
-    def update_db_entity(self, locale_code, db_entity, vcs_entity):
+    def update_db_entity(self, locale, db_entity, vcs_entity):
         """Update the database with translations from VCS."""
-        self.changes['update_db'].append((locale_code, db_entity, vcs_entity))
+        self.changes['update_db'].append((locale.code, db_entity, vcs_entity))
 
     def obsolete_db_entity(self, db_entity):
         """Mark the given entity as obsolete."""

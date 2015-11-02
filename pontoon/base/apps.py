@@ -18,7 +18,7 @@ class BaseConfig(AppConfig):
 
         # Load celery app so celery.shared_task uses it for executing
         # tasks.
-        from pontoon.base.celery import app as celery_app  # NOQA
+        from pontoon.base.celeryapp import app as celery_app  # NOQA
 
         # Load and register signals.
         from pontoon.base import signals  # NOQA

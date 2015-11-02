@@ -124,7 +124,7 @@ class VCSProjectTests(TestCase):
         self.vcs_project.relative_resource_paths = Mock(return_value=['failure', 'success'])
 
         # Fail only if the path is failure so we can test the ignore.
-        def vcs_resource_constructor(project, path):
+        def vcs_resource_constructor(project, path, locales=None):
             if path == 'failure':
                 raise ParseError('error message')
             else:
