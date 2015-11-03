@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime
 
 from django.utils import timezone
@@ -38,8 +39,7 @@ class ChangeSet(object):
         self.entities_to_update = []
         self.translations_to_update = []
         self.translations_to_create = []
-
-        self.commit_authors_per_locale = {}
+        self.commit_authors_per_locale = defaultdict(list)
 
     def update_vcs_entity(self, locale_code, db_entity, vcs_entity):
         """
@@ -137,7 +137,7 @@ class ChangeSet(object):
             }
 
             # Track which translators were involved.
-            self.commit_authors_per_locale[locale_code] = [t.user for t in db_translations if t.user]
+            self.commit_authors_per_locale[locale_code].extend([t.user for t in db_translations if t.user])
 
         for resource in changed_resources:
             resource.save()
