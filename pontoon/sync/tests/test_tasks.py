@@ -1,5 +1,6 @@
 from django_nose.tools import assert_equal, assert_false, assert_raises, assert_true
 from mock import patch, PropertyMock
+from waiting import wait
 
 from pontoon.base.models import ChangedEntityLocale, Project, Repository
 from pontoon.base.tests import (
@@ -10,8 +11,10 @@ from pontoon.base.tests import (
     TranslationFactory,
 )
 from pontoon.base.utils import aware_datetime
+from pontoon.sync.core import serial_task
 from pontoon.sync.tasks import sync_project, sync_project_repo
 from pontoon.sync.tests import FAKE_CHECKOUT_PATH, FakeCheckoutTestCase
+
 
 
 class SyncProjectTests(TestCase):
@@ -161,3 +164,63 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
         duplicate_translation.refresh_from_db()
         assert_true(duplicate_translation.approved)
         assert_equal(duplicate_translation.approved_date, aware_datetime(1970, 1, 3))
+
+
+class UserError(Exception):
+    pass
+
+class SyncExecutionTests(TestCase):
+    def setUp(self):
+        self.project = ProjectFactory.create()
+
+    def test_serial_task(self):
+        """
+        Test if sync will create lock in cache and release this after task is done.
+        """
+        @serial_task(100)
+        def test_task(self, callback):
+            return callback()
+
+
+        def execute_second_inner_task():
+            return test_task.delay(lambda: None)
+
+        first_call = test_task.delay(execute_second_inner_task)
+        second_call = first_call.get()
+
+        assert_true(first_call.successful())
+        assert_true(second_call.failed())
+        assert_raises(RuntimeError, second_call.get)
+
+    def test_timeout_argument(self):
+        """
+        Tests if second task can be executed after passed timeout.
+        """
+        @serial_task(1)
+        def timeout_task(self):
+            return 42
+
+        first_call = timeout_task.delay()
+        wait(lambda: first_call.ready(), timeout_seconds=10)
+        second_call = timeout_task.delay()
+
+        assert_true(first_call.successful())
+        assert_true(second_call.successful())
+        assert_equal(first_call.get(), 42)
+        assert_equal(second_call.get(), 42)
+
+    def test_exception_during_sync(self):
+        """
+        Any error during performing synchronization should release the lock.
+        """
+        @serial_task(100)
+        def exception_task(self):
+            raise UserError
+
+        first_call = exception_task.delay()
+        second_call = exception_task.delay()
+
+        assert_true(first_call.failed())
+        assert_true(second_call.failed())
+        assert_raises(UserError, first_call.get)
+        assert_raises(UserError, second_call.get)
