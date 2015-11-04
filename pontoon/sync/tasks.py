@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from django.db import connection, transaction
 from django.utils import timezone
 
@@ -14,7 +15,8 @@ from pontoon.sync.core import (
     pull_changes,
     sync_project as perform_sync_project,
     update_project_stats,
-    update_translations
+    update_translations,
+    serial_task
 )
 from pontoon.sync.vcs_models import VCSProject
 
@@ -22,8 +24,8 @@ from pontoon.sync.vcs_models import VCSProject
 log = logging.getLogger(__name__)
 
 
-@shared_task(base=PontoonTask)
-def sync_project(project_pk, no_pull=False, no_commit=False, force=False):
+@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask)
+def sync_project(self, project_pk, no_pull=False, no_commit=False, force=False):
     """Fetch the project with the given PK and perform sync on it."""
     try:
         db_project = Project.objects.get(pk=project_pk)
