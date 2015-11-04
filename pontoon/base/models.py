@@ -17,10 +17,10 @@ from django.utils import timezone
 from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
 
-from pontoon.administration.vcs import commit_to_vcs, get_revision, update_from_vcs
 from pontoon.base import utils
 from pontoon.base.utils import get_object_or_none
 from pontoon.sync import KEY_SEPARATOR
+from pontoon.sync.vcs import commit_to_vcs, get_revision, update_from_vcs
 
 
 log = logging.getLogger('pontoon')

@@ -10,7 +10,6 @@ from django_nose.tools import (
 )
 from mock import ANY, call, Mock, patch, PropertyMock
 
-from pontoon.administration.vcs import CommitToRepositoryException
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
@@ -37,6 +36,7 @@ from pontoon.sync.core import (
     update_resources,
 )
 from pontoon.sync.tests import FAKE_CHECKOUT_PATH, FakeCheckoutTestCase, VCSEntityFactory
+from pontoon.sync.vcs import CommitToRepositoryException
 
 
 class SyncProjectTests(FakeCheckoutTestCase):

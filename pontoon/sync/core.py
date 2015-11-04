@@ -7,7 +7,6 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 
 
-from pontoon.administration.vcs import CommitToRepositoryException
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
@@ -15,6 +14,7 @@ from pontoon.base.models import (
     update_stats
 )
 from pontoon.sync.changeset import ChangeSet
+from pontoon.sync.vcs import CommitToRepositoryException
 from pontoon.sync.vcs_models import VCSProject
 
 
@@ -203,7 +203,7 @@ def commit_changes(db_project, vcs_project, changeset):
         else:
             commit_author = User(first_name="Pontoon", email="pontoon@mozilla.com")
 
-        commit_message = render_to_string('commit_message.jinja', {
+        commit_message = render_to_string('sync/commit_message.jinja', {
             'locale': locale,
             'project': db_project,
             'authors': authors

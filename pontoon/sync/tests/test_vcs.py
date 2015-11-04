@@ -1,8 +1,8 @@
 from django_nose.tools import assert_equal
 from mock import patch
 
-from pontoon.administration.vcs import VCSRepository
 from pontoon.base.tests import CONTAINS, TestCase
+from pontoon.sync.vcs import VCSRepository
 
 
 class VCSRepositoryTests(TestCase):
@@ -13,8 +13,8 @@ class VCSRepositoryTests(TestCase):
         """
         repo = VCSRepository('/path')
 
-        with patch('pontoon.administration.vcs.execute') as mock_execute, \
-             patch('pontoon.administration.vcs.log') as mock_log:
+        with patch('pontoon.sync.vcs.execute') as mock_execute, \
+             patch('pontoon.sync.vcs.log') as mock_log:
             mock_execute.return_value = 1, 'output', 'stderr'
             assert_equal(
                 repo.execute('command', cwd='working_dir', log_errors=True),

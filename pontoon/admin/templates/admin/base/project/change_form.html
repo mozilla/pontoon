@@ -1,0 +1,10 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+  {{ block.super }}
+  <li>
+    <a href="{% url 'pontoon.admin.project_trigger_sync' original.pk %}">
+        Queue Sync Job
+    </a>
+  </li>
+{% endblock %}
