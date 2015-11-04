@@ -4,6 +4,7 @@
 
 from __future__ import print_function
 
+import datetime
 import os
 import shutil
 import subprocess
@@ -40,6 +41,11 @@ TARGET_REPOS = {
 SOURCE_REPOS = set(v["source"] for v in TARGET_REPOS.values())
 
 
+def write(text):
+    timestamp = datetime.datetime.now().strftime('[%Y-%m-%d %H:%M:%S] ')
+    print(timestamp + text)
+
+
 def execute(command, cwd=None):
     try:
         st = subprocess.PIPE
@@ -62,18 +68,18 @@ def pull(url, target):
     code, output, error = execute(['hg', 'pull'], target)
     code, output, error = execute(['hg', 'update', '-c'], target)
     if code == 0:
-        print('Repository at ' + url + ' updated.')
+        write('Repository at ' + url + ' updated.')
 
     # Clone
     else:
-        print(unicode(error))
-        print('Clone instead.')
+        write(unicode(error))
+        write('Clone instead.')
 
         code, output, error = execute(['hg', 'clone', url, target])
         if code == 0:
-            print('Repository at ' + url + ' cloned.')
+            write('Repository at ' + url + ' cloned.')
         else:
-            print(unicode(error))
+            write(unicode(error))
 
 
 def push(path):
@@ -83,14 +89,14 @@ def push(path):
     # Commit
     code, output, error = execute(['hg', 'commit', '-m', 'Update'], path)
     if code != 0 and len(error):
-        print(unicode(error))
+        write(unicode(error))
 
     # Push
     code, output, error = execute(['hg', 'push'], path)
     if code == 0:
-        print('Repository at ' + path + ' pushed.')
+        write('Repository at ' + path + ' pushed.')
     elif len(error):
-        print(unicode(error))
+        write(unicode(error))
 
 # Change working directory to where script is located
 abspath = os.path.abspath(__file__)
