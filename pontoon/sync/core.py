@@ -206,7 +206,7 @@ def commit_changes(db_project, vcs_project, changeset):
         commit_message = render_to_string('commit_message.jinja', {
             'locale': locale,
             'project': db_project,
-            'authors': authors
+            'authors': set(authors)
         })
 
         locale_path = vcs_project.locale_directory_path(locale.code)

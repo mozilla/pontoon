@@ -1,5 +1,5 @@
 import os.path
-
+import re
 from django_nose.tools import (
     assert_equal,
     assert_false,
@@ -339,6 +339,26 @@ class CommitChangesTests(FakeCheckoutTestCase):
             first_author,
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code)
         )
+
+    def test_author_with_multiple_contributions(self):
+        """
+        Tests if author with multiple contributions occurs once in commit message.
+        """
+        author = UserFactory.create()
+        self.changeset.commit_authors_per_locale = {
+            self.translated_locale.code: [author, author]
+        }
+        self.db_project.repository_for_path = Mock(return_value=self.repository)
+
+        commit_changes(self.db_project, self.vcs_project, self.changeset)
+
+        self.repository.commit.assert_called_with(
+            CONTAINS(author.display_name),
+            author,
+            os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code)
+        )
+        commit_message = self.repository.commit.mock_calls[0][1][0]
+        assert_equal(len(set(re.finditer(author.display_name, commit_message))), 1)
 
     def test_no_authors(self):
         """
