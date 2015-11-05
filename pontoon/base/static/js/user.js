@@ -16,7 +16,7 @@ $(function() {
           input.blur();
           Pontoon.endLoader('Thank you!');
         } else if (data === "length") {
-          Pontoon.endLoader('Must be between 3 and 30 characters.', 'error');
+          Pontoon.endLoader('Must be 30 characters or fewer.', 'error');
         } else {
           Pontoon.endLoader('Oops, something went wrong.', 'error');
         }
