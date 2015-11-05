@@ -3,8 +3,6 @@
 
 {% block title %}{{ super() }} &middot; Contributors {% endblock %}
 
-{% block class %}locale{% endblock %}
-
 {% block locale_subpage %}
   {% if contributors %}
     {{ Contributors.select_period(period, url('pontoon.locale.contributors', locale.code)) }}

@@ -2,15 +2,13 @@
 
 {# Widget to select period for filtering contributors #}
 {% macro select_period(period, viewurl) %}
-{{
-	Menu.submenu((
-		(viewurl, 'All time', None),
-		(viewurl + '?period=12', '12 months', 12),
-		(viewurl + '?period=6', '6 months', 6),
-		(viewurl + '?period=3', '3 months', 3),
-		(viewurl + '?period=1', 'Last month', 1),
-	), period)
-}}
+    {% call Menu.submenu() %}
+        {{ Menu.item('All time', viewurl, is_active = (period == None)) }}
+        {{ Menu.item('12 months', viewurl + '?period=12', is_active = (period == 12)) }}
+        {{ Menu.item('6 months', viewurl + '?period=6', is_active = (period == 6)) }}
+        {{ Menu.item('3 months', viewurl + '?period=3', is_active = (period == 3)) }}
+        {{ Menu.item('Last month', viewurl + '?period=1', is_active = (period == 1)) }}
+    {% endcall %}
 {% endmacro %}
 
 {# Widget to display list of contributors. #}

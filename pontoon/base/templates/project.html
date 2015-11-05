@@ -28,10 +28,11 @@
     </div>
   {% endif %}
 
-  {{ Menu.submenu((
-    (url('pontoon.project', project.slug), 'Teams', ''),
-    (url('pontoon.project.contributors', project.slug), 'Contributors', 'contributors')
-  ), request.path.split('/')[3]|default(''), 'submenu tabs') }}
+  {% set current_page = request.path.split('/')[3]|default('') %}
+  {% call Menu.submenu(class='submenu tabs') %}
+      {{ Menu.item('Teams', url('pontoon.project', project.slug), is_active = (current_page == '')) }}
+      {{ Menu.item('Contributors', url('pontoon.project.contributors', project.slug), is_active = (current_page == 'contributors')) }}
+  {% endcall %}
 
   {% block project_subpage %}
     {% include 'locale_selector.html' %}

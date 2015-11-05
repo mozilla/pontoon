@@ -457,14 +457,16 @@ label {
 
 .project.select,
 .locale.select,
-.part.select {
+.part.select,
+.user.select {
   padding-left: 0;
   width: 100%;
 }
 
 .project.select .menu,
 .locale.select .menu,
-.part.select .menu {
+.part.select .menu,
+.user.select .menu {
   bottom: auto;
   display: inline-block;
   position: relative;
@@ -972,6 +974,11 @@ body > nav,
   color: #7BC876;
 }
 
+.submenu.tabs {
+  border-bottom: 1px solid #5E6475;
+  margin: 0 12px 10px;
+}
+
 .submenu .links {
   margin: 0 0 50px;
 }
@@ -986,36 +993,23 @@ body > nav,
 }
 
 .submenu.tabs .links {
-  display: inline-block;
-  margin-bottom: 3px;
-  padding: 10px 12px;
+  display: table;
+  margin-bottom: -1px;
+  table-layout: fixed;
   width: 100%;
-
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
 }
 
 .submenu.tabs .links li {
-  border: 1px solid transparent;
-  border-bottom-color: #5E6475;
-  float: left;
+  border-color: transparent;
+  border-style: solid solid none;
+  border-width: 1px 1px 0;
+  display: table-cell;
   margin: 0;
-  width: 50%;
-
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
 }
 
 .submenu.tabs .links li.active {
   border-color: #5E6475;
-  border-bottom-color: transparent;
-}
-
-/* TODO: this is needed (but shouldn't be) for pixel perfect tab borders */
-.submenu.tabs .links li:last-child.active {
-  width: calc(50% + 2px);
-  margin-left: -2px;
-  padding-left: 2px;
+  background: #272A2F;
 }
 
 .submenu.tabs .links a {

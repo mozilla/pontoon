@@ -50,13 +50,23 @@ urlpatterns = patterns(
         name='pontoon.project'),
 
     # List project contributors
-    url(r'^projects/(?P<slug>[\w-]+)/contributors$',
+    url(r'^projects/(?P<slug>[\w-]+)/contributors/$',
         views.ProjectContributorsView.as_view(),
         name='pontoon.project.contributors'),
 
     # AJAX: Get project details
     url(r'^projects/(?P<slug>[\w-]+)/details/$', views.get_project_details,
         name='pontoon.project.details'),
+
+    # List team contributors
+    url(r'^(?P<code>[A-Za-z0-9\-\@\.]+)/contributors/$',
+        views.LocaleContributorsView.as_view(),
+        name='pontoon.locale.contributors'),
+
+    # Team admin
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/admin/$',
+        views.locale_admin,
+        name='pontoon.locale.admin'),
 
     # Translate project
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',
@@ -134,10 +144,5 @@ urlpatterns = patterns(
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
         views.locale,
         name='pontoon.locale'),
-
-    # List team contributors
-    url(r'^(?P<code>[A-Za-z0-9\-\@\.]+)/contributors$',
-        views.LocaleContributorsView.as_view(),
-        name='pontoon.locale.contributors'),
 
 )

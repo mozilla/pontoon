@@ -186,6 +186,7 @@ AUTHENTICATION_BACKENDS = [
 # This variable is required by django-guardian.
 # App supports giving permissions for anonymous users.
 ANONYMOUS_USER_ID = -1
+GUARDIAN_RAISE_403 = True
 
 PIPELINE_COMPILERS = (
     'pipeline.compilers.es6.ES6Compiler',
@@ -215,6 +216,12 @@ PIPELINE_CSS = {
             'css/admin_project.css',
         ),
         'output_filename': 'css/admin_project.min.css',
+    },
+    'locale_admin': {
+        'source_filenames': (
+            'css/locale_admin.css',
+        ),
+        'output_filename': 'css/locale_admin.min.css',
     },
     'locale_project': {
         'source_filenames': (
@@ -275,6 +282,12 @@ PIPELINE_JS = {
             'js/jquery.timeago.js',
         ),
         'output_filename': 'js/main.min.js',
+    },
+    'locale_admin': {
+        'source_filenames': (
+            'js/locale_admin.js',
+        ),
+        'output_filename': 'js/locale_admin.min.js',
     },
     'locale_project': {
         'source_filenames': (
