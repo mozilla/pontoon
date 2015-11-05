@@ -30,7 +30,6 @@ from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
-from django_browserid.views import Verify as BrowserIDVerifyBase
 from operator import itemgetter
 from pontoon.administration import files
 from pontoon.base import utils
@@ -607,7 +606,7 @@ def delete_translation(request, template=None):
         return HttpResponse("error")
 
     # Non-privileged users can only delete own non-approved translations
-    if not request.user.has_perm('base.can_localize'):
+    if not request.user.has_perm('base.can_translate_locale', translation.locale):
         if translation.user == request.user:
             if translation.approved is True:
                 log.error(
@@ -627,7 +626,7 @@ def delete_translation(request, template=None):
     next = get_translation(
         entity=entity, locale=locale, plural_form=plural_form)
 
-    if next.pk is not None and request.user.has_perm('base.can_localize'):
+    if next.pk is not None and request.user.has_perm('base.can_translate_locale', next.locale):
         next.approved = True
         next.approved_user = request.user
         next.approved_date = timezone.now()
@@ -700,7 +699,7 @@ def update_translation(request, template=None):
         ignore = True
 
     now = timezone.now()
-    can_localize = request.user.has_perm('base.can_localize')
+    can_translate = request.user.has_perm('base.can_translate_locale', l)
     translations = Translation.objects.filter(
         entity=e, locale=l, plural_form=plural_form)
 
@@ -716,7 +715,7 @@ def update_translation(request, template=None):
             t = translations.get(string=string)
 
             # If added by privileged user, approve and unfuzzy it
-            if can_localize:
+            if can_translate:
 
                 # Unless there's nothing to be changed
                 if t.user is not None and t.approved and t.approved_user \
@@ -780,7 +779,7 @@ def update_translation(request, template=None):
             if warnings:
                 return warnings
 
-            if can_localize:
+            if can_translate:
                 unapprove(translations)
 
             unfuzzy(translations)
@@ -788,9 +787,9 @@ def update_translation(request, template=None):
             t = Translation(
                 entity=e, locale=l, user=user, string=string,
                 plural_form=plural_form, date=now,
-                approved=can_localize)
+                approved=can_translate)
 
-            if can_localize:
+            if can_translate:
                 t.approved_user = user
                 t.approved_date = now
 
@@ -814,9 +813,9 @@ def update_translation(request, template=None):
         t = Translation(
             entity=e, locale=l, user=user, string=string,
             plural_form=plural_form, date=now,
-            approved=can_localize)
+            approved=can_translate)
 
-        if can_localize:
+        if can_translate:
             t.approved_user = user
             t.approved_date = now
 
@@ -1335,15 +1334,6 @@ def request_locale(request):
         return HttpResponse("error")
 
     return HttpResponse()
-
-
-class BrowserIDVerify(BrowserIDVerifyBase):
-    def login_success(self):
-        # Check for permission to localize if not granted on every login
-        if not self.user.has_perm('base.can_localize'):
-            utils.add_can_localize(self.user)
-
-        return super(BrowserIDVerify, self).login_success()
 
 
 def get_csrf(request, template=None):

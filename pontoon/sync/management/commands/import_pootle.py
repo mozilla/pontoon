@@ -1,7 +1,7 @@
 from bulk_update.helper import bulk_update
 from collections import Counter
 from datetime import datetime
-from django.contrib.auth.models import Permission, User
+from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils import timezone
@@ -113,13 +113,13 @@ class Command(BaseCommand):
         users_dict = {}
         users = User.objects.filter(email__in=emails)
         missing_users_list = []
-
+        locale_translators_map = dict(Locale.objects.values_list('code', 'translators_group'))
         for u in users:
             users_dict[u.email] = u
-            if not u.has_perm('base.can_localize'):
-                can_localize = Permission.objects.get(codename="can_localize")
-                u.user_permissions.add(can_localize)
-                self.stdout.write("Permission granted to user {}.".format(u.email))
+
+            if 'base.can_translate_locale' not in u.get_all_permissions():
+                u.groups.add(locale_translators_map[locale])
+                self.stdout.write("Permission granted to user {} to locale: {}.".format(u.email, locale))
 
         if users:
             bulk_update(users)
