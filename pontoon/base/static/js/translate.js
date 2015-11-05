@@ -14,7 +14,7 @@ var Pontoon = (function (my) {
           params = {
             type: type,
             locale: this.locale.code,
-            project: this.project.pk
+            project: this.project.slug
           };
 
       function strip(entities) {
@@ -387,6 +387,84 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Search list of entities using the search field value
+     */
+    searchEntities: function () {
+      var ul = $('#entitylist .wrapper > ul'),
+          val = $('#search').val();
+
+      // Search original strings and translations
+      ul
+        .find('.limited').hide()
+          .find('.string-wrapper:containsi("' + val + '")')
+        .parents('.limited').show();
+
+      // Search keys - separate selector for case-insensitivity
+      ul.find('.limited .source-string').filter(function() {
+        return this.dataset.key.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      }).parents('.limited').show();
+
+      if ($('.uneditables li:visible').length === 0) {
+        $('#not-on-page:not(".hidden")').hide();
+      } else {
+        $('#not-on-page:not(".hidden")').show();
+      }
+
+      if (ul.find('li:visible').length === 0) {
+        $('#entitylist .no-match').show();
+      } else {
+        $('#entitylist .no-match').hide();
+      }
+    },
+
+
+    /*
+     * Filter list of entities by given type
+     */
+    filterEntities: function (type) {
+      var list = $("#entitylist");
+      list.find('.entity').addClass('limited').show();
+
+      switch (type) {
+
+      case "untranslated":
+        list.find('.entity.approved, .entity.translated, .entity.fuzzy')
+          .removeClass('limited').hide();
+        break;
+
+      case "fuzzy":
+        list.find('.entity:not(".fuzzy")')
+          .removeClass('limited').hide();
+        break;
+
+      case "translated":
+        list.find('.entity:not(".translated")')
+          .removeClass('limited').hide();
+        break;
+
+      case "approved":
+        list.find('.entity:not(".approved")')
+          .removeClass('limited').hide();
+        break;
+
+      case "unchanged":
+        list.find('.entity').each(function() {
+          var entity = this.entity;
+          if (entity.original !== entity.translation[0].string) {
+            $(this).removeClass('limited').hide();
+          }
+        });
+        break;
+
+      }
+
+      this.searchEntities();
+      $('#filter .title').html($(this).text());
+      $('#filter .button').attr('class', 'button selector ' + type);
+    },
+
+
+    /*
      * Render list of entities to translate
      */
     renderEntityList: function () {
@@ -402,86 +480,21 @@ var Pontoon = (function (my) {
         };
       })();
 
-      function searchEntities() {
-        var ul = $('#entitylist .wrapper > ul'),
-            val = $('#search').val();
-
-        ul
-          .find('.limited').hide()
-            .find('.string-wrapper:containsi("' + val + '")')
-          .parents('.limited').show();
-
-        // Also search by key - separate selector for case-insensitivity
-        ul.find('.limited .source-string').filter(function() {
-          return this.dataset.key.toLowerCase().indexOf(val.toLowerCase()) > -1;
-        }).parents('.limited').show();
-
-        if ($('.uneditables li:visible').length === 0) {
-          $('#not-on-page').hide();
-        } else {
-          $('#not-on-page').show();
-        }
-
-        if (ul.find('li:visible').length === 0) {
-          $('#entitylist .no-match').show();
-        } else {
-          $('#entitylist .no-match').hide();
-        }
-      }
-
       // Search entities
       $('#search').keyup(function (e) {
         delay(function () {
-          searchEntities();
+          self.searchEntities();
         }, 200);
       });
 
       // Filter entities
       $('#filter li:not(".horizontal-separator")').click(function() {
-        var list = $("#entitylist"),
-            type = $(this).attr('class').split(' ')[0];
-
-        list.find('.entity').addClass('limited').show();
-
-        switch (type) {
-
-        case "untranslated":
-          list.find('.entity.approved, .entity.translated, .entity.fuzzy')
-            .removeClass('limited').hide();
-          break;
-
-        case "fuzzy":
-          list.find('.entity:not(".fuzzy")')
-            .removeClass('limited').hide();
-          break;
-
-        case "translated":
-          list.find('.entity:not(".translated")')
-            .removeClass('limited').hide();
-          break;
-
-        case "approved":
-          list.find('.entity:not(".approved")')
-            .removeClass('limited').hide();
-          break;
-
-        case "unchanged":
-          list.find('.entity').each(function() {
-            var entity = this.entity;
-            if (entity.original !== entity.translation[0].string) {
-              $(this).removeClass('limited').hide();
-            }
-          });
-          break;
-
-        }
-
-        searchEntities();
-        $('#filter .title').html($(this).text());
-        $('#filter .button').attr('class', 'button selector ' + type);
+        var type = $(this).attr('class').split(' ')[0];
+        self.filterEntities(type);
       });
 
       // Render
+      $('#entitylist .wrapper > ul').empty();
       $(self.entities).each(function () {
         var status = self.getEntityStatus(this),
             li = $('<li class="entity limited' +
@@ -506,13 +519,6 @@ var Pontoon = (function (my) {
           list.find('.uneditables').append(li);
         }
       });
-
-      // Move uneditable entities to a separate list
-      if (list.find('.editables li').length === 0) {
-        list.find('.editables').remove();
-      } else if ($(".entity.uneditable").length === 0) {
-        list.find('.uneditables, h2').remove();
-      }
 
       // Hover editable entities on the page
       $("#entitylist .entity:not('.uneditable')").hover(function () {
@@ -996,6 +1002,8 @@ var Pontoon = (function (my) {
       // Update graph
       $('#progress .graph').each(function() {
         var context = this.getContext('2d');
+        // Clear old canvas content to avoid aliasing
+        context.clearRect(0, 0, this.width, this.height);
         context.lineWidth = this.width/11;
 
         var x = this.width/2,
@@ -1029,7 +1037,7 @@ var Pontoon = (function (my) {
 
       // Update parts menu
       if (all && !this.project.search) {
-        var details = Pontoon.getProjectDetails(),
+        var details = Pontoon.getProjectData('details'),
             path = this.entities[0].path;
 
         $(details[this.locale.code.toLowerCase()]).each(function() {
@@ -1244,6 +1252,22 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Update part selector
+     *
+     * title Part title
+     */
+    updatePartSelector: function (title) {
+      $('.part .selector')
+        .attr('title', title)
+        .find('.icon')
+          .addClass('fa-file-o').removeClass('fa-search').end()
+        .find('.title')
+          // Only show filename instead of full path
+          .html(title.replace(/^.*[\\\/]/, ''));
+    },
+
+
+    /*
      * Attach event handlers to main toolbar elements
      */
     attachMainHandlers: function () {
@@ -1259,7 +1283,7 @@ var Pontoon = (function (my) {
         // Special case: menu in menu
         if ($(e.target).is('.hotkeys') || $(e.target).parent().is('.hotkeys')) {
           $('#hotkeys').show();
-          $('#iframe-cover').show(); // iframe fix
+          $('#iframe-cover:not(".hidden")').show(); // iframe fix
         }
       });
 
@@ -1271,6 +1295,7 @@ var Pontoon = (function (my) {
           self.postMessage("MODE", "Advanced");
         } else {
           $('#sidebar').show();
+          self.searchEntities();
           $('#source, #iframe-cover').css('margin-left', $('#sidebar').width());
           self.postMessage("MODE", "Basic");
         }
@@ -1293,7 +1318,7 @@ var Pontoon = (function (my) {
           .html(name)
           .data('slug', slug);
 
-        var details = Pontoon.getProjectDetails(),
+        var details = Pontoon.getProjectData('details'),
             locales = Object.keys(details),
             menu = $('.locale .menu'),
             locale = menu.siblings('.selector')
@@ -1323,7 +1348,7 @@ var Pontoon = (function (my) {
 
       // Show only locales available for the selected project
       $('.locale .selector').click(function () {
-        var details = Pontoon.getProjectDetails(),
+        var details = Pontoon.getProjectData('details'),
             menu = $(this).siblings('.menu');
 
         $('.locale .search-wrapper > a').removeClass('back').find('span')
@@ -1354,20 +1379,15 @@ var Pontoon = (function (my) {
           $('.locale .selector').html(language);
         }
 
-        var details = Pontoon.getProjectDetails(),
+        var details = Pontoon.getProjectData('details'),
             locales = Object.keys(details),
             menu = $('.locale .menu'),
-            locale = menu.siblings('.selector')
-              .find('.code').html().toLowerCase();
+            locale = $.trim(menu.siblings('.selector')
+              .find('.code').html().toLowerCase());
 
         // Fallback if selected part not available for the selected project
         var defaultPart = details[locale][0]['resource__path'];
-        $('header .part').find('.selector')
-          .attr('title', defaultPart)
-          .find('.icon')
-            .addClass('fa-file-o').removeClass('fa-search').end()
-          .find('.title')
-            .html(defaultPart.replace(/^.*[\\\/]/, ''));
+        self.updatePartSelector(defaultPart);
 
         // Switch to Resources tab
         $('.part .menu nav a[href=#resources]').click();
@@ -1382,7 +1402,7 @@ var Pontoon = (function (my) {
           .find('span').toggleClass('fa-plus-square fa-chevron-left');
 
         if ($(this).is('.back')) {
-          var details = Pontoon.getProjectDetails(),
+          var details = Pontoon.getProjectData('details'),
               menu = $(this).parents('.menu');
 
           menu.find('li').addClass('limited').show();
@@ -1399,9 +1419,10 @@ var Pontoon = (function (my) {
 
       // Show only parts available for the selected project
       $('.part .selector').click(function () {
-        var details = Pontoon.getProjectDetails(),
+        var details = self.getProjectData('details'),
             menu = $(this).siblings('.menu').find('.resources ul'),
-            locale = $.trim($('.locale .selector .code').html().toLowerCase());
+            locale = $.trim($('.locale .selector .code').html().toLowerCase()),
+            currentProject = self.getProjectData('slug') === self.project.slug;
 
         menu.find('li:not(".no-match")').remove();
         $(details[locale]).each(function() {
@@ -1409,7 +1430,7 @@ var Pontoon = (function (my) {
               title = this.resource__path,
               percent = '0%';
 
-          if ($('#server').data('part') === title) {
+          if (currentProject && self.part === title) {
             cls = ' class="current"';
           }
 
@@ -1432,12 +1453,7 @@ var Pontoon = (function (my) {
       // Parts menu handler
       $('.part .menu').on('click', '.resources li:not(".no-match")', function (e) {
         var title = $(this).find('span:first').html();
-        $('.part .selector')
-          .attr('title', title)
-          .find('.icon')
-            .addClass('fa-file-o').removeClass('fa-search').end()
-          .find('.title')
-            .html(title.replace(/^.*[\\\/]/, ''));
+        self.updatePartSelector(title);
 
         // Hide the parts menu
         $('body').click();
@@ -1448,42 +1464,26 @@ var Pontoon = (function (my) {
         e.preventDefault();
         e.stopPropagation();
 
-        var locale = $('.locale .selector .language').attr('class').split(' ')[1],
-            project = $('.project .selector .title').data('slug'),
-            part = $('.part .selector:visible').attr('title'),
-            search = self.project.search,
-            loc = '/' + locale + '/' + project + '/' + part;
-
-        if (!part) {
-          loc += 'search/' + search;
-        }
-        window.location = loc;
+        var data = self.pushState();
+        self.initialize();
       });
 
       // Profile menu
       // Register handlers to prep django-browserid before binding menu.
       django_browserid.registerWatchHandlers(function() {
         $('#profile .menu li').click(function (e) {
+          if ($(this).has('a').length) {
+            return;
+          }
           e.preventDefault();
 
-          if ($(this).is(".sign-out")) {
-            window.location = '/signout/';
-
-          } else if ($(this).is(".sign-in")) {
+          if ($(this).is(".sign-in")) {
             self.startLoader();
             django_browserid.login().then(function(verifyResult) {
-              var redirect = $('#server').data('redirect');
-              if (redirect) {
-                window.location = redirect;
-              } else {
-                window.location.reload();
-              }
+              window.location.reload();
             }, function(jqXHR) {
               self.endLoader('Oops, something went wrong.', 'error');
             });
-
-          } else if ($(this).data("url")) {
-            window.location = $(this).data('url');
 
           } else if ($(this).is(".hotkeys")) {
             $('#hotkeys').show();
@@ -1555,19 +1555,54 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Load project details to main menu
+     * Update links in the profile menu
      */
-    loadMainMenu: function () {
-      $('.project .menu .name:not([data-details])').each(function() {
-        $.ajax({
-          url: '/projects/' + $(this).data('slug') + '/details/',
-          success: function(data) {
-            $('.project .menu .name[data-slug=' + data.slug + ']')
-              .data('details', data.details)
-              .parent('li').show();
-          }
-        });
+    updateProfileMenu: function () {
+      $('#profile .admin-current-project a').attr('href', '/admin/projects/' + this.project.slug + '/');
+    },
+
+
+    /*
+     * Show project info if available
+     */
+    updateProjectInfo: function () {
+      var content = this.project.info;
+      $('#info').hide().toggle(content !== "").find('.content').html(content);
+    },
+
+
+    /*
+     * Load project details and mark current project & locale
+     */
+    updateMainMenu: function () {
+      $('.project .menu .name').each(function() {
+        if (!$(this).data('details')) {
+          $.ajax({
+            url: '/projects/' + $(this).data('slug') + '/details/',
+            success: function(data) {
+              $('.project .menu .name[data-slug=' + data.slug + ']')
+                .data('details', data.details)
+                .parent('li').show();
+            }
+          });
+        }
       });
+
+      $('.project .menu li .name[data-slug=' + this.project.slug + '], ' +
+        '.locale .menu li .language[data-code=' + this.locale.code + ']')
+        .parent().addClass('current').siblings().removeClass('current');
+    },
+
+
+    /*
+     * Show/hide elements needed for in-place localization
+     */
+    toggleInplaceElements: function() {
+      var inplaceElements = $('#source, #iframe-cover, #switch, #drag, #not-on-page, #profile .html').addClass('hidden').hide();
+
+      if (this.project.win) {
+        inplaceElements.removeClass('hidden').show();
+      }
     },
 
 
@@ -1575,24 +1610,24 @@ var Pontoon = (function (my) {
      * Create user interface
      */
     createUI: function () {
-      var self = this;
-
       // Show message if provided
       if ($('.notification li').length) {
         $('.notification').css('opacity', 100);
       }
 
-      self.loadMainMenu();
-      self.attachMainHandlers();
-      self.renderEntityList();
-      self.updateProgress();
-      self.attachEditorHandlers();
+      this.toggleInplaceElements();
+      this.updateMainMenu();
+      this.updateProjectInfo();
+      this.updateProfileMenu();
+      this.renderEntityList();
+      this.filterEntities('all');
+      this.updateProgress();
 
       $("#project-load").hide();
       $("body > header > .container").show();
 
       // If 2-column layout opened by default, open first entity in the editor
-      if (self.app.advanced) {
+      if (this.app.advanced) {
         $("#entitylist .entity:first").mouseover().click();
       }
     },
@@ -1631,6 +1666,18 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Get iframe width given the screen size and requested value
+     */
+    getProjectWidth: function () {
+      var width = this.getProjectData('width') || false;
+      if (($(window).width() - width) < 700) {
+        width = false;
+      }
+      return width;
+    },
+
+
+    /*
      * Handle messages from project code
      */
     receiveMessage: function (e) {
@@ -1643,9 +1690,10 @@ var Pontoon = (function (my) {
 
         case "READY":
           var advanced = false,
-              websiteWidth = $('#server').data('width');
+              websiteWidth = Pontoon.getProjectWidth();
 
           $('body > header').show();
+
           if (websiteWidth) {
             var windowWidth = $(window).width(),
                 sidebarWidth = windowWidth - websiteWidth;
@@ -1660,12 +1708,17 @@ var Pontoon = (function (my) {
               $('#switch').addClass('opened');
               $('#editor').css('left', sidebarWidth);
             }
+
+          } else if ($('#sidebar:visible').length) {
+            $('#sidebar').removeClass('advanced').css('width', '350px').hide();
+            $('#switch').removeClass('opened');
           }
 
-          $('#source').show().css('margin-left', $('#sidebar:visible').width());
+          $('#source, #iframe-cover').css('margin-left', $('#sidebar:visible').width() || 0);
+          $('#source').show();
           Pontoon.paths = message.value;
           Pontoon.resizeIframe();
-          Pontoon.initialize(advanced, projectWindow);
+          Pontoon.getEntities(advanced, projectWindow);
           break;
 
         case "DATA":
@@ -1685,7 +1738,7 @@ var Pontoon = (function (my) {
           break;
 
         case "SWITCH":
-          $("#switch").click();
+          $('#switch').click();
           break;
 
         case "HOVER":
@@ -1829,9 +1882,9 @@ var Pontoon = (function (my) {
      * Create Pontoon object data
      *
      * advanced Is advanced (2-column) mode on?
-     * project Website window object
+     * projectWindow Website window object
      */
-    createObject: function (advanced, project) {
+    createObject: function (advanced, projectWindow) {
       var self = this;
 
       this.app = {
@@ -1841,19 +1894,19 @@ var Pontoon = (function (my) {
       };
 
       this.project = {
-        win: project,
+        win: projectWindow,
         url: "",
         title: "",
-        pk: $('#server').data('id'),
-        width: (
-          $('#server').data('width') &&
-          ($(window).width() - $('#server').data('width')) >= 700) ?
-          $('#server').data('width') : false,
-        links: $('#server').data('links'),
+        slug: self.getProjectData('slug'),
+        info: self.getProjectData('info'),
+        width: self.getProjectWidth(),
+        links: self.getProjectData('links') === 'True' ? true : false,
         search: window.location.search
       };
 
-      this.locale = $('#server').data('locale');
+      this.part = $('.part .selector').attr('title');
+
+      this.locale = self.getLocaleData();
 
       this.user = {
         email: $('#server').data('email') || '',
@@ -1873,17 +1926,21 @@ var Pontoon = (function (my) {
         .find('.no-match').show();
     },
 
+
     /*
-     * Initialize Pontoon: load entities, store data, prepare UI
+     * Load entities, store data, prepare UI
      */
-    initialize: function(advanced, project) {
+    getEntities: function(advanced, projectWindow) {
       var self = this,
-          search = window.location.search.substring(1),
+          state = history.state,
           params =
-            'project=' + $('#server').data('id') +
-            '&locale=' + $('#server').data('locale').code +
-            '&paths=' + JSON.stringify([$('header .part .selector').attr('title')]) +
-            '&' + search;
+            'project=' + state.project +
+            '&locale=' + state.locale +
+            '&paths=' + JSON.stringify([state.paths]);
+
+      if (!state.paths) {
+        params += '&' + state.search.substring(1);
+      }
 
       $.ajax({
         url: '/get-entities/',
@@ -1898,29 +1955,25 @@ var Pontoon = (function (my) {
             }
 
             // Projects with in place translation support
-            if (project && !search && self.entities.length) {
-              self.createObject(advanced, project);
+            if (projectWindow && !state.search && self.entities.length) {
+              self.createObject(advanced, projectWindow);
 
               self.postMessage("INITIALIZE", {
                 path: self.app.path,
                 links: self.project.links,
                 entities: self.entities,
-                pk: self.project.pk,
+                slug: self.project.slug,
                 locale: self.locale,
                 user: self.user
-              }, null, $('#server').data('url'));
+              }, null, projectWindow.location.href);
 
               self.makeIframeResizable();
 
             // Projects without in place translation support
             } else {
               $('body > header').show();
-              $('#sidebar').addClass('advanced').css('width', '100%');
-              $('#switch, #drag').remove();
+              $('#sidebar').addClass('advanced').css('width', '100%').show();
               $('#editor').addClass('opened');
-
-              // When searching projects with in-place support
-              $('#not-on-page').hide();
 
               self.createObject(true);
 
@@ -1941,6 +1994,95 @@ var Pontoon = (function (my) {
           }
         }
       });
+    },
+
+
+    /*
+     * Get data-* attribute value of the currently selected locale
+     */
+    getLocaleData: function(attribute) {
+      var code = $.trim($('.locale .selector .code').html());
+      return $('.locale .menu li .language[data-code=' + code + ']').data(attribute);
+    },
+
+
+    /*
+     * Get data-* attribute value of the currently selected project
+     */
+    getProjectData: function(attribute) {
+      var slug = $('.project .button .title').data('slug');
+      return $('.project .menu li .name[data-slug=' + slug + ']').data(attribute);
+    },
+
+
+    /*
+     * Initialize translate view
+     */
+    initialize: function() {
+      var self = this;
+
+      // Reset loader
+      $('#project-load').show()
+        .find('.text').css('opacity', 0);
+
+      // Start differently, depending on project URL
+      var parts = self.getProjectData('details')[history.state.locale.toLowerCase()],
+          part = $.grep(parts, function (e) { return e.resource__path === history.state.paths; });
+
+      // Fallback if no match found for part in the URL
+      if (!part.length) {
+        part = parts[0];
+        Pontoon.updatePartSelector(part.resource__path);
+      } else {
+        part = part[0];
+      }
+
+      var url = part.url;
+
+      if (url) {
+        $('#source').attr('src', url);
+        window.addEventListener("message", self.receiveMessage, false);
+
+        var i = 0,
+            interval = 0;
+
+        // If no READY (Pontoon.paths) received for 10 seconds
+        interval = setInterval(function() {
+          i++;
+          if (i > 100 && !self.paths) {
+            clearInterval(interval);
+            window.removeEventListener("message", self.receiveMessage, false);
+            return self.getEntities();
+          }
+        }, 100);
+
+      } else {
+        self.getEntities();
+      }
+
+      // Show potentially amusing message if loading takes more time
+      setTimeout(function() {
+        $('#project-load .text').animate({opacity: 1});
+      }, 3000);
+    },
+
+
+    pushState: function() {
+      var state = {
+        project: $('.project .selector .title').data('slug'),
+        locale: $.trim($('.locale .selector .code').html()),
+        paths: $('.part .selector').attr('title'),
+        search: window.location.search
+      },
+      ending = state.paths ? state.paths + '/' : 'search' + '/' + state.search,
+      url = '/' + state.locale + '/' + state.project + '/' + ending;
+
+      // Keep homepage URL
+      if (window.location.pathname === '/' && state.project === 'pontoon-intro') {
+        url = '/';
+      }
+
+      history.pushState(state, '', url);
     }
 
   });
@@ -1950,35 +2092,21 @@ var Pontoon = (function (my) {
 
 /* Main code */
 $(function() {
+  Pontoon.attachMainHandlers();
+  Pontoon.attachEditorHandlers();
 
-  // Start differently, depending on project URL
-  var url = $('#server').data('url');
+  window.onpopstate = function(e) {
+    // Update main menu
+    $('.project .menu li [data-slug="' + e.state.project + '"]').parent().click();
+    $('.locale .menu li .language.' + e.state.locale.toLowerCase()).parent().click();
+    if (e.state.paths) {
+      Pontoon.updatePartSelector(e.state.paths);
+    }
+    // TODO: update search
 
-  if (url) {
-    $('#source').attr('src', url);
-    window.addEventListener("message", Pontoon.receiveMessage, false);
-
-    var i = 0,
-        interval = 0;
-
-    // If no READY (Pontoon.paths) received for 10 seconds
-    interval = setInterval(function() {
-      i++;
-      if (i > 100 && !Pontoon.paths) {
-        clearInterval(interval);
-        $('#source, #iframe-cover, #not-on-page, #profile .html').remove();
-        window.removeEventListener("message", Pontoon.receiveMessage, false);
-        return Pontoon.initialize();
-      }
-    }, 100);
-
-  } else {
     Pontoon.initialize();
-  }
+  };
 
-  // Show potentially amusing message if loading takes more time
-  setTimeout(function() {
-    $('#project-load .text').animate({opacity: 1});
-  }, 3000);
-
+  Pontoon.pushState();
+  Pontoon.initialize();
 });

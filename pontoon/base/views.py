@@ -11,12 +11,10 @@ import urllib
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
 from django.core.validators import validate_comma_separated_integer_list
 from django.db import transaction
 from django.db.models import Count, F, Q
@@ -25,7 +23,6 @@ from django.http import (
     Http404,
     HttpResponse,
     HttpResponseBadRequest,
-    HttpResponseRedirect,
 )
 
 from django.shortcuts import get_object_or_404, render
@@ -44,7 +41,6 @@ from pontoon.base.models import (
     Project,
     Resource,
     Stats,
-    Subpage,
     Translation,
     UserProfile,
     get_locales_with_project_stats,
@@ -209,59 +205,21 @@ def locale_project(request, locale, slug):
     return render(request, 'locale_project.html', data)
 
 
-def translate(request, locale, slug, part, template='translate.html'):
+def translate(request, locale, slug, part):
     """Translate view."""
 
-    invalid_locale = invalid_project = False
-
-    # Validate locale
-    try:
-        l = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist:
-        invalid_locale = True
-
-    # Validate project
-    try:
-        p = Project.objects.get(
-            disabled=False,
-            slug=slug, pk__in=Resource.objects.values('project'))
-    except Project.DoesNotExist:
-        invalid_project = True
-
-    if invalid_locale:
-        if invalid_project:
-            raise Http404
-        else:
-            messages.error(request, "Oops, locale is not supported.")
-            request.session['translate_error'] = {
-                'none': None,
-            }
-            return HttpResponseRedirect(reverse('pontoon.home'))
-
-    if invalid_project:
-        messages.error(request, "Oops, project could not be found.")
-        request.session['translate_error'] = {
-            'none': None,
-        }
-        return HttpResponseRedirect(reverse('pontoon.home'))
-
-    # Validate project locales
-    if p.locales.filter(code__iexact=locale).count() == 0:
-        request.session['translate_error'] = {
-            'none': None,
-        }
-        messages.error(
-            request, "Oops, locale is not supported for this project.")
-        return HttpResponseRedirect(reverse('pontoon.home'))
+    # Validate locale and project
+    l = get_object_or_404(Locale, code__iexact=locale)
+    p = get_object_or_404(
+        Project.objects.distinct(),
+        slug=slug,
+        disabled=False,
+        resources__isnull=False
+    )
 
     # Check if user authenticated
-    if not p.pk == 1:
-        if not request.user.is_authenticated():
-            messages.error(request, "You need to sign in first.")
-            request.session['translate_error'] = {
-                'redirect': request.get_full_path(),
-            }
-            return HttpResponseRedirect(reverse('pontoon.home'))
+    if not request.user.is_authenticated() and not p.pk == 1:
+        return render(request, '403.html', status=403)
 
     projects = (
         Project.objects.filter(
@@ -273,47 +231,15 @@ def translate(request, locale, slug, part, template='translate.html'):
     )
 
     data = {
-        'accept_language': utils.get_project_locale_from_request(
-            request, Locale.objects),
+        'accept_language': utils.get_project_locale_from_request(request, Locale.objects),
         'locale': l,
         'locales': Locale.objects.all(),
-        'page_url': p.url,
+        'part': part,
         'project': p,
         'projects': projects,
     }
 
-    # Set subpage
-    pages = Subpage.objects.filter(project=p)
-    if len(pages) > 0:
-        try:
-            page = pages.get(name=part)
-
-        # If page not specified or doesn't exist
-        except Subpage.DoesNotExist:
-            page = pages[0]
-            locale_pages = pages.filter(resources__stats__locale=l)
-            if locale_pages:
-                page = locale_pages[0]
-
-        data['page_url'] = page.url
-        data['part'] = page.name
-
-    # Set path if subpages not defined
-    else:
-        paths = (Resource.objects
-                    .filter(project=p, entity_count__gt=0, stats__locale=l)
-                    .order_by('path')
-                    .values_list('path', flat=True))
-
-        if paths:
-            data['part'] = part if part in paths else paths[0]
-
-    # Set error data
-    translate_error = request.session.pop('translate_error', {})
-    if translate_error:
-        data['redirect'] = translate_error.get('redirect', None)
-
-    return render(request, template, data)
+    return render(request, 'translate.html', data)
 
 
 @login_required(redirect_field_name='', login_url='/403')
@@ -488,7 +414,7 @@ def entities(request, template=None):
     log.debug("Paths: " + str(paths))
 
     try:
-        project = Project.objects.get(pk=project)
+        project = Project.objects.get(slug=project)
     except Entity.DoesNotExist as e:
         log.error(str(e))
         return HttpResponse("error")
@@ -1203,12 +1129,12 @@ def download(request, template=None):
             log.error(str(e))
             raise Http404
     try:
-        p = Project.objects.get(pk=project)
+        p = Project.objects.get(slug=project)
     except Project.DoesNotExist as e:
         log.error(e)
         raise Http404
 
-    filename = '%s-%s' % (p.slug, locale)
+    filename = '%s-%s' % (project, locale)
     response = HttpResponse()
 
     if format == 'html':

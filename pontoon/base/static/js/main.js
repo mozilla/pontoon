@@ -3,22 +3,6 @@ var Pontoon = (function (my) {
   return $.extend(true, my, {
 
     /*
-     * Get details available for selected project
-     */
-    getProjectDetails: function() {
-      var resources = null;
-
-      $('.project .menu li .name').each(function() {
-        if ($.trim($('.project .button .title').html()) === $.trim($(this).html())) {
-          resources = $(this).data('details');
-          return false;
-        }
-      });
-
-      return resources;
-    },
-
-    /*
      * Close notification
      */
     closeNotification: function () {
@@ -387,10 +371,10 @@ $(function() {
       e.stopPropagation();
       $('body:not(".admin-project") .menu, body:not(".admin-project") .popup').hide();
       $('.select').removeClass('opened');
-      $('#iframe-cover').hide(); // iframe fix
+      $('#iframe-cover:not(".hidden")').hide(); // iframe fix
       $(this).siblings('.menu').show().end()
              .parents('.select').addClass('opened');
-      $('#iframe-cover').show(); // iframe fix
+      $('#iframe-cover:not(".hidden")').show(); // iframe fix
       $('body:not(".admin-project") .menu:visible input[type=search]').focus();
     }
   });

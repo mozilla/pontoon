@@ -742,7 +742,7 @@
             win: window,
             url: window.location.href,
             title: document.title.split("-->")[1] || document.title,
-            pk: message.value.pk,
+            slug: message.value.slug,
             links: message.value.links
           },
           entities: message.value.entities,

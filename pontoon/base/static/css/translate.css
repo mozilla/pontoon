@@ -19,9 +19,9 @@ mark.placeable {
   height: 100%;
   overflow: hidden;
   position: fixed;
-  top: 0;
+  top: 60px;
   width: 100%;
-  z-index: 20;
+  z-index: 14;
 }
 
 #project-load p {
@@ -433,6 +433,10 @@ body > header .notification li {
   max-height: none;
 }
 
+#profile .menu li a {
+  display: block;
+}
+
 #profile .menu li.download.hover {
   color: inherit;
   cursor: inherit;
@@ -458,6 +462,10 @@ body > header .notification li {
 #profile.select .popup {
   right: 5px;
   width: 300px;
+}
+
+#info {
+  display: none;
 }
 
 #info .button {

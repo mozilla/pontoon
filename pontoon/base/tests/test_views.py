@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.test import RequestFactory
 from django.utils.timezone import now
@@ -10,7 +9,6 @@ from mock import patch
 from pontoon.base.models import Project
 from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import (
-    assert_redirects,
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
@@ -36,16 +34,14 @@ class TranslateTests(TestCase):
         ResourceFactory.create(project=project)
 
         response = self.client.get('/invalid-locale/valid-project/path/')
-        assert_redirects(response, reverse('pontoon.home'))
-        assert_equal(self.client.session['translate_error'], {'none': None})
+        assert_equal(response.status_code, 404)
 
     def test_invalid_project(self):
         """If the project is invalid, redirect home."""
         LocaleFactory.create(code='fakelocale')
 
         response = self.client.get('/fakelocale/invalid-project/path/')
-        assert_redirects(response, reverse('pontoon.home'))
-        assert_equal(self.client.session['translate_error'], {'none': None})
+        assert_equal(response.status_code, 404)
 
     def test_locale_not_available(self):
         """
@@ -56,8 +52,7 @@ class TranslateTests(TestCase):
         ProjectFactory.create(slug='valid-project')
 
         response = self.client.get('/fakelocale/valid-project/path/')
-        assert_redirects(response, reverse('pontoon.home'))
-        assert_equal(self.client.session['translate_error'], {'none': None})
+        assert_equal(response.status_code, 404)
 
     def test_not_authed_public_project(self):
         """
@@ -88,62 +83,7 @@ class TranslateTests(TestCase):
         ResourceFactory.create(project=project)
 
         response = self.client.get('/fakelocale/valid-project/path/')
-        assert_redirects(response, reverse('pontoon.home'))
-        assert_equal(self.client.session['translate_error'], {'redirect': '/fakelocale/valid-project/path/'})
-
-    def test_no_subpage_multiple_stats_in_current_locale(self):
-        """
-        If there are multiple stats for a resource available in the current
-        locale, and no subpages, set the part to the resource path.
-        """
-        locale = LocaleFactory.create()
-        project = ProjectFactory.create(locales=[locale])
-
-        resource1 = ResourceFactory.create(project=project, path='foo1.lang', entity_count=1)
-        resource2 = ResourceFactory.create(project=project, path='foo2.lang', entity_count=1)
-        StatsFactory.create(resource=resource1, locale=locale)
-        StatsFactory.create(resource=resource2, locale=locale)
-
-        self.client_login()
-        url = '/' + '/'.join([locale.code, project.slug, resource1.path]) + '/'
-        with patch('pontoon.base.views.render', wraps=render) as mock_render:
-            self.client.get(url)
-            assert_equal(mock_render.call_args[0][2]['part'], 'foo1.lang')
-
-    def test_no_subpage_one_stats_in_current_locale(self):
-        """
-        If there is just one stats for a resource available in the current
-        locale, and no subpages, set the part to the resource path.
-        """
-        locale = LocaleFactory.create()
-        project = ProjectFactory.create(locales=[locale])
-
-        resource = ResourceFactory.create(project=project, path='foo.lang', entity_count=1)
-        StatsFactory.create(resource=resource, locale=locale)
-
-        self.client_login()
-        url = '/{}/'.format('/'.join([locale.code, project.slug, resource.path]))
-        with patch('pontoon.base.views.render', wraps=render) as mock_render:
-            self.client.get(url)
-            assert_equal(mock_render.call_args[0][2]['part'], 'foo.lang')
-
-    def test_no_subpage_no_stats_in_current_locale(self):
-        """
-        If there are stats for a resource available in other locales but
-        not in the current one, and no subpages, do not set ctx['part'].
-        """
-        locale, locale_no_stats = LocaleFactory.create_batch(2)
-        project = ProjectFactory.create(locales=[locale, locale_no_stats])
-
-        resource = ResourceFactory.create(project=project, path='foo.lang', entity_count=1)
-        ResourceFactory.create(project=project, entity_count=1)
-        StatsFactory.create(resource=resource, locale=locale)
-
-        self.client_login()
-        url = '/{}/'.format('/'.join([locale_no_stats.code, project.slug, resource.path]))
-        with patch('pontoon.base.views.render', wraps=render) as mock_render:
-            self.client.get(url)
-            assert_true('part' not in mock_render.call_args[0][2])
+        assert_equal(response.status_code, 403)
 
 
 class ContributorsTests(TestCase):
