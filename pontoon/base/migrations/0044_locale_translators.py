@@ -11,10 +11,10 @@ def create_translators(apps, schema_editor):
     User = apps.get_model('auth', 'User')
 
     contributors_locale = (
-        User.objects.filter(translation__approved=True)
-            .annotate(translated_locales=models.Count('translation__locale', distinct=True),
-                approved_translations=models.Count('translation__pk', distinct=True))
-            .filter(approved_translations__gte=1, translated_locales=1)
+        User.objects
+            .filter(translation__approved=True, user_permissions__codename="can_localize")
+            .annotate(translated_locales=models.Count('translation__locale', distinct=True))
+            .filter(translated_locales=1)
     )
 
     for contributor in contributors_locale:
