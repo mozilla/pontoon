@@ -18,6 +18,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_comma_separated_integer_list
+from django.db import transaction
 from django.db.models import Count, F, Q
 
 from django.http import (
@@ -97,6 +98,7 @@ def locale(request, locale, template='locale.html'):
 
 @login_required(redirect_field_name='', login_url='/403')
 @permission_required_or_403('base.can_translate_locale', (Locale, 'code', 'locale'))
+@transaction.atomic
 def locale_admin(request, locale):
     l = get_object_or_404(Locale, code__iexact=locale)
     users_translators = l.translators_group.user_set.all()
@@ -624,6 +626,7 @@ def get_translation_history(request, template=None):
         return HttpResponse("error")
 
 
+@transaction.atomic
 def delete_translation(request, template=None):
     """Delete given translation."""
     log.debug("Delete given translation.")
@@ -680,6 +683,7 @@ def delete_translation(request, template=None):
 
 
 @anonymous_csrf_exempt
+@transaction.atomic
 def update_translation(request, template=None):
     """Update entity translation for the specified locale and user."""
     log.debug("Update entity translation for the specified locale and user.")
@@ -1289,6 +1293,7 @@ def save_to_transifex(request, template=None):
 
 
 @login_required(redirect_field_name='', login_url='/403')
+@transaction.atomic
 def quality_checks_switch(request):
     """Turn quality checks on/off for the current user."""
     log.debug("Turn quality checks on/off for the current user.")
@@ -1305,6 +1310,7 @@ def quality_checks_switch(request):
 
 
 @login_required(redirect_field_name='', login_url='/403')
+@transaction.atomic
 def save_user_name(request):
     """Save user name."""
     log.debug("Save user name.")
