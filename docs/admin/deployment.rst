@@ -10,14 +10,27 @@ below assume you've already created an app and have installed the
 
 Buildpack
 ---------
-Pontoon uses `heroku-buildpack-multi`_ as its buildpack. You can set this (and
-pin it to the correct version) with the following toolbelt command:
+Pontoon uses several buildpacks in a specific order. They are (in order):
+
+1. `heroku-buildpack-apt`_ for installing Subversion.
+2. `heroku-buildpack-ssh`_ for setting up the SSH keys necessary for committing
+   to version control.
+3. The official ``heroku/nodejs`` buildpack for installing Node.js programs for
+   pre-processing frontend assets.
+3. The official ``heroku/python`` buildpack as our primary buildpack.
+
+You can set these buildpacks on your app with the following toolbelt commands:
 
 .. code-block:: bash
 
-   heroku buildpacks:set https://github.com/heroku/heroku-buildpack-multi.git#26fa21ac7156e63d3d36df1627329aa57f8f137c
+   # Note that we use add and --index 1 to append to the top of the list.
+   heroku buildpacks:set heroku/python
+   heroku buildpacks:add --index 1 heroku/nodejs
+   heroku buildpacks:add --index 1 https://github.com/Osmose/heroku-buildpack-ssh.git#v0.1
+   heroku buildpacks:add --index 1 https://github.com/mozilla/heroku-buildpack-apt.git#v0.1
 
-.. _heroku-buildpack-multi: https://github.com/heroku/heroku-buildpack-multi
+.. _heroku-buildpack-apt: https://github.com/mozilla/heroku-buildpack-apt
+.. _heroku-buildpack-ssh: https://github.com/Osmose/heroku-buildpack-ssh
 
 Environment Variables
 ---------------------
