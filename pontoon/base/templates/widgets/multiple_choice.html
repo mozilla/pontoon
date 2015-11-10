@@ -1,0 +1,17 @@
+{% macro select(identifier, choices, label, description, extra=None) %}
+<div class="user select {{ identifier }}">
+  <label for="{{ identifier }}">{{ label|safe }}</label>
+  <div class="menu">
+    <div class="search-wrapper clearfix">
+      <div class="icon fa fa-search"></div>
+      <input id="{{ identifier }}" type="search" autocomplete="off">
+    </div>
+    <ul>
+      {% for user in choices %}
+      <li class="clearfix{% if user in extra %} contributor{% endif %}" data-id="{{ user.id }}" title="{{ user.first_name }}"><span class="arrow fa"></span>{{ user.email }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <p class="intro">{{ description }}</p>
+</div>
+{% endmacro %}

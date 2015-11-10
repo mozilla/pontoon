@@ -99,15 +99,14 @@ def locale(request, locale, template='locale.html'):
 @login_required(redirect_field_name='', login_url='/403')
 @permission_required_or_403('base.can_translate_locale', (Locale, 'code', 'locale'))
 @transaction.atomic
-def locale_admin(request, locale):
+def locale_manage(request, locale):
     l = get_object_or_404(Locale, code__iexact=locale)
-    users_translators = l.translators_group.user_set.all()
 
-    if request.method == 'POST':
-        current = set(users_translators.values_list("id", flat=True))
-        selected = request.POST['users-selected']
-
+    def update_group(group, name):
+        current = set(group.user_set.values_list("id", flat=True))
+        selected = request.POST[name]
         new = set()
+
         if selected:
             try:
                 # TODO: Use ModelMultipleChoiceField
@@ -118,21 +117,27 @@ def locale_admin(request, locale):
                 return HttpResponseBadRequest(e)
 
         if current != new:
-            l.translators_group.user_set = User.objects.filter(pk__in=new)
-            l.translators_group.save()
+            group.user_set = User.objects.filter(pk__in=new)
+            group.save()
 
-    users_translators = l.translators_group.user_set.all()
-    users_all = User.objects.exclude(pk__in=users_translators).exclude(email="")
-    users_contributors = User.translators.filter(translation__locale=l).distinct()
+    if request.method == 'POST':
+        update_group(l.translators_group, 'translators')
+        update_group(l.managers_group, 'managers')
+
+    managers = l.managers_group.user_set.all()
+    translators = l.translators_group.user_set.exclude(pk__in=managers).all()
+    all_users = User.objects.exclude(pk__in=managers).exclude(pk__in=translators).exclude(email="")
+    contributors = User.translators.filter(translation__locale=l).distinct()
 
     data = {
         'locale': l,
-        'users_translators': users_translators,
-        'users_all': users_all,
-        'users_contributors': users_contributors,
+        'all_users': all_users,
+        'contributors': contributors,
+        'translators': translators,
+        'managers': managers,
     }
 
-    return render(request, 'locale_admin.html', data)
+    return render(request, 'locale_manage.html', data)
 
 
 def locales(request):
