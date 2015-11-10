@@ -6,11 +6,14 @@ before_install:
   - git submodule update --init --recursive
 install:
   - pip install -r requirements.txt
+  - pip install coveralls coverage
 before_script:
   - psql -c 'create database pontoon;' -U postgres
 script:
   - pylama
-  - python manage.py test
+  - python manage.py test --with-coverage
+after_success:
+  - coveralls
 addons:
   postgresql: "9.4"
 env:

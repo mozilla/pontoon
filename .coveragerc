@@ -1,0 +1,4 @@
+[run]
+branch = true
+include = pontoon/*
+omit = *migrations*
