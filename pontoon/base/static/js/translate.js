@@ -1623,8 +1623,8 @@ var Pontoon = (function (my) {
       this.filterEntities('all');
       this.updateProgress();
 
+      $("#progress").show();
       $("#project-load").hide();
-      $("body > header > .container").show();
 
       // If 2-column layout opened by default, open first entity in the editor
       if (this.app.advanced) {
@@ -1691,8 +1691,6 @@ var Pontoon = (function (my) {
         case "READY":
           var advanced = false,
               websiteWidth = Pontoon.getProjectWidth();
-
-          $('body > header').show();
 
           if (websiteWidth) {
             var windowWidth = $(window).width(),
@@ -1971,7 +1969,6 @@ var Pontoon = (function (my) {
 
             // Projects without in place translation support
             } else {
-              $('body > header').show();
               $('#sidebar').addClass('advanced').css('width', '100%').show();
               $('#editor').addClass('opened');
 
