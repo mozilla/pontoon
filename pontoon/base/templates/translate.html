@@ -9,14 +9,6 @@
      data-site-url="{{ settings.SITE_URL }}"
      {% if accept_language %}data-accept-language="{{ accept_language }}"{% endif %}
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
-     {% if locale %}data-locale="{{ locale.stringify() }}"{% endif %}
-     {% if page_url %}data-url="{{ page_url }}"{% endif %}
-     {% if project.id %}data-id="{{ project.id }}"{% endif %}
-     {% if project.width %}data-width="{{ project.width }}"{% endif %}
-     {% if project.links %}data-links="{{ project.links|lower }}"{% endif %}
-     {% if part %}data-part="{{ part }}"{% endif %}
-     {% if search %}data-search="{{ search }}"{% endif %}
-     {% if redirect %}data-redirect="{{ redirect }}"{% endif %}
      {% if user.email %}data-email="{{ user.email }}"{% endif %}
      {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}
      {% if not user.is_anonymous() and user.has_perm('base.can_translate_locale', locale) %}data-localizer="true"{% endif %}
@@ -72,16 +64,14 @@
       </aside>
     </div>
 
-    {% if project.info_brief %}
     <!-- Project Info -->
     <div id="info" class="select">
       <div class="button selector fa fa-info"></div>
       <aside class="menu">
         <h2>Project info</h2>
-        <p>{{ project.info_brief|safe }}</p>
+        <p class="content"></p>
       </aside>
     </div>
-    {% endif %}
 
     <div class="right">
       <ul class="notification">
@@ -100,34 +90,34 @@
         <div class="menu">
           <ul>
             {% if user.is_authenticated() %}
-            <li data-url="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View profile</li>
+            <li><a href="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View profile</a></li>
             <li class="quality-checks check-box{% if user.profile.quality_checks %} enabled{% endif %}"><i class="fa fa-fw"></i>Quality checks</li>
             <li class="horizontal-separator"></li>
             {% endif %}
 
             <li class="download">Download
-              {% if page_url %}<i class="file-format html">HTML</i>{% endif %}
+              <i class="file-format html">HTML</i>
               <i class="file-format json">JSON</i>
             </li>
 
             <li class="horizontal-separator"></li>
 
-            <li data-url="{{ url('pontoon.projects') }}"><i class="fa fa-bar-chart-o fa-fw"></i>Project Overview</a></li>
-            <li data-url="{{ url('pontoon.teams') }}"><i class="fa fa-flag fa-fw"></i>Localization Teams</a></li>
-            <li data-url="{{ url('pontoon.contributors') }}"><i class="fa fa-trophy fa-fw"></i>Top Contributors</a></li>
-            <li data-url="{{ url('pontoon.search') }}"><i class="fa fa-search fa-fw"></i>Terminology Search</a></li>
-            <li data-url="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
+            <li><a href="{{ url('pontoon.projects') }}"><i class="fa fa-bar-chart-o fa-fw"></i>Project Overview</a></li>
+            <li><a href="{{ url('pontoon.teams') }}"><i class="fa fa-flag fa-fw"></i>Localization Teams</a></li>
+            <li><a href="{{ url('pontoon.contributors') }}"><i class="fa fa-trophy fa-fw"></i>Top Contributors</a></li>
+            <li><a href="{{ url('pontoon.search') }}"><i class="fa fa-search fa-fw"></i>Terminology Search</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
             <li class="hotkeys"><i class="fa fa-keyboard-o fa-fw"></i>Keyboard shortcuts</li>
 
             <li class="horizontal-separator"></li>
 
             {% if perms.base.can_manage %}
-            <li data-url="{{ url('pontoon.admin') }}"></i>Admin</li>
-            <li data-url="{{ url('pontoon.admin.project', project.slug) }}"></i>Admin &middot; Current project</li>
+            <li><a href="{{ url('pontoon.admin') }}">Admin</a></li>
+            <li class="admin-current-project"><a href="">Admin &middot; Current project</a></li>
             {% endif %}
 
             {% if user.is_authenticated() %}
-            <li class="sign-out"><i class="fa fa-sign-out fa-fw"></i>Sign out</li>
+            <li class="sign-out"><a href="{{ url('signout') }}"><i class="fa fa-sign-out fa-fw"></i>Sign out</a></li>
             {% else %}
             <li class="sign-in"><i class="fa fa-sign-in fa-fw"></i>Sign in</li>
             {% endif %}
@@ -209,9 +199,7 @@
     </div>
     <div class="wrapper">
       <ul class="editables"></ul>
-      {% if page_url %}
       <h2 id="not-on-page">Not on the current page</h2>
-      {% endif %}
       <ul class="uneditables"></ul>
       <h3 class="no-match"><div class="fa fa-exclamation-circle"></div>No results</h3>
     </div>
@@ -305,11 +293,9 @@
   <div id="drag" draggable="true"></div>
 </aside>
 
-{% if page_url %}
 <!-- Website placeholder + iframe fix: prevent iframes from capturing the mousemove events during a drag -->
 <iframe id="source"></iframe>
 <div id="iframe-cover"></div>
-{% endif %}
 
 <!-- Project loading indicator -->
 <div id="project-load">

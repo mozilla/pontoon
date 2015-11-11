@@ -1,5 +1,4 @@
 import hashlib
-import json
 import logging
 import os.path
 import urllib
@@ -192,14 +191,14 @@ class Locale(models.Model):
     def __unicode__(self):
         return self.name
 
-    def stringify(self):
-        return json.dumps({
+    def serialize(self):
+        return {
             'code': self.code,
             'name': self.name,
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
             'cldr_plurals': self.cldr_plurals_list(),
-        })
+        }
 
     class Meta:
         ordering = ['name', 'code']
@@ -347,6 +346,7 @@ class Project(models.Model):
         """Get project locales with their pages/paths and stats."""
         def get_details(stats):
             return stats.order_by('resource__path').values(
+                'url',
                 'resource__path',
                 'resource__entity_count',
                 'fuzzy_count',
@@ -366,10 +366,10 @@ class Project(models.Model):
             ).distinct()
             locale_details = []
 
-            # Is subpages aren't defined and project uses more than one
-            # resource, return resource paths with corresponding resource stats
+            # Is subpages aren't defined,
+            # return resource paths with corresponding resource stats
             if len(pages) == 0:
-                locale_details = get_details(stats)
+                locale_details = get_details(stats.annotate(url=F('resource__project__url')))
 
             # If project has defined subpages, return their names with
             # corresponding project stats. If subpages have defined resources,
@@ -405,6 +405,17 @@ class Project(models.Model):
             details = list(locale_details)
 
         return details
+
+    def serialize(self):
+        return {
+            'pk': self.pk,
+            'name': self.name,
+            'slug': self.slug,
+            'info': self.info_brief,
+            'url': self.url,
+            'width': self.width or '',
+            'links': self.links or '',
+        }
 
     def __unicode__(self):
         return self.name
