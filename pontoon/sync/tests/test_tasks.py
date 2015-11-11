@@ -1,6 +1,6 @@
 from django_nose.tools import assert_equal, assert_false, assert_raises, assert_true
-from mock import patch, PropertyMock
-from waiting import wait
+from mock import patch, PropertyMock, call
+
 from django.core.cache import cache
 
 from pontoon.base.models import ChangedEntityLocale, Project, Repository
@@ -15,7 +15,6 @@ from pontoon.base.utils import aware_datetime
 from pontoon.sync.core import serial_task
 from pontoon.sync.tasks import sync_project, sync_project_repo
 from pontoon.sync.tests import FAKE_CHECKOUT_PATH, FakeCheckoutTestCase
-
 
 
 class SyncProjectTests(TestCase):
@@ -170,10 +169,8 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
 class UserError(Exception):
     pass
 
-class SyncExecutionTests(TestCase):
-    def setUp(self):
-        self.project = ProjectFactory.create()
 
+class SyncExecutionTests(TestCase):
     def test_serial_task(self):
         """
         Test if sync will create lock in cache and release this after task is done.
@@ -196,21 +193,18 @@ class SyncExecutionTests(TestCase):
         """
         Tests if lock is released after specified timeout.
         """
-        @serial_task(3)
-        def timeout_task(self):
-            return wait(lambda: not cache.get('serial_task.pontoon.sync.tests.test_tasks.timeout_task'),
-                timeout_seconds=10)
+        with patch('pontoon.sync.core.cache') as mock_cache:
+            @serial_task(3)
+            def timeout_task(self):
+                return 42
+            first_call = timeout_task.delay()
 
-        first_call = timeout_task.delay()
-        assert_false(cache.get('serial_task.pontoon.sync.tests.test_tasks.timeout_task'))
-        assert_true(first_call.successful())
-        assert_true(first_call.get())
-
-        # Test if we can execute second call after previous one was released
-        second_call = timeout_task.delay()
-        assert_false(cache.get('serial_task.pontoon.sync.tests.test_tasks.timeout_task'))
-        assert_true(second_call.successful())
-        assert_true(second_call.get())
+            assert_false(cache.get('serial_task.pontoon.sync.tests.test_tasks.timeout_task'))
+            assert_true(first_call.successful())
+            assert_equal(first_call.get(), 42)
+            mock_cache.assert_has_calls([call.add('serial_task.pontoon.sync.tests.test_tasks.timeout_task', True, timeout=3),
+                call.add().__nonzero__(),
+                call.delete('serial_task.pontoon.sync.tests.test_tasks.timeout_task')])
 
     def test_exception_during_sync(self):
         """

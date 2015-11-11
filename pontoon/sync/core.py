@@ -6,6 +6,7 @@ from collections import Counter
 from celery import shared_task
 from django.contrib.auth.models import User
 
+from django.core.cache import cache
 from django.db import transaction
 from django.template.loader import render_to_string
 
@@ -38,18 +39,14 @@ def serial_task(timeout, **celery_args):
     :param timeout: time after which lock is released.
     """
     def wrapper(func):
-
         @shared_task(bind=True, **celery_args)
         @wraps(func)
         def wrapped_func(self, *args, **kwargs):
-            # Moved import here to mock cache during tests.
-            from django.core.cache import cache
-
             lock_name = "serial_task.{}".format(self.name)
             # Acquire the lock
             if not cache.add(lock_name, True, timeout=timeout):
-                raise RuntimeError("Can't execute task: {}  because the previous"
-                    " task is already running.".format(self.name))
+                raise RuntimeError("Can't execute task '{}' because the previously called"
+                    " task is still running.".format(self.name))
             try:
                 return func(self, *args, **kwargs)
             finally:
