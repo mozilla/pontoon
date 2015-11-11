@@ -35,6 +35,10 @@ you create:
    Celery or executed immediately and synchronously. Set this to ``False`` on
    production.
 
+``CELERYD_MAX_TASKS_PER_CHILD``
+   Maximum number of tasks a Celery worker process can execute before it’s
+   replaced with a new one. Defaults to 20 tasks.
+
 ``DISABLE_COLLECTSTATIC``
    Disables running ``./manage.py collectstatic`` during the build. Should be
    set to ``1``.
