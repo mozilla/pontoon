@@ -63,6 +63,17 @@ class SyncProjectTests(TestCase):
             CONTAINS('Skipping', self.db_project.slug)
         )
 
+    def test_no_changes_force(self):
+        """
+        If the database and VCS both have no changes, but force is true,
+        do not skip sync.
+        """
+        self.mock_pull_changes.return_value = False
+        self.mock_project_needs_sync.return_value = False
+
+        sync_project(self.db_project.pk, force=True)
+        assert_true(self.mock_perform_sync_project.called)
+
     def test_no_pull(self):
         """
         Don't call repo.pull if command.no_pull is True.

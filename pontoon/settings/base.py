@@ -68,6 +68,12 @@ BROKER_URL = os.environ.get('RABBITMQ_URL', None)
 # environment is configured.
 CELERY_ALWAYS_EAGER = os.environ.get('CELERY_ALWAYS_EAGER', 'True') != 'False'
 
+# Limit the number of tasks a celery worker can handle before being replaced.
+try:
+    CELERYD_MAX_TASKS_PER_CHILD = int(os.environ.get('CELERYD_MAX_TASKS_PER_CHILD', ''))
+except ValueError:
+    CELERYD_MAX_TASKS_PER_CHILD = 20
+
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')
 

@@ -15,6 +15,7 @@ class CommandTests(TestCase):
         self.command.verbosity = 0
         self.command.no_commit = False
         self.command.no_pull = False
+        self.command.force = False
 
         Project.objects.filter(slug='pontoon-intro').delete()
 
@@ -24,6 +25,7 @@ class CommandTests(TestCase):
         kwargs.setdefault('verbosity', 0)
         kwargs.setdefault('no_commit', False)
         kwargs.setdefault('no_pull', False)
+        kwargs.setdefault('force', False)
 
         self.command.handle(*args, **kwargs)
 
@@ -36,7 +38,8 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             active_project.pk,
             no_pull=False,
-            no_commit=False
+            no_commit=False,
+            force=False
         )
 
     def test_project_slugs(self):
@@ -50,7 +53,8 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             handle_project.pk,
             no_pull=False,
-            no_commit=False
+            no_commit=False,
+            force=False
         )
 
     def test_no_matching_projects(self):
@@ -77,5 +81,6 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             project.pk,
             no_pull=True,
-            no_commit=True
+            no_commit=True,
+            force=False
         )
