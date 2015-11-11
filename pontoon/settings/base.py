@@ -223,11 +223,11 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/admin_project.min.css',
     },
-    'locale_admin': {
+    'locale_manage': {
         'source_filenames': (
-            'css/locale_admin.css',
+            'css/locale_manage.css',
         ),
-        'output_filename': 'css/locale_admin.min.css',
+        'output_filename': 'css/locale_manage.min.css',
     },
     'locale_project': {
         'source_filenames': (
@@ -289,11 +289,11 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/main.min.js',
     },
-    'locale_admin': {
+    'locale_manage': {
         'source_filenames': (
-            'js/locale_admin.js',
+            'js/locale_manage.js',
         ),
-        'output_filename': 'js/locale_admin.min.js',
+        'output_filename': 'js/locale_manage.min.js',
     },
     'locale_project': {
         'source_filenames': (

@@ -63,10 +63,10 @@ urlpatterns = patterns(
         views.LocaleContributorsView.as_view(),
         name='pontoon.locale.contributors'),
 
-    # Team admin
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/admin/$',
-        views.locale_admin,
-        name='pontoon.locale.admin'),
+    # Manage team
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/manage/$',
+        views.locale_manage,
+        name='pontoon.locale.manage'),
 
     # Translate project
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',
