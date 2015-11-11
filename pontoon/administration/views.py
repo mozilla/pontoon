@@ -71,6 +71,7 @@ def get_slug(request):
     return HttpResponse(slug)
 
 
+@transaction.atomic
 def manage_project(request, slug=None, template='admin_project.html'):
     """Admin project."""
     log.debug("Admin project.")
@@ -177,6 +178,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
     return render(request, template, data)
 
 
+@transaction.atomic
 def delete_project(request, pk, template=None):
     """Delete project."""
     try:
@@ -202,6 +204,7 @@ def delete_project(request, pk, template=None):
             args=[project.slug]))
 
 
+@transaction.atomic
 def update_from_repository(request, template=None):
     """Update all project locales from repository."""
     log.debug("Update all project locales from repository.")
