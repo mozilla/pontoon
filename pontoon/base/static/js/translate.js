@@ -1965,7 +1965,7 @@ var Pontoon = (function (my) {
                 slug: self.project.slug,
                 locale: self.locale,
                 user: self.user
-              }, null, projectWindow.location.href);
+              }, null, $('#source').attr('src'));
 
               self.makeIframeResizable();
 
