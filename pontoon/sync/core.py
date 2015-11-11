@@ -1,7 +1,12 @@
+from functools import wraps
 import logging
+
 from collections import Counter
 
+from celery import shared_task
 from django.contrib.auth.models import User
+
+from django.core.cache import cache
 from django.db import transaction
 from django.template.loader import render_to_string
 
@@ -14,7 +19,6 @@ from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.vcs_models import VCSProject
 from pontoon.sync.utils import locale_directory_path
 
-
 log = logging.getLogger(__name__)
 
 
@@ -26,6 +30,30 @@ def sync_project(db_project, now):
         changeset = ChangeSet(db_project, vcs_project, now)
         update_entities(db_project, vcs_project, changeset)
         changeset.execute()
+
+
+def serial_task(timeout, **celery_args):
+    """
+    Decorator ensures that there's only one running task with given task_name.
+    Decorated tasks are bound tasks, meaning their first argument is always their Task instance
+    :param timeout: time after which lock is released.
+    """
+    def wrapper(func):
+        @shared_task(bind=True, **celery_args)
+        @wraps(func)
+        def wrapped_func(self, *args, **kwargs):
+            lock_name = "serial_task.{}".format(self.name)
+            # Acquire the lock
+            if not cache.add(lock_name, True, timeout=timeout):
+                raise RuntimeError("Can't execute task '{}' because the previously called"
+                    " task is still running.".format(self.name))
+            try:
+                return func(self, *args, **kwargs)
+            finally:
+                # release the lock
+                cache.delete(lock_name)
+        return wrapped_func
+    return wrapper
 
 
 def collect_entities(db_project, vcs_project):
