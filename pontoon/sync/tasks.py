@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 
 
 @shared_task(base=PontoonTask)
-def sync_project(project_pk, no_pull=False, no_commit=False):
+def sync_project(project_pk, no_pull=False, no_commit=False, force=False):
     """Fetch the project with the given PK and perform sync on it."""
     try:
         db_project = Project.objects.get(pk=project_pk)
@@ -44,7 +44,7 @@ def sync_project(project_pk, no_pull=False, no_commit=False):
 
     # If the repos haven't changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
-    if not repos_changed and not db_project.needs_sync:
+    if not force and not repos_changed and not db_project.needs_sync:
         log.info('Skipping project {0}, no changes detected.'.format(db_project.slug))
         return
 

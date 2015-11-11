@@ -25,6 +25,14 @@ class Command(BaseCommand):
             help='Do not pull new commits from VCS'
         )
 
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            dest='force',
+            default=False,
+            help='Always sync even if there are no changes'
+        )
+
     def handle(self, *args, **options):
         """
         Collect the projects we want to sync and trigger worker jobs to
@@ -46,5 +54,6 @@ class Command(BaseCommand):
                 sync_project.delay(
                     project.pk,
                     no_pull=options['no_pull'],
-                    no_commit=options['no_commit']
+                    no_commit=options['no_commit'],
+                    force=options['force'],
                 )
