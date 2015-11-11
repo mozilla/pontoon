@@ -214,6 +214,15 @@ It's recommended to run this job once an hour. It commits any string changes in
 the database to the remote VCS servers associated with each project, and pulls
 down the latest changes to keep the database in sync.
 
+Sync Log Retention
+~~~~~~~~~~~~~~~~~~
+You may also optionally run the ``clear_old_sync_logs`` management command on a
+schedule to remove sync logs from the database that are over 90 days old:
+
+.. code-block:: bash
+
+   ./manage.py clear_old_sync_logs
+
 Database Migrations
 -------------------
 After deploying Pontoon for the first time, you must run the database

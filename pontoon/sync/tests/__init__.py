@@ -15,6 +15,7 @@ from pontoon.base.tests import (
 )
 from pontoon.base.utils import aware_datetime
 from pontoon.sync.changeset import ChangeSet
+from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.vcs_models import VCSEntity, VCSProject, VCSResource, VCSTranslation
 
 
@@ -42,6 +43,27 @@ class VCSTranslationFactory(factory.Factory):
 
     class Meta:
         model = VCSTranslation
+
+
+class SyncLogFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = SyncLog
+
+
+class ProjectSyncLogFactory(factory.DjangoModelFactory):
+    sync_log = factory.SubFactory(SyncLogFactory)
+    project = factory.SubFactory(ProjectFactory)
+
+    class Meta:
+        model = ProjectSyncLog
+
+
+class RepositorySyncLogFactory(factory.DjangoModelFactory):
+    project_sync_log = factory.SubFactory(ProjectSyncLogFactory)
+    repository = factory.SubFactory(RepositoryFactory)
+
+    class Meta:
+        model = RepositorySyncLog
 
 
 class FakeCheckoutTestCase(TestCase):

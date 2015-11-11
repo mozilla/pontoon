@@ -1,0 +1,36 @@
+{% extends "landing.html" %}
+
+{% block title %}Pontoon &middot; Sync Logs{% endblock %}
+
+{% block header %}
+  <header id="header">
+    <h1 class="title">Sync Logs</h1>
+  </header>
+{% endblock %}
+
+{% block middle %}
+  <table class="log-list">
+    <tr class="log-list-header">
+      <th class="log-list-column">Start Time</th>
+      <th class="log-list-column">Date</th>
+      <th class="log-list-column">Duration</th>
+    </tr>
+    {% for log in sync_logs %}
+      <tr class="sync-log">
+        <td class="start-time">
+          <a href="{{ log.get_absolute_url() }}">
+            {{ log.start_time|format_datetime('time') }}
+          </a>
+        </td>
+        <td class="start-date">
+          {{ log.start_time|format_datetime('date') }}
+        </td>
+        <td class="duration">{{ log.duration|format_timedelta }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'sync_logs' %}
+{% endblock %}

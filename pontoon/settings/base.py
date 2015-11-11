@@ -247,6 +247,12 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/project.min.css',
     },
+    'sync_logs': {
+        'source_filenames': (
+            'css/sync_logs.css',
+        ),
+        'output_filename': 'css/sync_logs.min.css',
+    },
     'translate': {
         'source_filenames': (
             'css/translate.css',
@@ -541,3 +547,5 @@ MICROSOFT_TERMINOLOGY_LOCALES = [
 EXCLUDE = os.environ.get('EXCLUDE', '').split(',')
 
 SYNC_TASK_TIMEOUT = 60 * 60  # 1 hour
+
+SYNC_LOG_RETENTION = 90  # days

@@ -16,26 +16,42 @@ from pontoon.sync.core import (
     update_project_stats,
     update_translations,
 )
+from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.vcs_models import VCSProject
 
 
 log = logging.getLogger(__name__)
 
 
-@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key="project={0}")
-def sync_project(self, project_pk, no_pull=False, no_commit=False, force=False):
-    """Fetch the project with the given PK and perform sync on it."""
+def get_or_fail(ModelClass, message=None, **kwargs):
     try:
-        db_project = Project.objects.get(pk=project_pk)
-    except Project.DoesNotExist:
-        log.error('Could not sync project with pk={0}, not found.'.format(project_pk))
-        return
+        return ModelClass.objects.get(**kwargs)
+    except ModelClass.DoesNotExist:
+        if message is not None:
+            log.error(message)
+        raise
+
+
+@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0}')
+def sync_project(self, project_pk, sync_log_pk, no_pull=False, no_commit=False, force=False):
+    """Fetch the project with the given PK and perform sync on it."""
+    db_project = get_or_fail(Project, pk=project_pk,
+        message='Could not sync project with pk={0}, not found.'.format(project_pk))
+    sync_log = get_or_fail(SyncLog, pk=sync_log_pk,
+        message=('Could not sync project {0}, log with pk={1} not found.'
+                 .format(db_project.slug, sync_log_pk)))
 
     log.info('Syncing project {0}.'.format(db_project.slug))
 
     # Mark "now" at the start of sync to avoid messing with
     # translations submitted during sync.
     now = timezone.now()
+
+    project_sync_log = ProjectSyncLog.objects.create(
+        sync_log=sync_log,
+        project=db_project,
+        start_time=now
+    )
 
     if not no_pull:
         repos_changed = pull_changes(db_project)
@@ -50,24 +66,34 @@ def sync_project(self, project_pk, no_pull=False, no_commit=False, force=False):
 
     perform_sync_project(db_project, now)
     for repo in db_project.repositories.all():
-        sync_project_repo.delay(project_pk, repo.pk, now, no_pull=no_pull, no_commit=no_commit)
+        sync_project_repo.delay(
+            project_pk,
+            repo.pk,
+            project_sync_log.pk,
+            now,
+            no_pull=no_pull,
+            no_commit=no_commit
+        )
 
     log.info('Synced resources for project {0}.'.format(db_project.slug))
 
 
-@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key="project={0},repo={1}")
-def sync_project_repo(self, project_pk, repo_pk, now, no_pull=False, no_commit=False):
-    try:
-        db_project = Project.objects.get(pk=project_pk)
-    except Project.DoesNotExist:
-        log.error('Could not sync project with pk={0}, not found.'.format(project_pk))
-        return
+@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}')
+def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now,
+                      no_pull=False, no_commit=False):
+    db_project = get_or_fail(Project, pk=project_pk,
+        message='Could not sync project with pk={0}, not found.'.format(project_pk))
+    repo = get_or_fail(Repository, pk=repo_pk,
+        message='Could not sync repo with pk={0}, not found.'.format(project_pk))
+    project_sync_log = get_or_fail(ProjectSyncLog, pk=project_sync_log_pk,
+        message=('Could not sync project {0}, log with pk={1} not found.'
+                 .format(db_project.slug, project_sync_log_pk)))
 
-    try:
-        repo = Repository.objects.get(pk=repo_pk)
-    except Repository.DoesNotExist:
-        log.error('Could not sync repo with pk={0}, not found.'.format(repo_pk))
-        return
+    repo_sync_log = RepositorySyncLog.objects.create(
+        project_sync_log=project_sync_log,
+        repository=repo,
+        start_time=timezone.now()
+    )
 
     # Pull VCS changes in case we're on a different worker than the one
     # sync started on.
@@ -138,6 +164,8 @@ def sync_project_repo(self, project_pk, repo_pk, now, no_pull=False, no_commit=F
                 )
             )
 
+    repo_sync_log.end_time = timezone.now()
+    repo_sync_log.save()
     log.info('Synced translations for project {0} in locales {1}.'.format(
         db_project.slug, ','.join(locale.code for locale in repo.locales)
     ))

@@ -91,3 +91,38 @@ def display_permissions(self):
         output = 'Can submit and approve translations for ' + locales
 
     return output
+
+
+@library.filter
+def format_datetime(value, format='full'):
+    if value is not None:
+        if format == 'full':
+            format = '%A, %B %d, %Y at %H:%M %Z'
+        elif format == 'date':
+            format = '%B %d, %Y'
+        elif format == 'time':
+            format = '%H:%M %Z'
+        return value.strftime(format)
+    else:
+        return '---'
+
+
+@library.filter
+def format_timedelta(value):
+    if value is not None:
+        parts = []
+        if value.days > 0:
+            parts.append('{0} days'.format(value.days))
+        minutes = value.seconds // 60
+        seconds = value.seconds % 60
+        if minutes > 0:
+            parts.append('{0} minutes'.format(minutes))
+        if seconds > 0:
+            parts.append('{0} seconds'.format(seconds))
+
+        if parts:
+            return ', '.join(parts)
+        else:
+            return '0 seconds'
+    else:
+        return '---'

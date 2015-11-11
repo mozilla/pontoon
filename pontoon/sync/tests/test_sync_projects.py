@@ -1,11 +1,13 @@
 from django.core.management.base import CommandError
 
-from django_nose.tools import assert_false, assert_raises
-from mock import patch, PropertyMock
+from django_nose.tools import assert_equal, assert_false, assert_raises
+from mock import ANY, patch, PropertyMock
 
 from pontoon.base.models import Project
 from pontoon.base.tests import ProjectFactory, TestCase
+from pontoon.base.utils import aware_datetime
 from pontoon.sync.management.commands import sync_projects
+from pontoon.sync.models import SyncLog
 
 
 class CommandTests(TestCase):
@@ -37,6 +39,7 @@ class CommandTests(TestCase):
         self.execute_command()
         self.mock_sync_project.delay.assert_called_with(
             active_project.pk,
+            ANY,
             no_pull=False,
             no_commit=False,
             force=False
@@ -52,6 +55,7 @@ class CommandTests(TestCase):
         self.execute_command(handle_project.slug)
         self.mock_sync_project.delay.assert_called_with(
             handle_project.pk,
+            ANY,
             no_pull=False,
             no_commit=False,
             force=False
@@ -80,7 +84,20 @@ class CommandTests(TestCase):
         self.execute_command(no_pull=True, no_commit=True)
         self.mock_sync_project.delay.assert_called_with(
             project.pk,
+            ANY,
             no_pull=True,
             no_commit=True,
             force=False
         )
+
+    def test_sync_log(self):
+        """Create a new sync log when command is run."""
+        assert_false(SyncLog.objects.exists())
+
+        ProjectFactory.create()
+        with patch.object(sync_projects, 'timezone') as mock_timezone:
+            mock_timezone.now.return_value = aware_datetime(2015, 1, 1)
+            self.execute_command()
+
+        sync_log = SyncLog.objects.all()[0]
+        assert_equal(sync_log.start_time, aware_datetime(2015, 1, 1))

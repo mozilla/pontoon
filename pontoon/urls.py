@@ -21,6 +21,9 @@ urlpatterns = patterns('',
     # Django admin
     (r'^a/', include(admin.site.urls)),
 
+    # Sync views
+    (r'', include('pontoon.sync.urls')),
+
     # Test project: Pontoon Intro
     url(r'^intro/$', 'pontoon.intro.views.intro'),
 
