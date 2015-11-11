@@ -46,7 +46,6 @@ def serial_task(timeout, **celery_args):
             from django.core.cache import cache
 
             lock_name = "serial_task.{}".format(self.name)
-            print "lock_name", lock_name
             # Acquire the lock
             if not cache.add(lock_name, True, timeout=timeout):
                 raise RuntimeError("Can't execute task: {}  because the previous"

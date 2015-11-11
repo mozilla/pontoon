@@ -1,6 +1,7 @@
 from django_nose.tools import assert_equal, assert_false, assert_raises, assert_true
 from mock import patch, PropertyMock
 from waiting import wait
+from django.core.cache import cache
 
 from pontoon.base.models import ChangedEntityLocale, Project, Repository
 from pontoon.base.tests import (
@@ -181,7 +182,6 @@ class SyncExecutionTests(TestCase):
         def test_task(self, callback):
             return callback()
 
-
         def execute_second_inner_task():
             return test_task.delay(lambda: None)
 
@@ -192,22 +192,25 @@ class SyncExecutionTests(TestCase):
         assert_true(second_call.failed())
         assert_raises(RuntimeError, second_call.get)
 
-    def test_timeout_argument(self):
+    def test_release_lock_after_timeout(self):
         """
-        Tests if second task can be executed after passed timeout.
+        Tests if lock is released after specified timeout.
         """
-        @serial_task(1)
+        @serial_task(3)
         def timeout_task(self):
-            return 42
+            return wait(lambda: not cache.get('serial_task.pontoon.sync.tests.test_tasks.timeout_task'),
+                timeout_seconds=10)
 
         first_call = timeout_task.delay()
-        wait(lambda: first_call.ready(), timeout_seconds=10)
-        second_call = timeout_task.delay()
-
+        assert_false(cache.get('serial_task.pontoon.sync.tests.test_tasks.timeout_task'))
         assert_true(first_call.successful())
+        assert_true(first_call.get())
+
+        # Test if we can execute second call after previous one was released
+        second_call = timeout_task.delay()
+        assert_false(cache.get('serial_task.pontoon.sync.tests.test_tasks.timeout_task'))
         assert_true(second_call.successful())
-        assert_equal(first_call.get(), 42)
-        assert_equal(second_call.get(), 42)
+        assert_true(second_call.get())
 
     def test_exception_during_sync(self):
         """
