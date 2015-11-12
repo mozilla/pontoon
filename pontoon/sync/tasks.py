@@ -1,6 +1,5 @@
 import logging
 
-from django.conf import settings
 from django.db import connection, transaction
 from django.utils import timezone
 
@@ -16,7 +15,6 @@ from pontoon.sync.core import (
     sync_project as perform_sync_project,
     update_project_stats,
     update_translations,
-    serial_task
 )
 from pontoon.sync.vcs_models import VCSProject
 
