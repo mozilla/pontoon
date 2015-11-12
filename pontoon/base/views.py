@@ -23,11 +23,13 @@ from django.http import (
     Http404,
     HttpResponse,
     HttpResponseBadRequest,
+    HttpResponseForbidden,
 )
 
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
+from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from guardian.decorators import permission_required_or_403
@@ -675,7 +677,10 @@ def update_translation(request, template=None):
         ignore = True
 
     now = timezone.now()
-    can_translate = request.user.has_perm('base.can_translate_locale', l)
+    can_translate = (
+        request.user.has_perm('base.can_translate_locale', l)
+        and not request.user.profile.force_suggestions
+    )
     translations = Translation.objects.filter(
         entity=e, locale=l, plural_form=plural_form)
 
@@ -1224,20 +1229,26 @@ def save_to_transifex(request, template=None):
 
 
 @login_required(redirect_field_name='', login_url='/403')
+@require_POST
 @transaction.atomic
-def quality_checks_switch(request):
-    """Turn quality checks on/off for the current user."""
-    log.debug("Turn quality checks on/off for the current user.")
+def toggle_user_profile_attribute(request, email):
+    user = get_object_or_404(User, email=email)
+    if user != request.user:
+        return HttpResponseForbidden("Forbidden: You don't have permission to edit this user")
 
-    if request.method != 'POST':
-        log.error("Non-POST request")
-        raise Http404
+    attribute = request.POST.get('attribute', None)
+    if attribute not in ['quality_checks', 'force_suggestions']:
+        return HttpResponseForbidden('Forbidden: Attribute not allowed')
 
-    profile = request.user.profile
-    profile.quality_checks = not profile.quality_checks
+    value = request.POST.get('value', None)
+    if not value:
+        return HttpResponseBadRequest('Bad Request: Value not set')
+
+    profile = user.profile
+    setattr(profile, attribute, json.loads(value))
     profile.save()
 
-    return HttpResponse("ok")
+    return HttpResponse('ok')
 
 
 @login_required(redirect_field_name='', login_url='/403')

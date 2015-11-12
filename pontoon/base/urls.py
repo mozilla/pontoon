@@ -30,6 +30,11 @@ urlpatterns = patterns(
     url(r'^contributor/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
         RedirectView.as_view(url="/contributors/%(email)s/", permanent=True)),
 
+    # API: Toogle user profile attribute
+    url(r'^api/v1/user/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
+        views.toggle_user_profile_attribute,
+        name='pontoon.toggle_user_profile_attribute'),
+
     # List all active localization teams
     url(r'^teams/$',
         views.locales,
@@ -55,7 +60,8 @@ urlpatterns = patterns(
         name='pontoon.project.contributors'),
 
     # AJAX: Get project details
-    url(r'^projects/(?P<slug>[\w-]+)/details/$', views.get_project_details,
+    url(r'^projects/(?P<slug>[\w-]+)/details/$',
+        views.get_project_details,
         name='pontoon.project.details'),
 
     # List team contributors
@@ -129,8 +135,6 @@ urlpatterns = patterns(
         name='pontoon.other_locales'),
     url(r'^download/', views.download,
         name='pontoon.download'),
-    url(r'^quality-checks-switch/', views.quality_checks_switch,
-        name='pontoon.quality_checks_switch'),
     url(r'^request-locale/', views.request_locale,
         name='pontoon.request_locale'),
     url(r'^save-user-name/', views.save_user_name,

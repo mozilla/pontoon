@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% import "widgets/checkbox.html" as Checkbox %}
+
 {% block class %}translate{% endblock %}
 
 {% block content %}
@@ -11,6 +13,7 @@
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      {% if user.email %}data-email="{{ user.email }}"{% endif %}
      {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}
+     {% if user.profile and user.profile.force_suggestions %}data-force-suggestions="{{ user.profile.force_suggestions }}"{% endif %}
      {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if perms.base.can_manage %}data-manager="true"{% endif %}
      >
@@ -91,7 +94,10 @@
           <ul>
             {% if user.is_authenticated() %}
             <li><a href="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View profile</a></li>
-            <li class="quality-checks check-box{% if user.profile.quality_checks %} enabled{% endif %}"><i class="fa fa-fw"></i>Quality checks</li>
+            {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks) }}
+              {% if user.translated_locales %}
+              {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions) }}
+              {% endif %}
             <li class="horizontal-separator"></li>
             {% endif %}
 
@@ -245,7 +251,7 @@
         <a href="#" class="cancel">&times;</a>
         <h2>The following checks have failed</h2>
         <ul></ul>
-        <button id="save-anyway">Save anyway</button>
+        <button id="save-anyway"></button>
       </div>
       <div id="translation-length">
         <span class="current-length"></span>|<span class="original-length"></span>
@@ -253,7 +259,7 @@
       <button id="copy">Copy</button>
       <button id="clear">Clear</button>
       <button id="cancel">Cancel</button>
-      <button id="save">Save</button>
+      <button id="save"></button>
     </menu>
 
     <div id="helpers" class="tabs">

@@ -1,5 +1,7 @@
 {% extends "landing.html" %}
 
+{% import "widgets/checkbox.html" as Checkbox %}
+
 {% block title %}Pontoon &middot; {% if contributor.first_name %}{{ contributor.first_name }}{% else %}{{ contributor.email }}{% endif %}{% endblock %}
 
 {% block class %}user{% endblock %}
@@ -39,7 +41,10 @@
   <li><span class="fa fa-fw fa-envelope"></span><a href="mailto:{{ contributor.email }}">{{ contributor.email }}</a></li>
   <li><span class="fa fa-fw fa-lock"></span>{{ contributor|display_permissions() }}</li>
   {% if user.is_authenticated() and user.email == contributor.email %}
-  <li class="check-box quality-checks{% if user.profile.quality_checks %} enabled{% endif %}"><span class="fa fa-fw"></span>Quality checks</li>
+  {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks) }}
+    {% if user.translated_locales %}
+    {{ Checkbox.checkbox('Force suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions) }}
+    {% endif %}
   {% endif %}
 </ul>
 
