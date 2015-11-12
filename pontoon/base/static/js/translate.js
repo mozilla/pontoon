@@ -1970,7 +1970,8 @@ var Pontoon = (function (my) {
             // Projects without in place translation support
             } else {
               $('#sidebar').addClass('advanced').css('width', '100%').show();
-              $('#editor').addClass('opened');
+              $('#editor').addClass('opened').css('left', '');
+              $('#entitylist').css('left', '');
 
               self.createObject(true);
 
