@@ -68,11 +68,12 @@ def create_locale_managers_group(sender, **kwargs):
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
 
+
 @receiver(post_save, sender=Locale)
 def assign_group_permissions(sender, **kwargs):
     """"
-    After creation of locale, we have to assign translation and management permissions
-    to groups of translators and managers assigned to locale.
+    After creation of locale, we have to assign translation and management
+    permissions to groups of translators and managers assigned to locale.
     """
     if kwargs['raw'] or not kwargs['created']:
         return

@@ -96,7 +96,11 @@
   display: block;
   font-size: 16px;
   font-weight: 300;
+  overflow: hidden;
   padding: 4px 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 730px;
 }
 
 .info a {

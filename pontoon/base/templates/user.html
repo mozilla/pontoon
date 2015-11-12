@@ -37,7 +37,7 @@
 {% block middle %}
 <ul class="info">
   <li><span class="fa fa-fw fa-envelope"></span><a href="mailto:{{ contributor.email }}">{{ contributor.email }}</a></li>
-  <li><span class="fa fa-fw fa-lock"></span>Can {% if 'base.can_translate_locale' in contributor.get_all_permissions() %}submit and approve translations{% else %}make suggestions{% endif %}</li>
+  <li><span class="fa fa-fw fa-lock"></span>{{ contributor|display_permissions() }}</li>
   {% if user.is_authenticated() and user.email == contributor.email %}
   <li class="check-box quality-checks{% if user.profile.quality_checks %} enabled{% endif %}"><span class="fa fa-fw"></span>Quality checks</li>
   {% endif %}
