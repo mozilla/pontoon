@@ -80,3 +80,14 @@ def naturalday(source, arg=None):
 @library.filter
 def naturaltime(source):
     return humanize.naturaltime(source)
+
+
+@library.filter
+def display_permissions(self):
+    output = 'Can make suggestions'
+
+    if self.translated_locales:
+        locales = ', '.join(self.translated_locales)
+        output = 'Can submit and approve translations for ' + locales
+
+    return output

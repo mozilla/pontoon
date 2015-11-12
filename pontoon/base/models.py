@@ -16,6 +16,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 
 from dirtyfields import DirtyFieldsMixin
+from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
 from pontoon.administration.vcs import commit_to_vcs, get_revision, update_from_vcs
@@ -27,6 +28,7 @@ from pontoon.sync import KEY_SEPARATOR
 log = logging.getLogger('pontoon')
 
 
+# User class extensions
 class UserTranslationsManager(models.Manager):
     """
     Provides various method to interact with larger sets of translations and their stats for user.
@@ -89,15 +91,18 @@ class UserTranslationsManager(models.Manager):
         )
 
 
-# User class extensions
+@property
+def user_translated_locales(self):
+    locales = get_objects_for_user(
+        self, 'base.can_translate_locale', accept_global_perms=False)
+
+    return [locale.code for locale in locales]
+
+
 @property
 def user_display_name(self):
     name = self.first_name or self.email.split('@')[0]
     return u'{name} <{email}>'.format(name=name, email=self.email)
-
-
-User.add_to_class('display_name', user_display_name)
-User.add_to_class('translators', UserTranslationsManager())
 
 
 def user_gravatar_url(self, size):
@@ -110,7 +115,11 @@ def user_gravatar_url(self, size):
 
     return '//www.gravatar.com/avatar/{email}?{data}'.format(
         email=email, data=urllib.urlencode(data))
+
 User.add_to_class('gravatar_url', user_gravatar_url)
+User.add_to_class('display_name', user_display_name)
+User.add_to_class('translated_locales', user_translated_locales)
+User.add_to_class('translators', UserTranslationsManager())
 
 
 class UserProfile(models.Model):
@@ -268,10 +277,6 @@ class Project(models.Model):
     class Meta:
         permissions = (
             ("can_manage", "Can manage projects"),
-
-            # @TODO: This permission should be removed after we'll migrate all users to new
-            # object-based permission system.
-            ("can_localize", "Can localize projects"),
         )
 
     @property

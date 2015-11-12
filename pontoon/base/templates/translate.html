@@ -11,7 +11,7 @@
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      {% if user.email %}data-email="{{ user.email }}"{% endif %}
      {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}
-     {% if not user.is_anonymous() and user.has_perm('base.can_translate_locale', locale) %}data-localizer="true"{% endif %}
+     {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if perms.base.can_manage %}data-manager="true"{% endif %}
      >
 </div>

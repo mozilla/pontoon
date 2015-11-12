@@ -1885,6 +1885,13 @@ var Pontoon = (function (my) {
     createObject: function (advanced, projectWindow) {
       var self = this;
 
+      function isLocalizer(translatedLocales) {
+        if (translatedLocales) {
+          return translatedLocales.indexOf(self.locale.code) > -1;
+        }
+        return false;
+      }
+
       this.app = {
         win: window,
         advanced: advanced,
@@ -1909,7 +1916,7 @@ var Pontoon = (function (my) {
       this.user = {
         email: $('#server').data('email') || '',
         name: $('#server').data('name') || '',
-        localizer: $('#server').data('localizer'),
+        localizer: isLocalizer($('#server').data('user-translated-locales')),
         manager: $('#server').data('manager')
       };
     },
