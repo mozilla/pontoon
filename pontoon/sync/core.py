@@ -77,7 +77,7 @@ def update_entities(db_project, vcs_project, changeset):
         if vcs_entity is None:
             if db_entity is None:
                 # This should never happen. What? Hard abort.
-                raise ValueError('No entities found for key {0}'.format(key))
+                raise ValueError(u'No entities found for key `{0}`'.format(key))
             else:
                 # VCS no longer has the entity, obsolete it.
                 changeset.obsolete_db_entity(db_entity)
@@ -103,7 +103,7 @@ def update_translations(db_project, vcs_project, locale, changeset):
         # We shouldn't hit this situation in a real sync, but we might
         # hit it during a test, so log it and continue just in case.
         if db_entity is None or vcs_entity is None:
-            log.warning('Could not find VCS/DB entity for key {key} while '
+            log.warning(u'Could not find VCS/DB entity for key `{key}` while '
                         'updating translations, skipping.'.format(key=key))
             continue
 
