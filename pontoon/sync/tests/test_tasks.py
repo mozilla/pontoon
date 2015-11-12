@@ -201,6 +201,24 @@ class SyncExecutionTests(TestCase):
             assert_equal(first_call.get(), 42)
             mock_cache.add.assert_called_with(ANY, ANY, timeout=3)
 
+    def test_parametrized_serial_task(self):
+        """
+        Serial task should be able to work simultanously for different parameters.
+        """
+        with patch('pontoon.sync.core.cache') as mock_cache:
+            @serial_task(3, lock_key="param={0}")
+            def task_lock_key(self, param):
+                return param
+
+            first_call = task_lock_key.delay(42)
+            second_call = task_lock_key.delay(24)
+            assert_true(first_call.successful())
+            assert_true(second_call.successful())
+            assert_true(first_call.get(), 42)
+            assert_true(second_call.get(), 24)
+            mock_cache.add.assert_any_call(CONTAINS('task_lock_key[param=42]'), ANY, timeout=3)
+            mock_cache.add.assert_any_call(CONTAINS('task_lock_key[param=24]'), ANY, timeout=3)
+
     def test_exception_during_sync(self):
         """
         Any error during performing synchronization should release the lock.

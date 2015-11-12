@@ -15,6 +15,7 @@ from pontoon.base.models import (
     Resource,
     update_stats
 )
+from pontoon.base.tasks import PontoonTask
 from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.vcs_models import VCSProject
 from pontoon.sync.utils import locale_directory_path
@@ -32,17 +33,19 @@ def sync_project(db_project, now):
         changeset.execute()
 
 
-def serial_task(timeout, **celery_args):
+def serial_task(timeout, lock_key="", base=None, **celery_args):
     """
     Decorator ensures that there's only one running task with given task_name.
     Decorated tasks are bound tasks, meaning their first argument is always their Task instance
     :param timeout: time after which lock is released.
+    :param lock_key: allows to define different lock for respective parameters of task.
     """
+    task_class = base or PontoonTask
     def wrapper(func):
-        @shared_task(bind=True, **celery_args)
+        @shared_task(base=task_class, bind=True, **celery_args)
         @wraps(func)
         def wrapped_func(self, *args, **kwargs):
-            lock_name = "serial_task.{}".format(self.name)
+            lock_name = "serial_task.{}[{}]".format(self.name, lock_key.format(*args, self=self, **kwargs))
             # Acquire the lock
             if not cache.add(lock_name, True, timeout=timeout):
                 raise RuntimeError("Can't execute task '{}' because the previously called"

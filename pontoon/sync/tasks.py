@@ -1,18 +1,17 @@
 import logging
 
+from django.conf import settings
 from django.db import connection, transaction
 from django.utils import timezone
 
-from celery import shared_task
-
 from pontoon.administration.vcs import CommitToRepositoryException
 from pontoon.base.models import ChangedEntityLocale, Project, Repository
-from pontoon.base.tasks import PontoonTask
 from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.core import (
     commit_changes,
     pull_changes,
     sync_project as perform_sync_project,
+    serial_task,
     update_project_stats,
     update_translations,
 )
@@ -22,8 +21,8 @@ from pontoon.sync.vcs_models import VCSProject
 log = logging.getLogger(__name__)
 
 
-@shared_task(base=PontoonTask)
-def sync_project(project_pk, no_pull=False, no_commit=False, force=False):
+@serial_task(settings.SYNC_TASK_TIMEOUT, lock_key="project={0}")
+def sync_project(self, project_pk, no_pull=False, no_commit=False, force=False):
     """Fetch the project with the given PK and perform sync on it."""
     try:
         db_project = Project.objects.get(pk=project_pk)
@@ -55,8 +54,8 @@ def sync_project(project_pk, no_pull=False, no_commit=False, force=False):
     log.info('Synced resources for project {0}.'.format(db_project.slug))
 
 
-@shared_task(base=PontoonTask)
-def sync_project_repo(project_pk, repo_pk, now, no_pull=False, no_commit=False):
+@serial_task(settings.SYNC_TASK_TIMEOUT, lock_key="project={0},repo={1}")
+def sync_project_repo(self, project_pk, repo_pk, now, no_pull=False, no_commit=False):
     try:
         db_project = Project.objects.get(pk=project_pk)
     except Project.DoesNotExist:
