@@ -42,13 +42,21 @@ def locale_directory_path(checkout_path, locale_code):
     Path to the directory where strings for the given locale are
     stored.
     """
+    possible_paths = []
     for root, dirnames, filenames in os.walk(checkout_path):
         if locale_code in dirnames:
-            return os.path.join(root, locale_code)
+            possible_paths.append(os.path.join(root, locale_code))
 
         locale_variant = locale_code.replace('-', '_')
         if locale_variant in dirnames:
-            return os.path.join(root, locale_variant)
+            possible_paths.append(os.path.join(root, locale_variant))
+
+    for possible_path in possible_paths:
+        if directory_contains_resources(possible_path):
+            return possible_path
+
+    if possible_paths:
+        return possible_paths[0]
 
     raise IOError('Directory for locale `{0}` not found'.format(
                   locale_code or 'source'))
