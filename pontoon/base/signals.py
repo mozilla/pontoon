@@ -59,7 +59,7 @@ def create_locale_managers_group(sender, **kwargs):
 
     try:
         locale_ct = ContentType.objects.get(app_label='base', model='locale')
-        locale_group, _ = Group.objects.get_or_create(name='{} translators'.format(instance.code))
+        locale_group, _ = Group.objects.get_or_create(name='{} managers'.format(instance.code))
         can_translate = Permission.objects.get(content_type=locale_ct, codename='can_translate_locale')
         can_manage = Permission.objects.get(content_type=locale_ct, codename='can_manage_locale')
         locale_group.permissions.add(can_translate)
