@@ -13,10 +13,27 @@ mark.placeable {
   padding: 0 2px;
 }
 
+#source {
+  display: none;
+  height: 0;
+  padding: 60px 0 0 0;
+  width: 100%;
+}
+
+#iframe-cover {
+  bottom: 0;
+  display: none;
+  position: absolute;
+  top: 60px;
+  width: 100%;
+  z-index: 10; /* Must be lower than menu */
+}
+
 #project-load {
   background: #3F4752;
   display: table;
   height: 100%;
+  opacity: 0.9;
   overflow: hidden;
   position: fixed;
   top: 60px;

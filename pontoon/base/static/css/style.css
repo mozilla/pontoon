@@ -1042,7 +1042,7 @@ noscript p {
   font-size: 108px;
   font-weight: 300;
   letter-spacing: -4px;
-  padding-top: 150px;
+  padding-top: 100px;
 }
 
 #error #title {
@@ -1085,22 +1085,6 @@ body > .container {
   padding: 50px 0 100px;
   position: relative;
   width: 735px;
-}
-
-#source {
-  display: none;
-  height: 0;
-  padding: 60px 0 0 0;
-  width: 100%;
-}
-
-#iframe-cover {
-  bottom: 0;
-  display: none;
-  position: absolute;
-  top: 60px;
-  width: 100%;
-  z-index: 10; /* Must be lower than menu */
 }
 
 .unselectable * {
