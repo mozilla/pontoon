@@ -1595,6 +1595,14 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Reset entity list and editor width
+     */
+    resetColumnsWidth: function() {
+      $('#entitylist, #editor').css('width', '');
+    },
+
+
+    /*
      * Show/hide elements needed for in-place localization
      */
     toggleInplaceElements: function() {
@@ -1616,6 +1624,7 @@ var Pontoon = (function (my) {
       }
 
       this.toggleInplaceElements();
+      this.resetColumnsWidth();
       this.updateMainMenu();
       this.updateProjectInfo();
       this.updateProfileMenu();
