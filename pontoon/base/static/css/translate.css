@@ -897,6 +897,7 @@ body > header aside p {
 
 #editor nav ul {
   display: table;
+  table-layout: fixed;
   width: 100%;
 }
 
