@@ -270,6 +270,11 @@ var Pontoon = (function (my) {
           }
           $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
           $('#plural-tabs li:first a').click();
+
+        // Show plural string to locales with a single plural form (includes variable identifier)
+        } else {
+          $('#source-pane h2').html('Plural').show();
+          $('#original').html(entity.marked_plural);
         }
       }
       $("#helpers nav .active a").click();
@@ -497,12 +502,13 @@ var Pontoon = (function (my) {
       $('#entitylist .wrapper > ul').empty();
       $(self.entities).each(function () {
         var status = self.getEntityStatus(this),
+            source_string = (this.original_plural && self.locale.nplurals < 2) ? this.marked_plural : this.marked,
             li = $('<li class="entity limited' +
           (status ? ' ' + status : '') +
           (!this.body ? ' uneditable' : '') + '">' +
           '<span class="status fa"></span>' +
           '<p class="string-wrapper">' +
-            '<span class="source-string" data-key="' + self.doNotRender(this.key) + '">' + this.marked + '</span>' +
+            '<span class="source-string" data-key="' + self.doNotRender(this.key) + '">' + source_string + '</span>' +
             '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
               self.doNotRender(this.translation[0].string || '') +
             '</span>' +
@@ -543,7 +549,8 @@ var Pontoon = (function (my) {
           plural_rule = this.locale.plural_rule,
           pluralForm = this.getPluralForm();
 
-      if ((nplurals === 2 && pluralForm === 1) ||
+      if ((nplurals < 2 && $('#source-pane').is('.pluralized')) ||
+          (nplurals === 2 && pluralForm === 1) ||
           (nplurals > 2 &&
            pluralForm !== -1 &&
            pluralForm !== eval(plural_rule.replace(/n/g, 1)))) {
@@ -633,7 +640,7 @@ var Pontoon = (function (my) {
             i = tab.index(),
             original = entity['original' + self.isPluralized()],
             marked = entity['marked' + self.isPluralized()],
-            title = !self.isPluralized() ? "Singular" : "Plural",
+            title = !self.isPluralized() ? 'Singular' : 'Plural',
             source = entity.translation[i].string;
 
         $('#source-pane h2').html(title).show();
