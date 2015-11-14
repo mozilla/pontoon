@@ -325,35 +325,35 @@ var Pontoon = (function (my) {
       }).error(error).complete(complete);
 
       // Transvision
-      $(['aurora', 'gaia', 'mozilla-org']).each(function(i, v) {
-        requests++;
+      requests++;
 
-        if (self["XHRtransvision" + v]) {
-          self["XHRtransvision" + v].abort();
+      if (self.XHRtransvision) {
+        self.XHRtransvision.abort();
+      }
+
+      self.XHRtransvision = $.ajax({
+        url: '/transvision/',
+        data: {
+          text: encodeURIComponent(original),
+          locale: self.locale.code
         }
 
-        self["XHRtransvision" + v] = $.ajax({
-          url: '/transvision' + '-' + v + '/',
-          data: {
-            text: encodeURIComponent(original),
-            locale: self.locale.code
-          }
-
-        }).success(function(data) {
-          if (data.translations && !data.translations.error) {
-            $.each(data.translations, function() {
-              append({
-                original: this.source,
-                quality: Math.round(this.quality) + '%',
-                url: 'http://transvision.mozfr.org/',
-                title: 'Visit Transvision',
-                source: data.title,
-                translation: this.target
-              });
+      }).success(function(data) {
+        if (data && !data.error) {
+          $.each(data, function() {
+            append({
+              original: this.source,
+              quality: Math.round(this.quality) + '%',
+              url: 'https://transvision.mozfr.org/?repo=global' +
+                   '&recherche=' + encodeURIComponent(original) +
+                   '&locale=' + self.locale.code,
+              title: 'Visit Transvision',
+              source: 'Mozilla',
+              translation: this.target
             });
-          }
-        }).error(error).complete(complete);
-      });
+          });
+        }
+      }).error(error).complete(complete);
     }
 
 
