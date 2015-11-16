@@ -525,23 +525,37 @@ $(function() {
         .find('section.' + section).show();
   });
 
-  // Toggle quality checks
-  $('.check-box.quality-checks').click(function() {
+  // Toggle user profile attribute
+  $('.check-box').click(function() {
     var self = $(this);
     Pontoon.startLoader();
 
     $.ajax({
-      url: '/quality-checks-switch/',
+      url: '/api/v1/user/' + Pontoon.user.email + '/',
       type: 'POST',
       data: {
-        csrfmiddlewaretoken: $('#server').data('csrf')
+        csrfmiddlewaretoken: $('#server').data('csrf'),
+        attribute: self.data('attribute'),
+        value: !self.is('.enabled')
       },
       success: function(data) {
         if (data === 'ok') {
           self.toggleClass('enabled');
-          var status = self.is('.enabled') ? 'enabled' : 'disabled';
-          Pontoon.endLoader('Quality checks ' + status + '.');
+          var is_enabled = self.is('.enabled'),
+              status = is_enabled ? 'enabled' : 'disabled';
+
+          Pontoon.endLoader(self.text() + ' ' + status + '.');
           $('.notification').addClass('menu-open');
+
+          if (self.is('.force-suggestions')) {
+            Pontoon.user.forceSuggestions = is_enabled;
+            Pontoon.postMessage("UPDATE-ATTRIBUTE", {
+              object: 'user',
+              attribute: 'forceSuggestions',
+              value: is_enabled
+            });
+            $('[id^="save"]').toggleClass('suggest', is_enabled);
+          }
         }
       },
       error: function() {

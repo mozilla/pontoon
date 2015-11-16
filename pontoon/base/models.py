@@ -127,11 +127,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
 
     # Other fields here
-    transifex_username = models.CharField(max_length=40, blank=True)
-    transifex_password = models.CharField(max_length=128, blank=True)
-    svn_username = models.CharField(max_length=40, blank=True)
-    svn_password = models.CharField(max_length=128, blank=True)
     quality_checks = models.BooleanField(default=True)
+    force_suggestions = models.BooleanField(default=False)
 
 
 def validate_cldr(value):

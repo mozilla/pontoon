@@ -148,7 +148,7 @@ var Pontoon = (function (my) {
                 (this.approved ? ' class="approved"' : '') +
                 'title="Click to copy">' +
                   '<header class="clearfix' +
-                    ((self.user.localizer) ? ' localizer' :
+                    ((self.user.isTranslator) ? ' translator' :
                       ((self.user.email === this.email && !this.approved) ?
                         ' own' : '')) +
                     '">' +
@@ -194,6 +194,22 @@ var Pontoon = (function (my) {
      */
     appendMetaData: function (title, text) {
       $('#metadata').append('<p><span class="title">' + title + '</span>' + text + '</p>');
+    },
+
+
+    /*
+     * Update current translation length
+     */
+    updateCurrentTranslationLength: function () {
+      $('#translation-length .current-length').html($('#translation').val().length);
+    },
+
+
+    /*
+     * Update cached translation, needed for unsaved changes check
+     */
+    updateCachedTranslation: function () {
+      this.cachedTranslation = $('#translation').val();
     },
 
 
@@ -289,10 +305,10 @@ var Pontoon = (function (my) {
           translationString = entity.translation[0].string,
           translation = translationString ? translationString.length : 0;
 
-      $('#translation-length')
-        .show() // Needed if sidebar opened by default
-        .find('.original-length').html(original).end()
-        .find('.current-length').html(translation);
+      // Need to show if sidebar opened by default
+      $('#translation-length').show().find('.original-length').html(original).end();
+      self.updateCurrentTranslationLength();
+      self.updateCachedTranslation();
 
       // Update entity list
       $("#entitylist .hovered").removeClass('hovered');
@@ -355,11 +371,10 @@ var Pontoon = (function (my) {
         return callback();
       }
 
-      var pluralForm = this.getPluralForm(true),
-          translation = entity.translation[pluralForm].string,
-          source = $('#translation').val();
+      var before = this.cachedTranslation,
+          after = $('#translation').val();
 
-      if ((translation !== null) && (translation !== source)) {
+      if ((before !== null) && (before !== after)) {
         $('#unsaved').show();
         $("#translation").focus();
         this.checkUnsavedChangesCallback = callback;
@@ -647,9 +662,9 @@ var Pontoon = (function (my) {
         $('#original').html(marked);
 
         $('#translation').val(source).focus();
-        $('#translation-length')
-          .find('.original-length').html(original.length).end()
-          .find('.current-length').html($('#translation').val().length);
+        $('#translation-length .original-length').html(original.length);
+        self.updateCurrentTranslationLength();
+        self.updateCachedTranslation();
 
         $('#quality:visible .cancel').click();
         $("#helpers nav .active a").click();
@@ -746,9 +761,7 @@ var Pontoon = (function (my) {
 
       // Update length (keydown is triggered too early)
       }).unbind("input propertychange").bind("input propertychange", function (e) {
-        var length = $('#translation').val().length;
-        $('#translation-length .current-length').html(length);
-
+        self.updateCurrentTranslationLength();
         $('.warning-overlay:visible .cancel').click();
       });
 
@@ -782,7 +795,8 @@ var Pontoon = (function (my) {
             source = original;
 
         $('#translation').val(source).focus();
-        $('#translation-length .current-length').html(source.length);
+        self.updateCurrentTranslationLength();
+        self.updateCachedTranslation();
       });
 
       // Clear translation area
@@ -791,7 +805,8 @@ var Pontoon = (function (my) {
         e.preventDefault();
 
         $('#translation').val('').focus();
-        $('#translation-length .current-length').html('0');
+        self.updateCurrentTranslationLength();
+        self.updateCachedTranslation();
       });
 
       // Do not change anything when cancelled
@@ -892,7 +907,8 @@ var Pontoon = (function (my) {
         var translation = $(this).find('.translation').text(),
             source = translation;
         $('#translation').val(source).focus();
-        $('#translation-length .current-length').html(source.length);
+        self.updateCurrentTranslationLength();
+        self.updateCachedTranslation();
 
         $('.warning-overlay:visible .cancel').click();
       });
@@ -951,7 +967,7 @@ var Pontoon = (function (my) {
                       entity.translation[pluralForm].string = translation;
                       entity.ui.find('.translation-string')
                         .html(self.doNotRender(translation));
-                      if (self.user.localizer) {
+                      if (self.user.isTranslator) {
                         next.addClass('approved');
                         if (entity.body) {
                           self.postMessage("SAVE", entity.translation[0].string);
@@ -1169,10 +1185,11 @@ var Pontoon = (function (my) {
 
           var pf = self.getPluralForm(true);
           entity.translation[pf] = data.translation;
+          self.cachedTranslation = translation;
           self.updateEntityUI(entity);
 
           // Update translation, including in place if possible
-          if (!inplace && entity.body && (self.user.localizer ||
+          if (!inplace && entity.body && (self.user.isTranslator ||
               !entity.translation[pf].approved)) {
             self.postMessage("SAVE", {
               translation: translation,
@@ -1248,7 +1265,7 @@ var Pontoon = (function (my) {
             var data = {
               type: "added",
               translation: {
-                approved: self.user.localizer,
+                approved: self.user.isTranslator,
                 fuzzy: false,
                 string: translation
               }
@@ -1476,8 +1493,10 @@ var Pontoon = (function (my) {
         e.preventDefault();
         e.stopPropagation();
 
-        var data = self.pushState();
-        self.initialize();
+        self.checkUnsavedChanges(function() {
+          var data = self.pushState();
+          self.initialize();
+        });
       });
 
       // Profile menu
@@ -1500,7 +1519,7 @@ var Pontoon = (function (my) {
           } else if ($(this).is(".hotkeys")) {
             $('#hotkeys').show();
 
-          } else if ($(this).is(".quality-checks")) {
+          } else if ($(this).is('.check-box')) {
             e.stopPropagation();
           }
         });
@@ -1563,6 +1582,14 @@ var Pontoon = (function (my) {
           .bind('mouseup', { initial: data }, mouseUpHandler);
       });
 
+    },
+
+
+    /*
+     * Update save buttons based on user permissions and settings
+     */
+    updateSaveButtons: function () {
+      $('[id^="save"]').toggleClass('suggest', !this.user.isTranslator || this.user.forceSuggestions);
     },
 
 
@@ -1640,6 +1667,7 @@ var Pontoon = (function (my) {
       this.updateMainMenu();
       this.updateProjectInfo();
       this.updateProfileMenu();
+      this.updateSaveButtons();
       this.renderEntityList();
       this.filterEntities('all');
       this.updateProgress();
@@ -1906,7 +1934,7 @@ var Pontoon = (function (my) {
     createObject: function (advanced, projectWindow) {
       var self = this;
 
-      function isLocalizer(translatedLocales) {
+      function isTranslator(translatedLocales) {
         if (translatedLocales) {
           return translatedLocales.indexOf(self.locale.code) > -1;
         }
@@ -1931,15 +1959,8 @@ var Pontoon = (function (my) {
       };
 
       this.part = $('.part .selector').attr('title');
-
       this.locale = self.getLocaleData();
-
-      this.user = {
-        email: $('#server').data('email') || '',
-        name: $('#server').data('name') || '',
-        localizer: isLocalizer($('#server').data('user-translated-locales')),
-        manager: $('#server').data('manager')
-      };
+      this.user.isTranslator = isTranslator($('#server').data('user-translated-locales'));
     },
 
 
@@ -2118,21 +2139,28 @@ var Pontoon = (function (my) {
 
 /* Main code */
 $(function() {
-  Pontoon.attachMainHandlers();
-  Pontoon.attachEditorHandlers();
-
   window.onpopstate = function(e) {
-    // Update main menu
-    $('.project .menu li [data-slug="' + e.state.project + '"]').parent().click();
-    $('.locale .menu li .language.' + e.state.locale.toLowerCase()).parent().click();
-    if (e.state.paths) {
-      Pontoon.updatePartSelector(e.state.paths);
-    }
-    // TODO: update search
+    if (e.state) {
+      // Update main menu
+      $('.project .menu li [data-slug="' + e.state.project + '"]').parent().click();
+      $('.locale .menu li .language.' + e.state.locale.toLowerCase()).parent().click();
+      if (e.state.paths) {
+        Pontoon.updatePartSelector(e.state.paths);
+      }
 
-    Pontoon.initialize();
+      Pontoon.initialize();
+    }
   };
 
+  Pontoon.user = {
+    email: $('#server').data('email') || '',
+    name: $('#server').data('name') || '',
+    forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
+    manager: $('#server').data('manager')
+  };
+
+  Pontoon.attachMainHandlers();
+  Pontoon.attachEditorHandlers();
   Pontoon.pushState();
   Pontoon.initialize();
 });

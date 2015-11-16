@@ -382,7 +382,7 @@ body > header .project.select {
 body > header #loading {
   display: none;
   float: left;
-  margin-right: 5px;
+  margin: 23px 5px 0 0;
 }
 
 body > header #loading.loader {
@@ -968,7 +968,7 @@ body > header aside p {
 }
 
 #plural-tabs ul li a {
-  display: inline-block;
+  display: block;
   padding: 10px;
 }
 
@@ -1058,6 +1058,26 @@ body > header aside p {
   font-weight: 600;
   margin-left: 10px;
   padding: 10px 15px;
+}
+
+#editor > menu button[id^="save"].suggest {
+  background: #4FC4F6;
+}
+
+#save:before {
+  content: "Save";
+}
+
+#save.suggest:before {
+  content: "Suggest";
+}
+
+#save-anyway:before {
+  content: "Save anyway";
+}
+
+#save-anyway.suggest:before {
+  content: "Suggest anyway";
 }
 
 #editor > menu button#leave-anyway {
@@ -1167,7 +1187,7 @@ body > header aside p {
   width: 22px;
 }
 
-#helpers > section ul li > header.localizer button,
+#helpers > section ul li > header.translator button,
 #helpers > section ul li > header.own button.delete,
 #helpers > section ul li.approved > header button.approve {
   display: inline-block;

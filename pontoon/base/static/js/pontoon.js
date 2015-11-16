@@ -39,7 +39,7 @@
               entity = element.entity,
               content = $(element).html();
 
-          if (Pontoon.user.localizer || !entity.translation[0].approved) {
+          if ((Pontoon.user.isTranslator && !Pontoon.user.forceSuggestions) || !entity.translation[0].approved) {
             entity.translation[0].string = content;
             $(entity.node).each(function() {
               this.html(content);
@@ -594,6 +594,14 @@
               left = node.getBoundingClientRect().left + window.scrollX;
               toolbar.css('left', left);
             }
+            break;
+
+          case "UPDATE-ATTRIBUTE":
+            var object = message.value.object,
+                attribute = message.value.attribute,
+                value = message.value.value;
+
+            Pontoon[object][attribute] = value;
             break;
 
           }
