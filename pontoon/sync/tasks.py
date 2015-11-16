@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from pontoon.administration.vcs import CommitToRepositoryException
 from pontoon.base.models import ChangedEntityLocale, Project, Repository
+from pontoon.base.tasks import PontoonTask
 from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.core import (
     commit_changes,
@@ -21,7 +22,7 @@ from pontoon.sync.vcs_models import VCSProject
 log = logging.getLogger(__name__)
 
 
-@serial_task(settings.SYNC_TASK_TIMEOUT, lock_key="project={0}")
+@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key="project={0}")
 def sync_project(self, project_pk, no_pull=False, no_commit=False, force=False):
     """Fetch the project with the given PK and perform sync on it."""
     try:
@@ -54,7 +55,7 @@ def sync_project(self, project_pk, no_pull=False, no_commit=False, force=False):
     log.info('Synced resources for project {0}.'.format(db_project.slug))
 
 
-@serial_task(settings.SYNC_TASK_TIMEOUT, lock_key="project={0},repo={1}")
+@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key="project={0},repo={1}")
 def sync_project_repo(self, project_pk, repo_pk, now, no_pull=False, no_commit=False):
     try:
         db_project = Project.objects.get(pk=project_pk)
