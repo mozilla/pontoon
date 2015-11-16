@@ -496,13 +496,10 @@ def get_translations_from_other_locales(request, template=None):
             json.dumps(payload, indent=4), content_type='application/json')
 
 
-def get_translation_history(request, template=None):
+def get_translation_history(request):
     """Get history of translations of given entity to given locale."""
-    log.debug("Get history of translations of given entity to given locale.")
-
     if not request.is_ajax():
-        log.error("Non-AJAX request")
-        raise Http404
+        return HttpResponseBadRequest('Bad Request: Request must be AJAX')
 
     try:
         entity = request.GET['entity']
@@ -512,20 +509,8 @@ def get_translation_history(request, template=None):
         log.error(str(e))
         return HttpResponse("error")
 
-    log.debug("Entity: " + entity)
-    log.debug("Locale: " + locale)
-
-    try:
-        entity = Entity.objects.get(pk=entity)
-    except Entity.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    try:
-        locale = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
+    entity = get_object_or_404(Entity, pk=entity)
+    locale = get_object_or_404(Locale, code__iexact=locale)
 
     translations = Translation.objects.filter(entity=entity, locale=locale)
     if plural_form != "-1":
@@ -551,11 +536,9 @@ def get_translation_history(request, template=None):
             }
             payload.append(o)
 
-        return HttpResponse(
-            json.dumps(payload, indent=4), content_type='application/json')
+        return HttpResponse(json.dumps(payload, indent=4), content_type='application/json')
 
     else:
-        log.debug("Translations do not exist")
         return HttpResponse("error")
 
 

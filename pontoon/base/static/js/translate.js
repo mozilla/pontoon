@@ -467,6 +467,11 @@ var Pontoon = (function (my) {
           .removeClass('limited').hide();
         break;
 
+      case "has-suggestions":
+        list.find('.entity[data-has-suggestions!="true"]')
+          .removeClass('limited').hide();
+        break;
+
       case "unchanged":
         list.find('.entity').each(function() {
           var entity = this.entity;
@@ -520,7 +525,8 @@ var Pontoon = (function (my) {
             source_string = (this.original_plural && self.locale.nplurals < 2) ? this.marked_plural : this.marked,
             li = $('<li class="entity limited' +
           (status ? ' ' + status : '') +
-          (!this.body ? ' uneditable' : '') + '">' +
+          (!this.body ? ' uneditable' : '') +
+          '" data-has-suggestions="' + this.has_suggestions + '">' +
           '<span class="status fa"></span>' +
           '<p class="string-wrapper">' +
             '<span class="source-string" data-key="' + self.doNotRender(this.key) + '">' + source_string + '</span>' +
@@ -974,6 +980,7 @@ var Pontoon = (function (my) {
                           self.postMessage("SAVE", entity.translation[0].string);
                         }
                       }
+                      self.updateEntityUI(entity);
 
                     // Last translation deleted, no alternative available
                     } else {
@@ -1084,11 +1091,27 @@ var Pontoon = (function (my) {
 
       var status = this.getEntityStatus(entity),
           translation = entity.translation[0].string;
+
       entity.ui.addClass(status);
       entity.ui.find('.translation-string')
         .html(this.doNotRender(translation || ''));
 
       this.updateProgress();
+
+      // Update has-suggestions status
+      $.ajax({
+        url: '/get-history/',
+        data: {
+          entity: entity.pk,
+          locale: this.locale.code,
+          plural_form: this.getPluralForm()
+        },
+        success: function(data) {
+          if (data !== "error") {
+            entity.ui.attr('data-has-suggestions', data.length > 1);
+          }
+        }
+      });
     },
 
 

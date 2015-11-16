@@ -728,7 +728,8 @@ class EntityTests(TestCase):
             'original_plural': 'Plural Source String',
             'marked_plural': 'Plural Source String',
             'pk': self.main_entity.pk,
-            'original': 'Source String'
+            'original': 'Source String',
+            'has_suggestions': False,
         })
 
     def test_for_project_locale_paths(self):
