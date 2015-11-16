@@ -797,13 +797,18 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         for entity in entities:
             translation_array = []
+            has_suggestions = False
 
             if entity.string_plural == "":
                 translation_array.append(entity.get_translation())
+                if len(entity.fetched_translations) > 1:
+                    has_suggestions = True
 
             else:
                 for plural_form in range(0, locale.nplurals or 1):
                     translation_array.append(entity.get_translation(plural_form))
+                    if len([t for t in entity.fetched_translations if t.plural_form == plural_form]) > 1:
+                        has_suggestions = True
 
             entities_array.append({
                 'pk': entity.pk,
@@ -819,6 +824,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'source': entity.source,
                 'obsolete': entity.obsolete,
                 'translation': translation_array,
+                'has_suggestions': has_suggestions,
             })
 
         return sorted(entities_array, key=lambda k: k['order'])
