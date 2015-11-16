@@ -1154,7 +1154,11 @@ var Pontoon = (function (my) {
 
       function renderTranslation(data) {
         if (data.type) {
-          self.endLoader('Translation ' + data.type);
+          if (self.user.email) {
+            self.endLoader('Translation ' + data.type);
+          } else {
+            self.endLoader('Sign in to save translations');
+          }
 
           var pf = self.getPluralForm(true);
           entity.translation[pf] = data.translation;
