@@ -1064,9 +1064,8 @@ def amagama(request):
         return HttpResponse("error")
 
 
-def transvision(request, repo, title):
+def transvision(request):
     """Get Mozilla translations from Transvision service."""
-    log.debug("Get Mozilla translations from Transvision service.")
 
     try:
         text = request.GET['text']
@@ -1075,39 +1074,26 @@ def transvision(request, repo, title):
         log.error(str(e))
         return HttpResponse("error")
 
-    src = "en-US"
-    url = "https://transvision.mozfr.org/api/v1/tm/%s/%s/" \
-          "%s/%s/?max_results=%s&min_quality=70" % (repo, src, locale, text, 5)
+    url = (
+        'https://transvision.mozfr.org/api/v1/tm/global/en-US/{locale}/{text}/'
+        .format(locale=locale, text=text)
+    )
+
+    payload = {
+        'max_results': 5,
+        'min_quality': 70,
+    }
 
     try:
-        r = requests.get(url)
-
+        r = requests.get(url, params=payload)
         if r.text != '[]':
-            translations = r.json()
-
-            return HttpResponse(json.dumps({
-                'translations': translations,
-                'title': title,
-            }), content_type='application/json')
-
+            return HttpResponse(json.dumps(r.json()), content_type='application/json')
         else:
             return HttpResponse("no")
 
     except Exception as e:
         log.error(e)
         return HttpResponse("error")
-
-
-def transvision_aurora(request):
-    return transvision(request, "aurora", "Mozilla Aurora")
-
-
-def transvision_gaia(request):
-    return transvision(request, "gaia", "Firefox OS")
-
-
-def transvision_mozilla_org(request):
-    return transvision(request, "mozilla_org", "Mozilla.org")
 
 
 @anonymous_csrf_exempt
