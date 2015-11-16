@@ -782,6 +782,7 @@ var Pontoon = (function (my) {
         if (callback) {
           callback();
           $('#unsaved').hide();
+          $('#translation').val(self.cachedTranslation);
         }
       });
 
