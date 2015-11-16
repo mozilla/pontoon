@@ -1433,7 +1433,8 @@ var Pontoon = (function (my) {
         var details = self.getProjectData('details'),
             menu = $(this).siblings('.menu').find('.resources ul'),
             locale = $.trim($('.locale .selector .code').html().toLowerCase()),
-            currentProject = self.getProjectData('slug') === self.project.slug;
+            currentProject = self.getProjectData('slug') === self.project.slug,
+            currentLocale = self.getLocaleData('code') === self.locale.code;
 
         menu.find('li:not(".no-match")').remove();
         $(details[locale]).each(function() {
@@ -1441,7 +1442,7 @@ var Pontoon = (function (my) {
               title = this.resource__path,
               percent = '0%';
 
-          if (currentProject && self.part === title) {
+          if (currentProject && currentLocale && self.part === title) {
             cls = ' class="current"';
           }
 
