@@ -1665,7 +1665,6 @@ var Pontoon = (function (my) {
 
       this.toggleInplaceElements();
       this.resetColumnsWidth();
-      this.updateMainMenu();
       this.updateProjectInfo();
       this.updateProfileMenu();
       this.updateSaveButtons();
@@ -1680,6 +1679,9 @@ var Pontoon = (function (my) {
       if (this.app.advanced) {
         $("#entitylist .entity:first").mouseover().click();
       }
+
+      // Must come last to prevent blocking other AJAX requests, e.g. getHistory()
+      this.updateMainMenu();
     },
 
 
