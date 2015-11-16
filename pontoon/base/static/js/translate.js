@@ -858,7 +858,7 @@ var Pontoon = (function (my) {
         var sec = $(this).attr('href').substr(1),
             editor = $('#editor')[0],
             entity = editor.entity,
-            currentEntity = entity.id,
+            currentEntity = entity.pk,
             currentEntityPlural = currentEntity + self.isPluralized();
 
         switch (sec) {
