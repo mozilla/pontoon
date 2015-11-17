@@ -281,6 +281,11 @@ body > header .project.select {
   content: "";
 }
 
+.not-translated .status:before {
+  color: #AAAAAA;
+  content: "";
+}
+
 .has-suggestions .status:before {
   color: #AAAAAA;
   content: "";

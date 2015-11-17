@@ -494,6 +494,11 @@ var Pontoon = (function (my) {
           .removeClass('limited').hide();
         break;
 
+      case "not-translated":
+        list.find('.entity.approved')
+          .removeClass('limited').hide();
+        break;
+
       case "has-suggestions":
         list.find('.entity[data-has-suggestions!="true"]')
           .removeClass('limited').hide();
