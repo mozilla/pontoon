@@ -386,6 +386,33 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Do not change anything in place and hide editor
+     */
+    stoplInPlaceEditing: function () {
+      var entity = $("#editor")[0].entity;
+
+      if (entity.body) {
+        this.postMessage("CANCEL");
+        this.postMessage("UNHOVER", entity.id);
+      }
+    },
+
+
+    /*
+     * Close editor and return to entity list
+     */
+    goBackToEntityList: function () {
+      $("#entitylist")
+        .css('left', 0)
+        .find('.hovered').removeClass('hovered');
+
+      $("#editor")
+        .removeClass('opened')
+        .css('left', $('#sidebar').width());
+    },
+
+
+    /*
      * Switch to new entity in editor
      *
      * newEntity New entity we want to switch to
@@ -601,7 +628,8 @@ var Pontoon = (function (my) {
 
         case "back":
           self.checkUnsavedChanges(function() {
-            $('#cancel').click();
+            self.goBackToEntityList();
+            self.stoplInPlaceEditing();
           });
           break;
 
@@ -717,7 +745,10 @@ var Pontoon = (function (my) {
           if ($('.warning-overlay').is(':visible')) {
             $('.warning-overlay .cancel').click();
           } else if (!self.app.advanced) {
-            $('#cancel').click();
+            self.checkUnsavedChanges(function() {
+              self.goBackToEntityList();
+              self.stoplInPlaceEditing();
+            });
           }
           return false;
         }
@@ -814,29 +845,6 @@ var Pontoon = (function (my) {
         $('#translation').val('').focus();
         self.updateCurrentTranslationLength();
         self.updateCachedTranslation();
-      });
-
-      // Do not change anything when cancelled
-      $('#cancel').click(function (e, data) {
-        e.stopPropagation();
-        e.preventDefault();
-
-        var entity = $("#editor")[0].entity,
-            data = data || {};
-
-        $("#entitylist")
-          .css('left', 0)
-          .find('.hovered').removeClass('hovered');
-
-        $("#editor")
-          .removeClass('opened')
-          .css('left', $('#sidebar').width());
-
-        // Only if editable and not already handled inplace
-        if (entity.body && !data.inplace) {
-          self.postMessage("CANCEL");
-          self.postMessage("UNHOVER", entity.id);
-        }
       });
 
       // Save translation
@@ -1202,7 +1210,10 @@ var Pontoon = (function (my) {
       function gotoEntityListOrNextEntity() {
         // Go to entity list
         if (!self.app.advanced && $("#editor").is('.opened')) {
-          $('#cancel').trigger('click', [{inplace: inplace}]);
+          self.goBackToEntityList();
+          if (!inplace) {
+            self.stoplInPlaceEditing();
+          }
 
         // Go to next entity
         } else {
@@ -1842,13 +1853,16 @@ var Pontoon = (function (my) {
 
         case "INACTIVE":
           if (!Pontoon.app.advanced && $("#editor").is('.opened')) {
-            $('#cancel').trigger('click', [{inplace: true}]);
+            Pontoon.cancelTranslation();
           }
           break;
 
         case "UPDATE":
-          var entity = Pontoon.entities[message.value.id];
-          Pontoon.updateOnServer(entity, message.value.content, true, true);
+          var entity = Pontoon.entities[message.value.id],
+              translation = message.value.content;
+          Pontoon.updateOnServer(entity, translation, true, true);
+          $('#translation').val(translation);
+          Pontoon.updateCachedTranslation();
           break;
 
         case "DELETE":
