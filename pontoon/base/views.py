@@ -1,5 +1,3 @@
-import base64
-import hashlib
 import json
 import Levenshtein
 import logging
@@ -36,6 +34,7 @@ from guardian.decorators import permission_required_or_403
 from operator import itemgetter
 from pontoon.administration import files
 from pontoon.base import utils
+from pontoon.base.utils import require_AJAX
 
 from pontoon.base.models import (
     Entity,
@@ -62,8 +61,6 @@ log = logging.getLogger('pontoon')
 
 def home(request):
     """Home view."""
-    log.debug("Home view.")
-
     project = Project.objects.get(id=1)
     locale = utils.get_project_locale_from_request(
         request, project.locales) or 'en-GB'
@@ -72,11 +69,8 @@ def home(request):
     return translate(request, locale, project.slug, path)
 
 
-def locale(request, locale, template='locale.html'):
+def locale(request, locale):
     """Locale view."""
-    log.debug("Locale view.")
-
-    # Validate locale
     l = get_object_or_404(Locale, code__iexact=locale)
 
     projects = Project.objects.filter(
@@ -86,12 +80,10 @@ def locale(request, locale, template='locale.html'):
     if not projects:
         raise Http404
 
-    data = {
+    return render(request, 'locale.html', {
         'projects': get_projects_with_stats(projects, l),
         'locale': l,
-    }
-
-    return render(request, template, data)
+    })
 
 
 @login_required(redirect_field_name='', login_url='/403')
@@ -111,7 +103,7 @@ def locale_manage(request, locale):
                 validate_comma_separated_integer_list(selected)
                 new = set(map(int, selected.split(',')))
             except ValidationError as e:
-                log.debug(e)
+                log.error(e)
                 return HttpResponseBadRequest(e)
 
         if current != new:
@@ -127,48 +119,37 @@ def locale_manage(request, locale):
     all_users = User.objects.exclude(pk__in=managers).exclude(pk__in=translators).exclude(email="")
     contributors = User.translators.filter(translation__locale=l).distinct()
 
-    data = {
+    return render(request, 'locale_manage.html', {
         'locale': l,
         'all_users': all_users,
         'contributors': contributors,
         'translators': translators,
         'managers': managers,
-    }
-
-    return render(request, 'locale_manage.html', data)
+    })
 
 
 def locales(request):
     """Localization teams."""
-
-    data = {
+    return render(request, 'locales.html', {
         'locales': get_locales_with_stats(),
-    }
-
-    return render(request, 'locales.html', data)
+    })
 
 
-def project(request, slug, template='project.html'):
+def project(request, slug):
     """Project view."""
-    log.debug("Project view.")
-
     p = get_object_or_404(Project, slug=slug, disabled=False,
             pk__in=Resource.objects.values('project'))
 
-    data = {
+    return render(request, 'project.html', {
         'locales': get_locales_with_project_stats(p),
         'project': p,
         'project_locales': json.dumps(
             [i.lower() for i in p.locales.values_list('code', flat=True)]),
-    }
-
-    return render(request, template, data)
+    })
 
 
-def projects(request, template='projects.html'):
+def projects(request):
     """Project overview."""
-    log.debug("Project overview.")
-
     projects = (
         Project.objects
         .filter(disabled=False, resources__isnull=False)
@@ -177,11 +158,9 @@ def projects(request, template='projects.html'):
         .order_by("name")
     )
 
-    data = {
+    return render(request, 'projects.html', {
         'projects': get_projects_with_stats(projects),
-    }
-
-    return render(request, template, data)
+    })
 
 
 def locale_project(request, locale, slug):
@@ -199,23 +178,20 @@ def locale_project(request, locale, slug):
     )
     stats = {s.resource.path: s for s in stats_qs}
     parts = project.locales_parts_stats(l)
+
     for part in parts:
         stat = stats.get(part['resource__path'], None)
         part['latest_activity'] = stat.latest_translation if stat else None
 
-    data = {
+    return render(request, 'locale_project.html', {
         'locale': l,
         'project': project,
         'parts': parts,
-    }
-
-    return render(request, 'locale_project.html', data)
+    })
 
 
 def translate(request, locale, slug, part):
     """Translate view."""
-
-    # Validate locale and project
     l = get_object_or_404(Locale, code__iexact=locale)
     p = get_object_or_404(
         Project.objects.distinct(),
@@ -237,35 +213,25 @@ def translate(request, locale, slug, part):
         .order_by("name")
     )
 
-    data = {
+    return render(request, 'translate.html', {
         'accept_language': utils.get_project_locale_from_request(request, Locale.objects),
         'locale': l,
         'locales': Locale.objects.all(),
         'part': part,
         'project': p,
         'projects': projects,
-    }
-
-    return render(request, 'translate.html', data)
+    })
 
 
 @login_required(redirect_field_name='', login_url='/403')
 def profile(request):
     """Current user profile."""
-    log.debug("Current user profile.")
-
     return contributor(request, request.user.email)
 
 
-def contributor(request, email, template='user.html'):
+def contributor(request, email):
     """Contributor profile."""
-    log.debug("Contributor profile.")
-
-    # Validate user
-    try:
-        user = User.objects.get(email=email)
-    except User.DoesNotExist:
-        raise Http404
+    user = get_object_or_404(User, email=email)
 
     # Exclude unchanged translations
     translations = (
@@ -298,13 +264,11 @@ def contributor(request, email, template='user.html'):
 
     timeline.reverse()
 
-    data = {
+    return render(request, 'user.html', {
         'contributor': user,
         'timeline': timeline,
         'translations': translations,
-    }
-
-    return render(request, template, data)
+    })
 
 
 class ContributorsMixin(object):
@@ -316,8 +280,6 @@ class ContributorsMixin(object):
 
     def get_context_data(self, **kwargs):
         """Top contributors view."""
-        log.debug("Top contributors view.")
-
         context = super(ContributorsMixin, self).get_context_data(**kwargs)
         try:
             period = int(self.request.GET['period'])
@@ -370,44 +332,31 @@ class ProjectContributorsView(ContributorsMixin, DetailView):
         return Q(translation__entity__resource__project=self.object)
 
 
-def search(request, template='search.html'):
+def search(request):
     """Terminology search view."""
-    log.debug("Terminology search view.")
-
     locale = utils.get_project_locale_from_request(
         request, Locale.objects) or 'en-GB'
 
-    data = {
+    return render(request, 'search.html', {
         'locale': Locale.objects.get(code__iexact=locale),
         'locales': Locale.objects.all(),
-    }
-
-    return render(request, template, data)
+    })
 
 
+@require_AJAX
 def get_project_details(request, slug):
     """Get project locales with their pages/paths and stats."""
-    if not request.is_ajax():
-        return HttpResponseBadRequest('Bad Request: Request must be AJAX')
-
     project = get_object_or_404(Project, slug=slug)
 
-    data = {
+    return HttpResponse(json.dumps({
         "slug": slug,
         "details": project.locales_parts_stats(),
-    }
-
-    return HttpResponse(json.dumps(data), content_type='application/json')
+    }), content_type='application/json')
 
 
-def entities(request, template=None):
+@require_AJAX
+def entities(request):
     """Get entities for the specified project, locale and paths."""
-    log.debug("Get entities for the specified project, locale and paths.")
-
-    if not request.is_ajax():
-        log.error("Non-AJAX request")
-        raise Http404
-
     try:
         project = request.GET['project']
         locale = request.GET['locale']
@@ -415,10 +364,6 @@ def entities(request, template=None):
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
-
-    log.debug("Project: " + project)
-    log.debug("Locale: " + locale)
-    log.debug("Paths: " + str(paths))
 
     try:
         project = Project.objects.get(slug=project)
@@ -440,23 +385,15 @@ def entities(request, template=None):
     return HttpResponse(json.dumps(entities), content_type='application/json')
 
 
-def get_translations_from_other_locales(request, template=None):
+@require_AJAX
+def get_translations_from_other_locales(request):
     """Get entity translations for all but specified locale."""
-    log.debug("Get entity translation for all but specified locale.")
-
-    if not request.is_ajax():
-        log.error("Non-AJAX request")
-        raise Http404
-
     try:
         entity = request.GET['entity']
         locale = request.GET['locale']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
-
-    log.debug("Entity: " + entity)
-    log.debug("Locale: " + locale)
 
     try:
         entity = Entity.objects.get(pk=entity)
@@ -489,18 +426,15 @@ def get_translations_from_other_locales(request, template=None):
             })
 
     if len(payload) == 0:
-        log.debug("Translations do not exist")
         return HttpResponse("error")
     else:
         return HttpResponse(
             json.dumps(payload, indent=4), content_type='application/json')
 
 
+@require_AJAX
 def get_translation_history(request):
     """Get history of translations of given entity to given locale."""
-    if not request.is_ajax():
-        return HttpResponseBadRequest('Bad Request: Request must be AJAX')
-
     try:
         entity = request.GET['entity']
         locale = request.GET['locale']
@@ -542,22 +476,15 @@ def get_translation_history(request):
         return HttpResponse("error")
 
 
+@require_AJAX
 @transaction.atomic
-def delete_translation(request, template=None):
+def delete_translation(request):
     """Delete given translation."""
-    log.debug("Delete given translation.")
-
-    if not request.is_ajax():
-        log.error("Non-AJAX request")
-        raise Http404
-
     try:
         t = request.POST['translation']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
-
-    log.debug("Translation: " + t)
 
     try:
         translation = Translation.objects.get(pk=t)
@@ -599,19 +526,11 @@ def delete_translation(request, template=None):
 
 
 @anonymous_csrf_exempt
+@require_POST
+@require_AJAX
 @transaction.atomic
-def update_translation(request, template=None):
+def update_translation(request):
     """Update entity translation for the specified locale and user."""
-    log.debug("Update entity translation for the specified locale and user.")
-
-    if not request.is_ajax():
-        log.error("Non-AJAX request")
-        raise Http404
-
-    if request.method != 'POST':
-        log.error("Non-POST request")
-        raise Http404
-
     try:
         entity = request.POST['entity']
         string = request.POST['translation']
@@ -622,10 +541,6 @@ def update_translation(request, template=None):
     except MultiValueDictKeyError as error:
         log.error(str(error))
         return HttpResponse("error")
-
-    log.debug("Entity: " + entity)
-    log.debug("Translation: " + string)
-    log.debug("Locale: " + locale)
 
     try:
         e = Entity.objects.get(pk=entity)
@@ -794,8 +709,6 @@ def update_translation(request, template=None):
 
 def translation_memory(request):
     """Get translations from internal translations."""
-    log.debug("Get translations from internal translations.")
-
     try:
         text = request.GET['text']
         locale = request.GET['locale']
@@ -873,8 +786,6 @@ def translation_memory(request):
 
 def machine_translation(request):
     """Get translation from machine translation service."""
-    log.debug("Get translation from machine translation service.")
-
     try:
         text = request.GET['text']
         locale = request.GET['locale']
@@ -907,7 +818,6 @@ def machine_translation(request):
                     break
 
         if not supported:
-            log.debug("Locale not supported.")
             return HttpResponse("not-supported")
 
         obj['locale'] = locale
@@ -923,7 +833,6 @@ def machine_translation(request):
 
     try:
         r = requests.get(url, params=payload)
-        log.debug(r.content)
 
         # Parse XML response
         root = ET.fromstring(r.content)
@@ -939,8 +848,6 @@ def machine_translation(request):
 
 def microsoft_terminology(request):
     """Get translations from Microsoft Terminology Service."""
-    log.debug("Get translations from Microsoft Terminology Service.")
-
     try:
         text = request.GET['text']
         locale = request.GET['locale']
@@ -976,7 +883,6 @@ def microsoft_terminology(request):
                         break
 
         if not supported:
-            log.debug("Locale not supported.")
             return HttpResponse("not-supported")
 
         obj['locale'] = locale
@@ -1015,8 +921,6 @@ def microsoft_terminology(request):
 
 def amagama(request):
     """Get open source translations from amaGama service."""
-    log.debug("Get open source translations from amaGama service.")
-
     try:
         text = request.GET['text']
         locale = request.GET['locale']
@@ -1085,14 +989,9 @@ def transvision(request):
 
 
 @anonymous_csrf_exempt
-def download(request, template=None):
+@require_POST
+def download(request):
     """Download translations in appropriate form."""
-    log.debug("Download translations.")
-
-    if request.method != 'POST':
-        log.error("Non-POST request")
-        raise Http404
-
     try:
         format = request.POST['type']
         locale = request.POST['locale']
@@ -1137,67 +1036,6 @@ def download(request, template=None):
 
 
 @login_required(redirect_field_name='', login_url='/403')
-def save_to_transifex(request, template=None):
-    """Save translations to Transifex."""
-    log.debug("Save to Transifex.")
-
-    if request.method != 'POST':
-        log.error("Non-POST request")
-        raise Http404
-
-    try:
-        data = json.loads(request.POST['data'])
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    """Check if user authenticated to Transifex."""
-    profile = UserProfile.objects.get(user=request.user)
-
-    username = data.get('auth', {}) \
-                   .get('username', profile.transifex_username)
-    password = data.get('auth', {}) \
-                   .get('password',
-                        base64.decodestring(profile.transifex_password))
-    if len(username) == 0 or len(password) == 0:
-        return HttpResponse("authenticate")
-
-    """Make PUT request to Transifex API."""
-    payload = []
-    for entity in data.get('strings'):
-        obj = {
-            # Identify translation strings using hashes
-            "source_entity_hash": hashlib.md5(
-                ':'.join([entity['original'], ''])
-                   .encode('utf-8')).hexdigest(),
-            "translation": entity['translation']
-        }
-        payload.append(obj)
-    log.debug(json.dumps(payload, indent=4))
-
-    """Make PUT request to Transifex API."""
-    try:
-        p = Project.objects.get(url=data['url'])
-    except Project.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
-    response = utils.req('put', p.transifex_project, p.transifex_resource,
-                         data['locale'], username, password, payload)
-
-    """Save Transifex username and password."""
-    if data.get('auth', {}).get('remember', {}) == 1:
-        profile.transifex_username = data['auth']['username']
-        profile.transifex_password = base64.encodestring(
-            data['auth']['password'])
-        profile.save()
-
-    try:
-        return HttpResponse(response.status_code)
-    except AttributeError:
-        return HttpResponse(response)
-
-
-@login_required(redirect_field_name='', login_url='/403')
 @require_POST
 @transaction.atomic
 def toggle_user_profile_attribute(request, email):
@@ -1221,15 +1059,10 @@ def toggle_user_profile_attribute(request, email):
 
 
 @login_required(redirect_field_name='', login_url='/403')
+@require_POST
 @transaction.atomic
 def save_user_name(request):
     """Save user name."""
-    log.debug("Save user name.")
-
-    if request.method != 'POST':
-        log.error("Non-POST request")
-        raise Http404
-
     try:
         name = request.POST['name']
     except MultiValueDictKeyError as e:
@@ -1239,8 +1072,6 @@ def save_user_name(request):
     if len(name) > 30:
         return HttpResponse("length")
 
-    log.debug("New name: " + name)
-
     user = request.user
     user.first_name = name
     user.save()
@@ -1249,23 +1080,15 @@ def save_user_name(request):
 
 
 @login_required(redirect_field_name='', login_url='/403')
+@require_POST
 def request_locale(request):
     """Request new locale to be added to project."""
-    log.debug("Request new locale to be added to project.")
-
-    if request.method != 'POST':
-        log.error("Non-POST request")
-        raise Http404
-
     try:
         project = request.POST['project']
         locale = request.POST['locale']
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
-
-    log.debug("Project: " + project)
-    log.debug("Locale: " + locale)
 
     try:
         project = Project.objects.get(slug=project)
@@ -1294,12 +1117,7 @@ def request_locale(request):
     return HttpResponse()
 
 
-def get_csrf(request, template=None):
+@require_AJAX
+def get_csrf(request):
     """Get CSRF token."""
-    log.debug("Get CSRF token.")
-
-    if not request.is_ajax():
-        log.error("Non-AJAX request")
-        raise Http404
-
     return HttpResponse(request.csrf_token)
