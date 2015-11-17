@@ -394,10 +394,10 @@ $(function() {
         $('body').prepend(
           '<aside class="tooltip">' +
             '<div class="total">Total<span></span></div>' +
-            '<div class="approved">Approved<span></span></div>' +
+            '<div class="approved">Translated<span></span></div>' +
             '<div class="translated">Suggested<span></span></div>' +
-            '<div class="fuzzy">Needs work<span></span></div>' +
-            '<div class="untranslated">Untranslated<span></span></div>' +
+            '<div class="fuzzy">Fuzzy<span></span></div>' +
+            '<div class="untranslated">Missing<span></span></div>' +
           '</aside>');
       }
 
