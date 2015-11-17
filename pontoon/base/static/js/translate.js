@@ -961,10 +961,11 @@ var Pontoon = (function (my) {
                   $(this).remove();
                   self.endLoader('Translation deleted');
 
+                  var entity = $('#editor')[0].entity;
+
                   // Active translation deleted
                   if (index === 0) {
-                    var entity = $('#editor')[0].entity,
-                        next = $('#helpers .history li[data-id="' + data.next + '"]'),
+                    var next = $('#helpers .history li[data-id="' + data.next + '"]'),
                         pluralForm = self.getPluralForm(true);
 
                     // Make newest alternative translation active
@@ -980,7 +981,7 @@ var Pontoon = (function (my) {
                           self.postMessage("SAVE", entity.translation[0].string);
                         }
                       }
-                      self.updateEntityUI(entity);
+                      self.updateHasSuggestions(entity);
 
                     // Last translation deleted, no alternative available
                     } else {
@@ -999,6 +1000,8 @@ var Pontoon = (function (my) {
                                   '<p>No translations available.</p>' +
                                 '</li>');
                     }
+                  } else {
+                    self.updateHasSuggestions(entity);
                   }
                 });
             } else {
@@ -1082,6 +1085,28 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Update has-suggestions status in the entity list
+     *
+     * entity Entity
+     */
+    updateHasSuggestions: function (entity) {
+      $.ajax({
+        url: '/get-history/',
+        data: {
+          entity: entity.pk,
+          locale: this.locale.code,
+          plural_form: this.getPluralForm()
+        },
+        success: function(data) {
+          if (data !== "error") {
+            entity.ui.attr('data-has-suggestions', data.length > 1);
+          }
+        }
+      });
+    },
+
+
+    /*
      * Update entity in the entity list
      *
      * entity Entity
@@ -1097,21 +1122,7 @@ var Pontoon = (function (my) {
         .html(this.doNotRender(translation || ''));
 
       this.updateProgress();
-
-      // Update has-suggestions status
-      $.ajax({
-        url: '/get-history/',
-        data: {
-          entity: entity.pk,
-          locale: this.locale.code,
-          plural_form: this.getPluralForm()
-        },
-        success: function(data) {
-          if (data !== "error") {
-            entity.ui.attr('data-has-suggestions', data.length > 1);
-          }
-        }
-      });
+      this.updateHasSuggestions(entity);
     },
 
 
