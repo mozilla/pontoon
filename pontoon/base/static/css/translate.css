@@ -1051,10 +1051,6 @@ body > header aside p {
   text-transform: uppercase;
 }
 
-.advanced button#cancel {
-  display: none;
-}
-
 #editor > menu button[id^="save"],
 #editor > menu button#leave-anyway {
   background: #7bc876;
