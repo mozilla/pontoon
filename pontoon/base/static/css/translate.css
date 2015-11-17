@@ -407,7 +407,7 @@ body > header .notification {
   top: 70px;
   visibility: visible;
   width: auto;
-  z-index: 25;
+  /* No z-index to prevent from covering the Next button */
 }
 
 body > header .notification.hide {
