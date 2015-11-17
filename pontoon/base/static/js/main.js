@@ -152,7 +152,8 @@ var Pontoon = (function (my) {
       }
 
       function append(data) {
-        ul.append('<li title="Click to copy">' +
+        var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : '';
+        ul.append('<li' + title + '>' +
           '<header>' +
             '<span class="stress">' + (data.quality || '') +
               (data.count ? ' &bull; <span>#</span>' + data.count : '') +

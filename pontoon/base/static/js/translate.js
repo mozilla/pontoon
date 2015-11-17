@@ -81,7 +81,7 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data !== "error") {
             $.each(data, function() {
-              list.append('<li title="Click to copy">' +
+              list.append('<li title="Copy Into Translation (Tab)">' +
                 '<header>' + this.locale.name + '<span class="stress">' + this.locale.code + '</span></header>' +
                 '<p class="translation" dir="auto" lang="' + this.locale.code + '">' +
                   self.doNotRender(this.translation) +
@@ -146,7 +146,7 @@ var Pontoon = (function (my) {
               list.append(
                 '<li data-id="' + this.id + '" ' +
                 (this.approved ? ' class="approved"' : '') +
-                'title="Click to copy">' +
+                'title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
                     ((self.user.isTranslator) ? ' translator' :
                       ((self.user.email === this.email && !this.approved) ?
