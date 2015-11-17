@@ -528,7 +528,7 @@
           case "SAVE":
             var entity = null,
                 translationValue = message.value.translation,
-                translation = translationValue !== null ? translationValue : message.value;
+                translation = translationValue !== undefined ? translationValue : message.value;
             if (message.value.id) {
               entity = Pontoon.entities[message.value.id];
             } else {
