@@ -107,6 +107,12 @@
           {{ repo_form.DELETE }}
         </div>
       </section>
+      <section class="prefix-wrapper">
+        <div class="prefix">
+          {{ repo_form.permalink_prefix.label_tag() }}
+          {{ repo_form.permalink_prefix }}
+        </div>
+      </section>
       {{ repo_form.errors }}
     </div>
   {% endfor %}
@@ -126,6 +132,12 @@
       <div class="delete">
         {{ repo_formset.empty_form.DELETE.label_tag() }}
         {{ repo_formset.empty_form.DELETE }}
+      </div>
+    </section>
+    <section class="prefix-wrapper">
+      <div class="prefix">
+        {{ repo_formset.empty_form.permalink_prefix.label_tag() }}
+        {{ repo_formset.empty_form.permalink_prefix }}
       </div>
     </section>
     {{ repo_formset.empty_form.errors }}

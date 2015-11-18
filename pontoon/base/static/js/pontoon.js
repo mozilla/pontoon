@@ -568,29 +568,6 @@
             $("#context .mode").attr("label", message.value + " mode");
             break;
 
-          case "HTML":
-            $.ajax({
-              url: Pontoon.project.url,
-              success: function(data) {
-                var response = data,
-                    index = data.toLowerCase().indexOf("<head"),
-                    start = response.substring(0, index);
-                    inner = $("html").clone();
-                // Remove Pontoon-content
-                inner
-                  .find("link[href*='pontoon.css']").remove().end()
-                  .find("script[src*='pontoon']").remove().end()
-                  .find("script[src*='jquery.min.js']").remove().end()
-                  .find(".pontoon-remove").remove().end()
-                  .find(".pontoon-editable-toolbar").remove().end()
-                  .find("[contenteditable]").removeAttr("contenteditable").end()
-                  .find("body").removeAttr("contextmenu").end()
-                  .find("menu#context").remove();
-                postMessage("HTML", start + inner.html() + "\n</html>");
-              }
-            });
-            break;
-
           case "RESIZE":
             var toolbar = $('.pontoon-editable-toolbar'),
                 node = toolbar[0].target;

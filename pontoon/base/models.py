@@ -21,7 +21,6 @@ from jsonfield import JSONField
 
 from pontoon.administration.vcs import commit_to_vcs, get_revision, update_from_vcs
 from pontoon.base import utils
-from pontoon.base.utils import get_object_or_none
 from pontoon.sync import KEY_SEPARATOR
 
 
@@ -444,7 +443,7 @@ class ProjectLocale(models.Model):
     @classmethod
     def get_latest_activity(cls, project, locale):
         """Get the latest activity within this project and locale."""
-        project_locale = get_object_or_none(ProjectLocale, project=project, locale=locale)
+        project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
         if project_locale is not None and project_locale.latest_translation is not None:
             return project_locale.latest_translation.latest_activity
         else:
@@ -476,6 +475,12 @@ class Repository(models.Model):
         choices=TYPE_CHOICES
     )
     url = models.CharField("URL", max_length=2000, blank=True)
+
+    """
+    Prefix of the resource URL, used for direct downloads. To form a full
+    URL, relative path must be appended.
+    """
+    permalink_prefix = models.CharField("Permalink prefix", max_length=2000, blank=True)
 
     """
     Mapping of locale codes to VCS revisions of each repo at the last
@@ -907,7 +912,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             self.check_latest_translation(self.locale)
             self.check_latest_translation(stats)
 
-            project_locale = get_object_or_none(
+            project_locale = utils.get_object_or_none(
                 ProjectLocale,
                 project=self.entity.resource.project,
                 locale=self.locale

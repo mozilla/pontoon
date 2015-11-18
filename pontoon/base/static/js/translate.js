@@ -3,63 +3,30 @@ var Pontoon = (function (my) {
   return $.extend(true, my, {
 
     /*
-     * Save data in different formats
-     *
-     * type Data format
-     * value Data
+     * Download resource file. Not possible with AJAX.
      */
-    save: function (type, value) {
+    download: function () {
+      var params = {
+          slug: this.project.slug,
+          code: this.locale.code,
+          path: this.part,
+          csrfmiddlewaretoken: $('#server').data('csrf')
+      };
 
-      var self = this,
-          params = {
-            type: type,
-            locale: this.locale.code,
-            project: this.project.slug
-          };
+      var post = $('<form>', {
+        method: 'POST',
+        action: '/download/'
+      });
 
-      function strip(entities) {
-        // Deep copy: http://api.jquery.com/jQuery.extend
-        var e = $.extend(true, [], entities);
-        $(e).each(function () {
-          delete this.ui;
-          delete this.hover;
-          delete this.unhover;
-          delete this.id;
-          delete this.pk;
-          delete this.body;
-        });
-        return e;
+      for (var key in params) {
+        $('<input>', {
+          type: 'hidden',
+          name: key,
+          value: params[key]
+        }).appendTo(post);
       }
 
-      // It is impossible to download files with AJAX
-      function download(params) {
-        params.csrfmiddlewaretoken = $('#server').data('csrf');
-        var post = $('<form>', {
-          method: 'post',
-          action: '/download/'
-        });
-        for(var key in params) {
-          $('<input>', {
-            type: 'hidden',
-            name: key,
-            value: params[key]
-          }).appendTo(post);
-        }
-        post.appendTo('body').submit().remove();
-      }
-
-      if (type === "html") {
-        params.content = value;
-        download(params);
-
-      } else if (type === "json") {
-        var entities = strip(this.entities);
-        params.content = JSON.stringify(entities, null, "\t");
-        download(params);
-
-      } else if (type === "zip") {
-        download(params);
-      }
+      post.appendTo('body').submit().remove();
     },
 
 
@@ -1569,6 +1536,9 @@ var Pontoon = (function (my) {
               self.endLoader('Oops, something went wrong.', 'error');
             });
 
+          } else if ($(this).is('.download')) {
+            self.download();
+
           } else if ($(this).is(".hotkeys")) {
             $('#hotkeys').show();
 
@@ -1576,17 +1546,6 @@ var Pontoon = (function (my) {
             e.stopPropagation();
           }
         });
-      });
-
-      // Download menu
-      $('#profile .menu .file-format').click(function (e) {
-        e.preventDefault();
-
-        if ($(this).is(".html")) {
-          self.postMessage("HTML");
-        } else {
-          self.save($(this).attr('class').split(" ")[1]);
-        }
       });
 
       // Close notification on click
@@ -1651,6 +1610,7 @@ var Pontoon = (function (my) {
      */
     updateProfileMenu: function () {
       $('#profile .admin-current-project a').attr('href', '/admin/projects/' + this.project.slug + '/');
+      $('#profile .download .file-format').html(this.entities[0].format.toUpperCase());
     },
 
 
@@ -1878,10 +1838,6 @@ var Pontoon = (function (my) {
         case "DELETE":
           var entity = Pontoon.entities[message.value];
           Pontoon.updateEntityUI(entity);
-          break;
-
-        case "HTML":
-          Pontoon.save("html", message.value);
           break;
 
         }

@@ -2,6 +2,7 @@ import json
 import Levenshtein
 import logging
 import math
+import os
 import requests
 import xml.etree.ElementTree as ET
 import urllib
@@ -32,7 +33,7 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from guardian.decorators import permission_required_or_403
 from operator import itemgetter
-from pontoon.administration import files
+
 from pontoon.base import utils
 from pontoon.base.utils import require_AJAX
 
@@ -991,47 +992,25 @@ def transvision(request):
 @anonymous_csrf_exempt
 @require_POST
 def download(request):
-    """Download translations in appropriate form."""
+    """Download translated resource."""
     try:
-        format = request.POST['type']
-        locale = request.POST['locale']
-        project = request.POST['project']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
+        slug = request.POST['slug']
+        code = request.POST['code']
+        path = request.POST['path']
+    except MultiValueDictKeyError:
         raise Http404
 
-    if format in ('html', 'json'):
-        try:
-            content = request.POST['content']
-        except MultiValueDictKeyError as e:
-            log.error(str(e))
-            raise Http404
-    try:
-        p = Project.objects.get(slug=project)
-    except Project.DoesNotExist as e:
-        log.error(e)
+    content, path = utils.get_download_content(slug, code, path)
+    filename = os.path.basename(path)
+
+    if not content:
         raise Http404
 
-    filename = '%s-%s' % (project, locale)
     response = HttpResponse()
-
-    if format == 'html':
-        response['Content-Type'] = 'text/html'
-
-    elif format == 'json':
-        response['Content-Type'] = 'application/json'
-
-    elif format == 'zip':
-        content = files.generate_zip(p, locale)
-
-        if content is False:
-            raise Http404
-
-        response['Content-Type'] = 'application/x-zip-compressed'
-
     response.content = content
-    response['Content-Disposition'] = \
-        'attachment; filename=' + filename + '.' + format
+    response['Content-Type'] = 'text/plain'
+    response['Content-Disposition'] = 'attachment; filename=' + filename
+
     return response
 
 

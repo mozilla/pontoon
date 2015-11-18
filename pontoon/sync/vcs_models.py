@@ -3,8 +3,11 @@ Models for working with remote translation data stored in a VCS.
 """
 import logging
 import os.path
-from itertools import chain
 
+from itertools import chain
+from datetime import datetime
+
+from django.utils import timezone
 from django.utils.functional import cached_property
 
 from pontoon.base import MOZILLA_REPOS
@@ -12,6 +15,7 @@ from pontoon.sync.utils import (
     directory_contains_resources,
     is_resource,
     locale_directory_path,
+    relative_source_path,
 )
 
 
@@ -154,10 +158,7 @@ class VCSResource(object):
 
         # Create entities using resources from the source directory,
         source_resource_path = os.path.join(vcs_project.source_directory_path(), self.path)
-
-        # Special case: Source files for pofiles are actually .pot.
-        if source_resource_path.endswith('po'):
-            source_resource_path += 't'
+        source_resource_path = relative_source_path(source_resource_path)
 
         source_resource_file = formats.parse(source_resource_path)
         for index, translation in enumerate(source_resource_file.translations):
@@ -260,3 +261,24 @@ class VCSTranslation(object):
         that needs to be preserved.
         """
         return {}
+
+    def update_from_db(self, db_translations):
+        """
+        Update translation with current DB state.
+        """
+        # If no DB translations are fuzzy, set fuzzy to False.
+        # Otherwise, it's true.
+        self.fuzzy = any(t for t in db_translations if t.fuzzy)
+
+        if len(db_translations) > 0:
+            last_translation = max(
+                db_translations,
+                key=lambda t: t.date or timezone.make_aware(datetime.min)
+            )
+            self.last_updated = last_translation.date
+            self.last_translator = last_translation.user
+
+        # Replace existing translations with ones from the database.
+        self.strings = {
+            db.plural_form: db.string for db in db_translations
+        }

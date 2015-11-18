@@ -1,10 +1,14 @@
+import codecs
 import json
 import logging
 import os
 import re
+import requests
+import uuid
 from datetime import datetime
 
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import trans_real
 
@@ -295,3 +299,105 @@ def require_AJAX(f):
             return HttpResponseBadRequest('Bad Request: Request must be AJAX')
         return f(request, *args, **kwargs)
     return wrap
+
+
+def _download_file(prefixes, dirnames, relative_path):
+    for prefix in prefixes:
+        for dirname in dirnames:
+            url = os.path.join(prefix.format(locale_code=dirname), relative_path)
+            r = requests.get(url, stream=True)
+            if not r.ok:
+                continue
+
+            filename = str(uuid.uuid4()) + os.path.splitext(url)[1]
+            with codecs.open(filename, 'wb') as destination:
+                for chunk in r.iter_content(chunk_size=1024):
+                    if chunk:
+                        destination.write(chunk)
+            return filename
+
+
+def get_download_content(slug, code, relative_path):
+    """
+    Get content of the file to be downloaded.
+
+    :param str slug: Project slug.
+    :param str code: Locale code.
+    :param str relative_path: Resource path.
+    """
+    # Avoid circular import; someday we should refactor to avoid.
+    from pontoon.sync import formats
+    from pontoon.sync.vcs_models import VCSProject
+    from pontoon.base.models import (
+        Entity,
+        Locale,
+        Project,
+        Resource,
+        Subpage,
+    )
+
+    # Check if relative path is actually subpage name
+    try:
+        subpage = Subpage.objects.get(project__slug=slug, name=relative_path)
+        relative_path = subpage.resources.first().path
+    except Subpage.DoesNotExist:
+        pass
+
+    project = get_object_or_404(Project, slug=slug)
+    locale = get_object_or_404(Locale, code__iexact=code)
+    resource = get_object_or_404(Resource, project__slug=slug, path=relative_path)
+
+    # Get locale file
+    locale_prefixes = (
+        project.repositories.filter(permalink_prefix__contains='{locale_code}')
+        .values_list('permalink_prefix', flat=True)
+        .distinct()
+    )
+    dirnames = set([locale.code, locale.code.replace('-', '_')])
+    locale_path = _download_file(locale_prefixes, dirnames, relative_path)
+    if not locale_path:
+        return None
+
+    # Get source file if needed
+    source_path = None
+    if resource.is_asymmetric:
+        source_prefixes = (
+            project.repositories
+            .values_list('permalink_prefix', flat=True)
+            .distinct()
+        )
+        dirnames = VCSProject.SOURCE_DIR_NAMES
+        source_path = _download_file(source_prefixes, dirnames, relative_path)
+        if not source_path:
+            return None
+
+    # Update file from database
+    resource_file = formats.parse(locale_path, source_path)
+    entities_dict = {}
+    entities_qs = Entity.objects.filter(
+        changedentitylocale__locale=locale,
+        resource__project=project,
+        resource__path=relative_path,
+        obsolete=False
+    )
+
+    for e in entities_qs:
+        entities_dict[e.key] = e.translation_set.filter(approved=True, locale=locale)
+
+    for vcs_translation in resource_file.translations:
+        key = vcs_translation.key
+        if key in entities_dict:
+            vcs_translation.update_from_db(entities_dict[key])
+
+    resource_file.save(locale)
+
+    # Read download content
+    with codecs.open(locale_path, 'r', 'utf-8') as f:
+        content = f.read()
+
+    # Remove temporary files
+    os.remove(locale_path)
+    if source_path:
+        os.remove(source_path)
+
+    return content, relative_path
