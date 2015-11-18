@@ -221,8 +221,11 @@
         });
 
         $(Pontoon.entities).each(function(i, entity) {
+          // Renedered text could be different than source
+          $('body').append('<div id="pontoon-string">' + entity.original + '</div>');
+
           var translation = entity.translation[0].string,
-              original = entity.original,
+              original = $('#pontoon-string').html(),
               element = elements[original];
 
           entity.id = counter;
@@ -245,6 +248,7 @@
             });
           }
 
+          $('#pontoon-string').remove();
           counter++;
         });
 
