@@ -136,39 +136,39 @@
           <table>
             <tbody>
               <tr>
-                <td>Save translation</td>
+                <td>Save Translation</td>
                 <td><span>Enter</span></td>
               </tr>
               <tr>
-                <td>Cancel translation</td>
+                <td>Cancel Translation</td>
                 <td><span>Esc</span></td>
               </tr>
               <tr>
-                <td>Insert a new line</td>
+                <td>Insert A New Line</td>
                 <td><span>Shift</span>&nbsp;+&nbsp;<span>Enter</span></td>
               </tr>
               <tr>
-                <td>Copy from source</td>
+                <td>Copy From Source</td>
                 <td><span>Alt</span>&nbsp;+&nbsp;<span>C</span></td>
               </tr>
               <tr>
-                <td>Clear translation</td>
+                <td>Clear Translation</td>
                 <td><span>Alt</span>&nbsp;+&nbsp;<span>Backspace</span></td>
               </tr>
               <tr>
-                <td>Next string</td>
+                <td>Go To Next String</td>
                 <td><span>Alt</span>&nbsp;+&nbsp;<span>Down</span></td>
               </tr>
               <tr>
-                <td>Previous string</td>
+                <td>Go To Previous String</td>
                 <td><span>Alt</span>&nbsp;+&nbsp;<span>Up</span></td>
               </tr>
               <tr>
-                <td>Search strings</td>
+                <td>Search Strings</td>
                 <td><span>Alt</span>&nbsp;+&nbsp;<span>F</span></td>
               </tr>
               <tr>
-                <td>Select suggestions</td>
+                <td>Copy From Helpers</td>
                 <td><span>Tab</span></td>
               </tr>
             </tbody>
@@ -185,7 +185,7 @@
   <div id="entitylist">
     <div class="search-wrapper clearfix">
       <div class="icon fa fa-search"></div>
-      <input id="search" type="search" placeholder="Search">
+      <input id="search" type="search" placeholder="Search" title="Search Strings (Alt + F)">
       <div id="filter" class="select">
         <div class="button selector all">
           <span class="status fa"></span>
@@ -220,9 +220,9 @@
     <div id="drag-1" draggable="true"></div>
 
     <div id="topbar" class="clearfix">
-      <a id="back" href="#back"><span class="fa fa-chevron-left fa-lg"></span>Back to list</a>
-      <a id="next" href="#next"><span class="fa fa-chevron-down fa-lg"></span>Next</a>
-      <a id="previous" href="#previous"><span class="fa fa-chevron-up fa-lg"></span>Previous</a>
+      <a id="back" href="#back" title="Cancel Translation (Esc)"><span class="fa fa-chevron-left fa-lg"></span>Back to list</a>
+      <a id="next" href="#next" title="Go To Next String (Alt + Down)"><span class="fa fa-chevron-down fa-lg"></span>Next</a>
+      <a id="previous" href="#previous" title="Go To Previous String (Alt + Up)"><span class="fa fa-chevron-up fa-lg"></span>Previous</a>
     </div>
 
     <div id="source-pane">
@@ -241,7 +241,7 @@
         <li><a href="#plural6"><span></span><sup></sup></a></li>
       </ul>
     </nav>
-    <textarea dir="auto" lang="{{ locale.code }}" id="translation" placeholder="Enter translation"></textarea>
+    <textarea dir="auto" lang="{{ locale.code }}" id="translation" placeholder="Type translation and press Enter to save"></textarea>
 
     <menu>
       <div id="unsaved" class="warning-overlay">
@@ -259,9 +259,9 @@
       <div id="translation-length">
         <span class="current-length"></span>|<span class="original-length"></span>
       </div>
-      <button id="copy">Copy</button>
-      <button id="clear">Clear</button>
-      <button id="save"></button>
+      <button id="copy" title="Copy From Source (Alt + C)">Copy</button>
+      <button id="clear" title="Clear Translation (Alt + Backspace)">Clear</button>
+      <button id="save" title="Save Translation (Enter)"></button>
     </menu>
 
     <div id="helpers" class="tabs">
@@ -290,7 +290,7 @@
         <div class="search-wrapper clearfix">
           <div class="icon fa fa-search"></div>
           <div class="icon fa fa-cog fa-spin"></div>
-          <input type="search" autocomplete="off" placeholder="Type and press Enter to search">
+          <input type="search" autocomplete="off" placeholder="Type keyword and press Enter to search">
         </div>
         <ul></ul>
       </section>
