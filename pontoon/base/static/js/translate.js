@@ -634,7 +634,11 @@ var Pontoon = (function (my) {
         case "back":
           self.checkUnsavedChanges(function() {
             self.goBackToEntityList();
+<<<<<<< HEAD
             self.stopInPlaceEditing();
+=======
+            self.stoplInPlaceEditing();
+>>>>>>> 5265b0644c7bd7507347f54ce1bbab807154c23b
           });
           break;
 
@@ -752,7 +756,11 @@ var Pontoon = (function (my) {
           } else if (!self.app.advanced) {
             self.checkUnsavedChanges(function() {
               self.goBackToEntityList();
+<<<<<<< HEAD
               self.stopInPlaceEditing();
+=======
+              self.stoplInPlaceEditing();
+>>>>>>> 5265b0644c7bd7507347f54ce1bbab807154c23b
             });
           }
           return false;
@@ -1217,7 +1225,11 @@ var Pontoon = (function (my) {
         if (!self.app.advanced && $("#editor").is('.opened')) {
           self.goBackToEntityList();
           if (!inplace) {
+<<<<<<< HEAD
             self.stopInPlaceEditing();
+=======
+            self.stoplInPlaceEditing();
+>>>>>>> 5265b0644c7bd7507347f54ce1bbab807154c23b
           }
 
         // Go to next entity
@@ -1858,7 +1870,11 @@ var Pontoon = (function (my) {
 
         case "INACTIVE":
           if (!Pontoon.app.advanced && $("#editor").is('.opened')) {
+<<<<<<< HEAD
             Pontoon.goBackToEntityList();
+=======
+            Pontoon.cancelTranslation();
+>>>>>>> 5265b0644c7bd7507347f54ce1bbab807154c23b
           }
           break;
 

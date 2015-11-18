@@ -51,16 +51,16 @@
         </div>
         <div class="details">
           <div class="approved">
-            <span>Approved</span>
+            <span>Translated</span>
             <p></p>
           </div><div class="translated">
             <span>Suggested</span>
             <p></p>
           </div><div class="fuzzy">
-            <span>Needs work</span>
+            <span>Fuzzy</span>
             <p></p>
           </div><div class="untranslated">
-            <span>Untranslated</span>
+            <span>Missing</span>
             <p></p>
           </div>
         </div>
@@ -93,10 +93,10 @@
         <div class="menu">
           <ul>
             {% if user.is_authenticated() %}
-            <li><a href="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View profile</a></li>
-            {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks) }}
+            <li><a href="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>My Profile</a></li>
+            {{ Checkbox.checkbox('Quality Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks) }}
               {% if user.translated_locales %}
-              {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions) }}
+              {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions) }}
               {% endif %}
             <li class="horizontal-separator"></li>
             {% endif %}
@@ -113,13 +113,13 @@
             <li><a href="{{ url('pontoon.contributors') }}"><i class="fa fa-trophy fa-fw"></i>Top Contributors</a></li>
             <li><a href="{{ url('pontoon.search') }}"><i class="fa fa-search fa-fw"></i>Terminology Search</a></li>
             <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
-            <li class="hotkeys"><i class="fa fa-keyboard-o fa-fw"></i>Keyboard shortcuts</li>
+            <li class="hotkeys"><i class="fa fa-keyboard-o fa-fw"></i>Keyboard Shortcuts</li>
 
             <li class="horizontal-separator"></li>
 
             {% if perms.base.can_manage %}
             <li><a href="{{ url('pontoon.admin') }}">Admin</a></li>
-            <li class="admin-current-project"><a href="">Admin &middot; Current project</a></li>
+            <li class="admin-current-project"><a href="">Admin &middot; Current Project</a></li>
             {% endif %}
 
             {% if user.is_authenticated() %}
@@ -194,13 +194,13 @@
         <div class="menu">
           <ul>
             <li class="all"><span class="status fa"></span>All</li>
-            <li class="untranslated"><span class="status fa"></span>Untranslated</li>
-            <li class="fuzzy"><span class="status fa"></span>Needs work</li>
+            <li class="untranslated"><span class="status fa"></span>Missing</li>
+            <li class="fuzzy"><span class="status fa"></span>Fuzzy</li>
             <li class="translated"><span class="status fa"></span>Suggested</li>
-            <li class="approved"><span class="status fa"></span>Approved</li>
+            <li class="approved"><span class="status fa"></span>Translated</li>
             <li class="horizontal-separator"></li>
             <li class="not-translated"><span class="status fa"></span>Untranslated</li>
-            <li class="has-suggestions"><span class="status fa"></span>Contains suggestions</li>
+            <li class="has-suggestions"><span class="status fa"></span>Has Suggestions</li>
             <li class="unchanged"><span class="status fa"></span>Unchanged</li>
           </ul>
         </div>
