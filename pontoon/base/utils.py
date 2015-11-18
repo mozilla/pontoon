@@ -4,9 +4,11 @@ import logging
 import os
 import re
 import requests
-import uuid
+import tempfile
+
 from datetime import datetime
 
+from django.db.models import Prefetch
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -309,21 +311,33 @@ def _download_file(prefixes, dirnames, relative_path):
             if not r.ok:
                 continue
 
-            filename = str(uuid.uuid4()) + os.path.splitext(url)[1]
-            with codecs.open(filename, 'wb') as destination:
+            extension = os.path.splitext(relative_path)[1]
+            with tempfile.NamedTemporaryFile(suffix=extension, delete=False) as temp:
                 for chunk in r.iter_content(chunk_size=1024):
                     if chunk:
-                        destination.write(chunk)
-            return filename
+                        temp.write(chunk)
+                temp.flush()
+            return temp.name
 
 
-def get_download_content(slug, code, relative_path):
+def _get_relative_path_from_part(slug, part):
+    """ Check if part is a Resource path or Subpage name. """
+    # Avoid circular import; someday we should refactor to avoid.
+    from pontoon.base.models import Subpage
+    try:
+        subpage = Subpage.objects.get(project__slug=slug, name=part)
+        return subpage.resources.first().path
+    except Subpage.DoesNotExist:
+        return part
+
+
+def get_download_content(slug, code, part):
     """
     Get content of the file to be downloaded.
 
     :param str slug: Project slug.
     :param str code: Locale code.
-    :param str relative_path: Resource path.
+    :param str part: Resource path or Subpage name.
     """
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.sync import formats
@@ -333,16 +347,9 @@ def get_download_content(slug, code, relative_path):
         Locale,
         Project,
         Resource,
-        Subpage,
     )
 
-    # Check if relative path is actually subpage name
-    try:
-        subpage = Subpage.objects.get(project__slug=slug, name=relative_path)
-        relative_path = subpage.resources.first().path
-    except Subpage.DoesNotExist:
-        pass
-
+    relative_path = _get_relative_path_from_part(slug, part)
     project = get_object_or_404(Project, slug=slug)
     locale = get_object_or_404(Locale, code__iexact=code)
     resource = get_object_or_404(Resource, project__slug=slug, path=relative_path)
@@ -356,7 +363,7 @@ def get_download_content(slug, code, relative_path):
     dirnames = set([locale.code, locale.code.replace('-', '_')])
     locale_path = _download_file(locale_prefixes, dirnames, relative_path)
     if not locale_path:
-        return None
+        return None, None
 
     # Get source file if needed
     source_path = None
@@ -369,7 +376,7 @@ def get_download_content(slug, code, relative_path):
         dirnames = VCSProject.SOURCE_DIR_NAMES
         source_path = _download_file(source_prefixes, dirnames, relative_path)
         if not source_path:
-            return None
+            return None, None
 
     # Update file from database
     resource_file = formats.parse(locale_path, source_path)
@@ -387,7 +394,8 @@ def get_download_content(slug, code, relative_path):
     for vcs_translation in resource_file.translations:
         key = vcs_translation.key
         if key in entities_dict:
-            vcs_translation.update_from_db(entities_dict[key])
+            entity = entities_dict[key]
+            vcs_translation.update_from_db(entity)
 
     resource_file.save(locale)
 
@@ -401,3 +409,74 @@ def get_download_content(slug, code, relative_path):
         os.remove(source_path)
 
     return content, relative_path
+
+
+def handle_upload_content(slug, code, part, f, user):
+    """
+    Update translations in the database from uploaded file.
+
+    :param str slug: Project slug.
+    :param str code: Locale code.
+    :param str part: Resource path or Subpage name.
+    :param UploadedFile f: UploadedFile instance.
+    :param User user: User uploading the file.
+    """
+    # Avoid circular import; someday we should refactor to avoid.
+    from pontoon.sync import formats
+    from pontoon.sync.changeset import ChangeSet
+    from pontoon.sync.vcs_models import VCSProject
+    from pontoon.base.models import (
+        Entity,
+        Locale,
+        Project,
+        Translation,
+    )
+
+    relative_path = _get_relative_path_from_part(slug, part)
+    project = get_object_or_404(Project, slug=slug)
+    locale = get_object_or_404(Locale, code__iexact=code)
+
+    # Store uploaded file to a temporary file and parse it
+    extension = os.path.splitext(f.name)[1]
+    with tempfile.NamedTemporaryFile(suffix=extension) as temp:
+        for chunk in f.chunks():
+            temp.write(chunk)
+        temp.flush()
+        resource_file = formats.parse(temp.name)
+
+    # Update database objects from file
+    changeset = ChangeSet(
+        project,
+        VCSProject(project, locales=[locale]),
+        timezone.now()
+    )
+    entities_qs = Entity.objects.filter(
+        resource__project=project,
+        resource__path=relative_path,
+        obsolete=False
+    ).prefetch_related(
+        Prefetch(
+            'translation_set',
+            queryset=Translation.objects.filter(locale=locale),
+            to_attr='db_translations'
+        )
+    ).prefetch_related(
+        Prefetch(
+            'translation_set',
+            queryset=Translation.objects.filter(locale=locale, approved_date__lte=timezone.now()),
+            to_attr='old_translations'
+        )
+    )
+    entities_dict = {entity.key: entity for entity in entities_qs}
+
+    for vcs_translation in resource_file.translations:
+        key = vcs_translation.key
+        if key in entities_dict:
+            entity = entities_dict[key]
+            changeset.update_entity_translations_from_vcs(
+                entity, locale.code, vcs_translation, user,
+                entity.db_translations, entity.old_translations
+            )
+
+    changeset.bulk_create_translations()
+    changeset.bulk_update_translations()

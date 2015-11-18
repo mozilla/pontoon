@@ -69,6 +69,11 @@ mark.placeable {
   display: none;
 }
 
+#download-file,
+#upload-file {
+  top: 100000px;
+}
+
 /*
  * SpinKit
  * https://github.com/tobiasahlin/SpinKit/blob/master/LICENSE
@@ -478,12 +483,12 @@ body > header .notification li {
   display: block;
 }
 
-#profile .menu li i.fa {
-  margin: 0 8px 0 -2px;
+#profile .menu li.upload {
+  margin-top: 1px;
 }
 
-#profile .menu li i.file-format {
-  font-style: normal;
+#profile .menu li i.fa {
+  margin: 0 8px 0 -2px;
 }
 
 #profile.select .popup {

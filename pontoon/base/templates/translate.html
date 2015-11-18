@@ -101,7 +101,8 @@
             <li class="horizontal-separator"></li>
             {% endif %}
 
-            <li class="download">Download .<i class="file-format"></i></li>
+            <li class="download"><i class="fa fa-cloud-download fa-fw"></i>Download Translations</i></li>
+            <li class="upload"><i class="fa fa-cloud-upload fa-fw"></i>Upload Translations</li>
 
             <li class="horizontal-separator"></li>
 
@@ -120,7 +121,7 @@
             {% endif %}
 
             {% if user.is_authenticated() %}
-            <li class="sign-out"><a href="{{ url('signout') }}"><i class="fa fa-sign-out fa-fw"></i>Sign out</a></li>
+            <li class="sign-out"><a href="{{ url('signout') }}"><i class="fa fa-sign-out fa-fw"></i>Sign Out</a></li>
             {% else %}
             <li class="sign-in"><i class="fa fa-sign-in fa-fw"></i>Sign in</li>
             {% endif %}
@@ -322,6 +323,21 @@
     <div class="text">"640K ought to be enough for anybody."</div>
   </div>
 </div>
+
+<form id="download-file" method="POST" action="{{ url('pontoon.download') }}">
+    <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+    {{ download_form.slug }}
+    {{ download_form.code }}
+    {{ download_form.part }}
+</form>
+
+<form id="upload-file" method="POST" action="{{ url('pontoon.upload') }}" enctype="multipart/form-data">
+    <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+    {{ upload_form.slug }}
+    {{ upload_form.code }}
+    {{ upload_form.part }}
+    {{ upload_form.uploadfile }}
+</form>
 {% endblock %}
 
 {% block extend_css %}
