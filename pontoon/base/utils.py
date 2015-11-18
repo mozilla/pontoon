@@ -2,11 +2,9 @@ import json
 import logging
 import os
 import re
-import requests
-import traceback
 from datetime import datetime
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import timezone
 from django.utils.translation import trans_real
 
@@ -238,70 +236,6 @@ def quality_check(original, string, locale, ignore):
             }), content_type='application/json')
 
 
-def req(method, project, resource, locale,
-        username, password, payload=False):
-    """
-    Make request to Transifex server.
-
-    Args:
-        method: Request method
-        project: Transifex project name
-        resource: Transifex resource name
-        locale: Locale code
-        username: Transifex username
-        password: Transifex password
-        payload: Data to be sent to the server
-    Returns:
-        A server response or error message.
-    """
-    url = os.path.join(
-        'https://www.transifex.com/api/2/project/', project,
-        'resource', resource, 'translation', locale, 'strings')
-
-    try:
-        if method == 'get':
-            r = requests.get(
-                url + '?details', auth=(username, password), timeout=10)
-        elif method == 'put':
-            r = requests.put(url, auth=(username, password), timeout=10,
-                             data=json.dumps(payload),
-                             headers={'content-type': 'application/json'})
-        log.debug(r.status_code)
-        if r.status_code == 401:
-            return "authenticate"
-        elif r.status_code != 200:
-            log.debug("Response not 200")
-            return "error"
-        return r
-    # Network problem (DNS failure, refused connection, etc.)
-    except requests.exceptions.ConnectionError as e:
-        log.debug('ConnectionError: ' + str(e))
-        return "error"
-    # Invalid HTTP response
-    except requests.exceptions.HTTPError as e:
-        log.debug('HTTPError: ' + str(e))
-        return "error"
-    # A valid URL is required
-    except requests.exceptionsURLRequired as e:
-        log.debug('URLRequired: ' + str(e))
-        return "error"
-    # Request times out
-    except requests.exceptions.Timeout as e:
-        log.debug('Timeout: ' + str(e))
-        return "error"
-    # Request exceeds the number of maximum redirections
-    except requests.exceptions.TooManyRedirects as e:
-        log.debug('TooManyRedirects: ' + str(e))
-        return "error"
-    # Ambiguous exception occurres
-    except requests.exceptions.RequestException as e:
-        log.debug('RequestException: ' + str(e))
-        return "error"
-    except Exception:
-        log.debug('Generic exception: ' + traceback.format_exc())
-        return "error"
-
-
 def first(collection, test, default=None):
     """
     Return the first item that, when passed to the given test function,
@@ -350,3 +284,14 @@ def get_object_or_none(model, *args, **kwargs):
         return model.objects.get(*args, **kwargs)
     except model.DoesNotExist:
         return None
+
+
+def require_AJAX(f):
+    """
+    AJAX request required decorator
+    """
+    def wrap(request, *args, **kwargs):
+        if not request.is_ajax():
+            return HttpResponseBadRequest('Bad Request: Request must be AJAX')
+        return f(request, *args, **kwargs)
+    return wrap

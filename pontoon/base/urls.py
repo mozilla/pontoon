@@ -135,8 +135,6 @@ urlpatterns = patterns(
         name='pontoon.request_locale'),
     url(r'^save-user-name/', views.save_user_name,
         name='pontoon.save_user_name'),
-    url(r'^transifex/$', views.save_to_transifex,
-        name='pontoon.transifex'),
     url(r'^csrf/$', views.get_csrf,
         name='pontoon.csrf'),
 
