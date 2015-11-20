@@ -11,8 +11,8 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
+from django.core.exceptions import ValidationError, ImproperlyConfigured
+from django.core.mail import EmailMessage
 from django.core.validators import validate_comma_separated_integer_list
 from django.db import transaction
 from django.db.models import Count, F, Q
@@ -1090,29 +1090,18 @@ def request_locale(request):
         log.error(str(e))
         return HttpResponse("error")
 
-    try:
-        project = Project.objects.get(slug=project)
-    except Entity.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    try:
-        locale = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    subject = '[Pontoon] Locale Request'
-    message = 'Add locale %s (%s) to project %s (%s).' % (
-        locale.name, locale.code, project.name, project.slug)
-    sender = request.user.email
+    project = get_object_or_404(Project, slug=project)
+    locale = get_object_or_404(Locale, code__iexact=locale)
 
     if settings.ADMINS[0][1] != '':
-        recipients = [settings.ADMINS[0][1]]
-        send_mail(subject, message, sender, recipients)
+        EmailMessage(
+            '[Pontoon] Locale Request',
+            'Add locale %s (%s) to project %s (%s).' % (locale.name, locale.code, project.name, project.slug),
+            'pontoon@mozilla.com',
+            [settings.ADMINS[0][1]],
+            reply_to=[request.user.email]).send()
     else:
-        log.error("ADMIN not defined in settings. Email recipient unknown.")
-        return HttpResponse("error")
+        raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
 
     return HttpResponse()
 
