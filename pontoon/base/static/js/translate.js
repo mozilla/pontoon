@@ -1696,7 +1696,7 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Show/hide elements needed for in-place localization
+     * Show/hide elements needed for in place localization
      */
     toggleInplaceElements: function() {
       var inplaceElements = $('#source, #iframe-cover, #switch, #drag, #not-on-page, #profile .html').addClass('hidden').hide();
@@ -1794,6 +1794,8 @@ var Pontoon = (function (my) {
         switch (message.type) {
 
         case "READY":
+          clearInterval(Pontoon.interval);
+
           var advanced = false,
               websiteWidth = Pontoon.getProjectWidth();
 
@@ -2125,46 +2127,50 @@ var Pontoon = (function (my) {
      * Initialize translate view
      */
     initialize: function() {
-      var self = this;
+      var self = this,
+          paths = history.state.paths;
 
       // Reset loader
       $('#project-load').show()
         .find('.text').css('opacity', 0);
 
-      // Start differently, depending on project URL
-      var parts = self.getProjectData('details')[history.state.locale.toLowerCase()],
-          part = $.grep(parts, function (e) { return e.resource__path === history.state.paths; });
+      // Check if selected path has URL for in place localization
+      if (paths) {
+        var parts = self.getProjectData('details')[history.state.locale.toLowerCase()],
+            part = $.grep(parts, function (e) { return e.resource__path === paths; });
 
-      // Fallback if no match found for part in the URL
-      if (!part.length) {
-        part = parts[0];
-        Pontoon.updatePartSelector(part.resource__path);
-      } else {
-        part = part[0];
+        // Fallback to first available part if no match found (mistyped URL)
+        if (!part.length) {
+          part = parts[0];
+          Pontoon.updatePartSelector(part.resource__path);
+        } else {
+          part = part[0];
+        }
+
+        // Start differently, depending on part URL
+        if (part.url) {
+          $('#source').attr('src', part.url);
+          window.addEventListener("message", self.receiveMessage, false);
+
+          var i = 0;
+          self.interval = 0;
+
+          // If no READY (Pontoon.paths) received for 10 seconds
+          self.interval = setInterval(function() {
+            i++;
+            if (i > 100 && !self.paths) {
+              clearInterval(self.interval);
+              window.removeEventListener("message", self.receiveMessage, false);
+              return self.getEntities();
+            }
+          }, 100);
+
+          return;
+        }
       }
 
-      var url = part.url;
-
-      if (url) {
-        $('#source').attr('src', url);
-        window.addEventListener("message", self.receiveMessage, false);
-
-        var i = 0,
-            interval = 0;
-
-        // If no READY (Pontoon.paths) received for 10 seconds
-        interval = setInterval(function() {
-          i++;
-          if (i > 100 && !self.paths) {
-            clearInterval(interval);
-            window.removeEventListener("message", self.receiveMessage, false);
-            return self.getEntities();
-          }
-        }, 100);
-
-      } else {
-        self.getEntities();
-      }
+      // No paths (search) or no URL
+      self.getEntities();
 
       // Show potentially amusing message if loading takes more time
       setTimeout(function() {
@@ -2204,6 +2210,7 @@ $(function() {
       $('.project .menu li [data-slug="' + e.state.project + '"]').parent().click();
       $('.locale .menu li .language.' + e.state.locale.toLowerCase()).parent().click();
       if (e.state.paths) {
+        // Also update part, otherwise the first one gets selected
         Pontoon.updatePartSelector(e.state.paths);
       }
 
