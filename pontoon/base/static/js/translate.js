@@ -1016,6 +1016,8 @@ var Pontoon = (function (my) {
                                   '<p>No translations available.</p>' +
                                 '</li>');
                     }
+                    self.updateCurrentTranslationLength();
+                    self.updateCachedTranslation();
                   } else {
                     self.updateHasSuggestions(entity);
                   }
