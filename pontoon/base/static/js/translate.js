@@ -1459,19 +1459,19 @@ var Pontoon = (function (my) {
         // Select locale
         } else {
           $('.locale .selector').html(language);
+
+          // Fallback if selected part not available for the selected project-locale
+          var parts = self.getProjectData('details')[locale],
+              currentPart = $('.part .selector').attr('title'),
+              part = $.grep(parts, function (e) { return e.resource__path === currentPart; });
+
+          if (!part.length) {
+            Pontoon.updatePartSelector(parts[0].resource__path);
+          }
+
+          // Switch to Resources tab
+          $('.part .menu nav a[href=#resources]').click();
         }
-
-        // Fallback if selected part not available for the selected project-locale
-        var parts = self.getProjectData('details')[locale],
-            currentPart = $('.part .selector').attr('title'),
-            part = $.grep(parts, function (e) { return e.resource__path === currentPart; });
-
-        if (!part.length) {
-          Pontoon.updatePartSelector(parts[0].resource__path);
-        }
-
-        // Switch to Resources tab
-        $('.part .menu nav a[href=#resources]').click();
       });
 
       // Switch between available locales and locales to request
