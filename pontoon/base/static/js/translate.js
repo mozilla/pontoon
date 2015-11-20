@@ -1721,6 +1721,7 @@ var Pontoon = (function (my) {
       this.updateProfileMenu();
       this.updateSaveButtons();
       this.renderEntityList();
+      $('#search').val('');
       this.filterEntities('all');
       this.updateProgress();
 
