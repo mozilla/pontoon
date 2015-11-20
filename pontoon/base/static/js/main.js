@@ -335,18 +335,18 @@ var Pontoon = (function (my) {
       self.XHRtransvision = $.ajax({
         url: '/transvision/',
         data: {
-          text: encodeURIComponent(original),
+          text: original,
           locale: self.locale.code
         }
 
       }).success(function(data) {
-        if (data && !data.error && data !== 'no') {
+        if (data && data !== 'error' && data !== 'no') {
           $.each(data, function() {
             append({
               original: this.source,
               quality: Math.round(this.quality) + '%',
               url: 'https://transvision.mozfr.org/?repo=global' +
-                   '&recherche=' + encodeURIComponent(original) +
+                   '&recherche=' + original +
                    '&locale=' + self.locale.code,
               title: 'Visit Transvision',
               source: 'Mozilla',
