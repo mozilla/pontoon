@@ -29,11 +29,10 @@ mark.placeable {
   z-index: 10; /* Must be lower than menu */
 }
 
-#project-load {
+.overlay {
   background: #3F4752;
   display: table;
   height: 100%;
-  opacity: 0.9;
   overflow: hidden;
   position: fixed;
   top: 60px;
@@ -41,11 +40,33 @@ mark.placeable {
   z-index: 14;
 }
 
+#project-load {
+  opacity: 0.9;
+}
+
 #project-load p {
   font-size: 48px;
   font-weight: 300;
   letter-spacing: -3px;
   margin-bottom: 5px;
+}
+
+.no-match  {
+  color: #FFFFFF;
+  font-size: 28px;
+  font-weight: 300;
+  text-align: center;
+}
+
+.no-match div  {
+  color: #7BC876;
+  display: block;
+  font-size: 128px;
+  margin-bottom: 20px;
+}
+
+#no-results {
+  display: none;
 }
 
 /*
@@ -771,19 +792,8 @@ body > header aside p {
 }
 
 #entitylist .no-match  {
-  color: #FFFFFF;
   display: none;
-  font-size: 28px;
-  font-weight: 300;
   padding-top: 60px;
-  text-align: center;
-}
-
-#entitylist .no-match div  {
-  color: #7BC876;
-  display: block;
-  font-size: 128px;
-  margin-bottom: 20px;
 }
 
 

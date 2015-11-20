@@ -2025,16 +2025,6 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Hide translation interface if no entities
-     */
-    noEntities: function() {
-      $('#project-load, #source, #progress, #editor, #entitylist .search-wrapper, #not-on-page').hide();
-      $('#entitylist').width('100%')
-        .find('.no-match').show();
-    },
-
-
-    /*
      * Load entities, store data, prepare UI
      */
     getEntities: function(advanced, projectWindow) {
@@ -2058,7 +2048,13 @@ var Pontoon = (function (my) {
 
             // If no entities
             if (!self.entities.length) {
-              self.noEntities();
+              $('#no-results').css('display', 'table');
+              $('#project-load').hide();
+              self.createObject();
+              self.updateMainMenu();
+              return;
+            } else {
+              $('#no-results').hide();
             }
 
             // Projects with in place translation support
