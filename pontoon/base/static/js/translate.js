@@ -469,7 +469,9 @@ var Pontoon = (function (my) {
      * Filter list of entities by given type
      */
     filterEntities: function (type) {
-      var list = $("#entitylist");
+      var list = $("#entitylist"),
+          title = $('#filter .menu li.' + type).text();
+
       list.find('.entity').addClass('limited').show();
 
       switch (type) {
@@ -516,7 +518,8 @@ var Pontoon = (function (my) {
       }
 
       this.searchEntities();
-      $('#filter .title').html($(this).text());
+      $('#search').attr('placeholder', 'Search ' + title);
+      $('#filter .title').html(title);
       $('#filter .button').attr('class', 'button selector ' + type);
     },
 
