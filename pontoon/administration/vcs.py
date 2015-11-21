@@ -133,8 +133,7 @@ class CommitToRepository(object):
         return (' '.join([name, '<%s>' % user.email]))
 
     def nothing_to_commit(self):
-        text = 'Nothing to commit'
-        raise CommitToRepositoryException(unicode(text))
+        return log.warning('Nothing to commit')
 
 
 class CommitToGit(CommitToRepository):
@@ -167,7 +166,7 @@ class CommitToGit(CommitToRepository):
             raise CommitToRepositoryException(unicode(error))
 
         if 'Everything up-to-date' in error:
-            self.nothing_to_commit()
+            return self.nothing_to_commit()
 
         log.info(message)
 
@@ -196,7 +195,7 @@ class CommitToHg(CommitToRepository):
         push = ["hg", "push"]
         code, output, error = execute(push, path)
         if code == 1 and 'no changes found' in output:
-            self.nothing_to_commit()
+            return self.nothing_to_commit()
 
         if code != 0 and len(error):
             raise CommitToRepositoryException(unicode(error))
@@ -222,7 +221,7 @@ class CommitToSvn(CommitToRepository):
             raise CommitToRepositoryException(unicode(error))
 
         if not output and not error:
-            self.nothing_to_commit()
+            return self.nothing_to_commit()
 
         log.info(message)
 
