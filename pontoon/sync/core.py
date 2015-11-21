@@ -48,7 +48,7 @@ def serial_task(timeout, lock_key="", **celery_args):
             # Acquire the lock
             if not cache.add(lock_name, True, timeout=timeout):
                 raise RuntimeError("Can't execute task '{}' because the previously called"
-                    " task is still running.".format(self.name))
+                    " task is still running.".format(lock_name))
             try:
                 return func(self, *args, **kwargs)
             finally:
