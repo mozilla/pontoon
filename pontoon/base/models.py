@@ -899,7 +899,8 @@ class Translation(DirtyFieldsMixin, models.Model):
             # Whenever a translation changes, mark the entity as having
             # changed in the appropriate locale. We could be smarter about
             # this but for now this is fine.
-            self.entity.mark_changed(self.locale)
+            if self.approved:
+                self.entity.mark_changed(self.locale)
 
             # Check and update the latest translation where necessary.
             self.check_latest_translation(self.entity.resource.project)
@@ -933,7 +934,8 @@ class Translation(DirtyFieldsMixin, models.Model):
         # Mark entity as changed before deleting. This is skipped during
         # bulk delete operations, but we shouldn't be bulk-deleting
         # translations anyway.
-        self.entity.mark_changed(self.locale)
+        if self.approved:
+            self.entity.mark_changed(self.locale)
 
     def serialize(self):
         return {
