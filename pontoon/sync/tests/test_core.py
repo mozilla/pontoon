@@ -66,6 +66,19 @@ class UpdateTranslationsTests(FakeCheckoutTestCase):
             return update_translations(self.db_project, self.vcs_project,
                                        self.translated_locale, self.changeset)
 
+    def test_missing_entities(self):
+        """If either of the entities is missing, skip it."""
+        self.changeset.update_vcs_entity = Mock()
+        self.changeset.update_db_entity = Mock()
+
+        self.call_update_translations([
+            ('one', None, self.main_vcs_entity),
+            ('other', self.main_db_entity, None),
+            ('both', None, None),
+        ])
+        assert_false(self.changeset.update_vcs_entity.called)
+        assert_false(self.changeset.update_db_entity.called)
+
     def test_no_translation(self):
         """If no translation exists for a specific locale, skip it."""
         self.changeset.update_vcs_entity = Mock()

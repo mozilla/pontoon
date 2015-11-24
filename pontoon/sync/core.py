@@ -102,11 +102,9 @@ def update_resources(db_project, vcs_project):
 
 def update_translations(db_project, vcs_project, locale, changeset):
     for key, db_entity, vcs_entity in collect_entities(db_project, vcs_project):
-        # We shouldn't hit this situation in a real sync, but we might
-        # hit it during a test, so log it and continue just in case.
+        # If we don't have both the db_entity and vcs_entity we can't
+        # do anything with the translations.
         if db_entity is None or vcs_entity is None:
-            log.warning(u'Could not find VCS/DB entity for key `{key}` while '
-                        'updating translations, skipping.'.format(key=key))
             continue
 
         if not vcs_entity.has_translation_for(locale.code):
@@ -128,10 +126,11 @@ def update_project_stats(db_project, vcs_project, changeset, locale):
     for resource in db_project.resources.all():
         # We only want to create/update the stats object if the resource
         # exists in the current locale, UNLESS the file is asymmetric.
-        vcs_resource = vcs_project.resources[resource.path]
-        resource_exists = vcs_resource.files.get(locale) is not None
-        if resource_exists or resource.is_asymmetric:
-            update_stats(resource, locale)
+        vcs_resource = vcs_project.resources.get(resource.path, None)
+        if vcs_resource is not None:
+            resource_exists = vcs_resource.files.get(locale) is not None
+            if resource_exists or resource.is_asymmetric:
+                update_stats(resource, locale)
 
 
 def get_vcs_entities(vcs_project):
