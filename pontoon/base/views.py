@@ -43,6 +43,7 @@ from pontoon.base.models import (
     Resource,
     Stats,
     Translation,
+    TranslationMemoryEntry,
     UserProfile,
     get_locales_with_project_stats,
     get_locales_with_stats,
@@ -783,6 +784,53 @@ def translation_memory(request):
     else:
         return HttpResponse("no")
 
+
+def translation_memory_pg(request):
+    """
+    Suggests translations from internal translations.
+    """
+    try:
+        text = request.GET['text']
+        locale = request.GET['locale']
+        pk = request.GET['pk']
+    except MultiValueDictKeyError as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    try:
+        locale = Locale.objects.get(code__iexact=locale)
+    except Locale.DoesNotExist as e:
+        log.error(e)
+        return HttpResponse("error")
+
+    min_quality = 0.7
+    max_results = 5
+    length = len(text)
+    min_dist = math.ceil(max(length * min_quality, 2))
+    max_dist = math.floor(min(length / min_quality, 1000))
+
+    # Only check entities with similar length
+    entries = TranslationMemoryEntry.objects.all().extra(
+        where=["(CHAR_LENGTH(source) BETWEEN %s AND %s)"\
+              "AND source %% %s"],
+        params=(min_dist, max_dist, text),
+        select={'quality': "similarity(source, %s) * 100"},
+        select_params=(text,))\
+        .annotate(target_count=Count('target'))
+
+    # Exclude existing entity
+    if pk:
+        entries = entries.exclude(entity__pk=pk)
+    entries = list(
+            entries.values('source', 'target', 'quality', 'target_count')\
+                   .order_by('-quality', '-target_count')[:max_results]
+    )
+    if entries.exists():
+        return HttpResponse(json.dumps({
+            'translations': entries,
+        }), content_type='application/json')
+    else:
+        return HttpResponse("no")
 
 def machine_translation(request):
     """Get translation from machine translation service."""

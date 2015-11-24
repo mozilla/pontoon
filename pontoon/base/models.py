@@ -18,6 +18,7 @@ from django.utils.functional import cached_property
 from dirtyfields import DirtyFieldsMixin
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
+from pg_fts.fields import TSVectorField
 
 from pontoon.administration.vcs import commit_to_vcs, get_revision, update_from_vcs
 from pontoon.base import utils
@@ -891,7 +892,11 @@ class Translation(DirtyFieldsMixin, models.Model):
                 .filter(entity=self.entity, locale=self.locale, plural_form=self.plural_form)
                 .exclude(pk=self.pk)
                 .update(approved=False, approved_user=None, approved_date=None))
-
+            if not self.memory_entries.all().exists():
+                TranslationMemoryEntry.objects.create(
+                    source=self.entity.string, target=self.string,
+                    entity=self.entity, translation=self, locale=self.locale
+                )
         if not imported:
             # Update stats AFTER changing approval status.
             stats = update_stats(self.entity.resource, self.locale)
@@ -942,6 +947,20 @@ class Translation(DirtyFieldsMixin, models.Model):
             'approved': self.approved,
             'fuzzy': self.fuzzy,
         }
+
+
+class TranslationMemoryEntry(models.Model):
+    source = models.TextField()
+    source_fts = TSVectorField(('source',), dictionary='simple')
+    target = models.TextField()
+
+    entity = models.ForeignKey(Entity, null=True, on_delete=models.SET_NULL)
+    translation = models.ForeignKey(Translation, null=True, on_delete=models.SET_NULL,
+                                    related_name="memory_entries")
+    locale = models.ForeignKey(Locale)
+
+    def __repr__(self):
+        return u"locale={},source={},target={}".format(self.locale.code, self.source, self.target)
 
 
 class Stats(models.Model):
