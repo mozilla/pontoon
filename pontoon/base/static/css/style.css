@@ -662,6 +662,7 @@ label {
 .menu li.no-match {
   cursor: default;
   display: none;
+  font-size: inherit;
   list-style: none;
   text-align: left;
 }
