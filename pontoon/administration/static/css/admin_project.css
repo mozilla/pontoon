@@ -280,6 +280,14 @@ form a.add-repo {
   padding: 0;
 }
 
+.repository .prefix-wrapper {
+  clear: both;
+}
+
+.repository .prefix-wrapper .prefix input[type=text] {
+  width: 100%;
+}
+
 .repository input[type=text] {
   width: 403px;
 }

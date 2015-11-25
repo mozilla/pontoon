@@ -1,7 +1,4 @@
 from collections import defaultdict
-from datetime import datetime
-
-from django.utils import timezone
 
 from bulk_update.helper import bulk_update
 
@@ -121,22 +118,7 @@ class ChangeSet(object):
             db_translations = (db_entity.translation_set
                                .filter(approved=True, locale__code=locale_code))
 
-            # If no DB translations are fuzzy, set fuzzy to False.
-            # Otherwise, it's true.
-            vcs_translation.fuzzy = any(t for t in db_translations if t.fuzzy)
-
-            if len(db_translations) > 0:
-                last_translation = max(
-                    db_translations,
-                    key=lambda t: t.date or timezone.make_aware(datetime.min)
-                )
-                vcs_translation.last_updated = last_translation.date
-                vcs_translation.last_translator = last_translation.user
-
-            # Replace existing translations with ones from the database.
-            vcs_translation.strings = {
-                db.plural_form: db.string for db in db_translations
-            }
+            vcs_translation.update_from_db(db_translations)
 
             # Track which translators were involved.
             self.commit_authors_per_locale[locale_code].extend([t.user for t in db_translations if t.user])

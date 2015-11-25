@@ -60,3 +60,13 @@ def locale_directory_path(checkout_path, locale_code):
 
     raise IOError('Directory for locale `{0}` not found'.format(
                   locale_code or 'source'))
+
+
+def relative_source_path(path):
+    """
+    Return relative source resource path for the given relative locale
+    resource path. Source files for .po files are actually .pot.
+    """
+    if path.endswith('po'):
+        path += 't'
+    return path

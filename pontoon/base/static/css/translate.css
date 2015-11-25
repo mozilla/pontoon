@@ -478,26 +478,12 @@ body > header .notification li {
   display: block;
 }
 
-#profile .menu li.download.hover {
-  color: inherit;
-  cursor: inherit;
-  background: inherit;
-}
-
 #profile .menu li i.fa {
   margin: 0 8px 0 -2px;
 }
 
 #profile .menu li i.file-format {
-  font-weight: 300;
-  font-size: 13px;
   font-style: normal;
-}
-
-#profile .menu li i.file-format:hover {
-  border-color: #FFFFFF;
-  color: #FFFFFF;
-  cursor: pointer;
 }
 
 #profile.select .popup {
@@ -529,7 +515,6 @@ body > header .notification li {
   width: 60%;
 }
 
-#profile .menu li i.file-format,
 #hotkeys span {
   background: #3F4752;
   border: 1px solid #5E6475;
