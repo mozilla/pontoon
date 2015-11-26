@@ -1074,8 +1074,10 @@ def request_locale(request):
 
     if settings.ADMINS[0][1] != '':
         EmailMessage(
-            'Add %s to %s' % (locale.code, project.slug),
-            'Please add locale %s (%s) to project %s (%s).' % (locale.name, locale.code, project.name, project.slug),
+            'Locale request: {locale} ({code})'.format(locale=locale.name, code=locale.code),
+            'Please add locale {locale} ({code}) to project {project} ({slug}).'.format(
+                locale=locale.name, code=locale.code, project=project.name, slug=project.slug
+            ),
             'pontoon@mozilla.com',
             [settings.ADMINS[0][1]],
             reply_to=[request.user.email]).send()
