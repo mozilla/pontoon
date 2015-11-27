@@ -333,23 +333,6 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/search.min.js',
     },
-    'intro': {
-        'source_filenames': (
-            'js/l10n.js',
-            'js/jquery-1.11.1.min.js',
-            'js/bootstrap.min.js',
-            'js/jquery.easing.1.3.js',
-            'js/cbpAnimatedHeader.min.js',
-            'js/agency.js',
-        ),
-        'output_filename': 'js/intro.min.js',
-    },
-    'pontoon_embed': {
-        'source_filenames': (
-            'js/pontoon.js',
-        ),
-        'output_filename': 'js/pontoon.min.js',
-    },
 }
 
 # Cache config
