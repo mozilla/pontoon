@@ -3,33 +3,8 @@ var Pontoon = (function (my) {
   return $.extend(true, my, {
 
     /*
-     * Download resource file. Not possible with AJAX.
+     * Get suggestions from other locales
      */
-    download: function () {
-      var params = {
-          slug: this.project.slug,
-          code: this.locale.code,
-          path: this.part,
-          csrfmiddlewaretoken: $('#server').data('csrf')
-      };
-
-      var post = $('<form>', {
-        method: 'POST',
-        action: '/download/'
-      });
-
-      for (var key in params) {
-        $('<input>', {
-          type: 'hidden',
-          name: key,
-          value: params[key]
-        }).appendTo(post);
-      }
-
-      post.appendTo('body').submit().remove();
-    },
-
-
     getOtherLocales: function (entity) {
       var self = this,
           list = $('#helpers .other-locales ul').empty(),
@@ -1319,6 +1294,19 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Update download/upload form fields with translation project data
+     */
+    updateFormFields: function (form) {
+      var self = this;
+
+      form
+        .find('#id_slug').val(self.project.slug).end()
+        .find('#id_code').val(self.locale.code).end()
+        .find('#id_part').val(self.part);
+    },
+
+
+    /*
      * Attach event handlers to main toolbar elements
      */
     attachMainHandlers: function () {
@@ -1517,6 +1505,8 @@ var Pontoon = (function (my) {
           var data = self.pushState();
           self.initialize();
         });
+
+        self.closeNotification();
       });
 
       // Profile menu
@@ -1537,7 +1527,11 @@ var Pontoon = (function (my) {
             });
 
           } else if ($(this).is('.download')) {
-            self.download();
+            self.updateFormFields($('form#download-file'));
+            $('form#download-file').submit();
+
+          } else if ($(this).is(".upload")) {
+            $('#id_uploadfile').click();
 
           } else if ($(this).is(".hotkeys")) {
             $('#hotkeys').show();
@@ -1594,6 +1588,11 @@ var Pontoon = (function (my) {
           .bind('mouseup', { initial: data }, mouseUpHandler);
       });
 
+      // File upload
+      $('#id_uploadfile').change(function() {
+        self.updateFormFields($('form#upload-file'));
+        $('form#upload-file').submit();
+      });
     },
 
 
@@ -1606,11 +1605,11 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Update links in the profile menu
+     * Update profile menu links and contents
      */
     updateProfileMenu: function () {
       $('#profile .admin-current-project a').attr('href', '/admin/projects/' + this.project.slug + '/');
-      $('#profile .download .file-format').html(this.entities[0].format.toUpperCase());
+      $('#profile .upload').toggle(history.state.paths && this.user.isTranslator);
     },
 
 

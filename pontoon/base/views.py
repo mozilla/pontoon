@@ -8,8 +8,8 @@ import xml.etree.ElementTree as ET
 import urllib
 
 from dateutil.relativedelta import relativedelta
-
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, ImproperlyConfigured
@@ -34,6 +34,7 @@ from django.views.generic.detail import DetailView
 from guardian.decorators import permission_required_or_403
 from operator import itemgetter
 
+from pontoon.base import forms
 from pontoon.base import utils
 from pontoon.base.utils import require_AJAX
 
@@ -193,8 +194,8 @@ def locale_project(request, locale, slug):
 
 def translate(request, locale, slug, part):
     """Translate view."""
-    l = get_object_or_404(Locale, code__iexact=locale)
-    p = get_object_or_404(
+    locale = get_object_or_404(Locale, code__iexact=locale)
+    project = get_object_or_404(
         Project.objects.distinct(),
         slug=slug,
         disabled=False,
@@ -202,7 +203,7 @@ def translate(request, locale, slug, part):
     )
 
     # Check if user authenticated
-    if not request.user.is_authenticated() and not p.pk == 1:
+    if not request.user.is_authenticated() and not project.pk == 1:
         return render(request, '403.html', status=403)
 
     projects = (
@@ -216,10 +217,12 @@ def translate(request, locale, slug, part):
 
     return render(request, 'translate.html', {
         'accept_language': utils.get_project_locale_from_request(request, Locale.objects),
-        'locale': l,
+        'download_form': forms.DownloadFileForm(),
+        'upload_form': forms.UploadFileForm(),
+        'locale': locale,
         'locales': Locale.objects.all(),
         'part': part,
-        'project': p,
+        'project': project,
         'projects': projects,
     })
 
@@ -989,29 +992,59 @@ def transvision(request):
         return HttpResponse("error")
 
 
-@anonymous_csrf_exempt
 @require_POST
+@transaction.atomic
 def download(request):
     """Download translated resource."""
     try:
         slug = request.POST['slug']
         code = request.POST['code']
-        path = request.POST['path']
+        part = request.POST['part']
     except MultiValueDictKeyError:
         raise Http404
 
-    content, path = utils.get_download_content(slug, code, path)
-    filename = os.path.basename(path)
+    content, path = utils.get_download_content(slug, code, part)
 
     if not content:
         raise Http404
 
+    filename = os.path.basename(path)
     response = HttpResponse()
     response.content = content
     response['Content-Type'] = 'text/plain'
     response['Content-Disposition'] = 'attachment; filename=' + filename
 
     return response
+
+
+@login_required(redirect_field_name='', login_url='/403')
+@require_POST
+@transaction.atomic
+def upload(request):
+    """Upload translated resource."""
+    try:
+        slug = request.POST['slug']
+        code = request.POST['code']
+        part = request.POST['part']
+    except MultiValueDictKeyError:
+        raise Http404
+
+    locale = get_object_or_404(Locale, code=code)
+    if not request.user.has_perm('base.can_translate_locale', locale):
+        return HttpResponseForbidden("Forbidden: You don't have permission to upload files")
+
+    form = forms.UploadFileForm(request.POST, request.FILES)
+
+    if form.is_valid():
+        f = request.FILES['uploadfile']
+        utils.handle_upload_content(slug, code, part, f, request.user)
+        messages.success(request, 'Translations updated from uploaded file.')
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(request, error)
+
+    return translate(request, code, slug, part)
 
 
 @login_required(redirect_field_name='', login_url='/403')

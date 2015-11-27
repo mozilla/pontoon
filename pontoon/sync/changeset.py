@@ -25,6 +25,10 @@ class ChangeSet(object):
         self.vcs_project = vcs_project
         self.now = now
 
+        # Store locales and resources for FK relationships.
+        self.locales = {l.code: l for l in Locale.objects.all()}
+        self.resources = {r.path: r for r in self.db_project.resources.all()}
+
         self.executed = False
         self.changes = {
             'update_vcs': [],
@@ -70,10 +74,6 @@ class ChangeSet(object):
         else:
             self.executed = True
 
-        # Store locales and resources for FK relationships.
-        self.locales = {l.code: l for l in Locale.objects.all()}
-        self.resources = {r.path: r for r in self.db_project.resources.all()}
-
         # Perform the changes and fill the lists for bulk creation and
         # updating.
         self.execute_update_vcs()
@@ -82,30 +82,9 @@ class ChangeSet(object):
         self.execute_obsolete_db()
 
         # Apply the built-up changes to the DB
-        if len(self.entities_to_update) > 0:
-            bulk_update(self.entities_to_update, update_fields=[
-                'resource',
-                'string',
-                'string_plural',
-                'key',
-                'comment',
-                'order',
-                'source'
-            ])
-
-        Translation.objects.bulk_create(self.translations_to_create)
-        if len(self.translations_to_update) > 0:
-            bulk_update(self.translations_to_update, update_fields=[
-                'entity',
-                'locale',
-                'string',
-                'plural_form',
-                'approved',
-                'approved_user_id',
-                'approved_date',
-                'fuzzy',
-                'extra'
-            ])
+        self.bulk_update_entities()
+        self.bulk_create_translations()
+        self.bulk_update_translations()
 
     def execute_update_vcs(self):
         resources = self.vcs_project.resources
@@ -158,6 +137,60 @@ class ChangeSet(object):
                         fuzzy=vcs_translation.fuzzy
                     ))
 
+    def update_entity_translations_from_vcs(
+            self, db_entity, locale_code, vcs_translation,
+            user=None, db_translations=None, old_translations=None
+    ):
+        if db_translations is None:
+            db_translations = db_entity.translation_set.filter(
+                locale__code=locale_code,
+            )
+        approved_translations = []
+
+        for plural_form, string in vcs_translation.strings.items():
+            # Check if we need to modify an existing translation or
+            # create a new one.
+            db_translation = match_attr(db_translations,
+                                        plural_form=plural_form,
+                                        string=string)
+            if db_translation:
+                if not db_translation.approved and not vcs_translation.fuzzy:
+                    db_translation.approved = True
+                    db_translation.approved_date = self.now
+                    db_translation.approved_user = user
+                db_translation.fuzzy = vcs_translation.fuzzy
+                db_translation.extra = vcs_translation.extra
+
+                if db_translation.is_dirty():
+                    self.translations_to_update.append(db_translation)
+                if not db_translation.fuzzy:
+                    approved_translations.append(db_translation)
+            else:
+                self.translations_to_create.append(Translation(
+                    entity=db_entity,
+                    locale=self.locales[locale_code],
+                    string=string,
+                    plural_form=plural_form,
+                    approved=not vcs_translation.fuzzy,
+                    approved_date=self.now if not vcs_translation.fuzzy else None,
+                    approved_user=user,
+                    user=user,
+                    fuzzy=vcs_translation.fuzzy,
+                    extra=vcs_translation.extra
+                ))
+
+        # Any existing translations that were not approved get unapproved.
+        if old_translations is None:
+            old_translations = db_translations.filter(approved_date__lte=self.now)
+        for translation in old_translations:
+            if translation not in approved_translations:
+                translation.approved = False
+                translation.approved_user = None
+                translation.approved_date = None
+
+                if translation.is_dirty():
+                    self.translations_to_update.append(translation)
+
     def execute_update_db(self):
         for locale_code, db_entity, vcs_entity in self.changes['update_db']:
             for field, value in self.get_entity_updates(vcs_entity).items():
@@ -168,51 +201,38 @@ class ChangeSet(object):
 
             # Update translations for the entity.
             vcs_translation = vcs_entity.translations[locale_code]
-            db_translations = db_entity.translation_set.filter(
-                locale__code=locale_code,
-            )
-            approved_translations = []
-
-            for plural_form, string in vcs_translation.strings.items():
-                # Check if we need to modify an existing translation or
-                # create a new one.
-                db_translation = match_attr(db_translations,
-                                            plural_form=plural_form,
-                                            string=string)
-                if db_translation:
-                    if not db_translation.approved and not vcs_translation.fuzzy:
-                        db_translation.approved = True
-                        db_translation.approved_date = self.now
-                    db_translation.fuzzy = vcs_translation.fuzzy
-                    db_translation.extra = vcs_translation.extra
-
-                    if db_translation.is_dirty():
-                        self.translations_to_update.append(db_translation)
-                    if not db_translation.fuzzy:
-                        approved_translations.append(db_translation)
-                else:
-                    self.translations_to_create.append(Translation(
-                        entity=db_entity,
-                        locale=self.locales[locale_code],
-                        string=string,
-                        plural_form=plural_form,
-                        approved=not vcs_translation.fuzzy,
-                        approved_date=self.now if not vcs_translation.fuzzy else None,
-                        fuzzy=vcs_translation.fuzzy,
-                        extra=vcs_translation.extra
-                    ))
-
-            # Any existing translations that were not approved get unapproved.
-            for translation in db_translations.filter(approved_date__lte=self.now):
-                if translation not in approved_translations:
-                    translation.approved = False
-                    translation.approved_user = None
-                    translation.approved_date = None
-
-                    if translation.is_dirty():
-                        self.translations_to_update.append(translation)
+            self.update_entity_translations_from_vcs(db_entity, locale_code, vcs_translation)
 
     def execute_obsolete_db(self):
         (Entity.objects
             .filter(pk__in=self.changes['obsolete_db'])
             .update(obsolete=True))
+
+    def bulk_update_entities(self):
+        if len(self.entities_to_update) > 0:
+            bulk_update(self.entities_to_update, update_fields=[
+                'resource',
+                'string',
+                'string_plural',
+                'key',
+                'comment',
+                'order',
+                'source'
+            ])
+
+    def bulk_create_translations(self):
+        Translation.objects.bulk_create(self.translations_to_create)
+
+    def bulk_update_translations(self):
+        if len(self.translations_to_update) > 0:
+            bulk_update(self.translations_to_update, update_fields=[
+                'entity',
+                'locale',
+                'string',
+                'plural_form',
+                'approved',
+                'approved_user_id',
+                'approved_date',
+                'fuzzy',
+                'extra'
+            ])

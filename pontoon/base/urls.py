@@ -131,6 +131,8 @@ urlpatterns = patterns(
         name='pontoon.other_locales'),
     url(r'^download/', views.download,
         name='pontoon.download'),
+    url(r'^upload/', views.upload,
+        name='pontoon.upload'),
     url(r'^request-locale/', views.request_locale,
         name='pontoon.request_locale'),
     url(r'^save-user-name/', views.save_user_name,
