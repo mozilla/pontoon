@@ -8,10 +8,13 @@ import tempfile
 
 from datetime import datetime
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Prefetch
+
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import trans_real
 
 from translate.filters import checks
@@ -301,6 +304,45 @@ def require_AJAX(f):
             return HttpResponseBadRequest('Bad Request: Request must be AJAX')
         return f(request, *args, **kwargs)
     return wrap
+
+def ajaxview(require_get_args=None, require_post_args=None):
+    """
+    Shortcut which handles ajax responses in pontoon. It also handles validation of parameters
+    passed via request.GET/POST and passes them directly to the view.
+    If view can't find params in request or just can't find the object, decorator returns
+    HTTPResponse with following message: "error".
+    :param require_args: list of required args, which are populate from request arguments.
+    :rtype: HTTPResponse
+    :return: Rendered json response, response object passed from view.
+    """
+    def wrapper(f):
+        def wrap(request, *args, **kwargs):
+            if not request.is_ajax():
+                return HttpResponseBadRequest('Bad Request: Request must be AJAX')
+
+            try:
+                for arg in (require_get_args or []):
+                    kwargs[arg] = request.GET[arg]
+                for arg in (require_post_args or []):
+                    kwargs[arg] = request.POST[arg]
+            except MultiValueDictKeyError as e:
+                log.error(unicode(e))
+                return HttpResponse("error")
+
+            try:
+                context = f(request, *args, **kwargs)
+            except ObjectDoesNotExist as e:
+                log.error(unicode(e))
+                return HttpResponse("error")
+
+            if isinstance(context, HttpResponse):
+                return context
+            elif not isinstance(context, (tuple, list, dict)):
+                return HttpResponse(context)
+
+            return HttpResponse(json.dumps(context, indent=4), content_type='application/json')
+        return wrap
+    return wrapper
 
 
 def _download_file(prefixes, dirnames, relative_path):
