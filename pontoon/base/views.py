@@ -396,44 +396,21 @@ def get_translations_from_other_locales(request):
         entity = request.GET['entity']
         locale = request.GET['locale']
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    try:
-        entity = Entity.objects.get(pk=entity)
-    except Entity.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
+    entity = get_object_or_404(Entity, pk=entity)
+    locales = entity.resource.project.locales.exclude(code__iexact=locale)
+    plural_form = None if entity.string_plural == "" else 0
 
-    try:
-        locale = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
+    translations = Translation.objects.filter(
+        entity=entity,
+        locale__in=locales,
+        plural_form=plural_form,
+        approved=True
+    )
 
-    payload = []
-    locales = entity.resource.project.locales.all().exclude(
-        code__iexact=locale.code)
-
-    for l in locales:
-        plural_form = None if entity.string_plural == "" else 0
-        translation = get_translation(
-            entity=entity, locale=l, plural_form=plural_form)
-
-        if translation.string != '' or translation.pk is not None:
-            payload.append({
-                "locale": {
-                    "code": l.code,
-                    "name": l.name
-                },
-                "translation": translation.string
-            })
-
-    if len(payload) == 0:
-        return HttpResponse("error")
-    else:
-        return HttpResponse(
-            json.dumps(payload, indent=4), content_type='application/json')
+    payload = list(translations.values('locale__code', 'locale__name', 'string'))
+    return HttpResponse(json.dumps(payload, indent=4), content_type='application/json')
 
 
 @require_AJAX
