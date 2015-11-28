@@ -36,7 +36,7 @@ from operator import itemgetter
 
 from pontoon.base import forms
 from pontoon.base import utils
-from pontoon.base.utils import require_AJAX
+from pontoon.base.utils import ajaxview
 
 from pontoon.base.models import (
     Entity,
@@ -347,70 +347,34 @@ def search(request):
     })
 
 
-@require_AJAX
+@ajaxview
 def get_project_details(request, slug):
     """Get project locales with their pages/paths and stats."""
     project = get_object_or_404(Project, slug=slug)
-
-    return HttpResponse(json.dumps({
+    return {
         "slug": slug,
         "details": project.locales_parts_stats(),
-    }), content_type='application/json')
+    }
 
 
-@require_AJAX
-def entities(request):
+@ajaxview(['project', 'locale', 'paths'])
+def entities(request, project, locale, paths, entities_page_limit=3):
     """Get entities for the specified project, locale and paths."""
-    try:
-        project = request.GET['project']
-        locale = request.GET['locale']
-        paths = json.loads(request.GET['paths'])
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    try:
-        project = Project.objects.get(slug=project)
-    except Entity.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    try:
-        locale = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
+    project = Project.objects.get(slug=project)
+    locale = Locale.objects.get(code__iexact=locale)
 
     search = None
     if request.GET.get('keyword', None):
         search = request.GET
 
-    entities = Entity.for_project_locale(project, locale, paths, search)
-    return HttpResponse(json.dumps(entities), content_type='application/json')
+    return Entity.for_project_locale(project, locale, paths, search)
 
 
-@require_AJAX
-def get_translations_from_other_locales(request):
+@ajaxview(['entity', 'locale'])
+def get_translations_from_other_locales(request, entity, locale):
     """Get entity translations for all but specified locale."""
-    try:
-        entity = request.GET['entity']
-        locale = request.GET['locale']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    try:
-        entity = Entity.objects.get(pk=entity)
-    except Entity.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    try:
-        locale = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
+    entity = Entity.objects.get(pk=entity)
+    locale = Locale.objects.get(code__iexact=locale)
     payload = []
     locales = entity.resource.project.locales.all().exclude(
         code__iexact=locale.code)
@@ -428,25 +392,15 @@ def get_translations_from_other_locales(request):
                 },
                 "translation": translation.string
             })
-
     if len(payload) == 0:
-        return HttpResponse("error")
+        return "error"
     else:
-        return HttpResponse(
-            json.dumps(payload, indent=4), content_type='application/json')
+        return payload
 
 
-@require_AJAX
-def get_translation_history(request):
+@ajaxview(['entity', 'locale', 'plural_form'])
+def get_translation_history(request, entity, locale, plural_form):
     """Get history of translations of given entity to given locale."""
-    try:
-        entity = request.GET['entity']
-        locale = request.GET['locale']
-        plural_form = request.GET['plural_form']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code__iexact=locale)
 
@@ -473,28 +427,18 @@ def get_translation_history(request):
                 "approved_user": "" if a is None else a.first_name or a.email,
             }
             payload.append(o)
+        return payload
 
-        return HttpResponse(json.dumps(payload, indent=4), content_type='application/json')
 
     else:
-        return HttpResponse("error")
+        return "error"
 
 
-@require_AJAX
 @transaction.atomic
-def delete_translation(request):
+@ajaxview(['translation'])
+def delete_translation(request, translation):
     """Delete given translation."""
-    try:
-        t = request.POST['translation']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    try:
-        translation = Translation.objects.get(pk=t)
-    except Translation.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
+    translation = Translation.objects.get(pk=translation)
 
     # Non-privileged users can only delete own non-approved translations
     if not request.user.has_perm('base.can_translate_locale', translation.locale):
@@ -523,55 +467,35 @@ def delete_translation(request):
         next.approved_date = timezone.now()
         next.save()
 
-    return HttpResponse(json.dumps({
+    return {
         'type': 'deleted',
         'next': next.id,
-    }), content_type='application/json')
+    }
 
 
 @anonymous_csrf_exempt
-@require_POST
-@require_AJAX
 @transaction.atomic
-def update_translation(request):
+@ajaxview(['entity', 'translation', 'locale', 'plural_form', 'original', 'ignore_check'])
+def update_translation(request, entity, translation, locale, plural_form, original, ignore_check):
     """Update entity translation for the specified locale and user."""
-    try:
-        entity = request.POST['entity']
-        string = request.POST['translation']
-        locale = request.POST['locale']
-        plural_form = request.POST['plural_form']
-        original = request.POST['original']
-        ignore_check = request.POST['ignore_check']
-    except MultiValueDictKeyError as error:
-        log.error(str(error))
-        return HttpResponse("error")
-
-    try:
-        e = Entity.objects.get(pk=entity)
-    except Entity.DoesNotExist as error:
-        log.error(str(error))
-        return HttpResponse("error")
-
-    try:
-        l = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist as error:
-        log.error(str(error))
-        return HttpResponse("error")
+    e = Entity.objects.get(pk=entity)
+    l = Locale.objects.get(code__iexact=locale)
 
     if plural_form == "-1":
         plural_form = None
 
     user = request.user
+
     if not request.user.is_authenticated():
         if e.resource.project.pk != 1:
             log.error("Not authenticated")
-            return HttpResponse("error")
+            return "error"
         else:
             user = None
 
     try:
         quality_checks = UserProfile.objects.get(user=user).quality_checks
-    except UserProfile.DoesNotExist as error:
+    except UserProfile.DoesNotExist:
         quality_checks = True
 
     ignore = False
@@ -587,15 +511,15 @@ def update_translation(request):
         entity=e, locale=l, plural_form=plural_form)
 
     # Newlines are not allowed in .lang files (bug 1190754)
-    if e.resource.format == 'lang' and '\n' in string:
-        return HttpResponse('Newline characters are not allowed.')
+    if e.resource.format == 'lang' and '\n' in translation:
+        return 'Newline characters are not allowed.'
 
     # Translations exist
     if len(translations) > 0:
 
         # Same translation exists
         try:
-            t = translations.get(string=string)
+            t = translations.get(string=translation)
 
             # If added by privileged user, approve and unfuzzy it
             if can_translate:
@@ -603,9 +527,9 @@ def update_translation(request):
                 # Unless there's nothing to be changed
                 if t.user is not None and t.approved and t.approved_user \
                         and t.approved_date and not t.fuzzy:
-                    return HttpResponse("Same translation already exists.")
+                    return "Same translation already exists."
 
-                warnings = utils.quality_check(original, string, l, ignore)
+                warnings = utils.quality_check(original, translation, l, ignore)
                 if warnings:
                     return warnings
 
@@ -626,15 +550,15 @@ def update_translation(request):
                 if request.user.is_authenticated():
                     t.save()
 
-                return HttpResponse(json.dumps({
+                return {
                     'type': 'updated',
                     'translation': t.serialize(),
-                }), content_type='application/json')
+                }
 
             # If added by non-privileged user, unfuzzy it
             else:
                 if t.fuzzy:
-                    warnings = utils.quality_check(original, string, l, ignore)
+                    warnings = utils.quality_check(original, translation, l, ignore)
                     if warnings:
                         return warnings
 
@@ -658,7 +582,7 @@ def update_translation(request):
 
         # Different translation added
         except:
-            warnings = utils.quality_check(original, string, l, ignore)
+            warnings = utils.quality_check(original, translation, l, ignore)
             if warnings:
                 return warnings
 
@@ -668,7 +592,7 @@ def update_translation(request):
             unfuzzy(translations)
 
             t = Translation(
-                entity=e, locale=l, user=user, string=string,
+                entity=e, locale=l, user=user, string=translation,
                 plural_form=plural_form, date=now,
                 approved=can_translate)
 
@@ -682,19 +606,19 @@ def update_translation(request):
             active = get_translation(
                 entity=e, locale=l, plural_form=plural_form)
 
-            return HttpResponse(json.dumps({
+            return {
                 'type': 'added',
                 'translation': active.serialize(),
-            }), content_type='application/json')
+            }
 
     # No translations saved yet
     else:
-        warnings = utils.quality_check(original, string, l, ignore)
+        warnings = utils.quality_check(original, translation, l, ignore)
         if warnings:
             return warnings
 
         t = Translation(
-            entity=e, locale=l, user=user, string=string,
+            entity=e, locale=l, user=user, string=translation,
             plural_form=plural_form, date=now,
             approved=can_translate)
 
@@ -705,28 +629,16 @@ def update_translation(request):
         if request.user.is_authenticated():
             t.save()
 
-        return HttpResponse(json.dumps({
+        return {
             'type': 'saved',
             'translation': t.serialize(),
-        }), content_type='application/json')
+        }
 
 
-def translation_memory(request):
+@ajaxview(['text', 'locale', 'pk'])
+def translation_memory(request, text, locale, pk):
     """Get translations from internal translations."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-        pk = request.GET['pk']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    try:
-        locale = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist as e:
-        log.error(e)
-        return HttpResponse("error")
-
+    locale = Locale.objects.get(code__iexact=locale)
     min_quality = 0.7
     max_results = 5
     length = len(text)
@@ -780,24 +692,16 @@ def translation_memory(request):
             b["target"] = a
             translations_array.append(b)
 
-        return HttpResponse(json.dumps({
+        return {
             'translations': translations_array
-        }), content_type='application/json')
+        }
 
     else:
-        return HttpResponse("no")
+        return "no"
 
-
-def machine_translation(request):
+@ajaxview(['text', 'locale', 'check'])
+def machine_translation(request, text, locale, check ):
     """Get translation from machine translation service."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-        check = request.GET['check']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
         api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
     else:
@@ -822,7 +726,7 @@ def machine_translation(request):
                     break
 
         if not supported:
-            return HttpResponse("not-supported")
+            return "not-supported"
 
         obj['locale'] = locale
 
@@ -834,7 +738,6 @@ def machine_translation(request):
         "to": locale,
         "contentType": "text/html",
     }
-
     try:
         r = requests.get(url, params=payload)
 
@@ -842,24 +745,15 @@ def machine_translation(request):
         root = ET.fromstring(r.content)
         translation = root.text
         obj['translation'] = translation
-
-        return HttpResponse(json.dumps(obj), content_type='application/json')
-
     except Exception as e:
-        log.error(e)
-        return HttpResponse("error")
-
-
-def microsoft_terminology(request):
-    """Get translations from Microsoft Terminology Service."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-        check = request.GET['check']
-    except MultiValueDictKeyError as e:
         log.error(str(e))
-        return HttpResponse("error")
+        return "error"
+    return obj
 
+
+@ajaxview(['text', 'locale', 'check'])
+def microsoft_terminology(request, text, locale, check):
+    """Get translations from Microsoft Terminology Service."""
     obj = {}
     locale = locale.lower()
     url = 'http://api.terminology.microsoft.com/Terminology.svc?singleWsdl'
@@ -887,7 +781,7 @@ def microsoft_terminology(request):
                         break
 
         if not supported:
-            return HttpResponse("not-supported")
+            return "not-supported"
 
         obj['locale'] = locale
 
@@ -916,22 +810,15 @@ def microsoft_terminology(request):
 
             obj['translations'] = translations
 
-        return HttpResponse(json.dumps(obj), content_type='application/json')
+        return obj
 
     except WebFault as e:
         log.error(e)
-        return HttpResponse("error")
+        return "error"
 
-
-def amagama(request):
+@ajaxview(['text', 'locale'])
+def amagama(request, text, locale):
     """Get open source translations from amaGama service."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
     try:
         text = urllib.quote(text.encode('utf-8'))
     except KeyError as e:
@@ -960,16 +847,9 @@ def amagama(request):
         return HttpResponse("error")
 
 
-def transvision(request):
+@ajaxview(['text', 'locale'])
+def transvision(request, text, locale):
     """Get Mozilla translations from Transvision service."""
-
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
     url = (
         u'https://transvision.mozfr.org/api/v1/tm/global/en-US/{locale}/{text}/'
         .format(locale=locale, text=text)
@@ -983,26 +863,21 @@ def transvision(request):
     try:
         r = requests.get(url, params=payload)
         if r.text != '[]':
-            return HttpResponse(json.dumps(r.json()), content_type='application/json')
+            return r.json()
         else:
-            return HttpResponse("no")
+            return "no"
 
     except Exception as e:
         log.error(e)
-        return HttpResponse("error")
+        return "error"
+
 
 
 @require_POST
 @transaction.atomic
-def download(request):
+@ajaxview(['slug', 'code', 'part'])
+def download(request, slug, code, part):
     """Download translated resource."""
-    try:
-        slug = request.POST['slug']
-        code = request.POST['code']
-        part = request.POST['part']
-    except MultiValueDictKeyError:
-        raise Http404
-
     content, path = utils.get_download_content(slug, code, part)
 
     if not content:
@@ -1020,6 +895,7 @@ def download(request):
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
 @transaction.atomic
+@ajaxview()
 def upload(request):
     """Upload translated resource."""
     try:
@@ -1050,6 +926,7 @@ def upload(request):
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
 @transaction.atomic
+@ajaxview()
 def toggle_user_profile_attribute(request, email):
     user = get_object_or_404(User, email=email)
     if user != request.user:
@@ -1067,41 +944,30 @@ def toggle_user_profile_attribute(request, email):
     setattr(profile, attribute, json.loads(value))
     profile.save()
 
-    return HttpResponse('ok')
+    return 'ok'
 
 
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
 @transaction.atomic
-def save_user_name(request):
+@ajaxview(['name'])
+def save_user_name(request, name):
     """Save user name."""
-    try:
-        name = request.POST['name']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
     if len(name) > 30:
-        return HttpResponse("length")
+        return "length"
 
     user = request.user
     user.first_name = name
     user.save()
 
-    return HttpResponse("ok")
+    return "ok"
 
 
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
-def request_locale(request):
+@ajaxview(['project', 'locale'])
+def request_locale(request, project, locale):
     """Request new locale to be added to project."""
-    try:
-        project = request.POST['project']
-        locale = request.POST['locale']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
     project = get_object_or_404(Project, slug=project)
     locale = get_object_or_404(Locale, code__iexact=locale)
 
@@ -1117,10 +983,9 @@ def request_locale(request):
     else:
         raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
 
-    return HttpResponse()
+    return ""
 
 
-@require_AJAX
 def get_csrf(request):
     """Get CSRF token."""
     return HttpResponse(request.csrf_token)
