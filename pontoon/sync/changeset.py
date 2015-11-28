@@ -147,6 +147,12 @@ class ChangeSet(object):
             )
         approved_translations = []
 
+        # Unfuzzy existing fuzzy translations to prevent duplicate fuzzies.
+        for translation in db_translations:
+            if translation.fuzzy:
+                translation.fuzzy = False
+                self.translations_to_update.append(translation)
+
         for plural_form, string in vcs_translation.strings.items():
             # Check if we need to modify an existing translation or
             # create a new one.
