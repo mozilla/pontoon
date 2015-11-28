@@ -21,27 +21,30 @@ var Pontoon = (function (my) {
           locale: self.locale.code
         },
         success: function(data) {
-          if (data !== "error") {
+          if (data.length) {
             $.each(data, function() {
               list.append('<li title="Copy Into Translation (Tab)">' +
-                '<header>' + this.locale.name + '<span class="stress">' + this.locale.code + '</span></header>' +
-                '<p class="translation" dir="auto" lang="' + this.locale.code + '">' +
-                  self.doNotRender(this.translation) +
+                '<header>' + this.locale__name + '<span class="stress">' + this.locale__code + '</span></header>' +
+                '<p class="translation" dir="auto" lang="' + this.locale__code + '">' +
+                  self.doNotRender(this.string) +
                 '</p>' +
               '</li>');
             });
           } else {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
-          tab.removeClass('loading');
         },
         error: function(error) {
           if (error.status === 0 && error.statusText !== "abort") {
             // Allows requesting locales again
             editor.otherLocales = null;
             self.noConnectionError(list);
-            tab.removeClass('loading');
+          } else {
+            list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
+        },
+        complete: function() {
+          tab.removeClass('loading');
         }
       });
     },
