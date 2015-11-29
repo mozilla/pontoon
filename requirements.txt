@@ -114,7 +114,7 @@ whitenoise==1.0.6
 # sha256: _d1HqNBI4MX0Lu5RGoqvNYkcmW1slZVTx77Is6x0s8s
 newrelic==2.50.0.39
 
-# sha256: -jPrQhcqGbcVrbp6ZJcJEftdj9G2nPjaepXyvH8PMDs
+# sha256: 56MxTtRt0kOTkYZwt6EVbkuvODGJ9kSz5hIbocv7wvk
 django-browserid==1.0.0
 
 # sha256: ECyBQVEUQ98B01RhDTsmiSQQBlQxZwm0OsBGSLUL9wM
