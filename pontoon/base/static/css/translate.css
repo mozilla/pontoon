@@ -880,6 +880,8 @@ body > header aside p {
 
 #metadata .title {
   color: #888888;
+  # Bug 1228873: only select title with double click
+  display: inline-block;
   padding-right: 4px;
   text-transform: uppercase;
 }
