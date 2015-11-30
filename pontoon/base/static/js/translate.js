@@ -1693,6 +1693,10 @@ var Pontoon = (function (my) {
       // If 2-column layout opened by default, open first entity in the editor
       if (this.app.advanced) {
         $("#entitylist .entity:first").mouseover().click();
+
+      // If not and editor opened, show entity list
+      } else if ($("#editor").is('.opened')) {
+        this.goBackToEntityList();
       }
 
       // Must come last to prevent blocking other AJAX requests, e.g. getHistory()
