@@ -13,6 +13,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, ImproperlyConfigured
+
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
+
 from django.core.mail import EmailMessage
 from django.core.validators import validate_comma_separated_integer_list
 from django.db import transaction
@@ -28,6 +31,7 @@ from django.http import (
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
@@ -358,16 +362,20 @@ def get_project_details(request, slug):
     }), content_type='application/json')
 
 
+@csrf_exempt
 @require_AJAX
 def entities(request):
     """Get entities for the specified project, locale and paths."""
     try:
-        project = request.GET['project']
-        locale = request.GET['locale']
-        paths = json.loads(request.GET['paths'])
+        project = request.POST['project']
+        locale = request.POST['locale']
+        paths = json.loads(request.POST['paths'])
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
+
+    # in-place translation requires to load entities available on the current page.
+    inplace_entities = request.POST.get('pageEntities')
 
     try:
         project = Project.objects.get(slug=project)
@@ -382,11 +390,40 @@ def entities(request):
         return HttpResponse("error")
 
     search = None
-    if request.GET.get('keyword', None):
-        search = request.GET
+    if request.POST.get('keyword', None):
+        search = request.POST
 
-    entities = Entity.for_project_locale(project, locale, paths, search)
-    return HttpResponse(json.dumps(entities), content_type='application/json')
+    list_search = request.POST.get('listSearch', None)
+    list_filter = request.POST.get('listFilter', 'all')
+
+    page = request.POST.get('page', 1)
+
+    # Inplace entities are required only in the first batch of entities.
+    if inplace_entities:
+        inplace_entities = Entity.for_project_page(project, locale, json.loads(inplace_entities))
+    else:
+        inplace_entities = []
+
+    paginator = Paginator(Entity.for_project_locale(project, locale, paths, search, inplace_entities,
+        list_search=list_search, list_filter=list_filter), 10)
+
+    try:
+        page_entities = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        page = 1
+        page_entities = paginator.page(1)
+
+    entities = Entity.map_entities(list(page_entities.object_list), locale)
+    # In-place entities are required only on the first page.
+    if int(page) == 1 and not list_search and list_filter == "all":
+        entities += inplace_entities
+    response = {
+        'entities': entities,
+        'has_next': page_entities.has_next(),
+        'num_pages': paginator.num_pages,
+        'page': int(page),
+    }
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 @require_AJAX

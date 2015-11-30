@@ -381,9 +381,14 @@ var Pontoon = (function (my) {
     /*
      * Search list of entities using the search field value
      */
-    searchEntities: function () {
+      searchEntities: function (filterType) {
       var ul = $('#entitylist .wrapper > ul'),
-          val = $('#search').val();
+          val = $('#search').val(),
+          self = this,
+          filterType = filterType || self.getFilterType();
+
+      // Remove search results from uneditables.
+      $('#entitylist .searchResult').remove();
 
       // Search original strings and translations
       ul
@@ -407,6 +412,7 @@ var Pontoon = (function (my) {
       } else {
         $('#entitylist .no-match').hide();
       }
+      return {'search': val, 'filterType': filterType};
     },
 
 
@@ -418,6 +424,9 @@ var Pontoon = (function (my) {
           title = $('#filter .menu li.' + type).text();
 
       list.find('.entity').addClass('limited').show();
+
+      // Remove search results from uneditables.
+      $('#entitylist .searchResult').remove();
 
       switch (type) {
 
@@ -462,9 +471,10 @@ var Pontoon = (function (my) {
 
       }
 
-      this.searchEntities();
+      this.searchEntities(type);
       $('#search').attr('placeholder', 'Search ' + title);
       $('#filter .title').html(title);
+      $('#filter .title').data('type', type);
       $('#filter .button').attr('class', 'button selector ' + type);
     },
 
@@ -473,8 +483,7 @@ var Pontoon = (function (my) {
      * Render list of entities to translate
      */
     renderEntityList: function () {
-      var self = this,
-          list = $('#entitylist');
+      var self = this;
 
       // Trigger event with a delay (e.g. to prevent UI blocking)
       var delay = (function () {
@@ -488,58 +497,90 @@ var Pontoon = (function (my) {
       // Search entities
       $('#search').keyup(function (e) {
         delay(function () {
-          self.searchEntities();
+          var query = self.searchEntities();
+          if (!query.search) {
+            return;
+          }
+          self.getEntities({search: query.search, filterType: query.filterType, pageEntities: self.pageEntities})
+            .done(function(data, opts, state) {
+              $(data.entities).each(function (index, entity) {
+                self.appendEntity(index, entity, 'searchResult');
+            });
+
+        });
         }, 200);
       });
 
       // Filter entities
       $('#filter li:not(".horizontal-separator")').click(function() {
-        var type = $(this).attr('class').split(' ')[0];
+        var type = $(this).attr('class').split(' ')[0],
+          search = $('#search').val();
         self.filterEntities(type);
+        if (type === "all" && !search) {
+          return;
+        }
+        self.getEntities({search: search, filterType: type, pageEntities: self.pageEntities})
+          .done(function(data, opts, state) {
+            $(data.entities).each(function (index, entity) {
+              self.appendEntity(index, entity, 'searchResult');
+            });
+          });
       });
 
       // Render
       $('#entitylist .wrapper > ul').empty();
-      $(self.entities).each(function () {
-        var status = self.getEntityStatus(this),
-            source_string = (this.original_plural && self.locale.nplurals < 2) ? this.marked_plural : this.marked,
-            li = $('<li class="entity limited' +
-          (status ? ' ' + status : '') +
-          (!this.body ? ' uneditable' : '') +
-          '" data-has-suggestions="' + this.has_suggestions + '">' +
-          '<span class="status fa"></span>' +
-          '<p class="string-wrapper">' +
-            '<span class="source-string" data-key="' + self.doNotRender(this.key) + '">' + source_string + '</span>' +
-            '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
-              self.doNotRender(this.translation[0].string || '') +
-            '</span>' +
-          '</p>' +
-          '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
-        '</li>', self.app.win);
+      $(self.entities).each($.proxy(self.appendEntity, self));
 
-        li[0].entity = this;
-        this.ui = li; /* HTML Element representing string in the main UI */
-
-        if (this.body) {
-          list.find('.editables').append(li);
-        } else {
-          list.find('.uneditables').append(li);
-        }
-      });
-
-      // Hover editable entities on the page
-      $("#entitylist .entity:not('.uneditable')").hover(function () {
-        self.postMessage("HOVER", this.entity.id);
-      }, function () {
-        self.postMessage("UNHOVER", this.entity.id);
-      });
-
-      // Open entity editor on click
-      $("#entitylist .entity").click(function () {
-        self.switchToEntity(this.entity);
-      });
     },
 
+    /**
+    * Returns currently selected filter type.
+    */
+    getFilterType: function(){
+      return $('#filter .title').data('type');
+    },
+
+    appendEntity: function(index, entity, entityType) {
+      var self = this,
+          status = self.getEntityStatus(entity),
+          list = $('#entitylist'),
+          source_string = (entity.original_plural && self.locale.nplurals < 2) ? entity.marked_plural : entity.marked,
+          li = $('<li class="entity limited' +
+        (status ? ' ' + status : '') +
+        (!entity.body ? ' uneditable' : '') +
+        + (entityType || ' ') +
+        '" data-has-suggestions="' + entity.has_suggestions + '">' +
+        '<span class="status fa"></span>' +
+        '<p class="string-wrapper">' +
+          '<span class="source-string" data-key="' + self.doNotRender(entity.key) + '">' + source_string + '</span>' +
+          '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
+            self.doNotRender(entity.translation[0].string || '') +
+          '</span>' +
+        '</p>' +
+        '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
+      '</li>', self.app.win);
+
+      li[0].entity = entity;
+      entity.ui = li; /* HTML Element representing string in the main UI */
+
+      if (entity.body) {
+        // Hover editable entities on the page
+        list.find('.editables').append(li);
+        $(li[0]).hover(function () {
+          self.postMessage("HOVER", entity.id);
+        }, function () {
+          self.postMessage("UNHOVER", entity.id);
+        });
+      } else {
+        list.find('.uneditables').append(li);
+      };
+
+      // Open entity editor on click
+      $(li[0]).click(function() {
+        self.switchToEntity(entity);
+      });
+
+    },
 
     /*
      * Is original string pluralized
@@ -1738,7 +1779,8 @@ var Pontoon = (function (my) {
      * Handle messages from project code
      */
     receiveMessage: function (e) {
-      var projectWindow = $('#source')[0].contentWindow;
+      var projectWindow = $('#source')[0].contentWindow,
+          self = this;
 
       if (e.source === projectWindow) {
         var message = JSON.parse(e.data);
@@ -1773,9 +1815,13 @@ var Pontoon = (function (my) {
 
           $('#source, #iframe-cover').css('margin-left', $('#sidebar:visible').width() || 0);
           $('#source').show();
-          Pontoon.paths = message.value;
+          Pontoon.paths = message.value.paths;
           Pontoon.resizeIframe();
-          Pontoon.getEntities(advanced, projectWindow);
+          Pontoon.pageEntities = message.value.pageEntities;
+          Pontoon.getEntities({pageEntities: message.value.pageEntities}).then(function(data, opts, state){
+            Pontoon.renderInitialEntityList.apply(Pontoon, [data, state, advanced, projectWindow]);
+          },
+          $.proxy(Pontoon.renderEntitiesLoadError, Pontoon));
           break;
 
         case "DATA":
@@ -1976,76 +2022,38 @@ var Pontoon = (function (my) {
     /*
      * Load entities, store data, prepare UI
      */
-    getEntities: function(advanced, projectWindow) {
+    getEntities: function(opts) {
       var self = this,
           state = history.state,
-          params =
-            'project=' + state.project +
-            '&locale=' + state.locale +
-            '&paths=' + JSON.stringify([state.paths]);
+          params = {
+            'project': state.project,
+            'locale': state.locale,
+            'page': opts.page || 1,
+            'listSearch': opts.search,
+            'listFilter': opts.filterType,
+            'pageEntities': opts.pageEntities ? JSON.stringify(opts.pageEntities): null
+          },
+          entitiesLoad = $.Deferred();
 
-      if (!state.paths) {
-        params += '&' + state.search.substring(1);
+      if (state['paths']){
+        params['paths'] = JSON.stringify([state.paths]);
+      } else {
+        params[state.search.substring(1)] = true;
       }
 
       $.ajax({
+        method: 'POST',
         url: '/get-entities/',
         data: params,
         success: function(data) {
           if (data !== "error") {
-            self.entities = data;
-
-            // If no entities
-            if (!self.entities.length) {
-              $('#no-results').css('display', 'table');
-              $('#project-load').hide();
-              self.createObject();
-              self.updateMainMenu();
-              return;
-            } else {
-              $('#no-results').hide();
-            }
-
-            // Projects with in place translation support
-            if (projectWindow && !state.search && self.entities.length) {
-              self.createObject(advanced, projectWindow);
-
-              self.postMessage("INITIALIZE", {
-                path: self.app.path,
-                links: self.project.links,
-                entities: self.entities,
-                slug: self.project.slug,
-                locale: self.locale,
-                user: self.user
-              }, null, $('#source').attr('src'));
-
-              self.makeIframeResizable();
-
-            // Projects without in place translation support
-            } else {
-              $('#sidebar').addClass('advanced').css('width', '100%').show();
-              $('#editor').addClass('opened').css('left', '');
-              $('#entitylist').css('left', '');
-
-              self.createObject(true);
-
-              $(self.entities).each(function (i) {
-                this.id = i;
-              });
-
-              self.createUI();
-              self.syncLocalStorageOnServer();
-            }
-
+            entitiesLoad.resolve(data, opts, state);
           } else {
-            $('#project-load')
-              .find('.animation').hide().end()
-              .find('.text')
-                .html('Oops, something went wrong.')
-                .animate({opacity: 1});
+            entitiesLoad.reject();
           }
         }
       });
+      return entitiesLoad.promise();
     },
 
 
@@ -2066,6 +2074,83 @@ var Pontoon = (function (my) {
       return $('.project .menu li .name[data-slug=' + slug + ']').data(attribute);
     },
 
+    renderEntitiesLoadError: function() {
+      $('#project-load')
+        .find('.animation').hide().end()
+        .find('.text')
+          .html('Oops, something went wrong.')
+          .animate({opacity: 1});
+    },
+    renderInitialEntityList: function(data, state, advanced, projectWindow) {
+        // If no entities
+        var self = this;
+        self.entities = data.entities;
+        self.hasNextPage = data.has_next;
+        self.currentPage = 1;
+        if (!self.entities.length) {
+          $('#no-results').css('display', 'table');
+          $('#project-load').hide();
+          self.createObject();
+          self.updateMainMenu();
+          return;
+        } else {
+          $('#no-results').hide();
+        }
+
+        // Projects with in place translation support
+        if (projectWindow && !state.search && self.entities.length) {
+          self.createObject(advanced, projectWindow);
+
+          self.postMessage("INITIALIZE", {
+            path: self.app.path,
+              links: self.project.links,
+            entities: self.entities,
+            slug: self.project.slug,
+            locale: self.locale,
+            user: self.user
+          }, null, $('#source').attr('src'));
+
+          self.makeIframeResizable();
+
+        // Projects without in place translation support
+        } else {
+          $('#sidebar').addClass('advanced').css('width', '100%').show();
+          $('#editor').addClass('opened').css('left', '');
+          $('#entitylist').css('left', '');
+
+          self.createObject(true);
+
+          $(self.entities).each(function (i) {
+            this.id = i;
+          });
+
+          self.createUI();
+          self.syncLocalStorageOnServer();
+        };
+      $("#entitylist .wrapper").scroll(function(ev) {
+        var $this = $(this),
+            $editableEntities = $('#entitylist .wrapper .editables'),
+            $uneditableEntities = $('#entitylist .wrapper .uneditables'),
+            $loading = $('#entitylist .loading'),
+            entitiesHeight = $editableEntities.height() + $uneditableEntities.height(),
+            searchQuery = $('#search').val(),
+            filterType = self.getFilterType();
+
+        if (entitiesHeight > 0 && ($this.scrollTop() > entitiesHeight - $this.height()) && Pontoon.hasNextPage && !$loading.is(':visible')) {
+          var currentTop = $this.scrollTop();
+          $loading.css('display', 'block');
+
+          self.getEntities({pageEntities: Pontoon.pageEntities,  page: Pontoon.currentPage + 1, search: searchQuery, filter: filterType}).then(function(data){
+            Pontoon.entities = Pontoon.entities.concat(data.entities);
+            Pontoon.hasNextPage = data.has_next;
+            Pontoon.currentPage = data.page;
+            $(data.entities).each($.proxy(self.appendEntity, self));
+            $loading.css('display', 'none');
+            $this.scrollTop(currentTop);
+          });
+        };
+     });
+    },
 
     /*
      * Initialize translate view
@@ -2105,7 +2190,7 @@ var Pontoon = (function (my) {
             if (i > 100 && !self.paths) {
               clearInterval(self.interval);
               window.removeEventListener("message", self.receiveMessage, false);
-              return self.getEntities();
+              return self.getEntities().then($.proxy(self.renderInitialEntityList, self), $.proxy(self.renderEntitiesLoadError, self));
             }
           }, 100);
 
@@ -2114,7 +2199,7 @@ var Pontoon = (function (my) {
       }
 
       // No paths (search) or no URL
-      self.getEntities();
+      self.getEntities().then($.proxy(self.renderInitialEntityList, self), $.proxy(self.renderEntitiesLoadError, self));
 
       // Show potentially amusing message if loading takes more time
       setTimeout(function() {

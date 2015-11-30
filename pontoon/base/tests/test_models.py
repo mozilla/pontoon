@@ -696,7 +696,7 @@ class EntityTests(TestCase):
         If paths not specified, return all project entities along with their
         translations for locale.
         """
-        entities = Entity.for_project_locale(self.project, self.locale)
+        entities = Entity.map_entities(Entity.for_project_locale(self.project, self.locale), self.locale)
 
         assert_equal(len(entities), 2)
         self.assert_serialized_entity(
@@ -738,7 +738,7 @@ class EntityTests(TestCase):
         with their translations for locale.
         """
         paths = ['other.lang']
-        entities = Entity.for_project_locale(self.project, self.locale, paths)
+        entities = Entity.map_entities(Entity.for_project_locale(self.project, self.locale, paths), self.locale)
 
         assert_equal(len(entities), 1)
         self.assert_serialized_entity(
@@ -751,7 +751,7 @@ class EntityTests(TestCase):
         locale.
         """
         subpages = [self.subpage.name]
-        entities = Entity.for_project_locale(self.project, self.locale, subpages)
+        entities = Entity.map_entities(Entity.for_project_locale(self.project, self.locale, subpages), self.locale)
 
         assert_equal(len(entities), 1)
         self.assert_serialized_entity(
@@ -761,7 +761,7 @@ class EntityTests(TestCase):
         """
         For pluralized strings, return all available plural forms.
         """
-        entities = Entity.for_project_locale(self.project, self.locale)
+        entities = Entity.map_entities(Entity.for_project_locale(self.project, self.locale), self.locale)
 
         assert_equal(entities[0]['original'], 'Source String')
         assert_equal(entities[0]['original_plural'], 'Plural Source String')
@@ -784,7 +784,7 @@ class EntityTests(TestCase):
             resource=self.main_resource,
             string='First String'
         )
-        entities = Entity.for_project_locale(self.project, self.locale)
+        entities = Entity.map_entities(Entity.for_project_locale(self.project, self.locale), self.locale)
 
         assert_equal(entities[2]['original'], 'First String')
         assert_equal(entities[3]['original'], 'Second String')
@@ -794,7 +794,7 @@ class EntityTests(TestCase):
         If key contais source string and Translate Toolkit separator,
         remove them.
         """
-        entities = Entity.for_project_locale(self.project, self.locale)
+        entities = Entity.map_entities(Entity.for_project_locale(self.project, self.locale), self.locale)
 
         assert_equal(entities[0]['key'], '')
         assert_equal(entities[1]['key'], 'Key')
