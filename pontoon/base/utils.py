@@ -429,12 +429,15 @@ def handle_upload_content(slug, code, part, f, user):
         Entity,
         Locale,
         Project,
+        Resource,
         Translation,
+        update_stats,
     )
 
     relative_path = _get_relative_path_from_part(slug, part)
     project = get_object_or_404(Project, slug=slug)
     locale = get_object_or_404(Locale, code__iexact=code)
+    resource = get_object_or_404(Resource, project__slug=slug, path=relative_path)
 
     # Store uploaded file to a temporary file and parse it
     extension = os.path.splitext(f.name)[1]
@@ -480,3 +483,4 @@ def handle_upload_content(slug, code, part, f, user):
 
     changeset.bulk_create_translations()
     changeset.bulk_update_translations()
+    update_stats(resource, locale)
