@@ -1162,20 +1162,6 @@ var Pontoon = (function (my) {
 
       self.startLoader();
 
-      function gotoEntityListOrNextEntity() {
-        // Go to entity list
-        if (!self.app.advanced && $("#editor").is('.opened')) {
-          self.goBackToEntityList();
-          if (!inplace) {
-            self.stopInPlaceEditing();
-          }
-
-        // Go to next entity
-        } else {
-          $('#next').click();
-        }
-      }
-
       function renderTranslation(data) {
         if (data.type) {
           if (self.user.email) {
@@ -1208,14 +1194,14 @@ var Pontoon = (function (my) {
               .eq(pluralForm + 1).find('a');
 
             if (next.length === 0) {
-              gotoEntityListOrNextEntity();
+              $('#next').click();
             } else {
               next.click();
             }
 
           // Go to entity list or next entity
           } else {
-            gotoEntityListOrNextEntity();
+            $('#next').click();
           }
 
         } else if (data.warnings) {
