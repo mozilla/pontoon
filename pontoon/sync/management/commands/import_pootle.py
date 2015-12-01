@@ -63,7 +63,7 @@ class Command(BaseCommand):
             'firefox-accounts-payments': 'payments',
             'firefox-hello': 'loop',
             'firefox-input': 'input',
-            'marketplace-marketplace': 'marketplace',
+            'marketplace': 'marketplace',
             'marketplace-commbadge': 'commbadge',
             'marketplace-fireplace': 'fireplace',
             'marketplace-spartacus': 'spartacus',
