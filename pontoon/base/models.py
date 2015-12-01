@@ -998,13 +998,14 @@ def get_chart_data(stats):
 
 def get_locales_with_stats():
     """Add chart data to locales."""
-
     locales = Locale.objects.filter(stats__isnull=False).distinct()
 
     for locale in locales:
         stats = Stats.objects.filter(
+            resource__project__disabled=False,
             resource__entities__obsolete=False,
-            locale=locale).distinct()
+            locale=locale
+        ).distinct()
 
         locale.chart = get_chart_data(stats)
 
