@@ -880,10 +880,14 @@ body > header aside p {
 
 #metadata .title {
   color: #888888;
-  /* Bug 1228873: only select title with double click */
-  display: inline-block;
   padding-right: 4px;
   text-transform: uppercase;
+}
+
+/* Bug 1228873: do not cross element select on double click */
+#metadata .title,
+#metadata .content {
+  display: inline-block;
 }
 
 #source-pane h2 {

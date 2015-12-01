@@ -138,7 +138,7 @@ var Pontoon = (function (my) {
      * text Metadata text
      */
     appendMetaData: function (title, text) {
-      $('#metadata').append('<p><span class="title">' + title + '</span>' + text + '</p>');
+      $('#metadata').append('<p><span class="title">' + title + '</span><span class="content">' + text + '</span></p>');
     },
 
 
