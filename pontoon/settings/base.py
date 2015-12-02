@@ -290,6 +290,7 @@ PIPELINE_JS = {
     },
     'main': {
         'source_filenames': (
+            'js/jquery-1.11.1.min.js',
             'js/main.js',
             'js/jquery.timeago.js',
         ),
