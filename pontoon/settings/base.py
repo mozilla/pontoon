@@ -64,6 +64,16 @@ SSLIFY_DISABLE = DEBUG or os.environ.get('CI', False)
 # URL to the RabbitMQ server
 BROKER_URL = os.environ.get('RABBITMQ_URL', None)
 
+# Execute celery tasks locally instead of in a worker unless the
+# environment is configured.
+CELERY_ALWAYS_EAGER = os.environ.get('CELERY_ALWAYS_EAGER', 'True') != 'False'
+
+# Limit the number of tasks a celery worker can handle before being replaced.
+try:
+    CELERYD_MAX_TASKS_PER_CHILD = int(os.environ.get('CELERYD_MAX_TASKS_PER_CHILD', ''))
+except ValueError:
+    CELERYD_MAX_TASKS_PER_CHILD = 20
+
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')
 
@@ -522,21 +532,3 @@ EXCLUDE = os.environ.get('EXCLUDE', '').split(',')
 SYNC_TASK_TIMEOUT = 60 * 60  # 1 hour
 
 SYNC_LOG_RETENTION = 90  # days
-
-# Celery
-
-# Execute celery tasks locally instead of in a worker unless the
-# environment is configured.
-CELERY_ALWAYS_EAGER = os.environ.get('CELERY_ALWAYS_EAGER', 'True') != 'False'
-
-# Limit the number of tasks a celery worker can handle before being replaced.
-try:
-    CELERYD_MAX_TASKS_PER_CHILD = int(os.environ.get('CELERYD_MAX_TASKS_PER_CHILD', ''))
-except ValueError:
-    CELERYD_MAX_TASKS_PER_CHILD = 20
-
-BROKER_POOL_LIMIT = 1  # Limit to one connection per worker
-BROKER_HEARTBEAT = 30  # Detect stale connections faster
-BROKER_CONNECTION_TIMEOUT = 30  # Give up connecting faster
-CELERY_RESULT_BACKEND = None  # We don't store results
-CELERY_SEND_EVENTS = False  # We aren't yet monitoring events
