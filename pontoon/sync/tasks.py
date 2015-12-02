@@ -123,7 +123,7 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now,
                             when__lte=now)
                     .delete())
                 db_project.has_changed = False
-                db_project.save()
+                db_project.save(update_fields=['has_changed'])
 
                 # Clean up any duplicate approvals at the end of sync right
                 # before we commit the transaction to avoid race conditions.
