@@ -4,8 +4,8 @@ from textwrap import dedent
 from django_nose.tools import assert_equal, assert_raises
 
 from pontoon.base.tests import assert_attributes_equal, TestCase
+from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import lang
-from pontoon.sync.formats.base import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 

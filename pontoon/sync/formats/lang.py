@@ -9,7 +9,8 @@ from parsimonious.exceptions import ParseError as ParsimoniousParseError, Visita
 from parsimonious.grammar import Grammar
 from parsimonious.nodes import NodeVisitor
 
-from pontoon.sync.formats.base import ParseError, ParsedResource
+from pontoon.sync.exceptions import ParseError
+from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs_models import VCSTranslation
 
 
