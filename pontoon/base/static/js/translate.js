@@ -171,7 +171,11 @@ var Pontoon = (function (my) {
       // Metadata: comments, sources, keys
       $('#metadata').empty();
       if (entity.comment) {
-        self.appendMetaData('Comment', this.doNotRender(entity.comment));
+        var comment = this.linkify(entity.comment);
+        if (comment === entity.comment) {
+          comment = this.doNotRender(entity.comment);
+        }
+        self.appendMetaData('Comment', comment);
       }
       if (entity.key) {
         self.appendMetaData('Context', entity.key);
