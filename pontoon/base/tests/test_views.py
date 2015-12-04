@@ -71,20 +71,6 @@ class TranslateTests(TestCase):
         # I'd assertTemplateUsed here but it doesn't work on non-DTL
         # templates.
 
-    def test_not_authed_nonpublic_project(self):
-        """
-        If the user is not authenticated and we're not translating
-        project ID 1, redirect home.
-        """
-        # Clear out existing project with ID=1 if necessary.
-        Project.objects.filter(id=2).delete()
-        locale = LocaleFactory.create(code='fakelocale')
-        project = ProjectFactory.create(id=2, slug='valid-project', locales=[locale])
-        ResourceFactory.create(project=project)
-
-        response = self.client.get('/fakelocale/valid-project/path/')
-        assert_equal(response.status_code, 403)
-
 
 class ContributorsTests(TestCase):
     def setUp(self):

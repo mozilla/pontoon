@@ -202,10 +202,6 @@ def translate(request, locale, slug, part):
         resources__isnull=False
     )
 
-    # Check if user authenticated
-    if not request.user.is_authenticated() and not project.pk == 1:
-        return render(request, '403.html', status=403)
-
     projects = (
         Project.objects.filter(
             disabled=False,
