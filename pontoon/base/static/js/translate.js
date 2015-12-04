@@ -107,7 +107,7 @@ var Pontoon = (function (my) {
                       (this.approved ? this.approved_user ?
                         'Approved by ' + this.approved_user : '' : 'Approve') +
                       '"></button>' +
-                      '<button class="delete fa" title="Delete"></button>' +
+                      ((self.user.email && (self.user.email === this.email)) ? '<button class="delete fa" title="Delete"></button>' : '') +
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
@@ -1342,10 +1342,6 @@ var Pontoon = (function (my) {
             name = project.html(),
             slug = project.data('slug');
 
-        if (slug !== 'pontoon-intro' && !self.user.email) {
-          return self.endLoader('Sign in to access more projects.', 'error', true);
-        }
-
         $('.project .selector .title')
           .html(name)
           .data('slug', slug);
@@ -1505,6 +1501,16 @@ var Pontoon = (function (my) {
       // Profile menu
       // Register handlers to prep django-browserid before binding menu.
       django_browserid.registerWatchHandlers(function() {
+
+        function signIn() {
+          self.startLoader();
+          django_browserid.login().then(function(verifyResult) {
+            window.location.reload();
+          }, function(jqXHR) {
+            self.endLoader('Oops, something went wrong.', 'error');
+          });
+        }
+
         $('#profile .menu li').click(function (e) {
           if ($(this).has('a').length) {
             return;
@@ -1512,13 +1518,7 @@ var Pontoon = (function (my) {
           e.preventDefault();
 
           if ($(this).is(".sign-in")) {
-            self.startLoader();
-            django_browserid.login().then(function(verifyResult) {
-              window.location.reload();
-            }, function(jqXHR) {
-              self.endLoader('Oops, something went wrong.', 'error');
-            });
-
+            signIn();
           } else if ($(this).is('.download')) {
             self.updateFormFields($('form#download-file'));
             $('form#download-file').submit();
@@ -1532,6 +1532,11 @@ var Pontoon = (function (my) {
           } else if ($(this).is('.check-box')) {
             e.stopPropagation();
           }
+        });
+
+        $('p#sign-in-required > a#sidebar-signin').click(function (e) {
+          e.preventDefault();
+          signIn();
         });
       });
 

@@ -239,27 +239,32 @@
         <li><a href="#plural6"><span></span><sup></sup></a></li>
       </ul>
     </nav>
-    <textarea dir="auto" lang="{{ locale.code }}" id="translation" placeholder="Type translation and press Enter to save"></textarea>
+    
+    <textarea {% if not user.is_authenticated() %} readonly {% endif %} dir="auto" lang="{{ locale.code }}" id="translation" placeholder="Type translation and press Enter to save"></textarea>
 
     <menu>
-      <div id="unsaved" class="warning-overlay">
-        <a href="#" class="cancel">&times;</a>
-        <h2>You have unsaved changes</h2>
-        <p>Sure you want to leave?</p>
-        <button id="leave-anyway">Leave anyway</button>
-      </div>
-      <div id="quality" class="warning-overlay">
-        <a href="#" class="cancel">&times;</a>
-        <h2>The following checks have failed</h2>
-        <ul></ul>
-        <button id="save-anyway"></button>
-      </div>
-      <div id="translation-length">
-        <span class="current-length"></span>|<span class="original-length"></span>
-      </div>
-      <button id="copy" title="Copy From Source (Alt + C)">Copy</button>
-      <button id="clear" title="Clear Translation (Alt + Backspace)">Clear</button>
-      <button id="save" title="Save Translation (Enter)"></button>
+      {% if user.is_authenticated() %}
+        <div id="unsaved" class="warning-overlay">
+          <a href="#" class="cancel">&times;</a>
+          <h2>You have unsaved changes</h2>
+          <p>Sure you want to leave?</p>
+          <button id="leave-anyway">Leave anyway</button>
+        </div>
+        <div id="quality" class="warning-overlay">
+          <a href="#" class="cancel">&times;</a>
+          <h2>The following checks have failed</h2>
+          <ul></ul>
+          <button id="save-anyway"></button>
+        </div>
+        <div id="translation-length">
+          <span class="current-length"></span>|<span class="original-length"></span>
+        </div>
+        <button id="copy" title="Copy From Source (Alt + C)">Copy</button>
+        <button id="clear" title="Clear Translation (Alt + Backspace)">Clear</button>
+        <button id="save" title="Save Translation (Enter)"></button>
+      {% else %}
+        <p id="sign-in-required"><a id="sidebar-signin" href="">Sign in</a> to translate.</p>
+      {% endif %}
     </menu>
 
     <div id="helpers" class="tabs">

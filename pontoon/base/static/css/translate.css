@@ -1089,6 +1089,14 @@ body > header aside p {
   content: "Suggest anyway";
 }
 
+p#sign-in-required {
+  font-style: italic;
+}
+
+p#sign-in-required > a#sidebar-signin {
+  color: #7BC876;
+}
+
 #editor > menu button#leave-anyway {
   background: #FF0A43;
   color: #EBEBEB;
