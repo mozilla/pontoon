@@ -121,8 +121,8 @@ var Pontoon = (function (my) {
       var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
 
       return string
-        .replace(urlPattern, '<mark class="placeable"><a href="$&" target="_blank">$&</a></mark>')
-        .replace(pseudoUrlPattern, '<mark class="placeable">$1<a href="http://$2" target="_blank">$2</a></mark>');
+        .replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
+        .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>');
     },
 
 
