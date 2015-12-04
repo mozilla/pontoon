@@ -107,6 +107,24 @@ var Pontoon = (function (my) {
       return $('<div/>').text(string).html()
     },
 
+    /*
+     * Linkifies any traces of URLs present in a given string.
+     * Usage : string.linkify();
+     *
+     * Matches the URL Regex and parses the required matches.
+     * Can find more than one URL in the given string.
+     */
+    linkify: function (string) {
+      // http://, https://, ftp://
+      var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+      // www. sans http:// or https://
+      var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+
+      return string
+        .replace(urlPattern, '<mark class="placeable"><a href="$&" target="_blank">$&</a></mark>')
+        .replace(pseudoUrlPattern, '<mark class="placeable">$1<a href="http://$2" target="_blank">$2</a></mark>');
+    },
+
 
     /*
      * Show no connection error in helpers
