@@ -11,7 +11,7 @@ from pontoon.base.tests import (
     RepositoryFactory,
     TestCase,
 )
-from pontoon.sync.formats.base import ParseError
+from pontoon.sync.exceptions import ParseError
 from pontoon.sync.tests import VCSEntityFactory, VCSTranslationFactory
 from pontoon.sync.vcs_models import VCSProject
 

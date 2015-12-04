@@ -9,7 +9,8 @@ import polib
 import sys
 
 from pontoon.sync import KEY_SEPARATOR
-from pontoon.sync.formats.base import ParseError, ParsedResource
+from pontoon.sync.exceptions import ParseError
+from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs_models import VCSTranslation
 
 

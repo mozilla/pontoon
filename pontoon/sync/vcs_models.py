@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 
 from pontoon.base import MOZILLA_REPOS
+from pontoon.sync.exceptions import ParseError
 from pontoon.sync.utils import (
     directory_contains_resources,
     is_resource,
@@ -59,9 +60,6 @@ class VCSProject(object):
         and allows tests that don't need to touch the resources to run
         with less mocking.
         """
-        # Avoid circular import; someday we should refactor to avoid.
-        from pontoon.sync.formats.base import ParseError
-
         resources = {}
         for path in self.relative_resource_paths():
             try:
@@ -181,8 +179,8 @@ class VCSResource(object):
             )
             try:
                 resource_file = formats.parse(resource_path, source_resource_path)
-            except IOError:
-                continue  # File doesn't exist, let's move on
+            except (IOError, ParseError):
+                continue  # File doesn't exist or is invalid, let's move on
 
             self.files[locale] = resource_file
             for translation in resource_file.translations:
