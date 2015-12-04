@@ -1501,7 +1501,6 @@ var Pontoon = (function (my) {
       // Profile menu
       // Register handlers to prep django-browserid before binding menu.
       django_browserid.registerWatchHandlers(function() {
-
         function signIn() {
           self.startLoader();
           django_browserid.login().then(function(verifyResult) {
@@ -1519,6 +1518,7 @@ var Pontoon = (function (my) {
 
           if ($(this).is(".sign-in")) {
             signIn();
+
           } else if ($(this).is('.download')) {
             self.updateFormFields($('form#download-file'));
             $('form#download-file').submit();
