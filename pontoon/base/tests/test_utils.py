@@ -2,7 +2,12 @@ from django_nose.tools import assert_equal, assert_false, assert_is_none, assert
 
 from pontoon.base.tests import ProjectFactory, TestCase
 from pontoon.base.models import Project
-from pontoon.base.utils import extension_in, get_object_or_none
+from pontoon.base.utils import (
+    aware_datetime,
+    extension_in,
+    get_object_or_none,
+    latest_datetime,
+)
 
 
 class UtilsTests(TestCase):
@@ -21,3 +26,11 @@ class UtilsTests(TestCase):
         project = ProjectFactory.create(slug='exists')
         assert_is_none(get_object_or_none(Project, slug='does-not-exist'))
         assert_equal(get_object_or_none(Project, slug='exists'), project)
+
+    def test_latest_datetime(self):
+        larger = aware_datetime(2015, 1, 1)
+        smaller = aware_datetime(2014, 1, 1)
+
+        assert_is_none(latest_datetime([None, None, None]))
+        assert_equal(latest_datetime([None, larger]), larger)
+        assert_equal(latest_datetime([None, smaller, larger]), larger)
