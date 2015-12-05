@@ -116,7 +116,7 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'sslify.middleware.SSLifyMiddleware',
-    'raygun4py.middleware.django.Provider',
+    'pontoon.base.middleware.RaygunExceptionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
