@@ -536,8 +536,15 @@ var Pontoon = (function (my) {
     /**
     * Returns currently selected filter type.
     */
-    getFilterType: function(){
+    getFilterType: function() {
       return $('#filter .title').data('type');
+    },
+
+    /**
+    * Returns current search query.
+    */
+    getSearchQuery: function() {
+        return $("#search").val();
     },
 
     appendEntity: function(index, entity, entityType) {
@@ -2132,15 +2139,15 @@ var Pontoon = (function (my) {
             $editableEntities = $('#entitylist .wrapper .editables'),
             $uneditableEntities = $('#entitylist .wrapper .uneditables'),
             $loading = $('#entitylist .loading'),
-            entitiesHeight = $editableEntities.height() + $uneditableEntities.height(),
-            searchQuery = $('#search').val(),
-            filterType = self.getFilterType();
+            entitiesHeight = $editableEntities.height() + $uneditableEntities.height();
 
-        if (entitiesHeight > 0 && ($this.scrollTop() > entitiesHeight - $this.height()) && Pontoon.hasNextPage && !$loading.is(':visible')) {
+        if (entitiesHeight > 0 && ($this.scrollTop() >= entitiesHeight - $this.height()) && Pontoon.hasNextPage && !$loading.is(':visible')) {
           var currentTop = $this.scrollTop();
           $loading.css('display', 'block');
 
-          self.getEntities({pageEntities: Pontoon.pageEntities,  page: Pontoon.currentPage + 1, search: searchQuery, filter: filterType}).then(function(data){
+          self.getEntities({pageEntities: Pontoon.pageEntities,  page: Pontoon.currentPage + 1, search: self.getSearchQuery(),
+            filter: self.getFilterType()}).then(function(data){
+
             Pontoon.entities = Pontoon.entities.concat(data.entities);
             Pontoon.hasNextPage = data.has_next;
             Pontoon.currentPage = data.page;
@@ -2190,7 +2197,8 @@ var Pontoon = (function (my) {
             if (i > 100 && !self.paths) {
               clearInterval(self.interval);
               window.removeEventListener("message", self.receiveMessage, false);
-              return self.getEntities().then($.proxy(self.renderInitialEntityList, self), $.proxy(self.renderEntitiesLoadError, self));
+              return self.getEntities({search: self.getSearchQuery(), filterType: self.getFilterType()})
+                         .then($.proxy(self.renderInitialEntityList, self), $.proxy(self.renderEntitiesLoadError, self));
             }
           }, 100);
 
@@ -2199,7 +2207,8 @@ var Pontoon = (function (my) {
       }
 
       // No paths (search) or no URL
-      self.getEntities().then($.proxy(self.renderInitialEntityList, self), $.proxy(self.renderEntitiesLoadError, self));
+      self.getEntities({search: self.getSearchQuery(), filterType: self.getFilterType()})
+          .then($.proxy(self.renderInitialEntityList, self), $.proxy(self.renderEntitiesLoadError, self));
 
       // Show potentially amusing message if loading takes more time
       setTimeout(function() {
