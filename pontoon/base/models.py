@@ -810,7 +810,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         return entities_array
 
     @classmethod
-    def for_project_locale(self, project, locale, paths=None, search=None, inplace_entities=None,
+    def for_project_locale(self, project, locale, paths=None, search=None, exclude_entities=None,
         list_search=None, list_filter=None):
         """Get project entities with locale translations."""
         entities = self.objects.filter(
@@ -819,8 +819,8 @@ class Entity(DirtyFieldsMixin, models.Model):
             obsolete=False
         )
 
-        if inplace_entities:
-            entities = entities.exclude(pk__in=[e['pk'] for e in inplace_entities])
+        if exclude_entities:
+            entities = entities.exclude(pk__in=map(int, exclude_entities))
 
         # Filter by search parameters
         if search:
@@ -855,20 +855,42 @@ class Entity(DirtyFieldsMixin, models.Model):
         if list_search and list_search != "":
             entities = entities.filter(Q(**{'string__icontains': list_search}) | Q(**{'string_plural__icontains': list_search})).distinct()
 
+        entities = entities.annotate(
+            is_translated = Case(
+                When(Q(translation__locale=locale, translation__approved=True), then=True),
+                output_field=models.BooleanField(),
+                default=False,
+            ),
+            is_fuzzy = Case(
+                When(Q(translation__locale=locale, translation__fuzzy=True), then=True),
+                output_field=models.BooleanField(),
+                default=False,
+            ),
+            is_changed = Case(
+                When(Q(translation__locale=locale) & (~Q(translation__string=F('string')) | (~Q(translation__string=F('string_plural'),
+                    translation__plural_form__in=range(0, locale.nplurals or 1))    & ~(Q(string_plural="")))) , then=True),
+                output_field=models.BooleanField(),
+                default=False,
+            ),
+            has_suggestions = Case(
+                When(Q(translation__locale=locale, translation__isnull=False, translation__approved=False), then=True),
+                output_field=models.BooleanField(),
+                default=False,
+            )
+        )
         if list_filter:
-            entities = entities.filter(locale_status__locale=locale)
             if list_filter == 'untranslated':
-                entities = entities.filter(Q(locale_status__is_translated=False)|Q(locale_status__isnull=True))
+                entities = entities.filter(is_translated=False)
             elif list_filter == 'fuzzy':
-                entities = entities.filter(locale_status__is_fuzzy=True)
+                entities = entities.filter(is_fuzzy=True)
             elif list_filter in ('approved', 'translated'):
-                entities = entities.filter(locale_status__is_translated=True)
+                entities = entities.filter(is_translated=True)
             elif list_filter == 'not-translated':
-                entities = entities.filter(locale_status__is_fuzzy=False)
+                entities = entities.filter(is_fuzzy=False)
             elif list_filter == 'has-suggestions':
-                entities = entities.filter(locale_status__has_suggestions=True)
+                entities = entities.filter(has_suggestions=True)
             elif list_filter == 'unchanged':
-                entities = entities.filter(Q(locale_status__is_unchanged=True)|Q(locale_status__isnull=True))
+                entities = entities.filter(is_changed=False)
 
         entities = entities.prefetch_related(
             'resource',
@@ -890,21 +912,6 @@ class ChangedEntityLocale(models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
     when = models.DateTimeField(default=timezone.now)
-    class Meta:
-        unique_together = ('entity', 'locale')
-
-
-class EntityLocaleStatus(models.Model):
-    """
-    Contains precomputed fields and informations about translations for the locale.
-    """
-    entity = models.ForeignKey(Entity, related_name='locale_status')
-    locale = models.ForeignKey(Locale)
-    has_suggestions = models.BooleanField(default=False)
-    is_translated = models.BooleanField(default=False)
-    is_fuzzy = models.BooleanField(default=False)
-    is_changed = models.BooleanField(default=False)
-    is_approved = models.BooleanField(default=False)
     class Meta:
         unique_together = ('entity', 'locale')
 
@@ -1010,38 +1017,6 @@ class Translation(DirtyFieldsMixin, models.Model):
             'approved': self.approved,
             'fuzzy': self.fuzzy,
         }
-
-@receiver(post_save, sender=Translation)
-def update_entity_status(sender, instance, created, **kwargs):
-    """
-    Save some informations about entity, it will be helpful during filtering
-    of entities for the locale.
-    """
-
-    translations = instance.entity.translation_set.filter(locale=instance.locale)
-    entity_status, _ = EntityLocaleStatus.objects.get_or_create(entity=instance.entity, locale=instance.locale)
-
-
-    approved = translations.filter(approved=True).order_by('-pk')
-    if approved.exists():
-        approved_translation = approved[0]
-    else:
-        approved_translation = None
-
-    entity_status.is_translated = bool(approved_translation)
-    entity_status.is_fuzzy = translations.filter(fuzzy=True).exists()
-
-    entity_status.is_changed = approved_translation is not None and instance.entity.string != approved_translation.string
-    if entity_status.is_changed == False and instance.entity.string_plural != "":
-        for plural_form in range(0, instance.locale.nplurals or 1):
-            changed = translations.filter(approved=True, plural_form=plural_form,
-            ).exclude(string=instance.entity.string).exists()
-            if changed:
-                entity_status.is_changed = True
-                break
-
-    entity_status.has_suggestions = translations.filter(approved=False).exists()
-    entity_status.save()
 
 
 class Stats(models.Model):

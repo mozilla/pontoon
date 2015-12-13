@@ -1,7 +1,6 @@
 /* Extend public object */
 var Pontoon = (function (my) {
   return $.extend(true, my, {
-
     /*
      * Get suggestions from other locales
      */
@@ -554,9 +553,9 @@ var Pontoon = (function (my) {
           source_string = (entity.original_plural && self.locale.nplurals < 2) ? entity.marked_plural : entity.marked,
           li = $('<li class="entity limited' +
         (status ? ' ' + status : '') +
-        (!entity.body ? ' uneditable' : '') +
+        (!entity.body ? ' uneditable' : '') + ' ' +
         + (entityType || ' ') +
-        '" data-has-suggestions="' + entity.has_suggestions + '">' +
+        '" data-has-suggestions="' + entity.has_suggestions + '" data-entity-pk="' + entity.pk + '">' +
         '<span class="status fa"></span>' +
         '<p class="string-wrapper">' +
           '<span class="source-string" data-key="' + self.doNotRender(entity.key) + '">' + source_string + '</span>' +
@@ -1824,11 +1823,16 @@ var Pontoon = (function (my) {
           $('#source').show();
           Pontoon.paths = message.value.paths;
           Pontoon.resizeIframe();
-          Pontoon.pageEntities = message.value.pageEntities;
-          Pontoon.getEntities({pageEntities: message.value.pageEntities}).then(function(data, opts, state){
-            Pontoon.renderInitialEntityList.apply(Pontoon, [data, state, advanced, projectWindow]);
-          },
-          $.proxy(Pontoon.renderEntitiesLoadError, Pontoon));
+          Pontoon.getInplaceEntities({entities: message.value.pageEntities}).then(function (data) {
+            Pontoon.inplaceEntities = $.map(data, function(entity) {
+              return entity['pk'];
+            });
+            Pontoon.entities = data;
+            Pontoon.getEntities({page: 1, excludeEntities: Pontoon.inplaceEntities}).then(function(data, opts, state){
+              Pontoon.renderInitialEntityList.apply(Pontoon, [data, state, advanced, projectWindow]);
+            },
+            $.proxy(Pontoon.renderEntitiesLoadError, Pontoon));
+          });
           break;
 
         case "DATA":
@@ -2025,7 +2029,32 @@ var Pontoon = (function (my) {
       this.user.isTranslator = isTranslator($('#server').data('user-translated-locales'));
     },
 
+    /**
+     * Resolve in-place entities into entities.
+     */
+    getInplaceEntities: function(opts) {
+        var state = history.state,
+          params = {
+          entities: JSON.stringify(opts.entities),
+          project: state.project,
+          locale: state.locale,
+        },
+        dfd = $.Deferred();
+        $.ajax({
+          method: 'POST',
+          data: params,
+          url: '/get-page-entities/',
+          success: function(data) {
+            if (data !== "error") {
+              dfd.resolve(data, opts);
+            } else {
+              dfd.reject();
+            }
+          }
+        })
 
+        return dfd.promise();
+    },
     /*
      * Load entities, store data, prepare UI
      */
@@ -2038,7 +2067,7 @@ var Pontoon = (function (my) {
             'page': opts.page || 1,
             'listSearch': opts.search,
             'listFilter': opts.filterType,
-            'pageEntities': opts.pageEntities ? JSON.stringify(opts.pageEntities): null
+            'excludeEntities': opts.excludeEntities || self.inplaceEntities,
           },
           entitiesLoad = $.Deferred();
 
@@ -2091,7 +2120,7 @@ var Pontoon = (function (my) {
     renderInitialEntityList: function(data, state, advanced, projectWindow) {
         // If no entities
         var self = this;
-        self.entities = data.entities;
+        $.each(data.entities, self.entities.push);
         self.hasNextPage = data.has_next;
         self.currentPage = 1;
         if (!self.entities.length) {
@@ -2146,7 +2175,7 @@ var Pontoon = (function (my) {
           $loading.css('display', 'block');
 
           self.getEntities({pageEntities: Pontoon.pageEntities,  page: Pontoon.currentPage + 1, search: self.getSearchQuery(),
-            filter: self.getFilterType()}).then(function(data){
+            filterType: self.getFilterType()}).then(function(data){
 
             Pontoon.entities = Pontoon.entities.concat(data.entities);
             Pontoon.hasNextPage = data.has_next;

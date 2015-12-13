@@ -364,6 +364,22 @@ def get_project_details(request, slug):
 
 @csrf_exempt
 @require_AJAX
+def get_page_entities(request):
+    """Map strings from the page to the Pontoon entities."""
+    try:
+        project = get_object_or_404(Project, slug=request.POST['project'])
+        locale = get_object_or_404(Locale, code=request.POST['locale'])
+        page_entities = json.loads(request.POST['entities'])
+    except (MultiValueDictKeyError, ValueError) as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    entities = Entity.for_project_page(project, locale, page_entities)
+    return HttpResponse(json.dumps(entities), content_type='application/json')
+
+
+@csrf_exempt
+@require_AJAX
 def entities(request):
     """Get entities for the specified project, locale and paths."""
     try:
@@ -375,8 +391,7 @@ def entities(request):
         return HttpResponse("error")
 
     # in-place translation requires to load entities available on the current page.
-    inplace_entities = request.POST.get('pageEntities')
-
+    exclude_entities = map(int, request.POST.getlist('excludeEntities[]', []))
     try:
         project = Project.objects.get(slug=project)
     except Entity.DoesNotExist as e:
@@ -398,28 +413,18 @@ def entities(request):
 
     page = request.POST.get('page', 1)
 
-    # Inplace entities are required only in the first batch of entities.
-    if inplace_entities:
-        inplace_entities = Entity.for_project_page(project, locale, json.loads(inplace_entities))
-    else:
-        inplace_entities = []
-
-    paginator = Paginator(Entity.for_project_locale(project, locale, paths, search, inplace_entities,
+    paginator = Paginator(Entity.for_project_locale(project, locale, paths, search, exclude_entities,
         list_search=list_search, list_filter=list_filter), 10)
 
     try:
-        page_entities = paginator.page(page)
+        current_page = paginator.page(page)
     except (EmptyPage, InvalidPage):
         page = 1
-        page_entities = paginator.page(1)
+        current_page = paginator.page(1)
 
-    entities = Entity.map_entities(list(page_entities.object_list), locale)
-    # In-place entities are required only on the first page.
-    if int(page) == 1 and not list_search and list_filter == "all":
-        entities += inplace_entities
     response = {
-        'entities': entities,
-        'has_next': page_entities.has_next(),
+        'entities': Entity.map_entities(list(current_page.object_list), locale),
+        'has_next': current_page.has_next(),
         'num_pages': paginator.num_pages,
         'page': int(page),
     }
