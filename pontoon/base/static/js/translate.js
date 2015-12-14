@@ -1619,19 +1619,30 @@ var Pontoon = (function (my) {
       $('#info').hide().toggle(content !== "").find('.content').html(content);
     },
 
+    /*
+     * Returns current query phrase for the projects.
+     */
+    getProjectQuery: function () {
+      return $('.project input[type=search]').val() || "";
+    },
 
     /*
      * Load project details and mark current project & locale
      */
     updateMainMenu: function () {
+      var self = this;
       $('.project .menu .name').each(function() {
         if (!$(this).data('details')) {
           $.ajax({
             url: '/projects/' + $(this).data('slug') + '/details/',
             success: function(data) {
-              $('.project .menu .name[data-slug=' + data.slug + ']')
-                .data('details', data.details)
-                .parent('li').show();
+              var project_item = $('.project .menu .name[data-slug=' + data.slug + ']'),
+                  searchQuery = self.getProjectQuery();
+              project_item.data('details', data.details);
+
+              if (searchQuery == "" || project_item.data('name').toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
+                project_item.parent('li').show();
+              };
             }
           });
         }
