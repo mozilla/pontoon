@@ -12,8 +12,10 @@ import subprocess
 TARGET_REPOS = {
     'firefox': {
         'folders': [
-            'browser', 'browser/branding/official', 'dom', 'netwerk',
-            'security/manager', 'services/sync', 'toolkit', 'webapprt',
+            'browser', 'browser/branding/official',
+            'devtools/client', 'devtools/shared',
+            'dom', 'netwerk', 'security/manager',
+            'services/sync', 'toolkit', 'webapprt',
         ],
         'source': 'mozilla',
     },
@@ -131,6 +133,8 @@ for channel in ['aurora', 'beta']:
             if os.path.exists(destination):
                 shutil.rmtree(destination)
 
+        # Needed temporarily because devtools aren't moved in beta yet
+        if os.path.exists(origin):
             shutil.copytree(origin, destination)
 
         # Commit and push target repositories
