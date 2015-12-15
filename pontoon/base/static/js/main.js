@@ -657,9 +657,9 @@ $(function() {
       return false;
     }
 
-    // Alt + F: focus search
+    // Ctrl + Alt + F: focus search
     if ($('#sidebar').is(':visible') && (Pontoon.app.advanced || !$('#editor').is('.opened'))
-        && e.altKey && key === 70) {
+        && e.ctrlKey && e.altKey && key === 70) {
       $('#search').focus();
       return false;
     }
