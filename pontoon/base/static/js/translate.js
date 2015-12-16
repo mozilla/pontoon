@@ -107,7 +107,7 @@ var Pontoon = (function (my) {
                       (this.approved ? this.approved_user ?
                         'Approved by ' + this.approved_user : '' : 'Approve') +
                       '"></button>' +
-                      ((self.user.email && (self.user.email === this.email)) ? '<button class="delete fa" title="Delete"></button>' : '') +
+                      ((self.user.email && (self.user.email === this.email) || self.user.isTranslator) ? '<button class="delete fa" title="Delete"></button>' : '') +
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
