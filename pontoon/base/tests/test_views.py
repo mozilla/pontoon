@@ -245,3 +245,48 @@ class LocaleProjectTests(ViewTestCase):
                 {'resource__path': 'has/stats.po', 'latest_activity': translation},
                 {'resource__path': 'no/stats.po', 'latest_activity': None}
             ])
+
+
+class PageEntitiesTests(ViewTestCase):
+    """Tests related to the view which maps strings (extracted from the webpage)
+    to their respective entities."""
+
+    def test_missing_entities(self):
+        assert False
+
+    def test_map_entities(self):
+        assert False
+
+    def test_invalid_strings(self):
+        assert False
+
+
+class GetEntitiesTests(viewTestCase):
+    def test_empty_page(self):
+        assert False
+
+    def test_invalid_page(self):
+        assert False
+
+    def test_last_page(self):
+        assert False
+
+    def test_list_search(self):
+        assert False
+
+
+class GetEntitiesFilterTests(ViewTestCase):
+    def test_untranslated(self):
+        assert False
+
+    def test_translated(self):
+        assert False
+
+    def test_not_translated(self):
+        assert False
+
+    def test_has_suggestions(self):
+        assert False
+
+    def test_unchanged(self):
+        assert False

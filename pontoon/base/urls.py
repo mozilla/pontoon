@@ -111,6 +111,8 @@ urlpatterns = patterns(
     # AJAX
     url(r'^get-entities/', views.entities,
         name='pontoon.entities'),
+    url(r'^get-page-entities/', views.get_page_entities,
+        name='pontoon.page_entities'),
     url(r'^update/', views.update_translation,
         name='pontoon.update'),
     url(r'^get-history/', views.get_translation_history,

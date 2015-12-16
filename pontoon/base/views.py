@@ -13,6 +13,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, ImproperlyConfigured
+
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
+
 from django.core.mail import EmailMessage
 from django.core.validators import validate_comma_separated_integer_list
 from django.db import transaction
@@ -28,6 +31,7 @@ from django.http import (
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
@@ -354,17 +358,36 @@ def get_project_details(request, slug):
     }), content_type='application/json')
 
 
+@csrf_exempt
+@require_AJAX
+def get_page_entities(request):
+    """Map strings from the page to the Pontoon entities."""
+    try:
+        project = get_object_or_404(Project, slug=request.POST['project'])
+        locale = get_object_or_404(Locale, code=request.POST['locale'])
+        page_entities = json.loads(request.POST['entities'])
+    except (MultiValueDictKeyError, ValueError) as e:
+        log.error(str(e))
+        return HttpResponse("error")
+
+    entities = Entity.for_project_page(project, locale, page_entities)
+    return HttpResponse(json.dumps(entities), content_type='application/json')
+
+
+@csrf_exempt
 @require_AJAX
 def entities(request):
     """Get entities for the specified project, locale and paths."""
     try:
-        project = request.GET['project']
-        locale = request.GET['locale']
-        paths = json.loads(request.GET['paths'])
+        project = request.POST['project']
+        locale = request.POST['locale']
+        paths = json.loads(request.POST['paths'])
     except MultiValueDictKeyError as e:
         log.error(str(e))
         return HttpResponse("error")
 
+    # in-place translation requires to load entities available on the current page.
+    exclude_entities = map(int, request.POST.getlist('excludeEntities[]', []))
     try:
         project = Project.objects.get(slug=project)
     except Entity.DoesNotExist as e:
@@ -378,11 +401,30 @@ def entities(request):
         return HttpResponse("error")
 
     search = None
-    if request.GET.get('keyword', None):
-        search = request.GET
+    if request.POST.get('keyword', None):
+        search = request.POST
 
-    entities = Entity.for_project_locale(project, locale, paths, search)
-    return HttpResponse(json.dumps(entities), content_type='application/json')
+    list_search = request.POST.get('listSearch', None)
+    list_filter = request.POST.get('listFilter', 'all')
+
+    page = request.POST.get('page', 1)
+
+    paginator = Paginator(Entity.for_project_locale(project, locale, paths, search, exclude_entities,
+        list_search=list_search, list_filter=list_filter), 10)
+
+    try:
+        current_page = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        page = 1
+        current_page = paginator.page(1)
+
+    response = {
+        'entities': Entity.map_entities(list(current_page.object_list), locale),
+        'has_next': current_page.has_next(),
+        'num_pages': paginator.num_pages,
+        'page': int(page),
+    }
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 @require_AJAX

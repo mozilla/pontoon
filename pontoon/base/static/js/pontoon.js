@@ -113,14 +113,14 @@
        */ 
       function makeEditable(entity) {
         entity.body = true;
-        $(entity.node).each(function() {
+        $(entity.node).each(function () {
           this[0].entity = entity; // Store entity reference to the node
 
           // Show/hide toolbar on node hover
           if (!this.handlersAttached) {
             this.hover(function () {
               showToolbar(this);
-            }, function() {
+            }, function () {
               hideToolbar(this);
             });
             this.handlersAttached = true;
@@ -135,8 +135,6 @@
           hideToolbar(this.node[0][0]);
         };
       }
-
-
 
       /**
        * Extract entities from the document, not prepared for working with Pontoon
@@ -266,21 +264,21 @@
             l10n = {};
 
         // Create object with l10n comment nodes
-        $(':not("script, style, iframe, noscript, [translate=\'no\']")').contents().each(function () {
-          if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
-            var element = $(this).parent();
-            $(this).remove();
-            if (!l10n[element.html()]) {
-              l10n[element.html()] = [element];
-            } else {
-              l10n[element.html()].push(element);
-            }
-          }
-        });
+            $(':not("script, style, iframe, noscript, [translate=\'no\']")').contents().each(function () {
+              if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
+                var element = $(this).parent();
+                $(this).remove();
+                if (!l10n[element.html()]) {
+                  l10n[element.html()] = [element];
+                } else {
+                  l10n[element.html()].push(element);
+                }
+              }
+            });
 
         // Match l10n comment nodes with DB data
         $(Pontoon.entities).each(function(i, entity) {
-          // Renedered text could be different than source
+          // Rendered text could be different than source
           $('body').append('<div id="pontoon-string">' + this.original + '</div>');
 
           var parent = l10n[$('#pontoon-string').html()],
@@ -308,7 +306,6 @@
 
         renderHandle();
       }
-
 
 
       /**
@@ -717,6 +714,35 @@
     }
   }
 
+  /**
+   * Gets all entities available on the current page and sends them to the backend.
+   * @returns {Array}
+     */
+  function getPossiblePageEntities() {
+    var pageEntities = [];
+
+    $(':not("script, style, iframe, noscript, [translate=\'no\']")').contents().each(function () {
+      if (this.nodeType === Node.TEXT_NODE && $.trim(this.nodeValue).length > 0 && $(this).parents(".pontoon-entity").length === 0) {
+        var entity = {},
+            parentClone = $(this).parent().clone(),
+            safeElement = $(this).clone();
+
+        // If project uses hooks, but not available in the DB, remove <!--l10n--> comment nodes
+        parentClone.contents().each(function () {
+          if (this.nodeType === Node.COMMENT_NODE && this.nodeValue.indexOf('l10n') === 0) {
+            $(this).remove();
+          }
+        });
+        entity['string'] = parentClone.html();
+        if ($(this).parents('[data-l10n-id]').length) {
+          entity['key'] = $(this).parents('[data-l10n-id]').data('l10n-id');
+        }
+        pageEntities.push(entity);
+      }
+    });
+    return pageEntities;
+  }
+
   // Wait for main code trigger
   function initizalize(e) {
     if (e.source === appWindow) {
@@ -785,6 +811,11 @@
       paths.push(url);
     }
 
-    postMessage("READY", paths, null, "*");
+    var ready_params = {
+      'paths': paths,
+      'pageEntities': getPossiblePageEntities()
+    }
+
+    postMessage("READY", ready_params, null, "*");
   }
 })();

@@ -675,8 +675,8 @@ class Subpage(models.Model):
 
 class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, related_name='entities')
-    string = models.TextField()
-    string_plural = models.TextField(blank=True)
+    string = models.TextField(db_index=True)
+    string_plural = models.TextField(blank=True, db_index=True)
     key = models.TextField(blank=True)
     comment = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
@@ -752,54 +752,30 @@ class Entity(DirtyFieldsMixin, models.Model):
             }
 
     @classmethod
-    def for_project_locale(self, project, locale, paths=None, search=None):
-        """Get project entities with locale translations."""
-        entities = self.objects.filter(
+    def for_project_page(cls, project, locale, entities):
+        strings = [e['string'] for e in entities if 'key' not in e]
+        keys = [e['key'] for e in entities if 'key' in e]
+
+        entities = cls.objects.filter(
+            Q(string__in=strings)|Q(key__in=keys),
             resource__project=project,
             resource__stats__locale=locale,
-            obsolete=False
-        )
-
-        # Filter by search parameters
-        if search:
-            keyword = search.get('keyword', None)
-            i = '' if search.get('casesensitive', None) else 'i'
-
-            entity_query = Q()  # Empty object
-            if search.get('sources', None):
-                entity_query |= Q(**{'string__%scontains' % i: keyword}) | Q(**{'string_plural__%scontains' % i: keyword})
-
-            if search.get('translations', None):
-                entity_query |= Q(**{'translation__string__%scontains' % i: keyword})
-
-            if search.get('comments', None):
-                entity_query |= Q(**{'comment__%scontains' % i: keyword})
-
-            if search.get('keys', None):
-                entity_query |= Q(**{'key__%scontains' % i: keyword})
-
-            entities = entities.filter(entity_query).distinct()
-
-        # Filter by path
-        elif paths:
-            try:
-                subpage = Subpage.objects.get(project=project, name__in=paths)
-                paths = subpage.resources.values_list("path")
-            except Subpage.DoesNotExist:
-                pass
-            entities = entities.filter(resource__path__in=paths) or entities
-
-        entities = entities.prefetch_related(
+            obsolete=False,
+        ).prefetch_related(
             'resource',
             Prefetch(
                 'translation_set',
-                queryset=Translation.objects.filter(locale=locale),
+                queryset=Translation.objects.filter(
+                    locale=locale,
+                ),
                 to_attr='fetched_translations'
             )
         )
+        return sorted(cls.map_entities(entities, locale), key=lambda e: e['order'])
 
+    @classmethod
+    def map_entities(cls, entities, locale):
         entities_array = []
-
         for entity in entities:
             translation_array = []
             has_suggestions = False
@@ -831,19 +807,111 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'translation': translation_array,
                 'has_suggestions': has_suggestions,
             })
+        return entities_array
 
-        return sorted(entities_array, key=lambda k: k['order'])
+    @classmethod
+    def for_project_locale(self, project, locale, paths=None, search=None, exclude_entities=None,
+        list_search=None, list_filter=None):
+        """Get project entities with locale translations."""
+        entities = self.objects.filter(
+            resource__project=project,
+            resource__stats__locale=locale,
+            obsolete=False
+        )
+
+        if exclude_entities:
+            entities = entities.exclude(pk__in=map(int, exclude_entities))
+
+        # Filter by search parameters
+        if search:
+            keyword = search.get('keyword', None)
+            i = '' if search.get('casesensitive', None) else 'i'
+
+            entity_query = Q()  # Empty object
+            if search.get('sources', None):
+                entity_query |= Q(**{'string__%scontains' % i: keyword}) | Q(**{'string_plural__%scontains' % i: keyword})
+
+            if search.get('translations', None):
+                entity_query |= Q(**{'translation__string__%scontains' % i: keyword})
+
+            if search.get('comments', None):
+                entity_query |= Q(**{'comment__%scontains' % i: keyword})
+
+            if search.get('keys', None):
+                entity_query |= Q(**{'key__%scontains' % i: keyword})
+
+            entities = entities.filter(entity_query).distinct()
+
+        # Filter by path
+        elif paths:
+            try:
+                subpage = Subpage.objects.get(project=project, name__in=paths)
+                paths = subpage.resources.values_list("path")
+            except Subpage.DoesNotExist:
+                pass
+            entities = entities.filter(resource__path__in=paths) or entities
+
+        # User filters
+        if list_search and list_search != "":
+            entities = entities.filter(Q(**{'string__icontains': list_search}) | Q(**{'string_plural__icontains': list_search})).distinct()
+
+        entities = entities.annotate(
+            is_translated = Case(
+                When(Q(translation__locale=locale, translation__approved=True), then=True),
+                output_field=models.BooleanField(),
+                default=False,
+            ),
+            is_fuzzy = Case(
+                When(Q(translation__locale=locale, translation__fuzzy=True), then=True),
+                output_field=models.BooleanField(),
+                default=False,
+            ),
+            is_changed = Case(
+                When(Q(translation__locale=locale) & (~Q(translation__string=F('string')) | (~Q(translation__string=F('string_plural'),
+                    translation__plural_form__in=range(0, locale.nplurals or 1))    & ~(Q(string_plural="")))) , then=True),
+                output_field=models.BooleanField(),
+                default=False,
+            ),
+            has_suggestions = Case(
+                When(Q(translation__locale=locale, translation__isnull=False, translation__approved=False), then=True),
+                output_field=models.BooleanField(),
+                default=False,
+            )
+        )
+        if list_filter:
+            if list_filter == 'untranslated':
+                entities = entities.filter(is_translated=False)
+            elif list_filter == 'fuzzy':
+                entities = entities.filter(is_fuzzy=True)
+            elif list_filter in ('approved', 'translated'):
+                entities = entities.filter(is_translated=True)
+            elif list_filter == 'not-translated':
+                entities = entities.filter(is_fuzzy=False)
+            elif list_filter == 'has-suggestions':
+                entities = entities.filter(has_suggestions=True)
+            elif list_filter == 'unchanged':
+                entities = entities.filter(is_changed=False)
+
+        entities = entities.prefetch_related(
+            'resource',
+            Prefetch(
+                'translation_set',
+                queryset=Translation.objects.filter(locale=locale),
+                to_attr='fetched_translations'
+            )
+        ).order_by('order')
+        return entities
 
 
 class ChangedEntityLocale(models.Model):
     """
     ManyToMany model for storing what locales have changed translations for a
     specific entity since the last sync.
+
     """
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
     when = models.DateTimeField(default=timezone.now)
-
     class Meta:
         unique_together = ('entity', 'locale')
 
