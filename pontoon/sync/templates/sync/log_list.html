@@ -9,26 +9,48 @@
 {% endblock %}
 
 {% block middle %}
-  <table class="log-list">
-    <tr class="log-list-header">
-      <th class="log-list-column">Start Time</th>
-      <th class="log-list-column">Date</th>
-      <th class="log-list-column">Duration</th>
-    </tr>
-    {% for log in sync_logs %}
-      <tr class="sync-log">
-        <td class="start-time">
-          <a href="{{ log.get_absolute_url() }}">
-            {{ log.start_time|format_datetime('time') }}
-          </a>
-        </td>
-        <td class="start-date">
-          {{ log.start_time|format_datetime('date') }}
-        </td>
-        <td class="duration">{{ log.duration|format_timedelta }}</td>
+  <div class="log-list-container">
+    <table class="log-list">
+      <tr class="log-list-header">
+        <th class="log-list-column">Start Time</th>
+        <th class="log-list-column">Date</th>
+        <th class="log-list-column">Duration</th>
       </tr>
-    {% endfor %}
-  </table>
+      {% for log in sync_logs %}
+        <tr class="sync-log">
+          <td class="start-time">
+            <a href="{{ log.get_absolute_url() }}">
+              {{ log.start_time|format_datetime('time') }}
+            </a>
+          </td>
+          <td class="start-date">
+            {{ log.start_time|format_datetime('date') }}
+          </td>
+          <td class="duration">{{ log.duration|format_timedelta }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <div class="pagination">
+      {% if sync_logs.has_previous() %}
+        <a class="previous" href="?page={{ sync_logs.previous_page_number() }}">
+          <span class="fa fa-chevron-left"></span>
+          Previous
+        </a>
+      {% endif %}
+
+      <span class="current">
+        Page {{ sync_logs.number }} of {{ sync_logs.paginator.num_pages }}
+      </span>
+
+      {% if sync_logs.has_next() %}
+        <a class="next" href="?page={{ sync_logs.next_page_number() }}">
+          Next
+          <span class="fa fa-chevron-right"></span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}
 
 {% block extend_css %}
