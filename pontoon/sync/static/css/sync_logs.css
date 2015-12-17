@@ -10,11 +10,15 @@
 }
 
 /** @listing */
-.log-list {
+.log-list-container {
     color: #AAAAAA;
     margin: 0 auto;
-    text-align: left;
     width: 730px;
+}
+
+.log-list {
+    text-align: left;
+    width: 100%;
 }
 
 .log-list .log-list-column {
@@ -136,4 +140,24 @@
 
 .repository:nth-child(even) {
     background: #333941;
+}
+
+
+/** @pagination */
+.pagination {
+    font-size: 14px;
+    padding: 1em 0;
+    text-transform: uppercase;
+}
+
+.pagination .previous {
+    float: left;
+}
+
+.pagination .next {
+    float: right;
+}
+
+.pagination .current {
+    text-align: center;
 }

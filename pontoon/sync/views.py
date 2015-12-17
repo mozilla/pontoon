@@ -1,11 +1,23 @@
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import get_object_or_404, render
 
 from pontoon.sync.models import SyncLog
 
 
 def sync_log_list(request):
+    sync_logs = SyncLog.objects.order_by('-start_time')
+    paginator = Paginator(sync_logs, 24)
+
+    page = request.GET.get('page')
+    try:
+        sync_logs = paginator.page(page)
+    except PageNotAnInteger:
+        sync_logs = paginator.page(1)
+    except EmptyPage:
+        sync_logs = paginator.page(paginator.num_pages)
+
     return render(request, 'sync/log_list.html', {
-        'sync_logs': SyncLog.objects.order_by('-start_time'),
+        'sync_logs': sync_logs,
     })
 
 
