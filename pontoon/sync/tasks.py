@@ -62,6 +62,11 @@ def sync_project(self, project_pk, sync_log_pk, no_pull=False, no_commit=False, 
     # no Pontoon-side changes for this project, quit early.
     if not force and not repos_changed and not db_project.needs_sync:
         log.info('Skipping project {0}, no changes detected.'.format(db_project.slug))
+
+        project_sync_log.skipped = True
+        project_sync_log.skipped_end_time = timezone.now()
+        project_sync_log.save(update_fields=('skipped', 'skipped_end_time'))
+
         return
 
     perform_sync_project(db_project, now)
@@ -103,6 +108,8 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now,
     if len(repo.locales) < 1:
         log.warning('Could not sync repo `{0}`, no locales found within.'
                     .format(repo.url))
+        repo_sync_log.end_time = timezone.now()
+        repo_sync_log.save(update_fields=['end_time'])
         return
 
     vcs_project = VCSProject(db_project, locales=repo.locales)

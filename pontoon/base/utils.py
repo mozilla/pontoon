@@ -496,3 +496,17 @@ def handle_upload_content(slug, code, part, f, user):
             changed_entities[key] = ChangedEntityLocale(entity=t.entity, locale=t.locale)
 
     ChangedEntityLocale.objects.bulk_create(changed_entities.values())
+
+
+def latest_datetime(datetimes):
+    """
+    Return the latest datetime in the given list of datetimes,
+    gracefully handling `None` values in the list. Returns `None` if all
+    values in the list are `None`.
+    """
+    if all(map(lambda d: d is None, datetimes)):
+        return None
+
+    min_datetime = timezone.make_aware(datetime.min)
+    datetimes = map(lambda d: d or min_datetime, datetimes)
+    return max(datetimes)
