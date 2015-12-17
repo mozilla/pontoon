@@ -37,29 +37,32 @@
         <h2 class="project-name">Project: {{ project_log.project.name }}</h2>
 
         {% call details('sync-details project-details') %}
+          {{ detail_item('Status', project_log_status_string(project_log.status), class='status') }}
           {{ detail_item('Start', project_log.start_time|format_datetime('time'), class='start-time') }}
           {{ detail_item('End', project_log.end_time|format_datetime('time'), class='end-time') }}
           {{ detail_item('Duration', project_log.duration|format_timedelta, class='duration') }}
         {% endcall %}
 
-        <table class="repository-logs">
-          <tr class="repository-logs-header">
-            <th class="repository-logs-column">Repository URL</th>
-            <th class="repository-logs-column">Timing</th>
-          </tr>
-          {% for repo_log in repository_sync_logs[project_log] %}
-            <tr class="repository">
-              <td class="repository-url">{{ repo_log.repository.url }}</td>
-              <td class="repository-details">
-                {% call details('sync-details repository-details') %}
-                  {{ detail_item('Start', repo_log.start_time|format_datetime('time'), class='start-time') }}
-                  {{ detail_item('End', repo_log.end_time|format_datetime('time'), class='end-time') }}
-                  {{ detail_item('Duration', repo_log.duration|format_timedelta, class='duration') }}
-                {% endcall %}
-              </td>
+        {% if repository_sync_logs[project_log] %}
+          <table class="repository-logs">
+            <tr class="repository-logs-header">
+              <th class="repository-logs-column">Repository URL</th>
+              <th class="repository-logs-column">Timing</th>
             </tr>
-          {% endfor %}
-        </table>
+            {% for repo_log in repository_sync_logs[project_log] %}
+              <tr class="repository">
+                <td class="repository-url">{{ repo_log.repository.url }}</td>
+                <td class="repository-details">
+                  {% call details('sync-details repository-details') %}
+                    {{ detail_item('Start', repo_log.start_time|format_datetime('time'), class='start-time') }}
+                    {{ detail_item('End', repo_log.end_time|format_datetime('time'), class='end-time') }}
+                    {{ detail_item('Duration', repo_log.duration|format_timedelta, class='duration') }}
+                  {% endcall %}
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+        {% endif %}
       </section>
     {% endfor %}
   </div>

@@ -83,6 +83,9 @@ class SyncProjectTests(TestCase):
             CONTAINS('Skipping', self.db_project.slug)
         )
 
+        # When skipping, mark the project log properly.
+        assert_true(ProjectSyncLog.objects.get(project=self.db_project).skipped)
+
     def test_no_changes_force(self):
         """
         If the database and VCS both have no changes, but force is true,
