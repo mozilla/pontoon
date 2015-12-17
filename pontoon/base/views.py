@@ -23,6 +23,7 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseForbidden,
+    JsonResponse
 )
 
 from django.shortcuts import get_object_or_404, render
@@ -348,10 +349,10 @@ def get_project_details(request, slug):
     """Get project locales with their pages/paths and stats."""
     project = get_object_or_404(Project, slug=slug)
 
-    return HttpResponse(json.dumps({
+    return JsonResponse({
         "slug": slug,
         "details": project.locales_parts_stats(),
-    }), content_type='application/json')
+    })
 
 
 @require_AJAX
@@ -382,7 +383,7 @@ def entities(request):
         search = request.GET
 
     entities = Entity.for_project_locale(project, locale, paths, search)
-    return HttpResponse(json.dumps(entities), content_type='application/json')
+    return JsonResponse(entities, safe=False)
 
 
 @require_AJAX
@@ -406,7 +407,7 @@ def get_translations_from_other_locales(request):
     )
 
     payload = list(translations.values('locale__code', 'locale__name', 'string'))
-    return HttpResponse(json.dumps(payload, indent=4), content_type='application/json')
+    return JsonResponse(payload, safe=False)
 
 
 @require_AJAX
@@ -447,7 +448,7 @@ def get_translation_history(request):
             }
             payload.append(o)
 
-        return HttpResponse(json.dumps(payload, indent=4), content_type='application/json')
+        return JsonResponse(payload, safe=False)
 
     else:
         return HttpResponse("error")
@@ -496,10 +497,10 @@ def delete_translation(request):
         next.approved_date = timezone.now()
         next.save()
 
-    return HttpResponse(json.dumps({
+    return JsonResponse({
         'type': 'deleted',
         'next': next.id,
-    }), content_type='application/json')
+    })
 
 
 @anonymous_csrf_exempt
@@ -599,10 +600,10 @@ def update_translation(request):
                 if request.user.is_authenticated():
                     t.save()
 
-                return HttpResponse(json.dumps({
+                return JsonResponse({
                     'type': 'updated',
                     'translation': t.serialize(),
-                }), content_type='application/json')
+                })
 
             # If added by non-privileged user, unfuzzy it
             else:
@@ -622,10 +623,10 @@ def update_translation(request):
                     if request.user.is_authenticated():
                         t.save()
 
-                    return HttpResponse(json.dumps({
+                    return JsonResponse({
                         'type': 'updated',
                         'translation': t.serialize(),
-                    }), content_type='application/json')
+                    })
 
                 return HttpResponse("Same translation already exists.")
 
@@ -655,10 +656,10 @@ def update_translation(request):
             active = get_translation(
                 entity=e, locale=l, plural_form=plural_form)
 
-            return HttpResponse(json.dumps({
+            return JsonResponse({
                 'type': 'added',
                 'translation': active.serialize(),
-            }), content_type='application/json')
+            })
 
     # No translations saved yet
     else:
@@ -678,10 +679,10 @@ def update_translation(request):
         if request.user.is_authenticated():
             t.save()
 
-        return HttpResponse(json.dumps({
+        return JsonResponse({
             'type': 'saved',
             'translation': t.serialize(),
-        }), content_type='application/json')
+        })
 
 
 def translation_memory(request):
@@ -753,9 +754,9 @@ def translation_memory(request):
             b["target"] = a
             translations_array.append(b)
 
-        return HttpResponse(json.dumps({
+        return JsonResponse({
             'translations': translations_array
-        }), content_type='application/json')
+        })
 
     else:
         return HttpResponse("no")
@@ -816,7 +817,7 @@ def machine_translation(request):
         translation = root.text
         obj['translation'] = translation
 
-        return HttpResponse(json.dumps(obj), content_type='application/json')
+        return JsonResponse(obj)
 
     except Exception as e:
         log.error(e)
@@ -889,7 +890,7 @@ def microsoft_terminology(request):
 
             obj['translations'] = translations
 
-        return HttpResponse(json.dumps(obj), content_type='application/json')
+        return JsonResponse(obj)
 
     except WebFault as e:
         log.error(e)
@@ -921,9 +922,9 @@ def amagama(request):
         if r.text != '[]':
             translations = r.json()
 
-            return HttpResponse(json.dumps({
+            return JsonResponse({
                 'translations': translations
-            }), content_type='application/json')
+            })
 
         else:
             return HttpResponse("no")
@@ -956,7 +957,7 @@ def transvision(request):
     try:
         r = requests.get(url, params=payload)
         if r.text != '[]':
-            return HttpResponse(json.dumps(r.json()), content_type='application/json')
+            return JsonResponse(r.json(), safe=False)
         else:
             return HttpResponse("no")
 
