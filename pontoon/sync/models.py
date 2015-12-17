@@ -4,6 +4,7 @@ from django.db.models import Max
 from django.utils import timezone
 
 from pontoon.base.models import Project, Repository
+from pontoon.base.utils import latest_datetime
 
 
 class BaseLog(models.Model):
@@ -27,7 +28,13 @@ class SyncLog(BaseLog):
             return None
         else:
             repo_logs = RepositorySyncLog.objects.filter(project_sync_log__sync_log=self)
-            return repo_logs.aggregate(Max('end_time'))['end_time__max']
+            repo_end = repo_logs.aggregate(Max('end_time'))['end_time__max']
+
+            skipped_end = self.project_sync_logs.aggregate(
+                Max('skipped_end_time')
+            )['skipped_end_time__max']
+
+            return latest_datetime([repo_end, skipped_end])
 
     @property
     def finished(self):
@@ -43,18 +50,41 @@ class ProjectSyncLog(BaseLog):
 
     start_time = models.DateTimeField(default=timezone.now)
 
+    skipped = models.BooleanField(default=False)
+    skipped_end_time = models.DateTimeField(default=None, blank=True, null=True)
+
     @property
     def end_time(self):
-        if not self.finished:
-            return None
-        else:
+        if self.skipped:
+            return self.skipped_end_time
+        elif self.finished:
             aggregate = (self.repository_sync_logs
                             .all()
                             .aggregate(Max('end_time')))
             return aggregate['end_time__max']
+        else:
+            return None
+
+    # Possible sync status. May eventually become a model field.
+    IN_PROGRESS = 0
+    SKIPPED = 1
+    SYNCED = 2
+
+    @property
+    def status(self):
+        """Return a constant for the current status of this sync."""
+        if not self.finished:
+            return self.IN_PROGRESS
+        elif self.skipped:
+            return self.SKIPPED
+        else:
+            return self.SYNCED
 
     @property
     def finished(self):
+        if self.skipped:
+            return True
+
         repo_logs = self.repository_sync_logs.all()
         if len(repo_logs) != self.project.repositories.count():
             return False
@@ -68,7 +98,7 @@ class RepositorySyncLog(BaseLog):
     repository = models.ForeignKey(Repository)
 
     start_time = models.DateTimeField(default=timezone.now)
-    end_time = models.DateTimeField(default=timezone.now, blank=True, null=True)
+    end_time = models.DateTimeField(default=None, blank=True, null=True)
 
     @property
     def finished(self):
