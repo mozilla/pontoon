@@ -710,26 +710,26 @@ var Pontoon = (function (my) {
           return false;
         }
 
-        // Alt + C: copy from source
-        if (e.altKey && key === 67) {
+        // Ctrl + Alt + C: copy from source
+        if (e.ctrlKey && e.altKey && key === 67) {
           $('#copy').click();
           return false;
         }
 
-        // Alt + Backspace: clear translation
-        if (e.altKey && key === 8) {
+        // Ctrl + Alt + Backspace: clear translation
+        if (e.ctrlKey && e.altKey && key === 8) {
           $('#clear').click();
           return false;
         }
 
-        // Alt + Down: go to next string
-        if (e.altKey && key === 40) {
+        // Ctrl + Alt + .: go to next string
+        if (e.ctrlKey && e.altKey && key === 190) {
           $('#next').click();
           return false;
         }
 
-        // Alt + Up: go to previous string
-        if (e.altKey && key === 38) {
+        // Ctrl + Alt + ,: go to previous string
+        if (e.ctrlKey && e.altKey && key === 188) {
           $('#previous').click();
           return false;
         }
