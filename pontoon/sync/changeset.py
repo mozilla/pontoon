@@ -146,12 +146,7 @@ class ChangeSet(object):
                 locale__code=locale_code,
             )
         approved_translations = []
-
-        # Unfuzzy existing fuzzy translations to prevent duplicate fuzzies.
-        for translation in db_translations:
-            if translation.fuzzy:
-                translation.fuzzy = False
-                self.translations_to_update.append(translation)
+        fuzzy_translations = []
 
         for plural_form, string in vcs_translation.strings.items():
             # Check if we need to modify an existing translation or
@@ -171,6 +166,8 @@ class ChangeSet(object):
                     self.translations_to_update.append(db_translation)
                 if not db_translation.fuzzy:
                     approved_translations.append(db_translation)
+                else:
+                    fuzzy_translations.append(db_translation)
             else:
                 self.translations_to_create.append(Translation(
                     entity=db_entity,
@@ -193,6 +190,14 @@ class ChangeSet(object):
                 translation.approved = False
                 translation.approved_user = None
                 translation.approved_date = None
+
+                if translation.is_dirty():
+                    self.translations_to_update.append(translation)
+
+        # Any existing translations that are no longer fuzzy get unfuzzied.
+        for translation in db_translations:
+            if translation not in fuzzy_translations:
+                translation.fuzzy = False
 
                 if translation.is_dirty():
                     self.translations_to_update.append(translation)
