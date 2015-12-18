@@ -247,6 +247,22 @@ class ChangeSetTests(FakeCheckoutTestCase):
             extra={'tags': []}
         )
 
+    def test_update_db_unfuzzy_existing(self):
+        """
+        Any existing fuzzy translations get unfuzzied.
+        """
+        self.main_db_translation.fuzzy = True
+        self.main_db_translation.save()
+        self.main_vcs_translation.strings[None] = 'New Translated String'
+
+        self.update_main_db_entity()
+        self.main_db_translation.refresh_from_db()
+        assert_attributes_equal(
+            self.main_db_translation,
+            fuzzy=False
+        )
+
+
     def test_update_db_unapprove_existing(self):
         """
         Any existing translations that don't match anything in VCS get
