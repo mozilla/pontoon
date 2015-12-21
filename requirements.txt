@@ -53,9 +53,6 @@ pyasn1==0.1.7
 # sha256: -Shql53l7vyjxaNVruygX0ba58QwixjgBOTdKvfX7Sk
 https://github.com/l20n/python-l20n/archive/4e32a8d.zip#egg=python-l20n
 
-# sha256: wTEccb61tu7OpLuiAKYmMx72cRA1dEi-R7ob_jxKowU
-python-Levenshtein==0.11.2
-
 # sha256: NYsFoMJgXBXPgzfRcBbrla_qrQfJAN-cLN524hlKklg
 # sha256: PhW0FsmiA5waUSCLLNO7T_15bNGeYBsdJlevy3fD3JA
 pytz==2015.2

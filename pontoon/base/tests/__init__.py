@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 
@@ -23,6 +24,7 @@ from pontoon.base.models import (
     Stats,
     Subpage,
     Translation,
+    TranslationMemoryEntry
 )
 
 
@@ -158,6 +160,16 @@ class IdenticalTranslationFactory(TranslationFactory):
     entity = SubFactory(EntityFactory, string=SelfAttribute('..string'))
 
 
+class TranslationMemoryFactory(DjangoModelFactory):
+    source = Sequence(lambda n: 'source {0}'.format(n))
+    target = Sequence(lambda n: 'target {0}'.format(n))
+    entity = SubFactory(EntityFactory, string=SelfAttribute('..source'))
+    locale = SubFactory(LocaleFactory)
+
+    class Meta:
+        model = TranslationMemoryEntry
+
+
 class StatsFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
     locale = SubFactory(LocaleFactory)
@@ -266,3 +278,10 @@ def create_tempfile(contents):
     with os.fdopen(fd, 'w') as f:
         f.write(contents)
     return path
+
+
+def assert_json(response, expected_obj):
+    """
+    Checks if response contains a expected json object.
+    """
+    assert_equal(json.loads(response.content), expected_obj)

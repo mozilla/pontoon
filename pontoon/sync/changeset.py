@@ -6,6 +6,7 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Translation,
+    TranslationMemoryEntry
 )
 from pontoon.base.utils import match_attr
 
@@ -233,6 +234,14 @@ class ChangeSet(object):
 
     def bulk_create_translations(self):
         Translation.objects.bulk_create(self.translations_to_create)
+        memory_entries = [TranslationMemoryEntry(
+            source=t.entity.string,
+            target=t.string,
+            locale_id=t.locale_id,
+            entity_id=t.entity.pk,
+            translation_id=t.pk
+        ) for t in self.translations_to_create if t.plural_form in (None, 0)]
+        TranslationMemoryEntry.objects.bulk_create(memory_entries)
 
     def bulk_update_translations(self):
         if len(self.translations_to_update) > 0:
