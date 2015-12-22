@@ -4,6 +4,16 @@ from pontoon.base.models import Resource
 from pontoon.base.utils import extension_in, first
 
 
+def is_in_hidden_directory(path):
+    """
+    Return true if path contains hidden directory.
+    """
+    for p in path.split(os.sep):
+        if p.startswith('.'):
+            return True
+    return False
+
+
 def is_resource(filename):
     """
     Return True if the filename's extension is a supported Resource
@@ -31,7 +41,7 @@ def directory_contains_resources(directory_path, source_only=False):
     """
     resource_check = is_source_resource if source_only else is_resource
     for root, dirnames, filenames in os.walk(directory_path):
-        # first() avoids checking past the first matching resouce.
+        # first() avoids checking past the first matching resource.
         if first(filenames, resource_check) is not None:
             return True
     return False

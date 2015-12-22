@@ -1,7 +1,11 @@
 import os
 import os.path
 
-from django_nose.tools import assert_equal, assert_false, assert_true
+from django_nose.tools import (
+    assert_equal,
+    assert_false,
+    assert_true,
+)
 from mock import Mock, patch, PropertyMock
 
 from pontoon.base.models import Project
@@ -158,6 +162,19 @@ class VCSProjectTests(TestCase):
                 [os.path.join('/root', 'foo.pot')]
             )
 
+    def test_filter_hidden_directories(self):
+        """
+        We should filter out resources that are contained in the hidden paths.
+        """
+        hidden_paths = (
+            ('/root/.hidden_folder/templates', [], ('bar.pot',)),
+            ('/root/templates', [], ('foo.pot',)),
+        )
+        with patch('pontoon.sync.vcs_models.os.walk', wraps=os, return_value=hidden_paths):
+            assert_equal(
+                list(self.vcs_project.resources_for_path('/root')),
+                ['/root/templates/foo.pot']
+            )
 
 class VCSEntityTests(TestCase):
     def test_has_translation_for(self):
