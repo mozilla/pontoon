@@ -597,7 +597,7 @@ $(function() {
     Pontoon.startLoader();
 
     $.ajax({
-      url: '/api/v1/user/' + Pontoon.user.email + '/',
+      url: '/api/v1/user/' + $('#server').data('email') + '/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('#server').data('csrf'),
@@ -613,7 +613,7 @@ $(function() {
           Pontoon.endLoader(self.text() + ' ' + status + '.');
           $('.notification').addClass('menu-open');
 
-          if (self.is('.force-suggestions')) {
+          if (self.is('.force-suggestions') && Pontoon.user) {
             Pontoon.user.forceSuggestions = is_enabled;
             Pontoon.postMessage("UPDATE-ATTRIBUTE", {
               object: 'user',
