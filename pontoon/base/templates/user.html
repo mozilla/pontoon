@@ -10,6 +10,7 @@
 <!-- Server data -->
 <div id="server" class="hidden"
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+     {% if user.is_authenticated() and user.email %}data-email="{{ user.email }}"{% endif %}
      >
 </div>
 {% endblock %}
@@ -43,7 +44,7 @@
   {% if user.is_authenticated() and user.email == contributor.email %}
   {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks) }}
     {% if user.translated_locales %}
-    {{ Checkbox.checkbox('Force suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions) }}
+    {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions) }}
     {% endif %}
   {% endif %}
 </ul>
