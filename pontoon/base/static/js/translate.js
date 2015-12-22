@@ -1498,48 +1498,6 @@ var Pontoon = (function (my) {
         self.closeNotification();
       });
 
-      // Profile menu
-      // Register handlers to prep django-browserid before binding menu.
-      django_browserid.registerWatchHandlers(function() {
-        function signIn() {
-          self.startLoader();
-          django_browserid.login().then(function(verifyResult) {
-            window.location.reload();
-          }, function(jqXHR) {
-            self.endLoader('Oops, something went wrong.', 'error');
-          });
-        }
-
-        $('#profile .menu li').click(function (e) {
-          if ($(this).has('a').length) {
-            return;
-          }
-          e.preventDefault();
-
-          if ($(this).is(".sign-in")) {
-            signIn();
-
-          } else if ($(this).is('.download')) {
-            self.updateFormFields($('form#download-file'));
-            $('form#download-file').submit();
-
-          } else if ($(this).is(".upload")) {
-            $('#id_uploadfile').click();
-
-          } else if ($(this).is(".hotkeys")) {
-            $('#hotkeys').show();
-
-          } else if ($(this).is('.check-box')) {
-            e.stopPropagation();
-          }
-        });
-
-        $('p#sign-in-required > a#sidebar-signin').click(function (e) {
-          e.preventDefault();
-          signIn();
-        });
-      });
-
       // Close notification on click
       $('body > header').on('click', '.notification', function() {
         Pontoon.closeNotification();
