@@ -5,7 +5,7 @@ from django_nose.tools import (
     assert_raises,
     assert_true
 )
-from mock import Mock, MagicMock
+from mock import Mock, MagicMock, patch
 
 from pontoon.base.models import Entity
 from pontoon.base.tests import (
@@ -317,6 +317,63 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_db_entity.refresh_from_db()
         assert_true(self.main_db_entity.obsolete)
 
+    def test_no_new_translations(self):
+        """
+        Don't change any resource if there aren't any new translations.
+        """
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            approved=True, date=aware_datetime(2015, 1, 1))
+
+        with patch.object(self.main_db_entity, 'has_changed', return_value=False) as mock_has_changed:
+            resource_file = MagicMock()
+            self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
+            self.changeset.vcs_project.resources = {
+                self.main_db_entity.resource.path: resource_file
+            }
+
+            self.changeset.execute_update_vcs()
+
+            assert mock_has_changed.called
+            assert not resource_file.save.called
+
+    def test_changed_resources_sync(self):
+        """
+        Synchronization should modify resource files only if there are changed translations.
+        """
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            approved=True, date=aware_datetime(2015, 1, 1))
+
+        resource_file = MagicMock()
+
+        with patch.object(self.main_db_entity, 'has_changed', return_value=True) as mock_has_changed:
+            self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
+            self.changeset.vcs_project.resources = {
+                self.main_db_entity.resource.path: resource_file
+            }
+
+            self.changeset.execute_update_vcs()
+            assert mock_has_changed.called
+            assert resource_file.save.called
+
+    def test_unchanged_resources_sync(self):
+        """
+        Synchronization shouldn't modify resources if their entities weren't changed.
+        """
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            approved=True, date=aware_datetime(2015, 1, 1))
+        resource_file = MagicMock()
+
+        self.changeset.vcs_project.resources = {
+            self.main_db_entity.resource.path: resource_file
+        }
+
+        with patch.object(self.main_db_entity, 'has_changed', return_value=False) as mock_has_changed:
+            self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
+
+            self.changeset.execute_update_vcs()
+            assert mock_has_changed.called
+            assert len(resource_file.save.mock_calls) == 0
+
 
 class AuthorsTests(FakeCheckoutTestCase):
     """
@@ -385,3 +442,16 @@ class AuthorsTests(FakeCheckoutTestCase):
 
         assert_equal(self.changeset.commit_authors_per_locale[self.translated_locale.code],
             [first_author])
+
+
+    def test_no_translations(self):
+        """
+        We don't attribute anyone if there aren't any new translations.
+        """
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            approved=True, date=aware_datetime(2015, 1, 1))
+
+        with patch.object(self.main_db_entity, 'has_changed', return_value=False):
+            self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
+            self.changeset.execute_update_vcs()
+            assert_equal(self.changeset.commit_authors_per_locale[self.translated_locale.code], [])
