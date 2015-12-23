@@ -1,5 +1,6 @@
 import hashlib
 import logging
+import math
 import os.path
 import urllib
 from urlparse import urlparse
@@ -897,6 +898,15 @@ class Translation(DirtyFieldsMixin, models.Model):
                 .exclude(pk=self.pk)
                 .update(approved=False, approved_user=None, approved_date=None))
 
+            if not self.memory_entries.exists():
+                TranslationMemoryEntry.objects.create(
+                    source=self.entity.string,
+                    target=self.string,
+                    entity=self.entity,
+                    translation=self,
+                    locale=self.locale
+                )
+
         if not imported:
             # Update stats AFTER changing approval status.
             stats = update_stats(self.entity.resource, self.locale)
@@ -949,6 +959,42 @@ class Translation(DirtyFieldsMixin, models.Model):
             'approved': self.approved,
             'fuzzy': self.fuzzy,
         }
+
+
+class TranslationMemoryEntryManager(models.Manager):
+    def minimum_levenshtein_ratio(self, text, min_quality=0.7):
+        """
+        Returns entries that match minimal levenshtein_ratio
+        """
+        length = len(text)
+        min_dist = math.ceil(max(length * min_quality, 2))
+        max_dist = math.floor(min(length / min_quality, 1000))
+        levenshtein_ratio_equation = """(
+            (char_length(source) + char_length(%s) - levenshtein(source, %s, 1, 2, 2))::float /
+            (char_length(source) + char_length(%s))
+        )"""
+
+        # Only check entities with similar length
+        entries = self.extra(
+            where=['(CHAR_LENGTH(source) BETWEEN %s AND %s)',
+                  levenshtein_ratio_equation + ' > %s'],
+            params=(min_dist, max_dist, text, text, text, min_quality),
+            select={'quality': levenshtein_ratio_equation + '* 100'},
+            select_params=(text, text, text)
+        )
+        return entries
+
+
+class TranslationMemoryEntry(models.Model):
+    source = models.TextField()
+    target = models.TextField()
+
+    entity = models.ForeignKey(Entity, null=True, on_delete=models.SET_NULL)
+    translation = models.ForeignKey(Translation, null=True, on_delete=models.SET_NULL,
+                                    related_name="memory_entries")
+    locale = models.ForeignKey(Locale)
+
+    objects = TranslationMemoryEntryManager()
 
 
 class Stats(models.Model):

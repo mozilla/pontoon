@@ -16,6 +16,7 @@ from pontoon.base.models import (
     Entity,
     ProjectLocale,
     Repository,
+    TranslationMemoryEntry,
     User
 )
 from pontoon.base.tests import (
@@ -1025,3 +1026,54 @@ class TranslationTests(TestCase):
         self.assert_latest_translation(locale, translation)
         self.assert_latest_translation(project, translation)
         self.assert_latest_translation(stats, translation)
+
+    def test_approved_translation_in_memory(self):
+        """
+        Every save of approved translation should generate a new
+        entry in the translation memory.
+        """
+        translation = TranslationFactory.create(approved=True)
+        assert TranslationMemoryEntry.objects.get(
+            source=translation.entity.string,
+            target=translation.string,
+            locale=translation.locale
+        )
+
+    def test_unapproved_translation_in_memory(self):
+        """
+        Unapproved translation shouldn't be in the translation memory.
+        """
+        translation = TranslationFactory.create(approved=False)
+        with assert_raises(TranslationMemoryEntry.DoesNotExist):
+            TranslationMemoryEntry.objects.get(
+                source=translation.entity.string,
+                target=translation.string,
+                locale=translation.locale
+            )
+
+    def test_removed_translation(self):
+        """
+        Suggestions should be available even after an Entity or
+        Translation has been removed.
+        """
+        translation = TranslationFactory.create(approved=True)
+        assert TranslationMemoryEntry.objects.get(
+            source=translation.entity.string,
+            target=translation.string,
+            locale=translation.locale
+        )
+
+        entity = translation.entity
+        translation.delete()
+        assert TranslationMemoryEntry.objects.get(
+            source=translation.entity.string,
+            target=translation.string,
+            locale=translation.locale
+        )
+
+        entity.delete()
+        assert TranslationMemoryEntry.objects.get(
+            source=translation.entity.string,
+            target=translation.string,
+            locale=translation.locale
+        )

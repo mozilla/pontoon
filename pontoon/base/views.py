@@ -1,12 +1,11 @@
 import json
-import Levenshtein
 import logging
-import math
 import os
 import requests
 import xml.etree.ElementTree as ET
 import urllib
 
+from collections import defaultdict
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib import messages
@@ -33,7 +32,6 @@ from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from guardian.decorators import permission_required_or_403
-from operator import itemgetter
 
 from pontoon.base import forms
 from pontoon.base import utils
@@ -46,6 +44,7 @@ from pontoon.base.models import (
     Resource,
     Stats,
     Translation,
+    TranslationMemoryEntry,
     UserProfile,
     get_locales_with_project_stats,
     get_locales_with_stats,
@@ -686,80 +685,42 @@ def update_translation(request):
 
 
 def translation_memory(request):
-    """Get translations from internal translations."""
+    """Get translations from internal translations memory."""
     try:
         text = request.GET['text']
         locale = request.GET['locale']
         pk = request.GET['pk']
     except MultiValueDictKeyError as e:
         log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponse('error')
 
     try:
         locale = Locale.objects.get(code__iexact=locale)
     except Locale.DoesNotExist as e:
         log.error(e)
-        return HttpResponse("error")
+        return HttpResponse('error')
 
-    min_quality = 0.7
     max_results = 5
-    length = len(text)
-    min_dist = math.ceil(max(length * min_quality, 2))
-    max_dist = math.floor(min(length / min_quality, 1000))
-
-    # Only check entities with similar length
-    entities = Entity.objects.all().extra(
-        where=["CHAR_LENGTH(string) BETWEEN %s AND %s" % (min_dist, max_dist)])
+    entries = TranslationMemoryEntry.objects.minimum_levenshtein_ratio(text).filter(locale=locale)
 
     # Exclude existing entity
     if pk:
-        entities = entities.exclude(pk=pk)
+        entries = entries.exclude(entity__pk=pk)
 
-    translations = {}
+    entries = entries.values('source', 'target', 'quality').order_by('-quality')
+    suggestions = defaultdict(lambda: {'count': 0, 'quality': 0})
 
-    for e in entities:
-        source = e.string
-        quality = Levenshtein.ratio(text, source)
+    for entry in entries:
+        if entry['target'] not in suggestions or entry['quality'] > suggestions[entry['target']]['quality']:
+            suggestions[entry['target']].update(entry)
+        suggestions[entry['target']]['count'] += 1
 
-        if quality > min_quality:
-            plural_form = None if e.string_plural == "" else 0
-            translation = get_translation(
-                entity=e, locale=locale, fuzzy=False, plural_form=plural_form)
-
-            if translation.string != '' or translation.pk is not None:
-                count = 1
-                quality = quality * 100
-
-                if translation.string in translations:
-                    existing = translations[translation.string]
-                    count = existing['count'] + 1
-
-                    # Store data for best match among equal translations only
-                    if quality < existing['quality']:
-                        quality = existing['quality']
-                        source = existing['source']
-
-                translations[translation.string] = {
-                    'source': source,
-                    'quality': quality,
-                    'count': count,
-                }
-
-    if len(translations) > 0:
-        # Sort by translation count
-        t = sorted(translations.iteritems(), key=itemgetter(1), reverse=True)
-        translations_array = []
-
-        for a, b in t[:max_results]:
-            b["target"] = a
-            translations_array.append(b)
-
+    if len(suggestions) > 0:
         return JsonResponse({
-            'translations': translations_array
+            'translations': sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
         })
-
     else:
-        return HttpResponse("no")
+        return HttpResponse('no')
 
 
 def machine_translation(request):
