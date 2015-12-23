@@ -14,6 +14,7 @@ from pontoon.base import MOZILLA_REPOS
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.utils import (
     directory_contains_resources,
+    is_in_hidden_directory,
     is_resource,
     locale_directory_path,
     relative_source_path,
@@ -129,6 +130,9 @@ class VCSProject(object):
         path.
         """
         for root, dirnames, filenames in os.walk(path):
+            if is_in_hidden_directory(root):
+                continue
+
             # Ignore certain files in Mozilla repositories.
             if self.db_project.repository_url in MOZILLA_REPOS:
                 filenames = [f for f in filenames if not f.endswith('region.properties')]
