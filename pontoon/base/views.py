@@ -264,10 +264,16 @@ def contributor(request, email):
 
     timeline.reverse()
 
+    words = 0
+
+    for translation in translations:
+        words += len(translation.string.split(' '))
+
     return render(request, 'user.html', {
         'contributor': user,
         'timeline': timeline,
         'translations': translations,
+        'words': words,
     })
 
 

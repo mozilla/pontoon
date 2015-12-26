@@ -291,6 +291,11 @@ body > header .project.select {
   content: "";
 }
 
+.words .status:before {
+  color: #44DDAA;
+  content: "";
+}
+
 .translated .status:before {
   color: #4FC4F6;
   content: "";
@@ -762,6 +767,7 @@ body > header aside p {
   padding-left: 2%;
 }
 
+#entitylist > .wrapper > ul > li.words p span.source-string,
 #entitylist > .wrapper > ul > li.approved p span.source-string,
 #entitylist > .wrapper > ul > li.translated p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,

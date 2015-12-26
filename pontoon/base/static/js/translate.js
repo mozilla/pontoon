@@ -982,17 +982,36 @@ var Pontoon = (function (my) {
       });
     },
 
-
     /*
      * Update progress indicator and value
      */
     updateProgress: function () {
+
+      /*
+       * Count the number of words translated
+       */
+      function wordProgress () {
+        var entities = Pontoon.entities;
+        var entitiesLength = entities.length;
+        var wordCount = 0;
+        for (var entityIndex = 0; entityIndex < entitiesLength; entityIndex++) {
+          var entityString = entities[entityIndex].translation[0].string;
+          if (entityString !== null) {
+            var tempEntityString = entityString.split(' ');
+            wordCount += tempEntityString.length;
+          }
+        }
+        return wordCount;
+      }
+
       var all = $("#entitylist .entity").length,
           approved = $("#entitylist .entity.approved").length,
           translated = $("#entitylist .entity.translated").length,
           fuzzy = $("#entitylist .entity.fuzzy").length,
           untranslated = all - translated - approved - fuzzy,
+          words = wordProgress();
           fraction = {
+            words: words ? words / 1 : 0,
             approved: all ? approved / all : 0,
             translated: all ? translated / all : 0,
             fuzzy: all ? fuzzy / all : 0,
@@ -1031,6 +1050,7 @@ var Pontoon = (function (my) {
       // Update details in the menu
       $('#progress .menu').find('header span').html(all).end()
         .find('.details')
+          .find('.words p').html(words).end()
           .find('.approved p').html(approved).end()
           .find('.translated p').html(translated).end()
           .find('.fuzzy p').html(fuzzy).end()
