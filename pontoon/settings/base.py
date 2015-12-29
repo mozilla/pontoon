@@ -520,7 +520,7 @@ MICROSOFT_TERMINOLOGY_LOCALES = [
 # Contributors to exclude from Top Contributors list
 EXCLUDE = os.environ.get('EXCLUDE', '').split(',')
 
-SYNC_TASK_TIMEOUT = 60 * 60  # 1 hour
+SYNC_TASK_TIMEOUT = 60 * 60 * 4  # 4 hours
 
 SYNC_LOG_RETENTION = 90  # days
 
