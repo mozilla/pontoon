@@ -1,3 +1,5 @@
+import StringIO
+
 from django.core.management.base import CommandError
 
 from django_nose.tools import assert_equal, assert_false, assert_raises
@@ -18,6 +20,7 @@ class CommandTests(TestCase):
         self.command.no_commit = False
         self.command.no_pull = False
         self.command.force = False
+        self.command.stderr = StringIO.StringIO()
 
         Project.objects.filter(slug='pontoon-intro').delete()
 
@@ -68,6 +71,24 @@ class CommandTests(TestCase):
         """
         with assert_raises(CommandError):
             self.execute_command('does-not-exist')
+
+    def test_invalid_slugs(self):
+        """
+        If some of projects have invalid slug, we should warn user about them.
+        """
+        handle_project = ProjectFactory.create()
+
+        self.execute_command(handle_project.slug, 'aaa', 'bbb')
+
+        self.mock_sync_project.delay.assert_called_with(
+            handle_project.pk,
+            ANY,
+            no_pull=False,
+            no_commit=False,
+            force=False
+        )
+
+        assert_equal(self.command.stderr.getvalue(), 'Couldn\'t find projects with following slugs: aaa, bbb')
 
     def test_cant_commit(self):
         """If project.can_commit is False, do not sync it."""
