@@ -49,6 +49,10 @@ class Command(BaseCommand):
         if len(projects) < 1:
             raise CommandError('No matching projects found.')
 
+        if len(projects) != len(args):
+            invalid_slugs = sorted(set(args).difference(set(projects.values_list('slug', flat=True))))
+            self.stderr.write('Couldn\'t find projects with following slugs: {}'.format(', '.join(invalid_slugs)))
+
         for project in projects:
             if not project.can_commit:
                 self.stdout.write(u'Skipping project {0}, cannot commit to repository.'
