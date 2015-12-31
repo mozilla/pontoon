@@ -49,7 +49,7 @@ class Command(BaseCommand):
         if len(projects) < 1:
             raise CommandError('No matching projects found.')
 
-        if len(projects) != len(args):
+        if args and len(projects) != len(args):
             invalid_slugs = sorted(set(args).difference(set(projects.values_list('slug', flat=True))))
             self.stderr.write('Couldn\'t find projects with following slugs: {}'.format(', '.join(invalid_slugs)))
 
