@@ -4,7 +4,7 @@ Parser for the xliff translation format.
 from translate.storage import xliff
 
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.vcs_models import VCSTranslation
+from pontoon.sync.vcs.models import VCSTranslation
 
 
 class XLIFFEntity(VCSTranslation):

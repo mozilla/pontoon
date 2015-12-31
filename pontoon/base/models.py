@@ -20,7 +20,7 @@ from dirtyfields import DirtyFieldsMixin
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
-from pontoon.administration.vcs import commit_to_vcs, get_revision, update_from_vcs
+from pontoon.sync.vcs.repositories import commit_to_vcs, get_revision, update_from_vcs
 from pontoon.base import utils
 from pontoon.sync import KEY_SEPARATOR
 

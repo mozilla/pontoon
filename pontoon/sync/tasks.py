@@ -4,7 +4,6 @@ from django.conf import settings
 from django.db import connection, transaction
 from django.utils import timezone
 
-from pontoon.administration.vcs import CommitToRepositoryException
 from pontoon.base.models import ChangedEntityLocale, Project, Repository
 from pontoon.base.tasks import PontoonTask
 from pontoon.sync.changeset import ChangeSet
@@ -17,7 +16,8 @@ from pontoon.sync.core import (
     update_translations,
 )
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
-from pontoon.sync.vcs_models import VCSProject
+from pontoon.sync.vcs.repositories import CommitToRepositoryException
+from pontoon.sync.vcs.models import VCSProject
 
 
 log = logging.getLogger(__name__)

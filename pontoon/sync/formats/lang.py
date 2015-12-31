@@ -11,7 +11,7 @@ from parsimonious.nodes import NodeVisitor
 
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.vcs_models import VCSTranslation
+from pontoon.sync.vcs.models import VCSTranslation
 
 
 BLANK_LINE = 'blank_line'

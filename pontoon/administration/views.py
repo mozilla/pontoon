@@ -1,16 +1,13 @@
-import json
 import logging
-import traceback
 
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db import transaction
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
 from django.utils.datastructures import MultiValueDictKeyError
 
-from pontoon.administration import files
 from pontoon.administration.forms import (
     ProjectForm,
     RepositoryInlineFormSet,
@@ -24,7 +21,6 @@ from pontoon.base.models import (
     Resource,
     get_projects_with_stats,
 )
-
 
 log = logging.getLogger('pontoon')
 
@@ -202,56 +198,3 @@ def delete_project(request, pk, template=None):
         return HttpResponseRedirect(reverse(
             'pontoon.admin.project',
             args=[project.slug]))
-
-
-@transaction.atomic
-def update_from_repository(request, template=None):
-    """Update all project locales from repository."""
-    log.debug("Update all project locales from repository.")
-
-    if not request.user.has_perm('base.can_manage'):
-        return render(request, '403.html', status=403)
-
-    if request.method != 'POST':
-        log.error("Non-POST request")
-        raise Http404
-
-    try:
-        pk = request.POST['pk']
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse(json.dumps({
-            'type': 'error',
-            'message': 'Project primary key not provided.',
-        }), content_type='application/json')
-
-    try:
-        project = Project.objects.get(pk=pk)
-    except Project.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse(json.dumps({
-            'type': 'error',
-            'message': str(e),
-        }), content_type='application/json')
-
-    try:
-        files.update_from_repository(project)
-        files.extract_to_database(project)
-
-    except Exception as e:
-        log.error("Exception: " + str(e))
-        log.debug(traceback.format_exc())
-        return HttpResponse(json.dumps({
-            'type': 'error',
-            'message': str(e),
-        }), content_type='application/json')
-
-    except IOError as e:
-        log.error("IOError: " + str(e))
-        log.debug(traceback.format_exc())
-        return HttpResponse(json.dumps({
-            'type': 'error',
-            'message': str(e),
-        }), content_type='application/json')
-
-    return HttpResponse("200")
