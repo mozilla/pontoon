@@ -906,7 +906,7 @@ def transvision(request):
         return HttpResponse("error")
 
     url = (
-        u'https://transvision-beta.mozfr.org/api/v1/tm/global/en-US/{locale}/{text}/'
+        u'https://transvision.mozfr.org/api/v1/tm/global/en-US/{locale}/{text}/'
         .format(locale=locale, text=text)
     )
 
