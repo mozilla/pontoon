@@ -54,7 +54,7 @@ Installation
       ./bin/peep.py install -r requirements.txt
 
    .. note::
-  
+
      For Mac OS X users, You may encounter a value error while running the above command.
      The installation process would terminate flagging an error as follows.
 
@@ -64,7 +64,7 @@ Installation
        ValueError: unknown locale: UTF-8
 
      To fix this existing python issue_, Add the following lines to your `.bash_profile` or equivalent.
-     
+
      .. code-block:: bash
 
         export LC_ALL=en_US.UTF-8
@@ -117,7 +117,7 @@ Installation
 
    .. code-block:: bash
 
-      python manage.py update_projects
+      python manage.py sync_projects --no-commit pontoon-intro
 
 8. Install the required Node libraries using ``npm``:
 

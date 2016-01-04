@@ -17,7 +17,7 @@ from pontoon.base.tests import (
 )
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.tests import VCSEntityFactory, VCSTranslationFactory
-from pontoon.sync.vcs_models import VCSProject
+from pontoon.sync.vcs.models import VCSProject
 
 
 TEST_CHECKOUT_PATH = os.path.join(os.path.dirname(__file__), 'directory_detection_tests')
@@ -134,8 +134,8 @@ class VCSProjectTests(TestCase):
             else:
                 return 'successful resource'
 
-        with patch('pontoon.sync.vcs_models.VCSResource') as MockVCSResource, \
-             patch('pontoon.sync.vcs_models.log') as mock_log:
+        with patch('pontoon.sync.vcs.models.VCSResource') as MockVCSResource, \
+             patch('pontoon.sync.vcs.models.log') as mock_log:
             MockVCSResource.side_effect = vcs_resource_constructor
 
             assert_equal(self.vcs_project.resources, {'success': 'successful resource'})
@@ -151,8 +151,8 @@ class VCSProjectTests(TestCase):
         self.project.repositories.all().delete()
         self.project.repositories.add(RepositoryFactory.build(url=url))
 
-        with patch('pontoon.sync.vcs_models.os', wraps=os) as mock_os, \
-             patch('pontoon.sync.vcs_models.MOZILLA_REPOS', [url]):
+        with patch('pontoon.sync.vcs.models.os', wraps=os) as mock_os, \
+             patch('pontoon.sync.vcs.models.MOZILLA_REPOS', [url]):
             mock_os.walk.return_value = [
                 ('/root', [], ['foo.pot', 'region.properties'])
             ]
@@ -170,7 +170,7 @@ class VCSProjectTests(TestCase):
             ('/root/.hidden_folder/templates', [], ('bar.pot',)),
             ('/root/templates', [], ('foo.pot',)),
         )
-        with patch('pontoon.sync.vcs_models.os.walk', wraps=os, return_value=hidden_paths):
+        with patch('pontoon.sync.vcs.models.os.walk', wraps=os, return_value=hidden_paths):
             assert_equal(
                 list(self.vcs_project.resources_for_path('/root')),
                 ['/root/templates/foo.pot']

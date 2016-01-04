@@ -16,7 +16,7 @@ from pontoon.base.models import (
     update_stats
 )
 from pontoon.sync.changeset import ChangeSet
-from pontoon.sync.vcs_models import VCSProject
+from pontoon.sync.vcs.models import VCSProject
 from pontoon.sync.utils import locale_directory_path
 
 log = logging.getLogger(__name__)

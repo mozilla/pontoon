@@ -11,7 +11,7 @@ import sys
 from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.vcs_models import VCSTranslation
+from pontoon.sync.vcs.models import VCSTranslation
 
 
 class POEntity(VCSTranslation):
