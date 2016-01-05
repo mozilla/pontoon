@@ -4,7 +4,9 @@ import logging
 import os
 import re
 import requests
+import StringIO
 import tempfile
+import zipfile
 
 from datetime import datetime
 
@@ -321,7 +323,7 @@ def _download_file(prefixes, dirnames, relative_path):
 
 
 def _get_relative_path_from_part(slug, part):
-    """ Check if part is a Resource path or Subpage name. """
+    """Check if part is a Resource path or Subpage name."""
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.base.models import Subpage
     try:
@@ -342,73 +344,90 @@ def get_download_content(slug, code, part):
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.sync import formats
     from pontoon.sync.vcs.models import VCSProject
-    from pontoon.base.models import (
-        Entity,
-        Locale,
-        Project,
-        Resource,
-    )
+    from pontoon.base.models import Entity, Locale, Project, Resource
 
-    relative_path = _get_relative_path_from_part(slug, part)
     project = get_object_or_404(Project, slug=slug)
     locale = get_object_or_404(Locale, code__iexact=code)
-    resource = get_object_or_404(Resource, project__slug=slug, path=relative_path)
 
-    # Get locale file
-    locale_prefixes = (
-        project.repositories.filter(permalink_prefix__contains='{locale_code}')
-        .values_list('permalink_prefix', flat=True)
-        .distinct()
-    )
-    dirnames = set([locale.code, locale.code.replace('-', '_')])
-    locale_path = _download_file(locale_prefixes, dirnames, relative_path)
-    if not locale_path:
-        return None, None
+    # Download a ZIP of all files if project has > 1 and < 10 resources
+    isZipable = 1 < project.resources.count() < 10
+    if isZipable:
+        resources = project.resources.all()
+        s = StringIO.StringIO()
+        zf = zipfile.ZipFile(s, "w")
 
-    # Get source file if needed
-    source_path = None
-    if resource.is_asymmetric:
-        source_prefixes = (
-            project.repositories
+    # Download a single file if project has 1 or >= 10 resources
+    else:
+        relative_path = _get_relative_path_from_part(slug, part)
+        resources = [get_object_or_404(Resource, project__slug=slug, path=relative_path)]
+
+    for resource in resources:
+        # Get locale file
+        locale_prefixes = (
+            project.repositories.filter(permalink_prefix__contains='{locale_code}')
             .values_list('permalink_prefix', flat=True)
             .distinct()
         )
-        dirnames = VCSProject.SOURCE_DIR_NAMES
-        source_path = _download_file(source_prefixes, dirnames, relative_path)
-        if not source_path:
+        dirnames = set([locale.code, locale.code.replace('-', '_')])
+        locale_path = _download_file(locale_prefixes, dirnames, resource.path)
+        if not locale_path:
             return None, None
 
-    # Update file from database
-    resource_file = formats.parse(locale_path, source_path)
-    entities_dict = {}
-    entities_qs = Entity.objects.filter(
-        changedentitylocale__locale=locale,
-        resource__project=project,
-        resource__path=relative_path,
-        obsolete=False
-    )
+        # Get source file if needed
+        source_path = None
+        if resource.is_asymmetric:
+            source_prefixes = (
+                project.repositories
+                .values_list('permalink_prefix', flat=True)
+                .distinct()
+            )
+            dirnames = VCSProject.SOURCE_DIR_NAMES
+            source_path = _download_file(source_prefixes, dirnames, resource.path)
+            if not source_path:
+                return None, None
 
-    for e in entities_qs:
-        entities_dict[e.key] = e.translation_set.filter(approved=True, locale=locale)
+        # Update file from database
+        resource_file = formats.parse(locale_path, source_path)
+        entities_dict = {}
+        entities_qs = Entity.objects.filter(
+            changedentitylocale__locale=locale,
+            resource__project=project,
+            resource__path=resource.path,
+            obsolete=False
+        )
 
-    for vcs_translation in resource_file.translations:
-        key = vcs_translation.key
-        if key in entities_dict:
-            entity = entities_dict[key]
-            vcs_translation.update_from_db(entity)
+        for e in entities_qs:
+            entities_dict[e.key] = e.translation_set.filter(approved=True, locale=locale)
 
-    resource_file.save(locale)
+        for vcs_translation in resource_file.translations:
+            key = vcs_translation.key
+            if key in entities_dict:
+                entity = entities_dict[key]
+                vcs_translation.update_from_db(entity)
 
-    # Read download content
-    with codecs.open(locale_path, 'r', 'utf-8') as f:
-        content = f.read()
+        resource_file.save(locale)
 
-    # Remove temporary files
-    os.remove(locale_path)
-    if source_path:
-        os.remove(source_path)
+        if not locale_path:
+            return None, None
 
-    return content, relative_path
+        if isZipable:
+            zf.write(locale_path, resource.path)
+        else:
+            with codecs.open(locale_path, 'r', 'utf-8') as f:
+                content = f.read()
+            filename = os.path.basename(resource.path)
+
+        # Remove temporary files
+        os.remove(locale_path)
+        if source_path:
+            os.remove(source_path)
+
+    if isZipable:
+        zf.close()
+        content = s.getvalue()
+        filename = project.slug + '.zip'
+
+    return content, filename
 
 
 def handle_upload_content(slug, code, part, f, user):

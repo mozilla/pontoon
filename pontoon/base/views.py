@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import requests
 import xml.etree.ElementTree as ET
 import urllib
@@ -938,12 +937,11 @@ def download(request):
     except MultiValueDictKeyError:
         raise Http404
 
-    content, path = utils.get_download_content(slug, code, part)
+    content, filename = utils.get_download_content(slug, code, part)
 
     if not content:
         raise Http404
 
-    filename = os.path.basename(path)
     response = HttpResponse()
     response.content = content
     response['Content-Type'] = 'text/plain'
