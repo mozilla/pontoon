@@ -199,12 +199,11 @@
   </div>
 
   <div class="controls clearfix">
-      {% if pk %}<button class="button delete-project">Delete project</button>{% endif %}
-  <div class="checkbox clearfix">
-      <label for="id_disabled">
-          {{ form.disabled }}{{ form.disabled.label }}
-      </label>
-  </div>
+      <div class="checkbox clearfix">
+          <label for="id_disabled">
+              {{ form.disabled }}{{ form.disabled.label }}
+          </label>
+      </div>
       <button class="button">Save project</button>
       <a href="{{ url('pontoon.admin') }}" class="cancel">Cancel</a>
   </div>
