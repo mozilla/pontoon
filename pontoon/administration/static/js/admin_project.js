@@ -183,16 +183,6 @@ $(function() {
     $totalForms.val(count + 1);
   });
 
-  // Delete project
-  $('.delete-project').click(function (e) {
-    e.preventDefault();
-    if ($(this).is('.clicked')) {
-      window.location = '/admin/delete/' + $('input[name=pk]').val();
-    } else {
-      $(this).addClass('clicked').html('Are you sure?');
-    }
-  });
-
   // Auto-Update project if chosen locales changed
   $('.repository.autoupdate .update:visible').click();
 

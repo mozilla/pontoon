@@ -18,10 +18,6 @@ urlpatterns = patterns(
     url(r'^projects/(?P<slug>.+)/$', views.manage_project,
         name='pontoon.admin.project'),
 
-    # Delete project
-    url(r'^delete/(?P<pk>\d+)/$', views.delete_project,
-        name='pontoon.admin.project.delete'),
-
     # Get slug
     url(r'^get-slug/$', views.get_slug,
         name='pontoon.admin.get_slug'),

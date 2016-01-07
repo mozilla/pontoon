@@ -1,9 +1,7 @@
 import logging
 
-from django.core.urlresolvers import reverse
-from django.contrib import messages
 from django.db import transaction
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
 from django.utils.datastructures import MultiValueDictKeyError
@@ -172,29 +170,3 @@ def manage_project(request, slug=None, template='admin_project.html'):
         data['ready'] = True
 
     return render(request, template, data)
-
-
-@transaction.atomic
-def delete_project(request, pk, template=None):
-    """Delete project."""
-    try:
-        log.debug("Delete project.")
-
-        if not request.user.has_perm('base.can_manage'):
-            return render(request, '403.html', status=403)
-
-        with transaction.atomic():
-            project = Project.objects.get(pk=pk)
-            project.delete()
-
-        return HttpResponseRedirect(reverse('pontoon.admin'))
-    except Exception as e:
-        log.error(
-            "Admin interface: delete project error.\n%s"
-            % unicode(e), exc_info=True)
-        messages.error(
-            request,
-            "There was an error during deleting this project.")
-        return HttpResponseRedirect(reverse(
-            'pontoon.admin.project',
-            args=[project.slug]))
