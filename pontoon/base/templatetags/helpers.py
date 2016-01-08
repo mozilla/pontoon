@@ -87,7 +87,10 @@ def display_permissions(self):
     output = 'Can make suggestions'
 
     if self.translated_locales:
-        locales = ', '.join(self.translated_locales)
+        if self.is_superuser:
+            locales = 'all locales'
+        else:
+            locales = ', '.join(self.translated_locales)
         output = 'Can submit and approve translations for ' + locales
 
     return output
