@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 
 import views
 
@@ -107,6 +107,11 @@ urlpatterns = patterns(
     # Legacy: Redirect to /terminology
     url(r'^search/$',
         RedirectView.as_view(pattern_name='pontoon.search', permanent=True)),
+
+    # Terms
+    url(r'^terms/$',
+        TemplateView.as_view(template_name='terms.html'),
+        name='pontoon.terms'),
 
     # AJAX
     url(r'^get-entities/', views.entities,
