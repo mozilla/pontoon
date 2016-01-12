@@ -3,6 +3,6 @@ Pontoon: Updated {{ locale.name }} ({{ locale.code }}) localization of {{ projec
 
 Translation authors:
 {% for author in authors -%}
-- {{ author.display_name|safe }}
+- {{ author.display_name_and_email|safe }}
 {% endfor %}
 {%- endif -%}

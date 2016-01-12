@@ -100,8 +100,18 @@ def user_translated_locales(self):
 
 
 @property
+def user_name_or_email(self):
+    return self.first_name or self.email
+
+
+@property
 def user_display_name(self):
-    name = self.first_name or self.email.split('@')[0]
+    return self.first_name or self.email.split('@')[0]
+
+
+@property
+def user_display_name_and_email(self):
+    name = self.display_name
     return u'{name} <{email}>'.format(name=name, email=self.email)
 
 
@@ -117,7 +127,9 @@ def user_gravatar_url(self, size):
         email=email, data=urllib.urlencode(data))
 
 User.add_to_class('gravatar_url', user_gravatar_url)
+User.add_to_class('name_or_email', user_name_or_email)
 User.add_to_class('display_name', user_display_name)
+User.add_to_class('display_name_and_email', user_display_name_and_email)
 User.add_to_class('translated_locales', user_translated_locales)
 User.add_to_class('translators', UserTranslationsManager())
 

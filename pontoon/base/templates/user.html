@@ -2,7 +2,7 @@
 
 {% import "widgets/checkbox.html" as Checkbox %}
 
-{% block title %}Pontoon &middot; {% if contributor.first_name %}{{ contributor.first_name }}{% else %}{{ contributor.email }}{% endif %}{% endblock %}
+{% block title %}Pontoon &middot; {{ contributor.name_or_email }}{% endblock %}
 
 {% block class %}user{% endblock %}
 
