@@ -47,9 +47,9 @@
           <span class="chart-wrapper">
             <a href="{{ url('pontoon.translate', locale.code, project.slug, p['resource__path']) }}" class="clearfix">
               <span class="chart" data-chart="{{ {'translated': p['translated_count'], 'fuzzy': p['fuzzy_count'], 'total': p['resource__entity_count'], 'approved': p['approved_count']}|to_json }}">
-                <span class="approved" style="width:{{ p['approved_count'] / p['resource__entity_count'] * 100 }}%;"></span>
-                <span class="translated" style="width:{{ p['translated_count'] / p['resource__entity_count'] * 100 }}%;"></span>
-                <span class="fuzzy" style="width:{{ p['fuzzy_count'] / p['resource__entity_count'] * 100 }}%;"></span>
+                <span class="approved" style="width:{{ (p['approved_count'] / p['resource__entity_count'] * 100)|round }}%;"></span>
+                <span class="translated" style="width:{{ (p['translated_count'] / p['resource__entity_count'] * 100)|round }}%;"></span>
+                <span class="fuzzy" style="width:{{ (p['fuzzy_count'] / p['resource__entity_count'] * 100)|round }}%;"></span>
               </span>
               <span class="percent">{{ (p['approved_count'] / p['resource__entity_count'] * 100) | round(0, 'floor') | int }}%</span>
             </a>

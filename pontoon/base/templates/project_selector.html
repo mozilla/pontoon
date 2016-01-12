@@ -39,9 +39,9 @@
         <span class="chart-wrapper">
           {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.locale.project', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
           <span class="chart" data-chart="{{ p.chart|to_json }}">
-            <span class="approved" style="width:{{ p.chart.approved / p.chart.total * 100 }}%;"></span>
-            <span class="translated" style="width:{{ p.chart.translated / p.chart.total * 100 }}%;"></span>
-            <span class="fuzzy" style="width:{{ p.chart.fuzzy / p.chart.total * 100 }}%;"></span>
+            <span class="approved" style="width:{{ (p.chart.approved / p.chart.total * 100)|round }}%;"></span>
+            <span class="translated" style="width:{{ (p.chart.translated / p.chart.total * 100)|round }}%;"></span>
+            <span class="fuzzy" style="width:{{ (p.chart.fuzzy / p.chart.total * 100)|round }}%;"></span>
           </span>
           <span class="percent">{{ (p.chart.approved / p.chart.total * 100) | round(0, 'floor') | int }}%</span>
           {% if p and p.chart %}</a>{% endif %}
