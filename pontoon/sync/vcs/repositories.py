@@ -126,12 +126,6 @@ class CommitToRepository(object):
     def commit(self, path=None, message=None, user=None):
         raise NotImplementedError
 
-    def get_author(self, user):
-        name = user.first_name
-        if not name:
-            name = user.email.split('@')[0]
-        return (' '.join([name, '<%s>' % user.email]))
-
     def nothing_to_commit(self):
         return log.warning('Nothing to commit')
 
@@ -144,7 +138,7 @@ class CommitToGit(CommitToRepository):
         path = path or self.path
         message = message or self.message
         user = user or self.user
-        author = self.get_author(user)
+        author = user.display_name_and_email
 
         # Embed git identity info into commands
         git_cmd = ['git', '-c', 'user.name=Mozilla Pontoon', '-c',
@@ -179,7 +173,7 @@ class CommitToHg(CommitToRepository):
         path = path or self.path
         message = message or self.message
         user = user or self.user
-        author = self.get_author(user)
+        author = user.display_name_and_email
 
         # Add new and remove missing paths
         add = ["hg", "addremove"]
@@ -211,7 +205,7 @@ class CommitToSvn(CommitToRepository):
         path = path or self.path
         message = message or self.message
         user = user or self.user
-        author = self.get_author(user)
+        author = user.display_name_and_email
 
         # Commit
         command = ["svn", "commit", "-m", message, "--with-revprop",

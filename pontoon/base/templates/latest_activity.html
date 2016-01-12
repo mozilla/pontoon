@@ -3,7 +3,7 @@
     {% if latest_activity.date %}
     <time datetime="{{ latest_activity.date.isoformat() }}">{{ latest_activity.date|naturaltime }}</time>
       {% if latest_activity.user %}
-      &bull; <a href="{{ url('pontoon.contributor', latest_activity.user.email) }}">{{ latest_activity.user.first_name or latest_activity.user.email }}</a>
+      &bull; <a href="{{ url('pontoon.contributor', latest_activity.user.email) }}">{{ latest_activity.user.name_or_email }}</a>
       {% endif %}
     {% else %}
     No activity yet

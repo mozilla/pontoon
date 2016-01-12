@@ -436,13 +436,13 @@ def get_translation_history(request):
             a = t.approved_user
             o = {
                 "id": t.id,
-                "user": "Imported" if u is None else u.first_name or u.email,
+                "user": "Imported" if u is None else u.name_or_email,
                 "email": "" if u is None else u.email,
                 "translation": t.string,
                 "date": t.date.strftime('%b %d, %Y %H:%M'),
                 "date_iso": t.date.isoformat() + offset,
                 "approved": t.approved,
-                "approved_user": "" if a is None else a.first_name or a.email,
+                "approved_user": "" if a is None else a.name_or_email,
             }
             payload.append(o)
 

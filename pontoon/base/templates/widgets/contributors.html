@@ -28,7 +28,7 @@
         <td class="contributor">
           <a href="{{ url('pontoon.contributor', contributor.email) }}">
             <img class="rounded" src="{{ contributor.gravatar_url(44) }}">
-            <p class="name">{{ contributor.first_name or contributor.email.split('@')[0] }}</p>
+            <p class="name">{{ contributor.display_name }}</p>
           </a>
           <p class="email">{{ contributor.email }}</p>
         </td>

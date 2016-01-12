@@ -88,7 +88,7 @@ class POResource(ParsedResource):
                     '%Y-%m-%d %H:%M%z'
                 )
             if latest_translation.last_translator:
-                metadata['Last-Translator'] = latest_translation.last_translator.display_name
+                metadata['Last-Translator'] = latest_translation.last_translator.display_name_and_email
 
         metadata.update({
             'Language': locale.code.replace('-', '_'),
