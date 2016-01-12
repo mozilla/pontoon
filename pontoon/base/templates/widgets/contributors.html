@@ -26,11 +26,11 @@
       <tr>
         <td class="rank">{{ loop.index }}</td>
         <td class="contributor">
-          <a href="{{ url('pontoon.contributor', contributor.email) }}">
+          <a href="{{ url('pontoon.contributor', contributor.email)|nospam }}">
             <img class="rounded" src="{{ contributor.gravatar_url(44) }}">
             <p class="name">{{ contributor.display_name }}</p>
           </a>
-          <p class="email">{{ contributor.email }}</p>
+          <p class="email">{{ contributor.email|nospam }}</p>
         </td>
         <td class="stats">
           <div class="details">

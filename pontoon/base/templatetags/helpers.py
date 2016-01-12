@@ -129,3 +129,8 @@ def format_timedelta(value):
             return '0 seconds'
     else:
         return '---'
+
+
+@library.filter
+def nospam(self):
+    return jinja2.Markup(self.replace('@', '&#64;').replace('.', '&#46;'))

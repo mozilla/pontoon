@@ -17,7 +17,7 @@
         {% if not user.is_authenticated() %}
         <li id="sign-in"><a href="">Sign in</a></li>
         {% else %}
-        <li id="sign-out"><a href="{{ url('signout') }}" title="{{ user.email }}">Sign out</a></li>
+        <li id="sign-out"><a href="{{ url('signout') }}" title="{{ user.email|nospam }}">Sign out</a></li>
         {% endif %}
       </ul>
     </nav>
