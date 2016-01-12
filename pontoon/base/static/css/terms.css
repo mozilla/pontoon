@@ -1,0 +1,19 @@
+.container {
+  color: #AAAAAA;
+  font-size: 16px;
+  font-weight: 300;
+  text-align: left;
+}
+
+a:link, a:visited {
+  color: #7BC876;
+}
+
+p, dd {
+  margin-bottom: 40px;
+}
+
+dt {
+  color: #EBEBEB;
+  font-size: 28px;
+}
