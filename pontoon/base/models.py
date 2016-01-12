@@ -212,6 +212,12 @@ class Locale(models.Model):
             if i[1] == cldr_plural:
                 return i[0]
 
+    @classmethod
+    def cldr_id_to_plural(self, cldr_id):
+        for i in self.CLDR_PLURALS:
+            if i[0] == cldr_id:
+                return i[1]
+
     @property
     def nplurals(self):
         return len(self.cldr_plurals_list())
@@ -240,6 +246,18 @@ class Locale(models.Model):
         return list(
             self.project_set.available().values_list('slug', flat=True)
         )
+
+    def get_plural_index(self, cldr_plural):
+        """Returns plural index for given cldr name."""
+        cldr_id = Locale.cldr_plural_to_id(cldr_plural)
+        return self.cldr_plurals_list().index(cldr_id)
+
+    def get_relative_cldr_plural(self, plural_id):
+        """
+        Every locale supports a subset (a list) of The CLDR Plurals forms.
+        In code, we store their relative position.
+        """
+        return Locale.cldr_id_to_plural(self.cldr_plurals_list()[plural_id])
 
     def get_latest_activity(self, project=None):
         """Get latest activity for project and locale if provided."""

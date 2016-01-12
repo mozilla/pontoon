@@ -5,8 +5,7 @@ See base.py for the ParsedResource base class.
 """
 import os.path
 
-from pontoon.sync.formats import lang, po, silme, xliff
-
+from pontoon.sync.formats import lang, po, silme, xliff, l20n
 
 # To add support for a new resource format, add an entry to this dict
 # where the key is the extension you're parsing and the value is a
@@ -20,10 +19,11 @@ SUPPORTED_FORMAT_PARSERS = {
     '.properties': silme.parse_properties,
     '.ini': silme.parse_ini,
     '.inc': silme.parse_inc,
+    '.l20n': l20n.parse,
 }
 
 
-def parse(path, source_path=None):
+def parse(path, source_path=None, locale=None):
     """
     Parse the resource file at the given path and return a
     ParsedResource with its translations.
@@ -34,10 +34,13 @@ def parse(path, source_path=None):
         Path to the corresponding resource file in the source directory
         for the resource we're parsing. Asymmetric formats need this
         for saving. Defaults to None.
+    :param locale:
+        Object which describes information about currently processed locale.
+        Some of the formats require information about things like e.g. plural form.
     """
     root, extension = os.path.splitext(path)
     if extension in SUPPORTED_FORMAT_PARSERS:
-        return SUPPORTED_FORMAT_PARSERS[extension](path, source_path=source_path)
+        return SUPPORTED_FORMAT_PARSERS[extension](path, source_path=source_path, locale=locale)
     else:
         raise ValueError('Translation format {0} is not supported.'
                          .format(extension))

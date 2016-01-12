@@ -35,7 +35,7 @@ class FormatTestsMixin(object):
 
     # Supports source strings in translated resource. Asymmetric formats
     # do not support this.
-    supoorts_source_string = False
+    supports_source_string = False
 
     def setUp(self):
         super(FormatTestsMixin, self).setUp()
@@ -46,14 +46,14 @@ class FormatTestsMixin(object):
             cldr_plurals='1,5',
         )
 
-    def parse_string(self, string, source_string=None):
+    def parse_string(self, string, source_string=None, locale=None):
         path = create_tempfile(string)
-
+        locale = locale or self.locale
         if source_string is not None:
             source_path = create_tempfile(source_string)
-            return path, self.parse(path, source_path=source_path)
+            return path, self.parse(path, source_path=source_path, locale=locale)
         else:
-            return path, self.parse(path)
+            return path, self.parse(path, locale=locale)
 
     def key(self, source_string):
         """
@@ -262,25 +262,31 @@ class FormatTestsMixin(object):
     # state of the translation file before and after the change being
     # tested is made to the parsed resource and saved.
 
-    def run_save_basic(self, input_string, expected_string, source_string=None):
+    def run_save_basic(self, input_string, expected_string, source_string=None, resource_cb=None):
         """
         Test saving changes to an entity with a single translation.
         """
         path, resource = self.parse_string(input_string, source_string=source_string)
 
-        translation = resource.translations[0]
-        translation.strings[None] = 'New Translated String'
-        translation.fuzzy = True
+        def test_default(res):
+            translation = res.translations[0]
+            translation.strings[None] = 'New Translated String'
+            translation.fuzzy = True
+
+        (resource_cb or test_default)(resource)
         resource.save(self.locale)
 
         self.assert_file_content(path, expected_string)
 
-    def run_save_remove(self, input_string, expected_string, source_string=None):
+    def run_save_remove(self, input_string, expected_string, source_string=None, remove_cb=None):
         """Test saving a removed entity with a single translation."""
         path, resource = self.parse_string(input_string, source_string=source_string)
 
-        translation = resource.translations[0]
-        translation.strings = {}
+        def default_remove(res):
+            translation = res.translations[0]
+            translation.strings = {}
+
+        (remove_cb or default_remove)(resource)
         resource.save(self.locale)
 
         self.assert_file_content(path, expected_string)

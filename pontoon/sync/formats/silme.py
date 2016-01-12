@@ -244,7 +244,7 @@ def copy_source_entity(entity):
     )
 
 
-def parse(parser, path, source_path=None):
+def parse(parser, path, source_path=None, locale=None):
     # TODO: Cache the source resource to avoid re-parsing it a bunch.
     if source_path is not None:
         source_resource = SilmeResource(parser, source_path)
@@ -254,17 +254,17 @@ def parse(parser, path, source_path=None):
     return SilmeResource(parser, path, source_resource=source_resource)
 
 
-def parse_properties(path, source_path=None):
+def parse_properties(path, source_path=None, locale=None):
     return parse(PropertiesParser, path, source_path)
 
 
-def parse_ini(path, source_path=None):
+def parse_ini(path, source_path=None, locale=None):
     return parse(IniParser, path, source_path)
 
 
-def parse_inc(path, source_path=None):
+def parse_inc(path, source_path=None, locale=None):
     return parse(IncParser, path, source_path)
 
 
-def parse_dtd(path, source_path=None):
+def parse_dtd(path, source_path=None, locale=None):
     return parse(DTDParser, path, source_path)

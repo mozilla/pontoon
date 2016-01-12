@@ -98,7 +98,7 @@ class XLIFFResource(ParsedResource):
             f.writelines(str(self.xliff_file))
 
 
-def parse(path, source_path=None):
+def parse(path, source_path=None, locale=None):
     with open(path) as f:
         xliff_file = xliff.xlifffile(f)
     return XLIFFResource(path, xliff_file)
