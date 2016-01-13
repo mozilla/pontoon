@@ -905,7 +905,12 @@ var Pontoon = (function (my) {
             .parents('li').addClass('approved').click()
               .siblings().removeClass('approved');
 
-          $('#save').click();
+          var entity = $('#editor')[0].entity,
+              translation = $('#translation').val();
+
+          // Mark that user approved translation instead of submitting it
+          self.approvedNotSubmitted = true;
+          self.updateOnServer(entity, translation, false, true);
           return;
         }
 
@@ -1218,6 +1223,10 @@ var Pontoon = (function (my) {
         } else {
           self.endLoader(data, 'error');
         }
+
+        if (!data.warnings) {
+          self.approvedNotSubmitted = null;
+        }
       }
 
       // If the entity has a plural string, but the locale has nplurals == 1,
@@ -1239,7 +1248,8 @@ var Pontoon = (function (my) {
           translation: translation,
           plural_form: submittedPluralForm,
           original: entity['original' + self.isPluralized()],
-          ignore_check: inplace || $('#quality').is(':visible') || !syncLocalStorage
+          ignore_check: inplace || $('#quality').is(':visible') || !syncLocalStorage,
+          approve: self.approvedNotSubmitted || false
         },
         success: function(data) {
           renderTranslation(data);
@@ -1264,6 +1274,7 @@ var Pontoon = (function (my) {
             renderTranslation(data);
           } else {
             self.endLoader('Oops, something went wrong.', 'error');
+            self.approvedNotSubmitted = null;
           }
         }
       });

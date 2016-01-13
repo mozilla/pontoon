@@ -514,6 +514,7 @@ def update_translation(request):
         plural_form = request.POST['plural_form']
         original = request.POST['original']
         ignore_check = request.POST['ignore_check']
+        approve = json.loads(request.POST['approve'])
     except MultiValueDictKeyError as error:
         log.error(str(error))
         return HttpResponse("error")
@@ -553,7 +554,7 @@ def update_translation(request):
     now = timezone.now()
     can_translate = (
         request.user.has_perm('base.can_translate_locale', l)
-        and not request.user.profile.force_suggestions
+        and (not request.user.profile.force_suggestions or approve)
     )
     translations = Translation.objects.filter(
         entity=e, locale=l, plural_form=plural_form)
