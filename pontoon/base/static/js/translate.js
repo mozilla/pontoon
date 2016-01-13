@@ -905,7 +905,10 @@ var Pontoon = (function (my) {
             .parents('li').addClass('approved').click()
               .siblings().removeClass('approved');
 
-          $('#save').click();
+          var entity = $('#editor')[0].entity,
+              translation = $('#translation').val();
+
+          self.updateOnServer(entity, translation, false, true, true);
           return;
         }
 
@@ -1159,8 +1162,9 @@ var Pontoon = (function (my) {
      * translation Translation
      * inplace Was translation submitted in place?
      * syncLocalStorage Synchronize translations in localStorage with the server
+     * approve Did user approve translation instead of submit?
      */
-    updateOnServer: function (entity, translation, inplace, syncLocalStorage) {
+    updateOnServer: function (entity, translation, inplace, syncLocalStorage, approve) {
       var self = this,
           pluralForm = self.getPluralForm();
 
@@ -1239,7 +1243,8 @@ var Pontoon = (function (my) {
           translation: translation,
           plural_form: submittedPluralForm,
           original: entity['original' + self.isPluralized()],
-          ignore_check: inplace || $('#quality').is(':visible') || !syncLocalStorage
+          ignore_check: inplace || $('#quality').is(':visible') || !syncLocalStorage,
+          approve: approve || false
         },
         success: function(data) {
           renderTranslation(data);
