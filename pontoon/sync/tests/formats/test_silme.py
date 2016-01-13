@@ -185,6 +185,47 @@ class DTDTests(FormatTestsMixin, TestCase):
 
         self.run_save_translation_identical(source_string, input_string, expected_string)
 
+    def test_quotes(self):
+        input_strings = dedent("""
+            <!ENTITY SingleQuote "\'">
+            <!ENTITY SingleQuoteEntity "\&apos;">
+            <!ENTITY DoubleQuote '\"'>
+            <!ENTITY DoubleQuoteEntity "\&quot;">
+        """)
+
+        # Make sure path contains 'mobile/android/base'
+        dirname = os.path.join(tempfile.mkdtemp(), 'mobile', 'android', 'base')
+        os.makedirs(dirname)
+
+        fd, path = tempfile.mkstemp(dir=dirname)
+        with os.fdopen(fd, 'w') as f:
+            f.write(input_strings)
+
+        resource = self.parse(path)
+
+        # Unescape quotes when parsing
+        assert_attributes_equal(resource.translations[0], strings={None: "'"})
+        assert_attributes_equal(resource.translations[1], strings={None: "'"})
+        assert_attributes_equal(resource.translations[2], strings={None: '"'})
+        assert_attributes_equal(resource.translations[3], strings={None: '"'})
+
+        # Escape quotes when saving
+        translated_resource = silme.SilmeResource(
+            DTDParser, path, source_resource=resource
+        )
+        translated_resource.translations[0].strings[None] = "Single Quote '"
+        translated_resource.translations[1].strings[None] = 'Double Quote "'
+
+        translated_resource.save(self.locale)
+
+        expected_string = dedent("""
+            <!ENTITY SingleQuote "Single Quote \&apos;">
+            <!ENTITY SingleQuoteEntity "Double Quote \&quot;">
+            <!ENTITY DoubleQuote '\&quot;'>
+            <!ENTITY DoubleQuoteEntity "\&quot;">
+        """)
+        self.assert_file_content(path, expected_string)
+
 
 BASE_PROPERTIES_FILE = """
 # Sample comment
