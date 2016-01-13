@@ -86,7 +86,7 @@ var Pontoon = (function (my) {
           plural_form: self.getPluralForm()
         },
         success: function(data) {
-          if (data !== "error") {
+          if (data.length) {
             $.each(data, function() {
               list.append(
                 '<li data-id="' + this.id + '" ' +
@@ -900,6 +900,7 @@ var Pontoon = (function (my) {
         e.stopPropagation();
         e.preventDefault();
 
+        // Approve
         if (button.is('.approve')) {
           button
             .parents('li').addClass('approved').click()
@@ -909,6 +910,7 @@ var Pontoon = (function (my) {
           return;
         }
 
+        // Delete
         $.ajax({
           url: '/delete-translation/',
           type: 'POST',
@@ -917,63 +919,70 @@ var Pontoon = (function (my) {
             translation: $(this).parents('li').data('id')
           },
           success: function(data) {
-            if (data.type === "deleted") {
-              var item = button.parents('li'),
-                  index = item.index();
-              item
-                .addClass('delete')
-                .bind('transitionend', function() {
-                  $(this).remove();
-                  self.endLoader('Translation deleted');
+            var item = button.parents('li'),
+                next = item.next(),
+                index = item.index(),
+                entity = $('#editor')[0].entity,
+                pluralForm = self.getPluralForm(true),
+                translation = entity.translation[pluralForm];
 
-                  var entity = $('#editor')[0].entity;
+            item
+              .addClass('delete')
+              .bind('transitionend', function() {
+                $(this).remove();
+                self.endLoader('Translation deleted');
 
-                  // Active translation deleted
-                  if (index === 0) {
-                    var next = $('#helpers .history li[data-id="' + data.next + '"]'),
-                        pluralForm = self.getPluralForm(true);
+                // Active (approved or latest) translation deleted
+                if (index === 0) {
 
-                    // Make newest alternative translation active
-                    if (next.length > 0) {
-                      next.click();
-                      translation = next.find('.translation').text();
-                      entity.translation[pluralForm].string = translation;
-                      entity.ui.find('.translation-string')
-                        .html(self.doNotRender(translation));
-                      if (self.user.isTranslator) {
-                        next.addClass('approved');
-                        if (entity.body) {
-                          self.postMessage("SAVE", entity.translation[0].string);
-                        }
-                      }
-                      self.updateHasSuggestions(entity);
+                  // Make newest alternative translation active
+                  if (next.length) {
+                    next.click();
+                    var newTranslation = $('#translation').val();
 
-                    // Last translation deleted, no alternative available
-                    } else {
-                      $('#translation').val('').focus();
-                      if (entity.body && pluralForm === 0) {
-                        self.postMessage("DELETE");
-                      } else {
-                        entity.translation[pluralForm].pk = null;
-                        entity.translation[pluralForm].string = null;
-                        entity.translation[pluralForm].approved = false;
-                        entity.translation[pluralForm].fuzzy = false;
-                        self.updateEntityUI(entity);
-                      }
-                      $('#helpers .history ul')
-                        .append('<li class="disabled">' +
-                                  '<p>No translations available.</p>' +
-                                '</li>');
+                    if (entity.body && pluralForm === 0) {
+                      self.postMessage("SAVE", newTranslation);
                     }
-                    self.updateCurrentTranslationLength();
-                    self.updateCachedTranslation();
+
+                    self.updateTranslation(translation, {
+                      pk: next.data('id'),
+                      string: newTranslation,
+                      approved: false,
+                      fuzzy: false
+                    });
+                    self.updateEntityUI(entity);
+
+                  // Last translation deleted, no alternative available
                   } else {
-                    self.updateHasSuggestions(entity);
+                    $('#translation').val('').focus();
+
+                    if (entity.body && pluralForm === 0) {
+                      self.postMessage("DELETE");
+
+                    } else {
+                      self.updateTranslation(translation, {
+                        pk: null,
+                        string: null,
+                        approved: false,
+                        fuzzy: false
+                      });
+                      self.updateEntityUI(entity);
+                    }
+
+                    $('#helpers .history ul')
+                      .append('<li class="disabled">' +
+                                '<p>No translations available.</p>' +
+                              '</li>');
                   }
-                });
-            } else {
-              self.endLoader('Oops, something went wrong.', 'error');
-            }
+
+                  self.updateCurrentTranslationLength();
+                  self.updateCachedTranslation();
+
+                // Inactive translation deleted
+                } else {
+                  self.updateHasSuggestions(entity);
+                }
+              });
           },
           error: function() {
             self.endLoader('Oops, something went wrong.', 'error');
@@ -1079,17 +1088,30 @@ var Pontoon = (function (my) {
      * entity Entity
      */
     updateEntityUI: function (entity) {
-      entity.ui.removeClass('translated approved fuzzy');
-
       var status = this.getEntityStatus(entity),
           translation = entity.translation[0].string;
 
-      entity.ui.addClass(status);
-      entity.ui.find('.translation-string')
-        .html(this.doNotRender(translation || ''));
+      entity.ui
+        .removeClass('translated approved fuzzy')
+        .addClass(status)
+        .find('.translation-string')
+          .html(this.doNotRender(translation || ''));
 
       this.updateProgress();
       this.updateHasSuggestions(entity);
+    },
+
+
+    /*
+     * Update translation object with provided data
+     *
+     * translation Translation to update
+     * data Data to update translation with
+     */
+    updateTranslation: function (translation, data) {
+      for (var key in data) {
+        translation[key] = data[key];
+      }
     },
 
 
@@ -1175,8 +1197,8 @@ var Pontoon = (function (my) {
           }
 
           var pf = self.getPluralForm(true);
-          entity.translation[pf] = data.translation;
           self.cachedTranslation = translation;
+          self.updateTranslation(entity.translation[pf], data.translation);
           self.updateEntityUI(entity);
 
           // Update translation, including in place if possible

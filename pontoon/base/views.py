@@ -416,8 +416,7 @@ def get_translation_history(request):
         locale = request.GET['locale']
         plural_form = request.GET['plural_form']
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code__iexact=locale)
@@ -427,29 +426,25 @@ def get_translation_history(request):
         translations = translations.filter(plural_form=plural_form)
     translations = translations.order_by('-approved', '-date')
 
-    if len(translations) > 0:
-        payload = []
-        offset = timezone.now().strftime('%z')
+    payload = []
+    offset = timezone.now().strftime('%z')
 
-        for t in translations:
-            u = t.user
-            a = t.approved_user
-            o = {
-                "id": t.id,
-                "user": "Imported" if u is None else u.name_or_email,
-                "email": "" if u is None else u.email,
-                "translation": t.string,
-                "date": t.date.strftime('%b %d, %Y %H:%M'),
-                "date_iso": t.date.isoformat() + offset,
-                "approved": t.approved,
-                "approved_user": "" if a is None else a.name_or_email,
-            }
-            payload.append(o)
+    for t in translations:
+        u = t.user
+        a = t.approved_user
+        o = {
+            "id": t.id,
+            "user": "Imported" if u is None else u.name_or_email,
+            "email": "" if u is None else u.email,
+            "translation": t.string,
+            "date": t.date.strftime('%b %d, %Y %H:%M'),
+            "date_iso": t.date.isoformat() + offset,
+            "approved": t.approved,
+            "approved_user": "" if a is None else a.name_or_email,
+        }
+        payload.append(o)
 
-        return JsonResponse(payload, safe=False)
-
-    else:
-        return HttpResponse("error")
+    return JsonResponse(payload, safe=False)
 
 
 @require_AJAX
@@ -459,46 +454,25 @@ def delete_translation(request):
     try:
         t = request.POST['translation']
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    try:
-        translation = Translation.objects.get(pk=t)
-    except Translation.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
+    translation = get_object_or_404(Translation, pk=t)
 
-    # Non-privileged users can only delete own non-approved translations
+    # Non-privileged users can only delete own unapproved translations
     if not request.user.has_perm('base.can_translate_locale', translation.locale):
         if translation.user == request.user:
             if translation.approved is True:
-                log.error(
-                    "Non-privileged users cannot delete approved translation")
-                return HttpResponse("error")
-
+                return HttpResponseForbidden(
+                    "Forbidden: Can't delete approved translations"
+                )
         else:
-            return render(request, '403.html', status=403)
-
-    entity = translation.entity
-    locale = translation.locale
-    plural_form = translation.plural_form
+            return HttpResponseForbidden(
+                "Forbidden: Can't delete translations from other users"
+            )
 
     translation.delete()
 
-    # Mark next translation approved if needed
-    next = get_translation(
-        entity=entity, locale=locale, plural_form=plural_form)
-
-    if next.pk is not None and request.user.has_perm('base.can_translate_locale', next.locale):
-        next.approved = True
-        next.approved_user = request.user
-        next.approved_date = timezone.now()
-        next.save()
-
-    return JsonResponse({
-        'type': 'deleted',
-        'next': next.id,
-    })
+    return HttpResponse('ok')
 
 
 @anonymous_csrf_exempt
@@ -1021,7 +995,7 @@ def save_user_name(request):
     user.first_name = name
     user.save()
 
-    return HttpResponse("ok")
+    return HttpResponse('ok')
 
 
 @login_required(redirect_field_name='', login_url='/403')
