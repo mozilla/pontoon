@@ -1161,7 +1161,7 @@ p#sign-in-required > a#sidebar-signin {
   cursor: pointer;
   padding-left: 10px;
   padding-right: 10px;
-  transition: all 0.2s ease-out;
+  transition: all 0.1s ease-out;
 }
 
 #helpers > section ul li.delete {
