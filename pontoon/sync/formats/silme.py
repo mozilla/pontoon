@@ -4,10 +4,11 @@ Parser for silme-compatible translation formats.
 """
 import codecs
 import os
+import silme
+
 from collections import OrderedDict
 from copy import copy
 
-import silme
 from silme.format.dtd import FormatParser as DTDParser
 from silme.format.ini import FormatParser as IniParser
 from silme.format.inc import FormatParser as IncParser
@@ -78,6 +79,9 @@ class SilmeResource(ParsedResource):
         self.source_resource = source_resource
         self.entities = OrderedDict()  # Preserve entity order.
 
+        # Bug 1193860: unescape quotes in some files
+        self.escape_quotes_on = 'mobile/android/base' in path and parser is DTDParser
+
         # Copy entities from the source_resource if it's available.
         if source_resource:
             for key, entity in source_resource.entities.items():
@@ -103,6 +107,10 @@ class SilmeResource(ParsedResource):
         current_order = 0
         for obj in self.structure:
             if isinstance(obj, silme.core.entity.Entity):
+
+                if self.escape_quotes_on:
+                    obj.value = self.unescape_quotes(obj.value)
+
                 entity = SilmeEntity(obj, comments, current_order)
                 self.entities[entity.key] = entity
                 current_order += 1
@@ -117,6 +125,22 @@ class SilmeResource(ParsedResource):
     @property
     def translations(self):
         return self.entities.values()
+
+    def escape_quotes(self, value):
+        """
+        DTD files can use single or double quotes for identifying strings,
+        so &quot; and &apos; are the safe bet that will work in both cases.
+        """
+        value = value.replace('"', '\\&quot;')
+        value = value.replace("'", '\\&apos;')
+        return value
+
+    def unescape_quotes(self, value):
+        value = value.replace('\\&quot;', '"')
+        value = value.replace('\\"', '"')
+        value = value.replace('\\&apos;', "'")
+        value = value.replace("\\'", "'")
+        return value
 
     def save(self, locale):
         """
@@ -144,7 +168,12 @@ class SilmeResource(ParsedResource):
 
             translated_entity = self.entities.get(key)
             if translated_entity and None in translated_entity.strings:
-                new_structure.modify_entity(key, translated_entity.strings[None])
+                translation = translated_entity.strings[None]
+
+                if self.escape_quotes_on:
+                    translation = self.escape_quotes(translation)
+
+                new_structure.modify_entity(key, translation)
             else:
                 # Remove untranslated entity and following newline
                 pos = new_structure.entity_pos(key)
