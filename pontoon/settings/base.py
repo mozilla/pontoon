@@ -231,11 +231,11 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/locales.min.css',
     },
-    'project': {
+    'locale': {
         'source_filenames': (
-            'css/project.css',
+            'css/locale.css',
         ),
-        'output_filename': 'css/project.min.css',
+        'output_filename': 'css/locale.min.css',
     },
     'sync_logs': {
         'source_filenames': (
@@ -299,11 +299,11 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/locale_project.min.js',
     },
-    'project': {
+    'locale': {
         'source_filenames': (
-            'js/project.js',
+            'js/locale.js',
         ),
-        'output_filename': 'js/project.min.js',
+        'output_filename': 'js/locale.min.js',
     },
     'translate': {
         'source_filenames': (

@@ -145,7 +145,7 @@ class ProjectTests(TestCase):
             mock_get_latest_activity.assert_called_with(project, locale)
 
 
-class ProjectPartsTests(TestCase):
+class LocalePartsTests(TestCase):
     def setUp(self):
         self.locale, self.locale_other = LocaleFactory.create_batch(2)
         self.project = ProjectFactory.create(
@@ -158,26 +158,17 @@ class ProjectPartsTests(TestCase):
         EntityFactory.create(resource=self.resource)
         StatsFactory.create(resource=self.resource, locale=self.locale)
 
-    def _fetch_locales_parts_stats(self):
-        # Fake Prefetch
-        self.project.active_resources = self.project.resources.filter(
-            entities__obsolete=False
-        )
-
-        return self.project.locales_parts_stats()
-
-    def test_locales_parts_stats_no_page_one_resource(self):
+    def test_projects_parts_stats_no_page_one_resource(self):
         """
-        Return resource paths and stats in no subpage and one resource defined.
+        Return resource paths and stats if no subpage and one resource defined.
         """
-        project_details = self._fetch_locales_parts_stats()
-        details = project_details.get(self.locale.code)
+        details = self.locale.projects_parts_stats().get(self.project.slug)
 
         assert_equal(len(details), 1)
         assert_equal(details[0]['resource__path'], '/main/path.po')
         assert_equal(details[0]['translated_count'], 0)
 
-    def test_locales_parts_stats_no_page_multiple_resources(self):
+    def test_projects_parts_stats_no_page_multiple_resources(self):
         """
         Return resource paths and stats for locales resources are available for.
         """
@@ -189,9 +180,8 @@ class ProjectPartsTests(TestCase):
         StatsFactory.create(resource=resource_other, locale=self.locale)
         StatsFactory.create(resource=resource_other, locale=self.locale_other)
 
-        project_details = self._fetch_locales_parts_stats()
-        details = project_details.get(self.locale.code)
-        details_other = project_details.get(self.locale_other.code)
+        details = self.locale.projects_parts_stats().get(self.project.slug)
+        details_other = self.locale_other.projects_parts_stats().get(self.project.slug)
 
         assert_equal(details[0]['resource__path'], '/main/path.po')
         assert_equal(details[0]['translated_count'], 0)
@@ -201,19 +191,18 @@ class ProjectPartsTests(TestCase):
         assert_equal(details_other[0]['resource__path'], '/other/path.po')
         assert_equal(details_other[0]['translated_count'], 0)
 
-    def test_locales_parts_stats_pages_not_tied_to_resources(self):
+    def test_projects_parts_stats_pages_not_tied_to_resources(self):
         """
         Return subpage name and stats.
         """
         SubpageFactory.create(project=self.project, name='Subpage')
 
-        project_details = self._fetch_locales_parts_stats()
-        details = project_details.get(self.locale.code)
+        details = self.locale.projects_parts_stats().get(self.project.slug)
 
         assert_equal(details[0]['resource__path'], 'Subpage')
         assert_equal(details[0]['translated_count'], 0)
 
-    def test_locales_parts_stats_pages_tied_to_resources(self):
+    def test_projects_parts_stats_pages_tied_to_resources(self):
         """
         Return subpage name and stats for locales resources are available for.
         """
@@ -235,9 +224,8 @@ class ProjectPartsTests(TestCase):
             resources=[resource_other]
         )
 
-        project_details = self._fetch_locales_parts_stats()
-        details = project_details.get(self.locale.code)
-        details_other = project_details.get(self.locale_other.code)
+        details = self.locale.projects_parts_stats().get(self.project.slug)
+        details_other = self.locale_other.projects_parts_stats().get(self.project.slug)
 
         assert_equal(details[0]['resource__path'], 'Other Subpage')
         assert_equal(details[0]['translated_count'], 0)

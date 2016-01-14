@@ -421,11 +421,11 @@ label {
   z-index: 1;
 }
 
-.project.select > .button.breadcrumbs {
+.locale.select > .button.breadcrumbs {
   padding-left: 20px;
 }
 
-.project.select > .button.breadcrumbs:before {
+.locale.select > .button.breadcrumbs:before {
   display: none;
 }
 
