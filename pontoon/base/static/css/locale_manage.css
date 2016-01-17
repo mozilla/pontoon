@@ -2,6 +2,10 @@ body > .container {
   width: 1035px;
 }
 
+.notification {
+  display: none;
+}
+
 form {
   padding: 25px 12px;
   text-align: left;

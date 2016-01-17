@@ -45,27 +45,22 @@ var Pontoon = (function (my) {
     },
 
     /*
-     * Request new locale for project
+     * Request project to be added to locale
      *
      * locale Locale code
      * project Project slug
      */
-    requestLocale: function(locale, project) {
+    requestProject: function(locale, project) {
       $.ajax({
-        url: '/request-locale/',
+        url: '/projects/' + project + '/request/',
         type: 'POST',
         data: {
           csrfmiddlewaretoken: $('#server').data('csrf'),
-          project: project,
           locale: locale
         },
         success: function(data) {
-          if (data !== "error") {
-            Pontoon.endLoader(
-              "New locale (" + locale + ") requested. We'll send you an email once it gets enabled.", "", true);
-          } else {
-            Pontoon.endLoader('Oops, something went wrong.', 'error');
-          }
+          Pontoon.endLoader(
+            "New project (" + project + ") requested. We'll send you an email once it gets enabled.", "", true);
         },
         error: function() {
           Pontoon.endLoader('Oops, something went wrong.', 'error');
