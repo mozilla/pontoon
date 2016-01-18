@@ -48,9 +48,11 @@ class ChangeSet(object):
         """
         Replace the translations in VCS with the translations from the
         database.
+        Updates only entities that has been changed.
         """
-        self.changes['update_vcs'].append((locale.code, db_entity, vcs_entity))
-        self.locales_to_commit.add(locale)
+        if db_entity.has_changed(locale):
+            self.changes['update_vcs'].append((locale.code, db_entity, vcs_entity))
+            self.locales_to_commit.add(locale)
 
     def create_db_entity(self, vcs_entity):
         """Create a new entity in the database."""
@@ -93,11 +95,10 @@ class ChangeSet(object):
 
         for locale_code, db_entity, vcs_entity in self.changes['update_vcs']:
             changed_resources.add(resources[db_entity.resource.path])
-
             vcs_translation = vcs_entity.translations[locale_code]
             db_translations = (db_entity.translation_set
-                               .filter(approved=True, locale__code=locale_code))
-
+                .filter(approved=True, locale__code=locale_code)
+            )
             vcs_translation.update_from_db(db_translations)
 
             # Track which translators were involved.
