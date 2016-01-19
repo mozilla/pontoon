@@ -75,25 +75,17 @@ def locale(request, locale):
     l = get_object_or_404(Locale, code__iexact=locale)
 
     projects = (
-        Project.objects
-        .filter(disabled=False, resources__isnull=False)
+        Project.objects.available()
         .select_related('latest_translation')
-        .distinct()
         .order_by("name")
     )
 
     if not projects:
         raise Http404
 
-    locale_projects = l.project_set.filter(
-        disabled=False,
-        resources__isnull=False
-    ).distinct().values_list('slug', flat=True)
-
     return render(request, 'locale.html', {
         'projects': get_projects_with_stats(projects, l),
         'locale': l,
-        'locale_projects': json.dumps([lp.lower() for lp in locale_projects]),
     })
 
 
@@ -148,8 +140,7 @@ def locales(request):
 
 def project(request, slug):
     """Project view."""
-    p = get_object_or_404(Project, slug=slug, disabled=False,
-            pk__in=Resource.objects.values('project'))
+    p = get_object_or_404(Project.objects.available(), slug=slug)
 
     return render(request, 'project.html', {
         'locales': get_locales_with_project_stats(p),
@@ -160,10 +151,8 @@ def project(request, slug):
 def projects(request):
     """Project overview."""
     projects = (
-        Project.objects
-        .filter(disabled=False, resources__isnull=False)
+        Project.objects.available()
         .select_related('latest_translation')
-        .distinct()
         .order_by("name")
     )
 
@@ -176,8 +165,10 @@ def locale_project(request, locale, slug):
     """Locale-project overview."""
     l = get_object_or_404(Locale, code__iexact=locale)
 
-    projects = Project.objects.prefetch_related('subpage_set').distinct()
-    project = get_object_or_404(projects, disabled=False, slug=slug, resources__isnull=False)
+    project = get_object_or_404(
+        Project.objects.available().prefetch_related('subpage_set'),
+        slug=slug
+    )
 
     # Amend the parts dict with latest activity info.
     stats_qs = (
@@ -202,28 +193,19 @@ def locale_project(request, locale, slug):
 def translate(request, locale, slug, part):
     """Translate view."""
     locale = get_object_or_404(Locale, code__iexact=locale)
-    project = get_object_or_404(
-        Project.objects.distinct(),
-        slug=slug,
-        disabled=False,
-        resources__isnull=False
-    )
+    project = get_object_or_404(Project.objects.available(), slug=slug)
 
     projects = (
-        Project.objects.filter(
-            disabled=False,
-            pk__in=Resource.objects.values('project')
-        )
+        Project.objects.available()
         .prefetch_related('subpage_set')
         .order_by("name")
     )
 
     return render(request, 'translate.html', {
-        'accept_language': utils.get_project_locale_from_request(request, Locale.objects),
         'download_form': forms.DownloadFileForm(),
         'upload_form': forms.UploadFileForm(),
         'locale': locale,
-        'locales': Locale.objects.filter(stats__isnull=False).distinct(),
+        'locales': Locale.objects.available(),
         'part': part,
         'project': project,
         'projects': projects,

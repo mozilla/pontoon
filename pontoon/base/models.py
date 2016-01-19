@@ -154,6 +154,14 @@ def validate_cldr(value):
                 '%s must be a list of integers between 0 and 5' % value)
 
 
+class LocaleQuerySet(models.QuerySet):
+    def available(self):
+        """
+        Available locales have at least one stats defined.
+        """
+        return self.filter(stats__isnull=False).distinct()
+
+
 class Locale(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
@@ -190,6 +198,8 @@ class Locale(models.Model):
         on_delete=models.SET_NULL
     )
 
+    objects = LocaleQuerySet.as_manager()
+
     def cldr_plurals_list(self):
         if self.cldr_plurals == '':
             return [1]
@@ -225,6 +235,12 @@ class Locale(models.Model):
             ('can_manage_locale', 'Can manage locale')
         )
 
+    def available_projects_list(self):
+        """Get latest activity for project and locale if provided."""
+        return list(
+            self.project_set.available().values_list('slug', flat=True)
+        )
+
     def get_latest_activity(self, project=None):
         """Get latest activity for project and locale if provided."""
         if project is None:
@@ -252,10 +268,7 @@ class Locale(models.Model):
         if p:
             projects = [p]
         else:
-            projects = self.project_set.filter(
-                disabled=False,
-                resources__isnull=False
-            ).distinct()
+            projects = self.project_set.available()
 
         for project in projects:
             pages = project.subpage_set.all()
@@ -313,7 +326,7 @@ class ProjectQuerySet(models.QuerySet):
         Available projects are not disabled and have at least one
         resource defined.
         """
-        return self.filter(disabled=False, resource__isnull=False)
+        return self.filter(disabled=False, resources__isnull=False).distinct()
 
 
 class Project(models.Model):
@@ -1063,7 +1076,7 @@ def get_chart_data(stats):
 
 def get_locales_with_stats():
     """Add chart data to locales."""
-    locales = Locale.objects.filter(stats__isnull=False).distinct()
+    locales = Locale.objects.available()
 
     for locale in locales:
         stats = Stats.objects.filter(
