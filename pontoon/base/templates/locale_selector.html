@@ -4,11 +4,17 @@
 <div class="locale select">
   {% if locale and locale.code != '' %}
   <div class="button breadcrumbs selector noselect">
-    <span class="language {{ locale.code|lower }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span>
+    <span class="language {{ locale.code|lower }}">{{ locale.name }}</span><span class="code">{{ locale.code }}
+    </span>
   </div>
   {% endif %}
   <div class="menu">
     <div class="search-wrapper clearfix">
+      {% if user.is_authenticated() %}
+      <a class="new" title="Request new locale" href="#new">
+        <span class="fa fa-plus-square"></span>
+      </a>
+      {% endif %}
       <div class="icon fa fa-search"></div>
       <input type="search" autocomplete="off" autofocus>
     </div>
@@ -23,7 +29,7 @@
     <ul>
       {% for l in locales %}
       <li class="clearfix{% if l and l.chart %} filter{% endif %}">
-        <span class="language {{ l.code|lower }}"{% if locale %}{% for key, value in l.serialize().iteritems() %} data-{{ key }}="{{ value }}"{% endfor %}{% if locale == l %}data-details="{{ l.projects_parts_stats()|to_json }}"{% endif %}{% endif %}>{% if l and l.chart %}<a href="{% if project %}{{ url('pontoon.locale.project', l.code, project.slug) }}{% else %}{{ url('pontoon.locale', l.code) }}{% endif %}" class="clearfix">{% endif %}{{ l.name }}{% if l and l.chart %}</a>{% endif %}</span>
+        <span class="language {{ l.code|lower }}"{% if locale %}{% for key, value in l.serialize().iteritems() %} data-{{ key }}="{{ value }}"{% endfor %}{% endif %}>{% if l and l.chart %}<a href="{% if project %}{{ url('pontoon.locale.project', l.code, project.slug) }}{% else %}{{ url('pontoon.locale', l.code) }}{% endif %}" class="clearfix">{% endif %}{{ l.name }}{% if l and l.chart %}</a>{% endif %}</span>
         <span class="code">{% if l and l.chart %}<a class="code" href="{% if project %}{{ url('pontoon.locale.project', l.code, project.slug) }}{% else %}{{ url('pontoon.locale', l.code) }}{% endif %}" class="clearfix">{% endif %}{{ l.code }}{% if l and l.chart %}</a>{% endif %}</span>
         {% if not locale and l.chart %}
           {{ latest_activity.span(l.get_latest_activity(project|default(none))) }}

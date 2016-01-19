@@ -74,26 +74,16 @@ def locale(request, locale):
     """Locale view."""
     l = get_object_or_404(Locale, code__iexact=locale)
 
-    projects = (
-        Project.objects
-        .filter(disabled=False, resources__isnull=False)
-        .select_related('latest_translation')
-        .distinct()
+    projects = Project.objects.filter(
+        disabled=False, pk__in=Resource.objects.values('project'), locales=l) \
         .order_by("name")
-    )
 
     if not projects:
         raise Http404
 
-    locale_projects = l.project_set.filter(
-        disabled=False,
-        resources__isnull=False
-    ).distinct().values_list('slug', flat=True)
-
     return render(request, 'locale.html', {
         'projects': get_projects_with_stats(projects, l),
         'locale': l,
-        'locale_projects': json.dumps([lp.lower() for lp in locale_projects]),
     })
 
 
@@ -154,6 +144,8 @@ def project(request, slug):
     return render(request, 'project.html', {
         'locales': get_locales_with_project_stats(p),
         'project': p,
+        'project_locales': json.dumps(
+            [i.lower() for i in p.locales.values_list('code', flat=True)]),
     })
 
 
@@ -186,7 +178,7 @@ def locale_project(request, locale, slug):
         .select_related('resource', 'latest_translation')
     )
     stats = {s.resource.path: s for s in stats_qs}
-    parts = l.projects_parts_stats(project)
+    parts = project.locales_parts_stats(l)
 
     for part in parts:
         stat = stats.get(part['resource__path'], None)
@@ -223,7 +215,7 @@ def translate(request, locale, slug, part):
         'download_form': forms.DownloadFileForm(),
         'upload_form': forms.UploadFileForm(),
         'locale': locale,
-        'locales': Locale.objects.filter(stats__isnull=False).distinct(),
+        'locales': Locale.objects.all(),
         'part': part,
         'project': project,
         'projects': projects,
@@ -351,12 +343,13 @@ def search(request):
 
 
 @require_AJAX
-def get_locale_details(request, locale):
-    """Get locale projects with their pages/paths and stats."""
-    locale = get_object_or_404(Locale, code=locale)
+def get_project_details(request, slug):
+    """Get project locales with their pages/paths and stats."""
+    project = get_object_or_404(Project, slug=slug)
 
     return JsonResponse({
-        "details": locale.projects_parts_stats(),
+        "slug": slug,
+        "details": project.locales_parts_stats(),
     })
 
 
@@ -1008,21 +1001,23 @@ def save_user_name(request):
 
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
-def request_project(request, slug):
-    """Request project to be added to locale."""
+def request_locale(request):
+    """Request new locale to be added to project."""
     try:
+        project = request.POST['project']
         locale = request.POST['locale']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        log.error(str(e))
+        return HttpResponse("error")
 
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project, slug=project)
     locale = get_object_or_404(Locale, code__iexact=locale)
 
     if settings.ADMINS[0][1] != '':
         EmailMessage(
-            'Project request for {locale} ({code})'.format(locale=locale.name, code=locale.code),
-            'Please add project {project} ({slug}) to locale {locale} ({code}).'.format(
-                project=project.name, slug=slug, locale=locale.name, code=locale.code
+            'Locale request: {locale} ({code})'.format(locale=locale.name, code=locale.code),
+            'Please add locale {locale} ({code}) to project {project} ({slug}).'.format(
+                locale=locale.name, code=locale.code, project=project.name, slug=project.slug
             ),
             'pontoon@mozilla.com',
             [settings.ADMINS[0][1]],
@@ -1030,7 +1025,7 @@ def request_project(request, slug):
     else:
         raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
 
-    return HttpResponse('ok')
+    return HttpResponse()
 
 
 @require_AJAX

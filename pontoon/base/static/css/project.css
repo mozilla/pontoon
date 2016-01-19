@@ -6,14 +6,14 @@
   text-align: center;
 }
 
-.project .menu li:not(.filter) {
+.locale .menu li:not(.filter) {
   display: none;
 }
 
-.project .menu li a {
+.locale .menu li a {
   display: block;
 }
 
-.project .menu.request li {
+.locale .menu.request li {
   cursor: pointer;
 }

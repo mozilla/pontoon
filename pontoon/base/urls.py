@@ -44,11 +44,6 @@ urlpatterns = patterns(
     url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
         RedirectView.as_view(url="/%(locale)s/", permanent=True)),
 
-    # AJAX: Get locale details
-    url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/details/$',
-        views.get_locale_details,
-        name='pontoon.locale.details'),
-
     # List all imported projects
     url(r'^projects/$',
         views.projects,
@@ -64,10 +59,10 @@ urlpatterns = patterns(
         views.ProjectContributorsView.as_view(),
         name='pontoon.project.contributors'),
 
-    # AJAX: Request project to be added to locale
-    url(r'^projects/(?P<slug>[\w-]+)/request/$',
-        views.request_project,
-        name='pontoon.project.request'),
+    # AJAX: Get project details
+    url(r'^projects/(?P<slug>[\w-]+)/details/$',
+        views.get_project_details,
+        name='pontoon.project.details'),
 
     # List team contributors
     url(r'^(?P<code>[A-Za-z0-9\-\@\.]+)/contributors/$',
@@ -143,6 +138,8 @@ urlpatterns = patterns(
         name='pontoon.download'),
     url(r'^upload/', views.upload,
         name='pontoon.upload'),
+    url(r'^request-locale/', views.request_locale,
+        name='pontoon.request_locale'),
     url(r'^save-user-name/', views.save_user_name,
         name='pontoon.save_user_name'),
     url(r'^csrf/$', views.get_csrf,

@@ -6,7 +6,7 @@ from django.utils.timezone import now
 from django_nose.tools import assert_equal, assert_true, assert_code
 from mock import patch
 
-from pontoon.base.models import Locale, Project
+from pontoon.base.models import Project
 from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import (
     assert_json,
@@ -234,9 +234,9 @@ class LocaleProjectTests(ViewTestCase):
         translation = TranslationFactory.create(entity__resource=resource, locale=locale)
         StatsFactory.create(resource=resource, locale=locale, latest_translation=translation)
 
-        with patch.object(Locale, 'projects_parts_stats') as mock_projects_parts_stats, \
+        with patch.object(Project, 'locales_parts_stats') as mock_locales_parts_stats, \
                 patch('pontoon.base.views.render') as mock_render:
-            mock_projects_parts_stats.return_value = [
+            mock_locales_parts_stats.return_value = [
                 {'resource__path': 'has/stats.po'},
                 {'resource__path': 'no/stats.po'}
             ]

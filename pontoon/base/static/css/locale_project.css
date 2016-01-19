@@ -2,10 +2,6 @@ body > .container {
   width: 1035px;
 }
 
-.menu.tabs {
-  padding-top: 0px;
-}
-
 .menu .sort span.name {
   width: 520px;
 }
