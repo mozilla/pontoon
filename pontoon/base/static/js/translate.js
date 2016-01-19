@@ -1052,10 +1052,11 @@ var Pontoon = (function (my) {
 
       // Update parts menu
       if (all && !this.project.search) {
-        var details = this.getLocaleData('details'),
+        var parts = $('.project .menu li .name[data-slug=' + this.project.slug + ']')
+                      .data('parts')[this.locale.code],
             path = this.entities[0].path;
 
-        $(details[this.project.slug.toLowerCase()]).each(function() {
+        $(parts).each(function() {
           if (this.resource__path === path) {
             this.approved_count = approved;
             this.translated_count = translated;
@@ -1333,20 +1334,38 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Update project and (if needed) parts menu
+     * Update project and (if needed) part menu
      */
     updateProjectMenu: function () {
-      var details = this.getLocaleData('details'),
-          slug = this.getProjectData("slug"),
-          selectedProject = $('.project .button .title').data('slug');
+      var projects = this.getLocaleData('projects'),
+          slug = this.getProjectData('slug');
 
       // Fallback if selected project not available for the selected locale
-      if (!details[selectedProject]) {
-        slug = Object.keys(details).sort()[0];
+      if (projects.indexOf(slug) === -1) {
+        slug = projects.sort()[0];
       }
 
-      // Make sure parts menu is always updated
+      // Make sure part menu is always updated
       $('.project .menu [data-slug="' + slug + '"]').parent().click();
+    },
+
+
+    /*
+     * Update part menu
+     */
+    updatePartMenu: function () {
+      var locale = this.getSelectedLocale(),
+          parts = this.getProjectData('parts')[locale],
+          currentPart = $('.part .selector').attr('title');
+          part = $.grep(parts, function (e) { return e.resource__path === currentPart; });
+
+      // Fallback if selected part not available for the selected locale & project
+      if (!part.length) {
+        this.updatePartSelector(parts[0].resource__path);
+      }
+
+      // Switch to Resources tab
+      $('.part .menu nav a[href=#resources]').click();
     },
 
 
@@ -1399,11 +1418,11 @@ var Pontoon = (function (my) {
           .end()
           .find('.code').html(locale);
 
-        if (!self.getLocaleData('details')) {
+        if (!self.getLocaleData('projects')) {
           $.ajax({
-            url: '/teams/' + locale + '/details/',
-            success: function(data) {
-              menuItem.find('.language').data('details', data.details);
+            url: '/teams/' + locale + '/projects/',
+            success: function(projects) {
+              menuItem.find('.language').data('projects', projects);
               self.updateProjectMenu();
             }
           });
@@ -1415,14 +1434,14 @@ var Pontoon = (function (my) {
 
       // Show only projects available for the selected locale
       $('.project .selector').click(function () {
-        var details = self.getLocaleData('details'),
+        var projects = self.getLocaleData('projects'),
             menu = $(this).siblings('.menu');
 
         $('.project .search-wrapper > a').removeClass('back').find('span')
           .removeClass('fa-chevron-left').addClass('fa-plus-square');
 
         menu.find('.limited').removeClass('limited').end().find('li').hide();
-        $(Object.keys(details)).each(function() {
+        $(projects).each(function() {
           menu.find('[data-slug=' + this + ']').parent().addClass('limited').show();
         });
 
@@ -1433,12 +1452,12 @@ var Pontoon = (function (my) {
       $('.project .menu li:not(".no-match")').click(function () {
         var project = $(this).find('.name'),
             name = project.html(),
-            slug = project.data('slug');
+            slug = project.data('slug'),
+            locale = self.getSelectedLocale();
 
         // Request new project
         if ($('.project .menu .search-wrapper > a').is('.back:visible')) {
-          var locale = $.trim($('.locale .selector .code').html());
-          Pontoon.requestProject(locale, slug);
+          self.requestProject(locale, slug);
 
         // Select project
         } else {
@@ -1446,17 +1465,26 @@ var Pontoon = (function (my) {
             .html(name)
             .data('slug', slug);
 
-          // Fallback if selected part not available for the selected locale & project
-          var parts = self.getLocaleData('details')[slug],
-              currentPart = $('.part .selector').attr('title'),
-              part = $.grep(parts, function (e) { return e.resource__path === currentPart; });
+          var projectParts = project.data('parts');
 
-          if (!part.length) {
-            Pontoon.updatePartSelector(parts[0].resource__path);
+          if (projectParts && projectParts[locale]) {
+            self.updatePartMenu();
+
+          } else {
+            $.ajax({
+              url: '/' + locale + '/' + slug + '/parts/',
+              success: function(parts) {
+                if (projectParts) {
+                  projectParts[locale] = parts;
+                } else {
+                  var obj = {};
+                  obj[locale] = parts;
+                  project.data('parts', obj);
+                }
+                self.updatePartMenu();
+              }
+            });
           }
-
-          // Switch to Resources tab
-          $('.part .menu nav a[href=#resources]').click();
         }
       });
 
@@ -1469,11 +1497,11 @@ var Pontoon = (function (my) {
           .find('span').toggleClass('fa-plus-square fa-chevron-left');
 
         if ($(this).is('.back')) {
-          var details = self.getLocaleData('details'),
+          var projects = self.getLocaleData('projects'),
               menu = $(this).parents('.menu');
 
           menu.find('li').addClass('limited').show();
-          $(Object.keys(details)).each(function() {
+          $(projects).each(function() {
             menu.find('[data-slug=' + this + ']').parent().removeClass('limited').hide();
           });
           $('.menu:visible input[type=search]').trigger("keyup").focus();
@@ -1485,14 +1513,15 @@ var Pontoon = (function (my) {
 
       // Show only parts available for the selected project
       $('.part .selector').click(function () {
-        var details = self.getLocaleData('details'),
+        var locale = self.getSelectedLocale(),
+            parts = self.getProjectData('parts')[locale],
             menu = $(this).siblings('.menu').find('.resources ul'),
-            project = $('.project .button .title').data('slug').toLowerCase(),
+            project = self.getSelectedProject(),
             currentProject = self.getProjectData('slug') === self.project.slug,
             currentLocale = self.getLocaleData('code') === self.locale.code;
 
         menu.find('li:not(".no-match")').remove();
-        $(details[project]).each(function() {
+        $(parts).each(function() {
           var cls = '',
               title = this.resource__path,
               percent = '0%';
@@ -2045,10 +2074,26 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Get currently selected locale code
+     */
+    getSelectedLocale: function() {
+      return $.trim($('.locale .selector .code').html());
+    },
+
+
+    /*
+     * Get currently selected project slug
+     */
+    getSelectedProject: function() {
+      return $('.project .button .title').data('slug');
+    },
+
+
+    /*
      * Get data-* attribute value of the currently selected locale
      */
     getLocaleData: function(attribute) {
-      var code = $.trim($('.locale .selector .code').html());
+      var code = this.getSelectedLocale();
       return $('.locale .menu li .language[data-code=' + code + ']').data(attribute);
     },
 
@@ -2057,7 +2102,7 @@ var Pontoon = (function (my) {
      * Get data-* attribute value of the currently selected project
      */
     getProjectData: function(attribute) {
-      var slug = $('.project .button .title').data('slug');
+      var slug = this.getSelectedProject();
       return $('.project .menu li .name[data-slug=' + slug + ']').data(attribute);
     },
 
@@ -2075,7 +2120,7 @@ var Pontoon = (function (my) {
 
       // Check if selected path has URL for in place localization
       if (paths) {
-        var parts = self.getLocaleData('details')[history.state.project.toLowerCase()],
+        var parts = self.getProjectData('parts')[history.state.locale.toLowerCase()],
             part = $.grep(parts, function (e) { return e.resource__path === paths; });
 
         // Fallback to first available part if no match found (mistyped URL)
@@ -2121,7 +2166,7 @@ var Pontoon = (function (my) {
     pushState: function() {
       var state = {
         project: $('.project .selector .title').data('slug'),
-        locale: $.trim($('.locale .selector .code').html()),
+        locale: this.getSelectedLocale(),
         paths: $('.part .selector').attr('title'),
         search: window.location.search
       },

@@ -45,9 +45,9 @@ urlpatterns = patterns(
         RedirectView.as_view(url="/%(locale)s/", permanent=True)),
 
     # AJAX: Get locale details
-    url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/details/$',
-        views.get_locale_details,
-        name='pontoon.locale.details'),
+    url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/projects/$',
+        views.locale_projects,
+        name='pontoon.locale.projects'),
 
     # List all imported projects
     url(r'^projects/$',
@@ -78,6 +78,11 @@ urlpatterns = patterns(
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/manage/$',
         views.locale_manage,
         name='pontoon.locale.manage'),
+
+    # AJAX: Request project to be added to locale
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/parts/$',
+        views.locale_project_parts,
+        name='pontoon.locale.project.parts'),
 
     # Translate project
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',

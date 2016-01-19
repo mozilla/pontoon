@@ -177,7 +177,7 @@ def locale_project(request, locale, slug):
         .select_related('resource', 'latest_translation')
     )
     stats = {s.resource.path: s for s in stats_qs}
-    parts = l.projects_parts_stats(project)
+    parts = l.parts_stats(project)
 
     for part in parts:
         stat = stats.get(part['resource__path'], None)
@@ -333,13 +333,20 @@ def search(request):
 
 
 @require_AJAX
-def get_locale_details(request, locale):
-    """Get locale projects with their pages/paths and stats."""
+def locale_projects(request, locale):
+    """Get active projects for locale."""
     locale = get_object_or_404(Locale, code=locale)
 
-    return JsonResponse({
-        "details": locale.projects_parts_stats(),
-    })
+    return JsonResponse(locale.available_projects_list(), safe=False)
+
+
+@require_AJAX
+def locale_project_parts(request, locale, slug):
+    """Get locale-project pages/paths with stats."""
+    locale = get_object_or_404(Locale, code=locale)
+    project = get_object_or_404(Project, slug=slug)
+
+    return JsonResponse(locale.parts_stats(project), safe=False)
 
 
 @require_AJAX

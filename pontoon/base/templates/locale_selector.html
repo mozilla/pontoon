@@ -24,7 +24,7 @@
       {% for l in locales %}
       <li class="clearfix{% if l and l.chart %} filter{% endif %}">
         <span class="language {{ l.code|lower }}"
-        {% if locale %}
+        {% if project and locale %}
           {% for key, value in l.serialize().iteritems() %}
             data-{{ key }}="{{ value }}"
           {% endfor %}
