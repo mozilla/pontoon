@@ -235,6 +235,77 @@ class Locale(models.Model):
         else:
             return ProjectLocale.get_latest_activity(project, self)
 
+    def projects_parts_stats(self, p=None):
+        """Get locale projects with their pages/paths and stats."""
+        def get_details(stats):
+            return stats.order_by('resource__path').values(
+                'url',
+                'resource__path',
+                'resource__entity_count',
+                'fuzzy_count',
+                'translated_count',
+                'approved_count',
+            )
+
+        details = {}
+
+        if p:
+            projects = [p]
+        else:
+            projects = self.project_set.filter(
+                disabled=False,
+                resources__isnull=False
+            ).distinct()
+
+        for project in projects:
+            pages = project.subpage_set.all()
+            stats = Stats.objects.filter(
+                resource__project=project,
+                resource__entities__obsolete=False,
+                locale=self
+            ).distinct()
+            project_details = []
+
+            # Is subpages aren't defined,
+            # return resource paths with corresponding resource stats
+            if len(pages) == 0:
+                project_details = get_details(stats.annotate(url=F('resource__project__url')))
+
+            # If project has defined subpages, return their names with
+            # corresponding project stats. If subpages have defined resources,
+            # only include stats for page resources.
+            elif len(pages) > 0:
+                # Each subpage must have resources defined
+                if pages[0].resources.exists():
+                    project_details = get_details(
+                        # List only subpages, whose resources are available for locale
+                        pages.filter(resources__stats__locale=self).annotate(
+                            resource__path=F('name'),
+                            resource__entity_count=F('resources__entity_count'),
+                            fuzzy_count=F('resources__stats__fuzzy_count'),
+                            translated_count=F('resources__stats__translated_count'),
+                            approved_count=F('resources__stats__approved_count')
+                        )
+                    )
+
+                else:
+                    project_details = get_details(
+                        pages.annotate(
+                            resource__path=F('name'),
+                            resource__entity_count=F('project__resources__entity_count'),
+                            fuzzy_count=F('project__resources__stats__fuzzy_count'),
+                            translated_count=F('project__resources__stats__translated_count'),
+                            approved_count=F('project__resources__stats__approved_count')
+                        )
+                    )
+
+            details[project.slug.lower()] = list(project_details)
+
+        if p:
+            details = list(project_details)
+
+        return details
+
 
 class ProjectQuerySet(models.QuerySet):
     def available(self):
@@ -355,70 +426,6 @@ class Project(models.Model):
                 return None
         else:
             return ProjectLocale.get_latest_activity(self, locale)
-
-    def locales_parts_stats(self, loc=None):
-        """Get project locales with their pages/paths and stats."""
-        def get_details(stats):
-            return stats.order_by('resource__path').values(
-                'url',
-                'resource__path',
-                'resource__entity_count',
-                'fuzzy_count',
-                'translated_count',
-                'approved_count',
-            )
-
-        details = {}
-        pages = self.subpage_set.all()
-        locales = [loc] if loc else self.locales.all()
-
-        for locale in locales:
-            stats = Stats.objects.filter(
-                resource__project=self,
-                resource__entities__obsolete=False,
-                locale=locale
-            ).distinct()
-            locale_details = []
-
-            # Is subpages aren't defined,
-            # return resource paths with corresponding resource stats
-            if len(pages) == 0:
-                locale_details = get_details(stats.annotate(url=F('resource__project__url')))
-
-            # If project has defined subpages, return their names with
-            # corresponding project stats. If subpages have defined resources,
-            # only include stats for page resources.
-            elif len(pages) > 0:
-                # Each subpage must have resources defined
-                if pages[0].resources.exists():
-                    locale_details = get_details(
-                        # List only subpages, whose resources are available for locale
-                        pages.filter(resources__stats__locale=locale).annotate(
-                            resource__path=F('name'),
-                            resource__entity_count=F('resources__entity_count'),
-                            fuzzy_count=F('resources__stats__fuzzy_count'),
-                            translated_count=F('resources__stats__translated_count'),
-                            approved_count=F('resources__stats__approved_count')
-                        )
-                    )
-
-                else:
-                    locale_details = get_details(
-                        pages.annotate(
-                            resource__path=F('name'),
-                            resource__entity_count=F('project__resources__entity_count'),
-                            fuzzy_count=F('project__resources__stats__fuzzy_count'),
-                            translated_count=F('project__resources__stats__translated_count'),
-                            approved_count=F('project__resources__stats__approved_count')
-                        )
-                    )
-
-            details[locale.code.lower()] = list(locale_details)
-
-        if loc:
-            details = list(locale_details)
-
-        return details
 
     def serialize(self):
         return {
@@ -1072,36 +1079,34 @@ def get_locales_with_stats():
 
 def get_locales_with_project_stats(project):
     """Add chart data to locales for specified project."""
-    locales = Locale.objects.all()
     project_locales = project.locales.all()
 
-    for locale in locales:
-        if locale in project_locales:
-            stats = Stats.objects.filter(
-                resource__project=project,
-                resource__entities__obsolete=False,
-                locale=locale,
-            ).distinct()
+    for locale in project_locales:
+        stats = Stats.objects.filter(
+            resource__project=project,
+            resource__entities__obsolete=False,
+            locale=locale,
+        ).distinct()
 
-            locale.chart = get_chart_data(stats)
+        locale.chart = get_chart_data(stats)
 
-    return locales
+    return project_locales
 
 
 def get_projects_with_stats(projects, locale=None):
     """Add chart data to projects (for specified locale)."""
-
     for project in projects:
-        stats = Stats.objects.filter(
-            resource__project=project,
-            resource__entities__obsolete=False,
-            locale__in=project.locales.all(),
-        ).distinct()
+        if not locale or locale in project.locales.all():
+            stats = Stats.objects.filter(
+                resource__project=project,
+                resource__entities__obsolete=False,
+                locale__in=project.locales.all(),
+            ).distinct()
 
-        if locale:
-            stats = stats.filter(locale=locale)
+            if locale:
+                stats = stats.filter(locale=locale)
 
-        project.chart = get_chart_data(stats)
+            project.chart = get_chart_data(stats)
 
     return projects
 

@@ -1,32 +1,51 @@
 {% extends "landing.html" %}
-
 {% import "widgets/menu.html" as Menu %}
 
 {% block title %}Pontoon &middot; {{ locale.name }} ({{ locale.code }}){% endblock %}
 
 {% block class %}locale{% endblock %}
 
+{% block before %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+     data-locale="{{ locale.code }}"
+     data-locale-projects="{{ locale_projects or '' }}">
+</div>
+{% endblock %}
+
 {% block subtitle %}{{ locale.name }} ({{ locale.code }}){% endblock %}
 
 {% block middle %}
 <div class="container">
-    {% if locale.team_description %}
-        <div class="about">
-            <p>{{ locale.team_description|safe }}</p>
-        </div>
+  <ul class="notification"></ul>
+
+  {% if locale.team_description %}
+    <div class="about">
+      <p>{{ locale.team_description|safe }}</p>
+    </div>
+  {% endif %}
+
+  {% set current_page = request.path.split('/')[2]|default('') %}
+  {% call Menu.submenu(class='submenu tabs') %}
+    {{ Menu.item('Projects', url('pontoon.locale', locale.code), is_active = (current_page == '')) }}
+    {{ Menu.item('Contributors', url('pontoon.locale.contributors', locale.code), is_active = (current_page == 'contributors')) }}
+    {% if request.user.has_perm('base.can_manage_locale', locale) %}
+      {{ Menu.item('Manage', url('pontoon.locale.manage', locale.code), is_active = (current_page == 'manage')) }}
     {% endif %}
+  {% endcall %}
 
-    {% set current_page = request.path.split('/')[2]|default('') %}
-    {% call Menu.submenu(class='submenu tabs') %}
-        {{ Menu.item('Projects', url('pontoon.locale', locale.code), is_active = (current_page == '')) }}
-        {{ Menu.item('Contributors', url('pontoon.locale.contributors', locale.code), is_active = (current_page == 'contributors')) }}
-        {% if request.user.has_perm('base.can_manage_locale', locale) %}
-            {{ Menu.item('Manage', url('pontoon.locale.manage', locale.code), is_active = (current_page == 'manage')) }}
-        {% endif %}
-    {% endcall %}
-
-    {% block locale_subpage %}
-        {% include 'project_selector.html' %}
-    {% endblock %}
+  {% block locale_subpage %}
+    {% include 'project_selector.html' %}
+  {% endblock %}
 </div>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'locale' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'locale' %}
 {% endblock %}
