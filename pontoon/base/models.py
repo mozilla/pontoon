@@ -748,7 +748,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             translations = [t for t in translations if t.plural_form == plural_form]
 
         if translations:
-            translation = sorted(translations, key=lambda k: (not k.approved, not k.date))[0]
+            translation = sorted(translations, key=lambda k: (k.approved, k.date), reverse=True)[0]
             return {
                 'fuzzy': translation.fuzzy,
                 'string': translation.string,
