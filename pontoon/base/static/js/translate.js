@@ -2120,7 +2120,7 @@ var Pontoon = (function (my) {
 
       // Check if selected path has URL for in place localization
       if (paths) {
-        var parts = self.getProjectData('parts')[history.state.locale.toLowerCase()],
+        var parts = self.getProjectData('parts')[history.state.locale],
             part = $.grep(parts, function (e) { return e.resource__path === paths; });
 
         // Fallback to first available part if no match found (mistyped URL)
