@@ -751,7 +751,7 @@ label {
   content: "Request";
 }
 
-.locale .search-wrapper > a.back:after {
+.project .search-wrapper > a.back:after {
   content: "Back";
 }
 
