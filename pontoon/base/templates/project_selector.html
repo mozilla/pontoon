@@ -28,11 +28,22 @@
       {% for p in projects %}
       <li class="clearfix"{% if project and project == p %} style="display: list-item;"{% endif %}>
         <span class="name"
-          {% for key, value in p.serialize().iteritems() %} data-{{ key }}="{{ value }}"{% endfor %}
+          {% for key, value in p.serialize().iteritems() %}
+            data-{{ key }}="{{ value }}"
+          {% endfor %}
+          {% if project and locale %}
+            {% if project == p %}
+              data-parts="{{ {locale.code: locale.parts_stats(p)}|to_json }}"
+            {% endif %}
+          {% endif %}
         >
-          {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.locale.project', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
-            {{ p.name }}
-          {% if p and p.chart %}</a>{% endif %}
+        {% if p and p.chart %}
+          <a href="{% if locale %}{{ url('pontoon.locale.project', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">
+        {% endif %}
+          {{ p.name }}
+        {% if p and p.chart %}
+          </a>
+        {% endif %}
         </span>
         {% if not project %}
           {{ latest_activity.span(p.get_latest_activity(locale|default(none))) }}

@@ -234,9 +234,9 @@ class LocaleProjectTests(ViewTestCase):
         translation = TranslationFactory.create(entity__resource=resource, locale=locale)
         StatsFactory.create(resource=resource, locale=locale, latest_translation=translation)
 
-        with patch.object(Locale, 'projects_parts_stats') as mock_projects_parts_stats, \
+        with patch.object(Locale, 'parts_stats') as mock_parts_stats, \
                 patch('pontoon.base.views.render') as mock_render:
-            mock_projects_parts_stats.return_value = [
+            mock_parts_stats.return_value = [
                 {'resource__path': 'has/stats.po'},
                 {'resource__path': 'no/stats.po'}
             ]

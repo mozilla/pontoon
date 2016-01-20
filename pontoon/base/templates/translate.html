@@ -9,7 +9,6 @@
 <div id="server"
      class="hidden"
      data-site-url="{{ settings.SITE_URL }}"
-     {% if accept_language %}data-accept-language="{{ accept_language }}"{% endif %}
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      {% if user.email %}data-email="{{ user.email|nospam }}"{% endif %}
      {% if user.first_name %}data-name="{{ user.first_name }}"{% endif %}
