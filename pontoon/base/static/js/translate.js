@@ -297,9 +297,7 @@ var Pontoon = (function (my) {
 
       // Switch editor and entitylist in 1-column layout
       if (!this.app.advanced) {
-        $("#entitylist")
-          .css('left', -$('#sidebar').width()/2);
-
+        $("#entitylist").css('left', -$('#sidebar').width());
         $("#editor").addClass('opened').css('left', 0);
       }
     },
