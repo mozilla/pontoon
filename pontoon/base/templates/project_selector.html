@@ -10,7 +10,7 @@
   <div class="menu">
     <div class="search-wrapper clearfix">
       {% if locale and user.is_authenticated() %}
-      <a class="new" title="Request new project" href="#new">
+      <a class="new" title="Request new projects" href="#new">
         <span class="fa fa-plus-square"></span>
       </a>
       {% endif %}
@@ -45,9 +45,15 @@
           </a>
         {% endif %}
         </span>
+
+        {% if locale and user.is_authenticated() %}
+          <span class="check fa fa-fw"></span>
+        {% endif %}
+
         {% if not project %}
           {{ latest_activity.span(p.get_latest_activity(locale|default(none))) }}
         {% endif %}
+
         {% if p and p.chart and p.chart.total %}
         <span class="chart-wrapper">
           {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.locale.project', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
@@ -64,5 +70,8 @@
       {% endfor %}
       <li class="no-match">No results</li>
     </ul>
+    {% if locale and user.is_authenticated() %}
+    <button id="request-projects">Requets new projects</button>
+    {% endif %}
   </div>
 </div>

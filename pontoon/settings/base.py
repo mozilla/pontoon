@@ -301,7 +301,7 @@ PIPELINE_JS = {
     },
     'locale': {
         'source_filenames': (
-            'js/locale.js',
+            'js/request_projects.js',
         ),
         'output_filename': 'js/locale.min.js',
     },
@@ -309,6 +309,7 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/translate.js',
             'js/locale_project.js',
+            'js/request_projects.js',
         ),
         'output_filename': 'js/translate.min.js',
     },

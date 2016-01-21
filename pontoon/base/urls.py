@@ -49,6 +49,11 @@ urlpatterns = patterns(
         views.locale_projects,
         name='pontoon.locale.projects'),
 
+    # AJAX: Request projects to be added to locale
+    url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/request/$',
+        views.request_projects,
+        name='pontoon.locale.request'),
+
     # List all imported projects
     url(r'^projects/$',
         views.projects,
@@ -63,11 +68,6 @@ urlpatterns = patterns(
     url(r'^projects/(?P<slug>[\w-]+)/contributors/$',
         views.ProjectContributorsView.as_view(),
         name='pontoon.project.contributors'),
-
-    # AJAX: Request project to be added to locale
-    url(r'^projects/(?P<slug>[\w-]+)/request/$',
-        views.request_project,
-        name='pontoon.project.request'),
 
     # List team contributors
     url(r'^(?P<code>[A-Za-z0-9\-\@\.]+)/contributors/$',

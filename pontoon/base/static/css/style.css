@@ -491,6 +491,32 @@ label {
   max-height: none;
 }
 
+.project.select .menu ul li {
+  position: relative;
+}
+
+.project.select .menu ul li .check {
+  color: #AAAAAA;
+  font-size: 16px;
+  position: absolute;
+  right: 0;
+  top: 3px;
+}
+
+.project.select .menu ul li .check:before {
+  content: "";
+}
+
+.project.select .menu ul li:hover .check:before {
+  content: "";
+  color: #7BC876;
+}
+
+.project.select .menu ul li .check.enabled:before {
+  content: "";
+  color: #7BC876;
+}
+
 .project.select .menu ul li .name,
 .part.select .menu ul li .name {
   overflow: hidden;
@@ -498,6 +524,17 @@ label {
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 219px; /* Instead of 220px; because of padding */
+}
+
+#request-projects {
+  display: none;
+  background: #7BC876;
+  border: none;
+  border-radius: 3px;
+  margin-top: 10px;
+  padding: 5px;
+  text-transform: uppercase;
+  width: 100%;
 }
 
 .part .menu nav ul li {
@@ -867,6 +904,11 @@ body > .container .about p a:visited {
 
 .notification.menu-open {
   right: 240px;
+}
+
+.notification.left {
+  left: 10px;
+  right: auto;
 }
 
 .notification li {

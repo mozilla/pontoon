@@ -1432,33 +1432,18 @@ var Pontoon = (function (my) {
 
       // Show only projects available for the selected locale
       $('.project .selector').click(function () {
-        var projects = self.getLocaleData('projects'),
-            menu = $(this).siblings('.menu');
-
-        $('.project .search-wrapper > a').removeClass('back').find('span')
-          .removeClass('fa-chevron-left').addClass('fa-plus-square');
-
-        menu.find('.limited').removeClass('limited').end().find('li').hide();
-        $(projects).each(function() {
-          menu.find('[data-slug=' + this + ']').parent().addClass('limited').show();
-        });
-
-        $('.menu:visible input[type=search]').trigger("keyup");
+        $('.project .menu .search-wrapper > a.back').click();
       });
 
       // Project menu handler
-      $('.project .menu li:not(".no-match")').click(function () {
+      $('.project .menu li:not(".no-match")').click(function (e) {
         var project = $(this).find('.name'),
             name = project.html(),
             slug = project.data('slug'),
             locale = self.getSelectedLocale();
 
-        // Request new project
-        if ($('.project .menu .search-wrapper > a').is('.back:visible')) {
-          self.requestProject(locale, slug);
-
         // Select project
-        } else {
+        if (!$('.project .menu .search-wrapper > a').is('.back:visible')) {
           $('.project .selector .title')
             .html(name)
             .data('slug', slug);
@@ -1483,29 +1468,6 @@ var Pontoon = (function (my) {
               }
             });
           }
-        }
-      });
-
-      // Switch between available projects and projects to request
-      $('.project .menu .search-wrapper > a').click(function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-
-        $(this).toggleClass('back')
-          .find('span').toggleClass('fa-plus-square fa-chevron-left');
-
-        if ($(this).is('.back')) {
-          var projects = self.getLocaleData('projects'),
-              menu = $(this).parents('.menu');
-
-          menu.find('li').addClass('limited').show();
-          $(projects).each(function() {
-            menu.find('[data-slug=' + this + ']').parent().removeClass('limited').hide();
-          });
-          $('.menu:visible input[type=search]').trigger("keyup").focus();
-
-        } else {
-          $('.project .selector').click().click();
         }
       });
 
