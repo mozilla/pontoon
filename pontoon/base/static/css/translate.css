@@ -939,7 +939,7 @@ body > header aside p {
   color: #CCCCCC;
 }
 
-#editor nav li a > span > span {
+#editor nav li a > span > .fa {
   left: 0;
   position: absolute;
   right: 0;
@@ -948,8 +948,20 @@ body > header aside p {
   visibility: hidden;
 }
 
-#editor nav li a.loading > span > span {
+#editor nav li a.loading > span > .fa {
   visibility: visible;
+}
+
+#editor nav li a > span > .count {
+  background: #3F4752;
+  border-radius: 3px;
+  color: #4FC4F6;
+  padding: 0 5px;
+}
+
+#editor nav li.active a > span > .count,
+#editor nav li:hover a > span > .count {
+  background: #4D5967;
 }
 
 #editor nav li a > span {
@@ -958,6 +970,10 @@ body > header aside p {
 
 #editor nav li a.loading > span {
   visibility: hidden;
+}
+
+#editor nav li a.loading[href="#machinery"] span.count {
+  visibility: visible;
 }
 
 #editor textarea {
@@ -1134,25 +1150,16 @@ p#sign-in-required > a#sidebar-signin {
   top: 43px;
 }
 
-#helpers > section.custom-search .search-wrapper {
+#helpers > section.machinery .search-wrapper {
   margin: 0 10px 10px;
 }
 
-#helpers > section.custom-search .icon {
+#helpers > section.machinery .icon {
   left: 2px;
   right: auto;
 }
 
-#helpers > section.custom-search.loading .icon,
-#helpers > section.custom-search .icon.fa-cog {
-  display: none;
-}
-
-#helpers > section.custom-search.loading .icon.fa-cog {
-  display: block;
-}
-
-#helpers > section.custom-search input[type=search] {
+#helpers > section.machinery input[type=search] {
   background: transparent;
   padding: 10px 10px 5px 25px;
 }

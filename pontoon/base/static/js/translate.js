@@ -8,7 +8,8 @@ var Pontoon = (function (my) {
     getOtherLocales: function (entity) {
       var self = this,
           list = $('#helpers .other-locales ul').empty(),
-          tab = $('#helpers a[href="#other-locales"]').addClass('loading');
+          tab = $('#helpers a[href="#other-locales"]').addClass('loading'),
+          count = '';
 
       if (self.XHRgetOtherLocales) {
         self.XHRgetOtherLocales.abort();
@@ -30,6 +31,8 @@ var Pontoon = (function (my) {
                 '</p>' +
               '</li>');
             });
+            count = data.length;
+
           } else {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
@@ -44,7 +47,8 @@ var Pontoon = (function (my) {
           }
         },
         complete: function() {
-          tab.removeClass('loading');
+          tab.removeClass('loading')
+            .find('.count').html(count).toggle(count !== '');
         }
       });
     },
@@ -72,7 +76,8 @@ var Pontoon = (function (my) {
     getHistory: function (entity) {
       var self = this,
           list = $('#helpers .history ul').empty(),
-          tab = $('#helpers a[href="#history"]').addClass('loading');
+          tab = $('#helpers a[href="#history"]').addClass('loading'),
+          count = '';
 
       if (self.XHRgetHistory) {
         self.XHRgetHistory.abort();
@@ -116,18 +121,43 @@ var Pontoon = (function (my) {
                 '</li>');
             });
             $("#helpers .history time").timeago();
+            count = data.length;
+
           } else {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
           }
-          tab.removeClass('loading');
         },
         error: function(error) {
           if (error.status === 0 && error.statusText !== "abort") {
             self.noConnectionError(list);
-            tab.removeClass('loading');
           }
+        },
+        complete: function() {
+          tab.removeClass('loading')
+            .find('.count').html(count).toggle(count !== '');
         }
       });
+    },
+
+
+    /*
+     * Get suggestions for currently translated entity from all helpers
+     */
+    updateHelpers: function () {
+      var entity = $('#editor')[0].entity,
+          source = entity['original' + this.isPluralized()];
+
+      this.getHistory(entity);
+
+      // Hard to match plural forms with other locales; using singular
+      this.getOtherLocales(entity);
+
+      if (this.machinerySource !== source) {
+        this.getMachinery(source);
+        this.machinerySource = source;
+      }
+
+      $(".tabs nav .active a").click();
     },
 
 
@@ -242,7 +272,8 @@ var Pontoon = (function (my) {
           $('#original').html(entity.marked_plural);
         }
       }
-      $("#helpers nav .active a").click();
+
+      self.updateHelpers();
 
       // Focus
       if (!inplace) {
@@ -658,7 +689,7 @@ var Pontoon = (function (my) {
         self.updateCachedTranslation();
 
         $('#quality:visible .cancel').click();
-        $("#helpers nav .active a").click();
+        self.updateHelpers();
       }
 
       // Plurals navigation
@@ -821,52 +852,21 @@ var Pontoon = (function (my) {
         self.updateOnServer(entity, source, false, true);
       });
 
-      // Helpers navigation
-      $("#helpers nav a").click(function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-
-        var sec = $(this).attr('href').substr(1),
-            editor = $('#editor')[0],
-            entity = editor.entity,
-            currentEntity = entity.pk,
-            currentEntityPlural = currentEntity + self.isPluralized();
-
-        switch (sec) {
-
-        case "history":
-          // Do not cache history to prevent outdated suggestions on return
-          self.getHistory(entity);
-          break;
-
-        case "machinery":
-          if (editor.machinery !== currentEntityPlural) {
-            self.getMachinery(entity['original' + self.isPluralized()]);
-            editor.machinery = currentEntityPlural;
-          }
-          break;
-
-        case "other-locales":
-          if (editor.otherLocales !== currentEntity) {
-            // Hard to match plural forms with other locales; using singular
-            self.getOtherLocales(entity);
-            editor.otherLocales = currentEntity;
-          }
-          break;
-
-        }
-
-        // Only if actually clicked on tab
-        if (e.hasOwnProperty('originalEvent')) {
-          $("#helpers .custom-search input[type=search]:visible").focus();
-        }
-      });
-
       // Custom search: trigger with Enter
-      $('#helpers .custom-search input').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
-        var value = $(this).val();
-        if (e.which === 13 && value.length > 0) {
-          self.getMachinery(value, 'helpers .custom-search', 'helpers .custom-search');
+      $('#helpers .machinery input').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
+        if (e.which === 13) {
+          var source = $(this).val(),
+              entity = $('#editor')[0].entity;
+
+          // Reset to original string on empty search
+          if (!source) {
+            source = entity['original' + self.isPluralized()];
+          }
+
+          if (self.machinerySource !== source) {
+            self.getMachinery(source);
+            self.machinerySource = source;
+          }
           return false;
         }
       });

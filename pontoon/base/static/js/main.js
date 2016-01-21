@@ -148,21 +148,8 @@ var Pontoon = (function (my) {
           loader = loader || 'helpers li a[href="#machinery"]',
           ul = $('#' + tab_id).find('ul').empty(),
           tab = $('#' + loader).addClass('loading'),
-          requests = 0;
-
-      function complete(jqXHR, status) {
-        if (status !== "abort") {
-          requests--;
-          if (requests === 0) {
-            tab.removeClass('loading');
-            if (ul.find('li').length === 0) {
-              ul.append('<li class="disabled">' +
-                '<p>No translations available.</p>' +
-              '</li>');
-            }
-          }
-        }
-      }
+          requests = 0,
+          count = 0;
 
       function append(data) {
         var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : '';
@@ -188,6 +175,8 @@ var Pontoon = (function (my) {
           return (valA < valB) ? 1 : (valA > valB) ? -1 : 0;
         });
         ul.append(listitems);
+
+        count++;
       }
 
       function error(error) {
@@ -197,9 +186,26 @@ var Pontoon = (function (my) {
           if (ul.find('li').length === 0) {
             self.noConnectionError(ul);
           }
-          tab.removeClass('loading');
         }
       }
+
+      function complete(jqXHR, status) {
+        if (status !== "abort") {
+          requests--;
+          tab.find('.count').html(count).toggle(count !== 0);
+          if (requests === 0) {
+            tab.removeClass('loading');
+            if (ul.find('li').length === 0) {
+              ul.append('<li class="disabled">' +
+                '<p>No translations available.</p>' +
+              '</li>');
+            }
+          }
+        }
+      }
+
+      // Reset count
+      tab.find('.count').html('').hide();
 
       // Translation memory
       requests++;

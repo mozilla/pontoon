@@ -270,10 +270,28 @@
     <div id="helpers" class="tabs">
       <nav>
         <ul>
-          <li class="active"><a href="#history"><span>History<span class="fa fa-cog fa-lg fa-spin"></span></span></a></li>
-          <li><a href="#machinery"><span>Machinery<span class="fa fa-cog fa-lg fa-spin"></span></span></a></li>
-          <li><a href="#other-locales"><span>Locales<span class="fa fa-cog fa-lg fa-spin"></span></span></a></li>
-          <li><a href="#custom-search"><span>Search<span class="fa fa-cog fa-lg fa-spin"></span></span></a></li>
+          <li class="active">
+            <a href="#history">
+              <span>History
+                <span class="fa fa-cog fa-lg fa-spin"></span>
+                <span class="count"></span>
+              </span>
+            </a>
+          </li><li>
+            <a href="#machinery">
+              <span>Machinery
+                <span class="fa fa-cog fa-lg fa-spin"></span>
+                <span class="count"></span>
+              </span>
+            </a>
+          </li><li>
+            <a href="#other-locales">
+              <span>Locales
+                <span class="fa fa-cog fa-lg fa-spin"></span>
+                <span class="count"></span>
+              </span>
+            </a>
+          </li>
         </ul>
       </nav>
 
@@ -282,19 +300,14 @@
       </section>
 
       <section class="machinery">
+        <div class="search-wrapper clearfix">
+          <div class="icon fa fa-search"></div>
+          <input type="search" autocomplete="off" placeholder="Type to search machinery">
+        </div>
         <ul></ul>
       </section>
 
       <section class="other-locales">
-        <ul></ul>
-      </section>
-
-      <section class="custom-search">
-        <div class="search-wrapper clearfix">
-          <div class="icon fa fa-search"></div>
-          <div class="icon fa fa-cog fa-spin"></div>
-          <input type="search" autocomplete="off" placeholder="Type keyword and press Enter to search">
-        </div>
         <ul></ul>
       </section>
     </div>

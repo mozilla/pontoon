@@ -1168,7 +1168,7 @@ body > .container {
 .tabs nav ul li a {
   display: inline-block;
   outline: none;
-  padding: 10px;
+  padding: 10px 5px;
   width: 100%;
 
   -moz-box-sizing: border-box;
