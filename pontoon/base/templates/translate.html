@@ -184,7 +184,7 @@
     <div class="search-wrapper clearfix">
       <div class="icon fa fa-search"></div>
       <input id="search" type="search" autocomplete="off" placeholder="Search All" title="Search Strings (Alt + F)">
-      <div id="filter" class="select">
+      <div id="filter" class="select" data-current-filter="all">
         <div class="button selector all">
           <span class="status fa"></span>
           <span class="title">All</span>
@@ -209,6 +209,7 @@
       <h2 id="not-on-page">Not on the current page</h2>
       <ul class="uneditables"></ul>
       <h3 class="no-match"><div class="fa fa-exclamation-circle"></div>No results</h3>
+      <h3 class="loading"><div class="fa fa-refresh fa-spin"></div></h3>
     </div>
   </div>
 
@@ -319,15 +320,8 @@
 </aside>
 
 <!-- Website placeholder + iframe fix: prevent iframes from capturing the mousemove events during a drag -->
-<iframe id="source"{% if project.pk == 1 and part != 'search' %} src="{{ project.url }}"{% endif %}></iframe>
+<iframe id="source"{% if project.pk == 1 %} src="{{ project.url }}"{% endif %}></iframe>
 <div id="iframe-cover"></div>
-
-<!-- No results -->
-<div id="no-results" class="overlay">
-  <div class="inner">
-    <h3 class="no-match"><div class="fa fa-exclamation-circle"></div>No results</h3>
-  </div>
-</div>
 
 <!-- Project loading indicator -->
 <div id="project-load" class="overlay">
