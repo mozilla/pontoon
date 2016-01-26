@@ -103,7 +103,7 @@ class POResource(ParsedResource):
         return '<POResource {self.pofile.fpath}>'.format(self=self)
 
 
-def parse(path, source_path=None):
+def parse(path, source_path=None, locale=None):
     try:
         pofile = polib.pofile(path)
     except IOError as err:

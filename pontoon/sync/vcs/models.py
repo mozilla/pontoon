@@ -150,6 +150,7 @@ class VCSResource(object):
         Load the resource file for each enabled locale and store its
         translations in VCSEntity instances.
         """
+        from pontoon.base.models import Locale
         from pontoon.sync import formats  # Avoid circular import.
 
         self.vcs_project = vcs_project
@@ -161,8 +162,7 @@ class VCSResource(object):
         # Create entities using resources from the source directory,
         source_resource_path = os.path.join(vcs_project.source_directory_path(), self.path)
         source_resource_path = relative_source_path(source_resource_path)
-
-        source_resource_file = formats.parse(source_resource_path)
+        source_resource_file = formats.parse(source_resource_path, locale=Locale.objects.get(code='en-US'))
         for index, translation in enumerate(source_resource_file.translations):
             vcs_entity = VCSEntity(
                 resource=self,
@@ -182,7 +182,7 @@ class VCSResource(object):
                 self.path
             )
             try:
-                resource_file = formats.parse(resource_path, source_resource_path)
+                resource_file = formats.parse(resource_path, source_resource_path, locale)
             except (IOError, ParseError):
                 continue  # File doesn't exist or is invalid, let's move on
 
