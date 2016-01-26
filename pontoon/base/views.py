@@ -867,7 +867,6 @@ def amagama(request):
 
 def transvision(request):
     """Get Mozilla translations from Transvision service."""
-
     try:
         text = request.GET['text']
         locale = request.GET['locale']
@@ -997,21 +996,23 @@ def save_user_name(request):
 
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
-def request_project(request, slug):
-    """Request project to be added to locale."""
-    try:
-        locale = request.POST['locale']
-    except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    project = get_object_or_404(Project, slug=slug)
+def request_projects(request, locale):
+    """Request projects to be added to locale."""
+    slug_list = request.POST.getlist('projects[]')
     locale = get_object_or_404(Locale, code__iexact=locale)
+
+    # Validate projects
+    project_list = Project.objects.available().filter(slug__in=slug_list)
+    if not project_list:
+        return HttpResponseBadRequest('Bad Request: Non-existent projects specified')
+
+    projects = ''.join('- {} ({})\n'.format(p.name, p.slug) for p in project_list)
 
     if settings.ADMINS[0][1] != '':
         EmailMessage(
             'Project request for {locale} ({code})'.format(locale=locale.name, code=locale.code),
-            'Please add project {project} ({slug}) to locale {locale} ({code}).'.format(
-                project=project.name, slug=slug, locale=locale.name, code=locale.code
+            'Please add the following projects to {locale} ({code}):\n{projects}'.format(
+                locale=locale.name, code=locale.code, projects=projects
             ),
             'pontoon@mozilla.com',
             [settings.ADMINS[0][1]],

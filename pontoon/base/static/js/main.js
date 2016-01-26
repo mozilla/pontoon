@@ -31,7 +31,7 @@ var Pontoon = (function (my) {
         $('.notification')
           .html('<li class="' + (type || "") + '">' + text + '</li>')
           .css('opacity', 100)
-          .removeClass('hide menu-open');
+          .removeClass('hide menu-open left');
       }
 
       if (!persist) {
@@ -48,25 +48,33 @@ var Pontoon = (function (my) {
      * Request project to be added to locale
      *
      * locale Locale code
-     * project Project slug
+     * projects Array of Project slugs
      */
-    requestProject: function(locale, project) {
+    requestProject: function(locale, projects) {
+      this.startLoader();
+
       $.ajax({
-        url: '/projects/' + project + '/request/',
+        url: '/teams/' + locale + '/request/',
         type: 'POST',
         data: {
           csrfmiddlewaretoken: $('#server').data('csrf'),
-          locale: locale
+          projects: projects
         },
         success: function(data) {
           Pontoon.endLoader(
-            "New project (" + project + ") requested. We'll send you an email once it gets enabled.", "", true);
+            "New projects requested. We'll send you an email once it gets enabled.", "", true);
         },
         error: function() {
           Pontoon.endLoader('Oops, something went wrong.', 'error');
         },
         complete: function() {
-          $('.locale .menu .search-wrapper > a').click();
+          $('.notification').addClass('left');
+          $('.project')
+            .find('.menu')
+              .find('.check').removeClass('enabled').end()
+              .find('.search-wrapper > a').click().end()
+            .end()
+            .find('.selector').click();
           window.scrollTo(0, 0);
         }
       });

@@ -14,6 +14,15 @@
   display: block;
 }
 
+.project .menu li .check {
+  display: none;
+}
+
 .project .menu.request li {
   cursor: pointer;
+}
+
+.project .menu.request .sort .progress,
+.project .menu.request .latest {
+  display: none;
 }
