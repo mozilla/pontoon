@@ -152,6 +152,16 @@ class AggregatedStats(models.Model):
     class Meta:
         abstract = True
 
+    @property
+    def stats(self):
+        """JSONable structure with stats of instance."""
+        return {
+                'all': self.total_strings,
+                'approved': self.approved_strings,
+                'translated': self.translated_strings,
+                'fuzzy': self.fuzzy_strings,
+               }
+
     def adjust_stats(self, total_strings_diff, approved_strings_diff,
                      fuzzy_strings_diff, translated_strings_diff):
         self.total_strings = F('total_strings') + total_strings_diff
@@ -856,6 +866,87 @@ class Subpage(models.Model):
         return self.name
 
 
+class EntityQuerySet(models.QuerySet):
+    """
+    Queryset provides a set of additional methods that should allow us to filter entities.
+    """
+    def with_status_counts(self, locale):
+        """
+        Helper method that returns a set with annotation of following fields:
+            * approved_count - a number of approved translations in the entity.
+            * fuzzy_count - a number of fuzzy translations in the antity
+            * suggested_count - a number of translations assigned do the entity.
+            * expected_count - a number of translations that should cover entity.
+            * unchanged_count - a number of translations that have the same string as the entity.
+        """
+        return self.annotate(
+            approved_count=Sum(
+                Case(
+                    When(
+                        Q(translation__approved=True, translation__fuzzy=False, translation__locale=locale), then=1
+                    ), output_field=models.IntegerField(), default=0
+                )
+            ),
+            fuzzy_count=Sum(
+                Case(
+                    When(
+                        Q(translation__fuzzy=True, translation__approved=False, translation__locale=locale), then=1
+                    ), output_field=models.IntegerField(), default=0
+                )
+            ),
+            suggested_count=Sum(
+                Case(
+                    When(
+                        Q(translation__locale=locale, translation__approved=False, translation__fuzzy=False), then=1
+                    ), output_field=models.IntegerField(), default=0
+                )
+            ),
+            expected_count=Case(
+                When(
+                    Q(string_plural__isnull=True) | Q(string_plural=""), then=1
+                ), output_field=models.IntegerField(), default=locale.nplurals
+            ),
+            unchanged_count=Sum(
+                Case(
+                    When(
+                    Q(translation__locale=locale, translation__string=F('string')) |\
+                    Q(translation__locale=locale, translation__plural_form__gt=-1,
+                        translation__plural_form__isnull=False, translation__string=F('string_plural')), then=1
+                    ), output_field=models.IntegerField(), default=0
+                )
+            )
+        )
+
+    def untranslated(self, locale):
+        return self.with_status_counts(locale).exclude(
+            Q(approved_count=F('expected_count')) | Q(fuzzy_count=F('expected_count')) | Q(suggested_count=F('expected_count'))
+        )
+
+    def fuzzy(self, locale):
+        return self.with_status_counts(locale).filter(
+            Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
+        )
+
+    def translated(self, locale):
+        return self.with_status_counts(locale).filter(
+            Q(suggested_count__gt=0) & ~Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
+        )
+
+    def approved(self, locale):
+        return self.with_status_counts(locale).filter(
+            approved_count=F('expected_count')
+        )
+
+    def not_translated(self, locale):
+        return self.with_status_counts(locale).exclude(Q(approved_count=F('expected_count')))
+
+    def has_suggestions(self, locale):
+        return self.with_status_counts(locale).filter(suggested_count__lt=F('approved_count'), approved_count__gte=1)
+
+    def unchanged(self, locale):
+        return self.with_status_counts(locale).filter(unchanged_count=F('expected_count'))
+
+
 class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, related_name='entities')
     string = models.TextField()
@@ -872,6 +963,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         help_text='List of locales in which translations for this entity have '
                   'changed since the last sync.'
     )
+    objects = EntityQuerySet.as_manager()
 
     @property
     def marked(self):
@@ -935,9 +1027,38 @@ class Entity(DirtyFieldsMixin, models.Model):
             }
 
     @classmethod
-    def for_project_locale(self, project, locale, paths=None, search=None):
+    def for_project_locale(self, project, locale, paths=None, search=None, exclude=None,
+        filter_type=None, filter_search=None):
         """Get project entities with locale translations."""
-        entities = self.objects.filter(
+        if filter_type and filter_type != 'all':
+            if filter_type == 'untranslated':
+                entities = self.objects.untranslated(locale)
+
+            elif filter_type == 'fuzzy':
+                entities = self.objects.fuzzy(locale)
+
+            elif filter_type == 'translated':
+                entities = self.objects.translated(locale)
+
+            elif filter_type == 'approved':
+                entities = self.objects.approved(locale)
+
+            elif filter_type == 'not-translated':
+                entities = self.objects.not_translated(locale)
+
+            elif filter_type == 'has-suggestions':
+                entities = self.objects.has_suggestions(locale)
+
+            elif filter_type == 'unchanged':
+                entities = self.objects.unchanged(locale)
+
+            else:
+                raise ValueError(filter_type)
+
+        else:
+            entities = Entity.objects.all()
+
+        entities = entities.filter(
             resource__project=project,
             resource__translatedresources__locale=locale,
             obsolete=False
@@ -947,8 +1068,8 @@ class Entity(DirtyFieldsMixin, models.Model):
         if search:
             keyword = search.get('keyword', None)
             i = '' if search.get('casesensitive', None) else 'i'
-
             entity_query = Q()  # Empty object
+
             if search.get('sources', None):
                 entity_query |= Q(**{'string__%scontains' % i: keyword}) | Q(**{'string_plural__%scontains' % i: keyword})
 
@@ -970,7 +1091,15 @@ class Entity(DirtyFieldsMixin, models.Model):
                 paths = subpage.resources.values_list("path")
             except Subpage.DoesNotExist:
                 pass
-            entities = entities.filter(resource__path__in=paths) or entities
+
+            entities = entities.filter(resource__path__in=paths)
+
+        if filter_search:
+            search_query = Q(**{'string__icontains': filter_search}) | Q(**{'string_plural__icontains': filter_search})
+            search_query |= Q(**{'translation__string__icontains': filter_search})
+            search_query |= Q(**{'comment__icontains': filter_search})
+            search_query |= Q(**{'key__icontains': filter_search})
+            entities = entities.filter(search_query).distinct()
 
         entities = entities.prefetch_related(
             'resource',
@@ -981,6 +1110,13 @@ class Entity(DirtyFieldsMixin, models.Model):
             )
         )
 
+        if exclude:
+            entities = entities.exclude(pk__in=exclude)
+
+        return entities.distinct().order_by('order')
+
+    @classmethod
+    def map_entities(cls, locale, entities):
         entities_array = []
 
         for entity in entities:
@@ -1195,6 +1331,12 @@ class TranslatedResourceQuerySet(models.QuerySet):
         instance.fuzzy_strings = aggregated_stats['fuzzy'] or 0
 
         instance.save()
+
+    def stats(self, paths, locale):
+        """
+        Returns statistics for the given paths and locale.
+        """
+        return self.get(locale=locale, resource__path__in=paths).stats
 
 
 class TranslatedResource(AggregatedStats):
