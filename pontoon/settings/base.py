@@ -96,6 +96,7 @@ INSTALLED_APPS = (
     'pontoon.intro',
     'pontoon.sites',
     'pontoon.sync',
+    'pontoon.accounts',
 
     # Django contrib apps
     'django.contrib.admin',
@@ -141,7 +142,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'match_extension': '',
-            'match_regex': r'^(?!(admin|registration)/).*\.(html|jinja)$',
+            'match_regex': r'^(?!(admin)/).*\.(html|jinja)$',
             'context_processors': CONTEXT_PROCESSORS,
             'extensions': [
                 'jinja2.ext.do',
@@ -175,7 +176,7 @@ TEMPLATES = [
 
 AUTHENTICATION_BACKENDS = [
     'django_browserid.auth.BrowserIDBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    'pontoon.accounts.backends.EmailModelBackend',
     'guardian.backends.ObjectPermissionBackend',
 ]
 

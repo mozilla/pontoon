@@ -1,0 +1,20 @@
+{% extends 'landing.html' %}
+
+{% block subtitle %}Sign in{% endblock %}
+
+{% block middle %}
+    {% if form.errors %}
+    <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+    <form method="POST" action="{{ url('login') }}">
+      {% csrf_token %}
+      {{ form.as_p() }}
+
+      <input type="submit" value="login">
+    </form>
+    <p>Alternative providers</p>
+    <ul>
+      <li><a href="#" id="persona-sign-in">Persona</a></li>
+    </ul>
+
+{% endblock middle %}

@@ -460,10 +460,14 @@ $(function() {
   // Profile menu
   // Register handlers to prep django-browserid before binding menu.
   django_browserid.registerWatchHandlers(function() {
-    function signIn() {
+    function signIn(url) {
       Pontoon.startLoader();
       django_browserid.login().then(function(verifyResult) {
-        window.location.reload();
+        if (url) {
+          window.location = url;
+        } else {
+          window.location.reload();
+        }
       }, function(jqXHR) {
         Pontoon.endLoader('Oops, something went wrong.', 'error');
       });
@@ -498,9 +502,9 @@ $(function() {
       signIn();
     });
 
-    $('ul.links > li#sign-in').click(function (e) {
+    $('a#persona-sign-in').click(function (e) {
       e.preventDefault();
-      signIn();
+      signIn('/');
     });
   });
 
