@@ -62,7 +62,7 @@ var Pontoon = (function (my) {
         },
         success: function(data) {
           Pontoon.endLoader(
-            "New projects requested. We'll send you an email once it gets enabled.", "", true);
+            "New projects requested. We'll send you an email once they get enabled.", "", true);
         },
         error: function() {
           Pontoon.endLoader('Oops, something went wrong.', 'error');
