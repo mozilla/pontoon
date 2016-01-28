@@ -6,7 +6,7 @@
   text-align: center;
 }
 
-.project .menu li:not(.filter) {
+.project .menu li:not(.limited) {
   display: none;
 }
 

@@ -1432,7 +1432,7 @@ var Pontoon = (function (my) {
 
       // Show only projects available for the selected locale
       $('.project .selector').click(function () {
-        $('.project .menu .search-wrapper > a.back').click();
+        self.requestProjects.toggleProjects(true);
       });
 
       // Project menu handler

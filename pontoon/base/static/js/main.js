@@ -45,42 +45,6 @@ var Pontoon = (function (my) {
     },
 
     /*
-     * Request project to be added to locale
-     *
-     * locale Locale code
-     * projects Array of Project slugs
-     */
-    requestProject: function(locale, projects) {
-      this.startLoader();
-
-      $.ajax({
-        url: '/teams/' + locale + '/request/',
-        type: 'POST',
-        data: {
-          csrfmiddlewaretoken: $('#server').data('csrf'),
-          projects: projects
-        },
-        success: function(data) {
-          Pontoon.endLoader(
-            "New projects requested. We'll send you an email once they get enabled.", "", true);
-        },
-        error: function() {
-          Pontoon.endLoader('Oops, something went wrong.', 'error');
-        },
-        complete: function() {
-          $('.notification').addClass('left');
-          $('.project')
-            .find('.menu')
-              .find('.check').removeClass('enabled').end()
-              .find('.search-wrapper > a').click().end()
-            .end()
-            .find('.selector').click();
-          window.scrollTo(0, 0);
-        }
-      });
-    },
-
-    /*
      * Update scrollbar position in the menu
      *
      * menu Menu element
@@ -99,7 +63,6 @@ var Pontoon = (function (my) {
         menu.scrollTop(hoveredTop);
       }
     },
-
 
     /*
      * Do not render HTML tags
@@ -128,7 +91,6 @@ var Pontoon = (function (my) {
         .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>');
     },
 
-
     /*
      * Show no connection error in helpers
      *
@@ -141,7 +103,6 @@ var Pontoon = (function (my) {
           '<p>Check your connection and try again.</p>' +
         '</li>');
     },
-
 
     /*
      * Get suggestions from machine translation and translation memory
@@ -383,7 +344,6 @@ var Pontoon = (function (my) {
         }
       }).error(error).complete(complete);
     }
-
 
   });
 }(Pontoon || {}));

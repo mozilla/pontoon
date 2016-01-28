@@ -26,7 +26,7 @@
     {% endif %}
     <ul>
       {% for p in projects %}
-      <li class="clearfix"{% if project and project == p %} style="display: list-item;"{% endif %}>
+      <li class="clearfix{% if p.fetched_project_locales %} limited{% endif %}"{% if project and project == p %} style="display: list-item;"{% endif %}>
         <span class="name"
           {% for key, value in p.serialize().iteritems() %}
             data-{{ key }}="{{ value }}"
