@@ -17,7 +17,7 @@ $(function() {
   }
 
   function updateSearch() {
-    menu.find('input[type=search]').trigger('keyup').focus();
+    menu.find('input[type=search]:visible').trigger('keyup').focus();
   }
 
   // Show only projects available for the selected locale
