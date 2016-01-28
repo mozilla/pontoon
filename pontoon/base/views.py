@@ -14,7 +14,7 @@ from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.core.validators import validate_comma_separated_integer_list
 from django.db import transaction
-from django.db.models import Count, F, Q
+from django.db.models import Count, F, Q, Prefetch
 
 from django.http import (
     Http404,
@@ -40,6 +40,7 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Project,
+    ProjectLocale,
     Resource,
     Stats,
     Translation,
@@ -76,8 +77,17 @@ def locale(request, locale):
 
     projects = (
         Project.objects.available()
-        .select_related('latest_translation')
-        .order_by("name")
+        .prefetch_related(
+            Prefetch(
+                'project_locale',
+                queryset=(
+                    ProjectLocale.objects.filter(locale=l)
+                    .select_related('latest_translation__user')
+                ),
+                to_attr='fetched_project_locales'
+            )
+        )
+        .order_by('name')
     )
 
     if not projects:
@@ -152,7 +162,7 @@ def projects(request):
     """Project overview."""
     projects = (
         Project.objects.available()
-        .select_related('latest_translation')
+        .select_related('latest_translation__user')
         .order_by("name")
     )
 

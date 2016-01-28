@@ -808,7 +808,7 @@ class LocaleTests(TestCase):
         locale = LocaleFactory.create(latest_translation=None)
         assert_is_none(locale.get_latest_activity())
 
-    def test_get_latest_activity_with_locale(self):
+    def test_get_latest_activity_with_project(self):
         """
         If a locale is given, defer to
         ProjectLocale.get_latest_activity.
@@ -819,7 +819,7 @@ class LocaleTests(TestCase):
         with patch.object(ProjectLocale, 'get_latest_activity') as mock_get_latest_activity:
             mock_get_latest_activity.return_value = 'latest'
             assert_equal(locale.get_latest_activity(project=project), 'latest')
-            mock_get_latest_activity.assert_called_with(project, locale)
+            mock_get_latest_activity.assert_called_with(locale, project)
 
     def test_translators_group(self):
         """

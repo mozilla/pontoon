@@ -242,7 +242,7 @@ class Locale(models.Model):
         )
 
     def available_projects_list(self):
-        """Get latest activity for project and locale if provided."""
+        """Get a list of available project slugs."""
         return list(
             self.project_set.available().values_list('slug', flat=True)
         )
@@ -260,14 +260,7 @@ class Locale(models.Model):
         return Locale.cldr_id_to_plural(self.cldr_plurals_list()[plural_id])
 
     def get_latest_activity(self, project=None):
-        """Get latest activity for project and locale if provided."""
-        if project is None:
-            if self.latest_translation is not None:
-                return self.latest_translation.latest_activity
-            else:
-                return None
-        else:
-            return ProjectLocale.get_latest_activity(project, self)
+        return ProjectLocale.get_latest_activity(self, project)
 
     def parts_stats(self, project):
         """Get locale-project pages/paths with stats."""
@@ -436,14 +429,7 @@ class Project(models.Model):
             return repo
 
     def get_latest_activity(self, locale=None):
-        """Get latest activity for project and locale if provided."""
-        if locale is None:
-            if self.latest_translation is not None:
-                return self.latest_translation.latest_activity
-            else:
-                return None
-        else:
-            return ProjectLocale.get_latest_activity(self, locale)
+        return ProjectLocale.get_latest_activity(self, locale)
 
     def serialize(self):
         return {
@@ -462,8 +448,8 @@ class Project(models.Model):
 
 class ProjectLocale(models.Model):
     """Link between a project and a locale that is active for it."""
-    project = models.ForeignKey(Project)
-    locale = models.ForeignKey(Locale)
+    project = models.ForeignKey(Project, related_name='project_locale')
+    locale = models.ForeignKey(Locale, related_name='project_locale')
 
     #: Most recent translation approved or created for this project in
     #: this locale.
@@ -479,14 +465,36 @@ class ProjectLocale(models.Model):
         unique_together = ('project', 'locale')
 
     @classmethod
-    def get_latest_activity(cls, project, locale):
-        """Get the latest activity within this project and locale."""
-        project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
-        if project_locale is not None and project_locale.latest_translation is not None:
-            return project_locale.latest_translation.latest_activity
-        else:
-            return None
+    def get_latest_activity(cls, self, extra=None):
+        """
+        Get the latest activity within project, locale
+        or combination of both.
 
+        :param self: object to get data for,
+            instance of Projet or Locale
+        :param extra: extra filter to be used,
+            instance of Projet or Locale
+        """
+        latest_translation = None
+
+        if extra is None:
+            if self.latest_translation is not None:
+                latest_translation = self.latest_translation
+
+        else:
+            if hasattr(self, 'fetched_project_locales'):
+                if self.fetched_project_locales:
+                    latest_translation = self.fetched_project_locales[0].latest_translation
+
+            else:
+                project = self if isinstance(self, Project) else extra
+                locale = self if isinstance(self, Locale) else extra
+                project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
+
+                if project_locale is not None and project_locale.latest_translation is not None:
+                    latest_translation = project_locale.latest_translation
+
+        return latest_translation.latest_activity if latest_translation else None
 
 class Repository(models.Model):
     """
@@ -1081,7 +1089,10 @@ def get_chart_data(stats):
 
 def get_locales_with_stats():
     """Add chart data to locales."""
-    locales = Locale.objects.available()
+    locales = (
+        Locale.objects.available()
+        .select_related('latest_translation__user')
+    )
 
     for locale in locales:
         stats = Stats.objects.filter(
@@ -1097,7 +1108,20 @@ def get_locales_with_stats():
 
 def get_locales_with_project_stats(project):
     """Add chart data to locales for specified project."""
-    project_locales = project.locales.all()
+    project_locales = (
+        project.locales.all()
+        .prefetch_related(
+            Prefetch(
+                'project_locale',
+                queryset=(
+                    ProjectLocale.objects.filter(project=project)
+                    .select_related('latest_translation__user')
+                ),
+                to_attr='fetched_project_locales'
+            )
+        )
+        .order_by('name')
+    )
 
     for locale in project_locales:
         stats = Stats.objects.filter(
