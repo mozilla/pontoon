@@ -12,7 +12,7 @@ from pontoon.sync.core import (
     pull_changes,
     sync_project as perform_sync_project,
     serial_task,
-    update_project_stats,
+    update_translated_resources,
     update_translations,
 )
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
@@ -120,7 +120,7 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now,
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
 
-                update_project_stats(db_project, vcs_project, changeset, locale)
+                update_translated_resources(db_project, vcs_project, changeset, locale)
 
                 # Clear out the "has_changed" markers now that we've finished
                 # syncing.

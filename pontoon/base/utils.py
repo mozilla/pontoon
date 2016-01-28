@@ -450,8 +450,8 @@ def handle_upload_content(slug, code, part, f, user):
         Locale,
         Project,
         Resource,
+        TranslatedResource,
         Translation,
-        update_stats,
     )
 
     relative_path = _get_relative_path_from_part(slug, part)
@@ -503,7 +503,7 @@ def handle_upload_content(slug, code, part, f, user):
 
     changeset.bulk_create_translations()
     changeset.bulk_update_translations()
-    update_stats(resource, locale)
+    TranslatedResource.objects.get(resource=resource, locale=locale).calculate_stats()
 
     # Mark translations as changed
     changed_entities = {}

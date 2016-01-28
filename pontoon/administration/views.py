@@ -17,7 +17,6 @@ from pontoon.base.models import (
     Project,
     ProjectLocale,
     Resource,
-    get_projects_with_stats,
 )
 
 log = logging.getLogger('pontoon')
@@ -25,19 +24,19 @@ log = logging.getLogger('pontoon')
 
 def admin(request, template='admin.html'):
     """Admin interface."""
-    log.debug("Admin interface.")
-
     if not request.user.has_perm('base.can_manage'):
         return render(request, '403.html', status=403)
 
-    projects = Project.objects.all().order_by("name")
+    projects = (
+        Project.objects.all()
+        .select_related('latest_translation__user')
+        .order_by('name')
+    )
 
-    data = {
-        'projects': get_projects_with_stats(projects),
+    return render(request, 'admin.html', {
         'admin': True,
-    }
-
-    return render(request, template, data)
+        'projects': projects,
+    })
 
 
 def get_slug(request):

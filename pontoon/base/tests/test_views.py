@@ -15,7 +15,7 @@ from pontoon.base.tests import (
     ResourceFactory,
     TranslationFactory,
     TranslationMemoryFactory,
-    StatsFactory,
+    TranslatedResourceFactory,
     TestCase,
 )
 
@@ -65,8 +65,8 @@ class TranslateTests(TestCase):
         Project.objects.filter(id=1).delete()
         locale = LocaleFactory.create(code='fakelocale')
         project = ProjectFactory.create(id=1, slug='valid-project', locales=[locale])
-        resource = ResourceFactory.create(project=project, path='foo.lang', entity_count=1)
-        StatsFactory.create(resource=resource, locale=locale)
+        resource = ResourceFactory.create(project=project, path='foo.lang', total_strings=1)
+        TranslatedResourceFactory.create(resource=resource, locale=locale)
 
         response = self.client.get('/fakelocale/valid-project/foo.lang/')
         assert_equal(response.status_code, 200)
@@ -232,20 +232,66 @@ class LocaleProjectTests(ViewTestCase):
         project = ProjectFactory.create(locales=[locale], slug='test-project')
         resource = ResourceFactory.create(project=project, path='has/stats.po')
         translation = TranslationFactory.create(entity__resource=resource, locale=locale)
-        StatsFactory.create(resource=resource, locale=locale, latest_translation=translation)
+        TranslatedResourceFactory.create(resource=resource, locale=locale, latest_translation=translation)
 
         with patch.object(Locale, 'parts_stats') as mock_parts_stats, \
                 patch('pontoon.base.views.render') as mock_render:
             mock_parts_stats.return_value = [
-                {'resource__path': 'has/stats.po'},
-                {'resource__path': 'no/stats.po'}
+                {
+                    'resource__path': 'has/stats.po',
+                    'resource__total_strings': 1,
+                    'approved_strings': 0,
+                    'translated_strings': 1,
+                    'fuzzy_strings': 0,
+                },
+                {
+                    'resource__path': 'no/stats.po',
+                    'resource__total_strings': 1,
+                    'approved_strings': 0,
+                    'translated_strings': 0,
+                    'fuzzy_strings': 0,
+                }
             ]
 
             views.locale_project(self.factory.get('/'), locale='test', slug='test-project')
             ctx = mock_render.call_args[0][2]
             assert_equal(ctx['parts'], [
-                {'resource__path': 'has/stats.po', 'latest_activity': translation},
-                {'resource__path': 'no/stats.po', 'latest_activity': None}
+                {
+                    'latest_activity': translation,
+                    'resource__path': 'has/stats.po',
+                    'resource__total_strings': 1,
+                    'approved_strings': 0,
+                    'translated_strings': 1,
+                    'fuzzy_strings': 0,
+                    'chart': {
+                        'fuzzy_strings': 0,
+                        'total_strings': 1,
+                        'approved_strings': 0,
+                        'translated_strings': 1,
+                        'approved_share': 0.0,
+                        'translated_share': 100.0,
+                        'fuzzy_share': 0.0,
+                        'approved_percent': 0
+                    }
+                },
+                {
+                    'latest_activity': None,
+                    'resource__path': 'no/stats.po',
+                    'resource__total_strings': 1,
+                    'approved_strings': 0,
+                    'translated_strings': 0,
+                    'fuzzy_strings': 0,
+                    'chart': {
+                        'fuzzy_strings': 0,
+                        'total_strings': 1,
+                        'approved_strings': 0,
+                        'translated_strings': 0,
+                        'approved_share': 0.0,
+                        'translated_share': 0.0,
+                        'fuzzy_share': 0.0,
+                        'approved_percent': 0
+                    }
+                }
             ])
 
 

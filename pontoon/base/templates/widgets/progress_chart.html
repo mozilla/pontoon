@@ -1,0 +1,14 @@
+{% macro span(chart, link) %}
+{% if chart != None %}
+<span class="chart-wrapper">
+  <a href="{{ link }}" class="clearfix">
+    <span class="chart" data-chart="{{ chart|to_json }}">
+      <span class="approved" style="width:{{ chart.approved_share }}%;"></span>
+      <span class="translated" style="width:{{ chart.translated_share }}%;"></span>
+      <span class="fuzzy" style="width:{{ chart.fuzzy_share }}%;"></span>
+    </span>
+    <span class="percent">{{ chart.approved_percent }}%</span>
+  </a>
+</span>
+{% endif %}
+{% endmacro %}

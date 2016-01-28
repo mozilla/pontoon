@@ -1056,8 +1056,8 @@ var Pontoon = (function (my) {
 
         $(parts).each(function() {
           if (this.resource__path === path) {
-            this.approved_count = approved;
-            this.translated_count = translated;
+            this.approved_strings = approved;
+            this.translated_strings = translated;
           }
         });
       }
@@ -1490,8 +1490,8 @@ var Pontoon = (function (my) {
             cls = ' class="current"';
           }
 
-          if (this.resource__entity_count > 0) {
-            percent = Math.floor(this.approved_count / this.resource__entity_count * 100) + '%';
+          if (this.resource__total_strings > 0) {
+            percent = Math.floor(this.approved_strings / this.resource__total_strings * 100) + '%';
           }
 
           menu.append('<li' + cls + '><span>' + title + '</span>' +

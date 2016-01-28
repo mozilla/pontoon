@@ -1,3 +1,5 @@
+from __future__ import division
+
 import hashlib
 import logging
 import math
@@ -10,8 +12,6 @@ from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum, Prefetch, F, Q, Case, When
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -143,6 +143,22 @@ class UserProfile(models.Model):
     force_suggestions = models.BooleanField(default=False)
 
 
+class AggregatedStats(models.Model):
+    total_strings = models.PositiveIntegerField(default=0)
+    approved_strings = models.PositiveIntegerField(default=0)
+    translated_strings = models.PositiveIntegerField(default=0)
+    fuzzy_strings = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        abstract = True
+
+    def adjust_stats(self, approved_strings_diff, fuzzy_strings_diff, translated_strings_diff):
+        self.approved_strings = F('approved_strings') + approved_strings_diff
+        self.fuzzy_strings = F('fuzzy_strings') + fuzzy_strings_diff
+        self.translated_strings = F('translated_strings') + translated_strings_diff
+        self.save(update_fields=['approved_strings', 'fuzzy_strings', 'translated_strings'])
+
+
 def validate_cldr(value):
     for item in value.split(','):
         try:
@@ -159,10 +175,25 @@ class LocaleQuerySet(models.QuerySet):
         """
         Available locales have at least one stats defined.
         """
-        return self.filter(stats__isnull=False).distinct()
+        return self.filter(translatedresources__isnull=False).distinct()
+
+    def prefetch_latest_translation(self, project):
+        """
+        Prefetch latest translation data for given project.
+        """
+        return self.prefetch_related(
+            Prefetch(
+                'project_locale',
+                queryset=(
+                    ProjectLocale.objects.filter(project=project)
+                    .select_related('latest_translation__user')
+                ),
+                to_attr='fetched_latest_translation'
+            )
+        )
 
 
-class Locale(models.Model):
+class Locale(AggregatedStats):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
     plural_rule = models.CharField(max_length=128, blank=True)
@@ -200,6 +231,25 @@ class Locale(models.Model):
 
     objects = LocaleQuerySet.as_manager()
 
+    class Meta:
+        ordering = ['name', 'code']
+        permissions = (
+            ('can_translate_locale', 'Can add translations'),
+            ('can_manage_locale', 'Can manage locale')
+        )
+
+    def __unicode__(self):
+        return self.name
+
+    def serialize(self):
+        return {
+            'code': self.code,
+            'name': self.name,
+            'nplurals': self.nplurals,
+            'plural_rule': self.plural_rule,
+            'cldr_plurals': self.cldr_plurals_list(),
+        }
+
     def cldr_plurals_list(self):
         if self.cldr_plurals == '':
             return [1]
@@ -222,25 +272,6 @@ class Locale(models.Model):
     def nplurals(self):
         return len(self.cldr_plurals_list())
 
-    def __unicode__(self):
-        return self.name
-
-    def serialize(self):
-        return {
-            'code': self.code,
-            'name': self.name,
-            'nplurals': self.nplurals,
-            'plural_rule': self.plural_rule,
-            'cldr_plurals': self.cldr_plurals_list(),
-        }
-
-    class Meta:
-        ordering = ['name', 'code']
-        permissions = (
-            ('can_translate_locale', 'Can add translations'),
-            ('can_manage_locale', 'Can manage locale')
-        )
-
     def available_projects_list(self):
         """Get a list of available project slugs."""
         return list(
@@ -262,20 +293,30 @@ class Locale(models.Model):
     def get_latest_activity(self, project=None):
         return ProjectLocale.get_latest_activity(self, project)
 
+    def get_chart(self, project=None):
+        return ProjectLocale.get_chart(self, project)
+
+    def aggregate_stats(self):
+        TranslatedResource.objects.filter(
+            resource__project__disabled=False,
+            resource__entities__obsolete=False,
+            locale=self
+        ).distinct().aggregate_stats(self)
+
     def parts_stats(self, project):
         """Get locale-project pages/paths with stats."""
-        def get_details(stats):
-            return stats.order_by('resource__path').values(
+        def get_details(translatedresources):
+            return translatedresources.order_by('resource__path').values(
                 'url',
                 'resource__path',
-                'resource__entity_count',
-                'fuzzy_count',
-                'translated_count',
-                'approved_count',
+                'resource__total_strings',
+                'fuzzy_strings',
+                'translated_strings',
+                'approved_strings',
             )
 
         pages = project.subpage_set.all()
-        stats = Stats.objects.filter(
+        translatedresources = TranslatedResource.objects.filter(
             resource__project=project,
             resource__entities__obsolete=False,
             locale=self
@@ -283,9 +324,9 @@ class Locale(models.Model):
         details = []
 
         # If subpages aren't defined,
-        # return resource paths with corresponding resource stats
+        # return resource paths with corresponding stats
         if len(pages) == 0:
-            details = get_details(stats.annotate(url=F('resource__project__url')))
+            details = get_details(translatedresources.annotate(url=F('resource__project__url')))
 
         # If project has defined subpages, return their names with
         # corresponding project stats. If subpages have defined resources,
@@ -295,12 +336,12 @@ class Locale(models.Model):
             if pages[0].resources.exists():
                 details = get_details(
                     # List only subpages, whose resources are available for locale
-                    pages.filter(resources__stats__locale=self).annotate(
+                    pages.filter(resources__translatedresources__locale=self).annotate(
                         resource__path=F('name'),
-                        resource__entity_count=F('resources__entity_count'),
-                        fuzzy_count=F('resources__stats__fuzzy_count'),
-                        translated_count=F('resources__stats__translated_count'),
-                        approved_count=F('resources__stats__approved_count')
+                        resource__total_strings=F('resources__total_strings'),
+                        fuzzy_strings=F('resources__translatedresources__fuzzy_strings'),
+                        translated_strings=F('resources__translatedresources__translated_strings'),
+                        approved_strings=F('resources__translatedresources__approved_strings')
                     )
                 )
 
@@ -308,10 +349,10 @@ class Locale(models.Model):
                 details = get_details(
                     pages.annotate(
                         resource__path=F('name'),
-                        resource__entity_count=F('project__resources__entity_count'),
-                        fuzzy_count=F('project__resources__stats__fuzzy_count'),
-                        translated_count=F('project__resources__stats__translated_count'),
-                        approved_count=F('project__resources__stats__approved_count')
+                        resource__total_strings=F('project__resources__total_strings'),
+                        fuzzy_strings=F('project__resources__translatedresources__fuzzy_strings'),
+                        translated_strings=F('project__resources__translatedresources__translated_strings'),
+                        approved_strings=F('project__resources__translatedresources__approved_strings')
                     )
                 )
 
@@ -326,16 +367,26 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.filter(disabled=False, resources__isnull=False).distinct()
 
+    def prefetch_latest_translation(self, locale):
+        """
+        Prefetch latest translation data for given locale.
+        """
+        return self.prefetch_related(
+            Prefetch(
+                'project_locale',
+                queryset=(
+                    ProjectLocale.objects.filter(locale=locale)
+                    .select_related('latest_translation__user')
+                ),
+                to_attr='fetched_latest_translation'
+            )
+        )
 
-class Project(models.Model):
+
+class Project(AggregatedStats):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale, through='ProjectLocale')
-
-    transifex_project = models.CharField(
-        "Project", max_length=128, blank=True)
-    transifex_resource = models.CharField(
-        "Resource", max_length=128, blank=True)
 
     # Project info
     info_brief = models.TextField("Project info", blank=True)
@@ -346,9 +397,9 @@ class Project(models.Model):
         "Default website (iframe) width in pixels. If set, \
         sidebar will be opened by default.", null=True, blank=True)
     links = models.BooleanField(
-        "Keep links on the project website clickable")
+        'Keep links on the project website clickable', default=False)
 
-    # Disable project instead of deleting to keep translation memory & stats
+    # Disable project instead of deleting to keep translation memory & attributions
     disabled = models.BooleanField(default=False)
 
     # Whether this project has changed since the last sync.
@@ -369,6 +420,40 @@ class Project(models.Model):
         permissions = (
             ("can_manage", "Can manage projects"),
         )
+
+    def __unicode__(self):
+        return self.name
+
+    def serialize(self):
+        return {
+            'pk': self.pk,
+            'name': self.name,
+            'slug': self.slug,
+            'info': self.info_brief,
+            'url': self.url,
+            'width': self.width or '',
+            'links': self.links or '',
+        }
+
+    def save(self, *args, **kwargs):
+        """
+        When project disabled status changes, update denormalized stats
+        for all project locales.
+        """
+        disabled_changed = False
+        if self.pk is not None:
+            try:
+                original = Project.objects.get(pk=self.pk)
+                if self.disabled != original.disabled:
+                    disabled_changed = True
+            except Project.DoesNotExist:
+                pass
+
+        super(Project, self).save(*args, **kwargs)
+
+        if disabled_changed:
+            for locale in self.locales.all():
+                locale.aggregate_stats()
 
     @property
     def needs_sync(self):
@@ -431,22 +516,17 @@ class Project(models.Model):
     def get_latest_activity(self, locale=None):
         return ProjectLocale.get_latest_activity(self, locale)
 
-    def serialize(self):
-        return {
-            'pk': self.pk,
-            'name': self.name,
-            'slug': self.slug,
-            'info': self.info_brief,
-            'url': self.url,
-            'width': self.width or '',
-            'links': self.links or '',
-        }
+    def get_chart(self, locale=None):
+        return ProjectLocale.get_chart(self, locale)
 
-    def __unicode__(self):
-        return self.name
+    def aggregate_stats(self):
+        TranslatedResource.objects.filter(
+            resource__project=self,
+            resource__entities__obsolete=False
+        ).distinct().aggregate_stats(self)
 
 
-class ProjectLocale(models.Model):
+class ProjectLocale(AggregatedStats):
     """Link between a project and a locale that is active for it."""
     project = models.ForeignKey(Project, related_name='project_locale')
     locale = models.ForeignKey(Locale, related_name='project_locale')
@@ -495,6 +575,46 @@ class ProjectLocale(models.Model):
                     latest_translation = project_locale.latest_translation
 
         return latest_translation.latest_activity if latest_translation else None
+
+    @classmethod
+    def get_chart(cls, self, extra=None):
+        """
+        Get chart for project, locale or combination of both.
+
+        :param self: object to get data for,
+            instance of Projet or Locale
+        :param extra: extra filter to be used,
+            instance of Projet or Locale
+        """
+        chart = None
+
+        if extra is None:
+            chart = cls.get_chart_dict(self)
+
+        else:
+            project = self if isinstance(self, Project) else extra
+            locale = self if isinstance(self, Locale) else extra
+            project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
+
+            if project_locale is not None:
+                chart = cls.get_chart_dict(project_locale)
+
+        return chart
+
+    @classmethod
+    def get_chart_dict(cls, obj):
+        """Get chart data dictionary"""
+        return {
+            'total_strings': obj.total_strings,
+            'approved_strings': obj.approved_strings,
+            'translated_strings': obj.translated_strings,
+            'fuzzy_strings': obj.fuzzy_strings,
+            'approved_share': round(obj.approved_strings / obj.total_strings * 100, 2),
+            'translated_share': round(obj.translated_strings / obj.total_strings * 100, 2),
+            'fuzzy_share': round(obj.fuzzy_strings / obj.total_strings * 100, 2),
+            'approved_percent': int(math.floor(obj.approved_strings / obj.total_strings * 100)),
+        }
+
 
 class Repository(models.Model):
     """
@@ -671,7 +791,7 @@ class Repository(models.Model):
 class Resource(models.Model):
     project = models.ForeignKey(Project, related_name='resources')
     path = models.TextField()  # Path to localization file
-    entity_count = models.PositiveIntegerField(default=0)
+    total_strings = models.PositiveIntegerField(default=0)
 
     # Format
     FORMAT_CHOICES = (
@@ -813,7 +933,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         """Get project entities with locale translations."""
         entities = self.objects.filter(
             resource__project=project,
-            resource__stats__locale=locale,
+            resource__translatedresources__locale=locale,
             obsolete=False
         )
 
@@ -965,7 +1085,8 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         if not imported:
             # Update stats AFTER changing approval status.
-            stats = update_stats(self.entity.resource, self.locale)
+            translatedresource, _ = TranslatedResource.objects.get_or_create(resource=self.entity.resource, locale=self.locale)
+            translatedresource.calculate_stats()
 
             # Whenever a translation changes, mark the entity as having
             # changed in the appropriate locale. We could be smarter about
@@ -976,7 +1097,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             # Check and update the latest translation where necessary.
             self.check_latest_translation(self.entity.resource.project)
             self.check_latest_translation(self.locale)
-            self.check_latest_translation(stats)
+            self.check_latest_translation(translatedresource)
 
             project_locale = utils.get_object_or_none(
                 ProjectLocale,
@@ -1000,7 +1121,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def delete(self, stats=True, *args, **kwargs):
         super(Translation, self).delete(*args, **kwargs)
         if stats:
-            update_stats(self.entity.resource, self.locale)
+            TranslatedResource.objects.get(resource=self.entity.resource, locale=self.locale).calculate_stats()
 
         # Mark entity as changed before deleting. This is skipped during
         # bulk delete operations, but we shouldn't be bulk-deleting
@@ -1053,17 +1174,31 @@ class TranslationMemoryEntry(models.Model):
     objects = TranslationMemoryEntryManager()
 
 
-class Stats(models.Model):
-    """
-    Statistics related to a translated resource in a specific locale.
-    """
-    resource = models.ForeignKey(Resource)
-    locale = models.ForeignKey(Locale)
-    translated_count = models.PositiveIntegerField(default=0)
-    approved_count = models.PositiveIntegerField(default=0)
-    fuzzy_count = models.PositiveIntegerField(default=0)
+class TranslatedResourceQuerySet(models.QuerySet):
+    def aggregate_stats(self, instance):
+        aggregated_stats = self.aggregate(
+            total=Sum('resource__total_strings'),
+            approved=Sum('approved_strings'),
+            translated=Sum('translated_strings'),
+            fuzzy=Sum('fuzzy_strings')
+        )
 
-    #: Most recent translation approved or created for the translated
+        instance.total_strings = aggregated_stats['total'] or 0
+        instance.approved_strings = aggregated_stats['approved'] or 0
+        instance.translated_strings = aggregated_stats['translated'] or 0
+        instance.fuzzy_strings = aggregated_stats['fuzzy'] or 0
+
+        instance.save()
+
+
+class TranslatedResource(AggregatedStats):
+    """
+    Resource representation for a specific locale.
+    """
+    resource = models.ForeignKey(Resource, related_name='translatedresources')
+    locale = models.ForeignKey(Locale, related_name='translatedresources')
+
+    #: Most recent translation approved or created for this translated
     #: resource.
     latest_translation = models.ForeignKey(
         'Translation',
@@ -1073,255 +1208,61 @@ class Stats(models.Model):
         on_delete=models.SET_NULL
     )
 
+    objects = TranslatedResourceQuerySet.as_manager()
+
     def __unicode__(self):
-        translated = float(self.translated_count + self.approved_count)
+        translated = float(self.translated_strings + self.approved_strings)
         percent = 0
-        if self.resource.entity_count > 0:
-            percent = translated * 100 / self.resource.entity_count
+        if self.resource.total_strings > 0:
+            percent = translated * 100 / self.resource.total_strings
         return str(int(round(percent)))
 
+    def calculate_stats(self):
+        """Update stats, including denormalized ones."""
+        resource = self.resource
+        locale = self.locale
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
+        entity_ids = Translation.objects.filter(locale=locale).values('entity')
+        translated_entities = Entity.objects.filter(
+            pk__in=entity_ids, resource=resource, obsolete=False)
 
+        # Singular
+        translations = Translation.objects.filter(
+            entity__in=translated_entities.filter(string_plural=''), locale=locale)
+        approved = translations.filter(approved=True).count()
+        fuzzy = translations.filter(fuzzy=True).count()
 
-def get_chart_data(stats):
-    """Get chart data for stats."""
+        # Plural
+        nplurals = locale.nplurals or 1
+        for e in translated_entities.exclude(string_plural=''):
+            translations = Translation.objects.filter(entity=e, locale=locale)
+            if translations.filter(approved=True).count() == nplurals:
+                approved += 1
+            elif translations.filter(fuzzy=True).count() == nplurals:
+                fuzzy += 1
 
-    return stats.aggregate(
-        total=Sum('resource__entity_count'),
-        approved=Sum('approved_count'),
-        translated=Sum('translated_count'),
-        fuzzy=Sum('fuzzy_count')
-    )
+        translated = max(translated_entities.count() - approved - fuzzy, 0)
 
+        # Calculate diffs to reduce DB queries
+        approved_strings_diff = approved - self.approved_strings
+        fuzzy_strings_diff = fuzzy - self.fuzzy_strings
+        translated_strings_diff = translated - self.translated_strings
 
-def get_locales_with_stats():
-    """Add chart data to locales."""
-    locales = (
-        Locale.objects.available()
-        .select_related('latest_translation__user')
-    )
+        # Translated Resource
+        self.adjust_stats(approved_strings_diff, fuzzy_strings_diff, translated_strings_diff)
 
-    for locale in locales:
-        stats = Stats.objects.filter(
-            resource__project__disabled=False,
-            resource__entities__obsolete=False,
+        # Project
+        project = resource.project
+        project.adjust_stats(approved_strings_diff, fuzzy_strings_diff, translated_strings_diff)
+
+        # Locale
+        locale.adjust_stats(approved_strings_diff, fuzzy_strings_diff, translated_strings_diff)
+
+        # ProjectLocale
+        project_locale = utils.get_object_or_none(
+            ProjectLocale,
+            project=project,
             locale=locale
-        ).distinct()
-
-        locale.chart = get_chart_data(stats)
-
-    return locales
-
-
-def get_locales_with_project_stats(project):
-    """Add chart data to locales for specified project."""
-    project_locales = (
-        project.locales.all()
-        .prefetch_related(
-            Prefetch(
-                'project_locale',
-                queryset=(
-                    ProjectLocale.objects.filter(project=project)
-                    .select_related('latest_translation__user')
-                ),
-                to_attr='fetched_project_locales'
-            )
         )
-        .order_by('name')
-    )
-
-    for locale in project_locales:
-        stats = Stats.objects.filter(
-            resource__project=project,
-            resource__entities__obsolete=False,
-            locale=locale,
-        ).distinct()
-
-        locale.chart = get_chart_data(stats)
-
-    return project_locales
-
-
-def get_projects_with_stats(projects, locale=None):
-    """Add chart data to projects (for specified locale)."""
-    for project in projects:
-        if not locale or locale in project.locales.all():
-            stats = Stats.objects.filter(
-                resource__project=project,
-                resource__entities__obsolete=False,
-                locale__in=project.locales.all(),
-            ).distinct()
-
-            if locale:
-                stats = stats.filter(locale=locale)
-
-            project.chart = get_chart_data(stats)
-
-    return projects
-
-
-def get_translation(entity, locale, plural_form=None, fuzzy=None):
-    """Get translation of a given entity to a given locale in a given form."""
-
-    translations = Translation.objects.filter(
-        entity=entity, locale=locale, plural_form=plural_form)
-
-    if fuzzy is not None:
-        translations = translations.filter(fuzzy=fuzzy)
-
-    if translations.exists():
-        try:
-            return translations.filter(approved=True).latest("date")
-        except Translation.DoesNotExist:
-            return translations.latest("date")
-    else:
-        return Translation()
-
-
-def save_entity(resource, string, string_plural="", comment="",
-                order=0, key="", source=None):
-    """Add new or update existing entity."""
-    source = source or []
-
-    # Update existing entity
-    try:
-        if key is "":
-            e = Entity.objects.get(
-                resource=resource, string=string, string_plural=string_plural)
-
-        else:
-            e = Entity.objects.get(resource=resource, key=key)
-            e.string = string
-            e.string_plural = string_plural
-
-        e.source = source
-
-        # Set obsolete attribute for all updated entities to False
-        e.obsolete = False
-
-    # Add new entity
-    except Entity.DoesNotExist:
-        e = Entity(resource=resource, string=string,
-                   string_plural=string_plural, key=key, source=source)
-
-    if len(comment) > 0:
-        e.comment = comment
-
-    e.order = order
-    e.save()
-
-
-def save_translation(entity, locale, string, plural_form=None, fuzzy=False):
-    """Add new or update existing translation."""
-
-    approved = not fuzzy
-    now = timezone.now()
-    translations = Translation.objects.filter(
-        entity=entity, locale=locale, plural_form=plural_form)
-    translations_equal = translations.filter(string=string)
-    translations_equal_count = translations_equal.count()
-
-    # Add new translation if it doesn's exist yet
-    if translations_equal_count == 0:
-        unapprove(translations)
-        unfuzzy(translations)
-        t = Translation(
-            entity=entity, locale=locale, plural_form=plural_form,
-            string=string, date=now,
-            approved=approved, fuzzy=fuzzy)
-        if approved:
-            t.approved_date = now
-        t.save(imported=True)
-
-    # Update existing translations
-    elif translations_equal_count > 0:
-        t = translations_equal[0]
-        if translations_equal_count > 1:
-            try:
-                t = translations_equal.filter(approved=True).latest("date")
-                t.approved_date = now
-            except Translation.DoesNotExist:
-                t = translations_equal.latest("date")
-
-        # If fuzzy status changes
-        if t.fuzzy != fuzzy:
-            # Only if fuzzy flag removed
-            if not fuzzy:
-                unapprove(translations)
-
-            unfuzzy(translations)
-
-            if fuzzy and get_translation(
-                    entity=entity, locale=locale,
-                    plural_form=plural_form) == t:
-                t.fuzzy = fuzzy
-
-            t.date = now
-            t.approved = approved
-            t.save(imported=True)
-
-
-def unapprove(translations):
-    """Set approved attribute for given translations to False."""
-
-    translations.update(approved=False, approved_user=None, approved_date=None)
-
-
-def unfuzzy(translations):
-    """Set fuzzy attribute for given translations to False."""
-
-    translations.update(fuzzy=False)
-
-
-def update_entity_count(resource):
-    """Save number of non-obsolete entities for a given resource."""
-
-    count = Entity.objects.filter(resource=resource, obsolete=False).count()
-    resource.entity_count = count
-    resource.save()
-
-    # Asymmetric formats:
-    # Make sure Stats object exists, so resources are listed in the menu
-    if resource.format in ('dtd', 'properties'):
-        for locale in resource.project.locales.all():
-            stats, created = Stats.objects.get_or_create(
-                resource=resource, locale=locale)
-
-            # Existing stats were set to 0 beforehand and need to be restored
-            if not created:
-                update_stats(resource, locale)
-
-
-def update_stats(resource, locale):
-    """Save stats for given resource and locale."""
-
-    stats, c = Stats.objects.get_or_create(resource=resource, locale=locale)
-    entity_ids = Translation.objects.filter(locale=locale).values('entity')
-    translated_entities = Entity.objects.filter(
-        pk__in=entity_ids, resource=resource, obsolete=False)
-
-    # Singular
-    translations = Translation.objects.filter(
-        entity__in=translated_entities.filter(string_plural=''), locale=locale)
-    approved = translations.filter(approved=True).count()
-    fuzzy = translations.filter(fuzzy=True).count()
-
-    # Plural
-    nplurals = locale.nplurals or 1
-    for e in translated_entities.exclude(string_plural=''):
-        translations = Translation.objects.filter(entity=e, locale=locale)
-        if translations.filter(approved=True).count() == nplurals:
-            approved += 1
-        elif translations.filter(fuzzy=True).count() == nplurals:
-            fuzzy += 1
-
-    stats.approved_count = approved
-    stats.fuzzy_count = fuzzy
-    stats.translated_count = max(translated_entities.count() - approved - fuzzy, 0)
-    stats.save()
-
-    return stats
+        if project_locale:
+            project_locale.adjust_stats(approved_strings_diff, fuzzy_strings_diff, translated_strings_diff)
