@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import RedirectView, TemplateView
-
+from django.contrib.auth.forms import SetPasswordForm
 
 urlpatterns = patterns('',
     # Legacy: Locale redirect for compatibility with i18n ready URL scheme
@@ -13,6 +13,10 @@ urlpatterns = patterns('',
 
     # Admin
     (r'^admin/', include('pontoon.administration.urls')),
+    (r'^accounts/', include('django.contrib.auth.urls')),
+    url(r'accounts/password_change', 'django.contrib.auth.views.password_change', {
+        'password_change_form': SetPasswordForm,
+    }, name='password_change'),
 
     # Sites
     (r'^sites/', include('pontoon.sites.urls')),
