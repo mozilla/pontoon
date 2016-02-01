@@ -46,29 +46,11 @@ Installation
       re-activate the virtualenv. Read the virtualenv_ documentation to learn
       more about how virtualenv works.
 
-3. Install the dependencies using peep_, a wrapper around pip that is
-   included with Pontoon:
+3. Install the dependencies using the latest version of pip_:
 
    .. code-block:: bash
 
-      ./bin/peep.py install -r requirements.txt
-
-   .. note::
-
-     For Mac OS X users, You may encounter a value error while running the above command.
-     The installation process would terminate flagging an error as follows.
-
-     .. code-block:: bash
-
-       raise ValueError, 'unknown locale: %s' % localename
-       ValueError: unknown locale: UTF-8
-
-     To fix this existing python issue_, Add the following lines to your `.bash_profile` or equivalent.
-
-     .. code-block:: bash
-
-        export LC_ALL=en_US.UTF-8
-        export LANG=en_US.UTF-8
+      pip install --require-hashes -r requirements.txt
 
 4. Create a ``.env`` file at the root of the repository to configure the
    settings for your development instance. It should look something like this:
@@ -134,7 +116,7 @@ running:
 
 The site should be available at http://localhost:8000.
 
-.. _peep: https://github.com/erikrose/peep/
+.. _pip: https://pip.pypa.io/en/stable/
 .. _fork: http://help.github.com/fork-a-repo/
 .. _issue: https://bugs.python.org/issue18378
 
