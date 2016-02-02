@@ -53,8 +53,8 @@ dj-database-url==0.3.0 \
 django-dotenv==1.3.0 \
     --hash=sha256:dfe5b8c2be5ab3435b3d71e5a1c66bb14da8104da44ef0dd8ccc3e8a927616d9 \
     --hash=sha256:120c4621d1e4f5adabe0a683463d1be7a5a6b992edd4764d323c627d229251e0
-django==1.8.7 \
-    --hash=sha256:8fb693ecfe4cd6ff9ae3136ff0a1eaa4acae01af227bb81e646dc2bad3295ccf
+django==1.9.2 \
+    --hash=sha256:cc2ee91769af012654ae4904b6704f2fa0cc6b283675869c2f2ed879eaba11e8
 django-jinja==1.3.3 \
     --hash=sha256:df0d5c2deabc33375f288c7ab5462e06c6ecd824ecfa27bfa8bcd5e4ccfb372a
 django-pipeline==1.5.3 \
@@ -70,8 +70,8 @@ whitenoise==1.0.6 \
     --hash=sha256:dac9419db3ece27bb53c7433243fc22ed42cf68de9d6c4129390e1d9aefe6310
 newrelic==2.50.0.39 \
     --hash=sha256:fddd47a8d048e0c5f42eee511a8aaf35891c996d6c959553c7bec8b3ac74b3cb
-django-browserid==1.0.0 \
-    --hash=sha256:e7a3314ed46dd24393918670b7a1156e4baf383189f644b3e6121ba1cbfbc2f9
+django-browserid==2.0.0 \
+    --hash=sha256:5ef995f50de09c5a5ae3a6531a21d2c66549310e6ef94ec174bbc7bbad49e880
 factory-boy==2.5.2 \
     --hash=sha256:102c8141511443df01d354610d3b268924100654316709b43ac04648b50bf703 \
     --hash=sha256:cd8306e64c3a115deca136685e945db88ffe171382012ec938ed241a20dd7eba
@@ -79,9 +79,9 @@ nose==1.3.6 \
     --hash=sha256:4772ab5189229392d16c70ba7b8bb66b5d3c18076694c55347afb98c950b283c \
     --hash=sha256:e19b4f8a495681c367ab56c3c04f8bef30ddd7907ddfd9bee663a3f3286762b6 \
     --hash=sha256:f61e0909a743eed37b1207e38a8e7b4a2fe0a82185e36f2be252ef1b3f901758
-django-nose==1.4 \
-    --hash=sha256:26cef3c6f62df2eee955a25195de6f793881317c0f5fd1a1c6f9e22f351a9313 \
-    --hash=sha256:ed90a6ed8825a516c653fc9099c053be335b64fa004a903a181b7e01488ec5d4
+django-nose==1.4.3 \
+    --hash=sha256:19b8daf4cd5e66603dc58018f0384117097de18714775338cdb76a94d48d8966 \
+    --hash=sha256:92f7433367011746cc3cbd3d5e67dcc11066c8b8567b9a514948eeea11fa5843
 blessings==1.6 \
     --hash=sha256:edc5713061f10966048bf6b40d9a514b381e0ba849c64e034c4ef6c1847d3007
 nose-progressive==1.5.1 \
@@ -131,8 +131,8 @@ anyjson==0.3.3 \
     --hash=sha256:37812d863c9ad3e35c0734c42e0bf0320ce8c3bed82cd20ad54cb34d158157ba
 pylama==6.4.0 \
     --hash=sha256:f10e344cebf91903ca20adb491760db74d6c43b6f01c57e577d2f91dabc00aa8
-django-guardian==1.3 \
-    --hash=sha256:c98ef3102532180c6d0eb9e8d69774bbded8d90b671988ee455d56fe1f711a8b
+django-guardian==1.4.1 \
+    --hash=sha256:6ebe2421513079218cff383eafd81ab020864a5d6dbb64a7e628d172c4c852b3
 futures==3.0.4 \
     --hash=sha256:4e860d18d866ff6c5f2804ebcbb16415f4f29cf57efea919178b809cf99326b6 \
     --hash=sha256:19485d83f7bd2151c0aeaf88fbba3ee50dadfb222ffc3b66a344ef4952b782a3

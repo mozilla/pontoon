@@ -50,7 +50,7 @@ class ProjectTests(TestCase):
         can_commit should be False if there are no repo that can be
         committed to.
         """
-        repo = RepositoryFactory.build(type=Repository.FILE)
+        repo = RepositoryFactory.create(type=Repository.FILE)
         project = ProjectFactory.create(repositories=[repo])
         assert_false(project.can_commit)
 
@@ -59,7 +59,7 @@ class ProjectTests(TestCase):
         can_commit should be True if there is a repo that can be
         committed to.
         """
-        repo = RepositoryFactory.build(type=Repository.GIT)
+        repo = RepositoryFactory.create(type=Repository.GIT)
         project = ProjectFactory.create(repositories=[repo])
         assert_true(project.can_commit)
 
@@ -95,7 +95,7 @@ class ProjectTests(TestCase):
         Return the first repo found with a checkout path that contains
         the given path.
         """
-        repo1, repo2, repo3 = RepositoryFactory.build_batch(3)
+        repo1, repo2, repo3 = RepositoryFactory.create_batch(3)
         project = ProjectFactory.create(repositories=[repo1, repo2, repo3])
         path = os.path.join(repo2.checkout_path, 'foo', 'bar')
         assert_equal(project.repository_for_path(path), repo2)

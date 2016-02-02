@@ -1,7 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 import views
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Sites pages
     url(r'^tiles/$', views.sites_snippet_page,
         kwargs=dict(template="tiles.html",
@@ -18,4 +18,4 @@ urlpatterns = patterns('',
                     repository_url="https://svn.mozilla.org/projects/l10n-misc/trunk/firefoxupdater/en-US/",
                     default_filename="updater.lang"),
         name='sites-updater'),
-)
+]

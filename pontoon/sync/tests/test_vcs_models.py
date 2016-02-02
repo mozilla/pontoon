@@ -149,7 +149,7 @@ class VCSProjectTests(TestCase):
         """
         url = 'https://moz.example.com'
         self.project.repositories.all().delete()
-        self.project.repositories.add(RepositoryFactory.build(url=url))
+        self.project.repositories.add(RepositoryFactory.create(url=url))
 
         with patch('pontoon.sync.vcs.models.os', wraps=os) as mock_os, \
              patch('pontoon.sync.vcs.models.MOZILLA_REPOS', [url]):

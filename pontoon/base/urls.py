@@ -1,11 +1,9 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.views.generic import RedirectView, TemplateView
 
 import views
 
-urlpatterns = patterns(
-    '',
-
+urlpatterns = [
     # Home
     url(r'^$', views.home, name='pontoon.home'),
 
@@ -158,4 +156,4 @@ urlpatterns = patterns(
         views.locale,
         name='pontoon.locale'),
 
-)
+]

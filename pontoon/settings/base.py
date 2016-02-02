@@ -127,9 +127,9 @@ MIDDLEWARE_CLASSES = (
 
 CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.media',
-    'django.core.context_processors.request',
+    'django.template.context_processors.debug',
+    'django.template.context_processors.media',
+    'django.template.context_processors.request',
     'session_csrf.context_processor',
     'django.contrib.messages.context_processors.messages',
     'pontoon.base.context_processors.globals',

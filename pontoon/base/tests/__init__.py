@@ -95,8 +95,7 @@ class ProjectFactory(DjangoModelFactory):
             for repository in extracted:
                 self.repositories.add(repository)
         else:  # Default to a single valid repo.
-            self.repositories.add(RepositoryFactory.build())
-
+            self.repositories.add(RepositoryFactory.build(), bulk=False)
 
 class ProjectLocaleFactory(DjangoModelFactory):
     class Meta:
