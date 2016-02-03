@@ -5,7 +5,8 @@ python:
 before_install:
   - git submodule update --init --recursive
 install:
-  - pip install -r requirements.txt
+  - pip install -U --force pip
+  - pip install --require-hashes -r requirements.txt
 before_script:
   - psql -c 'create database pontoon;' -U postgres
 script:

@@ -28,7 +28,7 @@ steps, as they don't affect your setup if nothing has changed:
    git pull origin master
 
    # Install new dependencies or update existing ones.
-   ./bin/peep.py install -r requirements.txt
+   pip install -U --force --require-hashes -r requirements.txt
 
    # Run database migrations.
    python manage.py migrate
