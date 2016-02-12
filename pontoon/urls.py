@@ -1,36 +1,38 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth.views import logout
 from django.views.generic import RedirectView, TemplateView
 
+from pontoon.intro.views import intro
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Legacy: Locale redirect for compatibility with i18n ready URL scheme
-    (r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s", permanent=True)),
+    url(r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s", permanent=True)),
 
     # Redirect similar locales
-    (r'^ga/(?P<url>.*)$', RedirectView.as_view(url="/ga-IE/%(url)s", permanent=True)),
-    (r'^pt/(?P<url>.*)$', RedirectView.as_view(url="/pt-PT/%(url)s", permanent=True)),
+    url(r'^ga/(?P<url>.*)$', RedirectView.as_view(url="/ga-IE/%(url)s", permanent=True)),
+    url(r'^pt/(?P<url>.*)$', RedirectView.as_view(url="/pt-PT/%(url)s", permanent=True)),
 
     # Admin
-    (r'^admin/', include('pontoon.administration.urls')),
+    url(r'^admin/', include('pontoon.administration.urls')),
 
     # Sites
-    (r'^sites/', include('pontoon.sites.urls')),
+    url(r'^sites/', include('pontoon.sites.urls')),
 
     # Django admin
-    (r'^a/', include(admin.site.urls)),
+    url(r'^a/', include(admin.site.urls)),
 
     # Sync views
-    (r'', include('pontoon.sync.urls')),
+    url(r'', include('pontoon.sync.urls')),
 
     # Test project: Pontoon Intro
-    url(r'^intro/$', 'pontoon.intro.views.intro'),
-
+    url(r'^intro/$', intro),
     # BrowserID
-    (r'', include('django_browserid.urls')),
+
+    url(r'', include('django_browserid.urls')),
 
     # Logout
-    url(r'^signout/$', 'django.contrib.auth.views.logout', {'next_page': '/'},
+    url(r'^signout/$', logout, {'next_page': '/'},
         name='signout'),
 
     # Error pages
@@ -53,5 +55,5 @@ urlpatterns = patterns('',
         RedirectView.as_view(url='/static/js/pontoon.js', permanent=True)),
 
     # Main app: Must be at the end
-    (r'', include('pontoon.base.urls')),
-)
+    url(r'', include('pontoon.base.urls')),
+]

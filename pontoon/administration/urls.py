@@ -1,11 +1,9 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 import views
 
 
-urlpatterns = patterns(
-    '',
-
+urlpatterns = [
     # Admin Home
     url(r'^$', views.admin,
         name='pontoon.admin'),
@@ -21,4 +19,4 @@ urlpatterns = patterns(
     # Get slug
     url(r'^get-slug/$', views.get_slug,
         name='pontoon.admin.get_slug'),
-)
+]
