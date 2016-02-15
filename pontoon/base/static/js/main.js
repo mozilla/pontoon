@@ -127,7 +127,7 @@ var Pontoon = (function (my) {
             '<span class="stress">' + (data.quality || '') +
               (data.count ? ' &bull; <span>#</span>' + data.count : '') +
             '</span>' +
-            '<a href="' + data.url + '" target="_blank"' +
+            '<a class="translation-source" href="' + data.url + '" target="_blank"' +
               'title="' + data.title + '">' + data.source + '</a>' +
           '</header>' +
           '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
@@ -137,11 +137,26 @@ var Pontoon = (function (my) {
         '</li>');
 
         // Sort by quality
-        var listitems = ul.children("li");
+        var listitems = ul.children("li"),
+            sourceMap = {
+              'Translation memory': 1,
+              'Mozilla': 2,
+              'Open Source': 3,
+              'Microsoft': 4,
+              'Machine Translation': 5
+            };
+
+        function getTranslationSource(el) {
+          var source = $(el).find('.translation-source').text();
+          return sourceMap[source];
+        }
+
         listitems.sort(function(a, b) {
           var valA = parseInt($(a).find('.stress').html().split('%')[0]) || 0,
-              valB = parseInt($(b).find('.stress').html().split('%')[0]) || 0;
-          return (valA < valB) ? 1 : (valA > valB) ? -1 : 0;
+              valB = parseInt($(b).find('.stress').html().split('%')[0]) || 0,
+              sourceA = getTranslationSource(a),
+              sourceB = getTranslationSource(b);
+          return (valA < valB) ? 1 : (valA > valB) ? -1 : (sourceA > sourceB) ? 1 : (sourceA < sourceB) ? -1 : 0;
         });
         ul.append(listitems);
 
