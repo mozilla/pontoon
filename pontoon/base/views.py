@@ -844,21 +844,24 @@ def amagama(request):
         text = request.GET['text']
         locale = request.GET['locale']
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     try:
         text = urllib.quote(text.encode('utf-8'))
     except KeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    url = "http://amagama.locamotion.org/tmserver" \
-          "/en/%s/unit/%s?max_candidates=%s" \
-          % (locale, text, 5)
+    url = (
+        u'http://amagama.locamotion.org/tmserver/en/{locale}/unit/{text}/'
+        .format(locale=locale, text=text)
+    )
+
+    payload = {
+        'max_candidates': 5,
+    }
 
     try:
-        r = requests.get(url)
+        r = requests.get(url, params=payload)
 
         if r.text != '[]':
             translations = r.json()
@@ -866,13 +869,11 @@ def amagama(request):
             return JsonResponse({
                 'translations': translations
             })
-
         else:
-            return HttpResponse("no")
+            return HttpResponse('no')
 
     except Exception as e:
-        log.error(e)
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 
 def transvision(request):
@@ -881,8 +882,12 @@ def transvision(request):
         text = request.GET['text']
         locale = request.GET['locale']
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    try:
+        text = urllib.quote(text.encode('utf-8'))
+    except KeyError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     url = (
         u'https://transvision.mozfr.org/api/v1/tm/global/en-US/{locale}/{text}/'
@@ -896,14 +901,14 @@ def transvision(request):
 
     try:
         r = requests.get(url, params=payload)
+
         if r.text != '[]':
             return JsonResponse(r.json(), safe=False)
         else:
-            return HttpResponse("no")
+            return HttpResponse('no')
 
     except Exception as e:
-        log.error(e)
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 
 @require_POST
