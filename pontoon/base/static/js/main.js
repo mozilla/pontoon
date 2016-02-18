@@ -343,7 +343,7 @@ var Pontoon = (function (my) {
         }
 
       }).success(function(data) {
-        if (data && data !== 'error' && data !== 'no') {
+        if (data && data !== 'no') {
           $.each(data, function() {
             append({
               original: this.source,
