@@ -109,9 +109,8 @@ jsonfield==1.0.3 \
     --hash=sha256:7e7f73a675c518712badd783279e26d164140f3fc2ed7a32102c3d08a6a2a4a7
 pylibmc==1.5.0 \
     --hash=sha256:16255595616a6d78cd786a55cc6431da5b7accf46512df854712a0cdbb3acfaa
-django-pylibmc==0.6.0 \
-    --hash=sha256:559c424728e40420da8c998b13c3c4f0861b475269a0a876fb1718fff276d106 \
-    --hash=sha256:62137d53b5aca2fba424744ba1bb30e92a115d9a8681cbe6a6411db241b1d1ad
+django-pylibmc==0.6.1 \
+    --hash=sha256:9cffdee703aaf9ebc029d9dbdee8abdd0723564b95e4b2ac59e4a668b8e58f93
 django-dirtyfields==0.7 \
     --hash=sha256:53fe6cc4abc05da8f0f032202d5a10dbdf2ade4d42bc70f56557b292bf327289
 py-dateutil==2.2 \
