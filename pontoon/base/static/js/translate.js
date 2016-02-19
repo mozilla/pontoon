@@ -1407,12 +1407,13 @@ var Pontoon = (function (my) {
       // Locale menu handler
       $('.locale .menu li:not(".no-match")').click(function () {
         var menuItem = $(this),
-            locale = menuItem.find('.code').html(),
+            locale = menuItem.find('.language').data('code'),
             language = menuItem.find('.language').html();
 
         $('.locale .selector')
           .find('.language')
-            .removeAttr('class').addClass('language ' + locale).html(language)
+            .html(language)
+            .data('code', locale)
           .end()
           .find('.code').html(locale);
 
@@ -2037,7 +2038,7 @@ var Pontoon = (function (my) {
      * Get currently selected locale code
      */
     getSelectedLocale: function() {
-      return $.trim($('.locale .selector .code').html());
+      return $('.locale .selector .language').data('code');
     },
 
 
@@ -2152,7 +2153,7 @@ $(function() {
     if (e.state) {
       // Update main menu
       $('.project .menu li [data-slug="' + e.state.project + '"]').parent().click();
-      $('.locale .menu li .language.' + e.state.locale.toLowerCase()).parent().click();
+      $('.locale .menu li .language[data-code=' + e.state.locale + '"]').parent().click();
       if (e.state.paths) {
         // Also update part, otherwise the first one gets selected
         Pontoon.updatePartSelector(e.state.paths);
