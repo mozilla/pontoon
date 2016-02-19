@@ -21,7 +21,7 @@ from pontoon.base.models import (
     ProjectLocale,
     Repository,
     Resource,
-    Stats,
+    TranslatedResource,
     Subpage,
     Translation,
     TranslationMemoryEntry
@@ -115,7 +115,7 @@ class ResourceFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
     path = '/fake/path.po'
     format = 'po'
-    entity_count = 1
+    total_strings = 1
 
     class Meta:
         model = Resource
@@ -169,12 +169,12 @@ class TranslationMemoryFactory(DjangoModelFactory):
         model = TranslationMemoryEntry
 
 
-class StatsFactory(DjangoModelFactory):
+class TranslatedResourceFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
     locale = SubFactory(LocaleFactory)
 
     class Meta:
-        model = Stats
+        model = TranslatedResource
 
 
 class SubpageFactory(DjangoModelFactory):

@@ -1,4 +1,5 @@
-{% import 'latest_activity.html' as latest_activity %}
+{% import 'widgets/latest_activity.html' as LatestActivity %}
+{% import 'widgets/progress_chart.html' as ProgressChart %}
 {% set search = request.GET.urlencode() %}
 
 <!-- Part selector -->
@@ -35,26 +36,18 @@
       <ul>
         {% if not part %}
         {% for p in parts %}
-        <li class="clearfix">
-          <span class="name">
-            <a href="{{ url('pontoon.translate', locale.code, project.slug, p['resource__path']) }}" class="clearfix">
-              {{ p['resource__path'] }}
-            </a>
-          </span>
+          {% set link = url('pontoon.translate', locale.code, project.slug, p.resource__path) %}
+          <li class="clearfix">
+            <span class="name">
+              <a href="{{ link }}" class="clearfix">
+                {{ p.resource__path }}
+              </a>
+            </span>
 
-          {{ latest_activity.span(p['latest_activity']) }}
+            {{ LatestActivity.span(p.latest_activity) }}
 
-          <span class="chart-wrapper">
-            <a href="{{ url('pontoon.translate', locale.code, project.slug, p['resource__path']) }}" class="clearfix">
-              <span class="chart" data-chart="{{ {'translated': p['translated_count'], 'fuzzy': p['fuzzy_count'], 'total': p['resource__entity_count'], 'approved': p['approved_count']}|to_json }}">
-                <span class="approved" style="width:{{ (p['approved_count'] / p['resource__entity_count'] * 100)|round }}%;"></span>
-                <span class="translated" style="width:{{ (p['translated_count'] / p['resource__entity_count'] * 100)|round }}%;"></span>
-                <span class="fuzzy" style="width:{{ (p['fuzzy_count'] / p['resource__entity_count'] * 100)|round }}%;"></span>
-              </span>
-              <span class="percent">{{ (p['approved_count'] / p['resource__entity_count'] * 100) | round(0, 'floor') | int }}%</span>
-            </a>
-          </span>
-        </li>
+            {{ ProgressChart.span(p.chart, link) }}
+          </li>
         {% endfor %}
         {% endif %}
 

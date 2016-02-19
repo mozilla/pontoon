@@ -29,7 +29,7 @@ from pontoon.base.tests import (
     ProjectLocaleFactory,
     RepositoryFactory,
     ResourceFactory,
-    StatsFactory,
+    TranslatedResourceFactory,
     SubpageFactory,
     TestCase,
     TranslationFactory,
@@ -156,7 +156,7 @@ class LocalePartsTests(TestCase):
             path='/main/path.po'
         )
         EntityFactory.create(resource=self.resource)
-        StatsFactory.create(resource=self.resource, locale=self.locale)
+        TranslatedResourceFactory.create(resource=self.resource, locale=self.locale)
 
     def test_parts_stats_no_page_one_resource(self):
         """
@@ -166,7 +166,7 @@ class LocalePartsTests(TestCase):
 
         assert_equal(len(details), 1)
         assert_equal(details[0]['resource__path'], '/main/path.po')
-        assert_equal(details[0]['translated_count'], 0)
+        assert_equal(details[0]['translated_strings'], 0)
 
     def test_parts_stats_no_page_multiple_resources(self):
         """
@@ -177,19 +177,19 @@ class LocalePartsTests(TestCase):
             path='/other/path.po'
         )
         EntityFactory.create(resource=resource_other)
-        StatsFactory.create(resource=resource_other, locale=self.locale)
-        StatsFactory.create(resource=resource_other, locale=self.locale_other)
+        TranslatedResourceFactory.create(resource=resource_other, locale=self.locale)
+        TranslatedResourceFactory.create(resource=resource_other, locale=self.locale_other)
 
         details = self.locale.parts_stats(self.project)
         details_other = self.locale_other.parts_stats(self.project)
 
         assert_equal(details[0]['resource__path'], '/main/path.po')
-        assert_equal(details[0]['translated_count'], 0)
+        assert_equal(details[0]['translated_strings'], 0)
         assert_equal(details[1]['resource__path'], '/other/path.po')
-        assert_equal(details[1]['translated_count'], 0)
+        assert_equal(details[1]['translated_strings'], 0)
         assert_equal(len(details_other), 1)
         assert_equal(details_other[0]['resource__path'], '/other/path.po')
-        assert_equal(details_other[0]['translated_count'], 0)
+        assert_equal(details_other[0]['translated_strings'], 0)
 
     def test_parts_stats_pages_not_tied_to_resources(self):
         """
@@ -200,7 +200,7 @@ class LocalePartsTests(TestCase):
         details = self.locale.parts_stats(self.project)
 
         assert_equal(details[0]['resource__path'], 'Subpage')
-        assert_equal(details[0]['translated_count'], 0)
+        assert_equal(details[0]['translated_strings'], 0)
 
     def test_parts_stats_pages_tied_to_resources(self):
         """
@@ -211,8 +211,8 @@ class LocalePartsTests(TestCase):
             path='/other/path.po'
         )
         EntityFactory.create(resource=resource_other)
-        StatsFactory.create(resource=resource_other, locale=self.locale)
-        StatsFactory.create(resource=resource_other, locale=self.locale_other)
+        TranslatedResourceFactory.create(resource=resource_other, locale=self.locale)
+        TranslatedResourceFactory.create(resource=resource_other, locale=self.locale_other)
         SubpageFactory.create(
             project=self.project,
             name='Subpage',
@@ -228,11 +228,11 @@ class LocalePartsTests(TestCase):
         details_other = self.locale_other.parts_stats(self.project)
 
         assert_equal(details[0]['resource__path'], 'Other Subpage')
-        assert_equal(details[0]['translated_count'], 0)
+        assert_equal(details[0]['translated_strings'], 0)
         assert_equal(details[1]['resource__path'], 'Subpage')
-        assert_equal(details[1]['translated_count'], 0)
+        assert_equal(details[1]['translated_strings'], 0)
         assert_equal(details_other[0]['resource__path'], 'Other Subpage')
-        assert_equal(details_other[0]['translated_count'], 0)
+        assert_equal(details_other[0]['translated_strings'], 0)
 
 
 class RepositoryTests(TestCase):
@@ -936,18 +936,18 @@ class TranslationTests(TestCase):
     def test_save_latest_translation_update(self):
         """
         When a translation is saved, update the latest_translation
-        attribute on the related project, locale, stats, and
-        project_locale objects.
+        attribute on the related project, locale, translatedresource,
+        and project_locale objects.
         """
         locale = LocaleFactory.create(latest_translation=None)
         project = ProjectFactory.create(locales=[locale], latest_translation=None)
         resource = ResourceFactory.create(project=project)
-        stats = StatsFactory.create(locale=locale, resource=resource, latest_translation=None)
+        translatedresource = TranslatedResourceFactory.create(locale=locale, resource=resource, latest_translation=None)
         project_locale = ProjectLocale.objects.get(locale=locale, project=project)
 
         assert_is_none(locale.latest_translation)
         assert_is_none(project.latest_translation)
-        assert_is_none(stats.latest_translation)
+        assert_is_none(translatedresource.latest_translation)
         assert_is_none(project_locale.latest_translation)
 
         translation = TranslationFactory.create(
@@ -957,7 +957,7 @@ class TranslationTests(TestCase):
         )
         self.assert_latest_translation(locale, translation)
         self.assert_latest_translation(project, translation)
-        self.assert_latest_translation(stats, translation)
+        self.assert_latest_translation(translatedresource, translation)
         self.assert_latest_translation(project_locale, translation)
 
         # Ensure translation is replaced for newer translations
@@ -968,7 +968,7 @@ class TranslationTests(TestCase):
         )
         self.assert_latest_translation(locale, newer_translation)
         self.assert_latest_translation(project, newer_translation)
-        self.assert_latest_translation(stats, newer_translation)
+        self.assert_latest_translation(translatedresource, newer_translation)
         self.assert_latest_translation(project_locale, newer_translation)
 
         # Ensure translation isn't replaced for older translations.
@@ -979,7 +979,7 @@ class TranslationTests(TestCase):
         )
         self.assert_latest_translation(locale, newer_translation)
         self.assert_latest_translation(project, newer_translation)
-        self.assert_latest_translation(stats, newer_translation)
+        self.assert_latest_translation(translatedresource, newer_translation)
         self.assert_latest_translation(project_locale, newer_translation)
 
         # Ensure approved_date is taken into consideration as well.
@@ -990,7 +990,7 @@ class TranslationTests(TestCase):
         )
         self.assert_latest_translation(locale, newer_approved_translation)
         self.assert_latest_translation(project, newer_approved_translation)
-        self.assert_latest_translation(stats, newer_approved_translation)
+        self.assert_latest_translation(translatedresource, newer_approved_translation)
         self.assert_latest_translation(project_locale, newer_approved_translation)
 
     def test_save_latest_translation_missing_project_locale(self):
@@ -1001,7 +1001,7 @@ class TranslationTests(TestCase):
         locale = LocaleFactory.create(latest_translation=None)
         project = ProjectFactory.create(latest_translation=None)
         resource = ResourceFactory.create(project=project)
-        stats = StatsFactory.create(locale=locale, resource=resource, latest_translation=None)
+        translatedresource = TranslatedResourceFactory.create(locale=locale, resource=resource, latest_translation=None)
 
         # This calls .save, this should fail if we're not properly
         # handling the missing ProjectLocale.
@@ -1013,7 +1013,7 @@ class TranslationTests(TestCase):
 
         self.assert_latest_translation(locale, translation)
         self.assert_latest_translation(project, translation)
-        self.assert_latest_translation(stats, translation)
+        self.assert_latest_translation(translatedresource, translation)
 
     def test_approved_translation_in_memory(self):
         """

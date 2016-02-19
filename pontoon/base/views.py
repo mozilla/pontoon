@@ -1,5 +1,8 @@
+from __future__ import division
+
 import json
 import logging
+import math
 import requests
 import xml.etree.ElementTree as ET
 import urllib
@@ -14,7 +17,7 @@ from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.core.validators import validate_comma_separated_integer_list
 from django.db import transaction
-from django.db.models import Count, F, Q, Prefetch
+from django.db.models import Count, F, Q
 
 from django.http import (
     Http404,
@@ -40,18 +43,11 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Project,
-    ProjectLocale,
     Resource,
-    Stats,
+    TranslatedResource,
     Translation,
     TranslationMemoryEntry,
     UserProfile,
-    get_locales_with_project_stats,
-    get_locales_with_stats,
-    get_projects_with_stats,
-    get_translation,
-    unapprove,
-    unfuzzy,
 )
 
 from session_csrf import anonymous_csrf_exempt
@@ -66,7 +62,7 @@ def home(request):
     project = Project.objects.get(id=1)
     locale = utils.get_project_locale_from_request(
         request, project.locales) or 'en-GB'
-    path = Resource.objects.filter(project=project, stats__locale__code=locale)[0].path
+    path = Resource.objects.filter(project=project, translatedresources__locale__code=locale)[0].path
 
     return translate(request, locale, project.slug, path)
 
@@ -77,16 +73,7 @@ def locale(request, locale):
 
     projects = (
         Project.objects.available()
-        .prefetch_related(
-            Prefetch(
-                'project_locale',
-                queryset=(
-                    ProjectLocale.objects.filter(locale=l)
-                    .select_related('latest_translation__user')
-                ),
-                to_attr='fetched_project_locales'
-            )
-        )
+        .prefetch_latest_translation(l)
         .order_by('name')
     )
 
@@ -94,7 +81,7 @@ def locale(request, locale):
         raise Http404
 
     return render(request, 'locale.html', {
-        'projects': get_projects_with_stats(projects, l),
+        'projects': projects,
         'locale': l,
     })
 
@@ -143,18 +130,29 @@ def locale_manage(request, locale):
 
 def locales(request):
     """Localization teams."""
+    locales = (
+        Locale.objects.available()
+        .select_related('latest_translation__user')
+    )
+
     return render(request, 'locales.html', {
-        'locales': get_locales_with_stats(),
+        'locales': locales,
     })
 
 
 def project(request, slug):
     """Project view."""
-    p = get_object_or_404(Project.objects.available(), slug=slug)
+    project = get_object_or_404(Project.objects.available(), slug=slug)
+
+    locales = (
+        project.locales.all()
+        .prefetch_latest_translation(project)
+        .order_by('name')
+    )
 
     return render(request, 'project.html', {
-        'locales': get_locales_with_project_stats(p),
-        'project': p,
+        'locales': locales,
+        'project': project,
     })
 
 
@@ -163,11 +161,11 @@ def projects(request):
     projects = (
         Project.objects.available()
         .select_related('latest_translation__user')
-        .order_by("name")
+        .order_by('name')
     )
 
     return render(request, 'projects.html', {
-        'projects': get_projects_with_stats(projects),
+        'projects': projects,
     })
 
 
@@ -181,17 +179,28 @@ def locale_project(request, locale, slug):
     )
 
     # Amend the parts dict with latest activity info.
-    stats_qs = (
-        Stats.objects
+    translatedresources_qs = (
+        TranslatedResource.objects
         .filter(resource__project=project, locale=l)
         .select_related('resource', 'latest_translation')
     )
-    stats = {s.resource.path: s for s in stats_qs}
+    translatedresources = {s.resource.path: s for s in translatedresources_qs}
     parts = l.parts_stats(project)
 
     for part in parts:
-        stat = stats.get(part['resource__path'], None)
+        stat = translatedresources.get(part['resource__path'], None)
         part['latest_activity'] = stat.latest_translation if stat else None
+
+        part['chart'] = {
+            'translated_strings': part['translated_strings'],
+            'fuzzy_strings': part['fuzzy_strings'],
+            'total_strings': part['resource__total_strings'],
+            'approved_strings': part['approved_strings'],
+            'approved_share': round(part['approved_strings'] / part['resource__total_strings'] * 100, 2),
+            'translated_share': round(part['translated_strings'] / part['resource__total_strings'] * 100, 2),
+            'fuzzy_share': round(part['fuzzy_strings'] / part['resource__total_strings'] * 100, 2),
+            'approved_percent': int(math.floor(part['approved_strings'] / part['resource__total_strings'] * 100)),
+        }
 
     return render(request, 'locale_project.html', {
         'locale': l,
@@ -208,7 +217,7 @@ def translate(request, locale, slug, part):
     projects = (
         Project.objects.available()
         .prefetch_related('subpage_set')
-        .order_by("name")
+        .order_by('name')
     )
 
     return render(request, 'translate.html', {
@@ -562,8 +571,8 @@ def update_translation(request):
                 if warnings:
                     return warnings
 
-                unapprove(translations)
-                unfuzzy(translations)
+                translations.update(approved=False, approved_user=None, approved_date=None)
+                translations.update(fuzzy=False)
 
                 if t.user is None:
                     t.user = user
@@ -616,9 +625,9 @@ def update_translation(request):
                 return warnings
 
             if can_translate:
-                unapprove(translations)
+                translations.update(approved=False, approved_user=None, approved_date=None)
 
-            unfuzzy(translations)
+            translations.update(fuzzy=False)
 
             t = Translation(
                 entity=e, locale=l, user=user, string=string,
@@ -632,8 +641,11 @@ def update_translation(request):
             if request.user.is_authenticated():
                 t.save()
 
-            active = get_translation(
-                entity=e, locale=l, plural_form=plural_form)
+            # Return active (approved or latest) translation
+            try:
+                active = translations.filter(approved=True).latest("date")
+            except Translation.DoesNotExist:
+                active = translations.latest("date")
 
             return JsonResponse({
                 'type': 'added',

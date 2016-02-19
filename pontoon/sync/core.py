@@ -8,13 +8,16 @@ from django.contrib.auth.models import User
 
 from django.core.cache import cache
 from django.db import transaction
+from django.db.models import F
 from django.template.loader import render_to_string
 
 from pontoon.base.models import (
     Entity,
+    ProjectLocale,
     Resource,
-    update_stats
+    TranslatedResource
 )
+from pontoon.base import utils
 from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.vcs.models import VCSProject
 from pontoon.sync.utils import locale_directory_path
@@ -96,8 +99,32 @@ def update_resources(db_project, vcs_project):
     for relative_path, vcs_resource in vcs_project.resources.items():
         resource, created = db_project.resources.get_or_create(path=relative_path)
         resource.format = Resource.get_path_format(relative_path)
-        resource.entity_count = len(vcs_resource.entities)
+
+        # Calculate diffs to reduce DB queries
+        total_strings_diff = len(vcs_resource.entities) - resource.total_strings
+
+        # Resource
+        resource.total_strings = F('total_strings') + total_strings_diff
         resource.save()
+
+        # Project
+        db_project.total_strings = F('total_strings') + total_strings_diff
+        db_project.save()
+
+        # Locales
+        for locale in db_project.locales.all():
+            locale.total_strings = F('total_strings') + total_strings_diff
+            locale.save()
+
+            # ProjectLocales
+            project_locale = utils.get_object_or_none(
+                ProjectLocale,
+                project=db_project,
+                locale=locale
+            )
+            if project_locale:
+                project_locale.total_strings = F('total_strings') + total_strings_diff
+                project_locale.save()
 
 
 def update_translations(db_project, vcs_project, locale, changeset):
@@ -121,16 +148,17 @@ def update_translations(db_project, vcs_project, locale, changeset):
             changeset.update_db_entity(locale, db_entity, vcs_entity)
 
 
-def update_project_stats(db_project, vcs_project, changeset, locale):
-    """Update the Stats entries in the database."""
+def update_translated_resources(db_project, vcs_project, changeset, locale):
+    """Update the TranslatedResource entries in the database."""
     for resource in db_project.resources.all():
-        # We only want to create/update the stats object if the resource
-        # exists in the current locale, UNLESS the file is asymmetric.
+        # We only want to create/update the TranslatedResource object if the
+        # resource exists in the current locale, UNLESS the file is asymmetric.
         vcs_resource = vcs_project.resources.get(resource.path, None)
         if vcs_resource is not None:
             resource_exists = vcs_resource.files.get(locale) is not None
             if resource_exists or resource.is_asymmetric:
-                update_stats(resource, locale)
+                translatedresource, _ = TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
+                translatedresource.calculate_stats()
 
 
 def get_vcs_entities(vcs_project):

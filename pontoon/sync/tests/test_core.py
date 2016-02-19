@@ -4,16 +4,16 @@ from django_nose.tools import (
     assert_equal,
     assert_false,
     assert_not_equal,
-    assert_not_in,
     assert_raises,
     assert_true
 )
-from mock import ANY, call, Mock, patch, PropertyMock
+from mock import ANY, Mock, patch, PropertyMock
 
 from pontoon.base.models import (
     Entity,
     Repository,
     Resource,
+    TranslatedResource,
 )
 from pontoon.base.tests import (
     CONTAINS,
@@ -25,8 +25,8 @@ from pontoon.sync.core import (
     entity_key,
     pull_changes,
     update_entities,
-    update_project_stats,
     update_resources,
+    update_translated_resources,
     update_translations,
 )
 from pontoon.sync.tests import FAKE_CHECKOUT_PATH, FakeCheckoutTestCase
@@ -120,69 +120,85 @@ class UpdateResourcesTests(FakeCheckoutTestCase):
     def test_basic(self):
         # Check for self.main_db_resource to be updated and
         # self.other_db_resource to be created.
-        self.main_db_resource.entity_count = 5000
+        self.main_db_resource.total_strings += 1
         self.main_db_resource.save()
         self.other_db_resource.delete()
 
         update_resources(self.db_project, self.vcs_project)
         self.main_db_resource.refresh_from_db()
-        assert_equal(self.main_db_resource.entity_count, len(self.main_vcs_resource.entities))
+        assert_equal(self.main_db_resource.total_strings, len(self.main_vcs_resource.entities))
 
         other_db_resource = Resource.objects.get(path=self.other_vcs_resource.path)
-        assert_equal(other_db_resource.entity_count, len(self.other_vcs_resource.entities))
+        assert_equal(other_db_resource.total_strings, len(self.other_vcs_resource.entities))
 
 
-class UpdateProjectStatsTests(FakeCheckoutTestCase):
+class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
     def test_basic(self):
         """
-        Call update_stats on all resources available in the current
-        locale.
+        Create/update the TranslatedResource object on all resources
+        available in the current locale.
         """
-        with patch('pontoon.sync.core.update_stats') as update_stats:
-            update_project_stats(self.db_project, self.vcs_project,
-                                 self.changeset, self.translated_locale)
+        update_translated_resources(self.db_project, self.vcs_project,
+                             self.changeset, self.translated_locale)
 
-            update_stats.assert_any_call(self.main_db_resource, self.translated_locale)
-            update_stats.assert_any_call(self.other_db_resource, self.translated_locale)
-            assert_not_in(
-                call(self.missing_db_resource, self.translated_locale),
-                update_stats.mock_calls
-            )
+        assert_true(TranslatedResource.objects.filter(
+            resource=self.main_db_resource, locale=self.translated_locale
+        ).exists())
+
+        assert_true(TranslatedResource.objects.filter(
+            resource=self.other_db_resource, locale=self.translated_locale
+        ).exists())
+
+        assert_false(TranslatedResource.objects.filter(
+            resource=self.missing_db_resource, locale=self.translated_locale
+        ).exists())
 
     def test_asymmetric(self):
         """
-        Call update_stats on asymmetric resources even if they don't
-        exist in the target locale.
+        Create/update the TranslatedResource object on asymmetric resources
+        even if they don't exist in the target locale.
         """
-        with patch('pontoon.sync.core.update_stats') as update_stats, \
-             patch.object(Resource, 'is_asymmetric', new_callable=PropertyMock) as is_asymmetric:
+        with patch.object(Resource, 'is_asymmetric', new_callable=PropertyMock) as is_asymmetric:
             is_asymmetric.return_value = True
 
-            update_project_stats(self.db_project, self.vcs_project,
+            update_translated_resources(self.db_project, self.vcs_project,
                                  self.changeset, self.translated_locale)
-            update_stats.assert_any_call(self.main_db_resource, self.translated_locale)
-            update_stats.assert_any_call(self.other_db_resource, self.translated_locale)
-            update_stats.assert_any_call(self.missing_db_resource, self.translated_locale)
+
+            assert_true(TranslatedResource.objects.filter(
+                resource=self.main_db_resource, locale=self.translated_locale
+            ).exists())
+
+            assert_true(TranslatedResource.objects.filter(
+                resource=self.other_db_resource, locale=self.translated_locale
+            ).exists())
+
+            assert_true(TranslatedResource.objects.filter(
+                resource=self.missing_db_resource, locale=self.translated_locale
+            ).exists())
 
     def test_extra_locales(self):
         """
-        Only update stats for active locales, even if the inactive
-        locale has a resource.
+        Only create/update the TranslatedResource object for active locales,
+        even if the inactive locale has a resource.
         """
-        with patch('pontoon.sync.core.update_stats') as update_stats:
-            update_project_stats(self.db_project, self.vcs_project,
-                                 self.changeset, self.translated_locale)
+        update_translated_resources(self.db_project, self.vcs_project,
+                             self.changeset, self.translated_locale)
 
-            update_stats.assert_any_call(self.main_db_resource, self.translated_locale)
-            update_stats.assert_any_call(self.other_db_resource, self.translated_locale)
-            assert_not_in(
-                call(self.main_db_resource, self.inactive_locale),
-                update_stats.mock_calls
-            )
-            assert_not_in(
-                call(self.other_db_resource, self.inactive_locale),
-                update_stats.mock_calls
-            )
+        assert_true(TranslatedResource.objects.filter(
+            resource=self.main_db_resource, locale=self.translated_locale
+        ).exists())
+
+        assert_true(TranslatedResource.objects.filter(
+            resource=self.other_db_resource, locale=self.translated_locale
+        ).exists())
+
+        assert_false(TranslatedResource.objects.filter(
+            resource=self.main_db_resource, locale=self.inactive_locale
+        ).exists())
+
+        assert_false(TranslatedResource.objects.filter(
+            resource=self.other_db_resource, locale=self.inactive_locale
+        ).exists())
 
 
 class EntityKeyTests(FakeCheckoutTestCase):

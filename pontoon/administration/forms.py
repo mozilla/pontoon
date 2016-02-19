@@ -7,8 +7,8 @@ from pontoon.base.models import Project, Repository, Subpage
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
-        fields = ('name', 'slug', 'locales', 'transifex_project',
-                  'transifex_resource', 'info_brief', 'url', 'width',
+        fields = ('name', 'slug', 'locales',
+                  'info_brief', 'url', 'width',
                   'links', 'disabled')
 
 

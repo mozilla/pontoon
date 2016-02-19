@@ -1,4 +1,5 @@
-{% import 'latest_activity.html' as latest_activity %}
+{% import 'widgets/latest_activity.html' as LatestActivity %}
+{% import 'widgets/progress_chart.html' as ProgressChart %}
 
 <!-- Project selector -->
 <div class="project select">
@@ -26,52 +27,47 @@
     {% endif %}
     <ul>
       {% for p in projects %}
-      <li class="clearfix{% if p.fetched_project_locales %} limited{% endif %}"{% if project and project == p %} style="display: list-item;"{% endif %}>
-        <span class="name"
-          {% for key, value in p.serialize().iteritems() %}
-            data-{{ key }}="{{ value }}"
-          {% endfor %}
-          {% if project and locale %}
-            {% if project == p %}
-              data-parts="{{ {locale.code: locale.parts_stats(p)}|to_json }}"
+        {% if locale %}
+          {% set link = url('pontoon.locale.project', locale.code, p.slug) %}
+        {% elif admin %}
+          {% set link = url('pontoon.admin.project', p.slug) %}
+        {% else %}
+          {% set link = url('pontoon.project', p.slug) %}
+        {% endif %}
+        <li class="clearfix{% if p.fetched_latest_translation %} limited{% endif %}"{% if project and project == p %} style="display: list-item;"{% endif %}>
+          <span class="name"
+            {% for key, value in p.serialize().iteritems() %}
+              data-{{ key }}="{{ value }}"
+            {% endfor %}
+            {% if project and locale %}
+              {% if project == p %}
+                data-parts="{{ {locale.code: locale.parts_stats(p)}|to_json }}"
+              {% endif %}
             {% endif %}
-          {% endif %}
-        >
-        {% if p and p.chart %}
-          <a href="{% if locale %}{{ url('pontoon.locale.project', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">
-        {% endif %}
-          {{ p.name }}
-        {% if p and p.chart %}
-          </a>
-        {% endif %}
-        </span>
-
-        {% if locale and user.is_authenticated() %}
-          <span class="check fa fa-fw"></span>
-        {% endif %}
-
-        {% if not project %}
-          {{ latest_activity.span(p.get_latest_activity(locale|default(none))) }}
-        {% endif %}
-
-        {% if p and p.chart and p.chart.total %}
-        <span class="chart-wrapper">
-          {% if p and p.chart %}<a href="{% if locale %}{{ url('pontoon.locale.project', locale.code, p.slug) }}{% elif admin %}{{ url('pontoon.admin.project', p.slug) }}{% else %}{{ url('pontoon.project', p.slug) }}{% endif %}" class="clearfix">{% endif %}
-          <span class="chart" data-chart="{{ p.chart|to_json }}">
-            <span class="approved" style="width:{{ (p.chart.approved / p.chart.total * 100)|round }}%;"></span>
-            <span class="translated" style="width:{{ (p.chart.translated / p.chart.total * 100)|round }}%;"></span>
-            <span class="fuzzy" style="width:{{ (p.chart.fuzzy / p.chart.total * 100)|round }}%;"></span>
+          >
+            {% if not project %}<a href="{{ link }}" class="clearfix">{% endif %}
+              {{ p.name }}
+            {% if not project %}</a>{% endif %}
           </span>
-          <span class="percent">{{ (p.chart.approved / p.chart.total * 100) | round(0, 'floor') | int }}%</span>
-          {% if p and p.chart %}</a>{% endif %}
-        </span>
-        {% endif %}
-      </li>
+
+          {% if locale and user.is_authenticated() %}
+            <span class="check fa fa-fw"></span>
+          {% endif %}
+
+          {% if not project %}
+            {{ LatestActivity.span(p.get_latest_activity(locale|default(none))) }}
+          {% endif %}
+
+          {% if not project and p.total_strings %}
+            {% set chart = p.get_chart(locale|default(none)) %}
+            {{ ProgressChart.span(chart, link) }}
+          {% endif %}
+        </li>
       {% endfor %}
       <li class="no-match">No results</li>
     </ul>
     {% if locale and user.is_authenticated() %}
-    <button id="request-projects">Requets new projects</button>
+      <button id="request-projects">Requets new projects</button>
     {% endif %}
   </div>
 </div>

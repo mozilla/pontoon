@@ -405,7 +405,7 @@ $(function() {
       }
 
       var data = chart.data('chart'),
-          untranslated = data.total - data.approved - data.translated - data.fuzzy,
+          untranslated_strings = data.total_strings - data.approved_strings - data.translated_strings - data.fuzzy_strings,
           rect = chart[0].getBoundingClientRect(),
           height = $('.tooltip').outerHeight() + 15,
           width = ($('.tooltip').outerWidth() - $(this).outerWidth()) / 2,
@@ -413,11 +413,11 @@ $(function() {
           top = rect.top + window.scrollY - height;
 
       $('.tooltip')
-        .find('.total span').html(data.total).end()
-        .find('.approved span').html(data.approved).end()
-        .find('.translated span').html(data.translated).end()
-        .find('.fuzzy span').html(data.fuzzy).end()
-        .find('.untranslated span').html(untranslated).end()
+        .find('.total span').html(data.total_strings).end()
+        .find('.approved span').html(data.approved_strings).end()
+        .find('.translated span').html(data.translated_strings).end()
+        .find('.fuzzy span').html(data.fuzzy_strings).end()
+        .find('.untranslated span').html(untranslated_strings).end()
         .css('left', left)
         .css('top', top)
         .show();
@@ -507,8 +507,8 @@ $(function() {
   $('.menu .sort span').click(function (e) {
     function getChart(el) {
       var data = $(el).find('.chart').data('chart'),
-          approved = data ? data.approved/data.total : 0,
-          translated = data ? data.translated/data.total : 0;
+          approved = data ? data.approved_strings/data.total : 0,
+          translated = data ? data.translated_strings/data.total : 0;
 
       return {
         "approved": approved,
