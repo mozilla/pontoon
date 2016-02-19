@@ -367,21 +367,6 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.filter(disabled=False, resources__isnull=False).distinct()
 
-    def prefetch_latest_translation(self, locale):
-        """
-        Prefetch latest translation data for given locale.
-        """
-        return self.prefetch_related(
-            Prefetch(
-                'project_locale',
-                queryset=(
-                    ProjectLocale.objects.filter(locale=locale)
-                    .select_related('latest_translation__user')
-                ),
-                to_attr='fetched_latest_translation'
-            )
-        )
-
 
 class Project(AggregatedStats):
     name = models.CharField(max_length=128, unique=True)

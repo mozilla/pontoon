@@ -73,7 +73,6 @@ def locale(request, locale):
 
     projects = (
         Project.objects.available()
-        .prefetch_latest_translation(l)
         .order_by('name')
     )
 
@@ -132,7 +131,6 @@ def locales(request):
     """Localization teams."""
     locales = (
         Locale.objects.available()
-        .select_related('latest_translation__user')
     )
 
     return render(request, 'locales.html', {
