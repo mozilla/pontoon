@@ -507,8 +507,8 @@ $(function() {
   $('.menu .sort span').click(function (e) {
     function getChart(el) {
       var data = $(el).find('.chart').data('chart'),
-          approved = data ? data.approved_strings/data.total : 0,
-          translated = data ? data.translated_strings/data.total : 0;
+          approved = data ? data.approved_strings/data.total_strings : 0,
+          translated = data ? data.translated_strings/data.total_strings : 0;
 
       return {
         "approved": approved,
