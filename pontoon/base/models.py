@@ -589,16 +589,17 @@ class ProjectLocale(AggregatedStats):
     @classmethod
     def get_chart_dict(cls, obj):
         """Get chart data dictionary"""
-        return {
-            'total_strings': obj.total_strings,
-            'approved_strings': obj.approved_strings,
-            'translated_strings': obj.translated_strings,
-            'fuzzy_strings': obj.fuzzy_strings,
-            'approved_share': round(obj.approved_strings / obj.total_strings * 100, 2),
-            'translated_share': round(obj.translated_strings / obj.total_strings * 100, 2),
-            'fuzzy_share': round(obj.fuzzy_strings / obj.total_strings * 100, 2),
-            'approved_percent': int(math.floor(obj.approved_strings / obj.total_strings * 100)),
-        }
+        if obj.total_strings:
+            return {
+                'total_strings': obj.total_strings,
+                'approved_strings': obj.approved_strings,
+                'translated_strings': obj.translated_strings,
+                'fuzzy_strings': obj.fuzzy_strings,
+                'approved_share': round(obj.approved_strings / obj.total_strings * 100, 2),
+                'translated_share': round(obj.translated_strings / obj.total_strings * 100, 2),
+                'fuzzy_share': round(obj.fuzzy_strings / obj.total_strings * 100, 2),
+                'approved_percent': int(math.floor(obj.approved_strings / obj.total_strings * 100)),
+            }
 
 
 class Repository(models.Model):
