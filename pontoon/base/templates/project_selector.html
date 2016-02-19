@@ -34,7 +34,12 @@
         {% else %}
           {% set link = url('pontoon.project', p.slug) %}
         {% endif %}
-        <li class="clearfix{% if p.fetched_latest_translation %} limited{% endif %}"{% if project and project == p %} style="display: list-item;"{% endif %}>
+
+        {% if not project and p.total_strings %}
+          {% set chart = p.get_chart(locale|default(none)) %}
+        {% endif %}
+
+        <li class="clearfix{% if chart != None %} limited{% endif %}"{% if project and project == p %} style="display: list-item;"{% endif %}>
           <span class="name"
             {% for key, value in p.serialize().iteritems() %}
               data-{{ key }}="{{ value }}"
@@ -56,11 +61,10 @@
 
           {% if not project %}
             {{ LatestActivity.span(p.get_latest_activity(locale|default(none))) }}
-          {% endif %}
 
-          {% if not project and p.total_strings %}
-            {% set chart = p.get_chart(locale|default(none)) %}
-            {{ ProgressChart.span(chart, link) }}
+            {% if p.total_strings %}
+              {{ ProgressChart.span(chart, link) }}
+            {% endif %}
           {% endif %}
         </li>
       {% endfor %}

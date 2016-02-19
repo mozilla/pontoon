@@ -52,11 +52,11 @@
 
           {% if not locale %}
             {{ LatestActivity.span(l.get_latest_activity(project|default(none))) }}
-          {% endif %}
 
-          {% if not locale and l.total_strings %}
-            {% set chart = l.get_chart(project|default(none)) %}
-            {{ ProgressChart.span(chart, link) }}
+            {% if l.total_strings %}
+              {% set chart = l.get_chart(project|default(none)) %}
+              {{ ProgressChart.span(chart, link) }}
+            {% endif %}
           {% endif %}
         </li>
       {% endfor %}
