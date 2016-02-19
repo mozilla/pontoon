@@ -9,12 +9,10 @@ $(function() {
 
   // Locale menu handler
   $('.locale .menu li:not(".no-match")').click(function () {
-    var locale = $(this).find('.language').attr('class').split(' ')[1],
-        // Escape special characters in CSS notation
-        code = locale.replace( /(:|\.|\[|@|\])/g, "\\$1" ),
-        language = $('.locale .menu .language.' + code).parent().html();
-
+    var locale = $(this).find('.language').data('locale-code'),
+        language = $('.locale .menu span.language[data-locale-code=' + locale + ']').parent().html();
     $('.locale .selector').html(language);
+    $('.locale .selector').data('locale-code', locale);
   });
 
   // Trigger search with Enter
@@ -22,7 +20,7 @@ $(function() {
     var value = $(this).val(),
         self = Pontoon;
     if (e.which === 13 && value.length > 0) {
-      var code = $('.locale .selector .language').attr('class').split(' ')[1];
+      var code = $('.locale .selector .language').data('locale-code');
       self.locale = {
         code: code
       };

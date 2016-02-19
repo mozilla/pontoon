@@ -915,7 +915,12 @@ def transvision(request):
         r = requests.get(url, params=payload)
 
         if r.text != '[]':
+            if 'error' in r.json():
+                error = r.json()['error']
+                log.error('Transvision error: {error}'.format(error))
+                return HttpResponseBadRequest('Bad Request: {error}'.format(error=error))
             return JsonResponse(r.json(), safe=False)
+
         else:
             return HttpResponse('no')
 
