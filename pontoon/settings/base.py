@@ -47,10 +47,6 @@ STATIC_HOST = os.environ.get('STATIC_HOST', '')
 SESSION_COOKIE_HTTPONLY = os.environ.get('SESSION_COOKIE_HTTPONLY', 'True') != 'False'
 SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') != 'False'
 
-HMAC_KEYS = {
-    'hmac-key': os.environ['HMAC_KEY'],
-}
-
 SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 BROWSERID_AUDIENCES = [SITE_URL]
 
@@ -389,17 +385,15 @@ ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
 # Any other hasher in the list can be used for existing passwords.
 # Playdoh ships with Bcrypt+HMAC by default because it's the most secure.
 # To use bcrypt, fill in a secret HMAC key in your local settings.
-BASE_PASSWORD_HASHERS = (
-    'django_sha2.hashers.BcryptHMACCombinedPasswordVerifier',
-    'django_sha2.hashers.SHA512PasswordHasher',
-    'django_sha2.hashers.SHA256PasswordHasher',
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
     'django.contrib.auth.hashers.SHA1PasswordHasher',
     'django.contrib.auth.hashers.MD5PasswordHasher',
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
 )
-
-from django_sha2 import get_password_hashers
-PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
 
 ## Logging
 LOGGING = {
