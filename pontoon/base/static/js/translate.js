@@ -659,12 +659,13 @@ var Pontoon = (function (my) {
         e.preventDefault();
 
         var textarea = $('#translation'),
-            pos = textarea[0].selectionStart,
             placeable = $(this).text(),
             before = textarea.val(),
-            after = before.substring(0, pos) + placeable + before.substring(pos);
+            cursorPos = textarea.prop('selectionStart') + placeable.length,
+            after = before.substring(0, textarea.prop('selectionStart')) + placeable + before.substring(textarea.prop('selectionEnd'));
 
         textarea.val(after).focus();
+        textarea[0].setSelectionRange(cursorPos, cursorPos);
       });
 
       function switchToPluralForm(tab) {
