@@ -653,16 +653,18 @@ var Pontoon = (function (my) {
         }
       });
 
-      // Insert placeable at cursor or at the end if not focused
+      // Insert placeable at cursor, replace selection or at the end if not focused
       $("#original").on("click", ".placeable", function (e) {
         e.stopPropagation();
         e.preventDefault();
 
         var textarea = $('#translation'),
+            selectionStart = textarea.prop('selectionStart'),
+            selectionEnd = textarea.prop('selectionEnd'),
             placeable = $(this).text(),
+            cursorPos = selectionStart + placeable.length,
             before = textarea.val(),
-            cursorPos = textarea.prop('selectionStart') + placeable.length,
-            after = before.substring(0, textarea.prop('selectionStart')) + placeable + before.substring(textarea.prop('selectionEnd'));
+            after = before.substring(0, selectionStart) + placeable + before.substring(selectionEnd);
 
         textarea.val(after).focus();
         textarea[0].setSelectionRange(cursorPos, cursorPos);
