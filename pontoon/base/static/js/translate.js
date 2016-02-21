@@ -1980,58 +1980,56 @@ var Pontoon = (function (my) {
         url: '/get-entities/',
         data: params,
         success: function(data) {
-          if (data !== "error") {
-            self.entities = data;
+          self.entities = data;
 
-            // If no entities
-            if (!self.entities.length) {
-              $('#no-results').css('display', 'table');
-              $('#project-load').hide();
-              self.createObject();
-              self.updateMainMenu();
-              return;
-            } else {
-              $('#no-results').hide();
-            }
-
-            // Projects with in place translation support
-            if (projectWindow && !state.search && self.entities.length) {
-              self.createObject(advanced, projectWindow);
-
-              self.postMessage("INITIALIZE", {
-                path: self.app.path,
-                links: self.project.links,
-                entities: self.entities,
-                slug: self.project.slug,
-                locale: self.locale,
-                user: self.user
-              }, null, $('#source').attr('src'));
-
-              self.makeIframeResizable();
-
-            // Projects without in place translation support
-            } else {
-              $('#sidebar').addClass('advanced').css('width', '100%').show();
-              $('#editor').addClass('opened').css('left', '');
-              $('#entitylist').css('left', '');
-
-              self.createObject(true);
-
-              $(self.entities).each(function (i) {
-                this.id = i;
-              });
-
-              self.createUI();
-              self.syncLocalStorageOnServer();
-            }
-
+          // If no entities
+          if (!self.entities.length) {
+            $('#no-results').css('display', 'table');
+            $('#project-load').hide();
+            self.createObject();
+            self.updateMainMenu();
+            return;
           } else {
-            $('#project-load')
-              .find('.animation').hide().end()
-              .find('.text')
-                .html('Oops, something went wrong.')
-                .animate({opacity: 1});
+            $('#no-results').hide();
           }
+
+          // Projects with in place translation support
+          if (projectWindow && !state.search && self.entities.length) {
+            self.createObject(advanced, projectWindow);
+
+            self.postMessage("INITIALIZE", {
+              path: self.app.path,
+              links: self.project.links,
+              entities: self.entities,
+              slug: self.project.slug,
+              locale: self.locale,
+              user: self.user
+            }, null, $('#source').attr('src'));
+
+            self.makeIframeResizable();
+
+          // Projects without in place translation support
+          } else {
+            $('#sidebar').addClass('advanced').css('width', '100%').show();
+            $('#editor').addClass('opened').css('left', '');
+            $('#entitylist').css('left', '');
+
+            self.createObject(true);
+
+            $(self.entities).each(function (i) {
+              this.id = i;
+            });
+
+            self.createUI();
+            self.syncLocalStorageOnServer();
+          }
+        },
+        error: function() {
+          $('#project-load')
+            .find('.animation').hide().end()
+            .find('.text')
+              .html('Oops, something went wrong.')
+              .animate({opacity: 1});
         }
       });
     },

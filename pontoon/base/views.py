@@ -373,21 +373,11 @@ def entities(request):
         project = request.GET['project']
         locale = request.GET['locale']
         paths = json.loads(request.GET['paths'])
-    except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
+    except (MultiValueDictKeyError, ValueError) as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    try:
-        project = Project.objects.get(slug=project)
-    except Entity.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    try:
-        locale = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist as e:
-        log.error(str(e))
-        return HttpResponse("error")
+    project = get_object_or_404(Project, slug=project)
+    locale = get_object_or_404(Locale, code__iexact=locale)
 
     search = None
     if request.GET.get('keyword', None):
