@@ -1,0 +1,51 @@
+# Temporarily we had to remove support for the secure dependencies, because
+# readthedocs.org don't support pip8.
+# More info at https://github.com/rtfd/readthedocs.org/issues/1843
+
+sphinx-rtd-theme==0.1.8 \
+    --hash=sha256:ff9b29268824096fc9113904605d83f6aa817102c0f170115b4b39f0ae0651f3 \
+    --hash=sha256:74f633ed3a61da1d1d59c3185483c81a9d7346bf0e7b5f29ad0764a6f159b68a
+Sphinx==1.3.1 \
+    --hash=sha256:2ddf18da3b0621fa43fee4b7290da0ae789b46fb899278a8acccda195c4979a7 \
+    --hash=sha256:1a6e5130c2b42d2de301693c299f78cc4bd3501e78b610c08e45efc70e2b5114
+graphviz==0.4.7 \
+    --hash=sha256:d4ffac16e6ef5323883c412b025d9694b25d85fea485ea338404128686475ffb \
+    --hash=sha256:e27868e570daabfee6b2eb9b20f6e6319ca9ca2587ac41847b2d3471a7898b6d
+alabaster==0.7.7 \
+    --hash=sha256:d57602b3d730c2ecb978a213face0b7a16ceaa4a263575361bd4fd9e2669a544 \
+    --hash=sha256:f416a84e0d0ddbc288f6b8f2c276d10b40ca1238562cd9ed5a751292ec647b71
+Babel==2.2.0 \
+    --hash=sha256:fed07cbcdcb3de79b53a8220eebed21c93f8dbb3dbce1d9c6b1c4b09e8aecf2b \
+    --hash=sha256:d8cb4c0e78148aee89560f9fe21587aa57739c975bb89ff66b1e842cc697428f
+Jinja2==2.8 \
+    --hash=sha256:1cc03ef32b64be19e0a5b54578dd790906a34943fe9102cfdae0d4495bd536b4 \
+    --hash=sha256:bc1ff2ff88dbfacefde4ddde471d1417d3b304e8df103a7a9437d47269201bf4
+docutils==0.12 \
+    --hash=sha256:dcebd4928112631626f4c4d0df59787c748404e66dda952110030ea883d3b8cd \
+    --hash=sha256:c7db717810ab6965f66c8cf0398a98c9d8df982da39b4cd7f162911eb89596fa
+snowballstemmer==1.2.1 \
+    --hash=sha256:9f3bcd3c401c3e862ec0ebe6d2c069ebc012ce142cce209c098ccb5b09136e89 \
+    --hash=sha256:919f26a68b2c17a7634da993d91339e288964f93c274f1343e3bbbe2096e1128
+six==1.10.0 \
+    --hash=sha256:0ff78c403d9bccf5a425a6d31a12aa6b47f1c21ca4dc2573a7e2f32a97335eb1 \
+    --hash=sha256:105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a
+Pygments==2.1 \
+    --hash=sha256:3e723f70dc47b4ad5ca3ab4f1d1c3f76438b3dc74d6a843ded3e154e8af99838 \
+    --hash=sha256:148e04b185d3541b8d702e8cde3ee5acd06b31cc0d474127baba9f4652b2aaf1 \
+    --hash=sha256:13a0ef5fafd7b16cf995bc28fe7aab0780dab1b2fda0fc89e033709af8b8a47b
+MarkupSafe==0.23 \
+    --hash=sha256:a4ec1aff59b95a14b45eb2e23761a0179e98319da5a7eb76b56ea8cdc7b871c3
+pytz==2015.7 \
+    --hash=sha256:3abe6a6d3fc2fbbe4c60144211f45da2edbe3182a6f6511af6bbba0598b1f992 \
+    --hash=sha256:939ef9c1e1224d980405689a97ffcf7828c56d1517b31d73464356c1f2b7769e \
+    --hash=sha256:ead4aefa7007249e05e51b01095719d5a8dd95760089f5730aac5698b1932918 \
+    --hash=sha256:3cca0df08bd0ed98432390494ce3ded003f5e661aa460be7a734bffe35983605 \
+    --hash=sha256:3ede470d3d17ba3c07638dfa0d10452bc1b6e5ad326127a65ba77e6aaeb11bec \
+    --hash=sha256:68c47964f7186eec306b13629627722b9079cd4447ed9e5ecaecd4eac84ca734 \
+    --hash=sha256:dd5d3991950aae40a6c81de1578942e73d629808cefc51d12cd157980e6cfc18 \
+    --hash=sha256:a77c52062c07eb7c7b30545dbc73e32995b7e117eea750317b5cb5c7a4618f14 \
+    --hash=sha256:81af9aec4bc960a9a0127c488f18772dae4634689233f06f65443e7b11ebeb51 \
+    --hash=sha256:e079b1dadc5c06246cc1bb6fe1b23a50b1d1173f2edd5104efd40bb73a28f406 \
+    --hash=sha256:fbd26746772c24cb93c8b97cbdad5cb9e46c86bbdb1b9d8a743ee00e2fb1fc5d \
+    --hash=sha256:99266ef30a37e43932deec2b7ca73e83c8dbc3b9ff703ec73eca6b1dae6befea \
+    --hash=sha256:8b6ce1c993909783bc96e0b4f34ea223bff7a4df2c90bdb9c4e0f1ac928689e3
