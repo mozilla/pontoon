@@ -37,3 +37,30 @@ class PlaceablesTests(TestCase):
             mark_placeables(u'A\nstring'),
             u'A\nstring'
         )
+
+    def test_python_new_format_placeables(self):
+        """Test detection of the new format string in python strings."""
+        assert_equal(
+            mark_placeables(u'Hello {name}'),
+            u'Hello <mark class="placeable" title="Python format string">{name}</mark>'
+        )
+
+        assert_equal(
+            mark_placeables(u'Hello {name!s}'),
+            u'Hello <mark class="placeable" title="Python format string">{name!s}</mark>'
+        )
+
+        assert_equal(
+            mark_placeables(u'Hello {someone.name}'),
+            u'Hello <mark class="placeable" title="Python format string">{someone.name}</mark>'
+        )
+
+        assert_equal(
+            mark_placeables(u'Hello {name[0]}'),
+            u'Hello <mark class="placeable" title="Python format string">{name[0]}</mark>'
+        )
+
+        assert_equal(
+            mark_placeables(u'Hello {someone.name[0]}'),
+            u'Hello <mark class="placeable" title="Python format string">{someone.name[0]}</mark>'
+        )
