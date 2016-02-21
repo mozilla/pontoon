@@ -9,7 +9,7 @@ $(function() {
 
     if (keyword.length > 0) {
       if ($('.locale .selector .language').length) {
-        var locale = $('.locale .selector .language').attr('class').split(' ')[1],
+        var locale = $('.locale .selector .language').data('code'),
             project = $('.project .selector .title').data('slug'),
             action = '/' + locale + '/' + project + '/' + action;
       }
