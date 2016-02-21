@@ -1237,3 +1237,32 @@ body > .container {
   font-style: italic;
   margin-top: 20px;
 }
+
+#placeableMenu {
+  display: none;
+}
+
+#placeableMenu.opened {
+  display: block;
+  position: absolute;
+  top: 100px;
+  background-color: #4D5967;
+  width: 200px;
+}
+
+#placeableMenu.opened ul {
+  list-style: none;
+}
+
+#placeableMenu.opened li {
+  list-style: none;
+  padding: 10px;
+}
+
+#placeableMenu.opened li.active {
+  background: #3F4752;
+}
+
+#placeableMenu.opened li a {
+  outline: none;
+}

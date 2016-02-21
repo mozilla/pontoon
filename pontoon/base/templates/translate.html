@@ -166,6 +166,18 @@
                 <td><span>Ctrl</span>&nbsp;+&nbsp;<span>Alt</span>&nbsp;+&nbsp;<span>F</span></td>
               </tr>
               <tr>
+                <td>Suggest a placeable</td>
+                <td>
+                    <span>Ctrl</span>&nbsp;+&nbsp;<span>Alt</span>&nbsp;+&nbsp;<span>P</span><br>
+                </td>
+              </tr>
+              <tr>
+                <td>Select the next placeable</td>
+                <td>
+                  <span>Tab</span>
+                </td>
+              </tr>
+              <tr>
                 <td>Copy From Helpers</td>
                 <td><span>Tab</span></td>
               </tr>
@@ -241,7 +253,8 @@
     </nav>
 
     <textarea {% if not user.is_authenticated() %} readonly {% endif %} dir="auto" lang="{{ locale.code }}" id="translation" placeholder="Type translation and press Enter to save"></textarea>
-
+    <ul id="placeableMenu">
+    </ul>
     <menu>
       {% if user.is_authenticated() %}
         <div id="unsaved" class="warning-overlay">

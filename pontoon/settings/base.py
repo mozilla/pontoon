@@ -307,6 +307,8 @@ PIPELINE_JS = {
     },
     'translate': {
         'source_filenames': (
+            'js/component.textarea-caret-position.js',
+            'js/placeable_context_menu.js',
             'js/translate.js',
             'js/locale_project.js',
             'js/request_projects.js',
