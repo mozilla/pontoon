@@ -493,8 +493,7 @@ def update_translation(request):
         ignore_check = request.POST['ignore_check']
         approve = json.loads(request.POST['approve'])
     except MultiValueDictKeyError as error:
-        log.error(str(error))
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     try:
         e = Entity.objects.get(pk=entity)
@@ -671,16 +670,10 @@ def translation_memory(request):
         locale = request.GET['locale']
         pk = request.GET['pk']
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse('error')
-
-    try:
-        locale = Locale.objects.get(code__iexact=locale)
-    except Locale.DoesNotExist as e:
-        log.error(e)
-        return HttpResponse('error')
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     max_results = 5
+    locale = get_object_or_404(Locale, code__iexact=locale)
     entries = TranslationMemoryEntry.objects.minimum_levenshtein_ratio(text).filter(locale=locale)
 
     # Exclude existing entity
@@ -699,9 +692,9 @@ def translation_memory(request):
         return JsonResponse({
             'translations': sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
         })
-    else:
-        return HttpResponse('no')
 
+    else:
+        raise Http404
 
 def machine_translation(request):
     """Get translation from machine translation service."""
@@ -710,8 +703,7 @@ def machine_translation(request):
         locale = request.GET['locale']
         check = request.GET['check']
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
         api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
@@ -761,8 +753,7 @@ def machine_translation(request):
         return JsonResponse(obj)
 
     except Exception as e:
-        log.error(e)
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 
 def microsoft_terminology(request):
@@ -772,8 +763,7 @@ def microsoft_terminology(request):
         locale = request.GET['locale']
         check = request.GET['check']
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     obj = {}
     locale = locale.lower()
@@ -834,8 +824,7 @@ def microsoft_terminology(request):
         return JsonResponse(obj)
 
     except WebFault as e:
-        log.error(e)
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 
 def amagama(request):
@@ -870,7 +859,7 @@ def amagama(request):
                 'translations': translations
             })
         else:
-            return HttpResponse('no')
+            raise Http404
 
     except Exception as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
@@ -910,7 +899,7 @@ def transvision(request):
             return JsonResponse(r.json(), safe=False)
 
         else:
-            return HttpResponse('no')
+            raise Http404
 
     except Exception as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
@@ -1001,11 +990,10 @@ def save_user_name(request):
     try:
         name = request.POST['name']
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     if len(name) > 30:
-        return HttpResponse("length")
+        return HttpResponse('length')
 
     user = request.user
     user.first_name = name

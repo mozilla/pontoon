@@ -1241,9 +1241,6 @@ var Pontoon = (function (my) {
           self.endLoader();
           self.showQualityCheckWarnings(data.warnings);
 
-        } else if (data === "error") {
-          self.endLoader('Oops, something went wrong.', 'error');
-
         } else {
           self.endLoader(data, 'error');
         }
