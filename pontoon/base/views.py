@@ -492,7 +492,7 @@ def update_translation(request):
         original = request.POST['original']
         ignore_check = request.POST['ignore_check']
         approve = json.loads(request.POST['approve'])
-    except MultiValueDictKeyError as error:
+    except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     try:

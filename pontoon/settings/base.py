@@ -110,9 +110,12 @@ INSTALLED_APPS = (
     'guardian',
 )
 
+BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
+
 MIDDLEWARE_CLASSES = (
     'sslify.middleware.SSLifyMiddleware',
     'pontoon.base.middleware.RaygunExceptionMiddleware',
+    'pontoon.base.middleware.BlockedIpMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
