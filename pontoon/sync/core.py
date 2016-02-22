@@ -103,6 +103,9 @@ def update_resources(db_project, vcs_project):
         # Calculate diffs to reduce DB queries
         total_strings_diff = len(vcs_resource.entities) - resource.total_strings
 
+        if total_strings_diff == 0:
+            continue
+
         # Resource
         resource.total_strings = F('total_strings') + total_strings_diff
         resource.save()

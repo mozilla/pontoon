@@ -152,11 +152,17 @@ class AggregatedStats(models.Model):
     class Meta:
         abstract = True
 
-    def adjust_stats(self, approved_strings_diff, fuzzy_strings_diff, translated_strings_diff):
+    def adjust_stats(self, total_strings_diff, approved_strings_diff,
+                     fuzzy_strings_diff, translated_strings_diff):
+        self.total_strings = F('total_strings') + total_strings_diff
         self.approved_strings = F('approved_strings') + approved_strings_diff
         self.fuzzy_strings = F('fuzzy_strings') + fuzzy_strings_diff
         self.translated_strings = F('translated_strings') + translated_strings_diff
-        self.save(update_fields=['approved_strings', 'fuzzy_strings', 'translated_strings'])
+
+        self.save(update_fields=[
+            'total_strings', 'approved_strings',
+            'fuzzy_strings', 'translated_strings'
+        ])
 
 
 def validate_cldr(value):
@@ -1230,19 +1236,29 @@ class TranslatedResource(AggregatedStats):
         translated = max(translated_entities.count() - approved - fuzzy, 0)
 
         # Calculate diffs to reduce DB queries
+        total_strings_diff = resource.total_strings - self.total_strings
         approved_strings_diff = approved - self.approved_strings
         fuzzy_strings_diff = fuzzy - self.fuzzy_strings
         translated_strings_diff = translated - self.translated_strings
 
         # Translated Resource
-        self.adjust_stats(approved_strings_diff, fuzzy_strings_diff, translated_strings_diff)
+        self.adjust_stats(
+            total_strings_diff, approved_strings_diff,
+            fuzzy_strings_diff, translated_strings_diff
+        )
 
         # Project
         project = resource.project
-        project.adjust_stats(approved_strings_diff, fuzzy_strings_diff, translated_strings_diff)
+        project.adjust_stats(
+            total_strings_diff, approved_strings_diff,
+            fuzzy_strings_diff, translated_strings_diff
+        )
 
         # Locale
-        locale.adjust_stats(approved_strings_diff, fuzzy_strings_diff, translated_strings_diff)
+        locale.adjust_stats(
+            total_strings_diff, approved_strings_diff,
+            fuzzy_strings_diff, translated_strings_diff
+        )
 
         # ProjectLocale
         project_locale = utils.get_object_or_none(
@@ -1251,4 +1267,7 @@ class TranslatedResource(AggregatedStats):
             locale=locale
         )
         if project_locale:
-            project_locale.adjust_stats(approved_strings_diff, fuzzy_strings_diff, translated_strings_diff)
+            project_locale.adjust_stats(
+                total_strings_diff, approved_strings_diff,
+                fuzzy_strings_diff, translated_strings_diff
+            )
