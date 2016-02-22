@@ -344,8 +344,7 @@ class TranslateMemoryTests(ViewTestCase):
             'pk': memory_entry.entity.pk,
             'locale': memory_entry.locale.code
         })
-        assert_code(response, 200)
-        assert_equal(response.content, 'no')
+        assert_code(response, 404)
 
     def test_minimal_quality(self):
         """
@@ -359,5 +358,4 @@ class TranslateMemoryTests(ViewTestCase):
             'pk': 2,
             'locale': 'en-GB'
         })
-        assert_code(response, 200)
-        assert_equal(response.content, 'no')
+        assert_code(response, 404)
