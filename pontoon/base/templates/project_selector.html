@@ -39,7 +39,7 @@
           {% set chart = p.get_chart(locale|default(none)) %}
         {% endif %}
 
-        <li class="clearfix{% if chart != None %} limited{% endif %}"{% if project and project == p %} style="display: list-item;"{% endif %}>
+        <li class="clearfix{% if locale and p.slug in locale.available_projects_list() %} limited{% endif %}"{% if project and project == p %} style="display: list-item;"{% endif %}>
           <span class="name"
             {% for key, value in p.serialize().iteritems() %}
               data-{{ key }}="{{ value }}"
