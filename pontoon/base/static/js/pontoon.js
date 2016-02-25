@@ -657,21 +657,14 @@
       if (entities.length > 0) {
 
         if (entities[0].format === 'properties' && $('[data-l10n-id]').length) {
-          var localized = false;
+          loadEntitiesL10nJs();
+
+          // If webL10n localized event triggered, retranslate using Pontoon translations
           window.addEventListener("localized", function() {
-            if (!localized) {
-              if (!document.webL10n || document.webL10n.getReadyState() === 'complete') {
-                localized = true;
-                loadEntitiesL10nJs();
-              }
-            }
-          }, false);
-          // Fallback: in case the event is never triggered
-          setTimeout(function() {
-            if (!localized) {
+            if (!document.webL10n || document.webL10n.getReadyState() === 'complete') {
               loadEntitiesL10nJs();
             }
-          }, 1000);
+          }, false);
 
         } else {
           var hooks = false;
@@ -784,7 +777,13 @@
       url = url.substring(url.indexOf(split) + split.length);
       paths.push(url);
     }
-
-    postMessage("READY", paths, null, "*");
   }
 })();
+
+var appWindow = window.opener || ((window !== window.top) ? window.top : undefined);
+if (appWindow) {
+  appWindow.postMessage(JSON.stringify({
+    type: 'READY',
+    value: []
+  }), '*');
+}
