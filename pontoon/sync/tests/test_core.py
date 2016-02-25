@@ -120,7 +120,7 @@ class UpdateResourcesTests(FakeCheckoutTestCase):
     def test_basic(self):
         # Check for self.main_db_resource to be updated and
         # self.other_db_resource to be created.
-        self.main_db_resource.total_strings += 1
+        self.main_db_resource.total_strings = 5000
         self.main_db_resource.save()
         self.other_db_resource.delete()
 
