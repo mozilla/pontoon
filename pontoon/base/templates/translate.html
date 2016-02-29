@@ -318,7 +318,7 @@
 </aside>
 
 <!-- Website placeholder + iframe fix: prevent iframes from capturing the mousemove events during a drag -->
-<iframe id="source"></iframe>
+<iframe id="source"{% if project.pk == 1 and part != 'search' %} src="{{ project.url }}"{% endif %}></iframe>
 <div id="iframe-cover"></div>
 
 <!-- No results -->

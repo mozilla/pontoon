@@ -1,3 +1,12 @@
+/* Must be available immediately */
+// Add case insensitive :contains-like selector to jQuery (search)
+$.expr[':'].containsi = function(a, i, m) {
+  return (a.textContent || a.innerText || '')
+    .toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+};
+
+
+
 /* Public functions used across different files */
 var Pontoon = (function (my) {
   return $.extend(true, my, {
@@ -425,12 +434,6 @@ $(function() {
   }).on('mouseleave', 'li .chart-wrapper', function () {
     $('.tooltip:visible').remove();
   });
-
-  // Add case insensitive :contains-like selector to jQuery (search)
-  $.expr[':'].containsi = function(a, i, m) {
-    return (a.textContent || a.innerText || '')
-      .toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-  };
 
   // Profile menu
   // Register handlers to prep django-browserid before binding menu.

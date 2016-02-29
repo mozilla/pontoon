@@ -264,7 +264,6 @@ PIPELINE_CSS = {
         'source_filenames': (
             'css/bootstrap.min.css',
             'css/agency.css',
-            'css/font-awesome.min.css',
         ),
         'output_filename': 'css/intro.min.css',
     },

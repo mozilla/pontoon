@@ -157,7 +157,10 @@ var Pontoon = (function (my) {
         this.machinerySource = source;
       }
 
-      $(".tabs nav .active a").click();
+      var tab = $("#helpers nav .active a"),
+          section = tab.attr('href').substr(1);
+
+      $('#helpers section.' + section + ':hidden').show();
     },
 
 
@@ -1354,7 +1357,7 @@ var Pontoon = (function (my) {
     updatePartMenu: function () {
       var locale = this.getSelectedLocale(),
           parts = this.getProjectData('parts')[locale],
-          currentPart = $('.part .selector').attr('title');
+          currentPart = this.getSelectedPart();
           part = $.grep(parts, function (e) { return e.resource__path === currentPart; });
 
       // Fallback if selected part not available for the selected locale & project
@@ -1523,7 +1526,7 @@ var Pontoon = (function (my) {
 
         self.checkUnsavedChanges(function() {
           var data = self.pushState();
-          self.initialize();
+          self.getEntities(true);
         });
 
         self.closeNotification();
@@ -1663,6 +1666,7 @@ var Pontoon = (function (my) {
       $("#progress").show();
 
       $("#project-load").hide();
+      $('#source').click();
 
       // If 2-column layout opened by default, open first entity in the editor
       if (this.app.advanced) {
@@ -1758,9 +1762,32 @@ var Pontoon = (function (my) {
 
           $('#source, #iframe-cover').css('margin-left', $('#sidebar:visible').width() || 0);
           $('#source').show();
+
           Pontoon.paths = message.value;
           Pontoon.resizeIframe();
-          Pontoon.getEntities(advanced, projectWindow);
+          Pontoon.makeIframeResizable();
+
+          Pontoon.createObject(advanced, $('#source')[0].contentWindow);
+
+          // Page might be loaded before entities are returned
+          (function waitForEntities() {
+            if (Pontoon.entities){
+              Pontoon.postMessage("INITIALIZE", {
+                path: Pontoon.app.path,
+                links: Pontoon.project.links,
+                entities: Pontoon.entities,
+                slug: Pontoon.project.slug,
+                locale: Pontoon.locale,
+                user: Pontoon.user
+              }, null, $('#source').attr('src'));
+
+            } else {
+              setTimeout(function() {
+                waitForEntities();
+              }, 100);
+            }
+          })();
+
           break;
 
         case "DATA":
@@ -1952,16 +1979,58 @@ var Pontoon = (function (my) {
         search: window.location.search
       };
 
-      this.part = $('.part .selector').attr('title');
+      this.part = this.getSelectedPart();
       this.locale = self.getLocaleData();
       this.user.isTranslator = isTranslator($('#server').data('user-translated-locales'));
     },
 
 
     /*
+     * Load project with in place translation support
+     */
+    withInPlace: function() {
+      var self = this,
+          i = 0;
+
+      self.interval = 0;
+
+      // If no READY (Pontoon.paths) received for 10 seconds
+      self.interval = setInterval(function() {
+        i++;
+        if (i > 100 && !self.paths) {
+          clearInterval(self.interval);
+          window.removeEventListener("message", self.receiveMessage, false);
+          return self.withoutInPlace();
+        }
+      }, 100);
+    },
+
+
+    /*
+     * Load project without in place translation support
+     */
+    withoutInPlace: function() {
+      var self = this;
+
+      $('#sidebar').addClass('advanced').css('width', '100%').show();
+      $('#editor').addClass('opened').css('left', '');
+      $('#entitylist').css('left', '');
+
+      self.createObject(true);
+
+      $(self.entities).each(function (i) {
+        this.id = i;
+      });
+
+      self.createUI();
+      self.syncLocalStorageOnServer();
+    },
+
+
+    /*
      * Load entities, store data, prepare UI
      */
-    getEntities: function(advanced, projectWindow) {
+    getEntities: function(forceReloadIframe) {
       var self = this,
           state = history.state,
           params =
@@ -1971,6 +2040,29 @@ var Pontoon = (function (my) {
 
       if (!state.paths) {
         params += '&' + state.search.substring(1);
+      }
+
+      // Reset default values
+      self.entities = self.paths = null;
+
+      // Start loader
+      $('#project-load').show()
+        .find('.text').css('opacity', 0);
+
+      // Show potentially amusing message if loading takes more time
+      setTimeout(function() {
+        $('#project-load .text').animate({opacity: 1});
+      }, 3000);
+
+      // Load part URL if it exists and not already loaded
+      var part = self.currentPart;
+      if (part && part.url && !window.location.search) {
+        var url = part.url;
+
+        if ($('#source').attr('src') !== url || forceReloadIframe) {
+          $('#source').attr('src', url);
+        }
+        window.addEventListener("message", self.receiveMessage, false);
       }
 
       $.ajax({
@@ -1986,39 +2078,15 @@ var Pontoon = (function (my) {
             self.createObject();
             self.updateMainMenu();
             return;
+
           } else {
             $('#no-results').hide();
           }
 
-          // Projects with in place translation support
-          if (projectWindow && !state.search && self.entities.length) {
-            self.createObject(advanced, projectWindow);
-
-            self.postMessage("INITIALIZE", {
-              path: self.app.path,
-              links: self.project.links,
-              entities: self.entities,
-              slug: self.project.slug,
-              locale: self.locale,
-              user: self.user
-            }, null, $('#source').attr('src'));
-
-            self.makeIframeResizable();
-
-          // Projects without in place translation support
+          if (url) {
+            self.withInPlace();
           } else {
-            $('#sidebar').addClass('advanced').css('width', '100%').show();
-            $('#editor').addClass('opened').css('left', '');
-            $('#entitylist').css('left', '');
-
-            self.createObject(true);
-
-            $(self.entities).each(function (i) {
-              this.id = i;
-            });
-
-            self.createUI();
-            self.syncLocalStorageOnServer();
+            self.withoutInPlace();
           }
         },
         error: function() {
@@ -2049,6 +2117,14 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Get currently selected part name
+     */
+    getSelectedPart: function() {
+      return $('.part .selector').attr('title');
+    },
+
+
+    /*
      * Get data-* attribute value of the currently selected locale
      */
     getLocaleData: function(attribute) {
@@ -2067,73 +2143,53 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Initialize translate view
+     * Update currently selected part object
      */
-    initialize: function() {
-      var self = this,
-          paths = history.state.paths;
+    updateCurrentPart: function() {
+      var locale = this.getSelectedLocale(),
+          part = this.getSelectedPart(),
+          availableParts = this.getProjectData('parts')[locale],
+          matchingParts = $.grep(availableParts, function (e) {
+            return e.resource__path === part;
+          });
 
-      // Reset loader
-      $('#project-load').show()
-        .find('.text').css('opacity', 0);
-
-      // Check if selected path has URL for in place localization
-      if (paths) {
-        var parts = self.getProjectData('parts')[history.state.locale],
-            part = $.grep(parts, function (e) { return e.resource__path === paths; });
-
-        // Fallback to first available part if no match found (mistyped URL)
-        if (!part.length) {
-          part = parts[0];
-          Pontoon.updatePartSelector(part.resource__path);
-        } else {
-          part = part[0];
-        }
-
-        // Start differently, depending on part URL
-        if (part.url) {
-          $('#source').attr('src', part.url);
-          window.addEventListener("message", self.receiveMessage, false);
-
-          var i = 0;
-          self.interval = 0;
-
-          // If no READY (Pontoon.paths) received for 10 seconds
-          self.interval = setInterval(function() {
-            i++;
-            if (i > 100 && !self.paths) {
-              clearInterval(self.interval);
-              window.removeEventListener("message", self.receiveMessage, false);
-              return self.getEntities();
-            }
-          }, 100);
-
-          return;
-        }
+      if (!matchingParts.length) {
+        this.currentPart = availableParts[0];
+      } else {
+        this.currentPart = matchingParts[0];
       }
-
-      // No paths (search) or no URL
-      self.getEntities();
-
-      // Show potentially amusing message if loading takes more time
-      setTimeout(function() {
-        $('#project-load .text').animate({opacity: 1});
-      }, 3000);
     },
 
 
+    /*
+     * Push history state
+     */
     pushState: function() {
+      var project = this.getSelectedProject(),
+          locale = this.getSelectedLocale(),
+          // Empty if no path defined (i.e. search)
+          paths = requestedPart = this.getSelectedPart(),
+          search = window.location.search,
+          postfix = 'search' + '/' + search;
+
+      // Fallback to first available part if no matches found (mistyped URL)
+      if (requestedPart) {
+        this.updateCurrentPart();
+        paths = this.currentPart.resource__path;
+        this.updatePartSelector(paths);
+        postfix = paths + '/';
+      }
+
       var state = {
-        project: $('.project .selector .title').data('slug'),
-        locale: this.getSelectedLocale(),
-        paths: $('.part .selector').attr('title'),
-        search: window.location.search
+        project: project,
+        locale: locale,
+        paths: paths,
+        search: search
       },
-      ending = state.paths ? state.paths + '/' : 'search' + '/' + state.search,
-      url = '/' + state.locale + '/' + state.project + '/' + ending;
+      url = '/' + locale + '/' + project + '/' + postfix;
 
       // Keep homepage URL
-      if (window.location.pathname === '/' && state.project === 'pontoon-intro') {
+      if (window.location.pathname === '/' && project === 'pontoon-intro') {
         url = '/';
       }
 
@@ -2143,33 +2199,30 @@ var Pontoon = (function (my) {
   });
 }(Pontoon || {}));
 
-
-
 /* Main code */
-$(function() {
-  window.onpopstate = function(e) {
-    if (e.state) {
-      // Update main menu
-      $('.project .menu li [data-slug="' + e.state.project + '"]').parent().click();
-      $('.locale .menu li .language[data-code=' + e.state.locale + '"]').parent().click();
-      if (e.state.paths) {
-        // Also update part, otherwise the first one gets selected
-        Pontoon.updatePartSelector(e.state.paths);
-      }
-
-      Pontoon.initialize();
+window.onpopstate = function(e) {
+  if (e.state) {
+    // Update main menu
+    $('.project .menu li [data-slug="' + e.state.project + '"]').parent().click();
+    $('.locale .menu li .language[data-code="' + e.state.locale + '"]').parent().click();
+    if (e.state.paths) {
+      // Also update part, otherwise the first one gets selected
+      Pontoon.updateCurrentPart();
+      Pontoon.updatePartSelector(e.state.paths);
     }
-  };
 
-  Pontoon.user = {
-    email: $('#server').data('email') || '',
-    name: $('#server').data('name') || '',
-    forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
-    manager: $('#server').data('manager')
-  };
+    Pontoon.getEntities(true);
+  }
+};
 
-  Pontoon.attachMainHandlers();
-  Pontoon.attachEditorHandlers();
-  Pontoon.pushState();
-  Pontoon.initialize();
-});
+Pontoon.user = {
+  email: $('#server').data('email') || '',
+  name: $('#server').data('name') || '',
+  forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
+  manager: $('#server').data('manager')
+};
+
+Pontoon.attachMainHandlers();
+Pontoon.attachEditorHandlers();
+Pontoon.pushState();
+Pontoon.getEntities();
