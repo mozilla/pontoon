@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.core.validators import validate_comma_separated_integer_list
-from django.db import transaction
+from django.db import transaction, DataError
 from django.db.models import Count, F, Q
 
 from django.http import (
@@ -683,10 +683,13 @@ def translation_memory(request):
     entries = entries.values('source', 'target', 'quality').order_by('-quality')
     suggestions = defaultdict(lambda: {'count': 0, 'quality': 0})
 
-    for entry in entries:
-        if entry['target'] not in suggestions or entry['quality'] > suggestions[entry['target']]['quality']:
-            suggestions[entry['target']].update(entry)
-        suggestions[entry['target']]['count'] += 1
+    try:
+        for entry in entries:
+            if entry['target'] not in suggestions or entry['quality'] > suggestions[entry['target']]['quality']:
+                suggestions[entry['target']].update(entry)
+            suggestions[entry['target']]['count'] += 1
+    except DataError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     if len(suggestions) > 0:
         return JsonResponse({
