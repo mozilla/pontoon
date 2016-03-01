@@ -216,8 +216,8 @@ var Pontoon = (function (my) {
         }
 
       }).success(function(data) {
-        if (data.translations) {
-          $.each(data.translations, function() {
+        if (data) {
+          $.each(data, function() {
             append({
               original: this.source,
               quality: Math.round(this.quality) + '%',
@@ -323,8 +323,8 @@ var Pontoon = (function (my) {
         }
 
       }).success(function(data) {
-        if (data.translations) {
-          $.each(data.translations, function() {
+        if (data) {
+          $.each(data, function() {
             append({
               original: this.source,
               quality: Math.round(this.quality) + '%',
@@ -352,7 +352,7 @@ var Pontoon = (function (my) {
         }
 
       }).success(function(data) {
-        if (data && data !== 'no') {
+        if (data) {
           $.each(data, function() {
             append({
               original: this.source,

@@ -689,15 +689,11 @@ def translation_memory(request):
                 suggestions[entry['target']].update(entry)
             suggestions[entry['target']]['count'] += 1
     except DataError as e:
+        # Catches 'argument exceeds the maximum length of 255 bytes' Error
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    if len(suggestions) > 0:
-        return JsonResponse({
-            'translations': sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
-        })
+    return JsonResponse(sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results], safe=False)
 
-    else:
-        raise Http404
 
 def machine_translation(request):
     """Get translation from machine translation service."""
@@ -854,15 +850,7 @@ def amagama(request):
 
     try:
         r = requests.get(url, params=payload)
-
-        if r.text != '[]':
-            translations = r.json()
-
-            return JsonResponse({
-                'translations': translations
-            })
-        else:
-            raise Http404
+        return JsonResponse(r.json(), safe=False)
 
     except Exception as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
@@ -893,16 +881,12 @@ def transvision(request):
 
     try:
         r = requests.get(url, params=payload)
+        if 'error' in r.json():
+            error = r.json()['error']
+            log.error('Transvision error: {error}'.format(error))
+            return HttpResponseBadRequest('Bad Request: {error}'.format(error=error))
 
-        if r.text != '[]':
-            if 'error' in r.json():
-                error = r.json()['error']
-                log.error('Transvision error: {error}'.format(error))
-                return HttpResponseBadRequest('Bad Request: {error}'.format(error=error))
-            return JsonResponse(r.json(), safe=False)
-
-        else:
-            raise Http404
+        return JsonResponse(r.json(), safe=False)
 
     except Exception as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
