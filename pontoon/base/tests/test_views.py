@@ -311,7 +311,7 @@ class TranslateMemoryTests(ViewTestCase):
             'pk': memory_entry.entity.pk,
             'locale': new_locale.code
         })
-        assert_json(response, {"translations": [{"count": 1, "source": "aaa", "quality": 100.0, "target": "ddd"}]})
+        assert_json(response, [{"count": 1, "source": "aaa", "quality": 100.0, "target": "ddd"}])
 
     def test_translation_counts(self):
         """
@@ -329,10 +329,10 @@ class TranslateMemoryTests(ViewTestCase):
             'pk': memory_entry.entity.pk,
             'locale': memory_entry.locale.code
         })
-        assert_json(response, {u'translations': [{u'count': 3,
+        assert_json(response, [{u'count': 3,
                      u'quality': 75.0,
                      u'source': u'abaa',
-                     u'target': u'ccc'}]})
+                     u'target': u'ccc'}])
 
     def test_exclude_entity(self):
         """
@@ -344,7 +344,8 @@ class TranslateMemoryTests(ViewTestCase):
             'pk': memory_entry.entity.pk,
             'locale': memory_entry.locale.code
         })
-        assert_code(response, 404)
+        assert_code(response, 200)
+        assert_equal(response.content, '[]')
 
     def test_minimal_quality(self):
         """
@@ -358,4 +359,5 @@ class TranslateMemoryTests(ViewTestCase):
             'pk': 2,
             'locale': 'en-GB'
         })
-        assert_code(response, 404)
+        assert_code(response, 200)
+        assert_equal(response.content, '[]')

@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.core.validators import validate_comma_separated_integer_list
-from django.db import transaction
+from django.db import transaction, DataError
 from django.db.models import Count, F, Q
 
 from django.http import (
@@ -683,18 +683,17 @@ def translation_memory(request):
     entries = entries.values('source', 'target', 'quality').order_by('-quality')
     suggestions = defaultdict(lambda: {'count': 0, 'quality': 0})
 
-    for entry in entries:
-        if entry['target'] not in suggestions or entry['quality'] > suggestions[entry['target']]['quality']:
-            suggestions[entry['target']].update(entry)
-        suggestions[entry['target']]['count'] += 1
+    try:
+        for entry in entries:
+            if entry['target'] not in suggestions or entry['quality'] > suggestions[entry['target']]['quality']:
+                suggestions[entry['target']].update(entry)
+            suggestions[entry['target']]['count'] += 1
+    except DataError as e:
+        # Catches 'argument exceeds the maximum length of 255 bytes' Error
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    if len(suggestions) > 0:
-        return JsonResponse({
-            'translations': sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
-        })
+    return JsonResponse(sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results], safe=False)
 
-    else:
-        raise Http404
 
 def machine_translation(request):
     """Get translation from machine translation service."""
@@ -851,15 +850,7 @@ def amagama(request):
 
     try:
         r = requests.get(url, params=payload)
-
-        if r.text != '[]':
-            translations = r.json()
-
-            return JsonResponse({
-                'translations': translations
-            })
-        else:
-            raise Http404
+        return JsonResponse(r.json(), safe=False)
 
     except Exception as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
@@ -890,16 +881,12 @@ def transvision(request):
 
     try:
         r = requests.get(url, params=payload)
+        if 'error' in r.json():
+            error = r.json()['error']
+            log.error('Transvision error: {error}'.format(error))
+            return HttpResponseBadRequest('Bad Request: {error}'.format(error=error))
 
-        if r.text != '[]':
-            if 'error' in r.json():
-                error = r.json()['error']
-                log.error('Transvision error: {error}'.format(error))
-                return HttpResponseBadRequest('Bad Request: {error}'.format(error=error))
-            return JsonResponse(r.json(), safe=False)
-
-        else:
-            raise Http404
+        return JsonResponse(r.json(), safe=False)
 
     except Exception as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
