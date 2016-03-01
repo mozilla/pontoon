@@ -697,14 +697,16 @@
   // Load jQuery if not loaded yet
   function loadJquery() {
     if (!window.jQuery) {
-      if (!jqueryAppended && document.body) {
+      if (document.body) {
+        var script = document.createElement('script');
         script.src = Pontoon.app.path + 'static/js/jquery-1.11.1.min.js';
         document.body.appendChild(script);
-        jqueryAppended = true;
-        arguments.callee();
+        jqueryLoaded();
+
       } else {
         window.setTimeout(arguments.callee, 100);
       }
+
     } else {
       jqueryLoaded();
     }
@@ -714,6 +716,10 @@
   function initizalize(e) {
     if (e.source === appWindow) {
       var message = JSON.parse(e.data);
+      if (message.type === "ARE YOU READY?") {
+        postMessage("READY", null, appWindow, appWindow.location.href);
+      }
+
       if (message.type === "INITIALIZE") {
         Pontoon = {
           app: {
@@ -756,34 +762,13 @@
     otherWindow.postMessage(JSON.stringify(message), targetOrigin);
   }
 
-  var appWindow = window.opener || ((window !== window.top) ? window.top : undefined),
-      jqueryAppended = false,
-      script = document.createElement('script');
-
-  // When loaded inside web client, notify it and wait for messages
-  if (window.opener || (window !== window.top)) {
-    window.addEventListener("message", initizalize, false);
-
-    // Parse localization resource paths if present
-    var resources = document.querySelectorAll('link[rel="localization"]'),
-        split = '///',
-        paths = [];
-
-    for (var i = 0; i < resources.length; i++) {
-      var url = resources[i].href
-        .replace(/locales\//, '')
-        .replace(/%7Blocale%7D./, '');
-
-      url = url.substring(url.indexOf(split) + split.length);
-      paths.push(url);
-    }
-  }
+  window.addEventListener("message", initizalize, false);
 })();
 
+// When loaded inside web client, notify it and wait for messages
 var appWindow = window.opener || ((window !== window.top) ? window.top : undefined);
 if (appWindow) {
   appWindow.postMessage(JSON.stringify({
-    type: 'READY',
-    value: []
-  }), '*');
+    type: "READY"
+  }), appWindow.location.href);
 }

@@ -1698,7 +1698,7 @@ var Pontoon = (function (my) {
      * targetOrigin specifies what the origin of otherWindow must be
      */
     postMessage: function (messageType, messageValue, otherWindow, targetOrigin) {
-      if (!Pontoon.project.win) {
+      if (Pontoon.project && !Pontoon.project.win) {
         return false;
       }
       var otherWindow = otherWindow || Pontoon.project.win,
@@ -1763,7 +1763,7 @@ var Pontoon = (function (my) {
           $('#source, #iframe-cover').css('margin-left', $('#sidebar:visible').width() || 0);
           $('#source').show();
 
-          Pontoon.paths = message.value;
+          Pontoon.ready = true;
           Pontoon.resizeIframe();
           Pontoon.makeIframeResizable();
 
@@ -1771,7 +1771,7 @@ var Pontoon = (function (my) {
 
           // Page might be loaded before entities are returned
           (function waitForEntities() {
-            if (Pontoon.entities){
+            if (Pontoon.entities) {
               Pontoon.postMessage("INITIALIZE", {
                 path: Pontoon.app.path,
                 links: Pontoon.project.links,
@@ -1994,15 +1994,23 @@ var Pontoon = (function (my) {
 
       self.interval = 0;
 
-      // If no READY (Pontoon.paths) received for 10 seconds
+      // If no READY received for 10 seconds
       self.interval = setInterval(function() {
         i++;
-        if (i > 100 && !self.paths) {
+        if (i > 100 && !self.ready) {
           clearInterval(self.interval);
           window.removeEventListener("message", self.receiveMessage, false);
           return self.withoutInPlace();
         }
       }, 100);
+
+      // In case READY sent before we could catch it
+      self.postMessage(
+        "ARE YOU READY?",
+        null,
+        $('#source').prop('contentWindow'),
+        $('#source').attr('src')
+      );
     },
 
 
@@ -2043,7 +2051,7 @@ var Pontoon = (function (my) {
       }
 
       // Reset default values
-      self.entities = self.paths = null;
+      self.entities = self.ready = null;
 
       // Start loader
       $('#project-load').show()
