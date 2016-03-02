@@ -607,6 +607,14 @@ class ProjectLocale(AggregatedStats):
                 'approved_percent': int(math.floor(obj.approved_strings / obj.total_strings * 100)),
             }
 
+    def aggregate_stats(self):
+        TranslatedResource.objects.filter(
+            resource__project=self.project,
+            resource__project__disabled=False,
+            resource__entities__obsolete=False,
+            locale=self.locale
+        ).distinct().aggregate_stats(self)
+
 
 class Repository(models.Model):
     """
