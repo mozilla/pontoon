@@ -697,11 +697,13 @@
   // Load jQuery if not loaded yet
   function loadJquery() {
     if (!window.jQuery) {
-      if (document.body) {
+      if (!jqueryAppended && document.body) {
         var script = document.createElement('script');
         script.src = Pontoon.app.path + 'static/js/jquery-1.11.1.min.js';
         document.body.appendChild(script);
-        jqueryLoaded();
+
+        jqueryAppended = true;
+        arguments.callee();
 
       } else {
         window.setTimeout(arguments.callee, 100);
@@ -717,7 +719,7 @@
     if (e.source === appWindow) {
       var message = JSON.parse(e.data);
       if (message.type === "ARE YOU READY?") {
-        postMessage("READY", null, appWindow, appWindow.location.href);
+        postMessage("READY", null, appWindow, '*');
       }
 
       if (message.type === "INITIALIZE") {
@@ -762,6 +764,7 @@
     otherWindow.postMessage(JSON.stringify(message), targetOrigin);
   }
 
+  var jqueryAppended = false;
   window.addEventListener("message", initizalize, false);
 })();
 
@@ -770,5 +773,5 @@ var appWindow = window.opener || ((window !== window.top) ? window.top : undefin
 if (appWindow) {
   appWindow.postMessage(JSON.stringify({
     type: "READY"
-  }), appWindow.location.href);
+  }), '*');
 }
