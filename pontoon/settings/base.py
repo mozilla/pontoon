@@ -385,8 +385,6 @@ ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
 ## Auth
 # The first hasher in this list will be used for new passwords.
 # Any other hasher in the list can be used for existing passwords.
-# Playdoh ships with Bcrypt+HMAC by default because it's the most secure.
-# To use bcrypt, fill in a secret HMAC key in your local settings.
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',

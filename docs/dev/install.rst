@@ -62,14 +62,13 @@ Installation
       DJANGO_DEBUG=True
       DATABASE_URL=postgres://pontoon:asdf@localhost/pontoon
       SESSION_COOKIE_SECURE=False
-      HMAC_KEY=insert_random_key
       SITE_URL=http://localhost:8000
 
    Make sure to make the following modifications to the template above:
 
-   - ``SECRET_KEY`` and ``HMAC_KEY`` should be set to some random key you
-     come up with, as they are used to secure the authentication data for
-     your local instance.
+   - ``SECRET_KEY`` should be set to some random key you come up with,
+     as it is used to secure the authentication data for your local
+     instance.
 
    - ``DATABASE_URL`` should contain the connection data for connecting to
      your Postgres database. It takes the form
