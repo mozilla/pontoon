@@ -69,9 +69,6 @@ you create:
    Signifies whether this is a development server or not. Should be `False` in
    production.
 
-``HMAC_KEY``
-   Required. Secret key used for hashing passwords.
-
 ``NEW_RELIC_API_KEY``
    Optional. API key for accessing the New Relic REST API. Used to mark deploys
    on New Relic.
