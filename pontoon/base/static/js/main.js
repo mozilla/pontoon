@@ -84,7 +84,6 @@ var Pontoon = (function (my) {
 
     /*
      * Linkifies any traces of URLs present in a given string.
-     * Usage : string.linkify();
      *
      * Matches the URL Regex and parses the required matches.
      * Can find more than one URL in the given string.
