@@ -209,6 +209,17 @@ var Pontoon = (function (my) {
           comment = this.doNotRender(entity.comment);
         }
         self.appendMetaData('Comment', comment);
+
+        // Screenshots
+        $('#source-pane').removeClass().find('#screenshots').empty();
+        $('#metadata').find('a').each(function() {
+          var url = $(this).html();
+          if (/(https?:\/\/.*\.(?:png|jpg))/im.test(url)) {
+            var localURL = url.replace(/en-US\//gi, self.locale.code + '/');
+            $('#screenshots').append('<img src="'+ localURL +'" alt="Screenshot">');
+            $('#source-pane').addClass('screenshots');
+          }
+        });
       }
       if (entity.key) {
         self.appendMetaData('Context', entity.key);
@@ -654,6 +665,16 @@ var Pontoon = (function (my) {
           $(this).html('Less details');
           more.css('display', 'block');
         }
+      });
+
+      // Zoom in screenshot
+      $('#screenshots').on('click', 'img', function (e) {
+        $('body').append('<div id="overlay">' + this.outerHTML + '</div>');
+      });
+
+      // Close zoomed screenshot
+      $('body').on('click', '#overlay', function() {
+        $(this).remove();
       });
 
       // Insert placeable at cursor, replace selection or at the end if not focused
