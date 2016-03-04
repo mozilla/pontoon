@@ -22,3 +22,7 @@ body > .container {
 .part.select .menu ul li .name {
   width: 519px; /* Instead of 520px; because of padding */
 }
+
+.tabs > section.resources {
+  display: block; /* Make resources visible before JS done */
+}
