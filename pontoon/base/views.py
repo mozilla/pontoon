@@ -194,9 +194,9 @@ def locale_project(request, locale, slug):
             'fuzzy_strings': part['fuzzy_strings'],
             'total_strings': part['resource__total_strings'],
             'approved_strings': part['approved_strings'],
-            'approved_share': round(part['approved_strings'] / part['resource__total_strings'] * 100, 2),
-            'translated_share': round(part['translated_strings'] / part['resource__total_strings'] * 100, 2),
-            'fuzzy_share': round(part['fuzzy_strings'] / part['resource__total_strings'] * 100, 2),
+            'approved_share': round(part['approved_strings'] / part['resource__total_strings'] * 100),
+            'translated_share': round(part['translated_strings'] / part['resource__total_strings'] * 100),
+            'fuzzy_share': round(part['fuzzy_strings'] / part['resource__total_strings'] * 100),
             'approved_percent': int(math.floor(part['approved_strings'] / part['resource__total_strings'] * 100)),
         }
 
