@@ -115,7 +115,10 @@
         entity.body = true;
         $(entity.node).each(function() {
           this[0].entity = entity; // Store entity reference to the node
-
+ 
+          this.prop('lang', Pontoon.locale.code);
+          this.prop('dir', 'auto');
+ 
           // Show/hide toolbar on node hover
           if (!this.handlersAttached) {
             this.hover(function () {
