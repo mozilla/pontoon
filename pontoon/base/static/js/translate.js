@@ -670,11 +670,14 @@ var Pontoon = (function (my) {
       // Zoom in screenshot
       $('#screenshots').on('click', 'img', function (e) {
         $('body').append('<div id="overlay">' + this.outerHTML + '</div>');
+        $('#overlay').fadeIn('fast');
       });
 
       // Close zoomed screenshot
       $('body').on('click', '#overlay', function() {
-        $(this).remove();
+        $(this).fadeOut('fast', function() {
+          $(this).remove();
+        });
       });
 
       // Insert placeable at cursor, replace selection or at the end if not focused
