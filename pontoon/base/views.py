@@ -839,8 +839,9 @@ def amagama(request):
     except KeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
+    # No trailing slash at the end or slash becomes part of the source text
     url = (
-        u'http://amagama.locamotion.org/tmserver/en/{locale}/unit/{text}/'
+        u'http://amagama.locamotion.org/tmserver/en/{locale}/unit/{text}'
         .format(locale=locale, text=text)
     )
 
