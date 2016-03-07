@@ -435,50 +435,25 @@ $(function() {
   });
 
   // Profile menu
-  // Register handlers to prep django-browserid before binding menu.
-  django_browserid.registerWatchHandlers(function() {
-    function signIn() {
-      Pontoon.startLoader();
-      django_browserid.login().then(function(verifyResult) {
-        window.location.reload();
-      }, function(jqXHR) {
-        Pontoon.endLoader('Oops, something went wrong.', 'error');
-      });
+  $('#profile .menu li').click(function (e) {
+    if ($(this).has('a').length) {
+      return;
     }
+    e.preventDefault();
 
-    $('#profile .menu li').click(function (e) {
-      if ($(this).has('a').length) {
-        return;
-      }
-      e.preventDefault();
+    if ($(this).is('.download')) {
+      Pontoon.updateFormFields($('form#download-file'));
+      $('form#download-file').submit();
 
-      if ($(this).is(".sign-in")) {
-        signIn();
+    } else if ($(this).is(".upload")) {
+      $('#id_uploadfile').click();
 
-      } else if ($(this).is('.download')) {
-        Pontoon.updateFormFields($('form#download-file'));
-        $('form#download-file').submit();
+    } else if ($(this).is(".hotkeys")) {
+      $('#hotkeys').show();
 
-      } else if ($(this).is(".upload")) {
-        $('#id_uploadfile').click();
-
-      } else if ($(this).is(".hotkeys")) {
-        $('#hotkeys').show();
-
-      } else if ($(this).is('.check-box')) {
-        e.stopPropagation();
-      }
-    });
-
-    $('p#sign-in-required > a#sidebar-signin').click(function (e) {
-      e.preventDefault();
-      signIn();
-    });
-
-    $('ul.links > li#sign-in').click(function (e) {
-      e.preventDefault();
-      signIn();
-    });
+    } else if ($(this).is('.check-box')) {
+      e.stopPropagation();
+    }
   });
 
   // Menu search
@@ -698,5 +673,44 @@ $(function() {
     }
 
   });
+
+  if ($('#sign-in').length) {
+    // Asynchronously load Persona to avoid blocking JS execution
+    $.getScript('https://login.persona.org/include.js');
+
+    // Log in handler
+    $('body').on('click', '#profile .menu li.sign-in, p#sign-in-required > a#sidebar-signin, ul.links > li#sign-in', function (e) {
+      e.preventDefault();
+      var info = $('#browserid-info').data('info');
+
+      Pontoon.startLoader();
+
+      navigator.id.watch({
+        onlogin: function(verifyResult) {
+          $.get(info.csrfUrl).then(function(csrfToken) {
+            $.ajax({
+              url: info.loginUrl,
+              type: 'POST',
+              data: {
+                csrfmiddlewaretoken: csrfToken,
+                assertion: verifyResult
+              },
+              success: function(data) {
+                window.location.reload();
+              },
+              error: function(data) {
+                Pontoon.endLoader('Oops, something went wrong.', 'error');
+              }
+            });
+          });
+        }
+      });
+
+      try {
+        navigator.id.request(info.requestArgs);
+      }
+      catch(ex) { }
+    });
+  }
 
 });
