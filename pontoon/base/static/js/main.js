@@ -126,24 +126,38 @@ var Pontoon = (function (my) {
           ul = $('#' + tab_id).find('ul').empty(),
           tab = $('#' + loader).addClass('loading'),
           requests = 0,
-          count = 0;
+          count = 0,
+          sourcesMap = {};
 
       function append(data) {
-        var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : '';
-        ul.append('<li' + title + '>' +
-          '<header>' +
-            '<span class="stress">' + (data.quality || '') +
-              (data.count ? ' &bull; <span>#</span>' + data.count : '') +
-            '</span>' +
-            '<a class="translation-source" href="' + data.url + '" target="_blank"' +
-              'title="' + data.title + '">' + data.source + '</a>' +
-          '</header>' +
-          '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
-          '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
-            self.doNotRender(data.translation) +
-          '</p>' +
-        '</li>');
+        var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : '',
+            sources = sourcesMap[data.original + data.translation];
 
+        if (sources) {
+          sources.append(
+            ' &bull; <a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
+              '<span>' + data.source + '</span>' +
+              (data.count ? '<sup>' + data.count  + '</sup>' : '') +
+            '</a>'
+          );
+        } else {
+          var li = $('<li' + title + '>' +
+            '<header>' +
+              '<span class="stress">' + (data.quality || '') + '</span> &bull; ' +
+              '<a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
+                '<span>' + data.source + '</span>' +
+                (data.count ? '<sup>' + data.count + '</sup>' : '') +
+              '</a>' +
+            '</header>' +
+            '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
+            '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
+              self.doNotRender(data.translation) +
+            '</p>' +
+          '</li>');
+          ul.append(li);
+          sourcesMap[data.original + data.translation] = li.children('header');
+          count++;
+        }
         // Sort by quality
         var listitems = ul.children("li"),
             sourceMap = {
@@ -155,8 +169,15 @@ var Pontoon = (function (my) {
             };
 
         function getTranslationSource(el) {
-          var source = $(el).find('.translation-source').text();
-          return sourceMap[source];
+          var sources = $(el).find('.translation-source span');
+
+          if (sources.length > 1) {
+            return Math.min.apply(Math, $.map(sources, function(elem) {
+              return sourceMap[$(elem).text()];
+            }));
+          } else {
+            return sourceMap[sources.text()];
+          }
         }
 
         listitems.sort(function(a, b) {
@@ -164,11 +185,11 @@ var Pontoon = (function (my) {
               valB = parseInt($(b).find('.stress').html().split('%')[0]) || 0,
               sourceA = getTranslationSource(a),
               sourceB = getTranslationSource(b);
+
           return (valA < valB) ? 1 : (valA > valB) ? -1 : (sourceA > sourceB) ? 1 : (sourceA < sourceB) ? -1 : 0;
         });
         ul.append(listitems);
 
-        count++;
       }
 
       function error(error) {

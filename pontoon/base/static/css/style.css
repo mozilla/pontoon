@@ -1179,6 +1179,14 @@ body > .container {
   padding-right: 3px;
 }
 
+#helpers > section.machinery ul li > header .stress {
+  padding-right: 0;
+}
+
+#helpers > section.machinery ul li > header sup {
+  color: #7BC876;
+}
+
 #helpers > section ul li > p {
   min-height: 22px;
   text-align: left;
