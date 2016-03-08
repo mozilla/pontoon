@@ -674,12 +674,14 @@ $(function() {
 
   });
 
-  if ($('#sign-in').length) {
+  var signinSelectors = '#profile .menu li.sign-in, p#sign-in-required > a#sidebar-signin, ul.links > li#sign-in';
+
+  if ($(signinSelectors).length) {
     // Asynchronously load Persona to avoid blocking JS execution
     $.getScript('https://login.persona.org/include.js');
 
-    // Log in handler
-    $('body').on('click', '#profile .menu li.sign-in, p#sign-in-required > a#sidebar-signin, ul.links > li#sign-in', function (e) {
+    // Sign in handler
+    $('body').on('click', signinSelectors, function (e) {
       e.preventDefault();
       var info = $('#browserid-info').data('info');
 
