@@ -841,12 +841,14 @@ def amagama(request):
 
     # No trailing slash at the end or slash becomes part of the source text
     url = (
-        u'http://amagama.locamotion.org/tmserver/en/{locale}/unit/{text}'
-        .format(locale=locale, text=text)
+        u'https://amagama-live.translatehouse.org/api/v1/en/{locale}/unit/'
+        .format(locale=locale)
     )
 
     payload = {
+        'source': text,
         'max_candidates': 5,
+        'min_similarity': 70,
     }
 
     try:
