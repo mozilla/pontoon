@@ -182,6 +182,10 @@ def locale_project(request, locale, slug):
         .filter(resource__project=project, locale=l)
         .select_related('resource', 'latest_translation')
     )
+
+    if not len(translatedresources_qs):
+        raise Http404
+
     translatedresources = {s.resource.path: s for s in translatedresources_qs}
     parts = l.parts_stats(project)
 
@@ -211,6 +215,9 @@ def translate(request, locale, slug, part):
     """Translate view."""
     locale = get_object_or_404(Locale, code__iexact=locale)
     project = get_object_or_404(Project.objects.available(), slug=slug)
+
+    if locale not in project.locales.all():
+        raise Http404
 
     projects = (
         Project.objects.available()
