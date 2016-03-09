@@ -143,7 +143,7 @@ var Pontoon = (function (my) {
         } else {
           var li = $('<li' + title + '>' +
             '<header>' +
-              '<span class="stress">' + (data.quality || '') + '</span> &bull; ' +
+              (data.quality ? '<span class="stress">' + data.quality + '</span> &bull; ' : '') +
               '<a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
                 '<span>' + data.source + '</span>' +
                 (data.count ? '<sup>' + data.count + '</sup>' : '') +
