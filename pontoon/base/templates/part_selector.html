@@ -36,11 +36,11 @@
       <ul>
         {% if not part %}
         {% for p in parts %}
-          {% set link = url('pontoon.translate', locale.code, project.slug, p.resource__path) %}
+          {% set link = url('pontoon.translate', locale.code, project.slug, p.title) %}
           <li class="clearfix">
             <span class="name">
               <a href="{{ link }}" class="clearfix">
-                {{ p.resource__path }}
+                {{ p.title }}
               </a>
             </span>
 
