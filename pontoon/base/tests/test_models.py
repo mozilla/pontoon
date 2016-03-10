@@ -165,7 +165,7 @@ class LocalePartsTests(TestCase):
         details = self.locale.parts_stats(self.project)
 
         assert_equal(len(details), 1)
-        assert_equal(details[0]['resource__path'], '/main/path.po')
+        assert_equal(details[0]['title'], '/main/path.po')
         assert_equal(details[0]['translated_strings'], 0)
 
     def test_parts_stats_no_page_multiple_resources(self):
@@ -183,12 +183,12 @@ class LocalePartsTests(TestCase):
         details = self.locale.parts_stats(self.project)
         details_other = self.locale_other.parts_stats(self.project)
 
-        assert_equal(details[0]['resource__path'], '/main/path.po')
+        assert_equal(details[0]['title'], '/main/path.po')
         assert_equal(details[0]['translated_strings'], 0)
-        assert_equal(details[1]['resource__path'], '/other/path.po')
+        assert_equal(details[1]['title'], '/other/path.po')
         assert_equal(details[1]['translated_strings'], 0)
         assert_equal(len(details_other), 1)
-        assert_equal(details_other[0]['resource__path'], '/other/path.po')
+        assert_equal(details_other[0]['title'], '/other/path.po')
         assert_equal(details_other[0]['translated_strings'], 0)
 
     def test_parts_stats_pages_not_tied_to_resources(self):
@@ -199,7 +199,7 @@ class LocalePartsTests(TestCase):
 
         details = self.locale.parts_stats(self.project)
 
-        assert_equal(details[0]['resource__path'], 'Subpage')
+        assert_equal(details[0]['title'], 'Subpage')
         assert_equal(details[0]['translated_strings'], 0)
 
     def test_parts_stats_pages_tied_to_resources(self):
@@ -227,11 +227,11 @@ class LocalePartsTests(TestCase):
         details = self.locale.parts_stats(self.project)
         details_other = self.locale_other.parts_stats(self.project)
 
-        assert_equal(details[0]['resource__path'], 'Other Subpage')
+        assert_equal(details[0]['title'], 'Other Subpage')
         assert_equal(details[0]['translated_strings'], 0)
-        assert_equal(details[1]['resource__path'], 'Subpage')
+        assert_equal(details[1]['title'], 'Subpage')
         assert_equal(details[1]['translated_strings'], 0)
-        assert_equal(details_other[0]['resource__path'], 'Other Subpage')
+        assert_equal(details_other[0]['title'], 'Other Subpage')
         assert_equal(details_other[0]['translated_strings'], 0)
 
 

@@ -311,9 +311,10 @@ class Locale(AggregatedStats):
 
     def parts_stats(self, project):
         """Get locale-project pages/paths with stats."""
-        def get_details(translatedresources):
-            return translatedresources.order_by('resource__path').values(
+        def get_details(parts):
+            return parts.order_by('title').values(
                 'url',
+                'title',
                 'resource__path',
                 'resource__total_strings',
                 'fuzzy_strings',
@@ -332,7 +333,10 @@ class Locale(AggregatedStats):
         # If subpages aren't defined,
         # return resource paths with corresponding stats
         if len(pages) == 0:
-            details = get_details(translatedresources.annotate(url=F('resource__project__url')))
+            details = get_details(translatedresources.annotate(
+                title=F('resource__path'),
+                url=F('resource__project__url')
+            ))
 
         # If project has defined subpages, return their names with
         # corresponding project stats. If subpages have defined resources,
@@ -343,7 +347,8 @@ class Locale(AggregatedStats):
                 details = get_details(
                     # List only subpages, whose resources are available for locale
                     pages.filter(resources__translatedresources__locale=self).annotate(
-                        resource__path=F('name'),
+                        title=F('name'),
+                        resource__path=F('resources__path'),
                         resource__total_strings=F('resources__total_strings'),
                         fuzzy_strings=F('resources__translatedresources__fuzzy_strings'),
                         translated_strings=F('resources__translatedresources__translated_strings'),
@@ -354,7 +359,8 @@ class Locale(AggregatedStats):
             else:
                 details = get_details(
                     pages.annotate(
-                        resource__path=F('name'),
+                        title=F('name'),
+                        resource__path=F('project__resources__path'),
                         resource__total_strings=F('project__resources__total_strings'),
                         fuzzy_strings=F('project__resources__translatedresources__fuzzy_strings'),
                         translated_strings=F('project__resources__translatedresources__translated_strings'),

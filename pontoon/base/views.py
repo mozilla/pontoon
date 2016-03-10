@@ -190,7 +190,7 @@ def locale_project(request, locale, slug):
     parts = l.parts_stats(project)
 
     for part in parts:
-        stat = translatedresources.get(part['resource__path'], None)
+        stat = translatedresources.get(part['title'], None)
         part['latest_activity'] = stat.latest_translation if stat else None
 
         part['chart'] = {

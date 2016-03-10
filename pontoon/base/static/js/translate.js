@@ -1386,11 +1386,11 @@ var Pontoon = (function (my) {
       var locale = this.getSelectedLocale(),
           parts = this.getProjectData('parts')[locale],
           currentPart = this.getSelectedPart();
-          part = $.grep(parts, function (e) { return e.resource__path === currentPart; });
+          part = $.grep(parts, function (e) { return e.title === currentPart; });
 
       // Fallback if selected part not available for the selected locale & project
       if (!part.length) {
-        this.updatePartSelector(parts[0].resource__path);
+        this.updatePartSelector(parts[0].title);
       }
 
       // Switch to Resources tab
@@ -1515,7 +1515,7 @@ var Pontoon = (function (my) {
         menu.find('li:not(".no-match")').remove();
         $(parts).each(function() {
           var cls = '',
-              title = this.resource__path,
+              title = this.title,
               percent = '0%';
 
           if (currentProject && currentLocale && self.part === title) {
@@ -2186,7 +2186,7 @@ var Pontoon = (function (my) {
           part = this.getSelectedPart(),
           availableParts = this.getProjectData('parts')[locale],
           matchingParts = $.grep(availableParts, function (e) {
-            return e.resource__path === part;
+            return e.title === part;
           });
 
       if (!matchingParts.length) {
@@ -2211,7 +2211,7 @@ var Pontoon = (function (my) {
       // Fallback to first available part if no matches found (mistyped URL)
       if (requestedPart) {
         this.updateCurrentPart();
-        paths = this.currentPart.resource__path;
+        paths = this.currentPart.title;
         this.updatePartSelector(paths);
         postfix = paths + '/';
       }

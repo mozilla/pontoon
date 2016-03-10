@@ -238,6 +238,7 @@ class LocaleProjectTests(ViewTestCase):
                 patch('pontoon.base.views.render') as mock_render:
             mock_parts_stats.return_value = [
                 {
+                    'title': 'has/stats.po',
                     'resource__path': 'has/stats.po',
                     'resource__total_strings': 1,
                     'approved_strings': 0,
@@ -245,6 +246,7 @@ class LocaleProjectTests(ViewTestCase):
                     'fuzzy_strings': 0,
                 },
                 {
+                    'title': 'no/stats.po',
                     'resource__path': 'no/stats.po',
                     'resource__total_strings': 1,
                     'approved_strings': 0,
@@ -258,6 +260,7 @@ class LocaleProjectTests(ViewTestCase):
             assert_equal(ctx['parts'], [
                 {
                     'latest_activity': translation,
+                    'title': 'has/stats.po',
                     'resource__path': 'has/stats.po',
                     'resource__total_strings': 1,
                     'approved_strings': 0,
@@ -276,6 +279,7 @@ class LocaleProjectTests(ViewTestCase):
                 },
                 {
                     'latest_activity': None,
+                    'title': 'no/stats.po',
                     'resource__path': 'no/stats.po',
                     'resource__total_strings': 1,
                     'approved_strings': 0,
