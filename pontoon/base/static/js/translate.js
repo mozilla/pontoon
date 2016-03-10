@@ -930,9 +930,7 @@ var Pontoon = (function (my) {
 
         // Approve
         if (button.is('.approve')) {
-          button
-            .parents('li').addClass('approved').click()
-              .siblings().removeClass('approved');
+          button.parents('li').click();
 
           var entity = $('#editor')[0].entity,
               translation = $('#translation').val();
@@ -1230,6 +1228,12 @@ var Pontoon = (function (my) {
             self.endLoader('Sign in to save translations');
           }
 
+          if (self.approvedNotSubmitted) {
+            $('#helpers .history [data-id="' + data.translation.pk + '"] button.approve')
+              .parents('li').addClass('approved')
+                .siblings().removeClass('approved');
+          }
+
           var pf = self.getPluralForm(true);
           self.cachedTranslation = translation;
           self.updateTranslation(entity.translation[pf], data.translation);
@@ -1259,7 +1263,7 @@ var Pontoon = (function (my) {
               next.click();
             }
 
-          // Go to entity list or next entity
+          // Go to next entity
           } else {
             $('#next').click();
           }
