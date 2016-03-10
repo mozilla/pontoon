@@ -1187,6 +1187,18 @@ body > .container {
   color: #7BC876;
 }
 
+#helpers > section.machinery ul li > header .sources  {
+}
+
+#helpers > section.machinery ul li > header .sources li {
+  list-style-type: disc;
+  margin: 0 0;
+  padding: 0 0;
+  float: left;
+  min-width: 75px;
+}
+
+
 #helpers > section ul li > p {
   min-height: 22px;
   text-align: left;
