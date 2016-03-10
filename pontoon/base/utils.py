@@ -380,7 +380,7 @@ def get_download_content(slug, code, part):
         )
         dirnames = set([locale.code, locale.code.replace('-', '_')])
         locale_path = _download_file(locale_prefixes, dirnames, resource.path)
-        if not locale_path:
+        if not locale_path and not resource.is_asymmetric:
             return None, None
 
         # Get source file if needed
@@ -395,6 +395,13 @@ def get_download_content(slug, code, part):
             source_path = _download_file(source_prefixes, dirnames, resource.path)
             if not source_path:
                 return None, None
+
+            # If locale file doesn't exist, create it
+            if not locale_path:
+                extension = os.path.splitext(resource.path)[1]
+                with tempfile.NamedTemporaryFile(suffix=extension, delete=False) as temp:
+                    temp.flush()
+                locale_path = temp.name
 
         # Update file from database
         resource_file = formats.parse(locale_path, source_path)
