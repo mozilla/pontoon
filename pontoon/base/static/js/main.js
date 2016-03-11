@@ -407,7 +407,7 @@ $(function() {
       $(this).siblings('.menu').show().end()
              .parents('.select').addClass('opened');
       $('#iframe-cover:not(".hidden")').show(); // iframe fix
-      $('body:not(".admin-project") .menu:visible input[type=search]').focus();
+      $('body:not(".admin-project") .menu:visible input[type=search]').focus().trigger('keyup');
     }
   });
 

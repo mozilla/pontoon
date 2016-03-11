@@ -1529,8 +1529,6 @@ var Pontoon = (function (my) {
           menu.append('<li' + cls + '><span>' + title + '</span>' +
             '<span>' + percent + '</span></li>');
         });
-
-        $('.menu:visible input[type=search]').trigger("keyup");
       });
 
       // Do not hide the parts menu on click inside
