@@ -1188,16 +1188,26 @@ body > .container {
 }
 
 #helpers > section.machinery ul li > header .sources  {
+  display: inline-block;
+}
+
+#helpers > section.machinery ul li > header .sources li:before {
+  content: "•";
+  padding-right: 3px;
+}
+
+#helpers > section.machinery ul li > header .sources li[data-source='Machine Translation']:before {
+  content: "";
+  padding-right: 0;
 }
 
 #helpers > section.machinery ul li > header .sources li {
+  border: none;
+  display: inline-block;
   list-style-type: disc;
-  margin: 0 0;
-  padding: 0 0;
-  float: left;
-  min-width: 75px;
+  list-style-position: inside;
+  padding: 0 0 0 3px;
 }
-
 
 #helpers > section ul li > p {
   min-height: 22px;

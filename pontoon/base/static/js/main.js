@@ -121,9 +121,8 @@ var Pontoon = (function (my) {
      */
     getMachinery: function (original, target, loader) {
       var self = this,
-          tab_id = target || 'helpers > .machinery',
           loader = loader || 'helpers li a[href="#machinery"]',
-          ul = $('#' + tab_id).find('ul').empty(),
+          ul = $('#helpers > .machinery').children('ul').empty(),
           tab = $('#' + loader).addClass('loading'),
           requests = 0,
           count = 0,
@@ -133,7 +132,7 @@ var Pontoon = (function (my) {
         var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : '',
             sources = sourcesMap[data.original + data.translation];
 
-        if (typeof sources !== 'undefined') {
+        if (sources) {
           sources.append(
             '<li><a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
               '<span>' + data.source + '</span>' +
@@ -145,10 +144,14 @@ var Pontoon = (function (my) {
           var li = $('<li' + title + '>' +
             '<header>' +
               (data.quality ? '<span class="stress">' + data.quality + '</span>' : '') +
-              '<ul class="sources"><li><a class="source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
-                '<span>' + data.source + '</span>' +
-                (data.count ? '<sup>' + data.count + '</sup>' : '') +
-              '</a></li></ul>' +
+              '<ul class="sources">' +
+                '<li data-source="' + data.source + '">' +
+                  '<a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
+                    '<span>' + data.source + '</span>' +
+                    (data.count ? '<sup>' + data.count + '</sup>' : '') +
+                  '</a>' +
+                '</li>' +
+              '</ul>' +
             '</header>' +
             '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
             '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
@@ -171,7 +174,7 @@ var Pontoon = (function (my) {
             };
 
         function getTranslationSource(el) {
-          var sources = $(el).find('.source span');
+          var sources = $(el).find('.translation-source span');
 
           if (sources.length > 1) {
             return Math.min.apply(Math, $.map(sources, function(elem) {
@@ -200,16 +203,16 @@ var Pontoon = (function (my) {
           var $sourcesList = $(this),
               sources = $sourcesList.children('li'),
               sortedItems = sources.sort(function(a, b) {
-                var sourceA = sourceMap[$(a).children('span').text()],
-                    sourceB = sourceMap[$(b).children('span').text()];
+                var sourceA = sourceMap[$(a).find('span').text()],
+                    sourceB = sourceMap[$(b).find('span').text()];
                 return (sourceA > sourceB) ? 1 : (sourceA < sourceB) ? -1 : 0;
               });
 
-           $sourcesList.children('li').remove();
+          $sourcesList.children('li').remove();
 
-           sortedItems.each(function() {
-              $sourcesList.append(this);
-           });
+          sortedItems.each(function() {
+            $sourcesList.append(this);
+          });
         });
       }
 
@@ -217,7 +220,7 @@ var Pontoon = (function (my) {
         if (error.status === 0 && error.statusText !== "abort") {
           // Allows requesting Machinery again
           editor.machinery = null;
-          if (ul.find('li').length === 0) {
+          if (ul.children('li').length === 0) {
             self.noConnectionError(ul);
           }
         }
@@ -229,7 +232,7 @@ var Pontoon = (function (my) {
           tab.find('.count').html(count).toggle(count !== 0);
           if (requests === 0) {
             tab.removeClass('loading');
-            if (ul.find('li').length === 0) {
+            if (ul.children('li').length === 0) {
               ul.append('<li class="disabled">' +
                 '<p>No translations available.</p>' +
               '</li>');
