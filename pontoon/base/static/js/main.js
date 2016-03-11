@@ -133,21 +133,22 @@ var Pontoon = (function (my) {
         var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : '',
             sources = sourcesMap[data.original + data.translation];
 
-        if (sources) {
+        if (typeof sources !== 'undefined') {
           sources.append(
-            ' &bull; <a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
+            '<li><a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
               '<span>' + data.source + '</span>' +
               (data.count ? '<sup>' + data.count  + '</sup>' : '') +
-            '</a>'
+            '</a></li>'
           );
+
         } else {
           var li = $('<li' + title + '>' +
             '<header>' +
-              (data.quality ? '<span class="stress">' + data.quality + '</span> &bull; ' : '') +
-              '<a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
+              (data.quality ? '<span class="stress">' + data.quality + '</span>' : '') +
+              '<ul class="sources"><li><a class="source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
                 '<span>' + data.source + '</span>' +
                 (data.count ? '<sup>' + data.count + '</sup>' : '') +
-              '</a>' +
+              '</a></li></ul>' +
             '</header>' +
             '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
             '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
@@ -155,9 +156,10 @@ var Pontoon = (function (my) {
             '</p>' +
           '</li>');
           ul.append(li);
-          sourcesMap[data.original + data.translation] = li.children('header');
+          sourcesMap[data.original + data.translation] = li.find('.sources');
           count++;
         }
+
         // Sort by quality
         var listitems = ul.children("li"),
             sourceMap = {
@@ -169,7 +171,7 @@ var Pontoon = (function (my) {
             };
 
         function getTranslationSource(el) {
-          var sources = $(el).find('.translation-source span');
+          var sources = $(el).find('.source span');
 
           if (sources.length > 1) {
             return Math.min.apply(Math, $.map(sources, function(elem) {
@@ -190,8 +192,25 @@ var Pontoon = (function (my) {
 
           return (valA < valB) ? 1 : (valA > valB) ? -1 : (sourceA > sourceB) ? 1 : (sourceA < sourceB) ? -1 : 0;
         });
-        ul.append(listitems);
 
+        ul.html(listitems);
+
+        // Sort sources inside results.
+        ul.find('.sources').each(function (index) {
+          var $sourcesList = $(this),
+              sources = $sourcesList.children('li'),
+              sortedItems = sources.sort(function(a, b) {
+                var sourceA = sourceMap[$(a).children('span').text()],
+                    sourceB = sourceMap[$(b).children('span').text()];
+                return (sourceA > sourceB) ? 1 : (sourceA < sourceB) ? -1 : 0;
+              });
+
+           $sourcesList.children('li').remove();
+
+           sortedItems.each(function() {
+              $sourcesList.append(this);
+           });
+        });
       }
 
       function error(error) {
