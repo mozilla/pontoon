@@ -181,8 +181,10 @@ var Pontoon = (function (my) {
         }
 
         listitems.sort(function(a, b) {
-          var valA = parseInt($(a).find('.stress').html().split('%')[0]) || 0,
-              valB = parseInt($(b).find('.stress').html().split('%')[0]) || 0,
+          var stressA = $(a).find('.stress'),
+              stressB = $(b).find('.stress'),
+              valA = stressA.length ? parseInt(stressA.html().split('%')[0]) : 0,
+              valB = stressB.length ? parseInt(stressB.html().split('%')[0]) : 0,
               sourceA = getTranslationSource(a),
               sourceB = getTranslationSource(b);
 
