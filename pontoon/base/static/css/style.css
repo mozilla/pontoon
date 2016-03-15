@@ -987,8 +987,8 @@ img.rounded {
 
 body > nav,
 .inner > nav {
-  left: 50%;
-  margin-left: -400px;
+  left: 0;
+  right: 0;
   position: absolute;
   top: 20px;
   z-index: 1;
