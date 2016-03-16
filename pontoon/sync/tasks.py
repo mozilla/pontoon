@@ -69,13 +69,15 @@ def sync_project(self, project_pk, sync_log_pk, no_pull=False, no_commit=False, 
 
         return
 
-    perform_sync_project(db_project, now)
+    obsolete_vcs = perform_sync_project(db_project, now)
+
     for repo in db_project.repositories.all():
         sync_project_repo.delay(
             project_pk,
             repo.pk,
             project_sync_log.pk,
             now,
+            obsolete_vcs,
             no_pull=no_pull,
             no_commit=no_commit
         )
@@ -84,7 +86,7 @@ def sync_project(self, project_pk, sync_log_pk, no_pull=False, no_commit=False, 
 
 
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}')
-def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now,
+def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsolete_vcs=None,
                       no_pull=False, no_commit=False):
     db_project = get_or_fail(Project, pk=project_pk,
         message='Could not sync project with pk={0}, not found.'.format(project_pk))
@@ -116,7 +118,7 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now,
     for locale in repo.locales:
         try:
             with transaction.atomic():
-                changeset = ChangeSet(db_project, vcs_project, now)
+                changeset = ChangeSet(db_project, vcs_project, now, obsolete_vcs)
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
 
