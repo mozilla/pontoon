@@ -5,6 +5,7 @@ from bulk_update.helper import bulk_update
 from pontoon.base.models import (
     Entity,
     Locale,
+    Resource,
     Translation,
     TranslationMemoryEntry
 )
@@ -17,7 +18,7 @@ class ChangeSet(object):
     translations stored in VCS. Once all the necessary changes have been
     stored, execute all the changes at once efficiently.
     """
-    def __init__(self, db_project, vcs_project, now):
+    def __init__(self, db_project, vcs_project, now, obsolete_vcs=None):
         """
         :param now:
             Datetime to use for marking when approvals happened.
@@ -33,6 +34,7 @@ class ChangeSet(object):
         self.executed = False
         self.changes = {
             'update_vcs': [],
+            'obsolete_vcs': obsolete_vcs or [],
             'update_db': [],
             'obsolete_db': [],
             'create_db': []
@@ -103,6 +105,17 @@ class ChangeSet(object):
 
             # Track which translators were involved.
             self.commit_authors_per_locale[locale_code].extend([t.user for t in db_translations if t.user])
+
+        # Remove obsolete entities from asymmetric files
+        obsolete_entities_paths = Resource.objects.filter(
+            entities__pk__in=self.changes['obsolete_vcs']
+        ).asymmetric().values_list('path', flat=True).distinct()
+
+        for path in obsolete_entities_paths:
+            changed_resources.add(resources[path])
+
+        if len(obsolete_entities_paths) > 0:
+            self.locales_to_commit = self.locales.values()
 
         for resource in changed_resources:
             resource.save()

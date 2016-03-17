@@ -794,6 +794,11 @@ class Repository(models.Model):
         ordering = ['id']
 
 
+class ResourceQuerySet(models.QuerySet):
+    def asymmetric(self):
+        return self.filter(format__in=Resource.ASYMMETRIC_FORMATS)
+
+
 class Resource(models.Model):
     project = models.ForeignKey(Project, related_name='resources')
     path = models.TextField()  # Path to localization file
@@ -828,6 +833,8 @@ class Resource(models.Model):
     ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + SOURCE_EXTENSIONS
 
     ASYMMETRIC_FORMATS = ('dtd', 'properties', 'ini', 'inc', 'l20n')
+
+    objects = ResourceQuerySet.as_manager()
 
     @property
     def is_asymmetric(self):

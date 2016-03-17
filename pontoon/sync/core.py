@@ -31,6 +31,8 @@ def sync_project(db_project, now):
         update_entities(db_project, vcs_project, changeset)
         changeset.execute()
 
+    return changeset.changes['obsolete_db']
+
 
 def serial_task(timeout, lock_key="", **celery_args):
     """

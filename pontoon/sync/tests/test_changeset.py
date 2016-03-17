@@ -338,18 +338,19 @@ class ChangeSetTests(FakeCheckoutTestCase):
 
     def test_changed_resources_sync(self):
         """
-        Synchronization should modify resource files only if there are changed translations.
+        Synchronization should modify resource files if there
+        are changed translations.
         """
         TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
             approved=True, date=aware_datetime(2015, 1, 1))
 
         resource_file = MagicMock()
+        self.changeset.vcs_project.resources = {
+            self.main_db_entity.resource.path: resource_file
+        }
 
         with patch.object(self.main_db_entity, 'has_changed', return_value=True) as mock_has_changed:
             self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
-            self.changeset.vcs_project.resources = {
-                self.main_db_entity.resource.path: resource_file
-            }
 
             self.changeset.execute_update_vcs()
             assert mock_has_changed.called
@@ -357,12 +358,13 @@ class ChangeSetTests(FakeCheckoutTestCase):
 
     def test_unchanged_resources_sync(self):
         """
-        Synchronization shouldn't modify resources if their entities weren't changed.
+        Synchronization shouldn't modify resources if their
+        entities weren't changed.
         """
         TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
             approved=True, date=aware_datetime(2015, 1, 1))
-        resource_file = MagicMock()
 
+        resource_file = MagicMock()
         self.changeset.vcs_project.resources = {
             self.main_db_entity.resource.path: resource_file
         }
@@ -373,6 +375,34 @@ class ChangeSetTests(FakeCheckoutTestCase):
             self.changeset.execute_update_vcs()
             assert mock_has_changed.called
             assert len(resource_file.save.mock_calls) == 0
+
+    def test_obsolete_entities_asymmetric_resources_sync(self):
+        """
+        Synchronization should modify asymmetric resources files
+        if their entities were made obsolete, even if their
+        entities weren't changed.
+        """
+        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
+            approved=True, date=aware_datetime(2015, 1, 1))
+
+        resource_file = MagicMock()
+        self.changeset.vcs_project.resources = {
+            self.main_db_entity.resource.path: resource_file
+        }
+
+        # Entity must be made obsolete
+        self.changeset.changes['obsolete_vcs'] = [self.main_db_entity.pk]
+
+        # Resource file format must be asymmetric
+        self.main_db_entity.resource.format = 'dtd'
+        self.main_db_entity.resource.save()
+
+        with patch.object(self.main_db_entity, 'has_changed', return_value=False) as mock_has_changed:
+            self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
+
+            self.changeset.execute_update_vcs()
+            assert mock_has_changed.called
+            assert resource_file.save.called
 
 
 class AuthorsTests(FakeCheckoutTestCase):
