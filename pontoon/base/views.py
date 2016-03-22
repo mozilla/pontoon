@@ -984,17 +984,12 @@ def toggle_user_profile_attribute(request, email):
 @transaction.atomic
 def save_user_name(request):
     """Save user name."""
-    try:
-        name = request.POST['name']
-    except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+    profile_form = forms.UserProfileForm(request.POST, instance=request.user)
 
-    if len(name) > 30:
-        return HttpResponse('length')
+    if not profile_form.is_valid():
+        return HttpResponseBadRequest(u'\n'.join(profile_form.errors['first_name']))
 
-    user = request.user
-    user.first_name = name
-    user.save()
+    profile_form.save()
 
     return HttpResponse('ok')
 
