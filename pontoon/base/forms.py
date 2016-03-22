@@ -1,6 +1,8 @@
 import os
 
 from django import forms
+
+from pontoon.base.models import User
 from pontoon.sync.formats import SUPPORTED_FORMAT_PARSERS
 
 
@@ -42,3 +44,11 @@ class UploadFileForm(DownloadFileForm):
                         .format(supported=part_extension)
                     )
                     raise forms.ValidationError(message)
+
+
+class UserProfileForm(forms.ModelForm):
+    first_name = forms.RegexField(regex='^[^<>"\'&]+$', max_length=30, strip=True)
+
+    class Meta:
+        model = User
+        fields = ('first_name',)

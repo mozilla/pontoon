@@ -1,3 +1,4 @@
+import cgi
 import datetime
 import json
 import urllib
@@ -133,4 +134,4 @@ def format_timedelta(value):
 
 @library.filter
 def nospam(self):
-    return jinja2.Markup(self.replace('@', '&#64;').replace('.', '&#46;'))
+    return jinja2.Markup(cgi.escape(self, True).replace('@', '&#64;').replace('.', '&#46;').replace('\'', '&quot;'))

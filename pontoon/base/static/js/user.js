@@ -9,20 +9,20 @@ $(function() {
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('#server').data('csrf'),
-        name: $.trim(input.val())
+        first_name: $.trim(input.val())
       },
       success: function(data) {
         if (data === "ok") {
           input.blur();
           Pontoon.endLoader('Thank you!');
-        } else if (data === "length") {
-          Pontoon.endLoader('Must be 30 characters or fewer.', 'error');
-        } else {
-          Pontoon.endLoader('Oops, something went wrong.', 'error');
-        }
+        };
       },
-      error: function() {
-        Pontoon.endLoader('Oops, something went wrong.', 'error');
+      error: function(request) {
+        if (request.responseText === "error") {
+          Pontoon.endLoader('Oops, something went wrong.', 'error');
+        } else {
+          Pontoon.endLoader(request.responseText, 'error');
+        }
       }
     });
   }
