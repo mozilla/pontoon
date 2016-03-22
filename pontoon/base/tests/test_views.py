@@ -17,9 +17,35 @@ from pontoon.base.tests import (
     TranslationMemoryFactory,
     TranslatedResourceFactory,
     TestCase,
+    UserFactory
 )
 
 from pontoon.base import views
+
+
+class UserProfileTests(TestCase):
+    """Tests related to the saving user profile."""
+
+    def setUp(self):
+        self.user = UserFactory.create()
+        self.client.force_login(self.user)
+
+    def test_invalid_first_name(self):
+        response = self.client.post('/save-user-name/', {'first_name': '<aa>"\'"'})
+
+        assert_equal(response.status_code, 400)
+        assert_equal(response.content, 'Enter a valid value.')
+
+    def test_missing_first_name(self):
+        response = self.client.post('/save-user-name/', {})
+
+        assert_equal(response.status_code, 400)
+        assert_equal(response.content, 'This field is required.')
+
+    def test_valid_first_name(self):
+        response = self.client.post('/save-user-name/', {'first_name': 'contributor'})
+        assert_equal(response.status_code, 200)
+        assert_equal(response.content, 'ok')
 
 
 class TranslateTests(TestCase):

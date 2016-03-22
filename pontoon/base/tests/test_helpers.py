@@ -1,8 +1,9 @@
+# coding: utf-8
 from datetime import timedelta
 
 from django_nose.tools import assert_equal
 
-from pontoon.base.templatetags.helpers import format_datetime, format_timedelta
+from pontoon.base.templatetags.helpers import format_datetime, format_timedelta, nospam
 from pontoon.base.tests import TestCase
 from pontoon.base.utils import aware_datetime
 
@@ -42,3 +43,13 @@ class FormatTimedeltaTests(TestCase):
 
     def test_format_timedelta_0(self):
         assert_equal(format_timedelta(timedelta(seconds=0)), '0 seconds')
+
+
+class NoSpamTests(TestCase):
+    """Tests related to the no_spam template filter."""
+
+    def test_unicode(self):
+        assert_equal(unicode(nospam(u'<łążźćń>')), u'&lt;łążźćń&gt;')
+
+    def test_escape(self):
+        assert_equal(str(nospam('<>\'"@&')), '&lt;&gt;&quot;&quot;&#64;&amp;')
