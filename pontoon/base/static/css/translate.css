@@ -625,6 +625,10 @@ body > header aside p {
   width: 100%;
 }
 
+#entitylist .loading {
+  display: none;
+}
+
 .advanced #entitylist,
 .advanced #editor {
   width: 50%;

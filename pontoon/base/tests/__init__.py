@@ -137,6 +137,14 @@ class EntityFactory(DjangoModelFactory):
         model = Entity
 
 
+class PluralEntityFactory(DjangoModelFactory):
+    resource = SubFactory(ResourceFactory)
+    string = Sequence(lambda n: 'string {0}'.format(n))
+    string_plural = Sequence(lambda n: 'string plural {0}'.format(n))
+    class Meta:
+        model = Entity
+
+
 class ChangedEntityLocaleFactory(DjangoModelFactory):
     entity = SubFactory(EntityFactory)
     locale = SubFactory(LocaleFactory)
