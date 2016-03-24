@@ -682,7 +682,8 @@ label {
   padding: 2px 4px;
 }
 
-.menu li.hover {
+.menu li.hover,
+.menu .static-links div.hover {
   color: #FFFFFF;
   background: #3F4752;
 }

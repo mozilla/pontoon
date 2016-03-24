@@ -110,7 +110,7 @@
        * Makes DOM nodes editable using contentEditable property
        *
        * entity Entity object
-       */ 
+       */
       function makeEditable(entity) {
         entity.body = true;
         $(entity.node).each(function() {
@@ -638,8 +638,8 @@
 
         if (target) {
           var top = target.getBoundingClientRect().top + window.scrollY,
-          toolbarTop = top - toolbar.outerHeight();
 
+          toolbarTop = top - toolbar.outerHeight();
           toolbar.css('top', toolbarTop);
         }
       });

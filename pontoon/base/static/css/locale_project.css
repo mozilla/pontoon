@@ -2,27 +2,14 @@ body > .container {
   width: 1035px;
 }
 
-.menu.tabs {
-  padding-top: 0px;
-}
-
 .menu .sort span.name {
   width: 520px;
-}
-
-.part .menu ul {
-  margin-bottom: -1px;
-}
-
-.part .menu section {
-  border-top: 1px solid #5E6475;
-  padding-top: 27px;
 }
 
 .part.select .menu ul li .name {
   width: 519px; /* Instead of 520px; because of padding */
 }
 
-.tabs > section.resources {
-  display: block; /* Make resources visible before JS done */
+.menu .static-links {
+  display: none;
 }

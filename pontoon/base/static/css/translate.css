@@ -86,10 +86,6 @@ mark.placeable {
   margin-bottom: 20px;
 }
 
-#no-results {
-  display: none;
-}
-
 #download-file,
 #upload-file {
   top: 100000px;
@@ -196,6 +192,10 @@ body > header > .container {
   text-align: left;
 }
 
+.search-wrapper {
+  margin-bottom: 5px;
+}
+
 .select .menu ul li {
   cursor: pointer;
 }
@@ -236,12 +236,6 @@ body > header .locale.select {
   top: 60px;
 }
 
-.part .selector .icon {
-  float: left;
-  margin: 1px 10px 0 0;
-  color: #7BC876;
-}
-
 .project.select .menu,
 .part.select .menu {
   display: none;
@@ -251,12 +245,6 @@ body > header .locale.select {
 
 .part.select .menu {
   width: 600px;
-}
-
-.part .menu section {
-  border: 1px solid #5E6475;
-  margin-top: -1px;
-  padding: 20px 10px 10px;
 }
 
 .locale.select .menu {
@@ -273,7 +261,20 @@ body > header .locale.select {
   max-height: 318px;
 }
 
-.menu ul li.current {
+.menu .static-links {
+  border-top: 1px solid #5E6475;
+  font-weight: 300;
+  margin-top: 5px;
+  padding-top: 5px;
+}
+
+.menu .static-links div {
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.menu ul li.current,
+.menu .static-links .all-resources.current {
   color: #7BC876;
 }
 
@@ -283,7 +284,8 @@ body > header .locale.select {
   white-space: nowrap;
 }
 
-.part.select .menu ul li > span:nth-child(2) {
+.part.select .menu ul li > span:nth-child(2),
+.menu .static-links .percent {
   color: #7BC876;
   float: right;
 }
@@ -623,6 +625,21 @@ body > header aside p {
   position: absolute;
   transition: all 0.2s ease-out;
   width: 100%;
+}
+
+#sidebar.no #entitylist {
+  border-right: 1px solid #5E6475;
+}
+
+#sidebar.no #editor {
+  display: none;
+}
+
+#entitylist .loading {
+  display: none;
+  color: #7BC876;
+  font-size: 128px;
+  padding: 40px 0 10px;
 }
 
 .advanced #entitylist,

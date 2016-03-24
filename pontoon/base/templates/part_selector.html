@@ -1,41 +1,32 @@
 {% import 'widgets/latest_activity.html' as LatestActivity %}
 {% import 'widgets/progress_chart.html' as ProgressChart %}
-{% set search = request.GET.urlencode() %}
 
 <!-- Part selector -->
 <div class="part select">
   {% if part %}
-  <div class="button breadcrumbs selector" title="{% if not search %}{{ part }}{% endif %}">
-    <div class="icon fa {% if search %}fa-search{% else %}fa-file-o{% endif %}"></div>
-    <span class="title noselect">{% if search %}{{ request.GET['keyword'] }}{% else %}{{ part.rsplit('/')[-1] }}{% endif %}</span>
+  <div class="button breadcrumbs selector" title="{{ part }}">
+    <span class="title noselect">{{ part.rsplit('/')[-1] }}</span>
   </div>
   {% endif %}
 
-  <div class="menu tabs">
-    <nav>
-      <ul>
-        <li class="active"><a href="#resources"><span class="fa fa-file-o"></span>Resources</a></li>
-        <li><a href="#search-project"><span class="fa fa-search"></span>Search</a></li>
-      </ul>
-    </nav>
+  <div class="menu">
+    <div class="search-wrapper clearfix">
+      <div class="icon fa fa-search"></div>
+      <input type="search" autocomplete="off" autofocus>
+    </div>
 
-    <section class="resources">
-      <div class="search-wrapper clearfix">
-        <div class="icon fa fa-search"></div>
-        <input type="search" autocomplete="off" autofocus>
-      </div>
+    {% if not part %}
+    <div class="sort clearfix">
+      <span class="name asc">File Name<i class="fa"></i></span>
+      <span class="latest">Latest activity<i class="fa"></i></span>
+      <span class="progress">Progress<i class="fa"></i></span>
+    </div>
+    {% endif %}
 
+    <ul>
       {% if not part %}
-      <div class="sort clearfix">
-        <span class="name asc">File Name<i class="fa"></i></span>
-        <span class="latest">Latest activity<i class="fa"></i></span>
-        <span class="progress">Progress<i class="fa"></i></span>
-      </div>
-      {% endif %}
-
-      <ul>
-        {% if not part %}
-        {% for p in parts %}
+      {% for p in parts %}
+        {% if not loop.last %}
           {% set link = url('pontoon.translate', locale.code, project.slug, p.title) %}
           <li class="clearfix">
             <span class="name">
@@ -48,43 +39,18 @@
 
             {{ ProgressChart.span(p.chart, link) }}
           </li>
-        {% endfor %}
         {% endif %}
+      {% endfor %}
+      {% endif %}
 
-        <li class="no-match">No results</li>
-      </ul>
-    </section>
+      <li class="no-match">No results</li>
+    </ul>
 
-    <section class="search-project">
-      <form class="search-form" method="get">
-        <div class="search-wrapper clearfix">
-          <div class="icon fa fa-search"></div>
-          <input type="search" autocomplete="off" autofocus name="keyword" value="{% if search %}{{ request.GET['keyword'] }}{% endif %}" placeholder="Search entire project">
-        </div>
-
-        <ul class="options">
-          <li data-name="sources" class="check-box{% if request.GET.get('sources', None) or not search %}{{ ' enabled' }}{% endif %}">
-            <i class="fa fa-fw"></i>Source strings
-            <input type="checkbox" name="sources"{% if request.GET.get('sources', None) or not search %}{{ ' checked' }}{% endif %}>
-          </li>
-          <li data-name="translations" class="check-box{% if request.GET.get('translations', None) or not search %}{{ ' enabled' }}{% endif %}">
-            <i class="fa fa-fw"></i>Translations
-            <input type="checkbox" name="translations"{% if request.GET.get('translations', None) or not search %}{{ ' checked' }}{% endif %}>
-          </li>
-          <li data-name="comments" class="check-box{% if request.GET.get('comments', None) %}{{ ' enabled' }}{% endif %}">
-            <i class="fa fa-fw"></i>Comments
-            <input type="checkbox" name="comments"{% if request.GET.get('comments', None) %}{{ ' checked' }}{% endif %}>
-          </li>
-          <li data-name="keys" class="check-box{% if request.GET.get('keys', None) %}{{ ' enabled' }}{% endif %}">
-            <i class="fa fa-fw"></i>Keys
-            <input type="checkbox" name="keys"{% if request.GET.get('keys', None) %}{{ ' checked' }}{% endif %}>
-          </li>
-          <li data-name="casesensitive" class="check-box{% if request.GET.get('casesensitive', None) %}{{ ' enabled' }}{% endif %}">
-            <i class="fa fa-fw"></i>Case sensitive
-            <input type="checkbox" name="casesensitive"{% if request.GET.get('casesensitive', None) %}{{ ' checked' }}{% endif %}>
-          </li>
-        </ul>
-      </form>
-    </section>
+    <div class="static-links">
+      <div class="all-resources">
+        <span class="title">All Resources</span>
+        <span class="percent"></span>
+      </div>
+    </div>
   </div>
 </div>

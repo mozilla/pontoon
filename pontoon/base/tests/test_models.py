@@ -25,6 +25,7 @@ from pontoon.base.tests import (
     EntityFactory,
     IdenticalTranslationFactory,
     LocaleFactory,
+    PluralEntityFactory,
     ProjectFactory,
     ProjectLocaleFactory,
     RepositoryFactory,
@@ -164,7 +165,7 @@ class LocalePartsTests(TestCase):
         """
         details = self.locale.parts_stats(self.project)
 
-        assert_equal(len(details), 1)
+        assert_equal(len(details), 2)
         assert_equal(details[0]['title'], '/main/path.po')
         assert_equal(details[0]['translated_strings'], 0)
 
@@ -187,7 +188,7 @@ class LocalePartsTests(TestCase):
         assert_equal(details[0]['translated_strings'], 0)
         assert_equal(details[1]['title'], '/other/path.po')
         assert_equal(details[1]['translated_strings'], 0)
-        assert_equal(len(details_other), 1)
+        assert_equal(len(details_other), 2)
         assert_equal(details_other[0]['title'], '/other/path.po')
         assert_equal(details_other[0]['translated_strings'], 0)
 
@@ -685,7 +686,7 @@ class EntityTests(TestCase):
         If paths not specified, return all project entities along with their
         translations for locale.
         """
-        entities = Entity.for_project_locale(self.project, self.locale)
+        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale))
 
         assert_equal(len(entities), 2)
         self.assert_serialized_entity(
@@ -718,7 +719,6 @@ class EntityTests(TestCase):
             'marked_plural': 'Plural Source String',
             'pk': self.main_entity.pk,
             'original': 'Source String',
-            'has_suggestions': False,
         })
 
     def test_for_project_locale_paths(self):
@@ -727,7 +727,7 @@ class EntityTests(TestCase):
         with their translations for locale.
         """
         paths = ['other.lang']
-        entities = Entity.for_project_locale(self.project, self.locale, paths)
+        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale, paths))
 
         assert_equal(len(entities), 1)
         self.assert_serialized_entity(
@@ -740,7 +740,7 @@ class EntityTests(TestCase):
         locale.
         """
         subpages = [self.subpage.name]
-        entities = Entity.for_project_locale(self.project, self.locale, subpages)
+        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale, subpages))
 
         assert_equal(len(entities), 1)
         self.assert_serialized_entity(
@@ -750,7 +750,7 @@ class EntityTests(TestCase):
         """
         For pluralized strings, return all available plural forms.
         """
-        entities = Entity.for_project_locale(self.project, self.locale)
+        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale))
 
         assert_equal(entities[0]['original'], 'Source String')
         assert_equal(entities[0]['original_plural'], 'Plural Source String')
@@ -773,7 +773,7 @@ class EntityTests(TestCase):
             resource=self.main_resource,
             string='First String'
         )
-        entities = Entity.for_project_locale(self.project, self.locale)
+        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale))
 
         assert_equal(entities[2]['original'], 'First String')
         assert_equal(entities[3]['original'], 'Second String')
@@ -783,7 +783,7 @@ class EntityTests(TestCase):
         If key contais source string and Translate Toolkit separator,
         remove them.
         """
-        entities = Entity.for_project_locale(self.project, self.locale)
+        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale))
 
         assert_equal(entities[0]['key'], '')
         assert_equal(entities[1]['key'], 'Key')
@@ -1065,3 +1065,361 @@ class TranslationTests(TestCase):
             target=translation.string,
             locale=translation.locale
         )
+
+
+class EntityFilterTests(TestCase):
+    """
+    Tests all filters provided by the entity manager.
+    """
+    def setUp(self):
+        self.locale = LocaleFactory.create()
+        self.plural_locale = LocaleFactory.create(cldr_plurals='1,5')
+
+    def test_approved(self):
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=first_entity,
+            approved=True
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=second_entity,
+            fuzzy=True
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=third_entity,
+            approved=True
+        )
+
+        assert_equal({first_entity, third_entity}, set(Entity.objects.approved(self.locale)))
+
+    def test_approved_plurals(self):
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=True,
+            plural_form=0
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=True,
+            plural_form=1
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=second_entity,
+            approved=True,
+            plural_form=0
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=True,
+            plural_form=0
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=True,
+            plural_form=1
+        )
+
+        assert_equal({first_entity, third_entity},set(Entity.objects.approved(self.plural_locale)))
+
+    def test_fuzzy(self):
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=first_entity,
+            fuzzy=True
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=second_entity,
+            approved=True
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=third_entity,
+            fuzzy=True
+        )
+
+        assert_equal({first_entity, third_entity}, set(Entity.objects.fuzzy(self.locale)))
+
+    def test_fuzzy_plurals(self):
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            fuzzy=True,
+            plural_form=0
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            fuzzy=True,
+            plural_form=1
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=second_entity,
+            fuzzy=True,
+            plural_form=0
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            fuzzy=True,
+            plural_form=0
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            fuzzy=True,
+            plural_form=1
+        )
+
+        assert_equal({first_entity, third_entity}, set(Entity.objects.fuzzy(self.plural_locale)))
+
+    def test_untranslated(self):
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=first_entity,
+            approved=True
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=third_entity,
+            approved=True
+        )
+
+        assert_equal({second_entity}, set(Entity.objects.untranslated(self.locale)))
+
+    def test_not_translated(self):
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=first_entity,
+            approved=True
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=third_entity,
+            fuzzy=False,
+        )
+
+        assert_equal({second_entity, third_entity}, set(Entity.objects.not_translated(self.locale)))
+
+    def test_translated(self):
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=second_entity,
+            approved=False,
+            fuzzy=False,
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=third_entity,
+            approved=False,
+            fuzzy=False,
+        )
+
+        assert_equal({second_entity, third_entity}, set(Entity.objects.translated(self.locale)))
+
+    def test_unchanged(self):
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(3, string='Unchanged string')
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=first_entity,
+            approved=True,
+            string='Unchanged string'
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=third_entity,
+            fuzzy=True,
+            string='Unchanged string'
+        )
+
+        assert_equal({first_entity, third_entity}, set(Entity.objects.unchanged(self.locale)))
+
+    def test_untranslated_plural(self):
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            fuzzy=True,
+            plural_form=0,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            fuzzy=True,
+            plural_form=1,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=True,
+            plural_form=0,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=True,
+            plural_form=1,
+        )
+
+        assert_equal({second_entity}, set(Entity.objects.untranslated(self.plural_locale)))
+
+    def test_not_translated_plural(self):
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=True,
+            plural_form=0,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            fuzzy=True,
+            plural_form=1,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=True,
+            plural_form=0,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=True,
+            plural_form=1,
+        )
+
+        assert_equal({first_entity, second_entity}, set(Entity.objects.not_translated(self.plural_locale)))
+
+    def test_translated_plural(self):
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=False,
+            fuzzy=False,
+            plural_form=0,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=False,
+            fuzzy=False,
+            plural_form=1,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=False,
+            fuzzy=False,
+            plural_form=0,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=False,
+            fuzzy=False,
+            plural_form=1,
+        )
+
+        assert_equal({first_entity, third_entity}, set(Entity.objects.translated(self.plural_locale)))
+
+    def test_unchanged_plural(self):
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3,
+            string='Unchanged string',
+            string_plural='Unchanged plural string'
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=True,
+            plural_form=0,
+            string='Unchanged string'
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=True,
+            plural_form=1,
+            string='Unchanged plural string'
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            fuzzy=True,
+            plural_form=0,
+            string='Unchanged string'
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            fuzzy=True,
+            plural_form=1,
+            string='Unchanged plural string'
+        )
+        assert_equal({first_entity, third_entity}, set(Entity.objects.unchanged(self.plural_locale)))
+
+    def test_has_suggestions_plural(self):
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3,
+            string='Unchanged string',
+            string_plural='Unchanged plural string'
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=True,
+            fuzzy=False,
+            plural_form=0
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=True,
+            fuzzy=False,
+            plural_form=1,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=False,
+            fuzzy=False,
+            plural_form=2,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=True,
+            fuzzy=False,
+            plural_form=0,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=True,
+            fuzzy=False,
+            plural_form=1
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=False,
+            fuzzy=False,
+            plural_form=2
+        )
+        assert_equal({first_entity, third_entity}, set(Entity.objects.has_suggestions(self.plural_locale)))

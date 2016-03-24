@@ -436,8 +436,8 @@ $(function() {
   });
 
   // Menu hover
-  $('.menu').on('mouseenter', 'li', function () {
-    $('.menu li.hover').removeClass('hover');
+  $('.menu').on('mouseenter', 'li, .static-links div', function () {
+    $('.menu li.hover, .static-links div').removeClass('hover');
     $(this).toggleClass('hover');
   });
 
@@ -663,11 +663,6 @@ $(function() {
     if ($('.menu').is(':visible')) {
       var menu = $('.menu:visible'),
           hovered = menu.find('li.hover');
-
-      // Skip for the Search project menu
-      if (menu.is('.search-project:visible').length) {
-        return;
-      }
 
       // Skip for the tabs
       if (menu.is('.tabs')) {

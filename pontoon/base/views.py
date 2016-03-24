@@ -9,12 +9,14 @@ import urllib
 
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.mail import EmailMessage
+from django.core.paginator import Paginator, EmptyPage
 from django.core.validators import validate_comma_separated_integer_list
 from django.db import transaction, DataError
 from django.db.models import Count, F, Q
@@ -30,6 +32,7 @@ from django.http import (
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
@@ -373,25 +376,55 @@ def locale_project_parts(request, locale, slug):
     return JsonResponse(locale.parts_stats(project), safe=False)
 
 
+@csrf_exempt
+@require_POST
 @require_AJAX
 def entities(request):
     """Get entities for the specified project, locale and paths."""
     try:
-        project = request.GET['project']
-        locale = request.GET['locale']
-        paths = json.loads(request.GET['paths'])
+        project = request.POST['project']
+        locale = request.POST['locale']
+        paths = request.POST.getlist('paths[]')
+        limit = int(request.POST.get('limit', 50))
     except (MultiValueDictKeyError, ValueError) as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     project = get_object_or_404(Project, slug=project)
     locale = get_object_or_404(Locale, code__iexact=locale)
 
-    search = None
-    if request.GET.get('keyword', None):
-        search = request.GET
+    filter_type = request.POST.get('filterType', '')
+    filter_search = request.POST.get('filterSearch', '')
 
-    entities = Entity.for_project_locale(project, locale, paths, search)
-    return JsonResponse(entities, safe=False)
+    exclude_entities = request.POST.getlist('excludeEntities[]', [])
+    entities = Entity.for_project_locale(
+        project, locale, paths, exclude_entities, filter_type, filter_search
+    )
+
+    # In-place view: load all entities
+    if request.POST.get('inplaceEditor', None):
+        has_next = False
+        entities_to_map = entities
+
+    # Out-of-context view: paginate entities
+    else:
+        paginator = Paginator(entities, limit)
+
+        try:
+            entities_page = paginator.page(1)
+        except EmptyPage:
+            return JsonResponse({
+                'has_next': False,
+                'stats': {},
+            })
+
+        has_next = entities_page.has_next()
+        entities_to_map = entities_page.object_list
+
+    return JsonResponse({
+        'entities': Entity.map_entities(locale, entities_to_map),
+        'has_next': has_next,
+        'stats': TranslatedResource.objects.stats(project, paths, locale),
+    }, safe=False)
 
 
 @require_AJAX
@@ -463,6 +496,7 @@ def delete_translation(request):
     """Delete given translation."""
     try:
         t = request.POST['translation']
+        paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
@@ -482,7 +516,9 @@ def delete_translation(request):
 
     translation.delete()
 
-    return HttpResponse('ok')
+    return JsonResponse({
+        'stats': TranslatedResource.objects.stats(translation.entity.resource.project, paths, translation.locale)
+    })
 
 
 @anonymous_csrf_exempt
@@ -499,6 +535,7 @@ def update_translation(request):
         original = request.POST['original']
         ignore_check = request.POST['ignore_check']
         approve = json.loads(request.POST['approve'])
+        paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
@@ -585,6 +622,7 @@ def update_translation(request):
                 return JsonResponse({
                     'type': 'updated',
                     'translation': t.serialize(),
+                    'stats': TranslatedResource.objects.stats(e.resource.project, paths, l),
                 })
 
             # If added by non-privileged user, unfuzzy it
@@ -608,6 +646,7 @@ def update_translation(request):
                     return JsonResponse({
                         'type': 'updated',
                         'translation': t.serialize(),
+                        'stats': TranslatedResource.objects.stats(e.resource.project, paths, l),
                     })
 
                 return HttpResponse("Same translation already exists.")
@@ -644,6 +683,7 @@ def update_translation(request):
             return JsonResponse({
                 'type': 'added',
                 'translation': active.serialize(),
+                'stats': TranslatedResource.objects.stats(e.resource.project, paths, l)
             })
 
     # No translations saved yet
@@ -667,6 +707,7 @@ def update_translation(request):
         return JsonResponse({
             'type': 'saved',
             'translation': t.serialize(),
+            'stats': TranslatedResource.objects.stats(e.resource.project, paths, l)
         })
 
 

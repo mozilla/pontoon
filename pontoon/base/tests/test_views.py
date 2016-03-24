@@ -4,12 +4,13 @@ from django.test import RequestFactory
 from django.utils.timezone import now
 
 from django_nose.tools import assert_equal, assert_true, assert_code
-from mock import patch
+from mock import patch, call
 
-from pontoon.base.models import Locale, Project
+from pontoon.base.models import Locale, Project, Entity, ProjectLocale, TranslatedResource
 from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import (
     assert_json,
+    EntityFactory,
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
@@ -391,3 +392,90 @@ class TranslateMemoryTests(ViewTestCase):
         })
         assert_code(response, 200)
         assert_equal(response.content, '[]')
+
+
+class EntityViewTests(TestCase):
+    """
+    Tests related to the get_entity view.
+    """
+
+    def setUp(self):
+        self.resource = ResourceFactory.create()
+        self.locale = LocaleFactory.create()
+        ProjectLocale.objects.create(project=self.resource.project, locale=self.locale)
+        TranslatedResource.objects.create(resource=self.resource, locale=self.locale)
+        self.entities = EntityFactory.create_batch(3, resource=self.resource)
+        self.entities_pks = [e.pk for e in self.entities]
+
+    def test_inplace_mode(self):
+        """
+        Inplace mode of get_entites, should return all entities in a single batch.
+        """
+        response = self.client.post('/get-entities/', {
+            'project': self.resource.project.slug,
+            'locale': self.locale.code,
+            'paths[]': [self.resource.path],
+            'inplaceEditor': True,
+            # Inplace mode shouldn't respect paging or limiting page
+            'limit': 1,
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        assert_code(response, 200)
+        assert_equal(response.json()['has_next'], False)
+        assert_equal([e['pk'] for e in response.json()['entities']], self.entities_pks)
+
+    def test_entity_filters(self):
+        """
+        Tests if right filter calls right method in the Entity manager.
+        """
+        filters = (
+            'translated',
+            'untranslated',
+            'not-translated',
+            'has-suggestions',
+            'approved',
+            'fuzzy',
+            'unchanged'
+        )
+        for filter_ in filters:
+            filter_name = filter_.replace('-', '_')
+            with patch('pontoon.base.models.Entity.objects.{}'.format(filter_name), return_value=Entity.objects.all()) as filter_mock:
+                self.client.post('/get-entities/', {
+                    'project': self.resource.project.slug,
+                    'locale': self.locale.code,
+                    'paths[]': [self.resource.path],
+                    'filterType': filter_,
+                    'limit': 1,
+                }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+                assert_true(filter_mock.called)
+                assert_equal(filter_mock.call_args, call(self.locale))
+
+    def test_exclude_entities(self):
+        """
+        Excluded entities shouldn't returned by get_entities.
+        """
+        response = self.client.post('/get-entities/', {
+            'project': self.resource.project.slug,
+            'locale': self.locale.code,
+            'paths[]': [self.resource.path],
+            'excludeEntities[]': [self.entities[1].pk],
+            'limit': 1,
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        assert_code(response, 200)
+
+        assert_equal(response.json()['has_next'], True)
+        assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[0].pk,])
+
+        response = self.client.post('/get-entities/', {
+            'project': self.resource.project.slug,
+            'locale': self.locale.code,
+            'paths[]': [self.resource.path],
+            'excludeEntities[]': [self.entities[0].pk, self.entities[1].pk],
+            'limit': 1,
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        assert_code(response, 200)
+
+        assert_equal(response.json()['has_next'], False)
+        assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[2].pk])
