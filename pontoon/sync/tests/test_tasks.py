@@ -34,7 +34,7 @@ class SyncProjectTests(TestCase):
             Project, 'needs_sync', new_callable=PropertyMock, return_value=True)
         self.mock_sync_project_repo = self.patch('pontoon.sync.tasks.sync_project_repo')
 
-        self.mock_perform_sync_project = self.patch('pontoon.sync.tasks.perform_sync_project')
+        self.mock_perform_sync_project = self.patch('pontoon.sync.tasks.perform_sync_project', return_value=[[], []])
 
     def test_missing_project(self):
         """

@@ -1,4 +1,6 @@
 from collections import defaultdict
+import logging
+import os
 
 from bulk_update.helper import bulk_update
 
@@ -10,7 +12,9 @@ from pontoon.base.models import (
     TranslationMemoryEntry
 )
 from pontoon.base.utils import match_attr
+from pontoon.sync.utils import locale_directory_path
 
+log = logging.getLogger(__name__)
 
 class ChangeSet(object):
     """
@@ -18,7 +22,7 @@ class ChangeSet(object):
     translations stored in VCS. Once all the necessary changes have been
     stored, execute all the changes at once efficiently.
     """
-    def __init__(self, db_project, vcs_project, now, obsolete_vcs=None):
+    def __init__(self, db_project, vcs_project, now, obsolete_vcs_entities=None, obsolete_vcs_resources=None):
         """
         :param now:
             Datetime to use for marking when approvals happened.
@@ -34,7 +38,8 @@ class ChangeSet(object):
         self.executed = False
         self.changes = {
             'update_vcs': [],
-            'obsolete_vcs': obsolete_vcs or [],
+            'obsolete_vcs_entities': obsolete_vcs_entities or [],
+            'obsolete_vcs_resources': obsolete_vcs_resources or [],
             'update_db': [],
             'obsolete_db': [],
             'create_db': []
@@ -85,6 +90,7 @@ class ChangeSet(object):
         self.execute_create_db()
         self.execute_update_db()
         self.execute_obsolete_db()
+        self.execute_obsolete_vcs_resources()
 
         # Apply the built-up changes to the DB
         self.bulk_update_entities()
@@ -108,14 +114,14 @@ class ChangeSet(object):
 
         # Remove obsolete entities from asymmetric files
         obsolete_entities_paths = Resource.objects.filter(
-            entities__pk__in=self.changes['obsolete_vcs']
+            entities__pk__in=self.changes['obsolete_vcs_entities']
         ).asymmetric().values_list('path', flat=True).distinct()
 
         for path in obsolete_entities_paths:
             changed_resources.add(resources[path])
 
         if len(obsolete_entities_paths) > 0:
-            self.locales_to_commit = self.locales.values()
+            self.locales_to_commit = set(self.locales.values())
 
         for resource in changed_resources:
             resource.save()
@@ -200,6 +206,7 @@ class ChangeSet(object):
         # Any existing translations that were not approved get unapproved.
         if old_translations is None:
             old_translations = db_translations.filter(approved_date__lte=self.now)
+
         for translation in old_translations:
             if translation not in approved_translations:
                 translation.approved = False
@@ -233,6 +240,18 @@ class ChangeSet(object):
         (Entity.objects
             .filter(pk__in=self.changes['obsolete_db'])
             .update(obsolete=True))
+
+    def execute_obsolete_vcs_resources(self):
+        for path in self.changes['obsolete_vcs_resources']:
+            for locale in self.db_project.locales.all():
+                file_path = os.path.join(
+                    locale_directory_path(self.vcs_project.checkout_path, locale.code),
+                    path
+                )
+                if os.path.exists(file_path):
+                    log.info('Removing obsolete file {} for {}.'.format(path, locale.code))
+                    os.remove(file_path)
+                    self.locales_to_commit.add(locale)
 
     def bulk_update_entities(self):
         if len(self.entities_to_update) > 0:
