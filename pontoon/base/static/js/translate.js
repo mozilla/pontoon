@@ -635,7 +635,7 @@ var Pontoon = (function (my) {
         // Prevents from firing multiple calls during onscroll event
         if (entitiesHeight > 0 && (list.scrollTop() >= entitiesHeight * 0.75 - list.height()) && self.hasNext && !self.isLoading()) {
           var currentTop = list.scrollTop();
-          self.loadNextEntities();
+          self.loadNextEntities('scroll');
         }
       });
     },
@@ -2282,7 +2282,7 @@ var Pontoon = (function (my) {
     },
 
 
-    loadNextEntities: function() {
+    loadNextEntities: function(type) {
       var self = this,
           requiresInplaceEditor = self.requiresInplaceEditor();
           excludeEntities = requiresInplaceEditor ? {} : {excludeEntities: self.getEntitiesIds()};
@@ -2308,7 +2308,7 @@ var Pontoon = (function (my) {
 
         if(!hasNext && !self.hasVisibleEntities()) {
           self.setNoMatch(true);
-        } else if (self.app.advanced) {
+        } else if (self.app.advanced && type !== 'scroll') {
           self.openFirstEntity();
         }
       }).always(function() {
