@@ -69,7 +69,7 @@ def sync_project(self, project_pk, sync_log_pk, no_pull=False, no_commit=False, 
 
         return
 
-    obsolete_vcs = perform_sync_project(db_project, now)
+    obsolete_vcs_entities, obsolete_vcs_resources = perform_sync_project(db_project, now)
 
     for repo in db_project.repositories.all():
         sync_project_repo.delay(
@@ -77,7 +77,8 @@ def sync_project(self, project_pk, sync_log_pk, no_pull=False, no_commit=False, 
             repo.pk,
             project_sync_log.pk,
             now,
-            obsolete_vcs,
+            obsolete_vcs_entities,
+            obsolete_vcs_resources,
             no_pull=no_pull,
             no_commit=no_commit
         )
@@ -86,8 +87,8 @@ def sync_project(self, project_pk, sync_log_pk, no_pull=False, no_commit=False, 
 
 
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}')
-def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsolete_vcs=None,
-                      no_pull=False, no_commit=False):
+def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsolete_vcs_entities=None,
+                      obsolete_vcs_resources=None, no_pull=False, no_commit=False):
     db_project = get_or_fail(Project, pk=project_pk,
         message='Could not sync project with pk={0}, not found.'.format(project_pk))
     repo = get_or_fail(Repository, pk=repo_pk,
@@ -118,11 +119,13 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
     for locale in repo.locales:
         try:
             with transaction.atomic():
-                changeset = ChangeSet(db_project, vcs_project, now, obsolete_vcs)
+                changeset = ChangeSet(db_project, vcs_project, now, obsolete_vcs_entities, obsolete_vcs_resources)
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
 
                 update_translated_resources(db_project, vcs_project, changeset, locale)
+                locale.aggregate_stats()
+                locale.project_locale.get(project=db_project).aggregate_stats()
 
                 # Clear out the "has_changed" markers now that we've finished
                 # syncing.
@@ -172,7 +175,8 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
                     error=err,
                 )
             )
-
+    with transaction.atomic():
+        db_project.aggregate_stats()
     repo_sync_log.end_time = timezone.now()
     repo_sync_log.save()
     log.info('Synced translations for project {0} in locales {1}.'.format(

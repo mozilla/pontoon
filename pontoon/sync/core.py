@@ -26,12 +26,12 @@ def sync_project(db_project, now):
     # Only load source resources for updating entities.
     vcs_project = VCSProject(db_project, locales=[])
     with transaction.atomic():
-        update_resources(db_project, vcs_project)
+        removed_paths = update_resources(db_project, vcs_project)
         changeset = ChangeSet(db_project, vcs_project, now)
         update_entities(db_project, vcs_project, changeset)
         changeset.execute()
 
-    return changeset.changes['obsolete_db']
+    return changeset.changes['obsolete_db'], removed_paths
 
 
 def serial_task(timeout, lock_key="", **celery_args):
@@ -92,14 +92,19 @@ def update_entities(db_project, vcs_project, changeset):
 
 def update_resources(db_project, vcs_project):
     """Update the database on what resource files exist in VCS."""
+    log.debug('Scanning {}'.format(vcs_project.source_directory_path()))
     relative_paths = vcs_project.resources.keys()
-    db_project.resources.exclude(path__in=relative_paths).delete()
+    removed_resources = db_project.resources.exclude(path__in=relative_paths)
+    removed_paths = removed_resources.values_list('path', flat=True)
+    log.debug('Removed paths: {}'.format(', '.join(removed_paths)))
+    removed_resources.delete()
 
     for relative_path, vcs_resource in vcs_project.resources.items():
         resource, created = db_project.resources.get_or_create(path=relative_path)
         resource.format = Resource.get_path_format(relative_path)
         resource.total_strings = len(vcs_resource.entities)
         resource.save()
+    return removed_paths
 
 
 def update_translations(db_project, vcs_project, locale, changeset):

@@ -396,6 +396,11 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
     },
+    'formatters': {
+        'verbose': {
+            'format': '[%(levelname)s:%(name)s] %(asctime)s %(message)s'
+        },
+    },
     'loggers': {
         'django': {
             'handlers': ['console'],
@@ -409,6 +414,9 @@ LOGGING = {
         },
     }
 }
+
+if DEBUG:
+    LOGGING['handlers']['console']['formatter'] = 'verbose'
 
 ## Tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
