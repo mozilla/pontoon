@@ -17,7 +17,7 @@ from pontoon.sync.core import (
 )
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.vcs.repositories import CommitToRepositoryException
-from pontoon.sync.vcs.models import VCSProject
+from pontoon.sync.vcs.models import VCSProject, MissingSourceDirectoryError
 
 
 log = logging.getLogger(__name__)
@@ -62,14 +62,15 @@ def sync_project(self, project_pk, sync_log_pk, no_pull=False, no_commit=False, 
     # no Pontoon-side changes for this project, quit early.
     if not force and not repos_changed and not db_project.needs_sync:
         log.info('Skipping project {0}, no changes detected.'.format(db_project.slug))
-
-        project_sync_log.skipped = True
-        project_sync_log.skipped_end_time = timezone.now()
-        project_sync_log.save(update_fields=('skipped', 'skipped_end_time'))
-
+        project_sync_log.skip()
         return
 
-    obsolete_vcs_entities, obsolete_vcs_resources = perform_sync_project(db_project, now)
+    try:
+        obsolete_vcs_entities, obsolete_vcs_resources = perform_sync_project(db_project, now)
+    except MissingSourceDirectoryError, e:
+        log.error(e)
+        project_sync_log.skip()
+        return
 
     for repo in db_project.repositories.all():
         sync_project_repo.delay(
