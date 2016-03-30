@@ -1604,9 +1604,13 @@ var Pontoon = (function (my) {
 
       // Focus & unfocus iframe to make history (back/forward) work
       $('#source, #iframe-cover').hover(function() {
-        $('#source').click();
+        if (!self.dragging) {
+          $('#source').click();
+        }
       }, function() {
-        $('body').click();
+        if (!self.dragging) {
+          $('body').click();
+        }
       });
     },
 
@@ -1930,6 +1934,8 @@ var Pontoon = (function (my) {
           .unbind('mousemove', mouseMoveHandler)
           .unbind('mouseup', mouseUpHandler);
 
+        Pontoon.dragging = false;
+
         $('#iframe-cover').hide(); // iframe fix
         $('#editor:not(".opened")').css('left', $('#sidebar').width()).show();
 
@@ -1995,6 +2001,8 @@ var Pontoon = (function (my) {
       // Resize sidebar and iframe
       $('#drag').bind('mousedown', function (e) {
         e.preventDefault();
+
+        Pontoon.dragging = true;
 
         var left = $('#sidebar'),
             right = $('#source'),
