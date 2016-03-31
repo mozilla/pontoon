@@ -24,6 +24,10 @@ from pontoon.sync.utils import (
 log = logging.getLogger(__name__)
 
 
+class MissingSourceDirectoryError(Exception):
+    """Raised when sync can't find the source directory for the locales."""
+
+
 class VCSProject(object):
     """
     Container for project data that is stored on the filesystem and
@@ -107,8 +111,7 @@ class VCSProject(object):
         if possible_sources:
             return max(possible_sources, key=lambda s: s[1])[0]
         else:
-            raise Exception('No source directory found for project {0}'
-                            .format(self.db_project.slug))
+            raise MissingSourceDirectoryError('No source directory found for project {0}'.format(self.db_project.slug))
 
     def relative_resource_paths(self):
         """

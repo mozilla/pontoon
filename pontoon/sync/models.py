@@ -91,6 +91,12 @@ class ProjectSyncLog(BaseLog):
         else:
             return all(log.finished for log in repo_logs)
 
+    def skip(self, end_time=None):
+        """Marks current project sync log as skipped"""
+        end_time = end_time or timezone.now()
+        self.skipped = True
+        self.save(update_fields=('skipped', 'skipped_end_time'))
+
 
 class RepositorySyncLog(BaseLog):
     project_sync_log = models.ForeignKey(ProjectSyncLog,
