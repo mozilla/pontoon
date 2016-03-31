@@ -1194,8 +1194,11 @@ class EntityFilterTests(TestCase):
         )
         TranslationFactory.create(
             locale=self.locale,
-            entity=third_entity,
-            approved=True
+            entity=third_entity
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=third_entity
         )
 
         assert_equal({second_entity}, set(Entity.objects.untranslated(self.locale)))

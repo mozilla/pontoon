@@ -932,8 +932,8 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def untranslated(self, locale):
-        return self.with_status_counts(locale).exclude(
-            Q(approved_count=F('expected_count')) | Q(fuzzy_count=F('expected_count')) | Q(suggested_count=F('expected_count'))
+        return self.with_status_counts(locale).filter(
+            Q(approved_count=0) & Q(fuzzy_count=0) & Q(suggested_count=0)
         )
 
     def fuzzy(self, locale):
