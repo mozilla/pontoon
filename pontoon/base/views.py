@@ -394,12 +394,23 @@ def entities(request):
 
     project = get_object_or_404(Project, slug=project)
     locale = get_object_or_404(Locale, code__iexact=locale)
-
-    filter_type = request.POST.get('filterType', '')
-    search = request.POST.get('search', '')
     exclude_entities = request.POST.getlist('excludeEntities[]', [])
 
+    if request.POST.get('inplaceEditor'):
+        filter_type = request.POST.get('filterType', '')
+        search = request.POST.get('search', '')
+    else:
+        filter_type = request.POST.get('showFilter', request.POST.get('filterType', ''))
+        search = request.POST.get('showSearch', request.POST.get('search', ''))
+
+    # Variables only by the inplace editor.
+    show_filter = request.POST.get('showFilter', '')
+    show_search = request.POST.get('showSearch', '')
+    show_entity = request.POST.get('showEntity', '')
+    visible_entities = []
+
     # Only return entities with provided IDs
+    hidden_entities = None
     entity_ids = request.POST.getlist('entityIds[]', [])
     if entity_ids:
         entities = (
@@ -428,6 +439,10 @@ def entities(request):
     if request.POST.get('inplaceEditor', None):
         has_next = False
         entities_to_map = entities
+        if show_filter or show_search:
+            visible_entities = Entity.for_project_locale(
+                project, locale, paths, show_filter, show_search, exclude_entities
+            ).values_list('pk', flat=True)
 
     # Out-of-context view: paginate entities
     else:
@@ -444,8 +459,13 @@ def entities(request):
         has_next = entities_page.has_next()
         entities_to_map = entities_page.object_list
 
+    if show_entity and int(show_entity) not in entities_to_map.values_list('pk', flat=True)\
+        and int(show_entity) in entities.values_list('pk', flat=True):
+        entities_to_map = list(entities_to_map) + list(entities.filter(pk=show_entity))
+        visible_entities = list(visible_entities) + [show_entity]
+
     return JsonResponse({
-        'entities': Entity.map_entities(locale, entities_to_map),
+        'entities': Entity.map_entities(locale, entities_to_map, visible_entities),
         'has_next': has_next,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     }, safe=False)
