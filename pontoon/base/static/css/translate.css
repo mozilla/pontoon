@@ -313,7 +313,7 @@ body > header .locale.select {
   content: "";
 }
 
-.translated .status:before {
+.suggested .status:before {
   color: #4FC4F6;
 }
 
@@ -321,11 +321,11 @@ body > header .locale.select {
   color: #FED271;
 }
 
-.approved .status:before {
+.translated .status:before {
   color: #7BC876;
 }
 
-.not-translated .status:before {
+.untranslated .status:before {
   color: #AAAAAA;
   content: "";
 }
@@ -810,8 +810,8 @@ body > header aside p {
   padding-left: 2%;
 }
 
-#entitylist > .wrapper > ul > li.approved p span.source-string,
 #entitylist > .wrapper > ul > li.translated p span.source-string,
+#entitylist > .wrapper > ul > li.suggested p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
 #entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {
   display: inline-block;
@@ -1328,7 +1328,7 @@ p#sign-in-required > a#sidebar-signin {
 
 #helpers > section ul li > header.translator button,
 #helpers > section ul li > header.own button.delete,
-#helpers > section ul li.approved > header button.approve {
+#helpers > section ul li.translated > header button.approve {
   display: inline-block;
 }
 
@@ -1340,12 +1340,12 @@ p#sign-in-required > a#sidebar-signin {
   color: #FED271;
 }
 
-#helpers > section ul li.translated > header button.approve:before {
+#helpers > section ul li.suggested > header button.approve:before {
   color: #4FC4F6;
 }
 
 #helpers > section ul li > header button.approve:hover:before,
-#helpers > section ul li.approved > header button.approve:before {
+#helpers > section ul li.translated > header button.approve:before {
   color: #7BC876;
   content: "";
 }

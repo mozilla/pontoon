@@ -453,10 +453,10 @@ $(function() {
         $('body').prepend(
           '<aside class="tooltip">' +
             '<div class="total">Total<span></span></div>' +
-            '<div class="approved">Translated<span></span></div>' +
-            '<div class="translated">Suggested<span></span></div>' +
+            '<div class="translated">Translated<span></span></div>' +
+            '<div class="suggested">Suggested<span></span></div>' +
             '<div class="fuzzy">Fuzzy<span></span></div>' +
-            '<div class="untranslated">Missing<span></span></div>' +
+            '<div class="missing">Missing<span></span></div>' +
           '</aside>');
       }
 
@@ -470,10 +470,10 @@ $(function() {
 
       $('.tooltip')
         .find('.total span').html(data.total_strings).end()
-        .find('.approved span').html(data.approved_strings).end()
-        .find('.translated span').html(data.translated_strings).end()
+        .find('.translated span').html(data.approved_strings).end()
+        .find('.suggested span').html(data.translated_strings).end()
         .find('.fuzzy span').html(data.fuzzy_strings).end()
-        .find('.untranslated span').html(untranslated_strings).end()
+        .find('.missing span').html(untranslated_strings).end()
         .css('left', left)
         .css('top', top)
         .show();
