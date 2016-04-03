@@ -1587,7 +1587,7 @@ var Pontoon = (function (my) {
         e.stopPropagation();
 
         self.checkUnsavedChanges(function() {
-          self.pushState(true);
+          self.updateState(true);
           self.initializePart(true);
         });
 
@@ -1649,7 +1649,7 @@ var Pontoon = (function (my) {
      */
     updateProfileMenu: function () {
       $('#profile .admin-current-project a').attr('href', '/admin/projects/' + this.project.slug + '/');
-      $('#profile .upload').toggle(history.state.paths && this.user.isTranslator);
+      $('#profile .upload').toggle(this.state.paths && this.user.isTranslator);
     },
 
 
@@ -2165,7 +2165,7 @@ var Pontoon = (function (my) {
      */
     getEntities: function(opts) {
       var self = this,
-          state = history.state,
+          state = self.state,
           opts = opts || {},
           params = {
             'project': state.project,
@@ -2184,7 +2184,7 @@ var Pontoon = (function (my) {
         url: '/get-entities/',
         data: params,
         success: function(data) {
-          deferred.resolve(data, state, data.has_next);
+          deferred.resolve(data, data.has_next);
         },
         error: function(data, text) {
           deferred.reject(text);
@@ -2198,7 +2198,7 @@ var Pontoon = (function (my) {
     /*
      * Process entities if returned, considering in place support
      */
-    processEntities: function(entitiesData, state, hasNext) {
+    processEntities: function(entitiesData, hasNext) {
       var self = this;
 
       self.stats = entitiesData.stats;
@@ -2301,7 +2301,7 @@ var Pontoon = (function (my) {
       self.setSidebarLoading(true);
       self.setNoMatch(false);
 
-      self.getEntities(excludeEntities).then(function(entitiesData, state, hasNext) {
+      self.getEntities(excludeEntities).then(function(entitiesData, hasNext) {
         self.entities = self.entities.concat(entitiesData.entities);
         self.hasNext = hasNext;
 
@@ -2394,21 +2394,21 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Push history state
+     * Update Pontoon and history state
      */
-    pushState: function() {
-      var project = this.getSelectedProject(),
-          locale = this.getSelectedLocale(),
-          paths = requestedPart = this.getSelectedPart();
+    updateState: function(forceUpdate) {
+      var locale = this.getSelectedLocale(),
+          project = this.getSelectedProject(),
+          paths = requestedPaths = this.getSelectedPart();
 
       // Fallback to first available part if no matches found (mistyped URL)
       this.updateCurrentPart();
       paths = this.currentPart.title;
       this.updatePartSelector(paths);
 
-      var state = {
-        project: project,
+      this.state = {
         locale: locale,
+        project: project,
         paths: paths
       },
       url = '/' + locale + '/' + project + '/' + paths + '/';
@@ -2418,7 +2418,9 @@ var Pontoon = (function (my) {
         url = '/';
       }
 
-      history.pushState(state, '', url);
+      if (forceUpdate || requestedPaths !== paths) {
+        history.pushState(this.state, '', url);
+      }
     }
 
   });
@@ -2451,5 +2453,5 @@ Pontoon.user = {
 Pontoon.attachMainHandlers();
 Pontoon.attachEntityListHandlers();
 Pontoon.attachEditorHandlers();
-Pontoon.pushState(true);
+Pontoon.updateState();
 Pontoon.initializePart();
