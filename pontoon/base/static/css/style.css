@@ -664,6 +664,7 @@ label {
 }
 
 .locale .selector,
+.part .selector,
 .project .selector {
   float: right;
 }

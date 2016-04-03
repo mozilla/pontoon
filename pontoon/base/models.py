@@ -377,7 +377,7 @@ class Locale(AggregatedStats):
 
         details_list = list(details)
         details_list.append({
-            'title': 'All Resources',
+            'title': 'all-resources',
             'resource__path': list(all_paths),
             'resource__total_strings': all_resources.total_strings,
             'fuzzy_strings': all_resources.fuzzy_strings,

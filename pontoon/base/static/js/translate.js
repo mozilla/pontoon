@@ -1377,6 +1377,9 @@ var Pontoon = (function (my) {
      * title Part title
      */
     updatePartSelector: function (title) {
+      if (title === 'all-resources') {
+        title = 'All Resources';
+      }
       $('.part .selector')
         .attr('title', title)
         .find('.title')
@@ -1567,7 +1570,7 @@ var Pontoon = (function (my) {
           } else {
             menu.parents('.menu').find('.static-links .all-resources')
               .find('.percent').html(percent).end()
-              .toggleClass('current', self.part === 'All Resources');
+              .toggleClass('current', self.part === 'all-resources');
           }
         });
       });
@@ -2345,7 +2348,11 @@ var Pontoon = (function (my) {
      * Get currently selected part name
      */
     getSelectedPart: function() {
-      return $('.part .selector').attr('title');
+      part = $('.part .selector').attr('title');
+      if (part === 'All Resources') {
+        part = 'all-resources';
+      }
+      return part;
     },
 
 
