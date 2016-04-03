@@ -47,10 +47,12 @@
     </ul>
 
     <div class="static-links">
+      {% if not part %}<a href="{{ url('pontoon.translate', locale.code, project.slug, 'all-resources') }}">{% endif %}
       <div class="all-resources">
         <span class="title">All Resources</span>
         <span class="percent"></span>
       </div>
+      {% if not part %}</a>{% endif %}
     </div>
   </div>
 </div>

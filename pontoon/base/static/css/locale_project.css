@@ -1,5 +1,6 @@
 body > .container {
   width: 1035px;
+  margin-top: 45px;
 }
 
 .menu .sort span.name {
@@ -11,5 +12,28 @@ body > .container {
 }
 
 .menu .static-links {
-  display: none;
+  font-weight: 300;
+  position: absolute;
+  top: -36px;
+  left: 0;
+  right: 0;
+  text-transform: uppercase;
+}
+
+.menu .static-links a {
+  padding: 10px;
+}
+
+.menu .static-links .all-resources {
+  color: #7BC876;
+  display: inline;
+}
+
+.menu .static-links .all-resources.hover {
+  background: transparent;
+  color: #7BC876;
+}
+
+.menu .static-links .all-resources .title:before {
+  content: "Translate ";
 }

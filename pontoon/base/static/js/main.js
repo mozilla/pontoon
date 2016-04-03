@@ -437,6 +437,9 @@ $(function() {
 
   // Menu hover
   $('.menu').on('mouseenter', 'li, .static-links div', function () {
+    if ($(this).is('.static-links div') && !$('body').is('.translate')) {
+      return false;
+    }
     $('.menu li.hover, .static-links div').removeClass('hover');
     $(this).toggleClass('hover');
   });
