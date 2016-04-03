@@ -1,6 +1,6 @@
 {% extends "landing.html" %}
 
-{% block title %}Pontoon &middot; {{ project.name }} &middot; {{ locale.name }} ({{ locale.code }}){% endblock %}
+{% block title %}Pontoon &middot; {{ locale.name }} ({{ locale.code }}) &middot; {{ project.name }}{% endblock %}
 
 {% block class %}locale-project{% endblock %}
 
@@ -12,7 +12,7 @@
 </div>
 {% endblock %}
 
-{% block subtitle %}{{ project.name }} &middot; {{ locale.name }} ({{ locale.code }}){% endblock %}
+{% block subtitle %}{{ locale.name }} ({{ locale.code }}) &middot; {{ project.name }}{% endblock %}
 
 {% block middle %}
 <div class="container">
