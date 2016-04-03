@@ -410,7 +410,7 @@ label {
   top: 10px;
 }
 
-.select > .button.breadcrumbs::after {
+.select > .button.breadcrumbs:after {
   content: "";
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
@@ -496,7 +496,7 @@ label {
 }
 
 .project.select .menu ul li .check {
-  color: #AAAAAA;
+  color: #3F4752;
   font-size: 16px;
   position: absolute;
   right: 0;
@@ -504,17 +504,19 @@ label {
 }
 
 .project.select .menu ul li .check:before {
-  content: "";
+  content: "";
 }
 
-.project.select .menu ul li:hover .check:before {
-  content: "";
+.project.select .menu ul li.hover .check:before {
+  content: "";
   color: #7BC876;
+  margin-left: -2px;
 }
 
 .project.select .menu ul li .check.enabled:before {
   content: "";
   color: #7BC876;
+  margin-left: 0;
 }
 
 .project.select .menu ul li .name,
@@ -535,54 +537,6 @@ label {
   padding: 5px;
   text-transform: uppercase;
   width: 100%;
-}
-
-.part .menu nav ul li {
-  border-color: transparent;
-  border-style: solid solid none;
-  border-width: 1px 1px 0;
-}
-
-.part .menu nav ul li.hover {
-  background: transparent;
-}
-
-.part .menu nav ul li.active {
-  background: #272A2F;
-  border-color: #5E6475;
-}
-
-.part .menu nav ul li.hover a {
-  color: #AAAAAA;
-}
-
-.part .menu nav ul li.active a,
-.part .menu nav ul li:hover a {
-  color: #FFFFFF;
-}
-
-.part .menu section {
-  padding-top: 20px;
-}
-
-.part .menu section .check-box {
-  cursor: pointer;
-  display: table;
-  padding-left: 1px;
-  text-align: left;
-}
-
-.part .menu section .check-box.hover {
-  background: transparent;
-  color: inherit;
-}
-
-.part .menu section .check-box:hover {
-  color: #FFFFFF;
-}
-
-.part .menu section .check-box input[type="checkbox"] {
-  display: none;
 }
 
 .locale.select .new ~ input[type="search"] {
@@ -1232,13 +1186,6 @@ body > .container {
   text-transform: uppercase;
 }
 
-.part .tabs nav ul li {
-  width: 50%;
-
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
 .tabs nav ul li a {
   display: inline-block;
   outline: none;
@@ -1247,17 +1194,6 @@ body > .container {
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-}
-
-.part .tabs nav ul li a {
-  line-height: 14px;
-}
-
-.part .tabs nav ul li a span.fa {
-  color: #7BC876;
-  float: none;
-  line-height: 12px;
-  padding-right: 5px;
 }
 
 .tabs > section {

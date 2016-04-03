@@ -310,23 +310,19 @@ body > header .locale.select {
 
 .status:before {
   color: #FD5F60;
-  content: "";
+  content: "";
 }
 
 .translated .status:before {
   color: #4FC4F6;
-  content: "";
 }
 
 .fuzzy .status:before {
   color: #FED271;
-  content: "";
-  margin-left: -1px;
 }
 
 .approved .status:before {
   color: #7BC876;
-  content: "";
 }
 
 .not-translated .status:before {
@@ -458,9 +454,8 @@ body > header .notification {
   position: absolute;
   right: 15px;
   top: 70px;
-  visibility: visible;
   width: auto;
-  /* No z-index to prevent from covering the Next button */
+  /* No z-index or visibility to prevent covering the Next button */
 }
 
 body > header .notification.hide {
@@ -654,7 +649,7 @@ body > header aside p {
 #sidebar .search-wrapper .icon {
   font-size: 19px;
   left: auto;
-  right: 5px;
+  right: 10px;
   top: 12px;
 }
 
@@ -663,7 +658,7 @@ body > header aside p {
   color: #FFFFFF;
   font-size: 16px;
   font-weight: 300;
-  padding: 10px 30px 10px 43px;
+  padding: 10px 35px 10px 43px;
   width: 100%;
 
   -moz-box-sizing: border-box;
@@ -764,8 +759,9 @@ body > header aside p {
 
 #entitylist > .wrapper > ul > li:hover,
 #entitylist > .wrapper > ul > li.hovered,
-#entitylist > .wrapper > ul > li.active {
-  background-color: #4d5967;
+#entitylist > .wrapper > ul > li.active,
+#entitylist > .wrapper > ul > li.selected {
+  background-color: #4D5967;
 }
 
 #entitylist > .wrapper > ul > li .arrow {
@@ -777,6 +773,21 @@ body > header aside p {
 
 #entitylist > .wrapper > ul > li:hover .arrow {
   display: block;
+}
+
+/* Make selection area bigger and fit the entire row for easier use */
+#entitylist > .wrapper > ul > li > .status {
+  margin: -13px -13px -13px -16px;
+  padding: 13px 13px 13px 16px;
+  font-size: 16px;
+}
+
+#entitylist > .wrapper > ul > li > .status:not(.unselectable):hover:before {
+  content: "";
+}
+
+#entitylist > .wrapper > ul > li.selected > .status:before {
+  content: "";
 }
 
 #entitylist > .wrapper > ul > li p {
@@ -827,6 +838,24 @@ body > header aside p {
   padding-left: 16px;
 }
 
+#sidebar #entitylist .batch-bar {
+  display: none;
+  background: #272A2F;
+  border-top: 1px solid #5E6475;
+  border-bottom: none;
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+}
+
+#sidebar.batch:not(.advanced) #entitylist .batch-bar {
+  display: block;
+}
+
+#sidebar.batch:not(.advanced) #entitylist > .wrapper {
+  bottom: 44px;
+}
+
 
 
 
@@ -854,6 +883,22 @@ body > header aside p {
   box-sizing: border-box;
 }
 
+#editor > section {
+  height: 100%;
+}
+
+#editor #batch {
+  display: none;
+}
+
+.batch #editor #single {
+  display: none;
+}
+
+.batch #editor #batch {
+  display: block;
+}
+
 #editor p {
   text-align: left;
 }
@@ -864,7 +909,7 @@ body > header aside p {
   white-space: pre-wrap;
 }
 
-#topbar {
+#sidebar .topbar {
   background: #4D5967;
   border-bottom: 1px solid #5E6475;
   line-height: 23px;
@@ -875,28 +920,30 @@ body > header aside p {
   box-sizing: border-box;
 }
 
-#topbar a {
+#sidebar .topbar a {
   color: #CCCCCC;
   float: right;
 }
 
-#topbar a#back {
+#sidebar .topbar a#back,
+#sidebar .topbar a.quit-batch-editing,
+#entitylist .topbar a.select-all {
   float: left;
 }
 
-.advanced #topbar a#back {
+#sidebar.advanced .topbar a#back {
   display: none;
 }
 
-#topbar a#previous {
+#sidebar .topbar a#previous {
   margin-right: 30px;
 }
 
-#topbar a:hover {
+#sidebar .topbar a:hover {
   color: #7BC876;
 }
 
-#topbar a span {
+#sidebar .topbar a .fa {
   padding-right: 5px;
 }
 
@@ -1072,7 +1119,7 @@ body > header aside p {
   padding-left: 1px;
 }
 
-#editor > menu {
+#editor #single > menu {
   background: #272A2F;
   border-bottom: 1px solid #5E6475;
   padding: 10px;
@@ -1131,7 +1178,7 @@ body > header aside p {
   padding: 9px 0;
 }
 
-#editor > menu button {
+#editor #single > menu button {
   background: transparent;
   border: none;
   color: #EBEBEB;
@@ -1139,9 +1186,9 @@ body > header aside p {
   text-transform: uppercase;
 }
 
-#editor > menu button[id^="save"],
-#editor > menu button#leave-anyway {
-  background: #7bc876;
+#editor #single > menu button[id^="save"],
+#editor #single > menu button#leave-anyway {
+  background: #7BC876;
   border-radius: 3px;
   color: #272A2F;
   font-weight: 600;
@@ -1149,7 +1196,7 @@ body > header aside p {
   padding: 10px 15px;
 }
 
-#editor > menu button[id^="save"].suggest {
+#editor #single > menu button[id^="save"].suggest {
   background: #4FC4F6;
 }
 
@@ -1177,20 +1224,20 @@ p#sign-in-required > a#sidebar-signin {
   color: #7BC876;
 }
 
-#editor > menu button#leave-anyway {
+#editor #single > menu button#leave-anyway {
   background: #FF0A43;
   color: #EBEBEB;
 }
 
-#editor > menu button:hover {
+#editor #single > menu button:hover {
   color: #7BC876;
 }
 
-#editor > menu button[id^="save"]:hover {
+#editor #single > menu button[id^="save"]:hover {
   color: #EBEBEB;
 }
 
-#editor > menu button#leave-anyway:hover {
+#editor #single > menu button#leave-anyway:hover {
   color: #272A2F;
 }
 
@@ -1282,7 +1329,15 @@ p#sign-in-required > a#sidebar-signin {
 }
 
 #helpers > section ul li > header button.approve:before {
-  content: "";
+  content: "";
+}
+
+#helpers > section ul li.fuzzy > header button.approve:before {
+  color: #FED271;
+}
+
+#helpers > section ul li.translated > header button.approve:before {
+  color: #4FC4F6;
 }
 
 #helpers > section ul li > header button.approve:hover:before,
@@ -1298,4 +1353,117 @@ p#sign-in-required > a#sidebar-signin {
 
 #helpers > section ul li > header button.delete:hover:before {
   color: #FD5F60;
+}
+
+
+
+
+
+/* BATCH EDITOR */
+
+#sidebar .batch-bar .fa-remove,
+#sidebar.advanced .batch-bar .fa-chevron-left {
+  display: none;
+}
+
+#sidebar.advanced .batch-bar .fa-remove {
+  display: inline;
+}
+
+#sidebar .batch-bar .selected-count {
+  color: #7BC876;
+}
+
+#sidebar .batch-bar .variant .plural,
+#sidebar .batch-bar .variant.plural .singular {
+  display: none;
+}
+
+#sidebar .batch-bar .variant.plural .plural {
+  display: inline;
+}
+
+#batch .main-content {
+  overflow: auto;
+  position: absolute;
+  top: 44px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#batch .main-content div {
+  margin: 0 auto;
+  min-width: 300px;
+  padding: 20px;
+  width: 50%;
+}
+
+#batch h2 {
+  color: #CCCCCC;
+  text-align: left;
+}
+
+#batch .intro p {
+  font-style: italic;
+  color: #AAAAAA;
+}
+
+#batch .intro p .warning {
+  color: #FD5F60;
+}
+
+#batch button,
+#batch input {
+  display: block;
+  width: 100%;
+}
+
+#batch button {
+  background: #7BC876;
+  border: none;
+  border-radius: 3px;
+  color: #272A2F;
+  font-weight: 600;
+  margin-top: 10px;
+  padding: 15px 5px;
+  position: relative;
+  text-transform: uppercase;
+}
+
+#batch button .fa {
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  opacity: 0.5;
+}
+
+#batch button.loading .fa {
+  display: block;
+}
+
+#batch button .message {
+  display: none;
+}
+
+#batch button.show-message .message {
+  display: block;
+}
+
+#batch button.show-message .title {
+  display: none;
+}
+
+#batch button#delete-all {
+  background: #FD5F60;
+}
+
+#batch input {
+  background: transparent;
+  border-bottom: 1px solid #5E6475;
+  color: #FFFFFF;
+  float: none;
+  margin-bottom: 10px;
+  padding: 15px 0 5px;
 }

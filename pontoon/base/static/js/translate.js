@@ -15,6 +15,11 @@ var Pontoon = (function (my) {
     },
 
 
+    getAllEntitiesCount: function() {
+      return $('#progress .menu h2 span').html();
+    },
+
+
     renderEntity: function (index, entity) {
       var self = this,
           status = self.getEntityStatus(entity),
@@ -22,10 +27,11 @@ var Pontoon = (function (my) {
           li = $('<li class="entity limited' +
         (status ? ' ' + status : '') +
         (!entity.body ? ' uneditable' : '') +
+        (this.allEntitiesSelected ? ' selected' : '') +
         '" data-entry-pk="' + entity.pk + '">' +
-        '<span class="status fa"></span>' +
+        '<span class="status fa' + (self.user.isTranslator ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
-          '<span class="source-string" data-key="' + self.doNotRender(entity.key) + '">' + source_string + '</span>' +
+          '<span class="source-string">' + source_string + '</span>' +
           '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
             self.doNotRender(entity.translation[0].string || '') +
           '</span>' +
@@ -46,7 +52,12 @@ var Pontoon = (function (my) {
       }
 
       // Open entity editor on click
-      li.click(function () {
+      li.click(function (e) {
+        // Status icons are used to select entities for batch operations
+        if ($(e.target).is('.status:not(".unselectable")')) {
+          return;
+        }
+
         self.switchToEntity(this.entity);
       });
       return entity;
@@ -173,9 +184,9 @@ var Pontoon = (function (my) {
           if (data.length) {
             $.each(data, function() {
               list.append(
-                '<li data-id="' + this.id + '" ' +
-                (this.approved ? ' class="approved"' : '') +
-                'title="Copy Into Translation (Tab)">' +
+                '<li data-id="' + this.id + '" class="' +
+                (this.approved ? 'approved' : this.fuzzy ? 'fuzzy' : 'translated') +
+                '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
                     ((self.user.isTranslator) ? ' translator' :
                       ((self.user.email === this.email && !this.approved) ?
@@ -267,6 +278,24 @@ var Pontoon = (function (my) {
      */
     updateCachedTranslation: function () {
       this.cachedTranslation = $('#translation').val();
+    },
+
+
+    /*
+     * Open batch editor
+     */
+    openBatchEditor: function (selectedCount) {
+      selectedCount = selectedCount|| this.selectedEntities.length;
+
+      $('#sidebar').addClass('batch');
+
+      $('#sidebar .batch-bar')
+        .find('.variant').toggleClass('plural', selectedCount > 1).end()
+        .find('.selected-count').html(selectedCount);
+
+      $('#batch')
+        .find('button').removeClass('loading show-message')
+          .find('.message').html('');
     },
 
 
@@ -500,7 +529,19 @@ var Pontoon = (function (my) {
         if (!newEntity.body) {
           self.openEditor(newEntity);
         }
+
+        self.clearSelection();
       });
+    },
+
+
+    /*
+     * Clear selected entities
+     */
+    clearSelection: function () {
+      $('#sidebar').removeClass('batch');
+      $('#entitylist .entity.selected').removeClass('selected');
+      this.allEntitiesSelected = false;
     },
 
 
@@ -556,6 +597,57 @@ var Pontoon = (function (my) {
     },
 
 
+    /*
+     * Select entities for batch editing panel
+     */
+    selectEntity: function (entity, event) {
+      var self = this;
+
+      // Select single entity
+      entity.toggleClass('selected');
+
+      // Select multiple entities if holding Shift
+      if (event.shiftKey && self.lastSelectedEntity) {
+        var entities = $('#entitylist .entity'),
+            start = entities.index(entity),
+            end = entities.index(self.lastSelectedEntity);
+
+        entities
+          .slice(Math.min(start, end), Math.max(start, end) + 1)
+            .toggleClass('selected', entity.is('.selected'));
+      }
+
+      $('#entitylist .hovered').removeClass('hovered');
+
+      // Update selected entities
+      if (self.allEntitiesSelected) {
+        $('#entitylist .entity:not(".selected")').each(function() {
+          var index = self.selectedEntities.indexOf(this.entity.pk);
+          self.selectedEntities.splice(index, 1);
+        });
+
+      } else {
+        self.selectedEntities = self.getEntitiesIds('#entitylist .entity.selected');
+      }
+
+      // If at least one entity selected, open batch editor
+      if (self.selectedEntities.length > 0) {
+        self.openBatchEditor();
+
+      // If not, open regular editor
+      } else {
+        if (self.app.advanced) {
+          entity.addClass('hovered');
+          self.switchToEntity(entity[0].entity);
+        }
+
+        self.clearSelection();
+      }
+
+      self.lastSelectedEntity = entity;
+    },
+
+
     attachEntityListHandlers: function() {
       var self = this;
 
@@ -580,6 +672,37 @@ var Pontoon = (function (my) {
         delay(function () {
           self.searchEntities();
         }, 500);
+      });
+
+      // Select entities for batch editing
+      $('#entitylist').on('click', '.entity > .status:not(".unselectable")', function(e) {
+        var entity = $(this).parent('li');
+        self.selectEntity(entity, e);
+      });
+
+      // Edit selected entities from 1-column layout
+      $('#entitylist .batch-bar .edit-all').click(function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        $("#entitylist").css('left', -$('#sidebar').width());
+        $("#editor").css('left', 0);
+      });
+
+      // Scroll entities
+      $('#entitylist .wrapper').scroll(function(e) {
+        e.preventDefault();
+
+        var $editableEntities = $('#entitylist .wrapper .editables'),
+            $uneditableEntities = $('#entitylist .wrapper .uneditables'),
+            entitiesHeight = $editableEntities.height() + $uneditableEntities.height(),
+            list = $('#entitylist .wrapper');
+
+        // Prevents from firing multiple calls during onscroll event
+        if (entitiesHeight > 0 && (list.scrollTop() >= entitiesHeight * 0.75 - list.height()) && self.hasNext && !self.isLoading()) {
+          var currentTop = list.scrollTop();
+          self.loadNextEntities('scroll');
+        }
       });
 
       function mouseMoveHandler(e) {
@@ -622,22 +745,6 @@ var Pontoon = (function (my) {
           .bind('mousemove', { initial: data }, mouseMoveHandler)
           .bind('mouseup', { initial: data }, mouseUpHandler);
       });
-
-      // Scroll entities
-      $('#entitylist .wrapper').scroll(function(e) {
-        e.preventDefault();
-
-        var $editableEntities = $('#entitylist .wrapper .editables'),
-            $uneditableEntities = $('#entitylist .wrapper .uneditables'),
-            entitiesHeight = $editableEntities.height() + $uneditableEntities.height(),
-            list = $('#entitylist .wrapper');
-
-        // Prevents from firing multiple calls during onscroll event
-        if (entitiesHeight > 0 && (list.scrollTop() >= entitiesHeight * 0.75 - list.height()) && self.hasNext && !self.isLoading()) {
-          var currentTop = list.scrollTop();
-          self.loadNextEntities('scroll');
-        }
-      });
     },
 
 
@@ -669,7 +776,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       // Top bar
-      $("#topbar > a").click(function (e) {
+      $("#single .topbar > a").click(function (e) {
         e.stopPropagation();
         e.preventDefault();
 
@@ -702,21 +809,6 @@ var Pontoon = (function (my) {
           self.switchToEntity(next[0].entity);
           break;
 
-        }
-      });
-
-      // Show/hide more source string metadata
-      $("#metadata").on("click", "a.details", function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-
-        var more = $("#metadata .more");
-        if ($(this).is(':contains("Less")')) {
-          $(this).html('More details');
-          more.css('display', 'none');
-        } else {
-          $(this).html('Less details');
-          more.css('display', 'block');
         }
       });
 
@@ -1031,13 +1123,12 @@ var Pontoon = (function (my) {
                       self.postMessage("SAVE", newTranslation);
                     }
 
-                    self.updateTranslation(translation, {
+                    self.updateTranslation(entity, translation, {
                       pk: next.data('id'),
                       string: newTranslation,
                       approved: false,
                       fuzzy: false
                     });
-                    self.updateEntityUI(entity);
 
                   // Last translation deleted, no alternative available
                   } else {
@@ -1047,13 +1138,12 @@ var Pontoon = (function (my) {
                       self.postMessage("DELETE");
 
                     } else {
-                      self.updateTranslation(translation, {
+                      self.updateTranslation(entity, translation, {
                         pk: null,
                         string: null,
                         approved: false,
                         fuzzy: false
                       });
-                      self.updateEntityUI(entity);
                     }
 
                     $('#helpers .history ul')
@@ -1071,6 +1161,186 @@ var Pontoon = (function (my) {
             self.endLoader('Oops, something went wrong.', 'error');
           }
         });
+      });
+    },
+
+
+    /*
+     * Select all strings
+     */
+    selectAllEntities: function () {
+      var self = this;
+
+      self.allEntitiesSelected = true;
+      $('#entitylist .entity').addClass('selected');
+
+      // Fake selected entities count to prevent waiting for getEntities()
+      var selectedCount = $('#progress .menu h2 span').html();
+      self.openBatchEditor(selectedCount);
+      self.selectedEntities = [];
+
+      this.getEntities({pkOnly: true}).then(function(data) {
+        self.selectedEntities = data.entity_pks;
+      });
+    },
+
+
+    /*
+     * Attach event handlers to batch editor elements
+     */
+    attachBatchEditorHandlers: function () {
+      var self = this;
+
+      // Clear selection
+      $("#sidebar .quit-batch-editing").click(function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (self.app.advanced) {
+          self.openFirstEntity();
+        } else {
+          self.goBackToEntityList();
+        }
+      });
+
+      // Select All
+      $("#sidebar .select-all").click(function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        self.selectAllEntities();
+      });
+
+      // Actions
+      $('#approve-all, #delete-all, #replace-all').click(function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        var button = this,
+            action = $(this).attr('id').split('-')[0],
+            find = $('#batch .find').val(),
+            replace = $('#batch .replace').val(),
+            message = '';
+
+        // Disable before request complete
+        if ($(button).is('.loading')) {
+          return;
+        }
+
+        clearTimeout(self.batchButttonTimer);
+
+        // Delete check
+        if ($(button).is('#delete-all')) {
+          if ($(button).is('.confirmed')) {
+            $(button).removeClass('confirmed show-message');
+
+          } else {
+            $(button)
+              .addClass('confirmed show-message')
+              .find('.message').html('Are you sure?');
+            return;
+          }
+        }
+
+        // Find and Replace validation
+        if (action === 'replace') {
+          if (find === '') {
+            return $('#batch .find').focus();
+          }
+
+          if (find === replace) {
+            return $('#batch .replace').focus();
+          }
+        }
+
+        $(button).addClass('loading');
+
+        self.waitForAttribute('selectedEntities').then(function() {
+          $.ajax({
+            url: '/batch-edit-translations/',
+            type: 'POST',
+            data: {
+              csrfmiddlewaretoken: $('#server').data('csrf'),
+              locale: self.locale.code,
+              action: action,
+              entities: self.selectedEntities,
+              find: find,
+              replace: replace
+            },
+            success: function(data) {
+              if ('count' in data) {
+                var strings = data.count === 1 ? 'string' : 'strings';
+                message = data.count + ' ' + strings + ' ' + action + 'd';
+
+                // Update UI (entity list, progress, in-place)
+                if (data.count > 0) {
+                  var checkedEntities = self.getEntitiesIds('#entitylist .entity.selected');
+                  self.getEntities({entityIds: checkedEntities}).then(function(entitiesData, state, hasNext) {
+                    self.stats = entitiesData.stats;
+
+                    entitiesMap = {};
+                    $.each(entitiesData.entities, function() {
+                      entitiesMap[this.pk] = this;
+                    });
+
+                    $('#entitylist .entity.selected').each(function() {
+                      var entity = this.entity,
+                          updatedEntity = entitiesMap[entity.pk];
+
+                      if (updatedEntity) {
+                        entity.translation = updatedEntity.translation;
+                        self.updateEntityUI(entity);
+
+                        if (entity.body) {
+                          if ($(button).is('#delete-all')) {
+                            self.postMessage("BATCH-DELETE", {
+                              id: entity.id
+                            });
+                          } else {
+                            self.postMessage("SAVE", {
+                              translation: entity.translation[0].string,
+                              id: entity.id
+                            });
+                          }
+                        }
+                      }
+                    });
+                  });
+                }
+
+              // Empty translations produced by replace might not be always allowed
+              } else if (data.error) {
+                message = data.error;
+                $('#batch .replace').focus();
+              }
+            },
+            error: function(error) {
+              message = 'Oops, something went wrong';
+            },
+            complete: function() {
+              $(button)
+                .toggleClass('loading')
+                .addClass('show-message')
+                .find('.message').html(message);
+
+              // Reset button
+              self.batchButttonTimer = setTimeout(function() {
+                $(button).removeClass('show-message');
+              }, 3000);
+            }
+          });
+        });
+      });
+
+      // Keyboard shortcuts
+      $('#batch .find-replace input').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
+        var key = e.which;
+
+        // Enter: confirm
+        if (key === 13) {
+          $('#replace-all').click();
+          return false;
+        }
       });
     },
 
@@ -1171,13 +1441,16 @@ var Pontoon = (function (my) {
     /*
      * Update translation object with provided data
      *
+     * entity Entity to update Translation for
      * translation Translation to update
      * data Data to update translation with
      */
-    updateTranslation: function (translation, data) {
+    updateTranslation: function (entity, translation, data) {
       for (var key in data) {
         translation[key] = data[key];
       }
+
+      this.updateEntityUI(entity);
     },
 
 
@@ -1273,8 +1546,7 @@ var Pontoon = (function (my) {
 
           var pf = self.getPluralForm(true);
           self.cachedTranslation = translation;
-          self.updateTranslation(entity.translation[pf], data.translation);
-          self.updateEntityUI(entity);
+          self.updateTranslation(entity, entity.translation[pf], data.translation);
 
           // Update translation, including in place if possible
           if (!inplace && entity.body && (self.user.isTranslator ||
@@ -1706,7 +1978,7 @@ var Pontoon = (function (my) {
     createUI: function () {
       // Show message if provided
       if ($('.notification li').length) {
-        $('.notification').css('opacity', 100);
+        $('.notification').css('opacity', 100).removeClass('hide');
       }
 
       this.setMainLoading(false);
@@ -1779,24 +2051,24 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Waits until server returns entitites to frontend.
+     * Waits until Pontoon object attribute set.
      */
-    waitForEntities: function(mainDeferred, times) {
+    waitForAttribute: function(propery, times, mainDeferred) {
       var self = this,
           d = mainDeferred || $.Deferred(),
           // How many times should we check entities before displaying an error.
-          times = typeof times === 'undefined' ? 10 : times;
+          times = typeof times === 'undefined' ? 100 : times;
 
       if (times === -1) {
         d.reject();
         return;
       }
 
-      if (Pontoon.entities.length) {
+      if (Pontoon[propery].length) {
         d.resolve();
       } else {
         setTimeout(function() {
-          self.waitForEntities(d, times - 1);
+          self.waitForAttribute(propery, times - 1, d);
         }, 100);
       }
 
@@ -1850,7 +2122,7 @@ var Pontoon = (function (my) {
 
           Pontoon.createObject(advanced, $('#source')[0].contentWindow);
 
-          Pontoon.waitForEntities().then(function() {
+          Pontoon.waitForAttribute('entities').then(function() {
             // Deep copy: http://api.jquery.com/jQuery.extend
             // Avoid circular structure, which is unable to convert to JSON
             var entities = $.extend(true, [], Pontoon.entities);
@@ -1946,13 +2218,13 @@ var Pontoon = (function (my) {
             advanced = Pontoon.app.advanced;
         if (initial.advanced !== advanced) {
 
-          // On switch to 2-column view, populate editor if empty
+          // On switch to 2-column layout, populate editor if empty
           if (advanced) {
-            if (!$('#editor')[0].entity || !$('#entitylist .entity.hovered').length) {
+            if (!$('#sidebar').is('.batch') && (!$('#editor')[0].entity || !$('#entitylist .entity.hovered').length)) {
               Pontoon.openFirstEntity();
             }
 
-          // On switch to 1-column view, open editor if needed
+          // On switch to 1-column layout, open editor if needed
           } else {
             if ($('#entitylist .entity.hovered').length) {
               Pontoon.openEditor($('#editor')[0].entity);
@@ -2245,6 +2517,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       self.cleanupEntities();
+      this.clearSelection();
 
       // Reset filter and search to default values
       self.setFilter('all');
@@ -2267,6 +2540,9 @@ var Pontoon = (function (my) {
 
     setSidebarLoading: function(state) {
       $('#entitylist .loading').toggle(state);
+      if (state) {
+        $('#entitylist .no-match').hide();
+      }
     },
 
 
@@ -2286,8 +2562,8 @@ var Pontoon = (function (my) {
     },
 
 
-    getEntitiesIds: function() {
-      return $.map($('#entitylist li'), function(item) {
+    getEntitiesIds: function(selector) {
+      return $.map($(selector), function(item) {
         return $(item).data('entry-pk');
       });
     },
@@ -2295,11 +2571,10 @@ var Pontoon = (function (my) {
 
     loadNextEntities: function(type) {
       var self = this,
-          requiresInplaceEditor = self.requiresInplaceEditor();
-          excludeEntities = requiresInplaceEditor ? {} : {excludeEntities: self.getEntitiesIds()};
+          requiresInplaceEditor = self.requiresInplaceEditor(),
+          excludeEntities = requiresInplaceEditor ? {} : {excludeEntities: self.getEntitiesIds('#entitylist .entity')};
 
       self.setSidebarLoading(true);
-      self.setNoMatch(false);
 
       self.getEntities(excludeEntities).then(function(entitiesData, hasNext) {
         self.entities = self.entities.concat(entitiesData.entities);
@@ -2319,8 +2594,11 @@ var Pontoon = (function (my) {
 
         if(!hasNext && !self.hasVisibleEntities()) {
           self.setNoMatch(true);
-        } else if (self.app.advanced && type !== 'scroll') {
-          self.openFirstEntity();
+        } else {
+          self.setNoMatch(false);
+          if (self.app.advanced && type !== 'scroll') {
+            self.openFirstEntity();
+          }
         }
       }).always(function() {
         self.setSidebarLoading(false);
@@ -2453,5 +2731,6 @@ Pontoon.user = {
 Pontoon.attachMainHandlers();
 Pontoon.attachEntityListHandlers();
 Pontoon.attachEditorHandlers();
+Pontoon.attachBatchEditorHandlers();
 Pontoon.updateState();
 Pontoon.initializePart();

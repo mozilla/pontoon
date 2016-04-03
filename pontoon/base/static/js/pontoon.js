@@ -548,6 +548,15 @@
             stopEditing();
             break;
 
+          case "BATCH-DELETE":
+            if (message.value.id) {
+              var entity = Pontoon.entities[message.value.id];
+              $(entity.node).each(function() {
+                this.html(entity.original);
+              });
+            }
+            break;
+
           case "DELETE":
             var target = $('.pontoon-editable-toolbar')[0].target,
                 entity = target.entity;

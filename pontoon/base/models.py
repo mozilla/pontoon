@@ -960,6 +960,19 @@ class EntityQuerySet(models.QuerySet):
     def unchanged(self, locale):
         return self.with_status_counts(locale).filter(unchanged_count=F('expected_count'))
 
+    def prefetch_resources_translations(self, locale):
+        """
+        Prefetch resources and translations for given locale.
+        """
+        return self.prefetch_related(
+            'resource',
+            Prefetch(
+                'translation_set',
+                queryset=Translation.objects.filter(locale=locale),
+                to_attr='fetched_translations'
+            )
+        )
+
 
 class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, related_name='entities')
@@ -1041,8 +1054,8 @@ class Entity(DirtyFieldsMixin, models.Model):
             }
 
     @classmethod
-    def for_project_locale(self, project, locale, paths=None, exclude=None,
-        filter_type=None, filter_search=None):
+    def for_project_locale(self, project, locale, paths=None, filter_type=None,
+        filter_search=None, exclude=None):
         """Get project entities with locale translations."""
         if filter_type and filter_type != 'all':
             if filter_type == 'untranslated':
@@ -1098,14 +1111,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
             entities = Entity.objects.filter(search_query, pk__in=entities).distinct()
 
-        entities = entities.prefetch_related(
-            'resource',
-            Prefetch(
-                'translation_set',
-                queryset=Translation.objects.filter(locale=locale),
-                to_attr='fetched_translations'
-            )
-        )
+        entities = entities.prefetch_resources_translations(locale)
 
         if exclude:
             entities = entities.exclude(pk__in=exclude)
@@ -1163,6 +1169,52 @@ def extra_default():
     return {}
 
 
+class TranslationNotAllowed(Exception):
+    """Raised when submitted Translation cannot be saved."""
+
+
+class TranslationQuerySet(models.QuerySet):
+    def translated_resources(self, locale):
+        return TranslatedResource.objects.filter(
+            resource__entities__translation__in=self,
+            locale=locale
+        ).distinct()
+
+    def find_and_replace(self, find, replace, user):
+        # Find translations
+        translations = self.filter(string__contains=find)
+
+        if translations.count() == 0:
+            return translations
+
+        # Empty translations produced by replace might not be always allowed
+        forbidden = (
+            translations.filter(string=find)
+            .exclude(entity__resource__format__in=Resource.ASYMMETRIC_FORMATS)
+        )
+        if not replace and forbidden.exists():
+            raise Translation.NotAllowed
+
+        # Create translations' clones and replace strings
+        now = timezone.now()
+        translations_to_create = []
+        for translation in translations:
+            translation.pk = None  # Create new translation
+            translation.string = translation.string.replace(find, replace)
+            translation.user = translation.approved_user = user
+            translation.date = translation.approved_date = now
+            translation.approved = True
+            translation.fuzzy = False
+            translations_to_create.append(translation)
+
+        # Unapprove old translations
+        translations.update(approved=False, approved_user=None, approved_date=None)
+
+        # Create new translations
+        Translation.objects.bulk_create(translations_to_create)
+        return translations
+
+
 class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
@@ -1176,6 +1228,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         User, related_name='approvers', null=True, blank=True)
     approved_date = models.DateTimeField(null=True, blank=True)
     fuzzy = models.BooleanField(default=False)
+
+    objects = TranslationQuerySet.as_manager()
+    NotAllowed = TranslationNotAllowed
 
     # extra stores data that we want to save for the specific format
     # this translation is stored in, but that we otherwise don't care
@@ -1324,7 +1379,10 @@ class TranslatedResourceQuerySet(models.QuerySet):
         instance.translated_strings = aggregated_stats['translated'] or 0
         instance.fuzzy_strings = aggregated_stats['fuzzy'] or 0
 
-        instance.save()
+        instance.save(update_fields=[
+            'total_strings', 'approved_strings',
+            'fuzzy_strings', 'translated_strings'
+        ])
 
     def stats(self, project, paths, locale):
         """
@@ -1355,14 +1413,7 @@ class TranslatedResource(AggregatedStats):
 
     objects = TranslatedResourceQuerySet.as_manager()
 
-    def __unicode__(self):
-        translated = float(self.translated_strings + self.approved_strings)
-        percent = 0
-        if self.resource.total_strings > 0:
-            percent = translated * 100 / self.resource.total_strings
-        return str(int(round(percent)))
-
-    def calculate_stats(self):
+    def calculate_stats(self, save=True):
         """Update stats, including denormalized ones."""
         resource = self.resource
         locale = self.locale
@@ -1387,6 +1438,14 @@ class TranslatedResource(AggregatedStats):
                 fuzzy += 1
 
         translated = max(translated_entities.count() - approved - fuzzy, 0)
+
+        if not save:
+            self.total_strings = resource.total_strings
+            self.approved_strings = approved
+            self.fuzzy_strings = fuzzy
+            self.translated_strings = translated
+
+            return False
 
         # Calculate diffs to reduce DB queries
         total_strings_diff = resource.total_strings - self.total_strings

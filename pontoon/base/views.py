@@ -7,6 +7,7 @@ import requests
 import xml.etree.ElementTree as ET
 import urllib
 
+from bulk_update.helper import bulk_update
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
 
@@ -43,9 +44,11 @@ from pontoon.base import utils
 from pontoon.base.utils import require_AJAX
 
 from pontoon.base.models import (
+    ChangedEntityLocale,
     Entity,
     Locale,
     Project,
+    ProjectLocale,
     Resource,
     TranslatedResource,
     Translation,
@@ -89,7 +92,7 @@ def locale(request, locale):
 
 
 @login_required(redirect_field_name='', login_url='/403')
-@permission_required_or_403('base.can_translate_locale', (Locale, 'code', 'locale'))
+@permission_required_or_403('base.can_manage_locale', (Locale, 'code', 'locale'))
 @transaction.atomic
 def locale_manage(request, locale):
     l = get_object_or_404(Locale, code__iexact=locale)
@@ -394,11 +397,32 @@ def entities(request):
 
     filter_type = request.POST.get('filterType', '')
     filter_search = request.POST.get('filterSearch', '')
-
     exclude_entities = request.POST.getlist('excludeEntities[]', [])
+
+    # Only return entities with provided IDs
+    entity_ids = request.POST.getlist('entityIds[]', [])
+    if entity_ids:
+        entities = (
+            Entity.objects.filter(pk__in=entity_ids)
+            .prefetch_resources_translations(locale)
+            .distinct()
+            .order_by('order')
+        )
+
+        return JsonResponse({
+            'entities': Entity.map_entities(locale, entities),
+            'stats': TranslatedResource.objects.stats(project, paths, locale),
+        }, safe=False)
+
     entities = Entity.for_project_locale(
-        project, locale, paths, exclude_entities, filter_type, filter_search
+        project, locale, paths, filter_type, filter_search, exclude_entities
     )
+
+    # Only return a list of entity PKs
+    if request.POST.get('pkOnly', None):
+        return JsonResponse({
+            'entity_pks': list(entities.values_list('pk', flat=True)),
+        })
 
     # In-place view: load all entities
     if request.POST.get('inplaceEditor', None):
@@ -425,6 +449,115 @@ def entities(request):
         'has_next': has_next,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     }, safe=False)
+
+
+@login_required(redirect_field_name='', login_url='/403')
+@require_POST
+@require_AJAX
+@transaction.atomic
+def batch_edit_translations(request):
+    try:
+        l = request.POST['locale']
+        action = request.POST['action']
+        entity_pks = request.POST.getlist('entities[]')
+    except MultiValueDictKeyError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    locale = get_object_or_404(Locale, code=l)
+
+    # Batch editing is only available to translators
+    if not request.user.has_perm('base.can_translate_locale', locale):
+        return HttpResponseForbidden(
+            "Forbidden: You don't have permission for batch editing"
+        )
+
+    entities = (
+        Entity.objects.filter(pk__in=entity_pks)
+        .prefetch_resources_translations(locale)
+    )
+
+    translation_pks = set()
+
+    for entity in entities:
+        if entity.string_plural == "":
+            translation_pks.add(entity.get_translation()['pk'])
+
+        else:
+            for plural_form in range(0, locale.nplurals or 1):
+                translation_pks.add(entity.get_translation(plural_form)['pk'])
+
+    translation_pks.discard(None)
+    translations = Translation.objects.filter(pk__in=translation_pks)
+
+    # Must be executed before translations set changes
+    def get_translations_info(translations):
+        count = translations.count()
+        translated_resources = list(translations.translated_resources(locale))  # Force evaluate
+        changed_entities = Entity.objects.filter(translation__in=translations).distinct()
+
+        return count, translated_resources, changed_entities
+
+    if action == 'approve':
+        translations = translations.filter(approved=False)
+        count, translated_resources, changed_entities = get_translations_info(translations)
+        translations.update(
+            approved=True,
+            approved_user=request.user,
+            approved_date=timezone.now()
+        )
+
+    elif action == 'delete':
+        count, translated_resources, changed_entities = get_translations_info(translations)
+        translations.delete()
+
+    elif action == 'replace':
+        find = request.POST.get('find')
+        replace = request.POST.get('replace')
+
+        try:
+            translations = translations.find_and_replace(find, replace, request.user)
+        except Translation.NotAllowed:
+            return JsonResponse({
+                'error': 'Empty translations not allowed',
+            })
+
+        count, translated_resources, changed_entities = get_translations_info(translations)
+
+    if count == 0:
+        return JsonResponse({'count': 0})
+
+    # Update stats
+    for translated_resource in translated_resources:
+        translated_resource.calculate_stats(save=False)
+
+    bulk_update(translated_resources, update_fields=[
+        'total_strings',
+        'approved_strings',
+        'fuzzy_strings',
+        'translated_strings',
+    ])
+
+    project = entity.resource.project
+    project.aggregate_stats()
+    locale.aggregate_stats()
+    ProjectLocale.objects.get(locale=locale, project=project).aggregate_stats()
+
+    # Mark translations as changed
+    changed_entities_array = []
+    existing = ChangedEntityLocale.objects.values_list('entity', 'locale').distinct()
+    for changed_entity in changed_entities:
+        key = (changed_entity.pk, locale.pk)
+
+        # Remove duplicate changes to prevent unique constraint violation
+        if not key in existing:
+            changed_entities_array.append(
+                ChangedEntityLocale(entity=changed_entity, locale=locale)
+            )
+    ChangedEntityLocale.objects.bulk_create(changed_entities_array)
+
+    return JsonResponse({
+        'count': count
+    })
 
 
 @require_AJAX
@@ -484,6 +617,7 @@ def get_translation_history(request):
             "date_iso": t.date.isoformat() + offset,
             "approved": t.approved,
             "approved_user": "" if a is None else a.name_or_email,
+            "fuzzy": t.fuzzy,
         }
         payload.append(o)
 

@@ -16,7 +16,7 @@ var Pontoon = (function (my) {
      */
     closeNotification: function () {
       $('.notification').animate({opacity: 0}, function() {
-        $(this).addClass('hide');
+        $(this).addClass('hide').empty();
       });
     },
 
@@ -708,13 +708,29 @@ $(function() {
       return false;
     }
 
-    // Ctrl + Alt + F: focus search
-    if ($('#sidebar').is(':visible') && (Pontoon.app.advanced || !$('#editor').is('.opened'))
-        && e.ctrlKey && e.altKey && key === 70) {
-      $('#search').focus();
-      return false;
-    }
+    if ($('#sidebar').is(':visible') && (Pontoon.app.advanced || !$('#editor').is('.opened'))) {
+      // Ctrl + Alt + F: Focus Search
+      if (e.ctrlKey && e.altKey && key === 70) {
+        $('#search').focus();
+        return false;
+      }
 
+      // Ctrl + Alt + A: Select All Strings
+      if (Pontoon.user.isTranslator && e.ctrlKey && e.altKey && key === 65) {
+        Pontoon.selectAllEntities();
+        return false;
+      }
+
+      // Escape: Deselect entities and switch to first entity
+      if (Pontoon.user.isTranslator && $('#entitylist .entity.selected').length && key === 27) {
+        if (Pontoon.app.advanced) {
+          Pontoon.openFirstEntity();
+        } else {
+          Pontoon.goBackToEntityList();
+        }
+        return false;
+      }
+    }
   });
 
   var signinSelectors = '#profile .menu li.sign-in, p#sign-in-required > a#sidebar-signin, ul.links > li#sign-in';
