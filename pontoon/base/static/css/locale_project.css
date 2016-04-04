@@ -3,6 +3,10 @@ body > .container {
   margin-top: 45px;
 }
 
+#subtitle a {
+  color: #EBEBEB;
+}
+
 .menu .sort span.name {
   width: 520px;
 }
