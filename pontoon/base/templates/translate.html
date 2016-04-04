@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% import "widgets/checkbox.html" as Checkbox %}
+{% import "widgets/button.html" as Button %}
 
 {% block class %}translate{% endblock %}
 
@@ -76,7 +77,8 @@
     </div>
 
     <div class="right">
-      <ul class="notification">
+      <!-- Hide by default to prevent covering the Next button -->
+      <ul class="notification hide">
       {% for message in messages %}
         <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
       {% endfor %}
@@ -166,6 +168,10 @@
                 <td><span>Ctrl</span>&nbsp;+&nbsp;<span>Alt</span>&nbsp;+&nbsp;<span>F</span></td>
               </tr>
               <tr>
+                <td>Select All Strings</td>
+                <td><span>Ctrl</span>&nbsp;+&nbsp;<span>Alt</span>&nbsp;+&nbsp;<span>A</span></td>
+              </tr>
+              <tr>
                 <td>Copy From Helpers</td>
                 <td><span>Tab</span></td>
               </tr>
@@ -183,7 +189,7 @@
   <div id="entitylist">
     <div class="search-wrapper clearfix">
       <div class="icon fa fa-search"></div>
-      <input id="search" type="search" autocomplete="off" placeholder="Search All" title="Search Strings (Alt + F)">
+      <input id="search" type="search" autocomplete="off" placeholder="Search All" title="Search Strings (Ctrl + Alt + F)">
       <div id="filter" class="select" data-current-filter="all">
         <div class="button selector all">
           <span class="status fa"></span>
@@ -204,12 +210,27 @@
         </div>
       </div>
     </div>
-    <div class="wrapper">
+    <div class="wrapper unselectable">
       <ul class="editables"></ul>
       <h2 id="not-on-page">Not on the current page</h2>
       <ul class="uneditables"></ul>
       <h3 class="no-match"><div class="fa fa-exclamation-circle"></div>No results</h3>
       <h3 class="loading"><div class="fa fa-refresh fa-spin"></div></h3>
+    </div>
+    <div class="batch-bar topbar clearfix">
+      <a class="select-all" href="#select-all" title="Select All Strings (Ctrl + Alt + A)">
+        <span class="fa fa-check fa-lg"></span>
+        Select All
+      </a>
+      <a class="edit-all" href="#edit-all" title="Edit Selected Strings">
+        <span>Edit</span>
+        <span class="selected-count"></span>
+        <span class="variant">
+          <span class="singular">string</span>
+          <span class="plural">strings</span>
+        </span>
+        <span class="fa fa-chevron-right fa-lg"></span>
+      </a>
     </div>
   </div>
 
@@ -218,101 +239,143 @@
     <!-- Element for dragging entity list and editor -->
     <div id="drag-1" draggable="true"></div>
 
-    <div id="topbar" class="clearfix">
-      <a id="back" href="#back" title="Cancel Translation (Esc)"><span class="fa fa-chevron-left fa-lg"></span>Back to list</a>
-      <a id="next" href="#next" title="Go To Next String (Alt + Down)"><span class="fa fa-chevron-down fa-lg"></span>Next</a>
-      <a id="previous" href="#previous" title="Go To Previous String (Alt + Up)"><span class="fa fa-chevron-up fa-lg"></span>Previous</a>
-    </div>
+    <!-- Single string editor -->
+    <section id="single">
+      <div class="topbar clearfix">
+        <a id="back" href="#back" title="Cancel Translation (Esc)"><span class="fa fa-chevron-left fa-lg"></span>Back to list</a>
+        <a id="next" href="#next" title="Go To Next String (Ctrl + Alt + .)"><span class="fa fa-chevron-down fa-lg"></span>Next</a>
+        <a id="previous" href="#previous" title="Go To Previous String (Ctrl + Alt + ,)"><span class="fa fa-chevron-up fa-lg"></span>Previous</a>
+      </div>
 
-    <div id="source-pane">
-        <h2></h2>
-        <p id="original"></p>
-        <div id="metadata"></div>
-        <div id="screenshots"></div>
-    </div>
+      <div id="source-pane">
+          <h2></h2>
+          <p id="original"></p>
+          <div id="metadata"></div>
+          <div id="screenshots"></div>
+      </div>
 
-    <nav id="plural-tabs">
-      <ul>
-        <li class="active"><a href="#plural1"><span></span><sup></sup></a></li>
-        <li><a href="#plural2"><span></span><sup></sup></a></li>
-        <li><a href="#plural3"><span></span><sup></sup></a></li>
-        <li><a href="#plural4"><span></span><sup></sup></a></li>
-        <li><a href="#plural5"><span></span><sup></sup></a></li>
-        <li><a href="#plural6"><span></span><sup></sup></a></li>
-      </ul>
-    </nav>
-
-    <textarea {% if not user.is_authenticated() %} readonly {% endif %} dir="auto" lang="{{ locale.code }}" id="translation" placeholder="Type translation and press Enter to save"></textarea>
-
-    <menu>
-      {% if user.is_authenticated() %}
-        <div id="unsaved" class="warning-overlay">
-          <a href="#" class="cancel">&times;</a>
-          <h2>You have unsaved changes</h2>
-          <p>Sure you want to leave?</p>
-          <button id="leave-anyway">Leave anyway</button>
-        </div>
-        <div id="quality" class="warning-overlay">
-          <a href="#" class="cancel">&times;</a>
-          <h2>The following checks have failed</h2>
-          <ul></ul>
-          <button id="save-anyway"></button>
-        </div>
-        <div id="translation-length">
-          <span class="current-length"></span>|<span class="original-length"></span>
-        </div>
-        <button id="copy" title="Copy From Source (Alt + C)">Copy</button>
-        <button id="clear" title="Clear Translation (Alt + Backspace)">Clear</button>
-        <button id="save" title="Save Translation (Enter)"></button>
-      {% else %}
-        <p id="sign-in-required"><a id="sidebar-signin" href="">Sign in</a> to translate.</p>
-      {% endif %}
-    </menu>
-
-    <div id="helpers" class="tabs">
-      <nav>
+      <nav id="plural-tabs">
         <ul>
-          <li class="active">
-            <a href="#history">
-              <span>History
-                <span class="fa fa-cog fa-lg fa-spin"></span>
-                <span class="count"></span>
-              </span>
-            </a>
-          </li><li>
-            <a href="#machinery">
-              <span>Machinery
-                <span class="fa fa-cog fa-lg fa-spin"></span>
-                <span class="count"></span>
-              </span>
-            </a>
-          </li><li>
-            <a href="#other-locales">
-              <span>Locales
-                <span class="fa fa-cog fa-lg fa-spin"></span>
-                <span class="count"></span>
-              </span>
-            </a>
-          </li>
+          <li class="active"><a href="#plural1"><span></span><sup></sup></a></li>
+          <li><a href="#plural2"><span></span><sup></sup></a></li>
+          <li><a href="#plural3"><span></span><sup></sup></a></li>
+          <li><a href="#plural4"><span></span><sup></sup></a></li>
+          <li><a href="#plural5"><span></span><sup></sup></a></li>
+          <li><a href="#plural6"><span></span><sup></sup></a></li>
         </ul>
       </nav>
 
-      <section class="history">
-        <ul></ul>
-      </section>
+      <textarea {% if not user.is_authenticated() %} readonly {% endif %} dir="auto" lang="{{ locale.code }}" id="translation" placeholder="Type translation and press Enter to save"></textarea>
 
-      <section class="machinery">
-        <div class="search-wrapper clearfix">
-          <div class="icon fa fa-search"></div>
-          <input type="search" autocomplete="off" placeholder="Type to search machinery">
+      <menu>
+        {% if user.is_authenticated() %}
+          <div id="unsaved" class="warning-overlay">
+            <a href="#" class="cancel">&times;</a>
+            <h2>You have unsaved changes</h2>
+            <p>Sure you want to leave?</p>
+            <button id="leave-anyway">Leave anyway</button>
+          </div>
+          <div id="quality" class="warning-overlay">
+            <a href="#" class="cancel">&times;</a>
+            <h2>The following checks have failed</h2>
+            <ul></ul>
+            <button id="save-anyway"></button>
+          </div>
+          <div id="translation-length">
+            <span class="current-length"></span>|<span class="original-length"></span>
+          </div>
+          <button id="copy" title="Copy From Source (Ctrl + Alt + C)">Copy</button>
+          <button id="clear" title="Clear Translation (Ctrl + Alt + Backspace)">Clear</button>
+          <button id="save" title="Save Translation (Enter)"></button>
+        {% else %}
+          <p id="sign-in-required"><a id="sidebar-signin" href="">Sign in</a> to translate.</p>
+        {% endif %}
+      </menu>
+
+      <div id="helpers" class="tabs">
+        <nav>
+          <ul>
+            <li class="active">
+              <a href="#history">
+                <span>History
+                  <span class="fa fa-cog fa-lg fa-spin"></span>
+                  <span class="count"></span>
+                </span>
+              </a>
+            </li><li>
+              <a href="#machinery">
+                <span>Machinery
+                  <span class="fa fa-cog fa-lg fa-spin"></span>
+                  <span class="count"></span>
+                </span>
+              </a>
+            </li><li>
+              <a href="#other-locales">
+                <span>Locales
+                  <span class="fa fa-cog fa-lg fa-spin"></span>
+                  <span class="count"></span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <section class="history">
+          <ul></ul>
+        </section>
+
+        <section class="machinery">
+          <div class="search-wrapper clearfix">
+            <div class="icon fa fa-search"></div>
+            <input type="search" autocomplete="off" placeholder="Type to search machinery">
+          </div>
+          <ul></ul>
+        </section>
+
+        <section class="other-locales">
+          <ul></ul>
+        </section>
+      </div>
+    </section>
+
+    <!-- Batch string editor -->
+    <section id="batch">
+      <div class="batch-bar topbar clearfix">
+        <a class="quit-batch-editing" href="#quit-batch-editing" title="Quit Batch Editing (Esc)">
+          <span class="fa fa-remove fa-lg"></span>
+          <span class="fa fa-chevron-left fa-lg"></span>
+          <span class="selected-count"></span>
+          <span class="variant">
+            <span class="singular">string</span>
+            <span class="plural">strings</span>
+          </span>
+          <span class="selected">selected</span>
+        </a>
+        <a class="select-all" href="#select-all" title="Select All Strings (Ctrl + Alt + A)">
+          <span class="fa fa-check fa-lg"></span>
+          Select All
+        </a>
+      </div>
+
+      <div class="main-content">
+        <div class="intro">
+          <p><span class="warning">Warning:</span> These actions cannot be undone.</p>
         </div>
-        <ul></ul>
-      </section>
 
-      <section class="other-locales">
-        <ul></ul>
-      </section>
-    </div>
+        <div class="review">
+          <h2>Review translations</h2>
+          {{ Button.button('approve-all', 'Approve all') }}
+          {{ Button.button('delete-all', 'Delete all') }}
+        </div>
+
+        <div class="find-replace">
+          <h2>Replace in translations</h2>
+          <input class="find" type="search" autocomplete="off" placeholder="Find">
+          <input class="replace" type="search" autocomplete="off" placeholder="Replace with">
+          {{ Button.button('replace-all', 'Replace all') }}
+        </div>
+      </div>
+    </section>
   </div>
 
   <!-- Element for dragging sidebar -->

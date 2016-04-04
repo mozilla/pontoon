@@ -6,14 +6,22 @@ from pontoon.base.models import User
 from pontoon.sync.formats import SUPPORTED_FORMAT_PARSERS
 
 
+class NoTabStopCharField(forms.CharField):
+    widget = forms.TextInput(attrs={'tabindex': '-1'})
+
+
+class NoTabStopFileField(forms.FileField):
+    widget = forms.FileInput(attrs={'tabindex': '-1'})
+
+
 class DownloadFileForm(forms.Form):
-    slug = forms.CharField()
-    code = forms.CharField()
-    part = forms.CharField()
+    slug = NoTabStopCharField()
+    code = NoTabStopCharField()
+    part = NoTabStopCharField()
 
 
 class UploadFileForm(DownloadFileForm):
-    uploadfile = forms.FileField()
+    uploadfile = NoTabStopFileField()
 
     def clean(self):
         cleaned_data = super(UploadFileForm, self).clean()
