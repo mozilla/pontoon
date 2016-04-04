@@ -621,10 +621,8 @@ var Pontoon = (function (my) {
 
       // Update selected entities
       if (self.allEntitiesSelected) {
-        $('#entitylist .entity:not(".selected")').each(function() {
-          var index = self.selectedEntities.indexOf(this.entity.pk);
-          self.selectedEntities.splice(index, 1);
-        });
+        var index = self.selectedEntities.indexOf(entity[0].entity.pk);
+        self.selectedEntities.splice(index, 1);
 
       } else {
         self.selectedEntities = self.getEntitiesIds('#entitylist .entity.selected');
