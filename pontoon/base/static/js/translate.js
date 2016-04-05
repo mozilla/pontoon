@@ -2404,9 +2404,11 @@ var Pontoon = (function (my) {
       $('#project-load').toggle(enabled).find('.text').css('opacity', 0);
 
       // Show potentially amusing message if loading takes more time
-      this.mainLoadingTimer = setTimeout(function() {
-        $('#project-load .text').animate({opacity: enabled ? 1 : 0});
-      }, 3000);
+      if (enabled) {
+        this.mainLoadingTimer = setTimeout(function() {
+          $('#project-load .text').animate({opacity: 1});
+        }, 3000);
+      }
     },
 
 
