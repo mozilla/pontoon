@@ -2598,6 +2598,7 @@ var Pontoon = (function (my) {
           self.setNoMatch(false);
           if (self.app.advanced && type !== 'scroll') {
             self.openFirstEntity();
+            $('#search').focus();
           }
         }
       }).always(function() {
