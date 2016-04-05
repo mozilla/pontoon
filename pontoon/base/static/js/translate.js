@@ -2400,19 +2400,13 @@ var Pontoon = (function (my) {
      * Manipulates the loading overlay
      */
     setMainLoading: function(enabled) {
-      // Start loader
-      if (enabled) {
-        $('#project-load').show()
-          .find('.text').css('opacity', enabled ? 1 : 0);
+      clearTimeout(this.mainLoadingTimer);
+      $('#project-load').toggle(enabled).find('.text').css('opacity', 0);
 
-        // Show potentially amusing message if loading takes more time
-        setTimeout(function() {
-          $('#project-load .text').animate({opacity: enabled ? 1:0});
-        }, 3000);
-
-      } else {
-        $('#project-load').hide();
-      }
+      // Show potentially amusing message if loading takes more time
+      this.mainLoadingTimer = setTimeout(function() {
+        $('#project-load .text').animate({opacity: enabled ? 1 : 0});
+      }, 3000);
     },
 
 
