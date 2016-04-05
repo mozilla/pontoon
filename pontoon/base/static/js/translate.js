@@ -620,8 +620,19 @@ var Pontoon = (function (my) {
 
       // Update selected entities
       if (self.allEntitiesSelected) {
-        var index = self.selectedEntities.indexOf(entity[0].entity.pk);
-        self.selectedEntities.splice(index, 1);
+        $('#entitylist .entity:not(".selected")').each(function() {
+          var index = self.selectedEntities.indexOf(this.entity.pk);
+          if (index !== -1) {
+            self.selectedEntities.splice(index, 1);
+          }
+        });
+        $('#entitylist .entity.selected').each(function() {
+          var pk = this.entity.pk,
+              index = self.selectedEntities.indexOf(pk);
+          if (index === -1) {
+            self.selectedEntities.push(pk);
+          }
+        });
 
       } else {
         self.selectedEntities = self.getEntitiesIds('#entitylist .entity.selected');
