@@ -2210,7 +2210,7 @@ var Pontoon = (function (my) {
         Pontoon.dragging = false;
 
         $('#iframe-cover').hide(); // iframe fix
-        $('#editor:not(".opened")').css('left', $('#sidebar').width()).show();
+        $('#sidebar:not(".batch") #editor:not(".opened")').css('left', $('#sidebar').width()).show();
 
         var initial = e.data.initial,
             advanced = Pontoon.app.advanced;
@@ -2291,7 +2291,7 @@ var Pontoon = (function (my) {
             };
 
         $('#iframe-cover').show().width(right.width()); // iframe fix
-        $('#editor:not(".opened")').hide();
+        $('#sidebar:not(".batch") #editor:not(".opened")').hide();
 
         $(document)
           .bind('mousemove', { initial: data }, mouseMoveHandler)
