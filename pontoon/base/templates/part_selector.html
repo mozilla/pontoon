@@ -53,6 +53,13 @@
         <span class="percent"></span>
       </div>
       {% if not part %}</a>{% endif %}
+      {% if part %}
+      <a href="{{ url('pontoon.locale.project', locale.code, project.slug) }}">
+        <div class="current-localization-project">
+          <span class="title">Current Localization Project</span>
+        </div>
+      </a>
+      {% endif %}
     </div>
   </div>
 </div>

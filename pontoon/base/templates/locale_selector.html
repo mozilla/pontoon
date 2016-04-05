@@ -60,5 +60,20 @@
       {% endfor %}
       <li class="no-match">No results</li>
     </ul>
+
+    {% if part and locale %}
+    <div class="static-links">
+      <a href="{{ url('pontoon.teams') }}">
+        <div class="all-teams">
+          <span class="title">All Teams</span>
+        </div>
+      </a>
+      <a href="{{ url('pontoon.locale', locale.code) }}">
+        <div class="current-team">
+          <span class="title">Current Team</span>
+        </div>
+      </a>
+    </div>
+    {% endif %}
   </div>
 </div>
