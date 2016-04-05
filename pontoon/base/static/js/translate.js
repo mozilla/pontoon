@@ -1939,6 +1939,12 @@ var Pontoon = (function (my) {
       $('.project .menu li .name[data-slug=' + this.project.slug + '], ' +
         '.locale .menu li .language[data-code=' + this.locale.code + ']')
         .parent().addClass('current').siblings().removeClass('current');
+      $('.static-links .current-team').parent().attr(
+        'href', '/' + this.locale.code);
+      $('.static-links .current-project').parent().attr(
+        'href', '/projects/' + this.project.slug);
+      $('.static-links .current-localization-project').parent().attr(
+        'href', '/' + this.locale.code + '/' + this.project.slug);
     },
 
 

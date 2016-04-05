@@ -70,6 +70,24 @@
       {% endfor %}
       <li class="no-match">No results</li>
     </ul>
+
+    {% if part and locale %}
+    <div class="static-links">
+      <a href="{{ url('pontoon.projects') }}">
+        <div class="all-projects">
+          <span class="title">All Projects</span>
+        </div>
+      </a>
+      {% if project %}
+      <a href="{{ url('pontoon.project', project.slug) }}">
+        <div class="current-project">
+          <span class="title">Current Project</span>
+        </div>
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+
     {% if locale and user.is_authenticated() %}
       <button id="request-projects">Requets new projects</button>
     {% endif %}
