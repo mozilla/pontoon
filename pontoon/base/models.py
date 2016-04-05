@@ -1055,7 +1055,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     @classmethod
     def for_project_locale(self, project, locale, paths=None, filter_type=None,
-        filter_search=None, exclude=None):
+        search=None, exclude=None):
         """Get project entities with locale translations."""
         if filter_type and filter_type != 'all':
             if filter_type == 'untranslated':
@@ -1102,12 +1102,12 @@ class Entity(DirtyFieldsMixin, models.Model):
             entities = entities.filter(resource__path__in=paths)
 
         # Filter by search parameters
-        if filter_search:
-            search_query = Q(**{'string__icontains': filter_search})
-            search_query |= Q(**{'string_plural__icontains': filter_search})
-            search_query |= Q(**{'translation__string__icontains': filter_search})
-            search_query |= Q(**{'comment__icontains': filter_search})
-            search_query |= Q(**{'key__icontains': filter_search})
+        if search:
+            search_query = Q(**{'string__icontains': search})
+            search_query |= Q(**{'string_plural__icontains': search})
+            search_query |= Q(**{'translation__string__icontains': search})
+            search_query |= Q(**{'comment__icontains': search})
+            search_query |= Q(**{'key__icontains': search})
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
             entities = Entity.objects.filter(search_query, pk__in=entities).distinct()
 

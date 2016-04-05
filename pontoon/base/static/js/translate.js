@@ -10,7 +10,7 @@ var Pontoon = (function (my) {
     },
 
 
-    getFilterSearch: function() {
+    getSearch: function() {
       return $('#search').val();
     },
 
@@ -2443,7 +2443,7 @@ var Pontoon = (function (my) {
             'project': state.project,
             'locale': state.locale,
             'paths': self.getPartPaths(self.currentPart),
-            'filterSearch': self.getFilterSearch(),
+            'search': self.getSearch(),
             'filterType': self.getFilterType(),
             'inplaceEditor': self.requiresInplaceEditor()
           },

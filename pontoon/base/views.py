@@ -396,7 +396,7 @@ def entities(request):
     locale = get_object_or_404(Locale, code__iexact=locale)
 
     filter_type = request.POST.get('filterType', '')
-    filter_search = request.POST.get('filterSearch', '')
+    search = request.POST.get('search', '')
     exclude_entities = request.POST.getlist('excludeEntities[]', [])
 
     # Only return entities with provided IDs
@@ -415,7 +415,7 @@ def entities(request):
         }, safe=False)
 
     entities = Entity.for_project_locale(
-        project, locale, paths, filter_type, filter_search, exclude_entities
+        project, locale, paths, filter_type, search, exclude_entities
     )
 
     # Only return a list of entity PKs
