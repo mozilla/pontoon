@@ -947,6 +947,10 @@ body > header aside p {
   padding-right: 5px;
 }
 
+#sidebar .topbar a.edit-all .fa {
+  padding: 0 0 0 5px;
+}
+
 #source-pane {
   background: #3F4752;
   border-bottom: 1px solid #5E6475;
@@ -1360,6 +1364,26 @@ p#sign-in-required > a#sidebar-signin {
 
 
 /* BATCH EDITOR */
+
+#sidebar .batch-bar .selecting {
+  color: #CCCCCC;
+  display: none;
+  float: left;
+  margin-top: 6px;
+}
+
+#sidebar #entitylist .batch-bar .selecting {
+  float: right;
+}
+
+#sidebar .batch-bar.selecting-all-entities .edit-all,
+#sidebar .batch-bar.selecting-all-entities .quit-batch-editing {
+  display: none;
+}
+
+#sidebar .batch-bar.selecting-all-entities .selecting {
+  display: block;
+}
 
 #sidebar .batch-bar .fa-remove,
 #sidebar.advanced .batch-bar .fa-chevron-left {

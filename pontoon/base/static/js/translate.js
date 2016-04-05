@@ -284,14 +284,13 @@ var Pontoon = (function (my) {
     /*
      * Open batch editor
      */
-    openBatchEditor: function (selectedCount) {
-      selectedCount = selectedCount|| this.selectedEntities.length;
-
+    openBatchEditor: function (loading) {
       $('#sidebar').addClass('batch');
 
-      $('#sidebar .batch-bar')
-        .find('.variant').toggleClass('plural', selectedCount > 1).end()
-        .find('.selected-count').html(selectedCount);
+      loading = loading || false;
+      $('#sidebar .batch-bar').toggleClass('selecting-all-entities', loading)
+        .find('.variant').toggleClass('plural', this.selectedEntities.length > 1).end()
+        .find('.selected-count').html(this.selectedEntities.length);
 
       $('#batch')
         .find('button').removeClass('loading show-message')
@@ -1170,15 +1169,15 @@ var Pontoon = (function (my) {
       var self = this;
 
       self.allEntitiesSelected = true;
-      $('#entitylist .entity').addClass('selected');
+      $('#entitylist .entity:visible').addClass('selected');
 
       // Fake selected entities count to prevent waiting for getEntities()
-      var selectedCount = $('#progress .menu h2 span').html();
-      self.openBatchEditor(selectedCount);
       self.selectedEntities = [];
+      self.openBatchEditor(true);
 
       this.getEntities({pkOnly: true}).then(function(data) {
         self.selectedEntities = data.entity_pks;
+        self.openBatchEditor();
       });
     },
 
