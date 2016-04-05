@@ -1705,6 +1705,14 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Checks whether we should focus iframe on hover
+     */
+    isIframeHoverIntentional: function () {
+      return (!this.dragging && !$('.popup').is(':visible') && !$('.menu').is(':visible'));
+    },
+
+
+    /*
      * Attach event handlers to main toolbar elements
      */
     attachMainHandlers: function () {
@@ -1877,11 +1885,11 @@ var Pontoon = (function (my) {
 
       // Focus & unfocus iframe to make history (back/forward) work
       $('#source, #iframe-cover').hover(function() {
-        if (!self.dragging) {
+        if (self.isIframeHoverIntentional()) {
           $('#source').click();
         }
       }, function() {
-        if (!self.dragging) {
+        if (self.isIframeHoverIntentional()) {
           $('body').click();
         }
       });
