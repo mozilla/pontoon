@@ -1856,9 +1856,9 @@ var Pontoon = (function (my) {
             '</li>');
 
           } else {
-            menu.parents('.menu').find('.static-links .all-resources')
+            menu.parents('.menu').find('.static-links')
               .find('.percent').html(percent).end()
-              .toggleClass('current', self.part === 'all-resources');
+              .find('.all-resources').toggleClass('current', self.part === 'all-resources');
           }
         });
       });
