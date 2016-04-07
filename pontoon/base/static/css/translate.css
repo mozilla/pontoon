@@ -478,12 +478,8 @@ body > header .notification li {
   font-size: 16px;
 }
 
-#profile .button .title span {
-  margin-left: 5px;
-}
-
 #profile .button img {
-  margin: 6px 5px 0 0;
+  margin: 6px 5px 0 5px;
 }
 
 #profile .menu {

@@ -88,7 +88,7 @@
       <!-- Profile -->
       <div id="profile" class="select">
         <div class="button selector">
-          <span class="title noselect">{% if user.email %}{{ user.name_or_email|nospam }}{% else %}Anonymous{% endif %}<span class="fa fa-chevron-down"></span></span>
+          <span class="title noselect">{% if user.email %}{{ user.name_or_email|nospam }}{% else %}Anonymous{% endif %}</span>
           <img class="rounded" src="{% if request.user.is_authenticated() %}{{ request.user.gravatar_url(44) }}{% else %}{{ static('img/anon.jpg') }}{% endif %}">
         </div>
         <div class="menu">
