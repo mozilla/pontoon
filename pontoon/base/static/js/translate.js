@@ -1951,18 +1951,19 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Load project details and mark current project & locale
+     * Mark current project & locale and set links
      */
     updateMainMenu: function () {
       $('.project .menu li .name[data-slug=' + this.project.slug + '], ' +
         '.locale .menu li .language[data-code=' + this.locale.code + ']')
         .parent().addClass('current').siblings().removeClass('current');
-      $('.static-links .current-team').parent().attr(
-        'href', '/' + this.locale.code);
-      $('.static-links .current-project').parent().attr(
-        'href', '/projects/' + this.project.slug);
-      $('.static-links .current-localization-project').parent().attr(
-        'href', '/' + this.locale.code + '/' + this.project.slug);
+
+      $('.static-links .current-team').parent()
+        .attr('href', '/' + this.locale.code);
+      $('.static-links .current-project').parent()
+        .attr('href', '/projects/' + this.project.slug);
+      $('.static-links .current-localization').parent()
+        .attr('href', '/' + this.locale.code + '/' + this.project.slug);
     },
 
 
