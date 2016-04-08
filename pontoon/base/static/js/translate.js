@@ -2588,6 +2588,27 @@ var Pontoon = (function (my) {
     },
 
 
+    getEditorEntity: function() {
+      return $('#editor')[0].entity;
+    },
+
+
+    getEditorEntityId: function() {
+      var entity = this.getEditorEntity();
+
+      if (entity) {
+        return entity.pk;
+      }
+    },
+
+
+    isEditorEntityAvailable: function() {
+      var availableEntityIds = this.getEntitiesIds('#entitylist .entity:visible');
+
+      return availableEntityIds.indexOf(this.getEditorEntityId()) > -1;
+    },
+
+
     loadNextEntities: function(type) {
       var self = this,
           requiresInplaceEditor = self.requiresInplaceEditor(),
@@ -2616,7 +2637,11 @@ var Pontoon = (function (my) {
         } else {
           self.setNoMatch(false);
           if (self.app.advanced && type !== 'scroll') {
-            self.openFirstEntity();
+            if (self.isEditorEntityAvailable()) {
+              $('#entitylist .entity[data-entry-pk=' + self.getEditorEntityId() + ']').addClass('hovered');
+            } else {
+              self.openFirstEntity();
+            }
             $('#search').focus();
           }
         }
