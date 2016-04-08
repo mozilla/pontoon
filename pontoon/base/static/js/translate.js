@@ -1937,7 +1937,7 @@ var Pontoon = (function (my) {
      */
     updateProfileMenu: function () {
       $('#profile .admin-current-project a').attr('href', '/admin/projects/' + this.project.slug + '/');
-      $('#profile .upload').toggle(this.state.paths && this.user.isTranslator);
+      $('#profile .upload').toggle(this.state.paths && this.user.isTranslator && this.part !== 'all-resources');
     },
 
 
