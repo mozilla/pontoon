@@ -1672,12 +1672,20 @@ var Pontoon = (function (my) {
      * Update download/upload form fields with translation project data
      */
     updateFormFields: function (form) {
-      var self = this;
+      var self = this,
+          slug = self.project.slug,
+          code = self.locale.code,
+          part = self.part;
+
+      // Use first part when translating All Resources
+      if (part === 'all-resources') {
+        part = self.getProjectData('parts')[code][0].title;
+      }
 
       form
-        .find('#id_slug').val(self.project.slug).end()
-        .find('#id_code').val(self.locale.code).end()
-        .find('#id_part').val(self.part);
+        .find('#id_slug').val(slug).end()
+        .find('#id_code').val(code).end()
+        .find('#id_part').val(part);
     },
 
 
