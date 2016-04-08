@@ -34,7 +34,7 @@ py-bcrypt==0.3 \
     --hash=sha256:af12f99454e895e9e430c75723c3b9419c0bccd0ea77803662d6a9ac56f6425b
 pyasn1==0.1.7 \
     --hash=sha256:e4f81d53c533f6bd9526b047f047f7b101c24ab17339c1a7ad8f98b25c101eab
-https://github.com/l20n/python-l20n/archive/4e32a8d.zip#egg=python-l20n \
+https://github.com/l20n/python-l20n/archive/4e32a8d.zip#egg=l20n==0.1 \
     --hash=sha256:f9286a979de5eefca3c5a355aeeca05f46dae7c4308b18e004e4dd2af7d7ed29
 requests==2.6.2 \
     --hash=sha256:8f0f56813f82d0c27d9578221268ac9af48f076c71ee69693305ceca6ca355bd \
@@ -47,8 +47,8 @@ suds==0.4 \
     --hash=sha256:d5524ae523bb9e09c57bcdbd1efae2c287d20603688ea31f6020ed180a489af0
 https://github.com/jbalogh/test-utils/archive/e42e031.zip#egg=test-utils \
     --hash=sha256:8a1dbd1c7ade85206ae770c9ce5f43081a098c95f994af113f6434e900559a67
-https://github.com/mathjazz/translate/archive/1.13.1.zip#egg=translate==1.13.1 \
-    --hash=sha256:0130db76e886f26ba0d6dc69c1ef2659315ea972af4aa95cda69c1e53f322707
+https://github.com/mathjazz/translate/archive/1.13.1.zip#egg=translate-toolkit==1.13.1 \
+    --hash=sha256:0c35524756fe9f1f12ec7cfba84fc434ff0e74f8fb239ff7b3b21518e226b7ca
 dj-database-url==0.3.0 \
     --hash=sha256:f2e273ed34acbb560962d5cf12917936d8df02297df09bd3089b8546d4584138 \
     --hash=sha256:ca01768fdecde134301f3170743226f60edff5c3935f12437378ebd911506353
