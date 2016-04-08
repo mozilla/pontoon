@@ -89,10 +89,26 @@ class XLIFFResource(ParsedResource):
         for entity in self.entities:
             entity.sync_changes()
 
+        locale_code = locale.code
+
+        # TODO: should be made iOS specific
+        # Map locale codes for iOS: http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
+        locale_mapping = {
+            'bn-IN': 'bn',
+            'ga-IE': 'ga',
+            'nb-NO': 'nb',
+            'nn-NO': 'nn',
+            'sv-SE': 'sv'
+        }
+
+        if locale_code in locale_mapping:
+            locale_code = locale_mapping[locale_code]
+
         # Update target-language where necessary.
         file_node = self.xliff_file.namespaced('file')
         for node in self.xliff_file.document.getroot().iterchildren(file_node):
-            node.set('target-language', locale.code)
+            if node.get('target-language'):
+                node.set('target-language', locale_code)
 
         with open(self.path, 'w') as f:
             f.writelines(str(self.xliff_file))
