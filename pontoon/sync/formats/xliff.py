@@ -60,15 +60,21 @@ class XLIFFEntity(VCSTranslation):
         Apply any changes made to this object to the backing unit in the
         xliff file.
         """
+        # Clear unused approved tag
+        xml = self.unit.xmlelement
+        if 'approved' in xml.attrib:
+            del xml.attrib['approved']
+
+        target = xml.find(self.unit.namespaced('target'))
+
         if None in self.strings:
             self.target_string = self.strings[None]
+
+            # Clear unused state tag
+            if target is not None and 'state' in target.attrib:
+                del target.attrib["state"]
+
         else:
-            xml = self.unit.xmlelement
-
-            if 'approved' in xml.attrib:
-                del xml.attrib['approved']
-
-            target = xml.find(self.unit.namespaced('target'))
             if target is not None:
                 xml.remove(target)
 
