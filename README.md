@@ -19,9 +19,9 @@ Want to contribute to Pontoon or deploy your own instance? Check out the
 
 Get involved
 ------------
-* File a [bug](https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all)
-* Read more on the [Wiki](https://github.com/mozilla/pontoon/wiki)
 * Join `#pontoon` on [IRC](https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon)
+* File a [bug](https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all)
+* Start hacking on [mentored bugs](https://wiki.mozilla.org/Webdev/GetInvolved/pontoon.mozilla.org)
 
 Servers
 -------
