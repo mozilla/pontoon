@@ -351,6 +351,10 @@ body > header .locale.select {
   font-size: 21px;
 }
 
+#filter.opened .caret-down {
+  display: none;
+}
+
 .caret-down {
   position: absolute;
   top: 14px;
@@ -707,7 +711,7 @@ body > header aside p {
   color: #AAAAAA;
   display: none;
   font-size: 16px;
-  left: 53px;
+  left: 42px;
   position: absolute;
   top: 12px;
 }
