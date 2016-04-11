@@ -358,6 +358,7 @@ body > header .locale.select {
 }
 
 .caret-down:before {
+  color: #AAAAAA;
   content: "\f0d7";
 }
 
@@ -691,7 +692,7 @@ body > header aside p {
   width: 43px;
 }
 
-#filter .button:hover .status:before {
+#filter .button:hover .status:before, #filter .button:hover .caret-down:before {
   color: #FFFFFF;
 }
 
