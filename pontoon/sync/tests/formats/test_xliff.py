@@ -102,7 +102,7 @@ class XLIFFTests(FormatTestsMixin, TestCase):
         """))
 
         expected_string = self.generate_xliff(dedent("""
-            <trans-unit id="Source String Key" approved="yes">
+            <trans-unit id="Source String Key">
                 <source>Source String</source>
                 <target>New Translated String</target>
                 <note>Comment</note>
