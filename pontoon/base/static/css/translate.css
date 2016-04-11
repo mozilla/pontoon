@@ -357,8 +357,9 @@ body > header .locale.select {
 
 .caret-down {
   position: absolute;
-  top: 14px;
-  left: 35px;
+  bottom: 2px;
+  left: 19px;
+  font-size: 13px;
 }
 
 .caret-down:before {
