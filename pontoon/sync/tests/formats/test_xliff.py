@@ -104,7 +104,7 @@ class XLIFFTests(FormatTestsMixin, TestCase):
         expected_string = self.generate_xliff(dedent("""
             <trans-unit id="Source String Key" approved="yes">
                 <source>Source String</source>
-                <target state="translated">New Translated String</target>
+                <target>New Translated String</target>
                 <note>Comment</note>
             </trans-unit>
         """), locale_code=self.locale.code)
@@ -113,9 +113,9 @@ class XLIFFTests(FormatTestsMixin, TestCase):
 
     def test_save_remove(self):
         input_string = self.generate_xliff(dedent("""
-            <trans-unit id="Source String Key" approved="yes">
+            <trans-unit id="Source String Key">
                 <source>Source String</source>
-                <target state="translated">Translated String</target>
+                <target>Translated String</target>
                 <note>Comment</note>
             </trans-unit>
         """))
