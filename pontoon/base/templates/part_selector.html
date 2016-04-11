@@ -5,7 +5,7 @@
 <div class="part select">
   {% if part %}
   <div class="button breadcrumbs selector" title="{{ part }}">
-    <span class="title noselect">{{ part.rsplit('/')[-1] }}</span>
+    <span class="title noselect">{% if part == 'all-resources' %}{{ 'All Resources' }}{% else %}{{ part.rsplit('/')[-1] }}{% endif %}</span>
   </div>
   {% endif %}
 
