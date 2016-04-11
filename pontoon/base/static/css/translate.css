@@ -351,6 +351,16 @@ body > header .locale.select {
   font-size: 21px;
 }
 
+.caret-down {
+  position: absolute;
+  top: 14px;
+  left: 35px;
+}
+
+.caret-down:before {
+  content: "\f0d7";
+}
+
 #progress {
   cursor: pointer;
   display: none;
@@ -696,7 +706,7 @@ body > header aside p {
   color: #AAAAAA;
   display: none;
   font-size: 16px;
-  left: 43px;
+  left: 53px;
   position: absolute;
   top: 12px;
 }
