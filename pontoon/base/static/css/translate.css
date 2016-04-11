@@ -740,6 +740,10 @@ body > header aside p {
   top: 2px;
 }
 
+#filter .menu li.unchanged .status {
+  left: 3px;
+}
+
 #entitylist > .wrapper {
   bottom: 0;
   overflow-y: auto;
