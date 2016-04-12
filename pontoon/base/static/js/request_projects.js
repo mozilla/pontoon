@@ -25,7 +25,7 @@ var Pontoon = (function (my) {
             .parent().toggleClass('limited', show).toggle(show);
         });
 
-        menu.find('input[type=search]:visible').trigger('keyup').focus();
+        menu.find('input[type=search]:visible').trigger('input').focus();
         Pontoon.requestProjects.toggleButton(!show);
       },
 

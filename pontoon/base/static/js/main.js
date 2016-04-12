@@ -431,7 +431,7 @@ $(function() {
       $(this).siblings('.menu').show().end()
              .parents('.select').addClass('opened');
       $('#iframe-cover:not(".hidden")').show(); // iframe fix
-      $('body:not(".admin-project") .menu:visible input[type=search]').focus().trigger('keyup');
+      $('body:not(".admin-project") .menu:visible input[type=search]').focus().trigger('input');
     }
   });
 
@@ -507,7 +507,7 @@ $(function() {
   // Menu search
   $('.menu input[type=search]').click(function (e) {
     e.stopPropagation();
-  }).on('keyup.search', function(e) {
+  }).on('input.search', function(e) {
     if (e.which === 9) {
       return;
     }

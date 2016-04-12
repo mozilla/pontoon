@@ -21,11 +21,11 @@ $(function() {
       $('.user.available li:not(".contributor")').hide();
     }
 
-    $('#available').trigger("keyup").focus();
+    $('#available').trigger('input').focus();
   });
 
   // While in contributors tab, search contributors only
-  $('.menu input[type=search]').on('keyup.search', function(e) {
+  $('.menu input[type=search]').on('input.search', function(e) {
     if ($('.user.available label a.contributors').is('.active')) {
       $('.user.available li:not(".contributor")').hide();
     }
@@ -59,7 +59,7 @@ $(function() {
     var clone = $(this).remove();
 
     target.find('ul').prepend(clone.removeClass('hover'));
-    $('#available').trigger("keyup").focus();
+    $('#available').trigger('input').focus();
   });
 
 });
