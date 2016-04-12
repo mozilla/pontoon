@@ -306,7 +306,7 @@ var Pontoon = (function (my) {
      */
     openEditor: function (entity, inplace) {
       var self = this;
-      $("#editor")[0].entity = entity;
+      $('#editor')[0].entity = entity;
 
       // Metadata: comments, sources, keys
       $('#metadata').empty();
@@ -488,7 +488,7 @@ var Pontoon = (function (my) {
      * Do not change anything in place and hide editor
      */
     stopInPlaceEditing: function () {
-      var entity = $("#editor")[0].entity;
+      var entity = $('#editor')[0].entity;
 
       if (entity.body) {
         this.postMessage("CANCEL");
@@ -2646,7 +2646,9 @@ var Pontoon = (function (my) {
           self.setNoMatch(false);
           if (self.app.advanced && type !== 'scroll') {
             if (self.isEditorEntityAvailable()) {
-              $('#entitylist .entity[data-entry-pk=' + self.getEditorEntityId() + ']').addClass('hovered');
+              var ui = $('#entitylist .entity[data-entry-pk=' + self.getEditorEntityId() + ']');
+              ui.addClass('hovered');
+              self.getEditorEntity().ui = ui; // DOM node might have been replaced
             } else {
               self.openFirstEntity();
             }
