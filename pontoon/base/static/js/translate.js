@@ -234,7 +234,7 @@ var Pontoon = (function (my) {
      * Get suggestions for currently translated entity from all helpers
      */
     updateHelpers: function () {
-      var entity = $('#editor')[0].entity,
+      var entity = this.getEditorEntity(),
           source = entity['original' + this.isPluralized()];
 
       this.getHistory(entity);
@@ -463,7 +463,7 @@ var Pontoon = (function (my) {
      * callback Callback function
      */
     checkUnsavedChanges: function (callback) {
-      var entity = $('#editor')[0].entity;
+      var entity = this.getEditorEntity();
 
       // Ignore for anonymous users, for which we don't save traslations
       if (!this.user.email || !entity) {
@@ -488,7 +488,7 @@ var Pontoon = (function (my) {
      * Do not change anything in place and hide editor
      */
     stopInPlaceEditing: function () {
-      var entity = $('#editor')[0].entity;
+      var entity = this.getEditorEntity();
 
       if (entity.body) {
         this.postMessage("CANCEL");
@@ -520,7 +520,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       self.checkUnsavedChanges(function() {
-        var oldEntity = $('#editor')[0].entity;
+        var oldEntity = self.getEditorEntity();
 
         if (newEntity.body || (oldEntity && oldEntity.body)) {
           self.postMessage("NAVIGATE", newEntity.id);
@@ -790,7 +790,7 @@ var Pontoon = (function (my) {
 
         var sec = $(this).attr('id'),
             entitySelector = '#entitylist .entity:visible',
-            index = $('#editor')[0].entity.ui.index(entitySelector);
+            index = self.getEditorEntity().ui.index(entitySelector);
 
         switch (sec) {
 
@@ -854,7 +854,7 @@ var Pontoon = (function (my) {
         $("#plural-tabs li").removeClass('active');
         tab.addClass('active');
 
-        var entity = $('#editor')[0].entity,
+        var entity = self.getEditorEntity(),
             i = tab.index(),
             original = entity['original' + self.isPluralized()],
             marked = entity['marked' + self.isPluralized()],
@@ -997,7 +997,7 @@ var Pontoon = (function (my) {
         e.stopPropagation();
         e.preventDefault();
 
-        var entity = $('#editor')[0].entity,
+        var entity = self.getEditorEntity(),
             original = entity['original' + self.isPluralized()],
             source = original;
 
@@ -1021,7 +1021,7 @@ var Pontoon = (function (my) {
         e.stopPropagation();
         e.preventDefault();
 
-        var entity = $('#editor')[0].entity,
+        var entity = self.getEditorEntity(),
             source = $('#translation').val();
 
         if (source === '' &&
@@ -1037,7 +1037,7 @@ var Pontoon = (function (my) {
       $('#helpers .machinery input').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
         if (e.which === 13) {
           var source = $(this).val(),
-              entity = $('#editor')[0].entity;
+              entity = self.getEditorEntity();
 
           // Reset to original string on empty search
           if (!source) {
@@ -1085,7 +1085,7 @@ var Pontoon = (function (my) {
         if (button.is('.approve')) {
           button.parents('li').click();
 
-          var entity = $('#editor')[0].entity,
+          var entity = self.getEditorEntity(),
               translation = $('#translation').val();
 
           // Mark that user approved translation instead of submitting it
@@ -1107,7 +1107,7 @@ var Pontoon = (function (my) {
             var item = button.parents('li'),
                 next = item.next(),
                 index = item.index(),
-                entity = $('#editor')[0].entity,
+                entity = self.getEditorEntity(),
                 pluralForm = self.getPluralForm(true),
                 translation = entity.translation[pluralForm];
 
@@ -2251,14 +2251,14 @@ var Pontoon = (function (my) {
 
           // On switch to 2-column layout, populate editor if empty
           if (advanced) {
-            if (!$('#sidebar').is('.batch') && (!$('#editor')[0].entity || !$('#entitylist .entity.hovered').length)) {
+            if (!$('#sidebar').is('.batch') && (!Pontoon.getEditorEntity() || !$('#entitylist .entity.hovered').length)) {
               Pontoon.openFirstEntity();
             }
 
           // On switch to 1-column layout, open editor if needed
           } else {
             if ($('#entitylist .entity.hovered').length) {
-              Pontoon.openEditor($('#editor')[0].entity);
+              Pontoon.openEditor(Pontoon.getEditorEntity());
             }
           }
         }
