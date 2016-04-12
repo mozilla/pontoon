@@ -1105,7 +1105,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         if search:
             search_query = Q(**{'string__icontains': search})
             search_query |= Q(**{'string_plural__icontains': search})
-            search_query |= Q(**{'translation__string__icontains': search})
+            search_query |= Q(**{'translation__string__icontains': search, 'translation__locale': locale})
             search_query |= Q(**{'comment__icontains': search})
             search_query |= Q(**{'key__icontains': search})
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
