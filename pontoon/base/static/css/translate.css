@@ -782,7 +782,7 @@ body > header aside p {
   font-size: 16px;
 }
 
-#entitylist > .wrapper > ul > li > .status:not(.unselectable):hover:before {
+#entitylist > .wrapper > ul > li:not(.selected) > .status:not(.unselectable):hover:before {
   content: "";
 }
 
