@@ -754,6 +754,14 @@ label {
   padding: 1px 3px;
 }
 
+.project .menu a.new ~ input[type="search"] {
+  padding-right: 80px;
+}
+
+.project .menu a.back ~ input[type="search"] {
+  padding-right: 50px;
+}
+
 .menu input[type=search] {
   background: transparent;
   color: #FFFFFF;
