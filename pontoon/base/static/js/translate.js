@@ -1360,7 +1360,7 @@ var Pontoon = (function (my) {
     /*
      * Update progress indicator and value
      */
-    updateProgress: function (entity)
+    updateProgress: function (entity) {
       var self = this,
           stats = this.stats,
           total = stats.total,
@@ -2100,7 +2100,6 @@ var Pontoon = (function (my) {
         }
         $('#sidebar').removeClass('no');
         this.openEntity(initEntity);
-        this.toggleSidebar(true);
       } else {
         // If 2-column layout opened by default, open first entity in the editor
         if (this.app.advanced) {
@@ -2114,7 +2113,7 @@ var Pontoon = (function (my) {
         }
       }
 
-
+      this.toggleSidebar(true);
     },
 
     /*
@@ -2123,6 +2122,7 @@ var Pontoon = (function (my) {
     toggleSidebar: function(state) {
       $('#switch').toggleClass('opened', state);
       $('#sidebar').toggle(state);
+      $('#iframe-cover').remove();
     },
 
     /*
@@ -2750,11 +2750,7 @@ var Pontoon = (function (my) {
 
         if (requiresInplaceEditor) {
           $(entitiesData.entities).each(function (idx, entity) {
-            if (!self.isEntityLoaded(entity)) {
-              self.appendEntityToSidebar(self.renderEntity(0, entity));
-            } else {
               self.showEntityInSidebar(entity);
-            }
           });
           self.setNotOnPage();
 
