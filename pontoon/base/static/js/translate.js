@@ -1503,7 +1503,7 @@ var Pontoon = (function (my) {
      * Add entity translation to localStorage
      *
      * entity Entity
-     * translation Translatio n
+     * translation Translation
      */
     addToLocalStorage: function(entity, translation) {
       localStorage.setItem(this.getLocalStorageKey(entity), JSON.stringify({
@@ -2050,9 +2050,9 @@ var Pontoon = (function (my) {
      * Returns an entity object with given id.
      */
     getEntityById: function(entityId) {
-        return this.entities.find(function(entity){
-          return entity.pk == parseInt(entityId);
-        });
+      return this.entities.find(function(entity){
+        return entity.pk == parseInt(entityId);
+      });
     },
 
     /*
@@ -2716,10 +2716,19 @@ var Pontoon = (function (my) {
         return $('[data-entity-pk=' + entity.pk + ']').length > 0;
     },
 
+    /*
+     * Returns an current entity object`
+     */
     getEditorEntity: function() {
-      return $('#editor')[0].entity;
-    },
+      var $editor = $('#editor'),
+          $sidebar = $('#sidebar');
 
+      if ((this.requiresInplaceEditor() && !$editor.is('.opened')) ||
+          (!this.requiresInplaceEditor() && $sidebar.hasClass('no'))) {
+        return
+      }
+      return $editor[0].entity;
+    },
 
     getEditorEntityId: function() {
       var entity = this.getEditorEntity();
@@ -2845,20 +2854,6 @@ var Pontoon = (function (my) {
     },
 
     /*
-     * Returns an current entity object`
-     */
-    getCurrentEntity: function() {
-      var $editor = $('#editor'),
-          $sidebar = $('#sidebar');
-
-      if ((this.requiresInplaceEditor() && !$editor.is('.opened')) ||
-          (!this.requiresInplaceEditor() && $sidebar.hasClass('no'))) {
-        return
-      }
-      return $editor[0].entity;
-    },
-
-    /*
      * Update Pontoon and history state
      */
     updateState: function(forceUpdate) {
@@ -2879,8 +2874,8 @@ var Pontoon = (function (my) {
         project: project,
         paths: paths,
         filter: this.getFilter(),
-        search: this.getSearchQuery(),
-        currentEntity: this.getCurrentEntity()
+        search: this.getSearch(),
+        currentEntity: this.getEditorEntity()
       };
 
       if (!history.state || forceUpdate) {
@@ -2889,13 +2884,9 @@ var Pontoon = (function (my) {
         this.state['currentEntity'] = queryCurrentEntity;
       };
 
-     if (forceUpdate || requestedPaths !== paths) {
-       self.updateCurrentUrl(this.state);
-     }
-    },
-
-    getSearchQuery: function() {
-      return $('#search').val();
+      if (forceUpdate || requestedPaths !== paths) {
+        self.updateCurrentUrl(this.state);
+      }
     },
 
     getAppState: function() {
@@ -2904,12 +2895,12 @@ var Pontoon = (function (my) {
         'locale': this.getSelectedLocale(),
         'paths': this.getSelectedPart(),
         'filter': this.getFilter(),
-        'search': this.getSearchQuery(),
-        'currentEntity': this.getCurrentEntity(),
+        'search': this.getSearch(),
+        'currentEntity': this.getEditorEntity(),
       };
 
-      if (this.getCurrentEntity()) {
-        state['currentEntity'] = this.getCurrentEntity().pk;
+      if (this.getEditorEntity()) {
+        state['currentEntity'] = this.getEditorEntity().pk;
       }
       return state;
     },
@@ -2923,8 +2914,8 @@ var Pontoon = (function (my) {
           url = '/' + state.locale + '/' + state.project + '/' + state.paths + '/',
           queryParams = {},
           filter = self.getFilter(),
-          search = self.getSearchQuery(),
-          currentEntity = self.getCurrentEntity();
+          search = self.getSearch(),
+          currentEntity = self.getEditorEntity();
 
       // Keep homepage URL
       if (window.location.pathname === '/' && state.project === 'pontoon-intro') {
