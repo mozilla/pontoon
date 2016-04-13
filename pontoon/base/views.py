@@ -397,10 +397,10 @@ def entities(request):
     exclude_entities = request.POST.getlist('excludeEntities[]', [])
 
     if request.POST.get('inplaceEditor'):
-        filter_type = request.POST.get('filterType', '')
+        filter_type = request.POST.get('filter', '')
         search = request.POST.get('search', '')
     else:
-        filter_type = request.POST.get('showFilter', request.POST.get('filterType', ''))
+        filter_type = request.POST.get('showFilter', request.POST.get('filter', ''))
         search = request.POST.get('showSearch', request.POST.get('search', ''))
 
     # Variables only by the inplace editor.

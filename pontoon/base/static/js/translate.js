@@ -5,7 +5,7 @@ var Pontoon = (function (my) {
     /*
      * UI helper methods
      */
-    getFilterType: function() {
+    getFilter: function() {
       return $('#filter').data('current-filter') || 'all';
     },
 
@@ -1360,7 +1360,7 @@ var Pontoon = (function (my) {
     /*
      * Update progress indicator and value
      */
-    updateProgress: function (entity) {
+    updateProgress: function (entity)
       var self = this,
           stats = this.stats,
           total = stats.total,
@@ -2059,12 +2059,12 @@ var Pontoon = (function (my) {
      * Loads app state based on the initial data.
      */
     loadAppState: function() {
-      var initFilterType = this.initialState.filterType,
-          initFilterSearch = this.initialState.filterSearch,
+      var initFilter = this.initialState.filter,
+          initSearch = this.initialState.search,
           initEntity = this.initialState.entity,
           $search = $('#search');
 
-      if (!(initFilterType || initFilterSearch || initEntity)) {
+      if (!(initFilter || initSearch || initEntity)) {
         if (this.app.advanced) {
           if (this.getEntitiesIds().length > 0){
             $('#sidebar').removeClass('no');
@@ -2077,12 +2077,12 @@ var Pontoon = (function (my) {
         return;
       }
 
-      if (initFilterSearch) {
-        $('#search').val(initFilterSearch);
+      if (initSearch) {
+        $('#search').val(initSearch);
       }
 
-      if (initFilterType) {
-        this.setFilter(initFilterType);
+      if (initFilter) {
+        this.setFilter(initFilter);
         if (this.requiresInplaceEditor()) {
           $('#entitylist .entity').filter(':not(.visible)').hide();
           if (this.getVisibleEntities().length == 0) {
@@ -2572,7 +2572,7 @@ var Pontoon = (function (my) {
             'locale': state.locale,
             'paths': self.getPartPaths(self.currentPart),
             'search': self.getSearch(),
-            'filterType': self.getFilterType(),
+            'filter': self.getFilter(),
             'inplaceEditor': self.requiresInplaceEditor()
           },
           deferred = $.Deferred();
@@ -2656,12 +2656,12 @@ var Pontoon = (function (my) {
       self.ready = null;
       self.setMainLoading(true);
 
-      if (self.initialState.filterType) {
-        entitiesOpts['showFilter'] = self.initialState.filterType;
+      if (self.initialState.filter) {
+        entitiesOpts['showFilter'] = self.initialState.filter;
       }
 
-      if (self.initialState.filterType) {
-        entitiesOpts['showSearch'] = self.initialState.filterSearch;
+      if (self.initialState.filter) {
+        entitiesOpts['showSearch'] = self.initialState.search;
       }
 
       if (self.initialState.entity) {
@@ -2869,8 +2869,8 @@ var Pontoon = (function (my) {
       var locale = this.getSelectedLocale(),
           project = this.getSelectedProject(),
           paths = requestedPaths = this.getSelectedPart();
-          queryFilterType = this.getQueryParam('filterType'),
-          queryFilterSearch = this.getQueryParam('filterSearch'),
+          queryFilter = this.getQueryParam('filter'),
+          querySearch = this.getQueryParam('search'),
           queryCurrentEntity = this.getQueryParam('entity');
 
       // Fallback to first available part if no matches found (mistyped URL)
@@ -2882,14 +2882,14 @@ var Pontoon = (function (my) {
         locale: locale,
         project: project,
         paths: paths,
-        filterType: this.getFilterType(),
-        filterSearch: this.getSearchQuery(),
+        filter: this.getFilter(),
+        search: this.getSearchQuery(),
         currentEntity: this.getCurrentEntity()
       };
 
       if (!history.state || forceUpdate) {
-        this.state['filterType'] = queryFilterType;
-        this.state['filterSearch'] = queryFilterSearch;
+        this.state['filter'] = queryFilter;
+        this.state['search'] = querySearch;
         this.state['currentEntity'] = queryCurrentEntity;
       };
 
@@ -2907,8 +2907,8 @@ var Pontoon = (function (my) {
         'project': this.getSelectedProject(),
         'locale': this.getSelectedLocale(),
         'paths': this.getSelectedPart(),
-        'filterType': this.getFilterType(),
-        'filterSearch': this.getSearchQuery(),
+        'filter': this.getFilter(),
+        'search': this.getSearchQuery(),
         'currentEntity': this.getCurrentEntity(),
       };
 
@@ -2926,8 +2926,8 @@ var Pontoon = (function (my) {
           state = state || self.getAppState(),
           url = '/' + state.locale + '/' + state.project + '/' + state.paths + '/',
           queryParams = {},
-          filterType = self.getFilterType(),
-          filterSearch = self.getSearchQuery(),
+          filter = self.getFilter(),
+          search = self.getSearchQuery(),
           currentEntity = self.getCurrentEntity();
 
       // Keep homepage URL
@@ -2935,12 +2935,12 @@ var Pontoon = (function (my) {
         url = '/';
       }
 
-      if (state.filterType && state.filterType !== 'all') {
-        queryParams['filterType'] = state.filterType;
+      if (state.filter && state.filter !== 'all') {
+        queryParams['filter'] = state.filter;
       }
 
-      if (state.filterSearch && state.filterSearch !== '') {
-        queryParams['filterSearch'] = state.filterSearch;
+      if (state.search && state.search !== '') {
+        queryParams['search'] = state.search;
       }
 
       if (state.currentEntity) {
@@ -2997,8 +2997,8 @@ Pontoon.user = {
 };
 
 Pontoon.initialState = {
-  filterType: Pontoon.getQueryParam('filterType'),
-  filterSearch: Pontoon.getQueryParam('filterSearch'),
+  filter: Pontoon.getQueryParam('filter'),
+  search: Pontoon.getQueryParam('search'),
   entity: Pontoon.getQueryParam('entity'),
 };
 
