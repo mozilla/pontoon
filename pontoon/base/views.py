@@ -410,7 +410,6 @@ def entities(request):
     visible_entities = []
 
     # Only return entities with provided IDs
-    hidden_entities = None
     entity_ids = request.POST.getlist('entityIds[]', [])
     if entity_ids:
         entities = (

@@ -444,7 +444,7 @@ class EntityViewTests(TestCase):
                     'project': self.resource.project.slug,
                     'locale': self.locale.code,
                     'paths[]': [self.resource.path],
-                    'filterType': filter_,
+                    'filter': filter_,
                     'limit': 1,
                 }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
                 assert_true(filter_mock.called)
