@@ -33,7 +33,7 @@ def get_or_fail(ModelClass, message=None, **kwargs):
 
 
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0}')
-def sync_project(self, project_pk, sync_log_pk, no_pull=False, no_commit=False, force=False):
+def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_commit=False, force=False):
     """Fetch the project with the given PK and perform sync on it."""
     db_project = get_or_fail(Project, pk=project_pk,
         message='Could not sync project with pk={0}, not found.'.format(project_pk))
@@ -65,35 +65,48 @@ def sync_project(self, project_pk, sync_log_pk, no_pull=False, no_commit=False, 
         project_sync_log.skip()
         return
 
-    try:
-        obsolete_vcs_entities, obsolete_vcs_resources = perform_sync_project(db_project, now)
-    except MissingSourceDirectoryError, e:
-        log.error(e)
-        project_sync_log.skip()
-        return
-
-    for repo in db_project.repositories.all():
+    # Do not sync resources if locale specified
+    if locale:
         sync_project_repo.delay(
             project_pk,
-            repo.pk,
+            locale.get_repository(db_project).pk,
             project_sync_log.pk,
             now,
-            obsolete_vcs_entities,
-            obsolete_vcs_resources,
+            locale=locale,
             no_pull=no_pull,
             no_commit=no_commit
         )
 
-    log.info('Synced resources for project {0}.'.format(db_project.slug))
+    else:
+        try:
+            obsolete_vcs_entities, obsolete_vcs_resources = perform_sync_project(db_project, now)
+        except MissingSourceDirectoryError, e:
+            log.error(e)
+            project_sync_log.skip()
+            return
+
+        log.info('Synced resources for project {0}.'.format(db_project.slug))
+
+        for repo in db_project.repositories.all():
+            sync_project_repo.delay(
+                project_pk,
+                repo.pk,
+                project_sync_log.pk,
+                now,
+                obsolete_vcs_entities,
+                obsolete_vcs_resources,
+                no_pull=no_pull,
+                no_commit=no_commit
+            )
 
 
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}')
 def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsolete_vcs_entities=None,
-                      obsolete_vcs_resources=None, no_pull=False, no_commit=False):
+                      obsolete_vcs_resources=None, locale=None, no_pull=False, no_commit=False):
     db_project = get_or_fail(Project, pk=project_pk,
         message='Could not sync project with pk={0}, not found.'.format(project_pk))
     repo = get_or_fail(Repository, pk=repo_pk,
-        message='Could not sync repo with pk={0}, not found.'.format(project_pk))
+        message='Could not sync repo with pk={0}, not found.'.format(repo_pk))
     project_sync_log = get_or_fail(ProjectSyncLog, pk=project_sync_log_pk,
         message=('Could not sync project {0}, log with pk={1} not found.'
                  .format(db_project.slug, project_sync_log_pk)))
@@ -109,15 +122,19 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
     if not no_pull:
         pull_changes(db_project)
 
-    if len(repo.locales) < 1:
+    locales = repo.locales
+    if locale:
+        locales = [locale]
+
+    if len(locales) < 1:
         log.warning('Could not sync repo `{0}`, no locales found within.'
                     .format(repo.url))
         repo_sync_log.end_time = timezone.now()
         repo_sync_log.save(update_fields=['end_time'])
         return
 
-    vcs_project = VCSProject(db_project, locales=repo.locales)
-    for locale in repo.locales:
+    vcs_project = VCSProject(db_project, locales=locales)
+    for locale in locales:
         try:
             with transaction.atomic():
                 changeset = ChangeSet(db_project, vcs_project, now, obsolete_vcs_entities, obsolete_vcs_resources)
@@ -181,5 +198,5 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
     repo_sync_log.end_time = timezone.now()
     repo_sync_log.save()
     log.info('Synced translations for project {0} in locales {1}.'.format(
-        db_project.slug, ','.join(locale.code for locale in repo.locales)
+        db_project.slug, ','.join(locale.code for locale in locales)
     ))

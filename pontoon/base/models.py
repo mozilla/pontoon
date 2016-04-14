@@ -387,6 +387,10 @@ class Locale(AggregatedStats):
 
         return details_list
 
+    def get_repository(self, project):
+        for repo in project.repositories.all():
+            if self in repo.locales:
+                return repo
 
 class ProjectQuerySet(models.QuerySet):
     def available(self):

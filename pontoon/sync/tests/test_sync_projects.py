@@ -28,6 +28,7 @@ class CommandTests(TestCase):
 
     def execute_command(self, *args, **kwargs):
         kwargs.setdefault('verbosity', 0)
+        kwargs.setdefault('locale', False)
         kwargs.setdefault('no_commit', False)
         kwargs.setdefault('no_pull', False)
         kwargs.setdefault('force', False)
@@ -43,6 +44,7 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             active_project.pk,
             ANY,
+            locale=None,
             no_pull=False,
             no_commit=False,
             force=False
@@ -59,6 +61,7 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             handle_project.pk,
             ANY,
+            locale=None,
             no_pull=False,
             no_commit=False,
             force=False
@@ -83,6 +86,7 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             handle_project.pk,
             ANY,
+            locale=None,
             no_pull=False,
             no_commit=False,
             force=False
@@ -106,6 +110,7 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             project.pk,
             ANY,
+            locale=None,
             no_pull=True,
             no_commit=True,
             force=False
