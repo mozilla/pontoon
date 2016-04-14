@@ -43,6 +43,7 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             active_project.pk,
             ANY,
+            locales=None,
             no_pull=False,
             no_commit=False,
             force=False
@@ -59,6 +60,7 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             handle_project.pk,
             ANY,
+            locales=None,
             no_pull=False,
             no_commit=False,
             force=False
@@ -83,6 +85,7 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             handle_project.pk,
             ANY,
+            locales=None,
             no_pull=False,
             no_commit=False,
             force=False
@@ -106,6 +109,7 @@ class CommandTests(TestCase):
         self.mock_sync_project.delay.assert_called_with(
             project.pk,
             ANY,
+            locales=None,
             no_pull=True,
             no_commit=True,
             force=False
