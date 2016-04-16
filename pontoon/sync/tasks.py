@@ -67,15 +67,17 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
 
     # Do not sync resources if locale specified
     if locale:
-        sync_project_repo.delay(
-            project_pk,
-            locale.get_repository(db_project).pk,
-            project_sync_log.pk,
-            now,
-            locale=locale,
-            no_pull=no_pull,
-            no_commit=no_commit
-        )
+        repo = locale.get_repository(db_project)
+        if repo:
+            sync_project_repo.delay(
+                project_pk,
+                repo.pk,
+                project_sync_log.pk,
+                now,
+                locale=locale,
+                no_pull=no_pull,
+                no_commit=no_commit
+            )
 
     else:
         try:
