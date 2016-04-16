@@ -104,7 +104,7 @@ class ProjectLocaleFactory(DjangoModelFactory):
 
 class RepositoryFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
-    type = Repository.GIT
+    type = 'git'
     url = Sequence(lambda n: 'https://example.com/url_{0}.git'.format(n))
 
     class Meta:

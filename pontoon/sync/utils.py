@@ -4,7 +4,7 @@ from pontoon.base.models import Resource
 from pontoon.base.utils import extension_in, first
 
 
-def is_in_hidden_directory(path):
+def is_hidden(path):
     """
     Return true if path contains hidden directory.
     """

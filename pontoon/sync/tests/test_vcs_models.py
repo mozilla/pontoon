@@ -134,8 +134,10 @@ class VCSProjectTests(TestCase):
             else:
                 return 'successful resource'
 
+        changed_vcs_resources = {'success': [], 'failure': []}
         with patch('pontoon.sync.vcs.models.VCSResource') as MockVCSResource, \
-             patch('pontoon.sync.vcs.models.log') as mock_log:
+            patch('pontoon.sync.vcs.models.log') as mock_log, \
+            patch.object(VCSProject, 'changed_files', new_callable=PropertyMock, return_value=changed_vcs_resources):
             MockVCSResource.side_effect = vcs_resource_constructor
 
             assert_equal(self.vcs_project.resources, {'success': 'successful resource'})

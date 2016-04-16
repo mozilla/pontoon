@@ -7,7 +7,7 @@ from django_nose.tools import (
     assert_raises,
     assert_true
 )
-from mock import ANY, Mock, patch, PropertyMock
+from mock import ANY, Mock, patch, PropertyMock, MagicMock
 
 from pontoon.base.models import (
     Entity,
@@ -291,8 +291,15 @@ class PullChangesTests(FakeCheckoutTestCase):
         project, save the return value to repo.last_synced_revisions,
         and return whether any changes happened in VCS.
         """
+        mock_db_project = MagicMock()
+        mock_db_project.repositories.all.return_value = [self.repository]
         self.mock_repo_pull.return_value = {'single_locale': 'asdf'}
-        assert_true(pull_changes(self.db_project))
+
+        has_changed, revisions = pull_changes(self.db_project)
+        assert_true(has_changed)
+        assert_equal(revisions, {self.repository.pk: {'single_locale': 'asdf'}})
+        self.repository.last_synced_revisions = revisions[self.repository.pk]
+        self.repository.save()
         self.repository.refresh_from_db()
         assert_equal(self.repository.last_synced_revisions, {'single_locale': 'asdf'})
 
@@ -315,5 +322,5 @@ class PullChangesTests(FakeCheckoutTestCase):
         self.mock_repo_pull.return_value = {'single_locale': 'asdf'}
         self.repository.last_synced_revisions = {'single_locale': 'asdf'}
         self.repository.save()
-
-        assert_false(pull_changes(self.db_project))
+        has_changed, _ = pull_changes(self.db_project)
+        assert_false(has_changed)

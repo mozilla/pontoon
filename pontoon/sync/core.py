@@ -1,7 +1,7 @@
 from functools import wraps
 import logging
 
-from collections import Counter
+from collections import Counter, defaultdict
 
 from celery import shared_task
 from django.contrib.auth.models import User
@@ -13,7 +13,8 @@ from django.template.loader import render_to_string
 from pontoon.base.models import (
     Entity,
     Resource,
-    TranslatedResource
+    TranslatedResource,
+    ChangedEntityLocale
 )
 from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.vcs.models import VCSProject
@@ -22,9 +23,9 @@ from pontoon.sync.utils import locale_directory_path
 log = logging.getLogger(__name__)
 
 
-def sync_project(db_project, now):
-    # Only load source resources for updating entities.
-    vcs_project = VCSProject(db_project, locales=[])
+def sync_project(db_project, now, full_scan=False):
+    vcs_project = VCSProject(db_project, locales=[], full_scan=full_scan)
+
     with transaction.atomic():
         removed_paths = update_resources(db_project, vcs_project)
         changeset = ChangeSet(db_project, vcs_project, now)
@@ -68,12 +69,30 @@ def collect_entities(db_project, vcs_project):
 
     When a match isn't found, the missing entity will be None.
     """
+    changed_resources = None if db_project.unsynced_locales else vcs_project.changed_files
+    db_entities = get_db_entities(db_project, changed_resources)
     vcs_entities = get_vcs_entities(vcs_project)
-    db_entities = get_db_entities(db_project)
     entity_keys = set().union(db_entities.keys(), vcs_entities.keys())
 
     for key in entity_keys:
         yield key, db_entities.get(key, None), vcs_entities.get(key, None)
+
+
+def get_changed_db_resources(db_project):
+    """
+    Returns a map of resource paths and their locales that where changed from the last sync.
+    """
+    resources = defaultdict(set)
+    changes = (
+        ChangedEntityLocale.objects
+            .filter(entity__resource__project=db_project)
+            .prefetch_related('locale', 'entity__resource')
+    )
+
+    for change in changes:
+        resources[change.entity.resource.path].add(change.locale)
+
+    return resources
 
 
 def update_entities(db_project, vcs_project, changeset):
@@ -88,14 +107,18 @@ def update_entities(db_project, vcs_project, changeset):
         elif db_entity is None:
             # New VCS entities are added to Pontoon.
             changeset.create_db_entity(vcs_entity)
+        else:
+            changeset.update_db_source_entity(db_entity, vcs_entity)
 
 
 def update_resources(db_project, vcs_project):
     """Update the database on what resource files exist in VCS."""
     log.debug('Scanning {}'.format(vcs_project.source_directory_path()))
-    relative_paths = vcs_project.resources.keys()
-    removed_resources = db_project.resources.exclude(path__in=relative_paths)
+    _, vcs_removed_files = vcs_project.changed_source_files
+
+    removed_resources = db_project.resources.filter(path__in=vcs_removed_files)
     removed_paths = removed_resources.values_list('path', flat=True)
+
     log.debug('Removed paths: {}'.format(', '.join(removed_paths)))
     removed_resources.delete()
 
@@ -108,8 +131,11 @@ def update_resources(db_project, vcs_project):
 
 
 def update_translations(db_project, vcs_project, locale, changeset):
+    if not vcs_project.full_scan:
+        vcs_project.changed_files.update(get_changed_db_resources(db_project))
+
     for key, db_entity, vcs_entity in collect_entities(db_project, vcs_project):
-        # If we don't have both the db_entity and vcs_entity we can't
+        # If we don't have both the db_entity and cs_entity we can't
         # do anything with the translations.
         if db_entity is None or vcs_entity is None:
             continue
@@ -118,6 +144,7 @@ def update_translations(db_project, vcs_project, locale, changeset):
             # VCS lacks an entity for this locale, so we can't
             # pull updates nor edit it. Skip it!
             continue
+
         if db_entity.has_changed(locale):
             # Pontoon changes overwrite whatever VCS has.
             changeset.update_vcs_entity(locale, db_entity, vcs_entity)
@@ -134,6 +161,7 @@ def update_translated_resources(db_project, vcs_project, changeset, locale):
         # We only want to create/update the TranslatedResource object if the
         # resource exists in the current locale, UNLESS the file is asymmetric.
         vcs_resource = vcs_project.resources.get(resource.path, None)
+
         if vcs_resource is not None:
             resource_exists = vcs_resource.files.get(locale) is not None
             if resource_exists or resource.is_asymmetric:
@@ -145,12 +173,19 @@ def get_vcs_entities(vcs_project):
     return {entity_key(entity): entity for entity in vcs_project.entities}
 
 
-def get_db_entities(db_project):
+def get_changed_entities(db_project, changed_resources):
     entities = (Entity.objects
-                .select_related('resource')
-                .prefetch_related('changed_locales')
-                .filter(resource__project=db_project, obsolete=False))
-    return {entity_key(entity): entity for entity in entities}
+            .select_related('resource')
+            .prefetch_related('changed_locales')
+            .filter(resource__project=db_project, obsolete=False))
+
+    if changed_resources is not None:
+        entities = entities.filter(resource__path__in=changed_resources)
+    return entities
+
+
+def get_db_entities(db_project, changed_resources=None):
+    return {entity_key(entity): entity for entity in get_changed_entities(db_project, changed_resources)}
 
 
 def entity_key(entity):
@@ -167,21 +202,23 @@ def pull_changes(db_project):
     Update the local files with changes from the VCS. Returns
     whether any of the updated repos have changed since the last
     sync, based on the revision numbers.
+    Returns a tuple containing:
+    - if repository has changed.
+    - a map of revisions for each repository.
     """
     changed = False
+    revisions = {}
     for repo in db_project.repositories.all():
         repo_revisions = repo.pull()
-
         # If any revision is None, we can't be sure if a change
         # happened or not, so we default to assuming it did.
         unsure_change = None in repo_revisions.values()
         if unsure_change or repo_revisions != repo.last_synced_revisions:
             changed = True
 
-        repo.last_synced_revisions = repo_revisions
-        repo.save()
+        revisions[repo.pk] = repo_revisions
 
-    return changed
+    return changed, revisions
 
 
 def commit_changes(db_project, vcs_project, changeset, locale):

@@ -4,7 +4,13 @@ from django.conf import settings
 from django.db import connection, transaction
 from django.utils import timezone
 
-from pontoon.base.models import ChangedEntityLocale, Project, Repository
+from pontoon.base.models import (
+    ChangedEntityLocale,
+    Project,
+    Repository,
+    Resource,
+)
+
 from pontoon.base.tasks import PontoonTask
 from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.core import (
@@ -53,10 +59,11 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
         start_time=now
     )
 
-    if not no_pull:
-        repos_changed = pull_changes(db_project)
-    else:
+    # We have to cache changed files before last revision is overriden by pull
+    if no_pull:
         repos_changed = True  # Assume changed.
+    else:
+        repos_changed, _ = pull_changes(db_project)
 
     # If the repos haven't changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
@@ -76,12 +83,13 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
                 now,
                 locale=locale,
                 no_pull=no_pull,
-                no_commit=no_commit
+                no_commit=no_commit,
+                full_scan=force
             )
 
     else:
         try:
-            obsolete_vcs_entities, obsolete_vcs_resources = perform_sync_project(db_project, now)
+            obsolete_vcs_entities, obsolete_vcs_resources = perform_sync_project(db_project, now, full_scan=force)
         except MissingSourceDirectoryError, e:
             log.error(e)
             project_sync_log.skip()
@@ -89,7 +97,8 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
 
         log.info('Synced resources for project {0}.'.format(db_project.slug))
 
-        for repo in db_project.repositories.all():
+        # No need to sync translations if it's a source repository
+        for repo in db_project.repositories.exclude(source_repo=True):
             sync_project_repo.delay(
                 project_pk,
                 repo.pk,
@@ -98,13 +107,18 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
                 obsolete_vcs_entities,
                 obsolete_vcs_resources,
                 no_pull=no_pull,
-                no_commit=no_commit
+                no_commit=no_commit,
+                full_scan=force
             )
+
+        for repo in db_project.repositories.filter(source_repo=True):
+            repo.set_current_last_synced_revisions()
 
 
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}')
 def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsolete_vcs_entities=None,
-                      obsolete_vcs_resources=None, locale=None, no_pull=False, no_commit=False):
+                      obsolete_vcs_resources=None, locale=None, no_pull=False, no_commit=False,
+                      full_scan=False):
     db_project = get_or_fail(Project, pk=project_pk,
         message='Could not sync project with pk={0}, not found.'.format(project_pk))
     repo = get_or_fail(Repository, pk=repo_pk,
@@ -112,6 +126,7 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
     project_sync_log = get_or_fail(ProjectSyncLog, pk=project_sync_log_pk,
         message=('Could not sync project {0}, log with pk={1} not found.'
                  .format(db_project.slug, project_sync_log_pk)))
+    log.info('Syncing repo: {}'.format(repo.url))
 
     repo_sync_log = RepositorySyncLog.objects.create(
         project_sync_log=project_sync_log,
@@ -124,18 +139,26 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
     if not no_pull:
         pull_changes(db_project)
 
-    locales = repo.locales
     if locale:
         locales = [locale]
+    else:
+        locales = repo.locales
 
     if len(locales) < 1:
-        log.warning('Could not sync repo `{0}`, no locales found within.'
+        log.warning('Skipping repo `{0}`, no locales to sync found within.'
                     .format(repo.url))
+        repo.set_current_last_synced_revisions()
         repo_sync_log.end_time = timezone.now()
         repo_sync_log.save(update_fields=['end_time'])
         return
 
-    vcs_project = VCSProject(db_project, locales=locales)
+    vcs_project = VCSProject(
+        db_project,
+        locales=locales,
+        obsolete_entities_paths=Resource.objects.obsolete_entities_paths(obsolete_vcs_entities),
+        full_scan=full_scan
+    )
+
     for locale in locales:
         try:
             with transaction.atomic():
@@ -185,6 +208,7 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
                 # nothing after it to fail.
                 if not no_commit and locale in changeset.locales_to_commit:
                     commit_changes(db_project, vcs_project, changeset, locale)
+
         except CommitToRepositoryException as err:
             # Transaction aborted, log and move on to the next locale.
             log.warning(
@@ -197,8 +221,12 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
             )
     with transaction.atomic():
         db_project.aggregate_stats()
+
+    repo.set_current_last_synced_revisions()
+    log.debug('Last synced revisions: %s', repo.last_synced_revisions)
+
     repo_sync_log.end_time = timezone.now()
     repo_sync_log.save()
     log.info('Synced translations for project {0} in locales {1}.'.format(
-        db_project.slug, ','.join(locale.code for locale in locales)
+        db_project.slug, ','.join(locale.code for locale in vcs_project.synced_locales)
     ))
