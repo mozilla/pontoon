@@ -1123,8 +1123,9 @@ class Entity(DirtyFieldsMixin, models.Model):
         return entities.distinct().order_by('order')
 
     @classmethod
-    def map_entities(cls, locale, entities):
+    def map_entities(cls, locale, entities, visible_entities=None):
         entities_array = []
+        visible_entities = visible_entities or []
 
         for entity in entities:
             translation_array = []
@@ -1150,6 +1151,8 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'source': entity.source,
                 'obsolete': entity.obsolete,
                 'translation': translation_array,
+                'visible': False if entity.pk not in visible_entities or not visible_entities
+                                 else True
             })
 
         return sorted(entities_array, key=lambda k: k['order'])
