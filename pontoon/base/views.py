@@ -450,7 +450,7 @@ def entities(request):
         entities_to_map = entities_page.object_list
 
         # If requested entity not on the first page
-        entity = request.POST.get('entity', None)
+        entity = request.POST.get('string', None)
         if entity:
             entity_pk = int(entity)
             # TODO: entities_to_map.values_list() doesn't return entities from selected page

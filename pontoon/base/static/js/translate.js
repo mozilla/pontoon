@@ -2089,7 +2089,7 @@ var Pontoon = (function (my) {
 
       if (entity) {
         if (!this.getEntityById(entity)) {
-          this.endLoader("Can't load selected entity.", 'error');
+          this.endLoader("Can't load specified string.", 'error');
           this.openFirstEntity();
           return;
         }
@@ -2885,7 +2885,7 @@ var Pontoon = (function (my) {
       }
 
       if (state.entity) {
-        queryParams.entity = state.entity;
+        queryParams.string = state.entity;
       }
 
       if (!$.isEmptyObject(queryParams)) {
@@ -2939,7 +2939,7 @@ var Pontoon = (function (my) {
       var state = this.getState('selected');
       state.filter = this.getQueryParam('filter');
       state.search = this.getQueryParam('search');
-      state.entity = this.getQueryParam('entity');
+      state.entity = this.getQueryParam('string');
 
       // Update search and filter
       this.setSearch(state.search);
