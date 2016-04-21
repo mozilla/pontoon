@@ -586,11 +586,11 @@ label {
   height: 100%;
 }
 
-.select .menu ul li .chart span.approved {
+.select .menu ul li .chart span.translated {
   background: #7BC876;
 }
 
-.select .menu ul li .chart span.translated {
+.select .menu ul li .chart span.suggested {
   background: #4FC4F6;
 }
 
@@ -829,15 +829,15 @@ body > .container .about p a:visited {
   text-transform: uppercase;
 }
 
-.tooltip div.untranslated {
+.tooltip div.missing {
   border-color: #FD5F60;
 }
 
-.tooltip div.approved {
+.tooltip div.translated {
   border-color: #7BC876;
 }
 
-.tooltip div.translated {
+.tooltip div.suggested {
   border-color: #4FC4F6;
 }
 
@@ -907,11 +907,11 @@ img.rounded {
   width: 90px;
 }
 
-.details div.approved {
+.details div.translated {
   border-color: #7BC876;
 }
 
-.details div.translated {
+.details div.suggested {
   border-color: #4FC4F6;
 }
 
@@ -919,7 +919,7 @@ img.rounded {
   border-color: #FED271;
 }
 
-.details div.untranslated {
+.details div.missing {
   border-color: #FD5F60;
 }
 

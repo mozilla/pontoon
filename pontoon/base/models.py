@@ -935,7 +935,7 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
-    def untranslated(self, locale):
+    def missing(self, locale):
         return self.with_status_counts(locale).filter(
             Q(approved_count=0) & Q(fuzzy_count=0) & Q(suggested_count=0)
         )
@@ -945,17 +945,17 @@ class EntityQuerySet(models.QuerySet):
             Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
         )
 
-    def translated(self, locale):
+    def suggested(self, locale):
         return self.with_status_counts(locale).filter(
             Q(suggested_count__gt=0) & ~Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
         )
 
-    def approved(self, locale):
+    def translated(self, locale):
         return self.with_status_counts(locale).filter(
             approved_count=F('expected_count')
         )
 
-    def not_translated(self, locale):
+    def untranslated(self, locale):
         return self.with_status_counts(locale).exclude(Q(approved_count=F('expected_count')))
 
     def has_suggestions(self, locale):
@@ -1062,20 +1062,20 @@ class Entity(DirtyFieldsMixin, models.Model):
         search=None, exclude=None):
         """Get project entities with locale translations."""
         if filter_type and filter_type != 'all':
-            if filter_type == 'untranslated':
-                entities = self.objects.untranslated(locale)
+            if filter_type == 'missing':
+                entities = self.objects.missing(locale)
 
             elif filter_type == 'fuzzy':
                 entities = self.objects.fuzzy(locale)
 
+            elif filter_type == 'suggested':
+                entities = self.objects.suggested(locale)
+
             elif filter_type == 'translated':
                 entities = self.objects.translated(locale)
 
-            elif filter_type == 'approved':
-                entities = self.objects.approved(locale)
-
-            elif filter_type == 'not-translated':
-                entities = self.objects.not_translated(locale)
+            elif filter_type == 'untranslated':
+                entities = self.objects.untranslated(locale)
 
             elif filter_type == 'has-suggestions':
                 entities = self.objects.has_suggestions(locale)
@@ -1123,8 +1123,9 @@ class Entity(DirtyFieldsMixin, models.Model):
         return entities.distinct().order_by('order')
 
     @classmethod
-    def map_entities(cls, locale, entities):
+    def map_entities(cls, locale, entities, visible_entities=None):
         entities_array = []
+        visible_entities = visible_entities or []
 
         for entity in entities:
             translation_array = []
@@ -1150,6 +1151,8 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'source': entity.source,
                 'obsolete': entity.obsolete,
                 'translation': translation_array,
+                'visible': False if entity.pk not in visible_entities or not visible_entities
+                                 else True
             })
 
         return sorted(entities_array, key=lambda k: k['order'])
