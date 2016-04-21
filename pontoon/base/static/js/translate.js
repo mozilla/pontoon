@@ -2090,7 +2090,7 @@ var Pontoon = (function (my) {
       if (entity) {
         if (!this.getEntityById(entity)) {
           this.endLoader("Can't load specified string.", 'error');
-          this.openFirstEntity();
+          this.showDefaultView();
           return;
         }
         this.openEntity(entity);
