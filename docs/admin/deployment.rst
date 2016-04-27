@@ -197,7 +197,7 @@ RabbitMQ add-on:
    Again, you must attach the resource for RabbitMQ as ``RABBITMQ``. See the
    note in the Cache Add-ons section for details.
 
-.. _BROKER_URL: http://celery.readthedocs.org/en/latest/configuration.html#broker-url
+.. _BROKER_URL: http://celery.readthedocs.io/en/latest/configuration.html#broker-url
 
 Scheduled Jobs
 --------------

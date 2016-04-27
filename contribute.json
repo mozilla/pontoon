@@ -7,7 +7,7 @@
     },
     "participate": {
         "home": "https://wiki.mozilla.org/Webdev/GetInvolved/pontoon.mozilla.org",
-        "docs": "http://mozilla-pontoon.readthedocs.org/",
+        "docs": "http://mozilla-pontoon.readthedocs.io/",
         "irc": "irc://irc.mozilla.org/#pontoon",
         "irc-contacts": [
             "mathjazz",
