@@ -15,7 +15,7 @@ localization and include all the neccessary tags.
 Service Documentation
 ---------------------
 Want to contribute to Pontoon or deploy your own instance? Check out the
-[Service Documentation](http://mozilla-pontoon.readthedocs.org/en/latest/).
+[Service Documentation](http://mozilla-pontoon.readthedocs.io/en/latest/).
 
 Get involved
 ------------
