@@ -425,7 +425,7 @@ $(function() {
   $('.selector').click(function (e) {
     if (!$(this).siblings('.menu').is(':visible')) {
       e.stopPropagation();
-      $('body:not(".admin-project") .menu, body:not(".admin-project") .popup').hide();
+      $('body:not(".admin-project") .menu').hide();
       $('.select').removeClass('opened');
       $('#iframe-cover:not(".hidden")').hide(); // iframe fix
       $(this).siblings('.menu').show().end()
@@ -495,9 +495,6 @@ $(function() {
 
     } else if ($(this).is(".upload")) {
       $('#id_uploadfile').click();
-
-    } else if ($(this).is(".hotkeys")) {
-      $('#hotkeys').show();
 
     } else if ($(this).is('.check-box')) {
       e.stopPropagation();
@@ -697,15 +694,9 @@ $(function() {
 
       // Escape: close
       if (key === 27) {
-        menu.siblings('.selector').click();
+        $('body').click();
         return false;
       }
-    }
-
-    // Escape: close
-    if ($('.popup').is(':visible') && key === 27) {
-      $('body').click();
-      return false;
     }
 
     if ($('#sidebar').is(':visible') && (Pontoon.app.advanced || !$('#editor').is('.opened'))) {

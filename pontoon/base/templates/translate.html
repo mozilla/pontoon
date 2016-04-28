@@ -2,6 +2,7 @@
 
 {% import "widgets/checkbox.html" as Checkbox %}
 {% import "widgets/button.html" as Button %}
+{% import "widgets/keyboard_shortcut.html" as Shortcut %}
 
 {% block class %}translate{% endblock %}
 
@@ -111,7 +112,6 @@
             <li><a href="{{ url('pontoon.search') }}"><i class="fa fa-search fa-fw"></i>Terminology Search</a></li>
             <li><a href="{{ url('pontoon.terms') }}"><i class="fa fa-legal fa-fw"></i>Terms of Use</a></li>
             <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
-            <li class="hotkeys"><i class="fa fa-keyboard-o fa-fw"></i>Keyboard Shortcuts</li>
 
             <li class="horizontal-separator"></li>
 
@@ -127,55 +127,6 @@
             {% endif %}
           </ul>
         </div>
-
-        <!-- Keyboard shortcuts -->
-        <aside id="hotkeys" class="popup">
-          <h2>Keyboard shortcuts</h2>
-          <table>
-            <tbody>
-              <tr>
-                <td>Save Translation</td>
-                <td><span>Enter</span></td>
-              </tr>
-              <tr>
-                <td>Cancel Translation</td>
-                <td><span>Esc</span></td>
-              </tr>
-              <tr>
-                <td>Insert A New Line</td>
-                <td><span>Shift</span>&nbsp;+&nbsp;<span>Enter</span></td>
-              </tr>
-              <tr>
-                <td>Copy From Source</td>
-                <td><span>Ctrl</span>&nbsp;+&nbsp;<span>Alt</span>&nbsp;+&nbsp;<span>C</span></td>
-              </tr>
-              <tr>
-                <td>Clear Translation</td>
-                <td><span>Ctrl</span>&nbsp;+&nbsp;<span>Alt</span>&nbsp;+&nbsp;<span>Backspace</span></td>
-              </tr>
-              <tr>
-                <td>Go To Next String</td>
-                <td><span>Ctrl</span>&nbsp;+&nbsp;<span>Alt</span>&nbsp;+&nbsp;<span>.</span></td>
-              </tr>
-              <tr>
-                <td>Go To Previous String</td>
-                <td><span>Ctrl</span>&nbsp;+&nbsp;<span>Alt</span>&nbsp;+&nbsp;<span>,</span></td>
-              </tr>
-              <tr>
-                <td>Search Strings</td>
-                <td><span>Ctrl</span>&nbsp;+&nbsp;<span>Alt</span>&nbsp;+&nbsp;<span>F</span></td>
-              </tr>
-              <tr>
-                <td>Select All Strings</td>
-                <td><span>Ctrl</span>&nbsp;+&nbsp;<span>Alt</span>&nbsp;+&nbsp;<span>A</span></td>
-              </tr>
-              <tr>
-                <td>Copy From Helpers</td>
-                <td><span>Tab</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </aside>
       </div>
     </div>
 
@@ -283,6 +234,29 @@
           <div id="translation-length">
             <span class="current-length"></span>|<span class="original-length"></span>
           </div>
+
+          <!-- Keyboard shortcuts -->
+          <div id="hotkeys" class="select">
+            <div class="selector fa fa-keyboard-o" title="Keyboard Shortcuts"></div>
+            <aside class="menu">
+              <h2>Keyboard shortcuts</h2>
+              <table>
+                <tbody>
+                  {{ Shortcut.shortcut('Save Translation', ['Enter']) }}
+                  {{ Shortcut.shortcut('Cancel Translation', ['Esc']) }}
+                  {{ Shortcut.shortcut('Insert A New Line', ['Shift', 'Enter']) }}
+                  {{ Shortcut.shortcut('Copy From Source', ['Ctrl', 'Alt', 'C']) }}
+                  {{ Shortcut.shortcut('Clear Translation', ['Ctrl', 'Alt', 'Backspace']) }}
+                  {{ Shortcut.shortcut('Go To Next String', ['Ctrl', 'Alt', '.']) }}
+                  {{ Shortcut.shortcut('Go To Previous String', ['Ctrl', 'Alt', ',']) }}
+                  {{ Shortcut.shortcut('Search Strings', ['Ctrl', 'Alt', 'F']) }}
+                  {{ Shortcut.shortcut('Select All Strings', ['Ctrl', 'Alt', 'A']) }}
+                  {{ Shortcut.shortcut('Copy From Helpers', ['Tab']) }}
+                </tbody>
+              </table>
+            </aside>
+          </div>
+
           <button id="copy" title="Copy From Source (Ctrl + Alt + C)">Copy</button>
           <button id="clear" title="Clear Translation (Ctrl + Alt + Backspace)">Clear</button>
           <button id="save" title="Save Translation (Enter)"></button>
