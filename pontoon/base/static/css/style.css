@@ -369,8 +369,7 @@ label {
   display: none!important;
 }
 
-.select .menu,
-.select .popup {
+.select .menu {
   background: #272A2F;
   bottom: 50px;
   color: #AAAAAA;

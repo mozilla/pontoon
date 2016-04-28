@@ -967,7 +967,7 @@ var Pontoon = (function (my) {
         }
 
         // Tab: select suggestions
-        if (!$('.menu').is(':visible') && !$('.popup').is(':visible') && key === 9) {
+        if (!$('.menu').is(':visible') && key === 9) {
 
           var section = $('#helpers section:visible'),
               index = section.find('li.hover').index() + 1;
@@ -1746,7 +1746,7 @@ var Pontoon = (function (my) {
      * Checks whether we should focus iframe on hover
      */
     isIframeHoverIntentional: function () {
-      return (!this.dragging && !$('.popup').is(':visible') && !$('.menu').is(':visible'));
+      return (!this.dragging && !$('.menu').is(':visible'));
     },
 
 
@@ -1758,16 +1758,10 @@ var Pontoon = (function (my) {
 
       // Hide menus on click outside
       $('body').bind("click.main", function (e) {
-        $('.menu, #hotkeys').hide();
+        $('.menu').hide();
         $('#iframe-cover').hide(); // iframe fix
         $('.select').removeClass('opened');
         $('.menu li').removeClass('hover');
-
-        // Special case: menu in menu
-        if ($(e.target).is('.hotkeys') || $(e.target).parent().is('.hotkeys')) {
-          $('#hotkeys').show();
-          $('#iframe-cover:not(".hidden")').show(); // iframe fix
-        }
       });
 
       // Open/close sidebar
