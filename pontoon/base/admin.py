@@ -1,25 +1,20 @@
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
+from pontoon.base import models
 
-from pontoon.base.models import (
-    UserProfile,
-    Locale,
-    Project,
-    Subpage,
-    Resource,
-    TranslatedResource,
-    Entity,
-    Translation,
-)
 
-admin.site.register(UserProfile)
-admin.site.register(User)
+class UserAdmin(admin.ModelAdmin):
+    search_fields = ['email, first_name']
+
 admin.site.register(Group)
+admin.site.register(User, UserAdmin)
 
-admin.site.register(Locale)
-admin.site.register(Project)
-admin.site.register(Subpage)
-admin.site.register(Resource)
-admin.site.register(TranslatedResource)
-admin.site.register(Entity)
-admin.site.register(Translation)
+admin.site.register(models.Entity)
+admin.site.register(models.Locale)
+admin.site.register(models.Project)
+admin.site.register(models.Repository)
+admin.site.register(models.Resource)
+admin.site.register(models.Subpage)
+admin.site.register(models.TranslatedResource)
+admin.site.register(models.Translation)
+admin.site.register(models.UserProfile)
