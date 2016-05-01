@@ -1155,17 +1155,18 @@ body > header aside p {
   display: none;
   float: left;
   line-height: 22px;
-  padding: 9px 10px 9px 0;
+  padding: 9px 10px;
 }
 
 #hotkeys {
   cursor: pointer;
+  position: static; /* Avoid overlapping warning box */
 }
 
 #hotkeys .selector {
   color: #AAAAAA;
   font-size: 22px;
-  padding: 8px 10px;
+  padding: 8px 10px 8px 0;
 }
 
 #hotkeys .selector:hover {
