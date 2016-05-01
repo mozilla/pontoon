@@ -954,14 +954,14 @@ var Pontoon = (function (my) {
           return false;
         }
 
-        // Ctrl + Alt + .: go to next string
-        if (e.ctrlKey && e.altKey && key === 190) {
+        // Alt + Down: go to next string
+        if (e.altKey && key === 40) {
           $('#next').click();
           return false;
         }
 
-        // Ctrl + Alt + ,: go to previous string
-        if (e.ctrlKey && e.altKey && key === 188) {
+        // Alt + Up: go to previous string
+        if (e.altKey && key === 38) {
           $('#previous').click();
           return false;
         }
