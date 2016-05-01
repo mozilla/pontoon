@@ -339,7 +339,7 @@ var Pontoon = (function (my) {
               append({
                 original: this.source,
                 quality: Math.round(this.quality) + '%',
-                url: 'http://www.microsoft.com/Language/',
+                url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' + this.source + '&langID=' + self.locale.msTerminology,
                 title: 'Visit Microsoft Terminology Service API.\n' +
                        '© 2014 Microsoft Corporation. All rights reserved.',
                 source: 'Microsoft',
