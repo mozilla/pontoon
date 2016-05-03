@@ -4,7 +4,7 @@ from pontoon.base import models
 
 
 class UserAdmin(admin.ModelAdmin):
-    search_fields = ['email, first_name']
+    search_fields = ['email', 'first_name']
 
 admin.site.register(Group)
 admin.site.register(User, UserAdmin)
