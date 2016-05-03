@@ -196,8 +196,11 @@ def locale_project(request, locale, slug):
     parts = l.parts_stats(project)
 
     for part in parts:
-        stat = translatedresources.get(part['title'], None)
-        part['latest_activity'] = stat.latest_translation if stat else None
+        translatedresource = translatedresources.get(part['title'], None)
+        if translatedresource and translatedresource.latest_translation:
+            part['latest_activity'] = translatedresource.latest_translation.latest_activity
+        else:
+            part['latest_activity'] = None
 
         part['chart'] = {
             'translated_strings': part['translated_strings'],

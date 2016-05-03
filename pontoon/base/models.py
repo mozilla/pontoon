@@ -576,21 +576,15 @@ class ProjectLocale(AggregatedStats):
         latest_translation = None
 
         if extra is None:
-            if self.latest_translation is not None:
-                latest_translation = self.latest_translation
+            latest_translation = self.latest_translation
 
         else:
-            if hasattr(self, 'fetched_project_locales'):
-                if self.fetched_project_locales:
-                    latest_translation = self.fetched_project_locales[0].latest_translation
+            project = self if isinstance(self, Project) else extra
+            locale = self if isinstance(self, Locale) else extra
+            project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
 
-            else:
-                project = self if isinstance(self, Project) else extra
-                locale = self if isinstance(self, Locale) else extra
-                project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
-
-                if project_locale is not None and project_locale.latest_translation is not None:
-                    latest_translation = project_locale.latest_translation
+            if project_locale is not None:
+                latest_translation = project_locale.latest_translation
 
         return latest_translation.latest_activity if latest_translation else None
 
