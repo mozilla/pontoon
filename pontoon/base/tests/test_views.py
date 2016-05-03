@@ -286,7 +286,7 @@ class LocaleProjectTests(ViewTestCase):
             ctx = mock_render.call_args[0][2]
             assert_equal(ctx['parts'], [
                 {
-                    'latest_activity': translation,
+                    'latest_activity': translation.latest_activity,
                     'title': 'has/stats.po',
                     'resource__path': 'has/stats.po',
                     'resource__total_strings': 1,
