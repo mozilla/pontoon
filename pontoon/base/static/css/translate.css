@@ -786,6 +786,13 @@ body > header aside p {
   padding-left: 2%;
 }
 
+#entitylist > .wrapper > ul > li p > span .searchHighlight {
+  color: #7BC876;
+  display: inline-block;
+  margin-bottom: -6px;
+  width: auto;
+}
+
 #entitylist > .wrapper > ul > li.translated p span.source-string,
 #entitylist > .wrapper > ul > li.suggested p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
