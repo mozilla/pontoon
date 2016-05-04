@@ -54,16 +54,15 @@ var Pontoon = (function (my) {
         '" data-entry-pk="' + entity.pk + '">' +
         '<span class="status fa' + (self.user.isTranslator ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
-          '<span class="source-string">' + source_string + '</span>' +
+          '<span class="source-string">' + ((source_string.indexOf('<') == -1) ? source_string.replace(new RegExp("("+ Pontoon.getSearch().replace(/(\s+)/,"(?<!<[^>]*)$1(?<![^>]*<)") +")", "gi"), "<span class=\"searchHighlight\">$1</span>").replace(/(<span class="searchHighlight">[^<>]*)((<[^>]+>)+)([^<>]*<\/span>)/,"$1</span>$2<span class=\"searchHighlight\">$4") : source_string) + '</span>' +
           '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
-            self.doNotRender(entity.translation[0].string || '') +
+              self.doNotRender(entity.translation[0].string || '').replace(new RegExp("("+ Pontoon.getSearch().replace(/(\s+)/,"(?<!<[^>]*)$1(?<![^>]*<)") +")", "gi"), "<span class=\"searchHighlight\">$1</span>").replace(/(<span class="searchHighlight">[^<>]*)((<[^>]+>)+)([^<>]*<\/span>)/,"$1</span>$2<span class=\"searchHighlight\">$4") +
           '</span>' +
         '</p>' +
         '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
         '</li>', self.app.win);
       li[0].entity = entity;
       entity.ui = li; /* HTML Element representing string in the main UI */
-
       // Hover editable entities on the page
       if (entity.body) {
         li.hover(function () {
