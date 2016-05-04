@@ -1943,6 +1943,7 @@ var Pontoon = (function (my) {
     cleanupEntities: function() {
       this.entities = [];
       $('#entitylist .entity').remove();
+      this.setNotOnPage();
     },
 
 
