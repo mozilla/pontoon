@@ -41,6 +41,15 @@ var Pontoon = (function (my) {
       $('#search').val(value);
     },
 
+    highlightSearch: function(string, query) {
+      if (string.indexOf('<') == -1) {
+        string = string.replace(
+            new RegExp("(" + query.replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*") + ")", "gi"), "<span class=\"searchHighlight\">$1</span>")
+            .replace(/(<span class="searchHighlight">[^<>]*)((<[^>]+>)+)([^<>]*<\/span>)/,"$1</span>$2<span class=\"searchHighlight\">$4");
+      }
+
+      return string;
+    },
 
     renderEntity: function (index, entity) {
       var self = this,
@@ -54,9 +63,9 @@ var Pontoon = (function (my) {
         '" data-entry-pk="' + entity.pk + '">' +
         '<span class="status fa' + (self.user.isTranslator ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
-          '<span class="source-string">' + ((source_string.indexOf('<') == -1) ? source_string.replace(new RegExp("("+ Pontoon.getSearch().replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*") + ")", "gi"), "<span class=\"searchHighlight\">$1</span>").replace(/(<span class="searchHighlight">[^<>]*)((<[^>]+>)+)([^<>]*<\/span>)/,"$1</span>$2<span class=\"searchHighlight\">$4") : source_string) + '</span>' +
+          '<span class="source-string">' + Pontoon.highlightSearch(source_string, Pontoon.getSearch()) + '</span>' +
           '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
-              self.doNotRender(entity.translation[0].string || '').replace(new RegExp("("+ Pontoon.getSearch().replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*") +")", "gi"), "<span class=\"searchHighlight\">$1</span>").replace(/(<span class="searchHighlight">[^<>]*)((<[^>]+>)+)([^<>]*<\/span>)/,"$1</span>$2<span class=\"searchHighlight\">$4") +
+              Pontoon.highlightSearch(self.doNotRender(entity.translation[0].string || ''), Pontoon.getSearch()) +
           '</span>' +
         '</p>' +
         '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
