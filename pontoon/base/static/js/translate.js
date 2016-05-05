@@ -44,8 +44,8 @@ var Pontoon = (function (my) {
     highlightSearch: function(string) {
       if (string.indexOf('<') == -1) {
         string = string.replace(
-            new RegExp("(" + Pontoon.getSearch().replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*") + ")", "gi"), "<span class=\"searchHighlight\">$1</span>")
-            .replace(/(<span class="searchHighlight">[^<>]*)((<[^>]+>)+)([^<>]*<\/span>)/,"$1</span>$2<span class=\"searchHighlight\">$4");
+            new RegExp("(" + Pontoon.getSearch().replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*") + ")", "gi"), "<span class=\"searchHighlight\">$1</span>"
+        );
       }
 
       return string;
@@ -72,7 +72,7 @@ var Pontoon = (function (my) {
         '</li>', self.app.win);
       li[0].entity = entity;
       entity.ui = li; /* HTML Element representing string in the main UI */
-      
+
       // Hover editable entities on the page
       if (entity.body) {
         li.hover(function () {
