@@ -1443,6 +1443,8 @@ var Pontoon = (function (my) {
           }
         });
       }
+
+      $('#progress').show();
     },
 
 
@@ -2045,9 +2047,7 @@ var Pontoon = (function (my) {
       self.updateProfileMenu();
       self.updateSaveButtons();
       self.renderEntityList();
-
       self.updateProgress();
-      $("#progress").show();
 
       self.renderState();
     },
