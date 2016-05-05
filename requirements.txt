@@ -89,9 +89,6 @@ blessings==1.6 \
 nose-progressive==1.5.1 \
     --hash=sha256:44bd41344c1cc1de434a72764ed47fdbbbdbcf03c7801114c0433cd6c696cb55 \
     --hash=sha256:aac01f33c8446407b3c5e6f2185d5b09f5f3e6cb773f1db2df99efce5a70b81b
-https://github.com/Osmose/raygun4py/archive/510b309704705cd66086792edf2d40ada74e2c21.zip#egg=raygun4py \
-    --hash=sha256:da993d43a05e3a7064feb12c7b1ba49fc526b6705914847ecdff072e9bc3101b \
-    --hash=sha256:01524d39162d901efce8abc74f891ba2c1fbae94b76b853207ee7b4f5e438b82
 jsonpickle==0.7.0 \
     --hash=sha256:177b0e8311c6edbfc7d184157a7e80f68b6b874c5645f7300d41f475f05f231e
 blinker==1.3 \
@@ -137,3 +134,5 @@ django-guardian==1.4.1 \
 futures==3.0.4 \
     --hash=sha256:4e860d18d866ff6c5f2804ebcbb16415f4f29cf57efea919178b809cf99326b6 \
     --hash=sha256:19485d83f7bd2151c0aeaf88fbba3ee50dadfb222ffc3b66a344ef4952b782a3
+raygun4py==3.1.2 \
+    --hash=sha256:ee32cc3c7b1320fc0312c2b3a904a810f61ba302c2bad6dec836bb19fbf68340

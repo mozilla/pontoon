@@ -66,8 +66,10 @@ MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', ''
 # Google Analytics Key
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY', '')
 
-# Raygun.io API Key
-RAYGUN4PY_API_KEY = os.environ.get('RAYGUN_APIKEY', '')
+# Raygun.io configuration
+RAYGUN4PY_CONFIG = {
+    'api_key': os.environ.get('RAYGUN_APIKEY', '')
+}
 
 # Email settings
 EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME', '')
