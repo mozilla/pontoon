@@ -2566,9 +2566,13 @@ var Pontoon = (function (my) {
           },
           deferred = $.Deferred();
 
+      if (self.XHRgetEntities) {
+        self.XHRgetEntities.abort();
+      }
+
       $.extend(params, opts);
 
-      $.ajax({
+      self.XHRgetEntities = $.ajax({
         type: 'POST',
         url: '/get-entities/',
         data: params,
@@ -2624,6 +2628,11 @@ var Pontoon = (function (my) {
      * Displays an error if unable to get entities
      */
     noEntitiesError: function() {
+      // Do not show an error if other request in progress
+      if (this.XHRgetEntities && this.XHRgetEntities.statusText === 'abort') {
+        return;
+      }
+
       $('#project-load')
         .find('.animation').hide().end()
         .find('.text')
@@ -2781,6 +2790,10 @@ var Pontoon = (function (my) {
         }
         self.pushState();
       }).always(function() {
+        // Skip if other request in progress
+        if (self.XHRgetEntities && self.XHRgetEntities.statusText === 'abort') {
+          return;
+        }
         self.setSidebarLoading(false);
       });
     },
