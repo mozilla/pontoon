@@ -580,9 +580,8 @@ $(function() {
   });
 
   // Tabs
-  $(".tabs nav a").click(function (e) {
+  $('.tabs nav a').click(function (e) {
     e.preventDefault();
-    e.stopPropagation();
 
     var tab = $(this),
         section = tab.attr('href').substr(1);
