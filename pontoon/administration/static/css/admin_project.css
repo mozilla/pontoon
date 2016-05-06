@@ -169,7 +169,7 @@ form a.add-repo {
 
 .locale.select .menu ul li span.code {
   float: right;
-  text-align: right;
+  width: auto;
 }
 
 #id_locales {

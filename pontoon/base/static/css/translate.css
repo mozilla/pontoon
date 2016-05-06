@@ -200,8 +200,13 @@ body > header > .container {
   cursor: pointer;
 }
 
-.select .menu ul li span.code {
-  text-align: right;
+.select .menu ul li span {
+  float: none;
+}
+
+.locale.select .menu ul li span.code {
+  float: right;
+  width: auto;
 }
 
 .locale .button .code {
@@ -280,7 +285,6 @@ body > header .locale.select {
 .part .menu ul li {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .part.select .menu ul li > span:nth-child(2),

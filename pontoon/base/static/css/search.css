@@ -3,7 +3,7 @@
   margin-bottom: 40px;
 }
 
-.locale.select .selector {
+.locale.select .selector.button.breadcrumbs {
   float: none;
   margin: 0;
   padding: 10px;
@@ -24,7 +24,7 @@
   margin: 0 auto;
   position: absolute;
   right: 0;
-  width: 252px;
+  width: 242px;
 }
 
 .locale.select .menu .search-wrapper {
@@ -38,14 +38,16 @@
 .locale.select .menu li {
   color: #CCCCCC;
   cursor: pointer;
+  text-align: left;
 }
 
 .locale .code {
   float: right;
 }
 
-.select .menu ul li span.code {
-  text-align: right;
+.locale.select .menu ul li span.code {
+  float: right;
+  width: auto;
 }
 
 #search.search-wrapper {
