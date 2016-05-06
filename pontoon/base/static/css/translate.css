@@ -330,12 +330,12 @@ body > header .locale.select {
 
 .untranslated .status:before {
   color: #AAAAAA;
-  content: "";
+  content: "";
 }
 
 .has-suggestions .status:before {
   color: #AAAAAA;
-  content: "";
+  content: "";
 }
 
 .unchanged .status:before {
