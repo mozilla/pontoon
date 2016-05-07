@@ -710,7 +710,6 @@ var Pontoon = (function (my) {
 
       // Edit selected entities from 1-column layout
       $('#entitylist .batch-bar .edit-all').click(function(e) {
-        e.stopPropagation();
         e.preventDefault();
 
         $("#entitylist").css('left', -$('#sidebar').width());
@@ -804,8 +803,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       // Top bar
-      $("#single .topbar > a").click(function (e) {
-        e.stopPropagation();
+      $('#single .topbar > a').click(function (e) {
         e.preventDefault();
 
         var sec = $(this).attr('id'),
@@ -854,8 +852,7 @@ var Pontoon = (function (my) {
       });
 
       // Insert placeable at cursor, replace selection or at the end if not focused
-      $("#original").on("click", ".placeable", function (e) {
-        e.stopPropagation();
+      $('#original').on('click', '.placeable', function (e) {
         e.preventDefault();
 
         var textarea = $('#translation'),
@@ -894,8 +891,7 @@ var Pontoon = (function (my) {
       }
 
       // Plurals navigation
-      $("#plural-tabs a").click(function (e) {
-        e.stopPropagation();
+      $('#plural-tabs a').click(function (e) {
         e.preventDefault();
 
         var tab = $(this).parent();
@@ -993,7 +989,6 @@ var Pontoon = (function (my) {
 
       // Close warning box
       $('.warning-overlay .cancel').click(function (e) {
-        e.stopPropagation();
         e.preventDefault();
 
         $('.warning-overlay')
@@ -1013,8 +1008,7 @@ var Pontoon = (function (my) {
       });
 
       // Copy source to translation
-      $("#copy").click(function (e) {
-        e.stopPropagation();
+      $('#copy').click(function (e) {
         e.preventDefault();
 
         var entity = self.getEditorEntity(),
@@ -1027,8 +1021,7 @@ var Pontoon = (function (my) {
       });
 
       // Clear translation area
-      $("#clear").click(function (e) {
-        e.stopPropagation();
+      $('#clear').click(function (e) {
         e.preventDefault();
 
         $('#translation').val('').focus();
@@ -1038,7 +1031,6 @@ var Pontoon = (function (my) {
 
       // Save translation
       $('#save, #save-anyway').click(function (e) {
-        e.stopPropagation();
         e.preventDefault();
 
         var entity = self.getEditorEntity(),
@@ -1073,9 +1065,11 @@ var Pontoon = (function (my) {
       });
 
       // Copy helpers result to translation
-      $("#helpers section").on("click", "li:not('.disabled')", function (e) {
-        e.stopPropagation();
-        e.preventDefault();
+      $('#helpers section').on('click', 'li:not(".disabled")', function (e) {
+        // Ignore clicks on links and buttons
+        if ($(e.target).closest('a, menu button').length) {
+          return;
+        }
 
         var translation = $(this).find('.translation').text(),
             source = translation;
@@ -1086,20 +1080,12 @@ var Pontoon = (function (my) {
         $('.warning-overlay:visible .cancel').click();
       });
 
-      // Restore clickable links
-      $("#helpers section").on("click", "li a", function (e) {
-        e.stopPropagation();
-      });
-
       // Approve and delete translations
-      $("#helpers .history").on("click", "menu button", function (e) {
+      $('#helpers .history').on('click', 'menu button', function (e) {
         var button = $(this);
         if (button.is('.approve') && button.parents('li.translated').length > 0) {
           return;
         }
-
-        e.stopPropagation();
-        e.preventDefault();
 
         // Approve
         if (button.is('.approve')) {
@@ -1220,8 +1206,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       // Clear selection
-      $("#sidebar .quit-batch-editing").click(function (e) {
-        e.stopPropagation();
+      $('#sidebar .quit-batch-editing').click(function (e) {
         e.preventDefault();
 
         if (self.app.advanced) {
@@ -1232,8 +1217,7 @@ var Pontoon = (function (my) {
       });
 
       // Select All
-      $("#sidebar .select-all").click(function (e) {
-        e.stopPropagation();
+      $('#sidebar .select-all').click(function (e) {
         e.preventDefault();
 
         self.selectAllEntities();
@@ -1241,7 +1225,6 @@ var Pontoon = (function (my) {
 
       // Actions
       $('#approve-all, #delete-all, #replace-all').click(function(e) {
-        e.stopPropagation();
         e.preventDefault();
 
         var button = this,
@@ -1897,7 +1880,6 @@ var Pontoon = (function (my) {
       // Open selected project (part) and locale combination
       $('#go').click(function (e) {
         e.preventDefault();
-        e.stopPropagation();
 
         self.checkUnsavedChanges(function() {
           self.updateCurrentPart(self.getSelectedPart());
