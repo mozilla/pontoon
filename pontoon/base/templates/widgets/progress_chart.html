@@ -6,6 +6,7 @@
       <span class="translated" style="width:{{ chart.approved_share }}%;"></span>
       <span class="suggested" style="width:{{ chart.translated_share }}%;"></span>
       <span class="fuzzy" style="width:{{ chart.fuzzy_share }}%;"></span>
+      <span class="missing" style="width:{{ 100 - chart.approved_share - chart.translated_share - chart.fuzzy_share }}%;"></span>
     </span>
     <span class="percent">{{ chart.approved_percent }}%</span>
   </a>

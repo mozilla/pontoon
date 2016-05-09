@@ -574,14 +574,15 @@ label {
 }
 
 .select .menu ul li .chart {
-  background: #FD5F60;
+  display: table;
   height: 5px;
   margin-top: 6px;
   width: 140px;
 }
 
 .select .menu ul li .chart span {
-  float: left;
+  display: table-cell;
+  float: none;
   height: 100%;
 }
 
@@ -595,6 +596,10 @@ label {
 
 .select .menu ul li .chart span.fuzzy {
   background: #FED271;
+}
+
+.select .menu ul li .chart span.missing {
+  background: #FD5F60;
 }
 
 .select .menu ul li .latest {
