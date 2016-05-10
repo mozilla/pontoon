@@ -506,11 +506,12 @@ def batch_edit_translations(request):
     translation_pks.discard(None)
     translations = Translation.objects.filter(pk__in=translation_pks)
 
-    # Must be executed before translations set changes
+    # Must be executed before translations set changes, which is why
+    # we need to force evaluate QuerySets by wrapping them inside list()
     def get_translations_info(translations):
         count = translations.count()
-        translated_resources = list(translations.translated_resources(locale))  # Force evaluate
-        changed_entities = Entity.objects.filter(translation__in=translations).distinct()
+        translated_resources = list(translations.translated_resources(locale))
+        changed_entities = list(Entity.objects.filter(translation__in=translations).distinct())
 
         return count, translated_resources, changed_entities
 
