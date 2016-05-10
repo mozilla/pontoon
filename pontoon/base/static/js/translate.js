@@ -15,20 +15,25 @@ var Pontoon = (function (my) {
      */
     setFilter: function (type) {
       type = type || 'all';
-      var node = $('#filter .menu li.' + type);
+      var node = $('#filter .menu li[data-type="' + type + '"]');
 
       // Validate filter
       if (node.length === 0) {
         type = 'all';
-        node = $('#filter .menu li.' + type);
+        node = $('#filter .menu li[data-type="' + type + '"]');
       }
 
-      var title = node.text();
+      var title = node.text(),
+          selectorType = type;
+      if (node.find('.email').length) {
+        title = node.find('.email').text();
+        selectorType = 'all';
+      }
 
-      $('#search').attr('placeholder', 'Search ' + title);
+      $('#search').attr('placeholder', 'Search in ' + title);
       $('#filter').data('current-filter', type)
         .find('.title').html(title).end()
-        .find('.button').attr('class', 'button selector ' + type);
+        .find('.button').attr('class', 'button selector ' + selectorType);
     },
 
 
@@ -698,8 +703,8 @@ var Pontoon = (function (my) {
       var self = this;
 
       // Filter entities
-      $('#filter li:not(".horizontal-separator")').on("click", function() {
-        var type = $(this).attr('class').split(' ')[0];
+      $('#filter').on('click', 'li[data-type]', function() {
+        var type = $(this).data('type');
         self.filterEntities(type);
       });
 
@@ -1131,6 +1136,7 @@ var Pontoon = (function (my) {
                 translation = entity.translation[pluralForm];
 
             self.stats = data.stats;
+            self.authors = data.authors;
 
             item
               .addClass('delete')
@@ -1181,6 +1187,7 @@ var Pontoon = (function (my) {
 
                   self.updateCurrentTranslationLength();
                   self.updateCachedTranslation();
+                  self.updateAuthors();
                 }
               });
           },
@@ -1301,6 +1308,8 @@ var Pontoon = (function (my) {
                   var checkedEntities = self.getEntitiesIds('#entitylist .entity.selected');
                   self.getEntities({entityIds: checkedEntities}).then(function(entitiesData, state, hasNext) {
                     self.stats = entitiesData.stats;
+                    self.authors = entitiesData.authors;
+                    self.updateAuthors();
 
                     entitiesMap = {};
                     $.each(entitiesData.entities, function() {
@@ -1578,6 +1587,7 @@ var Pontoon = (function (my) {
 
       function renderTranslation(data) {
         self.stats = data.stats;
+        self.authors = data.authors;
 
         if (data.type) {
           if (self.user.email) {
@@ -1595,6 +1605,7 @@ var Pontoon = (function (my) {
           var pf = self.getPluralForm(true);
           self.cachedTranslation = translation;
           self.updateTranslation(entity, entity.translation[pf], data.translation);
+          self.updateAuthors();
 
           // Update translation, including in place if possible
           if (!inplace && entity.body && (self.user.isTranslator ||
@@ -1953,6 +1964,27 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Update authors list in filter menu
+     */
+    updateAuthors: function () {
+      $('#filter').find('.authors, .for-authors').toggle(this.authors.length > 0);
+      var authors = $('#filter .authors ul').empty();
+
+      $.each(this.authors, function() {
+        authors.append('<li data-type="' + this.email + '">' +
+          '<figure class="author">' +
+            '<img class="rounded" src="' + this.gravatar_url + '">' +
+            '<figcaption>' +
+              '<p class="name">' + this.display_name + '</p>' +
+              '<p class="email">' + this.email + '</p>' +
+            '</figcaption>' +
+          '</figure>' +
+        '</li>');
+      });
+    },
+
+
+    /*
      * Update save buttons based on user permissions and settings
      */
     updateSaveButtons: function () {
@@ -2049,6 +2081,7 @@ var Pontoon = (function (my) {
       self.updateProjectInfo();
       self.updateProfileMenu();
       self.updateSaveButtons();
+      self.updateAuthors();
       self.renderEntityList();
       self.updateProgress();
 
@@ -2598,6 +2631,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       self.stats = entitiesData.stats;
+      self.authors = entitiesData.authors;
       self.entities = entitiesData.entities;
       self.hasNext = hasNext;
 
@@ -2610,6 +2644,7 @@ var Pontoon = (function (my) {
           self.setNoMatch(true);
           self.setMainLoading(false);
           self.updateProgress();
+          self.updateAuthors();
           self.createObject(true);
           return;
         }

@@ -402,7 +402,7 @@ def entities(request):
     search = request.POST.get('search', '')
     exclude_entities = request.POST.getlist('excludeEntities[]', [])
 
-    # Only return entities with provided IDs
+    # Only return entities with provided IDs (batch editing)
     entity_ids = request.POST.getlist('entityIds[]', [])
     if entity_ids:
         entities = (
@@ -415,13 +415,14 @@ def entities(request):
         return JsonResponse({
             'entities': Entity.map_entities(locale, entities),
             'stats': TranslatedResource.objects.stats(project, paths, locale),
+            'authors': Translation.authors(locale, project, paths, serialize=True),
         }, safe=False)
 
     entities = Entity.for_project_locale(
         project, locale, paths, filter_type, search, exclude_entities
     )
 
-    # Only return a list of entity PKs
+    # Only return a list of entity PKs (batch editing: select all)
     if request.POST.get('pkOnly', None):
         return JsonResponse({
             'entity_pks': list(entities.values_list('pk', flat=True)),
@@ -447,6 +448,7 @@ def entities(request):
             return JsonResponse({
                 'has_next': False,
                 'stats': {},
+                'authors': []
             })
 
         has_next = entities_page.has_next()
@@ -469,6 +471,7 @@ def entities(request):
         'entities': Entity.map_entities(locale, entities_to_map, visible_entities),
         'has_next': has_next,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
+        'authors': Translation.authors(locale, project, paths, serialize=True),
     }, safe=False)
 
 
@@ -672,8 +675,11 @@ def delete_translation(request):
 
     translation.delete()
 
+    project = translation.entity.resource.project
+    locale = translation.locale
     return JsonResponse({
-        'stats': TranslatedResource.objects.stats(translation.entity.resource.project, paths, translation.locale)
+        'stats': TranslatedResource.objects.stats(project, paths, locale),
+        'authors': Translation.authors(locale, project, paths, serialize=True),
     })
 
 
@@ -711,8 +717,9 @@ def update_translation(request):
         plural_form = None
 
     user = request.user
+    project = e.resource.project
     if not request.user.is_authenticated():
-        if e.resource.project.pk != 1:
+        if project.pk != 1:
             log.error("Not authenticated")
             return HttpResponse("error")
         else:
@@ -781,7 +788,8 @@ def update_translation(request):
                 return JsonResponse({
                     'type': 'updated',
                     'translation': t.serialize(),
-                    'stats': TranslatedResource.objects.stats(e.resource.project, paths, l),
+                    'stats': TranslatedResource.objects.stats(project, paths, l),
+                    'authors': Translation.authors(l, project, paths, serialize=True),
                 })
 
             # If added by non-privileged user, unfuzzy it
@@ -805,7 +813,8 @@ def update_translation(request):
                     return JsonResponse({
                         'type': 'updated',
                         'translation': t.serialize(),
-                        'stats': TranslatedResource.objects.stats(e.resource.project, paths, l),
+                        'stats': TranslatedResource.objects.stats(project, paths, l),
+                        'authors': Translation.authors(l, project, paths, serialize=True),
                     })
 
                 return JsonResponse({
@@ -845,7 +854,8 @@ def update_translation(request):
             return JsonResponse({
                 'type': 'added',
                 'translation': active.serialize(),
-                'stats': TranslatedResource.objects.stats(e.resource.project, paths, l)
+                'stats': TranslatedResource.objects.stats(project, paths, l),
+                'authors': Translation.authors(l, project, paths, serialize=True),
             })
 
     # No translations saved yet
@@ -869,7 +879,8 @@ def update_translation(request):
         return JsonResponse({
             'type': 'saved',
             'translation': t.serialize(),
-            'stats': TranslatedResource.objects.stats(e.resource.project, paths, l)
+            'stats': TranslatedResource.objects.stats(project, paths, l),
+            'authors': Translation.authors(l, project, paths, serialize=True),
         })
 
 

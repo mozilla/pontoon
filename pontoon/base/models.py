@@ -582,6 +582,13 @@ class Project(AggregatedStats):
             resource__entities__obsolete=False
         ).distinct().aggregate_stats(self)
 
+    def parts_to_paths(self, paths):
+        try:
+            subpage = Subpage.objects.get(project=self, name__in=paths)
+            return subpage.resources.values_list("path")
+        except Subpage.DoesNotExist:
+            return paths
+
 
 class ProjectLocale(AggregatedStats):
     """Link between a project and a locale that is active for it."""
@@ -1020,6 +1027,9 @@ class EntityQuerySet(models.QuerySet):
             approved_count=F('expected_count')
         )
 
+    def authored_by(self, locale, email):
+        return self.filter(translation__locale=locale, translation__user__email=email)
+
     def untranslated(self, locale):
         return self.with_status_counts(locale).exclude(Q(approved_count=F('expected_count')))
 
@@ -1148,6 +1158,9 @@ class Entity(DirtyFieldsMixin, models.Model):
             elif filter_type == 'unchanged':
                 entities = self.objects.unchanged(locale)
 
+            elif filter_type in Translation.authors(locale, project, paths).values_list('email', flat=True):
+                entities = self.objects.authored_by(locale, filter_type)
+
             else:
                 raise ValueError(filter_type)
 
@@ -1162,12 +1175,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         # Filter by path
         if paths:
-            try:
-                subpage = Subpage.objects.get(project=project, name__in=paths)
-                paths = subpage.resources.values_list("path")
-            except Subpage.DoesNotExist:
-                pass
-
+            paths = project.parts_to_paths(paths)
             entities = entities.filter(resource__path__in=paths)
 
         # Filter by search parameters
@@ -1308,6 +1316,28 @@ class Translation(DirtyFieldsMixin, models.Model):
     # this translation is stored in, but that we otherwise don't care
     # about.
     extra = JSONField(default=extra_default)
+
+    @classmethod
+    def authors(self, locale, project, paths, serialize=False):
+        translations = Translation.objects.filter(entity__resource__project=project, locale=locale)
+
+        if paths:
+            paths = project.parts_to_paths(paths)
+            translations = translations.filter(entity__resource__path__in=paths)
+
+        authors = User.objects.filter(translation__in=translations).distinct()
+
+        if serialize:
+            authors_list = []
+            for a in Translation.authors(locale, project, paths):
+                authors_list.append({
+                    'email': a.email,
+                    'display_name': a.display_name,
+                    'gravatar_url': a.gravatar_url(44),
+                })
+            return authors_list
+
+        return authors
 
     @property
     def latest_activity(self):

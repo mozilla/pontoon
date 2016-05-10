@@ -694,9 +694,60 @@ body > header aside p {
   box-sizing: border-box;
 }
 
+#filter .menu li.horizontal-separator {
+  background: transparent;
+  border-top: none;
+  color: #7BC876;
+  cursor: default;
+  font-size: 13px;
+  height: auto;
+  padding-top: 10px;
+  text-transform: uppercase;
+}
+
+#filter .menu li.horizontal-separator:first-child {
+  padding-top: 0;
+}
+
 #filter .menu li:not(.horizontal-separator) {
   padding: 4px 0 4px 30px;
   position: relative;
+}
+
+#filter .menu li.authors {
+  background: transparent;
+  cursor: default;
+  margin-bottom: -4px;
+  padding-left: 0;
+}
+
+#filter .menu li.authors ul {
+  max-height: 168px;
+  overflow: hidden;
+}
+
+#filter .menu li.authors li {
+  padding-left: 4px;
+  white-space: nowrap;
+}
+
+#filter .menu li.authors .author img {
+  vertical-align: top;
+}
+
+#filter .menu li.authors .author figcaption {
+  display: inline-block;
+  padding: 2px 4px;
+}
+
+#filter .menu li.authors .author .name {
+  color: #FFFFFF;
+  font-size: 16px;
+  padding-bottom: 4px;
+}
+
+#filter .menu li.authors .author .email {
+  color: #888888;
 }
 
 #filter .menu li .status {
