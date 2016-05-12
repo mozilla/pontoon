@@ -61,16 +61,15 @@ class L20NResource(ParsedResource):
             return [obj['comment']['content']] if obj['comment'] else []
 
         def parse_entity(obj, section_comment=[]):
-            if obj['value'] and obj['value']['type'] == 'Pattern':
-                self.entities[obj['id']['name']] = L20NEntity(
-                    obj['id']['name'],
-                    obj['value']['source'],
-                    '',
-                    {None: obj['value']['source']},
-                    section_comment + get_comment(obj),
-                    self.order
-                )
-                self.order += 1
+            self.entities[obj['id']['name']] = L20NEntity(
+                obj['id']['name'],
+                obj['value']['source'],
+                '',
+                {None: obj['value']['source']},
+                section_comment + get_comment(obj),
+                self.order
+            )
+            self.order += 1
 
         for obj in self.structure[0]['body']:
             if obj['type'] == 'Entity':
@@ -103,12 +102,11 @@ class L20NResource(ParsedResource):
             entity_id = obj['id']['name']
             translations = self.entities[entity_id].strings
 
-            if obj['value'] and obj['value']['type'] == 'Pattern':
-                if translations:
-                    obj['value']['elements'][0]['value'] = translations[None]
-                else:
-                    index = entities.index(obj)
-                    del entities[index]
+            if translations:
+                obj['value']['elements'][0]['value'] = translations[None]
+            else:
+                index = entities.index(obj)
+                del entities[index]
 
         entities = structure[0]['body']
 
