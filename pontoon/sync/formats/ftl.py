@@ -5,7 +5,7 @@ import copy
 import logging
 import os
 
-from ftl.format.parser import FTLParser
+from ftl.format.parser import FTLParser, ParseContext
 from ftl.format.serializer import FTLSerializer
 
 from pontoon.sync import SyncError
@@ -103,7 +103,8 @@ class L20NResource(ParsedResource):
             translations = self.entities[entity_id].strings
 
             if translations:
-                obj['value']['elements'][0]['value'] = translations[None]
+                source = translations[None]
+                obj['value'] = ParseContext(source).getPattern().toJSON()
             else:
                 index = entities.index(obj)
                 del entities[index]
