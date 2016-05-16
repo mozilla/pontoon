@@ -748,7 +748,10 @@ def update_translation(request):
                 # Unless there's nothing to be changed
                 if t.user is not None and t.approved and t.approved_user \
                         and t.approved_date and not t.fuzzy:
-                    return HttpResponse("Same translation already exists.")
+                    return JsonResponse({
+                        'same': True,
+                        'message': 'Same translation already exists.',
+                    })
 
                 warnings = utils.quality_check(original, string, l, ignore)
                 if warnings:
@@ -801,7 +804,10 @@ def update_translation(request):
                         'stats': TranslatedResource.objects.stats(e.resource.project, paths, l),
                     })
 
-                return HttpResponse("Same translation already exists.")
+                return JsonResponse({
+                    'same': True,
+                    'message': 'Same translation already exists.',
+                })
 
         # Different translation added
         except:

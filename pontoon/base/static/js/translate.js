@@ -546,6 +546,24 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Navigate to next/previous entity in editor
+     */
+    navigateToEntity: function (type) {
+      var entitySelector = '#entitylist .entity:visible',
+          index = this.getEditorEntity().ui.index(entitySelector),
+          step = type === 'next' ? 1 : -1,
+          fallback = type === 'next' ? ':first' : ':last',
+          newEntity = $(entitySelector).eq(index + step);
+
+      if (newEntity.length === 0) {
+        newEntity = $(entitySelector + fallback);
+      }
+
+      this.switchToEntity(newEntity[0].entity);
+    },
+
+
+    /*
      * Switch to new entity in editor
      *
      * newEntity New entity we want to switch to
@@ -806,33 +824,23 @@ var Pontoon = (function (my) {
       $('#single .topbar > a').click(function (e) {
         e.preventDefault();
 
-        var sec = $(this).attr('id'),
-            entitySelector = '#entitylist .entity:visible',
-            index = self.getEditorEntity().ui.index(entitySelector);
+        var sec = $(this).attr('id');
 
         switch (sec) {
 
-        case "back":
+        case 'back':
           self.checkUnsavedChanges(function() {
             self.stopInPlaceEditing();
             self.goBackToEntityList();
           });
           break;
 
-        case "previous":
-          var prev = $(entitySelector).eq(index - 1);
-          if (prev.length === 0) {
-            prev = $(entitySelector + ':last');
-          }
-          self.switchToEntity(prev[0].entity);
+        case 'previous':
+          self.navigateToEntity('previous');
           break;
 
-        case "next":
-          var next = $(entitySelector).eq(index + 1);
-          if (next.length === 0) {
-            next = $(entitySelector + ':first');
-          }
-          self.switchToEntity(next[0].entity);
+        case 'next':
+          self.navigateToEntity('next');
           break;
 
         }
@@ -952,13 +960,13 @@ var Pontoon = (function (my) {
 
         // Alt + Down: go to next string
         if (e.altKey && key === 40) {
-          $('#next').click();
+          self.navigateToEntity('next');
           return false;
         }
 
         // Alt + Up: go to previous string
         if (e.altKey && key === 38) {
-          $('#previous').click();
+          self.navigateToEntity('previous');
           return false;
         }
 
@@ -1541,6 +1549,28 @@ var Pontoon = (function (my) {
 
       self.startLoader();
 
+      function goToNextTranslation() {
+        // Quit
+        if (!$('#editor:visible').is('.opened')) {
+          return;
+
+        // Go to next plural form
+        } else if (pluralForm !== -1 && $("#editor").is('.opened')) {
+          var next = $('#plural-tabs li:visible')
+            .eq(pluralForm + 1).find('a');
+
+          if (next.length === 0) {
+            self.navigateToEntity('next');
+          } else {
+            next.click();
+          }
+
+        // Go to next entity
+        } else {
+          self.navigateToEntity('next');
+        }
+      }
+
       function renderTranslation(data) {
         self.stats = data.stats;
 
@@ -1570,29 +1600,15 @@ var Pontoon = (function (my) {
             });
           }
 
-          // Quit
-          if (!$('#editor:visible').is('.opened')) {
-            return;
-
-          // Go to next plural form
-          } else if (pluralForm !== -1 && $("#editor").is('.opened')) {
-            var next = $('#plural-tabs li:visible')
-              .eq(pluralForm + 1).find('a');
-
-            if (next.length === 0) {
-              $('#next').click();
-            } else {
-              next.click();
-            }
-
-          // Go to next entity
-          } else {
-            $('#next').click();
-          }
+          goToNextTranslation();
 
         } else if (data.warnings) {
           self.endLoader();
           self.showQualityCheckWarnings(data.warnings);
+
+        } else if (data.same) {
+          self.endLoader(data.message, 'error');
+          goToNextTranslation();
 
         } else {
           self.endLoader(data, 'error');
