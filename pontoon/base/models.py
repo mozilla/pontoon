@@ -20,7 +20,11 @@ from dirtyfields import DirtyFieldsMixin
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
-from pontoon.sync.vcs.repositories import commit_to_vcs, get_revision, update_from_vcs
+from pontoon.sync.vcs.repositories import (
+        commit_to_vcs,
+        get_revision,
+        update_from_vcs,
+)
 from pontoon.base import utils
 from pontoon.sync import KEY_SEPARATOR
 
@@ -177,9 +181,15 @@ def validate_cldr(value):
 
 
 class LocaleQuerySet(models.QuerySet):
+    def unsynced(self):
+        """
+        Filter unsynchronized locales.
+        """
+        return self.filter(translatedresources__isnull=True).distinct()
+
     def available(self):
         """
-        Available locales have at least one stats defined.
+        Available locales have at least one TranslatedResource defined.
         """
         return self.filter(translatedresources__isnull=False).distinct()
 
@@ -474,13 +484,24 @@ class Project(AggregatedStats):
                 locale.aggregate_stats()
 
     @property
+    def unsynced_locales(self):
+        """
+        Project Locales that haven't been synchronized yet.
+        """
+        return list(
+            set(self.locales.all()) - set(Locale.objects.filter(
+                translatedresources__resource__project=self)
+            )
+        )
+
+    @property
     def needs_sync(self):
         """
         True if the project has changed since the last sync such that
         another sync is required.
         """
         changes = ChangedEntityLocale.objects.filter(entity__resource__project=self)
-        return self.has_changed or changes.exists()
+        return self.has_changed or changes.exists() or self.unsynced_locales
 
     @property
     def can_commit(self):
@@ -530,6 +551,19 @@ class Project(AggregatedStats):
             raise ValueError('Could not find repo matching path {path}.'.format(path=path))
         else:
             return repo
+
+    @cached_property
+    def source_repository(self):
+        """
+        Returns an instance of repository which contains the path to source files.
+        """
+        from pontoon.sync.vcs.models import VCSProject
+
+        vcs_project = VCSProject(self)
+        source_files_directory = vcs_project.source_directory_path()
+        for repo in self.repositories.all():
+            if not repo.multi_locale and source_files_directory.startswith(repo.checkout_path):
+                return repo
 
     def get_latest_activity(self, locale=None):
         return ProjectLocale.get_latest_activity(self, locale)
@@ -641,24 +675,17 @@ class Repository(models.Model):
     """
     A remote VCS repository that stores resource files for a project.
     """
-    FILE = 'file'
-    GIT = 'git'
-    HG = 'hg'
-    SVN = 'svn'
-    TRANSIFEX = 'transifex'
     TYPE_CHOICES = (
-        (FILE, 'File'),
-        (GIT, 'Git'),
-        (HG, 'HG'),
-        (SVN, 'SVN'),
-        (TRANSIFEX, 'Transifex'),
+        ('git', 'Git'),
+        ('hg', 'HG'),
+        ('svn', 'SVN'),
     )
 
     project = models.ForeignKey(Project, related_name='repositories')
     type = models.CharField(
         max_length=255,
         blank=False,
-        default='file',
+        default='git',
         choices=TYPE_CHOICES
     )
     url = models.CharField("URL", max_length=2000, blank=True)
@@ -682,6 +709,12 @@ class Repository(models.Model):
         appended to the end of their path so that they are detected as
         source directories.
     """)
+
+    def __repr__(self):
+        repo_kind = 'Repository'
+        if self.source_repo:
+            repo_kind = 'SourceRepository'
+        return "<{}[{}:{}:{}]".format(repo_kind, self.pk, self.type, self.url)
 
     @property
     def multi_locale(self):
@@ -791,7 +824,6 @@ class Repository(models.Model):
                     checkout_path
                 )
                 current_revisions[locale.code] = get_revision(self.type, checkout_path)
-
             return current_revisions
 
     def commit(self, message, author, path):
@@ -804,6 +836,29 @@ class Repository(models.Model):
 
         return commit_to_vcs(self.type, path, message, author, url)
 
+    """
+    Set last_synced_revisions to a dictionary of revisions
+    that are currently downloaded on the disk.
+    """
+    def set_current_last_synced_revisions(self):
+        current_revisions = {}
+
+        if self.multi_locale:
+            for locale in self.project.locales.all():
+                current_revisions[locale.code] = get_revision(
+                    self.type,
+                    self.locale_checkout_path(locale)
+                )
+
+        else:
+            current_revisions['single_locale'] = get_revision(
+                self.type,
+                self.checkout_path
+            )
+
+        self.last_synced_revisions = current_revisions
+        self.save(update_fields=['last_synced_revisions'])
+
     class Meta:
         unique_together = ('project', 'url')
         ordering = ['id']
@@ -812,6 +867,14 @@ class Repository(models.Model):
 class ResourceQuerySet(models.QuerySet):
     def asymmetric(self):
         return self.filter(format__in=Resource.ASYMMETRIC_FORMATS)
+
+    """
+    List of paths to remove translations of obsolete entities from
+    """
+    def obsolete_entities_paths(self, obsolete_vcs_entities):
+        return self.filter(
+            entities__pk__in=obsolete_vcs_entities
+        ).asymmetric().values_list('path', flat=True).distinct()
 
 
 class Resource(models.Model):

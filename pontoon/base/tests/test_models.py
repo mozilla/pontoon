@@ -15,7 +15,6 @@ from mock import call, Mock, patch
 from pontoon.base.models import (
     Entity,
     ProjectLocale,
-    Repository,
     TranslationMemoryEntry,
     User
 )
@@ -51,7 +50,7 @@ class ProjectTests(TestCase):
         can_commit should be False if there are no repo that can be
         committed to.
         """
-        repo = RepositoryFactory.create(type=Repository.FILE)
+        repo = RepositoryFactory.create(type='file')
         project = ProjectFactory.create(repositories=[repo])
         assert_false(project.can_commit)
 
@@ -60,7 +59,7 @@ class ProjectTests(TestCase):
         can_commit should be True if there is a repo that can be
         committed to.
         """
-        repo = RepositoryFactory.create(type=Repository.GIT)
+        repo = RepositoryFactory.create(type='git')
         project = ProjectFactory.create(repositories=[repo])
         assert_true(project.can_commit)
 
@@ -79,9 +78,9 @@ class ProjectTests(TestCase):
         first.
         """
         project = ProjectFactory.create(repositories=[])
-        RepositoryFactory.create(project=project, type=Repository.GIT)
-        RepositoryFactory.create(project=project, type=Repository.HG)
-        assert_equal(project.repository_type, Repository.GIT)
+        RepositoryFactory.create(project=project, type='git')
+        RepositoryFactory.create(project=project, type='hg')
+        assert_equal(project.repository_type, 'git')
 
     def test_repository_for_path_none(self):
         """
@@ -347,13 +346,13 @@ class RepositoryTests(TestCase):
             repo.url_for_path('/media/root/path/to/match/foo/bar.po')
 
     def test_pull(self):
-        repo = RepositoryFactory.create(type=Repository.GIT, url='https://example.com')
+        repo = RepositoryFactory.create(type='git', url='https://example.com')
         with patch('pontoon.base.models.update_from_vcs') as update_from_vcs, \
              patch('pontoon.base.models.get_revision') as mock_get_revision:
             mock_get_revision.return_value = 'asdf'
             assert_equal(repo.pull(), {'single_locale': 'asdf'})
             update_from_vcs.assert_called_with(
-                Repository.GIT,
+                'git',
                 'https://example.com',
                 repo.checkout_path
             )
@@ -366,7 +365,7 @@ class RepositoryTests(TestCase):
         locale1 = LocaleFactory.create(code='locale1')
         locale2 = LocaleFactory.create(code='locale2')
         repo = RepositoryFactory.create(
-            type=Repository.GIT,
+            type='git',
             url='https://example.com/{locale_code}/',
             project__locales=[locale1, locale2]
         )
@@ -385,16 +384,16 @@ class RepositoryTests(TestCase):
                 'locale2': '/media/locale2'
             })
             update_from_vcs.assert_has_calls([
-                call(Repository.GIT, 'https://example.com/locale1', '/media/locale1'),
-                call(Repository.GIT, 'https://example.com/locale2', '/media/locale2')
+                call('git', 'https://example.com/locale1', '/media/locale1'),
+                call('git', 'https://example.com/locale2', '/media/locale2')
             ])
 
     def test_commit(self):
-        repo = RepositoryFactory.create(type=Repository.GIT, url='https://example.com')
+        repo = RepositoryFactory.create(type='git', url='https://example.com')
         with patch('pontoon.base.models.commit_to_vcs') as commit_to_vcs:
             repo.commit('message', 'author', 'path')
             commit_to_vcs.assert_called_with(
-                Repository.GIT,
+                'git',
                 'path',
                 'message',
                 'author',
@@ -407,7 +406,7 @@ class RepositoryTests(TestCase):
         committing.
         """
         repo = RepositoryFactory.create(
-            type=Repository.GIT,
+            type='git',
             url='https://example.com/{locale_code}/',
         )
 
@@ -415,7 +414,7 @@ class RepositoryTests(TestCase):
         with patch('pontoon.base.models.commit_to_vcs') as commit_to_vcs:
             repo.commit('message', 'author', 'path')
             commit_to_vcs.assert_called_with(
-                Repository.GIT,
+                'git',
                 'path',
                 'message',
                 'author',

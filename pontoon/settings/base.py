@@ -420,6 +420,13 @@ LOGGING = {
 if DEBUG:
     LOGGING['handlers']['console']['formatter'] = 'verbose'
 
+
+if os.environ.get('DJANGO_SQL_LOG', False):
+    LOGGING['loggers']['django.db.backends'] = {
+        'level': 'DEBUG',
+        'handlers': ['console']
+    }
+
 ## Tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = ['--logging-filter=-django_browserid,-factory,-django.db,-raygun4py',

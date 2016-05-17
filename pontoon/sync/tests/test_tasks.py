@@ -21,20 +21,23 @@ from pontoon.sync.tests import (
     SyncLogFactory,
 )
 
-
 class SyncProjectTests(TestCase):
     def setUp(self):
         super(SyncProjectTests, self).setUp()
         self.db_project = ProjectFactory.create()
+        self.repository = self.db_project.repositories.all()[0]
         self.sync_log = SyncLogFactory.create()
 
         self.mock_pull_changes = self.patch(
-            'pontoon.sync.tasks.pull_changes', return_value=True)
+            'pontoon.sync.tasks.pull_changes', return_value=(True, {}))
         self.mock_project_needs_sync = self.patch_object(
             Project, 'needs_sync', new_callable=PropertyMock, return_value=True)
         self.mock_sync_project_repo = self.patch('pontoon.sync.tasks.sync_project_repo')
 
         self.mock_perform_sync_project = self.patch('pontoon.sync.tasks.perform_sync_project', return_value=[[], []])
+
+        self.mock_source_directory_path = self.patch('pontoon.sync.vcs.models.VCSProject.source_directory_path',
+                                                            return_value=self.repository.checkout_path)
 
     def test_missing_project(self):
         """
@@ -61,7 +64,7 @@ class SyncProjectTests(TestCase):
         If the database has changes and VCS doesn't, do not skip syncing
         the project.
         """
-        self.mock_pull_changes.return_value = False
+        self.mock_pull_changes.return_value = (False, {})
         self.mock_project_needs_sync.return_value = True
 
         sync_project(self.db_project.pk, self.sync_log.pk)
@@ -72,7 +75,7 @@ class SyncProjectTests(TestCase):
         If the database and VCS both have no changes, skip sync and log
         a message.
         """
-        self.mock_pull_changes.return_value = False
+        self.mock_pull_changes.return_value = (False, {})
         self.mock_project_needs_sync.return_value = False
 
         with patch('pontoon.sync.tasks.log') as mock_log:
@@ -91,7 +94,7 @@ class SyncProjectTests(TestCase):
         If the database and VCS both have no changes, but force is true,
         do not skip sync.
         """
-        self.mock_pull_changes.return_value = False
+        self.mock_pull_changes.return_value = (False, {})
         self.mock_project_needs_sync.return_value = False
 
         sync_project(self.db_project.pk, self.sync_log.pk, force=True)
@@ -110,7 +113,6 @@ class SyncProjectTests(TestCase):
         repo = RepositoryFactory.create()
         self.db_project.repositories = [repo]
         self.db_project.save()
-
         sync_project(self.db_project.pk, self.sync_log.pk)
 
         log = ProjectSyncLog.objects.get(project=self.db_project)
@@ -124,11 +126,12 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
         self.project_sync_log = ProjectSyncLogFactory.create()
 
         self.mock_pull_changes = self.patch(
-            'pontoon.sync.tasks.pull_changes', return_value=True)
+            'pontoon.sync.tasks.pull_changes', return_value=(True, {}))
         self.mock_commit_changes = self.patch('pontoon.sync.tasks.commit_changes')
         self.mock_repo_checkout_path = self.patch_object(
             Repository, 'checkout_path', new_callable=PropertyMock,
             return_value=FAKE_CHECKOUT_PATH)
+
 
     def test_clear_changed_entities(self):
         """
@@ -145,7 +148,7 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
         changed_after.save()
 
         sync_project_repo(self.db_project.pk, self.repository.pk,
-                          self.project_sync_log.pk, self.now)
+                          self.project_sync_log.pk, self.now, [])
         with assert_raises(ChangedEntityLocale.DoesNotExist):
             changed1.refresh_from_db()
         with assert_raises(ChangedEntityLocale.DoesNotExist):
@@ -164,7 +167,7 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
     def test_no_commit(self):
         """Don't call commit_changes if command.no_commit is True."""
         sync_project_repo(self.db_project.pk, self.repository.pk,
-                          self.project_sync_log.pk, self.now,
+                          self.project_sync_log.pk, self.now, [],
                           no_commit=True)
         assert_false(self.mock_commit_changes.called)
 
@@ -189,7 +192,7 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
 
         with patch('pontoon.sync.tasks.VCSProject', return_value=self.vcs_project):
             sync_project_repo(self.db_project.pk, self.repository.pk,
-                              self.project_sync_log.pk, self.now)
+                              self.project_sync_log.pk, self.now, [])
 
         # Only one translation should be approved: the duplicate_translation.
         assert_equal(self.main_db_entity.translation_set.filter(approved=True).count(), 1)
@@ -211,7 +214,7 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
         self.db_project.save()
 
         sync_project_repo(self.db_project.pk, self.repository.pk,
-                          self.project_sync_log.pk, self.now)
+                          self.project_sync_log.pk, self.now, [])
 
         log = RepositorySyncLog.objects.get(repository=self.repository)
         assert_equal(log.repository, self.repository)

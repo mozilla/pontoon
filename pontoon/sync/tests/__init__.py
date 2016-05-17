@@ -130,7 +130,32 @@ class FakeCheckoutTestCase(TestCase):
             return_value=FAKE_CHECKOUT_PATH
         )
         checkout_path_patch.start()
+
         self.addCleanup(checkout_path_patch.stop)
+
+        vcs_changed_files = {
+            self.main_db_resource.path: [self.translated_locale],
+            self.other_db_resource.path: [self.translated_locale],
+            self.missing_db_resource.path: [self.translated_locale],
+        }
+
+        changed_files_patch = patch.object(
+            VCSProject,
+            'changed_files',
+            new_callable=PropertyMock,
+            return_value=vcs_changed_files
+        )
+        changed_files_patch.start()
+        self.addCleanup(changed_files_patch.stop)
+
+        source_repository = patch.object(
+            Project,
+            'source_repository',
+            new_callable=PropertyMock,
+            return_value=self.db_project.repositories.all()[0]
+        )
+        source_repository.start()
+        self.addCleanup(source_repository.stop)
 
         self.vcs_project = VCSProject(self.db_project)
         self.main_vcs_resource = self.vcs_project.resources[self.main_db_resource.path]

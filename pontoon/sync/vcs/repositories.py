@@ -7,7 +7,7 @@ import subprocess
 from django.conf import settings
 
 
-log = logging.getLogger('pontoon')
+log = logging.getLogger(__name__)
 
 
 class PullFromRepositoryException(Exception):
@@ -210,9 +210,10 @@ class CommitToSvn(CommitToRepository):
         # Commit
         command = ["svn", "commit", "-m", message, "--with-revprop",
                    "author=%s" % author, path]
+
         code, output, error = execute(command, env=get_svn_env())
         if code != 0:
-            raise CommitToRepositoryException(unicode(error))
+            raise CommitToRepositoryException(error.decode('utf-8'))
 
         if not output and not error:
             return self.nothing_to_commit()
@@ -279,13 +280,22 @@ class VCSRepository(object):
     def __init__(self, path):
         self.path = path
 
-    def execute(self, cmd, cwd=None, env=None, log_errors=False):
+    def execute(self, cmd, cwd=None, env=None, log_errors=True):
+        cwd = cwd or self.path
         code, output, error = execute(cmd, cwd=cwd, env=env)
         if log_errors and code != 0:
             log.error('Error while executing command `{cmd}` in `{cwd}`: {stderr}'.format(
                 cmd=unicode(cmd), cwd=cwd, stderr=error
             ))
         return code, output, error
+
+    def get_changed_files(self, path, from_revision, statueses=None):
+        """Get a list of changed files in the repository."""
+        raise NotImplementedError
+
+    def get_removed_files(self, from_revision):
+        """Get a list of removed files in the repository."""
+        raise NotImplementedError
 
 
 class SvnRepository(VCSRepository):
@@ -297,16 +307,44 @@ class SvnRepository(VCSRepository):
         code, output, error = self.execute(['svnversion', self.path], log_errors=True)
         return output.strip() if code == 0 else None
 
+    def get_changed_files(self, path, from_revision, statuses=None):
+        statuses = statuses or ('A', 'M')
+        # Remove all non digit characters from the revision number.
+        normalize_revision = lambda rev: ''.join(filter(lambda c: c.isdigit(), rev))
+        from_revision = normalize_revision(from_revision)
+        code, output, error = self.execute(
+            ['svn', 'diff', '-r', '{}:{}'.format(from_revision, 'HEAD'), '--summarize'],
+            cwd=path
+        )
+        if code == 0:
+            # Mark added/modfied files as the changed ones
+            return [line.split()[1] for line in output.split('\n') if line and line[0] in statuses]
+        return []
+
+    def get_removed_files(self, path, from_revision):
+        return self.get_changed_files(path, from_revision, ('D',))
+
 
 class GitRepository(VCSRepository):
+
     @property
     def revision(self):
         code, output, error = self.execute(
             ['git', 'rev-parse', 'master'],
-            cwd=self.path,
-            log_errors=True
         )
         return output.strip() if code == 0 else None
+
+    def get_changed_files(self, path, from_revision, statuses=None):
+        statuses = statuses or ('A', 'M')
+        code, output, error = self.execute(
+            ['git', 'diff', '--name-status', '{}..HEAD'.format(from_revision), '--', path],
+        )
+        if code == 0:
+            return [line.split()[1] for line in output.split('\n') if line and line[0] in statuses]
+        return []
+
+    def get_removed_files(self, path, from_revision):
+        return self.get_changed_files(path, from_revision, ('D',))
 
 
 class HgRepository(VCSRepository):
@@ -318,6 +356,20 @@ class HgRepository(VCSRepository):
             log_errors=True
         )
         return output.strip() if code == 0 else None
+
+    def get_changed_files(self, path, from_revision, statuses=None):
+        statuses = statuses or ('A', 'M')
+        code, output, error = self.execute(
+            ['hg', 'status', '-a', '-m', '-r', '--rev={}'.format(from_revision), '--rev=tip'],
+            cwd=path
+        )
+        if code == 0:
+            # Mark added / modified files as the changed ones
+            return [line.split()[1] for line in output.split('\n') if line and line[0] in statuses]
+        return []
+
+    def get_removed_files(self, path, from_revision):
+        return self.get_changed_files(path, from_revision, ('R',))
 
 
 # TODO: Tie these to the same constants that the Repository model uses.
@@ -331,3 +383,21 @@ VCSRepository.REPO_TYPES = {
 def get_revision(repo_type, path):
     repo = VCSRepository.for_type(repo_type, path)
     return repo.revision
+
+
+def get_changed_files(repo_type, path, revision):
+    """Return a list of changed files for the repository."""
+    repo = VCSRepository.for_type(repo_type, path)
+    log.info('Retrieving changed files for: {}:{}'.format(path, revision))
+    # If there's no latest revision we should return all the files in the latest
+    # version of repository
+    if revision is None:
+        paths = []
+        for root, _, files in os.walk(path):
+            for f in files:
+                if root[0] == '.' or '/.' in root:
+                    continue
+                paths.append(os.path.join(root, f).replace(path + '/', ''))
+        return paths, []
+
+    return repo.get_changed_files(path, revision), repo.get_removed_files(path, revision)

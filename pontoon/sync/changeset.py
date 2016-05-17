@@ -69,6 +69,10 @@ class ChangeSet(object):
         """Update the database with translations from VCS."""
         self.changes['update_db'].append((locale.code, db_entity, vcs_entity))
 
+    def update_db_source_entity(self, db_entity, vcs_entity):
+        """Update the entities with the latest data from vcs."""
+        self.changes['update_db'].append((None, db_entity, vcs_entity))
+
     def obsolete_db_entity(self, db_entity):
         """Mark the given entity as obsolete."""
         self.changes['obsolete_db'].append(db_entity.pk)
@@ -113,9 +117,9 @@ class ChangeSet(object):
             self.commit_authors_per_locale[locale_code].extend([t.user for t in db_translations if t.user])
 
         # Remove obsolete entities from asymmetric files
-        obsolete_entities_paths = Resource.objects.filter(
-            entities__pk__in=self.changes['obsolete_vcs_entities']
-        ).asymmetric().values_list('path', flat=True).distinct()
+        obsolete_entities_paths = Resource.objects.obsolete_entities_paths(
+            self.changes['obsolete_vcs_entities']
+        )
 
         for path in obsolete_entities_paths:
             changed_resources.add(resources[path])
@@ -232,9 +236,10 @@ class ChangeSet(object):
             if db_entity.is_dirty(check_relationship=True):
                 self.entities_to_update.append(db_entity)
 
-            # Update translations for the entity.
-            vcs_translation = vcs_entity.translations[locale_code]
-            self.update_entity_translations_from_vcs(db_entity, locale_code, vcs_translation)
+            if locale_code is not None:
+                # Update translations for the entity.
+                vcs_translation = vcs_entity.translations[locale_code]
+                self.update_entity_translations_from_vcs(db_entity, locale_code, vcs_translation)
 
     def execute_obsolete_db(self):
         (Entity.objects

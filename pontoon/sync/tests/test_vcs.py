@@ -1,4 +1,6 @@
-from django_nose.tools import assert_equal
+from textwrap import dedent
+
+from django_nose.tools import assert_equal, assert_true
 from mock import patch
 
 from pontoon.sync.vcs.repositories import VCSRepository
@@ -21,3 +23,81 @@ class VCSRepositoryTests(TestCase):
                 (1, 'output', 'stderr')
             )
             mock_log.error.assert_called_with(CONTAINS('stderr', 'command', 'working_dir'))
+
+
+class VCSChangedFilesTests(object):
+    """
+    Mixin class that unifies all tests  for changed/removed files between repositories.
+    Every subclass should provide two properties:a
+    * shell_output - should contain an string which is returned.
+    * repository_type - a type of the repository that will be used to perform the test.
+    """
+    shell_output = ''
+    repository_type = None
+
+    def setUp(self):
+        self.vcsrepository = VCSRepository.for_type(self.repository_type, '/path')
+
+    def execute_success(self, *args, **kwargs):
+        """
+        Should be called when repository commands returns contents without error.
+        """
+        return 0, self.shell_output, None
+
+    def execute_failure(self, *args, **kwargs):
+        """
+        Returns an error for all tests cases that validate error handling.
+        """
+        return 1, '', None
+
+    def test_changed_files(self):
+        with patch.object(self.vcsrepository, 'execute', side_effect=self.execute_success) as mock_execute:
+            changed_files = self.vcsrepository.get_changed_files('/path', '1')
+            assert_true(mock_execute.called)
+            assert_equal(changed_files, ['changed_file1.properties', 'changed_file2.properties'])
+
+    def test_changed_files_error(self):
+        with patch.object(self.vcsrepository, 'execute', side_effect=self.execute_failure) as mock_execute:
+            assert_equal(self.vcsrepository.get_changed_files('path', '1'), [])
+            assert_true(mock_execute.called)
+
+    def test_removed_files(self):
+        with patch.object(self.vcsrepository, 'execute', side_effect=self.execute_success) as mock_execute:
+            removed_files = self.vcsrepository.get_removed_files('/path', '1')
+            assert_true(mock_execute.called)
+            assert_equal(removed_files, ['removed_file1.properties', 'removed_file2.properties'])
+
+    def test_removed_files_error(self):
+        with patch.object(self.vcsrepository, 'execute', side_effect=self.execute_failure) as mock_execute:
+            assert_equal(self.vcsrepository.get_removed_files('path', '1'), [])
+            assert_true(mock_execute.called)
+
+
+class GitChangedFilesTest(VCSChangedFilesTests, TestCase):
+    repository_type = 'git'
+    shell_output = dedent("""
+        M changed_file1.properties
+        M changed_file2.properties
+        D removed_file1.properties
+        D removed_file2.properties
+    """)
+
+
+class HgChangedFilesTest(VCSChangedFilesTests, TestCase):
+    repository_type = 'hg'
+    shell_output = dedent("""
+        M changed_file1.properties
+        M changed_file2.properties
+        R removed_file1.properties
+        R removed_file2.properties
+    """)
+
+
+class SVNChangedFilesTest(VCSChangedFilesTests, TestCase):
+    repository_type = 'svn'
+    shell_output = dedent("""
+        M changed_file1.properties
+        M changed_file2.properties
+        D removed_file1.properties
+        D removed_file2.properties
+    """)

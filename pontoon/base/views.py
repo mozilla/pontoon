@@ -27,7 +27,7 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseForbidden,
-    JsonResponse
+    JsonResponse,
 )
 
 from django.shortcuts import get_object_or_404, render
