@@ -34,8 +34,8 @@ py-bcrypt==0.3 \
     --hash=sha256:af12f99454e895e9e430c75723c3b9419c0bccd0ea77803662d6a9ac56f6425b
 pyasn1==0.1.7 \
     --hash=sha256:e4f81d53c533f6bd9526b047f047f7b101c24ab17339c1a7ad8f98b25c101eab
-https://github.com/l20n/python-l20n/archive/4e32a8d.zip#egg=l20n==0.1 \
-    --hash=sha256:f9286a979de5eefca3c5a355aeeca05f46dae7c4308b18e004e4dd2af7d7ed29
+https://github.com/l20n/python-l20n/archive/b229ff0.zip#egg=l20n==0.2 \
+    --hash=sha256:fce3395034b16e8d01ef1ee9d8d67de9536a4d1c8b30a9fc335f668b7beb72d8
 requests==2.6.2 \
     --hash=sha256:8f0f56813f82d0c27d9578221268ac9af48f076c71ee69693305ceca6ca355bd \
     --hash=sha256:0577249d4b6c4b11fd97c28037e98664bfaa0559022fee7bcef6b752a106e505

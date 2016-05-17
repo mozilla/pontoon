@@ -829,6 +829,7 @@ class Resource(models.Model):
         ('ini', 'ini'),
         ('lang', 'lang'),
         ('l20n', 'l20n'),
+        ('ftl', 'ftl'),
     )
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
@@ -847,7 +848,7 @@ class Resource(models.Model):
     SOURCE_EXTENSIONS = ['pot']  # Extensions of source-only formats.
     ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + SOURCE_EXTENSIONS
 
-    ASYMMETRIC_FORMATS = ('dtd', 'properties', 'ini', 'inc', 'l20n')
+    ASYMMETRIC_FORMATS = ('dtd', 'properties', 'ini', 'inc', 'l20n', 'ftl')
 
     objects = ResourceQuerySet.as_manager()
 

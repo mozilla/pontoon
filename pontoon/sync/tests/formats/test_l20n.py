@@ -68,7 +68,7 @@ class L20NTests(FormatTestsMixin, TestCase):
         source = '''
         /*Hash comment*/
         <multiple_hash_items {
-            one: "One item",
+            *one: "One item",
             other: "Other items",
         }>
         '''
@@ -113,7 +113,7 @@ class L20NTests(FormatTestsMixin, TestCase):
     def test_parse_hash_attributes(self):
         source = '''
         <sample_hash {
-            one: "First string",
+            *one: "First string",
             other: "Second string"
         }
         first_attr: "First string attribute"
@@ -140,7 +140,7 @@ class L20NTests(FormatTestsMixin, TestCase):
     def test_parse_hash_with_rule(self):
         source = '''
         <sample_hash[@cldr.global($n)] {
-            one: "First string",
+            *one: "First string",
             other: "Second string"
         }
         first_attr: "First string attribute"
@@ -239,7 +239,7 @@ second_attr: "bbb"
     def test_save_basic_hash(self):
         input_string = dedent('''
         <basic_hash {
-            one: "One string",
+            *one: "One string",
             other: "Other string"
         }>
         ''')
@@ -257,7 +257,7 @@ second_attr: "bbb"
     def test_save_hash_with_attribute(self):
         input_string = dedent('''
         <basic_hash {
-            one: "One string",
+            *one: "One string",
             other: "Other string"
         }
         first_attribute: "First attribute">
@@ -353,10 +353,10 @@ second_attr: "bbb"
     def test_save_remove_hash(self):
         input_string = """
         <first_hash {
-            one: "First hash"
+            *one: "First hash"
         }>
         <second_hash {
-            one: "Second hash"
+            *one: "Second hash"
         }>
         """
         expected_string ='''
@@ -372,7 +372,7 @@ second_attr: "bbb"
     def test_save_remove_hash_attribute(self):
         input_string = """
         <first_hash {
-            one: "First hash"
+            *one: "First hash"
         }
         first_attribute: "First attribute">
         """
@@ -389,10 +389,10 @@ second_attr: "bbb"
     def test_save_remove_hash_with_rule(self):
         input_string = """
         <first_hash {
-            one: "First hash"
+            *one: "First hash"
         }>
         <second_hash[@example] {
-            one: "Second hash"
+            *one: "Second hash"
         }>
         """
         expected_string ='''
@@ -408,7 +408,7 @@ second_attr: "bbb"
     def test_save_remove_hash_item(self):
         input_string = """
         <first_hash {
-            one: "One item",
+            *one: "One item",
             other: "Many items"
         }>
         """
