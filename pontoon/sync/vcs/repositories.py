@@ -45,7 +45,7 @@ class PullFromGit(PullFromRepository):
         else:
             log.debug("Git: " + unicode(error))
             log.debug("Git: Clone instead.")
-            command = ["git", "clone", "--depth", "1", source, target]
+            command = ["git", "clone", source, target]
             code, output, error = execute(command)
 
             if code == 0:
