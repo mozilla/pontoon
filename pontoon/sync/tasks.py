@@ -38,6 +38,12 @@ def get_or_fail(ModelClass, message=None, **kwargs):
         raise
 
 
+def end_repo_sync(repo, repo_sync_log):
+    repo.set_current_last_synced_revisions()
+    repo_sync_log.end_time = timezone.now()
+    repo_sync_log.save(update_fields=['end_time'])
+
+
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0}')
 def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_commit=False, force=False):
     """Fetch the project with the given PK and perform sync on it."""
@@ -144,14 +150,6 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
     else:
         locales = repo.locales
 
-    if len(locales) < 1:
-        log.warning('Skipping repo `{0}`, no locales to sync found within.'
-                    .format(repo.url))
-        repo.set_current_last_synced_revisions()
-        repo_sync_log.end_time = timezone.now()
-        repo_sync_log.save(update_fields=['end_time'])
-        return
-
     vcs_project = VCSProject(
         db_project,
         locales=locales,
@@ -162,11 +160,26 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
     for locale in locales:
         try:
             with transaction.atomic():
+                # Skip locales that have nothing to sync
+                if vcs_project.synced_locales and locale not in vcs_project.synced_locales:
+                    continue
+
                 changeset = ChangeSet(db_project, vcs_project, now, obsolete_vcs_entities, obsolete_vcs_resources)
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
 
                 update_translated_resources(db_project, vcs_project, changeset, locale)
+
+                # Skip if none of the locales has anything to sync
+                # VCSProject.synced_locales is set on a first call to
+                # VCSProject.resources, which is set in
+                # pontoon.sync.core.update_translated_resources()
+                if len(vcs_project.synced_locales) == 0:
+                    log.info('Skipping repo `{0}`, none of the locales has anything to sync.'
+                             .format(repo.url))
+                    end_repo_sync(repo, repo_sync_log)
+                    return
+
                 locale.aggregate_stats()
                 locale.project_locale.get(project=db_project).aggregate_stats()
 
@@ -219,14 +232,11 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
                     error=err,
                 )
             )
+
     with transaction.atomic():
         db_project.aggregate_stats()
 
-    repo.set_current_last_synced_revisions()
-    log.debug('Last synced revisions: %s', repo.last_synced_revisions)
-
-    repo_sync_log.end_time = timezone.now()
-    repo_sync_log.save()
     log.info('Synced translations for project {0} in locales {1}.'.format(
         db_project.slug, ','.join(locale.code for locale in vcs_project.synced_locales)
     ))
+    end_repo_sync(repo, repo_sync_log)
