@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 
 class MissingSourceRepository(Exception):
     """
-    Exception is called when project can't find the repository
+    Raised when project can't find the repository
     which contains source files.
     """
 
@@ -142,6 +142,7 @@ class VCSProject(object):
                 for path, locale_path, locale in filter(None, map(lambda x: self.get_path_info(x, repo), changed_files)):
                     path = path[len(locale_path):].lstrip(os.sep)
                     files.setdefault(path, []).append(locale)
+
         return files
 
 
