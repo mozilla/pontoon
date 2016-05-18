@@ -86,15 +86,16 @@ class ProjectSyncLog(BaseLog):
             return True
 
         repo_logs = self.repository_sync_logs.all()
-        if len(repo_logs) != self.project.repositories.count():
+        sync_repos = self.project.repositories.exclude(source_repo=True)
+        if len(repo_logs) != sync_repos.count():
             return False
         else:
             return all(log.finished for log in repo_logs)
 
     def skip(self, end_time=None):
         """Marks current project sync log as skipped"""
-        end_time = end_time or timezone.now()
         self.skipped = True
+        self.skipped_end_time = end_time or timezone.now()
         self.save(update_fields=('skipped', 'skipped_end_time'))
 
 
