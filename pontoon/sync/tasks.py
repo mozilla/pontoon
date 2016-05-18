@@ -175,8 +175,8 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
                 # VCSProject.resources, which is set in
                 # pontoon.sync.core.update_translated_resources()
                 if len(vcs_project.synced_locales) == 0:
-                    log.info('Skipping repo `{0}`, none of the locales has anything to sync.'
-                             .format(repo.url))
+                    log.info('Skipping repo `{0}` for project {1}, none of the locales has anything to sync.'
+                             .format(repo.url, db_project.slug))
                     end_repo_sync(repo, repo_sync_log)
                     return
 
