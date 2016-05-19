@@ -72,11 +72,21 @@ def locale_directory_path(checkout_path, locale_code):
                   locale_code or 'source'))
 
 
-def relative_source_path(path):
+def locale_to_source_path(path):
     """
-    Return relative source resource path for the given relative locale
-    resource path. Source files for .po files are actually .pot.
+    Return source resource path for the given locale resource path.
+    Source files for .po files are actually .pot.
     """
     if path.endswith('po'):
         path += 't'
+    return path
+
+
+def source_to_locale_path(path):
+    """
+    Return locale resource path for the given source resource path.
+    Locale files for .pot files are actually .po.
+    """
+    if path.endswith('pot'):
+        path = path[:-1]
     return path

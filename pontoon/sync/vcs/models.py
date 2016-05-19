@@ -17,7 +17,8 @@ from pontoon.sync.utils import (
     directory_contains_resources,
     is_resource,
     locale_directory_path,
-    relative_source_path,
+    locale_to_source_path,
+    source_to_locale_path,
 )
 from pontoon.sync.vcs.repositories import get_changed_files
 
@@ -102,6 +103,10 @@ class VCSProject(object):
 
         modified_files, removed_files = get_changed_files(source_resources_repo.type, source_directory, last_revision)
 
+        # Unify filesystem and data model file extensions
+        modified_files = map(source_to_locale_path, modified_files)
+        removed_files = map(source_to_locale_path, removed_files)
+
         if source_resources_repo.source_repo or not last_revision:
             get_path = lambda path: (path, [])
         else:
@@ -142,7 +147,6 @@ class VCSProject(object):
                 for path, locale_path, locale in filter(None, map(lambda x: self.get_path_info(x, repo), changed_files)):
                     path = path[len(locale_path):].lstrip(os.sep)
                     files.setdefault(path, []).append(locale)
-
         return files
 
 
@@ -303,7 +307,7 @@ class VCSResource(object):
 
         # Create entities using resources from the source directory,
         source_resource_path = os.path.join(vcs_project.source_directory_path(), self.path)
-        source_resource_path = relative_source_path(source_resource_path)
+        source_resource_path = locale_to_source_path(source_resource_path)
         source_resource_file = formats.parse(source_resource_path, locale=Locale.objects.get(code='en-US'))
         for index, translation in enumerate(source_resource_file.translations):
             vcs_entity = VCSEntity(
