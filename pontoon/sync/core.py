@@ -132,7 +132,15 @@ def update_resources(db_project, vcs_project):
 
 def update_translations(db_project, vcs_project, locale, changeset):
     if not vcs_project.full_scan:
-        vcs_project.changed_files.update(get_changed_db_resources(db_project))
+        vcs = vcs_project.changed_files
+        db = get_changed_db_resources(db_project)
+
+        for path in set(vcs.keys() + db.keys()):
+            if path in vcs and path in db:
+                vcs[path] = set(vcs[path] + list(db[path]))
+
+            else:
+                vcs[path] = vcs[path] if path in vcs else db[path]
 
     for key, db_entity, vcs_entity in collect_entities(db_project, vcs_project):
         # If we don't have both the db_entity and cs_entity we can't
