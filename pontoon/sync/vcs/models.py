@@ -142,11 +142,14 @@ class VCSProject(object):
                     for path in find_changed_files(repo, locale):
                         files.setdefault(path, []).append(locale)
             else:
-                changed_files = find_changed_files(repo)
+                for changed_file in find_changed_files(repo):
+                    path_info = self.get_path_info(changed_file, repo)
 
-                for path, locale_path, locale in filter(None, map(lambda x: self.get_path_info(x, repo), changed_files)):
-                    path = path[len(locale_path):].lstrip(os.sep)
-                    files.setdefault(path, []).append(locale)
+                    if path_info:
+                        path, locale_path, locale = path_info
+                        path = path[len(locale_path):].lstrip(os.sep)
+                        files.setdefault(path, []).append(locale)
+
         return files
 
 
@@ -174,9 +177,11 @@ class VCSProject(object):
         A map of paths to their respective locales.
         """
         locales_paths = {}
+
         for locale in self.db_project.locales.all():
             path = locale_directory_path(repo.checkout_path, locale.code)[len(repo.checkout_path):].lstrip(os.sep)
             locales_paths[path] = locale
+
         return locales_paths
 
     @cached_property
