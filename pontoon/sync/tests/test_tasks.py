@@ -259,7 +259,7 @@ class SyncExecutionTests(TestCase):
 
     def test_parametrized_serial_task(self):
         """
-        Serial task should be able to work simultanously for different parameters.
+        Serial task should be able to work simultaneously for different parameters.
         """
         with patch('pontoon.sync.core.cache') as mock_cache:
             @serial_task(3, lock_key="param={0}")
