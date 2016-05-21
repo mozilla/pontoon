@@ -221,7 +221,7 @@ class CommitChangesTests(FakeCheckoutTestCase):
     def test_multiple_authors(self):
         """
         Tests if multiple authors are passed to commit message. The
-        author with the most occurrances for the locale should be set as
+        author with the most occurrences for the locale should be set as
         the commit author.
         """
         first_author, second_author = UserFactory.create_batch(2)
