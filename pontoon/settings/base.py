@@ -113,6 +113,7 @@ INSTALLED_APPS = (
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.gzip.GZipMiddleware',
     'sslify.middleware.SSLifyMiddleware',
     'pontoon.base.middleware.RaygunExceptionMiddleware',
     'pontoon.base.middleware.BlockedIpMiddleware',
