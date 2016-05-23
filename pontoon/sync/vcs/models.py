@@ -104,9 +104,8 @@ class VCSProject(object):
         modified_files, removed_files = get_changed_files(source_resources_repo.type, source_directory, last_revision)
 
         # Unify filesystem and data model file extensions
-        modified_files = map(source_to_locale_path, modified_files)
-        removed_files = map(source_to_locale_path, removed_files)
-
+        modified_files = filter(None, map(source_to_locale_path, modified_files))
+        removed_files = filter(None, map(source_to_locale_path, removed_files))
         if source_resources_repo.source_repo or not last_revision:
             get_path = lambda path: (path, [])
         else:
@@ -134,6 +133,7 @@ class VCSProject(object):
 
             # We have to filter out paths that are locale files
             checkout_path = repo.locale_checkout_path(locale) if locale else repo.checkout_path
+            # We have to filter out paths that are locale files
             return get_changed_files(repo.type, checkout_path, last_revision)[0]
 
         for repo in self.db_project.repositories.exclude(source_repo=True):
@@ -145,10 +145,12 @@ class VCSProject(object):
                 for changed_file in find_changed_files(repo):
                     path_info = self.get_path_info(changed_file, repo)
 
-                    if path_info:
-                        path, locale_path, locale = path_info
-                        path = path[len(locale_path):].lstrip(os.sep)
-                        files.setdefault(path, []).append(locale)
+                    if not path_info:
+                        continue
+
+                    path, locale_path, locale = path_info
+                    path = path[len(locale_path):].lstrip(os.sep)
+                    files.setdefault(path, []).append(locale)
 
         return files
 
@@ -197,7 +199,7 @@ class VCSProject(object):
 
         for path in self.relative_resource_paths():
             locales = self.db_project.unsynced_locales
-
+            import ipdb; ipdb.set_trace()
             if (self.changed_files is not None and
                 ((not self.changed_files or path not in self.changed_files) and
                     path not in self.obsolete_entities_paths)):

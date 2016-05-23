@@ -10,6 +10,7 @@ from django_nose.tools import (
 from mock import ANY, Mock, patch, PropertyMock, MagicMock
 
 from pontoon.base.models import (
+    ChangedEntityLocale,
     Entity,
     Repository,
     Resource,
@@ -18,11 +19,15 @@ from pontoon.base.models import (
 from pontoon.base.tests import (
     CONTAINS,
     NOT,
+    EntityFactory,
+    LocaleFactory,
     UserFactory,
+    ProjectFactory,
 )
 from pontoon.sync.core import (
     commit_changes,
     entity_key,
+    get_changed_db_resources,
     pull_changes,
     update_entities,
     update_resources,
@@ -57,6 +62,12 @@ class UpdateEntityTests(FakeCheckoutTestCase):
         self.changeset.create_db_entity = Mock()
         self.call_update_entities([('key', None, self.main_vcs_entity)])
         self.changeset.create_db_entity.assert_called_with(self.main_vcs_entity)
+
+    def test_update(self):
+        """If all entities are updated in DB after changes in vcs."""
+        self.changeset.update_db_source_entity = Mock()
+        self.call_update_entities([('key', self.main_db_entity, self.main_vcs_entity)])
+        self.changeset.update_db_source_entity.assert_called_with(self.main_db_entity, self.main_vcs_entity)
 
 
 class UpdateTranslationsTests(FakeCheckoutTestCase):
@@ -115,11 +126,15 @@ class UpdateTranslationsTests(FakeCheckoutTestCase):
             self.translated_locale, self.main_db_entity, self.main_vcs_entity
         )
 
+    def test_full_scan(self):
+        assert False
+
 
 class UpdateResourcesTests(FakeCheckoutTestCase):
     def test_basic(self):
-        # Check for self.main_db_resource to be updated and
-        # self.other_db_resource to be created.
+        """
+        Check for self.main_db_resource to be updated and self.other_db_resource to be created.
+        """
         self.main_db_resource.total_strings = 5000
         self.main_db_resource.save()
         self.other_db_resource.delete()
@@ -130,6 +145,30 @@ class UpdateResourcesTests(FakeCheckoutTestCase):
 
         other_db_resource = Resource.objects.get(path=self.other_vcs_resource.path)
         assert_equal(other_db_resource.total_strings, len(self.other_vcs_resource.entities))
+
+    def test_changed_resources_db(self):
+        """
+        Check if changed db_resources returns a map of changed resources in locales.
+        """
+        # 2nd resource will be unchanged
+        project = ProjectFactory.create()
+
+        entity1, entity2 = EntityFactory.create_batch(3, resource__project=project)[:2]
+        resource1, resource2 = entity1.resource, entity2.resource
+
+        # 3rd locale won't have changes
+        locale1, locale2, locale3 = LocaleFactory.create_batch(3)
+
+        assert_equal(get_changed_db_resources(project), {})
+
+        # Mark entites as changed
+        ChangedEntityLocale.objects.create(entity=entity1, locale=locale3)
+        ChangedEntityLocale.objects.create(entity=entity1, locale=locale2)
+        ChangedEntityLocale.objects.create(entity=entity2, locale=locale1)
+        assert_equal(get_changed_db_resources(project), {
+            resource1.path: {locale2, locale3},
+            resource2.path: {locale1}
+        })
 
 
 class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
