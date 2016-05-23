@@ -17,3 +17,11 @@ if TEST:
         from .test import * # noqa
     except ImportError:
         pass
+
+
+# Import settings that are helpful during the process of development.
+if DEV:
+    try:
+        from .dev import * # noqa
+    except ImportError:
+        pass
