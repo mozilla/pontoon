@@ -137,7 +137,7 @@ def update_translations(db_project, vcs_project, locale, changeset):
 
         for path in set(vcs.keys() + db.keys()):
             if path in vcs and path in db:
-                vcs[path] = set(vcs[path] + list(db[path]))
+                vcs[path] = set(list(vcs[path]) + list(db[path]))
 
             else:
                 vcs[path] = vcs[path] if path in vcs else db[path]
