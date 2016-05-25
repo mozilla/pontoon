@@ -699,14 +699,14 @@ $(function() {
     }
 
     if ($('#sidebar').is(':visible') && (Pontoon.app.advanced || !$('#editor').is('.opened'))) {
-      // Ctrl + Alt + F: Focus Search
-      if (e.ctrlKey && e.altKey && key === 70) {
+      // Ctrl + Shift + F: Focus Search
+      if (e.ctrlKey && e.shiftKey && key === 70) {
         $('#search').focus();
         return false;
       }
 
-      // Ctrl + Alt + A: Select All Strings
-      if (Pontoon.user.isTranslator && e.ctrlKey && e.altKey && key === 65) {
+      // Ctrl + Shift + A: Select All Strings
+      if (Pontoon.user.isTranslator && e.ctrlKey && e.shiftKey && key === 65) {
         Pontoon.selectAllEntities();
         return false;
       }

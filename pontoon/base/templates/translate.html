@@ -138,7 +138,7 @@
   <div id="entitylist">
     <div class="search-wrapper clearfix">
       <div class="icon fa fa-search"></div>
-      <input id="search" type="search" autocomplete="off" placeholder="Search All" title="Search Strings (Ctrl + Alt + F)">
+      <input id="search" type="search" autocomplete="off" placeholder="Search All" title="Search Strings (Ctrl + Shift + F)">
       <div id="filter" class="select" data-current-filter="all">
         <div class="button selector all">
           <span class="status fa"></span>
@@ -167,7 +167,7 @@
       <h3 class="loading"><div class="fa fa-refresh fa-spin"></div></h3>
     </div>
     <div class="batch-bar topbar clearfix">
-      <a class="select-all" href="#select-all" title="Select All Strings (Ctrl + Alt + A)">
+      <a class="select-all" href="#select-all" title="Select All Strings (Ctrl + Shift + A)">
         <span class="fa fa-check fa-lg"></span>
         Select All
       </a>
@@ -193,8 +193,8 @@
     <section id="single">
       <div class="topbar clearfix">
         <a id="back" href="#back" title="Cancel Translation (Esc)"><span class="fa fa-chevron-left fa-lg"></span>Back to list</a>
-        <a id="next" href="#next" title="Go To Next String (Ctrl + Alt + .)"><span class="fa fa-chevron-down fa-lg"></span>Next</a>
-        <a id="previous" href="#previous" title="Go To Previous String (Ctrl + Alt + ,)"><span class="fa fa-chevron-up fa-lg"></span>Previous</a>
+        <a id="next" href="#next" title="Go To Next String (Alt + Down)"><span class="fa fa-chevron-down fa-lg"></span>Next</a>
+        <a id="previous" href="#previous" title="Go To Previous String (Alt + Up)"><span class="fa fa-chevron-up fa-lg"></span>Previous</a>
       </div>
 
       <div id="source-pane">
@@ -244,10 +244,10 @@
                   {{ Shortcut.shortcut('Insert A New Line', ['Shift', 'Enter']) }}
                   {{ Shortcut.shortcut('Go To Next String', ['Alt', 'Down']) }}
                   {{ Shortcut.shortcut('Go To Previous String', ['Alt', 'Up']) }}
-                  {{ Shortcut.shortcut('Copy From Source', ['Ctrl', 'Alt', 'C']) }}
-                  {{ Shortcut.shortcut('Clear Translation', ['Ctrl', 'Alt', 'Backspace']) }}
-                  {{ Shortcut.shortcut('Search Strings', ['Ctrl', 'Alt', 'F']) }}
-                  {{ Shortcut.shortcut('Select All Strings', ['Ctrl', 'Alt', 'A']) }}
+                  {{ Shortcut.shortcut('Copy From Source', ['Ctrl', 'Shift', 'C']) }}
+                  {{ Shortcut.shortcut('Clear Translation', ['Ctrl', 'Shift', 'Backspace']) }}
+                  {{ Shortcut.shortcut('Search Strings', ['Ctrl', 'Shift', 'F']) }}
+                  {{ Shortcut.shortcut('Select All Strings', ['Ctrl', 'Shift', 'A']) }}
                   {{ Shortcut.shortcut('Copy From Helpers', ['Tab']) }}
                 </tbody>
               </table>
@@ -258,8 +258,8 @@
             <span class="current-length"></span>|<span class="original-length"></span>
           </div>
 
-          <button id="copy" title="Copy From Source (Ctrl + Alt + C)">Copy</button>
-          <button id="clear" title="Clear Translation (Ctrl + Alt + Backspace)">Clear</button>
+          <button id="copy" title="Copy From Source (Ctrl + Shift + C)">Copy</button>
+          <button id="clear" title="Clear Translation (Ctrl + Shift + Backspace)">Clear</button>
           <button id="save" title="Save Translation (Enter)"></button>
         {% else %}
           <p id="sign-in-required"><a id="sidebar-signin" href="">Sign in</a> to translate.</p>
@@ -326,7 +326,7 @@
           </span>
           <span class="selected">selected</span>
         </a>
-        <a class="select-all" href="#select-all" title="Select All Strings (Ctrl + Alt + A)">
+        <a class="select-all" href="#select-all" title="Select All Strings (Ctrl + Shift + A)">
           <span class="fa fa-check fa-lg"></span>
           Select All
         </a>
