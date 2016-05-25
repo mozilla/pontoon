@@ -914,7 +914,12 @@ var Pontoon = (function (my) {
         }
       });
 
-      // Translate textarea keyboard shortcuts
+      /* Translate textarea keyboard shortcuts
+       *
+       * Known keyboard shortcut clashes:
+       * - Czech Windows keyboard: Ctrl + Alt + C/F/./,
+       * - Polish keyboard: Alt + C
+       */
       $('#translation').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
         var key = e.which;
 
@@ -923,7 +928,7 @@ var Pontoon = (function (my) {
           return false;
         }
 
-        // Enter: save translation
+        // Enter: Save translation
         if (key === 13 && !e.shiftKey && !e.altKey) {
           if ($('#leave-anyway').is(':visible')) {
             $('#leave-anyway').click();
@@ -933,7 +938,7 @@ var Pontoon = (function (my) {
           return false;
         }
 
-        // Esc: cancel translation and return to entity list
+        // Esc: Cancel translation and return to entity list
         if (key === 27) {
           if ($('.warning-overlay').is(':visible')) {
             $('.warning-overlay .cancel').click();
@@ -946,31 +951,31 @@ var Pontoon = (function (my) {
           return false;
         }
 
-        // Ctrl + Alt + C: copy from source
-        if (e.ctrlKey && e.altKey && key === 67) {
+        // Ctrl + Shift + C: Copy from source
+        if (e.ctrlKey && e.shiftKey && key === 67) {
           $('#copy').click();
           return false;
         }
 
-        // Ctrl + Alt + Backspace: clear translation
-        if (e.ctrlKey && e.altKey && key === 8) {
+        // Ctrl + Shift + Backspace: Clear translation
+        if (e.ctrlKey && e.shiftKey && key === 8) {
           $('#clear').click();
           return false;
         }
 
-        // Alt + Down: go to next string
+        // Alt + Down: Go to next string
         if (e.altKey && key === 40) {
           self.navigateToEntity('next');
           return false;
         }
 
-        // Alt + Up: go to previous string
+        // Alt + Up: Go to previous string
         if (e.altKey && key === 38) {
           self.navigateToEntity('previous');
           return false;
         }
 
-        // Tab: select suggestions
+        // Tab: Select suggestions
         if (!$('.menu').is(':visible') && key === 9) {
 
           var section = $('#helpers section:visible'),
