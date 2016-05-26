@@ -55,10 +55,10 @@
   <div class="total">
     <span>Total</span>
     <p>{{ translations.count() }}</p>
-  </div><div class="approved">
+  </div><div class="translated">
     <span>Translated</span>
     <p>{{ translations.filter(approved=True).count() }}</p>
-  </div><div class="translated">
+  </div><div class="suggested">
     <span>Suggested</span>
     <p>{{ translations.exclude(approved=True).exclude(fuzzy=True).count() }}</p>
   </div><div class="fuzzy">
