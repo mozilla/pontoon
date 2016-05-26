@@ -44,6 +44,11 @@ def end_repo_sync(repo, repo_sync_log):
     repo_sync_log.save(update_fields=['end_time'])
 
 
+def update_locale_project_locale_stats(locale, project):
+    locale.aggregate_stats()
+    locale.project_locale.get(project=project).aggregate_stats()
+
+
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0}')
 def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_commit=False, force=False):
     """Fetch the project with the given PK and perform sync on it."""
@@ -162,6 +167,8 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
             with transaction.atomic():
                 # Skip locales that have nothing to sync
                 if vcs_project.synced_locales and locale not in vcs_project.synced_locales:
+                    if obsolete_vcs_entities or obsolete_vcs_resources:
+                        update_locale_project_locale_stats(locale, db_project)
                     continue
 
                 changeset = ChangeSet(db_project, vcs_project, now, obsolete_vcs_entities, obsolete_vcs_resources)
@@ -175,13 +182,17 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
                 # VCSProject.resources, which is set in
                 # pontoon.sync.core.update_translated_resources()
                 if len(vcs_project.synced_locales) == 0:
+                    if obsolete_vcs_entities or obsolete_vcs_resources:
+                        for l in locales:
+                            update_locale_project_locale_stats(l, db_project)
+                        db_project.aggregate_stats()
+
                     log.info('Skipping repo `{0}` for project {1}, none of the locales has anything to sync.'
                              .format(repo.url, db_project.slug))
                     end_repo_sync(repo, repo_sync_log)
                     return
 
-                locale.aggregate_stats()
-                locale.project_locale.get(project=db_project).aggregate_stats()
+                update_locale_project_locale_stats(locale, db_project)
 
                 # Clear out the "has_changed" markers now that we've finished
                 # syncing.

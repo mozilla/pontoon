@@ -211,6 +211,7 @@ class VCSProject(object):
                 else:
                     locales += self.changed_files[path]
 
+            locales = set(locales)
             map(self.synced_locales.add, locales)
             log.debug('Resource file {} for {}'.format(path, ','.join([l.code for l in locales])))
 
