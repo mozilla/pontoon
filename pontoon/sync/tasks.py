@@ -155,6 +155,13 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
     else:
         locales = repo.locales
 
+    # Cannot skip earlier - repo.locales is only available after pull_changes()
+    if not locales:
+        log.debug('Skipping repo `{0}` for project {1}, no locales to sync found within.'
+                  .format(repo.url, db_project.slug))
+        end_repo_sync(repo, repo_sync_log)
+        return
+
     vcs_project = VCSProject(
         db_project,
         locales=locales,
