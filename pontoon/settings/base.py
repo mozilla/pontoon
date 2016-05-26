@@ -31,6 +31,9 @@ ADMINS = MANAGERS = (
      os.environ.get('ADMIN_EMAIL', '')),
 )
 
+# A list of project manager email addresses to send project requests to
+PROJECT_MANAGERS = os.environ.get('PROJECT_MANAGERS', '').split(',')
+
 DATABASES = {
     'default': dj_database_url.config(default='mysql://root@localhost/pontoon')
 }

@@ -1207,14 +1207,14 @@ def request_projects(request, locale):
 
     projects = ''.join('- {} ({})\n'.format(p.name, p.slug) for p in project_list)
 
-    if settings.ADMINS[0][1] != '':
+    if settings.PROJECT_MANAGERS[0] != '':
         EmailMessage(
             'Project request for {locale} ({code})'.format(locale=locale.name, code=locale.code),
             'Please add the following projects to {locale} ({code}):\n{projects}'.format(
                 locale=locale.name, code=locale.code, projects=projects
             ),
             'pontoon@mozilla.com',
-            [settings.ADMINS[0][1]],
+            settings.PROJECT_MANAGERS,
             reply_to=[request.user.email]).send()
     else:
         raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
