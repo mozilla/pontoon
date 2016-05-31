@@ -83,3 +83,18 @@
 .new {
   display: none;
 }
+
+.clipboard-success {
+  float: left;
+  color: #7BC876;
+}
+
+.machinery li {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.machinery li:hover {
+  background-color: #3f4752;
+  cursor: pointer;
+}

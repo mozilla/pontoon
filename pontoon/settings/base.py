@@ -319,6 +319,7 @@ PIPELINE_JS = {
     },
     'search': {
         'source_filenames': (
+            'js/clipboard.min.js',
             'js/search.js',
         ),
         'output_filename': 'js/search.min.js',
