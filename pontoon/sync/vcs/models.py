@@ -213,7 +213,7 @@ class VCSProject(object):
 
             locales = set(locales)
             map(self.synced_locales.add, locales)
-            log.debug('Resource file {} for {}'.format(path, ','.join([l.code for l in locales])))
+            log.debug('Resource file {} for {}'.format(path, ','.join([l.code for l in locales]) or 'source'))
 
             try:
                 resources[path] = VCSResource(self, path, locales=locales)

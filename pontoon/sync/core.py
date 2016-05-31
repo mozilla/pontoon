@@ -119,7 +119,7 @@ def update_resources(db_project, vcs_project):
     removed_resources = db_project.resources.filter(path__in=vcs_removed_files)
     removed_paths = removed_resources.values_list('path', flat=True)
 
-    log.debug('Removed paths: {}'.format(', '.join(removed_paths)))
+    log.debug('Removed paths: {}'.format(', '.join(removed_paths) or 'None'))
     removed_resources.delete()
 
     for relative_path, vcs_resource in vcs_project.resources.items():
