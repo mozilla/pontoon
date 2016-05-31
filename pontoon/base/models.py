@@ -430,9 +430,6 @@ class Project(AggregatedStats):
     # Disable project instead of deleting to keep translation memory & attributions
     disabled = models.BooleanField(default=False)
 
-    # Whether this project has changed since the last sync.
-    has_changed = models.BooleanField(default=False)
-
     # Most recent translation approved or created for this project.
     latest_translation = models.ForeignKey(
         'Translation',
@@ -501,7 +498,7 @@ class Project(AggregatedStats):
         another sync is required.
         """
         changes = ChangedEntityLocale.objects.filter(entity__resource__project=self)
-        return self.has_changed or changes.exists() or self.unsynced_locales
+        return changes.exists() or self.unsynced_locales
 
     @property
     def can_commit(self):

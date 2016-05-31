@@ -155,15 +155,6 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
             changed2.refresh_from_db()
         changed_after.refresh_from_db()  # Should not raise
 
-    def test_reset_project_has_changed(self):
-        """After syncing, set db_project.has_changed to False."""
-        self.db_project.has_changed = True
-        self.db_project.save()
-
-        sync_project(self.db_project.pk, self.project_sync_log.sync_log.pk)
-        self.db_project.refresh_from_db()
-        assert_false(self.db_project.has_changed)
-
     def test_no_commit(self):
         """Don't call commit_changes if command.no_commit is True."""
         sync_project_repo(self.db_project.pk, self.repository.pk,

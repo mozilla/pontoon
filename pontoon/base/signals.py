@@ -16,21 +16,6 @@ from pontoon.base.models import (
 )
 
 
-@receiver(post_save, sender=ProjectLocale)
-def project_locale_added(sender, **kwargs):
-    """
-    When a new locale is added to a project, mark the project as
-    changed.
-    """
-    created = kwargs.get('created', False)
-    raw = kwargs.get('raw', False)
-    project_locale = kwargs.get('instance', None)
-    if created and not raw and project_locale is not None:
-        project = project_locale.project
-        project.has_changed = True
-        project.save(update_fields=['has_changed'])
-
-
 @receiver(post_delete, sender=ProjectLocale)
 def project_locale_removed(sender, **kwargs):
     """

@@ -58,7 +58,7 @@ class SubpageInline(admin.TabularInline):
 
 class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['name', 'slug']
-    list_display = ('name', 'slug', 'pk', 'disabled', 'has_changed')
+    list_display = ('name', 'slug', 'pk', 'disabled')
 
     fieldsets = (
         (None, {
@@ -68,7 +68,7 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('url', 'width', 'links'),
         }),
     )
-    readonly_fields = AGGREGATED_STATS_FIELDS + ('latest_translation', 'has_changed')
+    readonly_fields = AGGREGATED_STATS_FIELDS + ('latest_translation',)
     inlines = (ProjectLocaleInline, RepositoryInline, SubpageInline)
 
 

@@ -103,12 +103,21 @@ class ProjectTests(TestCase):
     def test_needs_sync(self):
         """
         Project.needs_sync should be True if ChangedEntityLocale objects
-        exist for its entities or if Project.has_changed is True.
+        exist for its entities or if Project has unsynced locales.
         """
-        assert_true(ProjectFactory.create(has_changed=True).needs_sync)
+        project = ProjectFactory.create()
+        assert_false(project.needs_sync)
 
-        project = ProjectFactory.create(has_changed=False)
         ChangedEntityLocaleFactory.create(entity__resource__project=project)
+        assert_true(project.needs_sync)
+
+        project = ProjectFactory.create()
+        assert_false(project.needs_sync)
+
+        ProjectLocaleFactory.create(
+            project=project,
+            locale=LocaleFactory.create()
+        )
         assert_true(project.needs_sync)
 
     def test_get_latest_activity_with_latest(self):
