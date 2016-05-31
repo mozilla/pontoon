@@ -2,7 +2,8 @@
 Models for working with remote translation data stored in a VCS.
 """
 import logging
-import os.path
+import os
+import shutil
 
 from itertools import chain
 from datetime import datetime
@@ -16,6 +17,7 @@ from pontoon.sync.utils import (
     is_hidden,
     directory_contains_resources,
     is_resource,
+    is_asymmetric_resource,
     locale_directory_path,
     locale_to_source_path,
     source_to_locale_path,
@@ -35,6 +37,10 @@ class MissingSourceRepository(Exception):
 
 class MissingSourceDirectoryError(Exception):
     """Raised when sync can't find the source directory for the locales."""
+
+
+class MissingLocaleDirectoryError(IOError):
+    """Raised when sync can't find the locale directory."""
 
 
 class VCSProject(object):
@@ -293,6 +299,35 @@ class VCSProject(object):
                 if is_resource(filename):
                     yield os.path.join(root, filename)
 
+    def create_locale_directory(self, locale, path):
+        if not self.db_project.has_multi_locale_repositories:
+            source_directory = self.source_directory_path()
+            parent_directory = os.path.abspath(os.path.join(source_directory, os.pardir))
+            locale_directory = os.path.join(parent_directory, locale.code.replace('-', '_'))
+
+            # For asymmetric formats, create empty folder
+            if is_asymmetric_resource(path):
+                os.makedirs(locale_directory)
+
+            # For other formats, copy resources from source directory
+            else:
+                shutil.copytree(source_directory, locale_directory)
+
+                for root, dirnames, filenames in os.walk(locale_directory):
+                    for filename in filenames:
+                        path = os.path.join(root, filename)
+                        if is_resource(filename):
+                            os.rename(path, source_to_locale_path(path))
+                        else:
+                            os.remove(path)
+
+            return locale_directory
+
+        else:
+            raise MissingLocaleDirectoryError(
+                'Directory for locale `{0}` not found'.format(locale.code)
+            )
+
 
 class VCSResource(object):
     """Represents a single resource across multiple locales."""
@@ -329,11 +364,17 @@ class VCSResource(object):
 
         # Fill in translations from the locale resources.
         for locale in locales:
-            resource_path = os.path.join(
-                locale_directory_path(vcs_project.checkout_path, locale.code),
-                self.path
-            )
+            try:
+                locale_directory = locale_directory_path(
+                    vcs_project.checkout_path, locale.code
+                )
 
+            except IOError:
+                locale_directory = self.vcs_project.create_locale_directory(
+                    locale, self.path
+                )
+
+            resource_path = os.path.join(locale_directory, self.path)
             log.debug('Parsing resource file: %s', resource_path)
 
             try:

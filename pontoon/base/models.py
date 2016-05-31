@@ -549,6 +549,14 @@ class Project(AggregatedStats):
         else:
             return repo
 
+    @property
+    def has_multi_locale_repositories(self):
+        for repo in self.repositories.all():
+            if repo.multi_locale:
+                return True
+
+        return False
+
     @cached_property
     def source_repository(self):
         """
@@ -753,14 +761,16 @@ class Repository(models.Model):
     def locales(self):
         """
         Yield an iterable of Locales whose strings are stored within
-        this repo.
+        this repo. Also return enabled locales that are to be added to
+        the repo.
         """
         from pontoon.sync.utils import locale_directory_path
 
         locales = []  # Use list since we're caching the result.
         for locale in self.project.locales.all():
             try:
-                locale_directory_path(self.checkout_path, locale.code)
+                if self.project.has_multi_locale_repositories:
+                    locale_directory_path(self.checkout_path, locale.code)
                 locales.append(locale)
             except IOError:
                 pass  # Directory missing, not in this repo.
