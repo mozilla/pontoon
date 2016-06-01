@@ -455,7 +455,11 @@ def entities(request):
         # If requested entity not on the first page
         entity = request.POST.get('entity', None)
         if entity:
-            entity_pk = int(entity)
+            try:
+                entity_pk = int(entity)
+            except ValueError as err:
+                return HttpResponseBadRequest('Bad Request: {error}'.format(error=err))
+
             # TODO: entities_to_map.values_list() doesn't return entities from selected page
             if entity_pk not in [e.pk for e in entities_to_map]:
                 if entity_pk in entities.values_list('pk', flat=True):
