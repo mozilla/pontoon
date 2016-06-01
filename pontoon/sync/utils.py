@@ -30,6 +30,14 @@ def is_source_resource(filename):
     return extension_in(filename, Resource.SOURCE_EXTENSIONS)
 
 
+def is_asymmetric_resource(filename):
+    """
+    Return True if the filename's extension is an asymmetric Resource
+    format.
+    """
+    return extension_in(filename, Resource.ASYMMETRIC_FORMATS)
+
+
 def directory_contains_resources(directory_path, source_only=False):
     """
     Return True if the given directory contains at least one
