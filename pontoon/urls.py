@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.views import logout
 from django.views.generic import RedirectView, TemplateView
-
+from django.contrib.staticfiles.views import serve as staticfile
 from pontoon.intro.views import intro
 
 urlpatterns = [
@@ -51,8 +51,7 @@ urlpatterns = [
         RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),
 
     # Include script
-    url(r'^pontoon\.js$',
-        RedirectView.as_view(url='/static/js/pontoon.js', permanent=True)),
+    url(r'^pontoon\.js$', staticfile, kwargs=dict(path='js/pontoon.js', insecure=True)),
 
     # Main app: Must be at the end
     url(r'', include('pontoon.base.urls')),

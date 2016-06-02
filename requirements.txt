@@ -136,3 +136,5 @@ futures==3.0.4 \
     --hash=sha256:19485d83f7bd2151c0aeaf88fbba3ee50dadfb222ffc3b66a344ef4952b782a3
 raygun4py==3.1.2 \
     --hash=sha256:ee32cc3c7b1320fc0312c2b3a904a810f61ba302c2bad6dec836bb19fbf68340
+django-cors-headers==1.1.0 \
+    --hash=sha256:fcd96e2be47c8eef34c650e007a6d546e19e7ee61041b89edbbbbe7619aa3987
