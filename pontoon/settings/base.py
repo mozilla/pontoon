@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     'pipeline',
     'session_csrf',
     'guardian',
+    'corsheaders',
 )
 
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
@@ -122,6 +123,7 @@ MIDDLEWARE_CLASSES = (
     'sslify.middleware.SSLifyMiddleware',
     'pontoon.base.middleware.RaygunExceptionMiddleware',
     'pontoon.base.middleware.BlockedIpMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -548,3 +550,10 @@ BROKER_POOL_LIMIT = 1  # Limit to one connection per worker
 BROKER_CONNECTION_TIMEOUT = 30  # Give up connecting faster
 CELERY_RESULT_BACKEND = None  # We don't store results
 CELERY_SEND_EVENTS = False  # We aren't yet monitoring events
+
+# Settings related to the CORS mechanisms.
+# For the sake of integration with other sites,
+# some of javascript files (e.g. pontoon.js)
+# require Access-Control-Allow-Origin header to be set as '*'.
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/pontoon\.js$'
