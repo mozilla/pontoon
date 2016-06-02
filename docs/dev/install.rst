@@ -14,7 +14,12 @@ This guide assumes you have already installed and set up the following:
 
 These docs assume a Unix-like operating system, although the site should, in
 theory, run on Windows as well. All the example commands given below are
-intended to be run in a terminal.
+intended to be run in a terminal.  If you're on Ubuntu 16.04, you can install
+all the prerequisites using the following command:
+
+   .. code-block:: bash
+
+      sudo apt install git python-pip nodejs-legacy npm postgresql postgresql-server-dev-9.5 libxml2-dev libxslt1-dev python-dev libmemcached-dev
 
 .. _Git: https://git-scm.com/
 .. _Python 2.7: https://www.python.org/
