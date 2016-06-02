@@ -19,7 +19,7 @@ all the prerequisites using the following command:
 
    .. code-block:: bash
 
-      sudo apt install git python-pip npm postgresql postgresql-server-dev-9.5 libxml2-dev libxslt1-dev python-dev libmemcached-dev
+      sudo apt install git python-pip nodejs-legacy npm postgresql postgresql-server-dev-9.5 libxml2-dev libxslt1-dev python-dev libmemcached-dev
 
 .. _Git: https://git-scm.com/
 .. _Python 2.7: https://www.python.org/
