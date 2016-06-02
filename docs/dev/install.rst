@@ -10,7 +10,7 @@ This guide assumes you have already installed and set up the following:
 1. Git_
 2. `Python 2.7`_, pip_, and virtualenv_
 3. `Node.js`_ and npm_
-4. `Postgres 9.4`_
+4. `Postgres 9.4 or 9.5`_
 
 These docs assume a Unix-like operating system, although the site should, in
 theory, run on Windows as well. All the example commands given below are
@@ -27,7 +27,7 @@ all the prerequisites using the following command:
 .. _virtualenv: https://virtualenv.pypa.io/en/latest/
 .. _Node.js: https://nodejs.org/
 .. _npm: https://www.npmjs.com/
-.. _Postgres 9.4: http://www.postgresql.org/
+.. _Postgres 9.4 or 9.5: http://www.postgresql.org/
 
 Installation
 ------------
