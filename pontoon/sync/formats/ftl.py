@@ -105,7 +105,10 @@ class L20NResource(ParsedResource):
 
             if translations:
                 source = translations[None]
-                obj['value'] = ParseContext(source).getPattern().toJSON()
+                key = self.entities[entity_id].key
+                entity = ParseContext(key + '=' + source).getEntity().toJSON()
+                obj['value'] = entity['value']
+                obj['traits'] = entity['traits']
             else:
                 index = entities.index(obj)
                 del entities[index]
