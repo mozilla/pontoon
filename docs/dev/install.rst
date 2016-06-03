@@ -55,7 +55,7 @@ Installation
 
    .. code-block:: bash
 
-      pip install --require-hashes -r requirements.txt
+      pip install --require-hashes -r requirements-dev.txt
 
 4. Create a ``.env`` file at the root of the repository to configure the
    settings for your development instance. It should look something like this:

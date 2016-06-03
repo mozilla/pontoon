@@ -68,6 +68,7 @@ you create:
 ``DJANGO_DEV``
    Signifies whether this is a development server or not. Should be `False` in
    production.
+   Adds some additional django apps that can be helpful during day to day development.
 
 ``NEW_RELIC_API_KEY``
    Optional. API key for accessing the New Relic REST API. Used to mark deploys
