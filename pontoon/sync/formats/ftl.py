@@ -61,7 +61,7 @@ class L20NResource(ParsedResource):
             return [obj['comment']['content']] if obj['comment'] else []
 
         def parse_entity(obj, section_comment=[]):
-            translation = FTLSerializer().dumpEntity(obj).split(' = ', 1)[1]
+            translation = FTLSerializer().dumpEntity(obj).split('=', 1)[1].lstrip(' ')
             self.entities[obj['id']['name']] = L20NEntity(
                 obj['id']['name'],
                 translation,
