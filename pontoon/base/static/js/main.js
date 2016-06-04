@@ -129,7 +129,7 @@ var Pontoon = (function (my) {
           sourcesMap = {};
 
       function append(data) {
-        var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : '',
+        var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : ' title="Copy to clipboard"',
             sources = sourcesMap[data.original + data.translation];
 
         if (sources) {
@@ -141,7 +141,7 @@ var Pontoon = (function (my) {
           );
 
         } else {
-          var li = $('<li' + title + '>' +
+          var li = $('<li' + title + ' data-clipboard-text="' + self.doNotRender(data.translation) + '">' +
             '<header>' +
               (data.quality ? '<span class="stress">' + data.quality + '</span>' : '') +
               '<ul class="sources">' +

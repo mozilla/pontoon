@@ -29,4 +29,19 @@ $(function() {
     }
   });
 
+  // Handle "Copy to clipboard" on search results.
+  var clipboard = new Clipboard('.search .machinery li');
+
+  clipboard.on('success', function(event) {
+    var successMessage = $('<span class="clipboard-success">Copied!</span>'),
+        $trigger = $(event.trigger);
+
+    $('.clipboard-success').remove();
+    $trigger.find('header').prepend(successMessage);
+    setTimeout(function() {
+      successMessage.fadeOut(500, function() {
+         successMessage.remove();
+      });
+    }, 1000);
+  });
 });
