@@ -16,7 +16,16 @@ class RaygunExceptionMiddleware(Provider):
 
 class BlockedIpMiddleware(object):
     def process_request(self, request):
-        # Block IP addresses via settings variable BLOCKED_IPS
-        if request.META['REMOTE_ADDR'] in settings.BLOCKED_IPS:
+        try:
+            ip = request.META['HTTP_X_FORWARDED_FOR']
+            # If comma-separated list of IPs, take just the last one
+            # http://stackoverflow.com/a/18517550
+            ip = ip.split(',')[-1]
+        except KeyError:
+            ip = request.META['REMOTE_ADDR']
+
+        # Block client IP addresses via settings variable BLOCKED_IPS
+        if ip in settings.BLOCKED_IPS:
             return HttpResponseForbidden('<h1>Forbidden</h1>')
+
         return None
