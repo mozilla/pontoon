@@ -62,7 +62,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'info_brief',),
+            'fields': ('name', 'slug', 'info_brief', 'disabled',),
         }),
         ('WEBSITE', {
             'fields': ('url', 'width', 'links'),
