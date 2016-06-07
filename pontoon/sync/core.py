@@ -27,12 +27,12 @@ def sync_project(db_project, now, full_scan=False):
     vcs_project = VCSProject(db_project, locales=[], full_scan=full_scan)
 
     with transaction.atomic():
-        removed_paths = update_resources(db_project, vcs_project)
+        removed_paths, added_paths = update_resources(db_project, vcs_project)
         changeset = ChangeSet(db_project, vcs_project, now)
         update_entities(db_project, vcs_project, changeset)
         changeset.execute()
 
-    return changeset.changes['obsolete_db'], removed_paths
+    return changeset.changes['obsolete_db'], removed_paths, added_paths
 
 
 def serial_task(timeout, lock_key="", **celery_args):
@@ -119,6 +119,8 @@ def update_resources(db_project, vcs_project):
     removed_resources = db_project.resources.filter(path__in=vcs_removed_files)
     removed_paths = removed_resources.values_list('path', flat=True)
 
+    added_paths = []
+
     log.debug('Removed paths: {}'.format(', '.join(removed_paths) or 'None'))
     removed_resources.delete()
 
@@ -127,7 +129,12 @@ def update_resources(db_project, vcs_project):
         resource.format = Resource.get_path_format(relative_path)
         resource.total_strings = len(vcs_resource.entities)
         resource.save()
-    return removed_paths
+
+        if created:
+            added_paths.append(relative_path)
+
+    log.debug('Added paths: {}'.format(', '.join(added_paths) or 'None'))
+    return removed_paths, added_paths
 
 
 def update_translations(db_project, vcs_project, locale, changeset):

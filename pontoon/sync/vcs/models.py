@@ -55,7 +55,7 @@ class VCSProject(object):
     }
     SOURCE_DIR_NAMES = SOURCE_DIR_SCORES.keys()
 
-    def __init__(self, db_project, locales=None, obsolete_entities_paths=None, full_scan=False):
+    def __init__(self, db_project, locales=None, obsolete_entities_paths=None, new_paths=None, full_scan=False):
         """
         Load resource paths from the given db_project and parse them
         for translation data.
@@ -69,12 +69,15 @@ class VCSProject(object):
             locales on the project.
         :param list obsolete_entities_paths:
             List of paths to remove translations of obsolete entities from
+        :param list new_paths:
+            List of newly added files paths
         :param bool full_scan:
             Scans all resources in repository
         """
         self.db_project = db_project
         self.locales = locales if locales is not None else db_project.locales.all()
         self.obsolete_entities_paths = obsolete_entities_paths or []
+        self.new_paths = new_paths or []
         self.full_scan = full_scan
         self.synced_locales = set()
 
@@ -206,13 +209,14 @@ class VCSProject(object):
 
             if (self.changed_files is not None and
                 ((not self.changed_files or path not in self.changed_files) and
-                    path not in self.obsolete_entities_paths)):
+                    path not in self.obsolete_entities_paths and
+                        path not in self.new_paths)):
                 if not locales:
                     log.debug('Skipping unchanged file: {}'.format(path))
                     continue
 
             else:
-                if self.changed_files is None or path in self.obsolete_entities_paths:
+                if self.changed_files is None or path in self.obsolete_entities_paths or path in self.new_paths:
                     locales += self.locales
                 else:
                     locales += self.changed_files[path]

@@ -100,7 +100,7 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
 
     else:
         try:
-            obsolete_vcs_entities, obsolete_vcs_resources = perform_sync_project(db_project, now, full_scan=force)
+            obsolete_vcs_entities, obsolete_vcs_resources, new_paths = perform_sync_project(db_project, now, full_scan=force)
         except MissingSourceDirectoryError, e:
             log.error(e)
             project_sync_log.skip()
@@ -117,6 +117,7 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
                 now,
                 obsolete_vcs_entities,
                 obsolete_vcs_resources,
+                new_paths,
                 no_pull=no_pull,
                 no_commit=no_commit,
                 full_scan=force
@@ -128,7 +129,7 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
 
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}')
 def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsolete_vcs_entities=None,
-                      obsolete_vcs_resources=None, locale=None, no_pull=False, no_commit=False,
+                      obsolete_vcs_resources=None, new_paths=None, locale=None, no_pull=False, no_commit=False,
                       full_scan=False):
     db_project = get_or_fail(Project, pk=project_pk,
         message='Could not sync project with pk={0}, not found.'.format(project_pk))
@@ -166,6 +167,7 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
         db_project,
         locales=locales,
         obsolete_entities_paths=Resource.objects.obsolete_entities_paths(obsolete_vcs_entities),
+        new_paths=new_paths,
         full_scan=full_scan
     )
 
