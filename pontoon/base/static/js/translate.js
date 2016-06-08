@@ -2727,7 +2727,7 @@ var Pontoon = (function (my) {
       var $editor = $('#editor'),
           $sidebar = $('#sidebar');
 
-      if ((this.requiresInplaceEditor() && !$editor.is('.opened')) ||
+      if ((this.requiresInplaceEditor() && !$editor.is('.opened') && this.project.url) ||
           (!this.requiresInplaceEditor() && $sidebar.is('.no'))) {
         return;
       }
