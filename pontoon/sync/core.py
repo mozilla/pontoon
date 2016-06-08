@@ -35,12 +35,13 @@ def sync_project(db_project, now, full_scan=False):
     return changeset.changes['obsolete_db'], removed_paths
 
 
-def serial_task(timeout, lock_key="", **celery_args):
+def serial_task(timeout, lock_key="", on_error=None, **celery_args):
     """
     Decorator ensures that there's only one running task with given task_name.
     Decorated tasks are bound tasks, meaning their first argument is always their Task instance
     :param timeout: time after which lock is released.
     :param lock_key: allows to define different lock for respective parameters of task.
+    :param on_error: callback to be executed if an error is raised.
     :param celery_args: argument passed to celery's shared_task decorator.
     """
     def wrapper(func):
@@ -50,8 +51,11 @@ def serial_task(timeout, lock_key="", **celery_args):
             lock_name = "serial_task.{}[{}]".format(self.name, lock_key.format(*args, **kwargs))
             # Acquire the lock
             if not cache.add(lock_name, True, timeout=timeout):
-                raise RuntimeError("Can't execute task '{}' because the previously called"
+                error = RuntimeError("Can't execute task '{}' because the previously called"
                     " task is still running.".format(lock_name))
+                if callable(on_error):
+                    on_error(error, *args, **kwargs)
+                raise error
             try:
                 return func(self, *args, **kwargs)
             finally:

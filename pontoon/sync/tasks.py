@@ -38,10 +38,20 @@ def get_or_fail(ModelClass, message=None, **kwargs):
         raise
 
 
-def end_repo_sync(repo, repo_sync_log):
-    repo.set_current_last_synced_revisions()
-    repo_sync_log.end_time = timezone.now()
-    repo_sync_log.save(update_fields=['end_time'])
+def sync_project_error(error, *args, **kwargs):
+    ProjectSyncLog.objects.create(
+        sync_log=SyncLog.objects.get(pk=args[1]),
+        project=Project.objects.get(pk=args[0]),
+        start_time=timezone.now()
+    ).skip()
+
+
+def sync_project_repo_error(error, *args, **kwargs):
+    RepositorySyncLog.objects.create(
+        project_sync_log=ProjectSyncLog.objects.get(pk=args[2]),
+        repository=Repository.objects.get(pk=args[1]),
+        start_time=timezone.now()
+    ).end()
 
 
 def update_locale_project_locale_stats(locale, project):
@@ -49,7 +59,7 @@ def update_locale_project_locale_stats(locale, project):
     locale.project_locale.get(project=project).aggregate_stats()
 
 
-@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0}')
+@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0}', on_error=sync_project_error)
 def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_commit=False, force=False):
     """Fetch the project with the given PK and perform sync on it."""
     db_project = get_or_fail(Project, pk=project_pk,
@@ -126,7 +136,7 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
             repo.set_current_last_synced_revisions()
 
 
-@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}')
+@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}', on_error=sync_project_repo_error)
 def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsolete_vcs_entities=None,
                       obsolete_vcs_resources=None, locale=None, no_pull=False, no_commit=False,
                       full_scan=False):
@@ -159,7 +169,7 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
     if not locales:
         log.debug('Skipping repo `{0}` for project {1}, no locales to sync found within.'
                   .format(repo.url, db_project.slug))
-        end_repo_sync(repo, repo_sync_log)
+        repo_sync_log.end()
         return
 
     vcs_project = VCSProject(
@@ -196,7 +206,7 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
 
                     log.info('Skipping repo `{0}` for project {1}, none of the locales has anything to sync.'
                              .format(repo.url, db_project.slug))
-                    end_repo_sync(repo, repo_sync_log)
+                    repo_sync_log.end()
                     return
 
                 update_locale_project_locale_stats(locale, db_project)
@@ -255,4 +265,4 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
     log.info('Synced translations for project {0} in locales {1}.'.format(
         db_project.slug, ','.join(locale.code for locale in vcs_project.synced_locales)
     ))
-    end_repo_sync(repo, repo_sync_log)
+    repo_sync_log.end()

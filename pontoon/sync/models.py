@@ -110,3 +110,8 @@ class RepositorySyncLog(BaseLog):
     @property
     def finished(self):
         return self.end_time is not None
+
+    def end(self):
+        self.repository.set_current_last_synced_revisions()
+        self.end_time = timezone.now()
+        self.save(update_fields=['end_time'])
