@@ -1118,7 +1118,7 @@ def download(request):
 
     content, filename = utils.get_download_content(slug, code, part)
 
-    if not content:
+    if content is None:
         raise Http404
 
     response = HttpResponse()
