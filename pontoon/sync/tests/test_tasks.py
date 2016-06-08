@@ -34,7 +34,7 @@ class SyncProjectTests(TestCase):
             Project, 'needs_sync', new_callable=PropertyMock, return_value=True)
         self.mock_sync_project_repo = self.patch('pontoon.sync.tasks.sync_project_repo')
 
-        self.mock_perform_sync_project = self.patch('pontoon.sync.tasks.perform_sync_project', return_value=[[], []])
+        self.mock_perform_sync_project = self.patch('pontoon.sync.tasks.perform_sync_project', return_value=[[], [], []])
 
         self.mock_source_directory_path = self.patch('pontoon.sync.vcs.models.VCSProject.source_directory_path',
                                                             return_value=self.repository.checkout_path)
