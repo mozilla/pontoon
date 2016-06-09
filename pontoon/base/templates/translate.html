@@ -17,6 +17,7 @@
      {% if user.profile and user.profile.force_suggestions %}data-force-suggestions="{{ user.profile.force_suggestions }}"{% endif %}
      {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if perms.base.can_manage %}data-manager="true"{% endif %}
+     data-authors="{{ authors|to_json() }}"
      >
 </div>
 
@@ -146,15 +147,18 @@
         </div>
         <div class="menu">
           <ul>
-            <li class="all"><span class="status fa"></span>All</li>
-            <li class="missing"><span class="status fa"></span>Missing</li>
-            <li class="fuzzy"><span class="status fa"></span>Fuzzy</li>
-            <li class="suggested"><span class="status fa"></span>Suggested</li>
-            <li class="translated"><span class="status fa"></span>Translated</li>
-            <li class="horizontal-separator"></li>
-            <li class="untranslated"><span class="status fa"></span>Untranslated</li>
-            <li class="has-suggestions"><span class="status fa"></span>Has Suggestions</li>
-            <li class="unchanged"><span class="status fa"></span>Unchanged</li>
+            <li class="horizontal-separator">By Translation Status</li>
+            <li class="all" data-type="all"><span class="status fa"></span>All</li>
+            <li class="missing" data-type="missing"><span class="status fa"></span>Missing</li>
+            <li class="fuzzy" data-type="fuzzy"><span class="status fa"></span>Fuzzy</li>
+            <li class="suggested" data-type="suggested"><span class="status fa"></span>Suggested</li>
+            <li class="translated" data-type="translated"><span class="status fa"></span>Translated</li>
+            <li class="horizontal-separator for-authors">By Translation Author</li>
+            <li class="authors"><ul></ul></li>
+            <li class="horizontal-separator">Smart Filters</li>
+            <li class="untranslated" data-type="untranslated"><span class="status fa"></span>Untranslated</li>
+            <li class="unchanged" data-type="unchanged"><span class="status fa"></span>Unchanged</li>
+            <li class="has-suggestions" data-type="has-suggestions"><span class="status fa"></span>Has Suggestions</li>
           </ul>
         </div>
       </div>
