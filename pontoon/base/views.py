@@ -235,7 +235,7 @@ def translate(request, locale, slug, part):
     )
 
     paths = [part] if part != 'all-resources' else None
-    authors = Translation.authors(locale, project, paths, serialize=True)
+    authors = Translation.authors(locale, project, paths).serialize()
 
     return render(request, 'translate.html', {
         'download_form': forms.DownloadFileForm(),
@@ -419,7 +419,7 @@ def entities(request):
         return JsonResponse({
             'entities': Entity.map_entities(locale, entities),
             'stats': TranslatedResource.objects.stats(project, paths, locale),
-            'authors': Translation.authors(locale, project, paths, serialize=True),
+            'authors': Translation.authors(locale, project, paths).serialize(),
         }, safe=False)
 
     entities = Entity.for_project_locale(
@@ -475,7 +475,7 @@ def entities(request):
         'entities': Entity.map_entities(locale, entities_to_map, visible_entities),
         'has_next': has_next,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
-        'authors': Translation.authors(locale, project, paths, serialize=True),
+        'authors': Translation.authors(locale, project, paths).serialize(),
     }, safe=False)
 
 
@@ -793,7 +793,7 @@ def update_translation(request):
                     'type': 'updated',
                     'translation': t.serialize(),
                     'stats': TranslatedResource.objects.stats(project, paths, l),
-                    'authors': Translation.authors(l, project, paths, serialize=True),
+                    'authors': Translation.authors(l, project, paths).serialize(),
                 })
 
             # If added by non-privileged user, unfuzzy it
@@ -818,7 +818,7 @@ def update_translation(request):
                         'type': 'updated',
                         'translation': t.serialize(),
                         'stats': TranslatedResource.objects.stats(project, paths, l),
-                        'authors': Translation.authors(l, project, paths, serialize=True),
+                        'authors': Translation.authors(l, project, paths).serialize(),
                     })
 
                 return JsonResponse({
@@ -859,7 +859,7 @@ def update_translation(request):
                 'type': 'added',
                 'translation': active.serialize(),
                 'stats': TranslatedResource.objects.stats(project, paths, l),
-                'authors': Translation.authors(l, project, paths, serialize=True),
+                'authors': Translation.authors(l, project, paths).serialize(),
             })
 
     # No translations saved yet
@@ -884,7 +884,7 @@ def update_translation(request):
             'type': 'saved',
             'translation': t.serialize(),
             'stats': TranslatedResource.objects.stats(project, paths, l),
-            'authors': Translation.authors(l, project, paths, serialize=True),
+            'authors': Translation.authors(l, project, paths).serialize(),
         })
 
 

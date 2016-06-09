@@ -95,6 +95,20 @@ class UserTranslationsManager(models.Manager):
         )
 
 
+class UserQuerySet(models.QuerySet):
+    def serialize(self):
+        users = []
+
+        for user in self:
+            users.append({
+                'email': user.email,
+                'display_name': user.display_name,
+                'gravatar_url': user.gravatar_url(44),
+            })
+
+        return users
+
+
 @property
 def user_translated_locales(self):
     locales = get_objects_for_user(
@@ -136,6 +150,7 @@ User.add_to_class('display_name', user_display_name)
 User.add_to_class('display_name_and_email', user_display_name_and_email)
 User.add_to_class('translated_locales', user_translated_locales)
 User.add_to_class('translators', UserTranslationsManager())
+User.add_to_class('objects', UserQuerySet.as_manager())
 
 
 class UserProfile(models.Model):
@@ -1318,26 +1333,14 @@ class Translation(DirtyFieldsMixin, models.Model):
     extra = JSONField(default=extra_default)
 
     @classmethod
-    def authors(self, locale, project, paths, serialize=False):
+    def authors(self, locale, project, paths):
         translations = Translation.objects.filter(entity__resource__project=project, locale=locale)
 
         if paths:
             paths = project.parts_to_paths(paths)
             translations = translations.filter(entity__resource__path__in=paths)
 
-        authors = User.objects.filter(translation__in=translations).distinct()
-
-        if serialize:
-            authors_list = []
-            for a in Translation.authors(locale, project, paths):
-                authors_list.append({
-                    'email': a.email,
-                    'display_name': a.display_name,
-                    'gravatar_url': a.gravatar_url(44),
-                })
-            return authors_list
-
-        return authors
+        return User.objects.filter(translation__in=translations).distinct()
 
     @property
     def latest_activity(self):
