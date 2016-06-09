@@ -17,6 +17,7 @@
      {% if user.profile and user.profile.force_suggestions %}data-force-suggestions="{{ user.profile.force_suggestions }}"{% endif %}
      {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if perms.base.can_manage %}data-manager="true"{% endif %}
+     {% if authors %}data-authors="{{ authors|to_json() }}"{% endif %}
      >
 </div>
 

@@ -25,6 +25,7 @@ var Pontoon = (function (my) {
 
       var title = node.text(),
           selectorType = type;
+
       if (node.find('.email').length) {
         title = node.find('.email').text();
         selectorType = 'all';
@@ -3020,6 +3021,9 @@ window.onpopstate = function(e) {
 
     Pontoon.state = history.state;
 
+    Pontoon.authors = $('#server').data('authors');
+    Pontoon.updateAuthors();
+
     // Update search and filter
     Pontoon.setSearch(Pontoon.state.search);
     Pontoon.setFilter(Pontoon.state.filter);
@@ -3039,6 +3043,9 @@ Pontoon.attachMainHandlers();
 Pontoon.attachEntityListHandlers();
 Pontoon.attachEditorHandlers();
 Pontoon.attachBatchEditorHandlers();
+
+Pontoon.authors = $('#server').data('authors');
+Pontoon.updateAuthors();
 
 Pontoon.updateInitialState();
 Pontoon.initializePart();

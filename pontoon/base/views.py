@@ -234,6 +234,9 @@ def translate(request, locale, slug, part):
         .order_by('name')
     )
 
+    paths = [part] if part != 'all-resources' else None
+    authors = Translation.authors(locale, project, paths, serialize=True)
+
     return render(request, 'translate.html', {
         'download_form': forms.DownloadFileForm(),
         'upload_form': forms.UploadFileForm(),
@@ -242,6 +245,7 @@ def translate(request, locale, slug, part):
         'part': part,
         'project': project,
         'projects': projects,
+        'authors': authors,
     })
 
 
