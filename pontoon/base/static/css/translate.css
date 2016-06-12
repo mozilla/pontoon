@@ -1111,6 +1111,10 @@ body > header aside p {
   background: #4D5967;
 }
 
+#editor nav li a > span > .count > .preferred {
+  color: #7BC876;
+}
+
 #editor nav li a > span {
   position: relative;
 }
@@ -1211,21 +1215,25 @@ body > header aside p {
   display: none;
   float: left;
   line-height: 22px;
-  padding: 9px 10px;
+  padding: 9px 5px;
 }
 
-#hotkeys {
+#editor #single > menu > .select {
   cursor: pointer;
   position: static; /* Avoid overlapping warning box */
 }
 
-#hotkeys .selector {
+#editor #single > menu > .select .selector {
   color: #AAAAAA;
   font-size: 22px;
-  padding: 8px 10px 8px 0;
+  padding: 8px 5px;
 }
 
-#hotkeys .selector:hover {
+#editor #single > menu > #settings.select .selector {
+  padding-left: 0;
+}
+
+#editor #single > menu > .select .selector:hover {
   color: #7BC876;
 }
 
@@ -1387,6 +1395,10 @@ p#sign-in-required > a#sidebar-signin {
 
 #helpers > section ul li.disabled {
   cursor: default;
+}
+
+#helpers > section ul li.preferred {
+  border-bottom-color: #7BC876;
 }
 
 #helpers > section ul li > header .info {

@@ -24,6 +24,10 @@ def url(viewname, *args, **kwargs):
     """Helper for Django's ``reverse`` in templates."""
     return reverse(viewname, args=args, kwargs=kwargs)
 
+@library.global_function
+def return_url(request):
+    """Get an url of the previous page."""
+    return request.POST.get('return_url', request.META.get('HTTP_REFERER', '/'))
 
 @library.filter
 def urlparams(url_, hash=None, **query):

@@ -40,7 +40,7 @@ var Pontoon = (function (my) {
         $('.notification')
           .html('<li class="' + (type || "") + '">' + text + '</li>')
           .css('opacity', 100)
-          .removeClass('hide menu-open left');
+          .removeClass('hide left');
       }
 
       if (!persist) {
@@ -619,7 +619,6 @@ $(function() {
               status = is_enabled ? 'enabled' : 'disabled';
 
           Pontoon.endLoader(self.text() + ' ' + status + '.');
-          $('.notification').addClass('menu-open');
 
           if (self.is('.force-suggestions') && Pontoon.user) {
             Pontoon.user.forceSuggestions = is_enabled;

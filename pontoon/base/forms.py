@@ -2,7 +2,7 @@ import os
 
 from django import forms
 
-from pontoon.base.models import User
+from pontoon.base.models import User, UserProfile
 from pontoon.sync.formats import SUPPORTED_FORMAT_PARSERS
 
 
@@ -60,3 +60,12 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name',)
+
+
+class UserLocalesSettings(forms.ModelForm):
+    """
+    Form is responsible for saving preferred locales of contributor.
+    """
+    class Meta:
+        model = UserProfile
+        fields = ('locales_order',)

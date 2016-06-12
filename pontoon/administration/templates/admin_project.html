@@ -1,5 +1,7 @@
 {% extends "landing.html" %}
 
+{% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
+
 {% block title %}Pontoon &middot; {{'%(subtitle)s' | format(subtitle=subtitle) }}{% endblock %}
 
 {% block class %}admin-project{% endblock %}
@@ -27,7 +29,8 @@
       {% endfor %}
   </ul>
 
-  <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+  {% csrf_token %}
+
   {% if pk %}
   <input type="hidden" value="{{ pk }}" name="pk">
   {% endif %}
@@ -43,36 +46,7 @@
       {{ form.slug.errors }}
   </div>
   <div class="locales clearfix">
-      <div class="locale select">
-        <label for="available">Available locales<a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>
-        <div class="menu">
-          <div class="search-wrapper clearfix">
-            <div class="icon fa fa-search"></div>
-            <input id="available" type="search" autocomplete="off">
-          </div>
-          <ul>
-            {% for locale in locales_available %}
-            <li class="clearfix" data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
-            {% endfor %}
-            <li class="no-match">No results</li>
-          </ul>
-        </div>
-      </div>
-      <div class="locale select selected">
-        <label for="selected">Chosen locales<a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
-        <div class="menu">
-          <div class="search-wrapper clearfix">
-            <div class="icon fa fa-search"></div>
-            <input id="selected" type="search" autocomplete="off">
-          </div>
-          <ul>
-            {% for locale in locales_selected %}
-            <li class="clearfix" data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
-            {% endfor %}
-            <li class="no-match">No results</li>
-          </ul>
-        </div>
-      </div>
+      {{ multiple_locale_selector.render(locales_available, locales_selected) }}
       {{ form.locales }}
       {{ form.locales.errors }}
   </div>
@@ -213,8 +187,10 @@
 
 {% block extend_css %}
   {% stylesheet 'admin_project' %}
+  {% stylesheet 'multiple_locale_selector' %}
 {% endblock %}
 
 {% block extend_js %}
   {% javascript 'admin_project' %}
+  {% javascript 'multiple_locale_selector' %}
 {% endblock %}

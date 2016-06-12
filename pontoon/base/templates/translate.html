@@ -18,6 +18,7 @@
      {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if perms.base.can_manage %}data-manager="true"{% endif %}
      data-authors="{{ authors|to_json() }}"
+     {% if user.is_authenticated() and user.profile.locales_order %}data-locales-order="{{ user.profile.sorted_locales_codes|reverse|list|to_json() }}"{% endif %}
      >
 </div>
 
@@ -96,11 +97,8 @@
         <div class="menu">
           <ul>
             {% if user.is_authenticated() %}
-            <li><a href="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>My Profile</a></li>
-            {{ Checkbox.checkbox('Quality Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks) }}
-              {% if user.translated_locales %}
-              {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions) }}
-              {% endif %}
+            <li><a href="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View Profile</a></li>
+            <li><a href="{{ url('pontoon.user_settings') }}"><i class="fa fa-cog fa-fw"></i>Change Settings</a></li>
             <li class="horizontal-separator"></li>
             {% endif %}
 
@@ -236,6 +234,21 @@
             <button id="save-anyway"></button>
           </div>
 
+          <!-- Settings -->
+          <div id="settings" class="select">
+            <div class="selector fa fa-cog" title="Settings"></div>
+            <div class="menu">
+              <ul>
+                {{ Checkbox.checkbox('Quality Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks) }}
+                {% if user.translated_locales %}
+                {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions) }}
+                {% endif %}
+                <li class="horizontal-separator"></li>
+                <li><a href="{{ url('pontoon.user_settings') }}">Change All Settings</a></li>
+              </ul>
+            </div>
+          </div>
+
           <!-- Keyboard shortcuts -->
           <div id="hotkeys" class="select">
             <div class="selector fa fa-keyboard-o" title="Keyboard Shortcuts"></div>
@@ -291,7 +304,7 @@
               <a href="#other-locales">
                 <span>Locales
                   <span class="fa fa-cog fa-lg fa-spin"></span>
-                  <span class="count"></span>
+                  <span class="count"><span class="preferred"></span><span class="plus"></span><span class="remaining"></span></span>
                 </span>
               </a>
             </li>

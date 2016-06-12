@@ -259,8 +259,16 @@ PIPELINE_CSS = {
     'user': {
         'source_filenames': (
             'css/user.css',
+            'css/user_profile.css',
         ),
         'output_filename': 'css/user.min.css',
+    },
+    'user_settings': {
+        'source_filenames': (
+            'css/user.css',
+            'css/user_settings.css',
+        ),
+        'output_filename': 'css/user_settings.min.css',
     },
     'users': {
         'source_filenames': (
@@ -274,6 +282,10 @@ PIPELINE_CSS = {
             'css/agency.css',
         ),
         'output_filename': 'css/intro.min.css',
+    },
+    'multiple_locale_selector': {
+        'source_filenames': ('css/multiple_locale_selector.css',),
+        'output_filename': 'css/multiple_locale_selector.min.css',
     },
 }
 
@@ -324,6 +336,13 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/search.min.js',
     },
+    'multiple_locale_selector': {
+        'source_filenames': (
+            'js/jquery-ui-1.11.4.min.js',
+            'js/multiple_locale_selector.js',
+        ),
+        'output_filename': 'js/multiple_locale_selector.min.js',
+    }
 }
 
 # Cache config

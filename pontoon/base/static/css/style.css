@@ -871,10 +871,6 @@ body > .container .about p a:visited {
   opacity: 0;
 }
 
-.notification.menu-open {
-  right: 240px;
-}
-
 .notification.left {
   left: 10px;
   right: auto;
