@@ -823,6 +823,28 @@ var Pontoon = (function (my) {
     /*
      * Attach event handlers to editor elements
      */
+    saveTranslation: function (e) {
+      e.preventDefault();
+      var self = Pontoon,
+          entity = self.getEditorEntity(),
+          source = $('#translation').val();
+
+      // Prevent double translation submissions
+      $(this).off('click.save');
+
+      if (source === '' &&
+        ['properties', 'ini', 'dtd'].indexOf(entity.format) === -1) {
+          self.endLoader('Empty translations cannot be submitted.', 'error');
+          return;
+      }
+
+      self.updateOnServer(entity, source, false, true);
+    },
+
+
+    /*
+     * Attach event handlers to editor elements
+     */
     attachEditorHandlers: function () {
       var self = this;
 
@@ -939,7 +961,7 @@ var Pontoon = (function (my) {
           if ($('#leave-anyway').is(':visible')) {
             $('#leave-anyway').click();
           } else {
-            $('#save').click();
+            self.saveTranslation();
           }
           return false;
         }
@@ -1049,20 +1071,7 @@ var Pontoon = (function (my) {
       });
 
       // Save translation
-      $('#save, #save-anyway').click(function (e) {
-        e.preventDefault();
-
-        var entity = self.getEditorEntity(),
-            source = $('#translation').val();
-
-        if (source === '' &&
-          ['properties', 'ini', 'dtd'].indexOf(entity.format) === -1) {
-            self.endLoader('Empty translations cannot be submitted.', 'error');
-            return;
-        }
-
-        self.updateOnServer(entity, source, false, true);
-      });
+      $('#save, #save-anyway').on('click.save', self.saveTranslation);
 
       // Custom search: trigger with Enter
       $('#helpers .machinery input').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
@@ -1684,6 +1693,9 @@ var Pontoon = (function (my) {
             self.endLoader('Oops, something went wrong.', 'error');
             self.approvedNotSubmitted = null;
           }
+        },
+        complete: function(e) {
+          $('#save, #save-anyway').on('click.save', self.saveTranslation);
         }
       });
     },
