@@ -8,7 +8,7 @@ import urllib
 from urlparse import urlparse
 
 from django.conf import settings
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, UserManager
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum, Prefetch, F, Q, Case, When
@@ -150,7 +150,7 @@ User.add_to_class('display_name', user_display_name)
 User.add_to_class('display_name_and_email', user_display_name_and_email)
 User.add_to_class('translated_locales', user_translated_locales)
 User.add_to_class('translators', UserTranslationsManager())
-User.add_to_class('objects', UserQuerySet.as_manager())
+User.add_to_class('objects', UserManager.from_queryset(UserQuerySet)())
 
 
 class UserProfile(models.Model):
