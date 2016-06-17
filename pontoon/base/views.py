@@ -683,7 +683,7 @@ def delete_translation(request):
     locale = translation.locale
     return JsonResponse({
         'stats': TranslatedResource.objects.stats(project, paths, locale),
-        'authors': Translation.authors(locale, project, paths, serialize=True),
+        'authors': Translation.authors(locale, project, paths).serialize(),
     })
 
 
