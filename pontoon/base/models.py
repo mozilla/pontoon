@@ -95,6 +95,14 @@ class UserTranslationsManager(models.Manager):
         )
 
 
+class UserCustomManager(UserManager):
+    """
+    Django migrations is able to migrate managers, and throws an error if we directly call UserManager.from_queryset():
+        Please note that you need to inherit from managers you dynamically generated with 'from_queryset()'.
+    """
+    use_in_migrations = False
+
+
 class UserQuerySet(models.QuerySet):
     def serialize(self):
         users = []
@@ -150,13 +158,12 @@ User.add_to_class('display_name', user_display_name)
 User.add_to_class('display_name_and_email', user_display_name_and_email)
 User.add_to_class('translated_locales', user_translated_locales)
 User.add_to_class('translators', UserTranslationsManager())
-User.add_to_class('objects', UserManager.from_queryset(UserQuerySet)())
+User.add_to_class('objects', UserCustomManager.from_queryset(UserQuerySet)())
 
 
 class UserProfile(models.Model):
     # This field is required.
     user = models.OneToOneField(User, related_name='profile')
-
     # Other fields here
     quality_checks = models.BooleanField(default=True)
     force_suggestions = models.BooleanField(default=False)
