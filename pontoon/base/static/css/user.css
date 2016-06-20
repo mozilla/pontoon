@@ -272,13 +272,19 @@
   margin: 4px 2px 0 0;
 }
 
-#timeline .label a {
+#timeline .label a,
+#timeline .label span {
+  color: #EBEBEB;
   display: inline-block;
   font-size: 1.4em;
   font-weight: 400;
   margin-top: 12px;
   padding: 0 10px;
   vertical-align: top;
+}
+
+#timeline .label span {
+  color: #888888;
 }
 
 #timeline .container > div:nth-child(even) .content,
