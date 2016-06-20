@@ -17,7 +17,7 @@ def load_initial_data(apps, schema_editor):
         url=settings.SITE_URL + '/intro/',
         links=True,
         repository_type='git',
-        repository_url='https://github.com/mathjazz/pontoon-intro.git',
+        repository_url='https://github.com/mozilla/pontoon-intro.git',
         info_brief=('This is a demo website, used for demonstration purposes '
                     'only. You can translate on the website itself by double '
                     'clicking on page elements. Access to advanced features '
