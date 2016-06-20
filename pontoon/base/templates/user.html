@@ -101,7 +101,11 @@
             <figcaption>{{ event.date.strftime('%H:%M') }}</figcaption>
           </figure>
           {% if event.project %}
-            <a href="{{ url('pontoon.translate', event.translation.locale.code, event.project.slug, event.translation.entity.resource.path) }}">{{ event.project.name }}</a>
+            {% if not event.project.disabled %}
+              <a href="{{ url('pontoon.translate', event.translation.locale.code, event.project.slug, event.translation.entity.resource.path) }}">{{ event.project.name }}</a>
+            {% else %}
+              <span class="project">{{ event.project.name }}</span>
+            {% endif %}
           {% endif %}
         </div>
       </div>
