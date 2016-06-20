@@ -636,8 +636,7 @@ def get_translation_history(request):
 
     for t in translations:
         u = t.user
-        a = t.approved_user
-        o = {
+        payload.append({
             "id": t.id,
             "user": "Imported" if u is None else u.name_or_email,
             "email": "" if u is None else u.email,
@@ -645,12 +644,45 @@ def get_translation_history(request):
             "date": t.date.strftime('%b %d, %Y %H:%M'),
             "date_iso": t.date.isoformat() + offset,
             "approved": t.approved,
-            "approved_user": "" if a is None else a.name_or_email,
+            "approved_user": User.display_name_or_blank(t.approved_user),
+            "unapproved_user": User.display_name_or_blank(t.unapproved_user),
             "fuzzy": t.fuzzy,
-        }
-        payload.append(o)
+        })
 
     return JsonResponse(payload, safe=False)
+
+
+@require_AJAX
+@login_required
+@transaction.atomic
+def unapprove_translation(request):
+    """Unapprove given translation."""
+    try:
+        t = request.POST['translation']
+        paths = request.POST.getlist('paths[]')
+    except MultiValueDictKeyError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    translation = Translation.objects.get(pk=t)
+
+    # Only privileged users or authors can un-approve translations
+    if not (request.user.has_perm('base.can_translate_locale', translation.locale)
+            or request.user == translation.user
+            or translation.approved):
+        return HttpResponseForbidden("Forbidden: You can't unapprove this translation.")
+
+    translation.unapprove(request.user)
+    latest_translation = translation.entity.translation_set.filter(
+        locale=translation.locale,
+        plural_form=translation.plural_form,
+    ).latest('date').serialize()
+    project = translation.entity.resource.project
+    locale = translation.locale
+    return JsonResponse({
+        'translation': latest_translation,
+        'stats': TranslatedResource.objects.stats(project, paths, locale),
+        'authors': Translation.authors(locale, project, paths).serialize(),
+    })
 
 
 @require_AJAX

@@ -1426,9 +1426,16 @@ p#sign-in-required > a#sidebar-signin {
 }
 
 #helpers > section ul li > header button.approve:hover:before,
-#helpers > section ul li.translated > header button.approve:before {
+#helpers > section ul li.translated > header button.approve:before,
+#helpers > section ul li.translated > header button.unapprove:before {
   color: #7BC876;
   content: "";
+}
+
+#helpers > section ul li > header button.approve:before,
+#helpers > section ul li > header button.unapprove:hover:before {
+   content: "";
+   color: #4FC4F6;
 }
 
 #helpers > section ul li > header button.delete:before {

@@ -38,13 +38,15 @@ def commajoin(*items):
     return ','.join(map(str, items))
 
 
-class UserProfileTests(TestCase):
-    """Tests related to the saving user profile."""
-
+class UserTestCase(TestCase):
+    """Default testcase for the views that require logged accounts."""
     def setUp(self):
         self.user = UserFactory.create()
         self.client.force_login(self.user)
 
+
+class UserProfileTests(UserTestCase):
+    """Tests related to the saving user profile."""
     def test_invalid_first_name(self):
         response = self.client.post('/save-user-name/', {'first_name': '<aa>"\'"'})
 
@@ -106,6 +108,25 @@ class UserProfileTests(TestCase):
                 locale2,
             ]
         )
+
+class TranslationActionsTests(UserTestCase):
+    """Tests actions that can be performed on a translation."""
+
+    def test_unapprove_translation(self):
+        """Check if unapprove view works properly."""
+        translation = TranslationFactory.create()
+        translation.approved = True
+        translation.save()
+
+        response = self.client.ajax_post('/unapprove-translation/', {
+            'translation': translation.pk,
+            'paths': [],
+        })
+        assert_code(response, 200)
+
+        translation.refresh_from_db()
+        assert_equal(translation.approved, False)
+        assert_equal(translation.unapproved_user, self.user)
 
 
 class TranslateTests(TestCase):
@@ -470,14 +491,14 @@ class EntityViewTests(TestCase):
         """
         Inplace mode of get_entites, should return all entities in a single batch.
         """
-        response = self.client.post('/get-entities/', {
+        response = self.client.ajax_post('/get-entities/', {
             'project': self.resource.project.slug,
             'locale': self.locale.code,
             'paths[]': [self.resource.path],
             'inplaceEditor': True,
             # Inplace mode shouldn't respect paging or limiting page
             'limit': 1,
-        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        })
 
         assert_code(response, 200)
         assert_equal(response.json()['has_next'], False)
@@ -499,13 +520,13 @@ class EntityViewTests(TestCase):
         for filter_ in filters:
             filter_name = filter_.replace('-', '_')
             with patch('pontoon.base.models.Entity.objects.{}'.format(filter_name), return_value=Entity.objects.all()) as filter_mock:
-                self.client.post('/get-entities/', {
+                self.client.ajax_post('/get-entities/', {
                     'project': self.resource.project.slug,
                     'locale': self.locale.code,
                     'paths[]': [self.resource.path],
                     'filter': filter_,
                     'limit': 1,
-                }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+                })
                 assert_true(filter_mock.called)
                 assert_equal(filter_mock.call_args, call(self.locale))
 
@@ -513,26 +534,26 @@ class EntityViewTests(TestCase):
         """
         Excluded entities shouldn't returned by get_entities.
         """
-        response = self.client.post('/get-entities/', {
+        response = self.client.ajax_post('/get-entities/', {
             'project': self.resource.project.slug,
             'locale': self.locale.code,
             'paths[]': [self.resource.path],
             'excludeEntities[]': [self.entities[1].pk],
             'limit': 1,
-        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        })
 
         assert_code(response, 200)
 
         assert_equal(response.json()['has_next'], True)
         assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[0].pk,])
 
-        response = self.client.post('/get-entities/', {
+        response = self.client.ajax_post('/get-entities/', {
             'project': self.resource.project.slug,
             'locale': self.locale.code,
             'paths[]': [self.resource.path],
             'excludeEntities[]': [self.entities[0].pk, self.entities[1].pk],
             'limit': 1,
-        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        })
 
         assert_code(response, 200)
 

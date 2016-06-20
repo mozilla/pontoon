@@ -18,7 +18,12 @@
      {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if perms.base.can_manage %}data-manager="true"{% endif %}
      data-authors="{{ authors|to_json() }}"
-     {% if user.is_authenticated() and user.profile.locales_order %}data-locales-order="{{ user.profile.sorted_locales_codes|reverse|list|to_json() }}"{% endif %}
+     {% if user.is_authenticated() %}
+      data-display-name="{{ user.name_or_email }}"
+      {% if user.profile.locales_order %}
+        data-locales-order="{{ user.profile.sorted_locales_codes|reverse|list|to_json() }}"
+      {% endif %}
+     {% endif %}
      >
 </div>
 
