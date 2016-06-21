@@ -141,7 +141,7 @@ var Pontoon = (function (my) {
           );
 
         } else {
-          var li = $('<li' + title + ' data-clipboard-text="' + self.doNotRender(data.translation) + '">' +
+          var li = $('<li class="suggestion"' + title + ' data-clipboard-text="' + self.doNotRender(data.translation) + '">' +
             '<header>' +
               (data.quality ? '<span class="stress">' + data.quality + '</span>' : '') +
               '<ul class="sources">' +

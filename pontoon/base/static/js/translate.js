@@ -152,7 +152,7 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function() {
-              list.append('<li title="Copy Into Translation (Tab)">' +
+              list.append('<li class="suggestion" title="Copy Into Translation (Tab)">' +
                 '<header>' + this.locale__name + '<span class="stress">' + this.locale__code + '</span></header>' +
                 '<p class="translation" dir="auto" lang="' + this.locale__code + '">' +
                   self.doNotRender(this.string) +
@@ -222,7 +222,7 @@ var Pontoon = (function (my) {
           if (data.length) {
             $.each(data, function() {
               list.append(
-                '<li data-id="' + this.id + '" class="' +
+                '<li class="suggestion" data-id="' + this.id + '" class="' +
                 (this.approved ? 'translated' : this.fuzzy ? 'fuzzy' : 'suggested') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
@@ -1007,16 +1007,16 @@ var Pontoon = (function (my) {
         if (!$('.menu').is(':visible') && key === 9) {
 
           var section = $('#helpers section:visible'),
-              index = section.find('li.hover').index() + 1;
+              index = section.find('li.suggestion.hover').index() + 1;
 
           // If possible, select next suggestion, or select first
-          if (section.find('li:last').is('.hover')) {
+          if (section.find('li.suggestion:last').is('.hover')) {
             index = 0;
           }
 
           section
-            .find('li').removeClass('hover').end()
-            .find('li:eq(' + index + ')').addClass('hover').click();
+            .find('li.suggestion').removeClass('hover').end()
+            .find('li.suggestion:eq(' + index + ')').addClass('hover').click();
 
           self.updateScroll(section);
           return false;
