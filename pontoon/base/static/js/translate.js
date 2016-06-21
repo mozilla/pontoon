@@ -961,7 +961,7 @@ var Pontoon = (function (my) {
           if ($('#leave-anyway').is(':visible')) {
             $('#leave-anyway').click();
           } else {
-            self.saveTranslation();
+            self.saveTranslation(e);
           }
           return false;
         }
