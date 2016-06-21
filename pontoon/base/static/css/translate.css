@@ -723,7 +723,8 @@ body > header aside p {
 
 #filter .menu li.authors ul {
   max-height: 168px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #filter .menu li.authors li {
