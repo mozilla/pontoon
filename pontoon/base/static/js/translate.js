@@ -1695,7 +1695,8 @@ var Pontoon = (function (my) {
           }
         },
         complete: function(e) {
-          $('#save, #save-anyway').on('click.save', self.saveTranslation);
+          // Remove event first to avoid double handling
+          $('#save, #save-anyway').off('click.save').on('click.save', self.saveTranslation);
         }
       });
     },
