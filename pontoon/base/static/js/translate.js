@@ -331,7 +331,7 @@ var Pontoon = (function (my) {
         .find('.selected-count').html(this.selectedEntities.length);
 
       $('#batch')
-        .find('button').removeClass('loading show-message')
+        .find('button').removeClass('loading confirmed show-message')
           .find('.message').html('');
     },
 
