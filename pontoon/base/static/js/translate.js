@@ -306,6 +306,14 @@ var Pontoon = (function (my) {
     /*
      * Update current translation length
      */
+    moveCursorToBeginning: function () {
+      $('#translation')[0].setSelectionRange(0, 0);
+    },
+
+
+    /*
+     * Update current translation length
+     */
     updateCurrentTranslationLength: function () {
       $('#translation-length .current-length').html($('#translation').val().length);
     },
@@ -438,12 +446,11 @@ var Pontoon = (function (my) {
       }
 
       // Length
-      var original = entity['original' + this.isPluralized()].length,
-          translationString = entity.translation[0].string,
-          translation = translationString ? translationString.length : 0;
+      var original = entity['original' + this.isPluralized()].length;
 
       // Need to show if sidebar opened by default
       $('#translation-length').show().find('.original-length').html(original).end();
+      self.moveCursorToBeginning();
       self.updateCurrentTranslationLength();
       self.updateCachedTranslation();
 
@@ -514,7 +521,7 @@ var Pontoon = (function (my) {
 
       if ((before !== null) && (before !== after)) {
         $('#unsaved').show();
-        $("#translation").focus();
+        $('#translation').focus();
         this.checkUnsavedChangesCallback = callback;
 
       } else {
@@ -919,6 +926,7 @@ var Pontoon = (function (my) {
 
         $('#translation').val(source).focus();
         $('#translation-length .original-length').html(original.length);
+        self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
         self.updateCachedTranslation();
 
@@ -1057,6 +1065,7 @@ var Pontoon = (function (my) {
             source = original;
 
         $('#translation').val(source).focus();
+        self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
         self.updateCachedTranslation();
       });
@@ -1066,6 +1075,7 @@ var Pontoon = (function (my) {
         e.preventDefault();
 
         $('#translation').val('').focus();
+        self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
         self.updateCachedTranslation();
       });
@@ -1101,7 +1111,9 @@ var Pontoon = (function (my) {
 
         var translation = $(this).find('.translation').text(),
             source = translation;
+
         $('#translation').val(source).focus();
+        self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
         self.updateCachedTranslation();
 
@@ -1195,6 +1207,7 @@ var Pontoon = (function (my) {
                               '</li>');
                   }
 
+                  self.moveCursorToBeginning();
                   self.updateCurrentTranslationLength();
                   self.updateCachedTranslation();
                   self.updateAuthors();
