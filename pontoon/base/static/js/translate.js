@@ -222,7 +222,7 @@ var Pontoon = (function (my) {
           if (data.length) {
             $.each(data, function() {
               list.append(
-                '<li class="suggestion" data-id="' + this.id + '" class="' +
+                '<li data-id="' + this.id + '" class="suggestion ' +
                 (this.approved ? 'translated' : this.fuzzy ? 'fuzzy' : 'suggested') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
