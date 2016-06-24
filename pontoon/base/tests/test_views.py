@@ -6,7 +6,13 @@ from django.utils.timezone import now
 from django_nose.tools import assert_equal, assert_true, assert_code
 from mock import patch, call
 
-from pontoon.base.models import Locale, Project, Entity, ProjectLocale, TranslatedResource
+from pontoon.base.models import (Locale,
+        Project,
+        Entity,
+        ProjectLocale,
+        TranslatedResource,
+        User,
+)
 from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import (
     assert_json,
@@ -22,6 +28,14 @@ from pontoon.base.tests import (
 )
 
 from pontoon.base import views
+
+
+def commajoin(*items):
+    """
+    Small helper function that joins all items by comma and maps types
+    of items into strings.
+    """
+    return ','.join(map(str, items))
 
 
 class UserProfileTests(TestCase):
@@ -47,6 +61,51 @@ class UserProfileTests(TestCase):
         response = self.client.post('/save-user-name/', {'first_name': 'contributor'})
         assert_equal(response.status_code, 200)
         assert_equal(response.content, 'ok')
+
+    def test_user_locales_order(self):
+        locale1, locale2, locale3 = LocaleFactory.create_batch(3)
+        response = self.client.get('/settings/')
+        assert_equal(response.status_code, 200)
+
+        response = self.client.post('/settings/', {
+            'locales_order': commajoin(
+                locale2.pk,
+                locale1.pk,
+                locale3.pk,
+            )
+        })
+
+        assert_equal(response.status_code, 302)
+        assert_equal(
+            list(User.objects.get(pk=self.user.pk).profile.sorted_locales), [
+                locale2,
+                locale1,
+                locale3,
+            ]
+        )
+        # Test if you can clear all locales
+        response = self.client.post('/settings/', {
+            'locales_order': ''
+        })
+        assert_equal(response.status_code, 302)
+        assert_equal(list(User.objects.get(pk=self.user.pk).profile.sorted_locales), [])
+
+
+        # Test if form handles duplicated locales
+        response = self.client.post('/settings/', {
+            'locales_order': commajoin(
+                locale1.pk,
+                locale2.pk,
+                locale2.pk,
+            )
+        })
+        assert_equal(response.status_code, 302)
+        assert_equal(
+            list(User.objects.get(pk=self.user.pk).profile.sorted_locales), [
+                locale1,
+                locale2,
+            ]
+        )
 
 
 class TranslateTests(TestCase):

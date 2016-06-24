@@ -1,6 +1,6 @@
 {% extends "landing.html" %}
 
-{% import "widgets/checkbox.html" as Checkbox %}
+{% import "widgets/contributors.html" as Contributors %}
 
 {% block title %}Pontoon &middot; {{ contributor.name_or_email }}{% endblock %}
 
@@ -42,14 +42,15 @@
   <li><span class="fa fa-fw fa-envelope"></span><a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a></li>
   <li><span class="fa fa-fw fa-lock"></span>{{ contributor|display_permissions() }}</li>
   {% if user.is_authenticated() and user.email == contributor.email %}
-  {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks) }}
-    {% if user.translated_locales %}
-    {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions) }}
-    {% endif %}
+    <li class="settings"><i class="fa fa-fw fa-cog"></i><a href="{{ url('pontoon.user_settings') }}">Change Settings</a></li>
   {% endif %}
 </ul>
 
-<ul class="notification"></ul>
+<ul class="notification">
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+</ul>
 
 <div class="details">
   <div class="total">

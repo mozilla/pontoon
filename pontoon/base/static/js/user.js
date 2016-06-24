@@ -60,4 +60,8 @@ $(function() {
   animate();
   $(window).on('scroll', animate);
 
+  if ($('.notification li').length) {
+    Pontoon.endLoader();
+  }
+
 });

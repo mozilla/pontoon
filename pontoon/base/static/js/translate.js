@@ -137,7 +137,10 @@ var Pontoon = (function (my) {
       var self = this,
           list = $('#helpers .other-locales ul').empty(),
           tab = $('#helpers a[href="#other-locales"]').addClass('loading'),
-          count = '';
+          count = '',
+          preferred = 0,
+          remaining = 0,
+          localesOrder = self.user.localesOrder;
 
       if (self.XHRgetOtherLocales) {
         self.XHRgetOtherLocales.abort();
@@ -158,8 +161,33 @@ var Pontoon = (function (my) {
                   self.doNotRender(this.string) +
                 '</p>' +
               '</li>');
+
+              if (!$.isEmptyObject(localesOrder) && localesOrder.indexOf(this.locale__code) > -1) {
+                preferred += 1;
+              }
             });
             count = data.length;
+            remaining = count - preferred;
+
+            var sortedItems = list.find('li').sort(function(a, b) {
+               var localeA = $(a).find('p').prop('lang'),
+                   localeB = $(b).find('p').prop('lang');
+
+               var valA = localesOrder.indexOf(localeA),
+                   valB = localesOrder.indexOf(localeB);
+
+               return (valA === -1 && valB === -1 ) ? localeA > localeB : (valA < valB) ? 1 : (valA > valB) ? -1 : 0;
+            });
+
+            list.children('li').remove();
+
+            sortedItems.each(function() {
+              list.append(this);
+            });
+
+            if (preferred > 0 && remaining > 0) {
+              list.find('li:eq(' + (preferred-1) + ')').addClass('preferred');
+            }
 
           } else {
             list.append('<li class="disabled"><p>No translations available.</p></li>');
@@ -176,7 +204,11 @@ var Pontoon = (function (my) {
         },
         complete: function() {
           tab.removeClass('loading')
-            .find('.count').html(count).toggle(count !== '');
+            .find('.count')
+              .find('.preferred').html(preferred).toggle(preferred > 0).end()
+              .find('.plus').html('+').toggle(preferred > 0 && remaining > 0).end()
+              .find('.remaining').html(remaining).toggle(remaining > 0).end()
+              .toggle(count !== '');
         }
       });
     },
@@ -2772,8 +2804,6 @@ var Pontoon = (function (my) {
 
     /*
      * Returns an entity object with given id
-     *
-     * 
      */
     getEntityById: function(entityId, entities) {
       entities = entities || this.entities;
@@ -3064,7 +3094,8 @@ Pontoon.user = {
   email: $('#server').data('email') || '',
   name: $('#server').data('name') || '',
   forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
-  manager: $('#server').data('manager')
+  manager: $('#server').data('manager'),
+  localesOrder: $('#server').data('locales-order') || {},
 };
 
 Pontoon.attachMainHandlers();
