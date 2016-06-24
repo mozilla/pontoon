@@ -728,46 +728,4 @@ $(function() {
       }
     }
   });
-
-  var signinSelectors = '#profile .menu li.sign-in, p#sign-in-required > a#sidebar-signin, ul.links > li#sign-in';
-
-  if ($(signinSelectors).length) {
-    // Asynchronously load Persona to avoid blocking JS execution
-    $.getScript('https://login.persona.org/include.js');
-
-    // Sign in handler
-    $('body').on('click', signinSelectors, function (e) {
-      e.preventDefault();
-      var info = $('#browserid-info').data('info');
-
-      Pontoon.startLoader();
-
-      navigator.id.watch({
-        onlogin: function(verifyResult) {
-          $.get(info.csrfUrl).then(function(csrfToken) {
-            $.ajax({
-              url: info.loginUrl,
-              type: 'POST',
-              data: {
-                csrfmiddlewaretoken: csrfToken,
-                assertion: verifyResult
-              },
-              success: function(data) {
-                window.location.reload();
-              },
-              error: function(data) {
-                Pontoon.endLoader('Oops, something went wrong.', 'error');
-              }
-            });
-          });
-        }
-      });
-
-      try {
-        navigator.id.request(info.requestArgs);
-      }
-      catch(ex) { }
-    });
-  }
-
 });

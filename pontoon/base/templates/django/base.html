@@ -1,0 +1,67 @@
+{% load static %}
+{% load socialaccount %}
+{% load helpers %}
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>{% block title %}Pontoon{% endblock %}</title>
+    <meta name="description" content="Live web localization tool">
+    <meta name="author" content="Mozilla">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" title="" type="text/css" />
+    {% if settings.GOOGLE_ANALYTICS_KEY %}
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', '{{ settings.GOOGLE_ANALYTICS_KEY }}']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    {% endif %}
+    {% block extend_js %}
+    {% endblock extend_js %}
+  </head>
+
+  <body class="{% block class %}{% endblock %}">
+    <nav>
+      <ul class="links">
+        <li><a href="{% url 'pontoon.home' %}">Home</a></li>
+        <li><a href="{% url 'pontoon.teams' %}">Teams</a></li>
+        <li><a href="{% url 'pontoon.projects' %}">Projects</a></li>
+        <li><a href="{% url 'pontoon.contributors' %}">Contributors</a></li>
+        <li><a href="{% url 'pontoon.search' %}">Terminology</a></li>
+        <li><a href="{% url 'pontoon.terms' %}">Terms</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon" target="_blank">Help</a></li>
+        <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{% url "pontoon.admin" %}">Admin</a></li>
+        {% if not user.is_authenticated %}
+        <li id="sign-in">Sign in: <a href="{% provider_login_url 'fxa' %}">Firefox Accounts</a> &middot; <a href="{% provider_login_url 'persona' %}">Persona</a></li>
+        {% else %}
+        <li id="sign-out"><a href="{% url 'account_logout' %}" title="{{ user.email|nospam }}">Sign out</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+
+    <section id="error">
+      <div class="inner">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </section>
+
+    <!-- Javascript at the bottom for fast page loading -->
+    {% providers_media_js %}
+    <script type="text/javascript" charset="utf-8" src="{% static 'js/main.js' %}">
+    </script>
+  </body>
+</html>
