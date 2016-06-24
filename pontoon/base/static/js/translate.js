@@ -307,7 +307,9 @@ var Pontoon = (function (my) {
      * Move cursor to the beginning of translation textarea
      */
     moveCursorToBeginning: function () {
-      $('#translation')[0].setSelectionRange(0, 0);
+      if ($('#translation').is(':visible')) {
+        $('#translation')[0].setSelectionRange(0, 0);
+      }
     },
 
 
