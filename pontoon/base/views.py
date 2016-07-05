@@ -1247,7 +1247,7 @@ def get_csrf(request):
     return HttpResponse(request.csrf_token)
 
 
-@login_required
+@login_required(redirect_field_name='', login_url='/403')
 def user_settings(request):
     """View and edit user settings."""
     if request.method == 'POST':
