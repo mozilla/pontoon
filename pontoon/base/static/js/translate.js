@@ -166,27 +166,30 @@ var Pontoon = (function (my) {
                 preferred += 1;
               }
             });
+
             count = data.length;
             remaining = count - preferred;
 
-            var sortedItems = list.find('li').sort(function(a, b) {
-               var localeA = $(a).find('p').prop('lang'),
-                   localeB = $(b).find('p').prop('lang');
+            if (!$.isEmptyObject(localesOrder)) {
+              var sortedItems = list.find('li').sort(function(a, b) {
+                 var localeA = $(a).find('p').prop('lang'),
+                     localeB = $(b).find('p').prop('lang');
 
-               var valA = localesOrder.indexOf(localeA),
-                   valB = localesOrder.indexOf(localeB);
+                 var valA = localesOrder.indexOf(localeA),
+                     valB = localesOrder.indexOf(localeB);
 
-               return (valA === -1 && valB === -1 ) ? localeA > localeB : (valA < valB) ? 1 : (valA > valB) ? -1 : 0;
-            });
+                 return (valA === -1 && valB === -1 ) ? localeA > localeB : (valA < valB) ? 1 : (valA > valB) ? -1 : 0;
+              });
 
-            list.children('li').remove();
+              list.children('li').remove();
 
-            sortedItems.each(function() {
-              list.append(this);
-            });
+              sortedItems.each(function() {
+                list.append(this);
+              });
 
-            if (preferred > 0 && remaining > 0) {
-              list.find('li:eq(' + (preferred-1) + ')').addClass('preferred');
+              if (preferred > 0 && remaining > 0) {
+                list.find('li:eq(' + (preferred-1) + ')').addClass('preferred');
+              }
             }
 
           } else {
