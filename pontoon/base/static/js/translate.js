@@ -15,17 +15,60 @@ var Pontoon = (function (my) {
      */
     setFilter: function (type) {
       type = type || 'all';
-      var node = $('#filter .menu li[data-type="' + type + '"]');
+      var node = $('#filter .menu [data-type="' + type + '"]'),
+          selectorType = type;
+
+      function defaultFilter() {
+        type = selectorType = 'all';
+        node = $('#filter .menu [data-type="all"]');
+      }
 
       // Validate filter
       if (node.length === 0) {
-        type = 'all';
-        node = $('#filter .menu li[data-type="' + type + '"]');
+
+        // Special case: filter by time range
+        if (/^[0-9]{12}-[0-9]{12}$/.test(type)) {
+
+          // Populate from/to inputs (needed if filter specified in URL)
+          var from = new Date(
+            type.substring(0, 4) + '/' +
+            type.substring(4, 6) + '/' +
+            type.substring(6, 8) + ' ' +
+            type.substring(8, 10) + ':' +
+            type.substring(10, 12) + ' UTC'
+          );
+
+          var to = new Date(
+            type.substring(13, 17) + '/' +
+            type.substring(17, 19) + '/' +
+            type.substring(19, 21) + ' ' +
+            type.substring(21, 23) + ':' +
+            type.substring(23, 25) + ' UTC'
+          );
+
+          if (from != 'Invalid Date' && to != 'Invalid Date') {
+            $('#from').val(this.formatDateTime(from));
+            $('#to').val(this.formatDateTime(to));
+
+            // Firefox gracefully parses dates, arithmetically converting to meaningful values,
+            // so we need to reset the filter in the URL
+            type = this.local2utc('#from') + '-' + this.local2utc('#to');
+            selectorType = 'time-range';
+            node = $('#filter .menu [data-type="time-range"]');
+
+          } else {
+            defaultFilter();
+            this.resetTimeRange();
+          }
+
+        } else {
+          defaultFilter();
+        }
       }
 
-      var title = node.text(),
-          selectorType = type;
+      var title = node.find('.title').text();
 
+      // Special case: filter by author
       if (node.find('.email').length) {
         title = node.find('.email').text();
         selectorType = 'all';
@@ -33,7 +76,6 @@ var Pontoon = (function (my) {
 
       $('#search').attr('placeholder', 'Search in ' + title);
       $('#filter').data('current-filter', type)
-        .find('.title').html(title).end()
         .find('.button').attr('class', 'button selector ' + selectorType);
     },
 
@@ -754,13 +796,141 @@ var Pontoon = (function (my) {
     },
 
 
+    /*
+     * Start/Stop costumizing time range
+     */
+    toggleRangeEditing: function() {
+      $('#filter .time-range')
+        .toggleClass('editing', $('#from').prop('disabled'))
+        .find('input').each(function() {
+          $(this).prop('disabled', !$(this).prop('disabled'));
+        });
+
+      var $toggle = $('#filter .time-range-toolbar .edit'),
+          newTitle = $toggle.data('alternative'),
+          oldTitle = $toggle.html();
+
+      $toggle
+        .html(newTitle)
+        .data('alternative', oldTitle)
+        .toggleClass('editing');
+    },
+
+
+    /*
+     * Format Date object as required on the client side
+     */
+    formatDateTime: function(d) {
+      return ('0' + d.getDate()).slice(-2) + '/' +
+      ('0' + (d.getMonth() + 1)).slice(-2) + '/' +
+      d.getFullYear() + " " +
+      ('0' + d.getHours()).slice(-2) + ":" +
+      ('0' + d.getMinutes()).slice(-2);
+    },
+
+
+    /*
+     * Set time range to last hours from now
+     */
+    setLastHours: function(hours) {
+      var dateFrom = new Date();
+      var dateTo = new Date();
+
+      dateFrom.setHours(dateTo.getHours() - hours);
+
+      $('#from').val(this.formatDateTime(dateFrom));
+      $('#to').val(this.formatDateTime(dateTo));
+    },
+
+
+    /*
+     * Convert local time to UTC and format it as required on the server side
+     */
+    local2utc: function(selector) {
+      var local = $(selector).val(),
+          split = local.split('/'),
+          reverse = split[1] + '/' + split[0] + '/' + split[2];
+
+      try {
+        var utc = new Date(reverse).toISOString();
+        return utc.replace(/-/gi, '').replace(/T/gi, '').replace(/:/gi, '').substring(0, 12);
+      } catch (e) {}
+    },
+
+
     attachEntityListHandlers: function() {
       var self = this;
 
       // Filter entities
-      $('#filter').on('click', 'li[data-type]', function() {
+      $('#filter').on('click', 'li[data-type]:not(".editing")', function(e) {
         var type = $(this).data('type');
+
+        if ($(this).is('.time-range')) {
+          var from = self.local2utc('#from');
+              to = self.local2utc('#to');
+
+          // Validate Time range filter
+          if (from && to) {
+            type = from + '-' + to;
+
+          } else {
+            $('#from').toggleClass('error', !from);
+            $('#to').toggleClass('error', !to);
+            return;
+          }
+        }
+
         self.filterEntities(type);
+        $('#filter .selector').click();
+      });
+
+      // Time range shortcuts
+      $('#filter .time-range-toolbar .shortcut').click(function(e) {
+        var hours = parseInt($(this).data('hours'));
+        self.setLastHours(hours);
+        $('#filter .time-range input').removeClass('error');
+      });
+
+      // Time range editing toggle
+      $('#filter .time-range-toolbar .edit').click(function(e) {
+        self.toggleRangeEditing();
+      });
+
+      // Initialize date & time range picker
+      $('#filter .time-range').on('focusin', 'input', function(e) {
+        // Do not reappear when navigating months
+        if ($(this).is('.hasDatepicker')) {
+          return;
+        }
+
+        $.timepicker.datetimeRange($('#from'), $('#to'), {
+          showTime: false,
+          showHour: false,
+          showMinute: false,
+          showButtonPanel: false,
+          nextText: '',
+          prevText: '',
+          dateFormat: 'dd/mm/yy',
+          maxDate: new Date(),
+          minInterval: (1000*60) // 1 minute
+        });
+      });
+
+      // Clear error styling on value change
+      $('#filter .time-range input').on('input propertychange change', function() {
+        $(this).removeClass('error');
+      });
+
+      // Do not close the filter menu if clicked inside the menu
+      $('#filter').on('click', '.menu', function (e) {
+        e.stopPropagation();
+      });
+
+      // Do not close the filter menu when navigating calendar
+      $('html').on('click', function (e) {
+        if ($(e.target).is('#ui-datepicker-div') || $(e.target).is('.ui-icon') || $(e.target).parents('#ui-datepicker-div').length) {
+          $('#filter .selector').click();
+        }
       });
 
       // Trigger event with a delay (e.g. to prevent UI blocking)
@@ -1538,6 +1708,14 @@ var Pontoon = (function (my) {
           .find('.fuzzy p').html(fuzzy).end()
           .find('.missing p').html(missing);
 
+      // Update filter
+      $('#filter .menu')
+          .find('.all .count').html(total).end()
+          .find('.translated .count').html(translated).end()
+          .find('.suggested .count').html(suggested).end()
+          .find('.fuzzy .count').html(fuzzy).end()
+          .find('.missing .count').html(missing);
+
       // Update parts menu
       if (entity && total) {
         var paths = [],
@@ -2008,6 +2186,7 @@ var Pontoon = (function (my) {
           // Reset optional state parameters and update state
           self.setFilter();
           self.setSearch('');
+
           var state = self.getState('selected');
           state.entity = null;
           self.pushState(state);
@@ -2056,12 +2235,12 @@ var Pontoon = (function (my) {
      * Update authors list in filter menu
      */
     updateAuthors: function () {
-      $('#filter').find('.authors, .for-authors').toggle(this.authors.length > 0);
-      var authors = $('#filter .authors ul').empty();
+      var authors = $('#filter').find('.for-authors').toggle(this.authors.length > 0);
+      $('#filter .author').remove();
 
       $.each(this.authors, function() {
-        authors.append('<li data-type="' + this.email + '">' +
-          '<figure class="author">' +
+        authors.after('<li class="author" data-type="' + this.email + '">' +
+          '<figure>' +
             '<img class="rounded" src="' + this.gravatar_url + '">' +
             '<figcaption>' +
               '<p class="name">' + this.display_name + '</p>' +
@@ -2070,6 +2249,20 @@ var Pontoon = (function (my) {
           '</figure>' +
         '</li>');
       });
+    },
+
+
+    /*
+     * Reset Time range filter to default
+     */
+    resetTimeRange: function() {
+      $('#filter .time-range input').removeClass('error');
+
+      this.setLastHours(1);
+
+      if ($('#filter .time-range-toolbar .edit').is('.editing')) {
+        this.toggleRangeEditing();
+      }
     },
 
 
@@ -2170,6 +2363,7 @@ var Pontoon = (function (my) {
       self.updateProjectInfo();
       self.updateProfileMenu();
       self.updateSaveButtons();
+      self.resetTimeRange();
       self.updateAuthors();
       self.renderEntityList();
       self.updateProgress();

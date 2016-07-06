@@ -546,3 +546,17 @@ def latest_datetime(datetimes):
     min_datetime = timezone.make_aware(datetime.min)
     datetimes = map(lambda d: d or min_datetime, datetimes)
     return max(datetimes)
+
+
+def parse_time_interval(interval):
+    """
+    Return start and end time objects from time interval string
+    in the format %d%m%Y%H%M-%d%m%Y%H%M
+    """
+    def parse_timestamp(timestamp):
+        return timezone.make_aware(datetime.strptime(timestamp, '%Y%m%d%H%M'))
+
+    start = interval.split('-')[0]
+    end = interval.split('-')[1]
+
+    return parse_timestamp(start), parse_timestamp(end)

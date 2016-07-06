@@ -4,8 +4,10 @@ import hashlib
 import logging
 import math
 import os.path
+import re
 import urllib
-from urlparse import urlparse
+
+from dirtyfields import DirtyFieldsMixin
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group, UserManager
@@ -18,7 +20,6 @@ from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.functional import cached_property
 
-from dirtyfields import DirtyFieldsMixin
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
@@ -29,6 +30,8 @@ from pontoon.sync.vcs.repositories import (
 )
 from pontoon.base import utils
 from pontoon.sync import KEY_SEPARATOR
+
+from urlparse import urlparse
 
 
 log = logging.getLogger('pontoon')
@@ -1091,9 +1094,6 @@ class EntityQuerySet(models.QuerySet):
             approved_count=F('expected_count')
         )
 
-    def authored_by(self, locale, email):
-        return self.filter(translation__locale=locale, translation__user__email=email)
-
     def untranslated(self, locale):
         return self.with_status_counts(locale).exclude(Q(approved_count=F('expected_count')))
 
@@ -1102,6 +1102,12 @@ class EntityQuerySet(models.QuerySet):
 
     def unchanged(self, locale):
         return self.with_status_counts(locale).filter(unchanged_count=F('expected_count'))
+
+    def authored_by(self, locale, email):
+        return self.filter(translation__locale=locale, translation__user__email=email)
+
+    def between_time_interval(self, locale, start, end):
+        return self.filter(translation__locale=locale, translation__date__range=(start, end))
 
     def prefetch_resources_translations(self, locale):
         """
@@ -1224,6 +1230,13 @@ class Entity(DirtyFieldsMixin, models.Model):
 
             elif filter_type in Translation.authors(locale, project, paths).values_list('email', flat=True):
                 entities = self.objects.authored_by(locale, filter_type)
+
+            elif re.match('^[0-9]{12}-[0-9]{12}$', filter_type):
+                try:
+                    start, end = utils.parse_time_interval(filter_type)
+                except ValueError:
+                    raise ValueError(filter_type)
+                entities = self.objects.between_time_interval(locale, start, end)
 
             else:
                 raise ValueError(filter_type)

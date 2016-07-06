@@ -317,6 +317,11 @@ body > header .locale.select {
   content: "";
 }
 
+.time-range .status:before {
+  color: #AAAAAA;
+  content: "";
+}
+
 .unchanged .status:before {
   color: #AAAAAA;
   content: "";
@@ -597,6 +602,7 @@ body > header aside p {
 
 #entitylist .search-wrapper {
   margin-bottom: 0;
+  position: static;
 }
 
 #sidebar .search-wrapper .icon {
@@ -611,11 +617,15 @@ body > header aside p {
   color: #FFFFFF;
   font-size: 16px;
   font-weight: 300;
+  line-height: 23px;
   padding: 10px 35px 10px 43px;
   width: 100%;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+
+  /* Remove extra padding in Chrome search input */
+  -webkit-appearance: textfield;
 }
 
 #sidebar .search-wrapper input[type=search]:-moz-placeholder {
@@ -624,6 +634,11 @@ body > header aside p {
 
 #sidebar .search-wrapper input[type=search]:-webkit-input-placeholder {
   color: #AAAAAA;
+}
+
+/* Remove extra padding in Chrome search input */
+#sidebar .search-wrapper input[type=search]::-webkit-search-decoration {
+  -webkit-appearance: none;
 }
 
 #filter {
@@ -642,30 +657,12 @@ body > header aside p {
   color: #FFFFFF;
 }
 
-#filter.opened .button {
-  background-color: #272A2F;
-  border-bottom: 1px solid #525A65;
-  width: 100%;
-  z-index: 30;
-}
-
-#filter .button .title {
-  color: #AAAAAA;
-  display: none;
-  font-size: 16px;
-  left: 43px;
-  position: absolute;
-  top: 12px;
-}
-
-#filter.opened .button .title {
-  display: block;
-}
-
 #filter .menu {
   left: 0;
-  top: 43px;
-  width: 100%;
+  max-height: calc(100% - 44px);
+  overflow-y: auto;
+  top: 44px;
+  width: 350px;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -678,7 +675,7 @@ body > header aside p {
   cursor: default;
   font-size: 13px;
   height: auto;
-  padding-top: 10px;
+  padding-top: 20px;
   text-transform: uppercase;
 }
 
@@ -691,41 +688,219 @@ body > header aside p {
   position: relative;
 }
 
-#filter .menu li.authors {
+#filter .menu li.time-range.editing {
+  cursor: auto;
+}
+
+#filter .menu li.time-range.editing.hover {
   background: transparent;
+}
+
+#filter .menu li.time-range .title {
+  display: none;
+}
+
+#filter .menu li.time-range label {
+  border-bottom: 1px solid transparent;
+  color: #FFFFFF;
+  float: left;
+  font-size: 13px;
+}
+
+#filter .menu li.time-range.editing label {
+  border-color: #525A65;
+}
+
+#filter .menu li.time-range label[for="to"] {
+  float: right;
+  margin-right: 4px;
+}
+
+#filter .menu li.time-range input {
+  background: transparent;
+  border: none;
+  color: #AAAAAA;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 300;
+  height: 17px;
+  outline: none;
+  padding: 0 0 0 5px;
+  vertical-align: baseline;
+  width: 112px;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#filter .menu li.time-range.editing.hover input {
+  cursor: auto;
+}
+
+#filter .menu li.time-range input[disabled] {
+  pointer-events: none;
+}
+
+#filter .menu li.time-range input.error {
+  color: #FD5F60;
+}
+
+#filter .menu li.time-range input#to {
+  text-align: right;
+}
+
+#filter .menu li.time-range-toolbar {
+  background: transparent;
+  color: #AAAAAA;
   cursor: default;
-  margin-bottom: -4px;
-  padding-left: 0;
+  font-size: 11px;
+  padding: 0 4px;
 }
 
-#filter .menu li.authors ul {
-  max-height: 168px;
-  overflow-y: auto;
-  overflow-x: hidden;
+#filter .menu li.time-range-toolbar button {
+  background: transparent;
+  border: none;
+  color: #AAAAAA;
+  font-weight: 300;
+  padding: 4px 0;
+  text-transform: uppercase;
 }
 
-#filter .menu li.authors li {
+/* Remove extra padding in Firefox button */
+#filter .menu li.time-range-toolbar button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+#filter .menu li.time-range-toolbar button.shortcut:hover {
+  color: #7BC876;
+}
+
+#filter .menu li.time-range-toolbar button.edit {
+  color: #FFFFFF;
+  float: right;
+}
+
+#filter .menu li.time-range-toolbar button.edit.editing {
+  color: #7BC876;
+}
+
+#ui-datepicker-div {
+  background: #272A2F;
+  border: 1px solid #525A65;
+  border-radius: 0;
+  color: #AAAAAA;
+  font-family: inherit;
+  width: 218px;
+}
+
+#ui-datepicker-div .ui-datepicker-header {
+  background: transparent;
+  border: none;
+  color: #FFFFFF;
+  font-weight: 300;
+}
+
+.ui-datepicker .ui-datepicker-header .ui-corner-all {
+  background: none;
+  border-color: transparent;
+  cursor: pointer;
+}
+
+.ui-datepicker .ui-datepicker-header .ui-corner-all span {
+  background: none;
+  color: #AAAAAA;
+  padding-top: 2px;
+  text-indent: 0;
+  left: 12px;
+  top: 15px;
+
+  /* Font Awesome */
+  font: normal normal normal 14px/1 FontAwesome;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ui-datepicker .ui-datepicker-header .ui-corner-all:hover span {
+  color: #7BC876;
+}
+
+.ui-datepicker .ui-datepicker-header .ui-corner-all.ui-datepicker-prev span:before {
+  content: "";
+}
+
+.ui-datepicker .ui-datepicker-header .ui-corner-all.ui-datepicker-next span:before {
+  content: "";
+}
+
+#ui-datepicker-div table {
+  margin-bottom: 20px;
+}
+
+#ui-datepicker-div th {
+  color: #7BC876;
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+#ui-datepicker-div td a,
+#ui-datepicker-div td.ui-state-disabled span {
+  background: transparent;
+  border-color: transparent;
+  color: #AAAAAA;
+  text-align: center;
+  width: 21px;
+}
+
+#ui-datepicker-div td a.ui-state-hover {
+  border-color: #525A65;
+}
+
+#ui-datepicker-div td a.ui-state-highlight,
+#ui-datepicker-div td.ui-datepicker-today span {
+  border-color: #FED271;
+}
+
+#ui-datepicker-div td a.ui-state-active {
+  border-color: #7BC876;
+  color: #7BC876;
+}
+
+#ui-datepicker-div td.ui-state-disabled {
+  opacity: 1;
+}
+
+#ui-datepicker-div td.ui-state-disabled span {
+  color: #555555;
+}
+
+#ui-datepicker-div .ui-widget-content {
+  border: none;
+}
+
+#filter .menu li.author {
   padding-left: 4px;
   white-space: nowrap;
 }
 
-#filter .menu li.authors .author img {
+#filter .menu li.author img {
   vertical-align: top;
 }
 
-#filter .menu li.authors .author figcaption {
+#filter .menu li.author figcaption {
   display: inline-block;
-  padding: 2px 4px;
+  padding: 2px 0 2px 8px;
 }
 
-#filter .menu li.authors .author .name {
+#filter .menu li.author .name {
   color: #FFFFFF;
   font-size: 16px;
   padding-bottom: 4px;
 }
 
-#filter .menu li.authors .author .email {
-  color: #888888;
+#filter .menu li.author .email {
+  color: #AAAAAA;
 }
 
 #filter .menu li .status {
@@ -740,6 +915,21 @@ body > header aside p {
 
 #filter .menu li.unchanged .status {
   left: 3px;
+}
+
+#filter .menu li .count {
+  background: #3F4752;
+  border-radius: 3px;
+  color: #CCCCCC;
+  padding: 0 5px;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+}
+
+#filter .menu li.hover .count {
+  background: #4D5967;
+  color: #CCCCCC;
 }
 
 #entitylist > .wrapper {
@@ -1203,7 +1393,7 @@ body > header aside p {
 #editor #single > menu > .select .selector {
   color: #AAAAAA;
   font-size: 22px;
-  padding: 8px 5px;
+  padding: 9px 5px;
 }
 
 #editor #single > menu > #settings.select .selector {
@@ -1259,6 +1449,7 @@ body > header aside p {
   background: transparent;
   border: none;
   color: #EBEBEB;
+  height: 40px;
   padding: 10px 5px;
   text-transform: uppercase;
 }

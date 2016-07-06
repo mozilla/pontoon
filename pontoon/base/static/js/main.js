@@ -642,7 +642,7 @@ $(function() {
     function moveMenu(type) {
       var options = (type === "up") ? ["first", "last", -1] :
         ["last", "first", 1],
-          items = menu.find('li:visible:not(.horizontal-separator, :has(li))');
+          items = menu.find('li:visible:not(.horizontal-separator, .time-range-toolbar, :has(li))');
 
       if (hovered.length === 0 ||
           menu.find('li:not(:has(li)):visible:' + options[0]).is('.hover')) {

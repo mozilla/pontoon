@@ -252,6 +252,8 @@ PIPELINE_CSS = {
     },
     'translate': {
         'source_filenames': (
+            'css/jquery-ui.css',
+            'css/jquery-ui-timepicker-addon.css',
             'css/translate.css',
         ),
         'output_filename': 'css/translate.min.css',
@@ -318,6 +320,8 @@ PIPELINE_JS = {
     },
     'translate': {
         'source_filenames': (
+            'js/jquery-ui.js',
+            'js/jquery-ui-timepicker-addon.js',
             'js/translate.js',
             'js/request_projects.js',
         ),
@@ -338,7 +342,7 @@ PIPELINE_JS = {
     },
     'multiple_locale_selector': {
         'source_filenames': (
-            'js/jquery-ui-1.11.4.min.js',
+            'js/jquery-ui.js',
             'js/multiple_locale_selector.js',
         ),
         'output_filename': 'js/multiple_locale_selector.min.js',
