@@ -37,6 +37,7 @@ from pontoon.base.tests import (
 )
 from pontoon.base.utils import aware_datetime
 from pontoon.sync import KEY_SEPARATOR
+from pontoon.sync.vcs.models import MissingSourceDirectoryError
 
 
 class ProjectTests(TestCase):
@@ -430,6 +431,76 @@ class RepositoryTests(TestCase):
                 'https://example.com/for_path',
             )
             repo.url_for_path.assert_called_with('path')
+
+    def test_source_repository(self):
+        project = ProjectFactory.create()
+
+        # Raise exception if there's no source directory.
+        with assert_raises(MissingSourceDirectoryError):
+            project.source_repository
+
+        with patch('pontoon.sync.vcs.models.VCSProject.source_directory_path') as mock_source_repository:
+            # If project doesn't contain repositories
+            mock_source_repository.return_value = ''
+            assert_equal(project.source_repository, None)
+
+            del project.source_repository
+
+            # if project contains multi locale repository
+            repository = RepositoryFactory.create(project=project, url='http://local.dev/{locale_code}')
+            assert_true(repository.multi_locale)
+
+            assert_equal(project.source_repository, None)
+
+            del project.source_repository
+
+            # if checkout path matches and source repository isn't multi locale
+            repository.url = 'http://local.dev/'
+            repository.save()
+
+            mock_source_repository.return_value = repository.checkout_path
+
+            assert_equal(project.source_repository, repository)
+
+    def test_set_current_last_synced_revisions(self):
+        project = ProjectFactory.create()
+        repository, = project.repositories.all()
+
+        # Revisions for the normal repository
+        with patch('pontoon.base.models.get_revision') as mock_get_revision:
+            mock_get_revision.return_value = 'test_revision'
+            repository.set_current_last_synced_revisions()
+
+            assert_true(mock_get_revision.called)
+            assert_equal(repository.last_synced_revisions, {'single_locale': 'test_revision'})
+
+        # Last synced revisions for the multi locale repository
+        with patch('pontoon.base.models.get_revision') as mock_get_revision,\
+             patch('pontoon.base.models.Repository.locale_checkout_path') as mock_locale_checkout_path:
+            locale1, locale2 = LocaleFactory.create_batch(2)
+
+            ProjectLocale.objects.create(project=project, locale=locale1)
+            ProjectLocale.objects.create(project=project, locale=locale2)
+            locales_map = {
+                locale1: '/path/locale1',
+                locale2: '/path/locale2'
+            }
+
+            mock_locale_checkout_path.side_effect = lambda locale: locales_map[locale]
+
+            paths_map = {
+                    '/path/locale1': 'locale1_revision',
+                    '/path/locale2': 'locale2_revision',
+            }
+            mock_get_revision.side_effect = lambda type_, checkout_path: paths_map[checkout_path]
+            repository.url = os.path.join(os.path.split(repository.url)[0], '{locale_code}')
+            repository.set_current_last_synced_revisions()
+
+            assert_true(mock_get_revision.called)
+            assert_equal(repository.last_synced_revisions, {
+                locale1.code: 'locale1_revision',
+                locale2.code: 'locale2_revision'
+            })
 
 
 class UserTranslationManagerTests(TestCase):

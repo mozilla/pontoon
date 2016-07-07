@@ -98,6 +98,7 @@ class SyncProjectTests(TestCase):
         self.mock_project_needs_sync.return_value = False
 
         sync_project(self.db_project.pk, self.sync_log.pk, force=True)
+
         assert_true(self.mock_perform_sync_project.called)
 
     def test_no_pull(self):
@@ -118,6 +119,12 @@ class SyncProjectTests(TestCase):
         log = ProjectSyncLog.objects.get(project=self.db_project)
         assert_equal(self.mock_sync_project_repo.delay.call_args[0][1], repo.pk)
         assert_equal(self.mock_sync_project_repo.delay.call_args[0][2], log.pk)
+
+    def test_schedule_sync_of_no_source_repositories(self):
+        assert False
+
+    def test_set_revisions_for_source_repositories(self):
+        assert False
 
 
 class SyncProjectRepoTests(FakeCheckoutTestCase):
