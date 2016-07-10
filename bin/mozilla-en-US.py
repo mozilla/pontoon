@@ -1,6 +1,14 @@
 #!/usr/bin/env python
-"""This script creates or updates en-US repositories from Mozilla source
-   code to use for Mozilla product localization."""
+"""
+This script creates or updates en-US repositories from Mozilla source
+code to use for Mozilla product localization.
+
+The author of the original script is Ognyan Kulev (ogi):
+https://twitter.com/OgnyanKulev
+
+This is his code:
+https://bitbucket.org/ogi/mozilla-l10n-po/
+"""
 
 from __future__ import print_function
 
