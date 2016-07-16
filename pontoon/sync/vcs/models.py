@@ -188,7 +188,11 @@ class VCSProject(object):
         locales_paths = {}
 
         for locale in self.db_project.locales.all():
-            path = locale_directory_path(repo.checkout_path, locale.code)[len(repo.checkout_path):].lstrip(os.sep)
+            locale_directory = self.get_or_create_locale_directory(
+                locale, repo.checkout_path, next(self.relative_resource_paths())
+            )
+
+            path = locale_directory[len(repo.checkout_path):].lstrip(os.sep)
             locales_paths[path] = locale
 
         return locales_paths
@@ -275,7 +279,7 @@ class VCSProject(object):
     def relative_resource_paths(self):
         """
         List of paths relative to the locale directories returned by
-        self.locale_directory_path() for each resource in this project.
+        self.source_directory_path() for each resource in this project.
         """
         path = self.source_directory_path()
         for absolute_path in self.resources_for_path(path):
@@ -303,34 +307,41 @@ class VCSProject(object):
                 if is_resource(filename):
                     yield os.path.join(root, filename)
 
-    def create_locale_directory(self, locale, path):
-        if not self.db_project.has_multi_locale_repositories:
-            source_directory = self.source_directory_path()
-            parent_directory = os.path.abspath(os.path.join(source_directory, os.pardir))
-            locale_directory = os.path.join(parent_directory, locale.code.replace('-', '_'))
+    def get_or_create_locale_directory(self, locale, checkout_path, path):
+        """
+        Get locale directory or create it if not in repository yet
+        """
+        try:
+            return locale_directory_path(checkout_path, locale.code)
 
-            # For asymmetric formats, create empty folder
-            if is_asymmetric_resource(path):
-                os.makedirs(locale_directory)
+        except IOError:
+            if not self.db_project.has_multi_locale_repositories:
+                source_directory = self.source_directory_path()
+                parent_directory = os.path.abspath(os.path.join(source_directory, os.pardir))
+                locale_directory = os.path.join(parent_directory, locale.code.replace('-', '_'))
 
-            # For other formats, copy resources from source directory
+                # For asymmetric formats, create empty folder
+                if is_asymmetric_resource(path):
+                    os.makedirs(locale_directory)
+
+                # For other formats, copy resources from source directory
+                else:
+                    shutil.copytree(source_directory, locale_directory)
+
+                    for root, dirnames, filenames in os.walk(locale_directory):
+                        for filename in filenames:
+                            path = os.path.join(root, filename)
+                            if is_resource(filename):
+                                os.rename(path, source_to_locale_path(path))
+                            else:
+                                os.remove(path)
+
+                return locale_directory
+
             else:
-                shutil.copytree(source_directory, locale_directory)
-
-                for root, dirnames, filenames in os.walk(locale_directory):
-                    for filename in filenames:
-                        path = os.path.join(root, filename)
-                        if is_resource(filename):
-                            os.rename(path, source_to_locale_path(path))
-                        else:
-                            os.remove(path)
-
-            return locale_directory
-
-        else:
-            raise MissingLocaleDirectoryError(
-                'Directory for locale `{0}` not found'.format(locale.code)
-            )
+                raise MissingLocaleDirectoryError(
+                    'Directory for locale `{0}` not found'.format(locale.code)
+                )
 
 
 class VCSResource(object):
@@ -368,15 +379,9 @@ class VCSResource(object):
 
         # Fill in translations from the locale resources.
         for locale in locales:
-            try:
-                locale_directory = locale_directory_path(
-                    vcs_project.checkout_path, locale.code
-                )
-
-            except IOError:
-                locale_directory = self.vcs_project.create_locale_directory(
-                    locale, self.path
-                )
+            locale_directory = self.vcs_project.get_or_create_locale_directory(
+                locale, vcs_project.checkout_path, self.path
+            )
 
             resource_path = os.path.join(locale_directory, self.path)
             log.debug('Parsing resource file: %s', resource_path)
