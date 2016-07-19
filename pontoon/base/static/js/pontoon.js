@@ -33,28 +33,6 @@
           title: Pontoon.project.title
         });
 
-        // Update UI and progress when saved
-        $(".pontoon-editable-toolbar > .save").click(function () {
-          var element = $(this).parent()[0].target,
-              entity = element.entity,
-              content = $(element).html();
-
-          if ((Pontoon.user.isTranslator && !Pontoon.user.forceSuggestions) || !entity.translation[0].approved) {
-            entity.translation[0].string = content;
-            $(entity.node).each(function() {
-              this.html(content);
-            });
-            sendData();
-          } else {
-            $(element).html(entity.translation[0].string);
-          }
-
-          postMessage("UPDATE", {
-            id: entity.id,
-            content: content
-          });
-        });
-
         // Do not change anything when cancelled
         $(".pontoon-editable-toolbar > .cancel").click(function () {
           var element = $(this).parent()[0].target,
@@ -65,39 +43,16 @@
           postMessage("INACTIVE", entity.id);
         });
 
-        // Prevent button click with space
-        $("button").unbind("keyup.pontoon").bind("keyup.pontoon", function (e) {
-          var key = e.which;
-          if ($(".pontoon-editable-toolbar .save").is(":visible")) {
-            if (key === 32) {
-              e.preventDefault();
-            }
-          }
-        });
-
         // In-place keyboard shortcuts
         $("html").unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
           var key = e.which,
               toolbar = $(".pontoon-editable-toolbar"),
-              save = toolbar.find(".save"),
               cancel = toolbar.find(".cancel");
 
-          if (save.is(":visible")) {
-            var target = toolbar[0].target,
-                entity = target.entity,
-                id = entity.id,
-                next = id + 1,
-                entities = Pontoon.entities;
-
-            if (key === 13 && !e.shiftKey) { // Enter: confirm translation
-              save.click();
-              hideToolbar(target);
-              return false;
-            }
-
+          if (cancel.is(":visible")) {
             if (key === 27) { // Esc: status quo
               cancel.click();
-              hideToolbar(target);
+              hideToolbar(toolbar[0].target);
               return false;
             }
           }
@@ -107,11 +62,11 @@
 
 
       /**
-       * Makes DOM nodes editable using contentEditable property
+       * Makes DOM nodes hoverable and localizable in the sidebar
        *
        * entity Entity object
        */
-      function makeEditable(entity) {
+      function makeLocalizable(entity) {
         entity.body = true;
         $(entity.node).each(function() {
           this[0].entity = entity; // Store entity reference to the node
@@ -179,7 +134,7 @@
             // Head entities cannot be edited in place
             if ($(this).parents('head').length === 0) {
               entity.node = [parent];
-              makeEditable(entity);
+              makeLocalizable(entity);
             }
 
             // Remove entities from child nodes if parent node is entity
@@ -197,6 +152,7 @@
 
         $(".pontoon-entity").removeClass("pontoon-entity");
         $(".pontoon-noscript").remove();
+
         renderHandle();
       }
 
@@ -246,7 +202,7 @@
                 } else {
                   entity.node.push(this);
                 }
-                makeEditable(entity);
+                makeLocalizable(entity);
               }
             });
           }
@@ -301,7 +257,7 @@
               } else {
                 entity.node.push(this);
               }
-              makeEditable(entity);
+              makeLocalizable(entity);
             }
           });
 
@@ -343,7 +299,7 @@
               } else {
                 entity.node.push($(this));
               }
-              makeEditable(entity);
+              makeLocalizable(entity);
             }
           });
 
@@ -364,13 +320,16 @@
         if ($(node).is('.pontoon-editable-toolbar')) {
           showToolbar(node.target);
           return;
+
         } else {
           var toolbar = $('.pontoon-editable-toolbar'),
               curTarget = toolbar[0].target,
               newTarget = node;
-          if ($(curTarget).attr('contentEditable') === 'true') {
+
+          if ($(curTarget).is('.pontoon-localizing')) {
             return;
           }
+
           if (curTarget && curTarget !== newTarget) {
             hideToolbar(curTarget);
           }
@@ -391,18 +350,22 @@
         }
 
         var toolbarNode = toolbar[0];
+
         if (toolbarNode.I !== null) {
           clearTimeout(toolbarNode.I);
           toolbarNode.I = null;
         }
+
         if (newTarget) {
           toolbarNode.target = newTarget;
         }
+
         $(newTarget)
           .addClass('pontoon-hovered')
           .unbind("dblclick.pontoon").bind("dblclick.pontoon", function() {
             $('.pontoon-editable-toolbar > .edit').click();
           });
+
         postMessage("HOVER", newTarget.entity.id);
         toolbar.show();
       }
@@ -420,41 +383,32 @@
         } else {
           var toolbar = $('.pontoon-editable-toolbar');
         }
+
         var toolbarNode = toolbar[0],
             target = toolbarNode.target;
-        if ($(target).attr('contentEditable') === 'true') {
+
+        if ($(target).is('.pontoon-localizing')) {
           return;
         }
+
         function hide() {
           if (target) {
             target.blur();
+
             if (target === toolbar[0].target) {
               toolbar[0].target = null;
               $(target).removeClass('pontoon-hovered');
               postMessage("UNHOVER", target.entity.id);
               toolbar.hide();
+
             } else {
               $(target).removeClass('pontoon-hovered');
               postMessage("UNHOVER", target.entity.id);
             }
           }
         }
+
         toolbar[0].I = setTimeout(hide, 5);
-      }
-
-
-
-      /**
-       * Select node contents
-       *
-       * node DOM node
-       */
-      function selectNodeContents(node) {
-        var range = document.createRange();
-        range.selectNodeContents(node);
-        var sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
       }
 
 
@@ -464,16 +418,15 @@
        * inplace Was called in place?
        */
       function startEditing(inplace) {
-        var toolbar = $('.pontoon-editable-toolbar');
-        toolbar.children().show().end()
+        var toolbar = $('.pontoon-editable-toolbar'),
+            target = toolbar[0].target;
+
+        toolbar
+          .children().show().end()
           .find('.edit').hide();
-        var target = toolbar[0].target;
-        $(target).attr('contentEditable', true);
-        postMessage("ACTIVE", {
-          id: target.entity.id,
-          inplace: inplace
-        });
-        selectNodeContents(target);
+
+        $(target).addClass('pontoon-localizing');
+        postMessage("ACTIVE", target.entity.id);
       }
 
 
@@ -482,16 +435,20 @@
        * Disable editable mode
        */
       function stopEditing() {
-        var toolbar = $('.pontoon-editable-toolbar');
-        toolbar.children().hide().end()
+        var toolbar = $('.pontoon-editable-toolbar'),
+            target = toolbar[0].target;
+
+        toolbar
+          .children().hide().end()
           .find('.edit').show();
-        var target = toolbar[0].target;
+
         if (!target) {
           return;
         }
+
         $(target)
-          .attr('contentEditable', false)
-          .unbind("dblclick.pontoon");
+          .removeClass('pontoon-localizing')
+          .unbind('dblclick.pontoon');
       }
 
 
@@ -516,16 +473,20 @@
           case "NAVIGATE":
             // Stop editing old entity
             var target = $('.pontoon-editable-toolbar')[0].target;
+
             if (target) {
               var entity = target.entity,
                   string = entity.translation[0].string;
-              $(target).attr('contentEditable', false);
-              $(target).html(string !== null ? string : entity.original);
+
+              $(target)
+                .removeClass('pontoon-localizing')
+                .html(string !== null ? string : entity.original);
               hideToolbar(target);
             }
 
             // Start editing new entity
             var entity = Pontoon.entities[message.value];
+
             if (entity.body) {
               entity.hover();
               startEditing();
@@ -536,21 +497,26 @@
             var entity = null,
                 translationValue = message.value.translation,
                 translation = translationValue !== undefined ? translationValue : message.value;
+
             if (message.value.id) {
               entity = Pontoon.entities[message.value.id];
             } else {
               entity = $('.pontoon-editable-toolbar')[0].target.entity;
             }
+
             entity.translation[0].string = translation;
+
             $(entity.node).each(function() {
               this.html(translation);
             });
+
             stopEditing();
             break;
 
           case "BATCH-DELETE":
             if (message.value.id) {
               var entity = Pontoon.entities[message.value.id];
+
               $(entity.node).each(function() {
                 this.html(entity.original);
               });
@@ -560,14 +526,16 @@
           case "DELETE":
             var target = $('.pontoon-editable-toolbar')[0].target,
                 entity = target.entity;
+
             $(entity.node).each(function() {
               this.html(entity.original);
             });
-            selectNodeContents(target);
+
             entity.translation[0].pk = null;
             entity.translation[0].string = null;
             entity.translation[0].approved = false;
             entity.translation[0].fuzzy = false;
+
             sendData();
             postMessage("DELETE", entity.id);
             break;
@@ -576,17 +544,15 @@
             $('.pontoon-editable-toolbar > .cancel').click();
             break;
 
-          case "MODE":
-            $("#context .mode").attr("label", message.value + " mode");
-            break;
-
           case "RESIZE":
             var toolbar = $('.pontoon-editable-toolbar'),
                 node = toolbar[0].target;
+
             if (node) {
               left = node.getBoundingClientRect().left + window.scrollX;
               toolbar.css('left', left);
             }
+
             break;
 
           case "UPDATE-ATTRIBUTE":
@@ -603,6 +569,7 @@
 
       // Wait for main code messages
       window.addEventListener("message", receiveMessage, false);
+
       // Inject toolbar stylesheet
       $('<link>', {
         rel: 'stylesheet',
@@ -620,23 +587,21 @@
       var toolbar = $(
         "<div class='pontoon-editable-toolbar'>" +
           "<a href='#' class='edit'></a>" +
-          "<a href='#' class='save'></a>" +
           "<a href='#' class='cancel'></a>" +
         "</div>").appendTo($('body'));
+
       toolbar.hover(function () {
         showToolbar(this);
       }, function () {
         hideToolbar(this);
       })
       .find('.edit').click(function () {
-        if (!toolbar[0].target) {
-          return false;
+        if (toolbar[0].target) {
+          startEditing(true);
         }
-        startEditing(true);
-        toolbar[0].target.focus();
         return false;
       }).end()
-      .find('.save, .cancel').click(function () {
+      .find('.cancel').click(function () {
         stopEditing();
         return false;
       });
@@ -652,17 +617,6 @@
           toolbar.css('top', toolbarTop);
         }
       });
-
-      // Enable context menu
-      $('body')
-        .attr("contextmenu", "context")
-        .append(
-        '<menu type="context" id="context">' +
-          '<menuitem class="mode" label="Advanced mode" icon="' + Pontoon.app.path + 'static/img/logo.png' + '"></menuitem>' +
-        '</menu>')
-        .find("#context .mode").click(function() {
-          postMessage("SWITCH");
-        });
 
       // Select appropriate way of loading entities
       var entities = Pontoon.entities;
