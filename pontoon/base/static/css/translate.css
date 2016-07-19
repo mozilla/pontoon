@@ -169,23 +169,6 @@ body > header > .container {
   min-width: 800px;
 }
 
-#switch {
-  background: transparent;
-  border: none;
-  color: #FFFFFF;
-  display: none;
-  float: left;
-  height: 60px;
-  margin-left: 8px;
-  padding: 0; /* Needed to prevent jumping on click */
-  width: 27px;
-}
-
-#switch.opened {
-  -webkit-transform: rotate(90deg);
-  transform: rotate(90deg);
-}
-
 .select {
   float: left;
   padding-left: 0;
@@ -556,7 +539,6 @@ body > header aside p {
   background: #3F4752;
   border-right: 1px solid #5E6475;
   bottom: 0;
-  display: none;
   overflow: hidden;
   position: fixed;
   top: 60px;
@@ -567,7 +549,6 @@ body > header aside p {
 }
 
 #sidebar.advanced {
-  display: block;
   width: 700px;
 }
 

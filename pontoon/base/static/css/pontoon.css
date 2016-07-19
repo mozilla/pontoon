@@ -1,12 +1,10 @@
 .pontoon-hovered {
   outline: 1px dashed !important;
-}
-
-/* Prevent converting white-spaces at the beginning or
- * at the end of the node to &nbsp; and <br>
- */
-.pontoon-hovered[contenteditable=true] {
-  white-space: pre-wrap !important;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 
 .pontoon-editable-toolbar {
@@ -37,11 +35,6 @@
 
 .pontoon-editable-toolbar .edit {
   background-image: url('../img/edit.png');
-}
-
-.pontoon-editable-toolbar .save {
-  background-image: url('../img/save.png');
-  display: none;
 }
 
 .pontoon-editable-toolbar .cancel {
