@@ -36,7 +36,7 @@ class PullFromGit(PullFromRepository):
         execute(command, target)
 
         # Undo local changes
-        command = ["git", "reset", "--hard", "origin/master"]
+        command = ["git", "reset", "--hard", "origin"]
         code, output, error = execute(command, target)
 
         if code == 0:
@@ -154,7 +154,7 @@ class CommitToGit(CommitToRepository):
             raise CommitToRepositoryException(unicode(error))
 
         # Push
-        push = ["git", "push", self.url, 'master']
+        push = ["git", "push", self.url, "HEAD"]
         code, output, error = execute(push, path)
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
@@ -330,7 +330,7 @@ class GitRepository(VCSRepository):
     @property
     def revision(self):
         code, output, error = self.execute(
-            ['git', 'rev-parse', 'master'],
+            ['git', 'rev-parse', 'HEAD'],
         )
         return output.strip() if code == 0 else None
 
