@@ -61,10 +61,6 @@ mark.placeable {
   z-index: 14;
 }
 
-#project-load {
-  opacity: 0.9;
-}
-
 #project-load p {
   font-size: 48px;
   font-weight: 300;
