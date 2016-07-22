@@ -142,6 +142,12 @@ def user_display_name_and_email(self):
     return u'{name} <{email}>'.format(name=name, email=self.email)
 
 
+@classmethod
+def user_display_name_or_blank(cls, user):
+    """Shorcut function that displays user info if user isn't none."""
+    return (user.name_or_email if user else "")
+
+
 def user_gravatar_url(self, size):
     email = hashlib.md5(self.email.lower()).hexdigest()
     data = {'s': str(size)}
@@ -157,6 +163,7 @@ User.add_to_class('gravatar_url', user_gravatar_url)
 User.add_to_class('name_or_email', user_name_or_email)
 User.add_to_class('display_name', user_display_name)
 User.add_to_class('display_name_and_email', user_display_name_and_email)
+User.add_to_class('display_name_or_blank', user_display_name_or_blank)
 User.add_to_class('translated_locales', user_translated_locales)
 User.add_to_class('translators', UserTranslationsManager())
 User.add_to_class('objects', UserCustomManager.from_queryset(UserQuerySet)())
@@ -1347,6 +1354,10 @@ class Translation(DirtyFieldsMixin, models.Model):
     approved_user = models.ForeignKey(
         User, related_name='approvers', null=True, blank=True)
     approved_date = models.DateTimeField(null=True, blank=True)
+
+    unapproved_user = models.ForeignKey(
+        User, related_name='unapprovers', null=True, blank=True)
+    unapproved_date = models.DateTimeField(null=True, blank=True)
     fuzzy = models.BooleanField(default=False)
 
     objects = TranslationQuerySet.as_manager()
@@ -1435,6 +1446,19 @@ class Translation(DirtyFieldsMixin, models.Model):
         if latest is None or self.latest_activity['date'] > latest.latest_activity['date']:
             instance.latest_translation = self
             instance.save(update_fields=['latest_translation'])
+
+    def unapprove(self, user, stats=True):
+        """
+        Unapprove translation.
+        """
+        self.approved = False
+        self.unapproved_user = user
+        self.unapproved_date = timezone.now()
+        self.save()
+
+        TranslatedResource.objects.get(resource=self.entity.resource, locale=self.locale).calculate_stats()
+        TranslationMemoryEntry.objects.filter(translation=self).delete()
+        self.entity.mark_changed(self.locale)
 
     def delete(self, stats=True, *args, **kwargs):
         super(Translation, self).delete(*args, **kwargs)

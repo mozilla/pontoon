@@ -231,6 +231,22 @@ var Pontoon = (function (my) {
     },
 
 
+    getApproveButtonTitle: function(translation) {
+      var approveButtonTitle = '';
+
+      if (translation.approved && translation.approved_user) {
+        return 'Approved by ' + translation.approved_user;
+      } else {
+        if (translation.unapproved_user) {
+          return 'Unapproved by ' + translation.unapproved_user;
+        } else {
+          return 'Not reviewed yet';
+        }
+      }
+
+    },
+
+
     /*
      * Get history of translations of given entity
      *
@@ -266,15 +282,13 @@ var Pontoon = (function (my) {
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
-                      ((!this.email) ? this.user :
-                        '<a href="/contributors/' + this.email + '">' + this.user + '</a>') +
+                      ((!this.email) ? '<span title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</span>' :
+                        '<a href="/contributors/' + this.email + '" title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</a>') +
                       '<time class="stress" datetime="' + this.date_iso + '">' + this.date + '</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
-                      '<button class="approve fa" title="' +
-                      (this.approved ? this.approved_user ?
-                        'Approved by ' + this.approved_user : '' : 'Approve') +
-                      '"></button>' +
+                      '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
+                       (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
                       ((self.user.email && (self.user.email === this.email) || self.user.isTranslator) ? '<button class="delete fa" title="Delete"></button>' : '') +
                     '</menu>' +
                   '</header>' +
@@ -544,7 +558,7 @@ var Pontoon = (function (my) {
     checkUnsavedChanges: function (callback) {
       var entity = this.getEditorEntity();
 
-      // Ignore for anonymous users, for which we don't save traslations
+      // Ignore for anonymous users, for which we don't save translations
       if (!this.user.email || !entity) {
         return callback();
       }
@@ -1154,25 +1168,59 @@ var Pontoon = (function (my) {
       });
 
       // Approve and delete translations
-      $('#helpers .history').on('click', 'menu button', function (e) {
+      $('#helpers .history').on('click', 'menu .approve', function (e) {
+        var button = $(this),
+            entity = self.getEditorEntity(),
+            translation = $('#translation').val();
+
+        button.parents('li').click();
+
+        // Mark that user approved translation instead of submitting it
+        self.approvedNotSubmitted = true;
+        self.updateOnServer(entity, translation, true);
+      });
+
+      $('#helpers .history').on('click', 'menu .unapprove', function (e) {
+         var button = $(this),
+             translationId = parseInt($(this).parents('li').data('id'));
+
+         $.post('/unapprove-translation/', {
+            csrfmiddlewaretoken: $('#server').data('csrf'),
+            translation: translationId,
+            paths: self.getPartPaths(self.currentPart)
+         }).then(function(data) {
+           var entity = self.getEditorEntity(),
+               pf = self.getPluralForm(true);
+
+           var translation = entity.translation[pf];
+
+           self.stats = data.stats;
+           self.authors = data.authors;
+           self.updateProgress();
+           self.updateAuthors();
+
+           self.updateTranslation(entity, translation, data.translation);
+
+           $('#translation').val(data.translation.string).focus();
+           self.updateCachedTranslation();
+           self.postMessage("SAVE", data.translation);
+
+           button.removeClass('unapprove').addClass('approve');
+           button.prop('title', 'Approve');
+           button.parents('li.translated').removeClass('translated').addClass('suggested');
+           button.parents('li').find('.info a').prop('title', self.getApproveButtonTitle({
+             approved: false,
+             unapproved_user: self.user.display_name
+           }));
+
+           self.endLoader('Translation has been unapproved.');
+         }, function() {
+           self.endLoader("Couldn't unapprove this translation.");
+         });
+      });
+
+      $('#helpers .history').on('click', 'menu .delete', function (e) {
         var button = $(this);
-        if (button.is('.approve') && button.parents('li.translated').length > 0) {
-          return;
-        }
-
-        // Approve
-        if (button.is('.approve')) {
-          button.parents('li').click();
-
-          var entity = self.getEditorEntity(),
-              translation = $('#translation').val();
-
-          // Mark that user approved translation instead of submitting it
-          self.approvedNotSubmitted = true;
-          self.updateOnServer(entity, translation, true);
-          return;
-        }
-
         // Delete
         $.ajax({
           url: '/delete-translation/',
@@ -1698,7 +1746,7 @@ var Pontoon = (function (my) {
         submittedPluralForm = 0;
       }
 
-      $.ajax({
+      return $.ajax({
         url: '/update/',
         type: 'POST',
         data: {
@@ -3048,6 +3096,7 @@ window.onpopstate = function(e) {
 Pontoon.user = {
   email: $('#server').data('email') || '',
   name: $('#server').data('name') || '',
+  display_name: $('#server').data('display-name'),
   forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
   manager: $('#server').data('manager'),
   localesOrder: $('#server').data('locales-order') || {},

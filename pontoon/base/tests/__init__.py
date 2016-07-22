@@ -4,7 +4,10 @@ import tempfile
 
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
-from django.test import TestCase as BaseTestCase
+from django.test import (
+    TestCase as BaseTestCase,
+    Client as BaseClient
+)
 
 import factory
 from django_browserid.tests import mock_browserid
@@ -28,7 +31,17 @@ from pontoon.base.models import (
 )
 
 
+class PontoonClient(BaseClient):
+    """Useful helper methods that can be used in tests."""
+
+    def ajax_post(self, url, params):
+        """Send data to the ajax-type view."""
+        return self.post(url, params, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+
 class TestCase(BaseTestCase):
+    client_class = PontoonClient
+
     def client_login(self, user=None):
         """
         Authenticate the test client as the given user. If no user is

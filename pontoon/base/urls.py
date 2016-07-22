@@ -130,6 +130,8 @@ urlpatterns = [
         name='pontoon.update'),
     url(r'^get-history/', views.get_translation_history,
         name='pontoon.get_history'),
+    url(r'^unapprove-translation/', views.unapprove_translation,
+        name='pontoon.unapprove_translation'),
     url(r'^delete-translation/', views.delete_translation,
         name='pontoon.delete_translation'),
     url(r'^translation-memory/$', views.translation_memory,
