@@ -78,6 +78,9 @@ you create:
    Optional. Name to give to this app on New Relic. Required if you're using
    New Relic.
 
+``PROJECT_MANAGERS``
+   Optional. A list of project manager email addresses to send project requests to
+
 ``SECRET_KEY``
    Required. Secret key used for sessions, cryptographic signing, etc.
 
