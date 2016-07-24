@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.auth.models import User, Group, UserManager
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum, Prefetch, F, Q, Case, When
 from django.templatetags.static import static
@@ -118,12 +119,30 @@ class UserQuerySet(models.QuerySet):
         return users
 
 
-@property
-def user_translated_locales(self):
-    locales = get_objects_for_user(
-        self, 'base.can_translate_locale', accept_global_perms=False)
+def user_role(self, locale):
+    if self in locale.managers_group.user_set.all():
+        return 'manager'
+    if self in locale.translators_group.user_set.all():
+        return 'translator'
+    else:
+        return 'contributor'
 
-    return [locale.code for locale in locales]
+
+@property
+def user_profile_url(self):
+    return reverse('pontoon.contributor', kwargs={'email': self.email})
+
+
+def user_gravatar_url(self, size):
+    email = hashlib.md5(self.email.lower()).hexdigest()
+    data = {'s': str(size)}
+
+    if not settings.DEBUG:
+        append = '_big' if size > 44 else ''
+        data['d'] = settings.SITE_URL + static('img/anon' + append + '.jpg')
+
+    return '//www.gravatar.com/avatar/{email}?{data}'.format(
+        email=email, data=urllib.urlencode(data))
 
 
 @property
@@ -148,17 +167,15 @@ def user_display_name_or_blank(cls, user):
     return (user.name_or_email if user else "")
 
 
-def user_gravatar_url(self, size):
-    email = hashlib.md5(self.email.lower()).hexdigest()
-    data = {'s': str(size)}
+@property
+def user_translated_locales(self):
+    locales = get_objects_for_user(
+        self, 'base.can_translate_locale', accept_global_perms=False)
 
-    if not settings.DEBUG:
-        append = '_big' if size > 44 else ''
-        data['d'] = settings.SITE_URL + static('img/anon' + append + '.jpg')
+    return [locale.code for locale in locales]
 
-    return '//www.gravatar.com/avatar/{email}?{data}'.format(
-        email=email, data=urllib.urlencode(data))
-
+User.add_to_class('role', user_role)
+User.add_to_class('profile_url', user_profile_url)
 User.add_to_class('gravatar_url', user_gravatar_url)
 User.add_to_class('name_or_email', user_name_or_email)
 User.add_to_class('display_name', user_display_name)

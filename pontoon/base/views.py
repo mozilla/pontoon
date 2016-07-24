@@ -1257,16 +1257,26 @@ def request_projects(request, locale):
         return HttpResponseBadRequest('Bad Request: Non-existent projects specified')
 
     projects = ''.join('- {} ({})\n'.format(p.name, p.slug) for p in project_list)
+    user = request.user
 
     if settings.PROJECT_MANAGERS[0] != '':
         EmailMessage(
-            'Project request for {locale} ({code})'.format(locale=locale.name, code=locale.code),
-            'Please add the following projects to {locale} ({code}):\n{projects}'.format(
-                locale=locale.name, code=locale.code, projects=projects
+            subject='Project request for {locale} ({code})'.format(locale=locale.name, code=locale.code),
+            body=u'''
+            Please add the following projects to {locale} ({code}):
+            {projects}
+            Requested by {user}, {user_role}:
+            {user_url}
+            '''.format(
+                locale=locale.name, code=locale.code, projects=projects,
+                user=user.display_name_and_email,
+                user_role=user.role(locale),
+                user_url=request.build_absolute_uri(user.profile_url)
             ),
-            'pontoon@mozilla.com',
-            settings.PROJECT_MANAGERS,
-            reply_to=[request.user.email]).send()
+            from_email='pontoon@mozilla.com',
+            to=settings.PROJECT_MANAGERS,
+            cc=locale.managers_group.user_set.exclude(pk=user.pk).values_list('email', flat=True),
+            reply_to=[user.email]).send()
     else:
         raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
 
