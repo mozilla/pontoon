@@ -49,6 +49,7 @@ form .locale li {
 
 form .locale .sortable li {
   cursor: grab;
+  cursor: -webkit-grab;
 }
 
 .select {
