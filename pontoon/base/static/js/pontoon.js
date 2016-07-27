@@ -505,6 +505,7 @@
             });
 
             stopEditing();
+            $.event.trigger('pontoonSave');
             break;
 
           case "BATCH-DELETE":
@@ -702,6 +703,7 @@
 
         loadJquery();
         window.removeEventListener("message", initizalize, false);
+        $.event.trigger('pontoonInit');
       }
     }
   }
