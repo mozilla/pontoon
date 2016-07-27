@@ -2,13 +2,15 @@ import codecs
 import json
 import logging
 import os
+import pytz
 import re
 import requests
 import StringIO
 import tempfile
+import time
 import zipfile
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db.models import Prefetch
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -550,13 +552,21 @@ def latest_datetime(datetimes):
 
 def parse_time_interval(interval):
     """
-    Return start and end time objects from time interval string
-    in the format %d%m%Y%H%M-%d%m%Y%H%M
+    Return start and end time objects from time interval string n the format
+    %d%m%Y%H%M-%d%m%Y%H%M. Also, increase interval by one minute due to
+    truncation to a minute in Translation.counts_per_minute QuerySet.
     """
     def parse_timestamp(timestamp):
-        return timezone.make_aware(datetime.strptime(timestamp, '%Y%m%d%H%M'))
+        return timezone.make_aware(datetime.strptime(timestamp, '%Y%m%d%H%M'), timezone=pytz.UTC)
 
     start = interval.split('-')[0]
     end = interval.split('-')[1]
 
-    return parse_timestamp(start), parse_timestamp(end)
+    return parse_timestamp(start), parse_timestamp(end) + timedelta(minutes=1)
+
+
+def convert_to_unix_time(my_datetime):
+    """
+    Convert datetime object to UNIX time
+    """
+    return int(time.mktime(my_datetime.timetuple()) * 1000)

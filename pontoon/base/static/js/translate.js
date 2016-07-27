@@ -47,12 +47,12 @@ var Pontoon = (function (my) {
           );
 
           if (from != 'Invalid Date' && to != 'Invalid Date') {
-            $('#from').val(this.formatDateTime(from));
-            $('#to').val(this.formatDateTime(to));
+            $('#from').val(this.server2local(from));
+            $('#to').val(this.server2local(to));
 
             // Firefox gracefully parses dates, arithmetically converting to meaningful values,
             // so we need to reset the filter in the URL
-            type = this.local2utc('#from') + '-' + this.local2utc('#to');
+            type = this.local2server($('#from').val()) + '-' + this.local2server($('#to').val());
             selectorType = 'time-range';
             node = $('#filter .menu [data-type="time-range"]');
 
@@ -326,7 +326,7 @@ var Pontoon = (function (my) {
                     '<div class="info">' +
                       ((!this.email) ? '<span title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</span>' :
                         '<a href="/contributors/' + this.email + '" title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</a>') +
-                      '<time class="stress" datetime="' + this.date_iso + '">' + this.date + '</time>' +
+                      '<time class="stress" datetime="' + this.date_iso + '">' + this.date + ' UTC</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
@@ -802,13 +802,15 @@ var Pontoon = (function (my) {
      * Start/Stop costumizing time range
      */
     toggleRangeEditing: function() {
+      $('#range-picker').toggle($('#from').prop('disabled'));
+
       $('#filter .time-range')
         .toggleClass('editing', $('#from').prop('disabled'))
         .find('input').each(function() {
           $(this).prop('disabled', !$(this).prop('disabled'));
         });
 
-      var $toggle = $('#filter .time-range-toolbar .edit'),
+      var $toggle = $('#filter .horizontal-separator .edit'),
           newTitle = $toggle.data('alternative'),
           oldTitle = $toggle.html();
 
@@ -820,9 +822,18 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Format Date object as required on the client side
+     * Reverse day and month order
      */
-    formatDateTime: function(d) {
+    reverseDayMonth: function(date) {
+      var split = date.split('/');
+      return split[1] + '/' + split[0] + '/' + split[2];
+    },
+
+
+    /*
+     * Convert server time to local format
+     */
+    server2local: function(d) {
       return ('0' + d.getDate()).slice(-2) + '/' +
       ('0' + (d.getMonth() + 1)).slice(-2) + '/' +
       d.getFullYear() + " " +
@@ -832,31 +843,195 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Set time range to last hours from now
+     * Convert local time to to server format and time zone (UTC)
      */
-    setLastHours: function(hours) {
-      var dateFrom = new Date();
-      var dateTo = new Date();
-
-      dateFrom.setHours(dateTo.getHours() - hours);
-
-      $('#from').val(this.formatDateTime(dateFrom));
-      $('#to').val(this.formatDateTime(dateTo));
-    },
-
-
-    /*
-     * Convert local time to UTC and format it as required on the server side
-     */
-    local2utc: function(selector) {
-      var local = $(selector).val(),
-          split = local.split('/'),
-          reverse = split[1] + '/' + split[0] + '/' + split[2];
+    local2server: function(local) {
+      var reverse = this.reverseDayMonth(local);
 
       try {
         var utc = new Date(reverse).toISOString();
         return utc.replace(/-/gi, '').replace(/T/gi, '').replace(/:/gi, '').substring(0, 12);
       } catch (e) {}
+    },
+
+
+    /*
+     * Convert local time to chart format (Epoch) and time zone (UTC)
+     */
+    local2chart: function(local) {
+      var reverse = this.reverseDayMonth(local);
+      return new Date(reverse).getTime();
+    },
+
+
+    /*
+     * Initialize Time Range selector chart
+     */
+    updateRangePicker: function() {
+      var self = this,
+          counts = self.countsPerMinute;
+
+      $('#filter').find('.time-range, .for-time-range').toggle(counts.length > 0);
+
+      if (counts.length === 0) {
+        return;
+      }
+
+      // Set default input values and limits
+      var from = counts[0][0],
+          to = counts[counts.length - 1][0];
+
+      $('#from').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', from));
+      $('#to').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', to));
+
+      // Render range selector
+      Highcharts.setOptions({
+        global: {
+            useUTC: false
+        },
+        lang:{
+          rangeSelectorZoom: ''
+        }
+      });
+
+      $('#range-picker').highcharts('StockChart', {
+        credits: {
+          enabled: false
+        },
+
+        title: {
+          enabled: false
+        },
+
+        scrollbar : {
+          enabled : false
+        },
+
+        tooltip: {
+          enabled: false
+        },
+
+        chart: {
+          backgroundColor: 'transparent',
+          marginLeft: 5,
+          marginRight: 4,
+          spacingBottom: 30,
+          spacingTop: 0,
+          style: {
+            fontFamily: 'inherit'
+          }
+        },
+
+        xAxis: {
+          lineWidth: 0,
+          tickLength : 0,
+          labels: {
+            enabled: false
+          },
+          events: {
+            setExtremes: function (e) {
+              $('#from').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', e.min));
+              $('#to').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', e.max));
+            }
+          }
+        },
+
+        yAxis: {
+          type: 'logarithmic',
+          minorTickInterval: 0,
+          gridLineWidth: 0,
+          labels: {
+            enabled: false
+          }
+        },
+
+        rangeSelector: {
+          selected: 0,
+          buttons: [{
+            type: 'all',
+            text: 'All'
+          }, {
+            type: 'day',
+            count: 30,
+            text: '30 days'
+          }, {
+            type: 'day',
+            count: 7,
+            text: '7 days'
+          }, {
+            type: 'day',
+            count: 1,
+            text: '24 h'
+          }, {
+            type: 'minute',
+            count: 60,
+            text: '60 min'
+          }],
+          buttonPosition: {
+            x: -2,
+            y: 95
+          },
+          buttonTheme: {
+            fill: 'none',
+            stroke: 'none',
+            width: null,
+            style: {
+              color: '#FFFFFF',
+              fontSize: 11,
+              fontWeight: 300,
+              textTransform: 'uppercase',
+            },
+            states: {
+              hover: {
+                fill: 'none',
+                style: {
+                  color: '#7BC876'
+                }
+              },
+              select: {
+                fill: 'none',
+                style: {
+                  color: '#7BC876',
+                  fontWeight: 300,
+                }
+              },
+              disabled: {
+                style: {
+                  color: '#888888',
+                  cursor: 'default'
+                }
+              }
+            }
+          }
+        },
+
+        navigator: {
+          height: 80,
+          maskFill: 'rgba(77, 89, 103, 0.2)',
+          outlineColor: "#4D5967",
+          handles: {
+            backgroundColor: "#4D5967",
+            borderColor: "#272A2F"
+          },
+          series: {
+            type: "column",
+            color: '#7BC876'
+          },
+          xAxis: {
+            lineWidth: 1,
+            lineColor: "#4D5967",
+            gridLineWidth: 0,
+            labels: {
+              enabled: false
+            }
+          }
+        },
+
+        series: [{
+          type: 'column',
+            data: counts
+        }]
+      });
     },
 
 
@@ -868,8 +1043,8 @@ var Pontoon = (function (my) {
         var type = $(this).data('type');
 
         if ($(this).is('.time-range')) {
-          var from = self.local2utc('#from');
-              to = self.local2utc('#to');
+          var from = self.local2server($('#from').val());
+              to = self.local2server($('#to').val());
 
           // Validate Time range filter
           if (from && to) {
@@ -886,25 +1061,13 @@ var Pontoon = (function (my) {
         $('#filter .selector').click();
       });
 
-      // Time range shortcuts
-      $('#filter .time-range-toolbar .shortcut').click(function(e) {
-        var hours = parseInt($(this).data('hours'));
-        self.setLastHours(hours);
-        $('#filter .time-range input').removeClass('error');
-      });
-
       // Time range editing toggle
-      $('#filter .time-range-toolbar .edit').click(function(e) {
+      $('#filter .horizontal-separator .edit').click(function(e) {
         self.toggleRangeEditing();
       });
 
       // Initialize date & time range picker
-      $('#filter .time-range').on('focusin', 'input', function(e) {
-        // Do not reappear when navigating months
-        if ($(this).is('.hasDatepicker')) {
-          return;
-        }
-
+      $('#filter .time-range').on('focusin', 'input:not(".hasDatepicker")', function(e) {
         $.timepicker.datetimeRange($('#from'), $('#to'), {
           showTime: false,
           showHour: false,
@@ -913,13 +1076,16 @@ var Pontoon = (function (my) {
           nextText: '',
           prevText: '',
           dateFormat: 'dd/mm/yy',
-          maxDate: new Date(),
-          minInterval: (1000*60) // 1 minute
+          maxDate: new Date()
         });
       });
 
       // Clear error styling on value change
       $('#filter .time-range input').on('input propertychange change', function() {
+        var from = self.local2chart($('#from').val()),
+            to = self.local2chart($('#to').val());
+
+        $('#range-picker').highcharts().xAxis[0].setExtremes(from, to);
         $(this).removeClass('error');
       });
 
@@ -1458,6 +1624,7 @@ var Pontoon = (function (my) {
 
             self.stats = data.stats;
             self.authors = data.authors;
+            self.countsPerMinute = data.counts_per_minute;
 
             item
               .addClass('delete')
@@ -1514,6 +1681,7 @@ var Pontoon = (function (my) {
                   self.updateCurrentTranslationLength();
                   self.updateCachedTranslation();
                   self.updateAuthors();
+                  self.updateRangePicker();
                 }
               });
           },
@@ -1636,6 +1804,9 @@ var Pontoon = (function (my) {
                     self.stats = entitiesData.stats;
                     self.authors = entitiesData.authors;
                     self.updateAuthors();
+
+                    self.countsPerMinute = entitiesData.counts_per_minute;
+                    self.updateRangePicker();
 
                     entitiesMap = {};
                     $.each(entitiesData.entities, function() {
@@ -1921,6 +2092,7 @@ var Pontoon = (function (my) {
       function renderTranslation(data) {
         self.stats = data.stats;
         self.authors = data.authors;
+        self.countsPerMinute = data.counts_per_minute;
 
         if (data.type) {
           self.endLoader('Translation ' + data.type);
@@ -1936,6 +2108,15 @@ var Pontoon = (function (my) {
           self.updateTranslation(entity, pf, data.translation);
           self.updateAuthors();
           self.updateInPlaceTranslation(data.translation.string);
+          self.updateRangePicker();
+
+          // Update translation, including in place if possible
+          if (entity.body && (self.user.isTranslator || !entity.translation[pf].approved)) {
+            self.postMessage("SAVE", {
+              translation: translation,
+              id: entity.id
+            });
+          }
 
           goToNextTranslation();
 
@@ -2287,6 +2468,7 @@ var Pontoon = (function (my) {
               '<p class="name">' + this.display_name + '</p>' +
               '<p class="email">' + this.email + '</p>' +
             '</figcaption>' +
+            '<span class="count">' + this.translation_count + '</span>' +
           '</figure>' +
         '</li>');
       });
@@ -2299,9 +2481,7 @@ var Pontoon = (function (my) {
     resetTimeRange: function() {
       $('#filter .time-range input').removeClass('error');
 
-      this.setLastHours(1);
-
-      if ($('#filter .time-range-toolbar .edit').is('.editing')) {
+      if ($('#filter .horizontal-separator .edit').is('.editing')) {
         this.toggleRangeEditing();
       }
     },
@@ -2406,6 +2586,7 @@ var Pontoon = (function (my) {
       self.updateSaveButtons();
       self.resetTimeRange();
       self.updateAuthors();
+      self.updateRangePicker();
       self.renderEntityList();
       self.updateProgress();
 
@@ -2926,6 +3107,7 @@ var Pontoon = (function (my) {
 
       self.stats = entitiesData.stats;
       self.authors = entitiesData.authors;
+      self.countsPerMinute = entitiesData.counts_per_minute;
       self.entities = entitiesData.entities;
       self.hasNext = hasNext;
 
@@ -2939,6 +3121,7 @@ var Pontoon = (function (my) {
           self.setMainLoading(false);
           self.updateProgress();
           self.updateAuthors();
+          self.updateRangePicker();
           self.createObject(true);
           return;
         }
@@ -3315,6 +3498,9 @@ window.onpopstate = function(e) {
     Pontoon.authors = $('#server').data('authors');
     Pontoon.updateAuthors();
 
+    Pontoon.countsPerMinute = $('#server').data('counts-per-minute');
+    Pontoon.updateRangePicker();
+
     // Update search and filter
     Pontoon.setSearch(Pontoon.state.search);
     Pontoon.setFilter(Pontoon.state.filter);
@@ -3339,6 +3525,9 @@ Pontoon.attachBatchEditorHandlers();
 
 Pontoon.authors = $('#server').data('authors');
 Pontoon.updateAuthors();
+
+Pontoon.countsPerMinute = $('#server').data('counts-per-minute');
+Pontoon.updateRangePicker();
 
 Pontoon.updateInitialState();
 Pontoon.initializePart();
