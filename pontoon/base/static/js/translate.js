@@ -1365,9 +1365,7 @@ var Pontoon = (function (my) {
            var translation = entity.translation[pf];
 
            self.stats = data.stats;
-           self.authors = data.authors;
            self.updateProgress();
-           self.updateAuthors();
 
            self.updateTranslation(entity, translation, data.translation);
 

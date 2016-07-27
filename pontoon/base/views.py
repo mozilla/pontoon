@@ -681,7 +681,6 @@ def unapprove_translation(request):
     return JsonResponse({
         'translation': latest_translation,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
-        'authors': Translation.authors(locale, project, paths).serialize(),
     })
 
 
