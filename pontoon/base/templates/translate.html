@@ -148,7 +148,7 @@
         </div>
         <div class="menu">
           <ul>
-            <li class="horizontal-separator">By Translation Status</li>
+            <li class="horizontal-separator">Translation Status</li>
 
             {{ Filter.item('all', 'All', count=True) }}
             {{ Filter.item('missing', 'Missing', count=True) }}
@@ -156,13 +156,13 @@
             {{ Filter.item('suggested', 'Suggested', count=True) }}
             {{ Filter.item('translated', 'Translated', count=True) }}
 
-            <li class="horizontal-separator">By Smart Criteria</li>
+            <li class="horizontal-separator">Smart Filters</li>
 
             {{ Filter.item('untranslated', 'Untranslated') }}
             {{ Filter.item('unchanged', 'Unchanged') }}
             {{ Filter.item('has-suggestions', 'Has Suggestions') }}
 
-            <li class="horizontal-separator">By Translation Time Range</li>
+            <li class="horizontal-separator">Translation Time Range</li>
 
             <li class="time-range clearfix" data-type="time-range">
               <span class="status fa"></span>
@@ -178,7 +178,7 @@
               <button class="edit" data-alternative="Save changes">Custom range</button>
             </li>
 
-            <li class="horizontal-separator for-authors">By Translation Author</li>
+            <li class="horizontal-separator for-authors">Translation Authors</li>
           </ul>
         </div>
       </div>
