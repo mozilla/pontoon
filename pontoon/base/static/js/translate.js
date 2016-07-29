@@ -1339,11 +1339,10 @@ var Pontoon = (function (my) {
 
       // Approve and delete translations
       $('#helpers .history').on('click', 'menu .approve', function (e) {
-        var button = $(this),
-            entity = self.getEditorEntity(),
-            translation = $('#translation').val();
+        $(this).parents('li').click();
 
-        button.parents('li').click();
+        var entity = self.getEditorEntity(),
+            translation = $('#translation').val();
 
         // Mark that user approved translation instead of submitting it
         self.approvedNotSubmitted = true;
