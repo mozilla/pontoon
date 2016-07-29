@@ -921,7 +921,7 @@ class Repository(models.Model):
     Set last_synced_revisions to a dictionary of revisions
     that are currently downloaded on the disk.
     """
-    def set_current_last_synced_revisions(self):
+    def set_last_synced_revisions(self):
         current_revisions = {}
 
         if self.multi_locale:
@@ -939,6 +939,16 @@ class Repository(models.Model):
 
         self.last_synced_revisions = current_revisions
         self.save(update_fields=['last_synced_revisions'])
+
+    """
+    Get revision from the last_synced_revisions dictionary if exists.
+    """
+    def get_last_synced_revisions(self, locale=None):
+        if self.last_synced_revisions:
+            key = locale or 'single_locale'
+            return self.last_synced_revisions.get(key)
+        else:
+            return None
 
     class Meta:
         unique_together = ('project', 'url')
