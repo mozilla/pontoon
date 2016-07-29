@@ -1284,7 +1284,6 @@ var Pontoon = (function (my) {
         $('#translation').val(source).focus();
         self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
-        self.updateCachedTranslation();
       });
 
       // Clear translation area
@@ -1294,7 +1293,6 @@ var Pontoon = (function (my) {
         $('#translation').val('').focus();
         self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
-        self.updateCachedTranslation();
       });
 
       // Save translation
@@ -1332,7 +1330,6 @@ var Pontoon = (function (my) {
         $('#translation').val(source).focus();
         self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
-        self.updateCachedTranslation();
 
         $('.warning-overlay:visible .cancel').click();
       });
