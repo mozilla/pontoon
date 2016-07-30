@@ -1125,6 +1125,7 @@ var Pontoon = (function (my) {
 
         textarea.val(after).focus();
         textarea[0].setSelectionRange(cursorPos, cursorPos);
+        self.updateCurrentTranslationLength();
       });
 
       function switchToPluralForm(tab) {
@@ -1367,6 +1368,7 @@ var Pontoon = (function (my) {
 
            $('#translation').val(data.translation.string).focus();
            self.updateCachedTranslation();
+           self.updateCurrentTranslationLength();
            self.postMessage("SAVE", data.translation);
 
            button.removeClass('unapprove').addClass('approve');
