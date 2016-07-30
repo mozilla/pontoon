@@ -151,35 +151,21 @@ class VCSProject(object):
                     for path in find_changed_files(repo, locale):
                         files.setdefault(path, []).append(locale)
             else:
-                for changed_file in find_changed_files(repo):
-                    path_info = self.get_path_info(changed_file, repo)
+                locale_directories = self.locale_directories(repo)
+                locale_directories_paths = locale_directories.keys()
 
-                    if path_info:
-                        path, locale_path, locale = path_info
-                        path = path[len(locale_path):].lstrip(os.sep)
-                        files.setdefault(path, []).append(locale)
+                for changed_file in find_changed_files(repo):
+                    if is_hidden(changed_file):
+                        continue
+
+                    for ldp in locale_directories_paths:
+                        if changed_file.startswith(ldp):
+                            locale = locale_directories[ldp]
+                            path = changed_file[len(ldp):].lstrip(os.sep)
+                            files.setdefault(path, []).append(locale)
+                            break
 
         return files
-
-
-    def get_path_info(self, path, repo):
-        """
-        Checks if path inside one of locale directories.
-        Returns a tuple with information on given path or None if can't find any.
-        Tuple contains:
-        - path to the given file
-        - path to the locale directory
-        - locale code
-        """
-        if is_hidden(path):
-            return None
-
-        try:
-            locale_path, locale = next((p, l) for p, l in self.locale_directories(repo).items() if path.startswith(p))
-        except StopIteration:
-            return None
-
-        return path, locale_path, locale
 
     def locale_directories(self, repo):
         """
