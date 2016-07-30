@@ -134,7 +134,7 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
             )
 
         for repo in db_project.repositories.filter(source_repo=True):
-            repo.set_current_last_synced_revisions()
+            repo.set_last_synced_revisions()
 
 
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}', on_error=sync_project_repo_error)
@@ -173,10 +173,12 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
         repo_sync_log.end()
         return
 
+    obsolete_entities_paths = Resource.objects.obsolete_entities_paths(obsolete_vcs_entities) if obsolete_vcs_entities else None
+
     vcs_project = VCSProject(
         db_project,
         locales=locales,
-        obsolete_entities_paths=Resource.objects.obsolete_entities_paths(obsolete_vcs_entities),
+        obsolete_entities_paths=obsolete_entities_paths,
         new_paths=new_paths,
         full_scan=full_scan
     )
@@ -194,7 +196,21 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
 
+                log.info(
+                    'Updated translations for locale {locale} for project {project}.'.format(
+                        locale=locale.code,
+                        project=db_project.slug,
+                    )
+                )
+
                 update_translated_resources(db_project, vcs_project, changeset, locale)
+
+                log.info(
+                    'Updated translated resources for locale {locale} for project {project}.'.format(
+                        locale=locale.code,
+                        project=db_project.slug,
+                    )
+                )
 
                 # Skip if none of the locales has anything to sync
                 # VCSProject.synced_locales is set on a first call to
@@ -249,6 +265,13 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
                 # nothing after it to fail.
                 if not no_commit and locale in changeset.locales_to_commit:
                     commit_changes(db_project, vcs_project, changeset, locale)
+
+                log.info(
+                    'Synced locale {locale} for project {project}.'.format(
+                        locale=locale.code,
+                        project=db_project.slug,
+                    )
+                )
 
         except CommitToRepositoryException as err:
             # Transaction aborted, log and move on to the next locale.

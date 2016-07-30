@@ -104,11 +104,7 @@ class VCSProject(object):
             raise MissingSourceRepository(self.db_project)
 
         source_directory = self.source_directory_path()
-
-        if source_resources_repo.last_synced_revisions:
-            last_revision = source_resources_repo.last_synced_revisions.get('single_locale')
-        else:
-            last_revision = None
+        last_revision = source_resources_repo.get_last_synced_revisions()
 
         modified_files, removed_files = get_changed_files(source_resources_repo.type, source_directory, last_revision)
 
@@ -127,41 +123,39 @@ class VCSProject(object):
     @cached_property
     def changed_locales_files(self):
         """
-        Map of repositories and files changed within them after the latest update.
+        Map of changed files and locales they were changed for.
         """
         files = {}
-
-        def find_changed_files(repo, locale=None):
-            """
-            Returns a dictionary that contains resource paths as keys and their
-            list of locales as value.
-            """
-            if repo.last_synced_revisions:
-                last_revision = repo.last_synced_revisions.get(locale.code if locale else 'single_locale')
-            else:
-                last_revision = None
-
-            # We have to filter out paths that are locale files
-            checkout_path = repo.locale_checkout_path(locale) if locale else repo.checkout_path
-            return get_changed_files(repo.type, checkout_path, last_revision)[0]
 
         for repo in self.db_project.repositories.exclude(source_repo=True):
             if repo.multi_locale:
                 for locale in self.db_project.locales.all():
-                    for path in find_changed_files(repo, locale):
+                    changed_files = get_changed_files(
+                        repo.type,
+                        repo.locale_checkout_path(locale),
+                        repo.get_last_synced_revisions(locale.code)
+                    )[0]
+
+                    for path in changed_files:
                         files.setdefault(path, []).append(locale)
             else:
+                changed_files = get_changed_files(
+                    repo.type,
+                    repo.checkout_path,
+                    repo.get_last_synced_revisions()
+                )[0]
+
                 locale_directories = self.locale_directories(repo)
                 locale_directories_paths = locale_directories.keys()
 
-                for changed_file in find_changed_files(repo):
-                    if is_hidden(changed_file):
+                for path in changed_files:
+                    if is_hidden(path):
                         continue
 
                     for ldp in locale_directories_paths:
-                        if changed_file.startswith(ldp):
+                        if path.startswith(ldp):
                             locale = locale_directories[ldp]
-                            path = changed_file[len(ldp):].lstrip(os.sep)
+                            path = path[len(ldp):].lstrip(os.sep)
                             files.setdefault(path, []).append(locale)
                             break
 
@@ -169,7 +163,7 @@ class VCSProject(object):
 
     def locale_directories(self, repo):
         """
-        A map of paths to their respective locales.
+        A map of locale directory paths to their respective locales.
         """
         locales_paths = {}
 
