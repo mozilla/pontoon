@@ -494,44 +494,29 @@
             break;
 
           case "SAVE":
-            var entity = message.value.id ? Pontoon.entities[message.value.id] : $('.pontoon-editable-toolbar')[0].target.entity,
-                translationValue = message.value.translation,
-                translation = translationValue !== undefined ? translationValue : message.value;
+            var entity = Pontoon.entities[message.value.id],
+                translation = message.value.translation;
 
             entity.translation[0].string = translation;
 
             $(entity.node).each(function() {
               this.html(translation);
             });
-
-            stopEditing();
             break;
 
-          case "BATCH-DELETE":
+          case "DELETE":
             if (message.value.id) {
               var entity = Pontoon.entities[message.value.id];
 
               $(entity.node).each(function() {
                 this.html(entity.original);
               });
+
+              entity.translation[0].pk = null;
+              entity.translation[0].string = null;
+              entity.translation[0].approved = false;
+              entity.translation[0].fuzzy = false;
             }
-            break;
-
-          case "DELETE":
-            var target = $('.pontoon-editable-toolbar')[0].target,
-                entity = target.entity;
-
-            $(entity.node).each(function() {
-              this.html(entity.original);
-            });
-
-            entity.translation[0].pk = null;
-            entity.translation[0].string = null;
-            entity.translation[0].approved = false;
-            entity.translation[0].fuzzy = false;
-
-            sendData();
-            postMessage("DELETE", entity.id);
             break;
 
           case "CANCEL":
