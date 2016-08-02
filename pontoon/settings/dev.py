@@ -19,7 +19,7 @@ MIDDLEWARE_CLASSES = base.MIDDLEWARE_CLASSES + (
 )
 
 TEMPLATES = copy.copy(base.TEMPLATES)
-TEMPLATES[0]['OPTIONS']['match_regex'] = r'^(?!(admin|debug_toolbar|registration|account|socialaccount)/).*\.(html|jinja)$'
+TEMPLATES[0]['OPTIONS']['match_regex'] = r'^(?!(admin|debug_toolbar|registration|account|socialaccount)/).*\.(html|jinja|js)$'
 
 CSP_SCRIPT_SRC = base.CSP_SCRIPT_SRC + ('http://ajax.googleapis.com',)
 CSP_IMG_SRC = base.CSP_IMG_SRC + ('data:',)

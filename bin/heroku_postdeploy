@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# This file is being executed once after first deployment at heroku.
+set -e
+set -x
+
+# Some of scripts like e.g. migrations require SITE_URL to be set before the database is initialized.
+export SITE_URL='http://localhost:8000'
+
+# Compile static assets
+source ./bin/post_compile
+
+# Run celery task locally so that it's executed during build
+CELERY_ALWAYS_EAGER="True" ./manage.py sync_projects --no-commit

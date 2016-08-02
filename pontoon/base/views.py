@@ -3,6 +3,7 @@ from __future__ import division
 import json
 import logging
 import math
+import os
 import requests
 import xml.etree.ElementTree as ET
 import urllib
@@ -15,8 +16,10 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.mail import EmailMessage
+from django.core.cache import cache
 from django.core.paginator import Paginator, EmptyPage
 from django.core.validators import validate_comma_separated_integer_list
 from django.db import transaction, DataError
@@ -1343,3 +1346,31 @@ def user_settings(request):
         'available_locales': available_locales,
         'selected_locales': selected_locales,
     })
+
+
+def heroku_setup(request):
+    """
+    Heroku don't allow us to set SITE_URL or Site during the build phase of an app.
+    Because of that we have to set everything up after build is done and app is
+    able to retrieve a domain.
+    """
+    app_host = request.get_host()
+    homepage_url = 'https://{}/'.format(app_host)
+    site_domain = Site.objects.get(pk=1).domain
+
+    if not os.environ.get('HEROKU_DEMO') or site_domain != 'example.com':
+        return redirect(homepage_url)
+
+    admin_email = os.environ.get('ADMIN_EMAIL')
+    admin_password = os.environ.get('ADMIN_PASSWORD')
+
+    User.objects.create_superuser(admin_email, admin_email, admin_password)
+    Site.objects.filter(pk=1).update(name=app_host, domain=app_host)
+
+    Project.objects.filter(slug='pontoon-intro').update(
+        url='https://{}/intro/'.format(app_host)
+    )
+
+    # Clear the cache to ensure that SITE_URL will be regenerated.
+    cache.delete(settings.APP_URL_KEY)
+    return redirect(homepage_url)

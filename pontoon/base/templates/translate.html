@@ -124,11 +124,18 @@
             <li><a href="{{ url('pontoon.admin') }}">Admin</a></li>
             <li class="admin-current-project"><a href="">Admin &middot; Current Project</a></li>
             {% endif %}
-
-            {% if user.is_authenticated() %}
-            <li class="sign-out"><a href="{{ url('account_logout') }}"><i class="fa fa-sign-out fa-fw"></i> {{ SignOut.csrf_form() }} Sign Out</a></li>
+            {% if settings.HEROKU_DEMO %}
+              {% if user.is_authenticated() %}
+                <li class="standalone-sign-out"><a href="{{ url('standalone_logout') }}"><i class="fa fa-sign-out fa-fw"></i> Sign Out</a></li>
+              {% else %}
+                <li class="standalone-sign-in"><a id="standalone-sign-in" href="{{ url('standalone_login') }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+              {% endif %}
             {% else %}
-            <li class="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+              {% if user.is_authenticated() %}
+                <li class="sign-out"><a href="{{ url('account_logout') }}"><i class="fa fa-sign-out fa-fw"></i> {{ SignOut.csrf_form() }} Sign Out</a></li>
+              {% else %}
+                <li class="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+              {% endif %}
             {% endif %}
           </ul>
         </div>

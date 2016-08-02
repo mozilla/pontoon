@@ -12,6 +12,9 @@ before_script:
 script:
   - pylama
   - python manage.py test
+
+  # Heroku deployment file is valid
+  - cat app.json | python -m json.tool > /dev/null
 addons:
   postgresql: "9.4"
 env:

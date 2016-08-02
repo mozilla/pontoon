@@ -1,0 +1,135 @@
+{
+   "name": "pontoon",
+   "description": "In-place localization tool.",
+   "keywords": ["l10n", "localization", "mozilla", "collaboration", "python", "django"],
+   "website": "https://pontoon.mozilla.org",
+   "logo": "https://pontoon.mozilla.org/static/img/logo.svg",
+   "success_url": "/heroku-setup/",
+   "image": "heroku/python",
+   "addons": [
+     {
+       "plan": "newrelic:wayne"
+     },
+     {
+       "plan": "raygun:intro"
+     },
+     {
+       "plan": "papertrail:choklad"
+     },
+     {
+       "plan": "cloudamqp",
+       "as": "RABBITMQ"
+     },
+     {
+       "plan": "memcachedcloud",
+       "as": "MEMCACHE"
+     },
+     {
+       "plan": "heroku-postgresql",
+       "options": {
+         "version": "9.5"
+       }
+     }
+   ],
+   "env": {
+     "ADMIN_EMAIL": {
+       "value": "pontoon@example.com",
+       "description": "An email of the administrator."
+     },
+    "ADMIN_NAME": {
+      "value": "pontoon-admin",
+      "description": "The name of the administrator."
+    },
+    "ADMIN_PASSWORD": {
+      "value": "supersecretpassword",
+      "description": "A password of the administrator."
+    },
+    "PROJECT_MANAGERS": {
+      "description": "A list of project manager email addresses to send project requests to.",
+      "required": false,
+      "value": ""
+    },
+    "CELERY_ALWAYS_EAGER": {
+      "value": "False",
+      "description": "If celery tasks should be executed in eager manner."
+    },
+    "DJANGO_DEBUG": {
+      "value": "True",
+      "description": "Enabled the debug mode in webapp."
+    },
+    "DJANGO_DEV": {
+      "value": "False",
+      "description": "Is responsible for loading the additional utilities for the day to day development."
+    },
+    "SECRET_KEY": {
+      "description": "A secret key that is used by django.",
+      "generator": "secret"
+    },
+    "DISABLE_COLLECTSTATIC": {
+      "description": "Disable collect static.",
+      "value": "1"
+    },
+    "SSH_KEY": {
+      "description": "A ssh key which will be used to fetch repositories",
+      "required": false,
+      "value": ""
+    },
+    "SSH_CONFIG": {
+      "description": "Contents of the ``~/.ssh/config`` file used when Pontoon connects to VCS servers via SSH. Used for disabling strict key checking and setting the default user for SSH.",
+      "required": false,
+      "value": ""
+    },
+    "NEW_RELIC_API_KEY": {
+      "description": "API key for accessing the New Relic REST API. Used to mark deployson New Relic.",
+      "required": false,
+      "value": ""
+    },
+    "NEW_RELIC_APP_NAME": {
+      "description": "Name to give to this app on New Relic. Required if you're using New Relic.",
+      "required": false,
+      "value": ""
+    },
+    "STATIC_HOST": {
+      "description": "Hostname to prepend to static resources paths. useful for serving static files from a cdn.",
+      "required": false,
+      "value": ""
+    },
+    "SVN_LD_LIBRARY_PATH": {
+      "description": "Path to prepend to ``LD_LIBRARY_PATH`` when running SVN. This is necessary on Heroku because the Python buildpack alters the path in a way that breaks the built-in SVN command.",
+      "value": "/usr/lib/x86_64-linux-gnu/"
+   },
+    "TZ": {
+      "description": "Timezone for the dynos that will run the app. Pontoon operates in UTC",
+      "value": "UTC"
+    },
+    "HEROKU_DEMO": {
+      "description": "Loads some enhancements for better integration with heroku.",
+      "value": "1"
+    }
+   },
+   "buildpacks": [
+     {
+       "url": "https://github.com/dmathieu/heroku-buildpack-submodules#b37ffe4361bb9c975dd8e93068c9d296365d748c"
+     },
+     {
+       "url": "https://github.com/Osmose/heroku-buildpack-ssh"
+     },
+     {
+       "url": "https://github.com/mozilla/heroku-buildpack-apt.git#v0.1"
+     },
+     {
+       "url": "heroku/nodejs"
+     },
+     {
+       "url": "heroku/python"
+     }
+   ],
+   "scripts": {
+    "postdeploy": "./bin/heroku_postdeploy"
+   },
+   "formation": {
+     "worker": {
+       "quantity": 1
+     }
+   }
+}

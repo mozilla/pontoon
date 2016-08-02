@@ -16,11 +16,19 @@
         <li><a href="{{ url('pontoon.terms') }}">Terms</a></li>
         <li><a href="https://developer.mozilla.org/docs/Mozilla/Localization/Localizing_with_Pontoon" target="_blank">Help</a></li>
         <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{{ url('pontoon.admin') }}">Admin</a></li>
-        {% if not user.is_authenticated() %}
-        <li id="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}">Sign in</a></li>
-        {% else %}
-        <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }} Sign out</a></li>
-        {% endif %}
+          {% if settings.HEROKU_DEMO %}
+            {% if user.is_authenticated() %}
+              <li id="standalone-sign-out"><a href="{{ url('standalone_logout') }}" title="{{ user.email|nospam }}">Sign out</a></li>
+            {% else %}
+              <li id="standalone-sign-in"><a id="standalone-sign-in" href="{{ url('standalone_login') }}">Sign in</a></li>
+            {% endif %}
+          {% else %}
+            {% if user.is_authenticated() %}
+              <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }} Sign out</a></li>
+            {% else %}
+              <li id="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}">Sign in</a></li>
+            {% endif %}
+          {% endif %}
       </ul>
     </nav>
 
