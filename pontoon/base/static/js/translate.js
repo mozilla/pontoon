@@ -602,6 +602,7 @@ var Pontoon = (function (my) {
 
       // Ignore for anonymous users, for which we don't save translations
       if (!this.user.email || !entity) {
+        this.restoreInPlaceTranslation();
         return callback();
       }
 
@@ -614,6 +615,7 @@ var Pontoon = (function (my) {
         this.checkUnsavedChangesCallback = callback;
 
       } else {
+        this.restoreInPlaceTranslation();
         return callback();
       }
     },
@@ -1067,6 +1069,37 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Restore in-place translation to previous state or original
+     * We need to do this to avoid setting empty string
+     */
+    restoreInPlaceTranslation: function () {
+      var entity = this.getEditorEntity();
+
+      if (entity) {
+        var translation = entity.translation[0].string || entity.original;
+        this.updateInPlaceTranslation(translation);
+      }
+    },
+
+
+    /*
+     * Update in-place translation if applicable
+     */
+    updateInPlaceTranslation: function (translation) {
+      var entity = this.getEditorEntity(),
+          pluralForm = this.getPluralForm(true),
+          translation = translation || $('#translation').val();
+
+      if (entity.body && pluralForm === 0 && (this.user.isTranslator || !entity.translation[pluralForm].approved)) {
+        this.postMessage("SAVE", {
+          translation: translation,
+          id: entity.id
+        });
+      }
+    },
+
+
+    /*
      * Attach event handlers to editor elements
      */
     attachEditorHandlers: function () {
@@ -1115,6 +1148,11 @@ var Pontoon = (function (my) {
       $('#original').on('click', '.placeable', function (e) {
         e.preventDefault();
 
+        // Ignore for anonymous users
+        if (!self.user.email) {
+          return;
+        }
+
         var textarea = $('#translation'),
             selectionStart = textarea.prop('selectionStart'),
             selectionEnd = textarea.prop('selectionEnd'),
@@ -1126,6 +1164,7 @@ var Pontoon = (function (my) {
         textarea.val(after).focus();
         textarea[0].setSelectionRange(cursorPos, cursorPos);
         self.updateCurrentTranslationLength();
+        self.updateInPlaceTranslation();
       });
 
       function switchToPluralForm(tab) {
@@ -1251,6 +1290,7 @@ var Pontoon = (function (my) {
       // Update length (keydown is triggered too early)
       }).unbind("input propertychange").bind("input propertychange", function (e) {
         self.updateCurrentTranslationLength();
+        self.updateInPlaceTranslation();
         $('.warning-overlay:visible .cancel').click();
       });
 
@@ -1268,6 +1308,7 @@ var Pontoon = (function (my) {
       $('#leave-anyway').click(function() {
         var callback = self.checkUnsavedChangesCallback;
         if (callback) {
+          self.restoreInPlaceTranslation(); // Before callback, so that entity is available!
           callback();
           $('#unsaved').hide();
           $('#translation').val(self.cachedTranslation);
@@ -1285,6 +1326,7 @@ var Pontoon = (function (my) {
         $('#translation').val(source).focus();
         self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
+        self.updateInPlaceTranslation();
       });
 
       // Clear translation area
@@ -1294,6 +1336,7 @@ var Pontoon = (function (my) {
         $('#translation').val('').focus();
         self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
+        self.updateInPlaceTranslation();
       });
 
       // Save translation
@@ -1325,12 +1368,18 @@ var Pontoon = (function (my) {
           return;
         }
 
+        // Ignore for anonymous users
+        if (!self.user.email) {
+          return;
+        }
+
         var translation = $(this).find('.translation').text(),
             source = translation;
 
         $('#translation').val(source).focus();
         self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
+        self.updateInPlaceTranslation();
 
         $('.warning-overlay:visible .cancel').click();
       });
@@ -1359,17 +1408,21 @@ var Pontoon = (function (my) {
            var entity = self.getEditorEntity(),
                pf = self.getPluralForm(true);
 
-           var translation = entity.translation[pf];
-
            self.stats = data.stats;
            self.updateProgress();
 
-           self.updateTranslation(entity, translation, data.translation);
+           self.updateTranslation(entity, pf, data.translation);
 
            $('#translation').val(data.translation.string).focus();
            self.updateCachedTranslation();
            self.updateCurrentTranslationLength();
-           self.postMessage("SAVE", data.translation);
+
+           if (entity.body && pf === 0) {
+             self.postMessage("SAVE", {
+               translation: data.translation.string,
+               id: entity.id
+             });
+           }
 
            button.removeClass('unapprove').addClass('approve');
            button.prop('title', 'Approve');
@@ -1401,8 +1454,7 @@ var Pontoon = (function (my) {
                 next = item.next(),
                 index = item.index(),
                 entity = self.getEditorEntity(),
-                pluralForm = self.getPluralForm(true),
-                translation = entity.translation[pluralForm];
+                pluralForm = self.getPluralForm(true);
 
             self.stats = data.stats;
             self.authors = data.authors;
@@ -1422,10 +1474,13 @@ var Pontoon = (function (my) {
                     var newTranslation = $('#translation').val();
 
                     if (entity.body && pluralForm === 0) {
-                      self.postMessage("SAVE", newTranslation);
+                      self.postMessage("SAVE", {
+                        translation: newTranslation,
+                        id: entity.id
+                      });
                     }
 
-                    self.updateTranslation(entity, translation, {
+                    self.updateTranslation(entity, pluralForm, {
                       pk: next.data('id'),
                       string: newTranslation,
                       approved: false,
@@ -1437,16 +1492,17 @@ var Pontoon = (function (my) {
                     $('#translation').val('').focus();
 
                     if (entity.body && pluralForm === 0) {
-                      self.postMessage("DELETE");
-
-                    } else {
-                      self.updateTranslation(entity, translation, {
-                        pk: null,
-                        string: null,
-                        approved: false,
-                        fuzzy: false
+                      self.postMessage("DELETE", {
+                        id: entity.id
                       });
                     }
+
+                    self.updateTranslation(entity, pluralForm, {
+                      pk: null,
+                      string: null,
+                      approved: false,
+                      fuzzy: false
+                    });
 
                     $('#helpers .history ul')
                       .append('<li class="disabled">' +
@@ -1595,8 +1651,8 @@ var Pontoon = (function (my) {
                         self.updateEntityUI(entity);
 
                         if (entity.body) {
-                          if ($(button).is('#delete-all')) {
-                            self.postMessage("BATCH-DELETE", {
+                          if ($(button).is('#delete-all') && !entity.translation[0].pk) {
+                            self.postMessage("DELETE", {
                               id: entity.id
                             });
                           } else {
@@ -1755,12 +1811,12 @@ var Pontoon = (function (my) {
      * Update translation object with provided data
      *
      * entity Entity to update Translation for
-     * translation Translation to update
+     * pluralForm Translation plural form to update
      * data Data to update translation with
      */
-    updateTranslation: function (entity, translation, data) {
+    updateTranslation: function (entity, pluralForm, data) {
       for (var key in data) {
-        translation[key] = data[key];
+        entity.translation[pluralForm][key] = data[key];
       }
 
       this.updateEntityUI(entity);
@@ -1867,11 +1923,7 @@ var Pontoon = (function (my) {
         self.authors = data.authors;
 
         if (data.type) {
-          if (self.user.email) {
-            self.endLoader('Translation ' + data.type);
-          } else {
-            self.endLoader('Sign in to save translations');
-          }
+          self.endLoader('Translation ' + data.type);
 
           if (self.approvedNotSubmitted) {
             $('#helpers .history [data-id="' + data.translation.pk + '"] button.approve')
@@ -1881,16 +1933,9 @@ var Pontoon = (function (my) {
 
           var pf = self.getPluralForm(true);
           self.cachedTranslation = translation;
-          self.updateTranslation(entity, entity.translation[pf], data.translation);
+          self.updateTranslation(entity, pf, data.translation);
           self.updateAuthors();
-
-          // Update translation, including in place if possible
-          if (entity.body && (self.user.isTranslator || !entity.translation[pf].approved)) {
-            self.postMessage("SAVE", {
-              translation: translation,
-              id: entity.id
-            });
-          }
+          self.updateInPlaceTranslation(data.translation.string);
 
           goToNextTranslation();
 
@@ -2596,11 +2641,6 @@ var Pontoon = (function (my) {
           }
           break;
 
-        case "DELETE":
-          var entity = Pontoon.entities[message.value];
-          Pontoon.updateEntityUI(entity);
-          break;
-
         }
       }
     },
@@ -3022,7 +3062,7 @@ var Pontoon = (function (my) {
     },
 
 
-    getEditorEntityId: function() {
+    getEditorEntityPk: function() {
       var entity = this.getEditorEntity();
 
       if (entity) {
@@ -3034,7 +3074,7 @@ var Pontoon = (function (my) {
     isEditorEntityAvailable: function() {
       var availableEntityIds = this.getEntitiesIds();
 
-      return availableEntityIds.indexOf(this.getEditorEntityId()) > -1;
+      return availableEntityIds.indexOf(this.getEditorEntityPk()) > -1;
     },
 
 
@@ -3069,7 +3109,7 @@ var Pontoon = (function (my) {
           self.setNoMatch(false);
           if (self.app.advanced && type !== 'scroll') {
             if (self.isEditorEntityAvailable()) {
-              var ui = $('#entitylist .entity[data-entry-pk=' + self.getEditorEntityId() + ']');
+              var ui = $('#entitylist .entity[data-entry-pk=' + self.getEditorEntityPk() + ']');
               ui.addClass('hovered');
               self.getEditorEntity().ui = ui; // DOM node might have been replaced
             } else {
@@ -3225,7 +3265,7 @@ var Pontoon = (function (my) {
         paths: type === 'selected' ? this.getSelectedPart() : this.part,
         filter: this.getFilter(),
         search: this.getSearch(),
-        entity: this.getEditorEntityId()
+        entity: this.getEditorEntityPk()
       };
     },
 

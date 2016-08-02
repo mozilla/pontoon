@@ -56,7 +56,6 @@ from pontoon.base.models import (
     UserProfile,
 )
 
-from session_csrf import anonymous_csrf_exempt
 from suds.client import Client, WebFault
 
 
@@ -653,7 +652,7 @@ def get_translation_history(request):
 
 
 @require_AJAX
-@login_required
+@login_required(redirect_field_name='', login_url='/403')
 @transaction.atomic
 def unapprove_translation(request):
     """Unapprove given translation."""
@@ -718,9 +717,9 @@ def delete_translation(request):
     })
 
 
-@anonymous_csrf_exempt
 @require_POST
 @require_AJAX
+@login_required(redirect_field_name='', login_url='/403')
 @transaction.atomic
 def update_translation(request):
     """Update entity translation for the specified locale and user."""
@@ -753,12 +752,6 @@ def update_translation(request):
 
     user = request.user
     project = e.resource.project
-    if not request.user.is_authenticated():
-        if project.pk != 1:
-            log.error("Not authenticated")
-            return HttpResponse("error")
-        else:
-            user = None
 
     try:
         quality_checks = UserProfile.objects.get(user=user).quality_checks
@@ -817,8 +810,7 @@ def update_translation(request):
                     t.approved_user = user
                     t.approved_date = now
 
-                if request.user.is_authenticated():
-                    t.save()
+                t.save()
 
                 return JsonResponse({
                     'type': 'updated',
@@ -842,8 +834,7 @@ def update_translation(request):
                     t.approved_date = None
                     t.fuzzy = False
 
-                    if request.user.is_authenticated():
-                        t.save()
+                    t.save()
 
                     return JsonResponse({
                         'type': 'updated',
@@ -877,8 +868,7 @@ def update_translation(request):
                 t.approved_user = user
                 t.approved_date = now
 
-            if request.user.is_authenticated():
-                t.save()
+            t.save()
 
             # Return active (approved or latest) translation
             try:
@@ -908,8 +898,7 @@ def update_translation(request):
             t.approved_user = user
             t.approved_date = now
 
-        if request.user.is_authenticated():
-            t.save()
+        t.save()
 
         return JsonResponse({
             'type': 'saved',
