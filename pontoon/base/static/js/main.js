@@ -94,7 +94,7 @@ var Pontoon = (function (my) {
       // www. sans http:// or https://
       var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
 
-      return string
+      return this.doNotRender(string)
         .replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
         .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>');
     },
