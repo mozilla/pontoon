@@ -2052,6 +2052,18 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Mark Go button as active if main menu doesn't fully resemble
+     * locale, project, part combination currently being translated
+     */
+    updateGoButton: function () {
+      var toggle = this.getSelectedLocale() !== this.locale.code ||
+                   this.getSelectedProject() !== this.project.slug ||
+                   this.getSelectedPart() !== this.currentPart.title;
+      $('#go').toggleClass('active', toggle);
+    },
+
+
+    /*
      * Update project and (if needed) part menu
      */
     updateProjectMenu: function () {
@@ -2065,6 +2077,8 @@ var Pontoon = (function (my) {
 
       // Make sure part menu is always updated
       $('.project .menu [data-slug="' + slug + '"]').parent().click();
+
+      this.updateGoButton();
     },
 
 
@@ -2081,6 +2095,8 @@ var Pontoon = (function (my) {
       if (!part.length) {
         this.updatePartSelector(parts[0].title);
       }
+
+      this.updateGoButton();
     },
 
 
@@ -2215,6 +2231,7 @@ var Pontoon = (function (my) {
       $('.part .menu').on('click', 'li:not(".no-match"), .static-links .all-resources', function (e) {
         var title = $(this).find('span:first').html();
         self.updatePartSelector(title);
+        self.updateGoButton();
       });
 
       // Open selected project (part) and locale combination
@@ -2347,6 +2364,8 @@ var Pontoon = (function (my) {
         .attr('href', '/projects/' + this.project.slug);
       $('.static-links .current-localization').parent()
         .attr('href', '/' + this.locale.code + '/' + this.project.slug);
+
+      this.updateGoButton();
     },
 
 
