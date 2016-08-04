@@ -449,6 +449,7 @@ label {
   float: left;
 }
 
+#go.active,
 #go:hover {
   background: #7BC876;
   color: #272A2F;
