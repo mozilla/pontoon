@@ -70,7 +70,7 @@ class SpacesPlaceable(base.Ph):
 class PythonFormatPlaceable(base.Ph):
     """Placeable handling new format strings in python"""
     istranslatable = False
-    regex = re.compile(r'\{[[\w\d\!\.,\[\]%:$<>\+\-= ]*\}', )
+    regex = re.compile(r'\{{?[[\w\d\!\.,\[\]%:$<>\+\-= ]*\}?}', )
     parse = classmethod(general.regex_parse)
 
 
