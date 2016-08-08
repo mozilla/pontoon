@@ -927,6 +927,10 @@ body > header aside p {
   top: 4px;
 }
 
+#filter .menu li.author .count {
+  top: 8px;
+}
+
 #filter .menu li.hover .count {
   background: #4D5967;
   color: #CCCCCC;
