@@ -18,6 +18,7 @@ from pontoon.sync.utils import (
     directory_contains_resources,
     is_resource,
     is_asymmetric_resource,
+    uses_undercore_as_separator,
     locale_directory_path,
     locale_to_source_path,
     source_to_locale_path,
@@ -298,7 +299,12 @@ class VCSProject(object):
             if not self.db_project.has_multi_locale_repositories:
                 source_directory = self.source_directory_path()
                 parent_directory = os.path.abspath(os.path.join(source_directory, os.pardir))
-                locale_directory = os.path.join(parent_directory, locale.code.replace('-', '_'))
+
+                locale_code = locale.code
+                if uses_undercore_as_separator(parent_directory):
+                    locale_code = locale_code.replace('-', '_')
+
+                locale_directory = os.path.join(parent_directory, locale_code)
 
                 # For asymmetric formats, create empty folder
                 if is_asymmetric_resource(path):
