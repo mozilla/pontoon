@@ -43,7 +43,7 @@ class PullFromGit(PullFromRepository):
             log.debug("Git: Repository at " + source + " updated.")
 
         else:
-            log.debug("Git: " + unicode(error))
+            log.info("Git: " + unicode(error))
             log.debug("Git: Clone instead.")
             command = ["git", "clone", source, target]
             code, output, error = execute(command)
@@ -74,7 +74,7 @@ class PullFromHg(PullFromRepository):
             log.debug("Mercurial: Repository at " + source + " updated.")
 
         else:
-            log.debug("Mercurial: " + unicode(error))
+            log.info("Mercurial: " + unicode(error))
             log.debug("Mercurial: Clone instead.")
             command = ["hg", "clone", source, target]
             code, output, error = execute(command)
