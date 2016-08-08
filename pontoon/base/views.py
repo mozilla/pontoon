@@ -234,7 +234,7 @@ def translate(request, locale, slug, part):
     )
 
     paths = [part] if part != 'all-resources' else None
-    authors = Translation.authors(locale, project, paths).serialize()
+    translations = Translation.for_locale_project_paths(locale, project, paths)
 
     return render(request, 'translate.html', {
         'download_form': forms.DownloadFileForm(),
@@ -244,7 +244,8 @@ def translate(request, locale, slug, part):
         'part': part,
         'project': project,
         'projects': projects,
-        'authors': authors,
+        'authors': translations.authors().serialize(),
+        'counts_per_minute': translations.counts_per_minute(),
     })
 
 
@@ -414,11 +415,13 @@ def entities(request):
             .distinct()
             .order_by('order')
         )
+        translations = Translation.for_locale_project_paths(locale, project, paths)
 
         return JsonResponse({
             'entities': Entity.map_entities(locale, entities),
             'stats': TranslatedResource.objects.stats(project, paths, locale),
-            'authors': Translation.authors(locale, project, paths).serialize(),
+            'authors': translations.authors().serialize(),
+            'counts_per_minute': translations.counts_per_minute(),
         }, safe=False)
 
     entities = Entity.for_project_locale(
@@ -451,7 +454,8 @@ def entities(request):
             return JsonResponse({
                 'has_next': False,
                 'stats': {},
-                'authors': []
+                'authors': [],
+                'counts_per_minute': [],
             })
 
         has_next = entities_page.has_next()
@@ -470,11 +474,14 @@ def entities(request):
                 if entity_pk in entities.values_list('pk', flat=True):
                     entities_to_map = list(entities_to_map) + list(entities.filter(pk=entity_pk))
 
+    translations = Translation.for_locale_project_paths(locale, project, paths)
+
     return JsonResponse({
         'entities': Entity.map_entities(locale, entities_to_map, visible_entities),
         'has_next': has_next,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
-        'authors': Translation.authors(locale, project, paths).serialize(),
+        'authors': translations.authors().serialize(),
+        'counts_per_minute': translations.counts_per_minute(),
     }, safe=False)
 
 
@@ -711,9 +718,12 @@ def delete_translation(request):
 
     project = translation.entity.resource.project
     locale = translation.locale
+    translations = Translation.for_locale_project_paths(locale, project, paths)
+
     return JsonResponse({
         'stats': TranslatedResource.objects.stats(project, paths, locale),
-        'authors': Translation.authors(locale, project, paths).serialize(),
+        'authors': translations.authors().serialize(),
+        'counts_per_minute': translations.counts_per_minute(),
     })
 
 
@@ -812,11 +822,14 @@ def update_translation(request):
 
                 t.save()
 
+                translations = Translation.for_locale_project_paths(l, project, paths)
+
                 return JsonResponse({
                     'type': 'updated',
                     'translation': t.serialize(),
                     'stats': TranslatedResource.objects.stats(project, paths, l),
-                    'authors': Translation.authors(l, project, paths).serialize(),
+                    'authors': translations.authors().serialize(),
+                    'counts_per_minute': translations.counts_per_minute(),
                 })
 
             # If added by non-privileged user, unfuzzy it
@@ -836,11 +849,14 @@ def update_translation(request):
 
                     t.save()
 
+                    translations = Translation.for_locale_project_paths(l, project, paths)
+
                     return JsonResponse({
                         'type': 'updated',
                         'translation': t.serialize(),
                         'stats': TranslatedResource.objects.stats(project, paths, l),
-                        'authors': Translation.authors(l, project, paths).serialize(),
+                        'authors': translations.authors().serialize(),
+                        'counts_per_minute': translations.counts_per_minute(),
                     })
 
                 return JsonResponse({
@@ -876,11 +892,14 @@ def update_translation(request):
             except Translation.DoesNotExist:
                 active = translations.latest("date")
 
+            translations = Translation.for_locale_project_paths(l, project, paths)
+
             return JsonResponse({
                 'type': 'added',
                 'translation': active.serialize(),
                 'stats': TranslatedResource.objects.stats(project, paths, l),
-                'authors': Translation.authors(l, project, paths).serialize(),
+                'authors': translations.authors().serialize(),
+                'counts_per_minute': translations.counts_per_minute(),
             })
 
     # No translations saved yet
@@ -900,11 +919,14 @@ def update_translation(request):
 
         t.save()
 
+        translations = Translation.for_locale_project_paths(l, project, paths)
+
         return JsonResponse({
             'type': 'saved',
             'translation': t.serialize(),
             'stats': TranslatedResource.objects.stats(project, paths, l),
-            'authors': Translation.authors(l, project, paths).serialize(),
+            'authors': translations.authors().serialize(),
+            'counts_per_minute': translations.counts_per_minute(),
         })
 
 

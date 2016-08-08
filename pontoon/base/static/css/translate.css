@@ -688,6 +688,33 @@ body > header aside p {
   position: relative;
 }
 
+#filter .menu li.horizontal-separator button {
+  background: #7BC876;
+  border: none;
+  border-radius: 2px;
+  color: black;
+  float: right;
+  font-size: 13px;
+  font-weight: 700;
+  margin: -3px 4px 0 0;
+  padding: 1px 5px;
+  text-transform: uppercase;
+}
+
+#filter .menu li.horizontal-separator button:hover {
+  color: #FFFFFF;
+}
+
+/* Remove extra padding in Firefox button */
+#filter .menu li.horizontal-separator button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+#filter .menu li.time-range {
+  padding: 4px 0;
+}
+
 #filter .menu li.time-range.editing {
   cursor: auto;
 }
@@ -701,14 +728,13 @@ body > header aside p {
 }
 
 #filter .menu li.time-range label {
-  border-bottom: 1px solid transparent;
   color: #FFFFFF;
   float: left;
   font-size: 13px;
 }
 
-#filter .menu li.time-range.editing label {
-  border-color: #525A65;
+#filter .menu li.time-range label[for="from"] {
+  margin-left: 30px;
 }
 
 #filter .menu li.time-range label[for="to"] {
@@ -718,20 +744,24 @@ body > header aside p {
 
 #filter .menu li.time-range input {
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   color: #AAAAAA;
   cursor: pointer;
   display: inline-block;
   font-size: 13px;
   font-weight: 300;
   height: 17px;
+  margin-left: 5px;
   outline: none;
-  padding: 0 0 0 5px;
   vertical-align: baseline;
-  width: 112px;
+  width: 109px;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+#filter .menu li.time-range.editing input {
+  border-color: #525A65;
 }
 
 #filter .menu li.time-range.editing.hover input {
@@ -750,40 +780,11 @@ body > header aside p {
   text-align: right;
 }
 
-#filter .menu li.time-range-toolbar {
-  background: transparent;
-  color: #AAAAAA;
-  cursor: default;
-  font-size: 11px;
-  padding: 0 4px;
-}
-
-#filter .menu li.time-range-toolbar button {
-  background: transparent;
-  border: none;
-  color: #AAAAAA;
-  font-weight: 300;
-  padding: 4px 0;
-  text-transform: uppercase;
-}
-
-/* Remove extra padding in Firefox button */
-#filter .menu li.time-range-toolbar button::-moz-focus-inner {
-  padding: 0;
-  border: 0;
-}
-
-#filter .menu li.time-range-toolbar button.shortcut:hover {
-  color: #7BC876;
-}
-
-#filter .menu li.time-range-toolbar button.edit {
-  color: #FFFFFF;
-  float: right;
-}
-
-#filter .menu li.time-range-toolbar button.edit.editing {
-  color: #7BC876;
+#range-picker {
+  display: none;
+  height: 120px;
+  margin: 0 auto;
+  width: 306px;
 }
 
 #ui-datepicker-div {

@@ -19,6 +19,7 @@
      {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if perms.base.can_manage %}data-manager="true"{% endif %}
      data-authors="{{ authors|to_json() }}"
+     data-counts-per-minute="{{ counts_per_minute|to_json() }}"
      {% if user.is_authenticated() %}
       data-display-name="{{ user.name_or_email }}"
       {% if user.profile.locales_order %}
@@ -162,20 +163,16 @@
             {{ Filter.item('unchanged', 'Unchanged') }}
             {{ Filter.item('has-suggestions', 'Has Suggestions') }}
 
-            <li class="horizontal-separator">Translation Time Range</li>
+            <li class="horizontal-separator for-time-range">Translation Time<button class="edit" data-alternative="Save Range">Edit Range</button></li>
 
             <li class="time-range clearfix" data-type="time-range">
               <span class="status fa"></span>
               <span class="title">Time Range</span>
-              <label for="from">From<input type="datetime" id="from" disabled></label>
-              <label for="to">To<input type="datetime" id="to" disabled></label>
-            </li>
-            <li class="time-range-toolbar">
-              <button class="shortcut" data-hours="1">Last 60 min</button> &middot;
-              <button class="shortcut" data-hours="24">24 h</button> &middot;
-              <button class="shortcut" data-hours="168">7 days</button> &middot;
-              <button class="shortcut" data-hours="720">30 days</button>
-              <button class="edit" data-alternative="Save changes">Custom range</button>
+              <div class="clearfix">
+                <label for="from">From<input type="datetime" id="from" disabled></label>
+                <label for="to">To<input type="datetime" id="to" disabled></label>
+              </div>
+              <div id="range-picker"></div>
             </li>
 
             <li class="horizontal-separator for-authors">Translation Authors</li>

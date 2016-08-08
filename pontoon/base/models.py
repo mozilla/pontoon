@@ -15,7 +15,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Sum, Prefetch, F, Q, Case, When
+from django.db.models import Case, Count, F, Prefetch, Q, Sum, When
 from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -117,6 +117,7 @@ class UserQuerySet(models.QuerySet):
                 'email': user.email,
                 'display_name': user.display_name,
                 'gravatar_url': user.gravatar_url(44),
+                'translation_count': user.translation_count,
             })
 
         return users
@@ -1238,7 +1239,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             elif filter_type == 'unchanged':
                 entities = self.objects.unchanged(locale)
 
-            elif filter_type in Translation.authors(locale, project, paths).values_list('email', flat=True):
+            elif filter_type in Translation.for_locale_project_paths(locale, project, paths).authors().values_list('email', flat=True):
                 entities = self.objects.authored_by(locale, filter_type)
 
             elif re.match('^[0-9]{12}-[0-9]{12}$', filter_type):
@@ -1381,6 +1382,37 @@ class TranslationQuerySet(models.QuerySet):
         Translation.objects.bulk_create(translations_to_create)
         return translations
 
+    def authors(self):
+        """
+        Return a QuerySet of translation authors.
+        """
+        return (
+            User.objects
+                .filter(translation__in=self)
+                .annotate(translation_count=Count('id'))
+                .order_by('translation_count')
+        )
+
+    def counts_per_minute(self):
+        """
+        Return a dictionary of translation counts per minute.
+        """
+        translations = (
+            self
+            .extra({'minute': "date_trunc('minute', date)"})
+            .order_by('minute')
+            .values('minute')
+            .annotate(count=Count('id'))
+        )
+
+        data = []
+        for period in translations:
+            data.append([
+                utils.convert_to_unix_time(period['minute']),
+                period['count']
+            ])
+        return data
+
 
 class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity)
@@ -1409,14 +1441,21 @@ class Translation(DirtyFieldsMixin, models.Model):
     extra = JSONField(default=extra_default)
 
     @classmethod
-    def authors(self, locale, project, paths):
-        translations = Translation.objects.filter(entity__resource__project=project, locale=locale)
+    def for_locale_project_paths(self, locale, project, paths):
+        """
+        Return Translation QuerySet for given locale, project and paths.
+        """
+        translations = Translation.objects.filter(
+            entity__resource__project=project,
+            entity__obsolete=False,
+            locale=locale
+        )
 
         if paths:
             paths = project.parts_to_paths(paths)
             translations = translations.filter(entity__resource__path__in=paths)
 
-        return User.objects.filter(translation__in=translations).distinct()
+        return translations
 
     @property
     def latest_activity(self):
