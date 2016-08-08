@@ -110,7 +110,7 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
 
     else:
         try:
-            obsolete_vcs_entities, obsolete_vcs_resources, new_paths = perform_sync_project(db_project, now, full_scan=force)
+            project_changes, obsolete_vcs_resources, new_paths = perform_sync_project(db_project, now, full_scan=force)
         except MissingSourceDirectoryError, e:
             log.error(e)
             project_sync_log.skip()
@@ -125,7 +125,7 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
                 repo.pk,
                 project_sync_log.pk,
                 now,
-                obsolete_vcs_entities,
+                project_changes,
                 obsolete_vcs_resources,
                 new_paths,
                 no_pull=no_pull,
@@ -138,7 +138,7 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
 
 
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}', on_error=sync_project_repo_error)
-def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsolete_vcs_entities=None,
+def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, project_changes=None,
                       obsolete_vcs_resources=None, new_paths=None, locale=None, no_pull=False, no_commit=False,
                       full_scan=False):
     db_project = get_or_fail(Project, pk=project_pk,
@@ -173,6 +173,12 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
         repo_sync_log.end()
         return
 
+    db_project_changed = (
+        project_changes['update_db'] +
+        project_changes['obsolete_db'] +
+        project_changes['create_db']
+    )
+    obsolete_vcs_entities = project_changes['obsolete_db']
     obsolete_entities_paths = Resource.objects.obsolete_entities_paths(obsolete_vcs_entities) if obsolete_vcs_entities else None
 
     vcs_project = VCSProject(
@@ -188,7 +194,7 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
             with transaction.atomic():
                 # Skip locales that have nothing to sync
                 if vcs_project.synced_locales and locale not in vcs_project.synced_locales:
-                    if obsolete_vcs_entities or obsolete_vcs_resources:
+                    if db_project_changed or obsolete_vcs_resources:
                         update_locale_project_locale_stats(locale, db_project)
                     continue
 
@@ -196,28 +202,14 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, obsol
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
 
-                log.info(
-                    'Updated translations for locale {locale} for project {project}.'.format(
-                        locale=locale.code,
-                        project=db_project.slug,
-                    )
-                )
-
                 update_translated_resources(db_project, vcs_project, changeset, locale)
-
-                log.info(
-                    'Updated translated resources for locale {locale} for project {project}.'.format(
-                        locale=locale.code,
-                        project=db_project.slug,
-                    )
-                )
 
                 # Skip if none of the locales has anything to sync
                 # VCSProject.synced_locales is set on a first call to
                 # VCSProject.resources, which is set in
                 # pontoon.sync.core.update_translated_resources()
                 if len(vcs_project.synced_locales) == 0:
-                    if obsolete_vcs_entities or obsolete_vcs_resources:
+                    if db_project_changed or obsolete_vcs_resources:
                         for l in locales:
                             update_locale_project_locale_stats(l, db_project)
                         db_project.aggregate_stats()
