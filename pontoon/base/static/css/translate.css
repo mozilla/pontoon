@@ -576,7 +576,6 @@ body > header aside p {
   left: 0;
   height: 100%;
   position: absolute;
-  transition: all 0.2s ease-out;
   width: 100%;
 }
 
@@ -1071,7 +1070,6 @@ body > header aside p {
   padding: 0;
   position: absolute;
   top: 0;
-  transition: all 0.2s ease-out;
   width: 100%;
 }
 
