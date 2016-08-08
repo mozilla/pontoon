@@ -38,6 +38,14 @@ def is_asymmetric_resource(filename):
     return extension_in(filename, Resource.ASYMMETRIC_FORMATS)
 
 
+def uses_undercore_as_separator(directory):
+    """
+    Return True if any subdirectory contains underscore.
+    """
+    subdirs = os.listdir(directory)
+    return ''.join(subdirs).count('_') > ''.join(subdirs).count('-')
+
+
 def directory_contains_resources(directory_path, source_only=False):
     """
     Return True if the given directory contains at least one
