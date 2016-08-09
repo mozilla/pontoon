@@ -131,7 +131,11 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
         self.mock_repo_checkout_path = self.patch_object(
             Repository, 'checkout_path', new_callable=PropertyMock,
             return_value=FAKE_CHECKOUT_PATH)
-
+        self.mock_changes = {
+            'update_db': [],
+            'obsolete_db': [],
+            'create_db': []
+        }
 
     def test_clear_changed_entities(self):
         """
@@ -148,7 +152,8 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
         changed_after.save()
 
         sync_project_repo(self.db_project.pk, self.repository.pk,
-                          self.project_sync_log.pk, self.now, [])
+                          self.project_sync_log.pk, self.now,
+                          self.mock_changes)
         with assert_raises(ChangedEntityLocale.DoesNotExist):
             changed1.refresh_from_db()
         with assert_raises(ChangedEntityLocale.DoesNotExist):
@@ -158,8 +163,8 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
     def test_no_commit(self):
         """Don't call commit_changes if command.no_commit is True."""
         sync_project_repo(self.db_project.pk, self.repository.pk,
-                          self.project_sync_log.pk, self.now, [],
-                          no_commit=True)
+                          self.project_sync_log.pk, self.now,
+                          self.mock_changes, no_commit=True)
         assert_false(self.mock_commit_changes.called)
 
     def test_remove_duplicate_approvals(self):
@@ -183,7 +188,8 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
 
         with patch('pontoon.sync.tasks.VCSProject', return_value=self.vcs_project):
             sync_project_repo(self.db_project.pk, self.repository.pk,
-                              self.project_sync_log.pk, self.now, [])
+                              self.project_sync_log.pk, self.now,
+                              self.mock_changes)
 
         # Only one translation should be approved: the duplicate_translation.
         assert_equal(self.main_db_entity.translation_set.filter(approved=True).count(), 1)
@@ -205,7 +211,8 @@ class SyncProjectRepoTests(FakeCheckoutTestCase):
         self.db_project.save()
 
         sync_project_repo(self.db_project.pk, self.repository.pk,
-                          self.project_sync_log.pk, self.now, [])
+                          self.project_sync_log.pk, self.now,
+                          self.mock_changes)
 
         log = RepositorySyncLog.objects.get(repository=self.repository)
         assert_equal(log.repository, self.repository)

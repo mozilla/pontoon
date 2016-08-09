@@ -217,6 +217,7 @@ class VCSProject(object):
                     path=path, err=err
                 ))
 
+        log.info('Changed files: {resources}'.format(resources=resources.keys()))
         return resources
 
     @property
