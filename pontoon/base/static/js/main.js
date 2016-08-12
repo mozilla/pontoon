@@ -136,7 +136,7 @@ var Pontoon = (function (my) {
           sources.append(
             '<li><a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
               '<span>' + data.source + '</span>' +
-              (data.count ? '<sup>' + data.count  + '</sup>' : '') +
+              (data.count ? '<sup title="Translation memory match count">' + data.count  + '</sup>' : '') +
             '</a></li>'
           );
 
@@ -148,7 +148,7 @@ var Pontoon = (function (my) {
                 '<li data-source="' + data.source + '">' +
                   '<a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
                     '<span>' + data.source + '</span>' +
-                    (data.count ? '<sup>' + data.count + '</sup>' : '') +
+                    (data.count ? '<sup title="Translation memory match count">' + data.count + '</sup>' : '') +
                   '</a>' +
                 '</li>' +
               '</ul>' +
