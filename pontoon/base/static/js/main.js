@@ -130,13 +130,14 @@ var Pontoon = (function (my) {
 
       function append(data) {
         var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : ' title="Copy to clipboard"',
-            sources = sourcesMap[data.original + data.translation];
+            sources = sourcesMap[data.original + data.translation],
+            occurrencesTitle = ' title="Number of translation occurrences"';
 
         if (sources) {
           sources.append(
             '<li><a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
               '<span>' + data.source + '</span>' +
-              (data.count ? '<sup>' + data.count  + '</sup>' : '') +
+              (data.count ? '<sup' + occurrencesTitle + '>' + data.count  + '</sup>' : '') +
             '</a></li>'
           );
 
@@ -148,7 +149,7 @@ var Pontoon = (function (my) {
                 '<li data-source="' + data.source + '">' +
                   '<a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
                     '<span>' + data.source + '</span>' +
-                    (data.count ? '<sup>' + data.count + '</sup>' : '') +
+                    (data.count ? '<sup' + occurrencesTitle + '>' + data.count + '</sup>' : '') +
                   '</a>' +
                 '</li>' +
               '</ul>' +
