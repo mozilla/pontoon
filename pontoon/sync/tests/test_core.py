@@ -139,7 +139,7 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
         available in the current locale.
         """
         update_translated_resources(self.db_project, self.vcs_project,
-                             self.changeset, self.translated_locale)
+                                    self.translated_locale)
 
         assert_true(TranslatedResource.objects.filter(
             resource=self.main_db_resource, locale=self.translated_locale
@@ -162,7 +162,7 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
             is_asymmetric.return_value = True
 
             update_translated_resources(self.db_project, self.vcs_project,
-                                 self.changeset, self.translated_locale)
+                                        self.translated_locale)
 
             assert_true(TranslatedResource.objects.filter(
                 resource=self.main_db_resource, locale=self.translated_locale
@@ -182,7 +182,7 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
         even if the inactive locale has a resource.
         """
         update_translated_resources(self.db_project, self.vcs_project,
-                             self.changeset, self.translated_locale)
+                                    self.translated_locale)
 
         assert_true(TranslatedResource.objects.filter(
             resource=self.main_db_resource, locale=self.translated_locale

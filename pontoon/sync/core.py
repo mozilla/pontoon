@@ -174,7 +174,7 @@ def update_translations(db_project, vcs_project, locale, changeset):
             changeset.update_db_entity(locale, db_entity, vcs_entity)
 
 
-def update_translated_resources(db_project, vcs_project, changeset, locale):
+def update_translated_resources(db_project, vcs_project, locale):
     """Update the TranslatedResource entries in the database."""
     for resource in db_project.resources.all():
         # We only want to create/update the TranslatedResource object if the

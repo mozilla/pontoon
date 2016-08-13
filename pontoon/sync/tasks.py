@@ -195,14 +195,17 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, proje
                 # Skip locales that have nothing to sync
                 if vcs_project.synced_locales and locale not in vcs_project.synced_locales:
                     if db_project_changed or obsolete_vcs_resources:
+                        update_translated_resources(db_project, vcs_project, locale)
                         update_locale_project_locale_stats(locale, db_project)
+                        log.debug('Skipping locale `{0}` for project {1}, nothing to sync.'
+                                  .format(locale.code, db_project.slug))
                     continue
 
                 changeset = ChangeSet(db_project, vcs_project, now, obsolete_vcs_entities, obsolete_vcs_resources)
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
 
-                update_translated_resources(db_project, vcs_project, changeset, locale)
+                update_translated_resources(db_project, vcs_project, locale)
 
                 # Skip if none of the locales has anything to sync
                 # VCSProject.synced_locales is set on a first call to
@@ -211,6 +214,7 @@ def sync_project_repo(self, project_pk, repo_pk, project_sync_log_pk, now, proje
                 if len(vcs_project.synced_locales) == 0:
                     if db_project_changed or obsolete_vcs_resources:
                         for l in locales:
+                            update_translated_resources(db_project, vcs_project, l)
                             update_locale_project_locale_stats(l, db_project)
                         db_project.aggregate_stats()
 
