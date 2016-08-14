@@ -64,3 +64,25 @@ class PlaceablesTests(TestCase):
             mark_placeables(u'Hello {someone.name[0]}'),
             u'Hello <mark class="placeable" title="Python format string">{someone.name[0]}</mark>'
         )
+
+    def test_python_format_named_placeables(self):
+        """Test detection of format string with named placeables."""
+        assert_equal(
+            mark_placeables(u'Hello %(name)s'),
+            u'Hello <mark class="placeable" title="Python format string">%(name)s</mark>'
+        )
+
+        assert_equal(
+            mark_placeables(u'Rolling %(number)d dices'),
+            u'Rolling <mark class="placeable" title="Python format string">%(number)d</mark> dices'
+        )
+
+        assert_equal(
+            mark_placeables(u'Hello %(name)S'),
+            u'Hello <mark class="placeable" title="Python format string">%(name)S</mark>'
+        )
+
+        assert_equal(
+            mark_placeables(u'Rolling %(number)D dices'),
+            u'Rolling <mark class="placeable" title="Python format string">%(number)D</mark> dices'
+        )
