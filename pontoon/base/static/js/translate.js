@@ -1578,7 +1578,7 @@ var Pontoon = (function (my) {
                pf = self.getPluralForm(true);
 
            self.stats = data.stats;
-           self.updateProgress();
+           self.updateProgress(entity);
 
            self.updateTranslation(entity, pf, data.translation);
 
