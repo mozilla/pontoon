@@ -560,7 +560,7 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Get entity status: 'translated', 'fuzzy', 'suggested', ''
+     * Get entity status: 'translated', 'fuzzy', 'suggested', 'partial', ''
      *
      * entity Entity
      */
@@ -587,6 +587,8 @@ var Pontoon = (function (my) {
         return 'fuzzy';
       } else if (i === suggested) {
         return 'suggested';
+      } else if (translated > 0 || fuzzy > 0 || suggested > 0) {
+        return 'partial';
       }
       return '';
     },
@@ -1970,7 +1972,7 @@ var Pontoon = (function (my) {
           translation = entity.translation[0].string;
 
       entity.ui
-        .removeClass('translated suggested fuzzy')
+        .removeClass('translated suggested fuzzy partial')
         .addClass(status)
         .find('.translation-string')
           .html(self.doNotRender(translation || ''));
