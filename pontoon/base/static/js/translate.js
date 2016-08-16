@@ -1880,6 +1880,8 @@ var Pontoon = (function (my) {
 
     /*
      * Update progress indicator and value
+     *
+     * entity If provided, also update the parts menu
      */
     updateProgress: function (entity) {
       var self = this,
