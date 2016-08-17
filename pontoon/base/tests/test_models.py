@@ -1212,6 +1212,31 @@ class EntityFilterTests(TestCase):
 
         assert_equal({second_entity}, set(Entity.objects.missing(self.locale)))
 
+    def test_partially_translated_plurals(self):
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3,
+            string='Unchanged string',
+            string_plural='Unchanged plural string'
+        )
+
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            plural_form=0
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            plural_form=1
+        )
+
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=second_entity,
+            plural_form=0
+        )
+
+        assert_equal({second_entity, third_entity}, set(Entity.objects.missing(self.plural_locale)))
+
     def test_untranslated(self):
         first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
         TranslationFactory.create(
