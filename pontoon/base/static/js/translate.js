@@ -2151,7 +2151,11 @@ var Pontoon = (function (my) {
         submittedPluralForm = 0;
       }
 
-      return $.ajax({
+      if (self.XHRupdateOnServer) {
+        self.XHRupdateOnServer.abort();
+      }
+
+      self.XHRupdateOnServer = $.ajax({
         url: '/update/',
         type: 'POST',
         data: {
@@ -2173,6 +2177,11 @@ var Pontoon = (function (my) {
           }
         },
         error: function(error) {
+          // Skip if other request in progress
+          if (self.XHRupdateOnServer && self.XHRupdateOnServer.statusText === 'abort') {
+            return;
+          }
+
           if (error.status === 0) {
             // No connection -> use offline mode
             self.addToLocalStorage(entity, translation);
