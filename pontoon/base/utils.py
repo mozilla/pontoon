@@ -69,6 +69,13 @@ class SpacesPlaceable(base.Ph):
     parse = classmethod(general.regex_parse)
 
 
+class PythonFormatNamedPlaceable(base.Ph):
+    """Placeable handling named format string in python"""
+    istranslatable = False
+    regex = re.compile(r'%\([[\w\d\!\.,\[\]%:$<>\+\-= ]*\)[+|-|0\d+|#]?[\.\d+]?[s|d|e|f|g|o|x|c|%]', re.IGNORECASE)
+    parse = classmethod(general.regex_parse)
+
+
 class PythonFormatPlaceable(base.Ph):
     """Placeable handling new format strings in python"""
     istranslatable = False
@@ -89,6 +96,7 @@ def mark_placeables(text):
         # The spaces placeable can match '\n  ' and mask the newline,
         # so it has to come later.
         SpacesPlaceable.parse,
+        PythonFormatNamedPlaceable.parse,
         PythonFormatPlaceable.parse,
         general.XMLTagPlaceable.parse,
         general.AltAttrPlaceable.parse,
@@ -130,6 +138,7 @@ def mark_placeables(text):
         'CamelCasePlaceable': "Camel case string",
         'XMLTagPlaceable': "XML tag",
         'OptionPlaceable': "Command line option",
+        'PythonFormatNamedPlaceable': "Python format string",
         'PythonFormatPlaceable': "Python format string"
     }
 
@@ -169,6 +178,8 @@ def mark_placeables(text):
                     u'\n': u'\\n<br/>\n',
                 }.get(placeable),
                 'PythonFormatPlaceable':
+                    placeable.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'),
+                'PythonFormatNamedPlaceable':
                     placeable.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'),
                 'XMLEntityPlaceable': placeable.replace('&', '&amp;'),
                 'XMLTagPlaceable':
