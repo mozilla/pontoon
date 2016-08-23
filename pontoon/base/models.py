@@ -134,7 +134,9 @@ def user_role(self, locale):
 
 @property
 def user_profile_url(self):
-    return reverse('pontoon.contributor', kwargs={'email': self.email})
+    return reverse('pontoon.contributor.username', kwargs={
+        'username': self.username
+    })
 
 
 def user_gravatar_url(self, size):

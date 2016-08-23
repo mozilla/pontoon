@@ -325,7 +325,7 @@ var Pontoon = (function (my) {
                     '">' +
                     '<div class="info">' +
                       ((!this.email) ? '<span title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</span>' :
-                        '<a href="/contributors/' + this.email + '" title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</a>') +
+                        '<a href="/contributors/' + this.username + '" title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</a>') +
                       '<time class="stress" datetime="' + this.date_iso + '">' + this.date + ' UTC</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +

@@ -28,6 +28,26 @@ urlpatterns = [
     url(r'^contributor/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
         RedirectView.as_view(url="/contributors/%(email)s/", permanent=True)),
 
+    # List contributors
+    url(r'^contributors/$',
+        views.ContributorsView.as_view(),
+        name='pontoon.contributors'),
+
+    # Contributor profile by email
+    url(r'^contributors/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
+        views.contributor_email,
+        name='pontoon.contributor.email'),
+
+    # Contributor profile by username
+    url(r'^contributors/(?P<username>\w+)/$',
+        views.contributor_username,
+        name='pontoon.contributor.username'),
+
+    # Current user profile
+    url(r'^profile/$',
+        views.profile,
+        name='pontoon.profile'),
+
     # API: Toogle user profile attribute
     url(r'^api/v1/user/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
         views.toggle_user_profile_attribute,
@@ -91,21 +111,6 @@ urlpatterns = [
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/$',
         views.locale_project,
         name='pontoon.locale.project'),
-
-    # List contributors
-    url(r'^contributors/$',
-        views.ContributorsView.as_view(),
-        name='pontoon.contributors'),
-
-    # Contributor profile
-    url(r'^contributors/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
-        views.contributor,
-        name='pontoon.contributor'),
-
-    # Current user profile
-    url(r'^profile/$',
-        views.profile,
-        name='pontoon.profile'),
 
     # Terminology Search
     url(r'^terminology/$',
