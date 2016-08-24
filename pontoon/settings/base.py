@@ -95,7 +95,6 @@ INSTALLED_APPS = (
     'pontoon.base',
     'pontoon.administration',
     'pontoon.intro',
-    'pontoon.sites',
     'pontoon.sync',
 
     # Django contrib apps

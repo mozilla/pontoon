@@ -16,9 +16,6 @@ urlpatterns = [
     # Admin
     url(r'^admin/', include('pontoon.administration.urls')),
 
-    # Sites
-    url(r'^sites/', include('pontoon.sites.urls')),
-
     # Django admin
     url(r'^a/', include(admin.site.urls)),
 
