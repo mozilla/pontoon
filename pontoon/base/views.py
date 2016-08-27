@@ -252,12 +252,21 @@ def translate(request, locale, slug, part):
 @login_required(redirect_field_name='', login_url='/403')
 def profile(request):
     """Current user profile."""
-    return contributor(request, request.user.email)
+    return contributor(request, request.user)
 
 
-def contributor(request, email):
-    """Contributor profile."""
+def contributor_email(request, email):
     user = get_object_or_404(User, email=email)
+    return contributor(request, user)
+
+
+def contributor_username(request, username):
+    user = get_object_or_404(User, username=username)
+    return contributor(request, user)
+
+
+def contributor(request, user):
+    """Contributor profile."""
 
     # Exclude unchanged translations
     translations = (
@@ -646,6 +655,7 @@ def get_translation_history(request):
             "id": t.id,
             "user": "Imported" if u is None else u.name_or_email,
             "email": "" if u is None else u.email,
+            "username": "" if u is None else u.username,
             "translation": t.string,
             "date": t.date.strftime('%b %d, %Y %H:%M'),
             "date_iso": t.date.isoformat() + offset,
