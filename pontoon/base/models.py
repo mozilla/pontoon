@@ -114,8 +114,8 @@ class UserQuerySet(models.QuerySet):
 
         for user in self:
             users.append({
-                'email': user.email,
-                'display_name': user.display_name,
+                'username': user.username,
+                'display_name': user.name_or_email,
                 'gravatar_url': user.gravatar_url(44),
                 'translation_count': user.translation_count,
             })
@@ -1116,8 +1116,8 @@ class EntityQuerySet(models.QuerySet):
     def unchanged(self, locale):
         return self.with_status_counts(locale).filter(unchanged_count=F('expected_count'))
 
-    def authored_by(self, locale, email):
-        return self.filter(translation__locale=locale, translation__user__email=email)
+    def authored_by(self, locale, username):
+        return self.filter(translation__locale=locale, translation__user__username=username)
 
     def between_time_interval(self, locale, start, end):
         return self.filter(translation__locale=locale, translation__date__range=(start, end))
@@ -1241,7 +1241,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             elif filter_type == 'unchanged':
                 entities = self.objects.unchanged(locale)
 
-            elif filter_type in Translation.for_locale_project_paths(locale, project, paths).authors().values_list('email', flat=True):
+            elif filter_type in Translation.for_locale_project_paths(locale, project, paths).authors().values_list('username', flat=True):
                 entities = self.objects.authored_by(locale, filter_type)
 
             elif re.match('^[0-9]{12}-[0-9]{12}$', filter_type):

@@ -891,16 +891,13 @@ body > header aside p {
 #filter .menu li.author figcaption {
   display: inline-block;
   padding: 2px 0 2px 8px;
+  line-height:40px;
 }
 
 #filter .menu li.author .name {
   color: #FFFFFF;
   font-size: 16px;
   padding-bottom: 4px;
-}
-
-#filter .menu li.author .email {
-  color: #AAAAAA;
 }
 
 #filter .menu li .status {
@@ -928,7 +925,7 @@ body > header aside p {
 }
 
 #filter .menu li.author .count {
-  top: 8px;
+  top: 19px;
 }
 
 #filter .menu li.hover .count {

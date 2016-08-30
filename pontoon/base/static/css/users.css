@@ -85,13 +85,7 @@ sup a:visited {
 .contributor p.name {
   display: inline-block;
   font-size: 1.5em;
-  height: 1.5em;
-}
-
-.contributor p.email {
-  left: 67px;
-  position: absolute;
-  top: 47px;
+  line-height:44px;
 }
 
 th:last-child,
