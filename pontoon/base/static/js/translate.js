@@ -69,8 +69,8 @@ var Pontoon = (function (my) {
       var title = node.find('.title').text();
 
       // Special case: filter by author
-      if (node.find('.email').length) {
-        title = node.find('.email').text();
+      if (node.find('.name').length) {
+        title = node.find('.name').text() + '\'s translations';
         selectorType = 'all';
       }
 
@@ -320,18 +320,18 @@ var Pontoon = (function (my) {
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
                     ((self.user.isTranslator) ? ' translator' :
-                      ((self.user.email === this.email && !this.approved) ?
+                      ((self.user.id === this.uid && !this.approved) ?
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
-                      ((!this.email) ? '<span title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</span>' :
+                      ((!this.uid) ? '<span>' + this.user + '</span>' :
                         '<a href="/contributors/' + this.username + '" title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</a>') +
                       '<time class="stress" datetime="' + this.date_iso + '">' + this.date + ' UTC</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
-                      ((self.user.email && (self.user.email === this.email) || self.user.isTranslator) ? '<button class="delete fa" title="Delete"></button>' : '') +
+                      ((self.user.id && (self.user.id === this.uid) || self.user.isTranslator) ? '<button class="delete fa" title="Delete"></button>' : '') +
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
@@ -602,8 +602,7 @@ var Pontoon = (function (my) {
     checkUnsavedChanges: function (callback) {
       var entity = this.getEditorEntity();
 
-      // Ignore for anonymous users, for which we don't save translations
-      if (!this.user.email || !entity) {
+      if (!entity) {
         this.restoreInPlaceTranslation();
         return callback();
       }
@@ -1318,7 +1317,7 @@ var Pontoon = (function (my) {
         e.preventDefault();
 
         // Ignore for anonymous users
-        if (!self.user.email) {
+        if (!self.user.id) {
           return;
         }
 
@@ -1538,7 +1537,7 @@ var Pontoon = (function (my) {
         }
 
         // Ignore for anonymous users
-        if (!self.user.email) {
+        if (!self.user.id) {
           return;
         }
 
@@ -2497,7 +2496,7 @@ var Pontoon = (function (my) {
             '<img class="rounded" src="' + this.gravatar_url + '">' +
             '<figcaption>' +
               '<p class="name">' + this.display_name + '</p>' +
-              '<p class="email">' + this.email + '</p>' +
+              '<p class="rights">' + this.rights + '</p>' +
             '</figcaption>' +
             '<span class="count">' + this.translation_count + '</span>' +
           '</figure>' +
@@ -3543,8 +3542,7 @@ window.onpopstate = function(e) {
 };
 
 Pontoon.user = {
-  email: $('#server').data('email') || '',
-  name: $('#server').data('name') || '',
+  id: $('#server').data('id') || '',
   display_name: $('#server').data('display-name'),
   forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
   manager: $('#server').data('manager'),

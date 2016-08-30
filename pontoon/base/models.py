@@ -115,9 +115,11 @@ class UserQuerySet(models.QuerySet):
         for user in self:
             users.append({
                 'email': user.email,
-                'display_name': user.display_name,
+                'display_name': user.name_or_email,
+                'id': user.id,
                 'gravatar_url': user.gravatar_url(44),
                 'translation_count': user.translation_count,
+                'rights': user.rights
             })
 
         return users
@@ -180,6 +182,27 @@ def user_translated_locales(self):
 
     return [locale.code for locale in locales]
 
+
+@property
+def user_managed_locales(self):
+    locales = get_objects_for_user(
+        self, 'base.can_manage_locale', accept_global_perms=False)
+
+    return [locale.code for locale in locales]
+
+
+@property
+def user_rights(self):
+    if self.is_superuser:
+        return 'Admin'
+    if self.managed_locales:
+        return 'Manager for ' + ', '.join(self.managed_locales)
+    if self.translated_locales:
+        return 'Translator for ' + ', '.join(self.translated_locales)
+    else:
+        return 'Contributor'
+
+
 User.add_to_class('role', user_role)
 User.add_to_class('profile_url', user_profile_url)
 User.add_to_class('gravatar_url', user_gravatar_url)
@@ -188,6 +211,8 @@ User.add_to_class('display_name', user_display_name)
 User.add_to_class('display_name_and_email', user_display_name_and_email)
 User.add_to_class('display_name_or_blank', user_display_name_or_blank)
 User.add_to_class('translated_locales', user_translated_locales)
+User.add_to_class('managed_locales', user_managed_locales)
+User.add_to_class('rights', user_rights)
 User.add_to_class('translators', UserTranslationsManager())
 User.add_to_class('objects', UserCustomManager.from_queryset(UserQuerySet)())
 
