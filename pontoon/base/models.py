@@ -115,7 +115,7 @@ class UserQuerySet(models.QuerySet):
         for user in self:
             users.append({
                 'username': user.username,
-                'display_name': user.display_name,
+                'display_name': user.name_or_email,
                 'gravatar_url': user.gravatar_url(44),
                 'translation_count': user.translation_count,
             })

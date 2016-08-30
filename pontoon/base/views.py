@@ -653,7 +653,7 @@ def get_translation_history(request):
         u = t.user
         payload.append({
             "id": t.id,
-            "user": "Imported" if u is None else u.display_name,
+            "user": "Imported" if u is None else u.name_or_email,
             "username": "" if u is None else u.username,
             "translation": t.string,
             "date": t.date.strftime('%b %d, %Y %H:%M'),
@@ -1228,8 +1228,8 @@ def upload(request):
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
 @transaction.atomic
-def toggle_user_profile_attribute(request, email):
-    user = get_object_or_404(User, email=email)
+def toggle_user_profile_attribute(request, username):
+    user = get_object_or_404(User, username=username)
     if user != request.user:
         return HttpResponseForbidden("Forbidden: You don't have permission to edit this user")
 
