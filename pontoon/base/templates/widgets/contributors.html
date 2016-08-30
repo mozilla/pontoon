@@ -28,7 +28,7 @@
         <td class="contributor">
           <a href="{{ url('pontoon.contributor.username', contributor.username) }}">
             <img class="rounded" src="{{ contributor.gravatar_url(44) }}">
-            <p class="name">{{ contributor.display_name }}</p>
+            <p class="name">{{ contributor.name_or_email }}</p>
           </a>
         </td>
         <td class="stats">

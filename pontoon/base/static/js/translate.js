@@ -320,18 +320,18 @@ var Pontoon = (function (my) {
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
                     ((self.user.isTranslator) ? ' translator' :
-                      ((self.user.name === this.user && !this.approved) ?
+                      ((self.user.username === this.username && !this.approved) ?
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
-                      ((!this.user) ? '<span title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</span>' :
+                      ((!this.username) ? '<span>' + this.user + '</span>' :
                         '<a href="/contributors/' + this.username + '" title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</a>') +
                       '<time class="stress" datetime="' + this.date_iso + '">' + this.date + ' UTC</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
-                      ((self.user.name && (self.user.name === this.user) || self.user.isTranslator) ? '<button class="delete fa" title="Delete"></button>' : '') +
+                      ((self.user.username && (self.user.username === this.username) || self.user.isTranslator) ? '<button class="delete fa" title="Delete"></button>' : '') +
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
@@ -604,7 +604,7 @@ var Pontoon = (function (my) {
 	      self = this;
 
       // Ignore for anonymous users, for which we don't save translations
-      if (!self.user.name || !entity) {
+      if (!self.user.username || !entity) {
         this.restoreInPlaceTranslation();
         return callback();
       }
@@ -1319,7 +1319,7 @@ var Pontoon = (function (my) {
         e.preventDefault();
 
         // Ignore for anonymous users
-        if (!self.user.name) {
+        if (!self.user.username) {
           return;
         }
 
@@ -1539,7 +1539,7 @@ var Pontoon = (function (my) {
         }
 
         // Ignore for anonymous users
-        if (!self.user.name) {
+        if (!self.user.username) {
           return;
         }
 
@@ -3543,7 +3543,7 @@ window.onpopstate = function(e) {
 };
 
 Pontoon.user = {
-  name: $('#server').data('name') || '',
+  username: $('#server').data('username') || '',
   display_name: $('#server').data('display-name'),
   forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
   manager: $('#server').data('manager'),
