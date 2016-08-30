@@ -891,6 +891,7 @@ body > header aside p {
 #filter .menu li.author figcaption {
   display: inline-block;
   padding: 2px 0 2px 8px;
+  line-height:44px;
 }
 
 #filter .menu li.author .name {

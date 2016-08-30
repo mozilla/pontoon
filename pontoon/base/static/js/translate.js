@@ -69,8 +69,8 @@ var Pontoon = (function (my) {
       var title = node.find('.title').text();
 
       // Special case: filter by author
-      if (node.find('.email').length) {
-        title = node.find('.email').text();
+      if (node.find('.name').length) {
+        title = node.find('.name').text() + '\'s translations';
         selectorType = 'all';
       }
 
@@ -320,18 +320,18 @@ var Pontoon = (function (my) {
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
                     ((self.user.isTranslator) ? ' translator' :
-                      ((self.user.email === this.email && !this.approved) ?
+                      ((self.user.name === this.name && !this.approved) ?
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
-                      ((!this.email) ? '<span title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</span>' :
+                      ((!this.name) ? '<span title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</span>' :
                         '<a href="/contributors/' + this.username + '" title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</a>') +
                       '<time class="stress" datetime="' + this.date_iso + '">' + this.date + ' UTC</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
-                      ((self.user.email && (self.user.email === this.email) || self.user.isTranslator) ? '<button class="delete fa" title="Delete"></button>' : '') +
+                      ((self.user.name && (self.user.name === this.name) || self.user.isTranslator) ? '<button class="delete fa" title="Delete"></button>' : '') +
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
@@ -600,10 +600,11 @@ var Pontoon = (function (my) {
      * callback Callback function
      */
     checkUnsavedChanges: function (callback) {
-      var entity = this.getEditorEntity();
+      var entity = this.getEditorEntity(),
+	      self = this;
 
       // Ignore for anonymous users, for which we don't save translations
-      if (!this.user.email || !entity) {
+      if (!self.user.name || !entity) {
         this.restoreInPlaceTranslation();
         return callback();
       }
@@ -1318,7 +1319,7 @@ var Pontoon = (function (my) {
         e.preventDefault();
 
         // Ignore for anonymous users
-        if (!self.user.email) {
+        if (!self.user.name) {
           return;
         }
 
@@ -1538,7 +1539,7 @@ var Pontoon = (function (my) {
         }
 
         // Ignore for anonymous users
-        if (!self.user.email) {
+        if (!self.user.name) {
           return;
         }
 
@@ -2492,12 +2493,11 @@ var Pontoon = (function (my) {
       $('#filter .author').remove();
 
       $.each(this.authors, function() {
-        authors.after('<li class="author" data-type="' + this.email + '">' +
+        authors.after('<li class="author" data-type="' + this.username + '">' +
           '<figure>' +
             '<img class="rounded" src="' + this.gravatar_url + '">' +
             '<figcaption>' +
               '<p class="name">' + this.display_name + '</p>' +
-              '<p class="email">' + this.email + '</p>' +
             '</figcaption>' +
             '<span class="count">' + this.translation_count + '</span>' +
           '</figure>' +
@@ -3543,7 +3543,6 @@ window.onpopstate = function(e) {
 };
 
 Pontoon.user = {
-  email: $('#server').data('email') || '',
   name: $('#server').data('name') || '',
   display_name: $('#server').data('display-name'),
   forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
