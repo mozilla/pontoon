@@ -89,12 +89,6 @@ sup a:visited {
   line-height:44px;
 }
 
-.contributor p.email {
-  left: 67px;
-  position: absolute;
-  top: 47px;
-}
-
 th:last-child,
 .details {
   text-align: center;
