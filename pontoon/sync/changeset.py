@@ -3,6 +3,7 @@ import logging
 import os
 
 from bulk_update.helper import bulk_update
+from django.db.models import Prefetch
 
 from pontoon.base.models import (
     Entity,
@@ -228,7 +229,37 @@ class ChangeSet(object):
                 if translation.is_dirty():
                     self.translations_to_update.append(translation)
 
+    def prefetch_entity_translations(self):
+        prefetched_entities = {}
+
+        locale_entities = {}
+        for locale_code, db_entity, vcs_entity in self.changes['update_db']:
+            locale_entities.setdefault(locale_code, []).append(db_entity.pk)
+
+        for locale in locale_entities.keys():
+            entities_qs = Entity.objects.filter(
+                pk__in=locale_entities[locale],
+            ).prefetch_related(
+                Prefetch(
+                    'translation_set',
+                    queryset=Translation.objects.filter(locale__code=locale),
+                    to_attr='db_translations'
+                )
+            ).prefetch_related(
+                Prefetch(
+                    'translation_set',
+                    queryset=Translation.objects.filter(locale__code=locale, approved_date__lte=self.now),
+                    to_attr='old_translations'
+                )
+            )
+            prefetched_entities[locale] = {entity.key: entity for entity in entities_qs}
+
+        return prefetched_entities
+
     def execute_update_db(self):
+        if self.changes['update_db']:
+            entities_with_translations = self.prefetch_entity_translations()
+
         for locale_code, db_entity, vcs_entity in self.changes['update_db']:
             for field, value in self.get_entity_updates(vcs_entity).items():
                 setattr(db_entity, field, value)
@@ -239,7 +270,11 @@ class ChangeSet(object):
             if locale_code is not None:
                 # Update translations for the entity.
                 vcs_translation = vcs_entity.translations[locale_code]
-                self.update_entity_translations_from_vcs(db_entity, locale_code, vcs_translation)
+                prefetched_entity = entities_with_translations[locale_code][db_entity.key]
+                self.update_entity_translations_from_vcs(
+                    db_entity, locale_code, vcs_translation, None,
+                    prefetched_entity.db_translations, prefetched_entity.old_translations
+                )
 
     def execute_obsolete_db(self):
         (Entity.objects

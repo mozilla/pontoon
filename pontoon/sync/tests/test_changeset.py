@@ -103,7 +103,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         """Create new entity in the database."""
         self.main_db_entity.delete()
 
-        self.main_vcs_entity.key = 'string-key'
+        self.main_vcs_entity.key = 'Source String'
         self.main_vcs_entity.comments = ['first comment', 'second']
         self.main_vcs_entity.order = 7
         self.main_vcs_translation.fuzzy = False
@@ -120,7 +120,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
             new_entity,
             resource=self.main_db_resource,
             string='Source String',
-            key='string-key',
+            key='Source String',
             comment='first comment\nsecond',
             order=7,
             string_plural='plural string',
@@ -155,7 +155,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_db_translation.extra = {}
         self.main_db_translation.save()
 
-        self.main_vcs_entity.key = 'string-key'
+        self.main_vcs_entity.key = 'Source String'
         self.main_vcs_entity.comments = ['first comment', 'second']
         self.main_vcs_entity.order = 7
         self.main_vcs_entity.string_plural = 'plural string'
@@ -169,7 +169,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_db_entity.refresh_from_db()
         assert_attributes_equal(
             self.main_db_entity,
-            key='string-key',
+            key='Source String',
             comment='first comment\nsecond',
             order=7,
             string_plural='plural string',

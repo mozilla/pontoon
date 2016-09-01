@@ -7,6 +7,7 @@ import os.path
 import re
 import urllib
 
+from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
 
 from django.conf import settings
@@ -551,6 +552,24 @@ class Project(AggregatedStats):
                 locale.aggregate_stats()
 
     @property
+    def changed_resources(self):
+        """
+        Returns a map of resource paths and their locales
+        that where changed from the last sync.
+        """
+        resources = defaultdict(set)
+        changes = (
+            ChangedEntityLocale.objects
+                .filter(entity__resource__project=self)
+                .prefetch_related('locale', 'entity__resource')
+        )
+
+        for change in changes:
+            resources[change.entity.resource.path].add(change.locale)
+
+        return resources
+
+    @cached_property
     def unsynced_locales(self):
         """
         Project Locales that haven't been synchronized yet.
@@ -627,18 +646,32 @@ class Project(AggregatedStats):
 
         return False
 
+    @property
+    def has_single_repo(self):
+        return self.repositories.count() == 1
+
     @cached_property
     def source_repository(self):
         """
         Returns an instance of repository which contains the path to source files.
         """
-        from pontoon.sync.vcs.models import VCSProject
+        if not self.has_single_repo:
+            from pontoon.sync.vcs.models import VCSProject
+            source_directories = VCSProject.SOURCE_DIR_SCORES.keys()
 
-        vcs_project = VCSProject(self)
-        source_files_directory = vcs_project.source_directory_path()
-        for repo in self.repositories.all():
-            if not repo.multi_locale and source_files_directory.startswith(repo.checkout_path):
-                return repo
+            for repo in self.repositories.all():
+                last_directory = os.path.basename(os.path.normpath(urlparse(repo.url).path))
+                if repo.source_repo or last_directory in source_directories:
+                    return repo
+
+        return self.repositories.first()
+
+    def translation_repositories(self):
+        """
+        Returns a list of project repositories containing translations.
+        """
+        pks = [repo.pk for repo in self.repositories.all() if repo.is_translation_repository]
+        return Repository.objects.filter(pk__in=pks)
 
     def get_latest_activity(self, locale=None):
         return ProjectLocale.get_latest_activity(self, locale)
@@ -808,6 +841,13 @@ class Repository(models.Model):
         return '{locale_code}' in self.url
 
     @property
+    def is_translation_repository(self):
+        """
+        Returns true is repository contains translations.
+        """
+        return self.project.has_single_repo or self != self.project.source_repository
+
+    @property
     def checkout_path(self):
         """
         Path where the checkout for this repo is located. Does not
@@ -837,22 +877,13 @@ class Repository(models.Model):
     @cached_property
     def locales(self):
         """
-        Yield an iterable of Locales whose strings are stored within
-        this repo. Also return enabled locales that are to be added to
-        the repo.
+        Return a list of Locales whose strings are stored within
+        this repo. Include enabled locales that are not in the repo yet.
         """
-        from pontoon.sync.utils import locale_directory_path
+        if self.is_translation_repository:
+            return self.project.locales.all()
 
-        locales = []  # Use list since we're caching the result.
-        for locale in self.project.locales.all():
-            try:
-                if self.project.has_multi_locale_repositories:
-                    locale_directory_path(self.checkout_path, locale.code)
-                locales.append(locale)
-            except IOError:
-                pass  # Directory missing, not in this repo.
-
-        return locales
+        return []
 
     def locale_checkout_path(self, locale):
         """

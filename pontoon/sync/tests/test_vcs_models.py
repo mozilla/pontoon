@@ -40,16 +40,16 @@ class VCSProjectTests(TestCase):
         self.vcs_project = VCSProject(self.project)
 
     def test_relative_resource_paths(self):
-        self.vcs_project.source_directory_path = Mock(return_value='/root/')
-        self.vcs_project.resources_for_path = Mock(return_value=[
-            '/root/foo.po',
-            '/root/meh/bar.po'
-        ])
+        with patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'):
+            self.vcs_project.resources_for_path = Mock(return_value=[
+                '/root/foo.po',
+                '/root/meh/bar.po'
+            ])
 
-        assert_equal(
-            list(self.vcs_project.relative_resource_paths()),
-            ['foo.po', 'meh/bar.po']
-        )
+            assert_equal(
+                list(self.vcs_project.relative_resource_paths()),
+                ['foo.po', 'meh/bar.po']
+            )
 
     def test_relative_resource_paths_pot(self):
         """
@@ -57,16 +57,16 @@ class VCSProjectTests(TestCase):
         relative paths are used within non-source locales that do not
         have .pot files.
         """
-        self.vcs_project.source_directory_path = Mock(return_value='/root/')
-        self.vcs_project.resources_for_path = Mock(return_value=[
-            '/root/foo.pot',
-            '/root/meh/bar.pot'
-        ])
+        with patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'):
+            self.vcs_project.resources_for_path = Mock(return_value=[
+                '/root/foo.pot',
+                '/root/meh/bar.pot'
+            ])
 
-        assert_equal(
-            list(self.vcs_project.relative_resource_paths()),
-            ['foo.po', 'meh/bar.po']
-        )
+            assert_equal(
+                list(self.vcs_project.relative_resource_paths()),
+                ['foo.po', 'meh/bar.po']
+            )
 
     def test_source_directory_path_no_resource(self):
         """
@@ -77,7 +77,7 @@ class VCSProjectTests(TestCase):
         self.mock_checkout_path.return_value = checkout_path
 
         assert_equal(
-            self.vcs_project.source_directory_path(),
+            self.vcs_project.source_directory_path,
             os.path.join(checkout_path, 'real_resources', 'templates')
         )
 
@@ -90,7 +90,7 @@ class VCSProjectTests(TestCase):
         self.mock_checkout_path.return_value = checkout_path
 
         assert_equal(
-            self.vcs_project.source_directory_path(),
+            self.vcs_project.source_directory_path,
             os.path.join(checkout_path, 'templates')
         )
 
@@ -103,7 +103,7 @@ class VCSProjectTests(TestCase):
         self.mock_checkout_path.return_value = checkout_path
 
         assert_equal(
-            self.vcs_project.source_directory_path(),
+            self.vcs_project.source_directory_path,
             os.path.join(checkout_path, 'en-US')
         )
 
@@ -116,7 +116,7 @@ class VCSProjectTests(TestCase):
         self.mock_checkout_path.return_value = checkout_path
 
         assert_equal(
-            self.vcs_project.source_directory_path(),
+            self.vcs_project.source_directory_path,
             os.path.join(checkout_path, 'en')  # en has pot files in it
         )
 
