@@ -20,13 +20,23 @@ Sync tasks are executed in parallel, using `Celery`_ to manage the worker queue.
 
 Syncing a Project
 -----------------
-Syncing an individual project consists of roughly the following steps:
+Syncing an individual project is split into two tasks. The first one is syncing
+source strings:
 
-- Pull the latest commit from version control.
-- Check for changes in VCS or in Pontoon, and if there are none, skip syncing
-  completely.
-- Find all the possible entities across all the resources for this project,
-  searching both the Pontoon database and VCS.
+- Pull latest changes of the source string repository from version control.
+- Check for changes in VCS and in Pontoon, and if there are no changes in VCS
+  and Pontoon and the project only uses one repository, skip syncing the
+  project completely.
+- If source repository has changed since the last sync, reflect any added,
+  changed or removed files in Pontoon.
+
+The second step is syncing translations:
+
+- Pull latest changes of all project repositories from version control.
+- Check for changes in VCS and in Pontoon, and if there are no changes in VCS
+  and Pontoon, quit early.
+- If there are changes, identify which files have changed and find all their
+  entities, searching both the Pontoon database and VCS.
 - For each entity found, compare the VCS version to the Pontoon version (also
   known as the database version) and decide how to sync it. These changes are
   collected in a "Changeset" object.

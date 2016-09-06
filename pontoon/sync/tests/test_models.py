@@ -81,7 +81,7 @@ class ProjectSyncLogTests(TestCase):
         Return the latest end time among repo sync logs for this log.
         """
         project = ProjectFactory.create(repositories=[])
-        repo1, repo2 = RepositoryFactory.create_batch(2, project=project)
+        source_repo, repo1, repo2 = RepositoryFactory.create_batch(3, project=project)
         project_sync_log = ProjectSyncLogFactory.create(project=project)
 
         RepositorySyncLogFactory.create(project_sync_log=project_sync_log,

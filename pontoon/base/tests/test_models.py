@@ -114,6 +114,7 @@ class ProjectTests(TestCase):
         project = ProjectFactory.create()
         assert_false(project.needs_sync)
 
+        del project.unsynced_locales
         ProjectLocaleFactory.create(
             project=project,
             locale=LocaleFactory.create()

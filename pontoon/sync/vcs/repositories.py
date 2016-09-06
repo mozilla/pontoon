@@ -357,10 +357,14 @@ class HgRepository(VCSRepository):
         )
         return output.strip() if code == 0 else None
 
+    def _strip(self, rev):
+        "Ignore trailing + in revision number. It marks local changes."
+        return rev.rstrip('+')
+
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ('A', 'M')
         code, output, error = self.execute(
-            ['hg', 'status', '-a', '-m', '-r', '--rev={}'.format(from_revision), '--rev=tip'],
+            ['hg', 'status', '-a', '-m', '-r', '--rev={}'.format(self._strip(from_revision)), '--rev=tip'],
             cwd=path
         )
         if code == 0:
@@ -369,7 +373,7 @@ class HgRepository(VCSRepository):
         return []
 
     def get_removed_files(self, path, from_revision):
-        return self.get_changed_files(path, from_revision, ('R',))
+        return self.get_changed_files(path, self._strip(from_revision), ('R',))
 
 
 # TODO: Tie these to the same constants that the Repository model uses.

@@ -86,7 +86,7 @@ class ProjectSyncLog(BaseLog):
             return True
 
         repo_logs = self.repository_sync_logs.all()
-        sync_repos = self.project.repositories.exclude(source_repo=True)
+        sync_repos = self.project.translation_repositories()
         if len(repo_logs) != sync_repos.count():
             return False
         else:

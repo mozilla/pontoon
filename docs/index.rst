@@ -5,12 +5,14 @@ Pontoon is a web interface for translating text into other languages. Pontoon
 specializes in translating websites in-place, but can handle any project that
 uses one of the file formats it supports:
 
-- Gettext PO files
+- Gettext PO
 - XLIFF
-- Property files
+- FTL (L20n)
+- Properties
 - DTD
 - INI
-- .lang files
+- INC
+- .lang
 
 Pontoon pulls strings it needs to translate from an external source, and writes
 them back periodically. Typically these external sources are version control
@@ -20,8 +22,6 @@ sources include:
 - Git
 - Mercurial
 - Subversion
-- Remote file (pull only)
-- Transifex (pull only)
 
 Contents
 --------
