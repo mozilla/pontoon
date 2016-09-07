@@ -89,6 +89,15 @@ var Pontoon = (function (my) {
       $('#search').val(value);
     },
 
+    highlightSearch: function(string) {
+      if (string.indexOf('<') == -1) {
+        string = string.replace(
+            new RegExp("(" + Pontoon.getSearch().replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*") + ")", "gi"), "<span class=\"searchHighlight\">$1</span>"
+        );
+      }
+
+      return string;
+    },
 
     renderEntity: function (index, entity) {
       var self = this,
@@ -102,9 +111,9 @@ var Pontoon = (function (my) {
         '" data-entry-pk="' + entity.pk + '">' +
         '<span class="status fa' + (self.user.isTranslator ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
-          '<span class="source-string">' + source_string + '</span>' +
+          '<span class="source-string">' + self.highlightSearch(source_string) + '</span>' +
           '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
-            self.doNotRender(entity.translation[0].string || '') +
+              self.highlightSearch(self.doNotRender(entity.translation[0].string || '')) +
           '</span>' +
         '</p>' +
         '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
