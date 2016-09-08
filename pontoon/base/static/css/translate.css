@@ -34,6 +34,12 @@ mark.placeable {
   padding: 0 2px;
 }
 
+mark.search {
+  background: #FED271;
+  font-weight: normal;
+  font-style: inherit;
+}
+
 #source {
   display: none;
   height: 0;

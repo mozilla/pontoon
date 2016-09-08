@@ -143,7 +143,7 @@ def sync_resources(db_project, now, force, no_pull):
 
     else:
         project_changes, obsolete_vcs_resources, new_paths = None, None, None
-        log.info('Skipping syncing resources for project {0}, no changes detected.'.format(db_project.slug))
+        log.info('Skipping syncing resources for project {0}, no meaningful changes detected.'.format(db_project.slug))
 
     return {
         'project_changes': project_changes,
