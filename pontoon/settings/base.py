@@ -324,6 +324,7 @@ PIPELINE_JS = {
             'js/highstock.js',
             'js/translate.js',
             'js/request_projects.js',
+            'js/jquery.mark.js',
         ),
         'output_filename': 'js/translate.min.js',
     },

@@ -111,6 +111,7 @@ var Pontoon = (function (my) {
         '</li>', self.app.win);
       li[0].entity = entity;
       entity.ui = li; /* HTML Element representing string in the main UI */
+      self.highlightQuery(li);
 
       // Hover editable entities on the page
       if (entity.body) {
@@ -3293,6 +3294,20 @@ var Pontoon = (function (my) {
       return availableEntityIds.indexOf(this.getEditorEntityPk()) > -1;
     },
 
+    highlightQuery: function(item) {
+      var searchQuery = this.getSearch(),
+          item = item || $('#entitylist .source-string, #entitylist .translation-string');
+
+      item.unmark();
+      if (searchQuery) {
+        item.mark(searchQuery, {
+          acrossElements: true,
+          caseSensitive: false,
+          className: 'search',
+          separateWordSearch: false
+        });
+      }
+    },
 
     loadNextEntities: function(type) {
       var self = this,
@@ -3323,6 +3338,8 @@ var Pontoon = (function (my) {
           self.setNoMatch(true);
         } else {
           self.setNoMatch(false);
+          self.highlightQuery();
+
           if (self.app.advanced && type !== 'scroll') {
             if (self.isEditorEntityAvailable()) {
               var ui = $('#entitylist .entity[data-entry-pk=' + self.getEditorEntityPk() + ']');
