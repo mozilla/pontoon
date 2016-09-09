@@ -606,7 +606,7 @@ $(function() {
     Pontoon.startLoader();
 
     $.ajax({
-      url: '/api/v1/user/' + $('#server').data('email') + '/',
+      url: '/api/v1/user/' + $('#server').data('username') + '/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('#server').data('csrf'),

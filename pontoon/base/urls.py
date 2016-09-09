@@ -49,7 +49,7 @@ urlpatterns = [
         name='pontoon.profile'),
 
     # API: Toogle user profile attribute
-    url(r'^api/v1/user/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$',
+    url(r'^api/v1/user/(?P<username>[\w-]+)/$',
         views.toggle_user_profile_attribute,
         name='pontoon.toggle_user_profile_attribute'),
 
