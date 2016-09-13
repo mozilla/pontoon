@@ -138,12 +138,13 @@ def sync_resources(db_project, now, force, no_pull):
             log.error(e)
             return False
 
+        if not db_project.has_single_repo:
+            db_project.source_repository.set_last_synced_revisions()
         log.info('Synced resources for project {0}.'.format(db_project.slug))
-        db_project.source_repository.set_last_synced_revisions()
 
     else:
         project_changes, obsolete_vcs_resources, new_paths = None, None, None
-        log.info('Skipping syncing resources for project {0}, no meaningful changes detected.'.format(db_project.slug))
+        log.info('Skipping syncing resources for project {0}, no changes detected.'.format(db_project.slug))
 
     return {
         'project_changes': project_changes,
@@ -188,22 +189,22 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
     if not no_pull:
         repos_changed = pull_changes(db_project)
 
-    # If none of the repos has changed since the last sync and there are
-    # no Pontoon-side changes for this project, quit early.
-    if not full_scan and not db_project.needs_sync and not repos_changed:
-        log.info('Skipping project {0}, no changes detected.'.format(db_project.slug))
-        repo_sync_log.end()
-        return
-
-    db_project_changed = []
+    resources_changed = []
     obsolete_vcs_entities = []
     if project_changes:
-        db_project_changed = (
+        resources_changed = (
             project_changes['update_db'] +
             project_changes['obsolete_db'] +
             project_changes['create_db']
         )
         obsolete_vcs_entities = project_changes['obsolete_db']
+
+    # If none of the repos has changed since the last sync and there are
+    # no Pontoon-side changes for this project, quit early.
+    if not full_scan and not db_project.needs_sync and not repos_changed and not (resources_changed or obsolete_vcs_resources):
+        log.info('Skipping project {0}, no meaningful changes detected.'.format(db_project.slug))
+        repo_sync_log.end()
+        return
 
     obsolete_entities_paths = Resource.objects.obsolete_entities_paths(obsolete_vcs_entities) if obsolete_vcs_entities else None
 
@@ -226,7 +227,7 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
 
                 # Skip all locales if none of the them has anything to sync
                 if len(vcs_project.synced_locales) == 0:
-                    if db_project_changed or obsolete_vcs_resources:
+                    if resources_changed or obsolete_vcs_resources:
                         for l in locales:
                             update_translated_resources(db_project, vcs_project, l)
                             update_locale_project_locale_stats(l, db_project)
@@ -234,13 +235,13 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
 
                     log.info('Skipping repo `{0}` for project {1}, none of the locales has anything to sync.'
                              .format(repo.url, db_project.slug))
-                    repo_sync_log.end()
                     repo.set_last_synced_revisions()
+                    repo_sync_log.end()
                     return
 
                 # Skip locales that have nothing to sync
                 if vcs_project.synced_locales and locale not in vcs_project.synced_locales:
-                    if db_project_changed or obsolete_vcs_resources:
+                    if resources_changed or obsolete_vcs_resources:
                         update_translated_resources(db_project, vcs_project, locale)
                         update_locale_project_locale_stats(locale, db_project)
                         log.debug('Skipping locale `{0}` for project {1}, no changes detected.'

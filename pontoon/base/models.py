@@ -866,11 +866,18 @@ class Repository(models.Model):
         return '{locale_code}' in self.url
 
     @property
+    def is_source_repository(self):
+        """
+        Returns true if repository contains source strings.
+        """
+        return self == self.project.source_repository
+
+    @property
     def is_translation_repository(self):
         """
-        Returns true is repository contains translations.
+        Returns true if repository contains translations.
         """
-        return self.project.has_single_repo or self != self.project.source_repository
+        return self.project.has_single_repo or not self.is_source_repository
 
     @property
     def checkout_path(self):

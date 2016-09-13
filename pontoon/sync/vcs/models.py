@@ -148,7 +148,7 @@ class VCSProject(object):
                     repo.get_last_synced_revisions()
                 )[0]
 
-                locale_path_locales = self.locale_path_locales()
+                locale_path_locales = self.locale_path_locales(repo.checkout_path)
                 locale_paths = locale_path_locales.keys()
 
                 for path in changed_files:
@@ -174,7 +174,7 @@ class VCSProject(object):
 
         return files
 
-    def locale_path_locales(self):
+    def locale_path_locales(self, repo_checkout_path):
         """
         A map of relative locale directory paths and their respective locales.
         """
@@ -182,7 +182,7 @@ class VCSProject(object):
 
         for locale in self.db_project.locales.all():
             locale_directory = self.locale_directory_paths[locale.code]
-            path = locale_directory[len(self.checkout_path):].lstrip(os.sep)
+            path = locale_directory[len(repo_checkout_path):].lstrip(os.sep)
             locale_path_locales[path] = locale
 
         return locale_path_locales
