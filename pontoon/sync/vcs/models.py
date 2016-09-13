@@ -52,6 +52,7 @@ class VCSProject(object):
     SOURCE_DIR_SCORES = {
         'templates': 3,
         'en-US': 2,
+        'en-us': 2,
         'en': 1
     }
     SOURCE_DIR_NAMES = SOURCE_DIR_SCORES.keys()
