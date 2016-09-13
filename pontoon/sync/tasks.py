@@ -215,6 +215,8 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
         full_scan=full_scan
     )
 
+    failed_locales = set()
+
     for locale in locales:
         try:
             with transaction.atomic():
@@ -233,6 +235,7 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
                     log.info('Skipping repo `{0}` for project {1}, none of the locales has anything to sync.'
                              .format(repo.url, db_project.slug))
                     repo_sync_log.end()
+                    repo.set_last_synced_revisions()
                     return
 
                 # Skip locales that have nothing to sync
@@ -305,10 +308,21 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
                 )
             )
 
+            failed_locales.add(locale)
+
     with transaction.atomic():
         db_project.aggregate_stats()
 
-    log.info('Synced translations for project {0} in locales {1}.'.format(
-        db_project.slug, ','.join(locale.code for locale in vcs_project.synced_locales)
-    ))
+    synced_locales = [locale.code for locale in (vcs_project.synced_locales - failed_locales)]
+
+    if synced_locales:
+        log.info('Synced translations for project {0} in locales {1}.'.format(
+            db_project.slug, ','.join(synced_locales)
+        ))
+    else:
+        log.info('Failed to sync translations for project {0}'.format(
+            db_project.slug
+        ))
+
+    repo.set_last_synced_revisions(exclude=failed_locales)
     repo_sync_log.end()

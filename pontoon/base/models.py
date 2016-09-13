@@ -980,15 +980,21 @@ class Repository(models.Model):
     Set last_synced_revisions to a dictionary of revisions
     that are currently downloaded on the disk.
     """
-    def set_last_synced_revisions(self):
+    def set_last_synced_revisions(self, exclude=None):
         current_revisions = {}
 
         if self.multi_locale:
             for locale in self.project.locales.all():
-                current_revisions[locale.code] = get_revision(
-                    self.type,
-                    self.locale_checkout_path(locale)
-                )
+                if exclude and locale in exclude:
+                    revision = self.last_synced_revisions.get(locale.code)
+                else:
+                    revision = get_revision(
+                        self.type,
+                        self.locale_checkout_path(locale)
+                    )
+
+                if revision:
+                    current_revisions[locale.code] = revision
 
         else:
             current_revisions['single_locale'] = get_revision(

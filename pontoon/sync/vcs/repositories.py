@@ -63,27 +63,18 @@ class PullFromHg(PullFromRepository):
         source = source or self.source
         target = target or self.target
 
-        # Undo local changes
-        command = ["hg", "revert", "--all", "--no-backup"]
-        execute(command, target)
+        # Undo local changes: Mercurial doesn't offer anything more elegant
+        command = ["rm", "-rf", target]
+        code, output, error = execute(command)
 
-        command = ["hg", "pull", "-u"]
-        code, output, error = execute(command, target)
+        command = ["hg", "clone", source, target]
+        code, output, error = execute(command)
 
         if code == 0:
-            log.debug("Mercurial: Repository at " + source + " updated.")
+            log.debug("Mercurial: Repository at " + source + " cloned.")
 
         else:
-            log.info("Mercurial: " + unicode(error))
-            log.debug("Mercurial: Clone instead.")
-            command = ["hg", "clone", source, target]
-            code, output, error = execute(command)
-
-            if code == 0:
-                log.debug("Mercurial: Repository at " + source + " cloned.")
-
-            else:
-                raise PullFromRepositoryException(unicode(error))
+            raise PullFromRepositoryException(unicode(error))
 
 
 class PullFromSvn(PullFromRepository):
