@@ -2,13 +2,14 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Max
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 from pontoon.base.models import Project, Repository
 from pontoon.base.utils import latest_datetime
 
 
 class BaseLog(models.Model):
-    @property
+    @cached_property
     def duration(self):
         if self.end_time is not None:
             return self.end_time - self.start_time
@@ -22,13 +23,11 @@ class BaseLog(models.Model):
 class SyncLog(BaseLog):
     start_time = models.DateTimeField(default=timezone.now)
 
-    @property
+    @cached_property
     def end_time(self):
-        if not self.finished:
-            return None
-        else:
+        try:
             repo_logs = RepositorySyncLog.objects.filter(project_sync_log__sync_log=self)
-            repo_end = repo_logs.aggregate(Max('end_time'))['end_time__max']
+            repo_end = repo_logs.latest('end_time').end_time
 
             skipped_end = self.project_sync_logs.aggregate(
                 Max('skipped_end_time')
@@ -36,7 +35,10 @@ class SyncLog(BaseLog):
 
             return latest_datetime([repo_end, skipped_end])
 
-    @property
+        except RepositorySyncLog.DoesNotExist:
+            return None
+
+    @cached_property
     def finished(self):
         return all(log.finished for log in self.project_sync_logs.all())
 
@@ -53,7 +55,7 @@ class ProjectSyncLog(BaseLog):
     skipped = models.BooleanField(default=False)
     skipped_end_time = models.DateTimeField(default=None, blank=True, null=True)
 
-    @property
+    @cached_property
     def end_time(self):
         if self.skipped:
             return self.skipped_end_time
@@ -70,7 +72,7 @@ class ProjectSyncLog(BaseLog):
     SKIPPED = 1
     SYNCED = 2
 
-    @property
+    @cached_property
     def status(self):
         """Return a constant for the current status of this sync."""
         if not self.finished:
@@ -80,7 +82,7 @@ class ProjectSyncLog(BaseLog):
         else:
             return self.SYNCED
 
-    @property
+    @cached_property
     def finished(self):
         if self.skipped:
             return True
@@ -107,7 +109,7 @@ class RepositorySyncLog(BaseLog):
     start_time = models.DateTimeField(default=timezone.now)
     end_time = models.DateTimeField(default=None, blank=True, null=True)
 
-    @property
+    @cached_property
     def finished(self):
         return self.end_time is not None
 
