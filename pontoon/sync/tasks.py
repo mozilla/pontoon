@@ -202,7 +202,7 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
     # If none of the repos has changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
     if not full_scan and not db_project.needs_sync and not repos_changed and not (resources_changed or obsolete_vcs_resources):
-        log.info('Skipping project {0}, no meaningful changes detected.'.format(db_project.slug))
+        log.info('Skipping project {0}, no changes detected.'.format(db_project.slug))
         repo_sync_log.end()
         return
 
@@ -321,7 +321,7 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
             db_project.slug, ','.join(synced_locales)
         ))
     else:
-        log.info('Failed to sync translations for project {0}'.format(
+        log.info('Failed to sync translations for project {0} due to commit error.'.format(
             db_project.slug
         ))
 

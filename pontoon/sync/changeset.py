@@ -252,7 +252,7 @@ class ChangeSet(object):
                     to_attr='old_translations'
                 )
             )
-            prefetched_entities[locale] = {entity.key: entity for entity in entities_qs}
+            prefetched_entities[locale] = {entity.id: entity for entity in entities_qs}
 
         return prefetched_entities
 
@@ -270,7 +270,7 @@ class ChangeSet(object):
             if locale_code is not None:
                 # Update translations for the entity.
                 vcs_translation = vcs_entity.translations[locale_code]
-                prefetched_entity = entities_with_translations[locale_code][db_entity.key]
+                prefetched_entity = entities_with_translations[locale_code][db_entity.id]
                 self.update_entity_translations_from_vcs(
                     db_entity, locale_code, vcs_translation, None,
                     prefetched_entity.db_translations, prefetched_entity.old_translations
