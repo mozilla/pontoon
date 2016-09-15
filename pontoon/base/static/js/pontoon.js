@@ -457,7 +457,7 @@
        * Handle messages from project code
        */
       function receiveMessage(e) {
-        if (e.source === Pontoon.app.win) {
+        if (fromTrustedSource(e)) {
           var message = JSON.parse(e.data);
 
           switch (message.type) {
@@ -644,7 +644,7 @@
     if (!window.jQuery) {
       if (!jqueryAppended && document.body) {
         var script = document.createElement('script');
-        script.src = Pontoon.app.path + 'static/js/jquery-1.11.1.min.js';
+        script.src = '//pontoon.mozilla.org/static/js/jquery-1.11.1.min.js';
         document.body.appendChild(script);
 
         jqueryAppended = true;
@@ -659,9 +659,28 @@
     }
   }
 
+  function fromTrustedSource(e) {
+    var trustedOrigins = [
+      'https://pontoon.mozilla.org',
+      'https://mozilla-pontoon-staging.herokuapp.com'
+    ],
+    localHostnames = [
+      'localhost',
+      '127.0.0.1'
+    ];
+
+    var trusted = trustedOrigins.indexOf(e.origin) > -1 || localHostnames.indexOf(location.hostname) > -1;
+
+    if (e.source === appWindow && trusted) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // Wait for main code trigger
   function initizalize(e) {
-    if (e.source === appWindow) {
+    if (fromTrustedSource(e)) {
       var message = JSON.parse(e.data);
       if (message.type === "ARE YOU READY?") {
         postMessage("READY", null, appWindow, '*');
