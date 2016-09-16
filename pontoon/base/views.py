@@ -1290,7 +1290,7 @@ def request_projects(request, locale):
             '''.format(
                 locale=locale.name, code=locale.code, projects=projects,
                 user=user.display_name_and_email,
-                user_role=user.role(locale),
+                user_role=user.locale_role(locale),
                 user_url=request.build_absolute_uri(user.profile_url)
             ),
             from_email='pontoon@mozilla.com',
