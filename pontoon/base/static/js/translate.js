@@ -2497,7 +2497,7 @@ var Pontoon = (function (my) {
             '<img class="rounded" src="' + this.gravatar_url + '">' +
             '<figcaption>' +
               '<p class="name">' + this.display_name + '</p>' +
-              '<p class="rights">' + this.rights + '</p>' +
+              '<p class="role">' + this.role + '</p>' +
             '</figcaption>' +
             '<span class="count">' + this.translation_count + '</span>' +
           '</figure>' +

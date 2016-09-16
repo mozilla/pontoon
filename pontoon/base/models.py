@@ -89,7 +89,27 @@ class UserTranslationsManager(models.Manager):
                 query &= query_filters
 
             return self._changed_translations_count(query)
-        return (
+
+        def with_roles(self):
+            """Add user roles."""
+            managers = {}
+            manager_groups = Group.objects.filter(name__endswith='managers').prefetch_related('user_set')
+            for group in manager_groups:
+                for user in group.user_set.all():
+                    managers.setdefault(user, []).append(group.name.split(' ')[0])
+
+            translators = {}
+            translator_groups = Group.objects.filter(name__endswith='translators').prefetch_related('user_set')
+            for group in translator_groups:
+                for user in group.user_set.all():
+                    translators.setdefault(user, []).append(group.name.split(' ')[0])
+
+            for contributor in self:
+                contributor.user_role = contributor.role(managers, translators)
+
+            return self
+
+        return with_roles(
             self
             .exclude(email__in=settings.EXCLUDE)
             .annotate(translations_count=translations_count(),
@@ -120,19 +140,10 @@ class UserQuerySet(models.QuerySet):
                 'id': user.id,
                 'gravatar_url': user.gravatar_url(44),
                 'translation_count': user.translation_count,
-                'rights': user.rights
+                'role': user.role()
             })
 
         return users
-
-
-def user_role(self, locale):
-    if self in locale.managers_group.user_set.all():
-        return 'manager'
-    if self in locale.translators_group.user_set.all():
-        return 'translator'
-    else:
-        return 'contributor'
 
 
 @property
@@ -192,19 +203,40 @@ def user_managed_locales(self):
     return [locale.code for locale in locales]
 
 
-@property
-def user_rights(self):
+def user_role(self, managers=None, translators=None):
+    """
+    Prefetched managers and translators dicts help reduce the number of queries
+    on pages that contain a lot of users, like the Top Contributors page.
+    """
     if self.is_superuser:
         return 'Admin'
-    if self.managed_locales:
-        return 'Manager for ' + ', '.join(self.managed_locales)
-    if self.translated_locales:
-        return 'Translator for ' + ', '.join(self.translated_locales)
+
+    if managers is not None:
+        if self in managers:
+            return 'Manager for ' + ', '.join(managers[self])
     else:
-        return 'Contributor'
+        if self.managed_locales:
+            return 'Manager for ' + ', '.join(self.managed_locales)
+
+    if translators is not None:
+        if self in translators:
+            return 'Translator for ' + ', '.join(translators[self])
+    else:
+        if self.translated_locales:
+            return 'Translator for ' + ', '.join(self.translated_locales)
+
+    return 'Contributor'
 
 
-User.add_to_class('role', user_role)
+def user_locale_role(self, locale):
+    if self in locale.managers_group.user_set.all():
+        return 'manager'
+    if self in locale.translators_group.user_set.all():
+        return 'translator'
+    else:
+        return 'contributor'
+
+
 User.add_to_class('profile_url', user_profile_url)
 User.add_to_class('gravatar_url', user_gravatar_url)
 User.add_to_class('name_or_email', user_name_or_email)
@@ -213,7 +245,8 @@ User.add_to_class('display_name_and_email', user_display_name_and_email)
 User.add_to_class('display_name_or_blank', user_display_name_or_blank)
 User.add_to_class('translated_locales', user_translated_locales)
 User.add_to_class('managed_locales', user_managed_locales)
-User.add_to_class('rights', user_rights)
+User.add_to_class('role', user_role)
+User.add_to_class('locale_role', user_locale_role)
 User.add_to_class('translators', UserTranslationsManager())
 User.add_to_class('objects', UserCustomManager.from_queryset(UserQuerySet)())
 
