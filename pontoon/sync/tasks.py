@@ -249,7 +249,7 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
                                       .format(locale.code, db_project.slug))
                         continue
 
-                changeset = ChangeSet(db_project, vcs_project, now, obsolete_vcs_entities, obsolete_vcs_resources)
+                changeset = ChangeSet(db_project, vcs_project, now, obsolete_vcs_entities, obsolete_vcs_resources, locale)
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
                 update_translated_resources(db_project, vcs_project, locale)

@@ -13,7 +13,6 @@ from pontoon.base.models import (
     TranslationMemoryEntry
 )
 from pontoon.base.utils import match_attr
-from pontoon.sync.utils import locale_directory_path
 
 log = logging.getLogger(__name__)
 
@@ -23,7 +22,7 @@ class ChangeSet(object):
     translations stored in VCS. Once all the necessary changes have been
     stored, execute all the changes at once efficiently.
     """
-    def __init__(self, db_project, vcs_project, now, obsolete_vcs_entities=None, obsolete_vcs_resources=None):
+    def __init__(self, db_project, vcs_project, now, obsolete_vcs_entities=None, obsolete_vcs_resources=None, locale=None):
         """
         :param now:
             Datetime to use for marking when approvals happened.
@@ -31,6 +30,7 @@ class ChangeSet(object):
         self.db_project = db_project
         self.vcs_project = vcs_project
         self.now = now
+        self.locale = locale
 
         # Store locales and resources for FK relationships.
         self.locales = {l.code: l for l in Locale.objects.all()}
@@ -129,7 +129,7 @@ class ChangeSet(object):
             self.locales_to_commit = set(self.locales.values())
 
         for resource in changed_resources:
-            resource.save()
+            resource.save(self.locale)
 
     def get_entity_updates(self, vcs_entity):
         """
@@ -283,11 +283,10 @@ class ChangeSet(object):
 
     def execute_obsolete_vcs_resources(self):
         for path in self.changes['obsolete_vcs_resources']:
-            for locale in self.db_project.locales.all():
-                file_path = os.path.join(
-                    locale_directory_path(self.vcs_project.checkout_path, locale.code),
-                    path
-                )
+            locales = [self.locale] if self.locale else self.db_project.locales.all()
+            for locale in locales:
+                locale_directory = self.vcs_project.locale_directory_paths[locale.code]
+                file_path = os.path.join(locale_directory, path)
                 if os.path.exists(file_path):
                     log.info('Removing obsolete file {} for {}.'.format(path, locale.code))
                     os.remove(file_path)

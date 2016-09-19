@@ -420,13 +420,17 @@ class VCSResource(object):
                     # deleted and don't add it.
                     pass
 
-    def save(self):
+    def save(self, locale=None):
         """
         Save changes made to any of the translations in this resource
         back to the filesystem for all locales.
         """
-        for locale, resource_file in self.files.items():
-            resource_file.save(locale)
+        if locale:
+            self.files[locale].save(locale)
+
+        else:
+            for locale, resource_file in self.files.items():
+                resource_file.save(locale)
 
 
 class VCSEntity(object):
