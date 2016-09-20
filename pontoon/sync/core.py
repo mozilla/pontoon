@@ -64,7 +64,7 @@ def serial_task(timeout, lock_key="", on_error=None, **celery_args):
     return wrapper
 
 
-def collect_entities(db_project, vcs_project):
+def collect_entities(db_project, vcs_project, unsynced_locales=None):
     """
     Find all the entities in the database and on the filesystem and
     match them together, yielding tuples of the form
@@ -72,7 +72,7 @@ def collect_entities(db_project, vcs_project):
 
     When a match isn't found, the missing entity will be None.
     """
-    changed_resources = None if db_project.unsynced_locales else vcs_project.changed_files
+    changed_resources = None if unsynced_locales else vcs_project.changed_files
     db_entities = get_db_entities(db_project, changed_resources)
     vcs_entities = get_vcs_entities(vcs_project)
     entity_keys = set().union(db_entities.keys(), vcs_entities.keys())
@@ -124,7 +124,7 @@ def update_resources(db_project, vcs_project):
 
 
 def update_translations(db_project, vcs_project, locale, changeset):
-    for key, db_entity, vcs_entity in collect_entities(db_project, vcs_project):
+    for key, db_entity, vcs_entity in collect_entities(db_project, vcs_project, db_project.unsynced_locales):
         # If we don't have both the db_entity and cs_entity we can't
         # do anything with the translations.
         if db_entity is None or vcs_entity is None:
