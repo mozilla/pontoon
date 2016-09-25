@@ -148,6 +148,8 @@ class VCSProject(object):
                     repo.get_last_synced_revisions()
                 )[0]
 
+                log.info('Changed files in repository, all: {}'.format(changed_files))
+
                 locale_path_locales = self.locale_path_locales(repo.checkout_path)
                 locale_paths = locale_path_locales.keys()
 
@@ -161,6 +163,8 @@ class VCSProject(object):
                             path = path[len(locale_path):].lstrip(os.sep)
                             files.setdefault(path, []).append(locale)
                             break
+
+        log.info('Changed files in repository, relevant: {}'.format(files))
 
         # DB changes
         vcs = files
@@ -248,6 +252,8 @@ class VCSProject(object):
         with less mocking.
         """
         resources = {}
+
+        log.info('Changed files in repository and Pontoon: {}'.format(self.changed_files))
 
         for path in self.relative_resource_paths():
             # Syncing translations
