@@ -1,0 +1,9 @@
+{% extends "account/base.html" %}
+
+{% load socialaccount %}
+
+{% block content %}
+<h1 id="title">Sign Up Failure</h1>
+<h2 id="subtitle">Sorry, the sign up with Persona is now closed.</h2>
+<p id="action">Please sign up with <a href="{% provider_login_url 'fxa' %}">Firefox Accounts</a></p>
+{% endblock %}

@@ -73,8 +73,6 @@ whitenoise==1.0.6 \
     --hash=sha256:dac9419db3ece27bb53c7433243fc22ed42cf68de9d6c4129390e1d9aefe6310
 newrelic==2.50.0.39 \
     --hash=sha256:fddd47a8d048e0c5f42eee511a8aaf35891c996d6c959553c7bec8b3ac74b3cb
-django-browserid==2.0.0 \
-    --hash=sha256:5ef995f50de09c5a5ae3a6531a21d2c66549310e6ef94ec174bbc7bbad49e880
 factory-boy==2.5.2 \
     --hash=sha256:102c8141511443df01d354610d3b268924100654316709b43ac04648b50bf703 \
     --hash=sha256:cd8306e64c3a115deca136685e945db88ffe171382012ec938ed241a20dd7eba
@@ -139,3 +137,11 @@ raygun4py==3.1.2 \
     --hash=sha256:ee32cc3c7b1320fc0312c2b3a904a810f61ba302c2bad6dec836bb19fbf68340
 django-cors-headers==1.1.0 \
     --hash=sha256:fcd96e2be47c8eef34c650e007a6d546e19e7ee61041b89edbbbbe7619aa3987
+django-allauth==0.25.2 \
+    --hash=sha256:382632fc4e85d577bcb4a747dcd0fff0b4893fffe275922e8489855608f50252
+python-openid==2.2.5 \
+    --hash=sha256:92c51c3ecec846cbec4aeff11f9ff47303d4a63f93b0e6ac0ec02a091fed70ef \
+    --hash=sha256:c2d133e47e0a7705c9272eef00d7a09c174f5bf17a127fed8e2c6499556cc782
+requests-oauthlib==0.6.1 \
+    --hash=sha256:905306080ec0cc6b3c65c8101f471fccfdb9994c16dd116524fd3fc0790d46d7 \
+    --hash=sha256:7c708e8e2a4aa6a905cf91f28420d75db37270e0ec8fc951915c098dd8bde53e

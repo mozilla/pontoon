@@ -10,7 +10,6 @@ from django.test import (
 )
 
 import factory
-from django_browserid.tests import mock_browserid
 from django_nose.tools import assert_equal
 from factory import LazyAttribute, Sequence, SubFactory, SelfAttribute
 from factory.django import DjangoModelFactory
@@ -39,22 +38,9 @@ class PontoonClient(BaseClient):
         return self.post(url, params, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
 
+
 class TestCase(BaseTestCase):
     client_class = PontoonClient
-
-    def client_login(self, user=None):
-        """
-        Authenticate the test client as the given user. If no user is
-        given, a test user is created and returned.
-        """
-        if user is None:
-            user = UserFactory.create()
-
-        with mock_browserid(user.email):
-            self.client.login(assertion='asdf', audience='asdf')
-
-        return user
-
     def patch(self, *args, **kwargs):
         """
         Wrapper around mock.patch that automatically cleans up the patch
@@ -222,7 +208,8 @@ def assert_redirects(response, expected_url, status_code=302, host=None):
     The main difference between this and TestCase.assertRedirects is
     that this version doesn't follow the redirect.
     """
-    host = host or 'http://testserver'
+    if host is None:
+        host = 'http://testserver'
     assert_equal(response.status_code, status_code)
     assert_equal(response['Location'], host + expected_url)
 
