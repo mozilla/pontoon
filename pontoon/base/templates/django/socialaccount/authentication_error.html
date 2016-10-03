@@ -1,0 +1,9 @@
+{% extends "socialaccount/base.html" %}
+
+{% load socialaccount %}
+
+{% block content %}
+<h1 id="title">Sign In Failure</h1>
+<h2 id="subtitle">An error occurred while attempting to sign in.</h2>
+<p id="action">Try again with <a href="{% provider_login_url 'fxa' %}">Firefox Accounts</a> or <a href="{% provider_login_url 'persona' %}">Persona</a></p>
+{% endblock %}

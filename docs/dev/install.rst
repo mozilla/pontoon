@@ -68,6 +68,11 @@ Installation
       DATABASE_URL=postgres://pontoon:asdf@localhost/pontoon
       SESSION_COOKIE_SECURE=False
       SITE_URL=http://localhost:8000
+      FXA_CLIENT_ID=2651b9211a44b7b2
+      FXA_SECRET_KEY=a3cafccbafe39db54f2723f8a6f804c337e362950f197b5b33050d784129d570
+      FXA_OAUTH_ENDPOINT=https://oauth-stable.dev.lcip.org/v1
+      FXA_PROFILE_ENDPOINT=https://stable.dev.lcip.org/profile/v1
+
 
    Make sure to make the following modifications to the template above:
 
@@ -105,7 +110,15 @@ Installation
 
       python manage.py sync_projects --no-commit pontoon-intro
 
-8. Install the required Node libraries using ``npm``:
+8. After you've provided credentials to Firefox Accounts, you have to update them in database,
+   because it's required by django-allauth. You will have to call this command after every change in your
+   FXA settings (e.g. client key):
+
+   .. code-block:: bash
+
+      python manage.py updatefxaprovider
+
+9. Install the required Node libraries using ``npm``:
 
    .. code-block:: bash
 

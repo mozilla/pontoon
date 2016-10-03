@@ -6,16 +6,19 @@ from django.utils.timezone import now
 from django_nose.tools import assert_equal, assert_true, assert_code
 from mock import patch, call
 
-from pontoon.base.models import (Locale,
-        Project,
-        Entity,
-        ProjectLocale,
-        TranslatedResource,
-        User,
+from pontoon.base.models import (
+   Locale,
+   Project,
+   Entity,
+   ProjectLocale,
+   TranslatedResource,
+   User,
 )
+from pontoon.base import middleware
 from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import (
     assert_json,
+    assert_redirects,
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
@@ -41,8 +44,29 @@ def commajoin(*items):
 class UserTestCase(TestCase):
     """Default testcase for the views that require logged accounts."""
     def setUp(self):
+        mock_persona_migration = patch.object(middleware.PersonaMigrationMiddleware, 'process_request', return_value=None)
+        self.mock_persona_migration = mock_persona_migration.start()
+        self.addCleanup(mock_persona_migration.stop)
+
         self.user = UserFactory.create()
         self.client.force_login(self.user)
+
+
+class PersonaMigration(TestCase):
+    """Tests related to our migration to persona."""
+    def setUp(self):
+        self.user = UserFactory.create()
+
+        # Sign in but don't migrate account to fxa
+        self.client.force_login(self.user)
+
+    def test_migration_page(self):
+        """User should be redirected to the our migration page."""
+        response = self.client.post('/settings/',  {})
+        assert_redirects(response, '/sign-in-migration/', host='')
+
+        response = self.client.get('/sign-in-migration/')
+        assert_equal(response.status_code, 200)
 
 
 class UserProfileTests(UserTestCase):
@@ -61,6 +85,7 @@ class UserProfileTests(UserTestCase):
 
     def test_valid_first_name(self):
         response = self.client.post('/save-user-name/', {'first_name': 'contributor'})
+
         assert_equal(response.status_code, 200)
         assert_equal(response.content, 'ok')
 

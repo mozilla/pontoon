@@ -11,9 +11,27 @@ a:link, a:visited {
 
 p, dd {
   margin-bottom: 40px;
+  line-height: 1.5em;
 }
 
 dt {
   color: #EBEBEB;
   font-size: 28px;
+  padding-bottom: 10px;
+}
+
+p.center {
+  text-align: center;
+}
+
+a.action {
+  background: #7BC876;
+  border: none;
+  border-radius: 3px;
+  color: #272A2F;
+  display: block;
+  margin: 0 auto;
+  padding: 5px;
+  text-transform: uppercase;
+  width: 300px;
 }

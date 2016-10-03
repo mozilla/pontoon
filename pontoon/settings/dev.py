@@ -9,6 +9,9 @@ INSTALLED_APPS = base.INSTALLED_APPS + (
 
     # Adds various commands like e.g. shell which has all models loaded by default.
     'django_extensions',
+
+    # sslserver helps to develop features that require HTTPS.
+    'sslserver',
 )
 
 MIDDLEWARE_CLASSES = base.MIDDLEWARE_CLASSES + (
@@ -16,4 +19,4 @@ MIDDLEWARE_CLASSES = base.MIDDLEWARE_CLASSES + (
 )
 
 TEMPLATES = copy.copy(base.TEMPLATES)
-TEMPLATES[0]['OPTIONS']['match_regex'] = r'^(?!(admin|debug_toolbar|registration)/).*\.(html|jinja)$'
+TEMPLATES[0]['OPTIONS']['match_regex'] = r'^(?!(admin|persona|debug_toolbar|registration|account|socialaccount)/).*\.(html|jinja)$'

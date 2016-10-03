@@ -35,11 +35,12 @@
   </head>
 
   <body class="{% block class %}{% endblock %}">
-    {{ browserid_info()|safe }}
     {% block content %}{% endblock %}
 
     <!-- Javascript at the bottom for fast page loading -->
     {% block site_js %}
+      {{ providers_media_js(request) }}
+
       {% javascript 'main' %}
 
       {% block extend_js %}
