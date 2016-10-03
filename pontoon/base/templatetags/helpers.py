@@ -4,6 +4,7 @@ import json
 import urllib
 import urlparse
 
+from django import template
 from django.contrib.humanize.templatetags import humanize
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse
@@ -11,6 +12,11 @@ from django.utils.encoding import smart_str
 
 import jinja2
 from django_jinja import library
+from allauth.socialaccount import providers
+from allauth.utils import get_request_param
+
+
+register = template.Library()
 
 
 @library.global_function
@@ -136,6 +142,45 @@ def format_timedelta(value):
         return '---'
 
 
+@register.filter
 @library.filter
 def nospam(self):
     return jinja2.Markup(cgi.escape(self, True).replace('@', '&#64;').replace('.', '&#46;').replace('\'', '&quot;'))
+
+#
+# Currently django-allauth don't provide any support for jinja2 tags.
+#
+
+@library.global_function
+def provider_login_url(request, provider_id='fxa', **query):
+    """
+    This function adapts the django-allauth templatetags that don't support jinja2.
+    @TODO: land support for the jinja2 tags in the django-allauth.
+    """
+    provider = providers.registry.by_id(provider_id)
+
+    auth_params = query.get('auth_params', None)
+    query['scope'] = 'profile:uid profile:email profile:display_name'
+    process = query.get('process', None)
+
+    if auth_params == '':
+        del query['auth_params']
+
+    if 'next' not in query:
+        next_ = get_request_param(request, 'next')
+        if next_:
+            query['next'] = next_
+        elif process == 'redirect':
+            query['next'] = request.get_full_path()
+    else:
+        if not query['next']:
+            del query['next']
+    return provider.get_login_url(request, **query)
+
+
+@library.global_function
+def providers_media_js(request):
+    """A port of django tag into jinja2"""
+    return jinja2.Markup('\n'.join([
+        p.media_js(request) for p in providers.registry.get_list()
+    ]))

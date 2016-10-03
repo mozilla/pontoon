@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.http import Http404, HttpResponseForbidden
 
 from raygun4py.middleware.django import Provider
@@ -29,3 +31,20 @@ class BlockedIpMiddleware(object):
             return HttpResponseForbidden('<h1>Forbidden</h1>')
 
         return None
+
+
+class PersonaMigrationMiddleware(object):
+    """
+    Middleware that redirects a user to the migration page until an account is
+    fully migrated into firefox accounts.
+    """
+
+    def process_request(self, request):
+        if not request.user.is_authenticated():
+            return None
+
+        sign_in_migration_url = reverse('pontoon.sign-in-migration')
+
+        if not request.user.logged_via('fxa') and request.path != sign_in_migration_url\
+                and not request.path.startswith('/accounts/'):
+            return redirect(sign_in_migration_url)

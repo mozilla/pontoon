@@ -972,6 +972,10 @@ body > nav,
   display: none;
 }
 
+.links li#sign-in {
+  font-weight: 300;
+}
+
 .links li a:link,
 .links li a:visited {
   color: #EBEBEB;
@@ -1093,6 +1097,10 @@ body > .container {
   padding: 50px 0 100px;
   position: relative;
   width: 735px;
+}
+
+#_persona_login {
+  display: none;
 }
 
 .unselectable * {

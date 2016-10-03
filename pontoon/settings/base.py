@@ -51,7 +51,6 @@ SESSION_COOKIE_HTTPONLY = os.environ.get('SESSION_COOKIE_HTTPONLY', 'True') != '
 SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') != 'False'
 
 SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
-BROWSERID_AUDIENCES = [SITE_URL]
 
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
@@ -104,15 +103,22 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
+    # Django sites app is required by django-allauth
+    'django.contrib.sites',
+
     # Third-party apps, patches, fixes
     'commonware.response.cookies',
-    'django_browserid',
     'django_jinja',
     'django_nose',
     'pipeline',
     'session_csrf',
     'guardian',
     'corsheaders',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.fxa',
+    'allauth.socialaccount.providers.persona',
 )
 
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
@@ -126,6 +132,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'pontoon.base.middleware.PersonaMigrationMiddleware',
     'session_csrf.CsrfMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -147,7 +154,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'match_extension': '',
-            'match_regex': r'^(?!(admin|registration)/).*\.(html|jinja)$',
+            'match_regex': r'^(?!(admin|registration|persona|account|socialaccount)/).*\.(html|jinja)$',
             'context_processors': CONTEXT_PROCESSORS,
             'extensions': [
                 'jinja2.ext.do',
@@ -163,25 +170,25 @@ TEMPLATES = [
                 'django_jinja.builtins.extensions.DjangoFiltersExtension',
                 'pipeline.templatetags.ext.PipelineExtension',
             ],
-            'globals': {
-                'browserid_info': 'django_browserid.helpers.browserid_info',
-            }
         }
     },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': [path('pontoon/base/templates/django')],
         'OPTIONS': {
             'debug': DEBUG,
-            'context_processors': CONTEXT_PROCESSORS
+            'context_processors': CONTEXT_PROCESSORS,
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ]
         }
     },
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'django_browserid.auth.BrowserIDBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
     'guardian.backends.ObjectPermissionBackend',
 ]
 
@@ -442,9 +449,6 @@ LOGGING = {
             'handlers': ['console'],
             'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
         },
-        'django_browserid': {
-            'handlers': ['console'],
-        },
     }
 }
 
@@ -460,7 +464,7 @@ if os.environ.get('DJANGO_SQL_LOG', False):
 
 ## Tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_ARGS = ['--logging-filter=-django_browserid,-factory,-django.db,-raygun4py',
+NOSE_ARGS = ['--logging-filter=-factory,-django.db,-raygun4py',
              '--logging-clear-handlers']
 
 # Disable nose-progressive on CI due to ugly output.
@@ -470,11 +474,10 @@ if not os.environ.get('CI', False):
 # Set X-Frame-Options to DENY by default on all responses.
 X_FRAME_OPTIONS = 'DENY'
 
-# django-browserid
+# General auth settings
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
-BROWSERID_REQUEST_ARGS = {'siteName': 'Pontoon'}
 
 # Should robots.txt deny everything or disallow a calculated list of
 # URLs we don't want to be crawled?  Default is false, disallow
@@ -582,3 +585,37 @@ CELERY_SEND_EVENTS = False  # We aren't yet monitoring events
 # require Access-Control-Allow-Origin header to be set as '*'.
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/pontoon\.js$'
+
+SOCIALACCOUNT_ENABLED = True
+SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
+
+def account_username(user):
+    return user.name_or_email
+
+ACCOUNT_AUTHENTICATED_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_USER_DISPLAY = account_username
+ACCOUNT_LOGOUT_ON_GET = True
+
+# Firefox Accounts
+FXA_CLIENT_ID = os.environ.get('FXA_CLIENT_ID', '')
+FXA_SECRET_KEY = os.environ.get('FXA_SECRET_KEY', '')
+FXA_OAUTH_ENDPOINT = os.environ.get('FXA_OAUTH_ENDPOINT', '')
+FXA_PROFILE_ENDPOINT = os.environ.get('FXA_PROFILE_ENDPOINT', '')
+FXA_SCOPE = ['profile:uid', 'profile:display_name', 'profile:email']
+
+# All settings related to the AllAuth
+SOCIALACCOUNT_PROVIDERS = {
+    'fxa': {
+        'SCOPE': FXA_SCOPE,
+        'OAUTH_ENDPOINT': FXA_OAUTH_ENDPOINT,
+        'PROFILE_ENDPOINT': FXA_PROFILE_ENDPOINT,
+    },
+    'persona': {
+        'AUDIENCE': SITE_URL,
+        'REQUEST_PARAMETERS': {
+            'siteName': 'Pontoon'
+        }
+    }
+}
