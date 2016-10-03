@@ -52,7 +52,7 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
 
             if (login_provider == 'fxa' and user.profile.from_django_browserid) or\
                 (len(user_providers) == 1 and not user.profile.from_django_browserid):
-                messages.success(request, 'Your Persona account and Firefox Accounht have been connected.')
+                messages.success(request, 'Your Persona account and Firefox Account have been connected.')
 
     def get_connect_redirect_url(self, request, sociallogin):
         """
