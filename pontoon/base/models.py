@@ -482,6 +482,7 @@ class Locale(AggregatedStats):
             locale=self
         ).distinct()
         details = []
+        unbound_details = []
 
         # If subpages aren't defined,
         # return resource paths with corresponding stats
@@ -497,9 +498,10 @@ class Locale(AggregatedStats):
         elif len(pages) > 0:
             # Each subpage must have resources defined
             if pages[0].resources.exists():
+                locale_pages = pages.filter(resources__translatedresources__locale=self)
                 details = get_details(
                     # List only subpages, whose resources are available for locale
-                    pages.filter(resources__translatedresources__locale=self).annotate(
+                    locale_pages.annotate(
                         title=F('name'),
                         resource__path=F('resources__path'),
                         resource__total_strings=F('resources__total_strings'),
@@ -510,8 +512,13 @@ class Locale(AggregatedStats):
                 )
 
             else:
+                locale_pages = (
+                    pages
+                        .filter(project__resources__translatedresources__locale=self)
+                        .exclude(project__resources__total_strings=0)
+                )
                 details = get_details(
-                    pages.annotate(
+                    locale_pages.annotate(
                         title=F('name'),
                         resource__path=F('project__resources__path'),
                         resource__total_strings=F('project__resources__total_strings'),
@@ -521,6 +528,14 @@ class Locale(AggregatedStats):
                     )
                 )
 
+            # List resources not bound to subpages as regular resources
+            bound_resources = locale_pages.values_list('resources', flat=True)
+            unbound_tr = translatedresources.exclude(resource__pk__in=bound_resources)
+            unbound_details = get_details(unbound_tr.annotate(
+                title=F('resource__path'),
+                url=F('resource__project__url')
+            ))
+
         all_resources = ProjectLocale.objects.get(project=project, locale=self)
         all_paths = (
             TranslatedResource.objects
@@ -528,7 +543,7 @@ class Locale(AggregatedStats):
             .values_list("resource__path", flat=True)
         )
 
-        details_list = list(details)
+        details_list = list(details) + list(unbound_details)
         details_list.append({
             'title': 'all-resources',
             'resource__path': list(all_paths),
