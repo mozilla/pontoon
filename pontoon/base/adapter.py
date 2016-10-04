@@ -22,7 +22,7 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         user = super(PontoonSocialAdapter, self).save_user(request, sociallogin, form)
         user.username = base64.urlsafe_b64encode(
             hashlib.sha1(smart_bytes(user.email)).digest()
-        )
+        ).rstrip(b'=')
         user.save()
         return user
 
