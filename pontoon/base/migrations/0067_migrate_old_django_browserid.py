@@ -14,6 +14,10 @@ def mark_browserid_accounts(apps, schema_editor):
     UserProfile.objects.update(from_django_browserid=True)
 
 
+def reverse_migration(apps, schema_editor):
+    pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -21,5 +25,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(mark_browserid_accounts)
+        migrations.RunPython(mark_browserid_accounts, reverse_migration)
     ]
