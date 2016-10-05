@@ -54,11 +54,18 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
 
             # Merge current Firefox Account with the old Persona account
             if login_provider == 'persona' and request.user.is_authenticated() and not request.user.profile.from_django_browserid:
-                current_user = request.user
-                current_socialaccount = current_user.socialaccount_set.first()
-                current_socialaccount.user = user
-                current_socialaccount.save()
-                current_user.delete()
+                obsolete_user = request.user
+                obsolete_socialaccount = obsolete_user.socialaccount_set.first()
+                obsolete_socialaccount.user = user
+                obsolete_socialaccount.save()
+
+                # Update Translation authors and (un)approvers - avoid data loss
+                obsolete_user.translation_set.update(user=user)
+                obsolete_user.approved_translations.update(approved_user=user)
+                obsolete_user.unapproved_translations.update(unapproved_user=user)
+
+                obsolete_user.delete()
+
                 messages.success(request, message)
 
             if (login_provider == 'fxa' and user.profile.from_django_browserid) or\
