@@ -9,11 +9,6 @@ from django.utils.encoding import smart_bytes
 
 
 class PontoonSocialAdapter(DefaultSocialAccountAdapter):
-    """
-    It's required to merge old accounts created via django-browserid
-    with accounts created by django-allauth.
-    """
-
     def save_user(self, request, sociallogin, form=None):
         """
         Generates an unique username in the same way as it was done in django-browserid.
@@ -27,7 +22,12 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         return user
 
     def pre_social_login(self, request, sociallogin):
-        """connect existing accounts with existing accounts."""
+        """
+        Connect existing Pontoon accounts with newly created django-allauth
+        accounts and make sure users can log in to them with both, Persona
+        and Firefox Accounts. Because all of our providers use verified emails,
+        we can automatically connect accounts with the same email.
+        """
         email = sociallogin.account.extra_data.get('email')
 
         if not email:
@@ -38,10 +38,6 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         except User.DoesNotExist:
             return
 
-        # Without this adapter, django-allauth can't connect accounts from the old auth
-        # system (django-browserid) and requires manual intervention from the user.
-        # Because all of our providers use verified emails, we can safely merge
-        # accounts if they have the same primary email.
         login_provider = sociallogin.account.provider
         user_providers = [sa.provider for sa in user.socialaccount_set.all()]
 
@@ -50,9 +46,27 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
             sociallogin.account.save()
             sociallogin.user = user
 
+            message = 'Your Persona account and Firefox Account have been connected.'
+
+            # Merge current Firefox Account with the old Persona account
+            if login_provider == 'persona' and request.user.is_authenticated() and not request.user.profile.from_django_browserid:
+                obsolete_user = request.user
+                obsolete_socialaccount = obsolete_user.socialaccount_set.first()
+                obsolete_socialaccount.user = user
+                obsolete_socialaccount.save()
+
+                # Update Translation authors and (un)approvers - avoid data loss
+                obsolete_user.translation_set.update(user=user)
+                obsolete_user.approved_translations.update(approved_user=user)
+                obsolete_user.unapproved_translations.update(unapproved_user=user)
+
+                obsolete_user.delete()
+
+                messages.success(request, message)
+
             if (login_provider == 'fxa' and user.profile.from_django_browserid) or\
                 (len(user_providers) == 1 and not user.profile.from_django_browserid):
-                messages.success(request, 'Your Persona account and Firefox Account have been connected.')
+                messages.success(request, message)
 
     def get_connect_redirect_url(self, request, sociallogin):
         """
