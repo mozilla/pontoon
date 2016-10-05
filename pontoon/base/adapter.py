@@ -1,6 +1,7 @@
 import base64
 import hashlib
 
+from allauth.account.adapter import get_adapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 from django.contrib.auth.models import User
@@ -9,11 +10,6 @@ from django.utils.encoding import smart_bytes
 
 
 class PontoonSocialAdapter(DefaultSocialAccountAdapter):
-    """
-    It's required to merge old accounts created via django-browserid
-    with accounts created by django-allauth.
-    """
-
     def save_user(self, request, sociallogin, form=None):
         """
         Generates an unique username in the same way as it was done in django-browserid.
@@ -27,8 +23,15 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         return user
 
     def pre_social_login(self, request, sociallogin):
-        """connect existing accounts with existing accounts."""
+        """
+        Connect existing Pontoon accounts with newly created django-allauth
+        accounts and make sure users can log in to them with both, Persona
+        and Firefox Accounts. Because both of these providers use verified
+        emails, we can automatically connect accounts with the same email.
+        """
         email = sociallogin.account.extra_data.get('email')
+        message = 'Your Persona account and Firefox Account have been connected.'
+        connecting_accounts = sociallogin.state.get('process') == 'connect' and request.user.is_authenticated()
 
         if not email:
             return
@@ -36,23 +39,32 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
+            if connecting_accounts:
+                messages.success(request, message)
             return
 
-        # Without this adapter, django-allauth can't connect accounts from the old auth
-        # system (django-browserid) and requires manual intervention from the user.
-        # Because all of our providers use verified emails, we can safely merge
-        # accounts if they have the same primary email.
-        login_provider = sociallogin.account.provider
-        user_providers = [sa.provider for sa in user.socialaccount_set.all()]
+        if connecting_accounts:
+            older_account, newer_account = (request.user, user) if request.user.pk < user.pk else (user, request.user)
+            if sociallogin.account.provider == 'persona':
+                newer_account.is_active = False
+                newer_account.email = "connected+{}".format(newer_account.email)
+                newer_account.socialaccount_set.update(user=older_account)
+                newer_account.emailaddress_set.update(user=older_account)
+                newer_account.save()
 
-        if login_provider not in user_providers:
-            sociallogin.account.user = user
+            sociallogin.account.user = older_account
             sociallogin.account.save()
-            sociallogin.user = user
+            sociallogin.user = older_account
 
-            if (login_provider == 'fxa' and user.profile.from_django_browserid) or\
-                (len(user_providers) == 1 and not user.profile.from_django_browserid):
-                messages.success(request, 'Your Persona account and Firefox Account have been connected.')
+            adapter = get_adapter(request)
+            adapter.login(request, older_account)
+
+        if connecting_accounts or (sociallogin.account.provider == 'fxa' and not user.logged_via('fxa')):
+            messages.success(request, message)
+
+        sociallogin.account.user = user
+        sociallogin.account.save()
+        sociallogin.user = user
 
     def get_connect_redirect_url(self, request, sociallogin):
         """
