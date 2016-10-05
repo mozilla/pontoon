@@ -9,11 +9,6 @@ from django.utils.encoding import smart_bytes
 
 
 class PontoonSocialAdapter(DefaultSocialAccountAdapter):
-    """
-    It's required to merge old accounts created via django-browserid
-    with accounts created by django-allauth.
-    """
-
     def save_user(self, request, sociallogin, form=None):
         """
         Generates an unique username in the same way as it was done in django-browserid.
@@ -27,7 +22,12 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         return user
 
     def pre_social_login(self, request, sociallogin):
-        """connect existing accounts with existing accounts."""
+        """
+        Connect existing Pontoon accounts with newly created django-allauth
+        accounts and make sure users can log in to them with both, Persona
+        and Firefox Accounts. Because all of our providers use verified emails,
+        we can automatically connect accounts with the same email.
+        """
         email = sociallogin.account.extra_data.get('email')
 
         if not email:
@@ -38,10 +38,6 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         except User.DoesNotExist:
             return
 
-        # Without this adapter, django-allauth can't connect accounts from the old auth
-        # system (django-browserid) and requires manual intervention from the user.
-        # Because all of our providers use verified emails, we can safely merge
-        # accounts if they have the same primary email.
         login_provider = sociallogin.account.provider
         user_providers = [sa.provider for sa in user.socialaccount_set.all()]
 
