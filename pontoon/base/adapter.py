@@ -50,9 +50,20 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
             sociallogin.account.save()
             sociallogin.user = user
 
+            message = 'Your Persona account and Firefox Account have been connected.'
+
+            # Merge current Firefox Account with the old Persona account
+            if login_provider == 'persona' and request.user.is_authenticated() and not request.user.profile.from_django_browserid:
+                current_user = request.user
+                current_socialaccount = current_user.socialaccount_set.first()
+                current_socialaccount.user = user
+                current_socialaccount.save()
+                current_user.delete()
+                messages.success(request, message)
+
             if (login_provider == 'fxa' and user.profile.from_django_browserid) or\
                 (len(user_providers) == 1 and not user.profile.from_django_browserid):
-                messages.success(request, 'Your Persona account and Firefox Account have been connected.')
+                messages.success(request, message)
 
     def get_connect_redirect_url(self, request, sociallogin):
         """
