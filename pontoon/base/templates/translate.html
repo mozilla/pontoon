@@ -302,7 +302,7 @@
           <button id="clear" title="Clear Translation (Ctrl + Shift + Backspace)">Clear</button>
           <button id="save" title="Save Translation (Enter)"></button>
         {% else %}
-          <p id="sign-in-required"><a id="sidebar-signin" href="">Sign in</a> to translate.</p>
+          <p id="sign-in-required"><a id="sidebar-signin" href="{{ provider_login_url(request, "fxa") }}">Sign in</a> to translate.</p>
         {% endif %}
       </menu>
 
