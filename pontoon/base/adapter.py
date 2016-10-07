@@ -45,7 +45,14 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
 
         if connecting_accounts:
             older_account, newer_account = (request.user, user) if request.user.pk < user.pk else (user, request.user)
-            if sociallogin.account.provider == 'persona':
+            if sociallogin.account.provider == 'persona' or user.logged_via('fxa'):
+
+                # If connecting existing persona with a new Firefox Account
+                # that was already logged in previously, make sure that the
+                # sociallogin.account.user setting doesn't get overriden
+                if user.logged_via('fxa'):
+                    user = older_account
+
                 newer_account.is_active = False
                 newer_account.email = "connected+{}".format(newer_account.email)
                 newer_account.socialaccount_set.update(user=older_account)
