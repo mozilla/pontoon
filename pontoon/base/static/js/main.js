@@ -403,7 +403,7 @@ var Pontoon = (function (my) {
               original: this.source,
               quality: Math.round(this.quality) + '%',
               url: 'https://transvision.mozfr.org/?repo=global' +
-                   '&recherche=' + original +
+                   '&recherche=' + encodeURIComponent(original) +
                    '&locale=' + self.locale.code,
               title: 'Visit Transvision',
               source: 'Mozilla',
