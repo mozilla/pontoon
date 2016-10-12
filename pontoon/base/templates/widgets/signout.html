@@ -1,0 +1,5 @@
+{% macro csrf_form() %}
+<form method="POST" action="" style="display:none;" class="csrf">
+    <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+</form>
+{% endmacro %}

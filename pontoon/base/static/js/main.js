@@ -430,6 +430,27 @@ $(function() {
     allauth.persona.login('', type);
   });
 
+  function getRedirectUrl() {
+    return window.location.pathname + window.location.search;
+  }
+
+  // Sign in button action
+  $('#fxa-sign-in, #sidebar-signin').on('click', function(ev) {
+    var $this = $(this);
+
+    $this.prop('href', $this.prop('href') + '&next=' + getRedirectUrl());
+  });
+
+  // Sign out button action
+  $('.sign-out a, #sign-out a').on('click', function(ev) {
+    var $this = $(this),
+        $form = $this.find('form');
+
+    ev.preventDefault();
+    $form.prop('action', $this.prop('href') + '?next=' + getRedirectUrl());
+    $form.submit();
+  });
+
   // Show/hide menu on click
   $('.selector').click(function (e) {
     if (!$(this).siblings('.menu').is(':visible')) {
