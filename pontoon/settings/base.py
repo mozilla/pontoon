@@ -525,6 +525,11 @@ CSP_SCRIPT_SRC = (
 )
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'",)
 
+# Needed if site not hosted on HTTPS domains (like local setup)
+if not SITE_URL.startswith('https'):
+    CSP_IMG_SRC = CSP_IMG_SRC + ("http://www.gravatar.com/avatar/",)
+    CSP_CHILD_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",)
+
 # For absolute urls
 try:
     DOMAIN = socket.gethostname()
