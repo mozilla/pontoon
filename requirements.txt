@@ -137,8 +137,8 @@ raygun4py==3.1.2 \
     --hash=sha256:ee32cc3c7b1320fc0312c2b3a904a810f61ba302c2bad6dec836bb19fbf68340
 django-cors-headers==1.1.0 \
     --hash=sha256:fcd96e2be47c8eef34c650e007a6d546e19e7ee61041b89edbbbbe7619aa3987
-django-allauth==0.25.2 \
-    --hash=sha256:382632fc4e85d577bcb4a747dcd0fff0b4893fffe275922e8489855608f50252
+https://bitbucket.org/mathjazz/django-allauth/get/0.25.3.zip#egg=django-allauth==0.25.3 \
+    --hash=sha256:6a9ab50aca6a996f1afb30e9d64260ce0e9ee4313b7c12971bdca4d5f92bde43
 python-openid==2.2.5 \
     --hash=sha256:92c51c3ecec846cbec4aeff11f9ff47303d4a63f93b0e6ac0ec02a091fed70ef \
     --hash=sha256:c2d133e47e0a7705c9272eef00d7a09c174f5bf17a127fed8e2c6499556cc782
