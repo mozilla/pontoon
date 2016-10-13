@@ -145,5 +145,3 @@ python-openid==2.2.5 \
 requests-oauthlib==0.6.1 \
     --hash=sha256:905306080ec0cc6b3c65c8101f471fccfdb9994c16dd116524fd3fc0790d46d7 \
     --hash=sha256:7c708e8e2a4aa6a905cf91f28420d75db37270e0ec8fc951915c098dd8bde53e
-django-csp==3.1 \
-    --hash=sha256:9208219c341ddbe371b5fd217ced0c916a5e2f7184bc603415074afcace6b51c
