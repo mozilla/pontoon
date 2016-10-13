@@ -136,6 +136,8 @@ MIDDLEWARE_CLASSES = (
     'session_csrf.CsrfMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',
 )
 
 CONTEXT_PROCESSORS = (
@@ -471,9 +473,6 @@ NOSE_ARGS = ['--logging-filter=-factory,-django.db,-raygun4py',
 if not os.environ.get('CI', False):
     NOSE_ARGS.append('--with-progressive')
 
-# Set X-Frame-Options to DENY by default on all responses.
-X_FRAME_OPTIONS = 'DENY'
-
 # General auth settings
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
@@ -487,8 +486,49 @@ ENGAGE_ROBOTS = False
 # Always generate a CSRF token for anonymous users.
 ANON_ALWAYS = True
 
+# Set X-Frame-Options to DENY by default on all responses.
+X_FRAME_OPTIONS = 'DENY'
+
 # Use correct header for detecting HTTPS on Heroku.
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Strict-Transport-Security: max-age=63072000
+# Ensures users only visit the site over HTTPS
+SECURE_HSTS_SECONDS = 63072000
+
+# X-Content-Type-Options: nosniff
+# Disables browser MIME type sniffing
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# x-xss-protection: 1; mode=block
+# Activates the browser's XSS filtering and helps prevent XSS attacks
+SECURE_BROWSER_XSS_FILTER = True
+
+# Content-Security-Policy headers
+CSP_DEFAULT_SRC = ("'none'",)
+CSP_CHILD_SRC = ("https:",)
+CSP_FRAME_SRC = ("https:",)  # Older browsers
+CSP_CONNECT_SRC = ("'self'",)
+CSP_FONT_SRC = ("'self'",)
+CSP_IMG_SRC = (
+    "'self'",
+    "https://*.wp.com/pontoon.mozilla.org/",
+    "https://ssl.google-analytics.com",
+    "https://www.gravatar.com/avatar/",
+)
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "https://login.persona.org",
+    "'sha256-x3niK4UU+vG6EGT2NK2rwi2j/etQodJd840oRpEnqd4='",
+    "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
+    "https://ssl.google-analytics.com/ga.js",
+)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'",)
+
+# Needed if site not hosted on HTTPS domains (like local setup)
+if not SITE_URL.startswith('https'):
+    CSP_IMG_SRC = CSP_IMG_SRC + ("http://www.gravatar.com/avatar/",)
+    CSP_CHILD_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",)
 
 # For absolute urls
 try:

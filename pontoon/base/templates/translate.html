@@ -126,12 +126,12 @@
 
             {% if user.is_authenticated() %}
                 {% if user.logged_via('fxa') and not user.logged_via('persona') %}
-                    <li><a href="{{ provider_login_url(request, "persona", process="connect") }}">Connect with Persona account</a></li>
+                    <li><a id="persona-sign-in" data-type="connect" href="#">Connect with Persona account</a></li>
                 {% endif %}
             <li class="sign-out"><a href="{{ url('account_logout') }}"><i class="fa fa-sign-out fa-fw"></i>Sign Out</a></li>
             {% else %}
             <li class="sign-in"><a href="{{ provider_login_url(request, "fxa") }}"><i class="fa fa-sign-in fa-fw"></i>Sign in: Firefox Accounts</a></li>
-            <li class="sign-in"><a href="{{ provider_login_url(request, "persona")}}"><i class="fa fa-sign-in fa-fw"></i>Sign in: Persona</a></li>
+            <li class="sign-in"><a id="persona-sign-in" href="#"><i class="fa fa-sign-in fa-fw"></i>Sign in: Persona</a></li>
             {% endif %}
           </ul>
         </div>
