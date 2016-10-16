@@ -19,7 +19,7 @@ all the prerequisites using the following command:
 
    .. code-block:: bash
 
-      sudo apt install git python-pip nodejs-legacy npm postgresql postgresql-server-dev-9.5 postgresql-contrib-9.5 libxml2-dev libxslt1-dev python-dev libmemcached-dev
+      sudo apt install git python-pip nodejs-legacy npm postgresql postgresql-server-dev-9.5 postgresql-contrib-9.5 libxml2-dev libxslt1-dev python-dev libmemcached-dev virtualenv
 
 .. _Git: https://git-scm.com/
 .. _Python 2.7: https://www.python.org/
@@ -101,7 +101,7 @@ Installation
       python manage.py createsuperuser
 
    Make sure that the email address you use for the superuser account matches
-   the email that you will log in with via Persona.
+   the email that you will log in with via Firefox Accounts.
 
 7. Pull the latest strings from version control for the Pontoon Intro project
    (which is automatically created for you during the database migrations):
