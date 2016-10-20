@@ -1,7 +1,7 @@
 $(function() {
 
   // Before submitting the form
-  $('form').submit(function (e) {
+  $('#admin-form').submit(function (e) {
     // Update locales
     var arr = [];
     $("#selected").parent().siblings('ul').find('li:not(".no-match")').each(function() {
@@ -14,7 +14,7 @@ $(function() {
     if (slug.length > 0) {
       slug += '/';
     }
-    $('form').attr('action', $('form').attr('action').split('/projects/')[0] + '/projects/' + slug);
+    $('#admin-form').attr('action', $('#admin-form').attr('action').split('/projects/')[0] + '/projects/' + slug);
   });
 
   // Submit form with Enter
@@ -24,7 +24,7 @@ $(function() {
       if (key === 13) { // Enter
         // A short delay to allow digest of autocomplete before submit
         setTimeout(function() {
-          $('form').submit();
+          $('#admin-form').submit();
         }, 1);
         return false;
       }
