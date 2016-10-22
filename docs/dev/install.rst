@@ -129,7 +129,7 @@ running:
 
 .. code-block:: bash
 
-   python manage.py runserver
+   ./manage.py runserver localhost:8000
 
 The site should be available at http://localhost:8000.
 
