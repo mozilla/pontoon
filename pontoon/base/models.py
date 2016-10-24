@@ -355,7 +355,16 @@ class LocaleQuerySet(models.QuerySet):
 class Locale(AggregatedStats):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=128)
-    plural_rule = models.CharField(max_length=128, blank=True)
+    plural_rule = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="""
+        Plural rule is part of the plurals header in
+        <a href="https://www.gnu.org/software/gettext/manual/gettext.html#Plural-forms">Gettext PO files</a>,
+        that follows the <i>plural=</i> string, without the trailing semicolon.
+        E.g. (n != 1)
+        """
+    )
 
     # Locale contains references to user groups who translate or manage them.
     # Groups also store respective permissions for users.
@@ -375,7 +384,16 @@ class Locale(AggregatedStats):
     )
 
     cldr_plurals = models.CommaSeparatedIntegerField(
-        "CLDR Plurals", blank=True, max_length=11, validators=[validate_cldr])
+        "CLDR Plurals",
+        blank=True,
+        max_length=11,
+        validators=[validate_cldr],
+        help_text="""
+        A comma separated list of <a href="http://www.unicode.org/cldr/charts/dev/supplemental/language_plural_rules.html">CLDR plural rules</a>,
+        where 0 represents zero, 1 one, 2 two, 3 few, 4 many, and 5 other.
+        E.g. 1,5
+        """
+    )
 
     team_description = models.TextField(blank=True)
 
