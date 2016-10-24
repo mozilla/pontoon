@@ -57,7 +57,17 @@ Installation
 
       pip install --require-hashes -r requirements-dev.txt
 
-4. Create a ``.env`` file at the root of the repository to configure the
+4. Create your database, using the following set of commands:
+
+   .. code-block:: bash
+
+      sudo -u postgres psql
+      CREATE USER pontoon WITH PASSWORD 'asdf';
+      CREATE DATABASE pontoon;
+      GRANT ALL PRIVILEGES ON DATABASE pontoon to pontoon;
+      \q
+
+5. Create a ``.env`` file at the root of the repository to configure the
    settings for your development instance. It should look something like this:
 
    .. code-block:: ini
@@ -86,15 +96,18 @@ Installation
 
    - ``SITE_URL`` should be set to the URL you will use to connect to your
      local development site. Some people prefer to use
-     ``http://127.0.0.1:8000`` instead of ``localhost``.
+     ``http://127.0.0.1:8000`` instead of ``localhost``. However, should you
+     decide to change the ``SITE_URL``, you also need to request_
+     the new ``FXA_CLIENT_ID`` and ``FXA_SECRET_KEY``, and our demo/intro site
+     ``http://localhost:8000/intro`` will require change of base url.
 
-5. Initialize your database by running the migrations:
+6. Initialize your database by running the migrations:
 
    .. code-block:: bash
 
       python manage.py migrate
 
-6. Create a new superuser account:
+7. Create a new superuser account:
 
    .. code-block:: bash
 
@@ -103,14 +116,14 @@ Installation
    Make sure that the email address you use for the superuser account matches
    the email that you will log in with via Firefox Accounts.
 
-7. Pull the latest strings from version control for the Pontoon Intro project
+8. Pull the latest strings from version control for the Pontoon Intro project
    (which is automatically created for you during the database migrations):
 
    .. code-block:: bash
 
       python manage.py sync_projects --no-commit pontoon-intro
 
-8. After you've provided credentials to Firefox Accounts, you have to update them in database,
+9. After you've provided credentials to Firefox Accounts, you have to update them in database,
    because it's required by django-allauth. You will have to call this command after every change in your
    FXA settings (e.g. client key):
 
@@ -118,7 +131,7 @@ Installation
 
       python manage.py updatefxaprovider
 
-9. Install the required Node libraries using ``npm``:
+10. Install the required Node libraries using ``npm``:
 
    .. code-block:: bash
 
@@ -133,9 +146,9 @@ running:
 
 The site should be available at http://localhost:8000.
 
-.. _pip: https://pip.pypa.io/en/stable/
 .. _fork: http://help.github.com/fork-a-repo/
 .. _issue: https://bugs.python.org/issue18378
+.. _request: https://developer.mozilla.org/en-US/docs/Mozilla/Tech/Firefox_Accounts/Introduction
 
 Extra settings
 --------------
