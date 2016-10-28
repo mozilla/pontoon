@@ -411,7 +411,10 @@ def entities(request):
     project = get_object_or_404(Project, slug=project)
     locale = get_object_or_404(Locale, code__iexact=locale)
 
-    filter_type = request.POST.get('filter', '')
+    status = request.POST.get('status', '')
+    extra = request.POST.get('extra', '')
+    time = request.POST.get('time', '')
+    author = request.POST.get('author', '')
     search = request.POST.get('search', '')
     exclude_entities = request.POST.getlist('excludeEntities[]', [])
 
@@ -434,7 +437,7 @@ def entities(request):
         }, safe=False)
 
     entities = Entity.for_project_locale(
-        project, locale, paths, filter_type, search, exclude_entities
+        project, locale, paths, status, search, exclude_entities, extra, time, author
     )
 
     # Only return a list of entity PKs (batch editing: select all)

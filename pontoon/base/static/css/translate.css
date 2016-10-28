@@ -328,6 +328,11 @@ body > header .locale.select {
   content: "";
 }
 
+#filter .button.author .status:before {
+  color: #AAAAAA;
+  content: "";
+}
+
 .unchanged .status:before {
   color: #AAAAAA;
   content: "";
@@ -666,11 +671,20 @@ body > header aside p {
   left: 0;
   max-height: calc(100% - 44px);
   overflow-y: auto;
+  padding: 0;
   top: 44px;
   width: 350px;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+#filter .menu ul {
+  margin: 10px 12px;
+}
+
+#filter.fixed .menu ul {
+  margin-bottom: 54px;
 }
 
 #filter .menu li.horizontal-separator {
@@ -694,26 +708,28 @@ body > header aside p {
 }
 
 #filter .menu li.horizontal-separator button {
-  background: #7BC876;
+  background: transparent;
   border: none;
-  border-radius: 2px;
-  color: black;
+  color: #AAAAAA;
   float: right;
-  font-size: 13px;
-  font-weight: 700;
+  font-weight: 300;
   margin: -3px 4px 0 0;
   padding: 1px 5px;
   text-transform: uppercase;
 }
 
 #filter .menu li.horizontal-separator button:hover {
-  color: #FFFFFF;
+  color: #7BC876;
 }
 
 /* Remove extra padding in Firefox button */
 #filter .menu li.horizontal-separator button::-moz-focus-inner {
   padding: 0;
   border: 0;
+}
+
+#filter .menu li.horizontal-separator button .fa {
+  padding-right: 5px;
 }
 
 #filter .menu li.time-range {
@@ -886,8 +902,13 @@ body > header aside p {
 }
 
 #filter .menu li.author {
+  height: 48px;
   padding-left: 4px;
   white-space: nowrap;
+}
+
+#filter .menu li.author figure {
+  height: 100%;
 }
 
 #filter .menu li.author img {
@@ -896,7 +917,7 @@ body > header aside p {
 
 #filter .menu li.author figcaption {
   display: inline-block;
-  padding: 2px 0 2px 8px;
+  padding: 2px 0 2px 56px;
 }
 
 #filter .menu li.author .name {
@@ -909,6 +930,86 @@ body > header aside p {
   color: #AAAAAA;
 }
 
+#filter .menu li.author .sel {
+  position: absolute;
+}
+
+#filter .menu li.author .status {
+  display: none;
+  height: 100%;
+  left: 0;
+  margin: 0;
+  padding: 16px 0 0;
+  text-align: center;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#filter .menu li.author .status:before {
+  color: #AAAAAA;
+}
+
+
+#filter .menu li.author.selected .status,
+#filter .menu li.author .sel:hover .status {
+  display: block;
+}
+
+#filter .menu li.author.selected img,
+#filter .menu li.author .sel:hover img {
+  opacity: 0.3;
+}
+
+#filter .toolbar {
+  background: #111111;
+  display: none;
+  border-top: 1px solid #5E6475;
+  line-height: 23px;
+  padding: 10px 12px;
+  text-transform: uppercase;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#filter.fixed .toolbar {
+  position: fixed;
+  bottom: 0;
+  width: 350px;
+  z-index: 10;
+}
+
+#filter .clear-selection {
+  float: left;
+}
+
+#filter .apply-selected {
+  float: right;
+  text-align: right;
+}
+
+#filter .toolbar .fa {
+  vertical-align: baseline;
+}
+
+#filter .apply-selected:hover, #filter .apply-selected .applied-count {
+  color: #7BC876;
+}
+
+#filter .apply-selected .variant .plural,
+#filter .apply-selected .variant.plural .singular {
+  display: none;
+}
+
+#filter .apply-selected .variant.plural .plural {
+  display: inline;
+}
+
 #filter .menu li .status {
   left: 4px;
   top: 4px;
@@ -919,8 +1020,27 @@ body > header aside p {
   top: 2px;
 }
 
-#filter .menu li.unchanged .status {
+#filter .menu li.unchanged:not(.selected) .status {
   left: 3px;
+}
+
+#filter .menu li.unchanged:not(.selected) .status:hover {
+  left: 4px;
+}
+
+/* Make selection area bigger and fit the entire row for easier use */
+#filter .menu li .status {
+  margin: -3px -13px -3px -16px;
+  padding: 3px 13px 3px 16px;
+  font-size: 16px;
+}
+
+#filter .menu li:not(.selected):not(.all) .status:not(.unselectable):hover:before {
+  content: "";
+}
+
+#filter .menu li.selected .status:before {
+  content: "";
 }
 
 #filter .menu li .count {
