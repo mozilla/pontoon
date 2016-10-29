@@ -1254,15 +1254,21 @@ class EntityQuerySet(models.QuerySet):
     def unchanged(self):
         return Q(unchanged_count=F('expected_count'))
 
-    def authored_by(self, locale, email):
-        if ',' in email:
-            email = email.split(',')
-            return self.filter(translation__locale=locale).filter(reduce(lambda x, y: x | y, [Q(translation__user__email=item) for item in email]))
+    def authored_by(self, email):
+        email = email.split(',')
+        query = None
 
-        return self.filter(translation__locale=locale, translation__user__email=email)
+        for e in email:
+            q = Q(translation__user__email=e)
+            if query:
+                query |= q
+            else:
+                query = q
 
-    def between_time_interval(self, locale, start, end):
-        return self.filter(translation__locale=locale, translation__date__range=(start, end))
+        return query
+
+    def between_time_interval(self, start, end):
+        return Q(translation__date__range=(start, end))
 
     def prefetch_resources_translations(self, locale):
         """
@@ -1362,9 +1368,9 @@ class Entity(DirtyFieldsMixin, models.Model):
         search=None, exclude=None, extra=None, time=None, author=None):
         """Get project entities with locale translations."""
         entities = Entity.objects.all()
+        query = None
 
         if status:
-            query = None
             status = status.split(',')
 
             for s in status:
@@ -1385,11 +1391,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 else:
                     query = q
 
-            if query:
-                entities = entities.with_status_counts(locale).filter(query)
-
         if extra:
-            query = None
             extra = extra.split(',')
 
             for s in extra:
@@ -1404,9 +1406,6 @@ class Entity(DirtyFieldsMixin, models.Model):
                 else:
                     query = q
 
-            if query:
-                entities = entities.with_status_counts(locale).filter(query)
-
         if time:
             if re.match('^[0-9]{12}-[0-9]{12}$', time):
                 try:
@@ -1414,13 +1413,16 @@ class Entity(DirtyFieldsMixin, models.Model):
                 except ValueError:
                     raise ValueError(time)
 
-                entities = entities.between_time_interval(locale, start, end)
+                entities = entities.filter(Entity.objects.between_time_interval(start, end))
 
             else:
                 raise ValueError(time)
 
         if author:
-            entities = entities.authored_by(locale, author)
+            entities = entities.filter(Entity.objects.authored_by(author))
+
+        if query:
+            entities = entities.with_status_counts(locale).filter(query)
 
         entities = entities.filter(
             resource__project=project,
