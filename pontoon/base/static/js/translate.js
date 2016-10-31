@@ -1889,6 +1889,12 @@ var Pontoon = (function (my) {
                   self.updateRangePicker();
                   self.updateFilterUI();
                 }
+
+                // Update number of history entities
+                var count = $('#helpers .history .suggestion').length;
+                $('#helpers a[href="#history"] .count')
+                  .toggle(count > 0)
+                  .html(count);
               });
           },
           error: function() {
