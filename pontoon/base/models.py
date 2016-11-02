@@ -15,6 +15,7 @@ from django.contrib.auth.models import User, Group, UserManager
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.core.validators import validate_email
 from django.db import models
 from django.db.models import Case, Count, F, Prefetch, Q, Sum, When
 from django.templatetags.static import static
@@ -1175,6 +1176,24 @@ class EntityQuerySet(models.QuerySet):
     """
     Queryset provides a set of additional methods that should allow us to filter entities.
     """
+    user_entity_filters = ('missing', 'fuzzy', 'suggested', 'translated')
+    user_extra_filters = ('has-suggestions', 'unchanged')
+
+    def filter_statuses(self, locale, statuses):
+        sanitized_statuses = filter(lambda s: s in self.user_entity_filters, statuses)
+        if sanitized_statuses:
+            query = reduce(lambda x, y: x | y, [getattr(Entity.objects, s)() for s in sanitized_statuses])
+            return self.with_status_counts(locale).filter(Q(query))
+        return self
+
+    def filter_extra(self, locale, extra):
+        sanitized_filters = filter(lambda f: f in self.user_extra_filters, extra)
+
+        if sanitized_filters:
+            query = reduce(lambda x, y: x | y, [getattr(Entity.objects, s.replace('-', '_'))() for s in sanitized_filters])
+            return self.with_status_counts(locale).filter(Q(query))
+        return self
+
     def with_status_counts(self, locale):
         """
         Helper method that returns a set with annotation of following fields:
@@ -1240,12 +1259,22 @@ class EntityQuerySet(models.QuerySet):
     def unchanged(self):
         return Q(unchanged_count=F('expected_count'))
 
-    def authored_by(self, locale, email):
-        if ',' in email:
-            email = email.split(',')
-            return self.filter(translation__locale=locale).filter(reduce(lambda x, y: x | y, [Q(translation__user__email=item) for item in email]))
+    def authored_by(self, locale, emails):
+        def is_email(email):
+            """
+            Validate if user passed a real email.
+            """
+            try:
+                validate_email(email)
+                return True
+            except ValidationError:
+                return False
 
-        return self.filter(translation__locale=locale, translation__user__email=email)
+        sanitized_emails = filter(is_email, emails)
+        if sanitized_emails:
+            emails_query = reduce(lambda x, y: x | y, [Q(translation__user__email=item) for item in sanitized_emails])
+            return self.filter(translation__locale=locale).filter(Q(emails_query))
+        return self
 
     def between_time_interval(self, locale, start, end):
         return self.filter(translation__locale=locale, translation__date__range=(start, end))
@@ -1344,69 +1373,30 @@ class Entity(DirtyFieldsMixin, models.Model):
             }
 
     @classmethod
-    def for_project_locale(self, project, locale, paths=None, status=None,
-        search=None, exclude=None, extra=None, time=None, author=None):
+    def for_project_locale(self, project, locale, paths=None, statuses=None,
+        search=None, exclude=None, extra=None, time=None, authors=None):
         """Get project entities with locale translations."""
         entities = Entity.objects.all()
 
-        if status:
-            query = None
-            status = status.split(',')
+        def append_filters(qs):
+            return qs.filter(pk__in=entities)
 
-            for s in status:
-                if s == 'missing':
-                    q = Entity.objects.missing()
-
-                elif s == 'fuzzy':
-                    q = Entity.objects.fuzzy()
-
-                elif s == 'suggested':
-                    q = Entity.objects.suggested()
-
-                elif s == 'translated':
-                    q = Entity.objects.translated()
-
-                if query:
-                    query |= q
-                else:
-                    query = q
-
-            if query:
-                entities = entities.with_status_counts(locale).filter(query)
+        if statuses:
+            entities = entities.filter_statuses(locale, statuses.split(','))
 
         if extra:
-            query = None
-            extra = extra.split(',')
-
-            for s in extra:
-                if s == 'has-suggestions':
-                    q = Entity.objects.has_suggestions()
-
-                elif s == 'unchanged':
-                    q = Entity.objects.unchanged()
-
-                if query:
-                    query &= q
-                else:
-                    query = q
-
-            if query:
-                entities = entities.with_status_counts(locale).filter(query)
+            entities = entities.filter_extra(locale, extra.split(','))
 
         if time:
             if re.match('^[0-9]{12}-[0-9]{12}$', time):
-                try:
-                    start, end = utils.parse_time_interval(time)
-                except ValueError:
-                    raise ValueError(time)
-
-                entities = entities.between_time_interval(locale, start, end)
+                start, end = utils.parse_time_interval(time)
+                entities = append_filters(Entity.objects.between_time_interval(locale, start, end))
 
             else:
                 raise ValueError(time)
 
-        if author:
-            entities = entities.authored_by(locale, author)
+        if authors:
+            entities = append_filters(Entity.objects.authored_by(locale, authors.split(',')))
 
         entities = entities.filter(
             resource__project=project,
