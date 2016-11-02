@@ -1222,36 +1222,29 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
-    def missing(self, locale):
-        return self.with_status_counts(locale).filter(
-            Q(approved_count__lt=F('expected_count')) & Q(fuzzy_count__lt=F('expected_count')) & Q(suggested_count__lt=F('expected_count'))
-        )
+    def missing(self):
+        return Q(approved_count__lt=F('expected_count')) & Q(fuzzy_count__lt=F('expected_count')) & Q(suggested_count__lt=F('expected_count'))
 
-    def fuzzy(self, locale):
-        return self.with_status_counts(locale).filter(
-            Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
-        )
+    def fuzzy(self):
+        return Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
 
-    def suggested(self, locale):
-        return self.with_status_counts(locale).filter(
-            Q(suggested_count__gt=0) & ~Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
-        )
+    def suggested(self):
+        return Q(suggested_count__gt=0) & ~Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
 
-    def translated(self, locale):
-        return self.with_status_counts(locale).filter(
-            approved_count=F('expected_count')
-        )
+    def translated(self):
+        return Q(approved_count=F('expected_count'))
 
-    def untranslated(self, locale):
-        return self.with_status_counts(locale).exclude(Q(approved_count=F('expected_count')))
+    def has_suggestions(self):
+        return Q(suggested_count__gt=0)
 
-    def has_suggestions(self, locale):
-        return self.with_status_counts(locale).filter(suggested_count__gt=0)
-
-    def unchanged(self, locale):
-        return self.with_status_counts(locale).filter(unchanged_count=F('expected_count'))
+    def unchanged(self):
+        return Q(unchanged_count=F('expected_count'))
 
     def authored_by(self, locale, email):
+        if ',' in email:
+            email = email.split(',')
+            return self.filter(translation__locale=locale).filter(reduce(lambda x, y: x | y, [Q(translation__user__email=item) for item in email]))
+
         return self.filter(translation__locale=locale, translation__user__email=email)
 
     def between_time_interval(self, locale, start, end):
@@ -1351,46 +1344,69 @@ class Entity(DirtyFieldsMixin, models.Model):
             }
 
     @classmethod
-    def for_project_locale(self, project, locale, paths=None, filter_type=None,
-        search=None, exclude=None):
+    def for_project_locale(self, project, locale, paths=None, status=None,
+        search=None, exclude=None, extra=None, time=None, author=None):
         """Get project entities with locale translations."""
-        if filter_type and filter_type != 'all':
-            if filter_type == 'missing':
-                entities = self.objects.missing(locale)
+        entities = Entity.objects.all()
 
-            elif filter_type == 'fuzzy':
-                entities = self.objects.fuzzy(locale)
+        if status:
+            query = None
+            status = status.split(',')
 
-            elif filter_type == 'suggested':
-                entities = self.objects.suggested(locale)
+            for s in status:
+                if s == 'missing':
+                    q = Entity.objects.missing()
 
-            elif filter_type == 'translated':
-                entities = self.objects.translated(locale)
+                elif s == 'fuzzy':
+                    q = Entity.objects.fuzzy()
 
-            elif filter_type == 'untranslated':
-                entities = self.objects.untranslated(locale)
+                elif s == 'suggested':
+                    q = Entity.objects.suggested()
 
-            elif filter_type == 'has-suggestions':
-                entities = self.objects.has_suggestions(locale)
+                elif s == 'translated':
+                    q = Entity.objects.translated()
 
-            elif filter_type == 'unchanged':
-                entities = self.objects.unchanged(locale)
+                if query:
+                    query |= q
+                else:
+                    query = q
 
-            elif filter_type in Translation.for_locale_project_paths(locale, project, paths).authors().values_list('email', flat=True):
-                entities = self.objects.authored_by(locale, filter_type)
+            if query:
+                entities = entities.with_status_counts(locale).filter(query)
 
-            elif re.match('^[0-9]{12}-[0-9]{12}$', filter_type):
+        if extra:
+            query = None
+            extra = extra.split(',')
+
+            for s in extra:
+                if s == 'has-suggestions':
+                    q = Entity.objects.has_suggestions()
+
+                elif s == 'unchanged':
+                    q = Entity.objects.unchanged()
+
+                if query:
+                    query &= q
+                else:
+                    query = q
+
+            if query:
+                entities = entities.with_status_counts(locale).filter(query)
+
+        if time:
+            if re.match('^[0-9]{12}-[0-9]{12}$', time):
                 try:
-                    start, end = utils.parse_time_interval(filter_type)
+                    start, end = utils.parse_time_interval(time)
                 except ValueError:
-                    raise ValueError(filter_type)
-                entities = self.objects.between_time_interval(locale, start, end)
+                    raise ValueError(time)
+
+                entities = entities.between_time_interval(locale, start, end)
 
             else:
-                raise ValueError(filter_type)
+                raise ValueError(time)
 
-        else:
-            entities = Entity.objects.all()
+        if author:
+            entities = entities.authored_by(locale, author)
 
         entities = entities.filter(
             resource__project=project,

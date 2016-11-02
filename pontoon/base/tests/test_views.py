@@ -9,7 +9,7 @@ from django_nose.tools import (
     assert_code,
 )
 
-from mock import patch, call
+from mock import patch
 
 from pontoon.base.models import (
    Locale,
@@ -520,22 +520,28 @@ class EntityViewTests(TestCase):
             'fuzzy',
             'suggested',
             'translated',
-            'untranslated',
-            'has-suggestions',
             'unchanged',
+            'has-suggestions',
         )
+
         for filter_ in filters:
             filter_name = filter_.replace('-', '_')
-            with patch('pontoon.base.models.Entity.objects.{}'.format(filter_name), return_value=Entity.objects.all()) as filter_mock:
-                self.client.ajax_post('/get-entities/', {
-                    'project': self.resource.project.slug,
-                    'locale': self.locale.code,
-                    'paths[]': [self.resource.path],
-                    'filter': filter_,
-                    'limit': 1,
-                })
+            params = {
+                'project': self.resource.project.slug,
+                'locale': self.locale.code,
+                'paths[]': [self.resource.path],
+                'limit': 1,
+            }
+
+            if filter_ == 'unchanged' or filter_ == 'has-suggestions':
+                params['extra'] = filter_
+
+            else:
+                params['status'] = filter_
+
+            with patch('pontoon.base.models.Entity.objects.{}'.format(filter_name), return_value=getattr(Entity.objects, filter_name)()) as filter_mock:
+                self.client.ajax_post('/get-entities/', params)
                 assert_true(filter_mock.called)
-                assert_equal(filter_mock.call_args, call(self.locale))
 
     def test_exclude_entities(self):
         """

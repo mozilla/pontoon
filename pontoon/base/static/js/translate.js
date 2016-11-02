@@ -4,79 +4,11 @@ var Pontoon = (function (my) {
 
     /*
      * UI helper methods
+     *
+     * type - if specified, function returns value for this filter type otherwise for all types
      */
-    getFilter: function() {
-      return $('#filter').data('current-filter') || 'all';
-    },
-
-
-    /*
-     * Set filter widget
-     */
-    setFilter: function (type) {
-      type = type || 'all';
-      var node = $('#filter .menu [data-type="' + type + '"]'),
-          selectorType = type;
-
-      function defaultFilter() {
-        type = selectorType = 'all';
-        node = $('#filter .menu [data-type="all"]');
-      }
-
-      // Validate filter
-      if (node.length === 0) {
-
-        // Special case: filter by time range
-        if (/^[0-9]{12}-[0-9]{12}$/.test(type)) {
-
-          // Populate from/to inputs (needed if filter specified in URL)
-          var from = new Date(
-            type.substring(0, 4) + '/' +
-            type.substring(4, 6) + '/' +
-            type.substring(6, 8) + ' ' +
-            type.substring(8, 10) + ':' +
-            type.substring(10, 12) + ' UTC'
-          );
-
-          var to = new Date(
-            type.substring(13, 17) + '/' +
-            type.substring(17, 19) + '/' +
-            type.substring(19, 21) + ' ' +
-            type.substring(21, 23) + ':' +
-            type.substring(23, 25) + ' UTC'
-          );
-
-          if (from != 'Invalid Date' && to != 'Invalid Date') {
-            $('#from').val(this.server2local(from));
-            $('#to').val(this.server2local(to));
-
-            // Firefox gracefully parses dates, arithmetically converting to meaningful values,
-            // so we need to reset the filter in the URL
-            type = this.local2server($('#from').val()) + '-' + this.local2server($('#to').val());
-            selectorType = 'time-range';
-            node = $('#filter .menu [data-type="time-range"]');
-
-          } else {
-            defaultFilter();
-            this.resetTimeRange();
-          }
-
-        } else {
-          defaultFilter();
-        }
-      }
-
-      var title = node.find('.title').text();
-
-      // Special case: filter by author
-      if (node.find('.name').length) {
-        title = node.find('.name').text() + '\'s translations';
-        selectorType = 'all';
-      }
-
-      $('#search').attr('placeholder', 'Search in ' + title);
-      $('#filter').data('current-filter', type)
-        .find('.button').attr('class', 'button selector ' + selectorType);
+    getFilter: function(type) {
+      return type ? $('#filter').data('current-filter')[type] : $('#filter').data('current-filter');
     },
 
 
@@ -569,7 +501,7 @@ var Pontoon = (function (my) {
       var translation = entity.translation,
           translated = fuzzy = suggested = 0;
 
-      for (i=0; i<translation.length; i++) {
+      for (var i=0; i<translation.length; i++) {
         if (entity.translation[i].approved) {
           translated++;
         }
@@ -715,16 +647,6 @@ var Pontoon = (function (my) {
       this.loadNextEntities();
     },
 
-
-    /*
-     * Filter list of entities by given type
-     */
-    filterEntities: function (type) {
-      this.setFilter(type);
-      this.searchEntities();
-    },
-
-
     /*
      * Render list of entities to translate
      */
@@ -821,6 +743,8 @@ var Pontoon = (function (my) {
         .html(newTitle)
         .data('alternative', oldTitle)
         .toggleClass('editing');
+
+      this.positionFilterToolbar();
     },
 
 
@@ -1038,30 +962,308 @@ var Pontoon = (function (my) {
     },
 
 
+    /*
+     * Return empty filter object
+     */
+    getEmptyFilterObject: function() {
+      return {
+        status: [],
+        extra: [],
+        time: '',
+        author: []
+      };
+    },
+
+
+    /*
+     * Make sure filter toolbar is always visible
+     */
+    positionFilterToolbar: function() {
+      var menu = $('#filter .menu'),
+          scrollbarVisible = menu[0].scrollHeight > (menu.height()),
+          toolbarVisible = $('#filter .selected').length > 0;
+
+      $('#filter').toggleClass('fixed', scrollbarVisible && toolbarVisible);
+    },
+
+
+    /*
+     * Set filter value to HTML and mark selected filters
+     *
+     * filter: object with properties for each filter type
+     */
+    updateFilterUI: function(filter) {
+      filter = filter || this.getFilter();
+
+      var placeholder = [],
+          selectorType = 'all',
+          self = this;
+
+      $('#filter').data('current-filter', filter);
+
+      // Reset all filters
+      this.clearSelectedFilters();
+
+      function markSelectedFilters(type) {
+        for (var i=0, l=filter[type].length; i < l; i++) {
+          var node = $('#filter .menu [data-type="' + filter[type][i] + '"]'),
+              title = node.find('.title').text();
+
+          node.addClass('selected');
+
+          if (type === 'author') {
+            title = node.find('.name').text() + "'s translations";
+          }
+          placeholder.push(title);
+        }
+      }
+
+      for (var type in filter) {
+        if (filter[type] && filter[type] !== []) {
+          if (type === 'status' || type === 'extra' || type === 'author') {
+            markSelectedFilters(type);
+
+          } else if (type === 'time') {
+            var node = $('#filter .menu [data-type="time-range"]');
+            node.addClass('selected');
+            placeholder.push(node.find('.title').text());
+          }
+        }
+      }
+
+      // Special case: Untranslated filter is a union of missing, fuzzy, and suggested
+      if (self.untranslatedFilterApplied(filter.status)) {
+        $('#filter .menu [data-type="untranslated"]').addClass('selected');
+      }
+
+      var selectedCount = $('#filter .selected').length;
+
+      // If only one filter selected, use it's own icon in the filter selector
+      if (selectedCount === 1) {
+        selectorType = $('#filter .selected').data('type');
+        if (selectorType.indexOf('@') !== -1) {
+          selectorType = 'author';
+        }
+      }
+
+      // Update placeholder and filter selector icon
+      $('#search').attr('placeholder', 'Search in ' + (placeholder.join(', ') || 'All'));
+      $('#filter .button').attr('class', 'button selector ' + selectorType);
+
+      // Update count (N) in Apply N filters button
+      $('#filter .toolbar')
+        .toggle(selectedCount > 0)
+        .find('.variant').toggleClass('plural', selectedCount > 1).end()
+        .find('.applied-count').html(selectedCount);
+
+      this.positionFilterToolbar();
+    },
+
+
+    /*
+     * Validate Time range input field
+     */
+    validateTimeRangeInput: function() {
+      var from = this.local2server($('#from').val());
+          to = this.local2server($('#to').val());
+
+      if (from && to) {
+        return from + '-' + to;
+      } else {
+        $('#from').toggleClass('error', !from);
+        $('#to').toggleClass('error', !to);
+        return '';
+      }
+    },
+
+
+    /*
+     * Validate Time range URL parameter
+     */
+    validateTimeRangeURL: function (filter) {
+      var time = filter.time;
+
+      if (/^[0-9]{12}-[0-9]{12}$/.test(time)) {
+        // Populate from/to inputs (needed if filter specified in URL)
+        var from = new Date(
+          time.substring(0, 4) + '/' +
+          time.substring(4, 6) + '/' +
+          time.substring(6, 8) + ' ' +
+          time.substring(8, 10) + ':' +
+          time.substring(10, 12) + ' UTC'
+        );
+
+        var to = new Date(
+          time.substring(13, 17) + '/' +
+          time.substring(17, 19) + '/' +
+          time.substring(19, 21) + ' ' +
+          time.substring(21, 23) + ':' +
+          time.substring(23, 25) + ' UTC'
+        );
+
+        if (from != 'Invalid Date' && to != 'Invalid Date') {
+          $('#from').val(this.server2local(from));
+          $('#to').val(this.server2local(to));
+
+          // Firefox gracefully parses dates, arithmetically converting to meaningful values,
+          // so we need to reset the filter in the URL.
+          filter.time = this.local2server($('#from').val()) + '-' + this.local2server($('#to').val());
+
+        } else {
+          this.resetTimeRange();
+        }
+      }
+    },
+
+
+    /*
+     * Clear selected filters
+     */
+    clearSelectedFilters: function() {
+      $('#filter .selected').removeClass('selected');
+    },
+
+
+    /*
+     * Apply selected filters
+     */
+    applySelectedFilters: function() {
+      this.searchEntities();
+      $('#filter .selector').click();
+    },
+
+
+    /*
+     * Return an array of untranslated filter statuses
+     */
+    getUntranslatedFilters: function() {
+      return ['missing', 'fuzzy', 'suggested'];
+    },
+
+
+    /*
+     * Apply untranslated filter
+     */
+    applyUntranslatedFilter: function(status) {
+      var values = this.getUntranslatedFilters();
+      for (var i=0, l=values.length; i<l; i++) {
+        if (status.indexOf(values[i]) === -1) {
+          status.push(values[i]);
+        }
+      }
+    },
+
+
+    /*
+     * Check if untranslated filter applied
+     */
+    untranslatedFilterApplied: function(status) {
+      var values = this.getUntranslatedFilters();
+      for (var i=0, l=values.length; i<l; i++) {
+        if (status.indexOf(values[i]) === -1) {
+          return false;
+        }
+      }
+      return true;
+    },
+
+
     attachEntityListHandlers: function() {
       var self = this;
 
-      // Filter entities
-      $('#filter').on('click', 'li[data-type]:not(".editing")', function(e) {
-        var type = $(this).data('type');
+      // Filter entities by multiple filters
+      $('#filter').on('click', 'li[data-type]:not(".editing"):not(".all") .status', function(e) {
+        e.stopPropagation();
 
-        if ($(this).is('.time-range')) {
-          var from = self.local2server($('#from').val());
-              to = self.local2server($('#to').val());
+        var el = $(this).parents('li'),
+            value = el.data('type'),
+            filter = self.getFilter(),
+            num = -1;
 
-          // Validate Time range filter
-          if (from && to) {
-            type = from + '-' + to;
-
+        function updateFilterValue(type) {
+          num = filter[type].indexOf(value);
+          if (num === -1) {
+            filter[type].push(value);
           } else {
-            $('#from').toggleClass('error', !from);
-            $('#to').toggleClass('error', !to);
-            return;
+            filter[type].splice(num, 1);
           }
         }
 
-        self.filterEntities(type);
-        $('#filter .selector').click();
+        if (el.hasClass('time-range')) {
+          filter.time = el.hasClass('selected') ? '' : self.validateTimeRangeInput();
+
+        } else if (el.hasClass('author')) {
+          updateFilterValue('author');
+
+        } else if (el.hasClass('untranslated') || el.hasClass('unchanged') || el.hasClass('has-suggestions')) {
+          // Special case: Untranslated filter is a union of missing, fuzzy, and suggested
+          if (value === 'untranslated') {
+            if (self.untranslatedFilterApplied(filter.status)) {
+              filter.status = filter.status.indexOf('translated') !== -1 ? ['translated'] : [];
+            } else {
+              self.applyUntranslatedFilter(filter.status);
+            }
+
+          } else {
+            updateFilterValue('extra');
+          }
+
+        } else {
+          updateFilterValue('status');
+        }
+
+        self.updateFilterUI();
+      });
+
+      // Filter entities by a single filter
+      $('#filter').on('click', 'li[data-type]:not(".editing")', function(e) {
+        var el = $(this),
+            value = el.data('type'),
+            filter = self.getEmptyFilterObject();
+
+        if (el.hasClass('time-range')) {
+          filter.time = self.validateTimeRangeInput();
+          if (!filter.time) {
+            return;
+          }
+
+        } else if (el.hasClass('author')) {
+          filter.author.push(value);
+
+        } else if (el.hasClass('untranslated') || el.hasClass('unchanged') || el.hasClass('has-suggestions')) {
+          if (value === 'untranslated') {
+            self.applyUntranslatedFilter(filter.status);
+
+          } else {
+            filter.extra.push(value);
+          }
+
+        } else if (!el.hasClass('all')) {
+          filter.status.push(value);
+        }
+
+        self.updateFilterUI(filter);
+        self.applySelectedFilters();
+      });
+
+      // Switch between relative and fixed filter toolbar position on window resize
+      $(window).resize(function () {
+        self.positionFilterToolbar();
+      });
+
+      // Clear selected filters
+      $('#filter .clear-selected').click(function(e) {
+        e.preventDefault();
+
+        self.updateFilterUI(self.getEmptyFilterObject());
+        $('#filter .toolbar').hide();
+      });
+
+      // Apply selected filters
+      $('#filter .apply-selected').click(function(e) {
+        e.preventDefault();
+
+        self.applySelectedFilters();
       });
 
       // Time range editing toggle
@@ -1685,6 +1887,7 @@ var Pontoon = (function (my) {
                   self.updateCachedTranslation();
                   self.updateAuthors();
                   self.updateRangePicker();
+                  self.updateFilterUI();
                 }
 
                 // Update number of history entities
@@ -1813,9 +2016,9 @@ var Pontoon = (function (my) {
                     self.stats = entitiesData.stats;
                     self.authors = entitiesData.authors;
                     self.updateAuthors();
-
                     self.countsPerMinute = entitiesData.counts_per_minute;
                     self.updateRangePicker();
+                    self.updateFilterUI();
 
                     entitiesMap = {};
                     $.each(entitiesData.entities, function() {
@@ -2120,6 +2323,7 @@ var Pontoon = (function (my) {
           self.updateAuthors();
           self.updateInPlaceTranslation(data.translation.string);
           self.updateRangePicker();
+          self.updateFilterUI();
 
           // Update translation, including in place if possible
           if (entity.body && (self.user.isTranslator || !entity.translation[pf].approved)) {
@@ -2443,8 +2647,8 @@ var Pontoon = (function (my) {
           self.updateCurrentPart(self.getSelectedPart());
 
           // Reset optional state parameters and update state
-          self.setFilter();
           self.setSearch('');
+          self.updateFilterUI(self.getEmptyFilterObject());
 
           var state = self.getState('selected');
           state.entity = null;
@@ -2495,12 +2699,15 @@ var Pontoon = (function (my) {
      */
     updateAuthors: function () {
       var authors = $('#filter').find('.for-authors').toggle(this.authors.length > 0);
-      $('#filter .author').remove();
+      $('#filter .menu li.author').remove();
 
       $.each(this.authors, function() {
         authors.after('<li class="author" data-type="' + this.email + '">' +
           '<figure>' +
-            '<img class="rounded" src="' + this.gravatar_url + '">' +
+            '<span class="sel">' +
+              '<span class="status fa"></span>' +
+              '<img class="rounded" src="' + this.gravatar_url + '">' +
+            '</span>' +
             '<figcaption>' +
               '<p class="name">' + this.display_name + '</p>' +
               '<p class="role">' + this.role + '</p>' +
@@ -2626,6 +2833,7 @@ var Pontoon = (function (my) {
       self.resetTimeRange();
       self.updateAuthors();
       self.updateRangePicker();
+      self.updateFilterUI();
       self.renderEntityList();
       self.updateProgress();
 
@@ -2657,7 +2865,7 @@ var Pontoon = (function (my) {
           entity = this.state.entity;
 
       // No optional state parameters
-      if ((!filter || filter === 'all') && !search && !entity) {
+      if (!filter.status && !filter.extra && !filter.time && !filter.author && !search && !entity) {
         this.showDefaultView();
         return;
       }
@@ -3111,7 +3319,10 @@ var Pontoon = (function (my) {
             'locale': state.locale,
             'paths': self.getPartPaths(self.currentPart),
             'search': self.getSearch(),
-            'filter': self.getFilter(),
+            'status': self.getFilter('status').join(','),
+            'extra': self.getFilter('extra').join(','),
+            'time': self.getFilter('time'),
+            'author': self.getFilter('author').join(','),
             'inplaceEditor': self.requiresInplaceEditor()
           },
           deferred = $.Deferred();
@@ -3161,6 +3372,7 @@ var Pontoon = (function (my) {
           self.updateProgress();
           self.updateAuthors();
           self.updateRangePicker();
+          self.updateFilterUI();
           self.createObject(true);
           return;
         }
@@ -3452,8 +3664,20 @@ var Pontoon = (function (my) {
         url = '/';
       }
 
-      if (state.filter && state.filter !== 'all') {
-        queryParams.filter = state.filter;
+      if (state.filter.status.length > 0) {
+        queryParams.status = state.filter.status.join(',');
+      }
+
+      if (state.filter.extra.length > 0) {
+        queryParams.extra = state.filter.extra.join(',');
+      }
+
+      if (state.filter.time) {
+        queryParams.time = state.filter.time;
+      }
+
+      if (state.filter.author.length > 0) {
+        queryParams.author = state.filter.author.join(',');
       }
 
       if (state.search && state.search !== '') {
@@ -3513,13 +3737,19 @@ var Pontoon = (function (my) {
      */
     updateInitialState: function() {
       var state = this.getState('selected');
-      state.filter = this.getQueryParam('filter');
+      state.filter = {
+        status: this.getQueryParam('status') ? this.getQueryParam('status').split(',') : [],
+        extra: this.getQueryParam('extra') ? this.getQueryParam('extra').split(',') : [],
+        time: this.getQueryParam('time'),
+        author: this.getQueryParam('author') ? this.getQueryParam('author').split(',') : []
+      };
       state.search = this.getQueryParam('search');
       state.entity = this.getQueryParam('string');
 
       // Update search and filter
       this.setSearch(state.search);
-      this.setFilter(state.filter);
+      this.validateTimeRangeURL(state.filter);
+      this.updateFilterUI(state.filter);
 
       // Fallback to first available part if no matches found (mistyped URL)
       var paths = requestedPaths = this.getSelectedPart();
@@ -3558,7 +3788,8 @@ window.onpopstate = function(e) {
 
     // Update search and filter
     Pontoon.setSearch(Pontoon.state.search);
-    Pontoon.setFilter(Pontoon.state.filter);
+    Pontoon.validateTimeRangeURL(Pontoon.state.filter);
+    Pontoon.updateFilterUI(Pontoon.state.filter);
 
     Pontoon.initializePart(true);
   }
@@ -3584,4 +3815,5 @@ Pontoon.countsPerMinute = $('#server').data('counts-per-minute');
 Pontoon.updateRangePicker();
 
 Pontoon.updateInitialState();
+Pontoon.updateFilterUI();
 Pontoon.initializePart();
