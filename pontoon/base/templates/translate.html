@@ -147,7 +147,7 @@
   <div id="entitylist">
     <div class="search-wrapper clearfix">
       <div class="icon fa fa-search"></div>
-      <input id="search" type="search" autocomplete="off" placeholder="Search in All" title="Search Strings (Ctrl + Shift + F)">
+      <input id="search" type="search" autocomplete="off" placeholder="Search All" title="Search Strings (Ctrl + Shift + F)">
       <div id="filter" class="select" data-current-filter="all">
         <div class="button selector all">
           <span class="status fa"></span>
@@ -162,16 +162,13 @@
             {{ Filter.item('suggested', 'Suggested', count=True) }}
             {{ Filter.item('translated', 'Translated', count=True) }}
 
-            <li class="horizontal-separator">Extra Filters</li>
+            <li class="horizontal-separator">Smart Filters</li>
 
             {{ Filter.item('untranslated', 'Untranslated') }}
             {{ Filter.item('unchanged', 'Unchanged') }}
             {{ Filter.item('has-suggestions', 'Has Suggestions') }}
 
-            <li class="horizontal-separator for-time-range">
-              Translation Time
-              <button class="edit" data-alternative="Save Range"><span class="fa fa-area-chart"></span>Edit Range</button>
-            </li>
+            <li class="horizontal-separator for-time-range">Translation Time<button class="edit" data-alternative="Save Range">Edit Range</button></li>
 
             <li class="time-range clearfix" data-type="time-range">
               <span class="status fa"></span>
@@ -185,21 +182,6 @@
 
             <li class="horizontal-separator for-authors">Translation Authors</li>
           </ul>
-          <div class="toolbar clearfix">
-            <a class="clear-selected" href="#clear-filters" title="Uncheck selected filters">
-              <span class="fa fa-remove fa-lg"></span>
-              Clear
-            </a>
-            <a class="apply-selected" href="#apply-filters" title="Apply Selected Filters">
-              <span class="fa fa-check fa-lg"></span>
-              Apply
-              <span class="applied-count"></span>
-              <span class="variant">
-                <span class="singular">filter</span>
-                <span class="plural">filters</span>
-              </span>
-            </a>
-          </div>
         </div>
       </div>
     </div>

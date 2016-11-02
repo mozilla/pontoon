@@ -4,7 +4,7 @@ from django.test import RequestFactory
 from django.utils.timezone import now
 
 from django_nose.tools import assert_equal, assert_true, assert_code
-from mock import patch
+from mock import patch, call
 
 from pontoon.base.models import (
    Locale,
@@ -538,28 +538,22 @@ class EntityViewTests(TestCase):
             'fuzzy',
             'suggested',
             'translated',
-            'unchanged',
+            'untranslated',
             'has-suggestions',
+            'unchanged',
         )
-
         for filter_ in filters:
             filter_name = filter_.replace('-', '_')
-            params = {
-                'project': self.resource.project.slug,
-                'locale': self.locale.code,
-                'paths[]': [self.resource.path],
-                'limit': 1,
-            }
-
-            if filter_ == 'unchanged' or filter_ == 'has-suggestions':
-                params['extra'] = filter_
-
-            else:
-                params['status'] = filter_
-
-            with patch('pontoon.base.models.Entity.objects.{}'.format(filter_name), return_value=getattr(Entity.objects, filter_name)()) as filter_mock:
-                self.client.ajax_post('/get-entities/', params)
+            with patch('pontoon.base.models.Entity.objects.{}'.format(filter_name), return_value=Entity.objects.all()) as filter_mock:
+                self.client.ajax_post('/get-entities/', {
+                    'project': self.resource.project.slug,
+                    'locale': self.locale.code,
+                    'paths[]': [self.resource.path],
+                    'filter': filter_,
+                    'limit': 1,
+                })
                 assert_true(filter_mock.called)
+                assert_equal(filter_mock.call_args, call(self.locale))
 
     def test_exclude_entities(self):
         """
