@@ -1,6 +1,5 @@
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import logout
 from django.views.generic import RedirectView, TemplateView
 from django.contrib.staticfiles.views import serve as staticfile
@@ -22,12 +21,6 @@ urlpatterns = [
 
     # Django admin
     url(r'^a/', include(admin.site.urls)),
-
-    # Persona migration page
-    url(r'^sign-in-migration/$',
-        login_required(
-            TemplateView.as_view(template_name='sign_in_migration.html'),
-        ), name='pontoon.sign-in-migration'),
 
     # Sync views
     url(r'', include('pontoon.sync.urls')),

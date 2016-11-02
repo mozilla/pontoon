@@ -237,17 +237,6 @@ def user_locale_role(self, locale):
         return 'contributor'
 
 
-def logged_via(self, provider):
-    """
-    Tells if user logged/connected with given provider.
-    """
-    if provider == 'persona' and self.profile.from_django_browserid:
-        # We have to support old accounts that were already logged via persona.
-        return True
-    return provider in [sa.provider for sa in self.socialaccount_set.all()]
-
-
-User.add_to_class('logged_via', logged_via)
 User.add_to_class('profile_url', user_profile_url)
 User.add_to_class('gravatar_url', user_gravatar_url)
 User.add_to_class('name_or_email', user_name_or_email)
@@ -275,9 +264,6 @@ class UserProfile(models.Model):
         default=list,
         blank=True,
     )
-
-    """Marks old django browserid accounts to handle them in django-allauth."""
-    from_django_browserid = models.BooleanField(default=False)
 
     @property
     def sorted_locales(self):
