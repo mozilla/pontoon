@@ -563,8 +563,7 @@ def parse_time_interval(interval):
     def parse_timestamp(timestamp):
         return timezone.make_aware(datetime.strptime(timestamp, '%Y%m%d%H%M'), timezone=pytz.UTC)
 
-    start = interval.split('-')[0]
-    end = interval.split('-')[1]
+    start, end = interval.split('-')
 
     return parse_timestamp(start), parse_timestamp(end) + timedelta(minutes=1)
 

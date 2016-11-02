@@ -1452,3 +1452,55 @@ class EntityFilterTests(TestCase):
             {first_entity, third_entity},
             set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.has_suggestions()))
         )
+
+    def test_combined_filters(self):
+        """
+        All filters should be joined by AND instead of OR.
+        Tests filters against bug introduced by bug 1243115.
+        """
+        contributor = UserFactory.create()
+        project = ProjectFactory.create()
+        first_entity, second_entity = EntityFactory.create_batch(2, resource__project=project)
+
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=first_entity,
+            approved=True,
+            fuzzy=False,
+            user=contributor,
+        )
+
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=second_entity,
+            approved=True,
+            fuzzy=False,
+            user=contributor
+        )
+
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=second_entity,
+            approved=False,
+            fuzzy=False,
+            user=contributor,
+        )
+
+        assert_equal(
+            list(Entity.for_project_locale(
+                project,
+                self.locale,
+                statuses='suggested',
+                authors=contributor.email
+            )),
+            []
+        )
+        assert_equal(
+            list(Entity.for_project_locale(
+                project,
+                self.locale,
+                statuses='suggested',
+                time='201001010100-205001010100'
+            )),
+            []
+        )
