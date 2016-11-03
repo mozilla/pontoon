@@ -46,17 +46,6 @@ class AdapterPreLoginTestCase(BaseTestCase):
         assert_true(self.sociallogin.account.pk)
         assert_equal(self.sociallogin.user, self.user)
 
-    def test_connect_existing_fxa_account(self):
-        """
-        Check if user that previously connected via fxa is able to connect his persona account.
-        """
-        self.log_mock.side_effect = lambda provider: provider == 'fxa'
-
-        self.adapter.pre_social_login(MagicMock, self.get_sociallogin('persona'))
-
-        assert_true(self.sociallogin.account.pk)
-        assert_equal(self.sociallogin.user, self.user)
-
     def test_connect_existing_persona_account(self):
         self.log_mock.side_effect = lambda provider: provider == 'persona'
 
