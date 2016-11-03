@@ -1561,11 +1561,11 @@ class Translation(DirtyFieldsMixin, models.Model):
     date = models.DateTimeField(default=timezone.now)
     approved = models.BooleanField(default=False)
     approved_user = models.ForeignKey(
-        User, related_name='approvers', null=True, blank=True)
+        User, related_name='approved_translations', null=True, blank=True)
     approved_date = models.DateTimeField(null=True, blank=True)
 
     unapproved_user = models.ForeignKey(
-        User, related_name='unapprovers', null=True, blank=True)
+        User, related_name='unapproved_translations', null=True, blank=True)
     unapproved_date = models.DateTimeField(null=True, blank=True)
     fuzzy = models.BooleanField(default=False)
 
