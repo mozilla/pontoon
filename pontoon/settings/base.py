@@ -118,7 +118,6 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.fxa',
-    'allauth.socialaccount.providers.persona',
 )
 
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
@@ -155,7 +154,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'match_extension': '',
-            'match_regex': r'^(?!(admin|registration|persona|account|socialaccount)/).*\.(html|jinja)$',
+            'match_regex': r'^(?!(admin|registration|account|socialaccount)/).*\.(html|jinja)$',
             'context_processors': CONTEXT_PROCESSORS,
             'extensions': [
                 'jinja2.ext.do',
@@ -518,7 +517,6 @@ CSP_IMG_SRC = (
 CSP_SCRIPT_SRC = (
     "'self'",
     "'unsafe-eval'",
-    "https://login.persona.org",
     "'sha256-x3niK4UU+vG6EGT2NK2rwi2j/etQodJd840oRpEnqd4='",
     "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
     "https://ssl.google-analytics.com/ga.js",
@@ -650,11 +648,5 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': FXA_SCOPE,
         'OAUTH_ENDPOINT': FXA_OAUTH_ENDPOINT,
         'PROFILE_ENDPOINT': FXA_PROFILE_ENDPOINT,
-    },
-    'persona': {
-        'AUDIENCE': SITE_URL,
-        'REQUEST_PARAMETERS': {
-            'siteName': 'Pontoon'
-        }
     }
 }

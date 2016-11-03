@@ -1099,10 +1099,6 @@ body > .container {
   width: 735px;
 }
 
-#_persona_login {
-  display: none;
-}
-
 .unselectable * {
   -webkit-user-select: none;
   -khtml-user-select: none;
