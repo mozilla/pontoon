@@ -422,14 +422,6 @@ var Pontoon = (function (my) {
 /* Main code */
 $(function() {
 
-  // Sign in with Persona
-  $('#persona-sign-in').click(function(e) {
-    e.preventDefault();
-
-    var type = $(this).data('type') || 'login';
-    allauth.persona.login('', type);
-  });
-
   function getRedirectUrl() {
     return window.location.pathname + window.location.search;
   }

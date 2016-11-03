@@ -17,7 +17,7 @@ class UserProfileInline(admin.StackedInline):
     model = models.UserProfile
     max_num = 1
     can_delete = False
-    fields = ('quality_checks', 'force_suggestions', 'from_django_browserid',)
+    fields = ('quality_checks', 'force_suggestions',)
     verbose_name_plural = 'Settings'
 
 

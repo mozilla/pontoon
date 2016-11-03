@@ -15,7 +15,6 @@ class AdapterPreLoginTestCase(BaseTestCase):
     def setUp(self):
         self.log_mock = MagicMock()
         self.user = UserFactory.create()
-        self.user.logged_via = self.log_mock
 
         mock_messages = patch('pontoon.base.adapter.messages')
         self.mock_messages = mock_messages.start()

@@ -126,13 +126,9 @@
             {% endif %}
 
             {% if user.is_authenticated() %}
-                {% if user.logged_via('fxa') and not user.logged_via('persona') %}
-                    <li><a id="persona-sign-in" data-type="connect" href="#">Connect with Persona account</a></li>
-                {% endif %}
             <li class="sign-out"><a href="{{ url('account_logout') }}"><i class="fa fa-sign-out fa-fw"></i> {{ SignOut.csrf_form() }} Sign Out</a></li>
             {% else %}
-            <li class="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request, "fxa") }}"><i class="fa fa-sign-in fa-fw"></i>Sign in: Firefox Accounts</a></li>
-            <li class="sign-in"><a id="persona-sign-in" href="#"><i class="fa fa-sign-in fa-fw"></i>Sign in: Persona</a></li>
+            <li class="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
             {% endif %}
           </ul>
         </div>
@@ -303,7 +299,7 @@
           <button id="clear" title="Clear Translation (Ctrl + Shift + Backspace)">Clear</button>
           <button id="save" title="Save Translation (Enter)"></button>
         {% else %}
-          <p id="sign-in-required"><a id="sidebar-signin" href="{{ provider_login_url(request, "fxa") }}">Sign in</a> to translate.</p>
+          <p id="sign-in-required"><a id="sidebar-signin" href="{{ provider_login_url(request) }}">Sign in</a> to translate.</p>
         {% endif %}
       </menu>
 
