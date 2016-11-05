@@ -1800,20 +1800,21 @@ class TranslatedResource(AggregatedStats):
 
         # Plural
         nplurals = locale.nplurals or 1
-        partial = 0
+        missing = 0
         for e in translated_entities.exclude(string_plural=''):
             translations = Translation.objects.filter(entity=e, locale=locale)
             plural_approved_count = translations.filter(approved=True).count()
             plural_fuzzy_count = translations.filter(fuzzy=True).count()
+            plural_translated_count = translations.values('plural_form').distinct().count()
 
             if plural_approved_count == nplurals:
                 approved += 1
             elif plural_fuzzy_count == nplurals:
                 fuzzy += 1
-            elif plural_approved_count > 0 or plural_fuzzy_count > 0:
-                partial += 1
+            elif plural_translated_count < nplurals:
+                missing += 1
 
-        translated = max(translated_entities.count() - approved - fuzzy - partial, 0)
+        translated = max(translated_entities.count() - approved - fuzzy - missing, 0)
 
         if not save:
             self.total_strings = resource.total_strings
