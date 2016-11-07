@@ -272,26 +272,20 @@
 
       /**
        * Match entities and elements with data-l10n-id attribute
-       * https://github.com/fabi1cazenave/webL10n
+       *
+       * TODO: also match HTML attributes
        * https://github.com/l20n/l20n.js
        */
-      function loadEntitiesL10nJs() {
+      function loadEntitiesL20n() {
         var counter = 0;
 
         $(Pontoon.entities).each(function(i, entity) {
-          var translation = entity.translation[0].string,
-              split = entity.key.split('.'),
-              key = split[0],
-              attribute = split[1];
+          var translation = entity.translation[0].string;
           entity.id = counter;
 
-          $('[data-l10n-id="' + key + '"]').each(function() {
+          $('[data-l10n-id="' + entity.key + '"]').each(function() {
             if (translation !== null) {
-              if (!attribute) {
-                $(this).html(translation);
-              } else {
-                $(this).attr(attribute, translation);
-              }
+              $(this).html(translation);
             }
             if ($(this).parents('head').length === 0 && !$(this).is('input')) {
               if (!entity.node) {
@@ -601,15 +595,27 @@
       var entities = Pontoon.entities;
       if (entities.length > 0) {
 
-        if (entities[0].format === 'properties' && $('[data-l10n-id]').length) {
-          loadEntitiesL10nJs();
-
-          // If webL10n localized event triggered, retranslate using Pontoon translations
-          window.addEventListener("localized", function() {
-            if (!document.webL10n || document.webL10n.getReadyState() === 'complete') {
-              loadEntitiesL10nJs();
-            }
-          }, false);
+        if (entities[0].format === 'ftl') {
+          /*
+          if (document.l10n) {
+            document.l10n.get('main').interactive.then(function() {
+              console.log($('[data-l10n-id]').length);
+            });
+          } else {
+            console.log("FAIL");
+          }
+          */
+          var i = 0,
+              interval = setInterval(function() {
+                if (document.l10n || i > 100) {
+                  clearInterval(interval);
+                  setTimeout(function() {
+                    loadEntitiesL20n();
+                  }, 1500);
+                } else {
+                  i++;
+                }
+              }, 100);
 
         } else {
           var hooks = false;
