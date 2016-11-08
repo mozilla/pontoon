@@ -54,8 +54,16 @@ class L20NResource(ParsedResource):
                     entity.order
                 )
 
-        with codecs.open(path, 'r', 'utf-8') as resource:
-            self.structure = FTLParser().parseResource(resource.read())
+        try:
+            with codecs.open(path, 'r', 'utf-8') as resource:
+                self.structure = FTLParser().parseResource(resource.read())
+        except IOError:
+            # If the file doesn't exist, but we have a source resource,
+            # we can keep going, we'll just not have any translations.
+            if source_resource:
+                return
+            else:
+                raise
 
         def get_comment(obj):
             return [obj['comment']['content']] if obj['comment'] else []
