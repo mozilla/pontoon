@@ -600,6 +600,8 @@ SYNC_TASK_TIMEOUT = 60 * 60 * 1  # 1 hour
 
 SYNC_LOG_RETENTION = 90  # days
 
+MANUAL_SYNC = os.environ.get('MANUAL_SYNC', 'False') != 'False'
+
 # Celery
 
 # Execute celery tasks locally instead of in a worker unless the

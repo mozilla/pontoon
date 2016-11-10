@@ -173,6 +173,9 @@
   </div>
 
   <div class="controls clearfix">
+      {% if settings.MANUAL_SYNC %}
+      <button class="sync button">Sync</button>
+      {% endif %}
       <div class="checkbox clearfix">
           <label for="id_disabled">
               {{ form.disabled }}{{ form.disabled.label }}

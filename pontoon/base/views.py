@@ -56,6 +56,9 @@ from pontoon.base.models import (
     UserProfile,
 )
 
+from pontoon.sync.models import SyncLog
+from pontoon.sync.tasks import sync_project
+
 from suds.client import Client, WebFault
 
 
@@ -170,6 +173,21 @@ def projects(request):
     return render(request, 'projects.html', {
         'projects': projects,
     })
+
+
+@login_required(redirect_field_name='', login_url='/403')
+@require_AJAX
+def manually_sync_project(request, slug):
+    if not request.user.has_perm('base.can_manage') or not settings.MANUAL_SYNC:
+        return HttpResponseForbidden(
+            "Forbidden: You don't have permission for syncing projects"
+        )
+
+    sync_log = SyncLog.objects.create(start_time=timezone.now())
+    project = Project.objects.get(slug=slug)
+    sync_project.delay(project.pk, sync_log.pk)
+
+    return HttpResponse('ok')
 
 
 def locale_project(request, locale, slug):
