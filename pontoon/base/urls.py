@@ -87,6 +87,11 @@ urlpatterns = [
         views.ProjectContributorsView.as_view(),
         name='pontoon.project.contributors'),
 
+    # Sync project
+    url(r'^projects/(?P<slug>[\w-]+)/sync/$',
+        views.manually_sync_project,
+        name='pontoon.project.sync'),
+
     # List team contributors
     url(r'^(?P<code>[A-Za-z0-9\-\@\.]+)/contributors/$',
         views.LocaleContributorsView.as_view(),
