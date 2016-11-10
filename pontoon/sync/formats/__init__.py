@@ -14,6 +14,7 @@ SUPPORTED_FORMAT_PARSERS = {
     '.lang': lang.parse,
     '.po': po.parse,
     '.pot': po.parse,
+    '.xlf': xliff.parse,
     '.xliff': xliff.parse,
     '.dtd': silme.parse_dtd,
     '.properties': silme.parse_properties,

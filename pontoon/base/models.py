@@ -1115,6 +1115,7 @@ class Resource(models.Model):
     FORMAT_CHOICES = (
         ('po', 'po'),
         ('xliff', 'xliff'),
+        ('xlf', 'xliff'),
         ('properties', 'properties'),
         ('dtd', 'dtd'),
         ('inc', 'inc'),
@@ -1158,7 +1159,12 @@ class Resource(models.Model):
         path_format = extension[1:].lower()
 
         # Special case: pot files are considered the po format
-        return 'po' if path_format == 'pot' else path_format
+        if path_format == 'pot':
+            return 'po'
+        elif path_format == 'xlf':
+            return 'xliff'
+        else:
+            return path_format
 
 
 class Subpage(models.Model):
