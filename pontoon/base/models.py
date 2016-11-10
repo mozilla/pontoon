@@ -583,9 +583,10 @@ class Project(AggregatedStats):
 
     # Website for in place localization
     url = models.URLField("URL", blank=True)
-    width = models.PositiveIntegerField(
-        "Default website (iframe) width in pixels. If set, \
-        sidebar will be opened by default.", null=True, blank=True)
+    width = models.PositiveIntegerField(null=True, blank=True, help_text="""
+        Default website (iframe) width in pixels.
+        If set, sidebar will be opened by default.
+    """)
     links = models.BooleanField(
         'Keep links on the project website clickable', default=False)
 
@@ -890,18 +891,17 @@ class Repository(models.Model):
     project = models.ForeignKey(Project, related_name='repositories')
     type = models.CharField(
         max_length=255,
-        blank=False,
         default='git',
         choices=TYPE_CHOICES
     )
-    url = models.CharField("URL", max_length=2000, blank=True)
+    url = models.CharField("URL", max_length=2000)
 
-    """
-    Prefix of the resource URL, used for direct downloads. To form a full
-    URL, relative path must be appended.
-    """
-    permalink_prefix = models.CharField("Permalink prefix", max_length=2000, blank=True)
-
+    # TODO: We should be able to remove this once we have persistent storage
+    permalink_prefix = models.CharField("Download prefix", max_length=2000, help_text="""
+        A URL prefix for downloading localized files. For GitHub repositories,
+        select any localized file on GitHub, click Raw and replace locale code
+        and the following bits in the URL with `{locale_code}`.
+    """)
     """
     Mapping of locale codes to VCS revisions of each repo at the last
     sync. If this isn't a multi-locale repo, the mapping has a single
