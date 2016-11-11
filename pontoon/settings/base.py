@@ -328,10 +328,10 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/jquery-ui.js',
             'js/jquery-ui-timepicker-addon.js',
+            'js/jquery.mark.js',
             'js/highstock.js',
             'js/translate.js',
             'js/request_projects.js',
-            'js/jquery.mark.js',
         ),
         'output_filename': 'js/translate.min.js',
     },
