@@ -84,10 +84,7 @@ class PythonFormatPlaceable(base.Ph):
 
 
 def mark_placeables(text):
-    """Wrap placeables to easily distinguish and manipulate them.
-
-    Source: http://bit.ly/1yQOC9B
-    """
+    """Wrap placeables to easily distinguish and manipulate them"""
 
     PARSERS = [
         NewlineEscapePlaceable.parse,
@@ -164,14 +161,10 @@ def mark_placeables(text):
 
             title = TITLES.get(class_name, "Unknown placeable")
 
-            spaces = '&nbsp;' * len(placeable)
-            if not placeable.startswith(' '):
-                spaces = placeable[0] + '&nbsp;' * (len(placeable) - 1)
             # Correctly render placeables in translation editor
             content = {
                 'TabEscapePlaceable': u'\\t',
                 'EscapePlaceable': u'\\',
-                'SpacesPlaceable': spaces,
                 'NewlinePlaceable': {
                     u'\r\n': u'\\r\\n<br/>\n',
                     u'\r': u'\\r<br/>\n',
