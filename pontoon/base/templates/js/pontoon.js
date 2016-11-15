@@ -666,10 +666,7 @@
   }
 
   function fromTrustedSource(e) {
-    var trustedOrigins = [
-      'https://pontoon.mozilla.org',
-      'https://mozilla-pontoon-staging.herokuapp.com'
-    ],
+    var trustedOrigins = {{ settings.JS_TRUSTED_ORIGINS | to_json() | safe }},
     localHostnames = [
       'localhost',
       '127.0.0.1'

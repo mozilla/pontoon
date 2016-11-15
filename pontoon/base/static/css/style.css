@@ -1219,3 +1219,20 @@ body > .container {
   font-style: italic;
   margin-top: 20px;
 }
+
+#standalone-sign-in .clearfix {
+    padding: 15px;
+}
+
+#standalone-sign-in label {
+    font-size: 24px;
+    font-weight: 300;
+}
+
+#standalone-sign-in input {
+    float: none;
+    background-color: white;
+    padding: 10px;
+    margin: 10px;
+}
+

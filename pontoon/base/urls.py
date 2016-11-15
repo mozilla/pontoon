@@ -167,6 +167,10 @@ urlpatterns = [
     url(r'^settings/', views.user_settings,
         name='pontoon.user_settings'),
 
+    # Urls related to integration with Heroku
+    url(r'^heroku-setup/', views.heroku_setup,
+        name='pontoon.heroku_setup'),
+
     # Team page: Must be at the end
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
         views.locale,

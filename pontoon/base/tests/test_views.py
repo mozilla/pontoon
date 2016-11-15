@@ -3,7 +3,12 @@ from django.shortcuts import render
 from django.test import RequestFactory
 from django.utils.timezone import now
 
-from django_nose.tools import assert_equal, assert_true, assert_code
+from django_nose.tools import (
+    assert_equal,
+    assert_true,
+    assert_code,
+)
+
 from mock import patch, call
 
 from pontoon.base.models import (
@@ -25,7 +30,7 @@ from pontoon.base.tests import (
     TranslationMemoryFactory,
     TranslatedResourceFactory,
     TestCase,
-    UserFactory
+    UserFactory,
 )
 
 from pontoon.base import views

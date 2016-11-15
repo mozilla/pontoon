@@ -201,7 +201,7 @@ class SubpageFactory(DjangoModelFactory):
                 self.resources.add(resource)
 
 
-def assert_redirects(response, expected_url, status_code=302, host=None):
+def assert_redirects(response, expected_url, status_code=302, host=None, secure=False):
     """
     Assert that the given response redirects to the expected URL.
 
@@ -209,7 +209,7 @@ def assert_redirects(response, expected_url, status_code=302, host=None):
     that this version doesn't follow the redirect.
     """
     if host is None:
-        host = 'http://testserver'
+        host = '{}://{}'.format('https' if secure else 'http', host or 'testserver')
     assert_equal(response.status_code, status_code)
     assert_equal(response['Location'], host + expected_url)
 
@@ -221,6 +221,7 @@ def assert_attributes_equal(original, **expected_attrs):
     """
     if not expected_attrs:
         raise ValueError('Expected some attributes to check.')
+
     for key, value in expected_attrs.items():
         original_value = getattr(original, key)
         assert_equal(
@@ -229,6 +230,7 @@ def assert_attributes_equal(original, **expected_attrs):
             ('Attribute `{key}` does not match: {original_value} != {value}'
              .format(key=key, original_value=original_value, value=value)),
         )
+
 
 class NOT(object):
     """

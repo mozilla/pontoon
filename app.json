@@ -1,0 +1,135 @@
+{
+   "name": "pontoon",
+   "description": "In-place localization tool.",
+   "keywords": ["l10n", "localization", "mozilla", "collaboration", "python", "django"],
+   "website": "https://pontoon.mozilla.org",
+   "logo": "https://pontoon.mozilla.org/static/img/logo.svg",
+   "success_url": "/heroku-setup/",
+   "image": "heroku/python",
+   "addons": [
+     {
+       "plan": "newrelic:wayne"
+     },
+     {
+       "plan": "raygun:intro"
+     },
+     {
+       "plan": "papertrail:choklad"
+     },
+     {
+       "plan": "cloudamqp",
+       "as": "RABBITMQ"
+     },
+     {
+       "plan": "memcachedcloud",
+       "as": "MEMCACHE"
+     },
+     {
+       "plan": "heroku-postgresql",
+       "options": {
+         "version": "9.5"
+       }
+     }
+   ],
+   "env": {
+     "ADMIN_EMAIL": {
+       "value": "pontoon@example.com",
+       "description": "Email address for the ``ADMINS`` setting."
+     },
+    "ADMIN_NAME": {
+      "value": "pontoon-admin",
+      "description": "Name for the ``ADMINS`` setting."
+    },
+    "ADMIN_PASSWORD": {
+      "value": "supersecretpassword",
+      "description": "Password for the administrator account."
+    },
+    "PROJECT_MANAGERS": {
+      "description": "List of project managers.",
+      "required": false,
+      "value": ""
+    },
+    "CELERY_ALWAYS_EAGER": {
+      "value": "False",
+      "description": "Controls whether asynchronous tasks (mainly used during sync) are sent to Celery or executed immediately and synchronously. Set this to ``False`` on production."
+    },
+    "DJANGO_DEBUG": {
+      "value": "True",
+      "description": "Controls ``DEBUG`` mode for the site. Should be set to `False` in production."
+    },
+    "DJANGO_DEV": {
+      "value": "False",
+      "description": "Signifies whether this is a development server or not. Should be `False` in production. Adds some additional django apps that can be helpful during day to day development."
+    },
+    "SECRET_KEY": {
+      "description": "Secret key used for sessions, cryptographic signing, etc.",
+      "generator": "secret"
+    },
+    "DISABLE_COLLECTSTATIC": {
+      "description": "Disables running ``./manage.py collectstatic`` during the build. Should be set to ``1``.",
+      "value": "1"
+    },
+    "SSH_KEY": {
+      "description": "SSH private key to use for authentication when Pontoon connects to VCS servers via SSH.",
+      "required": false,
+      "value": ""
+    },
+    "SSH_CONFIG": {
+      "description": "Contents of the ``~/.ssh/config`` file used when Pontoon connects to VCS servers via SSH. Used for disabling strict key checking and setting the default user for SSH.",
+      "required": false,
+      "value": ""
+    },
+    "NEW_RELIC_API_KEY": {
+      "description": "API key for accessing the New Relic REST API. Used to mark deploys on New Relic.",
+      "required": false,
+      "value": ""
+    },
+    "NEW_RELIC_APP_NAME": {
+      "description": "Name to give to this app on New Relic. Required if you're using New Relic.",
+      "required": false,
+      "value": ""
+    },
+    "STATIC_HOST": {
+      "description": "Hostname to prepend to static resources paths. Useful for serving static files from a CDN.",
+      "required": false,
+      "value": ""
+    },
+    "SVN_LD_LIBRARY_PATH": {
+      "description": "Path to prepend to ``LD_LIBRARY_PATH`` when running SVN. This is necessary on Heroku because the Python buildpack alters the path in a way that breaks the built-in SVN command.",
+      "value": "/usr/lib/x86_64-linux-gnu/"
+   },
+    "TZ": {
+      "description": "Timezone for the dynos that will run the app. Pontoon operates in UTC",
+      "value": "UTC"
+    },
+    "HEROKU_DEMO": {
+      "description": "Enabled features like a standalone login page etc.",
+      "value": "1"
+    }
+   },
+   "buildpacks": [
+     {
+       "url": "https://github.com/dmathieu/heroku-buildpack-submodules#b37ffe4361bb9c975dd8e93068c9d296365d748c"
+     },
+     {
+       "url": "https://github.com/Osmose/heroku-buildpack-ssh"
+     },
+     {
+       "url": "https://github.com/mozilla/heroku-buildpack-apt.git#v0.1"
+     },
+     {
+       "url": "heroku/nodejs"
+     },
+     {
+       "url": "heroku/python"
+     }
+   ],
+   "scripts": {
+    "postdeploy": "./bin/heroku_postdeploy"
+   },
+   "formation": {
+     "worker": {
+       "quantity": 1
+     }
+   }
+}

@@ -8,6 +8,7 @@ import dj_database_url
 
 
 _dirname = os.path.dirname
+
 ROOT = _dirname(_dirname(_dirname(os.path.abspath(__file__))))
 
 
@@ -26,6 +27,8 @@ DEV = os.environ.get('DJANGO_DEV', 'False') != 'False'
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') != 'False'
 
+HEROKU_DEMO = os.environ.get('HEROKU_DEMO', 'False') != 'False'
+
 ADMINS = MANAGERS = (
     (os.environ.get('ADMIN_NAME', ''),
      os.environ.get('ADMIN_EMAIL', '')),
@@ -37,6 +40,7 @@ PROJECT_MANAGERS = os.environ.get('PROJECT_MANAGERS', '').split(',')
 DATABASES = {
     'default': dj_database_url.config(default='mysql://root@localhost/pontoon')
 }
+
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -50,7 +54,27 @@ STATIC_HOST = os.environ.get('STATIC_HOST', '')
 SESSION_COOKIE_HTTPONLY = os.environ.get('SESSION_COOKIE_HTTPONLY', 'True') != 'False'
 SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') != 'False'
 
-SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
+APP_URL_KEY = 'APP_URL'
+
+# For the sake of integration with Heroku, we dynamically load domain name
+# From the file that's set right after the build phase.
+if os.environ.get('HEROKU_DEMO') and not os.environ.get('SITE_URL'):
+    def _site_url():
+        from django.contrib.sites.models import Site
+        from django.core.cache import cache
+
+        app_url = cache.get(APP_URL_KEY)
+
+        # Sometimes data from cache is flushed, We can't do anything about that.
+        if not app_url:
+            app_url = "https://{}".format(Site.objects.get(pk=1).domain)
+            cache.set(APP_URL_KEY, app_url)
+
+        return app_url
+
+    SITE_URL = lazy(_site_url, str)()
+else:
+    SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
@@ -127,6 +151,7 @@ MIDDLEWARE_CLASSES = (
     'sslify.middleware.SSLifyMiddleware',
     'pontoon.base.middleware.RaygunExceptionMiddleware',
     'pontoon.base.middleware.BlockedIpMiddleware',
+    'pontoon.base.middleware.HerokuDemoSetupMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -154,7 +179,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'match_extension': '',
-            'match_regex': r'^(?!(admin|registration|account|socialaccount)/).*\.(html|jinja)$',
+            'match_regex': r'^(?!(admin|registration|account|socialaccount)/).*\.(html|jinja|js)$',
             'context_processors': CONTEXT_PROCESSORS,
             'extensions': [
                 'jinja2.ext.do',
@@ -524,7 +549,7 @@ CSP_SCRIPT_SRC = (
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'",)
 
 # Needed if site not hosted on HTTPS domains (like local setup)
-if not SITE_URL.startswith('https'):
+if not (HEROKU_DEMO or SITE_URL.startswith('https')):
     CSP_IMG_SRC = CSP_IMG_SRC + ("http://www.gravatar.com/avatar/",)
     CSP_CHILD_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",)
 
@@ -652,3 +677,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'PROFILE_ENDPOINT': FXA_PROFILE_ENDPOINT,
     }
 }
+
+# Defined all trusted origins that will be returned in pontoon.js file.
+JS_TRUSTED_ORIGINS = [
+    SITE_URL,
+]
