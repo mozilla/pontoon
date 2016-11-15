@@ -12,6 +12,10 @@ out of Pontoon, fully prepare your site with hooks that will mark strings for
 localization and include all the neccessary tags.
 [Developer Docs](https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla).
 
+For quick and easy deployment without leaving your web browser, click this button:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 Get involved
 ------------
 * Check out development roadmap on the [wiki](http://wiki.mozilla.org/Pontoon)
@@ -19,8 +23,6 @@ Get involved
 * Start hacking on [mentored bugs](https://wiki.mozilla.org/Webdev/GetInvolved/pontoon.mozilla.org)
 * Join `#pontoon` on [IRC](https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon)
 * [Set up](http://mozilla-pontoon.readthedocs.io/en/latest/) Pontoon for local development.
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 Servers
 -------

@@ -34,43 +34,43 @@
    "env": {
      "ADMIN_EMAIL": {
        "value": "pontoon@example.com",
-       "description": "An email of the administrator."
+       "description": "Email address for the ``ADMINS`` setting."
      },
     "ADMIN_NAME": {
       "value": "pontoon-admin",
-      "description": "The name of the administrator."
+      "description": "Name for the ``ADMINS`` setting."
     },
     "ADMIN_PASSWORD": {
       "value": "supersecretpassword",
-      "description": "A password of the administrator."
+      "description": "Password for the administrator account."
     },
     "PROJECT_MANAGERS": {
-      "description": "A list of project manager email addresses to send project requests to.",
+      "description": "List of project managers.",
       "required": false,
       "value": ""
     },
     "CELERY_ALWAYS_EAGER": {
       "value": "False",
-      "description": "If celery tasks should be executed in eager manner."
+      "description": "Controls whether asynchronous tasks (mainly used during sync) are sent to Celery or executed immediately and synchronously. Set this to ``False`` on production."
     },
     "DJANGO_DEBUG": {
       "value": "True",
-      "description": "Enabled the debug mode in webapp."
+      "description": "Controls ``DEBUG`` mode for the site. Should be set to `False` in production."
     },
     "DJANGO_DEV": {
       "value": "False",
-      "description": "Is responsible for loading the additional utilities for the day to day development."
+      "description": "Signifies whether this is a development server or not. Should be `False` in production. Adds some additional django apps that can be helpful during day to day development."
     },
     "SECRET_KEY": {
-      "description": "A secret key that is used by django.",
+      "description": "Secret key used for sessions, cryptographic signing, etc.",
       "generator": "secret"
     },
     "DISABLE_COLLECTSTATIC": {
-      "description": "Disable collect static.",
+      "description": "Disables running ``./manage.py collectstatic`` during the build. Should be set to ``1``.",
       "value": "1"
     },
     "SSH_KEY": {
-      "description": "A ssh key which will be used to fetch repositories",
+      "description": "SSH private key to use for authentication when Pontoon connects to VCS servers via SSH.",
       "required": false,
       "value": ""
     },
@@ -80,7 +80,7 @@
       "value": ""
     },
     "NEW_RELIC_API_KEY": {
-      "description": "API key for accessing the New Relic REST API. Used to mark deployson New Relic.",
+      "description": "API key for accessing the New Relic REST API. Used to mark deploys on New Relic.",
       "required": false,
       "value": ""
     },
@@ -90,7 +90,7 @@
       "value": ""
     },
     "STATIC_HOST": {
-      "description": "Hostname to prepend to static resources paths. useful for serving static files from a cdn.",
+      "description": "Hostname to prepend to static resources paths. Useful for serving static files from a CDN.",
       "required": false,
       "value": ""
     },
@@ -103,7 +103,7 @@
       "value": "UTC"
     },
     "HEROKU_DEMO": {
-      "description": "Loads some enhancements for better integration with heroku.",
+      "description": "Enabled features like a standalone login page etc.",
       "value": "1"
     }
    },

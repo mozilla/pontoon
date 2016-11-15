@@ -76,8 +76,6 @@ if os.environ.get('HEROKU_DEMO') and not os.environ.get('SITE_URL'):
 else:
     SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 
-BROWSERID_AUDIENCES = [SITE_URL]
-
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
 

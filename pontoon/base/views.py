@@ -1350,7 +1350,7 @@ def user_settings(request):
 
 def heroku_setup(request):
     """
-    Heroku don't allow us to set SITE_URL or Site during the build phase of an app.
+    Heroku doesn't allow us to set SITE_URL or Site during the build phase of an app.
     Because of that we have to set everything up after build is done and app is
     able to retrieve a domain.
     """
