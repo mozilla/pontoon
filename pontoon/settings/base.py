@@ -679,6 +679,9 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # Defined all trusted origins that will be returned in pontoon.js file.
-JS_TRUSTED_ORIGINS = [
-    SITE_URL,
-]
+if os.environ.get('JS_TRUSTED_ORIGINS'):
+    JS_TRUSTED_ORIGINS = os.environ.get('JS_TRUSTED_ORIGINS').split(',')
+else:
+    JS_TRUSTED_ORIGINS = [
+        SITE_URL,
+    ]
