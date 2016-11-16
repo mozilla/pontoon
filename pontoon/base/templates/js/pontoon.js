@@ -667,12 +667,7 @@
 
   function fromTrustedSource(e) {
     var trustedOrigins = {{ settings.JS_TRUSTED_ORIGINS | to_json() | safe }},
-    localHostnames = [
-      'localhost',
-      '127.0.0.1'
-    ];
-
-    var trusted = trustedOrigins.indexOf(e.origin) > -1 || localHostnames.indexOf(location.hostname) > -1;
+        trusted = trustedOrigins.indexOf(e.origin) > -1;
 
     if (e.source === appWindow && trusted) {
       return true;
