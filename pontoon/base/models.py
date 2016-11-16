@@ -559,10 +559,6 @@ class Locale(AggregatedStats):
 
         return details_list
 
-    def get_repository(self, project):
-        for repo in project.repositories.all():
-            if self in repo.locales:
-                return repo
 
 class ProjectQuerySet(models.QuerySet):
     def available(self):
@@ -972,17 +968,6 @@ class Repository(models.Model):
         """True if we can commit strings back to this repo."""
         return self.type in ('svn', 'git', 'hg')
 
-    @cached_property
-    def locales(self):
-        """
-        Return a list of Locales whose strings are stored within
-        this repo. Include enabled locales that are not in the repo yet.
-        """
-        if self.is_translation_repository:
-            return self.project.locales.all()
-
-        return []
-
     def locale_checkout_path(self, locale):
         """
         Path where the checkout for the given locale for this repo is
@@ -1017,7 +1002,7 @@ class Repository(models.Model):
 
         raise ValueError('No repo found for path: {0}'.format(path))
 
-    def pull(self):
+    def pull(self, skip_locales=None):
         """
         Pull changes from VCS. Returns the revision(s) of the repo after
         pulling.
@@ -1029,14 +1014,20 @@ class Repository(models.Model):
             }
         else:
             current_revisions = {}
-            for locale in self.project.locales.all():
+            skip_locales = skip_locales or []
+            for locale in self.project.locales.exclude(code__in=skip_locales):
                 checkout_path = self.locale_checkout_path(locale)
-                update_from_vcs(
-                    self.type,
-                    self.locale_url(locale),
-                    checkout_path
-                )
-                current_revisions[locale.code] = get_revision(self.type, checkout_path)
+
+                try:
+                    update_from_vcs(
+                        self.type,
+                        self.locale_url(locale),
+                        checkout_path
+                    )
+                    current_revisions[locale.code] = get_revision(self.type, checkout_path)
+                except Exception:
+                    pass
+
             return current_revisions
 
     def commit(self, message, author, path):
@@ -1053,12 +1044,12 @@ class Repository(models.Model):
     Set last_synced_revisions to a dictionary of revisions
     that are currently downloaded on the disk.
     """
-    def set_last_synced_revisions(self, exclude=None):
+    def set_last_synced_revisions(self, locales=None):
         current_revisions = {}
 
         if self.multi_locale:
             for locale in self.project.locales.all():
-                if exclude and locale in exclude:
+                if locales is not None and locale not in locales:
                     revision = self.last_synced_revisions.get(locale.code)
                 else:
                     revision = get_revision(
