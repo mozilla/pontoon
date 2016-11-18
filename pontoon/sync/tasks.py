@@ -210,6 +210,7 @@ def sync_translations(self, project_pk, project_sync_log_pk, now, project_change
     vcs_project = VCSProject(
         db_project,
         locales=locales,
+        repo_locales=repo_locales,
         obsolete_entities_paths=obsolete_entities_paths,
         new_paths=new_paths,
         full_scan=full_scan
