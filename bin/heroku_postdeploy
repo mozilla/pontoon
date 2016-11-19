@@ -9,5 +9,15 @@ export SITE_URL='http://localhost:8000'
 # Compile static assets
 source ./bin/post_compile
 
+MEMCACHE_SERVER=$(echo $MEMCACHE_SERVERS | cut -f1 -d:)
+MEMCACHE_PORT=$(echo $MEMCACHE_SERVERS | cut -f2 -d:)
+
+# Sometimes Memcache server isn't available immediately.
+# Synchronization of project will fail if memcached isn't accessible.
+while ! nc -z -w5 $MEMCACHE_SERVER $MEMCACHE_PORT; do
+    echo Waiting for memcached at $MEMCACHE_SERVER:$MEMCACHE_PORT
+    sleep 0.1
+done
+
 # Run celery task locally so that it's executed during build
 CELERY_ALWAYS_EAGER="True" ./manage.py sync_projects --no-commit
