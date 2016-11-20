@@ -5,7 +5,7 @@ import copy
 import logging
 import os
 
-from ftl.format.parser import FTLParser, ParseContext
+from ftl.format.parser import FTLParser, ParseContext, L10nError
 from ftl.format.serializer import FTLSerializer
 
 from pontoon.sync import SyncError
@@ -114,7 +114,14 @@ class L20NResource(ParsedResource):
             if translations:
                 source = translations[None]
                 key = self.entities[entity_id].key
-                entity = ParseContext(key + '=' + source).getEntity().toJSON()
+
+		# TODO: Make serialization less fragile
+                try:
+                    entity = ParseContext(key + '=' + source).getEntity().toJSON()
+                except L10nError:
+                    log.info('FTL serialization erorr in file {0}, locale {1}, key {2}'.format(self.path, self.locale, key))
+                    raise
+
                 obj['value'] = entity['value']
                 obj['traits'] = entity['traits']
             else:
