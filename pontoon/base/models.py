@@ -1423,7 +1423,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         if exclude:
             entities = entities.exclude(pk__in=exclude)
 
-        return entities.distinct().order_by('order')
+        return entities.distinct().order_by('resource__path', 'order')
 
     @classmethod
     def map_entities(cls, locale, entities, visible_entities=None):
@@ -1458,7 +1458,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                                  else True
             })
 
-        return sorted(entities_array, key=lambda k: k['order'])
+        return entities_array
 
 
 class ChangedEntityLocale(models.Model):
