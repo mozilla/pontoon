@@ -227,14 +227,8 @@ def execute(command, cwd=None, env=None):
 
 
 def update_from_vcs(repo_type, url, path):
-    try:
-        obj = globals()['PullFrom%s' % repo_type.capitalize()](url, path)
-        obj.pull()
-
-    except PullFromRepositoryException as e:
-        error = '%s Pull Error for %s: %s' % (repo_type.upper(), url, e)
-        log.debug(error)
-        raise Exception(error)
+    obj = globals()['PullFrom%s' % repo_type.capitalize()](url, path)
+    obj.pull()
 
 
 def commit_to_vcs(repo_type, path, message, user, url):

@@ -28,6 +28,7 @@ from pontoon.sync.vcs.repositories import (
     commit_to_vcs,
     get_revision,
     update_from_vcs,
+    PullFromRepositoryException,
 )
 from pontoon.base import utils
 from pontoon.sync import KEY_SEPARATOR
@@ -1016,16 +1017,19 @@ class Repository(models.Model):
             current_revisions = {}
             skip_locales = skip_locales or []
             for locale in self.project.locales.exclude(code__in=skip_locales):
+                repo_type = self.type
+                url = self.locale_url(locale)
                 checkout_path = self.locale_checkout_path(locale)
 
                 try:
                     update_from_vcs(
-                        self.type,
-                        self.locale_url(locale),
+                        repo_type,
+                        url,
                         checkout_path
                     )
-                    current_revisions[locale.code] = get_revision(self.type, checkout_path)
-                except Exception:
+                    current_revisions[locale.code] = get_revision(repo_type, checkout_path)
+                except PullFromRepositoryException as e:
+                    log.error('%s Pull Error for %s: %s' % (repo_type.upper(), url, e))
                     pass
 
             return current_revisions
