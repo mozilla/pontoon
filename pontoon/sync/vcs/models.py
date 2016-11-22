@@ -57,7 +57,7 @@ class VCSProject(object):
     }
     SOURCE_DIR_NAMES = SOURCE_DIR_SCORES.keys()
 
-    def __init__(self, db_project, locales=None, obsolete_entities_paths=None, new_paths=None, full_scan=False):
+    def __init__(self, db_project, locales=None, repo_locales=None, obsolete_entities_paths=None, new_paths=None, full_scan=False):
         """
         Load resource paths from the given db_project and parse them
         for translation data.
@@ -69,6 +69,9 @@ class VCSProject(object):
             List of Locale model instances for the locales that we want
             to parse. Defaults to parsing resources for all enabled
             locales on the project.
+        :param dict repo_locales:
+            A dict of repository PKs and their currently checked out locales
+            (not neccessarily matching the ones stored in the DB).
         :param list obsolete_entities_paths:
             List of paths to remove translations of obsolete entities from
         :param list new_paths:
@@ -78,6 +81,7 @@ class VCSProject(object):
         """
         self.db_project = db_project
         self.locales = locales if locales is not None else db_project.locales.all()
+        self.repo_locales = repo_locales
         self.obsolete_entities_paths = obsolete_entities_paths or []
         self.new_paths = new_paths or []
         self.full_scan = full_scan
@@ -132,7 +136,8 @@ class VCSProject(object):
         # VCS changes
         for repo in self.db_project.translation_repositories():
             if repo.multi_locale:
-                for locale in self.db_project.locales.all():
+                locales = self.repo_locales[repo.pk] if self.repo_locales else self.db_project.locales.all()
+                for locale in locales:
                     changed_files = get_changed_files(
                         repo.type,
                         repo.locale_checkout_path(locale),

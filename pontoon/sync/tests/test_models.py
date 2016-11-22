@@ -90,11 +90,8 @@ class ProjectSyncLogTests(TestCase):
         RepositorySyncLogFactory.create(project_sync_log=project_sync_log,
                                         repository=repo1,
                                         end_time=aware_datetime(2015, 1, 1))
-        RepositorySyncLogFactory.create(project_sync_log=project_sync_log,
-                                        repository=repo2,
-                                        end_time=aware_datetime(2015, 1, 2))
 
-        assert_equal(project_sync_log.end_time, aware_datetime(2015, 1, 2))
+        assert_equal(project_sync_log.end_time, aware_datetime(2015, 1, 1))
 
     def test_end_time_skipped(self):
         """

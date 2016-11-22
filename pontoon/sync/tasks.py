@@ -82,18 +82,15 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
 
     # Do not sync resources if locale specified
     if locale:
-        repo = locale.get_repository(db_project)
-        if repo:
-            sync_translations.delay(
-                project_pk,
-                repo.pk,
-                project_sync_log.pk,
-                now,
-                locale=locale,
-                no_pull=no_pull,
-                no_commit=no_commit,
-                full_scan=force
-            )
+        sync_translations.delay(
+            project_pk,
+            project_sync_log.pk,
+            now,
+            locale=locale,
+            no_pull=no_pull,
+            no_commit=no_commit,
+            full_scan=force
+        )
         return
 
     # Sync resources
@@ -103,19 +100,17 @@ def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_c
         return
 
     # Sync translations
-    for repo in db_project.translation_repositories():
-        sync_translations.delay(
-            project_pk,
-            repo.pk,
-            project_sync_log.pk,
-            now,
-            resource_changes['project_changes'],
-            resource_changes['obsolete_vcs_resources'],
-            resource_changes['new_paths'],
-            no_pull=no_pull,
-            no_commit=no_commit,
-            full_scan=force
-        )
+    sync_translations.delay(
+        project_pk,
+        project_sync_log.pk,
+        now,
+        resource_changes['project_changes'],
+        resource_changes['obsolete_vcs_resources'],
+        resource_changes['new_paths'],
+        no_pull=no_pull,
+        no_commit=no_commit,
+        full_scan=force
+    )
 
 
 def sync_resources(db_project, now, force, no_pull):
@@ -123,7 +118,7 @@ def sync_resources(db_project, now, force, no_pull):
     if no_pull:
         source_repo_changed = True  # Assume changed
     else:
-        source_repo_changed = pull_changes(db_project, source_only=True)
+        source_repo_changed, _ = pull_changes(db_project, source_only=True)
 
     # If the only repo hasn't changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
@@ -153,19 +148,23 @@ def sync_resources(db_project, now, force, no_pull):
     }
 
 
-@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},repo={1}', on_error=sync_translations_error)
-def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, project_changes=None,
+@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0},translations', on_error=sync_translations_error)
+def sync_translations(self, project_pk, project_sync_log_pk, now, project_changes=None,
                       obsolete_vcs_resources=None, new_paths=None, locale=None, no_pull=False, no_commit=False,
                       full_scan=False):
     db_project = get_or_fail(Project, pk=project_pk,
         message='Could not sync project with pk={0}, not found.'.format(project_pk))
+
+    repos = db_project.translation_repositories()
+    repo_pk = repos[0].pk
     repo = get_or_fail(Repository, pk=repo_pk,
         message='Could not sync repo with pk={0}, not found.'.format(repo_pk))
+
     project_sync_log = get_or_fail(ProjectSyncLog, pk=project_sync_log_pk,
         message=('Could not sync project {0}, log with pk={1} not found.'
                  .format(db_project.slug, project_sync_log_pk)))
 
-    log.info('Syncing translations for repo: {}'.format(repo.url))
+    log.info('Syncing translations for project: {}'.format(db_project.slug))
 
     repo_sync_log = RepositorySyncLog.objects.create(
         project_sync_log=project_sync_log,
@@ -176,18 +175,18 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
     if locale:
         locales = [locale]
     else:
-        locales = repo.locales
+        locales = db_project.locales.all()
 
     if not locales:
-        log.info('Skipping repo `{0}` for project {1}, no locales to sync found within.'
-                  .format(repo.url, db_project.slug))
+        log.info('Skippig syncing translations for project {0}, no locales to sync found within.'
+                  .format(db_project.slug))
         repo_sync_log.end()
         return
 
     # Pull VCS changes in case we're on a different worker than the one
     # sync started on.
     if not no_pull:
-        repos_changed = pull_changes(db_project)
+        repos_changed, repo_locales = pull_changes(db_project)
 
     resources_changed = []
     obsolete_vcs_entities = []
@@ -211,6 +210,7 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
     vcs_project = VCSProject(
         db_project,
         locales=locales,
+        repo_locales=repo_locales,
         obsolete_entities_paths=obsolete_entities_paths,
         new_paths=new_paths,
         full_scan=full_scan
@@ -234,9 +234,11 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
                                 update_locale_project_locale_stats(l, db_project)
                             db_project.aggregate_stats()
 
-                        log.info('Skipping repo `{0}` for project {1}, none of the locales has anything to sync.'
-                                 .format(repo.url, db_project.slug))
-                        repo.set_last_synced_revisions()
+                        log.info('Skippig syncing translations for project {0}, none of the locales has anything to sync.'
+                                 .format(db_project.slug))
+
+                        for r in repos:
+                            r.set_last_synced_revisions(locales=repo_locales[r.pk])
                         repo_sync_log.end()
                         return
 
@@ -310,12 +312,12 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
                 )
             )
 
-            failed_locales.add(locale)
+            failed_locales.add(locale.code)
 
     with transaction.atomic():
         db_project.aggregate_stats()
 
-    synced_locales = [locale.code for locale in (vcs_project.synced_locales - failed_locales)]
+    synced_locales = [locale.code for locale in vcs_project.synced_locales if locale.code not in failed_locales]
 
     if synced_locales:
         log.info('Synced translations for project {0} in locales {1}.'.format(
@@ -326,5 +328,8 @@ def sync_translations(self, project_pk, repo_pk, project_sync_log_pk, now, proje
             db_project.slug
         ))
 
-    repo.set_last_synced_revisions(exclude=failed_locales)
+    for r in repos:
+        r.set_last_synced_revisions(
+            locales=repo_locales[r.pk].exclude(code__in=failed_locales)
+        )
     repo_sync_log.end()

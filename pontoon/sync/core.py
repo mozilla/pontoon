@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 
 from pontoon.base.models import (
     Entity,
+    Locale,
     Resource,
     TranslatedResource,
 )
@@ -194,16 +195,20 @@ def pull_changes(db_project, source_only=False):
     """
     changed = False
     repositories = [db_project.source_repository] if source_only else db_project.repositories.all()
+    repo_locales = {}
+    skip_locales = []  # Skip already pulled locales
 
     for repo in repositories:
-        repo_revisions = repo.pull()
+        repo_revisions = repo.pull(skip_locales)
+        repo_locales[repo.pk] = Locale.objects.filter(code__in=repo_revisions.keys())
+        skip_locales += repo_revisions.keys()
         # If any revision is None, we can't be sure if a change
         # happened or not, so we default to assuming it did.
         unsure_change = None in repo_revisions.values()
         if unsure_change or repo_revisions != repo.last_synced_revisions:
             changed = True
 
-    return changed
+    return changed, repo_locales
 
 
 def commit_changes(db_project, vcs_project, changeset, locale):
