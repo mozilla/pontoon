@@ -784,9 +784,8 @@ class EntityTests(TestCase):
             string='First String'
         )
         entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale))
-
-        assert_equal(entities[2]['original'], 'First String')
-        assert_equal(entities[3]['original'], 'Second String')
+        assert_equal(entities[1]['original'], 'First String')
+        assert_equal(entities[2]['original'], 'Second String')
 
     def test_for_project_locale_cleaned_key(self):
         """
