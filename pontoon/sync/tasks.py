@@ -47,9 +47,12 @@ def sync_project_error(error, *args, **kwargs):
 
 
 def sync_translations_error(error, *args, **kwargs):
+    project_sync_log = ProjectSyncLog.objects.get(pk=args[1])
+    repository = project_sync_log.project.translation_repositories()[0]
+
     RepositorySyncLog.objects.create(
-        project_sync_log=ProjectSyncLog.objects.get(pk=args[2]),
-        repository=Repository.objects.get(pk=args[1]),
+        project_sync_log=project_sync_log,
+        repository=repository,
         start_time=timezone.now()
     ).end()
 
