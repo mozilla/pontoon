@@ -366,9 +366,9 @@ def get_download_content(slug, code, part):
     locale = get_object_or_404(Locale, code__iexact=code)
 
     # Download a ZIP of all files if project has > 1 and < 10 resources
-    isZipable = 1 < project.resources.count() < 10
+    resources = Resource.objects.filter(project=project, translatedresources__locale=locale)
+    isZipable = 1 < len(resources) < 10
     if isZipable:
-        resources = project.resources.all()
         s = StringIO.StringIO()
         zf = zipfile.ZipFile(s, "w")
 
