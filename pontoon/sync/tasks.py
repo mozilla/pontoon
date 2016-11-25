@@ -181,7 +181,7 @@ def sync_translations(self, project_pk, project_sync_log_pk, now, project_change
         locales = db_project.locales.all()
 
     if not locales:
-        log.info('Skippig syncing translations for project {0}, no locales to sync found within.'
+        log.info('Skipping syncing translations for project {0}, no locales to sync found within.'
                   .format(db_project.slug))
         repo_sync_log.end()
         return
@@ -237,7 +237,7 @@ def sync_translations(self, project_pk, project_sync_log_pk, now, project_change
                                 update_locale_project_locale_stats(l, db_project)
                             db_project.aggregate_stats()
 
-                        log.info('Skippig syncing translations for project {0}, none of the locales has anything to sync.'
+                        log.info('Skipping syncing translations for project {0}, none of the locales has anything to sync.'
                                  .format(db_project.slug))
 
                         for r in repos:
