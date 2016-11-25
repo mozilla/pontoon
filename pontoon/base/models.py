@@ -588,6 +588,11 @@ class Project(AggregatedStats):
     links = models.BooleanField(
         'Keep links on the project website clickable', default=False)
 
+    langpack_url = models.URLField('Language pack URL', blank=True, null=True, help_text="""
+        URL pattern for downloading language packs. Leave empty if language packs
+        not available for the project. Supports {locale_code} wildcard.
+    """)
+
     # Disable project instead of deleting to keep translation memory & attributions
     disabled = models.BooleanField(default=False)
 
@@ -619,6 +624,7 @@ class Project(AggregatedStats):
             'url': self.url,
             'width': self.width or '',
             'links': self.links or '',
+            'langpack_url': self.langpack_url or '',
         }
 
     def save(self, *args, **kwargs):
@@ -900,6 +906,7 @@ class Repository(models.Model):
         select any localized file on GitHub, click Raw and replace locale code
         and the following bits in the URL with `{locale_code}`.
     """)
+
     """
     Mapping of locale codes to VCS revisions of each repo at the last
     sync. If this isn't a multi-locale repo, the mapping has a single
@@ -1023,15 +1030,10 @@ class Repository(models.Model):
                 checkout_path = self.locale_checkout_path(locale)
 
                 try:
-                    update_from_vcs(
-                        repo_type,
-                        url,
-                        checkout_path
-                    )
+                    update_from_vcs(repo_type, url, checkout_path)
                     current_revisions[locale.code] = get_revision(repo_type, checkout_path)
                 except PullFromRepositoryException as e:
                     log.error('%s Pull Error for %s: %s' % (repo_type.upper(), url, e))
-                    pass
 
             return current_revisions
 

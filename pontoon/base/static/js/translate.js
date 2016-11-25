@@ -2745,6 +2745,9 @@ var Pontoon = (function (my) {
     updateProfileMenu: function () {
       $('#profile .admin-current-project a').attr('href', '/admin/projects/' + this.project.slug + '/');
       $('#profile .upload').toggle(this.state.paths && this.user.isTranslator && this.part !== 'all-resources');
+      $('#profile .langpack')
+        .toggle(this.project.langpack_url !== '')
+        .find('a').attr('href', this.project.langpack_url.replace('{locale_code}', this.locale.code));
     },
 
 
@@ -3205,7 +3208,8 @@ var Pontoon = (function (my) {
         slug: self.getProjectData('slug'),
         info: self.getProjectData('info'),
         width: self.getProjectWidth(),
-        links: self.getProjectData('links') === 'True' ? true : false
+        links: self.getProjectData('links') === 'True' ? true : false,
+        langpack_url: self.getProjectData('langpack_url')
       };
 
       this.part = this.getSelectedPart();
