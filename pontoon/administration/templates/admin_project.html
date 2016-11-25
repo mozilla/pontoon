@@ -84,9 +84,9 @@
         <div class="prefix">
           {{ repo_form.permalink_prefix.label_tag() }}
           {{ repo_form.permalink_prefix }}
+          {{ repo_form.permalink_prefix.errors }}
         </div>
       </section>
-      {{ repo_form.errors }}
     </div>
   {% endfor %}
   <div class="repository-empty clearfix">
