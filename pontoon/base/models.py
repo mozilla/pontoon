@@ -1184,17 +1184,15 @@ class EntityQuerySet(models.QuerySet):
     def filter_statuses(self, locale, statuses):
         sanitized_statuses = filter(lambda s: s in self.user_entity_filters, statuses)
         if sanitized_statuses:
-            query = reduce(lambda x, y: x | y, [getattr(Entity.objects, s)() for s in sanitized_statuses])
-            return self.with_status_counts(locale).filter(Q(query))
-        return self
+            return reduce(lambda x, y: x | y, [getattr(Entity.objects, s)() for s in sanitized_statuses])
+        return Q()
 
     def filter_extra(self, locale, extra):
-        sanitized_filters = filter(lambda f: f in self.user_extra_filters, extra)
+        sanitized_extras = filter(lambda f: f in self.user_extra_filters, extra)
 
-        if sanitized_filters:
-            query = reduce(lambda x, y: x | y, [getattr(Entity.objects, s.replace('-', '_'))() for s in sanitized_filters])
-            return self.with_status_counts(locale).filter(Q(query))
-        return self
+        if sanitized_extras:
+            return reduce(lambda x, y: x | y, [getattr(Entity.objects, s.replace('-', '_'))() for s in sanitized_extras])
+        return Q()
 
     def with_status_counts(self, locale):
         """
@@ -1274,12 +1272,11 @@ class EntityQuerySet(models.QuerySet):
 
         sanitized_emails = filter(is_email, emails)
         if sanitized_emails:
-            emails_query = reduce(lambda x, y: x | y, [Q(translation__user__email=item) for item in sanitized_emails])
-            return self.filter(translation__locale=locale).filter(Q(emails_query))
-        return self
+            return Q(translation__locale=locale, translation__user__email__in=sanitized_emails)
+        return Q()
 
     def between_time_interval(self, locale, start, end):
-        return self.filter(translation__locale=locale, translation__date__range=(start, end))
+        return Q(translation__locale=locale, translation__date__range=(start, end))
 
     def prefetch_resources_translations(self, locale):
         """
@@ -1378,27 +1375,36 @@ class Entity(DirtyFieldsMixin, models.Model):
     def for_project_locale(self, project, locale, paths=None, statuses=None,
         search=None, exclude=None, extra=None, time=None, authors=None):
         """Get project entities with locale translations."""
-        entities = Entity.objects.all()
 
-        def append_filters(qs):
-            return qs.filter(pk__in=entities)
-
-        if statuses:
-            entities = entities.filter_statuses(locale, statuses.split(','))
-
-        if extra:
-            entities = entities.filter_extra(locale, extra.split(','))
+        # Time & authors filters have to be applied before the aggregation
+        # (with_status_counts) and the status & extra filters to avoid
+        # unnecessary joins causing performance and logic issues.
+        pre_filters = []
+        post_filters = []
 
         if time:
             if re.match('^[0-9]{12}-[0-9]{12}$', time):
                 start, end = utils.parse_time_interval(time)
-                entities = append_filters(Entity.objects.between_time_interval(locale, start, end))
-
+                pre_filters.append(Entity.objects.between_time_interval(locale, start, end))
             else:
                 raise ValueError(time)
 
         if authors:
-            entities = append_filters(Entity.objects.authored_by(locale, authors.split(',')))
+            pre_filters.append(Entity.objects.authored_by(locale, authors.split(',')))
+
+        if pre_filters:
+            entities = Entity.objects.filter(pk__in=Entity.objects.filter(Q(*pre_filters)))
+        else:
+            entities = Entity.objects.all()
+
+        if statuses:
+            post_filters.append(Entity.objects.filter_statuses(locale, statuses.split(',')))
+
+        if extra:
+            post_filters.append(Entity.objects.filter_extra(locale, extra.split(',')))
+
+        if post_filters:
+            entities = entities.with_status_counts(locale).filter(Q(*post_filters))
 
         entities = entities.filter(
             resource__project=project,
