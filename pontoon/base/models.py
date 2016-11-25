@@ -867,7 +867,7 @@ class ProjectLocale(AggregatedStats):
                 'approved_strings': obj.approved_strings,
                 'translated_strings': obj.translated_strings,
                 'fuzzy_strings': obj.fuzzy_strings,
-                'approved_share': round(obj.approved_strings / obj.total_strings * 100),
+                'approved_share': int(math.floor(obj.approved_strings / obj.total_strings * 100)),
                 'translated_share': round(obj.translated_strings / obj.total_strings * 100),
                 'fuzzy_share': round(obj.fuzzy_strings / obj.total_strings * 100),
                 'approved_percent': int(math.floor(obj.approved_strings / obj.total_strings * 100)),
