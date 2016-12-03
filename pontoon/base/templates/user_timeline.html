@@ -1,0 +1,42 @@
+{# Template responsible for rendering pages of the timeline. #}
+{% for event in events %}
+<div class="clearfix">
+    <div class="tick"></div>
+    <div class="content">
+        <h3>
+            <div class="day">{{ event.date.strftime('%d') }}</div>
+            <div>
+                <div class="weekday">{{ event.date.strftime('%A') }}</div>
+                <div class="month">{{ event.date.strftime('%B %Y') }}</div>
+            </div>
+        </h3>
+        <h2>
+            {% if event.type == 'translation' %}
+            Added new translation
+            {% if event.count > 1 %}
+            <div>(and {{ event.count-1 }} other{% if event.count > 2 %}s{% endif %})</div>
+            {% endif %}
+            {% elif event.type == 'join' %}
+            Joined Pontoon
+            {% endif %}
+        </h2>
+        {% if event.translation %}
+        <div class="fa fa-2x fa-quote-left"></div>
+        <p dir="auto" lang="{{ event.translation.locale.code }}">{{ event.translation.string }}</p>
+        {% endif %}
+        <div class="label clearfix {{ event.type }}">
+            <figure>
+                <div class="fa fa-3x {% if event.count %}fa-comment{% if event.count > 1 %}s{% endif %}-o{% elif event.type == 'join' %}fa-child{% endif %}"></div>
+                <figcaption>{{ event.date.strftime('%H:%M') }}</figcaption>
+            </figure>
+            {% if event.project %}
+            {% if not event.project.disabled %}
+            <a href="{{ url('pontoon.translate', event.translation.locale.code, event.project.slug, event.translation.entity.resource.path) }}">{{ event.project.name }}</a>
+            {% else %}
+            <span class="project">{{ event.project.name }}</span>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endfor %}

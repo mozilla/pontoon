@@ -115,3 +115,13 @@
   cursor: pointer;
   display: table;
 }
+
+#timeline-loader {
+  margin: 0 auto;
+  display: none;
+}
+
+#timeline-loader img {
+  width: 100px;
+  height: 100px;
+}
