@@ -40,6 +40,8 @@ class BlockedIpMiddleware(object):
         except KeyError:
             ip = request.META['REMOTE_ADDR']
 
+        ip = ip.strip()
+
         # Block client IP addresses via settings variable BLOCKED_IPS
         if ip in settings.BLOCKED_IPS:
             return HttpResponseForbidden('<h1>Forbidden</h1>')
