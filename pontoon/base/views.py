@@ -23,7 +23,7 @@ from django.core.cache import cache
 from django.core.paginator import Paginator, EmptyPage
 from django.core.validators import validate_comma_separated_integer_list
 from django.db import transaction, DataError
-from django.db.models import Count, F, Q
+from django.db.models import Count, Q
 
 from django.http import (
     Http404,
@@ -286,44 +286,55 @@ def contributor_username(request, username):
     return contributor(request, user)
 
 
+def contributor_timeline(request, username):
+    """Contributor events in the timeline."""
+    user = get_object_or_404(User, username=username)
+    try:
+        page = int(request.GET.get('page', 1))
+    except ValueError:
+        raise Http404('Invalid page number: {}'.format(page))
+
+    # Exclude obsolete translations
+    contributor_translations = (
+        user.contributed_translations
+            .exclude(entity__obsolete=True)
+            .extra({'day': "date(date)"})
+            .order_by('-day')
+    )
+
+    counts_by_day = contributor_translations.values('day').annotate(count=Count('id'))
+
+    try:
+        events_paginator = Paginator(counts_by_day, 10)
+        timeline_events = []
+
+        timeline_events = User.objects.map_translations_to_events(
+            events_paginator.page(page).object_list,
+            contributor_translations
+        )
+
+        # Join is the last event in this reversed order.
+        if page == events_paginator.num_pages:
+            timeline_events.append({
+                'date': user.date_joined,
+                'type': 'join'
+            })
+
+    except EmptyPage:
+        # Return the join event if user reaches the last page.
+        raise Http404('No events.')
+
+    return render(request, 'user_timeline.html', {
+       'events': timeline_events
+    })
+
+
 def contributor(request, user):
     """Contributor profile."""
 
-    # Exclude unchanged translations
-    translations = (
-        Translation.objects.filter(user=user)
-        .exclude(string=F('entity__string'))
-        .exclude(string=F('entity__string_plural'))
-    )
-
-    # Exclude obsolete translations
-    current = translations.exclude(entity__obsolete=True) \
-        .extra({'day': "date(date)"}).order_by('day')
-
-    # Timeline
-    timeline = [{
-        'date': user.date_joined,
-        'type': 'join',
-    }]
-
-    for event in current.values('day').annotate(count=Count('id')):
-        daily = current.filter(date__startswith=event['day'])
-        example = daily[0]
-
-        timeline.append({
-            'date': example.date,
-            'type': 'translation',
-            'count': event['count'],
-            'project': example.entity.resource.project,
-            'translation': example,
-        })
-
-    timeline.reverse()
-
     return render(request, 'user.html', {
         'contributor': user,
-        'timeline': timeline,
-        'translations': translations,
+        'translations': user.contributed_translations
     })
 
 

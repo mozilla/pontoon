@@ -130,6 +130,29 @@ class UserCustomManager(UserManager):
     """
     use_in_migrations = False
 
+    def map_translations_to_events(cls, days, translations):
+        """
+        Map translations into events (jsonable dictionaries).
+        :param QuerySet[Translation] events: a QuerySet with translastions.
+        :rtype: list[dict]
+        :return: A list of dicts with mapped fields.
+        """
+        timeline = []
+        for day in days:
+            daily = translations.filter(date__startswith=day['day'])
+            daily.prefetch_related('entity__resource__project')
+            example = daily.first()
+
+            timeline.append({
+                'date': example.date,
+                'type': 'translation',
+                'count': day['count'],
+                'project': example.entity.resource.project,
+                'translation': example,
+            })
+
+        return timeline
+
 
 class UserQuerySet(models.QuerySet):
     def serialize(self):
@@ -239,6 +262,17 @@ def user_locale_role(self, locale):
         return 'contributor'
 
 
+@property
+def contributed_translations(self):
+    """Filtered contributions provided by user."""
+    translations = (
+        Translation.objects.filter(user=self)
+            .exclude(string=F('entity__string'))
+            .exclude(string=F('entity__string_plural'))
+    )
+    return translations
+
+
 User.add_to_class('profile_url', user_profile_url)
 User.add_to_class('gravatar_url', user_gravatar_url)
 User.add_to_class('name_or_email', user_name_or_email)
@@ -251,6 +285,7 @@ User.add_to_class('role', user_role)
 User.add_to_class('locale_role', user_locale_role)
 User.add_to_class('translators', UserTranslationsManager())
 User.add_to_class('objects', UserCustomManager.from_queryset(UserQuerySet)())
+User.add_to_class('contributed_translations', contributed_translations)
 
 
 class UserProfile(models.Model):

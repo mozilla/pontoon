@@ -39,6 +39,11 @@ urlpatterns = [
         name='pontoon.contributor.email'),
 
     # Contributor profile by username
+    url(r'^contributors/(?P<username>[\w-]+)/timeline/$',
+        views.contributor_timeline,
+        name='pontoon.contributor.timeline'),
+
+    # Contributor profile by username
     url(r'^contributors/(?P<username>[\w-]+)/$',
         views.contributor_username,
         name='pontoon.contributor.username'),
