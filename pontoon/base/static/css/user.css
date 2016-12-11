@@ -117,11 +117,13 @@
 }
 
 #timeline-loader {
-  margin: 0 auto;
   display: none;
+  margin: 0 auto;
+  height: 50px;
+  width: 50px;
 }
 
-#timeline-loader img {
-  width: 100px;
-  height: 100px;
+#timeline-loader div {
+  color: #7BC876;
+  font-size: 48px;
 }
