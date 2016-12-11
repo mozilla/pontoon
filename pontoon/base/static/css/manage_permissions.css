@@ -11,6 +11,42 @@ form {
   text-align: left;
 }
 
+h3 {
+  color: #EBEBEB;
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  padding-bottom: 30px;
+  position: relative;
+  text-align: left;
+  text-transform: none;
+}
+
+h3 .small {
+  color: #AAAAAA;
+  font-size: .7em;
+}
+
+h3 .remove-project {
+  bottom: 33px;
+  color: #7BC876;
+  font-size: 14px;
+  letter-spacing: 0;
+  position: absolute;
+  right: 0;
+  text-transform: uppercase;
+}
+
+h3 .remove-project .fa {
+  float: left;
+  margin-top: 1px;
+  padding-right: 5px;
+}
+
+.permissions-groups {
+  margin-bottom: 80px;
+}
+
 .user.select {
   display: inline-block;
   vertical-align: top;
@@ -29,6 +65,7 @@ form {
 .user.select.managers {
   margin-left: 59px;
 }
+
 .user.select label {
   color: #AAAAAA;
   display: block;
@@ -75,16 +112,18 @@ form {
 }
 
 .user.select.available .menu ul li .arrow:after,
-.user.select.translators .menu ul li .arrow:after {
+.general .user.select.translators .menu ul li .arrow:after {
   content: "";
 }
 
 .user.select.translators .menu ul li.left .arrow:after,
+.project-locale .user.select.translators .menu ul li.hover .arrow:after,
 .user.select.managers .menu ul li .arrow:after {
   content: "";
 }
 
 .user.select.translators .menu ul li.left .arrow,
+.project-locale .user.select.translators .menu ul li.hover .arrow,
 .user.select.managers .menu ul li .arrow {
   left: 2px;
 }
@@ -99,15 +138,54 @@ form {
 }
 
 .button {
-  background: #7BC876;
+  background: #4D5967;
   border: none;
-  border-radius: 3px;
-  color: #272A2F;
+  color: #FFFFFF;
   font-size: 14px;
-  font-weight: 400;
-  float: left;
-  height: 31px;
+  font-weight: 300;
+  float: right;
+  height: 20px;
   margin-top: 30px;
+  padding: 12px 10px 8px;
+  width: 240px;
+}
+
+.button.save {
+  background: #7BC876;
+  color: #272A2F;
+  font-weight: 400;
+  height: 40px;
+  padding-top: 9px;
+  text-align: center;
   text-transform: uppercase;
   width: 100px;
+}
+
+#project-selector  {
+  float: right;
+}
+
+#project-selector .button {
+  margin-right: 10px;
+}
+
+#project-selector .button .icon {
+  color: #7BC876;
+  float: right;
+  margin-top: 2px;
+}
+
+#project-selector .menu {
+  background: #4D5967;
+  bottom: 40px;
+  width: 236px;
+}
+
+#project-selector .menu .search-wrapper {
+  border-color: #82899B;
+}
+
+#project-selector .menu li {
+  color: #CCCCCC;
+  cursor: pointer;
 }

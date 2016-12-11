@@ -936,6 +936,30 @@ class ProjectLocaleTests(TestCase):
             translation.latest_activity
         )
 
+    def test_translators_group(self):
+        """
+        Tests if user has permission to translate project at specific locale after assigment.
+        """
+
+        project_locale = ProjectLocaleFactory.create(
+            project=self.project,
+            locale=self.locale,
+            latest_translation=None,
+            has_custom_translators=True,
+        )
+        user = UserFactory.create()
+
+        assert_equal(user.can_translate(locale=self.locale, project=self.project), False)
+
+        user.groups.add(project_locale.translators_group)
+
+        assert_equal(user.can_translate(locale=self.locale, project=self.project), True)
+
+        project_locale.has_custom_translators = False
+        project_locale.save()
+
+        assert_equal(user.can_translate(locale=self.locale, project=self.project), False)
+
 
 class TranslationTests(TestCase):
     def assert_latest_translation(self, instance, translation):

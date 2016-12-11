@@ -32,7 +32,7 @@
     {{ Menu.item('Projects', url('pontoon.locale', locale.code), is_active = (current_page == '')) }}
     {{ Menu.item('Contributors', url('pontoon.locale.contributors', locale.code), is_active = (current_page == 'contributors')) }}
     {% if request.user.has_perm('base.can_manage_locale', locale) %}
-      {{ Menu.item('Manage', url('pontoon.locale.manage', locale.code), is_active = (current_page == 'manage')) }}
+      {{ Menu.item('Permissions', url('pontoon.locale.permissions', locale.code), is_active = (current_page == 'permissions')) }}
     {% endif %}
   {% endcall %}
 

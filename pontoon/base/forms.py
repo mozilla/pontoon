@@ -2,7 +2,12 @@ import os
 
 from django import forms
 
-from pontoon.base.models import User, UserProfile
+from pontoon.base.models import (
+    Locale,
+    ProjectLocale,
+    User,
+    UserProfile
+)
 from pontoon.sync.formats import SUPPORTED_FORMAT_PARSERS
 
 
@@ -18,6 +23,87 @@ class DownloadFileForm(forms.Form):
     slug = NoTabStopCharField()
     code = NoTabStopCharField()
     part = NoTabStopCharField()
+
+
+class UserPermissionGroupForm(object):
+    def assign_users_to_groups(self, group_name, users):
+        """
+        Clear group membership and assign a set of users to a given group of users.
+        """
+        group = getattr(self.instance, '{}_group'.format(group_name))
+        group.user_set.clear()
+        if users:
+            group.user_set.add(*users)
+
+
+class LocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
+    translators = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
+    managers = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
+
+    class Meta:
+        model = Locale
+        fields = ('translators', 'managers')
+
+    def save(self, *args, **kwargs):
+        self.assign_users_to_groups('translators', self.cleaned_data.get('translators', []))
+        self.assign_users_to_groups('managers', self.cleaned_data.get('managers', []))
+
+
+class ProjectLocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
+    translators = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
+
+    class Meta:
+        model = ProjectLocale
+        fields = ('translators', 'has_custom_translators')
+
+    def save(self, *args, **kwargs):
+        super(ProjectLocalePermsForm, self).save(*args, **kwargs)
+        self.assign_users_to_groups('translators', self.cleaned_data.get('translators', []))
+
+
+class ProjectLocaleFormSet(forms.models.BaseModelFormSet):
+    """
+    Formset will update only existing objects and won't allow to create new-ones.
+    """
+
+    @property
+    def errors_dict(self):
+        errors = {}
+        for form in self:
+            if form.errors:
+                errors[form.instance.pk] = form.errors
+        return errors
+
+    def save(self, commit=True):
+        self.new_objects = []
+        if commit:
+            for form in self:
+                if form.instance.pk and form.cleaned_data.get('has_custom_translators'):
+                    form.save()
+
+            # We have to cleanup projects from translators
+            without_translators = (
+                form.instance.pk for form in self
+                if form.instance.pk and not form.cleaned_data.get('has_custom_translators')
+            )
+
+            if not without_translators:
+                return
+
+            ProjectLocale.objects.filter(
+                pk__in=without_translators
+            ).update(has_custom_translators=False)
+
+            User.groups.through.objects.filter(
+                group__projectlocales__pk__in=without_translators
+            ).delete()
+
+
+ProjectLocalePermsFormsSet = forms.modelformset_factory(
+    ProjectLocale,
+    ProjectLocalePermsForm,
+    formset=ProjectLocaleFormSet,
+)
 
 
 class UploadFileForm(DownloadFileForm):

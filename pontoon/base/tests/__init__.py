@@ -96,6 +96,7 @@ class ProjectFactory(DjangoModelFactory):
         else:  # Default to a single valid repo.
             self.repositories.add(RepositoryFactory.build(), bulk=False)
 
+
 class ProjectLocaleFactory(DjangoModelFactory):
     class Meta:
         model = ProjectLocale

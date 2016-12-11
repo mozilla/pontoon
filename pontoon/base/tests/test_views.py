@@ -127,21 +127,30 @@ class UserProfileTests(UserTestCase):
 class TranslationActionsTests(UserTestCase):
     """Tests actions that can be performed on a translation."""
 
-    def test_unapprove_translation(self):
-        """Check if unapprove view works properly."""
-        translation = TranslationFactory.create()
+    def setUp(self):
+        super(TranslationActionsTests, self).setUp()
+        project = ProjectFactory.create()
+        locale = LocaleFactory.create()
+
+        ProjectLocale.objects.create(project=project, locale=locale)
+
+        translation = TranslationFactory.create(locale=locale, entity__resource__project=project)
         translation.approved = True
         translation.save()
 
+        self.translation = translation
+
+    def test_unapprove_translation(self):
+        """Check if unapprove view works properly."""
         response = self.client.ajax_post('/unapprove-translation/', {
-            'translation': translation.pk,
+            'translation': self.translation.pk,
             'paths': [],
         })
         assert_code(response, 200)
 
-        translation.refresh_from_db()
-        assert_equal(translation.approved, False)
-        assert_equal(translation.unapproved_user, self.user)
+        self.translation.refresh_from_db()
+        assert_equal(self.translation.approved, False)
+        assert_equal(self.translation.unapproved_user, self.user)
 
 
 class TranslateTests(TestCase):

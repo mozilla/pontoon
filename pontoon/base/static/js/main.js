@@ -447,18 +447,18 @@ $(function() {
   $('.selector').click(function (e) {
     if (!$(this).siblings('.menu').is(':visible')) {
       e.stopPropagation();
-      $('body:not(".admin-project") .menu').hide();
+      $('body:not(".admin-project, .locale-permissions") .menu').hide();
       $('.select').removeClass('opened');
       $('#iframe-cover:not(".hidden")').hide(); // iframe fix
       $(this).siblings('.menu').show().end()
              .parents('.select').addClass('opened');
       $('#iframe-cover:not(".hidden")').show(); // iframe fix
-      $('body:not(".admin-project") .menu:visible input[type=search]').focus().trigger('input');
+      $('body:not(".admin-project, .locale-permissions") .menu:visible input[type=search]').focus().trigger('input');
     }
   });
 
   // Menu hover
-  $('.menu').on('mouseenter', 'li, .static-links div', function () {
+  $('body').on('mouseenter', '.menu li, .menu .static-links div', function () {
     // Ignore on nested menus and static links on dashborads
     if ($(this).has('li').length ||
         $(this).is('.static-links div') && !$('body').is('.translate')) {
@@ -527,9 +527,9 @@ $(function() {
   });
 
   // Menu search
-  $('.menu input[type=search]').click(function (e) {
+  $('body').on('click', '.menu input[type=search]', function (e) {
     e.stopPropagation();
-  }).on('input.search', function(e) {
+  }).on('input.search', '.menu input[type=search]', function(e) {
     if (e.which === 9) {
       return;
     }
@@ -733,13 +733,13 @@ $(function() {
       }
 
       // Ctrl + Shift + A: Select All Strings
-      if (Pontoon.user.isTranslator && e.ctrlKey && e.shiftKey && key === 65) {
+      if (Pontoon.user.canTranslate() && e.ctrlKey && e.shiftKey && key === 65) {
         Pontoon.selectAllEntities();
         return false;
       }
 
       // Escape: Deselect entities and switch to first entity
-      if (Pontoon.user.isTranslator && $('#entitylist .entity.selected').length && key === 27) {
+      if (Pontoon.user.canTranslate() && $('#entitylist .entity.selected').length && key === 27) {
         if (Pontoon.app.advanced) {
           Pontoon.openFirstEntity();
         } else {
