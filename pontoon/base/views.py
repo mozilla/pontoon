@@ -292,7 +292,7 @@ def contributor_timeline(request, username):
     try:
         page = int(request.GET.get('page', 1))
     except ValueError:
-        raise Http404('Invalid page number: {}'.format(page))
+        raise Http404('Invalid page number.')
 
     # Exclude obsolete translations
     contributor_translations = (
