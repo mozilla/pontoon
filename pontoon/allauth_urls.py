@@ -11,7 +11,7 @@ from allauth.compat import importlib
 from allauth.account import views as account_views
 from allauth.socialaccount import views as socialaccount_views, providers
 
-if settings.HEROKU_DEMO:
+if settings.DJANGO_LOGIN:
     urlpatterns = [
         url(r'^standalone-login/$', login, name='standalone_login'),
         url(r'^standalone-logout/$', logout, name='standalone_logout', kwargs={'next_page': '/'}),

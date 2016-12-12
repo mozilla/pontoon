@@ -29,6 +29,8 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') != 'False'
 
 HEROKU_DEMO = os.environ.get('HEROKU_DEMO', 'False') != 'False'
 
+DJANGO_LOGIN = os.environ.get('DJANGO_LOGIN', 'False') != 'False' or HEROKU_DEMO
+
 ADMINS = MANAGERS = (
     (os.environ.get('ADMIN_NAME', ''),
      os.environ.get('ADMIN_EMAIL', '')),
