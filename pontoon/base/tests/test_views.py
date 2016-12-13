@@ -1,7 +1,15 @@
+from collections import OrderedDict
+from datetime import (
+    datetime,
+    timedelta,
+)
+
+from random import randint
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.test import RequestFactory
-from django.utils.timezone import now
+from django.utils.timezone import now, make_aware
 
 from django_nose.tools import (
     assert_equal,
@@ -186,6 +194,109 @@ class TranslateTests(TestCase):
         assert_equal(response.status_code, 200)
         # I'd assertTemplateUsed here but it doesn't work on non-DTL
         # templates.
+
+
+class ContributorProfileViewTests(UserTestCase):
+    def setUp(self):
+        super(ContributorProfileViewTests, self).setUp()
+
+        mock_render = patch('pontoon.base.views.render', return_value=HttpResponse(''))
+        self.mock_render = mock_render.start()
+        self.addCleanup(mock_render.stop)
+
+    def test_contributor_profile_by_username(self):
+        """Users should be able to retrieve contributor's profile by its username."""
+        self.client.get('/contributors/{}/'.format(self.user.username))
+
+        assert_equal(self.mock_render.call_args[0][2]['contributor'], self.user)
+
+    def test_contributor_profile_by_email(self):
+        """Check if we can access contributor profile by its email."""
+        self.client.get('/contributors/{}/'.format(self.user.email))
+
+        assert_equal(self.mock_render.call_args[0][2]['contributor'], self.user)
+
+    def test_logged_user_profile(self):
+        """Logged user should be able to re"""
+        self.client.get('/profile/')
+
+        assert_equal(self.mock_render.call_args[0][2]['contributor'], self.user)
+
+    def test_unlogged_user_profile(self):
+        """Unlogged users shouldn't have access to edit any profile."""
+        self.client.logout()
+
+        assert_equal(self.client.get('/profile/')['Location'], '/403')
+
+
+class ContributorTimelineViewTests(UserTestCase):
+    """User timeline is a list of events created by a certain contributor."""
+    def setUp(self):
+        """
+        We setup a sample contributor with random set of translations.
+        """
+        super(ContributorTimelineViewTests, self).setUp()
+        self.project = ProjectFactory.create()
+        self.translations = OrderedDict()
+
+        for i in xrange(26):
+            date = make_aware(datetime(2016, 12, 1) - timedelta(days=i))
+            translations_count = randint(1,3)
+            self.translations.setdefault((date, translations_count), []).append(
+                TranslationFactory.create_batch(translations_count,
+                    date=date,
+                    user=self.user,
+                    entity__resource__project=self.project,
+                )
+            )
+
+        mock_render = patch('pontoon.base.views.render', return_value=HttpResponse(''))
+        self.mock_render = mock_render.start()
+        self.addCleanup(mock_render.stop)
+
+    def test_timeline(self):
+        """Backend should return events filtered by page number requested by user."""
+        self.client.get('/contributors/{}/timeline/?page=2'.format(self.user.username))
+
+        assert_equal(
+            self.mock_render.call_args[0][2]['events'],
+            [{
+                'date': dt,
+                'type': 'translation',
+                'count': count,
+                'project': self.project,
+                'translation': translations[0][0],
+            } for (dt,count), translations in self.translations.items()[10:20]
+        ])
+
+    def test_timeline_invalid_page(self):
+        """Backend should return 404 error when user requests an invalid/empty page."""
+        resp = self.client.get('/contributors/{}/timeline/?page=45'.format(self.user.username))
+        assert_code(resp, 404)
+
+        resp = self.client.get('/contributors/{}/timeline/?page=-aa45'.format(self.user.username))
+        assert_code(resp, 404)
+
+    def test_non_active_contributor(self):
+        """Test if backend is able return events for a user without contributions."""
+        nonactive_contributor = UserFactory.create()
+        self.client.get('/contributors/{}/timeline/'.format(nonactive_contributor.username))
+        assert_equal(
+            self.mock_render.call_args[0][2]['events'], [
+            {
+                'date': nonactive_contributor.date_joined,
+                'type': 'join'
+            }
+        ])
+
+    def test_timeline_join(self):
+        """Last page of results should include informations about the when user joined pontoon."""
+        self.client.get('/contributors/{}/timeline/?page=3'.format(self.user.username))
+
+        assert_equal(self.mock_render.call_args[0][2]['events'][-1], {
+            'date': self.user.date_joined,
+            'type': 'join'
+        })
 
 
 class ContributorsTests(TestCase):
