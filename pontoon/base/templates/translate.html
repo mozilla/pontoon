@@ -125,7 +125,7 @@
             <li><a href="{{ url('pontoon.admin') }}">Admin</a></li>
             <li class="admin-current-project"><a href="">Admin &middot; Current Project</a></li>
             {% endif %}
-            {% if settings.HEROKU_DEMO %}
+            {% if settings.DJANGO_LOGIN %}
               {% if user.is_authenticated() %}
                 <li class="standalone-sign-out"><a href="{{ url('standalone_logout') }}"><i class="fa fa-sign-out fa-fw"></i> Sign Out</a></li>
               {% else %}

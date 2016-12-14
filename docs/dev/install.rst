@@ -160,6 +160,8 @@ The following extra settings can be added to your ``.env`` file.
    Set your `Google Analytics key`_ to use Google Analytics.
 ``MOZILLIANS_API_KEY``
    Set your `Mozillians API key`_ to grant permission to Mozilla localizers.
+``DJANGO_LOGIN``
+   Set to True if you want to use the default Django login instead of Firefox Accounts. This will run allow you to log in via accounts created using `manage.py shell`.
 
 .. _Microsoft Translator API key: http://msdn.microsoft.com/en-us/library/hh454950
 .. _Google Analytics key: https://www.google.com/analytics/
