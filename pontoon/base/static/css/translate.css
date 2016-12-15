@@ -1390,10 +1390,13 @@ body > header aside p {
   right: 0;
   top: 2px;
   vertical-align: 0;
+  /* Bug 1312228: Stop tab loading animations when not needed to avoid high CPU usage */
+  display: none;
   visibility: hidden;
 }
 
 #editor nav li a.loading > span > .fa {
+  display: block;
   visibility: visible;
 }
 
