@@ -101,6 +101,13 @@ $(function() {
     }
   });
 
+  // Prevent openning project page from the request panel
+  menu.find('a').click(function (e) {
+    if (menu.find('.search-wrapper > a').is('.back:visible')) {
+      e.preventDefault();
+    }
+  });
+
   // Request projects
   $('#request-projects').click(function(e) {
     e.preventDefault();
