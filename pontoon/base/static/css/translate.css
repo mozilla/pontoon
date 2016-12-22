@@ -249,8 +249,11 @@ body > header .locale.select {
 }
 
 .menu .static-links {
-  border-top: 1px solid #5E6475;
   font-weight: 300;
+}
+
+.menu .static-links:not(.all-projects) {
+  border-top: 1px solid #5E6475;
   margin-top: 5px;
   padding-top: 5px;
 }
@@ -260,7 +263,14 @@ body > header .locale.select {
   padding: 2px 4px;
 }
 
+.menu .static-links .internal {
+  border-bottom: 1px solid #5E6475;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+}
+
 .menu ul li.current,
+.menu .static-links .all-projects.current,
 .menu .static-links .all-resources.current {
   color: #7BC876;
 }
