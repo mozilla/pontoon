@@ -870,7 +870,7 @@ class Locale(AggregatedStats):
         """Get a list of available project slugs."""
         return list(
             self.project_set.available().values_list('slug', flat=True)
-        )
+        ) + ['all-projects']
 
     def get_plural_index(self, cldr_plural):
         """Returns plural index for given cldr name."""
@@ -909,12 +909,19 @@ class Locale(AggregatedStats):
                 'approved_strings',
             )
 
-        pages = project.subpage_set.all()
+        if project.slug != 'all-projects':
+            pages = project.subpage_set.all()
+        else:
+            pages = Subpage.objects.filter(project__in=self.project_set.all())
+
         translatedresources = TranslatedResource.objects.filter(
-            resource__project=project,
             resource__entities__obsolete=False,
             locale=self
-        ).distinct()
+        )
+        if project.slug != 'all-projects':
+            translatedresources = translatedresources.filter(resource__project=project)
+        translatedresources = translatedresources.distinct()
+
         details = []
         unbound_details = []
 
@@ -931,7 +938,7 @@ class Locale(AggregatedStats):
         # only include stats for page resources.
         elif len(pages) > 0:
             # Each subpage must have resources defined
-            if pages[0].resources.exists():
+            if pages[0].resources.exists() or project.slug == 'all-projects':
                 locale_pages = pages.filter(resources__translatedresources__locale=self)
                 details = get_details(
                     # List only subpages, whose resources are available for locale
@@ -974,21 +981,21 @@ class Locale(AggregatedStats):
                 url=F('resource__project__url')
             ))
 
-        all_resources = ProjectLocale.objects.get(project=project, locale=self)
-        all_paths = (
-            TranslatedResource.objects
-            .filter(resource__project=project, locale=self)
-            .values_list("resource__path", flat=True)
-        )
+        if project.slug != 'all-projects':
+            stats = ProjectLocale.objects.get(project=project, locale=self)
+        else:
+            stats = self
+
+        all_paths = translatedresources.values_list("resource__path", flat=True)
 
         details_list = list(details) + list(unbound_details)
         details_list.append({
             'title': 'all-resources',
             'resource__path': list(all_paths),
-            'resource__total_strings': all_resources.total_strings,
-            'fuzzy_strings': all_resources.fuzzy_strings,
-            'translated_strings': all_resources.translated_strings,
-            'approved_strings': all_resources.approved_strings,
+            'resource__total_strings': stats.total_strings,
+            'fuzzy_strings': stats.fuzzy_strings,
+            'translated_strings': stats.translated_strings,
+            'approved_strings': stats.approved_strings,
         })
 
         return details_list
@@ -2167,6 +2174,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         entities = entities.filter(
             resource__translatedresources__locale=locale,
+            resource__project__disabled=False,
             obsolete=False
         )
 
@@ -2229,12 +2237,19 @@ class Entity(DirtyFieldsMixin, models.Model):
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
 
-        entities = entities.prefetch_related('resource').prefetch_translations(locale)
-
         if exclude_entities:
             entities = entities.exclude(pk__in=exclude_entities)
 
-        return entities.order_by('resource__path', 'order')
+        order_fields = ('resource__path', 'order')
+        prefetch_lookup = 'resource'
+
+        if project.slug == 'all-projects':
+            order_fields = ('resource__project__name',) + order_fields
+            prefetch_lookup = 'resource__project'
+
+        entities = entities.prefetch_related(prefetch_lookup).prefetch_translations(locale)
+
+        return entities.order_by(*order_fields)
 
     @classmethod
     def map_entities(cls, locale, entities, visible_entities=None):
@@ -2391,10 +2406,12 @@ class Translation(DirtyFieldsMixin, models.Model):
         Return Translation QuerySet for given locale, project and paths.
         """
         translations = Translation.objects.filter(
-            entity__resource__project=project,
             entity__obsolete=False,
             locale=locale
         )
+
+        if project.slug != 'all-projects':
+            translations = translations.filter(entity__resource__project=project)
 
         if paths:
             paths = project.parts_to_paths(paths)
@@ -2603,10 +2620,18 @@ class TranslatedResourceQuerySet(models.QuerySet):
         """
         Returns statistics for the given project, paths and locale.
         """
-        return self.filter(
-            resource__project=project,
-            resource__path__in=paths,
-            locale=locale).aggregated_stats()
+        translated_resources = self.filter(
+            locale=locale,
+            resource__project__disabled=False
+        )
+
+        if project.slug != 'all-projects':
+            translated_resources = translated_resources.filter(
+                resource__project=project,
+                resource__path__in=paths
+            )
+
+        return translated_resources.aggregated_stats()
 
 
 class TranslatedResource(AggregatedStats):
