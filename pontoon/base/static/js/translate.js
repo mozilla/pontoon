@@ -2756,12 +2756,7 @@ var Pontoon = (function (my) {
       var locale = this.getSelectedLocale(),
           parts = this.getProjectData('parts')[locale],
           currentPart = this.getSelectedPart(),
-          part = $.grep(parts, function (e) { return e.title === currentPart; }),
-          allProjects = (this.getSelectedProject() === 'all-projects');
-
-      // Hide parts if All projects selected
-      $('.part .menu .search-wrapper, .part .menu ul').toggle(!allProjects);
-      $('.part .menu .static-links').toggleClass('all-projects', allProjects);
+          part = $.grep(parts, function (e) { return e.title === currentPart; });
 
       // Fallback if selected part not available for the selected locale & project
       if (!part.length) {

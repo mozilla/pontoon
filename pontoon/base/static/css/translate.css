@@ -249,11 +249,8 @@ body > header .locale.select {
 }
 
 .menu .static-links {
-  font-weight: 300;
-}
-
-.menu .static-links:not(.all-projects) {
   border-top: 1px solid #5E6475;
+  font-weight: 300;
   margin-top: 5px;
   padding-top: 5px;
 }

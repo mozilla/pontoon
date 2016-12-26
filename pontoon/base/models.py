@@ -856,7 +856,7 @@ class Locale(AggregatedStats):
             locale=self
         ).distinct().aggregate_stats(self)
 
-    def parts_stats(self, project):
+    def parts_stats(self, project=None):
         """Get locale-project pages/paths with stats."""
         def get_details(parts):
             return parts.order_by('title').values(
@@ -869,12 +869,19 @@ class Locale(AggregatedStats):
                 'approved_strings',
             )
 
-        pages = project.subpage_set.all()
+        if project:
+            pages = project.subpage_set.all()
+        else:
+            pages = Subpage.objects.filter(project__in=self.project_set.all())
+
         translatedresources = TranslatedResource.objects.filter(
-            resource__project=project,
             resource__entities__obsolete=False,
             locale=self
-        ).distinct()
+        )
+        if project:
+            translatedresources = translatedresources.filter(resource__project=project)
+        translatedresources = translatedresources.distinct()
+
         details = []
         unbound_details = []
 
@@ -891,7 +898,7 @@ class Locale(AggregatedStats):
         # only include stats for page resources.
         elif len(pages) > 0:
             # Each subpage must have resources defined
-            if pages[0].resources.exists():
+            if pages[0].resources.exists() or not project:
                 locale_pages = pages.filter(resources__translatedresources__locale=self)
                 details = get_details(
                     # List only subpages, whose resources are available for locale
@@ -934,21 +941,21 @@ class Locale(AggregatedStats):
                 url=F('resource__project__url')
             ))
 
-        all_resources = ProjectLocale.objects.get(project=project, locale=self)
-        all_paths = (
-            TranslatedResource.objects
-            .filter(resource__project=project, locale=self)
-            .values_list("resource__path", flat=True)
-        )
+        if project:
+            stats = ProjectLocale.objects.get(project=project, locale=self)
+        else:
+            stats = self
+
+        all_paths = translatedresources.values_list("resource__path", flat=True)
 
         details_list = list(details) + list(unbound_details)
         details_list.append({
             'title': 'all-resources',
             'resource__path': list(all_paths),
-            'resource__total_strings': all_resources.total_strings,
-            'fuzzy_strings': all_resources.fuzzy_strings,
-            'translated_strings': all_resources.translated_strings,
-            'approved_strings': all_resources.approved_strings,
+            'resource__total_strings': stats.total_strings,
+            'fuzzy_strings': stats.fuzzy_strings,
+            'translated_strings': stats.translated_strings,
+            'approved_strings': stats.approved_strings,
         })
 
         return details_list
