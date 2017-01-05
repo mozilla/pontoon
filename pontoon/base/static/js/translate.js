@@ -32,7 +32,7 @@ var Pontoon = (function (my) {
         (this.allEntitiesSelected ? ' selected' : '') +
         (entity.visible ? ' visible': '') +
         '" data-entry-pk="' + entity.pk + '">' +
-        '<span class="status fa' + (self.user.isTranslator ? '' : ' unselectable') + '"></span>' +
+        '<span class="status fa' + (self.user.canTranslate() ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
           '<span class="source-string">' + source_string + '</span>' +
           '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
@@ -252,7 +252,7 @@ var Pontoon = (function (my) {
                 (this.approved ? 'translated' : this.fuzzy ? 'fuzzy' : 'suggested') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
-                    ((self.user.isTranslator) ? ' translator' :
+                    ((self.user.canTranslate()) ? ' translator' :
                       ((self.user.id === this.uid && !this.approved) ?
                         ' own' : '')) +
                     '">' +
@@ -264,7 +264,7 @@ var Pontoon = (function (my) {
                     '<menu class="toolbar">' +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
-                      ((self.user.id && (self.user.id === this.uid) || self.user.isTranslator) ? '<button class="delete fa" title="Delete"></button>' : '') +
+                      ((self.user.id && (self.user.id === this.uid) || self.user.canTranslate()) ? '<button class="delete fa" title="Delete"></button>' : '') +
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
@@ -1461,7 +1461,7 @@ var Pontoon = (function (my) {
           pluralForm = this.getPluralForm(true),
           translation = translation || $('#translation').val();
 
-      if (entity.body && pluralForm === 0 && (this.user.isTranslator || !entity.translation[pluralForm].approved)) {
+      if (entity.body && pluralForm === 0 && (this.user.canTranslate() || !entity.translation[pluralForm].approved)) {
         this.postMessage("SAVE", {
           translation: translation,
           id: entity.id
@@ -2326,7 +2326,7 @@ var Pontoon = (function (my) {
           self.updateFilterUI();
 
           // Update translation, including in place if possible
-          if (entity.body && (self.user.isTranslator || !entity.translation[pf].approved)) {
+          if (entity.body && (self.user.canTranslate() || !entity.translation[pf].approved)) {
             self.postMessage("SAVE", {
               translation: translation,
               id: entity.id
@@ -2399,7 +2399,7 @@ var Pontoon = (function (my) {
             var data = {
               type: "added",
               translation: {
-                approved: self.user.isTranslator,
+                approved: self.user.canTranslate(),
                 fuzzy: false,
                 string: translation
               }
@@ -2735,7 +2735,7 @@ var Pontoon = (function (my) {
      * Update save buttons based on user permissions and settings
      */
     updateSaveButtons: function () {
-      $('[id^="save"]').toggleClass('suggest', !this.user.isTranslator || this.user.forceSuggestions);
+      $('[id^="save"]').toggleClass('suggest', !this.user.canTranslate() || this.user.forceSuggestions);
     },
 
 
@@ -2744,7 +2744,7 @@ var Pontoon = (function (my) {
      */
     updateProfileMenu: function () {
       $('#profile .admin-current-project a').attr('href', '/admin/projects/' + this.project.slug + '/');
-      $('#profile .upload').toggle(this.state.paths && this.user.isTranslator && this.part !== 'all-resources');
+      $('#profile .upload').toggle(this.state.paths && this.user.canTranslate() && this.part !== 'all-resources');
       $('#profile .langpack')
         .toggle(this.project.langpack_url !== '')
         .find('a').attr('href', this.project.langpack_url.replace('{locale_code}', this.locale.code));
@@ -3188,13 +3188,6 @@ var Pontoon = (function (my) {
     createObject: function (advanced, projectWindow) {
       var self = this;
 
-      function isTranslator(translatedLocales) {
-        if (translatedLocales) {
-          return translatedLocales.indexOf(self.locale.code) > -1;
-        }
-        return false;
-      }
-
       this.app = {
         win: window,
         advanced: advanced,
@@ -3214,7 +3207,18 @@ var Pontoon = (function (my) {
 
       this.part = this.getSelectedPart();
       this.locale = self.getLocaleData();
-      this.user.isTranslator = isTranslator($('#server').data('user-translated-locales'));
+
+      this.user.canTranslate = function() {
+        var translatedLocales = $('#server').data('user-translated-locales') || [],
+            translatedProjects = $('#server').data('user-translated-projects') || {},
+            localeProject = self.locale.code + '-' + self.project.slug;
+
+        if (translatedProjects.hasOwnProperty(localeProject)) {
+           return translatedProjects[localeProject];
+        }
+
+        return $.inArray(self.locale.code, translatedLocales) !== -1;
+      };
     },
 
 

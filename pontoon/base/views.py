@@ -5,26 +5,23 @@ import logging
 import math
 import os
 import requests
-import xml.etree.ElementTree as ET
 import urllib
+import xml.etree.ElementTree as ET
 
 from bulk_update.helper import bulk_update
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
-from django.core.exceptions import ValidationError, ImproperlyConfigured
-from django.core.mail import EmailMessage
 from django.core.cache import cache
+from django.core.exceptions import ImproperlyConfigured
+from django.core.mail import EmailMessage
 from django.core.paginator import Paginator, EmptyPage
-from django.core.validators import validate_comma_separated_integer_list
 from django.db import transaction, DataError
 from django.db.models import Count, Q
-
 from django.http import (
     Http404,
     HttpResponse,
@@ -32,7 +29,6 @@ from django.http import (
     HttpResponseForbidden,
     JsonResponse,
 )
-
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
@@ -41,11 +37,10 @@ from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from guardian.decorators import permission_required_or_403
+from suds.client import Client, WebFault
 
 from pontoon.base import forms
 from pontoon.base import utils
-from pontoon.base.utils import require_AJAX
-
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
@@ -58,11 +53,9 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
     UserProfile,
 )
-
+from pontoon.base.utils import require_AJAX
 from pontoon.sync.models import SyncLog
 from pontoon.sync.tasks import sync_project
-
-from suds.client import Client, WebFault
 
 
 log = logging.getLogger('pontoon')
@@ -99,42 +92,48 @@ def locale(request, locale):
 @login_required(redirect_field_name='', login_url='/403')
 @permission_required_or_403('base.can_manage_locale', (Locale, 'code', 'locale'))
 @transaction.atomic
-def locale_manage(request, locale):
+def locale_permissions(request, locale):
     l = get_object_or_404(Locale, code__iexact=locale)
-
-    def update_group(group, name):
-        current = set(group.user_set.values_list("id", flat=True))
-        selected = request.POST[name]
-        new = set()
-
-        if selected:
-            try:
-                # TODO: Use ModelMultipleChoiceField
-                validate_comma_separated_integer_list(selected)
-                new = set(map(int, selected.split(',')))
-            except ValidationError as e:
-                log.error(e)
-                return HttpResponseBadRequest(e)
-
-        if current != new:
-            group.user_set = User.objects.filter(pk__in=new)
-            group.save()
+    project_locales = ProjectLocale.objects.filter(locale=l)
 
     if request.method == 'POST':
-        update_group(l.translators_group, 'translators')
-        update_group(l.managers_group, 'managers')
+        locale_form = forms.LocalePermsForm(request.POST, instance=l, prefix='general')
+        project_locale_form = forms.ProjectLocalePermsFormsSet(
+            request.POST,
+            prefix='project-locale',
+            queryset=project_locales,
+        )
+
+        if locale_form.is_valid() and project_locale_form.is_valid():
+            locale_form.save()
+            project_locale_form.save()
+
+        else:
+            errors = locale_form.errors
+            errors.update(project_locale_form.errors_dict)
+            return HttpResponseBadRequest(json.dumps(errors))
+
+    else:
+        project_locale_form = forms.ProjectLocalePermsFormsSet(
+            prefix='project-locale',
+            queryset=project_locales,
+        )
 
     managers = l.managers_group.user_set.all()
     translators = l.translators_group.user_set.exclude(pk__in=managers).all()
-    all_users = User.objects.exclude(pk__in=managers).exclude(pk__in=translators).exclude(email="")
-    contributors = User.translators.filter(translation__locale=l).distinct()
+    all_users = User.objects.exclude(pk__in=managers).exclude(pk__in=translators).exclude(email='')
 
-    return render(request, 'locale_manage.html', {
+    contributors = User.translators.filter(translation__locale=l).distinct()
+    locale_projects = l.projects_permissions
+    return render(request, 'locale_permissions.html', {
         'locale': l,
         'all_users': all_users,
         'contributors': contributors,
         'translators': translators,
         'managers': managers,
+        'locale_projects': locale_projects,
+        'project_locale_form': project_locale_form,
+        'all_projects_in_translation': all([x[6] for x in locale_projects])
     })
 
 
@@ -543,16 +542,24 @@ def batch_edit_translations(request):
 
     locale = get_object_or_404(Locale, code=l)
 
-    # Batch editing is only available to translators
-    if not request.user.has_perm('base.can_translate_locale', locale):
-        return HttpResponseForbidden(
-            "Forbidden: You don't have permission for batch editing"
-        )
-
     entities = (
         Entity.objects.filter(pk__in=entity_pks)
         .prefetch_resources_translations(locale)
     )
+
+    if not entities.exists():
+        return JsonResponse({'count': 0})
+
+
+    projects = Project.objects.filter(pk__in=entities.values_list('resource__project__pk', flat=True).distinct())
+
+    # Batch editing is only available to translators.
+    # Check if user has translate permissions for all of the projects in passed entities.
+    for project in projects:
+        if not request.user.can_translate(project=project, locale=locale):
+            return HttpResponseForbidden(
+                "Forbidden: You don't have permission for batch editing"
+            )
 
     translation_pks = set()
 
@@ -717,7 +724,7 @@ def unapprove_translation(request):
     translation = Translation.objects.get(pk=t)
 
     # Only privileged users or authors can un-approve translations
-    if not (request.user.has_perm('base.can_translate_locale', translation.locale)
+    if not (request.user.can_translate(project=translation.entity.resource.project, locale=translation.locale)
             or request.user == translation.user
             or translation.approved):
         return HttpResponseForbidden("Forbidden: You can't unapprove this translation.")
@@ -748,7 +755,7 @@ def delete_translation(request):
     translation = get_object_or_404(Translation, pk=t)
 
     # Non-privileged users can only delete own unapproved translations
-    if not request.user.has_perm('base.can_translate_locale', translation.locale):
+    if not request.user.can_translate(translation.locale, translation.entity.resource.project):
         if translation.user == request.user:
             if translation.approved is True:
                 return HttpResponseForbidden(
@@ -819,7 +826,7 @@ def update_translation(request):
 
     now = timezone.now()
     can_translate = (
-        request.user.has_perm('base.can_translate_locale', l)
+        request.user.can_translate(project=project, locale=l)
         and (not request.user.profile.force_suggestions or approve)
     )
     translations = Translation.objects.filter(
@@ -1244,7 +1251,9 @@ def upload(request):
         raise Http404
 
     locale = get_object_or_404(Locale, code=code)
-    if not request.user.has_perm('base.can_translate_locale', locale):
+    project = get_object_or_404(Project, slug=code)
+
+    if not request.user.can_translate(project=project, locale=locale):
         return HttpResponseForbidden("Forbidden: You don't have permission to upload files")
 
     form = forms.UploadFileForm(request.POST, request.FILES)
@@ -1382,7 +1391,7 @@ def heroku_setup(request):
     Site.objects.filter(pk=1).update(name=app_host, domain=app_host)
 
     Project.objects.filter(slug='pontoon-intro').update(
-        url='https://{}/intro/'.format(app_host)
+       url='https://{}/intro/'.format(app_host)
     )
 
     # Clear the cache to ensure that SITE_URL will be regenerated.

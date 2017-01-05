@@ -102,9 +102,14 @@ urlpatterns = [
         views.LocaleContributorsView.as_view(),
         name='pontoon.locale.contributors'),
 
-    # Manage team
+    # Team permissions
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/permissions/$',
+        views.locale_permissions,
+        name='pontoon.locale.permissions'),
+
+    # Legacy url for the locale management panel.
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/manage/$',
-        views.locale_manage,
+        RedirectView.as_view(url='/%(locale)s/permissions/', permanent=True),
         name='pontoon.locale.manage'),
 
     # AJAX: Request project to be added to locale

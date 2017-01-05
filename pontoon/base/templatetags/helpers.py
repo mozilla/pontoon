@@ -8,6 +8,7 @@ from django import template
 from django.contrib.humanize.templatetags import humanize
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse
+from django.db.models import QuerySet
 from django.utils.encoding import smart_str
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
@@ -27,7 +28,11 @@ class LazyObjectsJsonEncoder(json.JSONEncoder):
         if isinstance(obj, Promise):
             return force_text(obj)
 
-        return json.JSONDecoder.default(obj)
+        if isinstance(obj, QuerySet):
+            return list(map(str, obj))
+
+        return json.JSONEncoder.default(self, obj)
+
 
 @library.global_function
 def thisyear():
