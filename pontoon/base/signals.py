@@ -54,32 +54,39 @@ def project_deleted(sender, **kwargs):
             locale.aggregate_stats()
 
 
+def create_group(instance, group_name, perms, name_prefix):
+    """
+    Create all objects related to a group of users, e.g. translators, managers.
+    """
+    ct = ContentType.objects.get(app_label='base', model=instance.__class__.__name__.lower())
+    group, _ = Group.objects.get_or_create(name='{} {}'.format(name_prefix, group_name))
+
+    for perm_name in perms:
+        perm = Permission.objects.get(content_type=ct, codename=perm_name)
+        group.permissions.add(perm)
+
+        setattr(instance, '{}_group'.format(group_name), group)
+
+
+def assign_group_permissions(instance, group_name, perms):
+    """
+    Create group object permissions.
+    """
+    ct = ContentType.objects.get(app_label='base', model=instance.__class__.__name__.lower())
+
+    for perm_name in perms:
+        perm = Permission.objects.get(content_type=ct, codename=perm_name)
+        group = getattr(instance, '{}_group'.format(group_name))
+        GroupObjectPermission.objects.get_or_create(object_pk=instance.pk,
+                                                    content_type=ct,
+                                                    group=group,
+                                                    permission=perm)
+
+
 @receiver(pre_save, sender=Locale)
-def create_locale_translators_group(sender, **kwargs):
+def create_locale_permissions_groups(sender, **kwargs):
     """
-    Creates respective translators group in django's permission system.
-    Managers should be able to translate and manage locale.
-    """
-    instance = kwargs['instance']
-
-    if kwargs['raw'] or instance.translators_group is not None:
-        return
-
-    try:
-        locale_ct = ContentType.objects.get(app_label='base', model='locale')
-        locale_group, _ = Group.objects.get_or_create(name='{} translators'.format(instance.code))
-        can_translate = Permission.objects.get(content_type=locale_ct, codename='can_translate_locale')
-        locale_group.permissions.add(can_translate)
-        instance.translators_group = locale_group
-    except ObjectDoesNotExist as e:
-        errors.send_exception(e)
-
-
-@receiver(pre_save, sender=Locale)
-def create_locale_managers_group(sender, **kwargs):
-    """
-    Creates respective managers group in django's permission system.
-    Managers should be able to translate and manage locale.
+    Creates translators and managers groups for a given Locale.
     """
     instance = kwargs['instance']
 
@@ -87,20 +94,33 @@ def create_locale_managers_group(sender, **kwargs):
         return
 
     try:
-        locale_ct = ContentType.objects.get(app_label='base', model='locale')
-        locale_group, _ = Group.objects.get_or_create(name='{} managers'.format(instance.code))
-        can_translate = Permission.objects.get(content_type=locale_ct, codename='can_translate_locale')
-        can_manage = Permission.objects.get(content_type=locale_ct, codename='can_manage_locale')
-        locale_group.permissions.add(can_translate)
-        locale_group.permissions.add(can_manage)
-        instance.managers_group = locale_group
+        create_group(instance, 'translators', ['can_translate_locale'], '{} translators'.format(instance.code))
+        create_group(instance, 'managers', ['can_translate_locale', 'can_manage_locale'], '{} managers'.format(instance.code)) # noqa
+    except ObjectDoesNotExist as e:
+        errors.send_exception(e)
+
+
+@receiver(pre_save, sender=ProjectLocale)
+def create_project_locale_permissions_groups(sender, **kwargs):
+    """
+    Creates translators group for a given ProjectLocale.
+    """
+    instance = kwargs['instance']
+
+    if kwargs['raw'] or instance.translators_group is not None:
+        return
+
+    try:
+        create_group(instance, 'translators', ['can_translate_project_locale'], '{}/{} translators'.format(
+            instance.project.slug, instance.locale.code,
+        ))
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
 
 
 @receiver(post_save, sender=Locale)
-def assign_group_permissions(sender, **kwargs):
-    """"
+def assign_locale_group_permissions(sender, **kwargs):
+    """
     After creation of locale, we have to assign translation and management
     permissions to groups of translators and managers assigned to locale.
     """
@@ -110,24 +130,24 @@ def assign_group_permissions(sender, **kwargs):
     instance = kwargs['instance']
 
     try:
-        locale_ct = ContentType.objects.get(app_label='base', model='locale')
-        can_translate = Permission.objects.get(content_type=locale_ct, codename='can_translate_locale')
-        can_manage = Permission.objects.get(content_type=locale_ct, codename='can_manage_locale')
+        assign_group_permissions(instance, 'translators', ['can_translate_locale'])
+        assign_group_permissions(instance, 'managers', ['can_translate_locale', 'can_manage_locale'])
+    except ObjectDoesNotExist as e:
+        errors.send_exception(e)
 
-        GroupObjectPermission.objects.get_or_create(object_pk=instance.pk,
-            content_type=locale_ct,
-            group=instance.translators_group,
-            permission=can_translate)
 
-        GroupObjectPermission.objects.get_or_create(object_pk=instance.pk,
-            content_type=locale_ct,
-            group=instance.managers_group,
-            permission=can_translate)
+@receiver(post_save, sender=ProjectLocale)
+def assign_project_locale_group_permissions(sender, **kwargs):
+    """
+    Assign permissions group to a given ProjectLocale.
+    """
+    if kwargs['raw'] or not kwargs['created']:
+        return
 
-        GroupObjectPermission.objects.get_or_create(object_pk=instance.pk,
-            content_type=locale_ct,
-            group=instance.managers_group,
-            permission=can_manage)
+    instance = kwargs['instance']
+
+    try:
+        assign_group_permissions(instance, 'translators', ['can_translate_project_locale'])
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
 

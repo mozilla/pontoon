@@ -92,19 +92,27 @@ class UserTranslationsManager(models.Manager):
 
             return self._changed_translations_count(query)
 
+        def extract_locale(name):
+            """Extract locale code from group name."""
+            name = name.split(' ')[0]
+            if '/' in name:
+                name = name.split('/')[1]
+            return name
+
         def with_roles(self):
             """Add user roles."""
-            managers = {}
+            managers = defaultdict(set)
             manager_groups = Group.objects.filter(name__endswith='managers').prefetch_related('user_set')
+
             for group in manager_groups:
                 for user in group.user_set.all():
-                    managers.setdefault(user, []).append(group.name.split(' ')[0])
+                    managers[user].add(extract_locale(group.name))
 
-            translators = {}
+            translators = defaultdict(set)
             translator_groups = Group.objects.filter(name__endswith='translators').prefetch_related('user_set')
             for group in translator_groups:
                 for user in group.user_set.all():
-                    translators.setdefault(user, []).append(group.name.split(' ')[0])
+                    translators[user].add(extract_locale(group.name))
 
             for contributor in self:
                 contributor.user_role = contributor.role(managers, translators)
@@ -217,7 +225,30 @@ def user_translated_locales(self):
     locales = get_objects_for_user(
         self, 'base.can_translate_locale', accept_global_perms=False)
 
-    return [locale.code for locale in locales]
+    return locales.values_list('code', flat=True)
+
+
+@property
+def user_translated_projects(self):
+    """
+    Returns a map of permission for every user
+    :param self:
+    :return:
+    """
+    user_project_locales = (
+        get_objects_for_user(self, 'base.can_translate_project_locale', accept_global_perms=False)
+    ).values_list('pk', flat=True)
+
+    project_locales = (
+        ProjectLocale.objects.filter(
+            has_custom_translators=True
+        ).values_list('pk', 'locale__code', 'project__slug')
+    )
+    permission_map = {
+        '{}-{}'.format(locale, project): (pk in user_project_locales)
+        for pk, locale, project in project_locales
+    }
+    return permission_map
 
 
 @property
@@ -225,7 +256,7 @@ def user_managed_locales(self):
     locales = get_objects_for_user(
         self, 'base.can_manage_locale', accept_global_perms=False)
 
-    return [locale.code for locale in locales]
+    return locales.values_list('code', flat=True)
 
 
 def user_role(self, managers=None, translators=None):
@@ -273,6 +304,16 @@ def contributed_translations(self):
     return translations
 
 
+def can_translate(self, locale, project):
+    """Check if user has suitable permissions to translate in given locale or project/locale."""
+    project_locale = ProjectLocale.objects.get(project=project, locale=locale)
+
+    if project_locale.has_custom_translators:
+        return self.has_perm('base.can_translate_project_locale', project_locale)
+
+    return self.has_perm('base.can_translate_locale', locale)
+
+
 User.add_to_class('profile_url', user_profile_url)
 User.add_to_class('gravatar_url', user_gravatar_url)
 User.add_to_class('name_or_email', user_name_or_email)
@@ -280,12 +321,14 @@ User.add_to_class('display_name', user_display_name)
 User.add_to_class('display_name_and_email', user_display_name_and_email)
 User.add_to_class('display_name_or_blank', user_display_name_or_blank)
 User.add_to_class('translated_locales', user_translated_locales)
+User.add_to_class('translated_projects', user_translated_projects)
 User.add_to_class('managed_locales', user_managed_locales)
 User.add_to_class('role', user_role)
 User.add_to_class('locale_role', user_locale_role)
 User.add_to_class('translators', UserTranslationsManager())
 User.add_to_class('objects', UserCustomManager.from_queryset(UserQuerySet)())
 User.add_to_class('contributed_translations', contributed_translations)
+User.add_to_class('can_translate', can_translate)
 
 
 class UserProfile(models.Model):
@@ -389,8 +432,8 @@ class Locale(AggregatedStats):
         """
     )
 
-    # Locale contains references to user groups who translate or manage them.
-    # Groups also store respective permissions for users.
+    # Locale contains references to user groups that translate or manage them.
+    # Groups store respective permissions for users.
     translators_group = models.ForeignKey(Group, related_name='translated_locales', null=True,
         on_delete=models.SET_NULL)
     managers_group = models.ForeignKey(Group, related_name='managed_locales', null=True,
@@ -471,6 +514,94 @@ class Locale(AggregatedStats):
     @property
     def nplurals(self):
         return len(self.cldr_plurals_list())
+
+    @property
+    def projects_permissions(self):
+        """
+        List of tuples that contain informations required by the locale permissions view.
+
+        A row contains:
+            id  - id of project locale
+            slug - slug of the project
+            name - name of the project
+            all_users - (id, first_name, email) users that aren't translators of given project locale.
+            translators - (id, first_name, email) translators assigned to a project locale.
+            contributors - (id, first_name, email) people who contributed for a project in current locale.
+            has_custom_translators - Flag if locale has a translators group for the project.
+        """
+        locale_projects = []
+
+        def create_users_map(qs, keyfield):
+            """
+            Creates a map from query set
+            """
+            user_map = defaultdict(list)
+            for row in qs:
+                key = row.pop(keyfield)
+                user_map[key].append(row)
+            return user_map
+
+        project_locales = list(
+            self.project_locale.available()
+                .prefetch_related('project', 'translators_group')
+                .order_by('project__name')
+                .values(
+                    'id',
+                    'project__pk',
+                    'project__name',
+                    'project__slug',
+                    'translators_group__pk',
+                    'has_custom_translators'
+                )
+        )
+
+        projects_translators = create_users_map(
+            User.objects
+                .filter(groups__pk__in=[project_locale['translators_group__pk'] for project_locale in project_locales])
+                .exclude(email='')
+                .prefetch_related('groups')
+                .values('id', 'first_name', 'email', 'groups__pk')
+                .distinct(),
+            'groups__pk'
+        )
+
+        projects_contributors = create_users_map(
+            User.objects
+                .filter(
+                    translation__locale=self,
+                    translation__entity__resource__project__pk__in=[project_locale['project__pk'] for project_locale in project_locales]
+                )
+                .exclude(email='')
+                .prefetch_related('translation__entity__resource__project')
+                .values('id', 'first_name', 'email', 'translation__entity__resource__project__pk')
+                .distinct(),
+            'translation__entity__resource__project__pk'
+        )
+
+        projects_all_users = defaultdict(set)
+
+        for project_locale in project_locales:
+            projects_all_users[project_locale['translators_group__pk']] = list(
+                User.objects
+                    .exclude(email='')
+                    .exclude(groups__projectlocales__pk=project_locale['id'])
+                    .values('id', 'first_name', 'email')
+                    .distinct()
+            )
+
+        for project_locale in project_locales:
+            group_pk = project_locale['translators_group__pk']
+            locale_projects.append((
+                project_locale['id'],
+                project_locale['project__slug'],
+                project_locale['project__name'],
+                projects_all_users[group_pk],
+                projects_translators[group_pk],
+                projects_contributors[project_locale['project__pk']],
+                project_locale['has_custom_translators']
+            ))
+
+        return locale_projects
 
     def available_projects_list(self):
         """Get a list of available project slugs."""
@@ -824,6 +955,14 @@ class Project(AggregatedStats):
             return paths
 
 
+class ProjectLocaleQuerySet(models.QuerySet):
+    def available(self):
+        """
+        Available project locales belong to available projects.
+        """
+        return self.filter(project__disabled=False, project__resources__isnull=False).distinct()
+
+
 class ProjectLocale(AggregatedStats):
     """Link between a project and a locale that is active for it."""
     project = models.ForeignKey(Project, related_name='project_locale')
@@ -839,8 +978,27 @@ class ProjectLocale(AggregatedStats):
         on_delete=models.SET_NULL
     )
 
+    # ProjectLocale contains references to user groups that translate them.
+    # Groups store respective permissions for users.
+    translators_group = models.ForeignKey(
+        Group,
+        related_name='projectlocales',
+        null=True,
+        on_delete=models.SET_NULL
+    )
+
+    # Defines if locale has a translators group for the specific project.
+    has_custom_translators = models.BooleanField(
+        default=False,
+    )
+
+    objects = ProjectLocaleQuerySet.as_manager()
+
     class Meta:
         unique_together = ('project', 'locale')
+        permissions = (
+            ('can_translate_project_locale', 'Can add translations'),
+        )
 
     @classmethod
     def get_latest_activity(cls, self, extra=None):
