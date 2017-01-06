@@ -1744,6 +1744,11 @@ var Pontoon = (function (my) {
           return;
         }
 
+        // Ignore if selecting text
+        if (window.getSelection().toString()) {
+          return;
+        }
+
         var translation = $(this).find('.translation').text(),
             source = translation;
 
