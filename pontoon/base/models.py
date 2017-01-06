@@ -542,7 +542,7 @@ class Locale(AggregatedStats):
             return user_map
 
         project_locales = list(
-            self.project_locale.all()
+            self.project_locale.available()
                 .prefetch_related('project', 'translators_group')
                 .order_by('project__name')
                 .values(
@@ -955,6 +955,14 @@ class Project(AggregatedStats):
             return paths
 
 
+class ProjectLocaleQuerySet(models.QuerySet):
+    def available(self):
+        """
+        Available project locales belong to available projects.
+        """
+        return self.filter(project__disabled=False, project__resources__isnull=False).distinct()
+
+
 class ProjectLocale(AggregatedStats):
     """Link between a project and a locale that is active for it."""
     project = models.ForeignKey(Project, related_name='project_locale')
@@ -983,6 +991,8 @@ class ProjectLocale(AggregatedStats):
     has_custom_translators = models.BooleanField(
         default=False,
     )
+
+    objects = ProjectLocaleQuerySet.as_manager()
 
     class Meta:
         unique_together = ('project', 'locale')
