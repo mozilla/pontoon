@@ -1251,7 +1251,7 @@ def upload(request):
         raise Http404
 
     locale = get_object_or_404(Locale, code=code)
-    project = get_object_or_404(Project, slug=code)
+    project = get_object_or_404(Project, slug=slug)
 
     if not request.user.can_translate(project=project, locale=locale):
         return HttpResponseForbidden("Forbidden: You don't have permission to upload files")
