@@ -94,7 +94,7 @@ def locale(request, locale):
 @transaction.atomic
 def locale_permissions(request, locale):
     l = get_object_or_404(Locale, code__iexact=locale)
-    project_locales = ProjectLocale.objects.filter(locale=l)
+    project_locales = l.project_locale.available()
 
     if request.method == 'POST':
         locale_form = forms.LocalePermsForm(request.POST, instance=l, prefix='general')
