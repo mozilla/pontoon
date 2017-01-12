@@ -79,7 +79,25 @@ var Pontoon = (function (my) {
      * string String that has to be displayed as is instead of rendered
      */
     doNotRender: function (string) {
-      return $('<div/>').text(string).html()
+      return $('<div/>').text(string).html();
+    },
+
+    /*
+     * Markup placeables
+     */
+    markPlaceables: function (string) {
+      function markup(string, regex, title) {
+        return string.replace(regex, '<mark class="placeable" title="' + title + '">$&</mark>');
+      }
+
+      string = this.doNotRender(string);
+
+      // Pontoon.doNotRender() replaces \u00A0 with &nbsp;
+      string = markup(string, /&nbsp;/gi, 'Non-breaking space');
+      string = markup(string, /[\u202F]/gi, 'Narrow non-breaking space');
+      string = markup(string, /[\u2009]/gi, 'Thin space');
+
+      return string;
     },
 
     /*
@@ -156,7 +174,7 @@ var Pontoon = (function (my) {
             '</header>' +
             '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
             '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
-              self.doNotRender(data.translation) +
+              self.markPlaceables(data.translation) +
             '</p>' +
           '</li>');
           ul.append(li);
