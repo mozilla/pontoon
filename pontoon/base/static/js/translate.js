@@ -36,7 +36,7 @@ var Pontoon = (function (my) {
         '<p class="string-wrapper">' +
           '<span class="source-string">' + source_string + '</span>' +
           '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
-            self.doNotRender(entity.translation[0].string || '') +
+            self.markPlaceables(entity.translation[0].string || '') +
           '</span>' +
         '</p>' +
         '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
@@ -130,10 +130,10 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function() {
-              list.append('<li class="suggestion" title="Copy Into Translation (Tab)">' +
+              list.append('<li class="suggestion" title="Copy Into Translation (Tab)" data-clipboard-text="' + self.doNotRender(this.string) + '">' +
                 '<header>' + this.locale__name + '<span class="stress">' + this.locale__code + '</span></header>' +
                 '<p class="translation" dir="auto" lang="' + this.locale__code + '">' +
-                  self.doNotRender(this.string) +
+                  self.markPlaceables(this.string) +
                 '</p>' +
               '</li>');
 
@@ -248,7 +248,7 @@ var Pontoon = (function (my) {
           if (data.length) {
             $.each(data, function() {
               list.append(
-                '<li data-id="' + this.id + '" class="suggestion ' +
+                '<li data-id="' + this.id + '" data-clipboard-text="' + self.doNotRender(this.translation) + '" class="suggestion ' +
                 (this.approved ? 'translated' : this.fuzzy ? 'fuzzy' : 'suggested') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
@@ -268,7 +268,7 @@ var Pontoon = (function (my) {
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
-                    self.doNotRender(this.translation) +
+                    self.markPlaceables(this.translation) +
                   '</p>' +
                 '</li>');
             });
@@ -1749,8 +1749,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var translation = $(this).find('.translation').text(),
-            source = translation;
+        var source = $(this).data('clipboard-text');
 
         $('#translation').val(source).focus();
         self.moveCursorToBeginning();
@@ -2191,7 +2190,7 @@ var Pontoon = (function (my) {
         .removeClass('translated suggested fuzzy partial')
         .addClass(status)
         .find('.translation-string')
-          .html(self.doNotRender(translation || ''));
+          .html(self.markPlaceables(translation || ''));
 
       self.updateProgress(entity);
     },
