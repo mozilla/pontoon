@@ -101,6 +101,37 @@ var Pontoon = (function (my) {
     },
 
     /*
+     * Mark diff between the string and the reference string
+     */
+    diff: function (reference, string) {
+      var self = this,
+          diff = diff_main(reference, string),
+          output = '';
+
+      $.each(diff, function() {
+        var type = this[0],
+            slice = this[1];
+
+        // Inserted
+        if (type === 1) {
+          output += '<ins>' + self.markPlaceables(slice) + '</ins>';
+        }
+
+        // Deleted
+        if (type === -1) {
+          output += '<del>' + self.markPlaceables(slice) + '</del>';
+        }
+
+        // Equal
+        if (type === 0) {
+          output += self.markPlaceables(slice);
+        }
+      });
+
+      return output;
+    },
+
+    /*
      * Linkifies any traces of URLs present in a given string.
      *
      * Matches the URL Regex and parses the required matches.

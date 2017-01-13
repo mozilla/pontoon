@@ -357,6 +357,7 @@ PIPELINE_JS = {
             'js/lib/jquery-ui-timepicker-addon.js',
             'js/lib/jquery.mark.js',
             'js/lib/highstock.js',
+            'js/lib/diff.js',
             'js/translate.js',
             'js/request_projects.js',
         ),
