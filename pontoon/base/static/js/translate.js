@@ -130,10 +130,13 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function() {
-              list.append('<li class="suggestion" title="Copy Into Translation (Tab)" data-clipboard-text="' + self.doNotRender(this.string) + '">' +
+              list.append('<li class="suggestion" title="Copy Into Translation (Tab)">' +
                 '<header>' + this.locale__name + '<span class="stress">' + this.locale__code + '</span></header>' +
                 '<p class="translation" dir="auto" lang="' + this.locale__code + '">' +
                   self.markPlaceables(this.string) +
+                '</p>' +
+                '<p class="translation-raw">' +
+                  self.doNotRender(this.string) +
                 '</p>' +
               '</li>');
 
@@ -248,7 +251,7 @@ var Pontoon = (function (my) {
           if (data.length) {
             $.each(data, function() {
               list.append(
-                '<li data-id="' + this.id + '" data-clipboard-text="' + self.doNotRender(this.translation) + '" class="suggestion ' +
+                '<li data-id="' + this.id + '" class="suggestion ' +
                 (this.approved ? 'translated' : this.fuzzy ? 'fuzzy' : 'suggested') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
@@ -269,6 +272,9 @@ var Pontoon = (function (my) {
                   '</header>' +
                   '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
                     self.markPlaceables(this.translation) +
+                  '</p>' +
+                  '<p class="translation-raw">' +
+                    self.doNotRender(this.translation) +
                   '</p>' +
                 '</li>');
             });
@@ -1749,7 +1755,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var source = $(this).data('clipboard-text');
+        var source = $(this).find('.translation-raw').text();
 
         $('#translation').val(source).focus();
         self.moveCursorToBeginning();

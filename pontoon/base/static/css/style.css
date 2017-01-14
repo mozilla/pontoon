@@ -1184,6 +1184,10 @@ body > .container {
   text-align: left;
 }
 
+#helpers > section ul li > p.translation-raw {
+  display: none;
+}
+
 #helpers > section ul li.disabled p {
   color: #AAAAAA;
   font-style: italic;

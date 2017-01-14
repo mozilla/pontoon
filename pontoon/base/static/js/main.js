@@ -176,6 +176,9 @@ var Pontoon = (function (my) {
             '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
               self.markPlaceables(data.translation) +
             '</p>' +
+            '<p class="translation-raw">' +
+              self.doNotRender(data.translation) +
+            '</p>' +
           '</li>');
           ul.append(li);
           sourcesMap[data.original + data.translation] = li.find('.sources');
