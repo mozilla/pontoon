@@ -249,7 +249,7 @@ var Pontoon = (function (my) {
         },
         success: function(data) {
           if (data.length) {
-            $.each(data, function() {
+            $.each(data, function(i) {
               list.append(
                 '<li data-id="' + this.id + '" class="suggestion ' +
                 (this.approved ? 'translated' : this.fuzzy ? 'fuzzy' : 'suggested') +
@@ -271,7 +271,7 @@ var Pontoon = (function (my) {
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
-                    self.markPlaceables(this.translation) +
+                    ((i > 0) ? self.diff(data[0].translation, this.translation) : self.markPlaceables(this.translation)) +
                   '</p>' +
                   '<p class="translation-raw">' +
                     self.doNotRender(this.translation) +

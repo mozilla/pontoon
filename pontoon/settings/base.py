@@ -333,9 +333,9 @@ PIPELINE_JS = {
     },
     'main': {
         'source_filenames': (
-            'js/jquery-1.11.1.min.js',
+            'js/lib/jquery-1.11.1.min.js',
             'js/main.js',
-            'js/jquery.timeago.js',
+            'js/lib/jquery.timeago.js',
         ),
         'output_filename': 'js/main.min.js',
     },
@@ -353,10 +353,11 @@ PIPELINE_JS = {
     },
     'translate': {
         'source_filenames': (
-            'js/jquery-ui.js',
-            'js/jquery-ui-timepicker-addon.js',
-            'js/jquery.mark.js',
-            'js/highstock.js',
+            'js/lib/jquery-ui.js',
+            'js/lib/jquery-ui-timepicker-addon.js',
+            'js/lib/jquery.mark.js',
+            'js/lib/highstock.js',
+            'js/lib/diff.js',
             'js/translate.js',
             'js/request_projects.js',
         ),
@@ -370,14 +371,14 @@ PIPELINE_JS = {
     },
     'search': {
         'source_filenames': (
-            'js/clipboard.min.js',
+            'js/lib/clipboard.min.js',
             'js/search.js',
         ),
         'output_filename': 'js/search.min.js',
     },
     'multiple_locale_selector': {
         'source_filenames': (
-            'js/jquery-ui.js',
+            'js/lib/jquery-ui.js',
             'js/multiple_locale_selector.js',
         ),
         'output_filename': 'js/multiple_locale_selector.min.js',

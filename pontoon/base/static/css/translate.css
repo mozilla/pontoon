@@ -35,9 +35,11 @@ mark.placeable {
 }
 
 mark.search {
-  background: #FED271;
+  color: #FFA10F;
   font-weight: normal;
   font-style: inherit;
+  background: #676054;
+  border-radius: 2px;
 }
 
 #source {

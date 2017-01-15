@@ -1188,6 +1188,28 @@ body > .container {
   display: none;
 }
 
+#helpers > section ul li > p ins,
+#helpers > section ul li > p del {
+  border-radius: 2px;
+}
+
+#helpers > section ul li > p ins {
+  background: #4B6259;
+  color: #7BC876;
+}
+
+#helpers > section ul li > p del {
+  background: #674B54;
+  color: #FE7777;
+}
+
+#helpers > section ul li > p ins mark,
+#helpers > section ul li > p del mark {
+  background: transparent;
+  border-color: transparent;
+  margin: 0;
+}
+
 #helpers > section ul li.disabled p {
   color: #AAAAAA;
   font-style: italic;
