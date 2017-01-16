@@ -41,7 +41,7 @@ urlpatterns = [
     # Robots.txt
     url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
 
-    # Robots.txt
+    # contribute.json
     url(r'^contribute.json$', TemplateView.as_view(template_name='contribute.json', content_type='text/plain')),
 
     # Favicon
