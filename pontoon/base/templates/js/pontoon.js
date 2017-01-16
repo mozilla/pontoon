@@ -70,10 +70,10 @@
         entity.body = true;
         $(entity.node).each(function() {
           this[0].entity = entity; // Store entity reference to the node
- 
+
           this.prop('lang', Pontoon.locale.code);
           this.prop('dir', 'auto');
- 
+
           // Show/hide toolbar on node hover
           if (!this.handlersAttached) {
             this.hover(function () {
@@ -651,6 +651,7 @@
       if (!jqueryAppended && document.body) {
         var script = document.createElement('script');
         script.src = '//pontoon.mozilla.org/static/js/jquery-1.11.1.min.js';
+        script.integrity = 'sha384-UM1JrZIpBwVf5jj9dTKVvGiiZPZTLVoq4sfdvIe9SBumsvCuv6AHDNtEiIb5h1kU';
         document.body.appendChild(script);
 
         jqueryAppended = true;
