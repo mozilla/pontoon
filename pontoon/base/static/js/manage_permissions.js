@@ -102,7 +102,7 @@ $(function() {
 
     // Update menu (must be above Copying Translators)
     $(this).addClass('hidden');
-    if ($('#project-selector .menu li:visible').length === 0) {
+    if ($('#project-selector .menu li:not(".hidden")').length === 0) {
       $('#project-selector').addClass('hidden');
     }
 
