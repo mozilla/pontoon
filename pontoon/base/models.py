@@ -306,8 +306,12 @@ def contributed_translations(self):
 
 def can_translate(self, locale, project):
     """Check if user has suitable permissions to translate in given locale or project/locale."""
-    project_locale = ProjectLocale.objects.get(project=project, locale=locale)
 
+    # Locale managers can translate all projects
+    if locale.code in self.managed_locales:
+        return True
+
+    project_locale = ProjectLocale.objects.get(project=project, locale=locale)
     if project_locale.has_custom_translators:
         return self.has_perm('base.can_translate_project_locale', project_locale)
 
