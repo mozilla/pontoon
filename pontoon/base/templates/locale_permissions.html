@@ -7,7 +7,7 @@
     {{ MultipleChoice.select(
         'available',
         choices=all_users,
-        label='<a class="all active" href="#">all users</a> | <a class="contributors" href="#">team contributors</a>',
+        label='<a class="contributors active" href="#">team contributors</a> | <a class="all" href="#">all users</a>',
         description="Click on user's email address to move it to the group pointed to by the arrow.",
         extra=contributors
     ) }}
