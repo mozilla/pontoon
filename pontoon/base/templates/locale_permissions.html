@@ -3,7 +3,7 @@
 {% block title %}{{ super() }} &middot; Permissions {% endblock %}
 {% block class %}locale-permissions{% endblock %}
 
-{% macro user_selector(all_users, contributors) %}
+{% macro user_selector(all_users) %}
     {{ MultipleChoice.select(
         'available',
         choices=all_users,
@@ -13,7 +13,7 @@
     ) }}
 {% endmacro %}
 
-{% macro translator_selector(description, translators, contributors) %}
+{% macro translator_selector(description, translators) %}
     {{ MultipleChoice.select(
         'translators',
         choices=translators,
@@ -40,14 +40,14 @@
         <div class="permissions-groups general clearfix">
             <h3><span class="title">General</span> <span class="small">(default team permissions for all projects)</span></h3>
             <div class="clearfix">
-                {{ user_selector(all_users, contributors) }}
-                {{ translator_selector('Translators can submit and approve translations in all projects, unless overriden below.', translators, contributors) }}
+                {{ user_selector(all_users) }}
+                {{ translator_selector('Translators can submit and approve translations in all projects, unless overriden below.', translators) }}
                 {{ manager_selector() }}
             </div>
         </div>
 
         {{ project_locale_form.management_form }}
-        {% for pk, slug, name, all_users, translators, contributors, has_custom_translators in locale_projects %}
+        {% for pk, slug, name, all_users, translators, has_custom_translators in locale_projects %}
             <div class="permissions-groups project-locale clearfix{% if not has_custom_translators %} hidden{% endif %}"
                  data-slug="{{ slug }}"
                  data-index="{{ loop.index0 }}">
@@ -62,8 +62,8 @@
                     <a href="#" class="remove-project" title="Remove custom project permissions"><span class="fa fa-trash"></span>Remove</a>
                 </h3>
                 <div class="clearfix">
-                    {{ user_selector(all_users, contributors) }}
-                    {{ translator_selector('Add or remove Translators to override default team translators set in the General section.', translators, contributors) }}
+                    {{ user_selector(all_users) }}
+                    {{ translator_selector('Add or remove Translators to override default team translators set in the General section.', translators) }}
                 </div>
             </div>
 
@@ -78,7 +78,7 @@
                     <input autocomplete="off" autofocus="" type="search">
                 </div>
                 <ul>
-                    {% for pk, slug, name, all_users, translators, contributors, has_custom_translators in locale_projects %}
+                    {% for pk, slug, name, all_users, translators, has_custom_translators in locale_projects %}
                         <li data-slug="{{ slug }}" data-id="{{ pk }}" class="{% if has_custom_translators %}hidden{% endif %}">{{ name }}</li>
                     {% endfor %}
                 </ul>
