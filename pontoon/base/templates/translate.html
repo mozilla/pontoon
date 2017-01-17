@@ -287,7 +287,7 @@
             <div class="menu">
               <ul>
                 {{ Checkbox.checkbox('Quality Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks) }}
-                {% if user.translated_locales %}
+                {% if user.can_translate(project=project, locale=locale) %}
                 {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions) }}
                 {% endif %}
                 <li class="horizontal-separator"></li>
