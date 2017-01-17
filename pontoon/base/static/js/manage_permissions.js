@@ -91,6 +91,11 @@ $(function() {
     $('#project-selector .menu li').removeClass('hover');
   });
 
+  // Focus project selector search field
+  $('#project-selector .selector').click(function() {
+    $('#project-selector .search-wrapper input').focus();
+  });
+
   // Add project
   $('#project-selector .menu li').click(function() {
     var slug = $(this).data('slug'),
