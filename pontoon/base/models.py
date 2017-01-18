@@ -569,19 +569,6 @@ class Locale(AggregatedStats):
             'groups__pk'
         )
 
-        projects_contributors = create_users_map(
-            User.objects
-                .filter(
-                    translation__locale=self,
-                    translation__entity__resource__project__pk__in=[project_locale['project__pk'] for project_locale in project_locales]
-                )
-                .exclude(email='')
-                .prefetch_related('translation__entity__resource__project')
-                .values('id', 'first_name', 'email', 'translation__entity__resource__project__pk')
-                .distinct(),
-            'translation__entity__resource__project__pk'
-        )
-
         projects_all_users = defaultdict(set)
 
         for project_locale in project_locales:
@@ -601,7 +588,6 @@ class Locale(AggregatedStats):
                 project_locale['project__name'],
                 projects_all_users[group_pk],
                 projects_translators[group_pk],
-                projects_contributors[project_locale['project__pk']],
                 project_locale['has_custom_translators']
             ))
 

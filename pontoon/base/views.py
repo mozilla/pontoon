@@ -123,7 +123,7 @@ def locale_permissions(request, locale):
     translators = l.translators_group.user_set.exclude(pk__in=managers).all()
     all_users = User.objects.exclude(pk__in=managers).exclude(pk__in=translators).exclude(email='')
 
-    contributors = User.translators.filter(translation__locale=l).distinct()
+    contributors = User.translators.filter(translation__locale=l).values_list('email', flat=True).distinct()
     locale_projects = l.projects_permissions
     return render(request, 'locale_permissions.html', {
         'locale': l,
@@ -133,7 +133,7 @@ def locale_permissions(request, locale):
         'managers': managers,
         'locale_projects': locale_projects,
         'project_locale_form': project_locale_form,
-        'all_projects_in_translation': all([x[6] for x in locale_projects])
+        'all_projects_in_translation': all([x[5] for x in locale_projects])
     })
 
 
