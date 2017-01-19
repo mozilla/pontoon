@@ -1708,6 +1708,14 @@ p#sign-in-required > a#sidebar-signin {
   float: left;
 }
 
+#helpers > section ul li > header .toggle-diff {
+  margin-right: 6px;
+}
+
+#helpers > section ul li > header .toggle-diff.active {
+  color: #7BC876;
+}
+
 #helpers > section ul li > header .toolbar {
   float: right;
 }

@@ -105,8 +105,11 @@ var Pontoon = (function (my) {
      */
     diff: function (reference, string) {
       var self = this,
-          diff = diff_main(reference, string),
+          diff_obj = new diff_match_patch(),
+          diff = diff_obj.diff_main(reference, string),
           output = '';
+      diff_obj.diff_cleanupSemantic(diff);
+      diff_obj.diff_cleanupEfficiency(diff);
 
       $.each(diff, function() {
         var type = this[0],
