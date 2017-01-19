@@ -4,13 +4,13 @@ Pontoon enables localizers to translate web apps and web sites in place with
 context and spatial limitations right in front of them. A full list of extracted
 strings is also available, to help with strings that are hard to reach, e.g.
 error messages and the `<title>` tag.
-[Localizer Docs](https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon).
+[Localizer Docs](https://developer.mozilla.org/docs/Mozilla/Localization/Localizing_with_Pontoon).
 
 To enable localization of your site with Pontoon, include a script to overcome
 cross frame scripting, and Pontoon will autodetect strings. Or, to make the best
 out of Pontoon, fully prepare your site with hooks that will mark strings for
 localization and include all the neccessary tags.
-[Developer Docs](https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla).
+[Developer Docs](https://developer.mozilla.org/docs/Mozilla/Implementing_Pontoon_in_a_Mozilla_website).
 
 For quick and easy deployment without leaving your web browser, click this button:
 

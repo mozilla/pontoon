@@ -8,7 +8,7 @@ A `langpacks` folder is required on the same directory level as this script,
 with the following contents:
 * `mozilla-aurora`: SOURCE_REPOSITORY checkout
 * `mozilla-aurora/.mozconfig`: file set to reflect this folder structure, see
-  https://developer.mozilla.org/en-US/docs/Mozilla/Creating_a_language_pack#Pre-build_steps
+  https://developer.mozilla.org/docs/Mozilla/Creating_a_language_pack#Pre-build_steps
 * `mozilla-aurora/langpacks/l10n`: contains L10N_REPOSITORIES checkouts
 * `mozilla-aurora/langpacks/build`: empty folder to contain build
 * `pontoon-langpacks`: TARGET_REPOSITORY checkout (you need write access)
