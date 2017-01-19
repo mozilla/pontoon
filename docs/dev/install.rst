@@ -62,7 +62,7 @@ Installation
    .. code-block:: bash
 
       sudo -u postgres psql
-      CREATE USER pontoon WITH PASSWORD 'asdf';
+      CREATE USER pontoon WITH PASSWORD 'asdf' SUPERUSER;
       CREATE DATABASE pontoon;
       GRANT ALL PRIVILEGES ON DATABASE pontoon to pontoon;
       \q
@@ -148,7 +148,7 @@ The site should be available at http://localhost:8000.
 
 .. _fork: http://help.github.com/fork-a-repo/
 .. _issue: https://bugs.python.org/issue18378
-.. _request: https://developer.mozilla.org/en-US/docs/Mozilla/Tech/Firefox_Accounts/Introduction
+.. _request: https://developer.mozilla.org/docs/Mozilla/Tech/Firefox_Accounts/Introduction
 
 Extra settings
 --------------

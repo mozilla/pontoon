@@ -44,7 +44,7 @@
         <li><a href="{% url 'pontoon.contributors' %}">Contributors</a></li>
         <li><a href="{% url 'pontoon.search' %}">Terminology</a></li>
         <li><a href="{% url 'pontoon.terms' %}">Terms</a></li>
-        <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon" target="_blank">Help</a></li>
+        <li><a href="https://developer.mozilla.org/docs/Mozilla/Localization/Localizing_with_Pontoon" target="_blank">Help</a></li>
         <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{% url "pontoon.admin" %}">Admin</a></li>
         {% if settings.DJANGO_LOGIN %}
             {% if not user.is_authenticated %}
