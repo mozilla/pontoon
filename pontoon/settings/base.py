@@ -548,7 +548,6 @@ CSP_SCRIPT_SRC = (
     "'sha256-x3niK4UU+vG6EGT2NK2rwi2j/etQodJd840oRpEnqd4='",
     "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
     "https://ssl.google-analytics.com/ga.js",
-    "https://pontoon.mozilla.org/static/js/jquery-1.11.1.min.js"
 )
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'",)
 
