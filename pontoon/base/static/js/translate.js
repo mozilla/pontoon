@@ -265,6 +265,7 @@ var Pontoon = (function (my) {
                       '<time class="stress" datetime="' + this.date_iso + '">' + this.date + ' UTC</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
+                      ((i > 0) ? '<a href="#" class="toggle-diff" data-alternative-text="Hide diff" title="Show diff against the currently active translation">Show diff</a>' : '') +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
                       ((self.user.id && (self.user.id === this.uid) || self.user.canTranslate()) ? '<button class="delete fa" title="Delete"></button>' : '') +
@@ -1911,6 +1912,16 @@ var Pontoon = (function (my) {
             self.endLoader('Oops, something went wrong.', 'error');
           }
         });
+      });
+
+      // Toggle suggestion diff
+      $('#helpers .history').on('click', '.toggle-diff', function (e) {
+        e.preventDefault();
+
+        var oldText = $(this).html();
+        $(this).html($(this).data('alternative-text'));
+        $(this).data('alternative-text', oldText);
+        $(this).parents('li').find('p').toggle();
       });
     },
 
