@@ -482,10 +482,11 @@ $(function() {
   }
 
   // Sign in button action
-  $('#fxa-sign-in, #sidebar-signin').on('click', function(ev) {
+  $('#fxa-sign-in, #standalone-signin a, #sidebar-signin').on('click', function(ev) {
     var $this = $(this);
-
-    $this.prop('href', $this.prop('href') + '&next=' + getRedirectUrl());
+    var loginUrl = $this.prop('href'),
+        startSign = loginUrl.match(/\?/) ? '&': '?';
+    $this.prop('href', loginUrl + startSign + 'next=' + getRedirectUrl());
   });
 
   // Sign out button action

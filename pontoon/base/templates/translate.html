@@ -130,7 +130,7 @@
               {% if user.is_authenticated() %}
                 <li class="standalone-sign-out"><a href="{{ url('standalone_logout') }}"><i class="fa fa-sign-out fa-fw"></i> Sign Out</a></li>
               {% else %}
-                <li class="standalone-sign-in"><a id="standalone-sign-in" href="{{ url('standalone_login') }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+                <li class="standalone-signin"><a href="{{ url('standalone_login') }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
               {% endif %}
             {% else %}
               {% if user.is_authenticated() %}
@@ -326,7 +326,14 @@
           <button id="clear" title="Clear Translation (Ctrl + Shift + Backspace)">Clear</button>
           <button id="save" title="Save Translation (Enter)"></button>
         {% else %}
-          <p id="sign-in-required"><a id="sidebar-signin" href="{{ provider_login_url(request) }}">Sign in</a> to translate.</p>
+          <p id="sign-in-required">
+            {% if settings.DJANGO_LOGIN %}
+              {% set login_url = url('standalone_login') %}
+            {% else %}
+              {% set login_url = provider_login_url(request) %}
+            {% endif %}
+            <a id="sidebar-signin" href="{{ login_url }}">Sign in</a> to translate.
+          </p>
         {% endif %}
       </menu>
 

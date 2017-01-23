@@ -14,12 +14,12 @@
 
 <form id="standalone-sign-in" method="POST" action="{{ request.path }}">
     <div class="clearfix">
-        <label for="username">Email</label> <br/>
+        <label for="id_username">Username</label> <br/>
         {{ form.username }}
         {{ form.username.errors }}
     </div>
     <div class="clearfix">
-        <label for="password">Password</label> <br/>
+        <label for="id_password">Password</label> <br/>
         {{ form.password }}
         {{ form.password.errors }}
     </div>
