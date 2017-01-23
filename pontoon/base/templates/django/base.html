@@ -48,7 +48,7 @@
         <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{% url "pontoon.admin" %}">Admin</a></li>
         {% if settings.DJANGO_LOGIN %}
             {% if not user.is_authenticated %}
-                <li id="standalone-sign-in"><a href="{% url 'standalone_login' %}">Sign in</a></li>
+                <li id="standalone-signin"><a href="{% url 'standalone_login' %}">Sign in</a></li>
             {% else %}
                 <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}">Sign out</a></li>
             {% endif %}
@@ -71,7 +71,7 @@
 
     <!-- Javascript at the bottom for fast page loading -->
     {% providers_media_js %}
-    <script type="text/javascript" charset="utf-8" src="{% static 'js/main.js' %}">
-    </script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'js/lib/jquery-1.11.1.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'js/main.js' %}"></script>
   </body>
 </html>

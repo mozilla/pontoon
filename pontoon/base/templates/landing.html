@@ -20,7 +20,7 @@
             {% if user.is_authenticated() %}
               <li id="standalone-sign-out"><a href="{{ url('standalone_logout') }}" title="{{ user.email|nospam }}">Sign out</a></li>
             {% else %}
-              <li id="standalone-sign-in"><a id="standalone-sign-in" href="{{ url('standalone_login') }}">Sign in</a></li>
+              <li id="standalone-signin"><a href="{{ url('standalone_login') }}">Sign in</a></li>
             {% endif %}
           {% else %}
             {% if user.is_authenticated() %}
