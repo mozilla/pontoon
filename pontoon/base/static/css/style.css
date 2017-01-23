@@ -1184,7 +1184,7 @@ body > .container {
   text-align: left;
 }
 
-#helpers > section ul li > p.translation-raw {
+#helpers > section ul li > p.translation {
   display: none;
 }
 
@@ -1195,12 +1195,12 @@ body > .container {
 
 #helpers > section ul li > p ins {
   background: #4B6259;
-  color: #7BC876;
+  color: #9CD699;
 }
 
 #helpers > section ul li > p del {
   background: #674B54;
-  color: #FE7777;
+  color: #FE8F8F;
 }
 
 #helpers > section ul li > p ins mark,
