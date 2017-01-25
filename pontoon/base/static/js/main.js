@@ -210,7 +210,7 @@ var Pontoon = (function (my) {
             '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
               self.markPlaceables(data.translation) +
             '</p>' +
-            '<p class="translation-raw">' +
+            '<p class="translation-clipboard">' +
               self.doNotRender(data.translation) +
             '</p>' +
           '</li>');

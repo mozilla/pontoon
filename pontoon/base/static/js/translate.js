@@ -135,7 +135,7 @@ var Pontoon = (function (my) {
                 '<p class="translation" dir="auto" lang="' + this.locale__code + '">' +
                   self.markPlaceables(this.string) +
                 '</p>' +
-                '<p class="translation-raw">' +
+                '<p class="translation-clipboard">' +
                   self.doNotRender(this.string) +
                 '</p>' +
               '</li>');
@@ -272,9 +272,12 @@ var Pontoon = (function (my) {
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
+                    self.markPlaceables(this.translation) +
+                  '</p>' +
+                  '<p class="translation-diff" dir="auto" lang="' + self.locale.code + '">' +
                     ((i > 0) ? self.diff(data[0].translation, this.translation) : self.markPlaceables(this.translation)) +
                   '</p>' +
-                  '<p class="translation-raw">' +
+                  '<p class="translation-clipboard">' +
                     self.doNotRender(this.translation) +
                   '</p>' +
                 '</li>');
@@ -1756,7 +1759,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var source = $(this).find('.translation-raw').text();
+        var source = $(this).find('.translation-clipboard').text();
 
         $('#translation').val(source).focus();
         self.moveCursorToBeginning();
@@ -1921,7 +1924,7 @@ var Pontoon = (function (my) {
         var oldText = $(this).html();
         $(this).html($(this).data('alternative-text'));
         $(this).data('alternative-text', oldText);
-        $(this).parents('li').find('p').toggle();
+        $(this).parents('li').find('.translation, .translation-diff').toggle();
       });
     },
 
