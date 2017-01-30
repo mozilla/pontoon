@@ -3232,10 +3232,16 @@ var Pontoon = (function (my) {
       this.part = this.getSelectedPart();
       this.locale = self.getLocaleData();
 
+      /* Copy of User.can_translate(), used on client to improve performance */
       this.user.canTranslate = function() {
-        var translatedLocales = $('#server').data('user-translated-locales') || [],
+        var managedLocales = $('#server').data('user-managed-locales') || [],
+            translatedLocales = $('#server').data('user-translated-locales') || [],
             translatedProjects = $('#server').data('user-translated-projects') || {},
             localeProject = self.locale.code + '-' + self.project.slug;
+
+        if ($.inArray(self.locale.code, managedLocales) !== -1) {
+          return true;
+        }
 
         if (translatedProjects.hasOwnProperty(localeProject)) {
            return translatedProjects[localeProject];
