@@ -364,7 +364,8 @@ class RepositoryTests(TestCase):
             update_from_vcs.assert_called_with(
                 'git',
                 'https://example.com',
-                repo.checkout_path
+                repo.checkout_path,
+                ''
             )
 
     def test_pull_multi_locale(self):
@@ -394,8 +395,8 @@ class RepositoryTests(TestCase):
                 'locale2': '/media/locale2'
             })
             update_from_vcs.assert_has_calls([
-                call('git', 'https://example.com/locale1', '/media/locale1'),
-                call('git', 'https://example.com/locale2', '/media/locale2')
+                call('git', 'https://example.com/locale1', '/media/locale1', ''),
+                call('git', 'https://example.com/locale2', '/media/locale2', '')
             ])
 
     def test_commit(self):
@@ -407,6 +408,7 @@ class RepositoryTests(TestCase):
                 'path',
                 'message',
                 'author',
+                '',
                 'https://example.com',
             )
 
@@ -428,6 +430,7 @@ class RepositoryTests(TestCase):
                 'path',
                 'message',
                 'author',
+                '',
                 'https://example.com/for_path',
             )
             repo.url_for_path.assert_called_with('path')

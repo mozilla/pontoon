@@ -277,7 +277,8 @@ form a.add-repo {
   padding: 0;
 }
 
-.repository .prefix-wrapper {
+.repository .prefix-wrapper,
+.repository .branch-wrapper {
   clear: both;
 }
 

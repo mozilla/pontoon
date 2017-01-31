@@ -46,7 +46,7 @@ class RepositoryInline(admin.TabularInline):
     model = models.Repository
     extra = 0
     verbose_name_plural = 'Repositories'
-    fields = ('type', 'url', 'permalink_prefix', 'last_synced_revisions', 'source_repo',)
+    fields = ('type', 'url', 'branch', 'permalink_prefix', 'last_synced_revisions', 'source_repo',)
 
 
 class SubpageInline(admin.TabularInline):

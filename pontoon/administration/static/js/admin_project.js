@@ -112,15 +112,34 @@ $(function() {
     $('#id_subpage_set-TOTAL_FORMS').val(count);
   });
 
+  function toggleBranchInput(repoIndex) {
+    $('#id_repositories-' + repoIndex + '-type').change(function(e) {
+      if (e.target.value === 'git') {
+        $('#id_repositories-' + repoIndex + '-branch').show();
+        $('[for="id_repositories-' + repoIndex + '-branch"]').show();
+      } else {
+        $('#id_repositories-' + repoIndex + '-branch').hide();
+        $('[for="id_repositories-' + repoIndex + '-branch"]').hide();
+      }
+    });
+  }
+  // Initial branch toggle. Need to loop over all repos on init.
+  var $totalForms = $('#id_repositories-TOTAL_FORMS');
+  var count = parseInt($totalForms.val(), 10);
+  while (count) {
+    toggleBranchInput(--count);
+  }
+
   // Add repo
   $('.add-repo').click(function(e) {
     e.preventDefault();
-    var $totalForms = $('#id_repositories-TOTAL_FORMS');
     var count = parseInt($totalForms.val(), 10);
 
     var $emptyForm = $('.repository-empty');
     var form = $emptyForm.html().replace(/__prefix__/g, count);
     $('.repository:last').after('<div class="repository clearfix">' + form + '</div>');
+
+    toggleBranchInput(count);
 
     $totalForms.val(count + 1);
   });

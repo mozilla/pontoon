@@ -16,9 +16,10 @@ class PullFromRepositoryException(Exception):
 
 class PullFromRepository(object):
 
-    def __init__(self, source, target):
+    def __init__(self, source, target, branch):
         self.source = source
         self.target = target
+        self.branch = branch
 
     def pull(self, source=None, target=None):
         raise NotImplementedError
@@ -26,33 +27,43 @@ class PullFromRepository(object):
 
 class PullFromGit(PullFromRepository):
 
-    def pull(self, source=None, target=None):
+    def pull(self, source=None, target=None, branch=None):
         log.debug("Git: Update repository.")
 
         source = source or self.source
         target = target or self.target
+        branch = branch or self.branch
 
         command = ["git", "fetch", "--all"]
         execute(command, target)
 
+        remote = "origin"
+        if branch:
+            remote += "/" + branch
+
         # Undo local changes
-        command = ["git", "reset", "--hard", "origin"]
+        command = ["git", "reset", "--hard", remote]
         code, output, error = execute(command, target)
 
-        if code == 0:
-            log.debug("Git: Repository at " + source + " updated.")
-
-        else:
+        if code != 0:
             log.info("Git: " + unicode(error))
             log.debug("Git: Clone instead.")
             command = ["git", "clone", source, target]
             code, output, error = execute(command)
 
-            if code == 0:
-                log.debug("Git: Repository at " + source + " cloned.")
-
-            else:
+            if code != 0:
                 raise PullFromRepositoryException(unicode(error))
+
+        log.debug("Git: Repository at " + source + " cloned.")
+
+        if branch:
+            command = ["git", "checkout", branch]
+            code, output, error = execute(command, target)
+
+            if code != 0:
+                raise PullFromRepositoryException(unicode(error))
+
+            log.debug("Git: Branch " + branch + " checked out.")
 
 
 class PullFromHg(PullFromRepository):
@@ -108,11 +119,12 @@ class CommitToRepositoryException(Exception):
 
 class CommitToRepository(object):
 
-    def __init__(self, path, message, user, url):
+    def __init__(self, path, message, user, branch, url):
         self.path = path
         self.message = message
         self.user = user
         self.url = url
+        self.branch = branch
 
     def commit(self, path=None, message=None, user=None):
         raise NotImplementedError
@@ -123,12 +135,13 @@ class CommitToRepository(object):
 
 class CommitToGit(CommitToRepository):
 
-    def commit(self, path=None, message=None, user=None):
+    def commit(self, path=None, message=None, user=None, branch=None):
         log.debug("Git: Commit to repository.")
 
         path = path or self.path
         message = message or self.message
         user = user or self.user
+        branch = branch or self.branch
         author = user.display_name_and_email
 
         # Embed git identity info into commands
@@ -145,7 +158,11 @@ class CommitToGit(CommitToRepository):
             raise CommitToRepositoryException(unicode(error))
 
         # Push
-        push = ["git", "push", self.url, "HEAD"]
+        pushTarget = 'HEAD'
+        if branch:
+            pushTarget = branch
+
+        push = ["git", "push", self.url, pushTarget]
         code, output, error = execute(push, path)
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
@@ -226,15 +243,15 @@ def execute(command, cwd=None, env=None):
         return -1, "", error
 
 
-def update_from_vcs(repo_type, url, path):
-    obj = globals()['PullFrom%s' % repo_type.capitalize()](url, path)
+def update_from_vcs(repo_type, url, path, branch):
+    obj = globals()['PullFrom%s' % repo_type.capitalize()](url, path, branch)
     obj.pull()
 
 
-def commit_to_vcs(repo_type, path, message, user, url):
+def commit_to_vcs(repo_type, path, message, user, branch, url):
     try:
         obj = globals()['CommitTo%s' % repo_type.capitalize()](
-            path, message, user, url)
+            path, message, user, branch, url)
         return obj.commit()
 
     except CommitToRepositoryException as e:
