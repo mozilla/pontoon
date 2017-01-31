@@ -17,6 +17,7 @@
      {% if user.id %}data-id="{{ user.id }}"{% endif %}
      {% if user.username %}data-username="{{ user.username }}"{% endif %}
      {% if user.profile and user.profile.force_suggestions %}data-force-suggestions="{{ user.profile.force_suggestions }}"{% endif %}
+     {% if user.managed_locales %}data-user-managed-locales="{{ user.managed_locales|to_json() }}"{% endif %}
      {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if user.translated_projects %}data-user-translated-projects="{{ user.translated_projects|to_json() }}"{% endif %}
      {% if perms.base.can_manage %}data-manager="true"{% endif %}
