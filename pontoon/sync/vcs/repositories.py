@@ -37,11 +37,11 @@ class PullFromGit(PullFromRepository):
         command = ["git", "fetch", "--all"]
         execute(command, target)
 
+        # Undo local changes
         remote = "origin"
         if branch:
             remote += "/" + branch
 
-        # Undo local changes
         command = ["git", "reset", "--hard", remote]
         code, output, error = execute(command, target)
 
@@ -54,7 +54,7 @@ class PullFromGit(PullFromRepository):
             if code != 0:
                 raise PullFromRepositoryException(unicode(error))
 
-        log.debug("Git: Repository at " + source + " cloned.")
+            log.debug("Git: Repository at " + source + " cloned.")
 
         if branch:
             command = ["git", "checkout", branch]
@@ -158,11 +158,11 @@ class CommitToGit(CommitToRepository):
             raise CommitToRepositoryException(unicode(error))
 
         # Push
-        pushTarget = 'HEAD'
+        push_target = 'HEAD'
         if branch:
-            pushTarget = branch
+            push_target = branch
 
-        push = ["git", "push", self.url, pushTarget]
+        push = ["git", "push", self.url, push_target]
         code, output, error = execute(push, path)
         if code != 0:
             raise CommitToRepositoryException(unicode(error))
