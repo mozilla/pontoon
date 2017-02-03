@@ -80,6 +80,12 @@
           {{ repo_form.DELETE }}
         </div>
       </section>
+      <section class="branch-wrapper">
+        <div class="branch">
+          {{ repo_form.branch.label_tag() }}
+          {{ repo_form.branch }}
+        </div>
+      </section>
       <section class="prefix-wrapper">
         <div class="prefix">
           {{ repo_form.permalink_prefix.label_tag() }}
@@ -105,6 +111,12 @@
       <div class="delete">
         {{ repo_formset.empty_form.DELETE.label_tag() }}
         {{ repo_formset.empty_form.DELETE }}
+      </div>
+    </section>
+    <section class="branch-wrapper">
+      <div class="branch">
+        {{ repo_formset.empty_form.branch.label_tag() }}
+        {{ repo_formset.empty_form.branch }}
       </div>
     </section>
     <section class="prefix-wrapper">
@@ -197,3 +209,4 @@
   {% javascript 'admin_project' %}
   {% javascript 'multiple_locale_selector' %}
 {% endblock %}
+

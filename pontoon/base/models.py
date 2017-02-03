@@ -1082,6 +1082,7 @@ class Repository(models.Model):
         choices=TYPE_CHOICES
     )
     url = models.CharField("URL", max_length=2000)
+    branch = models.CharField("Branch", blank=True, max_length=2000)
 
     # TODO: We should be able to remove this once we have persistent storage
     permalink_prefix = models.CharField("Download prefix", max_length=2000, help_text="""
@@ -1200,7 +1201,7 @@ class Repository(models.Model):
         pulling.
         """
         if not self.multi_locale:
-            update_from_vcs(self.type, self.url, self.checkout_path)
+            update_from_vcs(self.type, self.url, self.checkout_path, self.branch)
             return {
                 'single_locale': get_revision(self.type, self.checkout_path)
             }
@@ -1211,9 +1212,10 @@ class Repository(models.Model):
                 repo_type = self.type
                 url = self.locale_url(locale)
                 checkout_path = self.locale_checkout_path(locale)
+                repo_branch = self.branch
 
                 try:
-                    update_from_vcs(repo_type, url, checkout_path)
+                    update_from_vcs(repo_type, url, checkout_path, repo_branch)
                     current_revisions[locale.code] = get_revision(repo_type, checkout_path)
                 except PullFromRepositoryException as e:
                     log.error('%s Pull Error for %s: %s' % (repo_type.upper(), url, e))
@@ -1228,7 +1230,7 @@ class Repository(models.Model):
         if self.multi_locale:
             url = self.url_for_path(path)
 
-        return commit_to_vcs(self.type, path, message, author, url)
+        return commit_to_vcs(self.type, path, message, author, self.branch, url)
 
     """
     Set last_synced_revisions to a dictionary of revisions
