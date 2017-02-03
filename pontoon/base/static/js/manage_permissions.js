@@ -106,7 +106,7 @@ $(function() {
     $permsForm.append(inputHidden('project-locale-' + $permsForm.data('index') + '-has_custom_translators', 1));
 
     // Update menu (must be above Copying Translators)
-    $(this).addClass('hidden');
+    $(this).addClass('hidden').removeClass('limited');
     if ($('#project-selector .menu li:not(".hidden")').length === 0) {
       $('#project-selector').addClass('hidden');
     }
@@ -129,7 +129,7 @@ $(function() {
     e.preventDefault();
 
     $('#project-selector').removeClass('hidden');
-    $("#project-selector li[data-slug='" + $permsForm.data('slug') + "']").removeClass('hidden');
+    $("#project-selector li[data-slug='" + $permsForm.data('slug') + "']").removeClass('hidden').addClass('limited');
 
     $permsForm.find('input[name$=has_custom_translators]').remove();
 
