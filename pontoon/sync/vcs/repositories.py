@@ -55,6 +55,8 @@ class PullFromGit(PullFromRepository):
                 raise PullFromRepositoryException(unicode(error))
 
             log.debug("Git: Repository at " + source + " cloned.")
+        else:
+            log.debug("Git: Repository at " + source + " updated.")
 
         if branch:
             command = ["git", "checkout", branch]
