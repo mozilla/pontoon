@@ -1,10 +1,10 @@
-{% macro select(identifier, choices, label, description, extra=None) %}
+{% macro select(identifier, choices, label, description, index=None, extra=None) %}
 <div class="user select {{ identifier }}">
-  <label for="{{ identifier }}">{{ label|safe }}</label>
-  <div class="menu">
+  <label for="{{ identifier }}-{{ index }}">{{ label|safe }}</label>
+  <div class="menu permanent">
     <div class="search-wrapper clearfix">
       <div class="icon fa fa-search"></div>
-      <input id="{{ identifier }}" type="search" autocomplete="off">
+      <input id="{{ identifier }}-{{ index }}" type="search" autocomplete="off">
     </div>
     <ul>
       {% for user in choices %}

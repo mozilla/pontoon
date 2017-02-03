@@ -3,7 +3,7 @@
 {% macro render(locales_available, locales_selected, form_field='selected_locales', sortable=False) %}
       <div class="locale select">
         <label for="available">Available locales<a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>
-        <div class="menu">
+        <div class="menu permanent">
           <div class="search-wrapper clearfix">
             <div class="icon fa fa-search"></div>
             <input id="available" type="search" autocomplete="off">
@@ -18,7 +18,7 @@
       </div>
       <div class="locale select selected">
         <label for="selected">Chosen locales<a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
-        <div class="menu">
+        <div class="menu permanent">
           <div class="search-wrapper clearfix">
             <div class="icon fa fa-search"></div>
             <input id="selected" type="search" autocomplete="off">

@@ -1,11 +1,3 @@
 .add {
-  line-height: 17px;
-  margin: -17px 12px 0 0;
-  text-align: right;
-}
-
-.add a {
-  color: #7BC876;
-  font-size: 14px;
-  text-transform: uppercase;
+  float: right;
 }

@@ -1,21 +1,4 @@
-/** @shared */
-#header {
-    margin: 10em 0 5em;
-}
-
-#header .title {
-    color: #7BC876;
-    font-size: 72px;
-    font-weight: 300;
-}
-
 /** @listing */
-.log-list-container {
-    color: #AAAAAA;
-    margin: 0 auto;
-    width: 730px;
-}
-
 .log-list {
     text-align: left;
     width: 100%;
@@ -40,6 +23,10 @@
 
 
 /** @details */
+td {
+    padding: 5px 10px;
+}
+
 .sync-details {
     display: flex;
     flex-direction: row;
@@ -47,11 +34,12 @@
     list-style-type: none;
     margin: 0;
     padding: 1em;
+    text-align: center;
 }
 
 .sync-details .detail-item {
     flex: 1;
-    margin: 0 0.3em;
+    margin: 0 1px;
 }
 
 .sync-details .detail-label {
@@ -73,7 +61,7 @@
 
 .command-details .detail-item {
     border-top: 4px solid;
-    flex: 0 0 250px;
+    flex: 0 0 325px;
 }
 
 .command-details .start-time {
@@ -103,15 +91,10 @@
     color: #FED271;
 }
 
-.project-logs {
-    width: 730px;
-    margin: 0 auto;
-}
-
 .project {
     border: 1px solid #5C6172;
     border-radius: 5px;
-    margin: 3em 0 0;
+    margin-bottom: 1em;
     padding: 1em;
 }
 
@@ -146,7 +129,7 @@
 /** @pagination */
 .pagination {
     font-size: 14px;
-    padding: 1em 0;
+    padding: 3em 0;
     text-transform: uppercase;
 }
 

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% import 'heading.html' as Heading %}
+
+{% block title %}Machinery{% endblock %}
+
+{% block heading %}
+  {{ Heading.heading(title='Machinery', subtitle='Metasearch engine for translations') }}
+{% endblock %}
+
+{% block bottom %}
+<section id="main">
+  <div class="container">
+    <menu class="controls">
+      <div id="search" class="search-wrapper big clearfix">
+        <div class="icon fa fa-search"></div>
+        <div class="icon fa fa-cog fa-spin"></div>
+        <input type="search" autocomplete="off" autofocus placeholder="Type and press Enter to search">
+      </div>
+
+      {% include 'teams/widgets/team_selector.html' %}
+    </menu>
+
+    <div id="helpers">
+      <section class="machinery">
+        <ul></ul>
+      </section>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'machinery' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'machinery' %}
+{% endblock %}

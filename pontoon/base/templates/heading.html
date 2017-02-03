@@ -1,0 +1,8 @@
+{% macro heading(title=None, subtitle=None) %}
+<section id="heading" class="simple">
+  <div class="container">
+    {% if title %}<h1 id="title">{{ title }}</h1>{% endif %}
+    {% if subtitle %}<h2 id="subtitle">{{ subtitle }}</h2>{% endif %}
+  </div>
+</section>
+{% endmacro %}

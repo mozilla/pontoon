@@ -1,0 +1,24 @@
+{% import 'localizations/widgets/resource_list.html' as ResourceList %}
+
+<div class="resources">
+  <menu class="controls">
+    <div class="search-wrapper small clearfix">
+      <div class="icon fa fa-search"></div>
+      <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter resources">
+    </div>
+  </menu>
+
+  {{ ResourceList.header() }}
+
+  {% for resource in resources %}
+    {% if not loop.last %}
+      {% set main_link = url('pontoon.translate', locale.code, project.slug, resource.title) %}
+      {% set chart_link = main_link %}
+      {% set latest_activity = resource.latest_activity %}
+      {% set chart = resource.chart %}
+      {{ ResourceList.item(resource, main_link, chart_link, latest_activity, chart) }}
+    {% endif %}
+  {% endfor %}
+
+  {{ ResourceList.footer() }}
+</div>

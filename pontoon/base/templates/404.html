@@ -1,17 +1,12 @@
-{% extends "landing.html" %}
+{% extends "base.html" %}
 
-{% block title %}Pontoon &middot; Page not found{% endblock %}
+{% block title %}Page not found{% endblock %}
 
-{% block before %}
+{% block middle %}
 <section id="error">
   <div class="inner">
-{% endblock %}
-
-{% block heading %}Oops{% endblock %}
-
-{% block subtitle %}We couldn't find the page you're looking for.{% endblock %}
-
-{% block after %}
+    <h1 id="title"><a href="/">Oops!</a></h1>
+    <h2 id="subtitle">{% block description %}We couldn't find the page you're looking for.{% endblock %}</h2>
   </div>
 </section>
 {% endblock %}

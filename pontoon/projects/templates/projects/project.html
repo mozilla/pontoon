@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% import 'widgets/heading_info.html' as HeadingInfo %}
+{% import "widgets/menu.html" as Menu %}
+
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block class %}project{% endblock %}
+
+{% block before %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+     data-url-split="projects/{{ project.slug }}">
+</div>
+{% endblock %}
+
+{% block heading %}
+<section id="heading">
+  <div class="container clearfix">
+    <h1>
+      {{ HeadingInfo.heading_item(
+        title=project.name,
+        link=url('pontoon.projects.project', project.slug))
+      }}
+    </h1>
+
+    <ul class="details">
+      {{ HeadingInfo.details_item_priority(project.priority) }}
+
+      {{ HeadingInfo.details_item_deadline(project.deadline, project.approved_strings == project.total_strings) }}
+
+      {% set repository_website = project.repositories.first().website %}
+      {% if repository_website %}
+      {{ HeadingInfo.details_item(
+        title='Repository',
+        class='repository',
+        value=repository_website|pretty_url,
+        value_link=repository_website,
+        value_class='overflow')
+      }}
+      {% endif %}
+
+      {% if project.url %}
+      {{ HeadingInfo.details_item(
+        title='Website',
+        class='website',
+        value=project.url|pretty_url,
+        value_link=project.url,
+        value_class='overflow')
+      }}
+      {% endif %}
+    </ul>
+
+    {{ HeadingInfo.progress_chart() }}
+    {{ HeadingInfo.progress_chart_legend(project) }}
+  </div>
+</section>
+{% endblock %}
+
+{% block middle %}
+<section id="middle" class="submenu tabs">
+  <div class="container">
+    {% set current_page = request.path.split('/')[2]|default('') %}
+    {% call Menu.submenu() %}
+      {{ Menu.item(
+          'Teams',
+          url('pontoon.projects.project', project.slug),
+          is_active = (current_page == ''),
+          count = project.locales.count()
+        )
+      }}
+      {{ Menu.item(
+          'Contributors',
+          url('pontoon.projects.contributors', project.slug),
+          is_active = (current_page == 'contributors'),
+          count = False
+        )
+      }}
+      {{ Menu.item(
+          'Info',
+          url('pontoon.projects.info', project.slug),
+          is_active = (current_page == 'info'),
+          count = 1 if project.info_brief else False
+        )
+      }}
+    {% endcall %}
+  </div>
+</section>
+{% endblock %}
+
+{% block bottom %}
+<section id="main" class="clearfix">
+  <div class="container">
+
+  </div>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'project' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'project' %}
+{% endblock %}

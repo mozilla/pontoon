@@ -1,0 +1,44 @@
+<!-- Project selector -->
+<div class="project select">
+  <div class="button breadcrumbs selector">
+    <span class="title noselect" data-slug="{{ project.slug }}">{{ project.name }}</span>
+  </div>
+
+  <div class="menu">
+    <div class="search-wrapper clearfix">
+      <div class="icon fa fa-search"></div>
+      <input type="search" autocomplete="off" autofocus>
+    </div>
+
+    <ul>
+      {% for p in projects %}
+        <li class="clearfix{% if locale and p.slug in locale.available_projects_list() %} limited{% endif %}">
+          <span class="name"
+            {% for key, value in p.serialize().iteritems() %}
+              data-{{ key }}="{{ value }}"
+            {% endfor %}
+            {% if project and locale and project == p %}
+              data-parts="{{ {locale.code: locale.parts_stats(p)}|to_json }}"
+            {% endif %}
+          >
+            {{ p.name }}
+          </span>
+        </li>
+      {% endfor %}
+      <li class="no-match">No results</li>
+    </ul>
+
+    <div class="static-links">
+      <a href="{{ url('pontoon.projects') }}">
+        <div class="all-projects">
+          <span class="title">All Projects</span>
+        </div>
+      </a>
+      <a href="{{ url('pontoon.projects.project', project.slug) }}">
+        <div class="current-project">
+          <span class="title">Current Project</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>

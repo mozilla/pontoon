@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% import 'widgets/heading_info.html' as HeadingInfo %}
+{% import "widgets/menu.html" as Menu %}
+
+{% block title %}{{ locale.name }} ({{ locale.code }}){% endblock %}
+
+{% block class %}locale{% endblock %}
+
+{% block before %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+     data-url-split="{{ locale.code }}"
+     data-locale="{{ locale.code }}"
+     data-locale-projects="{{ locale.available_projects_list()|to_json }}">
+</div>
+{% endblock %}
+
+{% block heading %}
+<section id="heading">
+  <div class="container clearfix">
+    <h1>
+      {{ HeadingInfo.heading_item(
+        title=locale.name,
+        link=url('pontoon.teams.team', locale.code))
+      }}
+      {{ HeadingInfo.heading_item(
+        title=locale.code,
+        link=url('pontoon.teams.team', locale.code),
+        class='small')
+      }}
+    </h1>
+
+    <ul class="details">
+      {{ HeadingInfo.details_item(
+        title='Plural forms',
+        class='plural-forms',
+        value=locale.cldr_plurals_list(),
+        title_link='http://cldr.unicode.org/index/cldr-spec/plural-rules')
+      }}
+      {{ HeadingInfo.details_item(
+        title='Script',
+        class='script',
+        value=locale.script)
+      }}
+      {{ HeadingInfo.details_item(
+        title='Writing direction',
+        class='writing-direction',
+        value=locale.get_direction_display()|capitalize)
+      }}
+      {{ HeadingInfo.details_item(
+        title='Number of literate speakers',
+        class='literate-speakers',
+        value=(locale.population|intcomma or 'Unknown'),
+        title_link='http://www.unicode.org/cldr/charts/latest/supplemental/territory_language_information.html')
+      }}
+    </ul>
+
+    {{ HeadingInfo.progress_chart() }}
+    {{ HeadingInfo.progress_chart_legend(locale) }}
+  </div>
+</section>
+{% endblock %}
+
+{% block middle %}
+<section id="middle" class="submenu tabs">
+  <div class="container">
+    {% set current_page = request.path.split('/')[2]|default('') %}
+    {% call Menu.submenu() %}
+      {{ Menu.item(
+          'Projects',
+          url('pontoon.teams.team', locale.code),
+          is_active = (current_page == ''),
+          count = locale.project_set.available().count()
+        )
+      }}
+      {{ Menu.item(
+          'Contributors',
+          url('pontoon.teams.contributors', locale.code),
+          is_active = (current_page == 'contributors'),
+          count = False
+        )
+      }}
+      {{ Menu.item(
+          'Bugs',
+          url('pontoon.teams.bugs', locale.code),
+          is_active = (current_page == 'bugs'),
+          count = False
+        )
+      }}
+      {{ Menu.item(
+          'Info',
+          url('pontoon.teams.info', locale.code),
+          is_active = (current_page == 'info'),
+          count = 1 if locale.team_description else False
+        )
+      }}
+      {% if request.user.has_perm('base.can_manage_locale', locale) %}
+        {{ Menu.item(
+            'Permissions',
+            url('pontoon.teams.permissions', locale.code),
+            is_active = (current_page == 'permissions'),
+            count = False
+          )
+        }}
+      {% endif %}
+    {% endcall %}    
+  </div>
+</section>
+{% endblock %}
+
+{% block bottom %}
+<section id="main" class="clearfix">
+  <div class="container">
+
+  </div>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'team' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'team' %}
+{% endblock %}

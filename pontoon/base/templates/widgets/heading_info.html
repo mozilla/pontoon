@@ -1,0 +1,88 @@
+{% macro heading_item(title, link, class=None) %}
+<a class="{{ class }}" href="{{ link }}">{{ title }}</a>
+{% endmacro %}
+
+{% macro details_item(title, class, value, title_link=None, value_link=None, value_class=None) %}
+<li class="{{ class }}">
+  <span class="title">{{ title }}{% if title_link %}<sup><a href="{{ title_link }}" target="_blank">*</a></sup>{% endif %}</span>
+  <span class="value{% if value_class %} {{ value_class }}{% endif %}">
+    {% if value_link %}<a href="{{ value_link }}">{% endif %}
+    {{ value }}
+    {% if value_link %}</a>{% endif %}
+  </span>
+</li>
+{% endmacro %}
+
+{% macro details_item_priority(priority) %}
+<li class="priority">
+  <span class="title">Priority</span>
+  <span class="value">
+    {% for n in range(5) %}
+      <span class="fa fa-star{% if loop.index <= priority %}{{ ' active' }}{% endif %}"></span>
+    {% endfor %}
+  </span>
+</li>
+{% endmacro %}
+
+{% macro details_item_deadline(deadline, complete) %}
+<li class="deadline">
+  <span class="title">Deadline</span>
+  <span class="value">
+    <time datetime="{% if deadline %}{{ deadline.isoformat() }}{% endif %}" class="{{ deadline|date_status(complete) }}">{{ deadline|format_datetime('short_date', default='Not set') }}</time>
+  </span>
+</li>
+{% endmacro %}
+
+{% macro progress_chart() %}
+<div class="progress">
+  <canvas class="chart" height="130" width="130"></canvas>
+  <span class="number noselect"></span>
+</div>
+{% endmacro %}
+
+{% macro legend_item(title, class, value, link=None) %}
+<li class="{{ class }}">
+  {% if link %}<a href="{{ link }}?status=suggested">{% endif %}
+    {% if class != 'all' %}
+      <span class="fa status"></span>
+    {% endif %}
+    {{ title }}
+    <span class="value" data-value="{{ value }}">{{ value|intcomma }}</span>
+  {% if link %}</a>{% endif %}
+</li>
+{% endmacro %}
+
+{% macro progress_chart_legend(obj, link=None) %}
+<ul class="legend">
+  {{ legend_item(
+    title='Translated strings',
+    class='translated',
+    value=obj.approved_strings,
+    link=link)
+  }}
+  {{ legend_item(
+    title='Suggested strings',
+    class='suggested',
+    value=obj.translated_strings,
+    link=link)
+  }}
+  {{ legend_item(
+    title='Fuzzy strings',
+    class='fuzzy',
+    value=obj.fuzzy_strings,
+    link=link)
+  }}
+  {{ legend_item(
+    title='Missing strings',
+    class='missing',
+    value=(obj.total_strings - obj.approved_strings - obj.translated_strings - obj.fuzzy_strings),
+    link=link)
+  }}
+  {{ legend_item(
+    title='All strings',
+    class='all',
+    value=obj.total_strings,
+    link=link)
+  }}
+</ul>
+{% endmacro %}

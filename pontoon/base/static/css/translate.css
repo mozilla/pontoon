@@ -111,6 +111,7 @@ mark.search {
 #project-load .text {
   font-size: 1.5em;
   opacity: 0;
+  text-align: center;
 }
 
 #project-load .animation > div {
@@ -161,8 +162,6 @@ mark.search {
 /* HEADER */
 
 body > header {
-  background: #272A2F;
-  height: 60px;
   position: fixed;
   text-align: left;
   width: 100%;
@@ -171,6 +170,7 @@ body > header {
 
 body > header > .container {
   min-width: 800px;
+  width: auto;
 }
 
 .select {
@@ -181,10 +181,6 @@ body > header > .container {
 
 .search-wrapper {
   margin-bottom: 5px;
-}
-
-.select .menu ul li {
-  cursor: pointer;
 }
 
 .select .menu ul li span {
@@ -284,23 +280,21 @@ body > header .locale.select {
   display: none;
 }
 
-.menu li.horizontal-separator {
-  border-top: 1px solid #525A65;
-  height: 0;
-  margin: 5px 0;
-  padding: 0;
-}
-
-.status {
-  font-size: 16px;
+.status.fa {
   left: 16px;
-  position: absolute;
   top: 13px;
 }
 
 .status:before {
-  color: #FD5F60;
+  color: #4D5967;
   content: "";
+}
+
+#filter .missing:not(.hover) .status:before,
+#entitylist .wrapper .selected.missing .status:before,
+#entitylist .wrapper .hovered.missing .status:before,
+#entitylist .wrapper li:hover.missing .status:before {
+  color: #3F4752;
 }
 
 .suggested .status:before {
@@ -443,65 +437,8 @@ body > header #loading.loader {
   display: inline-block;
 }
 
-body > header .notification {
-  background: rgba(0, 0, 0, 0.8);
-  cursor: pointer;
-  list-style: none;
-  margin: 0;
-  max-width: 500px;
-  opacity: 0;
-  padding: 10px;
-  position: absolute;
-  right: 15px;
-  top: 70px;
-  width: auto;
-  /* No z-index or visibility to prevent covering the Next button */
-}
-
 body > header .notification.hide {
   display: none;
-}
-
-body > header .notification li {
-  color: #7BC876;
-  white-space: pre-wrap;
-}
-
-#profile > .button {
-  height: 60px;
-  padding: 0;
-}
-
-#profile .button .title {
-  float: left;
-  margin: 20px 5px 20px 10px;
-  font-size: 16px;
-}
-
-#profile .button img {
-  margin: 6px 5px 0 5px;
-}
-
-#profile .menu {
-  line-height: 18px;
-  width: 200px;
-}
-
-#profile .menu ul,
-#filter .menu ul {
-  max-height: none;
-}
-
-#profile .menu li a {
-  display: block;
-}
-
-#profile .menu li.upload {
-  margin-top: 1px;
-}
-
-#profile .menu li i.fa {
-  margin: 0 8px 0 -2px;
 }
 
 #info {
@@ -510,8 +447,7 @@ body > header .notification li {
 
 #info .button {
   font-size: 1.6em;
-  height: 22px;
-  padding: 19px 5px;
+  padding: 22px 5px;
 }
 
 #info .menu a {
@@ -536,6 +472,29 @@ body > header aside p {
 
 .right .menu {
   right: 5px;
+}
+
+#profile .button .title {
+  font-size: 16px;
+}
+
+#profile .button img,
+#profile .button .menu-icon {
+  margin-right: 5px;
+}
+
+#profile .menu {
+  border-right: none;
+}
+
+#profile .menu li.download,
+#profile .menu li.upload {
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+#profile .menu li.upload {
+  margin-top: 1px;
 }
 
 #projects {
@@ -605,6 +564,7 @@ body > header aside p {
   color: #7BC876;
   font-size: 128px;
   padding: 40px 0 10px;
+  text-align: center;
 }
 
 .advanced #entitylist,
@@ -796,7 +756,7 @@ body > header aside p {
 }
 
 #filter .menu li.time-range input.error {
-  color: #FD5F60;
+  color: #F36;
 }
 
 #filter .menu li.time-range input#to {
@@ -1046,10 +1006,6 @@ body > header aside p {
 }
 
 #filter .menu li .count {
-  background: #3F4752;
-  border-radius: 3px;
-  color: #CCCCCC;
-  padding: 0 5px;
   position: absolute;
   right: 4px;
   top: 4px;
@@ -1404,8 +1360,7 @@ body > header aside p {
 
 #editor nav li a > span > .count {
   background: #3F4752;
-  border-radius: 3px;
-  padding: 0 5px;
+  margin-left: 0;
 }
 
 #editor nav li.active a > span > .count,
@@ -1497,7 +1452,7 @@ body > header aside p {
 }
 
 .warning-overlay h2 {
-  color: #FD5F60;
+  color: #F36;
 }
 
 .warning-overlay ul {
@@ -1559,6 +1514,10 @@ body > header aside p {
 
 #hotkeys table {
   width: 100%;
+}
+
+#hotkeys td {
+  padding: 0;
 }
 
 #hotkeys td:first-child {
@@ -1774,7 +1733,7 @@ p#sign-in-required > a#sidebar-signin {
 }
 
 #helpers > section ul li > header button.delete:hover:before {
-  color: #FD5F60;
+  color: #F36;
 }
 
 
@@ -1852,7 +1811,7 @@ p#sign-in-required > a#sidebar-signin {
 }
 
 #batch .intro p .warning {
-  color: #FD5F60;
+  color: #F36;
 }
 
 #batch button,
@@ -1898,7 +1857,7 @@ p#sign-in-required > a#sidebar-signin {
 }
 
 #batch button#delete-all {
-  background: #FD5F60;
+  background: #F36;
 }
 
 #batch input {

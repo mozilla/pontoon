@@ -17,6 +17,7 @@ form .locale.select.selected {
 }
 
 form .locale.select .menu {
+  background: transparent;
   border-bottom: 1px solid #5E6475;
   margin: 2px 0 -4px -1px;
   overflow: auto;

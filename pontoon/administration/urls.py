@@ -12,6 +12,11 @@ urlpatterns = [
     url(r'^projects/$', views.manage_project,
         name='pontoon.admin.project.new'),
 
+    # Sync project
+    url(r'^projects/(?P<slug>[\w-]+)/sync/$',
+        views.manually_sync_project,
+        name='pontoon.project.sync'),
+
     # Edit project
     url(r'^projects/(?P<slug>.+)/$', views.manage_project,
         name='pontoon.admin.project'),

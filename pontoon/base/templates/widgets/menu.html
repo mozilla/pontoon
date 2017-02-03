@@ -8,8 +8,8 @@
 {% endmacro %}
 
 {# Menu item #}
-{% macro item(label, url, is_active) %}
+{% macro item(label, url, is_active, count=0, class=None) %}
   <li {% if is_active %}class="active"{% endif %}>
-    <a href="{{ url }}">{{ label }}</a>
+    <a href="{{ url }}"{% if class %} class="button"{% endif %}>{{ label }}{% if count > 0 %}<span class="count">{{ count }}</span>{% endif %}</a>
   </li>
 {% endmacro %}

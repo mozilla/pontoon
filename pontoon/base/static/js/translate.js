@@ -27,7 +27,7 @@ var Pontoon = (function (my) {
           status = self.getEntityStatus(entity),
           source_string = (entity.original_plural && self.locale.nplurals < 2) ? entity.marked_plural : entity.marked,
           li = $('<li class="entity' +
-        (status ? ' ' + status : '') +
+        (' ' + status) +
         (!entity.body ? ' uneditable' : '') +
         (this.allEntitiesSelected ? ' selected' : '') +
         (entity.visible ? ' visible': '') +
@@ -503,7 +503,7 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Get entity status: 'translated', 'fuzzy', 'suggested', 'partial', ''
+     * Get entity status: 'translated', 'fuzzy', 'suggested', 'partial', 'missing'
      *
      * entity Entity
      */
@@ -533,7 +533,7 @@ var Pontoon = (function (my) {
       } else if (translated > 0 || fuzzy > 0 || suggested > 0) {
         return 'partial';
       }
-      return '';
+      return 'missing';
     },
 
 
@@ -2138,7 +2138,7 @@ var Pontoon = (function (my) {
         var context = this.getContext('2d');
         // Clear old canvas content to avoid aliasing
         context.clearRect(0, 0, this.width, this.height);
-        context.lineWidth = this.width/11;
+        context.lineWidth = 3;
 
         var x = this.width/2,
             y = this.height/2,
@@ -2162,20 +2162,20 @@ var Pontoon = (function (my) {
       $('#progress .number').html(number);
 
       // Update graph legend
-      $('#progress .menu').find('header span').html(total).end()
+      $('#progress .menu').find('header span').html(self.numberWithCommas(total)).end()
         .find('.details')
-          .find('.translated p').html(translated).end()
-          .find('.suggested p').html(suggested).end()
-          .find('.fuzzy p').html(fuzzy).end()
-          .find('.missing p').html(missing);
+          .find('.translated p').html(self.numberWithCommas(translated)).end()
+          .find('.suggested p').html(self.numberWithCommas(suggested)).end()
+          .find('.fuzzy p').html(self.numberWithCommas(fuzzy)).end()
+          .find('.missing p').html(self.numberWithCommas(missing));
 
       // Update filter
       $('#filter .menu')
-          .find('.all .count').html(total).end()
-          .find('.translated .count').html(translated).end()
-          .find('.suggested .count').html(suggested).end()
-          .find('.fuzzy .count').html(fuzzy).end()
-          .find('.missing .count').html(missing);
+          .find('.all .count').html(self.numberWithCommas(total)).end()
+          .find('.translated .count').html(self.numberWithCommas(translated)).end()
+          .find('.suggested .count').html(self.numberWithCommas(suggested)).end()
+          .find('.fuzzy .count').html(self.numberWithCommas(fuzzy)).end()
+          .find('.missing .count').html(self.numberWithCommas(missing));
 
       // Update parts menu
       if (entity && total) {
@@ -2543,12 +2543,9 @@ var Pontoon = (function (my) {
     attachMainHandlers: function () {
       var self = this;
 
-      // Hide menus on click outside
+      // iFrame fix on hiding menus
       $('body').bind("click.main", function (e) {
-        $('.menu').hide();
-        $('#iframe-cover').hide(); // iframe fix
-        $('.select').removeClass('opened');
-        $('.menu li').removeClass('hover');
+        $('#iframe-cover').hide();
       });
 
       // Locale menu handler
@@ -2580,7 +2577,22 @@ var Pontoon = (function (my) {
 
       // Show only projects available for the selected locale
       $('.project .selector').click(function () {
-        self.requestProjects.toggleProjects(true);
+        var projects = Pontoon.getLocaleData('projects'),
+            $menu = $(this).parents('.select').find('.menu');
+
+        // Hide all projects
+        $menu.find('li')
+          .toggleClass('limited', false)
+          .toggle(false);
+
+        // Show requested projects
+        $(projects).each(function() {
+          $menu
+              .find('.name[data-slug="' + this + '"]')
+            .parent()
+              .toggleClass('limited', true)
+              .toggle(true);
+        });
       });
 
       // Project menu handler
@@ -2722,7 +2734,8 @@ var Pontoon = (function (my) {
      * Update authors list in filter menu
      */
     updateAuthors: function () {
-      var authors = $('#filter').find('.for-authors').toggle(this.authors.length > 0);
+      var self = this,
+          authors = $('#filter').find('.for-authors').toggle(this.authors.length > 0);
       $('#filter .menu li.author').remove();
 
       $.each(this.authors, function() {
@@ -2736,7 +2749,7 @@ var Pontoon = (function (my) {
               '<p class="name">' + this.display_name + '</p>' +
               '<p class="role">' + this.role + '</p>' +
             '</figcaption>' +
-            '<span class="count">' + this.translation_count + '</span>' +
+            '<span class="count">' + self.numberWithCommas(this.translation_count) + '</span>' +
           '</figure>' +
         '</li>');
       });

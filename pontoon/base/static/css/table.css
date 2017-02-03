@@ -1,0 +1,305 @@
+table.table {
+  text-align: center;
+}
+
+.table td {
+  padding: 0 10px;
+  vertical-align: middle;
+}
+
+/* Used to designate from main style, e.g. project not active, deadline not set, no latest activity... */
+.table td .not {
+  font-style: italic;
+}
+
+.table tbody tr:hover {
+  background: #333941;
+}
+
+.table th:first-child {
+  text-align: left;
+}
+
+.table th.name {
+  width: 220px;
+}
+
+.table th.resource {
+  width: 420px;
+}
+
+.table th.population,
+.table th.deadline {
+  width: 90px;
+}
+
+.table th.code,
+.table th.priority {
+  width: 70px;
+}
+
+.table th.latest-activity {
+  width: 140px;
+}
+
+.table .progress {
+  text-align: right;
+  width: auto;
+}
+
+.table h3 {
+  overflow: hidden;
+  padding-left: 1px; /* Needed to avoid cutting off text due to overflow: hidden; */
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table .name h3 {
+  width: 219px;
+}
+
+.table .resource h3 {
+  width: 419px;
+}
+
+.table h3 a {
+  font-size: 15px;
+  line-height: 47px;
+  padding: 12px 0 11px;
+}
+
+.table a {
+  color: #EBEBEB;
+}
+
+.table a:hover {
+  color: #7BC876;
+}
+
+/* Selector must also match heading-info */
+.deadline time.approaching {
+  color: #FFA10F;
+}
+
+/* Selector must also match heading-info */
+.deadline time.overdue {
+  color: #F36;
+}
+
+.table td.code a {
+  color: #7BC876;
+  line-height: 47px;
+  padding: 15px 5px 14px;
+}
+
+.table td.priority {
+  padding-left: 16px;
+}
+
+.table td.priority .fa {
+  margin-top: 2px;
+}
+
+.table .latest-activity .latest {
+  display: block;
+  position: relative;
+  width: 140px;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.table .latest-activity time {
+  border-bottom: 1px dotted #F36;
+  padding: 0 1px;
+  white-space: nowrap;
+}
+
+.table .latest-activity time:hover {
+  color: #EBEBEB;
+}
+
+.table .latest-activity .tooltip {
+  display: block;
+  background: #1C1E21;
+  border-radius: 10px;
+  bottom: 30px;
+  color: #EBEBEB;
+  left: -100px;
+  padding: 10px;
+  position: absolute;
+  text-align: left;
+  width: 320px;
+  z-index: 20;
+}
+
+.table .latest-activity .tooltip:after {
+  content: "";
+  position: absolute;
+  border: 10px solid;
+  border-color: #1C1E21 transparent transparent transparent;
+  bottom: -20px;
+  left: 160px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
+  clip: rect(0 20px 10px 0);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+}
+
+.table .latest-activity .tooltip .quote {
+  color: #f36;
+  font-size: 30px;
+}
+
+.table .latest-activity .tooltip .translation {
+  display: block;
+  margin: -20px 0 0 40px;
+  overflow-wrap: break-word;
+}
+
+.table .latest-activity .tooltip footer {
+  color: #888888;
+  height: 48px;
+  margin-top: 10px;
+  position: relative;
+}
+
+.table .latest-activity .tooltip footer .wrapper {
+  bottom: 0;
+  position: absolute;
+  right: 0;
+}
+
+.table .latest-activity .tooltip footer .translation-details {
+  display: inline-block;
+  padding-top: 8px;
+  text-align: right;
+}
+
+.table .latest-activity .tooltip footer .translation-action {
+  overflow-y: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 264px;
+}
+
+.table .latest-activity .tooltip footer .translation-author {
+  color: #F36;
+}
+
+.table .latest-activity .tooltip footer img {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.table .progress .chart-wrapper {
+  position: relative;
+}
+
+.table .progress .chart-wrapper .chart {
+  display: table;
+  font-size: 0;
+  height: 3px;
+  margin-top: 2px;
+  table-layout: fixed;
+  width: 320px;
+}
+
+.table .progress .chart-wrapper .chart span {
+  display: table-cell;
+  height: 100%;
+}
+
+.table .progress .chart-wrapper .percent {
+  position: absolute;
+  right: 0;
+  top: -7px;
+}
+
+.table .progress .chart-wrapper .translated {
+  background: #7BC876;
+}
+
+.table .progress .chart-wrapper .suggested {
+  background: #4FC4F6;
+}
+
+.table .progress .chart-wrapper .fuzzy {
+  background: #FED271;
+}
+
+.table .progress .chart-wrapper .missing {
+  background: #637283;
+}
+
+.table tr:hover .progress .chart-wrapper {
+  display: none;
+}
+
+.table .progress .legend {
+  display: none;
+  margin-bottom: -9px;
+}
+
+.table tr:hover .progress .legend {
+  display: block;
+}
+
+.table .progress .legend ul {
+  font-size: 0;
+  margin-top: -1px;
+}
+
+.table .progress .legend li {
+  display: inline-block;
+  padding: 0;
+  text-align: center;
+  width: 72px;
+}
+
+.table .progress .legend li a {
+  color: #AAAAAA;
+  display: block;
+  margin-top: -5px;
+}
+
+.table .progress .legend li .title {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 10px;
+  text-transform: uppercase;
+}
+
+.table .progress .legend li.translated .title {
+  color: #7BC876;
+}
+
+.table .progress .legend li.suggested .title {
+  color: #4FC4F6;
+}
+
+.table .progress .legend li.fuzzy .title {
+  color: #FED271;
+}
+
+.table .progress .legend li.missing .title {
+  color: #7C8B9C;
+}
+
+.table .progress .legend li.all .title {
+  color: #AAAAAA;
+}
+
+.table .progress .legend li .value {
+  font-size: 18px;
+  line-height: 22px;
+}
+
+.table .progress .legend li a:hover .title {
+  color: #EBEBEB;
+}
+
+.table .progress .legend li a:hover .value {
+  color: #EBEBEB;
+  font-weight: 700;
+}

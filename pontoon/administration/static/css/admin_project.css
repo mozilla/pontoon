@@ -8,22 +8,28 @@ body {
   text-align: left;
 }
 
-#title {
-  display: block;
-  font-size: 50px;
-  letter-spacing: -3px;
-  position: relative;
-  text-align: left;
+select {
+  margin-top: 4px;
 }
 
-#title aside {
+h1 {
+  color: #EBEBEB;
+  font-size: 48px;
+  letter-spacing: -1px;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+h1 aside {
   bottom: 8px;
   position: absolute;
   right: 0;
 }
 
-#title a {
+h1 a {
+  color: #7BC876;
   font-size: 14px;
+  font-weight: 300;
   letter-spacing: 0;
   margin-left: 20px;
 }
@@ -32,7 +38,7 @@ body > form {
   color: #AAAAAA;
   font-size: 14px;
   width: 620px;
-  padding: 0 20px 100px;
+  padding: 40px 20px 100px;
 }
 
 form > div {
@@ -65,7 +71,7 @@ h2 .small {
 }
 
 h3 {
-  color: #FD5F60;
+  color: #F36;
   font-weight: 300;
   margin-left: -1px;
   text-align: left;
@@ -89,7 +95,7 @@ textarea {
   width: 615px; /* Must be same as form width - padding - margin-left */
 }
 
-.button {
+form .button {
   background: #888888;
   border: none;
   display: block;
@@ -111,15 +117,14 @@ textarea {
   color: #272A2F;
   font-weight: 400;
   text-transform: uppercase;
-  width: auto;
+  width: 130px;
 }
 
 .controls .button.sync {
-  background: #FD5F60;
+  background: #F36;
   color: #272A2F;
   float: left;
   margin-right: 10px;
-  width: 130px;
 }
 
 form a:link, form a:visited {
@@ -136,17 +141,12 @@ form a.add-repo {
 }
 
 .controls a {
-  margin: 9px;
+  margin: 6px 9px;
 }
 
 .controls .checkbox {
   float: left;
-  margin: 3px 0;
   text-transform: uppercase;
-}
-
-.authenticate .transifex .button {
-  margin-top: 42px;
 }
 
 .locale.select {
@@ -156,14 +156,6 @@ form a.add-repo {
 
 .locale.select.selected {
   float: right;
-}
-
-.locale.select .menu {
-  border-bottom: 1px solid #5E6475;
-  margin: 2px 0 -4px -1px;
-  overflow: auto;
-  padding: 10px 0;
-  width: 295px;
 }
 
 .locale.select .menu ul {
@@ -178,6 +170,24 @@ form a.add-repo {
 
 #id_locales {
   display: none;
+}
+
+.deadline {
+  float: left;
+  width: 295px;
+}
+
+.deadline input {
+  width: 289px;
+}
+
+.priority {
+  float: right;
+  width: 295px;
+}
+
+.priority label {
+  text-align: right;
 }
 
 .checkbox label {
@@ -195,31 +205,16 @@ form a.add-repo {
   display: inline;
 }
 
-.repository.authenticate .bottom label {
-  padding-left: 13px;
+.repository .source-wrapper input[type=checkbox],
+.repository .delete-wrapper input[type=checkbox] {
+  float: right;
+  margin: 2px;
 }
 
-.checkbox label input,
-.repository.authenticate .bottom label input {
+.checkbox label input {
   float: left;
   margin-left: -16px;
-  margin-top: 2px;
-}
-
-.repository.authenticate .bottom label input {
-  margin-top: 0;
-}
-
-.repository .type-wrapper .authentication-title,
-.repository .transifex .authentication-form,
-.repository .transifex .bottom {
-  display: none;
-}
-
-.repository.authenticate .type-wrapper .authentication-title,
-.repository.authenticate .transifex .authentication-form,
-.repository.authenticate .transifex .bottom {
-  display: block;
+  margin-top: 1px;
 }
 
 .repository .type-wrapper {
@@ -251,93 +246,60 @@ form a.add-repo {
   width: 207px;
 }
 
-.repository .type-wrapper .authentication-title {
-  color: #FD5F60;
-  font-size: 12px;
-  padding-top: 54px;
-  text-align: left;
-  text-transform: uppercase;
-}
-
 .repository .details-wrapper {
   float: left;
+  width: 552px;
+}
+
+.repository.git .details-wrapper {
   width: 408px;
 }
 
-.repository .details-wrapper[data-repository-type="transifex"] .repo {
-  display: none;
+.repository .details-wrapper input {
+  width: 548px;
 }
 
-.repository .details-wrapper[data-repository-type="transifex"] .transifex {
-  display: block;
-}
-
-.repository .details-wrapper .button.update {
-  color: #444444;
-  padding: 0;
-}
-
-.repository .prefix-wrapper,
-.repository .branch-wrapper {
-  clear: both;
-}
-
-.repository .prefix-wrapper .prefix input[type=text] {
-  width: 100%;
-}
-
-.repository input[type=text] {
+.repository.git .details-wrapper input {
   width: 403px;
 }
 
-.edit .repository input[type=text],
+.repository .branch-wrapper {
+  display: none;
+  float: left;
+  margin-left: 6px;
+  width: 138px;
+}
+
+.repository.git .branch-wrapper {
+  display: block;
+}
+
+.repository .website-wrapper,
+.repository .prefix-wrapper,
+.repository .repository-toolbar {
+  margin-top: 20px;
+}
+
+.repository .prefix-wrapper .prefix input[type=text] {
+  width: 615px;
+}
+
+.repository .repository-toolbar > section {
+  display: inline-block;
+  float: left;
+}
+
+.repository .repository-toolbar > section.delete-wrapper {
+  float: right;
+}
+
 .subpages input[id*=url] {
   float: left;
   width: 367px;
 }
 
-.transifex {
-  display: none;
-}
-
-.transifex .authentication-form {
-  padding-top: 73px;
-  padding-bottom: 57px;
-}
-
-.transifex input#id_transifex_project,
-.edit .authenticate .transifex input#id_transifex_project,
-.edit .transifex input#id_transifex_username {
-  float: left;
-  width: 196px;
-}
-
-.transifex input#id_transifex_resource,
-.edit .authenticate .transifex input#id_transifex_resource {
-  float: left;
-  width: 196px;
-}
-
-.edit .transifex input#id_transifex_project,
-.edit .transifex input#id_transifex_resource {
-  float: left;
-  width: 178px;
-}
-
-.edit .transifex input#id_transifex_password,
-.edit .authenticate .transifex .authentication-form label:nth-child(2) {
-  float: left;
-  width: 160px;
-}
-
-.transifex label,
-.edit .authenticate .transifex label  {
-  float: left;
-  width: 200px;
-}
-
-.edit .transifex label {
-  width: 182px;
+.branch-wrapper input[type=text] {
+  width: 134px;
 }
 
 .edit section .bottom {
@@ -369,11 +331,6 @@ form a.add-repo {
   width: 407px;
 }
 
-label[for=id_repository_type],
-.transifex input#id_transifex_project,
-.transifex input#id_transifex_username,
-.transifex label[for*=project],
-.transifex label[for*=username],
 .subpages input[id*=name],
 .subpages label[for*=name] {
   margin-right: 6px;
@@ -390,7 +347,7 @@ textarea {
 }
 
 .errorlist {
-  color: #FD5F60;
+  color: #F36;
   display: inline-block;
   font-size: 12px;
   line-height: 14px; /* Strange, but needed to keep controls in line when error occures */

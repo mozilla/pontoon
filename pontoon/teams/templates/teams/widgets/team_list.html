@@ -1,0 +1,56 @@
+{% import 'widgets/latest_activity.html' as LatestActivity %}
+{% import 'widgets/progress_chart.html' as ProgressChart %}
+
+{% macro header(request=False) %}
+  <table class="table table-sort team-list">
+    <thead>
+      <tr>
+        <th class="name asc">Language<i class="fa"></i></th>
+        <th class="code">Locale<i class="fa"></i></th>
+        <th class="population">Speakers<i class="fa"></i></th>
+        <th class="latest-activity">Latest Activity<i class="fa"></i></th>
+        <th class="progress">Progress<i class="fa"></i></th>
+        {% if request %}
+          <th class="check">Request<i class="fa"></i></th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+{% endmacro %}
+
+{% macro item(locale, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False) %}
+  <tr class="{{ class }}">
+    <td class="name">
+      <h3>
+        <a href="{{ main_link }}">{{ locale.name }}</a>
+      </h3>
+    </td>
+    <td class="code">
+        <a href="{{ main_link }}">{{ locale.code }}</a>
+    </td>
+    <td class="population">
+      <span>{{ locale.population|intcomma or 'Unknown' }}</span>
+    </td>
+    <td class="latest-activity">
+      {{ LatestActivity.span(latest_activity) }}
+    </td>
+    <td class="progress">
+      {% if locale.total_strings %}
+        {{ ProgressChart.span(chart, chart_link, link_parameter) }}
+      {% else %}
+        <span class="not-ready">Not synced yet</span>
+      {% endif %}
+    </td>
+    {% if request %}
+      <td class="check fa fa-fw"></td>
+    {% endif %}
+  </tr>
+{% endmacro %}
+
+{% macro footer(request=False) %}
+    </tbody>
+  </table>
+  {% if request %}
+    <button id="request-locales">Request new locales</button>
+  {% endif %}
+{% endmacro %}

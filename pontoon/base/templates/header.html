@@ -1,0 +1,71 @@
+{% import "widgets/signout.html" as SignOut with context %}
+
+<header>
+  <ul class="notification">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+
+  <div class="container">
+    <nav>
+      <a href="{{ url('pontoon.home') }}" class="logo"><img src="{{ static('img/logo32.png') }}"></a>
+
+      <ul class="links">
+        <li><a href="{{ url('pontoon.teams') }}">Teams</a></li>
+        <li><a href="{{ url('pontoon.projects') }}">Projects</a></li>
+        <li><a href="{{ url('pontoon.contributors') }}">Contributors</a></li>
+        <li><a href="{{ url('pontoon.machinery') }}">Machinery</a></li>
+      </ul>
+
+      <div class="right">
+        <div id="profile" class="select">
+          <div class="button selector">
+            {% if request.user.is_authenticated() %}
+              <span class="title noselect">{{ user.name_or_email|nospam }}</span>
+              <img class="rounded" src="{{ request.user.gravatar_url(44) }}">
+            {% else %}
+              <div class="menu-icon fa fa-navicon"></div>
+            {% endif %}
+          </div>
+          <div class="menu">
+            <ul>
+              {% if user.is_authenticated() %}
+              <li><a href="{{ url('pontoon.contributors.profile') }}"><i class="fa fa-user fa-fw"></i>My Profile</a></li>
+              <li><a href="{{ url('pontoon.contributors.settings') }}"><i class="fa fa-cog fa-fw"></i>Change Settings</a></li>
+              <li class="horizontal-separator"></li>
+              {% endif %}
+
+              <li><a href="{{ url('pontoon.terms') }}"><i class="fa fa-legal fa-fw"></i>Terms of Use</a></li>
+              <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
+
+              <li class="horizontal-separator"></li>
+
+              {% if perms.base.can_manage %}
+              <li><a href="{{ url('pontoon.admin') }}">Admin</a></li>
+                {% if project %}
+                <li><a href="{{ url('pontoon.admin.project', project.slug) }}">Admin &middot; Current Project</a></li>
+                {% endif %}
+              {% endif %}
+
+              {% if settings.DJANGO_LOGIN %}
+                {% if user.is_authenticated() %}
+                  <li id="standalone-sign-out"><a href="{{ url('standalone_logout') }}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out fa-fw"></i>Sign out</a></li>
+                {% else %}
+                  <li id="standalone-signin"><a href="{{ url('standalone_login') }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+                {% endif %}
+              {% else %}
+                {% if user.is_authenticated() %}
+                  <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out fa-fw"></i>Sign out</a></li>
+                {% else %}
+                  <li id="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+                {% endif %}
+              {% endif %}
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,66 @@
+{% import "widgets/menu.html" as Menu %}
+
+{# Widget to select period for filtering contributors #}
+{% macro select_period(period, viewurl) %}
+    {% call Menu.submenu() %}
+        {{ Menu.item('All time', viewurl, is_active = (period == None), class='button') }}
+        {{ Menu.item('12 months', viewurl + '?period=12', is_active = (period == 12), class='button') }}
+        {{ Menu.item('6 months', viewurl + '?period=6', is_active = (period == 6), class='button') }}
+        {{ Menu.item('3 months', viewurl + '?period=3', is_active = (period == 3), class='button') }}
+        {{ Menu.item('Last month', viewurl + '?period=1', is_active = (period == 1), class='button') }}
+    {% endcall %}
+{% endmacro %}
+
+{# Widget to display list of contributors. #}
+{% macro list_contributors(contributors) %}
+  <table class="striped">
+    <thead>
+      <tr>
+        <th class="rank">Rank</th>
+        <th>Contributor</th>
+        <th>Translations<sup><a href="#fn-translations" id="ref-translations">*</a></sup></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for contributor in contributors %}
+      <tr>
+        <td class="rank">{{ loop.index }}</td>
+        <td class="contributor">
+          <a href="{{ url('pontoon.contributors.contributor.username', contributor.username) }}">
+            <img class="rounded" src="{{ contributor.gravatar_url(44) }}">
+            <p class="name">{{ contributor.name_or_email }}</p>
+          </a>
+          <p class="role">{{ contributor.user_role }}</p>
+        </td>
+        <td class="stats">
+          <div class="details">
+            <div class="total">
+              <span>Total</span>
+              <p>{{ contributor.translations_count|intcomma }}</p>
+            </div><div class="approved">
+              <span>Translated</span>
+              <p>{{ contributor.translations_approved_count|intcomma }}</p>
+            </div><div class="translated">
+              <span>Suggested</span>
+              <p>{{ contributor.translations_unapproved_count|intcomma }}</p>
+            </div><div class="fuzzy">
+              <span>Fuzzy</span>
+              <p>{{ contributor.translations_needs_work_count|intcomma }}</p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3"><sup id="fn-translations">*Translation counts do not include unchanged translations.<a href="#ref-translations" title="Jump back to top.">↩</a></sup></td>
+      </tr>
+    </tfoot>
+  </table>
+{% endmacro %}
+
+{# Widget to display notification if no contributors available. #}
+{% macro no_contributors() %}
+  <p class="no-results no-contributors">No contributors found.</p>
+{% endmacro %}
