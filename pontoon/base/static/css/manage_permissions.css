@@ -193,3 +193,7 @@ h3 .remove-project .fa {
   color: #CCCCCC;
   cursor: pointer;
 }
+
+#project-selector .menu li:not(.limited) {
+  display: none;
+}

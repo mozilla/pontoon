@@ -79,7 +79,7 @@
                 </div>
                 <ul>
                     {% for pk, slug, name, all_users, translators, has_custom_translators in locale_projects %}
-                        <li data-slug="{{ slug }}" data-id="{{ pk }}" class="{% if has_custom_translators %}hidden{% endif %}">{{ name }}</li>
+                        <li data-slug="{{ slug }}" data-id="{{ pk }}" class="{% if has_custom_translators %}hidden{% else %}limited{% endif %}">{{ name }}</li>
                     {% endfor %}
                 </ul>
 
