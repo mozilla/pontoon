@@ -153,8 +153,10 @@ class VCSProject(object):
                     repo.get_last_synced_revisions()
                 )[0]
 
-                log.info('Changed files in repository, all: {}'.format(changed_files))
+                log.info('Changed files in {} repository, all: {}'.format(self.db_project.name, changed_files))
 
+                # Find relevant changes in repository by matching changed
+                # paths against locale repository paths
                 locale_path_locales = self.locale_path_locales(repo.checkout_path)
                 locale_paths = locale_path_locales.keys()
 
@@ -169,7 +171,7 @@ class VCSProject(object):
                             files.setdefault(path, []).append(locale)
                             break
 
-        log.info('Changed files in repository, relevant: {}'.format(files))
+        log.info('Changed files in {} repository, relevant for enabled locales: {}'.format(self.db_project.name, files))
 
         # DB changes
         vcs = files
@@ -192,6 +194,7 @@ class VCSProject(object):
         for locale in self.db_project.locales.all():
             locale_directory = self.locale_directory_paths[locale.code]
             path = locale_directory[len(repo_checkout_path):].lstrip(os.sep)
+            path = os.path.join(path, '')  # Ensure the path ends with os.sep
             locale_path_locales[path] = locale
 
         return locale_path_locales
@@ -258,7 +261,7 @@ class VCSProject(object):
         """
         resources = {}
 
-        log.info('Changed files in repository and Pontoon: {}'.format(self.changed_files))
+        log.info('Changed files in {} repository and Pontoon: {}'.format(self.db_project, self.changed_files))
 
         for path in self.relative_resource_paths():
             # Syncing translations
@@ -299,7 +302,7 @@ class VCSProject(object):
                     path=path, err=err
                 ))
 
-        log.info('Changed files: {resources}'.format(resources=resources.keys()))
+        log.info('Changed files in {} repository: {}'.format(self.db_project, resources.keys()))
         return resources
 
     @property
