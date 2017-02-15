@@ -453,7 +453,7 @@ class Locale(AggregatedStats):
         (5, 'other'),
     )
 
-    cldr_plurals = models.CommaSeparatedIntegerField(
+    cldr_plurals = models.CharField(
         "CLDR Plurals",
         blank=True,
         max_length=11,
