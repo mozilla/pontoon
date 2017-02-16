@@ -68,6 +68,7 @@
         <div class="repo">
           {{ repo_form.url.label_tag() }}
           {{ repo_form.url }}
+          {{ repo_form.url.errors }}
         </div>
       </section>
       <section class="source-wrapper">
@@ -193,7 +194,7 @@
               {{ form.disabled }}{{ form.disabled.label }}
           </label>
       </div>
-      <button class="button">Save project</button>
+      <button class="save button">Save project</button>
       <a href="{{ url('pontoon.admin') }}" class="cancel">Cancel</a>
   </div>
 

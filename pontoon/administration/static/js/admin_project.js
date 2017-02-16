@@ -31,6 +31,12 @@ $(function() {
     }
   });
 
+  // Submit form with button
+  $('.save').click(function(e) {
+    e.preventDefault();
+    $('#admin-form').submit();
+  });
+
   // Manually Sync project
   $('.sync').click(function(e) {
     e.preventDefault();
