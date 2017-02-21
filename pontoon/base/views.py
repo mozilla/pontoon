@@ -1325,7 +1325,7 @@ def request_projects(request, locale):
 
     if settings.PROJECT_MANAGERS[0] != '':
         EmailMessage(
-            subject='Project request for {locale} ({code})'.format(locale=locale.name, code=locale.code),
+            subject=u'Project request for {locale} ({code})'.format(locale=locale.name, code=locale.code),
             body=u'''
             Please add the following projects to {locale} ({code}):
             {projects}
