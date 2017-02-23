@@ -21,6 +21,8 @@ SubpageInlineFormSet = inlineformset_factory(
 
 RepositoryInlineFormSet = inlineformset_factory(
     Project, Repository,
-    extra=1,
+    extra=0,
+    min_num=1,
+    validate_min=True,
     fields=('type', 'url', 'branch', 'source_repo', 'permalink_prefix'),
 )
