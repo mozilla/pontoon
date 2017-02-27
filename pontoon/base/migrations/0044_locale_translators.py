@@ -10,8 +10,9 @@ def create_translators(apps, schema_editor):
     """
     User = apps.get_model('auth', 'User')
 
+    users = getattr(User, 'translators', User.objects)
     contributors_locale = (
-        User.objects
+        users
             .filter(translation__approved=True, user_permissions__codename="can_localize")
             .annotate(translated_locales=models.Count('translation__locale', distinct=True))
             .filter(translated_locales=1)
