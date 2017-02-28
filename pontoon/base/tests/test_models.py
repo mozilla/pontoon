@@ -1,5 +1,6 @@
 import os.path
 
+from django.core.management import call_command
 from django_nose.tools import (
     assert_equal,
     assert_false,
@@ -37,6 +38,19 @@ from pontoon.base.tests import (
 )
 from pontoon.base.utils import aware_datetime
 from pontoon.sync import KEY_SEPARATOR
+
+
+class CreateUserTests(TestCase):
+    def test_create_super_user(self):
+        """
+        Check if that's possible to create user.
+        Test against possible regressions in User model.
+        """
+        username = 'superuser@example.com'
+        call_command('createsuperuser', email=username, username=username, interactive=False)
+
+        assert User.objects.get(username=username)
+        assert User.objects.get(email=username)
 
 
 class ProjectTests(TestCase):

@@ -41,7 +41,7 @@ log = logging.getLogger('pontoon')
 
 
 # User class extensions
-class UserTranslationsManager(models.Manager):
+class UserTranslationsManager(UserManager):
     """
     Provides various method to interact with larger sets of translations and their stats for user.
     """
