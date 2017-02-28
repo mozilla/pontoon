@@ -90,20 +90,28 @@ def mark_placeables(text):
         NewlineEscapePlaceable.parse,
         TabEscapePlaceable.parse,
         EscapePlaceable.parse,
+
         # The spaces placeable can match '\n  ' and mask the newline,
         # so it has to come later.
         SpacesPlaceable.parse,
-        PythonFormatNamedPlaceable.parse,
-        PythonFormatPlaceable.parse,
+
+        # The XML placeables must be marked before variable placeables
+        # to avoid marking variables, but leaving out tags. See:
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=1334926
         general.XMLTagPlaceable.parse,
         general.AltAttrPlaceable.parse,
         general.XMLEntityPlaceable.parse,
+
+        PythonFormatNamedPlaceable.parse,
+        PythonFormatPlaceable.parse,
         general.PythonFormattingPlaceable.parse,
         general.JavaMessageFormatPlaceable.parse,
         general.FormattingPlaceable.parse,
+
         # The Qt variables can consume the %1 in %1$s which will mask a printf
         # placeable, so it has to come later.
         general.QtFormattingPlaceable.parse,
+
         general.UrlPlaceable.parse,
         general.FilePlaceable.parse,
         general.EmailPlaceable.parse,
