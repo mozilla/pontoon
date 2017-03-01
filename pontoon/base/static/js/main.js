@@ -15,7 +15,11 @@ var Pontoon = (function (my) {
      * Close notification
      */
     closeNotification: function () {
-      $('.notification').animate({opacity: 0}, function() {
+      $('.notification').animate({
+        top: '-60px',
+      }, {
+        duration: 200
+      }, function() {
         $(this).addClass('hide').empty();
       });
     },
@@ -32,25 +36,27 @@ var Pontoon = (function (my) {
      *
      * text End of operation text (e.g. Done!)
      * type Notification type (e.g. error)
-     * persist Do not close
+     * duration How long should the notification remain open (default: 2000 ms)
      */
-    endLoader: function (text, type, persist) {
+    endLoader: function (text, type, duration) {
       $('#loading').removeClass('loader');
       if (text) {
         $('.notification')
-          .html('<li class="' + (type || "") + '">' + text + '</li>')
-          .css('opacity', 100)
-          .removeClass('hide left');
+          .html('<li class="' + (type || '') + '">' + text + '</li>')
+          .removeClass('hide')
+          .animate({
+            top: 0,
+          }, {
+            duration: 200
+          });
       }
 
-      if (!persist) {
-        if (Pontoon.notificationTimeout) {
-          clearTimeout(Pontoon.notificationTimeout);
-        }
-        Pontoon.notificationTimeout = setTimeout(function() {
-          Pontoon.closeNotification();
-        }, 2000);
+      if (Pontoon.notificationTimeout) {
+        clearTimeout(Pontoon.notificationTimeout);
       }
+      Pontoon.notificationTimeout = setTimeout(function() {
+        Pontoon.closeNotification();
+      }, duration || 2000);
     },
 
     /*
@@ -80,6 +86,13 @@ var Pontoon = (function (my) {
      */
     doNotRender: function (string) {
       return $('<div/>').text(string).html();
+    },
+
+    /*
+     * Converts a number to a string containing commas every three digits
+     */
+    numberWithCommas: function (number) {
+      return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
 
     /*
@@ -477,6 +490,20 @@ var Pontoon = (function (my) {
 /* Main code */
 $(function() {
 
+  // Slim progress bar on top of the page
+  NProgress.configure({ showSpinner: false });
+  $(document).ajaxStart(function() {
+    NProgress.start();
+  }).ajaxStop(function() {
+    NProgress.done();
+  });
+
+  // Display any notifications
+  var notifications = $('.notification li');
+  if (notifications.length) {
+    Pontoon.endLoader(notifications.text());
+  }
+
   function getRedirectUrl() {
     return window.location.pathname + window.location.search;
   }
@@ -500,17 +527,24 @@ $(function() {
   });
 
   // Show/hide menu on click
-  $('.selector').click(function (e) {
+  $('body').on('click', '.selector', function (e) {
     if (!$(this).siblings('.menu').is(':visible')) {
       e.stopPropagation();
-      $('body:not(".admin-project, .locale-permissions") .menu').hide();
+      $('.menu:not(".permanent")').hide();
       $('.select').removeClass('opened');
       $('#iframe-cover:not(".hidden")').hide(); // iframe fix
       $(this).siblings('.menu').show().end()
              .parents('.select').addClass('opened');
       $('#iframe-cover:not(".hidden")').show(); // iframe fix
-      $('body:not(".admin-project, .locale-permissions") .menu:visible input[type=search]').focus().trigger('input');
+      $('.menu:not(".permanent"):visible input[type=search]').focus().trigger('input');
     }
+  });
+
+  // Hide menus on click outside
+  $('body').bind('click.main', function (e) {
+    $('.menu:not(".permanent")').hide();
+    $('.select').removeClass('opened');
+    $('.menu:not(".permanent") li').removeClass('hover');
   });
 
   // Menu hover
@@ -583,7 +617,7 @@ $(function() {
   });
 
   // Menu search
-  $('body').on('click', '.menu input[type=search]', function (e) {
+  $('body').on('click', '.menu input[type=search]', function(e) {
     e.stopPropagation();
   }).on('input.search', '.menu input[type=search]', function(e) {
     if (e.which === 9) {
@@ -604,60 +638,6 @@ $(function() {
     } else {
       ul.find('.no-match').hide();
     }
-  });
-
-  // Menu sort
-  $('.menu .sort span').click(function (e) {
-    function getChart(el) {
-      var data = $(el).find('.chart').data('chart'),
-          approved = data ? data.approved_strings/data.total_strings : 0,
-          translated = data ? data.translated_strings/data.total_strings : 0;
-
-      return {
-        "approved": approved,
-        "translated": translated
-      };
-    }
-
-    function getDate(el) {
-      var date = $(el).find('time').attr('datetime') || 0;
-      return new Date(date);
-    }
-
-    function getString(el) {
-      return $(el).find('span:eq(' + index + ')').text();
-    }
-
-    var node = $(this),
-        index = node.index(),
-        ul = node.parents('.sort').next(),
-        listitems = ul.children("li:not('.no-match')"),
-        dir = node.hasClass('asc') ? -1 : 1,
-        cls = node.hasClass('asc') ? 'desc' : 'asc';
-
-    $('.menu .sort span').removeClass('asc desc');
-    node.addClass(cls);
-
-    listitems.sort(function(a, b) {
-      // Sort by approved, then by unapproved percentage
-      if (node.is('.progress')) {
-        var chartA = getChart(a),
-            chartB = getChart(b);
-
-        return (chartA.approved - chartB.approved) * dir ||
-          (chartA.translated - chartB.translated) * dir;
-
-      // Sort by date
-      } else if (node.is('.latest')) {
-        return (getDate(b) - getDate(a)) * dir;
-
-      // Sort by alphabetical order
-      } else {
-        return getString(a).localeCompare(getString(b)) * dir;
-      }
-    });
-
-    ul.append(listitems);
   });
 
   // Tabs

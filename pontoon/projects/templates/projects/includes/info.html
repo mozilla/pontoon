@@ -1,0 +1,5 @@
+{% if project.info_brief %}
+  <div class="info">{{ project.info_brief|safe }}</div>
+{% else %}
+  <p class="no-results">No project info available.</p>
+{% endif %}

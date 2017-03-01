@@ -1,0 +1,5 @@
+{% if locale.team_description %}
+  <div class="info">{{ locale.team_description|safe }}</div>
+{% else %}
+  <p class="no-results">No team info available.</p>
+{% endif %}

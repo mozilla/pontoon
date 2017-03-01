@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contributor.name_or_email }}{% endblock %}
+
+{% block class %}user{% endblock %}
+
+{% block before %}
+<!-- Server data -->
+<div id="server" class="hidden"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+     {% if user.is_authenticated() and user.email %}data-email="{{ user.email|nospam }}"{% endif %}
+     >
+</div>
+{% endblock %}
+
+{% set my_profile = (user.is_authenticated() and user.email == contributor.email) %}
+
+{% block heading %}
+<section id="heading">
+  <a class="avatar" href="{% if my_profile %}http://gravatar.com/{% endif %}">
+    {% if my_profile %}
+      <div class="desc">Update profile picture</div>
+    {% endif %}
+    <img class="rounded" src="{{ contributor.gravatar_url(200) }}">
+  </a>
+
+  <h2 id="username">
+    {% if my_profile %}
+      <div class="container">
+        <input type="text" placeholder="What's your name?" value="{{ contributor.first_name }}" maxlength="30">
+        <div class="submit fa fa-arrow-circle-right"></div>
+      </div>
+    {% else %}
+      <div class="uneditable">{{ contributor.first_name }}</div>
+    {% endif %}
+  </h2>
+
+  <ul class="info">
+    <li><span class="fa fa-fw fa-envelope"></span><a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a></li>
+    <li><span class="fa fa-fw fa-lock"></span>{{ contributor|display_permissions() }}</li>
+    {% if my_profile %}
+      <li class="settings"><i class="fa fa-fw fa-cog"></i><a href="{{ url('pontoon.contributors.settings') }}">Change Settings</a></li>
+    {% endif %}
+  </ul>
+</section>
+{% endblock %}
+
+{% block middle %}
+<section id="middle">
+  <div class="container details">
+    <div class="total">
+      <span>Total</span>
+      <p>{{ translations.count()|intcomma }}</p>
+    </div><div class="translated">
+      <span>Translated</span>
+      <p>{{ translations.filter(approved=True).count()|intcomma }}</p>
+    </div><div class="suggested">
+      <span>Suggested</span>
+      <p>{{ translations.exclude(approved=True).exclude(fuzzy=True).count()|intcomma }}</p>
+    </div><div class="fuzzy">
+      <span>Fuzzy</span>
+      <p>{{ translations.filter(fuzzy=True).count()|intcomma }}</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block bottom %}
+<section id="main" data-url="{{ url('pontoon.contributors.contributor.timeline', username=contributor.username) }}" data-page="0" data-finalized="0">
+  <div class="container"></div>
+
+  <div id="timeline-loader">
+    <div class="fa fa-refresh fa-spin"></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'profile' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'profile' %}
+{% endblock %}

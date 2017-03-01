@@ -12,6 +12,8 @@
     <title>{% block title %}Pontoon{% endblock %}</title>
     <meta name="description" content="Live web localization tool">
     <meta name="author" content="Mozilla">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}" title="" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/nprogress.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" title="" type="text/css" />
     {% if settings.GOOGLE_ANALYTICS_KEY %}
     <!-- Google Analytics -->
@@ -36,31 +38,72 @@
   </head>
 
   <body class="{% block class %}{% endblock %}">
-    <nav>
-      <ul class="links">
-        <li><a href="{% url 'pontoon.home' %}">Home</a></li>
-        <li><a href="{% url 'pontoon.teams' %}">Teams</a></li>
-        <li><a href="{% url 'pontoon.projects' %}">Projects</a></li>
-        <li><a href="{% url 'pontoon.contributors' %}">Contributors</a></li>
-        <li><a href="{% url 'pontoon.search' %}">Terminology</a></li>
-        <li><a href="{% url 'pontoon.terms' %}">Terms</a></li>
-        <li><a href="https://developer.mozilla.org/docs/Mozilla/Localization/Localizing_with_Pontoon" target="_blank">Help</a></li>
-        <li id="admin"{% if not perms.base.can_manage %} class="hidden"{% endif %}><a href="{% url "pontoon.admin" %}">Admin</a></li>
-        {% if settings.DJANGO_LOGIN %}
-            {% if not user.is_authenticated %}
-                <li id="standalone-signin"><a href="{% url 'standalone_login' %}">Sign in</a></li>
-            {% else %}
-                <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}">Sign out</a></li>
-            {% endif %}
-        {% else %}
-            {% if not user.is_authenticated %}
-                <li id="sign-in"><a href="{% provider_login_url 'fxa' %}">Sign in</a></li>
-            {% else %}
-                <li id="sign-out"><a href="{% url 'account_logout' %}" title="{{ user.email|nospam }}">Sign out</a></li>
-            {% endif %}
-        {% endif %}
+    <header>
+      <ul class="notification">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
       </ul>
-    </nav>
+
+      <div class="container">
+        <nav>
+          <a href="{% url 'pontoon.home' %}" class="logo"><img src="{% static 'img/logo32.png' %}"></a>
+
+          <ul class="links">
+            <li><a href="{% url 'pontoon.teams' %}">Teams</a></li>
+            <li><a href="{% url 'pontoon.projects' %}">Projects</a></li>
+            <li><a href="{% url 'pontoon.contributors' %}">Contributors</a></li>
+            <li><a href="{% url 'pontoon.machinery' %}">Machinery</a></li>
+          </ul>
+
+          <div class="right">
+            <div id="profile" class="select">
+              <div class="button selector">
+                {% if user.is_authenticated %}
+                  <span class="title noselect">{{ user.name_or_email|nospam }}</span>
+                  <img class="rounded" src="{{ request.user.gravatar_url }}">
+                {% else %}
+                  <div class="menu-icon fa fa-navicon"></div>
+                {% endif %}
+              </div>
+              <div class="menu">
+                <ul>
+                  {% if user.is_authenticated %}
+                  <li><a href="{% url 'pontoon.contributors.profile' %}"><i class="fa fa-user fa-fw"></i>My Profile</a></li>
+                  <li><a href="{% url 'pontoon.contributors.settings' %}"><i class="fa fa-cog fa-fw"></i>Change Settings</a></li>
+                  <li class="horizontal-separator"></li>
+                  {% endif %}
+
+                  <li><a href="{% url 'pontoon.terms' %}"><i class="fa fa-legal fa-fw"></i>Terms of Use</a></li>
+                  <li><a href="https://developer.mozilla.org/en-US/docs/Localizing_with_Pontoon"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
+
+                  <li class="horizontal-separator"></li>
+
+                  {% if perms.base.can_manage %}
+                  <li><a href="{% url 'pontoon.admin' %}">Admin</a></li>
+                  {% endif %}
+
+                  {% if settings.DJANGO_LOGIN %}
+                    {% if user.is_authenticated %}
+                      <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out fa-fw"></i>Sign out</a></li>
+                    {% else %}
+                      <li id="standalone-signin"><a href="{% url 'standalone_login' %}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+                    {% endif %}
+                  {% else %}
+                    {% if user.is_authenticated %}
+                      <li id="sign-out"><a href="{% url 'account_logout' %}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form }}<i class="fa fa-sign-out fa-fw"></i>Sign out</a></li>
+                    {% else %}
+                      <li id="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+                    {% endif %}
+                  {% endif %}
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <section id="error">
       <div class="inner">
@@ -72,6 +115,7 @@
     <!-- Javascript at the bottom for fast page loading -->
     {% providers_media_js %}
     <script type="text/javascript" charset="utf-8" src="{% static 'js/lib/jquery-1.11.1.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'js/lib/nprogress.js' %}"></script>
     <script type="text/javascript" charset="utf-8" src="{% static 'js/main.js' %}"></script>
   </body>
 </html>

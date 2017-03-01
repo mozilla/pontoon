@@ -1,9 +1,13 @@
 import logging
 
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
+from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 
 from pontoon.administration.forms import (
@@ -12,12 +16,16 @@ from pontoon.administration.forms import (
     SubpageInlineFormSet,
 )
 from pontoon.base import utils
+from pontoon.base.utils import require_AJAX
 from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
     Resource,
 )
+from pontoon.sync.models import SyncLog
+from pontoon.sync.tasks import sync_project
+
 
 log = logging.getLogger('pontoon')
 
@@ -25,7 +33,7 @@ log = logging.getLogger('pontoon')
 def admin(request, template='admin.html'):
     """Admin interface."""
     if not request.user.has_perm('base.can_manage'):
-        return render(request, '403.html', status=403)
+        raise PermissionDenied
 
     projects = (
         Project.objects.all()
@@ -70,7 +78,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
     log.debug("Admin project.")
 
     if not request.user.has_perm('base.can_manage'):
-        return render(request, '403.html', status=403)
+        raise PermissionDenied
 
     form = ProjectForm()
     subpage_formset = SubpageInlineFormSet()
@@ -169,3 +177,18 @@ def manage_project(request, slug=None, template='admin_project.html'):
         data['ready'] = True
 
     return render(request, template, data)
+
+
+@login_required(redirect_field_name='', login_url='/403')
+@require_AJAX
+def manually_sync_project(request, slug):
+    if not request.user.has_perm('base.can_manage') or not settings.MANUAL_SYNC:
+        return HttpResponseForbidden(
+            "Forbidden: You don't have permission for syncing projects"
+        )
+
+    sync_log = SyncLog.objects.create(start_time=timezone.now())
+    project = Project.objects.get(slug=slug)
+    sync_project.delay(project.pk, sync_log.pk)
+
+    return HttpResponse('ok')

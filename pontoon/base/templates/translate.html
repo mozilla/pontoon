@@ -35,11 +35,11 @@
 <!-- Main toolbar -->
 <header>
   <div class="container clearfix">
-    {% include 'locale_selector.html' %}
+    {% include 'teams/widgets/team_selector.html' %}
 
-    {% include 'project_selector.html' %}
+    {% include 'projects/widgets/project_selector.html' %}
 
-    {% include 'part_selector.html' %}
+    {% include 'localizations/widgets/resource_selector.html' %}
 
     <!-- Go -->
     <div class="go select">
@@ -99,14 +99,18 @@
       <!-- Profile -->
       <div id="profile" class="select">
         <div class="button selector">
-          <span class="title noselect">{% if user.email %}{{ user.name_or_email|nospam }}{% else %}Anonymous{% endif %}</span>
-          <img class="rounded" src="{% if request.user.is_authenticated() %}{{ request.user.gravatar_url(44) }}{% else %}{{ static('img/anon.jpg') }}{% endif %}">
+          {% if request.user.is_authenticated() %}
+            <span class="title noselect">{{ user.name_or_email|nospam }}</span>
+            <img class="rounded" src="{{ request.user.gravatar_url(44) }}">
+          {% else %}
+            <div class="menu-icon fa fa-navicon"></div>
+          {% endif %}
         </div>
         <div class="menu">
           <ul>
             {% if user.is_authenticated() %}
-            <li><a href="{{ url('pontoon.profile') }}"><i class="fa fa-user fa-fw"></i>View Profile</a></li>
-            <li><a href="{{ url('pontoon.user_settings') }}"><i class="fa fa-cog fa-fw"></i>Change Settings</a></li>
+            <li><a href="{{ url('pontoon.contributors.profile') }}"><i class="fa fa-user fa-fw"></i>View Profile</a></li>
+            <li><a href="{{ url('pontoon.contributors.settings') }}"><i class="fa fa-cog fa-fw"></i>Change Settings</a></li>
             <li class="horizontal-separator"></li>
             {% endif %}
 
@@ -117,7 +121,7 @@
             <li class="horizontal-separator"></li>
 
             <li><a href="{{ url('pontoon.contributors') }}"><i class="fa fa-trophy fa-fw"></i>Top Contributors</a></li>
-            <li><a href="{{ url('pontoon.search') }}"><i class="fa fa-search fa-fw"></i>Terminology Search</a></li>
+            <li><a href="{{ url('pontoon.machinery') }}"><i class="fa fa-search fa-fw"></i>Machinery</a></li>
             <li><a href="{{ url('pontoon.terms') }}"><i class="fa fa-legal fa-fw"></i>Terms of Use</a></li>
             <li><a href="https://developer.mozilla.org/docs/Mozilla/Localization/Localizing_with_Pontoon"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
 
@@ -292,7 +296,7 @@
                 {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
                 {% endif %}
                 <li class="horizontal-separator"></li>
-                <li><a href="{{ url('pontoon.user_settings') }}">Change All Settings</a></li>
+                <li><a href="{{ url('pontoon.contributors.settings') }}">Change All Settings</a></li>
               </ul>
             </div>
           </div>

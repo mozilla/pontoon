@@ -1,33 +1,25 @@
-{% extends "landing.html" %}
+{% extends "base.html" %}
 
 {% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
 
-{% block title %}Pontoon &middot; {{'%(subtitle)s' | format(subtitle=subtitle) }}{% endblock %}
+{% block title %}{{'%(subtitle)s' | format(subtitle=subtitle) }}{% endblock %}
 
 {% block class %}admin-project{% endblock %}
-
-{% block header %}{% endblock %}
 
 {% block middle %}
 <form id="admin-form" method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
 
-  <h1 id="title">
+  <h1>
   {{ '%(subtitle)s' | format(subtitle=subtitle) }}
   {% if pk %}
   <aside>
     <a href="{{ url('pontoon.admin.project.new') }}">Add new</a>
     {% if translate_locale and form.slug.value() != '' %}
-    <a class="translate{% if not ready %} hidden{% endif %}" href="{{ url('pontoon.locale.project', translate_locale, form.slug.value()) }}">Translate</a>
+    <a class="translate{% if not ready %} hidden{% endif %}" href="{{ url('pontoon.localizations.localization', translate_locale, form.slug.value()) }}">Translate</a>
     {% endif %}
   </aside>
   {% endif %}
   </h1>
-
-  <ul class="notification{% if not messages %} hidden{% endif %}">
-      {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-  </ul>
 
   {% csrf_token %}
 
@@ -50,6 +42,18 @@
       {{ form.locales }}
       {{ form.locales.errors }}
   </div>
+  <div class="deadline-priority clearfix">
+    <section class="deadline clearfix">
+      {{ form.deadline.label_tag() }}
+      <input id="id_deadline" name="deadline" value="{{ form.deadline.value() or '' }}" type="text" placeholder="YYYY-MM-DD">
+      {{ form.deadline.errors }}
+    </section>
+    <section class="priority clearfix">
+      {{ form.priority.label_tag() }}
+      {{ form.priority }}
+      {{ form.priority.errors }}
+    </section>
+  </div>
 
   <h2>
     <span>Repositories</span>
@@ -60,72 +64,94 @@
   {% for repo_form in repo_formset %}
     <div class="repository clearfix">
       {{ repo_form.id }}
-      <section class="type-wrapper">
-        {{ repo_form.type.label_tag() }}
-        {{ repo_form.type }}
-      </section>
-      <section class="details-wrapper">
-        <div class="repo">
-          {{ repo_form.url.label_tag() }}
-          {{ repo_form.url }}
-          {{ repo_form.url.errors }}
-        </div>
-      </section>
-      <section class="source-wrapper">
-        {{ repo_form.source_repo.label_tag() }}
-        {{ repo_form.source_repo }}
-      </section>
-      <section class="delete-wrapper">
-        <div class="delete">
-          {{ repo_form.DELETE.label_tag() }}
-          {{ repo_form.DELETE }}
-        </div>
-      </section>
-      <section class="branch-wrapper">
-        <div class="branch">
-          {{ repo_form.branch.label_tag() }}
-          {{ repo_form.branch }}
-        </div>
-      </section>
-      <section class="prefix-wrapper">
+      <div class="clearfix">
+        <section class="type-wrapper">
+          {{ repo_form.type.label_tag() }}
+          {{ repo_form.type }}
+        </section>
+        <section class="details-wrapper">
+          <div class="repo">
+            {{ repo_form.url.label_tag() }}
+            {{ repo_form.url }}
+            {{ repo_form.url.errors }}
+          </div>
+        </section>
+        <section class="branch-wrapper">
+          <div class="branch">
+            {{ repo_form.branch.label_tag() }}
+            {{ repo_form.branch }}
+            {{ repo_form.branch.errors }}
+          </div>
+        </section>
+      </div>
+      <section class="prefix-wrapper clearfix">
         <div class="prefix">
           {{ repo_form.permalink_prefix.label_tag() }}
           {{ repo_form.permalink_prefix }}
           {{ repo_form.permalink_prefix.errors }}
         </div>
       </section>
+      <section class="website-wrapper clearfix">
+        <div class="website">
+          {{ repo_form.website.label_tag() }}
+          {{ repo_form.website }}
+          {{ repo_form.website.errors }}
+        </div>
+      </section>
+      <div class="repository-toolbar clearfix">
+        <section class="source-wrapper">
+          {{ repo_form.source_repo.label_tag() }}
+          {{ repo_form.source_repo }}
+        </section>
+        <section class="delete-wrapper">
+          <div class="delete">
+            {{ repo_form.DELETE.label_tag() }}
+            {{ repo_form.DELETE }}
+          </div>
+        </section>
+      </div>
     </div>
   {% endfor %}
   <div class="repository-empty clearfix">
     {{ repo_formset.empty_form.id }}
-    <section class="type-wrapper">
-      {{ repo_formset.empty_form.type.label_tag() }}
-      {{ repo_formset.empty_form.type }}
-    </section>
-    <section class="details-wrapper">
-      <div class="repo">
-        {{ repo_formset.empty_form.url.label_tag() }}
-        {{ repo_formset.empty_form.url }}
-      </div>
-    </section>
-    <section class="delete-wrapper">
-      <div class="delete">
-        {{ repo_formset.empty_form.DELETE.label_tag() }}
-        {{ repo_formset.empty_form.DELETE }}
-      </div>
-    </section>
-    <section class="branch-wrapper">
-      <div class="branch">
-        {{ repo_formset.empty_form.branch.label_tag() }}
-        {{ repo_formset.empty_form.branch }}
-      </div>
-    </section>
-    <section class="prefix-wrapper">
+    <div class="clearfix">
+      <section class="type-wrapper">
+        {{ repo_formset.empty_form.type.label_tag() }}
+        {{ repo_formset.empty_form.type }}
+      </section>
+      <section class="details-wrapper">
+        <div class="repo">
+          {{ repo_formset.empty_form.url.label_tag() }}
+          {{ repo_formset.empty_form.url }}
+        </div>
+      </section>
+      <section class="branch-wrapper">
+        <div class="branch">
+          {{ repo_formset.empty_form.branch.label_tag() }}
+          {{ repo_formset.empty_form.branch }}
+        </div>
+      </section>
+    </div>
+    <section class="prefix-wrapper clearfix">
       <div class="prefix">
         {{ repo_formset.empty_form.permalink_prefix.label_tag() }}
         {{ repo_formset.empty_form.permalink_prefix }}
       </div>
     </section>
+    <section class="website-wrapper clearfix">
+      <div class="website">
+        {{ repo_formset.empty_form.website.label_tag() }}
+        {{ repo_formset.empty_form.website }}
+      </div>
+    </section>
+    <div class="repository-toolbar clearfix">
+      <section class="delete-wrapper">
+        <div class="delete">
+          {{ repo_formset.empty_form.DELETE.label_tag() }}
+          {{ repo_formset.empty_form.DELETE }}
+        </div>
+      </section>
+    </div>
     {{ repo_formset.empty_form.errors }}
   </div>
 
@@ -203,11 +229,9 @@
 
 {% block extend_css %}
   {% stylesheet 'admin_project' %}
-  {% stylesheet 'multiple_locale_selector' %}
 {% endblock %}
 
 {% block extend_js %}
   {% javascript 'admin_project' %}
-  {% javascript 'multiple_locale_selector' %}
 {% endblock %}
 

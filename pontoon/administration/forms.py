@@ -7,9 +7,8 @@ from pontoon.base.models import Project, Repository, Subpage
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
-        fields = ('name', 'slug', 'locales',
-                  'info_brief', 'url', 'width',
-                  'links', 'disabled')
+        fields = ('name', 'slug', 'locales', 'deadline', 'priority',
+                  'info_brief', 'url', 'width', 'links', 'disabled')
 
 
 SubpageInlineFormSet = inlineformset_factory(
@@ -24,5 +23,5 @@ RepositoryInlineFormSet = inlineformset_factory(
     extra=0,
     min_num=1,
     validate_min=True,
-    fields=('type', 'url', 'branch', 'source_repo', 'permalink_prefix'),
+    fields=('type', 'url', 'branch', 'website', 'source_repo', 'permalink_prefix'),
 )

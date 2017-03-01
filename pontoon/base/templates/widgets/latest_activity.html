@@ -1,12 +1,18 @@
-{% macro span(latest_activity) -%}
+{% macro span(latest_activity, resource='all-resources') -%}
 <span class="latest">
   {% if latest_activity.date %}
-  <time datetime="{{ latest_activity.date.isoformat() }}">{{ latest_activity.date|naturaltime }}</time>
     {% if latest_activity.user %}
-    &bull; <a href="{{ url('pontoon.contributor.username', latest_activity.user.username) }}">{{ latest_activity.user.name_or_email|nospam }}</a>
+      {% set action = latest_activity.type + ' by' %}
+      {% set user = latest_activity.user.name_or_email %}
+      {% set avatar = latest_activity.user.gravatar_url(44) %}
+    {% else %}
+      {% set action = 'imported' %}
+      {% set user = '' %}
+      {% set avatar = '' %}
     {% endif %}
+    <time datetime="{{ latest_activity.date.isoformat() }}" data-translation="{{ latest_activity.translation.string }}" data-action="{{ action }}" data-user-name="{{ user }}" data-user-avatar="{{ avatar }}">{{ latest_activity.date|naturaltime }}</time>
   {% else %}
-  No activity yet
+    <span class="not">No activity yet</span>
   {% endif %}
 </span>
 {%- endmacro %}

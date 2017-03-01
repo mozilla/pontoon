@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% import "widgets/checkbox.html" as Checkbox %}
+{% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
+
+{% block title %}Settings{% endblock %}
+
+{% block before %}
+<!-- Server data -->
+<div id="server" class="hidden"
+     data-csrf="{{ csrf_token }}"
+     data-username="{{ user.username }}"
+     >
+</div>
+{% endblock %}
+
+{% block heading %}
+<section id="heading">
+  <a class="avatar" href="http://gravatar.com/">
+    <div class="desc">Update profile picture</div>
+    <img class="rounded" src="{{ user.gravatar_url(200) }}">
+  </a>
+
+  <h2 id="username">
+    <div class="container">
+      <input type="text" placeholder="What's your name?" value="{{ user.first_name }}" maxlength="30">
+      <div class="submit fa fa-arrow-circle-right"></div>
+    </div>
+  </h2>
+
+  <ul class="info">
+  {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run quality checks before submitting translations') }}
+  {% if user.translated_locales %}
+    {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
+  {% endif %}
+  </ul>
+</section>
+{% endblock %}
+
+{% block bottom %}
+<section id="main">
+  <form method="POST" action="{{ url('pontoon.contributors.settings') }}" class="user-locales-settings">
+    {% csrf_token %}
+    <input type="hidden" name="return_url" value="{{ return_url(request) }}">
+
+    <h3>Preferred locales <span class="small">(to get suggestions from)</span></h3>
+
+    <div class="clearfix">
+      {{ multiple_locale_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
+    </div>
+
+    <div class="controls">
+      <a class="cancel" href="{{ return_url(request) }}">Cancel</a>
+      <button class="button">Save</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'settings' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'settings' %}
+{% endblock %}

@@ -1,28 +1,33 @@
-{% extends "landing.html" %}
+{% extends 'base.html' %}
+{% import 'heading.html' as Heading %}
 
-{% block title %}Pontoon &middot; Terms of Use{% endblock %}
+{% block title %}Terms of Use{% endblock %}
 
 {% block class %}terms{% endblock %}
 
-{% block subtitle %}Terms of Use{% endblock %}
+{% block heading %}
+  {{ Heading.heading(title='Pontoon Terms of Use', subtitle='Last updated: 11 January 2016') }}
+{% endblock %}
 
-{% block middle %}
-<div class="container">
-  <p>By using Pontoon you are indicating your agreement to the terms set out in the <a href="https://www.mozilla.org/about/governance/policies/commit/requirements/">Mozilla Commit Access Requirements</a>. To sum up:</p>
+{% block bottom %}
+<section id="main">
+  <div class="container">
+    <p>By using Pontoon you are indicating your agreement to the terms set out in the <a href="https://www.mozilla.org/about/governance/policies/commit/requirements/">Mozilla Commit Access Requirements</a>. To sum up:</p>
 
-  <dl>
-    <dt>License</dt>
-    <dd>Translations are governed by the Mozilla Public License 2.0, or another license or set of licenses acceptable to the Mozilla Foundation.</dd>
-    <dt>User Accounts</dt>
-    <dd>Mozilla has complete control and discretion over capabilities associated with Your credentials and may change them for any reason at any time.</dd>
-    <dt>Personal Information</dt>
-    <dd>Your name and email address, or a derivative of it, may be attached to your contributions and so be visible worldwide.</dd>
-  </dl>
+    <dl>
+      <dt>License</dt>
+      <dd>Translations are governed by the Mozilla Public License 2.0, or another license or set of licenses acceptable to the Mozilla Foundation.</dd>
+      <dt>User Accounts</dt>
+      <dd>Mozilla has complete control and discretion over capabilities associated with Your credentials and may change them for any reason at any time.</dd>
+      <dt>Personal Information</dt>
+      <dd>Your name and email address, or a derivative of it, may be attached to your contributions and so be visible worldwide.</dd>
+    </dl>
 
-  <p>Learn more at <a href="https://www.mozilla.org/about/governance/policies/commit/requirements/">Mozilla.org</a>.</p>
-</div>
+    <p>Learn more at <a href="https://www.mozilla.org/about/governance/policies/commit/requirements/">Mozilla.org</a>.</p>
+  </div>
+</section>
 {% endblock %}
 
 {% block extend_css %}
-  <link rel="stylesheet" href="{{ static('css/terms.css') }}">
+  {% stylesheet 'terms' %}
 {% endblock %}

@@ -45,10 +45,12 @@ def url(viewname, *args, **kwargs):
     """Helper for Django's ``reverse`` in templates."""
     return reverse(viewname, args=args, kwargs=kwargs)
 
+
 @library.global_function
 def return_url(request):
     """Get an url of the previous page."""
     return request.POST.get('return_url', request.META.get('HTTP_REFERER', '/'))
+
 
 @library.filter
 def urlparams(url_, hash=None, **query):
@@ -109,6 +111,11 @@ def naturaltime(source):
 
 
 @library.filter
+def intcomma(source):
+    return humanize.intcomma(source)
+
+
+@library.filter
 def display_permissions(self):
     output = 'Can make suggestions'
 
@@ -123,17 +130,35 @@ def display_permissions(self):
 
 
 @library.filter
-def format_datetime(value, format='full'):
+def date_status(value, complete):
+    """Get date status relative to today."""
+    if isinstance(value, datetime.date):
+        if not complete:
+            today = datetime.date.today()
+            if value < today:
+                return 'overdue'
+            elif (value - today).days < 8:
+                return 'approaching'
+    else:
+        return 'not'
+
+    return 'normal'
+
+
+@library.filter
+def format_datetime(value, format='full', default='---'):
     if value is not None:
         if format == 'full':
             format = '%A, %B %d, %Y at %H:%M %Z'
         elif format == 'date':
             format = '%B %d, %Y'
+        elif format == 'short_date':
+            format = '%b %d, %Y'
         elif format == 'time':
             format = '%H:%M %Z'
         return value.strftime(format)
     else:
-        return '---'
+        return default
 
 
 @library.filter
@@ -162,9 +187,6 @@ def format_timedelta(value):
 def nospam(self):
     return jinja2.Markup(cgi.escape(self, True).replace('@', '&#64;').replace('.', '&#46;').replace('\'', '&quot;'))
 
-#
-# Currently django-allauth don't provide any support for jinja2 tags.
-#
 
 @library.global_function
 def provider_login_url(request, provider_id='fxa', **query):
@@ -199,3 +221,13 @@ def providers_media_js(request):
     return jinja2.Markup('\n'.join([
         p.media_js(request) for p in providers.registry.get_list()
     ]))
+
+
+@library.filter
+def pretty_url(url):
+    """Remove protocol and www"""
+    url = url.split('://')[1]
+    if url.startswith('www.'):
+        url = url[4:]
+
+    return url

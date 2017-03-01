@@ -24,7 +24,7 @@
         {{ form.password.errors }}
     </div>
     <div class="controls clearfix">
-        <input type="submit" name="sign-in" id="sign-in" value="Sign in" />
+        <input class="button" type="submit" name="sign-in" id="sign-in" value="Sign in" />
     </div>
     <input type="hidden" name="next" value="{{ request.GET.next }}">
     {% csrf_token %}

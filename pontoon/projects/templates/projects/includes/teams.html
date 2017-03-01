@@ -1,0 +1,32 @@
+{% import 'teams/widgets/team_list.html' as TeamList %}
+
+<div class="teams">
+  <menu class="controls">
+    <div class="search-wrapper small clearfix">
+      <div class="icon fa fa-search"></div>
+      <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter teams">
+    </div>
+  </menu>
+
+  {{ TeamList.header() }}
+
+  {% for locale in locales %}
+    {% set main_link = url('pontoon.projects.project', project.slug) %}
+    {% set chart_link = url('pontoon.translate', locale.code, project.slug, 'all-resources') %}
+    {% set latest_activity = locale.get_latest_activity(project) %}
+    {% set chart = locale.get_chart(project) %}
+
+    {% if project in locale.project_set.available() %}
+      {% set class = 'limited' %}
+      {% if chart %}
+        {% set main_link = url('pontoon.localizations.localization', locale.code, project.slug) %}
+      {% endif %}
+    {% else %}
+      {% set class = '' %}
+    {% endif %}
+
+    {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, class, request=False, link_parameter=True) }}
+  {% endfor %}
+
+  {{ TeamList.footer() }}
+</div>

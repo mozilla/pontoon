@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% import "contributors/widgets/contributor_list.html" as Contributors %}
+{% import 'widgets/heading_info.html' as HeadingInfo %}
+{% import 'heading.html' as Heading %}
+
+{% block title %}Top Contributors{% endblock %}
+
+{% block class %}users{% endblock %}
+
+{% block heading %}
+  {% if contributors %}
+    {% set top_contributor = contributors[0] %}
+    <section id="heading">
+      <div class="container clearfix">
+        <h1>
+          {{ HeadingInfo.heading_item(
+            title='Top Contributors',
+            link=url('pontoon.contributors'))
+          }}
+        </h1>
+
+        <ul class="details">
+          {{ HeadingInfo.details_item(
+            title='Top contributor',
+            class='banner',
+            value='')
+          }}
+          {{ HeadingInfo.details_item(
+            title='Name',
+            class='name',
+            value=top_contributor.name_or_email,
+            value_link=url('pontoon.contributors.contributor.username', top_contributor.username))
+          }}
+          {{ HeadingInfo.details_item(
+            title='Role',
+            class='role',
+            value=top_contributor.role())
+          }}
+          {{ HeadingInfo.details_item(
+            title='Active since',
+            class='date-joined',
+            value=top_contributor.date_joined.strftime('%d %B %Y'))
+          }}
+          {{ HeadingInfo.details_item(
+            title='Latest activity',
+            class='latest-activity',
+            value=top_contributor.contributed_translations[0].date|naturaltime)
+          }}
+        </ul>
+
+        <div class="progress">
+          <a href="{{ url('pontoon.contributors.contributor.username', top_contributor.username) }}">
+            <img class="rounded" src="{{ top_contributor.gravatar_url(126) }}" height="126" width="126">
+          </a>
+        </div>
+
+        <ul class="legend">
+          {{ HeadingInfo.details_item(
+            title='Contributions in selected period',
+            class='banner',
+            value='')
+          }}
+          {{ HeadingInfo.legend_item(
+            title='Translated strings',
+            class='translated',
+            value=top_contributor.translations_approved_count)
+          }}
+          {{ HeadingInfo.legend_item(
+            title='Suggested strings',
+            class='suggested',
+            value=top_contributor.translations_unapproved_count)
+          }}
+          {{ HeadingInfo.legend_item(
+            title='Fuzzy strings',
+            class='fuzzy',
+            value=top_contributor.translations_needs_work_count)
+          }}
+          {{ HeadingInfo.legend_item(
+            title='All strings',
+            class='all',
+            value=top_contributor.translations_count)
+          }}
+        </ul>
+      </div>
+    </section>
+  {% else %}
+    {{ Heading.heading(title='Top Contributors') }}
+  {% endif %}
+{% endblock %}
+
+{% block bottom %}
+<section id="main">
+  <div class="container">
+    <menu class="controls contributors">
+      {{ Contributors.select_period(period, url('pontoon.contributors')) }}
+    </menu>
+
+    {% if contributors %}
+      {{ Contributors.list_contributors(contributors) }}
+    {% else %}
+      {{ Contributors.no_contributors() }}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'contributors' %}
+{% endblock %}

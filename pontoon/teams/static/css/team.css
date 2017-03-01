@@ -1,0 +1,297 @@
+.request-toggle {
+  float: right;
+}
+
+.request-toggle:before {
+  content: "Request more projects";
+  margin-right: 2px;
+}
+
+.request-toggle.back:after {
+  content: "Back to enabled projects";
+  margin-left: 2px;
+}
+
+.request-toggle:after,
+.request-toggle.back:before {
+  content: "";
+}
+
+.project-list tbody tr:not(.limited) {
+  display: none;
+}
+
+.projects.request .project-list .check {
+  cursor: pointer;
+  display: block;
+}
+
+.projects.request .project-list th.check {
+  text-align: right;
+  width: auto;
+}
+
+.project-list .check {
+  display: none;
+}
+
+.project-list td.check {
+  color: #3F4752;
+  float: right;
+  font-size: 16px;
+  height: 47px;
+  text-align: right;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.project-list td.check:before {
+  content: "";
+  display: block;
+  margin-top: 16px;
+}
+
+.project-list td.check:hover:before,
+.project-list td.check.enabled:before {
+  content: "";
+  color: #7BC876;
+}
+
+.project-list td.check.enabled:before {
+  content: "";
+}
+
+.projects.request .project-list .progress,
+.projects.request .project-list .latest-activity {
+  display: none;
+}
+
+#request-projects {
+  display: none;
+  background: #7BC876;
+  border: none;
+  border-radius: 3px;
+  margin-top: 15px;
+  padding: 10px;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.buglist {
+  display: none;
+  table-layout: fixed;
+}
+
+.buglist .id {
+  width: 80px;
+}
+
+.buglist .summary {
+  width: 560px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.buglist .last-changed, .buglist .date-created {
+  text-align: left;
+  width: 130px;
+}
+
+.buglist tbody .id a {
+  color: #7BC876;
+}
+
+#permissions-form .selector-wrapper {
+  white-space: nowrap;
+}
+
+#permissions-form h3 {
+  color: #7BC876;
+  font-size: 20px;
+  font-weight: 300;
+  padding-bottom: 30px;
+  position: relative;
+  text-align: left;
+  text-transform: none;
+}
+
+#permissions-form h3 .small {
+  color: #AAAAAA;
+  font-size: 18px;
+}
+
+#permissions-form h3 .remove-project {
+  bottom: 25px;
+  font-size: 13px;
+  position: absolute;
+  right: 0;
+}
+
+#permissions-form h3 .remove-project:hover {
+  background: #F36;
+}
+
+#permissions-form h3 .remove-project .fa {
+  float: left;
+  font-size: 13px;
+  margin-top: 2px;
+  padding-right: 5px;
+}
+
+#permissions-form .permissions-groups {
+  margin-bottom: 80px;
+}
+
+#permissions-form .user.select {
+  display: inline-block;
+  vertical-align: top;
+  width: 300px;
+}
+
+#permissions-form .user.select.translators {
+  text-align: center;
+}
+
+#permissions-form .user.select.managers {
+  text-align: right;
+}
+
+#permissions-form .user.select.translators,
+#permissions-form .user.select.managers {
+  margin-left: 40px;
+}
+
+#permissions-form .user.select label {
+  display: block;
+}
+
+#permissions-form .user.select label,
+#permissions-form .user.select label a {
+  color: #AAAAAA;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#permissions-form .user.select label a {
+  display: inline-block;
+}
+
+#permissions-form .user.select.translators label:hover,
+#permissions-form .user.select.managers label:hover,
+#permissions-form .user.select label a.active,
+#permissions-form .user.select label a:hover {
+  color: #EBEBEB;
+}
+
+#permissions-form .user.select .menu {
+  border-bottom: 1px solid #5E6475;
+  overflow: auto;
+  padding: 10px 0;
+}
+
+#permissions-form .user.select .menu input[type="search"] {
+  width: 100%;
+}
+
+#permissions-form .user.select .menu ul {
+  height: 168px;
+  margin-bottom: 0;
+  white-space: normal;
+}
+
+#permissions-form .user.select .menu ul li {
+  cursor: pointer;
+  line-height: 17px;
+  position: relative;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#permissions-form .user.select.available .menu ul li:not(.contributor) {
+  display: none;
+}
+
+#permissions-form .user.select .menu ul li .arrow {
+  display: none;
+  position: absolute;
+  top: 4px;
+  right: 2px;
+}
+
+#permissions-form .user.select .menu ul li.hover .arrow {
+  display: inline-block;
+}
+
+#permissions-form .user.select.available .menu ul li .arrow:after,
+#permissions-form .general .user.select.translators .menu ul li .arrow:after {
+  content: "";
+}
+
+#permissions-form .user.select.translators .menu ul li.left .arrow:after,
+#permissions-form .project-locale .user.select.translators .menu ul li.hover .arrow:after,
+#permissions-form .user.select.managers .menu ul li .arrow:after {
+  content: "";
+}
+
+#permissions-form .user.select.translators .menu ul li.left .arrow,
+#permissions-form .project-locale .user.select.translators .menu ul li.hover .arrow,
+#permissions-form .user.select.managers .menu ul li .arrow {
+  left: 2px;
+}
+
+#permissions-form .user.select .intro {
+  color: #AAA;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 300;
+  margin: 10px 0;
+  text-align: center;
+  white-space: normal;
+}
+
+#permissions-form .button.save {
+  background: #7BC876;
+  color: #272A2F;
+  float: right;
+  width: 100px;
+}
+
+#permissions-form #project-selector  {
+  float: right;
+}
+
+#permissions-form #project-selector .button {
+  margin-right: 10px;
+  padding: 6px 12px;
+}
+
+#permissions-form #project-selector .button .icon {
+  float: right;
+  margin-left: 5px;
+}
+
+#permissions-form #project-selector .menu {
+  background: #333941;
+  bottom: 28px;
+  width: 287px;
+}
+
+#permissions-form #project-selector .menu .search-wrapper input {
+  width: 100%;
+}
+
+#permissions-form #project-selector .menu li {
+  color: #CCCCCC;
+  cursor: pointer;
+}
+
+#project-selector .menu li:not(.limited) {
+  display: none;
+}

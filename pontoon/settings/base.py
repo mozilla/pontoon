@@ -117,10 +117,15 @@ else:
 ROOT_URLCONF = 'pontoon.urls'
 
 INSTALLED_APPS = (
-    'pontoon.base',
     'pontoon.administration',
+    'pontoon.base',
+    'pontoon.contributors',
     'pontoon.intro',
+    'pontoon.localizations',
+    'pontoon.machinery',
+    'pontoon.projects',
     'pontoon.sync',
+    'pontoon.teams',
 
     # Django contrib apps
     'django.contrib.admin',
@@ -236,46 +241,64 @@ PIPELINE_DISABLE_WRAPPER = True
 PIPELINE_CSS = {
     'base': {
         'source_filenames': (
-            'css/style.css',
             'css/font-awesome.css',
+            'css/nprogress.css',
+            'css/style.css',
         ),
         'output_filename': 'css/base.min.css',
     },
     'admin': {
         'source_filenames': (
+            'css/table.css',
             'css/admin.css',
         ),
         'output_filename': 'css/admin.min.css',
     },
     'admin_project': {
         'source_filenames': (
+            'css/multiple_locale_selector.css',
             'css/admin_project.css',
         ),
         'output_filename': 'css/admin_project.min.css',
     },
-    'manage_permissions': {
+    'project': {
         'source_filenames': (
-            'css/manage_permissions.css',
+            'css/table.css',
+            'css/contributors.css',
+            'css/heading_info.css',
         ),
-        'output_filename': 'css/manage_permissions.min.css',
+        'output_filename': 'css/project.min.css',
     },
-    'locale_project': {
+    'localization': {
         'source_filenames': (
-            'css/locale_project.css',
+            'css/table.css',
+            'css/contributors.css',
+            'css/heading_info.css',
         ),
-        'output_filename': 'css/locale_project.min.css',
+        'output_filename': 'css/localization.min.css',
     },
-    'locales': {
+    'projects': {
         'source_filenames': (
-            'css/locales.css',
+            'css/heading_info.css',
+            'css/table.css',
         ),
-        'output_filename': 'css/locales.min.css',
+        'output_filename': 'css/projects.min.css',
     },
-    'locale': {
+    'team': {
         'source_filenames': (
-            'css/locale.css',
+            'css/table.css',
+            'css/contributors.css',
+            'css/heading_info.css',
+            'css/team.css',
         ),
-        'output_filename': 'css/locale.min.css',
+        'output_filename': 'css/team.min.css',
+    },
+    'teams': {
+        'source_filenames': (
+            'css/heading_info.css',
+            'css/table.css',
+        ),
+        'output_filename': 'css/teams.min.css',
     },
     'sync_logs': {
         'source_filenames': (
@@ -291,25 +314,33 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/translate.min.css',
     },
-    'user': {
+    'profile': {
         'source_filenames': (
-            'css/user.css',
-            'css/user_profile.css',
+            'css/contributor.css',
+            'css/profile.css',
         ),
-        'output_filename': 'css/user.min.css',
+        'output_filename': 'css/profile.min.css',
     },
-    'user_settings': {
+    'settings': {
         'source_filenames': (
-            'css/user.css',
-            'css/user_settings.css',
+            'css/multiple_locale_selector.css',
+            'css/contributor.css',
+            'css/settings.css',
         ),
-        'output_filename': 'css/user_settings.min.css',
+        'output_filename': 'css/settings.min.css',
     },
-    'users': {
+    'machinery': {
         'source_filenames': (
-            'css/users.css',
+            'css/machinery.css',
         ),
-        'output_filename': 'css/users.min.css',
+        'output_filename': 'css/machinery.min.css',
+    },
+    'contributors': {
+        'source_filenames': (
+            'css/heading_info.css',
+            'css/contributors.css',
+        ),
+        'output_filename': 'css/contributors.min.css',
     },
     'intro': {
         'source_filenames': (
@@ -318,38 +349,79 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/intro.min.css',
     },
-    'multiple_locale_selector': {
-        'source_filenames': ('css/multiple_locale_selector.css',),
-        'output_filename': 'css/multiple_locale_selector.min.css',
+    'terms': {
+        'source_filenames': (
+            'css/terms.css',
+        ),
+        'output_filename': 'css/terms.min.css',
     },
 }
 
 PIPELINE_JS = {
+    'base': {
+        'source_filenames': (
+            'js/lib/jquery-1.11.1.min.js',
+            'js/lib/jquery.timeago.js',
+            'js/lib/nprogress.js',
+            'js/main.js',
+        ),
+        'output_filename': 'js/base.min.js',
+    },
+    'admin': {
+        'source_filenames': (
+            'js/table.js',
+        ),
+        'output_filename': 'js/admin.min.js',
+    },
     'admin_project': {
         'source_filenames': (
+            'js/lib/jquery-ui.js',
+            'js/multiple_locale_selector.js',
             'js/admin_project.js',
         ),
         'output_filename': 'js/admin_project.min.js',
     },
-    'main': {
+    'localization': {
         'source_filenames': (
-            'js/lib/jquery-1.11.1.min.js',
-            'js/main.js',
-            'js/lib/jquery.timeago.js',
+            'js/table.js',
+            'js/progress-chart.js',
+            'js/tabs.js',
         ),
-        'output_filename': 'js/main.min.js',
+        'output_filename': 'js/localization.min.js',
     },
-    'manage_permissions': {
+    'project': {
         'source_filenames': (
-            'js/manage_permissions.js',
+            'js/table.js',
+            'js/progress-chart.js',
+            'js/tabs.js',
         ),
-        'output_filename': 'js/manage_permissions.min.js',
+        'output_filename': 'js/project.min.js',
     },
-    'locale': {
+    'projects': {
         'source_filenames': (
+            'js/table.js',
+            'js/progress-chart.js',
+        ),
+        'output_filename': 'js/projects.min.js',
+    },
+    'team': {
+        'source_filenames': (
+            'js/table.js',
+            'js/progress-chart.js',
+            'js/bugzilla.js',
+            'js/tabs.js',
             'js/request_projects.js',
+            'js/permissions.js',
+            'js/team.js',
         ),
-        'output_filename': 'js/locale.min.js',
+        'output_filename': 'js/team.min.js',
+    },
+    'teams': {
+        'source_filenames': (
+            'js/table.js',
+            'js/progress-chart.js',
+        ),
+        'output_filename': 'js/teams.min.js',
     },
     'translate': {
         'source_filenames': (
@@ -359,30 +431,30 @@ PIPELINE_JS = {
             'js/lib/highstock.js',
             'js/lib/diff.js',
             'js/translate.js',
-            'js/request_projects.js',
         ),
         'output_filename': 'js/translate.min.js',
     },
-    'user': {
+    'profile': {
         'source_filenames': (
-            'js/user.js',
+            'js/contributor.js',
         ),
-        'output_filename': 'js/user.min.js',
+        'output_filename': 'js/profile.min.js',
     },
-    'search': {
-        'source_filenames': (
-            'js/lib/clipboard.min.js',
-            'js/search.js',
-        ),
-        'output_filename': 'js/search.min.js',
-    },
-    'multiple_locale_selector': {
+    'settings': {
         'source_filenames': (
             'js/lib/jquery-ui.js',
             'js/multiple_locale_selector.js',
+            'js/contributor.js',
         ),
-        'output_filename': 'js/multiple_locale_selector.min.js',
-    }
+        'output_filename': 'js/settings.min.js',
+    },
+    'machinery': {
+        'source_filenames': (
+            'js/lib/clipboard.min.js',
+            'js/machinery.js',
+        ),
+        'output_filename': 'js/machinery.min.js',
+    },
 }
 
 # Cache config
@@ -534,7 +606,10 @@ SECURE_BROWSER_XSS_FILTER = True
 CSP_DEFAULT_SRC = ("'none'",)
 CSP_CHILD_SRC = ("https:",)
 CSP_FRAME_SRC = ("https:",)  # Older browsers
-CSP_CONNECT_SRC = ("'self'",)
+CSP_CONNECT_SRC = (
+    "'self'",
+    "https://bugzilla.mozilla.org/rest/bug",
+)
 CSP_FONT_SRC = ("'self'",)
 CSP_IMG_SRC = (
     "'self'",

@@ -12,6 +12,7 @@
 
     {% block site_css %}
       {% stylesheet 'base' %}
+
       {% block extend_css %}
       {% endblock %}
     {% endblock %}
@@ -35,13 +36,28 @@
   </head>
 
   <body class="{% block class %}{% endblock %}">
-    {% block content %}{% endblock %}
+    {% block content %}
+
+      {% include "header.html" %}
+
+      {% block before %}
+      {% endblock %}
+
+      {% block heading %}
+      {% endblock %}
+
+      {% block middle %}
+      {% endblock %}
+
+      {% block bottom %}
+      {% endblock %}
+
+    {% endblock %}
 
     <!-- Javascript at the bottom for fast page loading -->
     {% block site_js %}
       {{ providers_media_js(request) }}
-
-      {% javascript 'main' %}
+      {% javascript 'base' %}
 
       {% block extend_js %}
       {% endblock %}

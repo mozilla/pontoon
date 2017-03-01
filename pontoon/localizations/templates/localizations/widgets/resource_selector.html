@@ -1,0 +1,30 @@
+<!-- Resource selector -->
+<div class="part select">
+  <div class="button breadcrumbs selector" title="{{ part }}">
+    <span class="title noselect">{% if part == 'all-resources' %}{{ 'All Resources' }}{% else %}{{ part.rsplit('/')[-1] }}{% endif %}</span>
+  </div>
+
+  <div class="menu">
+    <div class="search-wrapper clearfix">
+      <div class="icon fa fa-search"></div>
+      <input type="search" autocomplete="off" autofocus>
+    </div>
+
+    <ul>
+      <li class="no-match">No results</li>
+    </ul>
+
+    <div class="static-links">
+      <div class="all-resources">
+        <span class="title">All Resources</span>
+        <span class="percent"></span>
+      </div>
+      <a href="{{ url('pontoon.localizations.localization', locale.code, project.slug) }}">
+        <div class="current-localization">
+          <span class="title">Current Localization</span>
+          <span class="percent"></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>

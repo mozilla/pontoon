@@ -181,7 +181,7 @@ class UserQuerySet(models.QuerySet):
 
 @property
 def user_profile_url(self):
-    return reverse('pontoon.contributor.username', kwargs={
+    return reverse('pontoon.contributors.contributor.username', kwargs={
         'username': self.username
     })
 
@@ -369,6 +369,39 @@ class AggregatedStats(models.Model):
     class Meta:
         abstract = True
 
+    @classmethod
+    def get_stats_sum(cls, qs):
+        """
+        Get sum of stats for all items in the queryset.
+        """
+        stats = qs.aggregate(
+            Sum('total_strings'),
+            Sum('approved_strings'),
+            Sum('translated_strings'),
+            Sum('fuzzy_strings'),
+        )
+
+        return cls(
+            total_strings=stats['total_strings__sum'],
+            approved_strings=stats['approved_strings__sum'],
+            translated_strings=stats['translated_strings__sum'],
+            fuzzy_strings=stats['fuzzy_strings__sum'],
+        )
+
+    @classmethod
+    def get_top_instances(cls, qs):
+        """
+        Get top instances in the queryset.
+        """
+        return {
+            'most_strings': qs.order_by('-total_strings')[0],
+            'most_translations': qs.order_by('-approved_strings')[0],
+            'most_suggestions': qs.order_by('-translated_strings')[0],
+            'most_missing': qs.annotate(
+                missing=F('total_strings') - F('approved_strings') - F('translated_strings') - F('fuzzy_strings')
+            ).order_by('-missing')[0],
+        }
+
     def adjust_stats(self, total_strings_diff, approved_strings_diff,
                      fuzzy_strings_diff, translated_strings_diff):
         self.total_strings = F('total_strings') + total_strings_diff
@@ -415,11 +448,23 @@ class LocaleQuerySet(models.QuerySet):
                 'project_locale',
                 queryset=(
                     ProjectLocale.objects.filter(project=project)
-                    .select_related('latest_translation__user')
+                    .prefetch_related('latest_translation__user')
                 ),
                 to_attr='fetched_latest_translation'
             )
         )
+
+    def get_stats_sum(self):
+        """
+        Get sum of stats for all items in the queryset.
+        """
+        return AggregatedStats.get_stats_sum(self)
+
+    def get_top_instances(self):
+        """
+        Get top instances in the queryset.
+        """
+        return AggregatedStats.get_top_instances(self)
 
 
 class Locale(AggregatedStats):
@@ -433,6 +478,41 @@ class Locale(AggregatedStats):
         <a href="https://www.gnu.org/software/gettext/manual/gettext.html#Plural-forms">Gettext PO files</a>,
         that follows the <i>plural=</i> string, without the trailing semicolon.
         E.g. (n != 1)
+        """
+    )
+
+    script = models.CharField(
+        max_length=128,
+        default='Latin',
+        help_text="""
+        Script locale is written in. Find it in
+        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/languageData.json">CLDR languageData.json</a>.
+        """
+    )
+
+    population = models.PositiveIntegerField(
+        default=0,
+        help_text="""
+        Number of native speakers. Find locale code in
+        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/territoryInfo.json">CLDR territoryInfo.json</a>
+        and multiply its "_populationPercent" with the territory "_population".
+        Repeat if multiple occurrences of locale code exist and sum products.
+        """
+    )
+
+    # Writing direction
+    DIRECTION = (
+        ('ltr', 'left-to-right'),
+        ('rtl', 'right-to-left'),
+    )
+    direction = models.CharField(
+        max_length=3,
+        default='ltr',
+        choices=DIRECTION,
+        help_text="""
+        Writing direction. Set to "right-to-left" if "rtl" value for the locale
+        script is set to "YES" in
+        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/scriptMetadata.json">CLDR scriptMetadata.json</a>.
         """
     )
 
@@ -494,14 +574,19 @@ class Locale(AggregatedStats):
             'name': self.name,
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
-            'cldr_plurals': self.cldr_plurals_list(),
+            'cldr_plurals': self.cldr_id_list(),
         }
 
-    def cldr_plurals_list(self):
+    def cldr_id_list(self):
         if self.cldr_plurals == '':
             return [1]
         else:
             return map(int, self.cldr_plurals.split(','))
+
+    def cldr_plurals_list(self):
+        return ', '.join(
+            map(Locale.cldr_id_to_plural, self.cldr_id_list())
+        )
 
     @classmethod
     def cldr_plural_to_id(self, cldr_plural):
@@ -517,7 +602,7 @@ class Locale(AggregatedStats):
 
     @property
     def nplurals(self):
-        return len(self.cldr_plurals_list())
+        return len(self.cldr_id_list())
 
     @property
     def projects_permissions(self):
@@ -602,14 +687,14 @@ class Locale(AggregatedStats):
     def get_plural_index(self, cldr_plural):
         """Returns plural index for given cldr name."""
         cldr_id = Locale.cldr_plural_to_id(cldr_plural)
-        return self.cldr_plurals_list().index(cldr_id)
+        return self.cldr_id_list().index(cldr_id)
 
     def get_relative_cldr_plural(self, plural_id):
         """
         Every locale supports a subset (a list) of The CLDR Plurals forms.
         In code, we store their relative position.
         """
-        return Locale.cldr_id_to_plural(self.cldr_plurals_list()[plural_id])
+        return Locale.cldr_id_to_plural(self.cldr_id_list()[plural_id])
 
     def get_latest_activity(self, project=None):
         return ProjectLocale.get_latest_activity(self, project)
@@ -726,6 +811,42 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.filter(disabled=False, resources__isnull=False).distinct()
 
+    def prefetch_latest_translation(self, locale):
+        """
+        Prefetch latest translation data for given locale.
+        """
+        return self.prefetch_related(
+            Prefetch(
+                'project_locale',
+                queryset=(
+                    ProjectLocale.objects.filter(locale=locale)
+                    .prefetch_related('latest_translation__user')
+                ),
+                to_attr='fetched_latest_translation'
+            )
+        )
+
+    def get_stats_sum(self):
+        """
+        Get sum of stats for all items in the queryset.
+        """
+        return AggregatedStats.get_stats_sum(self)
+
+    def get_top_instances(self):
+        """
+        Get top instances in the queryset.
+        """
+        return AggregatedStats.get_top_instances(self)
+
+
+PRIORITY_CHOICES = (
+    (1, 'Lowest'),
+    (2, 'Low'),
+    (3, 'Normal'),
+    (4, 'High'),
+    (5, 'Highest'),
+)
+
 
 class Project(AggregatedStats):
     name = models.CharField(max_length=128, unique=True)
@@ -751,6 +872,9 @@ class Project(AggregatedStats):
 
     # Disable project instead of deleting to keep translation memory & attributions
     disabled = models.BooleanField(default=False)
+
+    deadline = models.DateField(blank=True, null=True)
+    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=1)
 
     # Most recent translation approved or created for this project.
     latest_translation = models.ForeignKey(
@@ -1003,7 +1127,13 @@ class ProjectLocale(AggregatedStats):
         """
         latest_translation = None
 
-        if extra is None:
+        if hasattr(self, 'fetched_latest_translation'):
+            if self.fetched_latest_translation:
+                latest_translation = self.fetched_latest_translation[0].latest_translation
+            else:
+                latest_translation = None
+
+        elif extra is None:
             latest_translation = self.latest_translation
 
         else:
@@ -1083,6 +1213,8 @@ class Repository(models.Model):
     )
     url = models.CharField("URL", max_length=2000)
     branch = models.CharField("Branch", blank=True, max_length=2000)
+
+    website = models.URLField("Public Repository Website", blank=True, max_length=2000)
 
     # TODO: We should be able to remove this once we have persistent storage
     permalink_prefix = models.CharField("Download prefix", max_length=2000, help_text="""
@@ -1310,14 +1442,6 @@ class Resource(models.Model):
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
 
     deadline = models.DateField(blank=True, null=True)
-
-    PRIORITY_CHOICES = (
-        (1, 'Lowest'),
-        (2, 'Low'),
-        (3, 'Normal'),
-        (4, 'High'),
-        (5, 'Highest'),
-    )
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=3)
 
     SOURCE_EXTENSIONS = ['pot']  # Extensions of source-only formats.
@@ -1334,6 +1458,13 @@ class Resource(models.Model):
 
     def __unicode__(self):
         return '%s: %s' % (self.project.name, self.path)
+
+    def save(self, *args, **kwargs):
+        super(Resource, self).save(*args, **kwargs)
+
+        if self.deadline < self.project.deadline:
+            self.project.deadline = self.deadline
+            self.project.save()
 
     @classmethod
     def get_path_format(self, path):
@@ -1800,9 +1931,19 @@ class Translation(DirtyFieldsMixin, models.Model):
         this translation.
         """
         if self.approved_date is not None and self.approved_date > self.date:
-            return {'date': self.approved_date, 'user': self.approved_user}
+            return {
+                'translation': self,
+                'date': self.approved_date,
+                'user': self.approved_user,
+                'type': 'approved',
+            }
         else:
-            return {'date': self.date, 'user': self.user}
+            return {
+                'translation': self,
+                'date': self.date,
+                'user': self.user,
+                'type': 'submitted',
+            }
 
     def __unicode__(self):
         return self.string

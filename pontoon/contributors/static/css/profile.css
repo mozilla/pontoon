@@ -1,0 +1,311 @@
+#middle .container {
+  padding: 1em 0;
+}
+
+#middle .container p {
+  line-height: 18px;
+}
+
+#middle .container div {
+  width: 244px;
+}
+
+#middle .container div:last-child {
+  width: 245px;
+}
+
+#main {
+  padding: 5em 0;
+}
+
+#main .container {
+  margin: 0 auto 12em;
+  position: relative;
+  text-align: left;
+}
+
+#main .container:before {
+  background: #AAAAAA;
+  content: '';
+  height: 100%;
+  left: 50%;
+  margin-left: -1px;
+  position: absolute;
+  top: 0;
+  width: 2px;
+}
+
+#main .container > div {
+  position: relative;
+  margin: 8em 0 0;
+}
+
+#main .container > div:first-child {
+  margin: 0;
+}
+
+#main .container > div:nth-last-child(2) {
+  padding-bottom: 8em;
+}
+
+#main .container > div:last-child {
+  margin: 0;
+  position: absolute;
+  width: 100%;
+}
+
+#main .tick {
+  background: #272A2F;
+  border: 4px solid #AAAAAA;
+  position: absolute;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-left: -12px;
+  visibility: hidden;
+}
+
+#main .content {
+  border: 2px solid #AAAAAA;
+  border-radius: 8px;
+  position: relative;
+  padding: 1.5em;
+  top: -19px;
+  visibility: hidden;
+  width: 39%;
+}
+
+#main .content:before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 100%;
+  border: 6px solid transparent;
+  border-left-color: #AAAAAA;
+}
+
+#main .content:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+#main .content h3 {
+}
+
+#main .content h3 > div {
+  display: inline-block;
+}
+
+#main .content h3 .day {
+  font-size: 36px;
+}
+
+#main .content h3 .weekday {
+  text-transform: uppercase;
+}
+
+#main .content h3 .month {
+  font-weight: 300;
+}
+
+#main .content h2 {
+  color: #7BC876;
+  font-size: 20px;
+}
+
+#main .content h2 div {
+  font-size: 0.7em;
+}
+
+#main .content .fa-quote-left {
+  margin-top: 1em;
+}
+
+#main .content p {
+  color: #AAAAAA;
+  font-size: 16px;
+  margin: -1em 0 0 2em;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+#main .label {
+  padding: 0.5em 0;
+  position: absolute;
+  width: 100%;
+  left: 122%;
+  top: 0;
+}
+
+#main .label figure {
+  display: inline-block;
+  text-align: center;
+}
+
+#main .label .fa {
+  color: #7BC876;
+}
+
+#main .label figcaption {
+  margin: 4px 2px 0 0;
+}
+
+#main .label a,
+#main .label span {
+  color: #EBEBEB;
+  display: inline-block;
+  font-size: 1.4em;
+  font-weight: 400;
+  margin-top: 12px;
+  padding: 0 10px;
+  vertical-align: top;
+}
+
+#main .label span {
+  color: #888888;
+}
+
+#main .container > div:nth-child(even) .content,
+#main .container > div:nth-child(even) .label figure {
+  float: right;
+}
+
+#main .container > div:nth-child(even) .content:before {
+  top: 24px;
+  left: auto;
+  right: 100%;
+  border-color: transparent;
+  border-right-color: #AAAAAA;
+}
+
+#main .container > div:nth-child(even) .content .read-more {
+  float: right;
+}
+
+#main .container > div:nth-child(even) .content .label {
+  left: auto;
+  right: 122%;
+  text-align: right;
+}
+
+/*
+ * VERTICAL TIMELINE ANIMATION
+ *
+ * Inspired by:
+ * http://codyhouse.co/gem/vertical-timeline/
+ */
+
+#main .tick.bounce-in {
+  visibility: visible;
+  -webkit-animation: bounce-1 0.6s;
+  animation: bounce-1 0.6s;
+}
+
+@-webkit-keyframes bounce-1 {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: scale(1.5);
+  }
+
+  100% {
+    -webkit-transform: scale(1);
+  }
+}
+
+@keyframes bounce-1 {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+#main .content.bounce-in {
+  visibility: visible;
+  -webkit-animation: bounce-2 0.6s;
+  animation: bounce-2 0.6s;
+}
+
+#main .container > div:nth-child(even) .content.bounce-in {
+  -webkit-animation: bounce-2-inverse 0.6s;
+  animation: bounce-2-inverse 0.6s;
+}
+
+@-webkit-keyframes bounce-2 {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateX(-100px);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: translateX(20px);
+  }
+
+  100% {
+    -webkit-transform: translateX(0);
+  }
+}
+
+@keyframes bounce-2 {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateX(20px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@-webkit-keyframes bounce-2-inverse {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateX(100px);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: translateX(-20px);
+  }
+
+  100% {
+    -webkit-transform: translateX(0);
+  }
+}
+
+@keyframes bounce-2-inverse {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateX(-20px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}

@@ -1,0 +1,87 @@
+.controls {
+  margin-bottom: 40px;
+}
+
+.locale.select {
+  float: right;
+  width: auto;
+}
+
+.locale.select .button.breadcrumbs {
+  background: #333941;
+  font-size: 14px;
+  height: 28px;
+  margin: 0;
+  padding: 6px 12px;
+  text-align: left;
+  width: 240px;
+}
+
+.locale.select .button:before,
+.locale.select .button:after {
+  display: none;
+}
+
+.controls .locale.select.opened .button {
+  border-radius: 2px 2px 0 0;
+}
+
+.locale.select .button .code {
+  text-transform: none;
+}
+
+.locale.select .menu {
+  background: #333941;
+  top: 28px;
+  display: none;
+  position: absolute;
+  right: 0;
+  width: 240px;
+}
+
+.locale.select .menu ul {
+  max-height: 212px;
+}
+
+.locale.select .menu li {
+  color: #CCCCCC;
+  cursor: pointer;
+  text-align: left;
+}
+
+.locale .code {
+  float: right;
+}
+
+.locale.select .menu ul li span.code {
+  float: right;
+  width: auto;
+}
+
+.controls > .search-wrapper .fa-spin,
+.controls > .search-wrapper.loading .fa-search {
+  display: none;
+}
+
+.controls > .search-wrapper.loading .fa-spin {
+  display: block;
+}
+
+.controls > .search-wrapper input {
+  border-color: #5E6475;
+}
+
+.clipboard-success {
+  float: left;
+  color: #7BC876;
+}
+
+.machinery li {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.machinery li:hover {
+  background: #333941;
+  cursor: pointer;
+}

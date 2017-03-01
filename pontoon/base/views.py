@@ -2,26 +2,17 @@ from __future__ import division
 
 import json
 import logging
-import math
 import os
-import requests
-import urllib
-import xml.etree.ElementTree as ET
 
 from bulk_update.helper import bulk_update
-from collections import defaultdict
-from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.cache import cache
-from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMessage
 from django.core.paginator import Paginator, EmptyPage
-from django.db import transaction, DataError
-from django.db.models import Count, Q
+from django.db import transaction
 from django.http import (
     Http404,
     HttpResponse,
@@ -34,10 +25,6 @@ from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.views.generic import TemplateView
-from django.views.generic.detail import DetailView
-from guardian.decorators import permission_required_or_403
-from suds.client import Client, WebFault
 
 from pontoon.base import forms
 from pontoon.base import utils
@@ -50,12 +37,9 @@ from pontoon.base.models import (
     Resource,
     TranslatedResource,
     Translation,
-    TranslationMemoryEntry,
     UserProfile,
 )
 from pontoon.base.utils import require_AJAX
-from pontoon.sync.models import SyncLog
-from pontoon.sync.tasks import sync_project
 
 
 log = logging.getLogger('pontoon')
@@ -71,172 +55,35 @@ def home(request):
     return translate(request, locale, project.slug, path)
 
 
-def locale(request, locale):
-    """Locale view."""
-    l = get_object_or_404(Locale, code__iexact=locale)
+def heroku_setup(request):
+    """
+    Heroku doesn't allow us to set SITE_URL or Site during the build phase of an app.
+    Because of that we have to set everything up after build is done and app is
+    able to retrieve a domain.
+    """
+    app_host = request.get_host()
+    homepage_url = 'https://{}/'.format(app_host)
+    site_domain = Site.objects.get(pk=1).domain
 
-    projects = (
-        Project.objects.available()
-        .order_by('name')
+    if not os.environ.get('HEROKU_DEMO') or site_domain != 'example.com':
+        return redirect(homepage_url)
+
+    admin_email = os.environ.get('ADMIN_EMAIL')
+    admin_password = os.environ.get('ADMIN_PASSWORD')
+
+    User.objects.create_superuser(admin_email, admin_email, admin_password)
+    Site.objects.filter(pk=1).update(name=app_host, domain=app_host)
+
+    Project.objects.filter(slug='pontoon-intro').update(
+       url='https://{}/intro/'.format(app_host)
     )
 
-    if not projects:
-        raise Http404
-
-    return render(request, 'locale.html', {
-        'projects': projects,
-        'locale': l,
-    })
+    # Clear the cache to ensure that SITE_URL will be regenerated.
+    cache.delete(settings.APP_URL_KEY)
+    return redirect(homepage_url)
 
 
-@login_required(redirect_field_name='', login_url='/403')
-@permission_required_or_403('base.can_manage_locale', (Locale, 'code', 'locale'))
-@transaction.atomic
-def locale_permissions(request, locale):
-    l = get_object_or_404(Locale, code__iexact=locale)
-    project_locales = l.project_locale.available()
-
-    if request.method == 'POST':
-        locale_form = forms.LocalePermsForm(request.POST, instance=l, prefix='general')
-        project_locale_form = forms.ProjectLocalePermsFormsSet(
-            request.POST,
-            prefix='project-locale',
-            queryset=project_locales,
-        )
-
-        if locale_form.is_valid() and project_locale_form.is_valid():
-            locale_form.save()
-            project_locale_form.save()
-
-        else:
-            errors = locale_form.errors
-            errors.update(project_locale_form.errors_dict)
-            return HttpResponseBadRequest(json.dumps(errors))
-
-    else:
-        project_locale_form = forms.ProjectLocalePermsFormsSet(
-            prefix='project-locale',
-            queryset=project_locales,
-        )
-
-    managers = l.managers_group.user_set.all()
-    translators = l.translators_group.user_set.exclude(pk__in=managers).all()
-    all_users = User.objects.exclude(pk__in=managers).exclude(pk__in=translators).exclude(email='')
-
-    contributors = User.translators.filter(translation__locale=l).values_list('email', flat=True).distinct()
-    locale_projects = l.projects_permissions
-    return render(request, 'locale_permissions.html', {
-        'locale': l,
-        'all_users': all_users,
-        'contributors': contributors,
-        'translators': translators,
-        'managers': managers,
-        'locale_projects': locale_projects,
-        'project_locale_form': project_locale_form,
-        'all_projects_in_translation': all([x[5] for x in locale_projects])
-    })
-
-
-def locales(request):
-    """Localization teams."""
-    locales = (
-        Locale.objects.available()
-    )
-
-    return render(request, 'locales.html', {
-        'locales': locales,
-    })
-
-
-def project(request, slug):
-    """Project view."""
-    project = get_object_or_404(Project.objects.available(), slug=slug)
-
-    locales = (
-        project.locales.all()
-        .prefetch_latest_translation(project)
-        .order_by('name')
-    )
-
-    return render(request, 'project.html', {
-        'locales': locales,
-        'project': project,
-    })
-
-
-def projects(request):
-    """Project overview."""
-    projects = (
-        Project.objects.available()
-        .select_related('latest_translation__user')
-        .order_by('name')
-    )
-
-    return render(request, 'projects.html', {
-        'projects': projects,
-    })
-
-
-@login_required(redirect_field_name='', login_url='/403')
-@require_AJAX
-def manually_sync_project(request, slug):
-    if not request.user.has_perm('base.can_manage') or not settings.MANUAL_SYNC:
-        return HttpResponseForbidden(
-            "Forbidden: You don't have permission for syncing projects"
-        )
-
-    sync_log = SyncLog.objects.create(start_time=timezone.now())
-    project = Project.objects.get(slug=slug)
-    sync_project.delay(project.pk, sync_log.pk)
-
-    return HttpResponse('ok')
-
-
-def locale_project(request, locale, slug):
-    """Locale-project overview."""
-    l = get_object_or_404(Locale, code__iexact=locale)
-
-    project = get_object_or_404(
-        Project.objects.available().prefetch_related('subpage_set'),
-        slug=slug
-    )
-
-    # Amend the parts dict with latest activity info.
-    translatedresources_qs = (
-        TranslatedResource.objects
-        .filter(resource__project=project, locale=l)
-        .select_related('resource', 'latest_translation')
-    )
-
-    if not len(translatedresources_qs):
-        raise Http404
-
-    translatedresources = {s.resource.path: s for s in translatedresources_qs}
-    parts = l.parts_stats(project)
-
-    for part in parts:
-        translatedresource = translatedresources.get(part['title'], None)
-        if translatedresource and translatedresource.latest_translation:
-            part['latest_activity'] = translatedresource.latest_translation.latest_activity
-        else:
-            part['latest_activity'] = None
-
-        part['chart'] = {
-            'translated_strings': part['translated_strings'],
-            'fuzzy_strings': part['fuzzy_strings'],
-            'total_strings': part['resource__total_strings'],
-            'approved_strings': part['approved_strings'],
-            'approved_share': round(part['approved_strings'] / part['resource__total_strings'] * 100),
-            'translated_share': round(part['translated_strings'] / part['resource__total_strings'] * 100),
-            'fuzzy_share': round(part['fuzzy_strings'] / part['resource__total_strings'] * 100),
-            'approved_percent': int(math.floor(part['approved_strings'] / part['resource__total_strings'] * 100)),
-        }
-
-    return render(request, 'locale_project.html', {
-        'locale': l,
-        'project': project,
-        'parts': parts,
-    })
+# TRANSLATE VIEWs
 
 
 def translate(request, locale, slug, part):
@@ -266,146 +113,6 @@ def translate(request, locale, slug, part):
         'projects': projects,
         'authors': translations.authors().serialize(),
         'counts_per_minute': translations.counts_per_minute(),
-    })
-
-
-@login_required(redirect_field_name='', login_url='/403')
-def profile(request):
-    """Current user profile."""
-    return contributor(request, request.user)
-
-
-def contributor_email(request, email):
-    user = get_object_or_404(User, email=email)
-    return contributor(request, user)
-
-
-def contributor_username(request, username):
-    user = get_object_or_404(User, username=username)
-    return contributor(request, user)
-
-
-def contributor_timeline(request, username):
-    """Contributor events in the timeline."""
-    user = get_object_or_404(User, username=username)
-    try:
-        page = int(request.GET.get('page', 1))
-    except ValueError:
-        raise Http404('Invalid page number.')
-
-    # Exclude obsolete translations
-    contributor_translations = (
-        user.contributed_translations
-            .exclude(entity__obsolete=True)
-            .extra({'day': "date(date)"})
-            .order_by('-day')
-    )
-
-    counts_by_day = contributor_translations.values('day').annotate(count=Count('id'))
-
-    try:
-        events_paginator = Paginator(counts_by_day, 10)
-        timeline_events = []
-
-        timeline_events = User.objects.map_translations_to_events(
-            events_paginator.page(page).object_list,
-            contributor_translations
-        )
-
-        # Join is the last event in this reversed order.
-        if page == events_paginator.num_pages:
-            timeline_events.append({
-                'date': user.date_joined,
-                'type': 'join'
-            })
-
-    except EmptyPage:
-        # Return the join event if user reaches the last page.
-        raise Http404('No events.')
-
-    return render(request, 'user_timeline.html', {
-       'events': timeline_events
-    })
-
-
-def contributor(request, user):
-    """Contributor profile."""
-
-    return render(request, 'user.html', {
-        'contributor': user,
-        'translations': user.contributed_translations
-    })
-
-
-class ContributorsMixin(object):
-    def contributors_filter(self, **kwargs):
-        """
-        Return Q() filters for fetching contributors. Fetches all by default.
-        """
-        return None
-
-    def get_context_data(self, **kwargs):
-        """Top contributors view."""
-        context = super(ContributorsMixin, self).get_context_data(**kwargs)
-        try:
-            period = int(self.request.GET['period'])
-            if period <= 0:
-                raise ValueError
-            start_date = (timezone.now() + relativedelta(months=-period))
-        except (KeyError, ValueError):
-            period = None
-            start_date = None
-
-        context['contributors'] = User.translators.with_translation_counts(start_date, self.contributors_filter(**kwargs))
-        context['period'] = period
-        return context
-
-
-class ContributorsView(ContributorsMixin, TemplateView):
-    """
-    View returns top contributors.
-    """
-    template_name = 'users.html'
-
-
-class LocaleContributorsView(ContributorsMixin, DetailView):
-    """
-    View renders page of the contributors for the locale.
-    """
-    template_name = 'locale_contributors.html'
-    model = Locale
-    slug_field = 'code__iexact'
-    slug_url_kwarg = 'code'
-
-    def get_context_object_name(self, obj):
-        return 'locale'
-
-    def contributors_filter(self, **kwargs):
-        return Q(translation__locale=self.object)
-
-
-class ProjectContributorsView(ContributorsMixin, DetailView):
-    """
-    Renders an subpage of the project and displays its contributors.
-    """
-    template_name = 'project_contributors.html'
-    model = Project
-
-    def get_context_object_name(self, obj):
-        return 'project'
-
-    def contributors_filter(self, **kwargs):
-        return Q(translation__entity__resource__project=self.object)
-
-
-def search(request):
-    """Terminology search view."""
-    locale = utils.get_project_locale_from_request(
-        request, Locale.objects) or 'en-GB'
-
-    return render(request, 'search.html', {
-        'locale': Locale.objects.get(code__iexact=locale),
-        'locales': Locale.objects.all(),
     })
 
 
@@ -982,238 +689,6 @@ def update_translation(request):
         })
 
 
-def translation_memory(request):
-    """Get translations from internal translations memory."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-        pk = request.GET['pk']
-    except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    max_results = 5
-    locale = get_object_or_404(Locale, code__iexact=locale)
-    entries = TranslationMemoryEntry.objects.minimum_levenshtein_ratio(text).filter(locale=locale)
-
-    # Exclude existing entity
-    if pk:
-        entries = entries.exclude(entity__pk=pk)
-
-    entries = entries.values('source', 'target', 'quality').order_by('-quality')
-    suggestions = defaultdict(lambda: {'count': 0, 'quality': 0})
-
-    try:
-        for entry in entries:
-            if entry['target'] not in suggestions or entry['quality'] > suggestions[entry['target']]['quality']:
-                suggestions[entry['target']].update(entry)
-            suggestions[entry['target']]['count'] += 1
-    except DataError as e:
-        # Catches 'argument exceeds the maximum length of 255 bytes' Error
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    return JsonResponse(sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results], safe=False)
-
-
-def machine_translation(request):
-    """Get translation from machine translation service."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-        check = request.GET['check']
-    except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
-        api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
-    else:
-        log.error("MICROSOFT_TRANSLATOR_API_KEY not set")
-        return HttpResponse("apikey")
-
-    obj = {}
-
-    # On first run, check if target language supported
-    if check == "true":
-        supported = False
-        languages = settings.MICROSOFT_TRANSLATOR_LOCALES
-
-        if locale in languages:
-            supported = True
-
-        else:
-            for lang in languages:
-                if lang.startswith(locale.split("-")[0]):  # Neutral locales
-                    supported = True
-                    locale = lang
-                    break
-
-        if not supported:
-            return HttpResponse("not-supported")
-
-        obj['locale'] = locale
-
-    url = "http://api.microsofttranslator.com/V2/Http.svc/Translate"
-    payload = {
-        "appId": api_key,
-        "text": text,
-        "from": "en",
-        "to": locale,
-        "contentType": "text/html",
-    }
-
-    try:
-        r = requests.get(url, params=payload)
-
-        # Parse XML response
-        root = ET.fromstring(r.content)
-        translation = root.text
-        obj['translation'] = translation
-
-        return JsonResponse(obj)
-
-    except Exception as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-
-def microsoft_terminology(request):
-    """Get translations from Microsoft Terminology Service."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-        check = request.GET['check']
-    except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    obj = {}
-    locale = locale.lower()
-    url = 'http://api.terminology.microsoft.com/Terminology.svc?singleWsdl'
-    client = Client(url)
-
-    # On first run, check if target language supported
-    if check == "true":
-        supported = False
-        languages = settings.MICROSOFT_TERMINOLOGY_LOCALES
-
-        if locale in languages:
-            supported = True
-
-        elif "-" not in locale:
-            temp = locale + "-" + locale  # Try e.g. "de-de"
-            if temp in languages:
-                supported = True
-                locale = temp
-
-            else:
-                for lang in languages:
-                    if lang.startswith(locale + "-"):  # Try e.g. "de-XY"
-                        supported = True
-                        locale = lang
-                        break
-
-        if not supported:
-            return HttpResponse("not-supported")
-
-        obj['locale'] = locale
-
-    sources = client.factory.create('ns0:TranslationSources')
-    sources["TranslationSource"] = ['Terms', 'UiStrings']
-
-    payload = {
-        'text': text,
-        'from': 'en-US',
-        'to': locale,
-        'sources': sources,
-        'maxTranslations': 5
-    }
-
-    try:
-        r = client.service.GetTranslations(**payload)
-        translations = []
-
-        if len(r) != 0:
-            for translation in r.Match:
-                translations.append({
-                    'source': translation.OriginalText,
-                    'target': translation.Translations[0][0].TranslatedText,
-                    'quality': translation.ConfidenceLevel,
-                })
-
-            obj['translations'] = translations
-
-        return JsonResponse(obj)
-
-    except WebFault as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-
-def amagama(request):
-    """Get open source translations from amaGama service."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-    except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    try:
-        text = urllib.quote(text.encode('utf-8'))
-    except KeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    # No trailing slash at the end or slash becomes part of the source text
-    url = (
-        u'https://amagama-live.translatehouse.org/api/v1/en/{locale}/unit/'
-        .format(locale=locale)
-    )
-
-    payload = {
-        'source': text,
-        'max_candidates': 5,
-        'min_similarity': 70,
-    }
-
-    try:
-        r = requests.get(url, params=payload)
-        return JsonResponse(r.json(), safe=False)
-
-    except Exception as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-
-def transvision(request):
-    """Get Mozilla translations from Transvision service."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-    except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    try:
-        text = urllib.quote(text.encode('utf-8'))
-    except KeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    url = (
-        u'https://transvision.mozfr.org/api/v1/tm/global/en-US/{locale}/{text}/'
-        .format(locale=locale, text=text)
-    )
-
-    payload = {
-        'max_results': 5,
-        'min_quality': 70,
-    }
-
-    try:
-        r = requests.get(url, params=payload)
-        if 'error' in r.json():
-            error = r.json()['error']
-            log.error('Transvision error: {error}'.format(error))
-            return HttpResponseBadRequest('Bad Request: {error}'.format(error=error))
-
-        return JsonResponse(r.json(), safe=False)
-
-    except Exception as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-
 @require_POST
 @transaction.atomic
 def download(request):
@@ -1268,132 +743,3 @@ def upload(request):
                 messages.error(request, error)
 
     return translate(request, code, slug, part)
-
-
-@login_required(redirect_field_name='', login_url='/403')
-@require_POST
-@transaction.atomic
-def toggle_user_profile_attribute(request, username):
-    user = get_object_or_404(User, username=username)
-    if user != request.user:
-        return HttpResponseForbidden("Forbidden: You don't have permission to edit this user")
-
-    attribute = request.POST.get('attribute', None)
-    if attribute not in ['quality_checks', 'force_suggestions']:
-        return HttpResponseForbidden('Forbidden: Attribute not allowed')
-
-    value = request.POST.get('value', None)
-    if not value:
-        return HttpResponseBadRequest('Bad Request: Value not set')
-
-    profile = user.profile
-    setattr(profile, attribute, json.loads(value))
-    profile.save()
-
-    return HttpResponse('ok')
-
-
-@login_required(redirect_field_name='', login_url='/403')
-@require_POST
-@transaction.atomic
-def save_user_name(request):
-    """Save user name."""
-    profile_form = forms.UserProfileForm(request.POST, instance=request.user)
-
-    if not profile_form.is_valid():
-        return HttpResponseBadRequest(u'\n'.join(profile_form.errors['first_name']))
-
-    profile_form.save()
-
-    return HttpResponse('ok')
-
-
-@login_required(redirect_field_name='', login_url='/403')
-@require_POST
-def request_projects(request, locale):
-    """Request projects to be added to locale."""
-    slug_list = request.POST.getlist('projects[]')
-    locale = get_object_or_404(Locale, code__iexact=locale)
-
-    # Validate projects
-    project_list = Project.objects.available().filter(slug__in=slug_list)
-    if not project_list:
-        return HttpResponseBadRequest('Bad Request: Non-existent projects specified')
-
-    projects = ''.join('- {} ({})\n'.format(p.name, p.slug) for p in project_list)
-    user = request.user
-
-    if settings.PROJECT_MANAGERS[0] != '':
-        EmailMessage(
-            subject=u'Project request for {locale} ({code})'.format(locale=locale.name, code=locale.code),
-            body=u'''
-            Please add the following projects to {locale} ({code}):
-            {projects}
-            Requested by {user}, {user_role}:
-            {user_url}
-            '''.format(
-                locale=locale.name, code=locale.code, projects=projects,
-                user=user.display_name_and_email,
-                user_role=user.locale_role(locale),
-                user_url=request.build_absolute_uri(user.profile_url)
-            ),
-            from_email='pontoon@mozilla.com',
-            to=settings.PROJECT_MANAGERS,
-            cc=locale.managers_group.user_set.exclude(pk=user.pk).values_list('email', flat=True),
-            reply_to=[user.email]).send()
-    else:
-        raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
-
-    return HttpResponse('ok')
-
-
-@require_AJAX
-def get_csrf(request):
-    """Get CSRF token."""
-    return HttpResponse(request.csrf_token)
-
-
-@login_required(redirect_field_name='', login_url='/403')
-def user_settings(request):
-    """View and edit user settings."""
-    if request.method == 'POST':
-        form = forms.UserLocalesSettings(request.POST, instance=request.user.profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Settings saved.')
-            return redirect(request.POST.get('return_url', '/'))
-
-    selected_locales = list(request.user.profile.sorted_locales)
-    available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
-    return render(request, 'user_settings.html', {
-        'available_locales': available_locales,
-        'selected_locales': selected_locales,
-    })
-
-
-def heroku_setup(request):
-    """
-    Heroku doesn't allow us to set SITE_URL or Site during the build phase of an app.
-    Because of that we have to set everything up after build is done and app is
-    able to retrieve a domain.
-    """
-    app_host = request.get_host()
-    homepage_url = 'https://{}/'.format(app_host)
-    site_domain = Site.objects.get(pk=1).domain
-
-    if not os.environ.get('HEROKU_DEMO') or site_domain != 'example.com':
-        return redirect(homepage_url)
-
-    admin_email = os.environ.get('ADMIN_EMAIL')
-    admin_password = os.environ.get('ADMIN_PASSWORD')
-
-    User.objects.create_superuser(admin_email, admin_email, admin_password)
-    Site.objects.filter(pk=1).update(name=app_host, domain=app_host)
-
-    Project.objects.filter(slug='pontoon-intro').update(
-       url='https://{}/intro/'.format(app_host)
-    )
-
-    # Clear the cache to ensure that SITE_URL will be regenerated.
-    cache.delete(settings.APP_URL_KEY)
-    return redirect(homepage_url)

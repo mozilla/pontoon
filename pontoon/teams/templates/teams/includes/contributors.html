@@ -1,0 +1,10 @@
+{% import "contributors/widgets/contributor_list.html" as Contributors %}
+
+<menu class="controls contributors">
+  {{ Contributors.select_period(period, url('pontoon.teams.contributors', locale.code)) }}
+</menu>
+{% if contributors %}
+  {{ Contributors.list_contributors(contributors) }}
+{% else %}
+  {{ Contributors.no_contributors() }}
+{% endif %}

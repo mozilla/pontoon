@@ -6,7 +6,7 @@
     <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
  
-    <title>Pontoon &middot; Server Error</title>
+    <title>Server Error</title>
     <meta name="description" content="Live web localization tool">
     <meta name="author" content="Mozilla">
 
@@ -279,74 +279,40 @@
         font-family: "Open Sans", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
       }
 
-      #error {
+      body {
+        background: #333941;
+      }
+
+      .container {
+          margin: 0 auto;
+          width: 980px;
+      }
+
+      header {
         background: #272A2F;
-        bottom: 0;
-        display: table;
-        height: 100%;
-        overflow: hidden;
-        position: fixed;
-        text-align: center;
-        width: 100%;
+        height: 60px;
       }
 
-      .inner {
-        display: table-cell;
-        vertical-align: middle;
+      header nav {
+        text-align: left;
       }
 
-      #title {
-        color: #7BC876;
+      header nav .logo {
         display: inline-block;
-        font-size: 108px;
-        font-weight: 300;
-        letter-spacing: -4px;
-        text-align: center;
+        float: left;
+        margin: 14px 15px 0 0;
       }
 
-      #title a {
-        color: #7BC876;
-      }
-
-      h2 {
-        color: #888888;
-        font-size: 14px;
-        font-weight: 300;
-        text-transform: uppercase;
-        padding-bottom: 2px;
-      }
-
-      #subtitle {
-        color: #EBEBEB;
-        font-size: 48px;
-        letter-spacing: -2px;
-        text-transform: none;
-      }
-
-      #action {
-        color: #AAAAAA;
-        font-size: 14px;
-        font-weight: 300;
-        height: 40px;
-        margin-top: 70px;
-      }
-
-      #action a {
-        color: #7BC876;
-      }
-
-      nav {
-        left: 50%;
-        margin-left: -350px;
-        position: absolute;
-        top: 20px;
-        width: 700px;
+      header nav .links {
+        display: inline-block;
+        float: left;
+        padding-top: 22px;
       }
 
       .links li {
         list-style: none;
-        display: inline;
-        margin: 0 20px;
+        display: inline-block;
+        margin: 0 15px;
         font-size: 14px;
         line-height: 14px;
       }
@@ -361,32 +327,74 @@
         color: #7BC876;
         text-decoration: none;
       }
+
+      #error {
+        bottom: 0;
+        display: table;
+        height: 100%;
+        overflow: hidden;
+        position: fixed;
+        text-align: center;
+        width: 100%;
+        z-index: -1;
+
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      .inner {
+        display: table-cell;
+        vertical-align: middle;
+      }
+
+      #title {
+        display: inline-block;
+        font-size: 108px;
+        font-weight: 300;
+        letter-spacing: -4px;
+        line-height: 162px;
+        text-align: center;
+      }
+
+      #title a {
+        color: #EBEBEB;
+        font-weight: 700;
+        line-height: 108px;
+      }
+
+      #subtitle {
+        color: #7BC876;
+        font-size: 32px;
+        font-style: italic;
+        font-weight: 300;
+        padding-bottom: 2px;
+        text-transform: none;
+      }
     </style>
   </head>
   
   <body id="pontoon">
-    <section id="error">
-      <div class="inner">
-
+    <header>
+      <div class="container">
         <nav>
+
+          <a href="/" class="logo"><img src="{{ static('img/logo32.png') }}"></a>
+
           <ul class="links">
-            <li><a href="/">Home</a></li>
             <li><a href="/teams">Teams</a></li>
             <li><a href="/projects">Projects</a></li>
             <li><a href="/contributors">Contributors</a></li>
-            <li><a href="/terminology">Terminology</a></li>
-            <li><a href="/terms">Terms</a></li>
-            <li><a href="https://developer.mozilla.org/docs/Mozilla/Localization/Localizing_with_Pontoon" target="_blank">Help</a></li>
+            <li><a href="/machinery">Machinery</a></li>
           </ul>
+
         </nav>
+      </div>
+    </header>
 
-        <h1 id="title"><a href="/">Oops</a></h1>
+    <section id="error">
+      <div class="inner">
+        <h1 id="title"><a href="/">Oops!</a></h1>
         <h2 id="subtitle">Something is wrong. We're going to fix it soon.</h2>
-
-        <p id="action">
-          <a id="link" href="/">Go Home</a>
-        </p>
-
       </div>
     </section>
   </body>

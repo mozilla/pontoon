@@ -1,19 +1,19 @@
-{% extends "landing.html" %}
+{% extends "base.html" %}
+{% import 'heading.html' as Heading %}
 
-{% block title %}Pontoon &middot; Sync Logs{% endblock %}
+{% block title %}Sync Logs{% endblock %}
 
-{% block header %}
-  <header id="header">
-    <h1 class="title">Sync Logs</h1>
-  </header>
+{% block heading %}
+  {{ Heading.heading(title='Sync Logs') }}
 {% endblock %}
 
-{% block middle %}
-  <div class="log-list-container">
+{% block bottom %}
+<section id="main">
+  <div class="container">
     <table class="log-list">
       <tr class="log-list-header">
         <th class="log-list-column">Start Time</th>
-        <th class="log-list-column">Date</th>
+        <th class="log-list-column">Start Date</th>
         <th class="log-list-column">Duration</th>
       </tr>
       {% for log in sync_logs %}
@@ -51,6 +51,7 @@
       {% endif %}
     </div>
   </div>
+</section>
 {% endblock %}
 
 {% block extend_css %}

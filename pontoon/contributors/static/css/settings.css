@@ -1,0 +1,43 @@
+h3 {
+  color: #EBEBEB;
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  margin-left: -2px;
+  text-align: left;
+  text-transform: none;
+}
+
+h3 .small {
+  color: #AAAAAA;
+  font-size: 0.7em;
+}
+
+#main form {
+  margin: 0 auto;
+}
+
+#main form > div {
+  margin: 20px 0;
+  text-align: right;
+}
+
+#main form > div.controls {
+  margin-top: 50px;
+}
+
+.controls .button {
+  background: #7BC876;
+  border: none;
+  border-radius: 3px;
+  color: #272A2F;
+  font-size: 14px;
+  font-weight: 400;
+  height: 31px;
+  text-transform: uppercase;
+}
+
+.controls .cancel {
+  float: none;
+  margin: 9px;
+}
