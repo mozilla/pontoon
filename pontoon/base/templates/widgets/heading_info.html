@@ -42,7 +42,7 @@
 
 {% macro legend_item(title, class, value, link=None) %}
 <li class="{{ class }}">
-  {% if link %}<a href="{{ link }}?status=suggested">{% endif %}
+  {% if link %}<a href="{{ link }}">{% endif %}
     {% if class != 'all' %}
       <span class="fa status"></span>
     {% endif %}
@@ -58,25 +58,25 @@
     title='Translated strings',
     class='translated',
     value=obj.approved_strings,
-    link=link)
+    link=(link + '?status=translated') if link else None)
   }}
   {{ legend_item(
     title='Suggested strings',
     class='suggested',
     value=obj.translated_strings,
-    link=link)
+    link=(link + '?status=suggested') if link else None)
   }}
   {{ legend_item(
     title='Fuzzy strings',
     class='fuzzy',
     value=obj.fuzzy_strings,
-    link=link)
+    link=(link + '?status=fuzzy') if link else None)
   }}
   {{ legend_item(
     title='Missing strings',
     class='missing',
     value=(obj.total_strings - obj.approved_strings - obj.translated_strings - obj.fuzzy_strings),
-    link=link)
+    link=(link + '?status=missing') if link else None)
   }}
   {{ legend_item(
     title='All strings',
