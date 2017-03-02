@@ -1388,12 +1388,12 @@ body > form,
   z-index: 10;
 }
 
-.priority .fa {
+.priority .fa-star {
   color: #637283;
   float: left;
 }
 
-.priority .fa.active {
+.priority .fa-star.active {
   color: #7BC876;
 }
 
