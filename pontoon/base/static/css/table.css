@@ -111,8 +111,6 @@ table.table {
 }
 
 .table .latest-activity time {
-  border-bottom: 1px dotted #F36;
-  padding: 0 1px;
   white-space: nowrap;
 }
 
@@ -147,7 +145,7 @@ table.table {
 }
 
 .table .latest-activity .tooltip .quote {
-  color: #f36;
+  color: #7BC876;
   font-size: 30px;
 }
 
@@ -159,6 +157,7 @@ table.table {
 
 .table .latest-activity .tooltip footer {
   color: #888888;
+  font-style: italic;
   height: 48px;
   margin-top: 10px;
   position: relative;
@@ -184,7 +183,7 @@ table.table {
 }
 
 .table .latest-activity .tooltip footer .translation-author {
-  color: #F36;
+  color: #7BC876;
 }
 
 .table .latest-activity .tooltip footer img {

@@ -26,7 +26,7 @@
       </h3>
     </td>
     <td class="deadline">
-      <time datetime="{% if project.deadline %}{{ project.deadline.isoformat() }}{% endif %}" class="{{ project.deadline|date_status(chart.approved_percent == 100) }}">{{ project.deadline|format_datetime('short_date', default='Not set') }}</time>
+      <time datetime="{% if project.deadline %}{{ project.deadline.isoformat() }}{% endif %}" class="{{ project.deadline|date_status(chart.approved_percent == 100) }}">{{ project.deadline|format_datetime('short_date', default='―') }}</time>
     </td>
     <td class="priority">
       {% for n in range(5) %}
