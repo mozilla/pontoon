@@ -30,8 +30,8 @@ class UserAdmin(AuthUserAdmin):
 
 class LocaleAdmin(admin.ModelAdmin):
     search_fields = ['name', 'code']
-    list_display = ('pk', 'name', 'code', 'direction', 'script', 'population',
-                    'code', 'nplurals', 'plural_rule', 'cldr_plurals')
+    list_display = ('pk', 'name', 'code', 'script', 'direction', 'population',
+                    'cldr_plurals', 'nplurals', 'plural_rule')
     exclude = ('translators_group', 'managers_group')
     readonly_fields = AGGREGATED_STATS_FIELDS + ('latest_translation',)
 
