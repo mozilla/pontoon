@@ -12,7 +12,7 @@
     {% endif %}
     <time datetime="{{ latest_activity.date.isoformat() }}" data-translation="{{ latest_activity.translation.string }}" data-action="{{ action }}" data-user-name="{{ user }}" data-user-avatar="{{ avatar }}">{{ latest_activity.date|naturaltime }}</time>
   {% else %}
-    <span class="not">No activity yet</span>
+    <span class="not">―</span>
   {% endif %}
 </span>
 {%- endmacro %}

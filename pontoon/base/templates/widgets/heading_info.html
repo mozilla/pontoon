@@ -28,7 +28,7 @@
 <li class="deadline">
   <span class="title">Deadline</span>
   <span class="value">
-    <time datetime="{% if deadline %}{{ deadline.isoformat() }}{% endif %}" class="{{ deadline|date_status(complete) }}">{{ deadline|format_datetime('short_date', default='Not set') }}</time>
+    <time datetime="{% if deadline %}{{ deadline.isoformat() }}{% endif %}" class="{{ deadline|date_status(complete) }}">{{ deadline|format_datetime('short_date', default='―') }}</time>
   </span>
 </li>
 {% endmacro %}
