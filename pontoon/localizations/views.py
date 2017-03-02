@@ -18,7 +18,7 @@ def localization(request, code, slug):
     """Locale-project overview."""
     locale = get_object_or_404(Locale, code__iexact=code)
     project = get_object_or_404(Project.objects.available(), slug=slug)
-    project_locale = ProjectLocale.objects.get(locale=locale, project=project)
+    project_locale = get_object_or_404(ProjectLocale, locale=locale, project=project)
 
     resource_count = len(locale.parts_stats(project)) - 1
 
