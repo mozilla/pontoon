@@ -481,41 +481,6 @@ class Locale(AggregatedStats):
         """
     )
 
-    script = models.CharField(
-        max_length=128,
-        default='Latin',
-        help_text="""
-        Script locale is written in. Find it in
-        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/languageData.json">CLDR languageData.json</a>.
-        """
-    )
-
-    population = models.PositiveIntegerField(
-        default=0,
-        help_text="""
-        Number of native speakers. Find locale code in
-        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/territoryInfo.json">CLDR territoryInfo.json</a>
-        and multiply its "_populationPercent" with the territory "_population".
-        Repeat if multiple occurrences of locale code exist and sum products.
-        """
-    )
-
-    # Writing direction
-    DIRECTION = (
-        ('ltr', 'left-to-right'),
-        ('rtl', 'right-to-left'),
-    )
-    direction = models.CharField(
-        max_length=3,
-        default='ltr',
-        choices=DIRECTION,
-        help_text="""
-        Writing direction. Set to "right-to-left" if "rtl" value for the locale
-        script is set to "YES" in
-        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/scriptMetadata.json">CLDR scriptMetadata.json</a>.
-        """
-    )
-
     # Locale contains references to user groups that translate or manage them.
     # Groups store respective permissions for users.
     translators_group = models.ForeignKey(Group, related_name='translated_locales', null=True,
@@ -542,6 +507,41 @@ class Locale(AggregatedStats):
         A comma separated list of <a href="http://www.unicode.org/cldr/charts/dev/supplemental/language_plural_rules.html">CLDR plural rules</a>,
         where 0 represents zero, 1 one, 2 two, 3 few, 4 many, and 5 other.
         E.g. 1,5
+        """
+    )
+
+    script = models.CharField(
+        max_length=128,
+        default='Latin',
+        help_text="""
+        The script used by this locale. Find it in
+        <a href="http://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html">CLDR Languages and Scripts</a>.
+        """
+    )
+
+    # Writing direction
+    DIRECTION = (
+        ('ltr', 'left-to-right'),
+        ('rtl', 'right-to-left'),
+    )
+    direction = models.CharField(
+        max_length=3,
+        default='ltr',
+        choices=DIRECTION,
+        help_text="""
+        Writing direction of the script. Set to "right-to-left" if "rtl" value
+        for the locale script is set to "YES" in
+        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/scriptMetadata.json">CLDR scriptMetadata.json</a>.
+        """
+    )
+
+    population = models.PositiveIntegerField(
+        default=0,
+        help_text="""
+        Number of native speakers. Find locale code in
+        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/territoryInfo.json">CLDR territoryInfo.json</a>
+        and multiply its "_populationPercent" with the territory "_population".
+        Repeat if multiple occurrences of locale code exist and sum products.
         """
     )
 
