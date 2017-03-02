@@ -2207,7 +2207,7 @@ var Pontoon = (function (my) {
           translation = entity.translation[0].string;
 
       entity.ui
-        .removeClass('translated suggested fuzzy partial')
+        .removeClass('translated suggested fuzzy missing partial')
         .addClass(status)
         .find('.translation-string')
           .html(self.markPlaceables(translation || ''));
