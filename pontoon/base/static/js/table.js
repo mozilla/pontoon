@@ -162,15 +162,15 @@ var Pontoon = (function (my) {
 
             // Sort by priority
             } else if (node.is('.priority')) {
-              return (getPriority(b) - getPriority(a)) * dir;
+              return (getPriority(a) - getPriority(b)) * dir;
 
             // Sort by enabled state
             } else if (node.is('.check')) {
-              return (getEnabled(b) - getEnabled(a)) * dir;
+              return (getEnabled(a) - getEnabled(b)) * dir;
 
-            // Sort by enabled state
+            // Sort by number of speakers
             } else if (node.is('.population')) {
-              return (getNumber(b) - getNumber(a)) * dir;
+              return (getNumber(a) - getNumber(b)) * dir;
 
             // Sort by alphabetical order
             } else {
