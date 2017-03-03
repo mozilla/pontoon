@@ -3580,7 +3580,8 @@ var Pontoon = (function (my) {
     loadNextEntities: function(type) {
       var self = this,
           requiresInplaceEditor = self.requiresInplaceEditor(),
-          excludeEntities = requiresInplaceEditor ? {} : {excludeEntities: self.getEntitiesIds('#entitylist .entity')};
+          // Join IDs into string due to bug 1344322
+          excludeEntities = requiresInplaceEditor ? {} : {excludeEntities: self.getEntitiesIds('#entitylist .entity').join(',')};
 
       self.setSidebarLoading(true);
 

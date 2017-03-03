@@ -274,11 +274,16 @@ class EntityViewTests(TestCase):
         assert_equal(response.json()['has_next'], True)
         assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[0].pk,])
 
+        excludeEntities = ','.join(map(str, [
+            self.entities[0].pk,
+            self.entities[1].pk
+        ]))
+
         response = self.client.ajax_post('/get-entities/', {
             'project': self.resource.project.slug,
             'locale': self.locale.code,
             'paths[]': [self.resource.path],
-            'excludeEntities[]': [self.entities[0].pk, self.entities[1].pk],
+            'excludeEntities': excludeEntities,
             'limit': 1,
         })
 
