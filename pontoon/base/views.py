@@ -152,7 +152,7 @@ def entities(request):
     time = request.POST.get('time', '')
     author = request.POST.get('author', '')
     search = request.POST.get('search', '')
-    exclude_entities = request.POST.getlist('excludeEntities[]', [])
+    exclude_entities = filter(None, request.POST.get('excludeEntities', '').split(','))
 
     # Only return entities with provided IDs (batch editing)
     entity_ids = request.POST.getlist('entityIds[]', [])
