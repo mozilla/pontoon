@@ -149,7 +149,7 @@ class UserCustomManager(UserManager):
         for day in days:
             daily = translations.filter(date__startswith=day['day'])
             daily.prefetch_related('entity__resource__project')
-            example = daily.first()
+            example = daily.order_by('-pk').first()
 
             timeline.append({
                 'date': example.date,
@@ -1766,13 +1766,15 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         # Filter by search parameters
         if search:
-            search_query = Q(**{'string__icontains': search})
-            search_query |= Q(**{'string_plural__icontains': search})
-            search_query |= Q(**{'translation__string__icontains': search, 'translation__locale': locale})
-            search_query |= Q(**{'comment__icontains': search})
-            search_query |= Q(**{'key__icontains': search})
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
-            entities = Entity.objects.filter(search_query, pk__in=entities).distinct()
+            entities = (
+                Entity.objects.filter(
+                    Q(translation__string__icontains=search) | Q(translation__entity_document__icontains=search),
+                    translation__locale=locale,
+                    pk__in=entities
+                )
+                .distinct()
+            )
 
         entities = entities.prefetch_resources_translations(locale)
 
@@ -1929,6 +1931,11 @@ class Translation(DirtyFieldsMixin, models.Model):
         User, related_name='unapproved_translations', null=True, blank=True)
     unapproved_date = models.DateTimeField(null=True, blank=True)
     fuzzy = models.BooleanField(default=False)
+
+    # Field contains a concatenated state of the  entity for faster search lookups.
+    # Due to the nature of sql queries, it's faster to perform `icontains` filter on the same table
+    # than OR condition for The Entity and The Translation class joined together.
+    entity_document = models.TextField(blank=True)
 
     objects = TranslationQuerySet.as_manager()
     NotAllowed = TranslationNotAllowed

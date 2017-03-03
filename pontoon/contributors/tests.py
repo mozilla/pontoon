@@ -146,12 +146,16 @@ class ContributorTimelineViewTests(UserTestCase):
 
         for i in xrange(26):
             date = make_aware(datetime(2016, 12, 1) - timedelta(days=i))
-            translations_count = randint(1,3)
+            translations_count = randint(1, 3)
             self.translations.setdefault((date, translations_count), []).append(
-                TranslationFactory.create_batch(translations_count,
-                    date=date,
-                    user=self.user,
-                    entity__resource__project=self.project,
+                sorted(
+                    TranslationFactory.create_batch(translations_count,
+                        date=date,
+                        user=self.user,
+                        entity__resource__project=self.project,
+                    ),
+                    key=lambda t: t.pk,
+                    reverse=True,
                 )
             )
 
