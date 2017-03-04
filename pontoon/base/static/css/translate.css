@@ -1391,6 +1391,7 @@ body > header aside p {
 
 #plural-tabs ul li {
   display: none;
+  text-align: center;
   text-transform: uppercase;
 }
 
