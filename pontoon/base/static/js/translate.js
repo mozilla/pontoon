@@ -2131,7 +2131,7 @@ var Pontoon = (function (my) {
             missing: total ? missing / total : 0
           },
           number = Math.floor(fraction.translated * 100),
-          translatedOld = parseInt($('#progress .menu .details .translated p').html());
+          translatedOld = parseInt($('#progress .menu .details .translated p').html().replace(/,/g, ''));
 
       // Update graph
       $('#progress .graph').each(function() {
