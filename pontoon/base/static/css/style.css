@@ -1135,12 +1135,6 @@ noscript p {
   color: #7BC876;
 }
 
-#action #loading {
-  display: inline-block;
-  padding: 0 10px;
-  width: 20px;
-}
-
 body > form,
 .container {
   margin: 0 auto;

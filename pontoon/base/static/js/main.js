@@ -25,13 +25,6 @@ var Pontoon = (function (my) {
     },
 
     /*
-     * Display loader to provide feedback about the background process
-     */
-    startLoader: function () {
-      $('#loading').addClass('loader').show();
-    },
-
-    /*
      * Remove loader
      *
      * text End of operation text (e.g. Done!)
@@ -39,7 +32,6 @@ var Pontoon = (function (my) {
      * duration How long should the notification remain open (default: 2000 ms)
      */
     endLoader: function (text, type, duration) {
-      $('#loading').removeClass('loader');
       if (text) {
         $('.notification')
           .html('<li class="' + (type || '') + '">' + text + '</li>')
@@ -660,7 +652,6 @@ $(function() {
   // Toggle user profile attribute
   $('.check-box').click(function() {
     var self = $(this);
-    Pontoon.startLoader();
 
     $.ajax({
       url: '/api/v1/user/' + $('#server').data('username') + '/',
