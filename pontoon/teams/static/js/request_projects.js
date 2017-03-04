@@ -55,8 +55,6 @@ var Pontoon = (function (my) {
        * projects Array of Project slugs
        */
       request: function(locale, projects) {
-        Pontoon.startLoader();
-
         $.ajax({
           url: '/teams/' + locale + '/request/',
           type: 'POST',

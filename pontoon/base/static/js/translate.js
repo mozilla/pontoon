@@ -2303,8 +2303,6 @@ var Pontoon = (function (my) {
       var self = this,
           pluralForm = self.getPluralForm();
 
-      self.startLoader();
-
       function goToNextTranslation() {
         // Quit
         if (!$('#editor:visible').is('.opened')) {

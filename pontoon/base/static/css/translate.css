@@ -427,16 +427,6 @@ body > header .locale.select {
   width: 100%;
 }
 
-body > header #loading {
-  display: none;
-  float: left;
-  margin: 23px 5px 0 0;
-}
-
-body > header #loading.loader {
-  display: inline-block;
-}
-
 body > header .notification.hide {
   display: none;
 }
