@@ -28,6 +28,12 @@ from translate.lang import data as lang_data
 log = logging.getLogger('pontoon')
 
 
+def split_ints(s):
+    """Splits string by comma and maps items to the integer."""
+    integers = filter(None, (s or '').split(','))
+    return map(int, integers)
+
+
 def get_project_locale_from_request(request, locales):
     """Get Pontoon locale from Accept-language request header."""
 

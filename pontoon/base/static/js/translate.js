@@ -2024,7 +2024,7 @@ var Pontoon = (function (my) {
               csrfmiddlewaretoken: $('#server').data('csrf'),
               locale: self.locale.code,
               action: action,
-              entities: self.selectedEntities,
+              entities: self.selectedEntities.join(','),
               find: find,
               replace: replace
             },
@@ -2036,7 +2036,7 @@ var Pontoon = (function (my) {
                 // Update UI (entity list, progress, in-place)
                 if (data.count > 0) {
                   var checkedEntities = self.getEntitiesIds('#entitylist .entity.selected');
-                  self.getEntities({entityIds: checkedEntities}).then(function(entitiesData, state, hasNext) {
+                  self.getEntities({entityIds: checkedEntities.join(',')}).then(function(entitiesData, state, hasNext) {
                     self.stats = entitiesData.stats;
                     self.authors = entitiesData.authors;
                     self.updateAuthors();

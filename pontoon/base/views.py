@@ -37,7 +37,10 @@ from pontoon.base.models import (
     Translation,
     UserProfile,
 )
-from pontoon.base.utils import require_AJAX
+from pontoon.base.utils import (
+    split_ints,
+    require_AJAX
+)
 
 
 log = logging.getLogger('pontoon')
@@ -152,10 +155,11 @@ def entities(request):
     time = request.POST.get('time', '')
     author = request.POST.get('author', '')
     search = request.POST.get('search', '')
-    exclude_entities = filter(None, request.POST.get('excludeEntities', '').split(','))
+    exclude_entities = split_ints(request.POST.get('excludeEntities', ''))
 
     # Only return entities with provided IDs (batch editing)
-    entity_ids = request.POST.getlist('entityIds[]', [])
+    entity_ids = split_ints(request.POST.get('entityIds', ''))
+
     if entity_ids:
         entities = (
             Entity.objects.filter(pk__in=entity_ids)
@@ -241,7 +245,7 @@ def batch_edit_translations(request):
     try:
         l = request.POST['locale']
         action = request.POST['action']
-        entity_pks = request.POST.getlist('entities[]')
+        entity_pks = split_ints(request.POST.get('entities', ''))
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
