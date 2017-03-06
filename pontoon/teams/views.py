@@ -53,6 +53,7 @@ def ajax_projects(request, locale):
 
     projects = (
         Project.objects.available()
+        .filter(can_be_requested=True)
         .prefetch_latest_translation(locale)
         .order_by('name')
     )
@@ -132,7 +133,10 @@ def request_projects(request, locale):
     locale = get_object_or_404(Locale, code__iexact=locale)
 
     # Validate projects
-    project_list = Project.objects.available().filter(slug__in=slug_list)
+    project_list = (
+        Project.objects.available()
+        .filter(slug__in=slug_list, can_be_requested=True)
+    )
     if not project_list:
         return HttpResponseBadRequest('Bad Request: Non-existent projects specified')
 
