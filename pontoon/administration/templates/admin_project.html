@@ -42,22 +42,15 @@
       {{ form.locales }}
       {{ form.locales.errors }}
   </div>
-  <div class="deadline-priority clearfix">
-    <section class="deadline clearfix">
-      {{ form.deadline.label_tag() }}
-      <input id="id_deadline" name="deadline" value="{{ form.deadline.value() or '' }}" type="text" placeholder="YYYY-MM-DD">
-      {{ form.deadline.errors }}
-    </section>
-    <section class="priority clearfix">
-      {{ form.priority.label_tag() }}
-      {{ form.priority }}
-      {{ form.priority.errors }}
-    </section>
+  <div class="checkbox clearfix">
+      <label for="id_can_be_requested">
+          {{ form.can_be_requested }}{{ form.can_be_requested.help_text }}
+      </label>
   </div>
 
   <h2>
     <span>Repositories</span>
-    <a href="#add-subpage" class="add-repo">Add more</a>
+    <a href="#add-repo" class="add-repo">Add more</a>
   </h2>
   {{ repo_formset.management_form }}
   {{ repo_formset.non_form_errors() }}
@@ -99,9 +92,10 @@
         </div>
       </section>
       <div class="repository-toolbar clearfix">
-        <section class="source-wrapper">
-          {{ repo_form.source_repo.label_tag() }}
-          {{ repo_form.source_repo }}
+        <section class="checkbox source-wrapper">
+          <label for="id_repositories-0-source_repo" title="{{ repo_form.source_repo.help_text|trim }}">
+              {{ repo_form.source_repo }}{{ repo_form.source_repo.label }}
+          </label>
         </section>
         <section class="delete-wrapper">
           <div class="delete">
@@ -155,7 +149,7 @@
     {{ repo_formset.empty_form.errors }}
   </div>
 
-  <h2>Website</h2>
+  <h2>In-context localization <span class="small">(optional)</span></h2>
 
   <div class="clearfix">
       {{ form.url.label_tag() }}
@@ -173,8 +167,8 @@
       </label>
   </div>
 
-  <h2>Subpages
-      <span class="small">(optional)</span>
+  <h2 class="mini">
+      <span class="small">Subpages</span>
       <a href="#add-subpage" class="add-subpage">Add more</a>
   </h2>
 
@@ -206,9 +200,46 @@
   <h2>Project info <span class="small">(optional)</span></h2>
 
   <div>
-      {{ form.info_brief }}
+      {{ form.info }}
       <p class="subtitle">Supports HTML</p>
-      {{ form.info_brief.errors }}
+      {{ form.info.errors }}
+  </div>
+
+  <div class="deadline-priority clearfix">
+    <section class="deadline clearfix">
+      {{ form.deadline.label_tag() }}
+      <input id="id_deadline" name="deadline" value="{{ form.deadline.value() or '' }}" type="text" placeholder="YYYY-MM-DD">
+      {{ form.deadline.errors }}
+    </section>
+    <section class="priority clearfix">
+      {{ form.priority.label_tag() }}
+      {{ form.priority }}
+      {{ form.priority.errors }}
+    </section>
+  </div>
+
+  <div class="contacts clearfix">
+    <section class="l10n-contact clearfix">
+        {{ form.l10n_contact.label_tag() }}
+        {{ form.l10n_contact }}
+        {{ form.l10n_contact.errors }}
+    </section>
+    <section class="project-contact clearfix">
+        {{ form.project_contact.label_tag() }}
+        {{ form.project_contact }}
+        {{ form.project_contact.errors }}
+    </section>
+  </div>
+
+  <div class="clearfix">
+      {{ form.preview_url.label_tag() }}
+      {{ form.preview_url }}
+      {{ form.preview_url.errors }}
+  </div>
+  <div class="clearfix">
+      {{ form.project_url.label_tag() }}
+      {{ form.project_url }}
+      {{ form.project_url.errors }}
   </div>
 
   <div class="controls clearfix">

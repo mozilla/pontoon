@@ -65,6 +65,10 @@ h2 {
   text-transform: none;
 }
 
+h2.mini {
+  margin-top: 30px;
+}
+
 h2 .small {
   color: #AAAAAA;
   font-size: 0.7em;
@@ -172,40 +176,36 @@ form a.add-repo {
   display: none;
 }
 
+.l10n-contact,
 .deadline {
   float: left;
-  width: 295px;
+  width: 300px;
 }
 
 .deadline input {
-  width: 289px;
+  width: 294px;
 }
 
+.project-contact,
 .priority {
   float: right;
-  width: 295px;
+  width: 300px;
 }
 
-.priority label {
-  text-align: right;
+.contacts select,
+.priority select {
+  width: 100%;
 }
 
 .checkbox label {
   float: left;
-  padding: 6px 0 0 13px;
+  padding: 6px 0 0 15px;
 }
 
-.repository .locale-wrapper {
-  padding-top: 20px;
-}
-
-.repository .locale-wrapper label,
-.repository .source-wrapper label,
 .repository .delete-wrapper label {
   display: inline;
 }
 
-.repository .source-wrapper input[type=checkbox],
 .repository .delete-wrapper input[type=checkbox] {
   float: right;
   margin: 2px;
@@ -213,37 +213,13 @@ form a.add-repo {
 
 .checkbox label input {
   float: left;
-  margin-left: -16px;
+  margin-left: -18px;
   margin-top: 1px;
 }
 
 .repository .type-wrapper {
   float: left;
   margin-right: 6px;
-}
-
-.repository .type.select {
-  margin-left: -1px;
-}
-
-.repository .type.select .selector {
-  color: #444444;
-  font-weight: 400;
-  height: 24px;
-  line-height: 24px;
-  width: 199px;
-}
-
-.repository .type.select .selector > span:nth-child(2) {
-  float: right;
-}
-
-.repository .type.select .menu {
-  background: #272A2F;
-  border-top: 1px solid #5E6475;
-  bottom: 31px;
-  padding: 10px 0;
-  width: 207px;
 }
 
 .repository .details-wrapper {

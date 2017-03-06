@@ -135,7 +135,7 @@ def date_status(value, complete):
     if isinstance(value, datetime.date):
         if not complete:
             today = datetime.date.today()
-            if value < today:
+            if value <= today:
                 return 'overdue'
             elif (value - today).days < 8:
                 return 'approaching'
@@ -231,3 +231,9 @@ def pretty_url(url):
         url = url[4:]
 
     return url
+
+
+@library.filter
+def local_url(url, code='en-US'):
+    """Replace occurences of `{locale_code} in URL with provided code."""
+    return url.format(locale_code=code)
