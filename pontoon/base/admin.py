@@ -64,14 +64,17 @@ class ProjectAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'info_brief', 'deadline', 'priority', 'langpack_url', 'disabled'),
+            'fields': (
+                'name', 'slug', 'info', 'deadline', 'priority',
+                'l10n_contact', 'project_contact', 'preview_url', 'project_url',
+                'langpack_url', 'can_be_requested', 'disabled'),
         }),
         ('WEBSITE', {
             'fields': ('url', 'width', 'links'),
         }),
     )
     readonly_fields = AGGREGATED_STATS_FIELDS + ('latest_translation',)
-    inlines = (ProjectLocaleInline, RepositoryInline, SubpageInline)
+    inlines = (SubpageInline, ProjectLocaleInline, RepositoryInline)
 
 
 class ResourceAdmin(admin.ModelAdmin):

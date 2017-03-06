@@ -33,6 +33,18 @@
 </li>
 {% endmacro %}
 
+{% macro details_item_url(title, class, url) %}
+  {% if url %}
+  {{ details_item(
+    title=title,
+    class=class,
+    value=url|pretty_url,
+    value_link=url,
+    value_class='overflow')
+  }}
+  {% endif %}
+{% endmacro %}
+
 {% macro progress_chart() %}
 <div class="progress">
   <canvas class="chart" height="130" width="130"></canvas>

@@ -39,21 +39,30 @@
         value=locale.cldr_plurals_list(),
         title_link='http://cldr.unicode.org/index/cldr-spec/plural-rules')
       }}
+
       {{ HeadingInfo.details_item(
         title='Script',
         class='script',
         value=locale.script)
       }}
+
       {{ HeadingInfo.details_item(
         title='Writing direction',
         class='writing-direction',
         value=locale.get_direction_display()|capitalize)
       }}
+
       {{ HeadingInfo.details_item(
         title='Number of literate speakers',
         class='literate-speakers',
         value=(locale.population|intcomma or 'Unknown'),
         title_link='http://www.unicode.org/cldr/charts/latest/supplemental/territory_language_information.html')
+      }}
+
+      {{ HeadingInfo.details_item_url(
+        title='Style guide',
+        class='style-guide',
+        url=locale.style_guide)
       }}
     </ul>
 

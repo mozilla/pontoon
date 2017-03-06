@@ -30,26 +30,23 @@
 
       {{ HeadingInfo.details_item_deadline(project.deadline, project.approved_strings == project.total_strings) }}
 
-      {% set repository_website = project.repositories.first().website %}
-      {% if repository_website %}
-      {{ HeadingInfo.details_item(
+      {{ HeadingInfo.details_item_url(
         title='Repository',
         class='repository',
-        value=repository_website|pretty_url,
-        value_link=repository_website,
-        value_class='overflow')
+        url=project.repositories.first().website)
       }}
-      {% endif %}
 
-      {% if project.url %}
-      {{ HeadingInfo.details_item(
-        title='Website',
-        class='website',
-        value=project.url|pretty_url,
-        value_link=project.url,
-        value_class='overflow')
+      {{ HeadingInfo.details_item_url(
+        title='L10n preview',
+        class='l10n-preview',
+        url=project.preview_url|local_url())
       }}
-      {% endif %}
+
+      {{ HeadingInfo.details_item_url(
+        title='Production',
+        class='production',
+        url=project.project_url|local_url())
+      }}
     </ul>
 
     {{ HeadingInfo.progress_chart() }}
@@ -81,7 +78,7 @@
           'Info',
           url('pontoon.projects.info', project.slug),
           is_active = (current_page == 'info'),
-          count = 1 if project.info_brief else False
+          count = 1 if project.info else False
         )
       }}
     {% endcall %}

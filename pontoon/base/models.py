@@ -547,6 +547,10 @@ class Locale(AggregatedStats):
 
     team_description = models.TextField(blank=True)
 
+    style_guide = models.URLField(blank=True, help_text="""
+        URL to style guide for this locale.
+    """)
+
     #: Most recent translation approved or created for this locale.
     latest_translation = models.ForeignKey(
         'Translation',
@@ -853,8 +857,15 @@ class Project(AggregatedStats):
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale, through='ProjectLocale')
 
-    # Project info
-    info_brief = models.TextField("Project info", blank=True)
+    can_be_requested = models.BooleanField(default=True, help_text="""
+        Allow localizers to request the project for their team.
+    """)
+
+    disabled = models.BooleanField(default=False, help_text="""
+        Hide project from the UI and only keep it accessible from the admin.
+        Disable the project instead of deleting it to keep translation memory
+        and attributions.
+    """)
 
     # Website for in place localization
     url = models.URLField("URL", blank=True)
@@ -870,11 +881,26 @@ class Project(AggregatedStats):
         not available for the project. Supports {locale_code} wildcard.
     """)
 
-    # Disable project instead of deleting to keep translation memory & attributions
-    disabled = models.BooleanField(default=False)
-
     deadline = models.DateField(blank=True, null=True)
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=1)
+
+    # Project info
+    info = models.TextField("Project info", blank=True)
+    preview_url = models.URLField("L10n Preview URL", blank=True, help_text="""
+        URL to translation preview environment, e.g. staging website,
+        screenshots, development build, etc.
+    """)
+    project_url = models.URLField("Project URL", blank=True, help_text="""
+        URL to released project, e.g. production website or product download.
+    """)
+
+    # Contacts
+    l10n_contact = models.ForeignKey(User, null=True, blank=True, related_name="l10n_contact_for", help_text="""
+        L10n driver in charge of the project.
+    """)
+    project_contact = models.ForeignKey(User, null=True, blank=True, related_name="project_contact_for", help_text="""
+        Project manager or developer contact.
+    """)
 
     # Most recent translation approved or created for this project.
     latest_translation = models.ForeignKey(
@@ -900,7 +926,7 @@ class Project(AggregatedStats):
             'pk': self.pk,
             'name': self.name,
             'slug': self.slug,
-            'info': self.info_brief,
+            'info': self.info,
             'url': self.url,
             'width': self.width or '',
             'links': self.links or '',
