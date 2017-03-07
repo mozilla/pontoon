@@ -57,7 +57,7 @@ class CommandTests(TestCase):
         """
         ignore_project, handle_project = ProjectFactory.create_batch(2)
 
-        self.execute_command(handle_project.slug)
+        self.execute_command(projects=handle_project.slug)
         self.mock_sync_project.delay.assert_called_with(
             handle_project.pk,
             ANY,
@@ -73,7 +73,7 @@ class CommandTests(TestCase):
         CommandError.
         """
         with assert_raises(CommandError):
-            self.execute_command('does-not-exist')
+            self.execute_command(projects='does-not-exist')
 
     def test_invalid_slugs(self):
         """
@@ -81,7 +81,7 @@ class CommandTests(TestCase):
         """
         handle_project = ProjectFactory.create()
 
-        self.execute_command(handle_project.slug, 'aaa', 'bbb')
+        self.execute_command(projects=handle_project.slug + ',aaa,bbb')
 
         self.mock_sync_project.delay.assert_called_with(
             handle_project.pk,
@@ -101,7 +101,7 @@ class CommandTests(TestCase):
         with patch.object(Project, 'can_commit', new_callable=PropertyMock) as can_commit:
             can_commit.return_value = False
 
-            self.execute_command(project.slug)
+            self.execute_command(projects=project.slug)
             assert_false(self.mock_sync_project.delay.called)
 
     def test_options(self):

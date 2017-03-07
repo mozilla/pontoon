@@ -7,10 +7,17 @@ from pontoon.sync.tasks import sync_project
 
 
 class Command(BaseCommand):
-    args = '<project_slug project_slug ...>'
     help = 'Synchronize database and remote repositories.'
 
     def add_arguments(self, parser):
+        parser.add_argument(
+            '--projects',
+            action='store',
+            dest='projects',
+            default=None,
+            help='Sync only projects within this comma-separated list of slugs'
+        )
+
         parser.add_argument(
             '--locale',
             action='store',
@@ -51,14 +58,15 @@ class Command(BaseCommand):
         sync_log = SyncLog.objects.create(start_time=timezone.now())
 
         projects = Project.objects.filter(disabled=False)
-        if args:
-            projects = projects.filter(slug__in=args)
+        slugs = options['projects'].split(',') if 'projects' in options else None
+        if slugs:
+            projects = projects.filter(slug__in=slugs)
 
         if len(projects) < 1:
             raise CommandError('No matching projects found.')
 
-        if args and len(projects) != len(args):
-            invalid_slugs = sorted(set(args).difference(set(projects.values_list('slug', flat=True))))
+        if slugs and len(projects) != len(slugs):
+            invalid_slugs = sorted(set(slugs).difference(set(projects.values_list('slug', flat=True))))
             self.stderr.write('Couldn\'t find projects with following slugs: {}'.format(', '.join(invalid_slugs)))
 
         locale = None
