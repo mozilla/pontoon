@@ -121,7 +121,7 @@ Installation
 
    .. code-block:: bash
 
-      python manage.py sync_projects --no-commit pontoon-intro
+      python manage.py sync_projects --projects=pontoon-intro --no-commit
 
 9. After you've provided credentials to Firefox Accounts, you have to update them in database,
    because it's required by django-allauth. You will have to call this command after every change in your
