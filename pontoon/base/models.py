@@ -1462,9 +1462,10 @@ class Resource(models.Model):
     def save(self, *args, **kwargs):
         super(Resource, self).save(*args, **kwargs)
 
-        if self.deadline < self.project.deadline:
-            self.project.deadline = self.deadline
-            self.project.save()
+        if self.deadline and self.project.deadline:
+            if self.deadline < self.project.deadline:
+                self.project.deadline = self.deadline
+                self.project.save()
 
     @classmethod
     def get_path_format(self, path):
