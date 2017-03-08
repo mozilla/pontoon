@@ -37,15 +37,29 @@
       {{ form.slug }}
       {{ form.slug.errors }}
   </div>
+
+  <h2>Locales</h2>
+
   <div class="locales clearfix">
       {{ multiple_locale_selector.render(locales_available, locales_selected) }}
       {{ form.locales }}
       {{ form.locales.errors }}
   </div>
-  <div class="checkbox clearfix">
+
+  <div class="locales-toolbar clearfix">
+    <section class="can-be-requested checkbox clearfix">
       <label for="id_can_be_requested">
-          {{ form.can_be_requested }}{{ form.can_be_requested.help_text }}
+          {{ form.can_be_requested }}Locales can opt-in
       </label>
+    </section>
+    <section class="copy-locales clearfix">
+      <select id="copy-locales">
+        <option>Copy locales from another project</option>
+        {% for project in projects %}
+          <option value="{{ project.locales|to_json() }}">{{ project.name }}</option>
+        {% endfor %}
+      </select>
+    </section>
   </div>
 
   <h2>
@@ -149,6 +163,51 @@
     {{ repo_formset.empty_form.errors }}
   </div>
 
+  <h2>Project info <span class="small">(optional)</span></h2>
+
+  <div>
+      {{ form.info }}
+      <p class="subtitle">Supports HTML</p>
+      {{ form.info.errors }}
+  </div>
+
+  <div class="deadline-priority clearfix">
+    <section class="deadline clearfix">
+      {{ form.deadline.label_tag() }}
+      <input id="id_deadline" name="deadline" value="{{ form.deadline.value() or '' }}" type="text" placeholder="YYYY-MM-DD">
+      {{ form.deadline.errors }}
+    </section>
+    <section class="priority clearfix">
+      {{ form.priority.label_tag() }}
+      {{ form.priority }}
+      {{ form.priority.errors }}
+    </section>
+  </div>
+
+  <div class="contacts clearfix">
+    <section class="l10n-contact clearfix">
+        {{ form.l10n_contact.label_tag() }}
+        {{ form.l10n_contact }}
+        {{ form.l10n_contact.errors }}
+    </section>
+    <section class="project-contact clearfix">
+        {{ form.project_contact.label_tag() }}
+        {{ form.project_contact }}
+        {{ form.project_contact.errors }}
+    </section>
+  </div>
+
+  <div class="clearfix">
+      {{ form.preview_url.label_tag() }}
+      {{ form.preview_url }}
+      {{ form.preview_url.errors }}
+  </div>
+  <div class="clearfix">
+      {{ form.project_url.label_tag() }}
+      {{ form.project_url }}
+      {{ form.project_url.errors }}
+  </div>
+
   <h2>In-context localization <span class="small">(optional)</span></h2>
 
   <div class="clearfix">
@@ -195,51 +254,6 @@
       {{ subpage_formset.empty_form.DELETE }}
       {{ subpage_formset.empty_form.name.errors }}
       {{ subpage_formset.empty_form.url.errors }}
-  </div>
-
-  <h2>Project info <span class="small">(optional)</span></h2>
-
-  <div>
-      {{ form.info }}
-      <p class="subtitle">Supports HTML</p>
-      {{ form.info.errors }}
-  </div>
-
-  <div class="deadline-priority clearfix">
-    <section class="deadline clearfix">
-      {{ form.deadline.label_tag() }}
-      <input id="id_deadline" name="deadline" value="{{ form.deadline.value() or '' }}" type="text" placeholder="YYYY-MM-DD">
-      {{ form.deadline.errors }}
-    </section>
-    <section class="priority clearfix">
-      {{ form.priority.label_tag() }}
-      {{ form.priority }}
-      {{ form.priority.errors }}
-    </section>
-  </div>
-
-  <div class="contacts clearfix">
-    <section class="l10n-contact clearfix">
-        {{ form.l10n_contact.label_tag() }}
-        {{ form.l10n_contact }}
-        {{ form.l10n_contact.errors }}
-    </section>
-    <section class="project-contact clearfix">
-        {{ form.project_contact.label_tag() }}
-        {{ form.project_contact }}
-        {{ form.project_contact.errors }}
-    </section>
-  </div>
-
-  <div class="clearfix">
-      {{ form.preview_url.label_tag() }}
-      {{ form.preview_url }}
-      {{ form.preview_url.errors }}
-  </div>
-  <div class="clearfix">
-      {{ form.project_url.label_tag() }}
-      {{ form.project_url }}
-      {{ form.project_url.errors }}
   </div>
 
   <div class="controls clearfix">

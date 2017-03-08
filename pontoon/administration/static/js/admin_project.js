@@ -84,6 +84,23 @@ $(function() {
     });
   });
 
+  // Copy locales from another project
+  $('#copy-locales option').on('click', function(e) {
+    var projectLocales = [];
+
+    try {
+      projectLocales = JSON.parse($(this).val()).reverse();
+    } catch(error) {
+      // No project selected
+      return;
+    }
+
+    $('.remove-all').click();
+    $(projectLocales).each(function(i, id) {
+      $('.locale.select:first').find('[data-id=' + id + ']').click();
+    });
+  });
+
   // Suggest public repository website URL
   $('body').on('blur', '.repo input', function() {
     var val = $(this).val()

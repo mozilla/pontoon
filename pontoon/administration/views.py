@@ -37,7 +37,7 @@ def admin(request, template='admin.html'):
 
     projects = (
         Project.objects.all()
-        .select_related('latest_translation__user')
+        .prefetch_related('latest_translation__user')
         .order_by('name')
     )
 
@@ -156,6 +156,14 @@ def manage_project(request, slug=None, template='admin_project.html'):
     # Override default label suffix
     form.label_suffix = ''
 
+    projects = []
+    for p in Project.objects.prefetch_related('locales').order_by('name'):
+        projects.append({
+            'name': p.name,
+            # Cannot use values_list() here, because it hits the DB again
+            'locales': [l.pk for l in p.locales.all()],
+        })
+
     data = {
         'form': form,
         'subpage_formset': subpage_formset,
@@ -164,6 +172,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'locales_available': Locale.objects.exclude(pk__in=locales_selected),
         'subtitle': subtitle,
         'pk': pk,
+        'projects': projects,
     }
 
     # Set locale in Translate link

@@ -176,22 +176,25 @@ form a.add-repo {
   display: none;
 }
 
+.can-be-requested,
 .l10n-contact,
 .deadline {
   float: left;
-  width: 300px;
+  width: 295px;
 }
 
 .deadline input {
-  width: 294px;
+  width: 289px;
 }
 
+.copy-locales,
 .project-contact,
 .priority {
   float: right;
-  width: 300px;
+  width: 295px;
 }
 
+.copy-locales select,
 .contacts select,
 .priority select {
   width: 100%;
