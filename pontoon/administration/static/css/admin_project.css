@@ -124,7 +124,8 @@ form .button {
   width: 130px;
 }
 
-.controls .button.sync {
+.controls .button.sync,
+.controls .button.sync:hover {
   background: #F36;
   color: #272A2F;
   float: left;
