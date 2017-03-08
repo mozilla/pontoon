@@ -14,7 +14,7 @@ class Command(BaseCommand):
             '--projects',
             action='store',
             dest='projects',
-            default=None,
+            default='',
             help='Sync only projects within this comma-separated list of slugs'
         )
 
@@ -58,7 +58,7 @@ class Command(BaseCommand):
         sync_log = SyncLog.objects.create(start_time=timezone.now())
 
         projects = Project.objects.filter(disabled=False)
-        slugs = options['projects'].split(',') if 'projects' in options else None
+        slugs = options['projects'].split(',') if 'projects' in options and options['projects'] else None
         if slugs:
             projects = projects.filter(slug__in=slugs)
 
