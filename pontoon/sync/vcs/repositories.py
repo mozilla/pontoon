@@ -71,15 +71,33 @@ class PullFromGit(PullFromRepository):
 class PullFromHg(PullFromRepository):
 
     def pull(self, source=None, target=None):
-        log.debug("Mercurial: Update repository.")
-
         source = source or self.source
         target = target or self.target
 
-        # Undo local changes: Mercurial doesn't offer anything more elegant
-        command = ["rm", "-rf", target]
-        code, output, error = execute(command)
+        if os.path.exists(target):
+            log.debug("Mercurial: Update repository.")
 
+            # Undo local changes: discard uncommitted changes
+            command = ["hg", "update", "--clean"]
+            execute(command, target)
+
+            # Undo local changes: delete untracked files
+            command = ["hg", "--config", "extensions.strip=", "purge"]
+            execute(command, target)
+
+            # Undo local changes: discard local commits
+            command = ["hg", "--config", "extensions.strip=", "strip", "'roots(draft())'"]
+            execute(command, target)
+
+            command = ["hg", "pull", "-u"]
+            code, output, error = execute(command, target)
+
+            if code == 0:
+                return log.debug("Mercurial: Repository at " + source + " updated.")
+            else:
+                log.info("Mercurial: " + unicode(error))
+
+        log.debug("Mercurial: Clone repository.")
         command = ["hg", "clone", source, target]
         code, output, error = execute(command)
 
