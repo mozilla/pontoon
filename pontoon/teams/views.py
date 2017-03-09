@@ -53,7 +53,7 @@ def ajax_projects(request, locale):
 
     projects = (
         Project.objects.available()
-        .filter(can_be_requested=True)
+        .filter(Q(locales=locale) | Q(can_be_requested=True))
         .prefetch_latest_translation(locale)
         .order_by('name')
     )
