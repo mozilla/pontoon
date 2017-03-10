@@ -111,22 +111,28 @@ $(function() {
     $(this).parents('.repository').find('.website-wrapper input').val(val);
   });
 
-  // Delete subpage
-  $('body').on('click.pontoon', '.delete-subpage', function (e) {
+  // Delete inline form item (e.g. subpage or external resource)
+  $('body').on('click.pontoon', '.delete-inline', function (e) {
     e.preventDefault();
     $(this).parent().toggleClass('delete');
     $(this).next().prop('checked', !$(this).next().prop('checked'));
   });
-  $('.subpages [checked]').click().prev().click();
+  $('.inline [checked]').click().prev().click();
 
-  // Add subpage
-  var count = $('.subpages:last').data('count');
-  $('.add-subpage').click(function(e) {
+  // Add inline form item (e.g. subpage or external resource)
+  var count = {
+    'subpage': $('.subpage:last').data('count'),
+    'externalresource': $('.externalresource:last').data('count')
+  };
+  $('.add-inline').click(function(e) {
     e.preventDefault();
-    var form = $('.subpages:last').html().replace(/__prefix__/g, count);
-    $('.subpages:last').before('<div class="subpages clearfix">' + form + '</div>');
-    count++;
-    $('#id_subpage_set-TOTAL_FORMS').val(count);
+
+    var type = $(this).data('type'),
+        form = $('.' + type + ':last').html().replace(/__prefix__/g, count[type]);
+
+    $('.' + type + ':last').before('<div class="' + type + ' inline clearfix">' + form + '</div>');
+    count[type]++;
+    $('#id_' + type + '_set-TOTAL_FORMS').val(count[type]);
   });
 
   // Toggle branch input

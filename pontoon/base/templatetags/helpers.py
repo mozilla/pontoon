@@ -234,6 +234,7 @@ def pretty_url(url):
 
 
 @library.filter
-def local_url(url, code='en-US'):
+def local_url(url, code=None):
     """Replace occurences of `{locale_code} in URL with provided code."""
+    code = code or 'en-US'
     return url.format(locale_code=code)

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
+{% import 'admin_inline_formset.html' as inline_formset %}
 
 {% block title %}{{'%(subtitle)s' | format(subtitle=subtitle) }}{% endblock %}
 
@@ -54,7 +55,7 @@
     </section>
     <section class="copy-locales clearfix">
       <select id="copy-locales">
-        <option>Copy locales from another project</option>
+        <option selected>Copy locales from another project</option>
         {% for project in projects %}
           <option value="{{ project.locales|to_json() }}">{{ project.name }}</option>
         {% endfor %}
@@ -73,19 +74,19 @@
       {{ repo_form.id }}
       <div class="clearfix">
         <section class="type-wrapper">
-          {{ repo_form.type.label_tag() }}
+          {{ repo_form.type.label_tag(label_suffix='') }}
           {{ repo_form.type }}
         </section>
         <section class="details-wrapper">
           <div class="repo">
-            {{ repo_form.url.label_tag() }}
+            {{ repo_form.url.label_tag(label_suffix='') }}
             {{ repo_form.url }}
             {{ repo_form.url.errors }}
           </div>
         </section>
         <section class="branch-wrapper">
           <div class="branch">
-            {{ repo_form.branch.label_tag() }}
+            {{ repo_form.branch.label_tag(label_suffix='') }}
             {{ repo_form.branch }}
             {{ repo_form.branch.errors }}
           </div>
@@ -93,14 +94,14 @@
       </div>
       <section class="prefix-wrapper clearfix">
         <div class="prefix">
-          {{ repo_form.permalink_prefix.label_tag() }}
+          {{ repo_form.permalink_prefix.label_tag(label_suffix='') }}
           {{ repo_form.permalink_prefix }}
           {{ repo_form.permalink_prefix.errors }}
         </div>
       </section>
       <section class="website-wrapper clearfix">
         <div class="website">
-          {{ repo_form.website.label_tag() }}
+          {{ repo_form.website.label_tag(label_suffix='') }}
           {{ repo_form.website }}
           {{ repo_form.website.errors }}
         </div>
@@ -113,7 +114,7 @@
         </section>
         <section class="delete-wrapper">
           <div class="delete">
-            {{ repo_form.DELETE.label_tag() }}
+            {{ repo_form.DELETE.label_tag(label_suffix='') }}
             {{ repo_form.DELETE }}
           </div>
         </section>
@@ -171,7 +172,13 @@
       {{ form.info.errors }}
   </div>
 
-  <div class="deadline-priority clearfix">
+  <div>
+      <label for="id_admin_notes">Internal admin notes - only visible on this page</label>
+      {{ form.admin_notes }}
+      {{ form.admin_notes.errors }}
+  </div>
+
+  <div class="deadline-priority-contact clearfix">
     <section class="deadline clearfix">
       {{ form.deadline.label_tag() }}
       <input id="id_deadline" name="deadline" value="{{ form.deadline.value() or '' }}" type="text" placeholder="YYYY-MM-DD">
@@ -182,31 +189,22 @@
       {{ form.priority }}
       {{ form.priority.errors }}
     </section>
-  </div>
-
-  <div class="contacts clearfix">
-    <section class="l10n-contact clearfix">
-        {{ form.l10n_contact.label_tag() }}
-        {{ form.l10n_contact }}
-        {{ form.l10n_contact.errors }}
-    </section>
-    <section class="project-contact clearfix">
-        {{ form.project_contact.label_tag() }}
-        {{ form.project_contact }}
-        {{ form.project_contact.errors }}
+    <section class="contact clearfix">
+        {{ form.contact.label_tag() }}
+        {{ form.contact }}
+        {{ form.contact.errors }}
     </section>
   </div>
 
-  <div class="clearfix">
-      {{ form.preview_url.label_tag() }}
-      {{ form.preview_url }}
-      {{ form.preview_url.errors }}
-  </div>
-  <div class="clearfix">
-      {{ form.project_url.label_tag() }}
-      {{ form.project_url }}
-      {{ form.project_url.errors }}
-  </div>
+  {{ inline_formset.render(title='External resources', type='externalresource', formset=external_resource_formset) }}
+  <datalist id="external-resource-types">
+    <option value="Development site">
+    <option value="Production site">
+    <option value="Development build">
+    <option value="Production build">
+    <option value="Screenshots">
+    <option value="Language pack">
+  </datalist>
 
   <h2>In-context localization <span class="small">(optional)</span></h2>
 
@@ -226,35 +224,7 @@
       </label>
   </div>
 
-  <h2 class="mini">
-      <span class="small">Subpages</span>
-      <a href="#add-subpage" class="add-subpage">Add more</a>
-  </h2>
-
-  {{ subpage_formset.management_form }}
-  {% for form in subpage_formset %}
-      {{ form.id }}
-  <div class="subpages clearfix">
-      {{ form.name.label_tag(label_suffix='') }}
-      {{ form.url.label_tag(label_suffix='') }}
-      {{ form.name }}
-      {{ form.url }}
-      <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
-      {{ form.DELETE }}
-      {{ form.name.errors }}
-      {{ form.url.errors }}
-  </div>
-  {% endfor %}
-  <div class="subpages clearfix" data-count="{{ subpage_formset.total_form_count() }}">
-      {{ subpage_formset.empty_form.name.label_tag(label_suffix='') }}
-      {{ subpage_formset.empty_form.url.label_tag(label_suffix='') }}
-      {{ subpage_formset.empty_form.name }}
-      {{ subpage_formset.empty_form.url }}
-      <button title="Delete subpage" class="button delete-subpage fa fa-trash-o" tabindex="-1"></button>
-      {{ subpage_formset.empty_form.DELETE }}
-      {{ subpage_formset.empty_form.name.errors }}
-      {{ subpage_formset.empty_form.url.errors }}
-  </div>
+  {{ inline_formset.render(title='Subpages', type='subpage', formset=subpage_formset) }}
 
   <div class="controls clearfix">
       {% if settings.MANUAL_SYNC %}

@@ -59,11 +59,7 @@
         title_link='http://www.unicode.org/cldr/charts/latest/supplemental/territory_language_information.html')
       }}
 
-      {{ HeadingInfo.details_item_url(
-        title='Style guide',
-        class='style-guide',
-        url=locale.style_guide)
-      }}
+      {{ HeadingInfo.details_item_resources(locale.externalresource_set.all()) }}
     </ul>
 
     {{ HeadingInfo.progress_chart() }}

@@ -50,7 +50,7 @@ form > div.controls {
   margin-top: 70px;
 }
 
-form > div.subpages.delete {
+form > div.inline.delete {
   opacity: 0.3;
 }
 
@@ -109,7 +109,7 @@ form .button {
   width: 31px;
 }
 
-.button.delete-subpage {
+.button.delete-inline {
   color: #333333;
   font-size: 20px;
   padding: 4px;
@@ -138,7 +138,7 @@ form a:link, form a:visited {
   text-transform: uppercase;
 }
 
-form a.add-subpage,
+form a.add-inline,
 form a.add-repo {
   font-size: 14px;
   letter-spacing: 0;
@@ -146,11 +146,12 @@ form a.add-repo {
 }
 
 .controls a {
-  margin: 6px 9px;
+  margin: 5px 9px;
 }
 
 .controls .checkbox {
   float: left;
+  margin-top: -1px;
   text-transform: uppercase;
 }
 
@@ -177,28 +178,40 @@ form a.add-repo {
   display: none;
 }
 
-.can-be-requested,
-.l10n-contact,
-.deadline {
+.can-be-requested {
   float: left;
   width: 295px;
 }
 
-.deadline input {
-  width: 289px;
-}
-
-.copy-locales,
-.project-contact,
-.priority {
+.copy-locales {
   float: right;
   width: 295px;
 }
 
+.deadline {
+  float: left;
+  width: 150px;
+}
+
+.priority {
+  float: left;
+  margin-left: 10px;
+  width: 150px;
+}
+
+.contact {
+  float: right;
+  width: 300px;
+}
+
 .copy-locales select,
-.contacts select,
-.priority select {
+.priority select,
+.contact select {
   width: 100%;
+}
+
+.deadline input {
+  width: 144px;
 }
 
 .checkbox label {
@@ -273,7 +286,7 @@ form a.add-repo {
   float: right;
 }
 
-.subpages input[id*=url] {
+.inline input[id*=url] {
   float: left;
   width: 367px;
 }
@@ -287,32 +300,44 @@ form a.add-repo {
   text-transform: uppercase;
 }
 
-.subpages[data-count],
+.inline[data-count],
 .repository-empty {
   display: none;
 }
 
-.subpages label[for*=name] {
+.inline input[id*=name]::-webkit-calendar-picker-indicator {
+  display: none; /* remove default arrow */
+}
+
+.externalresource .arrow::after {
+  content: "▾";
+  color: #000;
+  float: left;
+  margin: 6px 0 0 -20px;
+  pointer-events: none;
+}
+
+.inline label[for*=name] {
   float: left;
   width: 205px;
 }
 
-.subpages input[id*=name] {
+.inline input[id*=name] {
   float: left;
   width: 201px;
 }
 
-.subpages input[id$=DELETE] {
+.inline input[id$=DELETE] {
   display: none;
 }
 
-.subpages label[for*=url] {
+.inline label[for*=url] {
   float: left;
   width: 407px;
 }
 
-.subpages input[id*=name],
-.subpages label[for*=name] {
+.inline input[id*=name],
+.inline label[for*=name] {
   margin-right: 6px;
 }
 

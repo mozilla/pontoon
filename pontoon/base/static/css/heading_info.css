@@ -61,7 +61,7 @@ ul {
 }
 
 #heading .details .value.overflow {
-  max-width: 265px;
+  max-width: 275px;
   overflow: hidden;
   padding-left: 1px; /* Needed to avoid cutting off overlay due to overflow: hidden; */
   padding-right: 1px; /* Needed to avoid cutting off overlay due to overflow: hidden; */

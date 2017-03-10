@@ -14,6 +14,7 @@ from pontoon.administration.forms import (
     ProjectForm,
     RepositoryInlineFormSet,
     SubpageInlineFormSet,
+    ExternalResourceInlineFormSet,
 )
 from pontoon.base import utils
 from pontoon.base.utils import require_AJAX
@@ -32,7 +33,7 @@ log = logging.getLogger('pontoon')
 
 def admin(request, template='admin.html'):
     """Admin interface."""
-    if not request.user.has_perm('base.can_manage'):
+    if not request.user.has_perm('base.can_manage_project'):
         raise PermissionDenied
 
     projects = (
@@ -51,7 +52,7 @@ def get_slug(request):
     """Convert project name to slug."""
     log.debug("Convert project name to slug.")
 
-    if not request.user.has_perm('base.can_manage'):
+    if not request.user.has_perm('base.can_manage_project'):
         log.error("Insufficient privileges.")
         return HttpResponse("error")
 
@@ -77,12 +78,13 @@ def manage_project(request, slug=None, template='admin_project.html'):
     """Admin project."""
     log.debug("Admin project.")
 
-    if not request.user.has_perm('base.can_manage'):
+    if not request.user.has_perm('base.can_manage_project'):
         raise PermissionDenied
 
     form = ProjectForm()
     subpage_formset = SubpageInlineFormSet()
     repo_formset = RepositoryInlineFormSet()
+    external_resource_formset = ExternalResourceInlineFormSet()
     locales_selected = []
     subtitle = 'Add project'
     pk = None
@@ -101,6 +103,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
             # Needed if form invalid
             subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
             repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
+            external_resource_formset = ExternalResourceInlineFormSet(request.POST, instance=project)
             subtitle = 'Edit project'
 
         # Add a new project
@@ -109,13 +112,15 @@ def manage_project(request, slug=None, template='admin_project.html'):
             # Needed if form invalid
             subpage_formset = SubpageInlineFormSet(request.POST)
             repo_formset = RepositoryInlineFormSet(request.POST)
+            external_resource_formset = ExternalResourceInlineFormSet(request.POST)
 
         if form.is_valid():
             project = form.save(commit=False)
             subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
             repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
+            external_resource_formset = ExternalResourceInlineFormSet(request.POST, instance=project)
 
-            if subpage_formset.is_valid() and repo_formset.is_valid():
+            if subpage_formset.is_valid() and repo_formset.is_valid() and external_resource_formset.is_valid():
                 project.save()
 
                 # Manually save ProjectLocales due to intermediary
@@ -130,9 +135,11 @@ def manage_project(request, slug=None, template='admin_project.html'):
 
                 subpage_formset.save()
                 repo_formset.save()
+                external_resource_formset.save()
                 # Properly displays formsets, but removes errors (if valid only)
                 subpage_formset = SubpageInlineFormSet(instance=project)
                 repo_formset = RepositoryInlineFormSet(instance=project)
+                external_resource_formset = ExternalResourceInlineFormSet(instance=project)
                 subtitle += '. Saved.'
                 pk = project.pk
             else:
@@ -148,6 +155,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
             form = ProjectForm(instance=project)
             subpage_formset = SubpageInlineFormSet(instance=project)
             repo_formset = RepositoryInlineFormSet(instance=project)
+            external_resource_formset = ExternalResourceInlineFormSet(instance=project)
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
         except Project.DoesNotExist:
@@ -168,6 +176,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'form': form,
         'subpage_formset': subpage_formset,
         'repo_formset': repo_formset,
+        'external_resource_formset': external_resource_formset,
         'locales_selected': locales_selected,
         'locales_available': Locale.objects.exclude(pk__in=locales_selected),
         'subtitle': subtitle,
@@ -191,7 +200,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
 @login_required(redirect_field_name='', login_url='/403')
 @require_AJAX
 def manually_sync_project(request, slug):
-    if not request.user.has_perm('base.can_manage') or not settings.MANUAL_SYNC:
+    if not request.user.has_perm('base.can_manage_project') or not settings.MANUAL_SYNC:
         return HttpResponseForbidden(
             "Forbidden: You don't have permission for syncing projects"
         )

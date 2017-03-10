@@ -41,17 +41,7 @@
         url=project.repositories.first().website)
       }}
 
-      {{ HeadingInfo.details_item_url(
-        title='L10n preview',
-        class='l10n-preview',
-        url=project.preview_url|local_url(locale.code))
-      }}
-
-      {{ HeadingInfo.details_item_url(
-        title='Production',
-        class='production',
-        url=project.project_url|local_url(locale.code))
-      }}
+      {{ HeadingInfo.details_item_resources(project.externalresource_set.all(), locale.code) }}
     </ul>
 
     {{ HeadingInfo.progress_chart() }}
