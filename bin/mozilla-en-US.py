@@ -22,6 +22,7 @@ TARGET_REPOS = {
         'folders': [
             'browser', 'browser/branding/official',
             'browser/extensions/pocket',
+            'browser/extensions/webcompat-reporter',
             'devtools/client', 'devtools/shared',
             'dom', 'netwerk', 'security/manager',
             'services/sync', 'toolkit', 'webapprt',
