@@ -1,6 +1,6 @@
 $(function() {
 
-  var input = $('#subtitle input');
+  var input = $('#username input');
 
   // Save user name handler
   function save() {
