@@ -78,7 +78,10 @@ class SubpageInline(admin.TabularInline):
 
 class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['name', 'slug']
-    list_display = ('name', 'slug', 'deadline', 'priority', 'pk', 'disabled')
+    list_display = ('name', 'slug', 'deadline', 'priority', 'contact_person', 'pk', 'disabled')
+
+    def contact_person(self, obj):
+        return obj.contact.name_or_email if obj.contact else '-'
 
     fieldsets = (
         (None, {
