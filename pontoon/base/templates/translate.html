@@ -20,7 +20,7 @@
      {% if user.managed_locales %}data-user-managed-locales="{{ user.managed_locales|to_json() }}"{% endif %}
      {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if user.translated_projects %}data-user-translated-projects="{{ user.translated_projects|to_json() }}"{% endif %}
-     {% if perms.base.can_manage %}data-manager="true"{% endif %}
+     {% if perms.base.can_manage_project %}data-manager="true"{% endif %}
      data-authors="{{ authors|to_json() }}"
      data-counts-per-minute="{{ counts_per_minute|to_json() }}"
      {% if user.is_authenticated() %}
@@ -126,7 +126,7 @@
 
             <li class="horizontal-separator"></li>
 
-            {% if perms.base.can_manage %}
+            {% if perms.base.can_manage_project %}
             <li><a href="{{ url('pontoon.admin') }}">Admin</a></li>
             <li class="admin-current-project"><a href="">Admin &middot; Current Project</a></li>
             {% endif %}

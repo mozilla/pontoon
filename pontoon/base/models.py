@@ -547,10 +547,6 @@ class Locale(AggregatedStats):
 
     team_description = models.TextField(blank=True)
 
-    style_guide = models.URLField(blank=True, help_text="""
-        URL to style guide for this locale.
-    """)
-
     #: Most recent translation approved or created for this locale.
     latest_translation = models.ForeignKey(
         'Translation',
@@ -881,25 +877,15 @@ class Project(AggregatedStats):
         not available for the project. Supports {locale_code} wildcard.
     """)
 
-    deadline = models.DateField(blank=True, null=True)
-    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=1)
-
     # Project info
     info = models.TextField("Project info", blank=True)
-    preview_url = models.URLField("L10n Preview URL", blank=True, help_text="""
-        URL to translation preview environment, e.g. staging website,
-        screenshots, development build, etc.
+    deadline = models.DateField(blank=True, null=True)
+    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=1)
+    contact = models.ForeignKey(User, null=True, blank=True, related_name="contact_for", help_text="""
+        L10n driver in charge of the project
     """)
-    project_url = models.URLField("Project URL", blank=True, help_text="""
-        URL to released project, e.g. production website or product download.
-    """)
-
-    # Contacts
-    l10n_contact = models.ForeignKey(User, null=True, blank=True, related_name="l10n_contact_for", help_text="""
-        L10n driver in charge of the project.
-    """)
-    project_contact = models.ForeignKey(User, null=True, blank=True, related_name="project_contact_for", help_text="""
-        Project manager or developer contact.
+    admin_notes = models.TextField(blank=True, help_text="""
+        Notes only visible in Administration
     """)
 
     # Most recent translation approved or created for this project.
@@ -915,7 +901,7 @@ class Project(AggregatedStats):
 
     class Meta:
         permissions = (
-            ("can_manage", "Can manage projects"),
+            ("can_manage_project", "Can manage project"),
         )
 
     def __unicode__(self):
@@ -1093,6 +1079,23 @@ class Project(AggregatedStats):
             return subpage.resources.values_list("path")
         except Subpage.DoesNotExist:
             return paths
+
+
+class ExternalResource(models.Model):
+    """
+    Represents links to external project resources like staging websites,
+    production websites, development builds, production builds, screenshots,
+    langpacks, etc. or team resources like style guides, dictionaries,
+    glossaries, etc.
+    Has no relation to the Resource class.
+    """
+    locale = models.ForeignKey(Locale, blank=True, null=True)
+    project = models.ForeignKey(Project, blank=True, null=True)
+    name = models.CharField(max_length=32)
+    url = models.URLField("URL", blank=True)
+
+    def __unicode__(self):
+        return self.name
 
 
 class ProjectLocaleQuerySet(models.QuerySet):
@@ -1510,7 +1513,7 @@ class Resource(models.Model):
 class Subpage(models.Model):
     project = models.ForeignKey(Project)
     name = models.CharField(max_length=128)
-    url = models.URLField("URL", blank=True)  # Firefox OS Hack
+    url = models.URLField("URL", blank=True)
     resources = models.ManyToManyField(Resource, blank=True)
 
     def __unicode__(self):

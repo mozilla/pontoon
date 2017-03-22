@@ -45,6 +45,20 @@
   {% endif %}
 {% endmacro %}
 
+{% macro details_item_resources(resources, locale_code=None) %}
+  {% if resources|length %}
+  <li class="resources">
+    <span class="title">Resources</span>
+    <span class="value overflow">
+      {% for resource in resources %}
+        {% if loop.index != 1 %}&middot;{% endif %}
+        <a href="{{ resource.url|local_url(locale_code) }}">{{ resource.name }}</a>
+      {% endfor %}
+    </span>
+  </li>
+  {% endif %}
+{% endmacro %}
+
 {% macro progress_chart() %}
 <div class="progress">
   <canvas class="chart" height="130" width="130"></canvas>

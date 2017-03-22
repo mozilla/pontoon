@@ -1,6 +1,9 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth.admin import (
+    UserAdmin as AuthUserAdmin,
+    GroupAdmin,
+)
+from django.contrib.auth.models import User, Group
 
 from pontoon.base import models
 
@@ -28,12 +31,27 @@ class UserAdmin(AuthUserAdmin):
     inlines = (UserProfileInline,)
 
 
+class ExternalResourceInline(admin.TabularInline):
+    model = models.ExternalResource
+    extra = 0
+    verbose_name_plural = 'External Resources'
+
+
+class ExternalLocaleResourceInline(ExternalResourceInline):
+    fields = ('locale', 'name', 'url',)
+
+
 class LocaleAdmin(admin.ModelAdmin):
     search_fields = ['name', 'code']
     list_display = ('pk', 'name', 'code', 'script', 'direction', 'population',
                     'cldr_plurals', 'nplurals', 'plural_rule')
     exclude = ('translators_group', 'managers_group')
     readonly_fields = AGGREGATED_STATS_FIELDS + ('latest_translation',)
+    inlines = (ExternalLocaleResourceInline,)
+
+
+class ExternalProjectResourceInline(ExternalResourceInline):
+    fields = ('project', 'name', 'url',)
 
 
 class ProjectLocaleInline(admin.TabularInline):
@@ -66,15 +84,17 @@ class ProjectAdmin(admin.ModelAdmin):
         (None, {
             'fields': (
                 'name', 'slug', 'info', 'deadline', 'priority',
-                'l10n_contact', 'project_contact', 'preview_url', 'project_url',
-                'langpack_url', 'can_be_requested', 'disabled'),
+                'contact', 'langpack_url', 'can_be_requested', 'disabled'),
         }),
         ('WEBSITE', {
             'fields': ('url', 'width', 'links'),
         }),
     )
     readonly_fields = AGGREGATED_STATS_FIELDS + ('latest_translation',)
-    inlines = (SubpageInline, ProjectLocaleInline, RepositoryInline)
+    inlines = (
+        SubpageInline, ProjectLocaleInline,
+        RepositoryInline, ExternalProjectResourceInline
+    )
 
 
 class ResourceAdmin(admin.ModelAdmin):
@@ -111,6 +131,7 @@ class ChangedEntityLocaleAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Group, GroupAdmin)
 admin.site.register(models.Locale, LocaleAdmin)
 admin.site.register(models.Project, ProjectAdmin)
 admin.site.register(models.Resource, ResourceAdmin)
