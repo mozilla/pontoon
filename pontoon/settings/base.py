@@ -31,6 +31,12 @@ HEROKU_DEMO = os.environ.get('HEROKU_DEMO', 'False') != 'False'
 
 DJANGO_LOGIN = os.environ.get('DJANGO_LOGIN', 'False') != 'False' or HEROKU_DEMO
 
+# Automatically log in the user with username 'AUTO_LOGIN_USERNAME'
+# and password 'AUTO_LOGIN_PASSWORD'
+AUTO_LOGIN = os.environ.get('AUTO_LOGIN', 'False') != 'False'
+AUTO_LOGIN_USERNAME = os.environ.get('AUTO_LOGIN_USERNAME', None)
+AUTO_LOGIN_PASSWORD = os.environ.get('AUTO_LOGIN_PASSWORD', None)
+
 ADMINS = MANAGERS = (
     (os.environ.get('ADMIN_NAME', ''),
      os.environ.get('ADMIN_EMAIL', '')),
@@ -168,6 +174,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'csp.middleware.CSPMiddleware',
+    'pontoon.base.middleware.AutomaticLoginUserMiddleware',
 )
 
 CONTEXT_PROCESSORS = (
