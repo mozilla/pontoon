@@ -78,10 +78,17 @@ class SubpageInline(admin.TabularInline):
 
 class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['name', 'slug']
-    list_display = ('name', 'slug', 'deadline', 'priority', 'contact_person', 'pk', 'disabled')
+    list_display = ('name', 'slug', 'deadline', 'priority', 'contact_person', 'pk', 'enabled')
+    ordering = ('disabled',)
 
     def contact_person(self, obj):
         return obj.contact.name_or_email if obj.contact else '-'
+    contact_person.admin_order_field = 'contact__first_name'
+
+    def enabled(self, obj):
+        return not obj.disabled
+    enabled.boolean = True
+    enabled.admin_order_field = 'disabled'
 
     fieldsets = (
         (None, {
