@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib import auth
 from django.contrib.sites.models import Site
 from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
@@ -47,3 +48,19 @@ class BlockedIpMiddleware(object):
             return HttpResponseForbidden('<h1>Forbidden</h1>')
 
         return None
+
+
+class AutomaticLoginUserMiddleware(object):
+    """
+    This middleware automatically logs in the user specified for AUTO_LOGIN.
+    """
+    def process_request(self, request):
+        if settings.AUTO_LOGIN and not request.user.is_authenticated():
+            user = auth.authenticate(
+                username=settings.AUTO_LOGIN_USERNAME,
+                password=settings.AUTO_LOGIN_PASSWORD
+            )
+
+            if user:
+                request.user = user
+                auth.login(request, user)
