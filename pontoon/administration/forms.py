@@ -20,7 +20,7 @@ class ProjectForm(forms.ModelForm):
         model = Project
         fields = ('name', 'slug', 'locales', 'can_be_requested',
                   'url', 'width', 'links', 'info', 'admin_notes',
-                  'deadline', 'priority', 'disabled')
+                  'deadline', 'priority', 'contact', 'disabled')
 
 
 SubpageInlineFormSet = inlineformset_factory(

@@ -37,6 +37,15 @@
       }}
 
       {{ HeadingInfo.details_item_resources(project.externalresource_set.all()) }}
+
+      {% if project.contact %}
+        {{ HeadingInfo.details_item(
+          title='Contact person',
+          class='contact-person',
+          value=project.contact.name_or_email,
+          value_link=url('pontoon.contributors.contributor.username', project.contact.username))
+        }}
+      {% endif %}
     </ul>
 
     {{ HeadingInfo.progress_chart() }}
