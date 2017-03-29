@@ -620,6 +620,7 @@ CSP_CONNECT_SRC = (
 CSP_FONT_SRC = ("'self'",)
 CSP_IMG_SRC = (
     "'self'",
+    "https:",
     "https://*.wp.com/pontoon.mozilla.org/",
     "https://ssl.google-analytics.com",
     "https://www.gravatar.com/avatar/",
