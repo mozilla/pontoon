@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 
@@ -494,6 +493,7 @@ def delete_translation(request):
 @transaction.atomic
 def update_translation(request):
     """Update entity translation for the specified locale and user."""
+
     try:
         entity = request.POST['entity']
         string = request.POST['translation']
@@ -501,7 +501,8 @@ def update_translation(request):
         plural_form = request.POST['plural_form']
         original = request.POST['original']
         ignore_check = request.POST['ignore_check']
-        approve = json.loads(request.POST['approve'])
+        approve = request.POST.get('approve', 'false') == 'true'
+        force_suggestions = request.POST.get('force_suggestions', 'false') == 'true'
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
@@ -536,7 +537,7 @@ def update_translation(request):
     now = timezone.now()
     can_translate = (
         request.user.can_translate(project=project, locale=l)
-        and (not request.user.profile.force_suggestions or approve)
+        and (not force_suggestions or approve)
     )
     translations = Translation.objects.filter(
         entity=e, locale=l, plural_form=plural_form)
