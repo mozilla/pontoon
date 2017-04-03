@@ -2399,7 +2399,8 @@ var Pontoon = (function (my) {
           original: entity['original' + self.isPluralized()],
           ignore_check: $('#quality').is(':visible') || !syncLocalStorage,
           approve: self.approvedNotSubmitted || false,
-          paths: self.getPartPaths(self.currentPart)
+          paths: self.getPartPaths(self.currentPart),
+          force_suggestions: self.user.forceSuggestions
         },
         success: function(data) {
           renderTranslation(data);

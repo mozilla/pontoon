@@ -9,11 +9,11 @@ from django_nose.tools import (
 from mock import patch
 
 from pontoon.base.models import (
-   Project,
-   Entity,
-   ProjectLocale,
-   TranslatedResource,
-)
+    Project,
+    Entity,
+    ProjectLocale,
+    TranslatedResource,
+    Translation)
 from pontoon.base.tests import (
     assert_json,
     EntityFactory,
@@ -125,6 +125,59 @@ class ViewTestCase(TestCase):
         ResourceFactory.create(project=Project.objects.get(pk=1))
 
         self.factory = RequestFactory()
+
+
+class TranslationUpdateTestCase(UserTestCase):
+    def setUp(self):
+        super(TranslationUpdateTestCase, self).setUp()
+
+        locale = LocaleFactory.create()
+        project = ProjectFactory.create()
+        ProjectLocale.objects.create(
+            project=project,
+            locale=locale,
+        )
+        resource = ResourceFactory.create(project=project)
+        entity = EntityFactory.create(resource=resource)
+
+        self.translation = TranslationFactory.create(entity=entity, locale=locale)
+        self.translation.locale.translators_group.user_set.add(self.user)
+
+    def post_translation(self, translation, **params):
+        """
+        Post translation with given params.
+        Returns the last translation object.
+        """
+        update_params = {
+            'locale': self.translation.locale.code,
+            'entity': self.translation.entity.pk,
+            'translation': translation,
+            'plural_form': '-1',
+            'ignore_check': 'true',
+            'original': self.translation.entity.string,
+        }
+        update_params.update(params)
+
+        response = self.client.ajax_post('/update/', update_params)
+        assert_code(response, 200)
+
+        return Translation.objects.last()
+
+    def test_force_suggestions(self):
+        """
+        Save/suggest button should always do what the current label says and
+        be independent from the user settings in different browser tabs.
+        """
+
+        # Check the default behaviour.
+        translation = self.post_translation('approved translation')
+        assert_true(translation.approved)
+
+        translation = self.post_translation('approved translation2', force_suggestions='false')
+        assert_true(translation.approved)
+
+        translation = self.post_translation('unapproved translation', force_suggestions='true')
+        assert_true(not(translation.approved))
 
 
 class TranslateMemoryTests(ViewTestCase):
