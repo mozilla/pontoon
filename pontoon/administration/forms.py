@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 
 from pontoon.base.models import Project, Repository, Subpage, ExternalResource
@@ -11,16 +11,17 @@ class ContactChoiceField(forms.ModelChoiceField):
 
 
 class ProjectForm(forms.ModelForm):
-    # Group not created until data migration executes
-    project_managers, _ = Group.objects.get_or_create(name="project_managers")
-    contact_queryset = project_managers.user_set.order_by('email')
-    contact = ContactChoiceField(contact_queryset, required=False)
+    contact = ContactChoiceField(None, required=False)
 
     class Meta:
         model = Project
         fields = ('name', 'slug', 'locales', 'can_be_requested',
                   'url', 'width', 'links', 'info', 'admin_notes',
                   'deadline', 'priority', 'contact', 'disabled')
+
+    def __init__(self, *args, **kwargs):
+        super(ProjectForm, self).__init__(*args, **kwargs)
+        self.fields['contact'].queryset = User.objects.filter(groups__name='project_managers').order_by('email')
 
 
 SubpageInlineFormSet = inlineformset_factory(
