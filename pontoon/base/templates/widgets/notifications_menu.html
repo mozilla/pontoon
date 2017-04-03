@@ -1,0 +1,46 @@
+{% macro menu() %}
+{% if user.is_authenticated() %}
+{% set unread_notifications = user.notifications.unread() %}
+<div id="notifications" class="notifications select{% if unread_notifications|length > 0 %} unread{% endif %}">
+
+  <div class="button selector">
+    <i class="icon fa fa-bell-o fa-fw"></i>
+  </div>
+
+  <div class="menu">
+    {{ list(notifications=unread_notifications) }}
+
+    <ul>
+      <li class="horizontal-separator"></li>
+      <li class="see-all"><a href="{{ url('pontoon.contributors.notifications') }}">See all Notifications</a></li>
+    </ul>
+  </div>
+
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro list(notifications, no="No new notifications.") %}
+<ul class="notification-list">
+  {% for notification in notifications %}
+    <li class="notification-item" data-id="{{ notification.id }}" data-level="{{ notification.level }}" data-unread="{{ notification.unread|to_json() }}">
+      <a href="{{ url('pontoon.projects.project', notification.actor.slug) }}">
+        <span class="actor">{{ notification.actor }}</span>
+        <span class="verb">{{ notification.verb }}</span>
+        <p class="timeago">{{ notification.timesince() }} ago</p>
+      </a>
+    </li>
+    {% if not loop.last %}
+      <li class="horizontal-separator"></li>
+    {% endif %}
+  {% endfor %}
+
+  {% if notifications|length == 0 %}
+    <li class="no">
+      <i class="icon fa fa-bell fa-fw"></i>
+      <p class="title">{{ no }}</p>
+      <p class="description">Here you’ll see updates for localizations you contribute to.</p>
+    </li>
+  {% endif %}
+</ul>
+{% endmacro %}

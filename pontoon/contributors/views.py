@@ -20,7 +20,8 @@ from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
 from pontoon.base import forms
-from pontoon.base.models import Locale
+from pontoon.base.models import Locale, Project
+from pontoon.base.utils import require_AJAX
 
 
 log = logging.getLogger('pontoon')
@@ -148,6 +149,46 @@ def settings(request):
         'available_locales': available_locales,
         'selected_locales': selected_locales,
     })
+
+
+@login_required(redirect_field_name='', login_url='/403')
+def notifications(request):
+    """View and edit user notifications."""
+    notifications = request.user.notifications.order_by('-pk')
+    projects = {}
+
+    for notification in notifications:
+        if isinstance(notification.actor, Project):
+            if notification.actor.slug in projects:
+                projects[notification.actor.slug]['notifications'].append(
+                    notification.id
+                )
+            else:
+                projects[notification.actor.slug] = {
+                    'name': notification.actor.name,
+                    'notifications': [notification.id],
+                }
+
+    # Sort projects by the number of notifications
+    ordered_projects = []
+    for slug in sorted(projects, key=lambda slug: len(projects[slug]['notifications']), reverse=True):
+        ordered_projects.append(slug)
+
+    return render(request, 'contributors/notifications.html', {
+        'notifications': notifications,
+        'projects': projects,
+        'ordered_projects': ordered_projects,
+    })
+
+
+@login_required(redirect_field_name='', login_url='/403')
+@require_AJAX
+@transaction.atomic
+def mark_all_notifications_as_read(request):
+    """Mark all notifications of the currently logged in user as read"""
+    request.user.notifications.mark_all_as_read()
+
+    return HttpResponse('ok')
 
 
 class ContributorsMixin(object):

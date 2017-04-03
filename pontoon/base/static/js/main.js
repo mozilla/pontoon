@@ -12,6 +12,47 @@ var Pontoon = (function (my) {
   return $.extend(true, my, {
 
     /*
+     * Bind NProgress (slim progress bar on top of the page) to each AJAX request
+     */
+    NProgressBind: function () {
+      NProgress.configure({ showSpinner: false });
+      $(document).bind('ajaxStart.nprogress', function() {
+        NProgress.start();
+      }).bind('ajaxStop.nprogress', function() {
+        NProgress.done();
+      });
+    },
+
+    /*
+     * Unbind NProgress
+     */
+    NProgressUnbind: function () {
+      $(document).unbind('.nprogress');
+    },
+
+    /*
+     * Mark all notifications as read and update UI accordingly
+     */
+    markAllNotificationsAsRead: function () {
+      this.NProgressUnbind();
+
+      $.ajax({
+        url: '/notifications/mark-all-as-read/',
+        success: function() {
+          $('#notifications.unread .button .icon').animate({color: '#4D5967'}, 1000);
+          var unreadNotifications = $('#main.notifications .right-column li.notification-item[data-unread="true"]');
+
+          unreadNotifications.animate({backgroundColor: 'transparent'}, 1000, function() {
+            // Remove inline style and unread mark to make hover work again
+            unreadNotifications.removeAttr('style').removeAttr('data-unread');
+          });
+        }
+      });
+
+      this.NProgressBind();
+    },
+
+    /*
      * Close notification
      */
     closeNotification: function () {
@@ -481,14 +522,7 @@ var Pontoon = (function (my) {
 
 /* Main code */
 $(function() {
-
-  // Slim progress bar on top of the page
-  NProgress.configure({ showSpinner: false });
-  $(document).ajaxStart(function() {
-    NProgress.start();
-  }).ajaxStop(function() {
-    NProgress.done();
-  });
+  Pontoon.NProgressBind();
 
   // Display any notifications
   var notifications = $('.notification li');
@@ -541,14 +575,16 @@ $(function() {
 
   // Menu hover
   $('body').on('mouseenter', '.menu li, .menu .static-links div', function () {
-    // Ignore on nested menus and static links on dashborads
-    if ($(this).has('li').length ||
-        $(this).is('.static-links div') && !$('body').is('.translate')) {
+    // Ignore on nested menus
+    if ($(this).has('li').length) {
       return false;
     }
 
     $('.menu li.hover, .static-links div').removeClass('hover');
     $(this).toggleClass('hover');
+
+  }).on('mouseleave', '.menu li, .menu .static-links div', function () {
+    $('.menu li.hover, .static-links div').removeClass('hover');
   });
 
   // Menu chart hover
@@ -587,6 +623,11 @@ $(function() {
     }
   }).on('mouseleave', 'li .chart-wrapper', function () {
     $('.tooltip:visible').remove();
+  });
+
+  // Mark notifications as read when notification menu opens
+  $('#notifications.unread .button .icon').click(function() {
+    Pontoon.markAllNotificationsAsRead();
   });
 
   // Profile menu

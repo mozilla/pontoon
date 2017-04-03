@@ -1,0 +1,22 @@
+{% macro button() %}
+<div class="button selector">
+  {% if user.is_authenticated() %}
+    <img class="rounded" src="{{ user.gravatar_url(44) }}">
+  {% else %}
+    <div class="menu-icon fa fa-navicon"></div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro top_menu() %}
+{% if user.is_authenticated() %}
+  <li class="details">
+    <a href="{{ url('pontoon.contributors.profile') }}">
+      <img class="rounded" src="{{ user.gravatar_url(88) }}">
+      <p class="name">{{ user.name_or_email|nospam }}</p>
+      <p class="email">{{ user.email|nospam }}</p>
+    </a>
+  </li>
+  <li class="horizontal-separator"></li>
+{% endif %}
+{% endmacro %}

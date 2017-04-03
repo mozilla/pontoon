@@ -5,6 +5,8 @@
 {% import "widgets/keyboard_shortcut.html" as Shortcut %}
 {% import "widgets/filter_item.html" as Filter %}
 {% import "widgets/signout.html" as SignOut with context %}
+{% import "widgets/profile.html" as Profile with context %}
+{% import "widgets/notifications_menu.html" as Notifications with context %}
 
 {% block class %}translate{% endblock %}
 
@@ -95,23 +97,15 @@
       {% endfor %}
       </ul>
 
+      <!-- Notifications -->
+      {{ Notifications.menu() }}
+
       <!-- Profile -->
       <div id="profile" class="select">
-        <div class="button selector">
-          {% if request.user.is_authenticated() %}
-            <span class="title noselect">{{ user.name_or_email|nospam }}</span>
-            <img class="rounded" src="{{ request.user.gravatar_url(44) }}">
-          {% else %}
-            <div class="menu-icon fa fa-navicon"></div>
-          {% endif %}
-        </div>
+        {{ Profile.button() }}
         <div class="menu">
           <ul>
-            {% if user.is_authenticated() %}
-            <li><a href="{{ url('pontoon.contributors.profile') }}"><i class="fa fa-user fa-fw"></i>View Profile</a></li>
-            <li><a href="{{ url('pontoon.contributors.settings') }}"><i class="fa fa-cog fa-fw"></i>Change Settings</a></li>
-            <li class="horizontal-separator"></li>
-            {% endif %}
+            {{ Profile.top_menu() }}
 
             <li class="langpack"><a href=""><i class="fa fa-cloud-download fa-fw"></i>Download Language Pack</a></li>
             <li class="download"><i class="fa fa-cloud-download fa-fw"></i>Download Translations</i></li>
@@ -127,18 +121,23 @@
             <li class="horizontal-separator"></li>
 
             {% if perms.base.can_manage_project %}
-            <li><a href="{{ url('pontoon.admin') }}">Admin</a></li>
-            <li class="admin-current-project"><a href="">Admin &middot; Current Project</a></li>
+            <li><a href="{{ url('pontoon.admin') }}"><i class="fa fa-wrench fa-fw"></i>Admin</a></li>
+            <li class="admin-current-project"><a href=""><i class="fa fa-wrench fa-fw"></i>Admin &middot; Current Project</a></li>
             {% endif %}
+
+            {% if user.is_authenticated() %}
+              <li><a href="{{ url('pontoon.contributors.settings') }}"><i class="fa fa-cog fa-fw"></i>Settings</a></li>
+            {% endif %}
+
             {% if settings.DJANGO_LOGIN %}
               {% if user.is_authenticated() %}
-                <li class="standalone-sign-out"><a href="{{ url('standalone_logout') }}"><i class="fa fa-sign-out fa-fw"></i> Sign Out</a></li>
+                <li class="standalone-sign-out"><a href="{{ url('standalone_logout') }}"><i class="fa fa-sign-out fa-fw"></i>Sign Out</a></li>
               {% else %}
                 <li class="standalone-signin"><a href="{{ url('standalone_login') }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
               {% endif %}
             {% else %}
               {% if user.is_authenticated() %}
-                <li class="sign-out"><a href="{{ url('account_logout') }}"><i class="fa fa-sign-out fa-fw"></i> {{ SignOut.csrf_form() }} Sign Out</a></li>
+                <li class="sign-out"><a href="{{ url('account_logout') }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out fa-fw"></i>Sign Out</a></li>
               {% else %}
                 <li class="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
               {% endif %}
