@@ -303,6 +303,13 @@ input[type=search] {
     url('../fonts/OpenSans-Italic.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'Ubuntu Regular';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/Ubuntu-RI.ttf')
+}
+
 body, select, input, textarea, button {
   font-family: "Open Sans", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
 }

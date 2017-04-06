@@ -1087,6 +1087,11 @@ body > header aside p {
   padding-left: 2%;
 }
 
+#entitylist > .wrapper > ul > li p span.translation-string[lang="mk"],
+#entitylist > .wrapper > ul > li p span.translation-string[lang="sr"] {
+  font-family: "Ubuntu Regular";
+}
+
 #entitylist > .wrapper > ul > li.translated p span.source-string,
 #entitylist > .wrapper > ul > li.suggested p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
