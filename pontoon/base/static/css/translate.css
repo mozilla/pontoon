@@ -1087,8 +1087,8 @@ body > header aside p {
   padding-left: 2%;
 }
 
-#entitylist > .wrapper > ul > li p span.translation-string:lang(mk),
-#entitylist > .wrapper > ul > li p span.translation-string:lang(sr) {
+#entitylist > .wrapper > ul > li p span.translation-string[lang="mk"],
+#entitylist > .wrapper > ul > li p span.translation-string[lang="sr"] {
   font-family: "Ubuntu Regular";
 }
 
