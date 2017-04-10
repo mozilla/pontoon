@@ -34,8 +34,16 @@ urlpatterns = [
         name='pontoon.contributors.profile'),
 
     # Current user's settings
-    url(r'^settings/', views.settings,
+    url(r'^settings/$', views.settings,
         name='pontoon.contributors.settings'),
+
+    # Current user's notifications
+    url(r'^notifications/$', views.notifications,
+        name='pontoon.contributors.notifications'),
+
+    # Mark current user's notifications as read
+    url(r'^notifications/mark-all-as-read/$', views.mark_all_notifications_as_read,
+        name='pontoon.contributors.notifications.mark.all.as.read'),
 
     # API: Toogle user profile attribute
     url(r'^api/v1/user/(?P<username>[\w-]+)/$',
@@ -43,6 +51,6 @@ urlpatterns = [
         name='pontoon.contributors.toggle_user_profile_attribute'),
 
     # AJAX
-    url(r'^save-user-name/', views.save_user_name,
+    url(r'^save-user-name/$', views.save_user_name,
         name='pontoon.contributors.save_user_name'),
 ]

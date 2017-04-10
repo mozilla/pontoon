@@ -957,17 +957,123 @@ header .right .select .menu {
   right: 0;
 }
 
-#profile > .button {
+#notifications {
+  float: left;
+  height: 60px;
+}
+
+#notifications .button {
   height: 100%;
   padding: 0;
 }
 
-#profile .button .title {
+#notifications .button .icon {
+  color: #4D5967;
+  font-size: 26px;
+  margin-top: 17px;
+}
+
+#notifications.unread .button .icon {
+  color: #F36;
+}
+
+#notifications .menu,
+#profile .menu {
+  border: 1px solid #333941;
+  border-top: none;
+}
+
+#notifications .menu {
+  padding: 0;
+  width: 350px;
+}
+
+.notifications .menu ul,
+#profile .menu ul,
+#filter .menu ul {
+  max-height: none;
+}
+
+#notifications .menu ul.notification-list {
+  max-height: 280px;
+}
+
+.notifications .menu li {
+  padding: 0;
+}
+
+#notifications .menu li.see-all {
+  text-align: center;
+}
+
+.notifications .menu li.notification-item span {
+  float: none;
+}
+
+.notifications .menu li.notification-item .actor {
+  color: #F36;
+}
+
+.notifications .menu li.notification-item .verb {
   color: #EBEBEB;
-  float: left;
-  margin: 23px 5px 23px 10px;
-  font-size: 14px;
-  line-height: 14px;
+}
+
+.notifications .menu li.notification-item .timeago {
+  color: #888888;
+  font-size: 11px;
+  font-weight: normal;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+#notifications .menu li.horizontal-separator,
+.notifications .menu ul.notification-list li.horizontal-separator {
+  border-color: #333941;
+  margin: 0;
+}
+
+.notifications .menu li.no {
+  background: transparent;
+  color: inherit;
+  cursor: default;
+  padding: 0 4px 14px;
+  text-align: center;
+}
+
+.notifications .menu li.no .icon {
+  color: #333941;
+  font-size: 92px;
+  padding-bottom: 8px;
+}
+
+.notifications .menu li.no .title,
+#profile .menu li.details .name {
+  color: #EBEBEB;
+  font-size: 16px;
+}
+
+.notifications .menu li.no .description,
+#profile .menu li.details .email {
+  color: #AAAAAA;
+  font-size: 12px;
+}
+
+.notifications .menu li.no .description {
+  padding-top: 4px;
+}
+
+.notifications .menu li a {
+  display: block;
+  padding: 10px;
+}
+
+#profile {
+  padding-left: 0;
+}
+
+#profile > .button {
+  height: 100%;
+  padding: 0;
 }
 
 #profile .button img,
@@ -992,15 +1098,9 @@ header .right .select .menu {
 }
 
 #profile .menu {
-  border: 1px solid #333941;
-  border-top: none;
   line-height: 18px;
-  width: 200px;
-}
-
-#profile .menu ul,
-#filter .menu ul {
-  max-height: none;
+  padding-top: 0;
+  width: 250px;
 }
 
 #profile .menu li {
@@ -1015,6 +1115,11 @@ header .right .select .menu {
 
 #profile .menu li i.fa {
   margin: 0 8px 0 -2px;
+}
+
+#profile .menu li.details {
+  padding: 10px 4px;
+  text-align: center;
 }
 
 .links li {

@@ -3,7 +3,10 @@ import logging
 import os
 
 from bulk_update.helper import bulk_update
+from django.contrib.auth.models import User
 from django.db.models import Prefetch
+from django.template.defaultfilters import pluralize
+from notifications.signals import notify
 
 from pontoon.base.models import (
     Entity,
@@ -15,6 +18,7 @@ from pontoon.base.models import (
 from pontoon.base.utils import match_attr
 
 log = logging.getLogger(__name__)
+
 
 class ChangeSet(object):
     """
@@ -131,7 +135,7 @@ class ChangeSet(object):
         for resource in changed_resources:
             resource.save(self.locale)
 
-    def get_entity_updates(self, vcs_entity):
+    def get_entity_updates(self, vcs_entity, db_entity=None):
         """
         Return a dict of the properties and values necessary to create
         or update a database entity from a VCS entity.
@@ -142,14 +146,44 @@ class ChangeSet(object):
             'string_plural': vcs_entity.string_plural,
             'key': vcs_entity.key,
             'comment': '\n'.join(vcs_entity.comments),
+            # one timestamp per import, unlike timezone.now()
+            'date_created': db_entity.date_created if db_entity else self.now,
             'order': vcs_entity.order,
             'source': vcs_entity.source
         }
 
+    def send_notifications(self, new_entities):
+        """
+        Notify project contributors if new entities have been added.
+        """
+        count = len(new_entities)
+
+        if count > 0:
+            log.info('Sending new string notifications for project {}.'.format(self.db_project))
+
+            verb = 'updated with {} new string{}'.format(count, pluralize(count))
+            contributors = User.objects.filter(
+                translation__entity__resource__project=self.db_project
+            ).distinct()
+
+            for contributor in contributors:
+                notify.send(
+                    self.db_project,
+                    recipient=contributor,
+                    verb=verb
+                )
+
+            log.info('New string notifications for project {} sent.'.format(self.db_project))
+
     def execute_create_db(self):
+        new_entities = []
+
         for vcs_entity in self.changes['create_db']:
-            entity = Entity(**self.get_entity_updates(vcs_entity))
-            entity.save()  # We can't use bulk_create since we need a PK
+            # We can't use bulk_create since we need a PK
+            entity, created = Entity.objects.get_or_create(**self.get_entity_updates(vcs_entity))
+
+            if created:
+                new_entities.append(entity)
 
             for locale_code, vcs_translation in vcs_entity.translations.items():
                 for plural_form, string in vcs_translation.strings.items():
@@ -162,6 +196,8 @@ class ChangeSet(object):
                         approved_date=self.now if not vcs_translation.fuzzy else None,
                         fuzzy=vcs_translation.fuzzy
                     ))
+
+        self.send_notifications(new_entities)
 
     def update_entity_translations_from_vcs(
             self, db_entity, locale_code, vcs_translation,
@@ -261,7 +297,7 @@ class ChangeSet(object):
             entities_with_translations = self.prefetch_entity_translations()
 
         for locale_code, db_entity, vcs_entity in self.changes['update_db']:
-            for field, value in self.get_entity_updates(vcs_entity).items():
+            for field, value in self.get_entity_updates(vcs_entity, db_entity).items():
                 setattr(db_entity, field, value)
 
             if db_entity.is_dirty(check_relationship=True):

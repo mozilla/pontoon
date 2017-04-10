@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% import 'heading.html' as Heading %}
+{% import "widgets/notifications_menu.html" as Notifications with context %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block before %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}>
+</div>
+{% endblock %}
+
+{% block heading %}
+  {{ Heading.heading(title='Notifications', subtitle='Updates for localizations you contribute to') }}
+{% endblock %}
+
+{% block bottom %}
+<section id="main" class="notifications clearfix {% if notifications|length == 0 %}no{% endif %}">
+  <div class="container">
+    <div class="menu permanent left-column">
+      <ul>
+        <li class="all selected">
+          <a href="{{ url('pontoon.contributors.notifications') }}">All Notifications</a>
+        </li>
+        {% for slug in ordered_projects %}
+          {% if loop.first %}
+            <li class="horizontal-separator"></li>
+          {% endif %}
+          <li class="project">
+            <a href="{{ url('pontoon.contributors.notifications') }}{{ slug }}" data-notifications="{{ projects[slug].notifications|to_json() }}">
+              <span class="name">{{ projects[slug].name }}</span>
+              <span class="count">{{ projects[slug].notifications|length }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="menu permanent right-column">
+      {{ Notifications.list(notifications=notifications, no="No notifications.") }}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'notifications' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'notifications' %}
+{% endblock %}
