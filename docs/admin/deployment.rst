@@ -78,6 +78,14 @@ you create:
    production.
    Adds some additional django apps that can be helpful during day to day development.
 
+``ERROR_PAGE_URL``
+   Optional. URL to the page displayed to your users when the application encounters
+   a system error. See `Heroku Reference`_ for more information.
+
+``MAINTENANCE_PAGE_URL``
+   Optional. URL to the page displayed to your users when the application is placed
+   in the maintenance state. See `Heroku Reference`_ for more information.
+
 ``NEW_RELIC_API_KEY``
    Optional. API key for accessing the New Relic REST API. Used to mark deploys
    on New Relic.
@@ -130,8 +138,7 @@ you create:
 
       heroku config:set SSH_KEY="`cat /path/to/key_rsa`"
 
-.. _Babel: http://babeljs.io/
-.. _Yuglify: https://github.com/yui/yuglify
+.. _Heroku Reference: https://devcenter.heroku.com/articles/error-pages#customize-pages
 
 ``TZ``
    Timezone for the dynos that will run the app. Pontoon operates in UTC, so set

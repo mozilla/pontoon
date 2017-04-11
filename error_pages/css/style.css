@@ -1,0 +1,843 @@
+html,body {
+  background:#333941;
+  padding:0;
+  margin:0;
+  font-family:"Play", "Helvetica Neue", "Arial", sans-serif;
+  font-weight:normal;
+  line-height:160%;
+  font-size:16px;
+  color:#fff;
+  text-align: center;
+}
+
+/*! normalize.css v3.0.1 | MIT License | git.io/normalize */html {
+  font-family:sans-serif;
+  -ms-text-size-adjust:100%;
+  -webkit-text-size-adjust:100%
+}
+
+body {
+  margin:0
+}
+
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary {
+  display:block
+}
+
+audio,canvas,progress,video {
+  display:inline-block;
+  vertical-align:baseline
+}
+
+audio:not([controls]) {
+  display:none;
+  height:0
+}
+
+[hidden],template {
+  display:none
+}
+
+a {
+  background:transparent
+}
+
+a:active,a:hover {
+  outline:0
+}
+
+abbr[title] {
+  border-bottom:1px dotted
+}
+
+b,strong {
+  font-weight:bold
+}
+
+dfn {
+  font-style:italic
+}
+
+h1 {
+  font-size:2em;
+  margin:0.67em 0
+}
+
+mark {
+  background:#ff0;
+  color:#000
+}
+
+small {
+  font-size:80%
+}
+
+sub,sup {
+  font-size:75%;
+  line-height:0;
+  position:relative;
+  vertical-align:baseline
+}
+
+sup {
+  top:-0.5em
+}
+
+sub {
+  bottom:-0.25em
+}
+
+img {
+  border:0
+}
+
+svg:not(:root) {
+  overflow:hidden
+}
+
+figure {
+  margin:1em 40px
+}
+
+hr {
+  -moz-box-sizing:content-box;
+  box-sizing:content-box;
+  height:0
+}
+
+pre {
+  overflow:auto
+}
+
+code,kbd,pre,samp {
+  font-family:monospace, monospace;
+  font-size:1em
+}
+
+button,input,optgroup,select,textarea {
+  color:inherit;
+  font:inherit;
+  margin:0
+}
+
+button {
+  overflow:visible
+}
+
+button,select {
+  text-transform:none
+}
+
+button,html input[type="button"],input[type="reset"],input[type="submit"] {
+  -webkit-appearance:button;
+  cursor:pointer
+}
+
+button[disabled],html input[disabled] {
+  cursor:default
+}
+
+button::-moz-focus-inner,input::-moz-focus-inner {
+  border:0;
+  padding:0
+}
+
+input {
+  line-height:normal
+}
+
+input[type="checkbox"],input[type="radio"] {
+  box-sizing:border-box;
+  padding:0
+}
+
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button {
+  height:auto
+}
+
+input[type="search"] {
+  -webkit-appearance:textfield;
+  -moz-box-sizing:content-box;
+  -webkit-box-sizing:content-box;
+  box-sizing:content-box
+}
+
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance:none
+}
+
+fieldset {
+  border:1px solid #c0c0c0;
+  margin:0 2px;
+  padding:0.35em 0.625em 0.75em
+}
+
+legend {
+  border:0;
+  padding:0
+}
+
+textarea {
+  overflow:auto
+}
+
+optgroup {
+  font-weight:bold
+}
+
+table {
+  border-collapse:collapse;
+  border-spacing:0
+}
+
+td,th {
+  padding:0
+}
+
+section {
+  text-align:center;
+}
+
+section header {
+  margin-bottom:60px;
+  padding:0 20px
+}
+
+section header h1 {
+  font-weight:normal;
+  margin-bottom:10px
+}
+
+section header h1:after,section header h1:before {
+  content:"**********";
+  color:#898989;
+  padding:0 10px;
+  font-size:.7em
+}
+
+section header p {
+  color:#898989;
+  font-size:1.2em;
+  margin-top:10px
+}
+
+section article {
+  width:100%;
+  max-width:840px;
+  margin:0 auto
+}
+
+header {
+  font-family:"Open Sans", "Helvetica Neue", "Arial", sans-serif;
+  padding: 40px;
+}
+
+header h1 {
+  color: #EBEBEB;
+  font-size: 40px;
+  line-height: 50px;
+  margin-bottom: -5px;
+}
+
+header h2 {
+  color: #7BC876;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.btn {
+  border:2px solid #fff;
+  color:#fff;
+  display:inline-block;
+  padding:12px 25px 12px 15px;
+  text-decoration:none;
+  position:relative;
+  background:#3b3b3b;
+  margin:0 15px
+}
+
+.btn:before {
+  content:"";
+  display:inline-block;
+  position:relative;
+  top:1px;
+  height:14px;
+  width:14px;
+  margin-right:10px;
+  background-size:auto 100%
+}
+
+.btn.btn-download:before {
+  background-position:-28px 0
+}
+
+.btn:after {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  width:100%;
+  height:100%;
+  border:2px solid #fff;
+  bottom:-8px;
+  right:-8px
+}
+
+section.versus {
+  text-align:center;
+  padding-top:100px
+}
+
+section.versus .game {
+  display:inline-block;
+  margin:0px 20px;
+  width:200px;
+  height:500px
+}
+
+#hero {
+  position:relative;
+  display:flex;
+  display:-webkit-flex;
+  -moz-display:flex;
+  flex-flow:row wrap;
+  justify-content:center;
+  align-content:center;
+  align-items:center;
+  -webkit-flex-flow:row wrap;
+  -webkit-justify-content:center;
+  -webkit-align-content:center;
+  -webkit-align-items:center;
+  -moz-flex-flow:row wrap;
+  -moz-justify-content:center;
+  -moz-align-content:center;
+  -moz-align-items:center;
+  min-height:500px;
+  height:90vh;
+  color:#fff;
+  padding:0
+}
+
+#hero .welcome {
+  position:relative;
+  z-index:10;
+  text-align:center;
+  margin-bottom:100px
+}
+
+#hero h1 {
+  font-size:60px;
+  margin:0
+}
+
+#hero h1 img {
+  width:90%;
+  max-width:560px
+}
+
+#hero p {
+  font-size:1.5em;
+  margin-bottom:50px
+}
+
+#hero:after {
+  content:"";
+  display:block;
+  width:100%;
+  height:8px;
+  position:absolute;
+  bottom:-12px;
+  left:0
+}
+
+#hero .blockrain-score {
+  border:2px solid #fff;
+  text-align:center;
+  width:120px;
+  background:#232323
+}
+
+#hero .blockrain-score .blockrain-score-msg {
+  border-bottom:2px solid #fff;
+  text-transform:uppercase;
+  padding:4px 0;
+  font-size:.7em
+}
+
+#hero .blockrain-score .blockrain-score-num {
+  font-size:1.2em;
+  padding:3px 0 5px
+}
+
+#cover-tetris {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:0
+}
+
+#features {
+  text-align:center;
+  padding-bottom:20px
+}
+
+#features .feature {
+  width:280px;
+  height:340px;
+  float:left;
+  margin:0;
+  padding:0 20px;
+  box-sizing:border-box
+}
+
+#features .feature h2 {
+  font-weight:normal
+}
+
+#features .feature p {
+  color:#898989
+}
+
+#features:after {
+  content:"";
+  clear:both;
+  display:block;
+  height:0;
+  width:0
+}
+
+#examples {
+  background:#333941;
+  padding-top:0px
+}
+
+#examples .buttons .btn {
+  display:block;
+  width:35px;
+  height:63px;
+  padding:0;
+  position:absolute;
+  background-size:auto 100%;
+  border:none;
+  top:50%;
+  margin-top:-30px;
+  overflow:hidden;
+  text-indent:-9999px
+}
+
+#examples .buttons .btn-prev {
+  right:100%;
+  margin-right:70px
+}
+
+#examples .buttons .btn-next {
+  left:100%;
+  margin-left:70px;
+  background-position:right
+}
+
+#example-slider {
+  background:#333941;
+  width:590px;
+  height:390px;
+  position:relative;
+}
+
+.example {
+  padding:50px 0 0 0;
+  color:#7BC876;
+  position:relative
+}
+
+.example .game {
+  display:inline-block;
+  margin:0px 20px;
+  width:200px;
+  height:330px;
+  position:static
+}
+
+.example .game .blockrain-score-holder {
+  left:100%;
+  top:-10px;
+  right:auto;
+  text-align:left;
+  margin-left:55px;
+  font-size:14px;
+  color:#7BC876;
+  line-height:20px
+}
+
+.example .game .blockrain-score-holder .blockrain-score-num {
+  font-size:24px;
+  font-weight:normal
+}
+
+.example .game .blockrain-start,.example .game .blockrain-game-over {
+  top:auto;
+  transform:none;
+  height:100%
+}
+
+.example .game .blockrain-start-msg,.example .game .blockrain-game-over-msg {
+  color:#EBEBEB;
+  font-size:14px;
+  position:absolute;
+  top:-16px;
+  width:100%
+}
+
+.example .game .blockrain-game-over-msg {
+  top:50%;
+  font-size:24px;
+  margin-top:-24px
+}
+
+.example .game .blockrain-start-btn,.example .game .blockrain-game-over-btn {
+  cursor: pointer;
+  position:absolute;
+  left:100%;
+  bottom:3px;
+  border:none;
+  background:#7BC876;
+  color:#000;
+  text-transform:uppercase;
+  font-weight:bold;
+  margin-left:55px;
+  width:120px;
+  padding:13px 0;
+  font-size:16px
+}
+
+.example .game .blockrain-start-btn:before,.example .game .blockrain-start-btn:after,.example .game .blockrain-game-over-btn:before,.example .game .blockrain-game-over-btn:after {
+  display:none
+}
+
+.example .theme {
+  position:absolute;
+  top:36px;
+  left:20px;
+  font-size:14px;
+  line-height:20px;
+  text-align:left
+}
+
+.example .theme strong {
+  display:block;
+  font-size:24px;
+  font-weight:normal
+}
+
+.example .instructions {
+  position:absolute;
+  bottom:10px;
+  left:20px;
+  overflow:hidden;
+  font-size:14px
+}
+
+.example .instructions .key {
+  border:1px solid #7BC876;
+  display:block;
+  width:38px;
+  height:33px;
+  padding-top:5px;
+  float:left;
+  position:relative
+}
+
+.example .instructions .key:before {
+  content:"";
+  display:block;
+  width:14px;
+  height:14px;
+  position:absolute;
+  top:50%;
+  left:50%;
+  margin:-7px 0 0 -7px;
+  background-position:-84px 0;
+  background-size:auto 100%
+}
+
+.example .instructions .key.key-up {
+  float:none;
+  margin-left:39px;
+  border-bottom:none;
+  margin-top:20px
+}
+
+.example .instructions .key.key-up:before {
+  background-position:-42px 0
+}
+
+.example .instructions .key.key-left:before {
+  background-position:-56px 0
+}
+
+.example .instructions .key.key-down {
+  border-left:none;
+  border-right:none
+}
+
+.example .instructions .key.key-down:before {
+  background-position:-70px 0
+}
+
+#versus-arena {
+  background:#333941;
+  width:590px;
+  height:375px;
+  border-radius:50%/5%;
+  position:relative;
+  padding-top:45px
+}
+
+#versus-arena:before {
+  content:"";
+  background:#333941;
+  position:absolute;
+  top:5%;
+  bottom:5%;
+  left:-5%;
+  right:-5%;
+  border-radius:5%/50%
+}
+
+#versus-arena .game-holder {
+  display:inline-block;
+  vertical-align:middle;
+  margin:0 15px;
+  position:relative
+}
+
+#versus-arena .game {
+  width:190px;
+  height:330px;
+  position:static
+}
+
+#versus-arena .score {
+  position:absolute;
+  right:100%;
+  margin-right:20px;
+  color:#7BC876;
+  font-size:20px;
+  text-align:right;
+  line-height:20px
+}
+
+#versus-arena .score:after {
+  content:"Won";
+  display:block;
+  font-size:14px
+}
+
+#versus-arena .blockrain-score-holder {
+  color:#7BC876;
+  line-height:20px
+}
+
+#versus-arena .blockrain-score-holder .blockrain-score-num {
+  font-weight:normal
+}
+
+#versus-arena #tetris-versus-1 .blockrain-score-holder {
+  top:auto;
+  right:100%;
+  bottom:0px;
+  margin-right:20px
+}
+
+#versus-arena #tetris-versus-2 .blockrain-score-holder {
+  top:auto;
+  right:auto;
+  left:100%;
+  bottom:0px;
+  margin-left:20px;
+  text-align:left
+}
+
+#versus-arena #tetris-versus-2 .score {
+  right:auto;
+  left:100%;
+  text-align:left;
+  margin-right:0;
+  margin-left:20px
+}
+
+#footer {
+  position:relative;
+  z-index:1;
+  text-align:center;
+  padding-bottom:60px
+}
+
+#footer .buttons {
+  padding:20px 0
+}
+
+#footer .buttons .btn {
+  background:#3b3d3b
+}
+
+#footer p {
+  font-size:.85em
+}
+
+#footer p a {
+  color:#ff7b00
+}
+
+#footer p img {
+  padding:15px 0
+}
+
+footer a {
+  color: #EBEBEB;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+/* Responsive */
+
+@media (max-width: 840px) {
+  section article {
+    max-width:560px
+  }
+}
+
+@media (max-width: 780px) {
+  #example-slider {
+    width:400px
+  }
+
+  .example {
+    height:340px
+  }
+
+  .example .game {
+    float:right
+  }
+
+  .example .game .blockrain-start-btn,.example .game .blockrain-game-over-btn {
+    left:50%;
+    bottom:auto;
+    top:50%;
+    margin-left:-60px;
+    margin-top:-20px
+  }
+
+  .example .game .blockrain-start-msg,.example .game .blockrain-game-over-msg {
+    top:50%;
+    margin-top:-75px
+  }
+}
+
+@media (max-width: 640px) {
+  section header h1:before,section header h1:after {
+    display:none
+  }
+
+  #example-slider {
+    width:240px;
+    height:460px
+  }
+
+  .example {
+    padding-top:100px
+  }
+
+  .example .game {
+    float:none
+  }
+
+  .example .instructions {
+    display:none
+  }
+
+  .example .game .blockrain-score-holder {
+    left:auto;
+    right:0;
+    margin-left:0;
+    width:100%;
+    top:-60px;
+    z-index:1;
+    text-align:right
+  }
+}
+
+@media (max-width: 560px) {
+  section article {
+    max-width:280px
+  }
+
+  #example-slider .buttons {
+    position:relative;
+    width:60%;
+    margin:0 auto;
+    padding-top:40px;
+    overflow:hidden
+  }
+
+  #example-slider .buttons .btn {
+    top:0;
+    margin:0;
+    position:relative;
+    left:auto;
+    right:auto;
+    height:50px;
+    width:28px
+  }
+
+  #example-slider .buttons .btn.btn-prev {
+    float:left
+  }
+
+  #example-slider .buttons .btn.btn-next {
+    float:right
+  }
+}
+
+@media (max-width: 400px) {
+  #hero .welcome {
+    margin-bottom:0;
+    padding:0 20px
+  }
+
+  #hero .blockrain-score-holder {
+    display:none !important
+  }
+
+  #footer {
+    padding:0 20px
+  }
+
+  #footer p {
+    padding:0 20px;
+    line-height:18px
+  }
+
+  #footer .buttons {
+    padding:10px 0 0 0
+  }
+
+  #hero .btn,#footer .btn {
+    width:100%;
+    margin:0 0 20px;
+    box-sizing:border-box
+  }
+
+  #hero .game {
+    opacity:.07
+  }
+
+  section header h1 {
+    font-size:1.7em
+  }
+
+  section header p {
+    font-size:1em
+  }
+}

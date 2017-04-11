@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700" rel="stylesheet"> 
+  <link href='https://fonts.googleapis.com/css?family=Play:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/blockrain.css">
+
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+
+  <title>Offline for maintenance</title>
+</head>
+
+<body>
+  <header>
+    <h1>Offline for maintenance</h1>
+    <h2>Please check back later. Or play some Tetris.</h2>
+  </header>
+
+  <section id="examples">
+    <article id="example-slider">
+      <div class="example">
+        <div class="instructions">
+          Use only arrows
+          <div class="keyboard">
+            <div class="key key-up">&#9650;</div>
+            <div class="key key-left">&#9668;</div>
+            <div class="key key-down">&#9660;</div>
+            <div class="key key-right">&#9658;</div>
+          </div>
+        </div>
+        <div class="game" id="tetris-demo"></div>
+      </div>
+    </article>
+
+    <footer>
+      <a id="credits" href="https://github.com/Aerolab/blockrain.js">Powered by Blockrain.js</a>
+    </footer>
+  </section>
+
+  <script src="js/jquery-1.11.1.min.js"></script>
+  <script src="js/blockrain.jquery.libs.js"></script>
+  <script src="js/blockrain.jquery.src.js"></script>
+  <script src="js/blockrain.jquery.themes.js"></script>
+
+  <script>
+    var $demo = $('#tetris-demo').blockrain({
+      theme: 'pontoon',
+      playText: ''
+    });
+  </script>
+</body>
+</html>
