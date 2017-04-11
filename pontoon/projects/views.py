@@ -1,12 +1,22 @@
 import logging
+import uuid
 
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
 from django.db.models import Q
-from django.views.generic.detail import DetailView
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.views.generic.detail import DetailView
+
+from guardian.decorators import permission_required_or_403
+from notifications.models import Notification
+from notifications.signals import notify
 
 from pontoon.base.models import Project
-from pontoon.base.utils import require_AJAX
+from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.contributors.views import ContributorsMixin
+from pontoon.projects import forms
 
 
 log = logging.getLogger('pontoon')
@@ -59,6 +69,82 @@ def ajax_info(request, slug):
 
     return render(request, 'projects/includes/info.html', {
         'project': project,
+    })
+
+
+@permission_required_or_403('base.can_manage_project')
+@transaction.atomic
+@require_AJAX
+def ajax_notifications(request, slug):
+    """Notifications tab."""
+    project = get_object_or_404(Project.objects.available(), slug=slug)
+    available_locales = project.locales.order_by('name')
+
+    # Send notifications
+    if request.method == 'POST':
+        form = forms.NotificationsForm(request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(form.errors.items()))
+
+        contributors = User.objects.filter(
+            translation__entity__resource__project=project,
+        )
+
+        # For performance reasons, only filter contributors for selected
+        # locales if different from all project locales
+        available_ids = sorted(list(available_locales.values_list('id', flat=True)))
+        selected_ids = sorted(split_ints(form.cleaned_data.get('selected_locales')))
+
+        if available_ids != selected_ids:
+            contributors = User.objects.filter(
+                translation__entity__resource__project=project,
+                translation__locale__in=available_locales.filter(id__in=selected_ids)
+            )
+
+        identifier = uuid.uuid4().hex
+        for contributor in contributors.distinct():
+            notify.send(
+                request.user,
+                recipient=contributor,
+                verb='has sent a message in',
+                target=project,
+                description=form.cleaned_data.get('message'),
+                identifier=identifier
+            )
+
+    # Detect previously sent notifications using a unique identifier
+    # TODO: We should simplify this with a custom Notifications model
+    notifications = []
+
+    identifiers = set(list(Notification.objects.filter(
+        description__isnull=False,
+        target_content_type=ContentType.objects.get_for_model(project),
+        target_object_id=project.id
+    ).values_list("data", flat=True)))
+
+    for identifier in identifiers:
+        notifications.append(Notification.objects.filter(data__contains=identifier)[0])
+
+    notifications.sort(key=lambda x: x.timestamp, reverse=True)
+
+    # Recipient shortcuts
+    incomplete = []
+    complete = []
+    for available_locale in available_locales:
+        approved_percent = available_locale.get_chart(project)['approved_percent']
+        if approved_percent == 100:
+            complete.append(available_locale.pk)
+        else:
+            incomplete.append(available_locale.pk)
+
+    return render(request, 'projects/includes/manual_notifications.html', {
+        'form': forms.NotificationsForm(),
+        'project': project,
+        'available_locales': available_locales,
+        'notifications': notifications,
+        'incomplete': incomplete,
+        'complete': complete,
     })
 
 

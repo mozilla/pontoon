@@ -1,0 +1,63 @@
+{% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
+{% import "contributors/widgets/notifications_menu.html" as Notifications with context %}
+
+<section class="manual-notifications notifications clearfix">
+  <div class="menu permanent left-column">
+    <ul>
+      <li class="selected">
+        <a href="{{ url('pontoon.projects.notifications', project.slug) }}" data-target="#compose">Compose</a>
+      </li>
+      <li class="horizontal-separator"></li>
+      <li>
+        <a href="{{ url('pontoon.projects.notifications', project.slug) }}sent/" data-target="#sent">
+          <span class="name">Sent</span>
+          <span class="count">{{ notifications|length }}</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="menu permanent right-column">
+    <section id="compose" class="selected">
+      <form id="send-notification" method="POST" action="{{ url('pontoon.projects.ajax.notifications', project.slug) }}">
+        {% csrf_token %}
+
+        <h3><span class="stress">#1</span> Choose recipient teams</h3>
+        <div class="locale-selector">
+          <div class="clearfix">
+            {{ multiple_locale_selector.render(available_locales, [], form_field='selected_locales') }}
+          </div>
+          <div class="toolbar clearfix">
+            <div class="shortcuts clearfix">
+              <a class="complete" href="#choose-complete" data-ids="{{ complete|to_json() }}">Complete only &rarr;</a>
+              <a class="incomplete" href="#choose-incomplete" data-ids="{{ incomplete|to_json() }}">Incomplete only &rarr;</a>
+            </div>
+            <div class="errors">
+              <p>Select at least one recipient</p>
+            </div>
+          </div>
+        </div>
+
+        <h3><span class="stress">#2</span> Enter notification message</h3>
+        <div class="message-wrapper">
+          {{ form.message }}
+          <div class="toolbar clearfix">
+            <div class="errors">
+              <p>Notification message cannot be empty</p>
+            </div>
+            <div class="subtitle">
+              <p>Supports html</p>
+            </div>
+          </div>
+        </div>
+
+        <menu class="controls">
+          <button class="button active send">Send</button>
+        </menu>
+      </form>
+    </section>
+    <section id="sent">
+      {{ Notifications.list(notifications=notifications, no_title="No notifications sent.", no_description="Here you’ll see notifications sent in the past") }}
+    </section>
+  </div>
+</section>

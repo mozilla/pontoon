@@ -3,13 +3,13 @@
 <div class="clearfix">
     <div class="tick"></div>
     <div class="content">
-        <h3>
+        <h4>
             <div class="day">{{ event.date.strftime('%d') }}</div>
             <div>
                 <div class="weekday">{{ event.date.strftime('%A') }}</div>
                 <div class="month">{{ event.date.strftime('%B %Y') }}</div>
             </div>
-        </h3>
+        </h4>
         <h2>
             {% if event.type == 'translation' %}
             Added new translation

@@ -1,5 +1,5 @@
 // Contains behaviours of widgets that are shared between admin and end-user interface.
-;$(function() {
+$(function() {
   /**
    * Function keeps track of inputs that contain informations abouyt the order of selected locales.
    */
@@ -12,10 +12,10 @@
         }).get();
 
     $selectedLocalesField.val(selectedLocales.join());
-  };
+  }
 
   // Choose locales
-  $('.locale.select').on('click.pontoon', 'li', function (e) {
+  $('body').on('click', '.locale.select li', function (e) {
     var target = $(this).parents('.locale.select').siblings('.locale.select').find('ul'),
         clone = $(this).remove();
     target.prepend(clone);
@@ -23,7 +23,7 @@
   });
 
   // Choose/remove all locales
-  $('.choose-all, .remove-all').click(function (e) {
+  $('body').on('click', '.choose-all, .remove-all', function (e) {
     e.preventDefault();
     var ls = $(this).parents('.locale.select'),
         target = ls.siblings('.locale.select').find('ul'),
@@ -32,14 +32,16 @@
     updateSelectedLocales();
   });
 
-  $('.locale.select .sortable').sortable({
-    axis: 'y',
-    containment: 'parent',
-    update: updateSelectedLocales,
-    tolerance: 'pointer'
-  });
+  if ($.ui && $.ui.sortable) {
+    $('.locale.select .sortable').sortable({
+      axis: 'y',
+      containment: 'parent',
+      update: updateSelectedLocales,
+      tolerance: 'pointer'
+    });
+  }
 
-  $('form.user-locales-settings').submit(function(ev) {
+  $('body').on('submit', '.form.user-locales-settings', function (e) {
     updateSelectedLocales();
   });
 });

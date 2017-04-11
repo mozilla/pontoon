@@ -47,7 +47,7 @@ table.table {
   width: auto;
 }
 
-.table h3 {
+.table h4 {
   overflow: hidden;
   padding-left: 1px; /* Needed to avoid cutting off text due to overflow: hidden; */
   text-align: left;
@@ -55,15 +55,15 @@ table.table {
   white-space: nowrap;
 }
 
-.table .name h3 {
+.table .name h4 {
   width: 219px;
 }
 
-.table .resource h3 {
+.table .resource h4 {
   width: 419px;
 }
 
-.table h3 a {
+.table h4 a {
   font-size: 15px;
   line-height: 47px;
   padding: 12px 0 11px;

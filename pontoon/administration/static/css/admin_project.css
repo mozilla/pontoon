@@ -54,32 +54,17 @@ form > div.inline.delete {
   opacity: 0.3;
 }
 
-h2 {
-  color: #EBEBEB;
-  font-size: 30px;
-  font-weight: 300;
-  letter-spacing: -1px;
-  margin-left: -2px;
-  margin-top: 70px;
-  text-align: left;
-  text-transform: none;
-}
-
-h2.mini {
-  margin-top: 30px;
-}
-
-h2 .small {
-  color: #AAAAAA;
-  font-size: 0.7em;
-}
-
 h3 {
-  color: #F36;
+  font-size: 30px;
+  margin-top: 70px;
+}
+
+h4 {
+  color: #EBEBEB;
+  font-size: 18px;
+  font-style: italic;
   font-weight: 300;
-  margin-left: -1px;
-  text-align: left;
-  text-transform: uppercase;
+  margin-top: 40px;
 }
 
 label {
@@ -139,6 +124,7 @@ form a:link, form a:visited {
 form a.add-inline,
 form a.add-repo {
   font-size: 14px;
+  font-style: normal;
   letter-spacing: 0;
   margin-top: 17px;
 }

@@ -91,22 +91,22 @@
   clear: both;
 }
 
-#main .content h3 {
+#main .content h4 {
 }
 
-#main .content h3 > div {
+#main .content h4 > div {
   display: inline-block;
 }
 
-#main .content h3 .day {
+#main .content h4 .day {
   font-size: 36px;
 }
 
-#main .content h3 .weekday {
+#main .content h4 .weekday {
   text-transform: uppercase;
 }
 
-#main .content h3 .month {
+#main .content h4 .month {
   font-weight: 300;
 }
 

@@ -274,6 +274,9 @@ PIPELINE_CSS = {
             'css/table.css',
             'css/contributors.css',
             'css/heading_info.css',
+            'css/sidebar_menu.css',
+            'css/multiple_locale_selector.css',
+            'css/manual_notifications.css',
         ),
         'output_filename': 'css/project.min.css',
     },
@@ -339,6 +342,7 @@ PIPELINE_CSS = {
     },
     'notifications': {
         'source_filenames': (
+            'css/sidebar_menu.css',
             'css/notifications.css',
         ),
         'output_filename': 'css/notifications.min.css',
@@ -409,6 +413,9 @@ PIPELINE_JS = {
             'js/table.js',
             'js/progress-chart.js',
             'js/tabs.js',
+            'js/sidebar_menu.js',
+            'js/multiple_locale_selector.js',
+            'js/manual_notifications.js',
         ),
         'output_filename': 'js/project.min.js',
     },
@@ -465,6 +472,7 @@ PIPELINE_JS = {
     },
     'notifications': {
         'source_filenames': (
+            'js/sidebar_menu.js',
             'js/notifications.js',
         ),
         'output_filename': 'js/notifications.min.js',
@@ -785,3 +793,7 @@ else:
     JS_TRUSTED_ORIGINS = [
         SITE_URL,
     ]
+
+# Attach extra arguments passed to notify.send(...) to the .data attribute
+# of the Notification object.
+NOTIFICATIONS_USE_JSONFIELD = True

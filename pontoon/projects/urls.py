@@ -32,6 +32,11 @@ urlpatterns = [
         views.project,
         name='pontoon.projects.info'),
 
+    # Project notifications
+    url(r'^projects/(?P<slug>[\w-]+)/notifications/$',
+        views.project,
+        name='pontoon.projects.notifications'),
+
     # AJAX view: Project teams
     url(r'^projects/(?P<slug>[\w-]+)/ajax/$',
         views.ajax_teams,
@@ -46,4 +51,9 @@ urlpatterns = [
     url(r'^projects/(?P<slug>[\w-]+)/ajax/info/$',
         views.ajax_info,
         name='pontoon.projects.ajax.info'),
+
+    # AJAX view: Project notifications
+    url(r'^projects/(?P<slug>[\w-]+)/ajax/notifications/$',
+        views.ajax_notifications,
+        name='pontoon.projects.ajax.notifications'),
 ]

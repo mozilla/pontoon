@@ -21,9 +21,9 @@
 {% macro item(project, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False) %}
   <tr class="{{ class }}">
     <td class="name" data-slug="{{ project.slug }}">
-      <h3>
+      <h4>
         <a href="{{ main_link }}">{{ project.name }}</a>
-      </h3>
+      </h4>
     </td>
     <td class="deadline">
       <time datetime="{% if project.deadline %}{{ project.deadline.isoformat() }}{% endif %}" class="{{ project.deadline|date_status(chart.approved_percent == 100) }}">{{ project.deadline|format_datetime('short_date', default='―') }}</time>

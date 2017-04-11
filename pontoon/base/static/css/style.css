@@ -355,6 +355,23 @@ h2 {
   padding-bottom: 2px;
 }
 
+h3 {
+  color: #7BC876;
+  font-size: 26px;
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: -1px;
+}
+
+h3 .stress {
+  color: #EBEBEB;
+}
+
+h3 .small {
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
 a:link,
 a:visited {
   color: #AAAAAA;
@@ -1000,48 +1017,100 @@ header .right .select .menu {
   max-height: none;
 }
 
+#notifications .menu li.see-all {
+  padding: 0;
+  text-align: center;
+}
+
 #notifications .menu ul.notification-list {
   max-height: 280px;
 }
 
-.notifications .menu li {
+.notifications .menu ul.notification-list li.notification-item {
+  cursor: default;
   padding: 0;
-}
-
-#notifications .menu li.see-all {
-  text-align: center;
 }
 
 .notifications .menu li.notification-item span {
   float: none;
 }
 
-.notifications .menu li.notification-item .actor {
+.notifications .menu li.notification-item a {
   color: #F36;
+  display: inline;
 }
 
 .notifications .menu li.notification-item .verb {
   color: #EBEBEB;
 }
 
+.notifications .menu li.notification-item .message {
+  padding: 10px;
+}
+
+.notifications .menu li.notification-item .message {
+  padding: 10px;
+}
+
+/* Users can include HTML tags in their messages */
+.notifications .menu li.notification-item .message h1,
+.notifications .menu li.notification-item .message h2,
+.notifications .menu li.notification-item .message h3,
+.notifications .menu li.notification-item .message h4,
+.notifications .menu li.notification-item .message h5,
+.notifications .menu li.notification-item .message h6 {
+  color: #EBEBEB;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: bold;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.notifications .menu li.notification-item .message h1 {
+  font-size: 18px;
+}
+
+.notifications .menu li.notification-item .message h2 {
+  font-size: 16px;
+}
+
+.notifications .menu li.notification-item .message p {
+  padding: 5px 0;
+}
+
+.notifications .menu li.notification-item .message ol {
+  margin-left: 1.2em;
+}
+
+.notifications .menu li.notification-item .message ul {
+  list-style: inside;
+}
+
+/* End message styling */
+
 .notifications .menu li.notification-item .timeago {
   color: #888888;
   font-size: 11px;
   font-weight: normal;
   margin-top: 8px;
+  text-align: right;
   text-transform: uppercase;
 }
 
-#notifications .menu li.horizontal-separator,
-.notifications .menu ul.notification-list li.horizontal-separator {
+#notifications .menu li.horizontal-separator {
   border-color: #333941;
+  margin: 0;
+}
+
+.notification-list li.horizontal-separator {
+  border-color: #272A2F;
   margin: 0;
 }
 
 .notifications .menu li.no {
   background: transparent;
   color: inherit;
-  cursor: default;
   padding: 0 4px 14px;
   text-align: center;
 }
@@ -1068,9 +1137,14 @@ header .right .select .menu {
   padding-top: 4px;
 }
 
-.notifications .menu li a {
+#notifications .menu li > a,
+.notifications .menu li > .item-content {
   display: block;
   padding: 10px;
+}
+
+.notifications:not(#notifications) .menu li > .item-content {
+  font-size: 15px;
 }
 
 #profile {

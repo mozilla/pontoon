@@ -1,8 +1,8 @@
 {% macro render(title, type, formset) %}
-<h2 class="mini">
-    <span class="small">{{ title }}</span>
+<h4>
+    <span>{{ title }}</span>
     <a href="#" class="add-inline" data-type="{{ type }}">Add more</a>
-</h2>
+</h4>
 
 {{ formset.management_form }}
 {% for form in formset %}
