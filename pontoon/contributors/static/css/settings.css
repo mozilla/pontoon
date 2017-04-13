@@ -26,17 +26,6 @@ h3 .small {
   margin-top: 50px;
 }
 
-.controls .button {
-  background: #7BC876;
-  border: none;
-  border-radius: 3px;
-  color: #272A2F;
-  font-size: 14px;
-  font-weight: 400;
-  height: 31px;
-  text-transform: uppercase;
-}
-
 .controls .cancel {
   float: none;
   margin: 9px;

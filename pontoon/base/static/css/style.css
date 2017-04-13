@@ -1448,9 +1448,14 @@ body > form,
 
 .controls button.button:hover,
 .controls a.button:hover,
-.controls li.active a.button {
+.controls li.active a.button,
+.controls .button.active {
   background: #7BC876;
   color: #272A2F;
+}
+
+.controls .button.active {
+  width: 100px;
 }
 
 .controls .button.selector:hover {

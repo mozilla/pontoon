@@ -257,10 +257,7 @@
 }
 
 #permissions-form .button.save {
-  background: #7BC876;
-  color: #272A2F;
   float: right;
-  width: 100px;
 }
 
 #permissions-form #project-selector  {

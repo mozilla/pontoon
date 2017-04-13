@@ -115,10 +115,8 @@ form .button {
   padding: 4px;
 }
 
-.controls .button {
-  background: #7BC876;
+#admin-form .controls .button {
   border-radius: 3px;
-  color: #272A2F;
   font-weight: 400;
   text-transform: uppercase;
   width: 130px;
