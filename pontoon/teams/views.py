@@ -77,7 +77,6 @@ def ajax_info(request, locale):
     })
 
 
-@login_required(redirect_field_name='', login_url='/403')
 @permission_required_or_403('base.can_manage_locale', (Locale, 'code', 'locale'))
 @transaction.atomic
 def ajax_permissions(request, locale):
