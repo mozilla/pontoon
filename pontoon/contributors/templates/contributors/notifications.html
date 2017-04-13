@@ -4,14 +4,6 @@
 
 {% block title %}Notifications{% endblock %}
 
-{% block before %}
-<!-- Server data -->
-<div id="server"
-     class="hidden"
-     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}>
-</div>
-{% endblock %}
-
 {% block heading %}
   {{ Heading.heading(title='Notifications', subtitle='Updates for localizations you contribute to') }}
 {% endblock %}
@@ -29,7 +21,7 @@
             <li class="horizontal-separator"></li>
           {% endif %}
           <li class="project">
-            <a href="{{ url('pontoon.contributors.notifications') }}{{ slug }}" data-notifications="{{ projects[slug].notifications|to_json() }}">
+            <a href="{{ url('pontoon.contributors.notifications') }}{{ slug }}/" data-notifications="{{ projects[slug].notifications|to_json() }}">
               <span class="name">{{ projects[slug].name }}</span>
               <span class="count">{{ projects[slug].notifications|length }}</span>
             </a>
