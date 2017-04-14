@@ -115,10 +115,18 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-for channel in ['aurora', 'beta']:
+for channel in ['beta', 'central']:
     for repo in SOURCE_REPOS:
         ending = repo + '-' + channel
-        url = 'ssh://hg.mozilla.org/releases/' + ending
+
+        url_folder = ''
+        if channel == 'central':
+            if repo == 'mozilla':
+                url_folder = 'l10n/'
+        else:
+            url_folder = 'releases/'
+
+        url = 'ssh://hg.mozilla.org/' + url_folder + ending
         target = os.path.join('source', ending)
 
         # Clone or update source repositories
@@ -143,9 +151,9 @@ for channel in ['aurora', 'beta']:
             if os.path.exists(destination):
                 shutil.rmtree(destination)
 
-        # Needed temporarily because devtools aren't moved in beta yet
-        if os.path.exists(origin):
-            shutil.copytree(origin, destination)
+            # Needed temporarily because devtools aren't moved in beta yet
+            if os.path.exists(origin):
+                shutil.copytree(origin, destination)
 
         # Commit and push target repositories
         push(target)
