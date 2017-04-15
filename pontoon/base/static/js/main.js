@@ -653,6 +653,7 @@ $(function() {
   $('body').on('click', '.menu input[type=search]', function(e) {
     e.stopPropagation();
   }).on('input.search', '.menu input[type=search]', function(e) {
+    // Tab
     if (e.which === 9) {
       return;
     }
@@ -670,6 +671,11 @@ $(function() {
       ul.find('.no-match').show();
     } else {
       ul.find('.no-match').hide();
+    }
+  }).on('keydown.search', '.menu input[type=search]', function(e) {
+    // Prevent form submission on Enter
+    if (e.which === 13) {
+      return false;
     }
   });
 
