@@ -22,8 +22,8 @@ $(function() {
     }
   });
 
-  // Handle "Copy to clipboard" on search results.
-  var clipboard = new Clipboard('.search .machinery li');
+  // Handle "Copy to clipboard" of search results on main Machinery page
+  var clipboard = new Clipboard('.machinery .machinery li');
 
   clipboard.on('success', function(event) {
     var successMessage = $('<span class="clipboard-success">Copied!</span>'),
