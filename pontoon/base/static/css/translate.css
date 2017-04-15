@@ -365,6 +365,7 @@ body > header .locale.select {
 }
 
 #progress .number {
+  font-weight: bold;
   left: 0;
   line-height: 20px;
   position: absolute;
@@ -378,6 +379,7 @@ body > header .locale.select {
   color: #888888;
   display: block;
   font-size: 10px;
+  font-weight: 300;
   line-height: 3px;
 }
 
