@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 """
-This script builds up-to-date versions of Firefox Developer Edition (Aurora)
-language packs from mozilla source code and localizations and makes them
-available in a public repository.
+This script builds up-to-date versions of Firefox Nightly language packs
+from mozilla source code and localizations and makes them available
+in a public repository.
 
 A `langpacks` folder is required on the same directory level as this script,
 with the following contents:
-* `mozilla-aurora`: SOURCE_REPOSITORY checkout
-* `mozilla-aurora/.mozconfig`: file set to reflect this folder structure, see
-  https://developer.mozilla.org/docs/Mozilla/Creating_a_language_pack#Pre-build_steps
-* `mozilla-aurora/langpacks/l10n`: contains L10N_REPOSITORIES checkouts
-* `mozilla-aurora/langpacks/build`: empty folder to contain build
+* `mozilla-central`: SOURCE_REPOSITORY checkout
+* `mozilla-central/.mozconfig`: file set to reflect this folder structure, see https://developer.mozilla.org/docs/Mozilla/Creating_a_language_pack#Pre-build_steps
+* `mozilla-central/langpacks/l10n`: contains L10N_REPOSITORIES checkouts
+* `mozilla-central/langpacks/build`: empty folder to contain build
 * `pontoon-langpacks`: TARGET_REPOSITORY checkout (you need write access)
 
 Required libraries:
@@ -29,12 +28,12 @@ import shutil
 import subprocess
 
 
-SOURCE_REPOSITORY = 'ssh://hg.mozilla.org/releases/mozilla-aurora/'
+SOURCE_REPOSITORY = 'ssh://hg.mozilla.org/mozilla-central/'
 TARGET_REPOSITORY = 'git@github.com:mathjazz/pontoon-langpacks.git'
 
 L10N_REPOSITORIES = [{
-    'url': 'ssh://hg.mozilla.org/releases/l10n/mozilla-aurora/{locale_code}/',
-    'locales_url': 'https://hg.mozilla.org/releases/l10n/mozilla-aurora/'
+    'url': 'ssh://hg.mozilla.org/l10n-central/{locale_code}/',
+    'locales_url': 'https://hg.mozilla.org/l10n-central/'
 }, {
     'url': 'ssh://hg@bitbucket.org/mozilla-l10n/{locale_code}/',
     'locales_url': 'https://api.bitbucket.org/2.0/repositories/mozilla-l10n'
@@ -90,12 +89,12 @@ dname = os.path.dirname(abspath)
 os.chdir(os.path.join(dname, 'langpacks'))
 
 # Update source repository
-target = 'mozilla-aurora'
+target = 'mozilla-central'
 pull(SOURCE_REPOSITORY, target)
 
 # Configure
 write('Running ./mach configure. Please wait...')
-execute(['sh', 'mach', 'configure'], 'mozilla-aurora')
+execute(['sh', 'mach', 'configure'], 'mozilla-central')
 write('Configuration complete.')
 
 for repository in L10N_REPOSITORIES:
@@ -112,12 +111,12 @@ for repository in L10N_REPOSITORIES:
     for locale in repository['locales']:
         # Update locale repositories
         url = repository['url'].format(locale_code=locale)
-        target = os.path.join('mozilla-aurora/langpacks/l10n', locale)
+        target = os.path.join('mozilla-central/langpacks/l10n', locale)
         pull(url, target)
 
         # Build locale langpacks
         write('Building langpack for {locale}...'.format(locale=locale))
-        target = 'mozilla-aurora/langpacks/build/browser/locales/'
+        target = 'mozilla-central/langpacks/build/browser/locales/'
         execute(['make', 'merge-' + locale, 'LOCALE_MERGEDIR=$(pwd)/mergedir'], target)
         execute(['make', 'langpack-' + locale, 'LOCALE_MERGEDIR=$(pwd)/mergedir'], target)
         write('Langpack for {locale} built!'.format(locale=locale))
@@ -131,7 +130,7 @@ if code != 0:
     execute(["git", "clone", TARGET_REPOSITORY, 'pontoon-langpacks'])
 
 # Move langpack to target repository
-source = 'mozilla-aurora/langpacks/build/dist/linux-x86_64/xpi'
+source = 'mozilla-central/langpacks/build/dist/linux-x86_64/xpi'
 for filename in os.listdir(source):
     shutil.copyfile(
         os.path.join(source, filename),
