@@ -16,6 +16,18 @@ urlpatterns = [
     url(r'^ga/(?P<url>.*)$', RedirectView.as_view(url="/ga-IE/%(url)s", permanent=True)),
     url(r'^pt/(?P<url>.*)$', RedirectView.as_view(url="/pt-PT/%(url)s", permanent=True)),
 
+    # Redirect legacy Aurora projects
+    url(r'^projects/firefox-aurora/(?P<url>.*)$', RedirectView.as_view(url="/projects/firefox/%(url)s", permanent=True)),
+    url(r'^projects/firefox-for-android-aurora/(?P<url>.*)$', RedirectView.as_view(url="/projects/firefox-for-android/%(url)s", permanent=True)),
+    url(r'^projects/thunderbird-aurora/(?P<url>.*)$', RedirectView.as_view(url="/projects/thunderbird/%(url)s", permanent=True)),
+    url(r'^projects/lightning-aurora/(?P<url>.*)$', RedirectView.as_view(url="/projects/lightning/%(url)s", permanent=True)),
+    url(r'^projects/seamonkey-aurora/(?P<url>.*)$', RedirectView.as_view(url="/projects/seamonkey/%(url)s", permanent=True)),
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/firefox-aurora/(?P<url>.*)$', RedirectView.as_view(url="/%(locale)s/firefox/%(url)s", permanent=True)),
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/firefox-for-android-aurora/(?P<url>.*)$', RedirectView.as_view(url="/%(locale)s/firefox-for-android/%(url)s", permanent=True)),
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/thunderbird-aurora/(?P<url>.*)$', RedirectView.as_view(url="/%(locale)s/thunderbird/%(url)s", permanent=True)),
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/lightning-aurora/(?P<url>.*)$', RedirectView.as_view(url="/%(locale)s/lightning/%(url)s", permanent=True)),
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/seamonkey-aurora/(?P<url>.*)$', RedirectView.as_view(url="/%(locale)s/seamonkey/%(url)s", permanent=True)),
+
     # Accounts
     url(r'^accounts/', include('pontoon.allauth_urls')),
 
