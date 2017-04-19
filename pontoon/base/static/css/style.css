@@ -218,6 +218,12 @@ button {  width: auto; overflow: visible; }
 
 /* COMMON */
 
+/* Bug 1351813 */
+[lang="ar"],
+[lang="fa"] {
+    font-size: 1.1em !important;
+}
+
 .status.fa {
   font-size: 16px;
   left: 20px;
