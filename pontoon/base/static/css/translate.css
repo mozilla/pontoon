@@ -1383,6 +1383,7 @@ body > header aside p {
 
 #editor textarea {
   background: #FFFFFF;
+  color: #222222;
   display: block;
   font-size: 13px;
   height: 20%;
