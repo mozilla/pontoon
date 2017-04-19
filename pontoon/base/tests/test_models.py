@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os.path
 
 from django.core.management import call_command
@@ -1115,6 +1116,102 @@ class TranslationTests(TestCase):
             target=translation.string,
             locale=translation.locale
         )
+
+
+class SearchQueryTests(TestCase):
+    """
+    Test search queries.
+    """
+    def setUp(self):
+        super(SearchQueryTests, self).setUp()
+        self.project = ProjectFactory.create()
+        self.locale = LocaleFactory.create()
+        entities = [
+            {
+                'key': 'access.key',
+                'string': 'First entity string',
+                'string_plural': 'First plural string',
+                'comment': 'random notes'
+            },
+            {
+                'key': 'second.key',
+                'string': 'Second entity string',
+                'string_plural': 'Second plural string',
+                'comment': 'random'
+            },
+            {
+                'key': 'third.key',
+                'string': u'Third entity string with some twist: ZAŻÓŁĆ GĘŚLĄ',
+                'string_plural': 'Third plural',
+                'comment': 'even more random notes'
+            },
+        ]
+        translations = [
+            {
+                'string': 'First translation',
+            },
+            {
+                'string': 'Second translation',
+            },
+            {
+                'string': 'Third translation',
+            },
+        ]
+        self.entities = [
+            EntityFactory.create(resource__project=self.project, **e)
+            for e in entities
+        ]
+
+        self.translations = [
+            TranslationFactory.create(
+                locale=self.locale,
+                entity=self.entities[i],
+                entity__resource__project=self.project,
+                **t
+            )
+            for (i, t) in enumerate(translations)
+        ]
+
+    def search(self, query):
+        """
+        Helper method for shorter search syntax.
+        """
+        return list(Entity.for_project_locale(
+            self.project,
+            self.locale,
+            search=query,
+        ))
+
+    def test_invalid_query(self):
+        """
+        We shouldn't return any records if there aren't any matching rows.
+        """
+        assert_equal(self.search("localization"), [])
+        assert_equal(self.search("testing search queries"), [])
+        assert_equal(self.search(u"Ń"), [])
+
+    def test_search_entities(self):
+        """
+        Search via querystrings available in entities.
+        """
+        assert_equal(self.search('e'), self.entities)
+        assert_equal(self.search('entity string'), self.entities)
+
+        assert_equal(self.search(u'first entity'), [self.entities[0]])
+        assert_equal(self.search(u'second entity'), [self.entities[1]])
+        assert_equal(self.search(u'third entity'), [self.entities[2]])
+
+        # Check if we're able search by unicode characters.
+        assert_equal(self.search(u'gęślą'), [self.entities[2]])
+
+    def test_search_translation(self):
+        """
+        Search entities by contents of their translations.
+        """
+        assert_equal(self.search('translation'), self.entities)
+        assert_equal(self.search('first translation'), [self.entities[0]])
+        assert_equal(self.search('second translation'), [self.entities[1]])
+        assert_equal(self.search('third translation'), [self.entities[2]])
 
 
 class EntityFilterTests(TestCase):
