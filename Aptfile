@@ -1,2 +1,3 @@
 libsqlite3-dev
 subversion
+libmemcached-dev
