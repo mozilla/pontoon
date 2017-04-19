@@ -39,7 +39,7 @@ def teams(request):
 
 def team(request, locale):
     """Team dashboard."""
-    locale = get_object_or_404(Locale, code__iexact=locale)
+    locale = get_object_or_404(Locale, code=locale)
 
     return render(request, 'teams/team.html', {
         'locale': locale,
@@ -49,7 +49,7 @@ def team(request, locale):
 @require_AJAX
 def ajax_projects(request, locale):
     """Projects tab."""
-    locale = get_object_or_404(Locale, code__iexact=locale)
+    locale = get_object_or_404(Locale, code=locale)
 
     projects = (
         Project.objects.available()
@@ -70,7 +70,7 @@ def ajax_projects(request, locale):
 @require_AJAX
 def ajax_info(request, locale):
     """Info tab."""
-    locale = get_object_or_404(Locale, code__iexact=locale)
+    locale = get_object_or_404(Locale, code=locale)
 
     return render(request, 'teams/includes/info.html', {
         'locale': locale,
@@ -80,7 +80,7 @@ def ajax_info(request, locale):
 @permission_required_or_403('base.can_manage_locale', (Locale, 'code', 'locale'))
 @transaction.atomic
 def ajax_permissions(request, locale):
-    l = get_object_or_404(Locale, code__iexact=locale)
+    l = get_object_or_404(Locale, code=locale)
     project_locales = l.project_locale.available()
 
     if request.method == 'POST':
@@ -129,7 +129,7 @@ def ajax_permissions(request, locale):
 def request_projects(request, locale):
     """Request projects to be added to locale."""
     slug_list = request.POST.getlist('projects[]')
-    locale = get_object_or_404(Locale, code__iexact=locale)
+    locale = get_object_or_404(Locale, code=locale)
 
     # Validate projects
     project_list = (
@@ -172,7 +172,7 @@ class LocaleContributorsView(ContributorsMixin, DetailView):
     """
     template_name = 'teams/includes/contributors.html'
     model = Locale
-    slug_field = 'code__iexact'
+    slug_field = 'code'
     slug_url_kwarg = 'code'
 
     def get_context_object_name(self, obj):

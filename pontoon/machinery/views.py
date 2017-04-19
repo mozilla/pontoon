@@ -23,7 +23,7 @@ def machinery(request):
         request, Locale.objects) or 'en-GB'
 
     return render(request, 'machinery/machinery.html', {
-        'locale': Locale.objects.get(code__iexact=locale),
+        'locale': Locale.objects.get(code=locale),
         'locales': Locale.objects.all(),
     })
 
@@ -38,7 +38,7 @@ def translation_memory(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     max_results = 5
-    locale = get_object_or_404(Locale, code__iexact=locale)
+    locale = get_object_or_404(Locale, code=locale)
     entries = TranslationMemoryEntry.objects.minimum_levenshtein_ratio(text).filter(locale=locale)
 
     # Exclude existing entity
