@@ -88,7 +88,7 @@ def heroku_setup(request):
 
 def translate(request, locale, slug, part):
     """Translate view."""
-    locale = get_object_or_404(Locale, code__iexact=locale)
+    locale = get_object_or_404(Locale, code=locale)
     project = get_object_or_404(Project.objects.available(), slug=slug)
 
     if locale not in project.locales.all():
@@ -147,7 +147,7 @@ def entities(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=err))
 
     project = get_object_or_404(Project, slug=project)
-    locale = get_object_or_404(Locale, code__iexact=locale)
+    locale = get_object_or_404(Locale, code=locale)
 
     status = request.POST.get('status', '')
     extra = request.POST.get('extra', '')
@@ -364,7 +364,7 @@ def get_translations_from_other_locales(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     entity = get_object_or_404(Entity, pk=entity)
-    locales = entity.resource.project.locales.exclude(code__iexact=locale)
+    locales = entity.resource.project.locales.exclude(code=locale)
     plural_form = None if entity.string_plural == "" else 0
 
     translations = Translation.objects.filter(
@@ -389,7 +389,7 @@ def get_translation_history(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     entity = get_object_or_404(Entity, pk=entity)
-    locale = get_object_or_404(Locale, code__iexact=locale)
+    locale = get_object_or_404(Locale, code=locale)
 
     translations = Translation.objects.filter(entity=entity, locale=locale)
     if plural_form != "-1":
@@ -514,7 +514,7 @@ def update_translation(request):
         return HttpResponse("error")
 
     try:
-        l = Locale.objects.get(code__iexact=locale)
+        l = Locale.objects.get(code=locale)
     except Locale.DoesNotExist as error:
         log.error(str(error))
         return HttpResponse("error")

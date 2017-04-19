@@ -42,7 +42,7 @@ def get_project_locale_from_request(request, locales):
 
     for a in accept:
         try:
-            return locales.get(code__iexact=a[0]).code
+            return locales.get(code=a[0]).code
         except:
             continue
 
@@ -377,7 +377,7 @@ def get_download_content(slug, code, part):
     from pontoon.base.models import Entity, Locale, Project, Resource
 
     project = get_object_or_404(Project, slug=slug)
-    locale = get_object_or_404(Locale, code__iexact=code)
+    locale = get_object_or_404(Locale, code=code)
 
     # Download a ZIP of all files if project has > 1 and < 10 resources
     resources = Resource.objects.filter(project=project, translatedresources__locale=locale)
@@ -493,7 +493,7 @@ def handle_upload_content(slug, code, part, f, user):
 
     relative_path = _get_relative_path_from_part(slug, part)
     project = get_object_or_404(Project, slug=slug)
-    locale = get_object_or_404(Locale, code__iexact=code)
+    locale = get_object_or_404(Locale, code=code)
     resource = get_object_or_404(Resource, project__slug=slug, path=relative_path)
 
     # Store uploaded file to a temporary file and parse it

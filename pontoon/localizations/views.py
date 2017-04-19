@@ -18,7 +18,7 @@ log = logging.getLogger('pontoon')
 
 def localization(request, code, slug):
     """Locale-project overview."""
-    locale = get_object_or_404(Locale, code__iexact=code)
+    locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project.objects.available(), slug=slug)
     project_locale = get_object_or_404(ProjectLocale, locale=locale, project=project)
 
@@ -35,7 +35,7 @@ def localization(request, code, slug):
 @require_AJAX
 def ajax_resources(request, code, slug):
     """Resources tab."""
-    locale = get_object_or_404(Locale, code__iexact=code)
+    locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(
         Project.objects.available().prefetch_related('subpage_set'),
         slug=slug
@@ -88,7 +88,7 @@ class LocalizationContributorsView(ContributorsMixin, DetailView):
     def get_object(self):
         return get_object_or_404(
             ProjectLocale,
-            locale__code__iexact=self.kwargs['code'],
+            locale__code=self.kwargs['code'],
             project__slug=self.kwargs['slug']
         )
 
