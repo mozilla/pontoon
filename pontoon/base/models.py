@@ -1769,8 +1769,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
             entities = (
                 Entity.objects.filter(
-                    Q(translation__string__icontains=search) | Q(translation__entity_document__icontains=search),
-                    translation__locale=locale,
+                    Q(translation__string__icontains=search, translation__locale=locale) | Q(translation__entity_document__icontains=search),
                     pk__in=entities
                 )
                 .distinct()
