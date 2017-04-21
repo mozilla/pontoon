@@ -1085,9 +1085,12 @@ body > header aside p {
 #entitylist > .wrapper > ul > li p span.translation-string {
   color: #AAAAAA;
   display: none;
-  font-style: italic;
   padding-left: 2%;
   text-align: start;
+}
+
+#entitylist > .wrapper > ul > li p span.translation-string.open-sans {
+  font-style: italic;
 }
 
 #entitylist > .wrapper > ul > li p span.translation-string[lang="mk"],

@@ -25,6 +25,7 @@ var Pontoon = (function (my) {
     renderEntity: function (index, entity) {
       var self = this,
           status = self.getEntityStatus(entity),
+          openSans = (['Latin', 'Greek', 'Cyrillic', 'Vietnamese'].indexOf(self.locale.script) > -1) ? ' open-sans' : '',
           source_string = (entity.original_plural && self.locale.nplurals < 2) ? entity.marked_plural : entity.marked,
           li = $('<li class="entity' +
         (' ' + status) +
@@ -35,7 +36,7 @@ var Pontoon = (function (my) {
         '<span class="status fa' + (self.user.canTranslate() ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
           '<span class="source-string">' + source_string + '</span>' +
-          '<span class="translation-string" dir="' + self.locale.direction + '" lang="' + self.locale.code + '">' +
+          '<span class="translation-string' + openSans + '" dir="' + self.locale.direction + '" lang="' + self.locale.code + '">' +
             self.markPlaceables(entity.translation[0].string || '') +
           '</span>' +
         '</p>' +
