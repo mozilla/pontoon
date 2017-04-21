@@ -142,6 +142,11 @@
   margin-right: 2em;
 }
 
+#main .content p[lang="ar"],
+#main .content p[lang="fa"] {
+  font-size: 18px;
+}
+
 #main .label {
   padding: 0.5em 0;
   position: absolute;
