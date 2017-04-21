@@ -2236,22 +2236,24 @@ var Pontoon = (function (my) {
      * Update all translations in localStorage on server
      */
     syncLocalStorageOnServer: function() {
-      if (localStorage.length !== 0) {
-        var len = this.entities.length;
-        for (var i = 0; i < len; i++) {
-          var entity = this.entities[i],
-              key = this.getLocalStorageKey(entity),
-              value = localStorage[key];
-          if (value) {
-            value = JSON.parse(localStorage[key]);
-            this.updateOnServer(entity, value.translation, false);
-            delete localStorage[key];
-          }
-        }
-
-        // Clear all other translations
-        localStorage.clear();
+      if (! (localStorage instanceof Storage) || localStorage.length === 0) {
+        return;
       }
+
+      var len = this.entities.length;
+      for (var i = 0; i < len; i++) {
+        var entity = this.entities[i],
+            key = this.getLocalStorageKey(entity),
+            value = localStorage[key];
+        if (value) {
+          value = JSON.parse(localStorage[key]);
+          this.updateOnServer(entity, value.translation, false);
+          delete localStorage[key];
+        }
+      }
+
+      // Clear all other translations
+      localStorage.clear();
     },
 
 
