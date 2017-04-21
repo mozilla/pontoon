@@ -42,7 +42,7 @@ def get_project_locale_from_request(request, locales):
 
     for a in accept:
         try:
-            return locales.get(code=a[0]).code
+            return locales.get(code__iexact=a[0]).code
         except:
             continue
 
