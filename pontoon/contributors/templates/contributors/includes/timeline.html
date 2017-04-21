@@ -22,7 +22,7 @@
         </h2>
         {% if event.translation %}
         <div class="fa fa-2x fa-quote-left"></div>
-        <p dir="auto" lang="{{ event.translation.locale.code }}">{{ event.translation.string }}</p>
+        <p dir="{{ event.translation.locale.direction }}" lang="{{ event.translation.locale.code }}">{{ event.translation.string }}</p>
         {% endif %}
         <div class="label clearfix {{ event.type }}">
             <figure>

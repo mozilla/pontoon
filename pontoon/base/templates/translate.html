@@ -267,7 +267,7 @@
         </ul>
       </nav>
 
-      <textarea {% if not user.is_authenticated() %} readonly {% endif %} dir="auto" lang="{{ locale.code }}" id="translation" placeholder="Type translation and press Enter to save"></textarea>
+      <textarea {% if not user.is_authenticated() %} readonly {% endif %} id="translation" placeholder="Type translation and press Enter to save"></textarea>
 
       <menu>
         {% if user.is_authenticated() %}
