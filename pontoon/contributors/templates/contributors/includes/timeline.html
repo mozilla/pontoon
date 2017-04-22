@@ -21,9 +21,8 @@
             {% endif %}
         </h2>
         {% if event.translation %}
-        {% set direction = event.translation.locale.direction %}
-        <div class="fa fa-2x quote {% if direction == 'ltr' %}fa-quote-left{% else %}fa-quote-right{% endif %}"></div>
-        <p dir="{{ direction }}" lang="{{ event.translation.locale.code }}">{{ event.translation.string }}</p>
+        <div class="fa fa-2x fa-quote-left"></div>
+        <p dir="auto" lang="{{ event.translation.locale.code }}">{{ event.translation.string }}</p>
         {% endif %}
         <div class="label clearfix {{ event.type }}">
             <figure>

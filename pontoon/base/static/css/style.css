@@ -221,7 +221,7 @@ button {  width: auto; overflow: visible; }
 /* Bug 1351813 */
 [lang="ar"],
 [lang="fa"] {
-    font-size: 1.1em;
+    font-size: 1.1em !important;
 }
 
 .status.fa {

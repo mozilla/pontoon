@@ -372,9 +372,9 @@ def get_translations_from_other_locales(request):
         locale__in=locales,
         plural_form=plural_form,
         approved=True
-    ).order_by('locale__name')
+    )
 
-    payload = list(translations.values('locale__code', 'locale__name', 'locale__direction', 'string'))
+    payload = list(translations.values('locale__code', 'locale__name', 'string'))
     return JsonResponse(payload, safe=False)
 
 

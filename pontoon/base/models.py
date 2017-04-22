@@ -575,8 +575,6 @@ class Locale(AggregatedStats):
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
             'cldr_plurals': self.cldr_id_list(),
-            'direction': self.direction,
-            'script': self.script,
         }
 
     def cldr_id_list(self):

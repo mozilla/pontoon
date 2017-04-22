@@ -25,7 +25,6 @@ var Pontoon = (function (my) {
     renderEntity: function (index, entity) {
       var self = this,
           status = self.getEntityStatus(entity),
-          openSans = (['Latin', 'Greek', 'Cyrillic', 'Vietnamese'].indexOf(self.locale.script) > -1) ? ' open-sans' : '',
           source_string = (entity.original_plural && self.locale.nplurals < 2) ? entity.marked_plural : entity.marked,
           li = $('<li class="entity' +
         (' ' + status) +
@@ -36,7 +35,7 @@ var Pontoon = (function (my) {
         '<span class="status fa' + (self.user.canTranslate() ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
           '<span class="source-string">' + source_string + '</span>' +
-          '<span class="translation-string' + openSans + '" dir="' + self.locale.direction + '" lang="' + self.locale.code + '">' +
+          '<span class="translation-string" dir="auto" lang="' + self.locale.code + '">' +
             self.markPlaceables(entity.translation[0].string || '') +
           '</span>' +
         '</p>' +
@@ -133,7 +132,7 @@ var Pontoon = (function (my) {
             $.each(data, function() {
               list.append('<li class="suggestion" title="Copy Into Translation (Tab)">' +
                 '<header>' + this.locale__name + '<span class="stress">' + this.locale__code + '</span></header>' +
-                '<p class="translation" dir="' + this.locale__direction + '" lang="' + this.locale__code + '">' +
+                '<p class="translation" dir="auto" lang="' + this.locale__code + '">' +
                   self.markPlaceables(this.string) +
                 '</p>' +
                 '<p class="translation-clipboard">' +
@@ -272,10 +271,10 @@ var Pontoon = (function (my) {
                       ((self.user.id && (self.user.id === this.uid) || self.user.canTranslate()) ? '<button class="delete fa" title="Delete"></button>' : '') +
                     '</menu>' +
                   '</header>' +
-                  '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '">' +
+                  '<p class="translation" dir="auto" lang="' + self.locale.code + '">' +
                     self.markPlaceables(this.translation) +
                   '</p>' +
-                  '<p class="translation-diff" dir="' + self.locale.direction + '" lang="' + self.locale.code + '">' +
+                  '<p class="translation-diff" dir="auto" lang="' + self.locale.code + '">' +
                     ((i > 0) ? self.diff(data[0].translation, this.translation) : self.markPlaceables(this.translation)) +
                   '</p>' +
                   '<p class="translation-clipboard">' +
@@ -2779,16 +2778,6 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Update textarea lang and dir attributes
-     */
-    updateTextareaAttributes: function () {
-      $('#translation')
-        .attr('dir', this.locale.direction)
-        .attr('lang', this.locale.code);
-    },
-
-
-    /*
      * Update profile menu links and contents
      */
     updateProfileMenu: function () {
@@ -2881,7 +2870,6 @@ var Pontoon = (function (my) {
       self.updateMainMenu();
       self.updateProjectInfo();
       self.updateProfileMenu();
-      self.updateTextareaAttributes();
       self.updateSaveButtons();
       self.resetTimeRange();
       self.updateAuthors();

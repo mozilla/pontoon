@@ -1085,12 +1085,8 @@ body > header aside p {
 #entitylist > .wrapper > ul > li p span.translation-string {
   color: #AAAAAA;
   display: none;
-  padding-left: 2%;
-  text-align: start;
-}
-
-#entitylist > .wrapper > ul > li p span.translation-string.open-sans {
   font-style: italic;
+  padding-left: 2%;
 }
 
 #entitylist > .wrapper > ul > li p span.translation-string[lang="mk"],
@@ -1194,7 +1190,6 @@ body > header aside p {
 #editor p#original,
 #editor p.original,
 #editor p.translation {
-  text-align: start;
   white-space: pre-wrap;
 }
 
@@ -1400,11 +1395,6 @@ body > header aside p {
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-}
-
-#editor textarea[lang="ar"],
-#editor textarea[lang="fa"] {
-  font-size: 15px;
 }
 
 #plural-tabs ul li {
