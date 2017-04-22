@@ -119,16 +119,32 @@
   font-size: 0.7em;
 }
 
-#main .content .fa-quote-left {
+#main .content .quote {
   margin-top: 1em;
+}
+
+#main .content .quote.fa-quote-right {
+  text-align: right;
+  width: 100%;
 }
 
 #main .content p {
   color: #AAAAAA;
   font-size: 16px;
-  margin: -1em 0 0 2em;
   line-height: 1.6;
+  margin: -1em 0 0 2em;
+  text-align: start;
   word-wrap: break-word;
+}
+
+#main .content p[dir="rtl"] {
+  margin-left: 0;
+  margin-right: 2em;
+}
+
+#main .content p[lang="ar"],
+#main .content p[lang="fa"] {
+  font-size: 18px;
 }
 
 #main .label {
