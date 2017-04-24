@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% import 'heading.html' as Heading %}
-{% import "widgets/notifications_menu.html" as Notifications with context %}
+{% import "contributors/widgets/notifications_menu.html" as Notifications with context %}
 
 {% block title %}Notifications{% endblock %}
 
@@ -30,7 +30,9 @@
       </ul>
     </div>
     <div class="menu permanent right-column">
-      {{ Notifications.list(notifications=notifications, no="No notifications.") }}
+      <section class="selected">
+        {{ Notifications.list(notifications=notifications, no_title="No notifications.") }}
+      </section>
     </div>
   </div>
 </section>

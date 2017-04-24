@@ -43,9 +43,9 @@
     {% csrf_token %}
     <input type="hidden" name="return_url" value="{{ return_url(request) }}">
 
-    <h3>Preferred locales <span class="small">(to get suggestions from)</span></h3>
+    <h3>Preferred locales <span class="small stress">(to get suggestions from)</span></h3>
 
-    <div class="clearfix">
+    <div class="clearfix locale-selector">
       {{ multiple_locale_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
     </div>
 

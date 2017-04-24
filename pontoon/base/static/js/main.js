@@ -576,7 +576,7 @@ $(function() {
   // Menu hover
   $('body').on('mouseenter', '.menu li, .menu .static-links div', function () {
     // Ignore on nested menus
-    if ($(this).has('li').length) {
+    if ($(this).parents('li').length) {
       return false;
     }
 
@@ -584,6 +584,11 @@ $(function() {
     $(this).toggleClass('hover');
 
   }).on('mouseleave', '.menu li, .menu .static-links div', function () {
+    // Ignore on nested menus
+    if ($(this).parents('li').length) {
+      return false;
+    }
+
     $('.menu li.hover, .static-links div').removeClass('hover');
   });
 
@@ -760,7 +765,7 @@ $(function() {
 
     var key = e.which;
 
-    if ($('.menu').is(':visible')) {
+    if ($('.menu:not(".permanent")').is(':visible')) {
       var menu = $('.menu:visible'),
           hovered = menu.find('li.hover');
 

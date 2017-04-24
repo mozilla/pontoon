@@ -1,11 +1,6 @@
 $(function() {
   // Filter notifications
   $('.left-column a').on('click', function(e) {
-    e.preventDefault();
-
-    $('.left-column li').removeClass('selected');
-    $(this).parents('li').addClass('selected');
-
     var notifications = $(this).data('notifications');
 
     // Show all notifications

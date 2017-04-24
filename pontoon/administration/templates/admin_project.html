@@ -39,7 +39,7 @@
       {{ form.slug.errors }}
   </div>
 
-  <h2>Locales</h2>
+  <h3>Locales</h3>
 
   <div class="locales clearfix">
       {{ multiple_locale_selector.render(locales_available, locales_selected) }}
@@ -63,10 +63,10 @@
     </section>
   </div>
 
-  <h2>
+  <h3>
     <span>Repositories</span>
     <a href="#add-repo" class="add-repo">Add more</a>
-  </h2>
+  </h3>
   {{ repo_formset.management_form }}
   {{ repo_formset.non_form_errors() }}
   {% for repo_form in repo_formset %}
@@ -164,7 +164,7 @@
     {{ repo_formset.empty_form.errors }}
   </div>
 
-  <h2>Project info <span class="small">(optional)</span></h2>
+  <h3>Project info <span class="small stress">(optional)</span></h3>
 
   <div>
       {{ form.info }}
@@ -206,7 +206,7 @@
     <option value="Language pack">
   </datalist>
 
-  <h2>In-context localization <span class="small">(optional)</span></h2>
+  <h3>In-context localization <span class="small stress">(optional)</span></h3>
 
   <div class="clearfix">
       {{ form.url.label_tag() }}

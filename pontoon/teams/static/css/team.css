@@ -109,23 +109,13 @@
 }
 
 #permissions-form h3 {
-  color: #7BC876;
-  font-size: 20px;
-  font-weight: 300;
   padding-bottom: 30px;
-  position: relative;
-  text-align: left;
-  text-transform: none;
-}
-
-#permissions-form h3 .small {
-  color: #AAAAAA;
-  font-size: 18px;
 }
 
 #permissions-form h3 .remove-project {
   bottom: 25px;
   font-size: 13px;
+  font-style: normal;
   position: absolute;
   right: 0;
 }

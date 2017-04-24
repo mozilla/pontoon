@@ -80,6 +80,15 @@
           count = 1 if project.info else False
         )
       }}
+      {% if request.user.has_perm('base.can_manage_project') %}
+        {{ Menu.item(
+            'Notifications',
+            url('pontoon.projects.notifications', project.slug),
+            is_active = (current_page == 'notifications'),
+            count = False
+          )
+        }}
+      {% endif %}
     {% endcall %}
   </div>
 </section>

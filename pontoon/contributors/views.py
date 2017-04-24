@@ -158,14 +158,20 @@ def notifications(request):
     projects = {}
 
     for notification in notifications:
+        project = None
         if isinstance(notification.actor, Project):
-            if notification.actor.slug in projects:
-                projects[notification.actor.slug]['notifications'].append(
+            project = notification.actor
+        elif isinstance(notification.target, Project):
+            project = notification.target
+
+        if project:
+            if project.slug in projects:
+                projects[project.slug]['notifications'].append(
                     notification.id
                 )
             else:
-                projects[notification.actor.slug] = {
-                    'name': notification.actor.name,
+                projects[project.slug] = {
+                    'name': project.name,
                     'notifications': [notification.id],
                 }
 

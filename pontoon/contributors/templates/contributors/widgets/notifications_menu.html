@@ -20,15 +20,38 @@
 {% endif %}
 {% endmacro %}
 
-{% macro list(notifications, no="No new notifications.") %}
+
+{% macro list(notifications, no_title="No new notifications.", no_description="Here you’ll see updates for localizations you contribute to.") %}
 <ul class="notification-list">
   {% for notification in notifications %}
     <li class="notification-item" data-id="{{ notification.id }}" data-level="{{ notification.level }}" data-unread="{{ notification.unread|to_json() }}">
-      <a href="{{ url('pontoon.projects.project', notification.actor.slug) }}">
-        <span class="actor">{{ notification.actor }}</span>
+      <div class="item-content">
+        {% if notification.actor.slug %}
+          {% set actor_anchor = notification.actor %}
+          {% set actor_url = url('pontoon.projects.project', notification.actor.slug) %}
+
+        {% elif notification.actor.email %}
+          {% set actor_anchor = notification.actor.name_or_email|nospam %}
+          {% set actor_url = url('pontoon.contributors.contributor.username', notification.actor.username) %}
+        {% endif %}
+
+        <span class="actor">
+          <a href="{{ actor_url }}">{{ actor_anchor }}</a>
+        </span>
         <span class="verb">{{ notification.verb }}</span>
+
+        {% if notification.target %}
+          <span class="target">
+            <a href="{{ url('pontoon.projects.project', notification.target.slug) }}">{{ notification.target }}</a>
+          </span>
+        {% endif %}
+
         <p class="timeago">{{ notification.timesince() }} ago</p>
-      </a>
+
+        {% if notification.description %}
+          <div class="message">{{ notification.description|safe }}</div>
+        {% endif %}
+      </div>
     </li>
     {% if not loop.last %}
       <li class="horizontal-separator"></li>
@@ -38,8 +61,8 @@
   {% if notifications|length == 0 %}
     <li class="no">
       <i class="icon fa fa-bell fa-fw"></i>
-      <p class="title">{{ no }}</p>
-      <p class="description">Here you’ll see updates for localizations you contribute to.</p>
+      <p class="title">{{ no_title }}</p>
+      <p class="description">{{ no_description }}</p>
     </li>
   {% endif %}
 </ul>

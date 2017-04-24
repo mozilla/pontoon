@@ -36,7 +36,7 @@
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
 
     <div class="permissions-groups general clearfix">
-        <h3 class="controls"><span class="title">General</span> <span class="small">default team permissions for all projects</span></h3>
+        <h3 class="controls">General <span class="small stress">(default team permissions for all projects)</span></h3>
         <div class="selector-wrapper clearfix">
             {{ user_selector(all_users) }}
             {{ translator_selector('Translators can submit and approve translations in all projects, unless overridden below.', translators) }}
@@ -56,7 +56,7 @@
             {% endif %}
 
             <h3 class="controls">
-                <span class="title">{{ name }}</span> <span class="small">override team translators for this project</span>
+                {{ name }} <span class="small stress">(override team translators for this project)</span>
                 <a href="#" class="remove-project button" title="Remove custom project permissions"><span class="fa fa-trash"></span>Remove</a>
             </h3>
             <div class="selector-wrapper clearfix">
