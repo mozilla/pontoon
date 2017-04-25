@@ -189,7 +189,9 @@ def sync_translations(self, project_pk, project_sync_log_pk, now, project_change
     # Pull VCS changes in case we're on a different worker than the one
     # sync started on.
     if not no_pull:
+        log.info('Pulling changes for project {0} started.'.format(db_project.slug))
         repos_changed, repo_locales = pull_changes(db_project)
+        log.info('Pulling changes for project {0} complete.'.format(db_project.slug))
 
     resources_changed = []
     obsolete_vcs_entities = []
