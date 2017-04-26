@@ -142,8 +142,7 @@
   margin-right: 2em;
 }
 
-#main .content p[lang="ar"],
-#main .content p[lang="fa"] {
+#main .content p[data-script="Arabic"] {
   font-size: 18px;
 }
 

@@ -1402,8 +1402,7 @@ body > header aside p {
   box-sizing: border-box;
 }
 
-#editor textarea[lang="ar"],
-#editor textarea[lang="fa"] {
+#editor textarea[data-script="Arabic"] {
   font-size: 15px;
 }
 

@@ -36,7 +36,7 @@ var Pontoon = (function (my) {
         '<span class="status fa' + (self.user.canTranslate() ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
           '<span class="source-string">' + source_string + '</span>' +
-          '<span class="translation-string' + openSans + '" dir="' + self.locale.direction + '" lang="' + self.locale.code + '">' +
+          '<span class="translation-string' + openSans + '" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
             self.markPlaceables(entity.translation[0].string || '') +
           '</span>' +
         '</p>' +
@@ -133,7 +133,7 @@ var Pontoon = (function (my) {
             $.each(data, function() {
               list.append('<li class="suggestion" title="Copy Into Translation (Tab)">' +
                 '<header>' + this.locale__name + '<span class="stress">' + this.locale__code + '</span></header>' +
-                '<p class="translation" dir="' + this.locale__direction + '" lang="' + this.locale__code + '">' +
+                '<p class="translation" dir="' + this.locale__direction + '" lang="' + this.locale__code + '" data-script="' + this.locale__script + '">' +
                   self.markPlaceables(this.string) +
                 '</p>' +
                 '<p class="translation-clipboard">' +
@@ -272,10 +272,10 @@ var Pontoon = (function (my) {
                       ((self.user.id && (self.user.id === this.uid) || self.user.canTranslate()) ? '<button class="delete fa" title="Delete"></button>' : '') +
                     '</menu>' +
                   '</header>' +
-                  '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '">' +
+                  '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
                     self.markPlaceables(this.translation) +
                   '</p>' +
-                  '<p class="translation-diff" dir="' + self.locale.direction + '" lang="' + self.locale.code + '">' +
+                  '<p class="translation-diff" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
                     ((i > 0) ? self.diff(data[0].translation, this.translation) : self.markPlaceables(this.translation)) +
                   '</p>' +
                   '<p class="translation-clipboard">' +
@@ -2784,7 +2784,8 @@ var Pontoon = (function (my) {
     updateTextareaAttributes: function () {
       $('#translation')
         .attr('dir', this.locale.direction)
-        .attr('lang', this.locale.code);
+        .attr('lang', this.locale.code)
+        .attr('data-script', this.locale.script);
     },
 
 

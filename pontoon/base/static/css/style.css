@@ -219,8 +219,7 @@ button {  width: auto; overflow: visible; }
 /* COMMON */
 
 /* Bug 1351813 */
-[lang="ar"],
-[lang="fa"] {
+[data-script="Arabic"] {
     font-size: 1.1em;
 }
 
