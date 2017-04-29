@@ -105,8 +105,8 @@ var Pontoon = (function (my) {
           }
 
           function getDate(el) {
-            var date = $(el).find('td:eq(' + index + ')').find('time').attr('datetime') || 0;
-            return new Date(date);
+            var date = $(el).find('td:eq(' + index + ')').find('time').attr('datetime');
+            return date === '' ? 0 : new Date(date);
           }
 
           function getPriority(el) {
@@ -156,9 +156,19 @@ var Pontoon = (function (my) {
               return (chartA.translated - chartB.translated) * dir ||
                 (chartA.suggested - chartB.suggested) * dir;
 
-            // Sort by date
+            // Sort by deadline & the last activity
             } else if (node.is('.deadline') || node.is('.latest-activity')) {
-              return (getDate(b) - getDate(a)) * dir;
+                var dateA = getDate(a),
+                    dateB = getDate(b);
+
+                if (dateA === 0 && dateB === 0) {
+                    return getString(a).localeCompare(getString(b)) * dir;
+                } else if (dateA === 0) {
+                    return 1;
+                } else if (dateB === 0) {
+                    return -1;
+                }
+                return (dateA - dateB) * dir;
 
             // Sort by priority
             } else if (node.is('.priority')) {
