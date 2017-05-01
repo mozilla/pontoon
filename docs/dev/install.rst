@@ -158,8 +158,8 @@ The following extra settings can be added to your ``.env`` file.
    Set your `Microsoft Translator API key`_ to use machine translation.
 ``GOOGLE_ANALYTICS_KEY``
    Set your `Google Analytics key`_ to use Google Analytics.
-``MOZILLIANS_API_KEY``
-   Set your `Mozillians API key`_ to grant permission to Mozilla localizers.
+``MANUAL_SYNC``
+   Enable Sync button in project Admin.
 ``DJANGO_LOGIN``
    Set to True if you want to use the default Django login instead of Firefox Accounts. This will run allow you to log in via accounts created using `manage.py shell`.
 
