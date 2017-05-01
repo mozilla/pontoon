@@ -4,6 +4,8 @@ from django.contrib.auth.admin import (
     GroupAdmin,
 )
 from django.contrib.auth.models import User, Group
+from django.forms.models import ModelForm
+from django.forms import ChoiceField
 
 from pontoon.base import models
 
@@ -41,6 +43,34 @@ class ExternalLocaleResourceInline(ExternalResourceInline):
     fields = ('locale', 'name', 'url',)
 
 
+class LocaleAdminForm(ModelForm):
+    """
+    Dynamically loads a list of available collations in your database.
+    """
+    db_collation = ChoiceField()
+
+    @property
+    def db_collations_choices(self):
+        """
+        Return all available collations in the current postgresql instance.
+
+        More info about the management of collations in PostgreSQL:
+        https://www.postgresql.org/docs/9.4/static/collation.html
+        """
+        # To avoid pre-mature initialization of db-context.
+        from django.db import connection
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT collname, collcollate  FROM pg_collation")
+            rows = cursor.fetchall()
+            return ((name, "{} ({})".format(name, collate)) for name, collate in rows)
+
+    def __init__(self, *args, **kwargs):
+        super(LocaleAdminForm, self).__init__(*args, **kwargs)
+        self.fields['db_collation'].choices = self.db_collations_choices
+        self.fields['db_collation'].help_text = self._meta.model._meta.get_field('db_collation').help_text
+
+
 class LocaleAdmin(admin.ModelAdmin):
     search_fields = ['name', 'code']
     list_display = ('pk', 'name', 'code', 'script', 'direction', 'population',
@@ -48,6 +78,7 @@ class LocaleAdmin(admin.ModelAdmin):
     exclude = ('translators_group', 'managers_group')
     readonly_fields = AGGREGATED_STATS_FIELDS + ('latest_translation',)
     inlines = (ExternalLocaleResourceInline,)
+    form = LocaleAdminForm
 
 
 class ExternalProjectResourceInline(ExternalResourceInline):
