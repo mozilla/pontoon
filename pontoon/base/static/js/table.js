@@ -104,9 +104,9 @@ var Pontoon = (function (my) {
             };
           }
 
-          function getDate(el) {
-            var date = $(el).find('td:eq(' + index + ')').find('time').attr('datetime');
-            return date === '' ? 0 : new Date(date);
+          function getTime(el) {
+            var date = $(el).find('td:eq(' + index + ')').find('time').attr('datetime') || 0;
+            return new Date(date).getTime();
           }
 
           function getPriority(el) {
@@ -133,6 +133,11 @@ var Pontoon = (function (my) {
               dir = node.hasClass('asc') ? -1 : 1,
               cls = node.hasClass('asc') ? 'desc' : 'asc';
 
+          // Default value for rows which don't have a timestamp
+          if (node.is('.deadline')) {
+            var defaultTime = new Date(0).getTime();
+          }
+
           $(table).find('th').removeClass('asc desc');
           node.addClass(cls);
 
@@ -156,19 +161,23 @@ var Pontoon = (function (my) {
               return (chartA.translated - chartB.translated) * dir ||
                 (chartA.suggested - chartB.suggested) * dir;
 
-            // Sort by deadline & the last activity
-            } else if (node.is('.deadline') || node.is('.latest-activity')) {
-                var dateA = getDate(a),
-                    dateB = getDate(b);
+            // Sort by deadline
+            } else if (node.is('.deadline')) {
+              var timeA = getTime(a),
+                  timeB = getTime(b);
 
-                if (dateA === 0 && dateB === 0) {
-                    return getString(a).localeCompare(getString(b)) * dir;
-                } else if (dateA === 0) {
-                    return 1;
-                } else if (dateB === 0) {
-                    return -1;
-                }
-                return (dateA - dateB) * dir;
+              if (timeA === defaultTime && timeB === defaultTime) {
+                return getString(a).localeCompare(getString(b)) * dir;
+              } else if (timeA === defaultTime) {
+                return 1 * dir;
+              } else if (timeB === defaultTime) {
+                return -1 * dir;
+              }
+              return (timeA - timeB) * dir;
+
+            // Sort by last activity
+            } else if (node.is('.latest-activity')) {
+              return (getTime(b) - getTime(a)) * dir;
 
             // Sort by priority
             } else if (node.is('.priority')) {
