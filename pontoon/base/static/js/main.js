@@ -252,7 +252,7 @@ var Pontoon = (function (my) {
                 '</li>' +
               '</ul>' +
             '</header>' +
-            '<p class="original">' + self.doNotRender(data.original || '') + '</p>' +
+            '<p class="original">' + (data.original ? self.diff(original, data.original) : '') + '</p>' +
             '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
               self.markPlaceables(data.translation) +
             '</p>' +
