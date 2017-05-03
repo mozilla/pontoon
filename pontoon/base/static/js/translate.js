@@ -1651,7 +1651,7 @@ var Pontoon = (function (my) {
         }
 
         // Tab: Select suggestions
-        if (!$('.menu').is(':visible') && key === 9) {
+        if (!$('.menu').is(':visible') && key === 9 && !e.ctrlKey) {
 
           var section = $('#helpers section:visible'),
               index = section.find('li.suggestion.hover').index() + 1;
