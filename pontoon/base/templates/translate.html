@@ -251,7 +251,17 @@
 
       <div id="source-pane">
           <h2></h2>
+
           <p id="original"></p>
+          <div id="ftl-original" class="ftl-area">
+            <section class="main-value">
+              <ul></ul>
+            </section>
+            <section class="attributes">
+              <ul></ul>
+            </section>
+          </div>
+
           <div id="metadata"></div>
           <div id="screenshots"></div>
       </div>
@@ -269,6 +279,31 @@
 
       <textarea {% if not user.is_authenticated() %} readonly {% endif %} id="translation" placeholder="Type translation and press Enter to save"></textarea>
 
+      <div id="ftl-area" class="ftl-area">
+        <section class="main-value">
+          <ul>
+            <li>
+              <label class="id" for="entity-value">
+                <span>Value</span>
+              </label>
+              <input type="text" id="entity-value" class="value" placeholder="Enter translation"></li>
+            </li>
+          </ul>
+        </section>
+        <section class="attributes">
+          <ul></ul>
+          <ul class="template">
+            <li class="custom-attribute clearfix">
+              <div class="wrapper">
+                <input type="text" class="id" placeholder="enter-attribute-id">
+                <sub class="fa fa-remove remove" title="Remove"></sub>
+              </div>
+              <input type="text" class="value" placeholder="Enter attribute value">
+            </li>
+          </ul>
+        </section>
+      </div>
+
       <menu>
         {% if user.is_authenticated() %}
           <div id="unsaved" class="warning-overlay">
@@ -283,6 +318,8 @@
             <ul></ul>
             <button id="save-anyway"></button>
           </div>
+
+          <button id="ftl" title="Toggle between simple and advanced FTL mode">FTL</button>
 
           <!-- Settings -->
           <div id="settings" class="select">
@@ -325,6 +362,7 @@
             <span class="current-length"></span>|<span class="original-length"></span>
           </div>
 
+          <button id="add-attribute" title="Add attribute">+Attribute</button>
           <button id="copy" title="Copy From Source (Ctrl + Shift + C)">Copy</button>
           <button id="clear" title="Clear Translation (Ctrl + Shift + Backspace)">Clear</button>
           <button id="save" title="Save Translation (Enter)"></button>
@@ -470,5 +508,7 @@
 {% endblock %}
 
 {% block extend_js %}
+  <!-- TODO: integrate into django-pipeline -->
+  <script type="text/javascript" src="{{ static('js/lib/fluent-syntax.js') }}"></script>
   {% javascript 'translate' %}
 {% endblock %}

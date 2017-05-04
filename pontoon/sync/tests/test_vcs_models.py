@@ -178,6 +178,7 @@ class VCSProjectTests(TestCase):
                 ['/root/templates/foo.pot']
             )
 
+
 class VCSEntityTests(TestCase):
     def test_has_translation_for(self):
         """

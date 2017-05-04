@@ -1,6 +1,8 @@
 /* Extend public object */
 var Pontoon = (function (my) {
+
   return $.extend(true, my, {
+    CLDR_PLURALS: ['zero', 'one', 'two', 'few', 'many', 'other'],
 
     /*
      * UI helper methods
@@ -26,8 +28,14 @@ var Pontoon = (function (my) {
       var self = this,
           status = self.getEntityStatus(entity),
           openSans = (['Latin', 'Greek', 'Cyrillic', 'Vietnamese'].indexOf(self.locale.script) > -1) ? ' open-sans' : '',
-          source_string = (entity.original_plural && self.locale.nplurals < 2) ? entity.marked_plural : entity.marked,
-          li = $('<li class="entity' +
+          sourceString = (entity.original_plural && self.locale.nplurals < 2) ? entity.marked_plural : entity.marked,
+          translation = entity.translation[0],
+          translationString = translation.string || '';
+
+      sourceString = self.fluent.getSimplePreview(entity, sourceString, entity);
+      translationString = self.fluent.getSimplePreview(translation, translationString, entity);
+
+      var li = $('<li class="entity' +
         (' ' + status) +
         (!entity.body ? ' uneditable' : '') +
         (this.allEntitiesSelected ? ' selected' : '') +
@@ -35,9 +43,9 @@ var Pontoon = (function (my) {
         '" data-entry-pk="' + entity.pk + '">' +
         '<span class="status fa' + (self.user.canTranslate() ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
-          '<span class="source-string">' + source_string + '</span>' +
+          '<span class="source-string">' + sourceString + '</span>' +
           '<span class="translation-string' + openSans + '" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
-            self.markPlaceables(entity.translation[0].string || '') +
+            self.markPlaceables(translationString) +
           '</span>' +
         '</p>' +
         '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
@@ -251,8 +259,11 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function(i) {
+              var baseString = self.fluent.getSimplePreview(this, data[0].string, entity);
+                  translationString = self.fluent.getSimplePreview(this, this.string, entity);
+
               list.append(
-                '<li data-id="' + this.id + '" class="suggestion ' +
+                '<li data-id="' + this.pk + '" class="suggestion ' +
                 (this.approved ? 'translated' : this.fuzzy ? 'fuzzy' : 'suggested') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
@@ -273,16 +284,20 @@ var Pontoon = (function (my) {
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
-                    self.markPlaceables(this.translation) +
+                    self.markPlaceables(translationString) +
                   '</p>' +
                   '<p class="translation-diff" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
-                    ((i > 0) ? self.diff(data[0].translation, this.translation) : self.markPlaceables(this.translation)) +
+                    ((i > 0) ? self.diff(baseString, translationString) : self.markPlaceables(translationString)) +
                   '</p>' +
                   '<p class="translation-clipboard">' +
-                    self.doNotRender(this.translation) +
+                    self.doNotRender(translationString) +
                   '</p>' +
                 '</li>');
+
+              // Storing string value, needed for FTL
+              list.find('[data-id="' + this.pk + '"]')[0].string = this.string;
             });
+
             $("#helpers .history time").timeago();
             count = data.length;
 
@@ -378,8 +393,18 @@ var Pontoon = (function (my) {
      * Move cursor to the beginning of translation textarea
      */
     moveCursorToBeginning: function () {
-      if ($('#translation').is(':visible')) {
-        $('#translation')[0].setSelectionRange(0, 0);
+      var standard = $('#translation'),
+          ftl = $('#ftl-area input.value:visible:first'),
+          element = null;
+
+      if (standard.is(':visible')) {
+        element = standard;
+      } else if (ftl.is(':visible')) {
+        element = ftl;
+      }
+
+      if (element) {
+        element[0].setSelectionRange(0, 0);
       }
     },
 
@@ -476,12 +501,6 @@ var Pontoon = (function (my) {
         self.appendMetaData('Resource path', entity.path, link, linkClass);
       }
 
-      // Translation area (must be set before unsaved changes check)
-      $('#translation')
-        .val(entity.translation[0].string)
-        .focus();
-      $('.warning-overlay:visible .cancel').click();
-
       // Original string and plurals
       $('#original').html(entity.marked);
       $('#source-pane').removeClass('pluralized');
@@ -495,8 +514,7 @@ var Pontoon = (function (my) {
 
           // Get example number for each plural form based on locale plural rule
           if (!this.locale.examples) {
-            var CLDR_PLURALS = ['zero', 'one', 'two', 'few', 'many', 'other'],
-                examples = this.locale.examples = {},
+            var examples = this.locale.examples = {},
                 n = 0;
 
             if (nplurals === 2) {
@@ -514,7 +532,7 @@ var Pontoon = (function (my) {
 
             $.each(this.locale.cldr_plurals, function(i) {
               $('#plural-tabs li:eq(' + i + ') a')
-                .find('span').html(CLDR_PLURALS[this]).end()
+                .find('span').html(self.CLDR_PLURALS[this]).end()
                 .find('sup').html(examples[i]);
             });
           }
@@ -527,6 +545,11 @@ var Pontoon = (function (my) {
           $('#original').html(entity.marked_plural);
         }
       }
+
+      // Translation area (must be set before unsaved changes check)
+      var translation = entity.translation[0];
+      $('#translation').val(translation.string);
+      $('.warning-overlay:visible .cancel').click();
 
       // Length
       var original = entity['original' + this.isPluralized()].length;
@@ -548,8 +571,14 @@ var Pontoon = (function (my) {
         $("#editor").addClass('opened').css('left', 0);
       }
 
+      // FTL: Complex original string and translation
+      self.fluent.toggleOriginal();
+      self.fluent.toggleEditor(translation.isComplexFTL || (entity.isComplexFTL && !translation.pk));
+      // TODO: Uncomment once source view support is implemented
+      // self.fluent.toggleButton();
+
       self.updateHelpers();
-      this.pushState();
+      self.pushState();
     },
 
 
@@ -1479,19 +1508,19 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Attach event handlers to editor elements
+     * Submit translation to DB
      */
     saveTranslation: function (e) {
       e.preventDefault();
       var self = Pontoon,
-          entity = self.getEditorEntity(),
-          source = $('#translation').val();
+          entity = self.getEditorEntity();
 
       // Prevent double translation submissions
       $(this).off('click.save');
 
+      var source = $('#translation').val();
       if (source === '' &&
-        ['properties', 'ini', 'dtd'].indexOf(entity.format) === -1) {
+        ['properties', 'ini', 'dtd', 'ftl'].indexOf(entity.format) === -1) {
           self.endLoader('Empty translations cannot be submitted.', 'error');
           return;
       }
@@ -1645,13 +1674,13 @@ var Pontoon = (function (my) {
         }
       });
 
-      /* Translate textarea keyboard shortcuts
+      /* Translate textarea and FTL area keyboard shortcuts
        *
        * Known keyboard shortcut clashes:
        * - Czech Windows keyboard: Ctrl + Alt + C/F/./,
        * - Polish keyboard: Alt + C
        */
-      $('#translation').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
+      $('#editor').on('keydown', '#translation, #ftl-area input', function (e) {
         var key = e.which;
 
         // Prevent triggering unnecessary events in 1-column layout
@@ -1708,6 +1737,11 @@ var Pontoon = (function (my) {
 
         // Tab: Select suggestions
         if (!$('.menu').is(':visible') && key === 9 && !e.ctrlKey) {
+
+          // Prevent in complex FTL mode
+          if ($('#ftl').is('.active')) {
+            return;
+          }
 
           var section = $('#helpers section:visible'),
               index = section.find('li.suggestion.hover').index() + 1;
@@ -1932,7 +1966,7 @@ var Pontoon = (function (my) {
 
                   // Last translation deleted, no alternative available
                   } else {
-                    $('#translation').val('').focus();
+                    $('#clear').click();
 
                     if (entity.body && pluralForm === 0) {
                       self.postMessage("DELETE", {
@@ -2261,13 +2295,16 @@ var Pontoon = (function (my) {
     updateEntityUI: function (entity) {
       var self = this,
           status = self.getEntityStatus(entity),
-          translation = entity.translation[0].string;
+          translation = entity.translation[0],
+          translationString = translation.string || '';
+
+      translationString = self.fluent.getSimplePreview(translation, translationString, entity);
 
       entity.ui
         .removeClass('translated suggested fuzzy missing partial')
         .addClass(status)
         .find('.translation-string')
-          .html(self.markPlaceables(translation || ''));
+          .html(self.markPlaceables(translationString));
 
       self.updateProgress(entity);
     },
@@ -2285,6 +2322,7 @@ var Pontoon = (function (my) {
         entity.translation[pluralForm][key] = data[key];
       }
 
+      // TODO: update editor/entitylist on delete and copy from helpers
       this.updateEntityUI(entity);
     },
 
@@ -2453,10 +2491,10 @@ var Pontoon = (function (my) {
           csrfmiddlewaretoken: $('#server').data('csrf'),
           locale: self.locale.code,
           entity: entity.pk,
-          translation: translation,
+          translation: self.fluent.serializeTranslation(entity, translation),
           plural_form: submittedPluralForm,
           original: entity['original' + self.isPluralized()],
-          ignore_check: $('#quality').is(':visible') || !syncLocalStorage,
+          ignore_check: $('#quality').is(':visible') || !syncLocalStorage || entity.format === 'ftl',
           approve: self.approvedNotSubmitted || false,
           paths: self.getPartPaths(self.currentPart),
           force_suggestions: self.user.forceSuggestions

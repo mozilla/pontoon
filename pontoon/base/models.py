@@ -1716,19 +1716,14 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if translations:
             translation = sorted(translations, key=lambda k: (k.approved, k.date), reverse=True)[0]
-            return {
-                'fuzzy': translation.fuzzy,
-                'string': translation.string,
-                'approved': translation.approved,
-                'pk': translation.pk
-            }
+            return translation.serialize()
 
         else:
             return {
                 'fuzzy': False,
                 'string': None,
                 'approved': False,
-                'pk': None
+                'pk': None,
             }
 
     @classmethod

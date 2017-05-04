@@ -149,7 +149,7 @@ class ChangeSet(object):
             # one timestamp per import, unlike timezone.now()
             'date_created': db_entity.date_created if db_entity else self.now,
             'order': vcs_entity.order,
-            'source': vcs_entity.source
+            'source': vcs_entity.source,
         }
 
     def send_notifications(self, new_entities):
@@ -337,7 +337,7 @@ class ChangeSet(object):
                 'key',
                 'comment',
                 'order',
-                'source'
+                'source',
             ])
 
     def bulk_create_translations(self):

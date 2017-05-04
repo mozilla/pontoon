@@ -403,19 +403,17 @@ def get_translation_history(request):
 
     for t in translations:
         u = t.user
-        payload.append({
-            "id": t.id,
+        translation_dict = t.serialize()
+        translation_dict.update({
             "user": "Imported" if u is None else u.name_or_email,
             "uid": "" if u is None else u.id,
             "username": "" if u is None else u.username,
-            "translation": t.string,
             "date": t.date.strftime('%b %d, %Y %H:%M'),
             "date_iso": t.date.isoformat() + offset,
-            "approved": t.approved,
             "approved_user": User.display_name_or_blank(t.approved_user),
             "unapproved_user": User.display_name_or_blank(t.unapproved_user),
-            "fuzzy": t.fuzzy,
         })
+        payload.append(translation_dict)
 
     return JsonResponse(payload, safe=False)
 

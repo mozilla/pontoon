@@ -1406,6 +1406,169 @@ body > header aside p {
   font-size: 15px;
 }
 
+.ftl-area {
+  background: #272A2F;
+  display: none;
+  height: 20%;
+  line-height: 22px;
+  min-height: 100px;
+  overflow: auto;
+  padding: 10px;
+  text-align: left;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#source-pane .ftl-area {
+  background: transparent;
+  border: none;
+  display: none;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+}
+
+.ftl-area button {
+  background: transparent;
+  border: none;
+  color: #7BC876;
+  font-size: 12px;
+  margin-left: 3px;
+  padding: 0;
+  text-align: right;
+  width: 24%;
+}
+
+.ftl-area button:hover {
+  color: #EBEBEB;
+}
+
+.ftl-area ul {
+  list-style: none;
+  margin: 0;
+  text-align: left;
+}
+
+.ftl-area section .id {
+  font-weight: 300;
+  border: 1px solid #5E6475;
+  background: transparent;
+  color: #FFFFFF;
+  display: inline-block;
+  font-weight: normal;
+  margin: 2px 5px 2px 0;
+  padding: 0 4px;
+  position: relative;
+  width: calc(25% - 5px);
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.ftl-area section .id.built-in,
+.ftl-area .main-value .id {
+  color: #AAAAAA;
+}
+
+.ftl-area section .id .stress {
+  color: #7BC876;
+}
+
+.ftl-area section .id sub {
+  color: #7BC876;
+  float: right;
+  font-size: 11px;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.ftl-area .main-value .id .remove {
+  margin: 0;
+  right: -1px;
+  top: 0;
+}
+
+.ftl-area section .value {
+  float: right;
+  background: #FFFFFF;
+  width: 75%;
+  padding: 0 4px;
+  margin: 2px 0;
+  line-height: 24px;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#source-pane .ftl-area section .value {
+  background: transparent;
+  color: white;
+  padding: 0;
+}
+
+.ftl-area .attributes .value#accesskey {
+  margin-right: 3px;
+  padding: 0 4px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 24px;
+}
+
+.ftl-area .accesskeys {
+  display: inline-block;
+  float: right;
+  margin: 2px 0;
+  width: calc(75% - 27px);
+}
+
+.ftl-area .accesskeys div {
+  border: 1px solid #5E6475;
+  background: #4D5967;
+  cursor: pointer;
+  display: inline-block;
+  height: 22px;
+  margin-right: 3px;
+  text-align: center;
+  vertical-align: top;
+  width: 20px;
+}
+
+.ftl-area .accesskeys div.active,
+.ftl-area .accesskeys div:hover {
+  border-color: #7BC876;
+}
+
+#ftl-area .attributes .template {
+  display: none;
+}
+
+.ftl-area .attributes .custom-attribute .wrapper {
+  position: relative;
+  width: calc(25% - 5px);
+}
+
+.ftl-area .attributes .custom-attribute .wrapper .id {
+  line-height: 22px;
+  padding-right: 15px;
+  width: 100%;
+}
+
+.ftl-area section sub.remove {
+  color: #AAAAAA;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  position: absolute;
+  right: 0;
+  top: 3px;
+}
+
+.ftl-area section sub.remove:hover {
+  color: #7BC876;
+}
+
 #plural-tabs ul li {
   display: none;
   text-align: center;
@@ -1473,6 +1636,21 @@ body > header aside p {
   bottom: 10px;
   position: absolute;
   right: 10px;
+}
+
+#editor #single #ftl {
+  display: none; /* TODO: Remove once source view support is implemented */
+  color: #AAAAAA;
+  float: left;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 0;
+  padding: 10px 5px 10px 0;
+}
+
+#editor #single #ftl.active,
+#editor #single #ftl:hover {
+  color: #7BC876;
 }
 
 #translation-length {
@@ -1552,8 +1730,12 @@ body > header aside p {
   border: none;
   color: #EBEBEB;
   height: 40px;
-  padding: 10px 5px;
+  padding: 10px 3px;
   text-transform: uppercase;
+}
+
+#editor #single > menu button#add-attribute {
+  display: none;
 }
 
 #editor #single > menu button[id^="save"],
@@ -1563,7 +1745,7 @@ body > header aside p {
   color: #272A2F;
   font-weight: 600;
   margin-left: 10px;
-  padding: 10px 15px;
+  padding: 10px;
 }
 
 #editor #single > menu button[id^="save"].suggest {

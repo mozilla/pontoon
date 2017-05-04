@@ -452,6 +452,7 @@ PIPELINE_JS = {
             'js/lib/jquery.mark.js',
             'js/lib/highstock.js',
             'js/lib/diff.js',
+            'js/fluent_interface.js',
             'js/translate.js',
         ),
         'output_filename': 'js/translate.min.js',
