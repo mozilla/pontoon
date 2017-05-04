@@ -139,13 +139,15 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function() {
+              var translationString = self.fluent.getSimplePreview(this, this.string, entity);
+
               list.append('<li class="suggestion" title="Copy Into Translation (Tab)">' +
                 '<header>' + this.locale__name + '<span class="stress">' + this.locale__code + '</span></header>' +
                 '<p class="translation" dir="' + this.locale__direction + '" lang="' + this.locale__code + '" data-script="' + this.locale__script + '">' +
-                  self.markPlaceables(this.string) +
+                  self.markPlaceables(translationString) +
                 '</p>' +
                 '<p class="translation-clipboard">' +
-                  self.doNotRender(this.string) +
+                  self.doNotRender(translationString) +
                 '</p>' +
               '</li>');
 

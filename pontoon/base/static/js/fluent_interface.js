@@ -118,7 +118,9 @@ var Pontoon = (function (my) {
         $.each(elements, function(i) {
           if (this.type === 'TextElement') {
             translatedValue += this.value;
-          } else if (this.type === 'ExternalArgument' || this.type === 'MessageReference') {
+          } else if (this.type === 'ExternalArgument') {
+            translatedValue += ('{$' + this.id.name + '}');
+          } else if (this.type === 'MessageReference') {
             translatedValue += ('{' + this.id.name + '}');
           }
         });
@@ -294,7 +296,7 @@ var Pontoon = (function (my) {
           ast = FluentSyntax.parse(source).body[0];
 
           if (ast.value) {
-            response = ast.value.elements[0].value;
+            response = this.serializePlaceables(ast.value.elements);
 
           // Attributes
           } else {
@@ -328,7 +330,8 @@ var Pontoon = (function (my) {
           // Update entity and translation objects
           } else {
             if (object.hasOwnProperty('original')) {
-              object.original = object.marked = response;
+              object.original = response;
+              response = object.marked = Pontoon.doNotRender(response);
             } else if (object.hasOwnProperty('string')) {
               object.string = response;
             }
