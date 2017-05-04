@@ -332,9 +332,45 @@ var Pontoon = (function (my) {
      *
      * title Metadata title
      * text Metadata text
+     * link Metadata link (optional)
      */
-    appendMetaData: function (title, text) {
+    appendMetaData: function (title, text, link, linkClass) {
+      if (link) {
+        text = '<a href="' + link + '" class="' + linkClass + '">' + this.doNotRender(text) + '</a>';
+      }
+
       $('#metadata').append('<p><span class="title">' + title + '</span> <span class="content">' + text + '</span></p>');
+    },
+
+
+    /**
+     * Jump to a part without reloading the whole UI
+     */
+    jumpToPart: function(part) {
+      var self = this;
+
+      self.checkUnsavedChanges(function() {
+        $('.part .selector').attr('title', part);
+        self.updateCurrentPart(part);
+
+        // Reset optional state parameters and update state
+        self.setSearch('');
+        self.updateFilterUI(self.getEmptyFilterObject());
+
+        var state = self.getState('selected');
+        state.entity = null;
+        self.pushState(state);
+
+        self.initializePart(true);
+      });
+    },
+
+
+    /*
+     * Return a link to resource from a set of given parameters.
+     */
+    getResourceLink: function(localeCode, projectSlug, resourcePath) {
+        return '/' + localeCode + '/' +  projectSlug + '/' + resourcePath + '/';
     },
 
 
@@ -423,7 +459,21 @@ var Pontoon = (function (my) {
         }
       }
       if (entity.path) {
-        self.appendMetaData('Resource path', entity.path);
+        var link = null,
+            linkClass = null;
+
+        // Resources can be mapped into multiple subpages.
+        if (!self.project.hasSubPages) {
+          link = self.getResourceLink(
+            self.locale.code,
+            self.project.slug,
+            entity.path
+          );
+
+          linkClass = 'resource-path';
+        }
+
+        self.appendMetaData('Resource path', entity.path, link, linkClass);
       }
 
       // Translation area (must be set before unsaved changes check)
@@ -1524,6 +1574,12 @@ var Pontoon = (function (my) {
         $(this).fadeOut('fast', function() {
           $(this).remove();
         });
+      });
+
+      // Load Resource
+      $('body').on('click', '#metadata a.resource-path', function(e) {
+        e.preventDefault();
+        self.jumpToPart($(this).html());
       });
 
       // Insert placeable at cursor, replace selection or at the end if not focused
@@ -2680,20 +2736,7 @@ var Pontoon = (function (my) {
       // Open selected project (part) and locale combination
       $('#go').click(function (e) {
         e.preventDefault();
-
-        self.checkUnsavedChanges(function() {
-          self.updateCurrentPart(self.getSelectedPart());
-
-          // Reset optional state parameters and update state
-          self.setSearch('');
-          self.updateFilterUI(self.getEmptyFilterObject());
-
-          var state = self.getState('selected');
-          state.entity = null;
-          self.pushState(state);
-
-          self.initializePart(true);
-        });
+        self.jumpToPart(self.getSelectedPart());
 
         self.closeNotification();
       });
@@ -3245,6 +3288,10 @@ var Pontoon = (function (my) {
         path: $('#server').data('site-url') + '/' // pontoon.css injection
       };
 
+      this.part = this.getSelectedPart();
+
+      this.locale = self.getLocaleData();
+
       this.project = {
         win: projectWindow,
         url: "",
@@ -3253,11 +3300,11 @@ var Pontoon = (function (my) {
         info: self.getProjectData('info'),
         width: self.getProjectWidth(),
         links: self.getProjectData('links') === 'True' ? true : false,
-        langpack_url: self.getProjectData('langpack_url')
+        langpack_url: self.getProjectData('langpack_url'),
+        hasSubPages: self.getProjectData('parts')[this.locale.code].some(function(item) {
+          return !!item['url'];
+        })
       };
-
-      this.part = this.getSelectedPart();
-      this.locale = self.getLocaleData();
 
       /* Copy of User.can_translate(), used on client to improve performance */
       this.user.canTranslate = function() {
