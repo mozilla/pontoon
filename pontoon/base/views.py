@@ -258,11 +258,9 @@ def batch_edit_translations(request):
     if not entities.exists():
         return JsonResponse({'count': 0})
 
-
-    projects = Project.objects.filter(pk__in=entities.values_list('resource__project__pk', flat=True).distinct())
-
     # Batch editing is only available to translators.
     # Check if user has translate permissions for all of the projects in passed entities.
+    projects = Project.objects.filter(pk__in=entities.values_list('resource__project__pk', flat=True).distinct())
     for project in projects:
         if not request.user.can_translate(project=project, locale=locale):
             return HttpResponseForbidden(
@@ -281,6 +279,7 @@ def batch_edit_translations(request):
 
     translation_pks.discard(None)
     translations = Translation.objects.filter(pk__in=translation_pks)
+    latest_translation_pk = None
 
     # Must be executed before translations set changes, which is why
     # we need to force evaluate QuerySets by wrapping them inside list()
@@ -293,6 +292,7 @@ def batch_edit_translations(request):
 
     if action == 'approve':
         translations = translations.filter(approved=False)
+        latest_translation_pk = translations.last().pk
         count, translated_resources, changed_entities = get_translations_info(translations)
         translations.update(
             approved=True,
@@ -309,7 +309,7 @@ def batch_edit_translations(request):
         replace = request.POST.get('replace')
 
         try:
-            translations = translations.find_and_replace(find, replace, request.user)
+            translations, latest_translation_pk = translations.find_and_replace(find, replace, request.user)
         except Translation.NotAllowed:
             return JsonResponse({
                 'error': 'Empty translations not allowed',
@@ -348,6 +348,10 @@ def batch_edit_translations(request):
                 ChangedEntityLocale(entity=changed_entity, locale=locale)
             )
     ChangedEntityLocale.objects.bulk_create(changed_entities_array)
+
+    # Update latest translation
+    if latest_translation_pk:
+        Translation.objects.get(pk=latest_translation_pk).update_latest_translation()
 
     return JsonResponse({
         'count': count
