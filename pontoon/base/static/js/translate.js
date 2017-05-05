@@ -431,16 +431,20 @@ var Pontoon = (function (my) {
      * Open batch editor
      */
     openBatchEditor: function (loading) {
-      $('#sidebar').addClass('batch');
+      var self = this;
 
-      loading = loading || false;
-      $('#sidebar .batch-bar').toggleClass('selecting-all-entities', loading)
-        .find('.variant').toggleClass('plural', this.selectedEntities.length > 1).end()
-        .find('.selected-count').html(this.selectedEntities.length);
+      self.checkUnsavedChanges(function() {
+        $('#sidebar').addClass('batch');
 
-      $('#batch')
-        .find('button').removeClass('loading confirmed show-message')
-          .find('.message').html('');
+        loading = loading || false;
+        $('#sidebar .batch-bar').toggleClass('selecting-all-entities', loading)
+          .find('.variant').toggleClass('plural', self.selectedEntities.length > 1).end()
+          .find('.selected-count').html(self.selectedEntities.length);
+
+        $('#batch')
+          .find('button').removeClass('loading confirmed show-message')
+            .find('.message').html('');
+      });
     },
 
 
