@@ -51,7 +51,24 @@ def ajax_resources(request, code, slug):
     if not len(translatedresources_qs):
         raise Http404
 
+    pages = {}
+    for page in project.subpage_set.all():
+        latest_page_translatedresource = None
+        page_translatedresources_qs = (
+            TranslatedResource.objects
+            .filter(resource__in=page.resources.all(), locale=locale)
+            .prefetch_related('resource', 'latest_translation__user')
+        )
+
+        for page_translatedresource in page_translatedresources_qs:
+            latest = latest_page_translatedresource.latest_translation if latest_page_translatedresource else None
+            if latest is None or page_translatedresource.latest_translation.latest_activity['date'] > latest.latest_activity['date']:
+                latest_page_translatedresource = page_translatedresource
+
+        pages[page.name] = latest_page_translatedresource
+
     translatedresources = {s.resource.path: s for s in translatedresources_qs}
+    translatedresources = dict(translatedresources.items() + pages.items())
     parts = locale.parts_stats(project)
 
     for part in parts:
