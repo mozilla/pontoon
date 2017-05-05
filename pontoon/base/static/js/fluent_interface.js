@@ -423,9 +423,9 @@ $(function() {
 
   // Copy helpers result to translation
   $('#helpers section').on('click', 'li:not(".disabled")', function (e) {
-    e.preventDefault();
-
     if ($('#ftl').is('.active')) {
+      e.preventDefault();
+
       var translation = {
         pk: $(this).data('id'),
         string: this.string

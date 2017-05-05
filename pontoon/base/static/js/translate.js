@@ -139,10 +139,18 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function() {
-              var translationString = self.fluent.getSimplePreview(this, this.string, entity);
+              var translationString = self.fluent.getSimplePreview(this, this.string, entity),
+              link = self.getResourceLink(
+                    this.locale__code,
+                    self.project.slug,
+                    self.part,
+                    entity.pk
+                  );
 
               list.append('<li class="suggestion" title="Copy Into Translation (Tab)">' +
-                '<header>' + this.locale__name + '<span class="stress">' + this.locale__code + '</span></header>' +
+                '<header>' +
+                  '<a href="' + link + '" title="" target="_blank">' + this.locale__name + '<span class="stress">' + this.locale__code + '</span></a>' +
+                '</header>' +
                 '<p class="translation" dir="' + this.locale__direction + '" lang="' + this.locale__code + '" data-script="' + this.locale__script + '">' +
                   self.markPlaceables(translationString) +
                 '</p>' +
@@ -386,8 +394,14 @@ var Pontoon = (function (my) {
     /*
      * Return a link to resource from a set of given parameters.
      */
-    getResourceLink: function(localeCode, projectSlug, resourcePath) {
-        return '/' + localeCode + '/' +  projectSlug + '/' + resourcePath + '/';
+    getResourceLink: function(localeCode, projectSlug, resourcePath, entityId) {
+      var link = '/' + localeCode + '/' +  projectSlug + '/' + resourcePath + '/';
+
+      if (entityId) {
+        link += '?string=' + entityId;
+      }
+
+      return link;
     },
 
 
