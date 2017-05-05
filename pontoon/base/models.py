@@ -2025,29 +2025,30 @@ class Translation(DirtyFieldsMixin, models.Model):
             if self.approved:
                 self.entity.mark_changed(self.locale)
 
-            # Check and update the latest translation where necessary.
-            self.check_latest_translation(self.entity.resource.project)
-            self.check_latest_translation(self.locale)
-            self.check_latest_translation(translatedresource)
+            # Update latest translation where necessary
+            self.update_latest_translation()
 
-            project_locale = utils.get_object_or_none(
-                ProjectLocale,
-                project=self.entity.resource.project,
-                locale=self.locale
-            )
-            if project_locale:
-                self.check_latest_translation(project_locale)
+    def update_latest_translation(self):
+        """
+        Set `latest_translation` to this translation if its more recent than
+        the currently stored translation. Do this for all affected models.
+        """
+        resource = self.entity.resource
+        project = resource.project
+        locale = self.locale
+        translatedresource = TranslatedResource.objects.get(resource=resource, locale=locale)
 
-    def check_latest_translation(self, instance):
-        """
-        Check if the given model instance has a `latest_activity`
-        attribute and, if it does, see if this translation is more
-        recent than it. If so, replace it and save.
-        """
-        latest = instance.latest_translation
-        if latest is None or self.latest_activity['date'] > latest.latest_activity['date']:
-            instance.latest_translation = self
-            instance.save(update_fields=['latest_translation'])
+        instances = [project, locale, translatedresource]
+
+        project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
+        if project_locale:
+            instances.append(project_locale)
+
+        for instance in instances:
+            latest = instance.latest_translation
+            if latest is None or self.latest_activity['date'] > latest.latest_activity['date']:
+                instance.latest_translation = self
+                instance.save(update_fields=['latest_translation'])
 
     def unapprove(self, user, stats=True):
         """
