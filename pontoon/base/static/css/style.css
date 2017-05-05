@@ -862,7 +862,7 @@ tfoot td a {
   left: 0;
   margin: 0;
   position: fixed;
-  top: -60px;
+  bottom: -60px;
   width: 100%;
   z-index: 100;
 }
