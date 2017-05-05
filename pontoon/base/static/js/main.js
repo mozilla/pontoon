@@ -57,7 +57,7 @@ var Pontoon = (function (my) {
      */
     closeNotification: function () {
       $('.notification').animate({
-        top: '-60px',
+        bottom: '-60px',
       }, {
         duration: 200
       }, function() {
@@ -78,7 +78,7 @@ var Pontoon = (function (my) {
           .html('<li class="' + (type || '') + '">' + text + '</li>')
           .removeClass('hide')
           .animate({
-            top: 0,
+            bottom: 0,
           }, {
             duration: 200
           });
