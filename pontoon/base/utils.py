@@ -553,6 +553,10 @@ def handle_upload_content(slug, code, part, f, user):
 
     ChangedEntityLocale.objects.bulk_create(changed_entities.values())
 
+    # Update latest translation
+    if changeset.translations_to_create:
+        changeset.translations_to_create[-1].update_latest_translation()
+
 
 def latest_datetime(datetimes):
     """
