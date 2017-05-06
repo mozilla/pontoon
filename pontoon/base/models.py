@@ -1857,11 +1857,15 @@ class TranslationQuerySet(models.QuerySet):
         ).distinct()
 
     def find_and_replace(self, find, replace, user):
-        # Find translations
+        """
+        :return: A tuple
+            - a queryset of old translations (to be changed)
+            - a list of newly created translations
+        """
         translations = self.filter(string__contains=find)
 
         if translations.count() == 0:
-            return translations, None
+            return translations, []
 
         # Empty translations produced by replace might not be always allowed
         forbidden = (
@@ -1887,8 +1891,8 @@ class TranslationQuerySet(models.QuerySet):
         translations.update(approved=False, approved_user=None, approved_date=None)
 
         # Create new translations
-        new_translations = Translation.objects.bulk_create(translations_to_create)
-        return translations, new_translations[-1].pk
+        changed_translations = Translation.objects.bulk_create(translations_to_create)
+        return translations, changed_translations
 
     def authors(self):
         """

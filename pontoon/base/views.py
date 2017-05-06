@@ -32,6 +32,7 @@ from pontoon.base.models import (
     Project,
     ProjectLocale,
     Resource,
+    TranslationMemoryEntry,
     TranslatedResource,
     Translation,
     UserProfile,
@@ -292,6 +293,7 @@ def batch_edit_translations(request):
 
     if action == 'approve':
         translations = translations.filter(approved=False)
+        changed_translation_pks = list(translations.values_list('pk', flat=True))
         latest_translation_pk = translations.last().pk
         count, translated_resources, changed_entities = get_translations_info(translations)
         translations.update(
@@ -309,7 +311,10 @@ def batch_edit_translations(request):
         replace = request.POST.get('replace')
 
         try:
-            translations, latest_translation_pk = translations.find_and_replace(find, replace, request.user)
+            translations, changed_translations = translations.find_and_replace(find, replace, request.user)
+            changed_translation_pks = [c.pk for c in changed_translations]
+            if changed_translation_pks:
+                latest_translation_pk = max(changed_translation_pks)
         except Translation.NotAllowed:
             return JsonResponse({
                 'error': 'Empty translations not allowed',
@@ -352,6 +357,16 @@ def batch_edit_translations(request):
     # Update latest translation
     if latest_translation_pk:
         Translation.objects.get(pk=latest_translation_pk).update_latest_translation()
+
+    # Update translation memory
+    memory_entries = [TranslationMemoryEntry(
+        source=t.entity.string,
+        target=t.string,
+        locale=locale,
+        entity=t.entity,
+        translation=t
+    ) for t in Translation.objects.filter(pk__in=changed_translation_pks).prefetch_related('entity')]
+    TranslationMemoryEntry.objects.bulk_create(memory_entries)
 
     return JsonResponse({
         'count': count
