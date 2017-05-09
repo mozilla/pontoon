@@ -10,7 +10,9 @@ import tempfile
 import time
 import zipfile
 
+from cgi import escape
 from datetime import datetime, timedelta
+from functools import partial
 
 from django.db.models import Prefetch
 from django.http import HttpResponse, HttpResponseBadRequest

@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+from datetime import datetime
+from xml.dom.minidom import parseString as xml_parse
+import os
+
 from django.test import RequestFactory
 
 from django_nose.tools import (
@@ -26,6 +31,7 @@ from pontoon.base.tests import (
     TestCase,
     UserFactory,
 )
+from pontoon.base.views import build_translation_memory_file
 
 
 class UserTestCase(TestCase):
@@ -344,3 +350,96 @@ class EntityViewTests(TestCase):
 
         assert_equal(response.json()['has_next'], False)
         assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[2].pk])
+
+
+def assert_xml(xml_content, expected_xml=None):
+    """Provided xml_content should be a valid XML string and be equal to expected_xml."""
+    validated_xml = xml_parse(xml_content.encode('utf-8')).toxml()
+
+
+    if expected_xml is not None:
+        assert_equal(validated_xml, xml_parse(expected_xml.encode('utf-8')).toxml())
+
+
+class TMXDownloadViewTests(TestCase):
+    """
+    Backend should be able to return a valid (and empty) TMX file.
+    """
+    def setUp(self):
+        self.project = EntityFactory.create().resource.project
+        self.locale = LocaleFactory.create()
+
+    def test_locale_file_download(self):
+        """By download the data."""
+        response = self.client.get('/translation-memory/download?locale=%s' % self.locale.code)
+
+        assert_code(response, 200)
+        assert_xml(response.content)
+
+    def test_no_parameters(self):
+        """If user won't provide any parameters for the download view."""
+        response = self.client.get('/translation-memory/download')
+
+        assert_code(response, 404)
+
+    def test_invalid_locale(self):
+        """Validate locale code and don't return data."""
+        response = self.client.get('/translation-memory/download?locale=invalid_locale')
+
+        assert_code(response, 404)
+
+    def test_filter_project(self):
+        """Create TMX file from entries related to a project."""
+        response = self.client.get('/translation-memory/download?locale=%s&project=%s' % (
+            self.locale.code,
+            self.project.slug
+        ))
+
+        assert_code(response, 200)
+        assert_xml(response.content)
+
+    def test_invalid_project(self):
+        """Validate project slug and don't return data."""
+        response = self.client.get('/translation-memory/download?locale=%s&project=invalid_project' % self.locale.code)
+
+        assert_code(response, 404)
+
+
+class TMXFileGeneratorTests(TestCase):
+    def get_sample_tmx(self, file_name):
+        """
+        Read a tmx file from our samples directorty
+        """
+        tests_root = os.path.dirname(os.path.abspath(__file__))
+
+        with open(os.path.join(tests_root, 'samples', 'tmx', '%s.xml' % file_name), 'rU') as f:
+            return f.read().decode('utf-8')
+
+    def test_empty_tmx_file(self):
+        tmx_file = build_translation_memory_file(
+            datetime(2010, 01, 01),
+            'sl',
+            ()
+        )
+
+        assert_xml(tmx_file, self.get_sample_tmx('no_entries'))
+
+    def test_valid_entries(self):
+        tmx_file = build_translation_memory_file(
+            datetime(2010, 01, 01),
+            'sl',
+            (
+                ('aa/bb/ccc', 'xxx', 'source string', 'translation', 'Pontoon App', 'pontoon'),
+
+                # Test escape of characters
+                ('aa/bb/ccc', 'x&x&x#"', 'source string', 'translation', 'Pontoon & App', 'pontoon'),
+
+                # Handle unicode characters
+                ('aa/bb/ccc', 'xxx', u'source string łążśźć', u'translation łążśźć', 'pontoon', 'pontoon'),
+
+                # Handle html content
+                ('aa/bb/ccc', 'xxx', u'<p>source <strong>string</p>', u'<p>translation łążśźć</p>', 'pontoon', 'pontoon'),
+
+            )
+        )
+        assert_xml(tmx_file, self.get_sample_tmx('valid_entries'))

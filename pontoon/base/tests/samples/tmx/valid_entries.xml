@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<TMX VERSION="1.0">
+<HEADER
+ CREATIONTOOLVERSION="0.1"
+ CREATIONTOOL="Pontoon"
+ DATATYPE="plaintext"
+ SEGTYPE="sentence"
+ O-TMF="plain text"
+ SRCLANG="en-US"
+ CREATIONDATE="2010-01-01T00:00:00"></HEADER><BODY>
+<TU ID="pontoon:aa/bb/ccc:xxx" srclang="en-US">
+<PROP NAME="Domain">Computing</PROP>
+<PROP NAME="Project">Pontoon App</PROP>
+<TUV LANG="en-US">
+<SEG>
+<![CDATA[
+source string
+]]>
+</SEG>
+</TUV>
+<TUV LANG="sl">
+<SEG>
+<![CDATA[
+translation
+]]>
+</SEG>
+</TUV>
+</TU>
+<TU ID='pontoon:aa/bb/ccc:x&amp;x&amp;x#"' srclang="en-US">
+<PROP NAME="Domain">Computing</PROP>
+<PROP NAME="Project">Pontoon &amp; App</PROP>
+<TUV LANG="en-US">
+<SEG>
+<![CDATA[
+source string
+]]>
+</SEG>
+</TUV>
+<TUV LANG="sl">
+<SEG>
+<![CDATA[
+translation
+]]>
+</SEG>
+</TUV>
+</TU>
+<TU ID="pontoon:aa/bb/ccc:xxx" srclang="en-US">
+<PROP NAME="Domain">Computing</PROP>
+<PROP NAME="Project">pontoon</PROP>
+<TUV LANG="en-US">
+<SEG>
+<![CDATA[
+source string łążśźć
+]]>
+</SEG>
+</TUV>
+<TUV LANG="sl">
+<SEG>
+<![CDATA[
+translation łążśźć
+]]>
+</SEG>
+</TUV>
+</TU>
+<TU ID="pontoon:aa/bb/ccc:xxx" srclang="en-US">
+<PROP NAME="Domain">Computing</PROP>
+<PROP NAME="Project">pontoon</PROP>
+<TUV LANG="en-US">
+<SEG>
+<![CDATA[
+<p>source <strong>string</p>
+]]>
+</SEG>
+</TUV>
+<TUV LANG="sl">
+<SEG>
+<![CDATA[
+<p>translation łążśźć</p>
+]]>
+</SEG>
+</TUV>
+</TU>
+</BODY></TMX>

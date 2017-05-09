@@ -1,4 +1,11 @@
+from datetime import datetime
 import logging
+
+from xml.sax.saxutils import (
+    escape as xml_escape,
+    quoteattr,
+)
+
 import os
 
 from bulk_update.helper import bulk_update
@@ -21,7 +28,10 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import (
+    condition,
+    require_POST
+)
 
 from pontoon.base import forms
 from pontoon.base import utils
@@ -39,7 +49,7 @@ from pontoon.base.models import (
 )
 from pontoon.base.utils import (
     split_ints,
-    require_AJAX
+    require_AJAX,
 )
 
 
@@ -731,7 +741,6 @@ def download(request):
     response.content = content
     response['Content-Type'] = 'text/plain'
     response['Content-Disposition'] = 'attachment; filename=' + filename
-
     return response
 
 
@@ -765,3 +774,90 @@ def upload(request):
                 messages.error(request, error)
 
     return translate(request, code, slug, part)
+
+
+def build_translation_memory_file(creation_date, locale_code, entries):
+    """
+    TMX files will contain large amount of entries and It's impossible to render all the data with django templates.
+    Rendering of string in memory is a lot faster.
+    :param datetime creation_date: when TMX file is being created.
+    :param str locale_code: code of a locale
+    :param list entries: A list which contains tuples with following items:
+                         * resource_path - path of a resource
+                         * key - key of an entity
+                         * source - source string of entity
+                         * target - translated string
+                         * project_name - name of a project.
+                         * project_slug - slugified name of a project.
+
+    """
+    yield (
+        u'<?xml version="1.0" encoding="UTF-8" ?>'
+        u'\n<TMX VERSION="1.0">'
+        u'\n<HEADER'
+        u'\n CREATIONTOOLVERSION="0.1"'
+        u'\n CREATIONTOOL="Pontoon"'
+        u'\n DATATYPE="plaintext"'
+        u'\n SEGTYPE="sentence"'
+        u'\n O-TMF="plain text"'
+        u'\n SRCLANG="en-US"'
+        u'\n CREATIONDATE="%(creation_date)s"></HEADER><BODY>' % {
+            'creation_date': creation_date.isoformat()
+        }
+    )
+
+    for resource_path, key, source, target, project_name, project_slug in entries:
+        yield (
+            u'\n<TU ID=%(tuid)s srclang="en-US">'
+            u'\n<PROP NAME="Domain">Computing</PROP>'
+            u'\n<PROP NAME="Project">%(project_name)s</PROP>'
+            u'\n<TUV LANG="en-US">'
+            u'\n<SEG>'
+            u'\n<![CDATA[\n%(source)s\n]]>'
+            u'\n</SEG>'
+            u'\n</TUV>'
+            u'\n<TUV LANG=%(locale_code)s>'
+            u'\n<SEG>'
+            u'\n<![CDATA[\n%(target)s\n]]>'
+            u'\n</SEG>'
+            u'\n</TUV>'
+            u'\n</TU>' % {
+                'tuid': quoteattr('%s:%s:%s' % (project_slug, resource_path, key)),
+                'source': source,
+                'locale_code': quoteattr(locale_code),
+                'target': target,
+                'project_name': xml_escape(project_name),
+            }
+        )
+
+    yield u'</BODY></TMX>'
+
+
+def download_translation_memory(request):
+    locale = get_object_or_404(Locale, code=request.GET.get('locale'))
+
+    tm_entries = TranslationMemoryEntry.objects.filter(
+        locale=locale,
+        translation__isnull=False,
+    )
+
+    project = request.GET.get('project')
+    if project:
+        tm_entries = tm_entries.filter(
+            project=get_object_or_404(Project, slug=request.GET.get('project'))
+        )
+
+    return HttpResponse(
+        build_translation_memory_file(
+            datetime.now(),
+            locale.code,
+            tm_entries.values_list(
+                'entity__resource__path',
+                'entity__key',
+                'source',
+                'target',
+                'project__name',
+                'project__slug'
+            ).order_by('project__slug', 'source')
+        ),
+    content_type='text/xml')
