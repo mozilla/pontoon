@@ -86,12 +86,12 @@ var Pontoon = (function (my) {
               countCallback(tab, count);
 
             } else {
-              contentCallback('Zarro Boogs Found.');
+              errorCallback('Zarro Boogs Found.');
             }
           },
           error: function(error) {
             if (error.status === 0 && error.statusText !== 'abort') {
-              contentCallback('Oops, something went wrong. We were unable to load the bugs. Please try again later.');
+              errorCallback('Oops, something went wrong. We were unable to load the bugs. Please try again later.');
             }
           }
         });
