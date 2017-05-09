@@ -52,7 +52,7 @@ $(function() {
       inProgress.abort();
     }
 
-    var url = path.split(urlSplit)[1],
+    var url = '/' + path.split('/' + urlSplit + '/')[1],
         tab = $('#middle .links a[href="' + path.split('?')[0] + '"]');
 
     // Update menu
