@@ -429,7 +429,21 @@ var Pontoon = (function (my) {
      * Update current translation length
      */
     updateCurrentTranslationLength: function () {
-      $('#translation-length .current-length').html($('#translation').val().length);
+      var limit = this.translationLengthLimit,
+          translation = $('#translation').val();
+
+      if (limit) {
+        var length = this.stripHTML(translation).length,
+            charactersLeft = limit - length;
+
+        $('#translation-length .characters-left')
+          .toggleClass('overflow', charactersLeft < 0)
+          .html(charactersLeft);
+
+      } else {
+        $('#translation-length .current-length')
+          .html(translation.length);
+      }
     },
 
 
@@ -469,18 +483,31 @@ var Pontoon = (function (my) {
      */
     openEditor: function (entity) {
       var self = this;
+      self.translationLengthLimit = null;
+
       $('#editor')[0].entity = entity;
 
-      // Metadata: comments, sources, keys
+      // Metadata: comment
       $('#metadata').empty();
       if (entity.comment) {
-        var comment = this.linkify(entity.comment);
-        if (comment === entity.comment) {
-          comment = this.doNotRender(entity.comment);
+
+        // Translation length limit
+        var split = entity.comment.split('\n'),
+            splitComment = entity.comment;
+        if (split[0].startsWith('MAX_LENGTH')) {
+          try {
+            self.translationLengthLimit = parseInt(split[0].split('MAX_LENGTH: ')[1].split(' ')[0], 10);
+            splitComment = split.length > 1 ? entity.comment.substring(entity.comment.indexOf('\n') + 1) : '';
+          } catch (e) {} // Catch unexpected comment structure
+        }
+
+        var comment = this.linkify(splitComment);
+        if (comment === splitComment) {
+          comment = this.doNotRender(splitComment);
         }
         self.appendMetaData('Comment', comment);
 
-        // Screenshots
+        // Screenshot
         $('#source-pane').removeClass().find('#screenshots').empty();
         $('#metadata').find('a').each(function() {
           var url = $(this).html();
@@ -491,9 +518,13 @@ var Pontoon = (function (my) {
           }
         });
       }
+
+      // Metadata: key
       if (entity.key) {
         self.appendMetaData('Context', entity.key);
       }
+
+      // Metadata: source
       if (entity.source) {
         if (typeof(entity.source) === 'object') {
           $.each(entity.source, function() {
@@ -503,6 +534,8 @@ var Pontoon = (function (my) {
           self.appendMetaData('Source', entity.source);
         }
       }
+
+      // Metadata: path
       if (entity.path) {
         var link = null,
             linkClass = null;
@@ -574,8 +607,13 @@ var Pontoon = (function (my) {
       // Length
       var original = entity['original' + this.isPluralized()].length;
 
+      // Toggle translation length display
+      $('#translation-length')
+        .find('.current-vs-original').toggle(!self.translationLengthLimit).end()
+        .find('.countdown').toggle(!!self.translationLengthLimit);
+
       // Need to show if sidebar opened by default
-      $('#translation-length').show().find('.original-length').html(original).end();
+      $('#translation-length').show().find('.original-length').html(original);
       self.moveCursorToBeginning();
       self.updateCurrentTranslationLength();
       self.updateCachedTranslation();
@@ -1533,19 +1571,26 @@ var Pontoon = (function (my) {
     saveTranslation: function (e) {
       e.preventDefault();
       var self = Pontoon,
-          entity = self.getEditorEntity();
+          entity = self.getEditorEntity(),
+          translation = $('#translation').val();
 
-      // Prevent double translation submissions
-      $(this).off('click.save');
-
-      var source = $('#translation').val();
-      if (source === '' &&
+      // Prevent empty translation submissions if not supported
+      if (translation === '' &&
         ['properties', 'ini', 'dtd', 'ftl'].indexOf(entity.format) === -1) {
           self.endLoader('Empty translations cannot be submitted.', 'error');
           return;
       }
 
-      self.updateOnServer(entity, source, true);
+      // Prevent too long translation submissions
+      if (self.translationLengthLimit && self.stripHTML(translation).length > self.translationLengthLimit) {
+        self.endLoader('Translation too long.', 'error');
+        return;
+      }
+
+      // Prevent double translation submissions
+      $(this).off('click.save');
+
+      self.updateOnServer(entity, translation, true);
     },
 
 

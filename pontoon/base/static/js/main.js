@@ -122,6 +122,13 @@ var Pontoon = (function (my) {
     },
 
     /*
+     * Strip HTML tags from the given string
+     */
+    stripHTML: function (string) {
+      return $($.parseHTML(string)).text();
+    },
+
+    /*
      * Converts a number to a string containing commas every three digits
      */
     numberWithCommas: function (number) {

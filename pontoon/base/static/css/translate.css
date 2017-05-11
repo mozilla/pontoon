@@ -1661,6 +1661,14 @@ body > header aside p {
   padding: 9px 5px;
 }
 
+#translation-length .countdown {
+  display: none;
+}
+
+#translation-length .countdown .overflow {
+  color: #F36;
+}
+
 #editor #single > menu > .select {
   cursor: pointer;
   position: static; /* Avoid overlapping warning box */
