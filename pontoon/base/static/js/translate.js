@@ -496,7 +496,7 @@ var Pontoon = (function (my) {
             splitComment = entity.comment;
         if (split[0].startsWith('MAX_LENGTH')) {
           try {
-            self.translationLengthLimit = parseInt(split[0].split('MAX_LENGTH: ')[1].split(' ')[0]);
+            self.translationLengthLimit = parseInt(split[0].split('MAX_LENGTH: ')[1].split(' ')[0], 10);
             splitComment = split.length > 1 ? entity.comment.substring(entity.comment.indexOf('\n') + 1) : '';
           } catch (e) {} // Catch unexpected comment structure
         }
@@ -1574,9 +1574,6 @@ var Pontoon = (function (my) {
           entity = self.getEditorEntity(),
           translation = $('#translation').val();
 
-      // Prevent double translation submissions
-      $(this).off('click.save');
-
       // Prevent empty translation submissions if not supported
       if (translation === '' &&
         ['properties', 'ini', 'dtd', 'ftl'].indexOf(entity.format) === -1) {
@@ -1589,6 +1586,9 @@ var Pontoon = (function (my) {
         self.endLoader('Translation too long.', 'error');
         return;
       }
+
+      // Prevent double translation submissions
+      $(this).off('click.save');
 
       self.updateOnServer(entity, translation, true);
     },
