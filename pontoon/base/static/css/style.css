@@ -1425,6 +1425,7 @@ body > form,
 #helpers > section ul li > p ins,
 #helpers > section ul li > p del {
   border-radius: 2px;
+  white-space: pre-wrap;
 }
 
 #helpers > section ul li > p ins {
