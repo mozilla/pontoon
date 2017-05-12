@@ -281,6 +281,7 @@ def batch_edit_translations(request):
     translation_pks.discard(None)
     translations = Translation.objects.filter(pk__in=translation_pks)
     latest_translation_pk = None
+    changed_translation_pks = []
 
     # Must be executed before translations set changes, which is why
     # we need to force evaluate QuerySets by wrapping them inside list()
