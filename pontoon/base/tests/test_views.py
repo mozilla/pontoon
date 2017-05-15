@@ -354,7 +354,7 @@ class EntityViewTests(TestCase):
 
 def assert_xml(xml_content, expected_xml=None):
     """Provided xml_content should be a valid XML string and be equal to expected_xml."""
-    validated_xml = xml_parse(xml_content.encode('utf-8')).toxml()
+    validated_xml = xml_parse((u''.join(xml_content)).encode('utf-8')).toxml()
 
 
     if expected_xml is not None:
@@ -421,7 +421,6 @@ class TMXFileGeneratorTests(TestCase):
             'sl',
             ()
         )
-
         assert_xml(tmx_file, self.get_sample_tmx('no_entries'))
 
     def test_valid_entries(self):

@@ -832,7 +832,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
             }
         )
 
-    yield u'</BODY></TMX>'
+    yield u'\n</BODY></TMX>'
 
 
 @condition(etag_func=None)
