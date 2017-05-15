@@ -54,7 +54,7 @@ urlpatterns = [
     url(r'^other-locales/', views.get_translations_from_other_locales,
         name='pontoon.other_locales'),
     url(r'^translation-memory/download$', views.download_translation_memory,
-        name='pontoon.download_translation_memory'),
+        name='pontoon.download_tmx'),
     url(r'^download/', views.download,
         name='pontoon.download'),
     url(r'^upload/', views.upload,

@@ -25,6 +25,11 @@ class DownloadFileForm(forms.Form):
     part = NoTabStopCharField()
 
 
+class DownloadTMXFileForm(forms.Form):
+    slug = NoTabStopCharField()
+    code = NoTabStopCharField()
+
+
 class UploadFileForm(DownloadFileForm):
     uploadfile = NoTabStopFileField()
 

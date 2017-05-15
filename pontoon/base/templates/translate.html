@@ -109,7 +109,7 @@
 
             <li class="langpack"><a href=""><i class="fa fa-cloud-download fa-fw"></i>Download Language Pack</a></li>
               <li class="download"><i class="fa fa-cloud-download fa-fw"></i>Download Translations</i></li>
-            <li class="download-tmx"><i class="fa fa-cloud-download fa-fw"></i>Download translation memory</i></li>
+            <li class="download-tmx"><i class="fa fa-cloud-download fa-fw"></i>Download Translations Memory</i></li>
             <li class="upload"><i class="fa fa-cloud-upload fa-fw"></i>Upload Translations</li>
 
             <li class="horizontal-separator"></li>
@@ -495,6 +495,12 @@
     {{ download_form.part }}
 </form>
 
+
+<form id="download-tmx" method="POST" action="{{ url('pontoon.download_tmx') }}">
+    <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+    {{ download_tmx_form.slug }}
+    {{ download_tmx_form.code }}
+</form>
 <form id="upload-file" method="POST" action="{{ url('pontoon.upload') }}" enctype="multipart/form-data">
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
     {{ upload_form.slug }}

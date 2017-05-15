@@ -643,9 +643,11 @@ $(function() {
     e.preventDefault();
 
     if ($(this).is('.download')) {
-      Pontoon.updateFormFields($('form#download-file'));
-      $('form#download-file').submit();
-
+        Pontoon.updateFormFields($('form#download-file'));
+        $('form#download-file').submit();
+    } else if ($(this).is(".download-tmx")) {
+        Pontoon.updateFormFields($('form#download-tmx'));
+        $('form#download-tmx').submit();
     } else if ($(this).is(".upload")) {
       $('#id_uploadfile').click();
 

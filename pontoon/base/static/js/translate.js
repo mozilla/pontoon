@@ -2590,9 +2590,9 @@ var Pontoon = (function (my) {
       }
 
       form
-        .find('#id_slug').val(slug).end()
-        .find('#id_code').val(code).end()
-        .find('#id_part').val(part);
+        .find('input[name="slug"]').val(slug).end()
+        .find('input[name="code"]').val(code).end()
+        .find('input[name="part"]').val(part);
     },
 
 

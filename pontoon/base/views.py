@@ -23,6 +23,7 @@ from django.http import (
     HttpResponseBadRequest,
     HttpResponseForbidden,
     JsonResponse,
+    StreamingHttpResponse
 )
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
@@ -117,6 +118,7 @@ def translate(request, locale, slug, part):
     return render(request, 'translate.html', {
         'download_form': forms.DownloadFileForm(),
         'upload_form': forms.UploadFileForm(),
+        'download_tmx_form': forms.DownloadTMXFileForm(),
         'locale': locale,
         'locales': Locale.objects.available(),
         'part': part,
@@ -833,21 +835,23 @@ def build_translation_memory_file(creation_date, locale_code, entries):
     yield u'</BODY></TMX>'
 
 
+@condition(etag_func=None)
+@require_POST
 def download_translation_memory(request):
-    locale = get_object_or_404(Locale, code=request.GET.get('locale'))
+    locale = get_object_or_404(Locale, code=request.POST.get('code'))
 
     tm_entries = TranslationMemoryEntry.objects.filter(
         locale=locale,
         translation__isnull=False,
     )
 
-    project = request.GET.get('project')
+    project = request.POST.get('slug')
     if project:
         tm_entries = tm_entries.filter(
-            project=get_object_or_404(Project, slug=request.GET.get('project'))
+            project=get_object_or_404(Project, slug=project)
         )
 
-    return HttpResponse(
+    response = StreamingHttpResponse(
         build_translation_memory_file(
             datetime.now(),
             locale.code,
@@ -861,3 +865,5 @@ def download_translation_memory(request):
             ).order_by('project__slug', 'source')
         ),
     content_type='text/xml')
+    response['Content-Disposition'] = 'attachment; filename="translation_memory.xml"'
+    return response
