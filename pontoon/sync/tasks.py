@@ -252,8 +252,9 @@ def sync_translations(self, project_pk, project_sync_log_pk, now, project_change
                         if resources_changed:
                             update_translated_resources(db_project, vcs_project, locale)
                             update_locale_project_locale_stats(locale, db_project)
-                            log.debug('Skipping locale `{0}` for project {1}, no changes detected.'
+                            log.info('Skipping locale `{0}` for project {1}, no changes detected.'
                                       .format(locale.code, db_project.slug))
+                            log.info(vcs_project.resources)
                         continue
 
                 changeset = ChangeSet(db_project, vcs_project, now, obsolete_vcs_entities, obsolete_vcs_resources, locale)
