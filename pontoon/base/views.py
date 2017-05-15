@@ -1,14 +1,9 @@
-from datetime import datetime
 import logging
-
-from xml.sax.saxutils import (
-    escape as xml_escape,
-    quoteattr,
-)
-
 import os
 
 from bulk_update.helper import bulk_update
+from datetime import datetime
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -17,6 +12,7 @@ from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.paginator import Paginator, EmptyPage
 from django.db import transaction
+from django.db.models import Q
 from django.http import (
     Http404,
     HttpResponse,
@@ -49,6 +45,7 @@ from pontoon.base.models import (
     UserProfile,
 )
 from pontoon.base.utils import (
+    build_translation_memory_file,
     split_ints,
     require_AJAX,
 )
@@ -118,7 +115,6 @@ def translate(request, locale, slug, part):
     return render(request, 'translate.html', {
         'download_form': forms.DownloadFileForm(),
         'upload_form': forms.UploadFileForm(),
-        'download_tmx_form': forms.DownloadTMXFileForm(),
         'locale': locale,
         'locales': Locale.objects.available(),
         'part': part,
@@ -743,6 +739,7 @@ def download(request):
     response.content = content
     response['Content-Type'] = 'text/plain'
     response['Content-Disposition'] = 'attachment; filename=' + filename
+
     return response
 
 
@@ -778,78 +775,19 @@ def upload(request):
     return translate(request, code, slug, part)
 
 
-def build_translation_memory_file(creation_date, locale_code, entries):
-    """
-    TMX files will contain large amount of entries and It's impossible to render all the data with django templates.
-    Rendering of string in memory is a lot faster.
-    :param datetime creation_date: when TMX file is being created.
-    :param str locale_code: code of a locale
-    :param list entries: A list which contains tuples with following items:
-                         * resource_path - path of a resource
-                         * key - key of an entity
-                         * source - source string of entity
-                         * target - translated string
-                         * project_name - name of a project.
-                         * project_slug - slugified name of a project.
-
-    """
-    yield (
-        u'<?xml version="1.0" encoding="UTF-8" ?>'
-        u'\n<TMX VERSION="1.0">'
-        u'\n<HEADER'
-        u'\n CREATIONTOOLVERSION="0.1"'
-        u'\n CREATIONTOOL="Pontoon"'
-        u'\n DATATYPE="plaintext"'
-        u'\n SEGTYPE="sentence"'
-        u'\n O-TMF="plain text"'
-        u'\n SRCLANG="en-US"'
-        u'\n CREATIONDATE="%(creation_date)s"></HEADER><BODY>' % {
-            'creation_date': creation_date.isoformat()
-        }
-    )
-
-    for resource_path, key, source, target, project_name, project_slug in entries:
-        yield (
-            u'\n<TU ID=%(tuid)s srclang="en-US">'
-            u'\n<PROP NAME="Domain">Computing</PROP>'
-            u'\n<PROP NAME="Project">%(project_name)s</PROP>'
-            u'\n<TUV LANG="en-US">'
-            u'\n<SEG>'
-            u'\n<![CDATA[\n%(source)s\n]]>'
-            u'\n</SEG>'
-            u'\n</TUV>'
-            u'\n<TUV LANG=%(locale_code)s>'
-            u'\n<SEG>'
-            u'\n<![CDATA[\n%(target)s\n]]>'
-            u'\n</SEG>'
-            u'\n</TUV>'
-            u'\n</TU>' % {
-                'tuid': quoteattr('%s:%s:%s' % (project_slug, resource_path, key)),
-                'source': source,
-                'locale_code': quoteattr(locale_code),
-                'target': target,
-                'project_name': xml_escape(project_name),
-            }
-        )
-
-    yield u'\n</BODY></TMX>'
-
-
 @condition(etag_func=None)
-@require_POST
-def download_translation_memory(request):
-    locale = get_object_or_404(Locale, code=request.POST.get('code'))
+def download_translation_memory(request, locale, slug, filename):
+    locale = get_object_or_404(Locale, code=locale)
+    project = get_object_or_404(Project, slug=slug)
 
-    tm_entries = TranslationMemoryEntry.objects.filter(
-        locale=locale,
-        translation__isnull=False,
+    tm_entries = (
+        TranslationMemoryEntry.objects.filter(
+            locale=locale,
+            project=project,
+            translation__isnull=False,
+        ).exclude(Q(source='') | Q(target=''))
     )
-
-    project = request.POST.get('slug')
-    if project:
-        tm_entries = tm_entries.filter(
-            project=get_object_or_404(Project, slug=project)
-        )
+    filename = '{code}.{slug}.tmx'.format(code=locale.code, slug=project.slug)
 
     response = StreamingHttpResponse(
         build_translation_memory_file(
@@ -864,6 +802,7 @@ def download_translation_memory(request):
                 'project__slug'
             ).order_by('project__slug', 'source')
         ),
-    content_type='text/xml')
-    response['Content-Disposition'] = 'attachment; filename="translation_memory.xml"'
+        content_type='text/xml'
+    )
+    response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(filename=filename)
     return response
