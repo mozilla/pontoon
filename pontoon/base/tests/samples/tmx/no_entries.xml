@@ -1,11 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<TMX VERSION="1.0">
-<HEADER
- CREATIONTOOLVERSION="0.1"
- CREATIONTOOL="Pontoon"
- DATATYPE="plaintext"
- SEGTYPE="sentence"
- O-TMF="plain text"
- SRCLANG="en-US"
- CREATIONDATE="2010-01-01T00:00:00"></HEADER><BODY>
-</BODY></TMX>
+<?xml version="1.0" ?>
+<tmx version="1.4">
+	<header creationdate="2010-01-01T00:00:00" creationtool="pontoon" creationtoolversion="0.1" datatype="plaintext" o-tmf="plain text" segtype="sentence" srclang="en-US">
+	</header>
+	<body>
+	</body>
+</tmx>

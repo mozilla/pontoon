@@ -643,8 +643,8 @@ $(function() {
     e.preventDefault();
 
     if ($(this).is('.download')) {
-        Pontoon.updateFormFields($('form#download-file'));
-        $('form#download-file').submit();
+      Pontoon.updateFormFields($('form#download-file'));
+      $('form#download-file').submit();
     } else if ($(this).is(".download-tmx")) {
       var downloadUrl = $(this).data('url-template')
                                .replace('locale', Pontoon.locale.code)

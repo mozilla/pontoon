@@ -369,41 +369,27 @@ class TMXDownloadViewTests(TestCase):
         self.project = EntityFactory.create().resource.project
         self.locale = LocaleFactory.create()
 
+    def get_tmx_file(self, locale, project):
+        """Shortcut function to request tmx contents from server."""
+        response = self.client.get('/{locale}/{project}/{locale}.{project}.tmx'.format(
+                locale=locale,
+                project=project
+            )
+        )
+        return response
+
     def test_locale_file_download(self):
         """By download the data."""
-        response = self.client.get('/translation-memory/download?locale=%s' % self.locale.code)
+        response = self.get_tmx_file(self.locale.code, self.project.slug)
 
         assert_code(response, 200)
-        assert_xml(response.content)
+        assert_xml(response.streaming_content)
 
-    def test_no_parameters(self):
-        """If user won't provide any parameters for the download view."""
-        response = self.client.get('/translation-memory/download')
-
-        assert_code(response, 404)
-
-    def test_invalid_locale(self):
+    def test_invalid_parameters(self):
         """Validate locale code and don't return data."""
-        response = self.client.get('/translation-memory/download?locale=invalid_locale')
 
-        assert_code(response, 404)
-
-    def test_filter_project(self):
-        """Create TMX file from entries related to a project."""
-        response = self.client.get('/translation-memory/download?locale=%s&project=%s' % (
-            self.locale.code,
-            self.project.slug
-        ))
-
-        assert_code(response, 200)
-        assert_xml(response.content)
-
-    def test_invalid_project(self):
-        """Validate project slug and don't return data."""
-        response = self.client.get('/translation-memory/download?locale=%s&project=invalid_project' % self.locale.code)
-
-        assert_code(response, 404)
-
+        assert_code(self.get_tmx_file('invalidlocale', 'invalidproject'), 404)
+        assert_code(self.get_tmx_file(self.locale.code, 'invalidproject'), 404)
 
 class TMXFileGeneratorTests(TestCase):
     def get_sample_tmx(self, file_name):
