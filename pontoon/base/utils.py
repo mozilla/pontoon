@@ -628,14 +628,14 @@ def build_translation_memory_file(creation_date, locale_code, entries):
 
     for resource_path, key, source, target, project_name, project_slug in entries:
         yield (
-            u'\n\t<tu id=%(tuid)s srclang="en-US">'
-            u'\n\t\t<tuv xml:lang="en-US">'
-            u'\n\t\t\t<seg>%(source)s</seg>'
-            u'\n\t\t</tuv>'
-            u'\n\t\t<tuv xml:lang=%(locale_code)s>'
-            u'\n\t\t\t<seg>%(target)s</seg>'
-            u'\n\t\t</tuv>'
-            u'\n\t</tu>' % {
+            u'\n\t\t<tu id=%(tuid)s srclang="en-US">'
+            u'\n\t\t\t<tuv xml:lang="en-US">'
+            u'\n\t\t\t\t<seg>%(source)s</seg>'
+            u'\n\t\t\t</tuv>'
+            u'\n\t\t\t<tuv xml:lang=%(locale_code)s>'
+            u'\n\t\t\t\t<seg>%(target)s</seg>'
+            u'\n\t\t\t</tuv>'
+            u'\n\t\t</tu>' % {
                 'tuid': quoteattr('%s:%s:%s' % (project_slug, resource_path, key)),
                 'source': xml_escape(source),
                 'locale_code': quoteattr(locale_code),

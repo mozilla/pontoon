@@ -347,7 +347,8 @@ class ChangeSet(object):
             target=t.string,
             locale_id=t.locale_id,
             entity_id=t.entity.pk,
-            translation_id=t.pk
+            translation_id=t.pk,
+            project=t.entity.resource.project_id,
         ) for t in self.translations_to_create if t.plural_form in (None, 0)]
         TranslationMemoryEntry.objects.bulk_create(memory_entries)
 

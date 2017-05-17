@@ -352,9 +352,14 @@ class EntityViewTests(TestCase):
         assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[2].pk])
 
 
-def assert_xml(xml_content, expected_xml=None):
+def assert_xml(xml_content, expected_xml=None, dtd_path=None):
     """Provided xml_content should be a valid XML string and be equal to expected_xml."""
+    from lxml import etree
+    from xml.parsers.expat import
+    etree.fromstring()
     validated_xml = xml_parse((u''.join(xml_content)).encode('utf-8')).toxml()
+    if dtd_path:
+
 
 
     if expected_xml is not None:
