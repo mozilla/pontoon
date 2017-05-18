@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from xml.dom.minidom import parseString as xml_parse
 import os
 
 from django.test import RequestFactory
@@ -11,6 +10,7 @@ from django_nose.tools import (
     assert_code,
 )
 
+from lxml import etree
 from mock import patch
 
 from pontoon.base.models import (
@@ -354,16 +354,29 @@ class EntityViewTests(TestCase):
 
 def assert_xml(xml_content, expected_xml=None, dtd_path=None):
     """Provided xml_content should be a valid XML string and be equal to expected_xml."""
-    from lxml import etree
-    from xml.parsers.expat import
-    etree.fromstring()
-    validated_xml = xml_parse((u''.join(xml_content)).encode('utf-8')).toxml()
+
+    def to_xml(string):
+        """
+        A shortcut function to load xml.
+        """
+        return etree.fromstring(string)
+
+    def normalize_xml(xml_string):
+        """
+        Helps to normalize different xml to the same format, indentation etc.
+        At the same time, content is validated.
+        """
+        return etree.tostring(to_xml(xml_content))
+
+    validated_xml = normalize_xml(xml_content)
+
     if dtd_path:
-
-
+        dtd = etree.DTD(dtd_path)
+        if not dtd.validate(to_xml(xml_content)):
+            raise AssertionError(dtd.error_log)
 
     if expected_xml is not None:
-        assert_equal(validated_xml, xml_parse(expected_xml.encode('utf-8')).toxml())
+        assert_equal(validated_xml, normalize_xml(expected_xml))
 
 
 class TMXDownloadViewTests(TestCase):
@@ -388,7 +401,7 @@ class TMXDownloadViewTests(TestCase):
         response = self.get_tmx_file(self.locale.code, self.project.slug)
 
         assert_code(response, 200)
-        assert_xml(response.streaming_content)
+        assert_xml(''.join(response.streaming_content).encode('utf-8'))
 
     def test_invalid_parameters(self):
         """Validate locale code and don't return data."""
@@ -396,26 +409,37 @@ class TMXDownloadViewTests(TestCase):
         assert_code(self.get_tmx_file('invalidlocale', 'invalidproject'), 404)
         assert_code(self.get_tmx_file(self.locale.code, 'invalidproject'), 404)
 
-class TMXFileGeneratorTests(TestCase):
-    def get_sample_tmx(self, file_name):
-        """
-        Read a tmx file from our samples directorty
-        """
-        tests_root = os.path.dirname(os.path.abspath(__file__))
 
-        with open(os.path.join(tests_root, 'samples', 'tmx', '%s.xml' % file_name), 'rU') as f:
+class TMXFileGeneratorTests(TestCase):
+    @property
+    def samples_root(self):
+        """Path to the folder with artifacts required to test TMX functionality."""
+
+        tests_root = os.path.dirname(os.path.abspath(__file__))
+        return os.path.join(tests_root, 'samples')
+
+    def get_sample(self, file_path):
+        """
+        Retrieve contents of artifact that is required to run/assert a part of test.
+        """
+
+        with open(os.path.join(self.samples_root, file_path), 'rU') as f:
             return f.read().decode('utf-8')
 
     def test_empty_tmx_file(self):
-        tmx_file = build_translation_memory_file(
+        tmx_contents = build_translation_memory_file(
             datetime(2010, 01, 01),
             'sl',
             ()
         )
-        assert_xml(tmx_file, self.get_sample_tmx('no_entries'))
+        assert_xml(
+            ''.join(tmx_contents).encode('utf-8'),
+            self.get_sample('tmx/no_entries.tmx'),
+            os.path.join(self.samples_root, 'tmx/tmx14.dtd')
+        )
 
     def test_valid_entries(self):
-        tmx_file = build_translation_memory_file(
+        tmx_contents = build_translation_memory_file(
             datetime(2010, 01, 01),
             'sl',
             (
@@ -432,4 +456,8 @@ class TMXFileGeneratorTests(TestCase):
 
             )
         )
-        assert_xml(tmx_file, self.get_sample_tmx('valid_entries'))
+        assert_xml(
+            ''.join(tmx_contents).encode('utf-8'),
+            self.get_sample('tmx/valid_entries.tmx'),
+            os.path.join(self.samples_root, 'tmx/tmx14.dtd')
+        )

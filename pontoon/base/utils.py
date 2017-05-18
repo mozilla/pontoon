@@ -615,20 +615,22 @@ def build_translation_memory_file(creation_date, locale_code, entries):
         u'<?xml version="1.0" encoding="utf-8" ?>'
         u'\n<tmx version="1.4">'
         u'\n\t<header'
+        u' adminlang="en-US"'
         u' creationtoolversion="0.1"'
         u' creationtool="pontoon"'
         u' datatype="plaintext"'
         u' segtype="sentence"'
         u' o-tmf="plain text"'
         u' srclang="en-US"'
-        u' creationdate="%(creation_date)s">\n\t</header>\n\t<body>' % {
+        u' creationdate="%(creation_date)s">'
+        u'\n\t</header>'
+        u'\n\t<body>' % {
             'creation_date': creation_date.isoformat()
         }
     )
-
     for resource_path, key, source, target, project_name, project_slug in entries:
         yield (
-            u'\n\t\t<tu id=%(tuid)s srclang="en-US">'
+            u'\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
             u'\n\t\t\t<tuv xml:lang="en-US">'
             u'\n\t\t\t\t<seg>%(source)s</seg>'
             u'\n\t\t\t</tuv>'
@@ -644,4 +646,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
             }
         )
 
-    yield u'\n\t</body>\n</tmx>'
+    yield (
+        u'\n\t</body>'
+        u'\n</tmx>'
+    )

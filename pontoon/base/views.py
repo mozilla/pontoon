@@ -373,7 +373,7 @@ def batch_edit_translations(request):
         locale=locale,
         entity=t.entity,
         translation=t,
-        project=t.entity.resource.project,
+        project=project,
     ) for t in Translation.objects.filter(pk__in=changed_translation_pks).prefetch_related('entity__resource')]
     TranslationMemoryEntry.objects.bulk_create(memory_entries)
 
