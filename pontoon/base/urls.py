@@ -38,6 +38,10 @@ urlpatterns = [
         views.translate,
         name='pontoon.translate'),
 
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<filename>.+)\.tmx$',
+        views.download_translation_memory,
+        name='pontoon.download_tmx'),
+
     # AJAX
     url(r'^get-entities/', views.entities,
         name='pontoon.entities'),
