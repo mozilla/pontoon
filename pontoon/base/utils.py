@@ -11,6 +11,10 @@ import time
 import zipfile
 
 from datetime import datetime, timedelta
+from xml.sax.saxutils import (
+    escape as xml_escape,
+    quoteattr,
+)
 
 from django.db.models import Prefetch
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -591,3 +595,58 @@ def convert_to_unix_time(my_datetime):
     Convert datetime object to UNIX time
     """
     return int(time.mktime(my_datetime.timetuple()) * 1000)
+
+
+def build_translation_memory_file(creation_date, locale_code, entries):
+    """
+    TMX files will contain large amount of entries and it's impossible to render all the data with django templates.
+    Rendering of string in memory is a lot faster.
+    :param datetime creation_date: when TMX file is being created.
+    :param str locale_code: code of a locale
+    :param list entries: A list which contains tuples with following items:
+                         * resource_path - path of a resource,
+                         * key - key of an entity,
+                         * source - source string of entity,
+                         * target - translated string,
+                         * project_name - name of a project,
+                         * project_slug - slugified name of a project,
+    """
+    yield (
+        u'<?xml version="1.0" encoding="utf-8" ?>'
+        u'\n<tmx version="1.4">'
+        u'\n\t<header'
+        u' adminlang="en-US"'
+        u' creationtoolversion="0.1"'
+        u' creationtool="pontoon"'
+        u' datatype="plaintext"'
+        u' segtype="sentence"'
+        u' o-tmf="plain text"'
+        u' srclang="en-US"'
+        u' creationdate="%(creation_date)s">'
+        u'\n\t</header>'
+        u'\n\t<body>' % {
+            'creation_date': creation_date.isoformat()
+        }
+    )
+    for resource_path, key, source, target, project_name, project_slug in entries:
+        yield (
+            u'\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
+            u'\n\t\t\t<tuv xml:lang="en-US">'
+            u'\n\t\t\t\t<seg>%(source)s</seg>'
+            u'\n\t\t\t</tuv>'
+            u'\n\t\t\t<tuv xml:lang=%(locale_code)s>'
+            u'\n\t\t\t\t<seg>%(target)s</seg>'
+            u'\n\t\t\t</tuv>'
+            u'\n\t\t</tu>' % {
+                'tuid': quoteattr('%s:%s:%s' % (project_slug, resource_path, key)),
+                'source': xml_escape(source),
+                'locale_code': quoteattr(locale_code),
+                'target': xml_escape(target),
+                'project_name': xml_escape(project_name),
+            }
+        )
+
+    yield (
+        u'\n\t</body>'
+        u'\n</tmx>'
+    )

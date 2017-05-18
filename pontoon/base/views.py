@@ -2,6 +2,8 @@ import logging
 import os
 
 from bulk_update.helper import bulk_update
+from datetime import datetime
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -10,18 +12,23 @@ from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.paginator import Paginator, EmptyPage
 from django.db import transaction
+from django.db.models import Q
 from django.http import (
     Http404,
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseForbidden,
     JsonResponse,
+    StreamingHttpResponse
 )
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import (
+    condition,
+    require_POST
+)
 
 from pontoon.base import forms
 from pontoon.base import utils
@@ -38,8 +45,9 @@ from pontoon.base.models import (
     UserProfile,
 )
 from pontoon.base.utils import (
+    build_translation_memory_file,
     split_ints,
-    require_AJAX
+    require_AJAX,
 )
 
 
@@ -365,8 +373,9 @@ def batch_edit_translations(request):
         target=t.string,
         locale=locale,
         entity=t.entity,
-        translation=t
-    ) for t in Translation.objects.filter(pk__in=changed_translation_pks).prefetch_related('entity')]
+        translation=t,
+        project=project,
+    ) for t in Translation.objects.filter(pk__in=changed_translation_pks).prefetch_related('entity__resource')]
     TranslationMemoryEntry.objects.bulk_create(memory_entries)
 
     return JsonResponse({
@@ -766,3 +775,36 @@ def upload(request):
                 messages.error(request, error)
 
     return translate(request, code, slug, part)
+
+
+@condition(etag_func=None)
+def download_translation_memory(request, locale, slug, filename):
+    locale = get_object_or_404(Locale, code=locale)
+    project = get_object_or_404(Project, slug=slug)
+
+    tm_entries = (
+        TranslationMemoryEntry.objects.filter(
+            locale=locale,
+            project=project,
+            translation__isnull=False,
+        ).exclude(Q(source='') | Q(target=''))
+    )
+    filename = '{code}.{slug}.tmx'.format(code=locale.code, slug=project.slug)
+
+    response = StreamingHttpResponse(
+        build_translation_memory_file(
+            datetime.now(),
+            locale.code,
+            tm_entries.values_list(
+                'entity__resource__path',
+                'entity__key',
+                'source',
+                'target',
+                'project__name',
+                'project__slug'
+            ).order_by('project__slug', 'source')
+        ),
+        content_type='text/xml'
+    )
+    response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(filename=filename)
+    return response

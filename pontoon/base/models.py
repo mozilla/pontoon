@@ -2015,7 +2015,8 @@ class Translation(DirtyFieldsMixin, models.Model):
                     target=self.string,
                     entity=self.entity,
                     translation=self,
-                    locale=self.locale
+                    locale=self.locale,
+                    project=self.entity.resource.project,
                 )
 
         if not imported:
@@ -2115,10 +2116,12 @@ class TranslationMemoryEntry(models.Model):
     source = models.TextField()
     target = models.TextField()
 
-    entity = models.ForeignKey(Entity, null=True, on_delete=models.SET_NULL)
+    entity = models.ForeignKey(Entity, null=True, on_delete=models.SET_NULL,
+                               related_name='memory_entries')
     translation = models.ForeignKey(Translation, null=True, on_delete=models.SET_NULL,
-                                    related_name="memory_entries")
+                                    related_name='memory_entries')
     locale = models.ForeignKey(Locale)
+    project = models.ForeignKey(Project, null=True, related_name='memory_entries')
 
     objects = TranslationMemoryEntryManager()
 

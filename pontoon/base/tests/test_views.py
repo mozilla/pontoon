@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+from datetime import datetime
+import os
+
 from django.test import RequestFactory
 
 from django_nose.tools import (
@@ -6,6 +10,7 @@ from django_nose.tools import (
     assert_code,
 )
 
+from lxml import etree
 from mock import patch
 
 from pontoon.base.models import (
@@ -26,6 +31,7 @@ from pontoon.base.tests import (
     TestCase,
     UserFactory,
 )
+from pontoon.base.views import build_translation_memory_file
 
 
 class UserTestCase(TestCase):
@@ -344,3 +350,114 @@ class EntityViewTests(TestCase):
 
         assert_equal(response.json()['has_next'], False)
         assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[2].pk])
+
+
+def assert_xml(xml_content, expected_xml=None, dtd_path=None):
+    """Provided xml_content should be a valid XML string and be equal to expected_xml."""
+
+    def to_xml(string):
+        """
+        A shortcut function to load xml.
+        """
+        return etree.fromstring(string)
+
+    def normalize_xml(xml_string):
+        """
+        Helps to normalize different xml to the same format, indentation etc.
+        At the same time, content is validated.
+        """
+        return etree.tostring(to_xml(xml_content))
+
+    validated_xml = normalize_xml(xml_content)
+
+    if dtd_path:
+        dtd = etree.DTD(dtd_path)
+        if not dtd.validate(to_xml(xml_content)):
+            raise AssertionError(dtd.error_log)
+
+    if expected_xml is not None:
+        assert_equal(validated_xml, normalize_xml(expected_xml))
+
+
+class TMXDownloadViewTests(TestCase):
+    """
+    Backend should be able to return a valid (and empty) TMX file.
+    """
+    def setUp(self):
+        self.project = EntityFactory.create().resource.project
+        self.locale = LocaleFactory.create()
+
+    def get_tmx_file(self, locale, project):
+        """Shortcut function to request tmx contents from server."""
+        response = self.client.get('/{locale}/{project}/{locale}.{project}.tmx'.format(
+                locale=locale,
+                project=project
+            )
+        )
+        return response
+
+    def test_locale_file_download(self):
+        """By download the data."""
+        response = self.get_tmx_file(self.locale.code, self.project.slug)
+
+        assert_code(response, 200)
+        assert_xml(''.join(response.streaming_content).encode('utf-8'))
+
+    def test_invalid_parameters(self):
+        """Validate locale code and don't return data."""
+
+        assert_code(self.get_tmx_file('invalidlocale', 'invalidproject'), 404)
+        assert_code(self.get_tmx_file(self.locale.code, 'invalidproject'), 404)
+
+
+class TMXFileGeneratorTests(TestCase):
+    @property
+    def samples_root(self):
+        """Path to the folder with artifacts required to test TMX functionality."""
+
+        tests_root = os.path.dirname(os.path.abspath(__file__))
+        return os.path.join(tests_root, 'samples')
+
+    def get_sample(self, file_path):
+        """
+        Retrieve contents of artifact that is required to run/assert a part of test.
+        """
+
+        with open(os.path.join(self.samples_root, file_path), 'rU') as f:
+            return f.read().decode('utf-8')
+
+    def test_empty_tmx_file(self):
+        tmx_contents = build_translation_memory_file(
+            datetime(2010, 01, 01),
+            'sl',
+            ()
+        )
+        assert_xml(
+            ''.join(tmx_contents).encode('utf-8'),
+            self.get_sample('tmx/no_entries.tmx'),
+            os.path.join(self.samples_root, 'tmx/tmx14.dtd')
+        )
+
+    def test_valid_entries(self):
+        tmx_contents = build_translation_memory_file(
+            datetime(2010, 01, 01),
+            'sl',
+            (
+                ('aa/bb/ccc', 'xxx', 'source string', 'translation', 'Pontoon App', 'pontoon'),
+
+                # Test escape of characters
+                ('aa/bb/ccc', 'x&x&x#"', 'source string', 'translation', 'Pontoon & App', 'pontoon'),
+
+                # Handle unicode characters
+                ('aa/bb/ccc', 'xxx', u'source string łążśźć', u'translation łążśźć', 'pontoon', 'pontoon'),
+
+                # Handle html content
+                ('aa/bb/ccc', 'xxx', u'<p>source <strong>string</p>', u'<p>translation łążśźć</p>', 'pontoon', 'pontoon'),
+
+            )
+        )
+        assert_xml(
+            ''.join(tmx_contents).encode('utf-8'),
+            self.get_sample('tmx/valid_entries.tmx'),
+            os.path.join(self.samples_root, 'tmx/tmx14.dtd')
+        )
