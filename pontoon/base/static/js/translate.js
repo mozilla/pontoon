@@ -2939,11 +2939,15 @@ var Pontoon = (function (my) {
      * Update profile menu links and contents
      */
     updateProfileMenu: function () {
-      $('#profile .admin-current-project a').attr('href', '/admin/projects/' + this.project.slug + '/');
+      var code = this.locale.code,
+          slug = this.project.slug;
+
+      $('#profile .admin-current-project a').attr('href', '/admin/projects/' + slug + '/');
       $('#profile .upload').toggle(this.state.paths && this.user.canTranslate() && this.part !== 'all-resources');
       $('#profile .langpack')
         .toggle(this.project.langpack_url !== '')
         .find('a').attr('href', this.project.langpack_url.replace('{locale_code}', this.locale.code));
+      $('#profile .download-tmx a').attr('href', '/' + code + '/' + slug + '/' + code + '.' + slug + '.tmx');
     },
 
 

@@ -60,7 +60,6 @@ class TestCase(BaseTestCase):
         return patch_obj.start()
 
 
-
 class UserFactory(DjangoModelFactory):
     username = Sequence(lambda n: 'test%s' % n)
     email = Sequence(lambda n: 'test%s@example.com' % n)

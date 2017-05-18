@@ -652,11 +652,6 @@ $(function() {
     if ($(this).is('.download')) {
       Pontoon.updateFormFields($('form#download-file'));
       $('form#download-file').submit();
-    } else if ($(this).is(".download-tmx")) {
-      var downloadUrl = $(this).data('url-template')
-                               .replace('locale', Pontoon.locale.code)
-                               .replace('project', Pontoon.project.slug);
-      window.location.href = downloadUrl;
 
     } else if ($(this).is(".upload")) {
       $('#id_uploadfile').click();
