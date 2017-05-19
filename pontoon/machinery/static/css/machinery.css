@@ -76,12 +76,12 @@
   color: #7BC876;
 }
 
-.machinery li {
+#helpers .machinery li {
   padding-left: 5px;
   padding-right: 5px;
 }
 
-.machinery li:hover {
+#helpers .machinery li:hover {
   background: #333941;
   cursor: pointer;
 }
