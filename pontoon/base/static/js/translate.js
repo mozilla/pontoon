@@ -1566,6 +1566,14 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Check if translation length limit exceeded
+     */
+    translationLengthLimitExceeded: function (translation) {
+      return this.translationLengthLimit && this.stripHTML(translation).length > this.translationLengthLimit;
+    },
+
+
+    /*
      * Submit translation to DB
      */
     saveTranslation: function (e) {
@@ -1581,8 +1589,7 @@ var Pontoon = (function (my) {
           return;
       }
 
-      // Prevent too long translation submissions
-      if (self.translationLengthLimit && self.stripHTML(translation).length > self.translationLengthLimit) {
+      if (self.translationLengthLimitExceeded(translation)) {
         self.endLoader('Translation too long.', 'error');
         return;
       }
@@ -1931,6 +1938,11 @@ var Pontoon = (function (my) {
 
         var entity = self.getEditorEntity(),
             translation = $('#translation').val();
+
+        if (self.translationLengthLimitExceeded(translation)) {
+          self.endLoader('Translation too long.', 'error');
+          return;
+        }
 
         // Mark that user approved translation instead of submitting it
         self.approvedNotSubmitted = true;
