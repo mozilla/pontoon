@@ -480,6 +480,7 @@ PIPELINE_JS = {
     },
     'machinery': {
         'source_filenames': (
+            'js/lib/diff.js',
             'js/lib/clipboard.min.js',
             'js/machinery.js',
         ),
