@@ -461,7 +461,7 @@ var Pontoon = (function (my) {
         }).error(error).complete(complete);
       }
 
-      /* amaGama
+      // amaGama
       requests++;
 
       if (self.XHRamagama) {
@@ -489,7 +489,6 @@ var Pontoon = (function (my) {
           });
         }
       }).error(error).complete(complete);
-      */
 
       // Transvision
       requests++;
