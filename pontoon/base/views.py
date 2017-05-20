@@ -303,7 +303,8 @@ def batch_edit_translations(request):
     if action == 'approve':
         translations = translations.filter(approved=False)
         changed_translation_pks = list(translations.values_list('pk', flat=True))
-        latest_translation_pk = translations.last().pk
+        if changed_translation_pks:
+            latest_translation_pk = translations.last().pk
         count, translated_resources, changed_entities = get_translations_info(translations)
         translations.update(
             approved=True,
