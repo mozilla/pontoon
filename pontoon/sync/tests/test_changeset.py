@@ -1,5 +1,3 @@
-import os.path
-
 from django_nose.tools import (
     assert_equal,
     assert_false,
@@ -7,7 +5,7 @@ from django_nose.tools import (
     assert_raises,
     assert_true
 )
-from mock import Mock, MagicMock, patch, call
+from mock import Mock, MagicMock, patch
 
 from pontoon.base.models import Entity
 from pontoon.base.tests import (
@@ -17,7 +15,6 @@ from pontoon.base.tests import (
 )
 from pontoon.base.utils import aware_datetime
 from pontoon.sync.tests import FakeCheckoutTestCase
-from pontoon.sync.utils import locale_directory_path
 
 
 class ChangeSetTests(FakeCheckoutTestCase):
@@ -378,31 +375,6 @@ class ChangeSetTests(FakeCheckoutTestCase):
             self.changeset.execute_update_vcs()
             assert mock_has_changed.called
             assert len(resource_file.save.mock_calls) == 0
-
-    def test_obsolete_vcs_resources_paths(self):
-        """Tests if we remove obsolete resources"""
-        obsolete_vcs_resources = [
-            'obsolete.properties',
-            'second_obsolete.properties',
-        ]
-        obsolete_paths = [
-            os.path.join(locale_directory_path(self.vcs_project.checkout_path, self.translated_locale.code), path)
-            for path in obsolete_vcs_resources
-        ]
-
-        # We test if we remove only resources available on disk
-        self.changeset.changes['obsolete_vcs_resources'] = obsolete_paths + ['second_obsolete.properties']
-
-        with patch('os.path.exists', side_effect=lambda p: p in obsolete_paths[:1]) as exists_mock,\
-             patch('os.remove') as remove_mock:
-
-            self.changeset.execute_obsolete_vcs_resources()
-            exists_mock.assert_has_calls([
-                call(obsolete_paths[0]),
-                call(obsolete_paths[1])
-            ])
-            remove_mock.assert_called_once_with(obsolete_paths[0])
-        assert_equal(self.changeset.locales_to_commit, {self.translated_locale})
 
 
 class AuthorsTests(FakeCheckoutTestCase):
