@@ -1,8 +1,7 @@
-from collections import defaultdict
 import logging
-import os
 
 from bulk_update.helper import bulk_update
+from collections import defaultdict
 from django.contrib.auth.models import User
 from django.db.models import Prefetch
 from django.template.defaultfilters import pluralize
@@ -25,7 +24,7 @@ class ChangeSet(object):
     translations stored in VCS. Once all the necessary changes have been
     stored, execute all the changes at once efficiently.
     """
-    def __init__(self, db_project, vcs_project, now, obsolete_vcs_resources=None, locale=None):
+    def __init__(self, db_project, vcs_project, now, locale=None):
         """
         :param now:
             Datetime to use for marking when approvals happened.
@@ -42,7 +41,6 @@ class ChangeSet(object):
         self.executed = False
         self.changes = {
             'update_vcs': [],
-            'obsolete_vcs_resources': obsolete_vcs_resources or [],
             'update_db': [],
             'obsolete_db': [],
             'create_db': []
@@ -97,7 +95,6 @@ class ChangeSet(object):
         self.execute_create_db()
         self.execute_update_db()
         self.execute_obsolete_db()
-        self.execute_obsolete_vcs_resources()
 
         # Apply the built-up changes to the DB
         self.bulk_update_entities()
@@ -303,17 +300,6 @@ class ChangeSet(object):
         (Entity.objects
             .filter(pk__in=self.changes['obsolete_db'])
             .update(obsolete=True))
-
-    def execute_obsolete_vcs_resources(self):
-        for path in self.changes['obsolete_vcs_resources']:
-            locales = [self.locale] if self.locale else self.db_project.locales.all()
-            for locale in locales:
-                locale_directory = self.vcs_project.locale_directory_paths[locale.code]
-                file_path = os.path.join(locale_directory, path)
-                if os.path.exists(file_path):
-                    log.info('Removing obsolete file {} for {}.'.format(path, locale.code))
-                    os.remove(file_path)
-                    self.locales_to_commit.add(locale)
 
     def bulk_update_entities(self):
         if len(self.entities_to_update) > 0:
