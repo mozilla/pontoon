@@ -11,7 +11,6 @@ from notifications.signals import notify
 from pontoon.base.models import (
     Entity,
     Locale,
-    Resource,
     Translation,
     TranslationMemoryEntry
 )
@@ -26,7 +25,7 @@ class ChangeSet(object):
     translations stored in VCS. Once all the necessary changes have been
     stored, execute all the changes at once efficiently.
     """
-    def __init__(self, db_project, vcs_project, now, obsolete_vcs_entities=None, obsolete_vcs_resources=None, locale=None):
+    def __init__(self, db_project, vcs_project, now, obsolete_vcs_resources=None, locale=None):
         """
         :param now:
             Datetime to use for marking when approvals happened.
@@ -43,7 +42,6 @@ class ChangeSet(object):
         self.executed = False
         self.changes = {
             'update_vcs': [],
-            'obsolete_vcs_entities': obsolete_vcs_entities or [],
             'obsolete_vcs_resources': obsolete_vcs_resources or [],
             'update_db': [],
             'obsolete_db': [],
@@ -120,17 +118,6 @@ class ChangeSet(object):
 
             # Track which translators were involved.
             self.commit_authors_per_locale[locale_code].extend([t.user for t in db_translations if t.user])
-
-        # Remove obsolete entities from asymmetric files
-        obsolete_entities_paths = Resource.objects.obsolete_entities_paths(
-            self.changes['obsolete_vcs_entities']
-        )
-
-        for path in obsolete_entities_paths:
-            changed_resources.add(resources[path])
-
-        if len(obsolete_entities_paths) > 0:
-            self.locales_to_commit = set(self.locales.values())
 
         for resource in changed_resources:
             resource.save(self.locale)
