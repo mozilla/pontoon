@@ -139,16 +139,44 @@ var Pontoon = (function (my) {
      * Markup placeables
      */
     markPlaceables: function (string) {
-      function markup(string, regex, title) {
-        return string.replace(regex, '<mark class="placeable" title="' + title + '">$&</mark>');
+      function getReplacement(title, replacement) {
+        return '<mark class="placeable" title="' + title + '">' + replacement + '</mark>';
+      }
+
+      function markup(string, regex, title, replacement) {
+        replacement = replacement || '$&';
+        return string.replace(regex, getReplacement(title, replacement));
       }
 
       string = this.doNotRender(string);
 
+      /* Special spaces */
       // Pontoon.doNotRender() replaces \u00A0 with &nbsp;
       string = markup(string, /&nbsp;/gi, 'Non-breaking space');
       string = markup(string, /[\u202F]/gi, 'Narrow non-breaking space');
       string = markup(string, /[\u2009]/gi, 'Thin space');
+
+      /* Multiple spaces */
+      string = string.replace(/  +/gi, function(match) {
+        var title = 'Multiple spaces',
+            replacement = '';
+
+        for (var i=0; i<match.length; i++) {
+          replacement += ' &middot; ';
+        }
+
+        return getReplacement(title, replacement);
+      });
+
+      /* Leading and Trailing spaces */
+      string = markup(string, /^ /gi, 'Leading space');
+      string = markup(string, / $/gi, 'Trailing space');
+
+      /* Tab */
+      string = markup(string, /\t/gi, 'Tab character', '&rarr;');
+
+      /* Newline */
+      string = markup(string, /\n/gi, 'Newline character', '¶$&');
 
       return string;
     },
