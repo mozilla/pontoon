@@ -21,6 +21,12 @@ all the prerequisites using the following command:
 
       sudo apt install git python-pip nodejs-legacy npm postgresql postgresql-server-dev-9.5 postgresql-contrib-9.5 libxml2-dev libxslt1-dev python-dev libmemcached-dev virtualenv
 
+If you're on Ubuntu 17.04, you can install all the prerequisites using the following command:
+
+   .. code-block:: bash
+
+      sudo apt install git python-pip nodejs-legacy npm postgresql postgresql-server-dev-9.6 postgresql-contrib-9.6 libxml2-dev libxslt1-dev python-dev libmemcached-dev virtualenv
+
 .. _Git: https://git-scm.com/
 .. _Python 2.7: https://www.python.org/
 .. _pip: https://pip.pypa.io/en/stable/
