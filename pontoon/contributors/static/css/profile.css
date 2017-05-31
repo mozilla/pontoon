@@ -19,7 +19,7 @@
 }
 
 #main .container {
-  margin: 0 auto 12em;
+  margin: 0 auto;
   position: relative;
   text-align: left;
 }
@@ -27,7 +27,7 @@
 #main .container:before {
   background: #AAAAAA;
   content: '';
-  height: 100%;
+  height: calc(100% - 8em);
   left: 50%;
   margin-left: -1px;
   position: absolute;
