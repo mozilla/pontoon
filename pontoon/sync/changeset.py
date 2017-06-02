@@ -140,16 +140,19 @@ class ChangeSet(object):
         Return a dict of the properties and values necessary to create
         or update a database entity from a VCS entity.
         """
+        comment = '\n'.join(vcs_entity.comments)
+
         return {
             'resource': self.resources[vcs_entity.resource.path],
             'string': vcs_entity.string,
             'string_plural': vcs_entity.string_plural,
             'key': vcs_entity.key,
-            'comment': '\n'.join(vcs_entity.comments),
+            'comment': comment,
             # one timestamp per import, unlike timezone.now()
             'date_created': db_entity.date_created if db_entity else self.now,
             'order': vcs_entity.order,
             'source': vcs_entity.source,
+            'document': vcs_entity.key + ' ' + vcs_entity.string + ' ' + vcs_entity.string_plural + ' ' + comment
         }
 
     def send_notifications(self, new_entities):
