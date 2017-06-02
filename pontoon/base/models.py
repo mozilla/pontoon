@@ -1778,7 +1778,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             search_query = (search, locale.db_collation)
             entities = (
                 Entity.objects.filter(
-                    Q(translation__string__icontains_collate=search_query, translation__locale=locale) | Q(translation__entity_document__icontains=search),
+                    Q(translation__string__icontains_collate=search_query, translation__locale=locale) | Q(string__icontains=search) | Q(string_plural__icontains=search) | Q(comment__icontains=search) | Q(key__icontains=search),
                     pk__in=entities
                 )
                 .distinct()
