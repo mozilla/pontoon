@@ -130,6 +130,7 @@ td {
 .pagination {
     font-size: 14px;
     padding: 3em 0;
+    text-align: center;
     text-transform: uppercase;
 }
 
@@ -139,8 +140,4 @@ td {
 
 .pagination .next {
     float: right;
-}
-
-.pagination .current {
-    text-align: center;
 }
