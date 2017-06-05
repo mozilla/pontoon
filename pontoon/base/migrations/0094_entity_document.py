@@ -57,4 +57,16 @@ class Migration(migrations.Migration):
             entity_document_update_trigger_drop_sql,
             entity_document_update_trigger_create_sql,
         ),
+
+        MultiFieldTRGMIndex(
+            table='base_entity',
+            from_fields=['document'],
+            field='document'
+        ),
+
+        MultiFieldTRGMIndex(
+            table='base_translation',
+            from_fields=['string'],
+            field='string'
+        ),
     ]
