@@ -85,5 +85,7 @@
 {% endblock %}
 
 {% block extend_js %}
+  <!-- TODO: integrate into django-pipeline -->
+  <script type="text/javascript" src="{{ static('js/lib/fluent-syntax.js') }}"></script>
   {% javascript 'projects' %}
 {% endblock %}

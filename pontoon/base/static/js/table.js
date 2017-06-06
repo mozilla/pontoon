@@ -23,8 +23,12 @@ var date_formatter = new Intl.DateTimeFormat('en-GB', {
 $('body').on('mouseenter', '.latest-activity .latest time', function() {
   var $element = $(this);
 
+  // Translation Preview (needed for FTL)
+  var translationData = $element.data('translation'),
+      translationPreview = Pontoon.fluent.getSimplePreview({string: translationData}, translationData, {format: 'ftl'});
+
   timer = setTimeout(function() {
-    var translation = Pontoon.doNotRender($element.data('translation')),
+    var translation = Pontoon.doNotRender(translationPreview),
         avatar = $element.data('user-avatar'),
         action = $element.data('action'),
         name = $element.data('user-name'),

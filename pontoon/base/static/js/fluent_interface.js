@@ -348,7 +348,7 @@ var Pontoon = (function (my) {
 $(function() {
 
   // Ignore editing for anonymous users
-  if (!Pontoon.user.id) {
+  if (Pontoon && Pontoon.user && !Pontoon.user.id) {
     return;
   }
 
