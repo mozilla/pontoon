@@ -1670,6 +1670,11 @@ class Entity(DirtyFieldsMixin, models.Model):
     )
     objects = EntityQuerySet.as_manager()
 
+    class Meta:
+        index_together = (
+            ('resource', 'obsolete', 'string_plural'),
+        )
+
     @property
     def marked(self):
         return utils.mark_placeables(self.string)
@@ -1956,6 +1961,12 @@ class Translation(DirtyFieldsMixin, models.Model):
     # this translation is stored in, but that we otherwise don't care
     # about.
     extra = JSONField(default=extra_default)
+
+    class Meta:
+        index_together = (
+            ('entity', 'locale', 'approved'),
+            ('entity', 'locale', 'fuzzy'),
+        )
 
     @classmethod
     def for_locale_project_paths(self, locale, project, paths):
