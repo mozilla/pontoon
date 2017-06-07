@@ -578,7 +578,7 @@ def latest_datetime(datetimes):
 
 def parse_time_interval(interval):
     """
-    Return start and end time objects from time interval string n the format
+    Return start and end time objects from time interval string in the format
     %d%m%Y%H%M-%d%m%Y%H%M. Also, increase interval by one minute due to
     truncation to a minute in Translation.counts_per_minute QuerySet.
     """

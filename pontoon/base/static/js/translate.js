@@ -942,10 +942,7 @@ var Pontoon = (function (my) {
     /*
      * Initialize Time Range selector chart
      */
-    updateRangePicker: function() {
-      var self = this,
-          counts = self.countsPerMinute;
-
+    updateRangePicker: function(counts) {
       $('#filter').find('.time-range, .for-time-range').toggle(counts.length > 0);
 
       if (counts.length === 0) {
@@ -1412,6 +1409,25 @@ var Pontoon = (function (my) {
         e.preventDefault();
 
         self.applySelectedFilters();
+      });
+
+      // Update authors and time range
+      $('#filter:not(".opened") .selector').click(function(e) {
+        if ($('#filter').is('.opened')) {
+          return;
+        }
+
+        self.NProgressUnbind();
+
+        $.ajax({
+          url: '/' + self.locale.code + '/' + self.project.slug + '/' + self.part + '/authors-and-time-range/',
+          success: function(data) {
+            self.updateRangePicker(data.counts_per_minute);
+            self.updateAuthors(data.authors);
+          }
+        });
+
+        self.NProgressBind();
       });
 
       // Time range editing toggle
@@ -2010,8 +2026,6 @@ var Pontoon = (function (my) {
                 pluralForm = self.getPluralForm(true);
 
             self.stats = data.stats;
-            self.authors = data.authors;
-            self.countsPerMinute = data.counts_per_minute;
 
             item
               .addClass('delete')
@@ -2067,8 +2081,6 @@ var Pontoon = (function (my) {
                   self.moveCursorToBeginning();
                   self.updateCurrentTranslationLength();
                   self.updateCachedTranslation();
-                  self.updateAuthors();
-                  self.updateRangePicker();
                   self.updateFilterUI();
                 }
 
@@ -2206,10 +2218,6 @@ var Pontoon = (function (my) {
                   var checkedEntities = self.getEntitiesIds('#entitylist .entity.selected');
                   self.getEntities({entityIds: checkedEntities.join(',')}).then(function(entitiesData, state, hasNext) {
                     self.stats = entitiesData.stats;
-                    self.authors = entitiesData.authors;
-                    self.updateAuthors();
-                    self.countsPerMinute = entitiesData.counts_per_minute;
-                    self.updateRangePicker();
                     self.updateFilterUI();
 
                     entitiesMap = {};
@@ -2501,8 +2509,6 @@ var Pontoon = (function (my) {
 
       function renderTranslation(data) {
         self.stats = data.stats;
-        self.authors = data.authors;
-        self.countsPerMinute = data.counts_per_minute;
 
         if (data.type) {
           self.endLoader('Translation ' + data.type);
@@ -2516,9 +2522,7 @@ var Pontoon = (function (my) {
           var pf = self.getPluralForm(true);
           self.cachedTranslation = translation;
           self.updateTranslation(entity, pf, data.translation);
-          self.updateAuthors();
           self.updateInPlaceTranslation(data.translation.string);
-          self.updateRangePicker();
           self.updateFilterUI();
 
           // Update translation, including in place if possible
@@ -2893,13 +2897,14 @@ var Pontoon = (function (my) {
     /*
      * Update authors list in filter menu
      */
-    updateAuthors: function () {
+    updateAuthors: function (authors) {
       var self = this,
-          authors = $('#filter').find('.for-authors').toggle(this.authors.length > 0);
+          $forAuthors = $('#filter').find('.for-authors').toggle(authors.length > 0);
+
       $('#filter .menu li.author').remove();
 
-      $.each(this.authors, function() {
-        authors.after('<li class="author" data-type="' + this.email + '">' +
+      $.each(authors, function() {
+        $forAuthors.after('<li class="author" data-type="' + this.email + '">' +
           '<figure>' +
             '<span class="sel">' +
               '<span class="status fa"></span>' +
@@ -3047,8 +3052,6 @@ var Pontoon = (function (my) {
       self.updateTextareaAttributes();
       self.updateSaveButtons();
       self.resetTimeRange();
-      self.updateAuthors();
-      self.updateRangePicker();
       self.updateFilterUI();
       self.renderEntityList();
       self.updateProgress();
@@ -3587,8 +3590,6 @@ var Pontoon = (function (my) {
       var self = this;
 
       self.stats = entitiesData.stats;
-      self.authors = entitiesData.authors;
-      self.countsPerMinute = entitiesData.counts_per_minute;
       self.entities = entitiesData.entities;
       self.hasNext = hasNext;
 
@@ -3601,8 +3602,6 @@ var Pontoon = (function (my) {
           self.setNoMatch(true);
           self.setMainLoading(false);
           self.updateProgress();
-          self.updateAuthors();
-          self.updateRangePicker();
           self.updateFilterUI();
           self.createObject(true);
           return;
@@ -4012,12 +4011,6 @@ window.onpopstate = function(e) {
 
     Pontoon.state = history.state;
 
-    Pontoon.authors = $('#server').data('authors');
-    Pontoon.updateAuthors();
-
-    Pontoon.countsPerMinute = $('#server').data('counts-per-minute');
-    Pontoon.updateRangePicker();
-
     // Update search and filter
     Pontoon.setSearch(Pontoon.state.search);
     Pontoon.validateTimeRangeURL(Pontoon.state.filter);
@@ -4039,12 +4032,6 @@ Pontoon.attachMainHandlers();
 Pontoon.attachEntityListHandlers();
 Pontoon.attachEditorHandlers();
 Pontoon.attachBatchEditorHandlers();
-
-Pontoon.authors = $('#server').data('authors');
-Pontoon.updateAuthors();
-
-Pontoon.countsPerMinute = $('#server').data('counts-per-minute');
-Pontoon.updateRangePicker();
 
 Pontoon.updateInitialState();
 Pontoon.updateFilterUI();

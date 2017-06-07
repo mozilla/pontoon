@@ -685,7 +685,13 @@ body > header aside p {
   padding-right: 5px;
 }
 
+#filter .menu li.horizontal-separator.for-time-range,
+#filter .menu li.horizontal-separator.for-authors {
+  display: none;
+}
+
 #filter .menu li.time-range {
+  display: none;
   padding: 4px 0;
 }
 
