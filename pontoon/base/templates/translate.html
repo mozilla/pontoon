@@ -23,8 +23,6 @@
      {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if user.translated_projects %}data-user-translated-projects="{{ user.translated_projects|to_json() }}"{% endif %}
      {% if perms.base.can_manage_project %}data-manager="true"{% endif %}
-     data-authors="{{ authors|to_json() }}"
-     data-counts-per-minute="{{ counts_per_minute|to_json() }}"
      {% if user.is_authenticated() %}
       data-display-name="{{ user.name_or_email }}"
       {% if user.profile.locales_order %}

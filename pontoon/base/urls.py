@@ -33,11 +33,17 @@ urlpatterns = [
         views.locale_project_parts,
         name='pontoon.locale.project.parts'),
 
+    # AJAX: Get authors and time range data
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/authors-and-time-range/$',
+        views.authors_and_time_range,
+        name='pontoon.authors.and.time.range'),
+
     # Translate project
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',
         views.translate,
         name='pontoon.translate'),
 
+    # Download translation memory
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<filename>.+)\.tmx$',
         views.download_translation_memory,
         name='pontoon.download_tmx'),
