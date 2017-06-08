@@ -1,11 +1,18 @@
+import logging
+
+from bulk_update.helper import bulk_update
+
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Max
+from django.db.models import F, Max, Sum
 from django.utils import timezone
 from django.utils.functional import cached_property
 
-from pontoon.base.models import Project, Repository
+from pontoon.base.models import Project, ProjectLocale, Repository, TranslatedResource
 from pontoon.base.utils import latest_datetime
+
+
+log = logging.getLogger(__name__)
 
 
 class BaseLog(models.Model):
@@ -44,6 +51,39 @@ class SyncLog(BaseLog):
 
     def get_absolute_url(self):
         return reverse('pontoon.sync.logs.details', kwargs={'sync_log_pk': self.pk})
+
+    def fix_stats(self):
+        """
+        Recalculate any broken stats when sync task is finished. This is a
+        temporary fix for bug 1310668.
+        """
+        if not self.finished:
+            return
+
+        # total_strings missmatch between TranslatedResource & Resource
+        translated_resources = []
+        for t in TranslatedResource.objects.exclude(total_strings=F('resource__total_strings')).select_related('resource'):
+            t.total_strings = t.resource.total_strings
+            translated_resources.append(t)
+
+        bulk_update(translated_resources, update_fields=['total_strings'])
+
+        # total_strings missmatch in ProjectLocales within the same project
+        for p in Project.objects.available():
+            if ProjectLocale.objects.filter(project=p).values("total_strings").distinct().count() > 1:
+                for pl in ProjectLocale.objects.filter(project=p):
+                    pl.aggregate_stats()
+
+        # translated + suggested + fuzzy > total in TranslatedResource
+        for t in (
+            TranslatedResource.objects
+                .filter(resource__project__disabled=False)
+                .annotate(total=Sum(F('approved_strings') + F('translated_strings') + F('fuzzy_strings')))
+                .filter(total__gt=F('total_strings'))
+            ):
+            t.calculate_stats()
+
+        log.info("Sync complete.")
 
 
 class ProjectSyncLog(BaseLog):
@@ -98,6 +138,7 @@ class ProjectSyncLog(BaseLog):
         self.skipped = True
         self.skipped_end_time = end_time or timezone.now()
         self.save(update_fields=('skipped', 'skipped_end_time'))
+        self.sync_log.fix_stats()
 
 
 class RepositorySyncLog(BaseLog):
@@ -115,3 +156,4 @@ class RepositorySyncLog(BaseLog):
     def end(self):
         self.end_time = timezone.now()
         self.save(update_fields=['end_time'])
+        self.project_sync_log.sync_log.fix_stats()
