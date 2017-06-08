@@ -16,16 +16,11 @@
     {% set latest_activity = locale.get_latest_activity(project) %}
     {% set chart = locale.get_chart(project) %}
 
-    {% if project in locale.project_set.available() %}
-      {% set class = 'limited' %}
-      {% if chart %}
-        {% set main_link = url('pontoon.localizations.localization', locale.code, project.slug) %}
-      {% endif %}
-    {% else %}
-      {% set class = '' %}
+    {% if chart %}
+      {% set main_link = url('pontoon.localizations.localization', locale.code, project.slug) %}
     {% endif %}
 
-    {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, class, request=False, link_parameter=True) }}
+    {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, request=False, link_parameter=True) }}
   {% endfor %}
 
   {{ TeamList.footer() }}
