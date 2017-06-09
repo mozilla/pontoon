@@ -52,7 +52,7 @@ def ajax_teams(request, slug):
 
     locales = (
         project.locales.all()
-        .prefetch_latest_translation(project)
+        .prefetch_project_locale(project)
         .order_by('name')
     )
 

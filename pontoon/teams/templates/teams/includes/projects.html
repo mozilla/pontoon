@@ -16,12 +16,14 @@
 
   {{ ProjectList.header(request=True) }}
 
+  {% set locale_projects = locale.available_projects_list() %}
+
   {% for project in projects %}
     {% set main_link = url('pontoon.projects.project', project.slug) %}
     {% set chart_link = url('pontoon.translate', locale.code, project.slug, 'all-resources') %}
     {% set latest_activity = project.get_latest_activity(locale) %}
     {% set chart = project.get_chart(locale) %}
-    {% if project in locale.project_set.available() %}
+    {% if project.slug in locale_projects %}
       {% set class = 'limited' %}
       {% if chart %}
         {% set main_link = url('pontoon.localizations.localization', locale.code, project.slug) %}
