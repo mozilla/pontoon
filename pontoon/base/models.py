@@ -1664,6 +1664,9 @@ class Entity(DirtyFieldsMixin, models.Model):
     source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
 
+    # Field contains a concatenated state of the entity for faster search lookups
+    document = models.TextField(blank=True)
+
     changed_locales = models.ManyToManyField(
         Locale,
         through='ChangedEntityLocale',
@@ -1785,7 +1788,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             search_query = (search, locale.db_collation)
             entities = (
                 Entity.objects.filter(
-                    Q(translation__string__icontains_collate=search_query, translation__locale=locale) | Q(string__icontains=search) | Q(string_plural__icontains=search) | Q(comment__icontains=search) | Q(key__icontains=search),
+                    Q(translation__string__icontains_collate=search_query, translation__locale=locale) | Q(document__icontains=search),
                     pk__in=entities
                 )
                 .distinct()
