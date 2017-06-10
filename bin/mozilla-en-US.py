@@ -21,6 +21,7 @@ TARGET_REPOS = {
     'firefox': {
         'folders': [
             'browser', 'browser/branding/official',
+            'browser/extensions/onboarding',
             'browser/extensions/pocket',
             'browser/extensions/webcompat-reporter',
             'devtools/client', 'devtools/shared',
