@@ -10,6 +10,9 @@ import os.path
 import re
 
 from collections import defaultdict
+from urlparse import urlparse
+
+from compare_locales.checks import getChecker
 from dirtyfields import DirtyFieldsMixin
 from six.moves import reduce
 from six.moves.urllib.parse import (urlencode, urlparse)
@@ -26,10 +29,12 @@ from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
-
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
+from pontoon.base import utils
+from pontoon.base.checks import check_translations
+from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.vcs.repositories import (
     commit_to_vcs,
     get_revision,
@@ -82,6 +87,9 @@ class UserTranslationsManager(UserManager):
         * translations_needs_work_count
         * user_role
 
+        * translations_fuzzy_count
+        Method has been created mainly to improve performance and to optimize
+        count of sql queries during generation of metrics.
         All counts will be returned from start_date to now().
         :param date start_date: start date for translations.
         :param django.db.models.Q query_filters: filters contributors by given query_filters.
@@ -425,6 +433,8 @@ class AggregatedStats(models.Model):
     approved_strings = models.PositiveIntegerField(default=0)
     translated_strings = models.PositiveIntegerField(default=0)
     fuzzy_strings = models.PositiveIntegerField(default=0)
+    errors = models.PositiveIntegerField(default=0)
+    warnings = models.PositiveIntegerField(default=0)
 
     class Meta:
         abstract = True
@@ -439,6 +449,8 @@ class AggregatedStats(models.Model):
             approved_strings=sum(x.approved_strings for x in qs),
             translated_strings=sum(x.translated_strings for x in qs),
             fuzzy_strings=sum(x.fuzzy_strings for x in qs),
+            errors=sum(x.errors for x in qs),
+            warnings=sum(x.warnings for x in qs)
         )
 
     @classmethod
@@ -453,20 +465,25 @@ class AggregatedStats(models.Model):
             'most_missing': sorted(
                 qs,
                 key=lambda x:
-                    x.total_strings - x.approved_strings - x.translated_strings - x.fuzzy_strings
+                    x.total_strings - x.approved_strings - x.translated_strings - x.fuzzy_strings - x.errors -
+                    x.warnings
             )[-1],
         }
 
     def adjust_stats(self, total_strings_diff, approved_strings_diff,
-                     fuzzy_strings_diff, translated_strings_diff):
+                     translated_strings_diff, fuzzy_strings_diff,
+                     errors_diff, warnings_diff):
         self.total_strings = F('total_strings') + total_strings_diff
         self.approved_strings = F('approved_strings') + approved_strings_diff
         self.fuzzy_strings = F('fuzzy_strings') + fuzzy_strings_diff
         self.translated_strings = F('translated_strings') + translated_strings_diff
+        self.errors = F('errors') + errors_diff
+        self.warnings = F('warnings') + warnings_diff
 
         self.save(update_fields=[
             'total_strings', 'approved_strings',
-            'fuzzy_strings', 'translated_strings'
+            'fuzzy_strings', 'translated_strings',
+            'errors', 'warnings',
         ])
 
 
@@ -841,9 +858,11 @@ class Locale(AggregatedStats):
                 'title',
                 'resource__path',
                 'resource__total_strings',
-                'fuzzy_strings',
-                'translated_strings',
                 'approved_strings',
+                'translated_strings',
+                'fuzzy_strings',
+                'errors',
+                'warnings',
             )
 
         pages = project.subpage_set.all()
@@ -878,7 +897,9 @@ class Locale(AggregatedStats):
                         resource__total_strings=F('resources__total_strings'),
                         fuzzy_strings=F('resources__translatedresources__fuzzy_strings'),
                         translated_strings=F('resources__translatedresources__translated_strings'),
-                        approved_strings=F('resources__translatedresources__approved_strings')
+                        approved_strings=F('resources__translatedresources__approved_strings'),
+                        errors=F('resources__translatedresources__errors'),
+                        warnings=F('resources__translatedresources__warnings'),
                     )
                 )
 
@@ -895,7 +916,9 @@ class Locale(AggregatedStats):
                         resource__total_strings=F('project__resources__total_strings'),
                         fuzzy_strings=F('project__resources__translatedresources__fuzzy_strings'),
                         translated_strings=F('project__resources__translatedresources__translated_strings'),
-                        approved_strings=F('project__resources__translatedresources__approved_strings')
+                        approved_strings=F('project__resources__translatedresources__approved_strings'),
+                        errors=F('project__resources__translatedresources__errors'),
+                        warnings=F('project__resources__translatedresources__warnings'),
                     )
                 )
 
@@ -922,6 +945,8 @@ class Locale(AggregatedStats):
             'fuzzy_strings': all_resources.fuzzy_strings,
             'translated_strings': all_resources.translated_strings,
             'approved_strings': all_resources.approved_strings,
+            'errors': all_resources.errors,
+            'warnings': all_resources.warnings,
         })
 
         return details_list
@@ -1336,9 +1361,13 @@ class ProjectLocale(AggregatedStats):
                 'approved_strings': obj.approved_strings,
                 'translated_strings': obj.translated_strings,
                 'fuzzy_strings': obj.fuzzy_strings,
+                'errors': obj.errors,
+                'warnings': obj.warnings,
                 'approved_share': round(obj.approved_strings / obj.total_strings * 100),
                 'translated_share': round(obj.translated_strings / obj.total_strings * 100),
                 'fuzzy_share': round(obj.fuzzy_strings / obj.total_strings * 100),
+                'errors_share': round(obj.errors / obj.total_strings * 100),
+                'warnings_share': round(obj.warnings / obj.total_strings * 100),
                 'approved_percent': int(math.floor(obj.approved_strings / obj.total_strings * 100)),
             }
 
@@ -1692,12 +1721,13 @@ class EntityQuerySet(models.QuerySet):
     """
     Queryset provides a set of additional methods that should allow us to filter entities.
     """
-
     def with_status_counts(self, locale):
         """
         Helper method that returns a set with annotation of following fields:
             * approved_count - a number of approved translations in the entity.
             * fuzzy_count - a number of fuzzy translations in the entity.
+            * errors_count - a number of translations with errors in the entity.
+            * warnings_count - a number of translations with warnings in the entity.
             * suggested_count - a number of suggested translations in the
               entity.
             * unreviewed_count - a number of translations in the entity that
@@ -1716,14 +1746,21 @@ class EntityQuerySet(models.QuerySet):
                     ), output_field=models.IntegerField(), default=0
                 )
             ),
-            fuzzy_count=Sum(
+            suggested_count=Sum(
                 Case(
                     When(
-                        Q(translation__fuzzy=True, translation__approved=False, translation__locale=locale), then=1
+                        Q(translation__approved=False, translation__fuzzy=False, translation__locale=locale), then=1
                     ), output_field=models.IntegerField(), default=0
                 )
             ),
-            suggested_count=Sum(
+            fuzzy_count=Sum(
+                Case(
+                    When(
+                        Q(translation__approved=False, translation__fuzzy=True, translation__locale=locale), then=1
+                    ), output_field=models.IntegerField(), default=0
+                )
+            ),
+            errors_count=Sum(
                 Case(
                     When(
                         Q(
@@ -1765,6 +1802,15 @@ class EntityQuerySet(models.QuerySet):
                     ),
                     output_field=models.IntegerField(),
                     default=0
+                        Q(translation__failing_checks__severity='error', translation__locale=locale), then=1
+                    ), output_field=models.IntegerField(), default=0
+                )
+            ),
+            warnings_count=Sum(
+                Case(
+                    When(
+                        Q(translation__failing_checks__severity='warning', translation__locale=locale), then=1
+                    ), output_field=models.IntegerField(), default=0
                 )
             ),
             expected_count=Case(
@@ -1827,6 +1873,23 @@ class EntityQuerySet(models.QuerySet):
 
         return Q(unreviewed_count__gt=0)
 
+    def errors(self, no_plurals):
+        if no_plurals:
+            errors = Translation.objects.filter(
+                locale=locale, failing_checks__severity='error'
+            ).values('entity')
+            return Q(pk__in=errors)
+
+        return Q(errors_count=F('expected_count'))
+
+    def warnings(self, no_plurals):
+        if no_plurals:
+            warnings = Translation.objects.filter(
+                locale=locale, failing_checks__severity='warnings'
+            ).values('entity')
+            return Q(pk__in=warnings)
+        return Q(warnings_count=F('expected_count'))
+
     def rejected(self, locale, no_plurals):
         if no_plurals:
             rejected = Translation.objects.filter(locale=locale, rejected=True).values('entity')
@@ -1840,6 +1903,7 @@ class EntityQuerySet(models.QuerySet):
                 locale=locale, entity__in=self, string=F('entity__string')
             ).values('entity')
             return Q(pk__in=unchanged)
+
 
         return Q(unchanged_count=F('expected_count'))
 
@@ -1870,7 +1934,18 @@ class EntityQuerySet(models.QuerySet):
             'resource',
             Prefetch(
                 'translation_set',
-                queryset=Translation.objects.filter(locale=locale),
+                queryset=Translation.objects.filter(locale=locale).prefetch_related(
+                    Prefetch(
+                        'failing_checks',
+                        queryset=FailingCheck.objects.filter(severity='error'),
+                        to_attr='fetched_errors'
+                    ),
+                    Prefetch(
+                        'failing_checks',
+                        queryset=FailingCheck.objects.filter(severity='warning'),
+                        to_attr='fetched_warnings'
+                    )
+                ),
                 to_attr='fetched_translations'
             )
         )
@@ -1955,6 +2030,8 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         return {
             'fuzzy': False,
+            'errors': [],
+            'warnings': [],
             'string': None,
             'approved': False,
             'pk': None,
@@ -2202,6 +2279,25 @@ class TranslationQuerySet(models.QuerySet):
 
 
 @python_2_unicode_compatible
+class TranslationErrorManager(models.Manager):
+    def check_translation(self, translation):
+        """
+        Search for errors and is
+        """
+        errors = []
+        resource_path = translation.entity.resource.path
+        # search for available checkets in compare-locale project.
+        # Currently supports .dtd and .properties.
+        error_checker = getChecker(resource_path)
+
+        if error_checker:
+            errors.append(
+                error_checker.check()
+            )
+        return errors
+
+
+@python_2_unicode_compatible
 class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
@@ -2390,13 +2486,61 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.save()
 
     def serialize(self):
+        errors = [e.message for e in getattr(self, 'fetched_errors', self.failing_checks.filter(severity='error'))]
+        warnings = [w.message for w in getattr(self, 'fetched_warnings', self.failing_checks.filter(severity='warning'))]
+
         return {
             'pk': self.pk,
             'string': self.string,
             'approved': self.approved,
             'rejected': self.rejected,
             'fuzzy': self.fuzzy,
+            'errors': errors,
+            'warnings': warnings,
         }
+
+    def update_failing_checks(self, commit=False):
+        """
+        Update all failing checks for translation.
+        """
+        self.failing_checks.clear()
+
+        errors = defaultdict(list)
+        for severity, message in check_translations(self.entity.resource, [self]):
+            errors[severity].append(
+                FailingCheck(
+                    translation=self,
+                    severity=severity,
+                    message=message,
+                )
+            )
+
+        if errors and commit:
+            FailingCheck.objects.bulk_create(errors)
+        return errors
+
+
+class FailingCheck(models.Model):
+    """
+    Stores informations about definitions of errors that can happen in translations/resource files.
+    """
+    severity = models.CharField(
+        max_length=20,
+        choices=(
+            ('warning', 'Warning'),
+            ('error', 'Error'),
+        ),
+        db_index=True
+    )
+
+    message = models.CharField(
+        max_length=200,
+        blank=False,
+    )
+    translation = models.ForeignKey(Translation, related_name='failing_checks')
+
+    class Meta:
+        unique_together = (('severity',  'message', 'translation'),)
 
 
 class TranslationMemoryEntryManager(models.Manager):
@@ -2445,7 +2589,9 @@ class TranslatedResourceQuerySet(models.QuerySet):
             total=Sum('resource__total_strings'),
             approved=Sum('approved_strings'),
             translated=Sum('translated_strings'),
-            fuzzy=Sum('fuzzy_strings')
+            fuzzy=Sum('fuzzy_strings'),
+            errors=Sum('errors'),
+            warnings=Sum('warnings'),
         )
 
     def aggregate_stats(self, instance):
@@ -2455,10 +2601,13 @@ class TranslatedResourceQuerySet(models.QuerySet):
         instance.approved_strings = aggregated_stats['approved'] or 0
         instance.translated_strings = aggregated_stats['translated'] or 0
         instance.fuzzy_strings = aggregated_stats['fuzzy'] or 0
+        instance.errors = aggregated_stats['errors'] or 0
+        instance.warnings = aggregated_stats['warnings'] or 0
 
         instance.save(update_fields=[
             'total_strings', 'approved_strings',
-            'fuzzy_strings', 'translated_strings'
+            'translated_strings', 'fuzzy_strings',
+            'errors', 'warnings',
         ])
 
     def stats(self, project, paths, locale):
@@ -2504,6 +2653,8 @@ class TranslatedResource(AggregatedStats):
             entity__in=translated_entities.filter(string_plural=''), locale=locale)
         approved = translations.filter(approved=True).count()
         fuzzy = translations.filter(fuzzy=True).count()
+        errors = translations.filter(failing_checks__severity='error').count()
+        warnings = translations.filter(failing_checks__severity='warning').count()
 
         # Plural
         nplurals = locale.nplurals or 1
@@ -2512,12 +2663,18 @@ class TranslatedResource(AggregatedStats):
             translations = Translation.objects.filter(entity=e, locale=locale)
             plural_approved_count = translations.filter(approved=True).count()
             plural_fuzzy_count = translations.filter(fuzzy=True).count()
+            plural_errors_count = translations.filter(failing_checks__severity='error').count()
+            plural_warnings_count = translations.filter(failing_checks__severity='warning').count()
             plural_translated_count = translations.values('plural_form').distinct().count()
 
             if plural_approved_count == nplurals:
                 approved += 1
             elif plural_fuzzy_count == nplurals:
                 fuzzy += 1
+            elif plural_errors_count == nplurals:
+                errors += 1
+            elif plural_warnings_count == nplurals:
+                warnings += 1
             elif plural_translated_count < nplurals:
                 missing += 1
 
@@ -2526,34 +2683,41 @@ class TranslatedResource(AggregatedStats):
         if not save:
             self.total_strings = resource.total_strings
             self.approved_strings = approved
-            self.fuzzy_strings = fuzzy
             self.translated_strings = translated
+            self.fuzzy_strings = fuzzy
+            self.errors = errors
+            self.warnings = warnings
 
             return False
 
         # Calculate diffs to reduce DB queries
         total_strings_diff = resource.total_strings - self.total_strings
         approved_strings_diff = approved - self.approved_strings
-        fuzzy_strings_diff = fuzzy - self.fuzzy_strings
         translated_strings_diff = translated - self.translated_strings
+        fuzzy_strings_diff = fuzzy - self.fuzzy_strings
+        errors_diff = errors - self.errors
+        warnings_diff = warnings - self.warnings
 
         # Translated Resource
         self.adjust_stats(
             total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, translated_strings_diff
+            translated_strings_diff, fuzzy_strings_diff,
+            errors_diff, warnings_diff,
         )
 
         # Project
         project = resource.project
         project.adjust_stats(
             total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, translated_strings_diff
+            translated_strings_diff, fuzzy_strings_diff,
+            errors_diff, warnings_diff,
         )
 
         # Locale
         locale.adjust_stats(
             total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, translated_strings_diff
+            translated_strings_diff, fuzzy_strings_diff,
+            errors_diff, warnings_diff,
         )
 
         # ProjectLocale
@@ -2565,5 +2729,6 @@ class TranslatedResource(AggregatedStats):
         if project_locale:
             project_locale.adjust_stats(
                 total_strings_diff, approved_strings_diff,
-                fuzzy_strings_diff, translated_strings_diff
+                translated_strings_diff, fuzzy_strings_diff,
+                errors_diff, warnings_diff,
             )

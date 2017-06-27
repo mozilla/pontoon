@@ -15,6 +15,8 @@ AGGREGATED_STATS_FIELDS = (
     'approved_strings',
     'translated_strings',
     'fuzzy_strings',
+    'errors',
+    'warnings',
 )
 
 

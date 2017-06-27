@@ -423,6 +423,8 @@ def batch_edit_translations(request):
         'approved_strings',
         'fuzzy_strings',
         'translated_strings',
+        'errors',
+        'warnings',
     ])
 
     project = entity.resource.project
@@ -668,6 +670,24 @@ def unreject_translation(request):
     })
 
 
+def translation_failing_checks(translation, ignore_warnings):
+    """
+    Returns failing checks from translation.
+    """
+    failing_checks = translation.get_failing_checks()
+
+    if 'error' in failing_checks:
+        return JsonResponse({
+            'warnings': failing_checks.get('warning'),
+            'errors': failing_checks['errors']
+        })
+
+    if 'warning' in failing_checks and not ignore_warnings:
+        return JsonResponse({
+            'warnings': failing_checks['warnings']
+        })
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name='', login_url='/403')
@@ -752,6 +772,10 @@ def update_translation(request):
                 if warnings:
                     return warnings
 
+                failing_checks = translation_failing_checks(t, ignore)
+                if failing_checks:
+                    return failing_checks
+
                 translations.update(
                     approved=False,
                     approved_user=None,
@@ -791,6 +815,10 @@ def update_translation(request):
                     if warnings:
                         return warnings
 
+                    failing_checks = translation_failing_checks(t, ignore)
+                    if failing_checks:
+                        return failing_checks
+
                     if t.user is None:
                         t.user = user
 
@@ -828,6 +856,10 @@ def update_translation(request):
                 plural_form=plural_form, date=now,
                 approved=can_translate)
 
+            failing_checks = translation_failing_checks(t, ignore)
+            if failing_checks:
+                return failing_checks
+
             if can_translate:
                 t.approved_user = user
                 t.approved_date = now
@@ -856,6 +888,10 @@ def update_translation(request):
             entity=e, locale=l, user=user, string=string,
             plural_form=plural_form, date=now,
             approved=can_translate)
+
+        failing_checks = translation_failing_checks(t)
+        if failing_checks:
+            return failing_checks
 
         if can_translate:
             t.approved_user = user

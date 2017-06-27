@@ -56,7 +56,7 @@
       <p>{{ translations.filter(approved=True).count()|intcomma }}</p>
     </div><div class="suggested">
       <span>Suggested</span>
-      <p>{{ translations.exclude(approved=True).exclude(fuzzy=True).count()|intcomma }}</p>
+      <p>{{ translations.exclude(approved=True).exclude(fuzzy=True).exclude(failing_checks__severity='error').exclude(failing_checks__severity='warning').count()|intcomma }}</p>
     </div><div class="fuzzy">
       <span>Fuzzy</span>
       <p>{{ translations.filter(fuzzy=True).count()|intcomma }}</p>

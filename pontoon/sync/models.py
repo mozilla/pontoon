@@ -85,12 +85,12 @@ class SyncLog(BaseLog):
                 for pl in ProjectLocale.objects.filter(project=p):
                     pl.aggregate_stats()
 
-        # translated + suggested + fuzzy > total in TranslatedResource
+        # translated + suggested + fuzzy + errors + warnings > total in TranslatedResource
         for t in (
             TranslatedResource.objects
             .filter(resource__project__disabled=False)
             .annotate(
-                total=Sum(F('approved_strings') + F('translated_strings') + F('fuzzy_strings'))
+                total=Sum(F('approved_strings') + F('translated_strings') + F('fuzzy_strings') + + F('errors') + F('warnings'))
             )
             .filter(total__gt=F('total_strings'))
         ):
@@ -152,6 +152,8 @@ class ProjectSyncLog(BaseLog):
         self.sync_log.fix_stats()
 
 
+
+
 class RepositorySyncLog(BaseLog):
     project_sync_log = models.ForeignKey(ProjectSyncLog,
                                          related_name='repository_sync_logs')
@@ -164,7 +166,27 @@ class RepositorySyncLog(BaseLog):
     def finished(self):
         return self.end_time is not None
 
-    def end(self):
+    def end(self, skipped_files=None):
         self.end_time = timezone.now()
         self.save(update_fields=['end_time'])
         self.project_sync_log.sync_log.fix_stats()
+
+        if skipped_files:
+            SkippedFile.objects.bulk_create([
+                SkippedFile(
+                    repository_sync_log=self,
+                    path=path,
+                    error_message=error
+                ) for path, error in skipped_files.items()
+            ])
+
+
+
+class SkippedFile(models.Model):
+    """
+    Tells why a file was skipped (shows an error code).
+    """
+    repository_sync_log = models.ForeignKey(RepositorySyncLog,
+            related_name='skipped_files')
+    path = models.TextField()
+    error_message = models.TextField(blank=True)

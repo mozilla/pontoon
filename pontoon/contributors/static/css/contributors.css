@@ -83,6 +83,14 @@ th:last-child sup {
   color: #FED271;
 }
 
+.stats .details div.errors {
+  color: #F36;
+}
+
+.stats .details div.warnings {
+  color: #FF6D33;
+}
+
 .stats .details div p {
   font-size: 20px;
   padding: 3px 0 0;

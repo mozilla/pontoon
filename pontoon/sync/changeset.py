@@ -1,17 +1,19 @@
 import logging
+from collections import defaultdict
 
 from bulk_update.helper import bulk_update
-from collections import defaultdict
 from django.contrib.auth.models import User
 from django.db.models import Prefetch
 from django.template.defaultfilters import pluralize
 from notifications.signals import notify
 
+from pontoon.base.checks import check_translations
 from pontoon.base.models import (
     Entity,
     Locale,
     Translation,
-    TranslationMemoryEntry
+    TranslationMemoryEntry,
+    FailingCheck
 )
 from pontoon.base.utils import match_attr
 
@@ -50,6 +52,7 @@ class ChangeSet(object):
         self.entities_to_update = []
         self.translations_to_update = {}
         self.translations_to_create = []
+        self.failing_checks = defaultdict(list)
         self.commit_authors_per_locale = defaultdict(list)
         self.locales_to_commit = set()
 
@@ -345,8 +348,37 @@ class ChangeSet(object):
                 'source',
             ])
 
+    def bulk_create_failing_checks(self, translations):
+        failing_checks = []
+        # Group translations by their respective resources
+        # In order to create a table of references
+        resource_translations = defaultdict(list)
+
+        for translation in translations.prefetch_related('entity__resource'):
+            resource_translations[translation.entity.resource].append(translation)
+
+        FailingCheck.objects.filter(
+            translation__in=translations
+        ).delete()
+
+        for resource, translations in resource_translations.items():
+            for translation_pk, errors in check_translations(resource, translations).items():
+                for severity, message in errors:
+                    failing_checks.append(
+                        FailingCheck(
+                            translation=translation,
+                            severity=severity,
+                            message=message
+                        )
+                    )
+
+        FailingCheck.objects.bulk_create(failing_checks)
+
     def bulk_create_translations(self):
         Translation.objects.bulk_create(self.translations_to_create)
+        self.bulk_create_failing_checks(
+            Translation.objects.filter(pk__in=[t.pk for t in self.translations_to_create]).prefetch_related('entity')
+        )
 
     def bulk_update_translations(self):
         if len(self.translations_to_update) > 0:
@@ -362,6 +394,10 @@ class ChangeSet(object):
                 'fuzzy',
                 'extra'
             ])
+            self.bulk_create_failing_checks(
+                Translation.objects.filter(pk__in=[t.pk for t in self.translations_to_update]).prefetch_related('entity')
+            )
+
 
     def bulk_create_translaton_memory_entries(self):
         """

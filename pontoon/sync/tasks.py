@@ -411,4 +411,4 @@ def sync_translations(
         r.set_last_synced_revisions(
             locales=repo_locales[r.pk].exclude(code__in=failed_locales)
         )
-    repo_sync_log.end()
+    repo_sync_log.end(vcs_project.unparsed_files)

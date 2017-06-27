@@ -251,6 +251,29 @@ button {  width: auto; overflow: visible; }
   color: #FED271;
 }
 
+.errors .status.fa:before {
+  color: #F36;
+}
+
+.warnings .status.fa:before {
+  color: #FF6D33;
+}
+
+.untranslated .status.fa:before {
+  color: #AAAAAA;
+  content: "";
+}
+
+.has-suggestions .status.fa:before {
+  color: #AAAAAA;
+  content: "";
+}
+
+.unchanged .status.fa:before {
+  color: #AAAAAA;
+  content: "";
+}
+
 /* Reset HTML5 Search Input in Webkit */
 input[type=search] {
   -webkit-appearance:none;
@@ -708,6 +731,14 @@ tfoot td a {
   background: #FED271;
 }
 
+.select .menu ul li .chart span.errors {
+  background: #F36;
+}
+
+.select .menu ul li .chart span.warnings {
+  background: #FF6D33;
+}
+
 .select .menu ul li .chart span.missing {
   background: #4D5967;
 }
@@ -889,6 +920,14 @@ img.rounded {
   border-color: #FED271;
 }
 
+.details div.errors {
+  border-color: #F36;
+}
+
+.details div.warnings {
+  border-color: #FF6D33;
+}
+
 .details div.missing {
   border-color: #4D5967;
 }
@@ -900,8 +939,8 @@ img.rounded {
 
 .details div p {
   color: #FFFFFF;
-  font-size: 28px;
-  padding: 10px 0;
+  font-size: 24px;
+  padding: 5px 0 10px;
   position: relative;
 }
 
@@ -980,6 +1019,8 @@ header .right .select .menu {
   color: #F36;
 }
 
+#progress .menu,
+#info .menu,
 #notifications .menu,
 #profile .menu {
   border: 1px solid #333941;

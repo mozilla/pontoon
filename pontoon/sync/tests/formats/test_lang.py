@@ -2,9 +2,9 @@ import os.path
 from textwrap import dedent
 
 from django_nose.tools import assert_equal, assert_raises
+from parsimonious import VisitationError
 
 from pontoon.base.tests import assert_attributes_equal, TestCase
-from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import lang
 from pontoon.sync.tests.formats import FormatTestsMixin
 
@@ -142,7 +142,7 @@ class LangTests(FormatTestsMixin, TestCase):
         If an entity has an empty translation, parse should raise a
         ParseError.
         """
-        with assert_raises(ParseError):
+        with assert_raises(VisitationError):
             self.parse_string(dedent("""
                 # Comment
                 ;Source

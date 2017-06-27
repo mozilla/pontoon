@@ -89,6 +89,8 @@ def ajax_resources(request, code, slug):
             'fuzzy_strings': part['fuzzy_strings'],
             'total_strings': part['resource__total_strings'],
             'approved_strings': part['approved_strings'],
+            'errors': part['errors'],
+            'warnings': part['warnings'],
             'approved_share': round(
                 part['approved_strings'] / part['resource__total_strings'] * 100
             ),
@@ -96,6 +98,8 @@ def ajax_resources(request, code, slug):
                 part['translated_strings'] / part['resource__total_strings'] * 100
             ),
             'fuzzy_share': round(part['fuzzy_strings'] / part['resource__total_strings'] * 100),
+            'errors_share': round(part['errors'] / part['resource__total_strings'] * 100),
+            'warnings_share': round(part['warnings'] / part['resource__total_strings'] * 100),
             'approved_percent': int(
                 math.floor(part['approved_strings'] / part['resource__total_strings'] * 100)
             ),
