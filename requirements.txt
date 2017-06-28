@@ -2,8 +2,6 @@
 # readthedocs.org don't support pip8.
 # More info at https://github.com/rtfd/readthedocs.org/issues/1843
 
--r docs/requirements.txt
-
 # Dependencies required by the pontoon to work in the production environment.
 argparse==1.3.0 \
     --hash=sha256:d01978e9a8c51ea7b34ec71f3fced1326437cd366b9c2e19265ace050924e0e2 \
@@ -151,3 +149,18 @@ django-notifications-hq==1.2 \
     --hash=sha256:4a7afdc506a15aad89434fb9fd41b611ba2a75bc0f5ba15179b5998c5181a703
 django-model-utils==2.0.3 \
     --hash=sha256:fae8d517590d99730ed3cfc3fdf9378e0b3815325a8911b963241ee8e9761fd7
+Jinja2==2.5 \
+    --hash=sha256:3d51c7a98feb1ae3cd4083f2ca5c9a35d2804707601ae18cdc707f3a0e63ef2b
+pytz==2017.2 \
+    --hash=sha256:c883c2d6670042c7bc1688645cac73dd2b03193d1f7a6847b6154e96890be06d \
+    --hash=sha256:03c9962afe00e503e2d96abab4e8998a0f84d4230fa57afe1e0528473698cdd9 \
+    --hash=sha256:487e7d50710661116325747a9cd1744d3323f8e49748e287bc9e659060ec6bf9 \
+    --hash=sha256:43f52d4c6a0be301d53ebd867de05e2926c35728b3260157d274635a0a947f1c \
+    --hash=sha256:d1d6729c85acea5423671382868627129432fba9a89ecbb248d8d1c7a9f01c67 \
+    --hash=sha256:54a935085f7bf101f86b2aff75bd9672b435f51c3339db2ff616e66845f2b8f9 \
+    --hash=sha256:39504670abb5dae77f56f8eb63823937ce727d7cdd0088e6909e6dcac0f89043 \
+    --hash=sha256:ddc93b6d41cfb81266a27d23a79e13805d4a5521032b512643af8729041a81b4 \
+    --hash=sha256:f5c056e8f62d45ba8215e5cb8f50dfccb198b4b9fbea8500674f3443e4689589
+six==1.10.0 \
+    --hash=sha256:0ff78c403d9bccf5a425a6d31a12aa6b47f1c21ca4dc2573a7e2f32a97335eb1 \
+    --hash=sha256:105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a
