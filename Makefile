@@ -1,19 +1,19 @@
-all: dockerrun
+DC := $(shell which docker-compose)
 
 .PHONY: dockerbuild dockersetup dockerclean dockertest dockertestshell dockerrun
 
-DC := $(shell which docker-compose)
+all: dockerrun
 
 .docker-build:
 	make dockerbuild
 
 dockerbuild:
+	${DC} build base
 	${DC} build webapp
 	touch .docker-build
 
 dockersetup: .docker-build
-	${DC} exec webapp python /app/manage.py createsuperuser
-	${DC} exec webapp python /app/manage.py updatefxaprovider
+	${DC} run webapp /app/docker/set_up_webapp.sh
 
 dockerclean:
 	rm .docker-build
@@ -25,4 +25,4 @@ dockerclean:
 # 	./docker/run_tests_in_docker.sh --shell
 
 dockerrun:
-	${DC} up
+	${DC} up webapp

@@ -2,8 +2,11 @@
 
 # Prepares then runs the webapp.
 
-echo "Setting up the db for Django..."
+echo "Install latest npm modules"
 cd /app
+npm install
+
+echo "Setting up the db for Django"
 python manage.py migrate
 
 echo "Collect static assets"
