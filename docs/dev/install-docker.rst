@@ -50,6 +50,10 @@ Quickstart
         ready, then abort the process, then restart it. That should let the
         webapp do all its setup as expected.
 
+        Alternatively, you can run ``docker-compose up postgresql`` and wait
+        until it reports that the database is ready, then stop that and run
+        ``make dockerrun``.
+
 3. Finally you need to run some setup steps, while the webapp is running::
 
       $ make dockersetup
@@ -58,3 +62,16 @@ Quickstart
    account settings.
 
 At that point, you're good to go. Access the webapp via this URL: http://localhost:8000/
+
+Database
+--------
+
+By default, you will have default data loaded for only the Pontoon Intro project.
+If you have a database dump, you can load it into your PostgreSQL database by running::
+
+    $ make dockerloaddb DB_DUMP_FILE=path/to/my/dump
+
+Note that your database container needs to be running while you do that. You
+can start just the postgresql container by runnin::
+
+    $ docker-compose run postgresql
