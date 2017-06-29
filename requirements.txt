@@ -149,8 +149,9 @@ django-notifications-hq==1.2 \
     --hash=sha256:4a7afdc506a15aad89434fb9fd41b611ba2a75bc0f5ba15179b5998c5181a703
 django-model-utils==2.0.3 \
     --hash=sha256:fae8d517590d99730ed3cfc3fdf9378e0b3815325a8911b963241ee8e9761fd7
-Jinja2==2.5 \
-    --hash=sha256:3d51c7a98feb1ae3cd4083f2ca5c9a35d2804707601ae18cdc707f3a0e63ef2b
+Jinja2==2.8 \
+    --hash=sha256:1cc03ef32b64be19e0a5b54578dd790906a34943fe9102cfdae0d4495bd536b4 \
+    --hash=sha256:bc1ff2ff88dbfacefde4ddde471d1417d3b304e8df103a7a9437d47269201bf4
 pytz==2017.2 \
     --hash=sha256:c883c2d6670042c7bc1688645cac73dd2b03193d1f7a6847b6154e96890be06d \
     --hash=sha256:03c9962afe00e503e2d96abab4e8998a0f84d4230fa57afe1e0528473698cdd9 \
