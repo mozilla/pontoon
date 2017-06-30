@@ -18,11 +18,11 @@ dockersetup: .docker-build
 dockerclean:
 	rm .docker-build
 
-# dockertest:
-# 	./docker/run_tests_in_docker.sh ${ARGS}
-#
-# dockertestshell:
-# 	./docker/run_tests_in_docker.sh --shell
+dockertest:
+	./docker/run_tests_in_docker.sh ${ARGS}
+
+dockertestshell:
+	./docker/run_tests_in_docker.sh --shell
 
 dockerloaddb:
 	docker exec -i `${DC} ps -q postgresql` pg_restore -U pontoon -d pontoon -O < ${DB_DUMP_FILE}

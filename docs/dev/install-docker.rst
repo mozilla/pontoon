@@ -75,3 +75,17 @@ Note that your database container needs to be running while you do that. You
 can start just the postgresql container by runnin::
 
     $ docker-compose run postgresql
+
+Running tests
+-------------
+
+To run the entire test suite, simply run::
+
+    $ make dockertest
+
+If you want to run only some unit tests, or want to avoid rebuilding the
+docker container every time you run tests, you can start a shell that will
+allow to run your own commands. To do that, run::
+
+    $ make dockertestshell
+    app@675af05d66ae:/app$ python manage.py test
