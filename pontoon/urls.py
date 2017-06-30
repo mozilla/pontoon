@@ -2,6 +2,11 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.views import logout
 from django.views.generic import RedirectView, TemplateView
+from django.views.decorators.csrf import csrf_exempt
+from csp.decorators import csp_exempt
+from graphene_django.views import GraphQLView
+from pontoon.settings.base import DEV
+from pontoon.graphql import schema
 from pontoon.base.views import heroku_setup
 from pontoon.intro.views import intro
 from pontoon.teams.views import team
@@ -76,4 +81,8 @@ urlpatterns = [
 
     # Team page: Must be at the end
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$', team, name='pontoon.teams.team'),
+
+    url(r'^graphql', csp_exempt(
+        csrf_exempt(
+            GraphQLView.as_view(schema=schema, graphiql=DEV)))),
 ]

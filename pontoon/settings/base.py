@@ -155,6 +155,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'allauth.socialaccount.providers.fxa',
     'notifications',
+    'graphene_django',
 )
 
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
