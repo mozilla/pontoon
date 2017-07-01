@@ -28,6 +28,8 @@ CSP_SCRIPT_SRC = base.CSP_SCRIPT_SRC + ('http://ajax.googleapis.com',)
 CSP_IMG_SRC = base.CSP_IMG_SRC + ('data:',)
 
 GRAPHENE = {
+    'RELAY_CONNECTION_ENFORCE_FIRST_OR_LAST': True,
+    'RELAY_CONNECTION_MAX_LIMIT': 30,
     'MIDDLEWARE': [
         'graphene_django.debug.DjangoDebugMiddleware',
     ]
