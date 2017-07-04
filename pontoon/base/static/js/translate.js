@@ -2118,12 +2118,15 @@ var Pontoon = (function (my) {
       self.allEntitiesSelected = true;
       $('#entitylist .entity:visible').addClass('selected');
 
-      // Fake selected entities count to prevent waiting for getEntities()
       self.selectedEntities = [];
       self.openBatchEditor(true);
 
       this.getEntities({pkOnly: true}).then(function(data) {
-        self.selectedEntities = data.entity_pks;
+        var locallySelectedEntities = self.getEntitiesIds('#entitylist .entity:visible.selected'),
+            mergedEntities = data.entity_pks.concat(locallySelectedEntities),
+            uniqueEntities = [...new Set(mergedEntities)];
+
+        self.selectedEntities = uniqueEntities;
         self.openBatchEditor();
       });
     },
