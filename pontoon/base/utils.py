@@ -1,4 +1,5 @@
 import codecs
+import functools
 import json
 import logging
 import os
@@ -332,6 +333,7 @@ def require_AJAX(f):
     """
     AJAX request required decorator
     """
+    @functools.wraps(f)  # Required by New Relic
     def wrap(request, *args, **kwargs):
         if not request.is_ajax():
             return HttpResponseBadRequest('Bad Request: Request must be AJAX')
