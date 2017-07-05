@@ -7,6 +7,10 @@ from .base.models import (
     Project as ProjectModel,
     Locale as LocaleModel,
     ProjectLocale as ProjectLocaleModel,
+    Resource as ResourceModel,
+    Entity as EntityModel,
+    Translation as TranslationModel,
+    TranslatedResource as TranslatedResourceModel
 )
 
 
@@ -16,7 +20,8 @@ class ProjectNode(DjangoObjectType):
         interfaces = (relay.Node, )
         only_fields = (
             'name', 'info', 'deadline', 'priority', 'contact',
-            'project_locale')
+            'total_strings', 'approved_strings', 'translated_strings',
+            'fuzzy_strings', 'project_locale', 'resources')
 
 
 class LocaleNode(DjangoObjectType):
@@ -25,7 +30,8 @@ class LocaleNode(DjangoObjectType):
         interfaces = (relay.Node, )
         only_fields = (
             'name', 'code', 'direction', 'script', 'population',
-            'project_locale')
+            'total_strings', 'approved_strings', 'translated_strings',
+            'fuzzy_strings', 'project_locale')
 
 
 class ProjectLocaleNode(DjangoObjectType):
@@ -35,6 +41,42 @@ class ProjectLocaleNode(DjangoObjectType):
         only_fields = (
             'total_strings', 'approved_strings', 'translated_strings',
             'fuzzy_strings', 'project', 'locale')
+
+
+class ResourceNode(DjangoObjectType):
+    class Meta:
+        model = ResourceModel
+        interfaces = (relay.Node, )
+        only_fields = (
+            'path', 'total_strings', 'format', 'deadline', 'priority',
+            'project', 'entities')
+
+
+class TranslatedResourceNode(DjangoObjectType):
+    class Meta:
+        model = TranslatedResourceModel
+        interfaces = (relay.Node, )
+        only_fields = (
+            'total_strings', 'approved_strings', 'translated_strings',
+            'fuzzy_strings', 'project', 'resource', 'locale')
+
+
+class EntityNode(DjangoObjectType):
+    class Meta:
+        model = EntityModel
+        interfaces = (relay.Node, )
+        only_fields = (
+            'string', 'string_plural', 'key', 'comment', 'date_created',
+            'order', 'source', 'obsolete', 'resource', 'translations')
+
+
+class TranslationNode(DjangoObjectType):
+    class Meta:
+        model = TranslationModel
+        interfaces = (relay.Node, )
+        only_fields = (
+            'entity', 'locale', 'string', 'plural_form', 'date', 'approved',
+            'approved_date', 'unapproved_date', 'fuzzy', 'extra')
 
 
 class Query(graphene.ObjectType):
@@ -47,11 +89,11 @@ class Query(graphene.ObjectType):
     locale = relay.Node.Field(LocaleNode)
     locales = DjangoConnectionField(LocaleNode)
 
-    def resolve_projects(root, args, context, info):
-        return ProjectModel.objects.prefetch_related('project_locale__locale')
+    entity = relay.Node.Field(EntityNode)
+    entities = DjangoConnectionField(EntityNode)
 
-    def resolve_locales(root, args, context, info):
-        return LocaleModel.objects.prefetch_related('project_locale__project')
+    translation = relay.Node.Field(TranslationNode)
+    translations = DjangoConnectionField(TranslationNode)
 
 
 schema = graphene.Schema(query=Query)

@@ -2139,7 +2139,7 @@ class TranslationQuerySet(models.QuerySet):
 
 @python_2_unicode_compatible
 class Translation(DirtyFieldsMixin, models.Model):
-    entity = models.ForeignKey(Entity)
+    entity = models.ForeignKey(Entity, related_name='translations')
     locale = models.ForeignKey(Locale)
     user = models.ForeignKey(User, null=True, blank=True)
     string = models.TextField()
