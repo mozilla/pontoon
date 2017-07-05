@@ -10,7 +10,7 @@ from .base.models import (
 )
 
 
-class Project(DjangoObjectType):
+class ProjectNode(DjangoObjectType):
     class Meta:
         model = ProjectModel
         interfaces = (relay.Node, )
@@ -18,17 +18,8 @@ class Project(DjangoObjectType):
             'name', 'info', 'deadline', 'priority', 'contact',
             'project_locale')
 
-    def resolve_project_locale(root, args, context, info):
-        # This seems wrong. It creates a completely new QuerySet which doesn't
-        # have access to the prefetch cache of the QuerySet from which root
-        # originated.
-        # return ProjectLocaleModel.objects.filter(project_id=root.id)
 
-        # XXX Maybe select_related('locale') or prefetch_related('locale')
-        return root.project_locale
-
-
-class Locale(DjangoObjectType):
+class LocaleNode(DjangoObjectType):
     class Meta:
         model = LocaleModel
         interfaces = (relay.Node, )
@@ -36,12 +27,8 @@ class Locale(DjangoObjectType):
             'name', 'code', 'direction', 'script', 'population',
             'project_locale')
 
-    def resolve_project_locale(root, args, context, info):
-        # XXX Maybe select_related('project') or prefetch_related('project')
-        return root.project_locale
 
-
-class ProjectLocale(DjangoObjectType):
+class ProjectLocaleNode(DjangoObjectType):
     class Meta:
         model = ProjectLocaleModel
         interfaces = (relay.Node, )
@@ -54,8 +41,11 @@ class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name='__debug')
     node = relay.Node.Field()
 
-    projects = DjangoConnectionField(Project)
-    locales = DjangoConnectionField(Locale)
+    project = relay.Node.Field(ProjectNode)
+    projects = DjangoConnectionField(ProjectNode)
+
+    locale = relay.Node.Field(LocaleNode)
+    locales = DjangoConnectionField(LocaleNode)
 
     def resolve_projects(root, args, context, info):
         return ProjectModel.objects.prefetch_related('project_locale__locale')
