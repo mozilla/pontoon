@@ -31,6 +31,18 @@ var Pontoon = (function (my) {
     },
 
     /*
+     * Remove duplicate items from the array of numeric values
+     *
+     * TODO: Switch to ES6 and replace with Set
+     */
+    removeDuplicates: function (array) {
+      var seen = {};
+      return array.filter(function(item) {
+        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+      });
+    },
+
+    /*
      * Mark all notifications as read and update UI accordingly
      */
     markAllNotificationsAsRead: function () {
