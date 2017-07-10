@@ -35,12 +35,22 @@ steps, as they don't affect your setup if nothing has changed:
 
 Building the Documentation
 --------------------------
+
+Before you can build the documentation, you will need to install a few
+dependencies. It is recommended to do that in a Python virtual environment:
+
+.. code-block:: bash
+
+    cd docs
+    virtualenv venv
+    source venv/bin/activate
+    pip install --require-hashes -r requirements.txt
+
 You can build the documentation with the following command:
 
 .. code-block:: bash
 
-   # Enter the docs/ subdirectory
-   cd docs
+   # From the docs/ subdirectory
    make html
 
 After running this command, the documentation should be available at
@@ -55,13 +65,14 @@ After running this command, the documentation should be available at
 
 Adding New Dependencies
 -----------------------
-Pontoon uses peep_ to install dependencies. Peep is a wrapper around pip that
+
+Pontoon uses pip_ to install dependencies, and since version 8, that tool
 checks downloaded packages to ensure they haven't been tampered with.
 
 Because of this, adding a new library to ``requirements.txt`` is a bit more work
 as you need to add hashes for each library you want to install. To help make
-this easier, you can use the peepin_ tool to add new dependencies to the
+this easier, you can use the hashin_ tool to add new dependencies to the
 requirements file.
 
-.. _peep: https://github.com/erikrose/peep/
-.. _peepin: https://github.com/peterbe/peepin/
+.. _pip: https://pip.pypa.io/
+.. _hashin: https://github.com/peterbe/hashin/
