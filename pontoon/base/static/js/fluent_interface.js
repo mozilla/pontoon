@@ -1,5 +1,7 @@
 /* Public functions used across different files */
 var Pontoon = (function (my) {
+  const fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
+
   return $.extend(true, my, {
     fluent: {
 
@@ -16,13 +18,13 @@ var Pontoon = (function (my) {
             isFTLplural = entity.isFTLplural,
             translation = translation || entity.translation[0],
             isTranslated = translation.pk,
-            entity_ast = FluentSyntax.parse(entity.original).body[0],
+            entity_ast = fluentParser.parseEntry(entity.original),
             entityAttributes = [],
             id, value;
 
         var attributes = entity_ast.attributes;
         if (isTranslated) {
-          var translation_ast = FluentSyntax.parse(translation.string).body[0];
+          var translation_ast = fluentParser.parseEntry(translation.string);
           attributes = translation_ast.attributes;
         }
 
@@ -179,7 +181,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var ast = FluentSyntax.parse(entity.original).body[0],
+        var ast = fluentParser.parseEntry(entity.original),
             original = '';
 
         function renderOriginal(obj) {
@@ -293,7 +295,7 @@ var Pontoon = (function (my) {
             return response;
           }
 
-          ast = FluentSyntax.parse(source).body[0];
+          ast = fluentParser.parseEntry(source);
 
           if (ast.value) {
             response = this.serializePlaceables(ast.value.elements);
