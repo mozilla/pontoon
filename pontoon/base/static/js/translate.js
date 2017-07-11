@@ -2124,7 +2124,7 @@ var Pontoon = (function (my) {
       this.getEntities({pkOnly: true}).then(function(data) {
         var locallySelectedEntities = self.getEntitiesIds('#entitylist .entity:visible.selected'),
             mergedEntities = data.entity_pks.concat(locallySelectedEntities),
-            uniqueEntities = [...new Set(mergedEntities)];
+            uniqueEntities = self.removeDuplicates(mergedEntities);
 
         self.selectedEntities = uniqueEntities;
         self.openBatchEditor();
