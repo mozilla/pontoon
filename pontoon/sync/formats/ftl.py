@@ -10,7 +10,6 @@ from fluent.syntax import (
     FluentParser,
     FluentSerializer
 )
-from fluent.syntax.serializer import serialize_message
 
 from pontoon.sync import SyncError
 from pontoon.sync.formats.base import ParsedResource
@@ -79,7 +78,7 @@ class FTLResource(ParsedResource):
         for obj in self.structure.body:
             if type(obj) == ast.Message:
                 key = obj.id.name
-                translation = serialize_message(obj)
+                translation = serializer.serialize_entry(obj)
 
                 self.entities[key] = FTLEntity(
                     key,
