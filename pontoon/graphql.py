@@ -76,7 +76,10 @@ class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name='__debug')
 
     projects = graphene.Field(ProjectPage, page=graphene.Int(default_value=1))
+    project = graphene.Field(Project, pk=graphene.Int())
+
     locales = graphene.Field(LocalePage, page=graphene.Int(default_value=1))
+    locale = graphene.Field(Locale, pk=graphene.Int())
 
     @graphene.resolve_only_args
     def resolve_projects(self, page=1):
@@ -84,9 +87,19 @@ class Query(graphene.ObjectType):
         return get_page(ProjectPage, query, page)
 
     @graphene.resolve_only_args
+    def resolve_project(self, pk):
+        return ProjectModel.objects.prefetch_related(
+            'project_locale__locale').get(pk=pk)
+
+    @graphene.resolve_only_args
     def resolve_locales(self, page=1):
         query = LocaleModel.objects.prefetch_related('project_locale__project')
         return get_page(LocalePage, query, page)
+
+    @graphene.resolve_only_args
+    def resolve_locale(self, pk):
+        return LocaleModel.objects.prefetch_related(
+            'project_locale__project').get(pk=pk)
 
 
 def get_page(shape, queryset, page):
