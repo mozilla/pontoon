@@ -123,6 +123,14 @@
   color: #7BC876;
 }
 
+.edit-info {
+  float: right;
+}
+
+.editing-info {
+  width: 100%;
+}
+
 #permissions-form .selector-wrapper {
   white-space: nowrap;
 }

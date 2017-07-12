@@ -434,7 +434,7 @@ PIPELINE_JS = {
             'js/tabs.js',
             'js/request_projects.js',
             'js/permissions.js',
-            'js/team.js',
+            'js/info.js',
         ),
         'output_filename': 'js/team.min.js',
     },
