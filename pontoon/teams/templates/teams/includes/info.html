@@ -1,5 +1,23 @@
+{% if request.user.has_perm('base.can_manage_locale', locale) %}
+<a class="edit-info" href=""><i class="fa fa-wrench fa-fw"></i></a>
+{% endif %}
+<div class="read-only-info">
 {% if locale.team_description %}
   <div class="info">{{ locale.team_description|safe }}</div>
 {% else %}
   <p class="no-results">No team info available.</p>
+{% endif %}
+</div>
+{% if request.user.has_perm('base.can_manage_locale', locale) %}
+<div class="editable-info hidden"
+     data-url="{{ url('pontoon.teams.ajax.update-info', locale.code) }}"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}>
+
+  <textarea class="editing-info" rows="20"/>
+  <div class="controls clearfix">
+    <button class="button active save info">Save project</button>
+    <a href="" class="cancel">Cancel</a>
+  </div>
+
+</div>
 {% endif %}

@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 
+import bleach
 from guardian.decorators import permission_required_or_403
 
 from pontoon.base import forms
@@ -76,6 +77,27 @@ def ajax_info(request, locale):
         'locale': locale,
     })
 
+@require_POST
+@permission_required_or_403('base.can_manage_locale', (Locale, 'code', 'locale'))
+@transaction.atomic
+def ajax_update_info(request, locale):
+    new_description = request.body
+    tags = bleach.ALLOWED_TAGS[:]
+    # allow <p>
+    tags.extend(('br', 'p'))
+    attrs = bleach.ALLOWED_ATTRIBUTES.copy()
+    # allow <a target="">
+    attrs['a'].append('target')
+    bleached_desc = bleach.clean(
+        new_description, tags=tags, attributes=attrs, strip=True)
+    if bleached_desc != new_description:
+        r = HttpResponse(bleached_desc)
+        r.status_code = 406
+        return r
+    l = get_object_or_404(Locale, code=locale)
+    l.team_description = bleached_desc
+    l.save()
+    return HttpResponse(bleached_desc)
 
 @permission_required_or_403('base.can_manage_locale', (Locale, 'code', 'locale'))
 @transaction.atomic
