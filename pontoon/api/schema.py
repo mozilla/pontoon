@@ -3,7 +3,9 @@ from graphene_django import DjangoObjectType
 from graphene_django.debug import DjangoDebug
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from .base.models import (
+from .util import get_fields
+
+from ..base.models import (
     Project as ProjectModel,
     Locale as LocaleModel,
     ProjectLocale as ProjectLocaleModel
@@ -81,25 +83,53 @@ class Query(graphene.ObjectType):
     locales = graphene.Field(LocalePage, page=graphene.Int(default_value=1))
     locale = graphene.Field(Locale, pk=graphene.Int())
 
-    @graphene.resolve_only_args
-    def resolve_projects(self, page=1):
-        query = ProjectModel.objects.prefetch_related('project_locale__locale')
-        return get_page(ProjectPage, query, page)
+    def resolve_projects(self, args, context, info):
+        qs = ProjectModel.objects.all()
+        fields = get_fields(info)
 
-    @graphene.resolve_only_args
-    def resolve_project(self, pk):
-        return ProjectModel.objects.prefetch_related(
-            'project_locale__locale').get(pk=pk)
+        if 'projects.locales' in fields:
+            qs = qs.prefetch_related('project_locale__locale')
 
-    @graphene.resolve_only_args
-    def resolve_locales(self, page=1):
-        query = LocaleModel.objects.prefetch_related('project_locale__project')
-        return get_page(LocalePage, query, page)
+        if 'projects.locales.items.locale.projects' in fields:
+            raise Exception('Cyclic queries are forbidden')
 
-    @graphene.resolve_only_args
-    def resolve_locale(self, pk):
-        return LocaleModel.objects.prefetch_related(
-            'project_locale__project').get(pk=pk)
+        return get_page(ProjectPage, qs, args['page'])
+
+    def resolve_project(self, args, context, info):
+        qs = ProjectModel.objects
+        fields = get_fields(info)
+
+        if 'project.locales' in fields:
+            qs = qs.prefetch_related('project_locale__locale')
+
+        if 'project.locales.items.locale.projects' in fields:
+            raise Exception('Cyclic queries are forbidden')
+
+        return qs.get(pk=args['pk'])
+
+    def resolve_locales(self, args, context, info):
+        qs = LocaleModel.objects.all()
+        fields = get_fields(info)
+
+        if 'locales.projects' in fields:
+            qs = qs.prefetch_related('project_locale__project')
+
+        if 'locales.projects.items.project.locales' in fields:
+            raise Exception('Cyclic queries are forbidden')
+
+        return get_page(LocalePage, qs, args['page'])
+
+    def resolve_locale(self, args, context, info):
+        qs = LocaleModel.objects
+        fields = get_fields(info)
+
+        if 'locale.projects' in fields:
+            qs = qs.prefetch_related('project_locale__project')
+
+        if 'locale.projects.items.project.locales' in fields:
+            raise Exception('Cyclic queries are forbidden')
+
+        return qs.get(pk=args['pk'])
 
 
 def get_page(shape, queryset, page):

@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from csp.decorators import csp_exempt
 from graphene_django.views import GraphQLView
 from pontoon.settings.base import DEV
-from pontoon.graphql import schema
+from pontoon.api.schema import schema
 from pontoon.base.views import heroku_setup
 from pontoon.intro.views import intro
 from pontoon.teams.views import team
