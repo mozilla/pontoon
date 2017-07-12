@@ -87,10 +87,10 @@ class Query(graphene.ObjectType):
         qs = ProjectModel.objects.all()
         fields = get_fields(info)
 
-        if 'projects.locales' in fields:
+        if 'projects.items.locales' in fields:
             qs = qs.prefetch_related('project_locale__locale')
 
-        if 'projects.locales.items.locale.projects' in fields:
+        if 'projects.items.locales.items.locale.projects' in fields:
             raise Exception('Cyclic queries are forbidden')
 
         return get_page(ProjectPage, qs, args['page'])
@@ -111,10 +111,10 @@ class Query(graphene.ObjectType):
         qs = LocaleModel.objects.all()
         fields = get_fields(info)
 
-        if 'locales.projects' in fields:
+        if 'locales.items.projects' in fields:
             qs = qs.prefetch_related('project_locale__project')
 
-        if 'locales.projects.items.project.locales' in fields:
+        if 'locales.items.projects.items.project.locales' in fields:
             raise Exception('Cyclic queries are forbidden')
 
         return get_page(LocalePage, qs, args['page'])
