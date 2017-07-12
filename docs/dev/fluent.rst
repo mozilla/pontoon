@@ -15,9 +15,6 @@ How to build the fresh version of fluent-syntax.js
 --------------------------------------------------
 
 .. code-block:: bash
-    git clone https://github.com/projectfluent/fluent.js
-    cd fluent.js
-    npm install
-    cd fluent-syntax
-    make build
-    cp fluent-syntax.js <your pontoon directory>/pontoon/base/static/js/lib/fluent-syntax.js
+    cd <pontoon working dir>
+    npm install fluent-syntax
+    cp node_modules/fluent-syntax/compat.js <your pontoon directory>/pontoon/base/static/js/lib/fluent-syntax.js
