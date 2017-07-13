@@ -59,7 +59,7 @@ var Pontoon = (function (my) {
         }
 
         // Attributes
-        if (!attributes) {
+        if (!(attributes && attributes.length)) {
           return;
         }
 
@@ -303,7 +303,7 @@ var Pontoon = (function (my) {
           // Attributes
           } else {
             var attributes = ast.attributes;
-            if (attributes) {
+            if (attributes && attributes.length) {
               response = attributes[0].value.elements[0].value;
             }
           }
@@ -326,7 +326,7 @@ var Pontoon = (function (my) {
           }
 
           // Mark complex strings
-          if (ast.attributes || (ast.value && ast.value.elements && ast.value.elements[0].expression && ast.value.elements[0].variants.length > 1)) {
+          if (ast.attributes && ast.attributes.length || (ast.value && ast.value.elements && ast.value.elements[0].expression && ast.value.elements[0].variants.length > 1)) {
             object.isComplexFTL = true;
 
           // Update entity and translation objects
