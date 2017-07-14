@@ -316,6 +316,7 @@ def batch_edit_translations(request):
 
     elif action == 'delete':
         count, translated_resources, changed_entities = get_translations_info(translations)
+        TranslationMemoryEntry.objects.filter(translation__in=translations).delete()
         translations.delete()
 
     elif action == 'replace':

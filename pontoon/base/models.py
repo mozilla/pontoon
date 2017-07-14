@@ -2082,7 +2082,10 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.entity.mark_changed(self.locale)
 
     def delete(self, stats=True, *args, **kwargs):
+        TranslationMemoryEntry.objects.filter(translation=self).delete()
+
         super(Translation, self).delete(*args, **kwargs)
+
         if stats:
             TranslatedResource.objects.get(resource=self.entity.resource, locale=self.locale).calculate_stats()
 

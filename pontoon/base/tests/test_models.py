@@ -1090,10 +1090,10 @@ class TranslationTests(TestCase):
                 locale=translation.locale
             )
 
-    def test_removed_translation(self):
+    def test_deleted_translation_not_in_memory(self):
         """
-        Suggestions should be available even after an Entity or
-        Translation has been removed.
+        When translation is deleted, its corresponding TranslationMemoryEntry
+        needs to be deleted, too.
         """
         translation = TranslationFactory.create(approved=True)
         assert TranslationMemoryEntry.objects.get(
@@ -1102,20 +1102,13 @@ class TranslationTests(TestCase):
             locale=translation.locale
         )
 
-        entity = translation.entity
         translation.delete()
-        assert TranslationMemoryEntry.objects.get(
-            source=translation.entity.string,
-            target=translation.string,
-            locale=translation.locale
-        )
-
-        entity.delete()
-        assert TranslationMemoryEntry.objects.get(
-            source=translation.entity.string,
-            target=translation.string,
-            locale=translation.locale
-        )
+        with self.assertRaises(TranslationMemoryEntry.DoesNotExist):
+            TranslationMemoryEntry.objects.get(
+                source=translation.entity.string,
+                target=translation.string,
+                locale=translation.locale
+            )
 
 
 class SearchQueryTests(TestCase):
