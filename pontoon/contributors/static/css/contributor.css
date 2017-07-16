@@ -3,7 +3,7 @@
 }
 
 a.avatar {
-  display: inline-block;
+  display: block;
   position: relative;
 }
 
@@ -30,60 +30,37 @@ a.avatar:hover .desc ~ img {
   opacity: 0.3;
 }
 
-#username {
-  color: #EBEBEB;
-  font-size: 48px;
-  letter-spacing: -2px;
-  text-transform: none;
-}
-
-#username .uneditable {
-  letter-spacing: normal;
-  padding: 8px 0 20px;
-}
-
-#username .container {
-  display: inline-block;
+#profile-form {
+  display: block;
   position: relative;
+  text-align: left;
+  margin: 0 auto;
+  width: 620px;
+}
+#profile-form .field {
+  margin-top: 10px;
 }
 
-#username .container input {
-  background: transparent;
-  border-bottom: 1px dashed transparent;
+#profile-form .field input {
   color: #FFFFFF;
-  font-size: 48px;
-  font-weight: 300;
-  padding: 4px 50px;
-  text-align: center;
-  width: 100%;
+  background: #373C42;
+  border: 1px solid #4F5965;
+  border-radius: 5px;
+  float: none;
+  width: 290px;
+  padding: 4px;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
-#username .container input:hover,
-#username .container input:focus {
+#profile-form .field input:hover,
+#profile-form .field input:focus {
   border-color: #888888;
 }
 
-#username .container .submit {
-  bottom: -8px;
-  color: #888888;
-  opacity: 0;
-  padding: 20px 0;
-  position: absolute;
-  right: 0;
-  /* Needed or click doesn't trigger */
-  transition: all 0.1s ease-out;
-}
-
-#username .container input:focus + .submit {
-  cursor: pointer;
-  opacity: 1;
-}
-
-#username .container input:focus + .submit:hover {
-  color: #7BC876;
+#profile-form button {
+  margin-top: 10px;
 }
 
 .info {
