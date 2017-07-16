@@ -159,7 +159,7 @@ ProjectLocalePermsFormsSet = forms.modelformset_factory(
 )
 
 
-class UserFirstNameForm(forms.ModelForm):
+class UserProfileForm(forms.ModelForm):
     """
     Form is responsible for saving user's name.
     """
@@ -167,7 +167,7 @@ class UserFirstNameForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name',)
+        fields = ('first_name', 'email')
 
 
 class UserCustomHomepageForm(forms.ModelForm):

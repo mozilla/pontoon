@@ -40,19 +40,19 @@ class ContributorProfileTests(UserTestCase):
     """Tests related to the saving user profile."""
 
     def test_invalid_first_name(self):
-        response = self.client.post('/save-user-name/', {'first_name': '<aa>"\'"'})
+        response = self.client.post('/save-user-profile/', {'first_name': '<aa>"\'"'})
 
         assert_equal(response.status_code, 400)
         assert_equal(response.content, 'Enter a valid value.')
 
     def test_missing_first_name(self):
-        response = self.client.post('/save-user-name/', {})
+        response = self.client.post('/save-user-profile/', {})
 
         assert_equal(response.status_code, 400)
         assert_equal(response.content, 'This field is required.')
 
     def test_valid_first_name(self):
-        response = self.client.post('/save-user-name/', {'first_name': 'contributor'})
+        response = self.client.post('/save-user-profile/', {'first_name': 'contributor'})
 
         assert_equal(response.status_code, 200)
         assert_equal(response.content, 'ok')
