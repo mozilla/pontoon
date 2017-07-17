@@ -29,6 +29,7 @@ Contents
    :maxdepth: 2
 
    dev/install
+   dev/fluent
    dev/workflow
    dev/sync
    admin/deployment

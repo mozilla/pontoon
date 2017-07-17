@@ -1,5 +1,7 @@
 /* Public functions used across different files */
 var Pontoon = (function (my) {
+  const fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
+
   return $.extend(true, my, {
     fluent: {
 
@@ -16,13 +18,13 @@ var Pontoon = (function (my) {
             isFTLplural = entity.isFTLplural,
             translation = translation || entity.translation[0],
             isTranslated = translation.pk,
-            entity_ast = FluentSyntax.parse(entity.original).body[0],
+            entity_ast = fluentParser.parseEntry(entity.original),
             entityAttributes = [],
             id, value;
 
         var attributes = entity_ast.attributes;
         if (isTranslated) {
-          var translation_ast = FluentSyntax.parse(translation.string).body[0];
+          var translation_ast = fluentParser.parseEntry(translation.string);
           attributes = translation_ast.attributes;
         }
 
@@ -57,7 +59,7 @@ var Pontoon = (function (my) {
         }
 
         // Attributes
-        if (!attributes) {
+        if (!(attributes && attributes.length)) {
           return;
         }
 
@@ -179,7 +181,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var ast = FluentSyntax.parse(entity.original).body[0],
+        var ast = fluentParser.parseEntry(entity.original),
             original = '';
 
         function renderOriginal(obj) {
@@ -293,7 +295,7 @@ var Pontoon = (function (my) {
             return response;
           }
 
-          ast = FluentSyntax.parse(source).body[0];
+          ast = fluentParser.parseEntry(source);
 
           if (ast.value) {
             response = this.serializePlaceables(ast.value.elements);
@@ -301,7 +303,7 @@ var Pontoon = (function (my) {
           // Attributes
           } else {
             var attributes = ast.attributes;
-            if (attributes) {
+            if (attributes && attributes.length) {
               response = attributes[0].value.elements[0].value;
             }
           }
@@ -324,7 +326,7 @@ var Pontoon = (function (my) {
           }
 
           // Mark complex strings
-          if (ast.attributes || (ast.value && ast.value.elements && ast.value.elements[0].expression && ast.value.elements[0].variants.length > 1)) {
+          if (ast.attributes && ast.attributes.length || (ast.value && ast.value.elements && ast.value.elements[0].expression && ast.value.elements[0].variants.length > 1)) {
             object.isComplexFTL = true;
 
           // Update entity and translation objects
