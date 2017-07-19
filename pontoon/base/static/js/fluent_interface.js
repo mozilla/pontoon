@@ -48,10 +48,10 @@ var Pontoon = (function (my) {
             $('#ftl-area .main-value ul')
               .append(
                 '<li class="clearfix">' +
-                  '<label class="id built-in" for="' + this + '">' +
+                  '<label class="id built-in" for="ftl-id-' + this + '">' +
                     '<span>' + this + ' (e.g. </span><span class="stress">' + example + '</span>)<sub class="fa fa-remove remove" title="Remove"></sub>' +
                   '</label>' +
-                  '<input class="value" id="' + this + '" type="text" value="' + value + '">' +
+                  '<input class="value" id="ftl-id-' + this + '" type="text" value="' + value + '">' +
                 '</li>');
           });
 
@@ -73,10 +73,10 @@ var Pontoon = (function (my) {
             maxlength = '1';
             input = '<div class="accesskeys"></div>';
           }
-          input += '<input class="value" id="' + id + '" type="text" value="' + value + '" maxlength="' + maxlength + '">';
+          input += '<input class="value" id="ftl-id-' + id + '" type="text" value="' + value + '" maxlength="' + maxlength + '">';
 
           if ($.inArray(id, [entityAttributes])) {
-            label = '<label class="id" for="' + id + '">' +
+            label = '<label class="id" for="ftl-id-' + id + '">' +
               '<span>' + id + '</span>' +
             '</label>';
 
