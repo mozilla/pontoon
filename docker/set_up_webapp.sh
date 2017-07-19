@@ -9,3 +9,6 @@ python manage.py createsuperuser
 
 echo "Updating Firefox Account provider settings"
 python manage.py updatefxaprovider
+
+echo "Running migration of the pontoon-intro module"
+python manage.py sync_projects --projects=pontoon-intro --no-commit

@@ -28,7 +28,7 @@ if [ "$1" == "--shell" ]; then
            --volume "$(pwd)":/app \
            --workdir /app \
            --network pontoon_default \
-           --link pontoon_postgresql_1 \
+           --link "${DC} ps -q postgresql" \
            --env-file ./docker/config/webapp.env \
            -e LOCAL_USER_ID=$UID \
            --tty \
@@ -45,14 +45,10 @@ else
 
     echo "Creating pontoon-tests container..."
     docker create \
-           -v /app \
+           --volume "$(pwd)":/app \
            -e LOCAL_USER_ID=$UID \
            --name pontoon-tests \
            ${BASEIMAGENAME} /bin/true
-
-    # Copy the repo root into /app.
-    echo "Copying contents..."
-    docker cp . pontoon-tests:/app
 
     # Run cmd in that environment and then remove the container.
     echo "Running tests..."
@@ -61,12 +57,11 @@ else
            --volumes-from pontoon-tests \
            --workdir /app \
            --network pontoon_default \
-           --link pontoon_elasticsearch_1 \
-           --link pontoon_postgresql_1 \
-           --link pontoon_rabbitmq_1 \
+           --link "${DC} ps -q postgresql" \
            --env-file ./docker/config/webapp.env \
            -e LOCAL_USER_ID=$UID \
-           local/pontoon python /app/manage.py test
+           local/pontoon \
+           python manage.py test
 
     echo "Done!"
 fi
