@@ -1811,18 +1811,6 @@ var Pontoon = (function (my) {
           return false;
         }
 
-        // Alt + Down: Go to next string
-        if (e.altKey && key === 40) {
-          self.navigateToEntity('next');
-          return false;
-        }
-
-        // Alt + Up: Go to previous string
-        if (e.altKey && key === 38) {
-          self.navigateToEntity('previous');
-          return false;
-        }
-
         // Tab: Select suggestions
         if (!$('.menu').is(':visible') && key === 9 && !e.ctrlKey) {
 
@@ -2722,6 +2710,23 @@ var Pontoon = (function (my) {
      */
     attachMainHandlers: function () {
       var self = this;
+
+      // Main keyboard shortcuts
+      $('html').on('keydown', function (e) {
+        var key = e.which;
+
+        // Alt + Down: Go to next string
+        if (e.altKey && key === 40) {
+          self.navigateToEntity('next');
+          return false;
+        }
+
+        // Alt + Up: Go to previous string
+        if (e.altKey && key === 38) {
+          self.navigateToEntity('previous');
+          return false;
+        }
+      });
 
       // iFrame fix on hiding menus
       $('body').bind("click.main", function (e) {
