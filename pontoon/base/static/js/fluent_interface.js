@@ -397,11 +397,11 @@ $(function() {
       $(this).addClass('active');
     }
 
-    $('#accesskey').val($('.accesskeys div.active').html());
+    $('#ftl-id-accesskey').val($('.accesskeys div.active').html());
   });
 
   // Select access key via input
-  $('#ftl-area .attributes').on('keyup', '#accesskey', function() {
+  $('#ftl-area .attributes').on('keyup', '#ftl-id-accesskey', function() {
     var accesskey = $(this).val().toUpperCase();
 
     if (accesskey) {

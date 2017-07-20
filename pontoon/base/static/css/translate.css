@@ -1513,7 +1513,7 @@ body > header aside p {
   padding: 0;
 }
 
-.ftl-area .attributes .value#accesskey {
+.ftl-area .attributes .value#ftl-id-accesskey {
   margin-right: 3px;
   padding: 0 4px;
   text-align: center;
