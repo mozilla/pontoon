@@ -309,7 +309,7 @@ var Pontoon = (function (my) {
           }
 
           // Plurals
-          if (ast.value && ast.value.elements && ast.value.elements[0].expression && ast.value.elements[0].variants) {
+          if (ast.value && ast.value.elements && ast.value.elements.length && ast.value.elements[0].expression && ast.value.elements[0].variants) {
             var variants = ast.value.elements[0].variants,
                 isFTLplural = variants.every(function(element) {
                   var key = element.key.name,
@@ -326,7 +326,7 @@ var Pontoon = (function (my) {
           }
 
           // Mark complex strings
-          if (ast.attributes && ast.attributes.length || (ast.value && ast.value.elements && ast.value.elements[0].expression && ast.value.elements[0].variants.length > 1)) {
+          if (ast.attributes && ast.attributes.length || (ast.value && ast.value.elements && ast.value.elements.length && ast.value.elements[0].expression && ast.value.elements[0].variants.length > 1)) {
             object.isComplexFTL = true;
 
           // Update entity and translation objects
