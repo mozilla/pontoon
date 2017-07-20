@@ -1878,16 +1878,12 @@ p#sign-in-required > a#sidebar-signin {
   display: inline-block;
 }
 
-#helpers > section ul li > header button.approve:before {
-  content: "";
+#helpers > section ul li.rejected {
+  opacity: 0.4;
 }
 
 #helpers > section ul li.fuzzy > header button.approve:before {
   color: #FED271;
-}
-
-#helpers > section ul li.suggested > header button.approve:before {
-  color: #4FC4F6;
 }
 
 #helpers > section ul li > header button.approve:hover:before,
@@ -1899,17 +1895,24 @@ p#sign-in-required > a#sidebar-signin {
 
 #helpers > section ul li > header button.approve:before,
 #helpers > section ul li > header button.unapprove:hover:before {
-   content: "";
-   color: #4FC4F6;
+   content: "";
 }
 
-#helpers > section ul li > header button.delete:before {
-  content: "";
+#helpers > section ul li > header button.unreject:before,
+#helpers > section ul li > header button.reject:hover:before,
+#helpers > section ul li.rejected > header button.reject:before,
+#helpers > section ul li.rejected > header button.unreject:before {
+  color: #F36;
+  content: "";
   margin-left: 5px;
 }
 
-#helpers > section ul li > header button.delete:hover:before {
-  color: #F36;
+#helpers > section ul li > header button.reject:before,
+#helpers > section ul li > header button.unreject:hover:before,
+#helpers > section ul li.rejected > header button.reject:hover:before,
+#helpers > section ul li.rejected > header button.unreject:hover:before {
+  content: "";
+  margin-left: 5px;
 }
 
 

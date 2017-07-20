@@ -488,8 +488,8 @@ def unapprove_translation(request):
 
 @require_AJAX
 @transaction.atomic
-def delete_translation(request):
-    """Delete given translation."""
+def reject_translation(request):
+    """Reject given translation."""
     try:
         t = request.POST['translation']
         paths = request.POST.getlist('paths[]')
@@ -498,24 +498,68 @@ def delete_translation(request):
 
     translation = get_object_or_404(Translation, pk=t)
 
-    # Non-privileged users can only delete own unapproved translations
-    if not request.user.can_translate(translation.locale, translation.entity.resource.project):
+    # Non-privileged users can only reject own unapproved translations
+    if (
+        not request.user.can_translate(
+            translation.locale, translation.entity.resource.project
+        )
+    ):
         if translation.user == request.user:
             if translation.approved is True:
                 return HttpResponseForbidden(
-                    "Forbidden: Can't delete approved translations"
+                    "Forbidden: Can't reject approved translations"
                 )
         else:
             return HttpResponseForbidden(
-                "Forbidden: Can't delete translations from other users"
+                "Forbidden: Can't reject translations from other users"
             )
 
-    translation.delete()
+    translation.rejected = True
+    translation.save()
 
     project = translation.entity.resource.project
     locale = translation.locale
 
     return JsonResponse({
+        'stats': TranslatedResource.objects.stats(project, paths, locale),
+    })
+
+
+@require_AJAX
+@login_required(redirect_field_name='', login_url='/403')
+@transaction.atomic
+def unreject_translation(request):
+    """Unreject given translation."""
+    try:
+        t = request.POST['translation']
+        paths = request.POST.getlist('paths[]')
+    except MultiValueDictKeyError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    translation = Translation.objects.get(pk=t)
+
+    # Only privileged users or authors can un-reject translations
+    if not (
+        request.user.can_translate(
+            project=translation.entity.resource.project,
+            locale=translation.locale
+        )
+        or request.user == translation.user
+        or translation.approved
+    ):
+        return HttpResponseForbidden(
+            "Forbidden: You can't unreject this translation."
+        )
+
+    translation.unreject(request.user)
+    latest_translation = translation.entity.translation_set.filter(
+        locale=translation.locale,
+        plural_form=translation.plural_form,
+    ).latest('date').serialize()
+    project = translation.entity.resource.project
+    locale = translation.locale
+    return JsonResponse({
+        'translation': latest_translation,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 

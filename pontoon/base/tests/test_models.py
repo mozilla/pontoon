@@ -733,12 +733,14 @@ class EntityTests(TestCase):
                 'pk': self.main_translation.pk,
                 'fuzzy': False,
                 'string': 'Translated String',
-                'approved': False
+                'approved': False,
+                'rejected': False
             }, {
                 'pk': self.main_translation_plural.pk,
                 'fuzzy': False,
                 'string': 'Translated Plural String',
-                'approved': False
+                'approved': False,
+                'rejected': False
             }],
             'order': 0,
             'source': [],

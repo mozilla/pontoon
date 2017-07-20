@@ -1962,6 +1962,8 @@ class Translation(DirtyFieldsMixin, models.Model):
     # 0=zero, 1=one, 2=two, 3=few, 4=many, 5=other, null=no plural forms
     plural_form = models.SmallIntegerField(null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
+    fuzzy = models.BooleanField(default=False)
+
     approved = models.BooleanField(default=False)
     approved_user = models.ForeignKey(
         User, related_name='approved_translations', null=True, blank=True)
@@ -1970,7 +1972,15 @@ class Translation(DirtyFieldsMixin, models.Model):
     unapproved_user = models.ForeignKey(
         User, related_name='unapproved_translations', null=True, blank=True)
     unapproved_date = models.DateTimeField(null=True, blank=True)
-    fuzzy = models.BooleanField(default=False)
+
+    rejected = models.BooleanField(default=False)
+    rejected_user = models.ForeignKey(
+        User, related_name='rejected_translations', null=True, blank=True)
+    rejected_date = models.DateTimeField(null=True, blank=True)
+
+    unrejected_user = models.ForeignKey(
+        User, related_name='unrejected_translations', null=True, blank=True)
+    unrejected_date = models.DateTimeField(null=True, blank=True)
 
     # Field contains a concatenated state of the  entity for faster search lookups.
     # Due to the nature of sql queries, it's faster to perform `icontains` filter on the same table
@@ -2041,7 +2051,8 @@ class Translation(DirtyFieldsMixin, models.Model):
             (Translation.objects
                 .filter(entity=self.entity, locale=self.locale, plural_form=self.plural_form)
                 .exclude(pk=self.pk)
-                .update(approved=False, approved_user=None, approved_date=None))
+                .update(approved=False, approved_user=None, approved_date=None,
+                        rejected=True, rejected_user=None, rejected_date=None))
 
             if not self.memory_entries.exists():
                 TranslationMemoryEntry.objects.create(
@@ -2098,7 +2109,30 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.unapproved_date = timezone.now()
         self.save()
 
-        TranslatedResource.objects.get(resource=self.entity.resource, locale=self.locale).calculate_stats()
+        if stats:
+            TranslatedResource.objects.get(
+                resource=self.entity.resource,
+                locale=self.locale
+            ).calculate_stats()
+
+        TranslationMemoryEntry.objects.filter(translation=self).delete()
+        self.entity.mark_changed(self.locale)
+
+    def unreject(self, user, stats=True):
+        """
+        Unreject translation.
+        """
+        self.rejected = False
+        self.unrejected_user = user
+        self.unrejected_date = timezone.now()
+        self.save()
+
+        if stats:
+            TranslatedResource.objects.get(
+                resource=self.entity.resource,
+                locale=self.locale
+            ).calculate_stats()
+
         TranslationMemoryEntry.objects.filter(translation=self).delete()
         self.entity.mark_changed(self.locale)
 
@@ -2121,6 +2155,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             'pk': self.pk,
             'string': self.string,
             'approved': self.approved,
+            'rejected': self.rejected,
             'fuzzy': self.fuzzy,
         }
 
