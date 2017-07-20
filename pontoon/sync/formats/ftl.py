@@ -80,6 +80,13 @@ class FTLResource(ParsedResource):
                 key = obj.id.name
                 translation = serializer.serialize_entry(obj)
 
+                # If syncing locale file
+                if source_resource:
+                    split = translation.split('\n' + key + ' = ')
+                    if len(split) > 1:
+                        serialized_comment = split[0] + '\n'
+                        translation = translation[len(serialized_comment):]
+
                 self.entities[key] = FTLEntity(
                     key,
                     translation,
