@@ -1,6 +1,7 @@
 /* Public functions used across different files */
 var Pontoon = (function (my) {
   const fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
+  const fluentSerializer = new FluentSyntax.FluentSerializer();
 
   return $.extend(true, my, {
     fluent: {
@@ -277,7 +278,8 @@ var Pontoon = (function (my) {
           translation = ' = ' + translation;
         }
 
-        return entity.key + translation + '\n';
+        var content = entity.key + translation;
+        return fluentSerializer.serializeEntry(fluentParser.parseEntry(content));
       },
 
 
