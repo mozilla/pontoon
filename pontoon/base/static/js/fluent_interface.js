@@ -277,7 +277,7 @@ var Pontoon = (function (my) {
           translation = ' = ' + translation;
         }
 
-        return entity.key + translation;
+        return entity.key + translation + '\n';
       },
 
 
