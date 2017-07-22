@@ -30,11 +30,19 @@ a.avatar:hover .desc ~ img {
   opacity: 0.3;
 }
 
+#username {
+  color: #EBEBEB;
+  font-size: 48px;
+  letter-spacing: normal;
+  padding: 8px 0 20px;
+  text-transform: none;
+}
+
 #profile-form {
   display: block;
   position: relative;
   text-align: left;
-  margin: 0 auto;
+  margin: 0 auto 70px auto;
   width: 620px;
 }
 #profile-form .field {
@@ -43,9 +51,9 @@ a.avatar:hover .desc ~ img {
 
 #profile-form .field input {
   color: #FFFFFF;
-  background: #373C42;
-  border: 1px solid #4F5965;
-  border-radius: 5px;
+  background: #333941;
+  border: 1px solid #4d5967;
+  border-radius: 3px;
   float: none;
   width: 290px;
   padding: 4px;
