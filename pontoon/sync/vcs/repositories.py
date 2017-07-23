@@ -355,7 +355,7 @@ class HgRepository(VCSRepository):
     @property
     def revision(self):
         code, output, error = self.execute(
-            ['hg', 'identify', '--id'],
+            ['hg', 'identify', '--id', '--rev=default'],
             cwd=self.path,
             log_errors=True
         )
@@ -368,7 +368,7 @@ class HgRepository(VCSRepository):
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ('A', 'M')
         code, output, error = self.execute(
-            ['hg', 'status', '-a', '-m', '-r', '--rev={}'.format(self._strip(from_revision)), '--rev=tip'],
+            ['hg', 'status', '-a', '-m', '-r', '--rev={}'.format(self._strip(from_revision)), '--rev=default'],
             cwd=path
         )
         if code == 0:
