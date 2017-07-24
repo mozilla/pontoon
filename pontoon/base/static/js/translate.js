@@ -2072,7 +2072,9 @@ var Pontoon = (function (my) {
           success: function(data) {
             var item = button.parents('li');
             self.stats = data.stats;
-            item.addClass('rejected');
+            item.addClass('rejected').removeClass('translated');
+            item.find('.unapprove').removeClass('unapprove').addClass('approve').prop('title', 'Approve');
+            button.addClass('unreject').removeClass('reject').prop('title', 'Unreject');
           },
           error: function() {
             self.endLoader('Oops, something went wrong.', 'error');
@@ -2182,7 +2184,7 @@ var Pontoon = (function (my) {
       });
 
       // Actions
-      $('#approve-all, #delete-all, #replace-all').click(function(e) {
+      $('#approve-all, #reject-all, #replace-all').click(function(e) {
         e.preventDefault();
 
         var button = this,
@@ -2199,7 +2201,7 @@ var Pontoon = (function (my) {
         clearTimeout(self.batchButttonTimer);
 
         // Delete check
-        if ($(button).is('#delete-all')) {
+        if ($(button).is('#reject-all')) {
           if ($(button).is('.confirmed')) {
             $(button).removeClass('confirmed show-message');
 
@@ -2262,7 +2264,7 @@ var Pontoon = (function (my) {
                         self.updateEntityUI(entity);
 
                         if (entity.body) {
-                          if ($(button).is('#delete-all') && !entity.translation[0].pk) {
+                          if ($(button).is('#reject-all') && !entity.translation[0].pk) {
                             self.postMessage("DELETE", {
                               id: entity.id
                             });

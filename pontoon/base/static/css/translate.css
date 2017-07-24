@@ -2035,7 +2035,7 @@ p#sign-in-required > a#sidebar-signin {
   display: none;
 }
 
-#batch button#delete-all {
+#batch button#reject-all {
   background: #F36;
 }
 

@@ -314,13 +314,23 @@ def batch_edit_translations(request):
         translations.update(
             approved=True,
             approved_user=request.user,
-            approved_date=timezone.now()
+            approved_date=timezone.now(),
+            rejected=False,
+            rejected_user=None,
+            rejected_date=None,
         )
 
-    elif action == 'delete':
+    elif action == 'reject':
         count, translated_resources, changed_entities = get_translations_info(translations)
         TranslationMemoryEntry.objects.filter(translation__in=translations).delete()
-        translations.delete()
+        translations.update(
+            rejected=True,
+            rejected_user=request.user,
+            rejected_date=timezone.now(),
+            approved=False,
+            approved_user=None,
+            approved_date=None,
+        )
 
     elif action == 'replace':
         find = request.POST.get('find')
@@ -515,6 +525,9 @@ def reject_translation(request):
             )
 
     translation.rejected = True
+    translation.approved = False
+    translation.approved_user = None
+    translation.approved_date = None
     translation.save()
 
     project = translation.entity.resource.project
@@ -655,6 +668,9 @@ def update_translation(request):
                 t.approved = True
                 t.approved_date = timezone.now()
                 t.fuzzy = False
+                t.rejected = False
+                t.rejected_user = None
+                t.rejected_date = None
 
                 if t.approved_user is None:
                     t.approved_user = user
