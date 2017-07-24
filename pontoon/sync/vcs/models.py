@@ -328,6 +328,11 @@ class VCSProject(object):
         directory names get higher scores, as do directories with
         formats that only used for source strings.
         """
+        # If source repository explicitly marked
+        source_repository = self.db_project.source_repository
+        if source_repository.source_repo:
+            return source_repository.checkout_path
+
         possible_sources = []
         for root, dirnames, filenames in os.walk(self.checkout_path):
             for dirname in dirnames:
