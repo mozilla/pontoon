@@ -1,5 +1,6 @@
 import os
 import os.path
+import scandir
 
 from django_nose.tools import (
     assert_equal,
@@ -153,9 +154,9 @@ class VCSProjectTests(TestCase):
         self.project.repositories.all().delete()
         self.project.repositories.add(RepositoryFactory.create(url=url))
 
-        with patch('pontoon.sync.vcs.models.os', wraps=os) as mock_os, \
+        with patch('pontoon.sync.vcs.models.scandir', wraps=scandir) as mock_scandir, \
              patch('pontoon.sync.vcs.models.MOZILLA_REPOS', [url]):
-            mock_os.walk.return_value = [
+            mock_scandir.walk.return_value = [
                 ('/root', [], ['foo.pot', 'region.properties'])
             ]
 
@@ -172,7 +173,7 @@ class VCSProjectTests(TestCase):
             ('/root/.hidden_folder/templates', [], ('bar.pot',)),
             ('/root/templates', [], ('foo.pot',)),
         )
-        with patch('pontoon.sync.vcs.models.os.walk', wraps=os, return_value=hidden_paths):
+        with patch('pontoon.sync.vcs.models.scandir.walk', wraps=scandir, return_value=hidden_paths):
             assert_equal(
                 list(self.vcs_project.resources_for_path('/root')),
                 ['/root/templates/foo.pot']

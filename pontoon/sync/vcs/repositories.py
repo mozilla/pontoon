@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 import logging
 import os
+import scandir
 import subprocess
 
 from django.conf import settings
@@ -401,7 +402,7 @@ def get_changed_files(repo_type, path, revision):
     # version of repository
     if revision is None:
         paths = []
-        for root, _, files in os.walk(path):
+        for root, _, files in scandir.walk(path):
             for f in files:
                 if root[0] == '.' or '/.' in root:
                     continue
