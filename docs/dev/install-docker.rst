@@ -88,5 +88,5 @@ If you want to run only some unit tests, or want to avoid rebuilding the
 docker container every time you run tests, you can start a shell that will
 allow to run your own commands. To do that, run::
 
-    $ make dockertestshell
+    $ make dockershell
     app@675af05d66ae:/app$ python manage.py test
