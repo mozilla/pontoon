@@ -15,10 +15,11 @@ from pontoon.base import MOZILLA_REPOS
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.utils import (
     is_hidden,
-    directory_contains_resources,
     is_resource,
     is_asymmetric_resource,
+    get_parent_directory,
     uses_undercore_as_separator,
+    directory_contains_resources,
     locale_directory_path,
     locale_to_source_path,
     source_to_locale_path,
@@ -206,17 +207,19 @@ class VCSProject(object):
         Create locale directory, if not in repository yet.
         """
         locale_directory_paths = {}
+        parent_directories = set()
 
         for locale in self.locales:
             try:
                 locale_directory_paths[locale.code] = locale_directory_path(
-                    self.checkout_path, locale.code
+                    self.checkout_path, locale.code, parent_directories
                 )
+                parent_directory = get_parent_directory(locale_directory_paths[locale.code])
 
             except IOError:
                 if not self.db_project.has_multi_locale_repositories:
                     source_directory = self.source_directory_path
-                    parent_directory = os.path.abspath(os.path.join(source_directory, os.pardir))
+                    parent_directory = get_parent_directory(source_directory)
 
                     locale_code = locale.code
                     if uses_undercore_as_separator(parent_directory):
@@ -247,6 +250,7 @@ class VCSProject(object):
                         'Directory for locale `{0}` not found'.format(locale.code)
                     )
 
+            parent_directories.add(parent_directory)
 
         return locale_directory_paths
 

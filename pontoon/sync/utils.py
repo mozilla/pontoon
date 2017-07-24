@@ -38,6 +38,13 @@ def is_asymmetric_resource(filename):
     return extension_in(filename, Resource.ASYMMETRIC_FORMATS)
 
 
+def get_parent_directory(path):
+    """
+    Get parent directory of the path
+    """
+    return os.path.abspath(os.path.join(path, os.pardir))
+
+
 def uses_undercore_as_separator(directory):
     """
     Return True if any subdirectory contains underscore.
@@ -63,24 +70,35 @@ def directory_contains_resources(directory_path, source_only=False):
     return False
 
 
-def locale_directory_path(checkout_path, locale_code):
+def locale_directory_path(checkout_path, locale_code, parent_directories=None):
     """
     Path to the directory where strings for the given locale are
     stored.
     """
     possible_paths = []
-    for root, dirnames, filenames in os.walk(checkout_path):
-        if locale_code in dirnames:
-            possible_paths.append(os.path.join(root, locale_code))
 
-        locale_variant = locale_code.replace('-', '_')
-        if locale_variant in dirnames:
-            possible_paths.append(os.path.join(root, locale_variant))
+    # Check paths that use underscore as locale/country code separator
+    locale_code_variants = [locale_code, locale_code.replace('-', '_')]
+
+    # Optimization for directories with a lot of paths: if parent_directories
+    # is provided, we simply join it with locale_code and check if path exists
+    for parent_directory in parent_directories:
+        for locale in locale_code_variants:
+            candidate = os.path.join(parent_directory, locale)
+            if os.path.exists(candidate):
+                possible_paths.append(candidate)
+
+    if not possible_paths:
+        for root, dirnames, filenames in os.walk(checkout_path):
+            for locale in locale_code_variants:
+                if locale in dirnames:
+                    possible_paths.append(os.path.join(root, locale))
 
     for possible_path in possible_paths:
         if directory_contains_resources(possible_path):
             return possible_path
 
+    # If locale directory empty (asymmetric formats)
     if possible_paths:
         return possible_paths[0]
 

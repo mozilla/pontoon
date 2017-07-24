@@ -18,7 +18,6 @@ from pontoon.base.models import (
 )
 from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.vcs.models import VCSProject
-from pontoon.sync.utils import locale_directory_path
 
 log = logging.getLogger(__name__)
 
@@ -228,6 +227,6 @@ def commit_changes(db_project, vcs_project, changeset, locale):
         'authors': set(authors)
     })
 
-    locale_path = locale_directory_path(vcs_project.checkout_path, locale.code)
+    locale_path = vcs_project.locale_directory_paths[locale.code]
     repo = db_project.repository_for_path(locale_path)
     repo.commit(commit_message, commit_author, locale_path)
