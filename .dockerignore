@@ -1,0 +1,7 @@
+.git
+**/*.swp
+**/*.pyc
+__pycache__
+.cache
+venv
+static
