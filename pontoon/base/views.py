@@ -321,15 +321,20 @@ def batch_edit_translations(request):
         )
 
     elif action == 'reject':
-        count, translated_resources, changed_entities = get_translations_info(translations)
-        TranslationMemoryEntry.objects.filter(translation__in=translations).delete()
-        translations.update(
+        suggestions = Translation.objects.filter(
+            locale=locale,
+            entity__pk__in=entities,
+            approved=False,
+            rejected=False
+        )
+        count, translated_resources, changed_entities = get_translations_info(
+            suggestions
+        )
+        TranslationMemoryEntry.objects.filter(translation__in=suggestions).delete()
+        suggestions.update(
             rejected=True,
             rejected_user=request.user,
             rejected_date=timezone.now(),
-            approved=False,
-            approved_user=None,
-            approved_date=None,
         )
 
     elif action == 'replace':
@@ -659,8 +664,15 @@ def update_translation(request):
                 if warnings:
                     return warnings
 
-                translations.update(approved=False, approved_user=None, approved_date=None)
-                translations.update(fuzzy=False)
+                translations.update(
+                    approved=False,
+                    approved_user=None,
+                    approved_date=None,
+                    rejected=True,
+                    rejected_user=request.user,
+                    rejected_date=timezone.now(),
+                    fuzzy=False,
+                )
 
                 if t.user is None:
                     t.user = user
