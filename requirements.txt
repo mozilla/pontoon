@@ -11,8 +11,6 @@ certifi==14.05.14 \
 chardet==2.3.0 \
     --hash=sha256:aaf514bde38020b4f1e42c6a6e141f2827a8a58ccfc3b22b6ff5a1a4b50be56e
     --hash=sha256:e53e38b3a4afe6d1132de62b7400a4ac363452dc5dfcf8d88e8e0cce663c68aa
-commonware==0.4.3 \
-    --hash=sha256:a7b02a5f76d89a79f861926fb34e029cc4343c13802525c818542a39fe788cce
 configparser==3.5.0b2 \
     --hash=sha256:16810160ff28233efac6c1dc0eea8d4c9b87042f9210541dab4f92a90a7d8597
 diff-match-patch==20121119 \
