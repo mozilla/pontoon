@@ -57,6 +57,11 @@ var Pontoon = (function (my) {
           });
 
           $('#entity-value').parents('li').hide();
+
+
+        // Main Value
+        } else if (translation_ast && translation_ast.value) {
+          $('#ftl-area > .main-value #entity-value').val(translation_ast.value.elements[0].value);
         }
 
         // Attributes
@@ -194,7 +199,13 @@ var Pontoon = (function (my) {
               original += '</span></li>';
             });
 
-          } else if (obj.attributes) {
+          } else if (obj.value) {
+            original += '<li><span class="id">Value</span><span class="value">';
+            original += obj.value.elements[0].value;
+            original += '</span></li>';
+          }
+
+          if (obj.attributes) {
             var id, value;
             $.each(obj.attributes, function() {
               id = this.id.name;
