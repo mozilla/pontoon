@@ -134,7 +134,10 @@ def locale_project_parts(request, locale, slug):
     locale = get_object_or_404(Locale, code=locale)
     project = get_object_or_404(Project, slug=slug)
 
-    return JsonResponse(locale.parts_stats(project), safe=False)
+    try:
+        return JsonResponse(locale.parts_stats(project), safe=False)
+    except ProjectLocale.DoesNotExist:
+        raise Http404('Locale not enabled for selected project.')
 
 
 @require_AJAX
