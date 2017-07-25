@@ -2,14 +2,15 @@ import logging
 import requests
 import urllib
 import xml.etree.ElementTree as ET
+from uuid import uuid4
 
 from collections import defaultdict
 from django.conf import settings
 from django.db import DataError
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
-from suds.client import Client, WebFault
 
 from pontoon.base import utils
 from pontoon.base.models import Locale, TranslationMemoryEntry
@@ -131,8 +132,11 @@ def microsoft_terminology(request):
 
     obj = {}
     locale = locale.lower()
-    url = 'http://api.terminology.microsoft.com/Terminology.svc?singleWsdl'
-    client = Client(url)
+    url = 'http://api.terminology.microsoft.com/Terminology.svc'
+    headers = {
+        'SOAPAction': '"http://api.terminology.microsoft.com/terminology/Terminology/GetTranslations"',
+        'Content-Type': 'text/xml; charset=utf-8'
+    }
 
     # On first run, check if target language supported
     if check == "true":
@@ -160,34 +164,32 @@ def microsoft_terminology(request):
 
         obj['locale'] = locale
 
-    sources = client.factory.create('ns0:TranslationSources')
-    sources["TranslationSource"] = ['Terms', 'UiStrings']
-
     payload = {
+        'uuid': uuid4(),
         'text': text,
-        'from': 'en-US',
         'to': locale,
-        'sources': sources,
-        'maxTranslations': 5
+        'max_result': 5
     }
+    template = get_template('machinery/microsoft_terminology.jinja')
+    payload = template.render(payload)
 
     try:
-        r = client.service.GetTranslations(**payload)
+        r = requests.post(url, data=payload, headers=headers)
         translations = []
-
-        if len(r) != 0:
-            for translation in r.Match:
+        xpath = './/{http://api.terminology.microsoft.com/terminology}'
+        root = ET.fromstring(r.content)
+        if len(root.find(xpath + 'GetTranslationsResult')):
+            for translation in root.find(xpath + 'GetTranslationsResult'):
                 translations.append({
-                    'source': translation.OriginalText,
-                    'target': translation.Translations[0][0].TranslatedText,
-                    'quality': translation.ConfidenceLevel,
+                    'source': translation.find(xpath + 'OriginalText').text,
+                    'target': translation.find(xpath + 'TranslatedText').text,
+                    'quality': int(translation.find(xpath + 'ConfidenceLevel').text),
                 })
 
             obj['translations'] = translations
-
         return JsonResponse(obj)
 
-    except WebFault as e:
+    except requests.exceptions.RequestException as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 

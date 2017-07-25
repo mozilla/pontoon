@@ -46,8 +46,6 @@ rsa==3.1.4 \
     --hash=sha256:e2b0b05936c276b1edd2e1525553233b666df9e29b5c3ba223eed738277c82a0
 https://github.com/mathjazz/silme/archive/v0.9.3.zip#egg=silme==0.9.3 \
     --hash=sha256:9aa618f068ed71ecc8820dd7538aa39e499ed4ce61a0074edbcfcf1008da1d1c
-suds==0.4 \
-    --hash=sha256:d5524ae523bb9e09c57bcdbd1efae2c287d20603688ea31f6020ed180a489af0
 https://github.com/jbalogh/test-utils/archive/e42e031.zip#egg=test-utils \
     --hash=sha256:8a1dbd1c7ade85206ae770c9ce5f43081a098c95f994af113f6434e900559a67
 https://github.com/mathjazz/translate/archive/1.13.1.zip#egg=translate-toolkit==1.13.1 \
