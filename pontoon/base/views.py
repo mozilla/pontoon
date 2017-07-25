@@ -538,6 +538,15 @@ def reject_translation(request):
     project = translation.entity.resource.project
     locale = translation.locale
 
+    TranslationMemoryEntry.objects.filter(translation=translation).delete()
+    TranslatedResource.objects.get(
+        resource=translation.entity.resource,
+        locale=locale
+    ).calculate_stats()
+
+    if translation.approved:
+        translation.entity.mark_changed(locale)
+
     return JsonResponse({
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
