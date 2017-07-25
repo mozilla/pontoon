@@ -1599,8 +1599,16 @@ class EntityQuerySet(models.QuerySet):
             suggested_count=Sum(
                 Case(
                     When(
-                        Q(translation__locale=locale, translation__approved=False, translation__fuzzy=False), then=1
-                    ), output_field=models.IntegerField(), default=0
+                        Q(
+                            translation__locale=locale,
+                            translation__approved=False,
+                            translation__fuzzy=False,
+                            translation__rejected=False,
+                        ),
+                        then=1
+                    ),
+                    output_field=models.IntegerField(),
+                    default=0
                 )
             ),
             expected_count=Case(
