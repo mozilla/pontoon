@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='repository',
             name='type',
-            field=models.CharField(choices=[(b'git', b'Git'), (b'hg', b'HG'), (b'svn', b'SVN')], default=b'git', max_length=255),
+            field=models.CharField(choices=[(
+                b'git', b'Git'), (b'hg', b'HG'), (b'svn', b'SVN')], default=b'git', max_length=255),
         ),
     ]

@@ -26,7 +26,8 @@ class Command(BaseCommand):
             else:
                 continue
 
-            self.stdout.write('Sending deadline notifications for project {}.'.format(project))
+            self.stdout.write(
+                'Sending deadline notifications for project {}.'.format(project))
 
             verb = 'due in {} days'.format(days_left)
             locales = []
@@ -47,4 +48,5 @@ class Command(BaseCommand):
                     verb=verb
                 )
 
-            self.stdout.write('Deadline notifications for project {} sent.'.format(project))
+            self.stdout.write(
+                'Deadline notifications for project {} sent.'.format(project))

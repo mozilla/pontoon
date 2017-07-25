@@ -14,12 +14,14 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='projectlocale',
             name='locale',
-            field=models.ForeignKey(related_name='project_locale', to='base.Locale'),
+            field=models.ForeignKey(
+                related_name='project_locale', to='base.Locale'),
         ),
         migrations.AlterField(
             model_name='projectlocale',
             name='project',
-            field=models.ForeignKey(related_name='project_locale', to='base.Project'),
+            field=models.ForeignKey(
+                related_name='project_locale', to='base.Project'),
         ),
         migrations.AlterField(
             model_name='stats',

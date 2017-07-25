@@ -93,13 +93,16 @@ def ajax_notifications(request, slug):
 
         # For performance reasons, only filter contributors for selected
         # locales if different from all project locales
-        available_ids = sorted(list(available_locales.values_list('id', flat=True)))
-        selected_ids = sorted(split_ints(form.cleaned_data.get('selected_locales')))
+        available_ids = sorted(
+            list(available_locales.values_list('id', flat=True)))
+        selected_ids = sorted(split_ints(
+            form.cleaned_data.get('selected_locales')))
 
         if available_ids != selected_ids:
             contributors = User.objects.filter(
                 translation__entity__resource__project=project,
-                translation__locale__in=available_locales.filter(id__in=selected_ids)
+                translation__locale__in=available_locales.filter(
+                    id__in=selected_ids)
             )
 
         identifier = uuid.uuid4().hex
@@ -124,7 +127,8 @@ def ajax_notifications(request, slug):
     ).values_list("data", flat=True)))
 
     for identifier in identifiers:
-        notifications.append(Notification.objects.filter(data__contains=identifier)[0])
+        notifications.append(Notification.objects.filter(
+            data__contains=identifier)[0])
 
     notifications.sort(key=lambda x: x.timestamp, reverse=True)
 
@@ -132,7 +136,8 @@ def ajax_notifications(request, slug):
     incomplete = []
     complete = []
     for available_locale in available_locales:
-        approved_percent = available_locale.get_chart(project)['approved_percent']
+        approved_percent = available_locale.get_chart(project)[
+            'approved_percent']
         if approved_percent == 100:
             complete.append(available_locale.pk)
         else:

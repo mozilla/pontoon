@@ -17,12 +17,13 @@ def create_locale_permissions(apps, schema_editor):
     Permission = apps.get_model('auth', 'Permission')
     ContentType = apps.get_model('contenttypes', 'ContentType')
 
-    locale_content_type, _ = ContentType.objects.get_or_create(app_label='base', model='locale')
+    locale_content_type, _ = ContentType.objects.get_or_create(
+        app_label='base', model='locale')
 
     Permission.objects.get_or_create(codename='can_translate_locale', content_type=locale_content_type,
-        name="Can add translations")
+                                     name="Can add translations")
     Permission.objects.get_or_create(codename='can_manage_locale', content_type=locale_content_type,
-        name="Can manage locale")
+                                     name="Can manage locale")
 
 
 def noop(apps, schema_editor):

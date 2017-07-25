@@ -13,9 +13,11 @@ def create_project_locale_groups(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     GroupObjectPermission = apps.get_model('guardian', 'GroupObjectPermission')
 
-    project_locale_ct = ContentType.objects.get(app_label='base', model='projectlocale')
+    project_locale_ct = ContentType.objects.get(
+        app_label='base', model='projectlocale')
 
-    can_translate = Permission.objects.get(content_type=project_locale_ct, codename='can_translate_project_locale')
+    can_translate = Permission.objects.get(
+        content_type=project_locale_ct, codename='can_translate_project_locale')
 
     for project_locale in ProjectLocale.objects.all():
         translators_group = Group.objects.create(name='{}/{} translators'.format(
@@ -47,5 +49,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_project_locale_groups, remove_project_locale_groups)
+        migrations.RunPython(create_project_locale_groups,
+                             remove_project_locale_groups)
     ]

@@ -10,7 +10,8 @@ def create_project_locale_permission(apps, schema_editor):
     Permission = apps.get_model('auth', 'Permission')
     ContentType = apps.get_model('contenttypes', 'ContentType')
 
-    project_locale_content_type, _ = ContentType.objects.get_or_create(app_label='base', model='projectlocale')
+    project_locale_content_type, _ = ContentType.objects.get_or_create(
+        app_label='base', model='projectlocale')
 
     Permission.objects.get_or_create(
         codename='can_translate_project_locale',
@@ -27,5 +28,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_project_locale_permission, migrations.RunPython.noop)
+        migrations.RunPython(
+            create_project_locale_permission, migrations.RunPython.noop)
     ]

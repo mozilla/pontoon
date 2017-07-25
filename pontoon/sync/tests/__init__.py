@@ -68,6 +68,7 @@ class RepositorySyncLogFactory(factory.DjangoModelFactory):
 
 class FakeCheckoutTestCase(TestCase):
     """Parent class for tests that use the fake l10n repo checkout."""
+
     def setUp(self):
         self.now = aware_datetime(1970, 1, 1)
 

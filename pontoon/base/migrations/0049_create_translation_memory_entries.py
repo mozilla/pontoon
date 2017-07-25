@@ -7,6 +7,7 @@ from django.db import migrations, models
 def create_translation_memory_entries(apps, schema):
     Translation = apps.get_model('base', 'Translation')
     TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
+
     def get_memory_entry(translation):
         return TranslationMemoryEntry(
             entity_id=translation['entity_id'],
@@ -17,11 +18,12 @@ def create_translation_memory_entries(apps, schema):
         )
     translations = (
         Translation.objects.filter(approved=True, fuzzy=False)
-          .filter(models.Q(plural_form__isnull=True) | models.Q(plural_form=0))
-          .prefetch_related('entity')
-          .values('pk', 'entity_id', 'entity__string', 'string', 'locale_id')
+        .filter(models.Q(plural_form__isnull=True) | models.Q(plural_form=0))
+        .prefetch_related('entity')
+        .values('pk', 'entity_id', 'entity__string', 'string', 'locale_id')
     )
-    TranslationMemoryEntry.objects.bulk_create(map(get_memory_entry, translations), 1000)
+    TranslationMemoryEntry.objects.bulk_create(
+        map(get_memory_entry, translations), 1000)
 
 
 def remove_translation_memory_entries(apps, schema):
@@ -35,5 +37,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_translation_memory_entries, remove_translation_memory_entries)
+        migrations.RunPython(create_translation_memory_entries,
+                             remove_translation_memory_entries)
     ]

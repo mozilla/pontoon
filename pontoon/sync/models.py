@@ -33,7 +33,8 @@ class SyncLog(BaseLog):
     @cached_property
     def end_time(self):
         try:
-            repo_logs = RepositorySyncLog.objects.filter(project_sync_log__sync_log=self)
+            repo_logs = RepositorySyncLog.objects.filter(
+                project_sync_log__sync_log=self)
             repo_end = repo_logs.latest('end_time').end_time
 
             skipped_end = self.project_sync_logs.aggregate(
@@ -76,11 +77,11 @@ class SyncLog(BaseLog):
 
         # translated + suggested + fuzzy > total in TranslatedResource
         for t in (
-            TranslatedResource.objects
-                .filter(resource__project__disabled=False)
-                .annotate(total=Sum(F('approved_strings') + F('translated_strings') + F('fuzzy_strings')))
-                .filter(total__gt=F('total_strings'))
-            ):
+                TranslatedResource.objects
+            .filter(resource__project__disabled=False)
+            .annotate(total=Sum(F('approved_strings') + F('translated_strings') + F('fuzzy_strings')))
+            .filter(total__gt=F('total_strings'))
+        ):
             t.calculate_stats()
 
         log.info("Sync complete.")
@@ -93,7 +94,8 @@ class ProjectSyncLog(BaseLog):
     start_time = models.DateTimeField(default=timezone.now)
 
     skipped = models.BooleanField(default=False)
-    skipped_end_time = models.DateTimeField(default=None, blank=True, null=True)
+    skipped_end_time = models.DateTimeField(
+        default=None, blank=True, null=True)
 
     @cached_property
     def end_time(self):
@@ -101,8 +103,8 @@ class ProjectSyncLog(BaseLog):
             return self.skipped_end_time
         elif self.finished:
             aggregate = (self.repository_sync_logs
-                            .all()
-                            .aggregate(Max('end_time')))
+                         .all()
+                         .aggregate(Max('end_time')))
             return aggregate['end_time__max']
         else:
             return None

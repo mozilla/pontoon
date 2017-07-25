@@ -13,8 +13,10 @@ def create_pm_groups(apps, schema_editor):
     group, created = Group.objects.get_or_create(name='project_managers')
 
     if created:
-        project_content_type, _ = ContentType.objects.get_or_create(app_label='base', model='project')
-        can_manage_project, _ = Permission.objects.get_or_create(content_type=project_content_type, codename='can_manage_project')
+        project_content_type, _ = ContentType.objects.get_or_create(
+            app_label='base', model='project')
+        can_manage_project, _ = Permission.objects.get_or_create(
+            content_type=project_content_type, codename='can_manage_project')
         group.permissions.add(can_manage_project)
 
 

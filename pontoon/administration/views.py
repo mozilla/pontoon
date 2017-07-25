@@ -101,9 +101,12 @@ def manage_project(request, slug=None, template='admin_project.html'):
             project = Project.objects.get(pk=pk)
             form = ProjectForm(request.POST, instance=project)
             # Needed if form invalid
-            subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
-            repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
-            external_resource_formset = ExternalResourceInlineFormSet(request.POST, instance=project)
+            subpage_formset = SubpageInlineFormSet(
+                request.POST, instance=project)
+            repo_formset = RepositoryInlineFormSet(
+                request.POST, instance=project)
+            external_resource_formset = ExternalResourceInlineFormSet(
+                request.POST, instance=project)
             subtitle = 'Edit project'
 
         # Add a new project
@@ -112,13 +115,17 @@ def manage_project(request, slug=None, template='admin_project.html'):
             # Needed if form invalid
             subpage_formset = SubpageInlineFormSet(request.POST)
             repo_formset = RepositoryInlineFormSet(request.POST)
-            external_resource_formset = ExternalResourceInlineFormSet(request.POST)
+            external_resource_formset = ExternalResourceInlineFormSet(
+                request.POST)
 
         if form.is_valid():
             project = form.save(commit=False)
-            subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
-            repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
-            external_resource_formset = ExternalResourceInlineFormSet(request.POST, instance=project)
+            subpage_formset = SubpageInlineFormSet(
+                request.POST, instance=project)
+            repo_formset = RepositoryInlineFormSet(
+                request.POST, instance=project)
+            external_resource_formset = ExternalResourceInlineFormSet(
+                request.POST, instance=project)
 
             if subpage_formset.is_valid() and repo_formset.is_valid() and external_resource_formset.is_valid():
                 project.save()
@@ -131,7 +138,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
                     .exclude(locale__pk__in=[l.pk for l in locales])
                     .delete())
                 for locale in locales:
-                    ProjectLocale.objects.get_or_create(project=project, locale=locale)
+                    ProjectLocale.objects.get_or_create(
+                        project=project, locale=locale)
 
                 subpage_formset.save()
                 repo_formset.save()
@@ -139,7 +147,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 # Properly displays formsets, but removes errors (if valid only)
                 subpage_formset = SubpageInlineFormSet(instance=project)
                 repo_formset = RepositoryInlineFormSet(instance=project)
-                external_resource_formset = ExternalResourceInlineFormSet(instance=project)
+                external_resource_formset = ExternalResourceInlineFormSet(
+                    instance=project)
                 subtitle += '. Saved.'
                 pk = project.pk
             else:
@@ -155,7 +164,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
             form = ProjectForm(instance=project)
             subpage_formset = SubpageInlineFormSet(instance=project)
             repo_formset = RepositoryInlineFormSet(instance=project)
-            external_resource_formset = ExternalResourceInlineFormSet(instance=project)
+            external_resource_formset = ExternalResourceInlineFormSet(
+                instance=project)
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
         except Project.DoesNotExist:

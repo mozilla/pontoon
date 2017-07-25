@@ -21,7 +21,8 @@ class ProjectForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
-        self.fields['contact'].queryset = User.objects.filter(groups__name='project_managers').order_by('email')
+        self.fields['contact'].queryset = User.objects.filter(
+            groups__name='project_managers').order_by('email')
 
 
 SubpageInlineFormSet = inlineformset_factory(
@@ -36,7 +37,8 @@ RepositoryInlineFormSet = inlineformset_factory(
     extra=0,
     min_num=1,
     validate_min=True,
-    fields=('type', 'url', 'branch', 'website', 'source_repo', 'permalink_prefix'),
+    fields=('type', 'url', 'branch', 'website',
+            'source_repo', 'permalink_prefix'),
 )
 
 

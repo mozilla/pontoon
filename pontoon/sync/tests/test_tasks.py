@@ -21,6 +21,7 @@ from pontoon.sync.tests import (
     SyncLogFactory,
 )
 
+
 class SyncProjectTests(TestCase):
     def setUp(self):
         super(SyncProjectTests, self).setUp()
@@ -34,12 +35,14 @@ class SyncProjectTests(TestCase):
         self.mock_project_needs_sync = self.patch_object(
             Project, 'needs_sync', new_callable=PropertyMock, return_value=True)
 
-        self.mock_sync_translations = self.patch('pontoon.sync.tasks.sync_translations')
+        self.mock_sync_translations = self.patch(
+            'pontoon.sync.tasks.sync_translations')
 
-        self.mock_update_originals = self.patch('pontoon.sync.tasks.update_originals', return_value=[[], [], []])
+        self.mock_update_originals = self.patch(
+            'pontoon.sync.tasks.update_originals', return_value=[[], [], []])
 
         self.mock_source_directory_path = self.patch('pontoon.sync.vcs.models.VCSProject.source_directory_path',
-                                                            return_value=self.repository.checkout_path)
+                                                     return_value=self.repository.checkout_path)
 
     def test_missing_project(self):
         """
@@ -95,7 +98,8 @@ class SyncProjectTests(TestCase):
         )
 
         # When skipping, mark the project log properly.
-        assert_true(ProjectSyncLog.objects.get(project=self.db_project).skipped)
+        assert_true(ProjectSyncLog.objects.get(
+            project=self.db_project).skipped)
 
     def test_no_changes_force(self):
         """
@@ -130,7 +134,8 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
 
         self.mock_pull_changes = self.patch(
             'pontoon.sync.tasks.pull_changes', return_value=[True, {}])
-        self.mock_commit_changes = self.patch('pontoon.sync.tasks.commit_changes')
+        self.mock_commit_changes = self.patch(
+            'pontoon.sync.tasks.commit_changes')
         self.mock_repo_checkout_path = self.patch_object(
             Repository, 'checkout_path', new_callable=PropertyMock,
             return_value=FAKE_CHECKOUT_PATH)
@@ -151,10 +156,11 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         }]
 
         changed1, changed2, changed_after = ChangedEntityLocaleFactory.create_batch(3,
-            locale=self.translated_locale,
-            entity__resource=self.main_db_resource,
-            when=aware_datetime(1970, 1, 1)
-        )
+                                                                                    locale=self.translated_locale,
+                                                                                    entity__resource=self.main_db_resource,
+                                                                                    when=aware_datetime(
+                                                                                        1970, 1, 1)
+                                                                                    )
         changed_after.when = aware_datetime(1970, 1, 3)
         changed_after.save()
 
@@ -202,7 +208,8 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
                               self.now, self.mock_changes)
 
         # Only one translation should be approved: the duplicate_translation.
-        assert_equal(self.main_db_entity.translation_set.filter(approved=True).count(), 1)
+        assert_equal(self.main_db_entity.translation_set.filter(
+            approved=True).count(), 1)
         new_translation = self.main_db_entity.translation_set.get(
             string='New Translated String'
         )
@@ -211,7 +218,8 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
 
         duplicate_translation.refresh_from_db()
         assert_true(duplicate_translation.approved)
-        assert_equal(duplicate_translation.approved_date, aware_datetime(1970, 1, 3))
+        assert_equal(duplicate_translation.approved_date,
+                     aware_datetime(1970, 1, 3))
 
     def test_create_repository_log(self):
         assert_false(RepositorySyncLog.objects.exists())
@@ -282,8 +290,10 @@ class SyncExecutionTests(TestCase):
             assert_true(second_call.successful())
             assert_true(first_call.get(), 42)
             assert_true(second_call.get(), 24)
-            mock_cache.add.assert_any_call(CONTAINS('task_lock_key[param=42]'), ANY, timeout=3)
-            mock_cache.add.assert_any_call(CONTAINS('task_lock_key[param=24]'), ANY, timeout=3)
+            mock_cache.add.assert_any_call(
+                CONTAINS('task_lock_key[param=42]'), ANY, timeout=3)
+            mock_cache.add.assert_any_call(
+                CONTAINS('task_lock_key[param=24]'), ANY, timeout=3)
 
     def test_exception_during_sync(self):
         """

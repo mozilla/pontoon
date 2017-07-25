@@ -39,13 +39,15 @@ def translation_memory(request):
 
     max_results = 5
     locale = get_object_or_404(Locale, code=locale)
-    entries = TranslationMemoryEntry.objects.minimum_levenshtein_ratio(text).filter(locale=locale)
+    entries = TranslationMemoryEntry.objects.minimum_levenshtein_ratio(
+        text).filter(locale=locale)
 
     # Exclude existing entity
     if pk:
         entries = entries.exclude(entity__pk=pk)
 
-    entries = entries.values('source', 'target', 'quality').order_by('-quality')
+    entries = entries.values(
+        'source', 'target', 'quality').order_by('-quality')
     suggestions = defaultdict(lambda: {'count': 0, 'quality': 0})
 
     try:

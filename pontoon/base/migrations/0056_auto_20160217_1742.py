@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='links',
-            field=models.BooleanField(default=False, verbose_name=b'Keep links on the project website clickable'),
+            field=models.BooleanField(
+                default=False, verbose_name=b'Keep links on the project website clickable'),
         ),
     ]

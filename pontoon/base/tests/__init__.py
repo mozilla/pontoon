@@ -38,9 +38,9 @@ class PontoonClient(BaseClient):
         return self.post(url, params, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
 
-
 class TestCase(BaseTestCase):
     client_class = PontoonClient
+
     def patch(self, *args, **kwargs):
         """
         Wrapper around mock.patch that automatically cleans up the patch
@@ -141,6 +141,7 @@ class PluralEntityFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
     string = Sequence(lambda n: 'string {0}'.format(n))
     string_plural = Sequence(lambda n: 'string plural {0}'.format(n))
+
     class Meta:
         model = Entity
 
@@ -210,7 +211,8 @@ def assert_redirects(response, expected_url, status_code=302, host=None, secure=
     that this version doesn't follow the redirect.
     """
     if host is None:
-        host = '{}://{}'.format('https' if secure else 'http', host or 'testserver')
+        host = '{}://{}'.format('https' if secure else 'http',
+                                host or 'testserver')
     assert_equal(response.status_code, status_code)
     assert_equal(response['Location'], host + expected_url)
 
@@ -242,6 +244,7 @@ class NOT(object):
     >>> mock_function.assert_called_with(NOT('fizzbarboff'))  # Passes
     >>> mock_function.assert_called_with(NOT('foobarbaz'))  # Fails
     """
+
     def __init__(self, *values):
         self.values = values
 
@@ -266,6 +269,7 @@ class CONTAINS(object):
     >>> mock_function('foobarbaz')
     >>> mock_function.assert_called_with(CONTAINS('bar'))  # Passes
     """
+
     def __init__(self, *args):
         self.items = args
 

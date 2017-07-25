@@ -24,6 +24,7 @@ class ChangeSet(object):
     translations stored in VCS. Once all the necessary changes have been
     stored, execute all the changes at once efficiently.
     """
+
     def __init__(self, db_project, vcs_project, now, locale=None):
         """
         :param now:
@@ -59,7 +60,8 @@ class ChangeSet(object):
         Updates only entities that has been changed.
         """
         if db_entity.has_changed(locale):
-            self.changes['update_vcs'].append((locale.code, db_entity, vcs_entity))
+            self.changes['update_vcs'].append(
+                (locale.code, db_entity, vcs_entity))
             self.locales_to_commit.add(locale)
 
     def create_db_entity(self, vcs_entity):
@@ -85,7 +87,8 @@ class ChangeSet(object):
         RuntimeError, even if the changes failed.
         """
         if self.executed:
-            raise RuntimeError('execute() can only be called once per changeset.')
+            raise RuntimeError(
+                'execute() can only be called once per changeset.')
         else:
             self.executed = True
 
@@ -109,12 +112,13 @@ class ChangeSet(object):
             changed_resources.add(resources[db_entity.resource.path])
             vcs_translation = vcs_entity.translations[locale_code]
             db_translations = (db_entity.translation_set
-                .filter(approved=True, locale__code=locale_code)
-            )
+                               .filter(approved=True, locale__code=locale_code)
+                               )
             vcs_translation.update_from_db(db_translations)
 
             # Track which translators were involved.
-            self.commit_authors_per_locale[locale_code].extend([t.user for t in db_translations if t.user])
+            self.commit_authors_per_locale[locale_code].extend(
+                [t.user for t in db_translations if t.user])
 
         for resource in changed_resources:
             resource.save(self.locale)
@@ -143,9 +147,11 @@ class ChangeSet(object):
         count = len(new_entities)
 
         if count > 0:
-            log.info('Sending new string notifications for project {}.'.format(self.db_project))
+            log.info('Sending new string notifications for project {}.'.format(
+                self.db_project))
 
-            verb = 'updated with {} new string{}'.format(count, pluralize(count))
+            verb = 'updated with {} new string{}'.format(
+                count, pluralize(count))
             contributors = User.objects.filter(
                 translation__entity__resource__project=self.db_project
             ).distinct()
@@ -157,14 +163,16 @@ class ChangeSet(object):
                     verb=verb
                 )
 
-            log.info('New string notifications for project {} sent.'.format(self.db_project))
+            log.info('New string notifications for project {} sent.'.format(
+                self.db_project))
 
     def execute_create_db(self):
         new_entities = []
 
         for vcs_entity in self.changes['create_db']:
             # We can't use bulk_create since we need a PK
-            entity, created = Entity.objects.get_or_create(**self.get_entity_updates(vcs_entity))
+            entity, created = Entity.objects.get_or_create(
+                **self.get_entity_updates(vcs_entity))
 
             if created:
                 new_entities.append(entity)
@@ -230,7 +238,8 @@ class ChangeSet(object):
 
         # Any existing translations that were not approved get unapproved.
         if old_translations is None:
-            old_translations = db_translations.filter(approved_date__lte=self.now)
+            old_translations = db_translations.filter(
+                approved_date__lte=self.now)
 
         for translation in old_translations:
             if translation not in approved_translations:
@@ -268,11 +277,13 @@ class ChangeSet(object):
             ).prefetch_related(
                 Prefetch(
                     'translation_set',
-                    queryset=Translation.objects.filter(locale__code=locale, approved_date__lte=self.now),
+                    queryset=Translation.objects.filter(
+                        locale__code=locale, approved_date__lte=self.now),
                     to_attr='old_translations'
                 )
             )
-            prefetched_entities[locale] = {entity.id: entity for entity in entities_qs}
+            prefetched_entities[locale] = {
+                entity.id: entity for entity in entities_qs}
 
         return prefetched_entities
 

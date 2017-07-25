@@ -15,12 +15,14 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='locale',
             name='direction',
-            field=models.CharField(choices=[(b'ltr', b'left-to-right'), (b'rtl', b'right-to-left')], default=b'ltr', max_length=3),
+            field=models.CharField(choices=[(
+                b'ltr', b'left-to-right'), (b'rtl', b'right-to-left')], default=b'ltr', max_length=3),
         ),
         migrations.AddField(
             model_name='locale',
             name='population',
-            field=models.PositiveIntegerField(default=0, help_text=b'\n        Number of native speakers.\n    '),
+            field=models.PositiveIntegerField(
+                default=0, help_text=b'\n        Number of native speakers.\n    '),
         ),
         migrations.AddField(
             model_name='locale',
@@ -35,6 +37,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='priority',
-            field=models.IntegerField(choices=[(1, b'Lowest'), (2, b'Low'), (3, b'Normal'), (4, b'High'), (5, b'Highest')], default=3),
+            field=models.IntegerField(choices=[(
+                1, b'Lowest'), (2, b'Low'), (3, b'Normal'), (4, b'High'), (5, b'Highest')], default=3),
         ),
     ]

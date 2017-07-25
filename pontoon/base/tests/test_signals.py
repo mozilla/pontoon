@@ -23,7 +23,8 @@ class SignalTests(TestCase):
         project.refresh_from_db()
         assert_false(project.has_changed)
 
-        project_locale = ProjectLocale.objects.get(project=project, locale=locale)
+        project_locale = ProjectLocale.objects.get(
+            project=project, locale=locale)
         project_locale.latest_translation = TranslationFactory.create(
             entity__resource__project=project, locale=locale)
         project_locale.save()

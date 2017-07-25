@@ -16,6 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='translation',
             name='extra',
-            field=jsonfield.fields.JSONField(default=pontoon.base.models.extra_default),
+            field=jsonfield.fields.JSONField(
+                default=pontoon.base.models.extra_default),
         ),
     ]

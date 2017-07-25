@@ -18,14 +18,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ExternalResource',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=32)),
                 ('url', models.URLField(blank=True, verbose_name=b'URL')),
             ],
         ),
         migrations.AlterModelOptions(
             name='project',
-            options={'permissions': (('can_manage_project', 'Can manage project'),)},
+            options={'permissions': (
+                ('can_manage_project', 'Can manage project'),)},
         ),
         migrations.RemoveField(
             model_name='locale',
@@ -50,21 +52,25 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='admin_notes',
-            field=models.TextField(blank=True, help_text=b'\n        Notes only visible in Administration\n    '),
+            field=models.TextField(
+                blank=True, help_text=b'\n        Notes only visible in Administration\n    '),
         ),
         migrations.AddField(
             model_name='project',
             name='contact',
-            field=models.ForeignKey(blank=True, help_text=b'\n        L10n driver in charge of the project\n    ', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='contact_for', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, help_text=b'\n        L10n driver in charge of the project\n    ', null=True,
+                                    on_delete=django.db.models.deletion.CASCADE, related_name='contact_for', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='externalresource',
             name='locale',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='base.Locale'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='base.Locale'),
         ),
         migrations.AddField(
             model_name='externalresource',
             name='project',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='base.Project'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='base.Project'),
         ),
     ]

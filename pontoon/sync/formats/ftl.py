@@ -21,10 +21,12 @@ log = logging.getLogger(__name__)
 parser = FluentParser()
 serializer = FluentSerializer()
 
+
 class FTLEntity(VCSTranslation):
     """
     Represents entities in FTL (without its attributes).
     """
+
     def __init__(self, key, source_string, source_string_plural, strings, comments=None, order=None):
         super(FTLEntity, self).__init__(
             key=key,

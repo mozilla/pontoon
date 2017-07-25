@@ -16,12 +16,14 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='translationmemoryentry',
             name='project',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='memory_entries', to='base.Project'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='memory_entries', to='base.Project'),
         ),
         migrations.AlterField(
             model_name='translationmemoryentry',
             name='entity',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='memory_entries', to='base.Entity'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL,
+                                    related_name='memory_entries', to='base.Entity'),
         ),
 
         # Assign projects to existing TM entries in raw SQL because of a lot better performance.

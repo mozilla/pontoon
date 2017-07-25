@@ -15,12 +15,14 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='width',
-            field=models.PositiveIntegerField(blank=True, help_text=b'\n        Default website (iframe) width in pixels.\n        If set, sidebar will be opened by default.\n    ', null=True),
+            field=models.PositiveIntegerField(
+                blank=True, help_text=b'\n        Default website (iframe) width in pixels.\n        If set, sidebar will be opened by default.\n    ', null=True),
         ),
         migrations.AlterField(
             model_name='repository',
             name='permalink_prefix',
-            field=models.CharField(help_text=b'\n        A URL prefix for downloading localized files. For GitHub repositories,\n        select any localized file on GitHub, click Raw and replace locale code\n        and the following bits in the URL with `{locale_code}`.\n    ', max_length=2000, verbose_name=b'Download prefix'),
+            field=models.CharField(
+                help_text=b'\n        A URL prefix for downloading localized files. For GitHub repositories,\n        select any localized file on GitHub, click Raw and replace locale code\n        and the following bits in the URL with `{locale_code}`.\n    ', max_length=2000, verbose_name=b'Download prefix'),
         ),
         migrations.AlterField(
             model_name='repository',

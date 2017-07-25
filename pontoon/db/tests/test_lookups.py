@@ -18,6 +18,7 @@ class TestIContainsCollationLookup(TestCase):
     """
     Collation lookups allows a user to set text-collation to search queries.
     """
+
     def setUp(self):
         # Create a list of instances in order to filter them.
         EntityFactory.create_batch(10)
@@ -52,10 +53,9 @@ class TestIContainsCollationLookup(TestCase):
         entities = Entity.objects.filter(
             string__icontains_collate=('string', 'C')
         )
-        query_sql =  entities.query.sql_with_params()[0]
+        query_sql = entities.query.sql_with_params()[0]
 
         # Force evaluation of query on the real database.
         assert_equal(entities.count(), 10)
         assert_true(query_sql.endswith('WHERE UPPER("base_entity"."string"::text COLLATE "C") '
                                        'LIKE UPPER(%s COLLATE "C")'))
-

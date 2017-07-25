@@ -23,6 +23,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='translation',
             name='unapproved_user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='unapprovers', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='unapprovers', to=settings.AUTH_USER_MODEL),
         ),
     ]

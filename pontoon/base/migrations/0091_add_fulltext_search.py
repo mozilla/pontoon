@@ -41,6 +41,7 @@ entity_document_update_trigger_drop_sql = '''
     DROP FUNCTION base_translation_entity_document_update();
 '''
 
+
 class Migration(migrations.Migration):
 
     dependencies = [

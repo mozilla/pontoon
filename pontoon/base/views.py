@@ -59,7 +59,8 @@ def home(request):
     project = Project.objects.get(id=1)
     locale = utils.get_project_locale_from_request(
         request, project.locales) or 'en-GB'
-    path = Resource.objects.filter(project=project, translatedresources__locale__code=locale)[0].path
+    path = Resource.objects.filter(
+        project=project, translatedresources__locale__code=locale)[0].path
 
     return translate(request, locale, project.slug, path)
 
@@ -84,7 +85,7 @@ def heroku_setup(request):
     Site.objects.filter(pk=1).update(name=app_host, domain=app_host)
 
     Project.objects.filter(slug='pontoon-intro').update(
-       url='https://{}/intro/'.format(app_host)
+        url='https://{}/intro/'.format(app_host)
     )
 
     # Clear the cache to ensure that SITE_URL will be regenerated.
@@ -238,7 +239,8 @@ def entities(request):
             # TODO: entities_to_map.values_list() doesn't return entities from selected page
             if entity_pk not in [e.pk for e in entities_to_map]:
                 if entity_pk in entities.values_list('pk', flat=True):
-                    entities_to_map = list(entities_to_map) + list(entities.filter(pk=entity_pk))
+                    entities_to_map = list(
+                        entities_to_map) + list(entities.filter(pk=entity_pk))
 
     return JsonResponse({
         'entities': Entity.map_entities(locale, entities_to_map, visible_entities),
@@ -271,7 +273,8 @@ def batch_edit_translations(request):
 
     # Batch editing is only available to translators.
     # Check if user has translate permissions for all of the projects in passed entities.
-    projects = Project.objects.filter(pk__in=entities.values_list('resource__project__pk', flat=True).distinct())
+    projects = Project.objects.filter(pk__in=entities.values_list(
+        'resource__project__pk', flat=True).distinct())
     for project in projects:
         if not request.user.can_translate(project=project, locale=locale):
             return HttpResponseForbidden(
@@ -298,16 +301,19 @@ def batch_edit_translations(request):
     def get_translations_info(translations):
         count = translations.count()
         translated_resources = list(translations.translated_resources(locale))
-        changed_entities = list(Entity.objects.filter(translation__in=translations).distinct())
+        changed_entities = list(Entity.objects.filter(
+            translation__in=translations).distinct())
 
         return count, translated_resources, changed_entities
 
     if action == 'approve':
         translations = translations.filter(approved=False)
-        changed_translation_pks = list(translations.values_list('pk', flat=True))
+        changed_translation_pks = list(
+            translations.values_list('pk', flat=True))
         if changed_translation_pks:
             latest_translation_pk = translations.last().pk
-        count, translated_resources, changed_entities = get_translations_info(translations)
+        count, translated_resources, changed_entities = get_translations_info(
+            translations)
         translations.update(
             approved=True,
             approved_user=request.user,
@@ -315,8 +321,10 @@ def batch_edit_translations(request):
         )
 
     elif action == 'delete':
-        count, translated_resources, changed_entities = get_translations_info(translations)
-        TranslationMemoryEntry.objects.filter(translation__in=translations).delete()
+        count, translated_resources, changed_entities = get_translations_info(
+            translations)
+        TranslationMemoryEntry.objects.filter(
+            translation__in=translations).delete()
         translations.delete()
 
     elif action == 'replace':
@@ -324,7 +332,8 @@ def batch_edit_translations(request):
         replace = request.POST.get('replace')
 
         try:
-            translations, changed_translations = translations.find_and_replace(find, replace, request.user)
+            translations, changed_translations = translations.find_and_replace(
+                find, replace, request.user)
             changed_translation_pks = [c.pk for c in changed_translations]
             if changed_translation_pks:
                 latest_translation_pk = max(changed_translation_pks)
@@ -333,7 +342,8 @@ def batch_edit_translations(request):
                 'error': 'Empty translations not allowed',
             })
 
-        count, translated_resources, changed_entities = get_translations_info(translations)
+        count, translated_resources, changed_entities = get_translations_info(
+            translations)
 
     if count == 0:
         return JsonResponse({'count': 0})
@@ -356,7 +366,8 @@ def batch_edit_translations(request):
 
     # Mark translations as changed
     changed_entities_array = []
-    existing = ChangedEntityLocale.objects.values_list('entity', 'locale').distinct()
+    existing = ChangedEntityLocale.objects.values_list(
+        'entity', 'locale').distinct()
     for changed_entity in changed_entities:
         key = (changed_entity.pk, locale.pk)
 
@@ -369,7 +380,8 @@ def batch_edit_translations(request):
 
     # Update latest translation
     if latest_translation_pk:
-        Translation.objects.get(pk=latest_translation_pk).update_latest_translation()
+        Translation.objects.get(
+            pk=latest_translation_pk).update_latest_translation()
 
     # Update translation memory
     memory_entries = [TranslationMemoryEntry(
@@ -532,7 +544,8 @@ def update_translation(request):
         original = request.POST['original']
         ignore_check = request.POST['ignore_check']
         approve = request.POST.get('approve', 'false') == 'true'
-        force_suggestions = request.POST.get('force_suggestions', 'false') == 'true'
+        force_suggestions = request.POST.get(
+            'force_suggestions', 'false') == 'true'
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
@@ -598,7 +611,8 @@ def update_translation(request):
                 if warnings:
                     return warnings
 
-                translations.update(approved=False, approved_user=None, approved_date=None)
+                translations.update(
+                    approved=False, approved_user=None, approved_date=None)
                 translations.update(fuzzy=False)
 
                 if t.user is None:
@@ -655,7 +669,8 @@ def update_translation(request):
                 return warnings
 
             if can_translate:
-                translations.update(approved=False, approved_user=None, approved_date=None)
+                translations.update(
+                    approved=False, approved_user=None, approved_date=None)
 
             translations.update(fuzzy=False)
 
@@ -791,5 +806,6 @@ def download_translation_memory(request, locale, slug, filename):
         ),
         content_type='text/xml'
     )
-    response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(filename=filename)
+    response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(
+        filename=filename)
     return response

@@ -58,7 +58,8 @@ class SilmeResourceTests(TestCase):
         path = os.path.join(tempfile.mkdtemp(), 'does', 'not', 'exist.dtd')
         translated_resource = self.create_nonexistant_resource(path)
 
-        translated_resource.translations[0].strings = {None: 'New Translated String'}
+        translated_resource.translations[0].strings = {
+            None: 'New Translated String'}
         translated_resource.save(LocaleFactory.create())
 
         assert_true(os.path.exists(path))
@@ -110,7 +111,8 @@ class DTDTests(FormatTestsMixin, TestCase):
             <!ENTITY SourceString "New Translated String">
         """)
 
-        self.run_save_basic(input_string, expected_string, source_string=input_string)
+        self.run_save_basic(input_string, expected_string,
+                            source_string=input_string)
 
     def test_save_remove(self):
         """Deleting strings removes them completely from the DTD file."""
@@ -122,7 +124,8 @@ class DTDTests(FormatTestsMixin, TestCase):
             <!-- Comment -->
         """)
 
-        self.run_save_remove(input_string, expected_string, source_string=input_string)
+        self.run_save_remove(input_string, expected_string,
+                             source_string=input_string)
 
     def test_save_source_removed(self):
         """
@@ -140,7 +143,8 @@ class DTDTests(FormatTestsMixin, TestCase):
             <!ENTITY SourceString "Translated String">
         """)
 
-        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, expected_string, source_string=source_string)
 
     def test_save_source_no_translation(self):
         """
@@ -155,7 +159,8 @@ class DTDTests(FormatTestsMixin, TestCase):
             <!ENTITY OtherSourceString "Translated Other String">
         """)
 
-        self.run_save_no_changes(input_string, input_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, input_string, source_string=source_string)
 
     def test_save_translation_missing(self):
         source_string = dedent("""
@@ -170,7 +175,8 @@ class DTDTests(FormatTestsMixin, TestCase):
             <!ENTITY MissingString "Translated Missing String">
         """)
 
-        self.run_save_translation_missing(source_string, input_string, expected_string)
+        self.run_save_translation_missing(
+            source_string, input_string, expected_string)
 
     def test_save_translation_identical(self):
         source_string = dedent("""
@@ -183,7 +189,8 @@ class DTDTests(FormatTestsMixin, TestCase):
             <!ENTITY String "Source String">
         """)
 
-        self.run_save_translation_identical(source_string, input_string, expected_string)
+        self.run_save_translation_identical(
+            source_string, input_string, expected_string)
 
     def test_quotes(self):
         input_strings = dedent("""
@@ -274,7 +281,8 @@ class PropertiesTests(FormatTestsMixin, TestCase):
             SourceString=New Translated String
         """)
 
-        self.run_save_basic(input_string, expected_string, source_string=input_string)
+        self.run_save_basic(input_string, expected_string,
+                            source_string=input_string)
 
     def test_save_remove(self):
         """
@@ -289,7 +297,8 @@ class PropertiesTests(FormatTestsMixin, TestCase):
             # Comment
         """)
 
-        self.run_save_remove(input_string, expected_string, source_string=input_string)
+        self.run_save_remove(input_string, expected_string,
+                             source_string=input_string)
 
     def test_save_source_removed(self):
         """
@@ -307,7 +316,8 @@ class PropertiesTests(FormatTestsMixin, TestCase):
             SourceString=Translated String
         """)
 
-        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, expected_string, source_string=source_string)
 
     def test_save_source_no_translation(self):
         """
@@ -322,7 +332,8 @@ class PropertiesTests(FormatTestsMixin, TestCase):
             OtherSourceString=Translated Other String
         """)
 
-        self.run_save_no_changes(input_string, input_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, input_string, source_string=source_string)
 
     def test_save_translation_missing(self):
         source_string = dedent("""
@@ -337,7 +348,8 @@ class PropertiesTests(FormatTestsMixin, TestCase):
             MissingString=Translated Missing String
         """)
 
-        self.run_save_translation_missing(source_string, input_string, expected_string)
+        self.run_save_translation_missing(
+            source_string, input_string, expected_string)
 
     def test_save_translation_identical(self):
         source_string = dedent("""
@@ -350,7 +362,8 @@ class PropertiesTests(FormatTestsMixin, TestCase):
             String=Source String
         """)
 
-        self.run_save_translation_identical(source_string, input_string, expected_string)
+        self.run_save_translation_identical(
+            source_string, input_string, expected_string)
 
 
 BASE_INI_FILE = """
@@ -402,7 +415,8 @@ class IniTests(FormatTestsMixin, TestCase):
             SourceString=New Translated String
         """)
 
-        self.run_save_basic(input_string, expected_string, source_string=input_string)
+        self.run_save_basic(input_string, expected_string,
+                            source_string=input_string)
 
     def test_save_remove(self):
         """
@@ -418,7 +432,8 @@ class IniTests(FormatTestsMixin, TestCase):
             # Comment
         """)
 
-        self.run_save_remove(input_string, expected_string, source_string=input_string)
+        self.run_save_remove(input_string, expected_string,
+                             source_string=input_string)
 
     def test_save_source_removed(self):
         """
@@ -439,7 +454,8 @@ class IniTests(FormatTestsMixin, TestCase):
             SourceString=Translated String
         """)
 
-        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, expected_string, source_string=source_string)
 
     def test_save_source_no_translation(self):
         """
@@ -456,7 +472,8 @@ class IniTests(FormatTestsMixin, TestCase):
             OtherSourceString=Translated Other String
         """)
 
-        self.run_save_no_changes(input_string, input_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, input_string, source_string=source_string)
 
     def test_save_translation_missing(self):
         source_string = dedent("""
@@ -474,7 +491,8 @@ class IniTests(FormatTestsMixin, TestCase):
             MissingString=Translated Missing String
         """)
 
-        self.run_save_translation_missing(source_string, input_string, expected_string)
+        self.run_save_translation_missing(
+            source_string, input_string, expected_string)
 
     def test_save_translation_identical(self):
         source_string = dedent("""
@@ -490,7 +508,8 @@ class IniTests(FormatTestsMixin, TestCase):
             String=Source String
         """)
 
-        self.run_save_translation_identical(source_string, input_string, expected_string)
+        self.run_save_translation_identical(
+            source_string, input_string, expected_string)
 
 
 BASE_INC_FILE = """
@@ -539,7 +558,8 @@ class IncTests(FormatTestsMixin, TestCase):
             #define SourceString New Translated String
         """)
 
-        self.run_save_basic(input_string, expected_string, source_string=input_string)
+        self.run_save_basic(input_string, expected_string,
+                            source_string=input_string)
 
     def test_save_remove(self):
         """
@@ -553,7 +573,8 @@ class IncTests(FormatTestsMixin, TestCase):
             # Comment
         """)
 
-        self.run_save_remove(input_string, expected_string, source_string=input_string)
+        self.run_save_remove(input_string, expected_string,
+                             source_string=input_string)
 
     def test_save_source_removed(self):
         """
@@ -571,7 +592,8 @@ class IncTests(FormatTestsMixin, TestCase):
             #define SourceString Translated String
         """)
 
-        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, expected_string, source_string=source_string)
 
     def test_save_source_no_translation(self):
         """
@@ -586,7 +608,8 @@ class IncTests(FormatTestsMixin, TestCase):
             #define OtherSourceString Translated Other String
         """)
 
-        self.run_save_no_changes(input_string, input_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, input_string, source_string=source_string)
 
     def test_save_translation_missing(self):
         source_string = dedent("""
@@ -601,7 +624,8 @@ class IncTests(FormatTestsMixin, TestCase):
             #define MissingString Translated Missing String
         """)
 
-        self.run_save_translation_missing(source_string, input_string, expected_string)
+        self.run_save_translation_missing(
+            source_string, input_string, expected_string)
 
     def test_save_translation_identical(self):
         source_string = dedent("""
@@ -614,7 +638,8 @@ class IncTests(FormatTestsMixin, TestCase):
             #define String Source String
         """)
 
-        self.run_save_translation_identical(source_string, input_string, expected_string)
+        self.run_save_translation_identical(
+            source_string, input_string, expected_string)
 
     def test_moz_langpack_contributors(self):
         """
@@ -652,7 +677,8 @@ class IncTests(FormatTestsMixin, TestCase):
             # #define MOZ_LANGPACK_CONTRIBUTORS Other Contributors
         """)
 
-        path, resource = self.parse_string(input_string, source_string=source_string)
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
         assert_equal(len(resource.translations), 2)
         assert_attributes_equal(
             resource.translations[1],
@@ -676,8 +702,10 @@ class IncTests(FormatTestsMixin, TestCase):
             # #define MOZ_LANGPACK_CONTRIBUTORS Contributor list
         """)
 
-        path, resource = self.parse_string(input_string, source_string=source_string)
-        resource.entities['MOZ_LANGPACK_CONTRIBUTORS'].strings = {None: 'New Contributor list'}
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
+        resource.entities['MOZ_LANGPACK_CONTRIBUTORS'].strings = {
+            None: 'New Contributor list'}
         resource.save(self.locale)
 
         self.assert_file_content(path, dedent("""
@@ -702,7 +730,8 @@ class IncTests(FormatTestsMixin, TestCase):
             # #define MOZ_LANGPACK_CONTRIBUTORS Contributor list
         """)
 
-        path, resource = self.parse_string(input_string, source_string=source_string)
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
         resource.entities['MOZ_LANGPACK_CONTRIBUTORS'].strings = {}
         resource.save(self.locale)
 

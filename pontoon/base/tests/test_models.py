@@ -48,7 +48,8 @@ class CreateUserTests(TestCase):
         Test against possible regressions in User model.
         """
         username = 'superuser@example.com'
-        call_command('createsuperuser', email=username, username=username, interactive=False)
+        call_command('createsuperuser', email=username,
+                     username=username, interactive=False)
 
         assert User.objects.get(username=username)
         assert User.objects.get(email=username)
@@ -142,11 +143,13 @@ class ProjectTests(TestCase):
         return it.
         """
         project = ProjectFactory.create()
-        translation = TranslationFactory.create(entity__resource__project=project)
+        translation = TranslationFactory.create(
+            entity__resource__project=project)
         project.latest_translation = translation
         project.save()
 
-        assert_equal(project.get_latest_activity(), translation.latest_activity)
+        assert_equal(project.get_latest_activity(),
+                     translation.latest_activity)
 
     def test_get_latest_activity_without_latest(self):
         """
@@ -181,7 +184,8 @@ class LocalePartsTests(TestCase):
             path='/main/path.po'
         )
         EntityFactory.create(resource=self.resource)
-        TranslatedResourceFactory.create(resource=self.resource, locale=self.locale)
+        TranslatedResourceFactory.create(
+            resource=self.resource, locale=self.locale)
 
     def test_parts_stats_no_page_one_resource(self):
         """
@@ -202,8 +206,10 @@ class LocalePartsTests(TestCase):
             path='/other/path.po'
         )
         EntityFactory.create(resource=resource_other)
-        TranslatedResourceFactory.create(resource=resource_other, locale=self.locale)
-        TranslatedResourceFactory.create(resource=resource_other, locale=self.locale_other)
+        TranslatedResourceFactory.create(
+            resource=resource_other, locale=self.locale)
+        TranslatedResourceFactory.create(
+            resource=resource_other, locale=self.locale_other)
 
         details = self.locale.parts_stats(self.project)
         details_other = self.locale_other.parts_stats(self.project)
@@ -236,8 +242,10 @@ class LocalePartsTests(TestCase):
             path='/other/path.po'
         )
         EntityFactory.create(resource=resource_other)
-        TranslatedResourceFactory.create(resource=resource_other, locale=self.locale)
-        TranslatedResourceFactory.create(resource=resource_other, locale=self.locale_other)
+        TranslatedResourceFactory.create(
+            resource=resource_other, locale=self.locale)
+        TranslatedResourceFactory.create(
+            resource=resource_other, locale=self.locale_other)
         SubpageFactory.create(
             project=self.project,
             name='Subpage',
@@ -332,7 +340,8 @@ class RepositoryTests(TestCase):
         )
         locale = LocaleFactory.create(code='test-locale')
 
-        assert_equal(repo.locale_url(locale), 'https://example.com/path/to/test-locale/')
+        assert_equal(repo.locale_url(locale),
+                     'https://example.com/path/to/test-locale/')
 
     def test_locale_url_non_multi_locale(self):
         """If the repo isn't multi-locale, throw a ValueError."""
@@ -356,7 +365,8 @@ class RepositoryTests(TestCase):
 
         with self.settings(MEDIA_ROOT='/media/root'):
             test_path = '/media/root/projects/test-project/path/to/match/foo/bar.po'
-            assert_equal(repo.url_for_path(test_path), 'https://example.com/path/to/match/')
+            assert_equal(repo.url_for_path(test_path),
+                         'https://example.com/path/to/match/')
 
     def test_url_for_path_no_match(self):
         """
@@ -373,7 +383,7 @@ class RepositoryTests(TestCase):
     def test_pull(self):
         repo = RepositoryFactory.create(type='git', url='https://example.com')
         with patch('pontoon.base.models.update_from_vcs') as update_from_vcs, \
-             patch('pontoon.base.models.get_revision') as mock_get_revision:
+                patch('pontoon.base.models.get_revision') as mock_get_revision:
             mock_get_revision.return_value = 'asdf'
             assert_equal(repo.pull(), {'single_locale': 'asdf'})
             update_from_vcs.assert_called_with(
@@ -400,7 +410,7 @@ class RepositoryTests(TestCase):
         repo.locale_checkout_path = lambda locale: '/media/' + locale.code
 
         with patch('pontoon.base.models.update_from_vcs') as update_from_vcs, \
-             patch('pontoon.base.models.get_revision') as mock_get_revision:
+                patch('pontoon.base.models.get_revision') as mock_get_revision:
             # Return path as the revision so different locales return
             # different values.
             mock_get_revision.side_effect = lambda type, path: path
@@ -458,8 +468,10 @@ class UserTranslationManagerTests(TestCase):
         Checks if contributors with mails in settings.EXCLUDE are excluded
         from top contributors list.
         """
-        included_contributor = TranslationFactory.create(user__email='included@example.com').user
-        excluded_contributor = TranslationFactory.create(user__email='excluded@example.com').user
+        included_contributor = TranslationFactory.create(
+            user__email='included@example.com').user
+        excluded_contributor = TranslationFactory.create(
+            user__email='excluded@example.com').user
 
         top_contributors = User.translators.with_translation_counts()
         assert_true(included_contributor in top_contributors)
@@ -469,7 +481,8 @@ class UserTranslationManagerTests(TestCase):
         """
         Checks if user contributors without translations aren't returned.
         """
-        active_contributor = TranslationFactory.create(user__email='active@example.com').user
+        active_contributor = TranslationFactory.create(
+            user__email='active@example.com').user
         inactive_contributor = UserFactory.create(email='inactive@example.com')
 
         top_contributors = User.translators.with_translation_counts()
@@ -522,9 +535,12 @@ class UserTranslationManagerTests(TestCase):
         Helper method, creates contributor with given translations counts.
         """
         contributor = UserFactory.create()
-        TranslationFactory.create_batch(approved, user=contributor, approved=True, **kwargs)
-        TranslationFactory.create_batch(unapproved, user=contributor, approved=False, fuzzy=False, **kwargs)
-        TranslationFactory.create_batch(needs_work, user=contributor, fuzzy=True, **kwargs)
+        TranslationFactory.create_batch(
+            approved, user=contributor, approved=True, **kwargs)
+        TranslationFactory.create_batch(
+            unapproved, user=contributor, approved=False, fuzzy=False, **kwargs)
+        TranslationFactory.create_batch(
+            needs_work, user=contributor, fuzzy=True, **kwargs)
         return contributor
 
     def test_translation_counts(self):
@@ -533,9 +549,12 @@ class UserTranslationManagerTests(TestCase):
         Tests creates 3 contributors with different numbers translations and checks if their counts match.
         """
 
-        first_contributor = self.create_contributor_with_translation_counts(approved=7, unapproved=3, needs_work=2)
-        second_contributor = self.create_contributor_with_translation_counts(approved=5, unapproved=9, needs_work=2)
-        third_contributor = self.create_contributor_with_translation_counts(approved=1, unapproved=2, needs_work=5)
+        first_contributor = self.create_contributor_with_translation_counts(
+            approved=7, unapproved=3, needs_work=2)
+        second_contributor = self.create_contributor_with_translation_counts(
+            approved=5, unapproved=9, needs_work=2)
+        third_contributor = self.create_contributor_with_translation_counts(
+            approved=1, unapproved=2, needs_work=5)
 
         top_contributors = User.translators.with_translation_counts()
         assert_equal(top_contributors.count(), 3)
@@ -545,14 +564,14 @@ class UserTranslationManagerTests(TestCase):
         assert_equal(top_contributors[2], third_contributor)
 
         assert_attributes_equal(top_contributors[0], translations_count=16,
-            translations_approved_count=5, translations_unapproved_count=9,
-            translations_needs_work_count=2)
+                                translations_approved_count=5, translations_unapproved_count=9,
+                                translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[1], translations_count=12,
-            translations_approved_count=7, translations_unapproved_count=3,
-            translations_needs_work_count=2)
+                                translations_approved_count=7, translations_unapproved_count=3,
+                                translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[2], translations_count=8,
-            translations_approved_count=1, translations_unapproved_count=2,
-            translations_needs_work_count=5)
+                                translations_approved_count=1, translations_unapproved_count=2,
+                                translations_needs_work_count=5)
 
     def test_period_filters(self):
         """
@@ -561,40 +580,44 @@ class UserTranslationManagerTests(TestCase):
         """
 
         first_contributor = self.create_contributor_with_translation_counts(approved=12, unapproved=1, needs_work=2,
-            date=aware_datetime(2015, 3, 2))
+                                                                            date=aware_datetime(2015, 3, 2))
 
         # Second contributor
         self.create_contributor_with_translation_counts(approved=2, unapproved=11, needs_work=2,
-            date=aware_datetime(2015, 6, 1))
+                                                        date=aware_datetime(2015, 6, 1))
 
-        TranslationFactory.create_batch(5, approved=True, user=first_contributor, date=aware_datetime(2015, 7, 2))
+        TranslationFactory.create_batch(
+            5, approved=True, user=first_contributor, date=aware_datetime(2015, 7, 2))
 
-        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 6, 10))
+        top_contributors = User.translators.with_translation_counts(
+            aware_datetime(2015, 6, 10))
 
         assert_equal(top_contributors.count(), 1)
         assert_attributes_equal(top_contributors[0], translations_count=5,
-            translations_approved_count=5, translations_unapproved_count=0,
-            translations_needs_work_count=0)
+                                translations_approved_count=5, translations_unapproved_count=0,
+                                translations_needs_work_count=0)
 
-        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 5, 10))
+        top_contributors = User.translators.with_translation_counts(
+            aware_datetime(2015, 5, 10))
 
         assert_equal(top_contributors.count(), 2)
         assert_attributes_equal(top_contributors[0], translations_count=15,
-            translations_approved_count=2, translations_unapproved_count=11,
-            translations_needs_work_count=2)
+                                translations_approved_count=2, translations_unapproved_count=11,
+                                translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[1], translations_count=5,
-            translations_approved_count=5, translations_unapproved_count=0,
-            translations_needs_work_count=0)
+                                translations_approved_count=5, translations_unapproved_count=0,
+                                translations_needs_work_count=0)
 
-        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 10))
+        top_contributors = User.translators.with_translation_counts(
+            aware_datetime(2015, 1, 10))
 
         assert_equal(top_contributors.count(), 2)
         assert_attributes_equal(top_contributors[0], translations_count=20,
-            translations_approved_count=17, translations_unapproved_count=1,
-            translations_needs_work_count=2)
+                                translations_approved_count=17, translations_unapproved_count=1,
+                                translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[1], translations_count=15,
-            translations_approved_count=2, translations_unapproved_count=11,
-            translations_needs_work_count=2)
+                                translations_approved_count=2, translations_unapproved_count=11,
+                                translations_needs_work_count=2)
 
     def test_query_args_filtering(self):
         """
@@ -610,26 +633,28 @@ class UserTranslationManagerTests(TestCase):
             approved=10, unapproved=12, needs_work=2, locale=locale_first)
 
         # Testing filtering for the first locale
-        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 1), Q(translation__locale=locale_first))
+        top_contributors = User.translators.with_translation_counts(
+            aware_datetime(2015, 1, 1), Q(translation__locale=locale_first))
         assert_equal(top_contributors.count(), 2)
         assert_equal(top_contributors[0], third_contributor)
         assert_attributes_equal(top_contributors[0], translations_count=24,
-            translations_approved_count=10, translations_unapproved_count=12,
-            translations_needs_work_count=2)
+                                translations_approved_count=10, translations_unapproved_count=12,
+                                translations_needs_work_count=2)
 
         assert_equal(top_contributors[1], first_contributor)
         assert_attributes_equal(top_contributors[1], translations_count=15,
-            translations_approved_count=12, translations_unapproved_count=1,
-            translations_needs_work_count=2)
+                                translations_approved_count=12, translations_unapproved_count=1,
+                                translations_needs_work_count=2)
 
         # Testing filtering for the second locale
-        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 1), Q(translation__locale=locale_second))
+        top_contributors = User.translators.with_translation_counts(
+            aware_datetime(2015, 1, 1), Q(translation__locale=locale_second))
 
         assert_equal(top_contributors.count(), 1)
         assert_equal(top_contributors[0], second_contributor)
         assert_attributes_equal(top_contributors[0], translations_count=14,
-            translations_approved_count=11, translations_unapproved_count=1,
-            translations_needs_work_count=2)
+                                translations_approved_count=11, translations_unapproved_count=1,
+                                translations_needs_work_count=2)
 
 
 class EntityTests(TestCase):
@@ -713,7 +738,8 @@ class EntityTests(TestCase):
         If paths not specified, return all project entities along with their
         translations for locale.
         """
-        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale))
+        entities = Entity.map_entities(
+            self.locale, Entity.for_project_locale(self.project, self.locale))
 
         assert_equal(len(entities), 2)
         self.assert_serialized_entity(
@@ -755,7 +781,8 @@ class EntityTests(TestCase):
         with their translations for locale.
         """
         paths = ['other.lang']
-        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale, paths))
+        entities = Entity.map_entities(
+            self.locale, Entity.for_project_locale(self.project, self.locale, paths))
 
         assert_equal(len(entities), 1)
         self.assert_serialized_entity(
@@ -768,7 +795,8 @@ class EntityTests(TestCase):
         locale.
         """
         subpages = [self.subpage.name]
-        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale, subpages))
+        entities = Entity.map_entities(
+            self.locale, Entity.for_project_locale(self.project, self.locale, subpages))
 
         assert_equal(len(entities), 1)
         self.assert_serialized_entity(
@@ -778,12 +806,15 @@ class EntityTests(TestCase):
         """
         For pluralized strings, return all available plural forms.
         """
-        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale))
+        entities = Entity.map_entities(
+            self.locale, Entity.for_project_locale(self.project, self.locale))
 
         assert_equal(entities[0]['original'], 'Source String')
         assert_equal(entities[0]['original_plural'], 'Plural Source String')
-        assert_equal(entities[0]['translation'][0]['string'], 'Translated String')
-        assert_equal(entities[0]['translation'][1]['string'], 'Translated Plural String')
+        assert_equal(entities[0]['translation'][0]
+                     ['string'], 'Translated String')
+        assert_equal(entities[0]['translation'][1]
+                     ['string'], 'Translated Plural String')
 
     def test_for_project_locale_order(self):
         """
@@ -801,7 +832,8 @@ class EntityTests(TestCase):
             resource=self.main_resource,
             string='First String'
         )
-        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale))
+        entities = Entity.map_entities(
+            self.locale, Entity.for_project_locale(self.project, self.locale))
         assert_equal(entities[1]['original'], 'First String')
         assert_equal(entities[2]['original'], 'Second String')
 
@@ -810,7 +842,8 @@ class EntityTests(TestCase):
         If key contais source string and Translate Toolkit separator,
         remove them.
         """
-        entities = Entity.map_entities(self.locale, Entity.for_project_locale(self.project, self.locale))
+        entities = Entity.map_entities(
+            self.locale, Entity.for_project_locale(self.project, self.locale))
 
         assert_equal(entities[0]['key'], '')
         assert_equal(entities[1]['key'], 'Key')
@@ -856,20 +889,26 @@ class LocaleTests(TestCase):
         [first_locale, second_locale] = LocaleFactory.create_batch(2)
 
         assert_equal(user.has_perm('base.can_translate_locale'), False)
-        assert_equal(user.has_perm('base.can_translate_locale', first_locale), False)
-        assert_equal(user.has_perm('base.can_translate_locale', second_locale), False)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', first_locale), False)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', second_locale), False)
 
         user.groups.add(second_locale.translators_group)
 
         assert_equal(user.has_perm('base.can_translate_locale'), False)
-        assert_equal(user.has_perm('base.can_translate_locale', first_locale), False)
-        assert_equal(user.has_perm('base.can_translate_locale', second_locale), True)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', first_locale), False)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', second_locale), True)
 
         user.groups.add(first_locale.translators_group)
 
         assert_equal(user.has_perm('base.can_translate_locale'), False)
-        assert_equal(user.has_perm('base.can_translate_locale', first_locale), True)
-        assert_equal(user.has_perm('base.can_translate_locale', second_locale), True)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', first_locale), True)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', second_locale), True)
 
     def test_managers_group(self):
         """
@@ -879,29 +918,41 @@ class LocaleTests(TestCase):
         [first_locale, second_locale] = LocaleFactory.create_batch(2)
 
         assert_equal(user.has_perm('base.can_translate_locale'), False)
-        assert_equal(user.has_perm('base.can_translate_locale', first_locale), False)
-        assert_equal(user.has_perm('base.can_translate_locale', second_locale), False)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', first_locale), False)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', second_locale), False)
         assert_equal(user.has_perm('base.can_manage_locale'), False)
-        assert_equal(user.has_perm('base.can_manage_locale', first_locale), False)
-        assert_equal(user.has_perm('base.can_manage_locale', second_locale), False)
+        assert_equal(user.has_perm(
+            'base.can_manage_locale', first_locale), False)
+        assert_equal(user.has_perm(
+            'base.can_manage_locale', second_locale), False)
 
         user.groups.add(second_locale.managers_group)
 
         assert_equal(user.has_perm('base.can_translate_locale'), False)
-        assert_equal(user.has_perm('base.can_translate_locale', first_locale), False)
-        assert_equal(user.has_perm('base.can_translate_locale', second_locale), True)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', first_locale), False)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', second_locale), True)
         assert_equal(user.has_perm('base.can_manage_locale'), False)
-        assert_equal(user.has_perm('base.can_manage_locale', first_locale), False)
-        assert_equal(user.has_perm('base.can_manage_locale', second_locale), True)
+        assert_equal(user.has_perm(
+            'base.can_manage_locale', first_locale), False)
+        assert_equal(user.has_perm(
+            'base.can_manage_locale', second_locale), True)
 
         user.groups.add(first_locale.managers_group)
 
         assert_equal(user.has_perm('base.can_translate_locale'), False)
-        assert_equal(user.has_perm('base.can_translate_locale', first_locale), True)
-        assert_equal(user.has_perm('base.can_translate_locale', second_locale), True)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', first_locale), True)
+        assert_equal(user.has_perm(
+            'base.can_translate_locale', second_locale), True)
         assert_equal(user.has_perm('base.can_manage_locale'), False)
-        assert_equal(user.has_perm('base.can_manage_locale', first_locale), True)
-        assert_equal(user.has_perm('base.can_manage_locale', second_locale), True)
+        assert_equal(user.has_perm(
+            'base.can_manage_locale', first_locale), True)
+        assert_equal(user.has_perm(
+            'base.can_manage_locale', second_locale), True)
 
 
 class ProjectLocaleTests(TestCase):
@@ -919,7 +970,8 @@ class ProjectLocaleTests(TestCase):
         assert_false(ProjectLocale.objects
                      .filter(project=self.project, locale=self.locale)
                      .exists())
-        assert_is_none(ProjectLocale.get_latest_activity(self.project, self.locale))
+        assert_is_none(ProjectLocale.get_latest_activity(
+            self.project, self.locale))
 
     def test_get_latest_activity_no_latest(self):
         """
@@ -932,7 +984,8 @@ class ProjectLocaleTests(TestCase):
             latest_translation=None
         )
 
-        assert_is_none(ProjectLocale.get_latest_activity(self.project, self.locale))
+        assert_is_none(ProjectLocale.get_latest_activity(
+            self.project, self.locale))
 
     def test_get_latest_activity_success(self):
         """
@@ -967,16 +1020,19 @@ class ProjectLocaleTests(TestCase):
         )
         user = UserFactory.create()
 
-        assert_equal(user.can_translate(locale=self.locale, project=self.project), False)
+        assert_equal(user.can_translate(
+            locale=self.locale, project=self.project), False)
 
         user.groups.add(project_locale.translators_group)
 
-        assert_equal(user.can_translate(locale=self.locale, project=self.project), True)
+        assert_equal(user.can_translate(
+            locale=self.locale, project=self.project), True)
 
         project_locale.has_custom_translators = False
         project_locale.save()
 
-        assert_equal(user.can_translate(locale=self.locale, project=self.project), False)
+        assert_equal(user.can_translate(
+            locale=self.locale, project=self.project), False)
 
 
 class TranslationTests(TestCase):
@@ -991,10 +1047,13 @@ class TranslationTests(TestCase):
         and project_locale objects.
         """
         locale = LocaleFactory.create(latest_translation=None)
-        project = ProjectFactory.create(locales=[locale], latest_translation=None)
+        project = ProjectFactory.create(
+            locales=[locale], latest_translation=None)
         resource = ResourceFactory.create(project=project)
-        translatedresource = TranslatedResourceFactory.create(locale=locale, resource=resource, latest_translation=None)
-        project_locale = ProjectLocale.objects.get(locale=locale, project=project)
+        translatedresource = TranslatedResourceFactory.create(
+            locale=locale, resource=resource, latest_translation=None)
+        project_locale = ProjectLocale.objects.get(
+            locale=locale, project=project)
 
         assert_is_none(locale.latest_translation)
         assert_is_none(project.latest_translation)
@@ -1041,8 +1100,10 @@ class TranslationTests(TestCase):
         )
         self.assert_latest_translation(locale, newer_approved_translation)
         self.assert_latest_translation(project, newer_approved_translation)
-        self.assert_latest_translation(translatedresource, newer_approved_translation)
-        self.assert_latest_translation(project_locale, newer_approved_translation)
+        self.assert_latest_translation(
+            translatedresource, newer_approved_translation)
+        self.assert_latest_translation(
+            project_locale, newer_approved_translation)
 
     def test_save_latest_translation_missing_project_locale(self):
         """
@@ -1052,7 +1113,8 @@ class TranslationTests(TestCase):
         locale = LocaleFactory.create(latest_translation=None)
         project = ProjectFactory.create(latest_translation=None)
         resource = ResourceFactory.create(project=project)
-        translatedresource = TranslatedResourceFactory.create(locale=locale, resource=resource, latest_translation=None)
+        translatedresource = TranslatedResourceFactory.create(
+            locale=locale, resource=resource, latest_translation=None)
 
         # This calls .save, this should fail if we're not properly
         # handling the missing ProjectLocale.
@@ -1115,6 +1177,7 @@ class SearchQueryTests(TestCase):
     """
     Test search queries.
     """
+
     def setUp(self):
         super(SearchQueryTests, self).setUp()
         self.project = ProjectFactory.create()
@@ -1211,12 +1274,14 @@ class EntityFilterTests(TestCase):
     """
     Tests all filters provided by the entity manager.
     """
+
     def setUp(self):
         self.locale = LocaleFactory.create()
         self.plural_locale = LocaleFactory.create(cldr_plurals='1,5')
 
     def test_translated(self):
-        first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(
+            3)
         TranslationFactory.create(
             locale=self.locale,
             entity=first_entity,
@@ -1235,11 +1300,13 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.translated()))
+            set(Entity.objects.with_status_counts(
+                self.locale).filter(Entity.objects.translated()))
         )
 
     def test_translated_plurals(self):
-        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3)
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(
+            3)
         TranslationFactory.create(
             locale=self.plural_locale,
             entity=first_entity,
@@ -1273,11 +1340,13 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.translated()))
+            set(Entity.objects.with_status_counts(
+                self.plural_locale).filter(Entity.objects.translated()))
         )
 
     def test_fuzzy(self):
-        first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(
+            3)
         TranslationFactory.create(
             locale=self.locale,
             entity=first_entity,
@@ -1296,11 +1365,13 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.fuzzy()))
+            set(Entity.objects.with_status_counts(
+                self.locale).filter(Entity.objects.fuzzy()))
         )
 
     def test_fuzzy_plurals(self):
-        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3)
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(
+            3)
         TranslationFactory.create(
             locale=self.plural_locale,
             entity=first_entity,
@@ -1334,11 +1405,13 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.fuzzy()))
+            set(Entity.objects.with_status_counts(
+                self.plural_locale).filter(Entity.objects.fuzzy()))
         )
 
     def test_missing(self):
-        first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(
+            3)
         TranslationFactory.create(
             locale=self.locale,
             entity=first_entity,
@@ -1355,14 +1428,15 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {second_entity},
-            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.missing()))
+            set(Entity.objects.with_status_counts(
+                self.locale).filter(Entity.objects.missing()))
         )
 
     def test_partially_translated_plurals(self):
         first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3,
-            string='Unchanged string',
-            string_plural='Unchanged plural string'
-        )
+                                                                                     string='Unchanged string',
+                                                                                     string_plural='Unchanged plural string'
+                                                                                     )
 
         TranslationFactory.create(
             locale=self.plural_locale,
@@ -1383,11 +1457,13 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {second_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.missing()))
+            set(Entity.objects.with_status_counts(
+                self.plural_locale).filter(Entity.objects.missing()))
         )
 
     def test_suggested(self):
-        first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(
+            3)
         TranslationFactory.create(
             locale=self.locale,
             entity=second_entity,
@@ -1403,11 +1479,13 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {second_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.suggested()))
+            set(Entity.objects.with_status_counts(
+                self.locale).filter(Entity.objects.suggested()))
         )
 
     def test_unchanged(self):
-        first_entity, second_entity, third_entity = EntityFactory.create_batch(3, string='Unchanged string')
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(
+            3, string='Unchanged string')
         TranslationFactory.create(
             locale=self.locale,
             entity=first_entity,
@@ -1423,11 +1501,13 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.unchanged()))
+            set(Entity.objects.with_status_counts(
+                self.locale).filter(Entity.objects.unchanged()))
         )
 
     def test_missing_plural(self):
-        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3)
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(
+            3)
         TranslationFactory.create(
             locale=self.plural_locale,
             entity=first_entity,
@@ -1455,11 +1535,13 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {second_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.missing()))
+            set(Entity.objects.with_status_counts(
+                self.plural_locale).filter(Entity.objects.missing()))
         )
 
     def test_suggested_plural(self):
-        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3)
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(
+            3)
         TranslationFactory.create(
             locale=self.plural_locale,
             entity=first_entity,
@@ -1491,14 +1573,15 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.suggested()))
+            set(Entity.objects.with_status_counts(
+                self.plural_locale).filter(Entity.objects.suggested()))
         )
 
     def test_unchanged_plural(self):
         first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3,
-            string='Unchanged string',
-            string_plural='Unchanged plural string'
-        )
+                                                                                     string='Unchanged string',
+                                                                                     string_plural='Unchanged plural string'
+                                                                                     )
         TranslationFactory.create(
             locale=self.plural_locale,
             entity=first_entity,
@@ -1529,14 +1612,15 @@ class EntityFilterTests(TestCase):
         )
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.unchanged()))
+            set(Entity.objects.with_status_counts(
+                self.plural_locale).filter(Entity.objects.unchanged()))
         )
 
     def test_has_suggestions_plural(self):
         first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3,
-            string='Unchanged string',
-            string_plural='Unchanged plural string'
-        )
+                                                                                     string='Unchanged string',
+                                                                                     string_plural='Unchanged plural string'
+                                                                                     )
         TranslationFactory.create(
             locale=self.plural_locale,
             entity=first_entity,
@@ -1581,7 +1665,8 @@ class EntityFilterTests(TestCase):
         )
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.has_suggestions()))
+            set(Entity.objects.with_status_counts(
+                self.plural_locale).filter(Entity.objects.has_suggestions()))
         )
 
     def test_combined_filters(self):
@@ -1591,7 +1676,8 @@ class EntityFilterTests(TestCase):
         """
         contributor = UserFactory.create()
         project = ProjectFactory.create()
-        first_entity, second_entity = EntityFactory.create_batch(2, resource__project=project)
+        first_entity, second_entity = EntityFactory.create_batch(
+            2, resource__project=project)
 
         TranslationFactory.create(
             locale=self.locale,

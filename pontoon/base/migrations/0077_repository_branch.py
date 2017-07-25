@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='repository',
             name='branch',
-            field=models.CharField(blank=True, max_length=2000, verbose_name=b'Branch'),
+            field=models.CharField(
+                blank=True, max_length=2000, verbose_name=b'Branch'),
         ),
     ]

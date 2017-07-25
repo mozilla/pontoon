@@ -19,8 +19,10 @@ class LocaleProjectTests(ViewTestCase):
         locale = LocaleFactory.create(code='test')
         project = ProjectFactory.create(locales=[locale], slug='test-project')
         resource = ResourceFactory.create(project=project, path='has/stats.po')
-        translation = TranslationFactory.create(entity__resource=resource, locale=locale)
-        TranslatedResourceFactory.create(resource=resource, locale=locale, latest_translation=translation)
+        translation = TranslationFactory.create(
+            entity__resource=resource, locale=locale)
+        TranslatedResourceFactory.create(
+            resource=resource, locale=locale, latest_translation=translation)
 
         with patch.object(Locale, 'parts_stats') as mock_parts_stats, \
                 patch('pontoon.localizations.views.render') as mock_render:

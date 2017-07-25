@@ -59,7 +59,8 @@ def contributor_timeline(request, username):
             .order_by('-day')
     )
 
-    counts_by_day = contributor_translations.values('day').annotate(count=Count('id'))
+    counts_by_day = contributor_translations.values(
+        'day').annotate(count=Count('id'))
 
     try:
         events_paginator = Paginator(counts_by_day, 10)
@@ -137,14 +138,16 @@ def save_user_name(request):
 def settings(request):
     """View and edit user settings."""
     if request.method == 'POST':
-        form = forms.UserLocalesSettings(request.POST, instance=request.user.profile)
+        form = forms.UserLocalesSettings(
+            request.POST, instance=request.user.profile)
         if form.is_valid():
             form.save()
             messages.success(request, 'Settings saved.')
             return redirect(request.POST.get('return_url', '/'))
 
     selected_locales = list(request.user.profile.sorted_locales)
-    available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
+    available_locales = Locale.objects.exclude(
+        pk__in=[l.pk for l in selected_locales])
     return render(request, 'contributors/settings.html', {
         'available_locales': available_locales,
         'selected_locales': selected_locales,
@@ -216,7 +219,8 @@ class ContributorsMixin(object):
             period = None
             start_date = None
 
-        context['contributors'] = User.translators.with_translation_counts(start_date, self.contributors_filter(**kwargs))
+        context['contributors'] = User.translators.with_translation_counts(
+            start_date, self.contributors_filter(**kwargs))
         context['period'] = period
         return context
 

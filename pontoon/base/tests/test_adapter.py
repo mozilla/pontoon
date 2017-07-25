@@ -12,6 +12,7 @@ class AdapterPreLoginTestCase(BaseTestCase):
     We have to support customized adapter during the transition of accounts between
     fxa and persona.
     """
+
     def setUp(self):
         self.log_mock = MagicMock()
         self.user = UserFactory.create()

@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='resource',
             name='format',
-            field=models.CharField(blank=True, choices=[(b'po', b'po'), (b'xliff', b'xliff'), (b'properties', b'properties'), (b'dtd', b'dtd'), (b'inc', b'inc'), (b'ini', b'ini'), (b'lang', b'lang'), (b'l20n', b'l20n'), (b'ftl', b'ftl')], max_length=20, verbose_name=b'Format'),
+            field=models.CharField(blank=True, choices=[(b'po', b'po'), (b'xliff', b'xliff'), (b'properties', b'properties'), (b'dtd', b'dtd'), (
+                b'inc', b'inc'), (b'ini', b'ini'), (b'lang', b'lang'), (b'l20n', b'l20n'), (b'ftl', b'ftl')], max_length=20, verbose_name=b'Format'),
         ),
     ]

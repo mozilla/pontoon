@@ -38,7 +38,7 @@ class UploadFileForm(DownloadFileForm):
 
             # File size validation
             if uploadfile.size > limit * 1000:
-                current = round(uploadfile.size/1000)
+                current = round(uploadfile.size / 1000)
                 message = (
                     'Upload failed. Keep filesize under {limit} kB. Your upload: {current} kB.'
                     .format(limit=limit, current=current)
@@ -71,20 +71,25 @@ class UserPermissionGroupForm(object):
 
 
 class LocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
-    translators = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
-    managers = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
+    translators = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(), required=False)
+    managers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(), required=False)
 
     class Meta:
         model = Locale
         fields = ('translators', 'managers')
 
     def save(self, *args, **kwargs):
-        self.assign_users_to_groups('translators', self.cleaned_data.get('translators', []))
-        self.assign_users_to_groups('managers', self.cleaned_data.get('managers', []))
+        self.assign_users_to_groups(
+            'translators', self.cleaned_data.get('translators', []))
+        self.assign_users_to_groups(
+            'managers', self.cleaned_data.get('managers', []))
 
 
 class ProjectLocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
-    translators = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
+    translators = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(), required=False)
 
     class Meta:
         model = ProjectLocale
@@ -92,7 +97,8 @@ class ProjectLocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
 
     def save(self, *args, **kwargs):
         super(ProjectLocalePermsForm, self).save(*args, **kwargs)
-        self.assign_users_to_groups('translators', self.cleaned_data.get('translators', []))
+        self.assign_users_to_groups(
+            'translators', self.cleaned_data.get('translators', []))
 
 
 class ProjectLocaleFormSet(forms.models.BaseModelFormSet):
@@ -141,7 +147,8 @@ ProjectLocalePermsFormsSet = forms.modelformset_factory(
 
 
 class UserProfileForm(forms.ModelForm):
-    first_name = forms.RegexField(regex='^[^<>"\'&]+$', max_length=30, strip=True)
+    first_name = forms.RegexField(
+        regex='^[^<>"\'&]+$', max_length=30, strip=True)
 
     class Meta:
         model = User

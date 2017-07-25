@@ -42,7 +42,8 @@ class ProjectContributorsTests(ViewTestCase):
         """
         Checks if view handles invalid project.
         """
-        assert_code(self.client.get('/projects/project_doesnt_exist/contributors/'), 404)
+        assert_code(self.client.get(
+            '/projects/project_doesnt_exist/contributors/'), 404)
 
     def test_project_top_contributors(self):
         """
@@ -50,18 +51,25 @@ class ProjectContributorsTests(ViewTestCase):
         """
         first_project = ProjectFactory.create()
         ResourceFactory.create(project=first_project)
-        first_project_contributor = TranslationFactory.create(entity__resource__project=first_project).user
+        first_project_contributor = TranslationFactory.create(
+            entity__resource__project=first_project).user
 
         second_project = ProjectFactory.create()
         ResourceFactory.create(project=second_project)
-        second_project_contributor = TranslationFactory.create(entity__resource__project=second_project).user
+        second_project_contributor = TranslationFactory.create(
+            entity__resource__project=second_project).user
 
         with patch.object(views.ProjectContributorsView, 'render_to_response', return_value=HttpResponse('')) as mock_render:
 
-            self.client.get('/projects/{}/ajax/contributors/'.format(first_project.slug), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            self.client.get('/projects/{}/ajax/contributors/'.format(
+                first_project.slug), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
             assert_equal(mock_render.call_args[0][0]['project'], first_project)
-            assert_equal(list(mock_render.call_args[0][0]['contributors']), [first_project_contributor])
+            assert_equal(list(mock_render.call_args[0][0]['contributors']), [
+                         first_project_contributor])
 
-            self.client.get('/projects/{}/ajax/contributors/'.format(second_project.slug), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-            assert_equal(mock_render.call_args[0][0]['project'], second_project)
-            assert_equal(list(mock_render.call_args[0][0]['contributors']), [second_project_contributor])
+            self.client.get('/projects/{}/ajax/contributors/'.format(
+                second_project.slug), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            assert_equal(
+                mock_render.call_args[0][0]['project'], second_project)
+            assert_equal(list(mock_render.call_args[0][0]['contributors']), [
+                         second_project_contributor])
