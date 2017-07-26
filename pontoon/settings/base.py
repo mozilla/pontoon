@@ -144,7 +144,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
 
     # Third-party apps, patches, fixes
-    'commonware.response.cookies',
     'django_jinja',
     'django_nose',
     'pipeline',
