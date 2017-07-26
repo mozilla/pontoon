@@ -190,6 +190,7 @@ CONTEXT_PROCESSORS = (
 TEMPLATES = [
     {
         'BACKEND': 'django_jinja.backend.Jinja2',
+        'NAME': 'jinja2',
         'APP_DIRS': True,
         'OPTIONS': {
             'match_extension': '',
