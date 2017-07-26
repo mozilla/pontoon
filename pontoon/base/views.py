@@ -583,8 +583,9 @@ def update_translation(request):
     if len(translations) > 0:
 
         # Same translation exists
-        try:
-            t = translations.get(string=string)
+        same_translations = translations.filter(string=string).order_by('-approved', '-date')
+        if len(same_translations) > 0:
+            t = same_translations[0]
 
             # If added by privileged user, approve and unfuzzy it
             if can_translate:
@@ -652,7 +653,7 @@ def update_translation(request):
                 })
 
         # Different translation added
-        except:
+        else:
             warnings = utils.quality_check(original, string, l, ignore)
             if warnings:
                 return warnings
