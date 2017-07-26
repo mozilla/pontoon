@@ -2244,8 +2244,14 @@ var Pontoon = (function (my) {
             success: function(data) {
               if ('count' in data) {
                 var strings = data.count === 1 ? 'string' : 'strings';
-                var suffix = action === 'reject' ? 'ed' : 'd';
-                message = data.count + ' ' + strings + ' ' + action + suffix;
+                var actionText = action + 'd';
+
+                if (action === 'reject') {
+                  itemsText = 'suggestion' + (data.count === 1 ? '' : 's');
+                  actionText = 'rejected';
+                }
+
+                message = data.count + ' ' + itemsText + ' ' + actionText;
 
                 // Update UI (entity list, progress, in-place)
                 if (data.count > 0) {
