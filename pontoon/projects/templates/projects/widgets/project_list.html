@@ -49,13 +49,12 @@
   </tr>
 {% endmacro %}
 
-{% macro footer(request=False, locale_code='') %}
+{% macro footer(request=False) %}
     </tbody>
   </table>
   {% if request %}
     <div id="request-projects-note">
-        <p>The requested projects won’be enabled automatically: an email will be sent to Pontoon admins and managers for this locale, and the request evaluated. We’ll try to respond as soon as possible.</p>
-        <p>Please make sure to get in touch with the localization team (check the <a href="{{ url('pontoon.teams.info', locale_code) }}">INFO</a> section) if you are a new contributor.</p>
+      <p>The requested projects won’t be enabled automatically: an email will be sent to Pontoon admins and team managers to evaluate the request. We’ll try to respond as soon as possible. Please make sure to get in touch with the <a href="{{ url('pontoon.teams.info', locale.code) }}">localization team</a> if you are a new contributor.</p>
     </div>
     <button id="request-projects">Request new projects</button>
   {% endif %}

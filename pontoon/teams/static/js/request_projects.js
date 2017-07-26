@@ -123,11 +123,11 @@ $(function() {
     if ($(this).is('.confirmed')) {
       Pontoon.requestProjects.request(locale, projects);
       $(this)
-        .removeClass('confirmed show-message')
+        .removeClass('confirmed')
         .html('Request new projects');
     } else {
       $(this)
-        .addClass('confirmed show-message')
+        .addClass('confirmed')
         .html('Are you sure?');
     }
   });

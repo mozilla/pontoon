@@ -1,4 +1,4 @@
-{% import 'projects/widgets/project_list.html' as ProjectList %}
+{% import 'projects/widgets/project_list.html' as ProjectList with context %}
 
 <div class="projects">
   <menu class="controls">
@@ -35,5 +35,5 @@
     {{ ProjectList.item(project, main_link, chart_link, latest_activity, chart, class, request=True, link_parameter=True) }}
   {% endfor %}
 
-  {{ ProjectList.footer(request=True, locale_code=locale.code) }}
+  {{ ProjectList.footer(request=True) }}
 </div>

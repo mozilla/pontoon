@@ -69,12 +69,14 @@
 }
 
 #request-projects-note {
-  margin-top: 10px;
+  margin: 25px 0 5px;
   display: none;
 }
 
 #request-projects-note p {
-  margin-bottom: 5px;
+  font-style: italic;
+  color: #AAAAAA;
+  text-align: center;
 }
 
 #request-projects-note a {
