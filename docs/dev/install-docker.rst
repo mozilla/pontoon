@@ -31,7 +31,10 @@ Prerequisites
 Quickstart
 ----------
 
-1. From the root of this repository, run::
+Make sure to clone the repository using the ``--recursive`` option, or
+initialize submodules with ``git submodule update --init --recursive``.
+
+1. From the root of the repository, run::
 
      $ make dockerbuild
 
