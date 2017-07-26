@@ -78,14 +78,12 @@ class FTLResource(ParsedResource):
         for obj in self.structure.body:
             if type(obj) == ast.Message:
                 key = obj.id.name
-                translation = serializer.serialize_entry(obj)
 
-                # If syncing locale file
+                # Do not store translation comments in the database
                 if source_resource:
-                    split = translation.split('\n' + key + ' = ')
-                    if len(split) > 1:
-                        serialized_comment = split[0] + '\n'
-                        translation = translation[len(serialized_comment):]
+                    obj.comment = None
+
+                translation = serializer.serialize_entry(obj)
 
                 self.entities[key] = FTLEntity(
                     key,
