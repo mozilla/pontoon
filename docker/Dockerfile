@@ -6,7 +6,7 @@ WORKDIR /app
 COPY docker/set_up_ubuntu.sh /app/
 RUN DEBIAN_FRONTEND=noninteractive /app/set_up_ubuntu.sh
 
-# Install Socorro Python requirements
+# Install Pontoon Python requirements
 COPY requirements.txt /app/requirements.txt
 COPY requirements-dev.txt /app/requirements-dev.txt
 RUN pip install -U 'pip>=8'
