@@ -35,5 +35,5 @@
     {{ ProjectList.item(project, main_link, chart_link, latest_activity, chart, class, request=True, link_parameter=True) }}
   {% endfor %}
 
-  {{ ProjectList.footer(request=True) }}
+  {{ ProjectList.footer(request=True, locale_code=locale.code) }}
 </div>
