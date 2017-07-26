@@ -68,6 +68,21 @@
   display: none;
 }
 
+#request-projects-note {
+  margin: 25px 0 5px;
+  display: none;
+}
+
+#request-projects-note p {
+  font-style: italic;
+  color: #AAAAAA;
+  text-align: center;
+}
+
+#request-projects-note a {
+  color: #7BC876;
+}
+
 #request-projects {
   display: none;
   background: #7BC876;
@@ -77,6 +92,10 @@
   padding: 10px;
   text-transform: uppercase;
   width: 100%;
+}
+
+#request-projects.confirmed {
+  background: #FED271;
 }
 
 .buglist {
