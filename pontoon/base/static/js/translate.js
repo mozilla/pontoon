@@ -2070,8 +2070,11 @@ var Pontoon = (function (my) {
             paths: self.getPartPaths(self.currentPart)
           },
           success: function(data) {
-            var item = button.parents('li');
             self.stats = data.stats;
+            var entity = self.getEditorEntity();
+            self.updateProgress(entity);
+
+            var item = button.parents('li');
             item.addClass('rejected').removeClass('translated');
             item.find('.unapprove').removeClass('unapprove').addClass('approve').prop('title', 'Approve');
             button.addClass('unreject').removeClass('reject').prop('title', 'Unreject');
