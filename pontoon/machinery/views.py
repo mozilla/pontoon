@@ -166,7 +166,7 @@ def microsoft_terminology(request):
 
     payload = {
         'uuid': uuid4(),
-        'text': text,
+        'text': urllib.quote(text.encode('utf-8')),
         'to': locale,
         'max_result': 5
     }
@@ -178,8 +178,10 @@ def microsoft_terminology(request):
         translations = []
         xpath = './/{http://api.terminology.microsoft.com/terminology}'
         root = ET.fromstring(r.content)
-        if len(root.find(xpath + 'GetTranslationsResult')):
-            for translation in root.find(xpath + 'GetTranslationsResult'):
+        results = root.find(xpath + 'GetTranslationsResult')
+
+        if results is not None:
+            for translation in results:
                 translations.append({
                     'source': translation.find(xpath + 'OriginalText').text,
                     'target': translation.find(xpath + 'TranslatedText').text,
