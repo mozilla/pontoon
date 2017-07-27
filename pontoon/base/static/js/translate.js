@@ -269,7 +269,7 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function(i) {
-              var baseString = self.fluent.getSimplePreview(this, data[0].string, entity);
+              var baseString = self.fluent.getSimplePreview(data[0], data[0].string, entity),
                   translationString = self.fluent.getSimplePreview(this, this.string, entity);
 
               list.append(
