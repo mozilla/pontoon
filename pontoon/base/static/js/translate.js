@@ -1990,9 +1990,17 @@ var Pontoon = (function (my) {
 
            self.updateTranslation(entity, pf, data.translation);
 
-           $('#translation').val(data.translation.string).focus();
-           self.updateCachedTranslation();
-           self.updateCurrentTranslationLength();
+           // FTL Editor
+           if ($('#ftl').is('.active')) {
+             self.fluent.renderEditorWithTranslation(data.translation);
+
+           // Standard Editor
+           } else {
+             var translationString = self.fluent.getSimplePreview(data.translation, data.translation.string, entity);
+             $('#translation').val(translationString).focus();
+             self.updateCachedTranslation();
+             self.updateCurrentTranslationLength();
+           }
 
            if (entity.body && pf === 0) {
              self.postMessage("SAVE", {
