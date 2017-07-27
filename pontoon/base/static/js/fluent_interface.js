@@ -317,7 +317,7 @@ var Pontoon = (function (my) {
           } else {
             var attributes = ast.attributes;
             if (attributes && attributes.length) {
-              response = attributes[0].value.elements[0].value;
+              response = this.serializePlaceables(attributes[0].value.elements);
             }
           }
 
@@ -333,7 +333,7 @@ var Pontoon = (function (my) {
                 });
 
             if (isFTLplural) {
-              response = variants[0].value.elements[0].value;
+              response = this.serializePlaceables(variants[0].value.elements);
               entity.isFTLplural = true;
             }
           }
