@@ -1881,10 +1881,20 @@ var Pontoon = (function (my) {
       $('#clear').click(function (e) {
         e.preventDefault();
 
-        $('#translation').val('').focus();
-        self.moveCursorToBeginning();
-        self.updateCurrentTranslationLength();
-        self.updateInPlaceTranslation();
+        // FTL Editor
+        if ($('#ftl').is('.active')) {
+          Pontoon.fluent.renderEditorWithTranslation({
+            pk: null,
+            string: ''
+          });
+
+        // Standard Editor
+        } else {
+          $('#translation').val('').focus();
+          self.moveCursorToBeginning();
+          self.updateCurrentTranslationLength();
+          self.updateInPlaceTranslation();
+        }
       });
 
       // Save translation
@@ -1926,12 +1936,22 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var source = $(this).find('.translation-clipboard').text();
+        // FTL Editor
+        if ($('#ftl').is('.active')) {
+          Pontoon.fluent.renderEditorWithTranslation({
+            pk: $(this).data('id'),
+            string: this.string
+          });
 
-        $('#translation').val(source).focus();
-        self.moveCursorToBeginning();
-        self.updateCurrentTranslationLength();
-        self.updateInPlaceTranslation();
+        // Standard Editor
+        } else {
+          var source = $(this).find('.translation-clipboard').text();
+
+          $('#translation').val(source).focus();
+          self.moveCursorToBeginning();
+          self.updateCurrentTranslationLength();
+          self.updateInPlaceTranslation();
+        }
 
         $('.warning-overlay:visible .cancel').click();
       });
