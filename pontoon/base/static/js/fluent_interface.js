@@ -118,6 +118,15 @@ var Pontoon = (function (my) {
 
 
       /*
+       * Render editor with given translation
+       */
+      renderEditorWithTranslation: function (translation) {
+        Pontoon.fluent.renderEditor(translation);
+        Pontoon.fluent.focusFirstField();
+      },
+
+
+      /*
        * Serialize value with placeables into a simple strings
        */
       serializePlaceables: function (elements) {
@@ -160,7 +169,7 @@ var Pontoon = (function (my) {
           $('#ftl').addClass('active');
 
           this.renderEditor();
-          $('#ftl-area input.value:visible:first').focus();
+          this.focusFirstField();
 
         } else {
           $('#ftl-area').hide();
@@ -354,6 +363,14 @@ var Pontoon = (function (my) {
         }
 
         return response;
+      },
+
+
+      /*
+       * Focus first field of the FTL editor
+       */
+      focusFirstField: function(object, fallback, entity) {
+        $('#ftl-area input.value:visible:first').focus();
       }
 
     }
@@ -418,37 +435,6 @@ $(function() {
     if (accesskey) {
       $('.accesskeys div').removeClass('active');
       $('.accesskeys div:contains("' + accesskey + '")').addClass('active');
-    }
-  });
-
-  // Clear translation area
-  $('#clear').click(function (e) {
-    e.preventDefault();
-
-    if ($('#ftl').is('.active')) {
-      var translation = {
-        pk: null,
-        string: ''
-      };
-
-      Pontoon.fluent.renderEditor(translation);
-      $('#ftl-area input.value:visible:first').focus();
-    }
-  });
-
-  // Copy helpers result to translation
-  $('#helpers section').on('click', 'li:not(".disabled")', function (e) {
-    if ($('#ftl').is('.active')) {
-      e.preventDefault();
-
-      var translation = {
-        pk: $(this).data('id'),
-        string: this.string
-      };
-
-      $('#translation').val(''); // Invalidate main copy from helpers action
-      Pontoon.fluent.renderEditor(translation);
-      $('#ftl-area input.value:visible:first').focus();
     }
   });
 
