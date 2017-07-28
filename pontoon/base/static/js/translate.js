@@ -2045,7 +2045,9 @@ var Pontoon = (function (my) {
 
                   // Last translation deleted, no alternative available
                   } else {
-                    $('#clear').click();
+                    if (self.cachedTranslation === $('#translation').val()) {
+                      $('#clear').click();
+                    }
 
                     if (entity.body && pluralForm === 0) {
                       self.postMessage("DELETE", {
