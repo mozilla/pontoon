@@ -456,6 +456,14 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Update the standard translation editor and focus it
+     */
+    updateAndFocusTranslationEditor: function (translation) {
+      $('#translation').val(translation).focus();
+    },
+
+
+    /*
      * Open batch editor
      */
     openBatchEditor: function (loading) {
@@ -1736,7 +1744,7 @@ var Pontoon = (function (my) {
         $('#source-pane h2').html(title).show();
         $('#original').html(marked);
 
-        $('#translation').val(source).focus();
+        self.updateAndFocusTranslationEditor(source);
         $('#translation-length .original-length').html(original.length);
         self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
@@ -1871,7 +1879,7 @@ var Pontoon = (function (my) {
             original = entity['original' + self.isPluralized()],
             source = original;
 
-        $('#translation').val(source).focus();
+        self.updateAndFocusTranslationEditor(source);
         self.moveCursorToBeginning();
         self.updateCurrentTranslationLength();
         self.updateInPlaceTranslation();
@@ -1890,7 +1898,7 @@ var Pontoon = (function (my) {
 
         // Standard Editor
         } else {
-          $('#translation').val('').focus();
+          self.updateAndFocusTranslationEditor('');
           self.moveCursorToBeginning();
           self.updateCurrentTranslationLength();
           self.updateInPlaceTranslation();
@@ -1947,7 +1955,7 @@ var Pontoon = (function (my) {
         } else {
           var source = $(this).find('.translation-clipboard').text();
 
-          $('#translation').val(source).focus();
+          self.updateAndFocusTranslationEditor(source);
           self.moveCursorToBeginning();
           self.updateCurrentTranslationLength();
           self.updateInPlaceTranslation();
@@ -1997,7 +2005,7 @@ var Pontoon = (function (my) {
           // Standard Editor
           } else {
             var translationString = self.fluent.getSimplePreview(data.translation, data.translation.string, entity);
-            $('#translation').val(translationString).focus();
+            self.updateAndFocusTranslationEditor(translationString);
             self.updateCachedTranslation();
             self.updateCurrentTranslationLength();
           }
