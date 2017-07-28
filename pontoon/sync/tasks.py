@@ -65,11 +65,19 @@ def update_locale_project_locale_stats(locale, project):
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key='project={0}', on_error=sync_project_error)
 def sync_project(self, project_pk, sync_log_pk, locale=None, no_pull=False, no_commit=False, force=False):
     """Fetch the project with the given PK and perform sync on it."""
-    db_project = get_or_fail(Project, pk=project_pk,
-        message='Could not sync project with pk={0}, not found.'.format(project_pk))
-    sync_log = get_or_fail(SyncLog, pk=sync_log_pk,
-        message=('Could not sync project {0}, log with pk={1} not found.'
-                 .format(db_project.slug, sync_log_pk)))
+    db_project = get_or_fail(
+        Project,
+        pk=project_pk,
+        message='Could not sync project with pk={0}, not found.'.format(project_pk)
+    )
+    sync_log = get_or_fail(
+        SyncLog,
+        pk=sync_log_pk,
+        message=(
+            'Could not sync project {0}, log with pk={1} not found.'
+            .format(db_project.slug, sync_log_pk)
+        )
+    )
 
     log.info('Syncing project {0}.'.format(db_project.slug))
 
@@ -155,17 +163,28 @@ def sync_resources(db_project, now, force, no_pull):
 def sync_translations(self, project_pk, project_sync_log_pk, now, project_changes=None,
                       obsolete_vcs_resources=None, new_paths=None, locale=None, no_pull=False, no_commit=False,
                       full_scan=False):
-    db_project = get_or_fail(Project, pk=project_pk,
-        message='Could not sync project with pk={0}, not found.'.format(project_pk))
+    db_project = get_or_fail(
+        Project,
+        pk=project_pk,
+        message='Could not sync project with pk={0}, not found.'.format(project_pk)
+    )
 
     repos = db_project.translation_repositories()
     repo_pk = repos[0].pk
-    repo = get_or_fail(Repository, pk=repo_pk,
-        message='Could not sync repo with pk={0}, not found.'.format(repo_pk))
+    repo = get_or_fail(
+        Repository,
+        pk=repo_pk,
+        message='Could not sync repo with pk={0}, not found.'.format(repo_pk)
+    )
 
-    project_sync_log = get_or_fail(ProjectSyncLog, pk=project_sync_log_pk,
-        message=('Could not sync project {0}, log with pk={1} not found.'
-                 .format(db_project.slug, project_sync_log_pk)))
+    project_sync_log = get_or_fail(
+        ProjectSyncLog,
+        pk=project_sync_log_pk,
+        message=(
+            'Could not sync project {0}, log with pk={1} not found.'
+            .format(db_project.slug, project_sync_log_pk)
+        )
+    )
 
     log.info('Syncing translations for project: {}'.format(db_project.slug))
 
@@ -182,7 +201,7 @@ def sync_translations(self, project_pk, project_sync_log_pk, now, project_change
 
     if not locales:
         log.info('Skipping syncing translations for project {0}, no locales to sync found within.'
-                  .format(db_project.slug))
+                 .format(db_project.slug))
         repo_sync_log.end()
         return
 
@@ -253,7 +272,7 @@ def sync_translations(self, project_pk, project_sync_log_pk, now, project_change
                             update_translated_resources(db_project, vcs_project, locale)
                             update_locale_project_locale_stats(locale, db_project)
                             log.info('Skipping locale `{0}` for project {1}, no changes detected.'
-                                      .format(locale.code, db_project.slug))
+                                     .format(locale.code, db_project.slug))
                             log.info(vcs_project.resources)
                         continue
 

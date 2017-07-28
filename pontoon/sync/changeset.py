@@ -24,6 +24,7 @@ class ChangeSet(object):
     translations stored in VCS. Once all the necessary changes have been
     stored, execute all the changes at once efficiently.
     """
+
     def __init__(self, db_project, vcs_project, now, locale=None):
         """
         :param now:
@@ -108,8 +109,9 @@ class ChangeSet(object):
         for locale_code, db_entity, vcs_entity in self.changes['update_vcs']:
             changed_resources.add(resources[db_entity.resource.path])
             vcs_translation = vcs_entity.translations[locale_code]
-            db_translations = (db_entity.translation_set
-                .filter(approved=True, locale__code=locale_code)
+            db_translations = db_entity.translation_set.filter(
+                approved=True,
+                locale__code=locale_code
             )
             vcs_translation.update_from_db(db_translations)
 

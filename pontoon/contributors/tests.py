@@ -37,6 +37,7 @@ def commajoin(*items):
 
 class ContributorProfileTests(UserTestCase):
     """Tests related to the saving user profile."""
+
     def test_invalid_first_name(self):
         response = self.client.post('/save-user-name/', {'first_name': '<aa>"\'"'})
 
@@ -82,7 +83,6 @@ class ContributorProfileTests(UserTestCase):
         })
         assert_equal(response.status_code, 302)
         assert_equal(list(User.objects.get(pk=self.user.pk).profile.sorted_locales), [])
-
 
         # Test if form handles duplicated locales
         response = self.client.post('/settings/', {
@@ -136,6 +136,7 @@ class ContributorProfileViewTests(UserTestCase):
 
 class ContributorTimelineViewTests(UserTestCase):
     """User timeline is a list of events created by a certain contributor."""
+
     def setUp(self):
         """
         We setup a sample contributor with random set of translations.
@@ -149,7 +150,8 @@ class ContributorTimelineViewTests(UserTestCase):
             translations_count = randint(1, 3)
             self.translations.setdefault((date, translations_count), []).append(
                 sorted(
-                    TranslationFactory.create_batch(translations_count,
+                    TranslationFactory.create_batch(
+                        translations_count,
                         date=date,
                         user=self.user,
                         entity__resource__project=self.project,
@@ -169,14 +171,16 @@ class ContributorTimelineViewTests(UserTestCase):
 
         assert_equal(
             self.mock_render.call_args[0][2]['events'],
-            [{
-                'date': dt,
-                'type': 'translation',
-                'count': count,
-                'project': self.project,
-                'translation': translations[0][0],
-            } for (dt,count), translations in self.translations.items()[10:20]
-        ])
+            [
+                {
+                    'date': dt,
+                    'type': 'translation',
+                    'count': count,
+                    'project': self.project,
+                    'translation': translations[0][0],
+                } for (dt, count), translations in self.translations.items()[10:20]
+            ]
+        )
 
     def test_timeline_invalid_page(self):
         """Backend should return 404 error when user requests an invalid/empty page."""
@@ -192,11 +196,12 @@ class ContributorTimelineViewTests(UserTestCase):
         self.client.get('/contributors/{}/timeline/'.format(nonactive_contributor.username))
         assert_equal(
             self.mock_render.call_args[0][2]['events'], [
-            {
-                'date': nonactive_contributor.date_joined,
-                'type': 'join'
-            }
-        ])
+                {
+                    'date': nonactive_contributor.date_joined,
+                    'type': 'join'
+                }
+            ]
+        )
 
     def test_timeline_join(self):
         """Last page of results should include informations about the when user joined pontoon."""

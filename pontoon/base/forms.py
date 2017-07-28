@@ -38,7 +38,7 @@ class UploadFileForm(DownloadFileForm):
 
             # File size validation
             if uploadfile.size > limit * 1000:
-                current = round(uploadfile.size/1000)
+                current = round(uploadfile.size / 1000)
                 message = (
                     'Upload failed. Keep filesize under {limit} kB. Your upload: {current} kB.'
                     .format(limit=limit, current=current)

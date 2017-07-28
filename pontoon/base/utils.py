@@ -48,7 +48,7 @@ def get_project_locale_from_request(request, locales):
     for a in accept:
         try:
             return locales.get(code__iexact=a[0]).code
-        except:
+        except BaseException:
             continue
 
 
@@ -554,7 +554,7 @@ def handle_upload_content(slug, code, part, f, user):
     for t in changeset.translations_to_create + changeset.translations_to_update:
         key = (t.entity.pk, t.locale.pk)
         # Remove duplicate changes to prevent unique constraint violation
-        if not key in existing:
+        if key not in existing:
             changed_entities[key] = ChangedEntityLocale(entity=t.entity, locale=t.locale)
 
     ChangedEntityLocale.objects.bulk_create(changed_entities.values())

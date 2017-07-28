@@ -36,6 +36,7 @@ from pontoon.db import IContainsCollate  # noqa
 from pontoon.sync import KEY_SEPARATOR
 
 from urlparse import urlparse
+from functools import reduce
 
 
 log = logging.getLogger('pontoon')
@@ -53,9 +54,9 @@ class UserTranslationsManager(UserManager):
         with counts of translations.
         """
         translation_query = (
-            ~Q(translation__string=F('translation__entity__string'))
-            & ~Q(translation__string=F('translation__entity__string_plural'))
-            & Q(translation__user__isnull=False)
+            ~Q(translation__string=F('translation__entity__string')) &
+            ~Q(translation__string=F('translation__entity__string_plural')) &
+            Q(translation__user__isnull=False)
         )
         for arg in args:
             translation_query &= arg
@@ -299,8 +300,8 @@ def contributed_translations(self):
     """Filtered contributions provided by user."""
     translations = (
         Translation.objects.filter(user=self)
-            .exclude(string=F('entity__string'))
-            .exclude(string=F('entity__string_plural'))
+        .exclude(string=F('entity__string'))
+        .exclude(string=F('entity__string_plural'))
     )
     return translations
 
@@ -494,10 +495,18 @@ class Locale(AggregatedStats):
 
     # Locale contains references to user groups that translate or manage them.
     # Groups store respective permissions for users.
-    translators_group = models.ForeignKey(Group, related_name='translated_locales', null=True,
-        on_delete=models.SET_NULL)
-    managers_group = models.ForeignKey(Group, related_name='managed_locales', null=True,
-        on_delete=models.SET_NULL)
+    translators_group = models.ForeignKey(
+        Group,
+        related_name='translated_locales',
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    managers_group = models.ForeignKey(
+        Group,
+        related_name='managed_locales',
+        null=True,
+        on_delete=models.SET_NULL
+    )
 
     # CLDR Plurals
     CLDR_PLURALS = (
@@ -654,7 +663,7 @@ class Locale(AggregatedStats):
                     'project__slug',
                     'translators_group__pk',
                     'has_custom_translators'
-                )
+            )
         )
 
         projects_translators = create_users_map(
@@ -774,8 +783,8 @@ class Locale(AggregatedStats):
             else:
                 locale_pages = (
                     pages
-                        .filter(project__resources__translatedresources__locale=self)
-                        .exclude(project__resources__total_strings=0)
+                    .filter(project__resources__translatedresources__locale=self)
+                    .exclude(project__resources__total_strings=0)
                 )
                 details = get_details(
                     locale_pages.annotate(
@@ -961,8 +970,8 @@ class Project(AggregatedStats):
         resources = defaultdict(set)
         changes = (
             ChangedEntityLocale.objects
-                .filter(entity__resource__project=self)
-                .prefetch_related('locale', 'entity__resource')
+            .filter(entity__resource__project=self)
+            .prefetch_related('locale', 'entity__resource')
         )
 
         for change in changes:
@@ -1412,6 +1421,7 @@ class Repository(models.Model):
     Set last_synced_revisions to a dictionary of revisions
     that are currently downloaded on the disk.
     """
+
     def set_last_synced_revisions(self, locales=None):
         current_revisions = {}
 
@@ -1440,6 +1450,7 @@ class Repository(models.Model):
     """
     Get revision from the last_synced_revisions dictionary if exists.
     """
+
     def get_last_synced_revisions(self, locale=None):
         if self.last_synced_revisions:
             key = locale or 'single_locale'
@@ -1459,6 +1470,7 @@ class ResourceQuerySet(models.QuerySet):
     """
     List of paths to remove translations of obsolete entities from
     """
+
     def obsolete_entities_paths(self, obsolete_vcs_entities):
         return self.filter(
             entities__pk__in=obsolete_vcs_entities
@@ -1594,9 +1606,9 @@ class EntityQuerySet(models.QuerySet):
             unchanged_count=Sum(
                 Case(
                     When(
-                    Q(translation__locale=locale, translation__string=F('string')) |\
-                    Q(translation__locale=locale, translation__plural_form__gt=-1,
-                        translation__plural_form__isnull=False, translation__string=F('string_plural')), then=1
+                        Q(translation__locale=locale, translation__string=F('string')) |
+                        Q(translation__locale=locale, translation__plural_form__gt=-1,
+                          translation__plural_form__isnull=False, translation__string=F('string_plural')), then=1
                     ), output_field=models.IntegerField(), default=0
                 )
             )
@@ -1735,7 +1747,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     @classmethod
     def for_project_locale(self, project, locale, paths=None, statuses=None,
-        search=None, exclude=None, extra=None, time=None, authors=None):
+                           search=None, exclude=None, extra=None, time=None, authors=None):
         """Get project entities with locale translations."""
 
         # Time & authors filters have to be applied before the aggregation
@@ -1827,8 +1839,10 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'source': entity.source,
                 'obsolete': entity.obsolete,
                 'translation': translation_array,
-                'visible': False if entity.pk not in visible_entities or not visible_entities
-                                 else True
+                'visible': (
+                    False if entity.pk not in visible_entities or not visible_entities
+                    else True
+                )
             })
 
         return entities_array
@@ -2119,8 +2133,10 @@ class TranslationMemoryEntryManager(models.Manager):
 
         # Only check entities with similar length
         entries = self.extra(
-            where=['(CHAR_LENGTH(source) BETWEEN %s AND %s)',
-                  levenshtein_ratio_equation + ' > %s'],
+            where=[
+                '(CHAR_LENGTH(source) BETWEEN %s AND %s)',
+                levenshtein_ratio_equation + ' > %s'
+            ],
             params=(min_dist, max_dist, text, text, text, min_quality),
             select={'quality': levenshtein_ratio_equation + '* 100'},
             select_params=(text, text, text)

@@ -1,12 +1,12 @@
 import sys
 
-from .base import * # noqa
+from .base import *  # noqa
 
 
 # Import local settings if they exist (usually only in development).
 try:
-    from .local import * # noqa
-except ImportError, exc:
+    from .local import *  # noqa
+except ImportError as exc:
     pass
 
 
@@ -14,7 +14,7 @@ except ImportError, exc:
 TEST = len(sys.argv) > 1 and sys.argv[1] == 'test'
 if TEST:
     try:
-        from .test import * # noqa
+        from .test import *  # noqa
     except ImportError:
         pass
 
@@ -22,6 +22,6 @@ if TEST:
 # Import settings that are helpful during the process of development.
 if DEV:
     try:
-        from .dev import * # noqa
+        from .dev import *  # noqa
     except ImportError:
         pass

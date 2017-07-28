@@ -11,7 +11,7 @@ TIMES = ('start_time', 'end_time', 'duration')
 class EditLinkToInlineObject(object):
     def edit_link(self, instance):
         url = reverse('admin:%s_%s_change' % (
-            instance._meta.app_label,  instance._meta.model_name),  args=[instance.pk] )
+            instance._meta.app_label, instance._meta.model_name), args=[instance.pk])
         if instance.pk:
             return mark_safe(u'<a href="{u}">edit</a>'.format(u=url))
         else:

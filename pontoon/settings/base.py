@@ -512,7 +512,7 @@ else:
 # Site ID is used by Django's Sites framework.
 SITE_ID = 1
 
-## Media and templates.
+# Media and templates.
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -543,9 +543,11 @@ def _allowed_hosts():
     host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
     host = host.rsplit(':', 1)[0]  # Remove port
     return [host]
+
+
 ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
 
-## Auth
+# Auth
 # The first hasher in this list will be used for new passwords.
 # Any other hasher in the list can be used for existing passwords.
 PASSWORD_HASHERS = (
@@ -558,7 +560,7 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
 )
 
-## Logging
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -592,7 +594,7 @@ if os.environ.get('DJANGO_SQL_LOG', False):
         'handlers': ['console']
     }
 
-## Tests
+# Tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = ['--logging-filter=-factory,-django.db,-raygun4py',
              '--logging-clear-handlers']
@@ -673,7 +675,7 @@ PORT = 80
 # Names for slave databases from the DATABASES setting.
 SLAVE_DATABASES = []
 
-## Internationalization.
+# Internationalization.
 
 # Enable timezone-aware datetimes.
 USE_TZ = True
@@ -763,8 +765,10 @@ CORS_URLS_REGEX = r'^/pontoon\.js$'
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
 
+
 def account_username(user):
     return user.name_or_email
+
 
 ACCOUNT_AUTHENTICATED_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
