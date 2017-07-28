@@ -278,7 +278,8 @@ class VCSRepository(object):
     def for_type(cls, repo_type, path):
         SubClass = cls.REPO_TYPES.get(repo_type)
         if SubClass is None:
-            raise ValueError('No subclass found for repo type {0}.'.format(repo_type))
+            raise ValueError(
+                'No subclass found for repo type {0}.'.format(repo_type))
 
         return SubClass(path)
 
@@ -309,16 +310,20 @@ class SvnRepository(VCSRepository):
 
     @property
     def revision(self):
-        code, output, error = self.execute(['svnversion', self.path], log_errors=True)
+        code, output, error = self.execute(
+            ['svnversion', self.path], log_errors=True)
         return output.strip() if code == 0 else None
 
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ('A', 'M')
         # Remove all non digit characters from the revision number.
-        normalize_revision = lambda rev: ''.join(filter(lambda c: c.isdigit(), rev))
+
+        def normalize_revision(rev): return ''.join(
+            filter(lambda c: c.isdigit(), rev))
         from_revision = normalize_revision(from_revision)
         code, output, error = self.execute(
-            ['svn', 'diff', '-r', '{}:{}'.format(from_revision, 'HEAD'), '--summarize'],
+            ['svn', 'diff', '-r',
+                '{}:{}'.format(from_revision, 'HEAD'), '--summarize'],
             cwd=path
         )
         if code == 0:
@@ -342,7 +347,8 @@ class GitRepository(VCSRepository):
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ('A', 'M')
         code, output, error = self.execute(
-            ['git', 'diff', '--name-status', '{}..HEAD'.format(from_revision), '--', path],
+            ['git', 'diff', '--name-status',
+                '{}..HEAD'.format(from_revision), '--', path],
         )
         if code == 0:
             return [line.split()[1] for line in output.split('\n') if line and line[0] in statuses]
@@ -369,7 +375,8 @@ class HgRepository(VCSRepository):
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ('A', 'M')
         code, output, error = self.execute(
-            ['hg', 'status', '-a', '-m', '-r', '--rev={}'.format(self._strip(from_revision)), '--rev=default'],
+            ['hg', 'status', '-a', '-m', '-r',
+                '--rev={}'.format(self._strip(from_revision)), '--rev=default'],
             cwd=path
         )
         if code == 0:

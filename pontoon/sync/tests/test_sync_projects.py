@@ -24,7 +24,8 @@ class CommandTests(TestCase):
 
         Project.objects.filter(slug='pontoon-intro').delete()
 
-        self.mock_sync_project = self.patch_object(sync_projects, 'sync_project')
+        self.mock_sync_project = self.patch_object(
+            sync_projects, 'sync_project')
 
     def execute_command(self, *args, **kwargs):
         kwargs.setdefault('verbosity', 0)
@@ -92,7 +93,8 @@ class CommandTests(TestCase):
             force=False
         )
 
-        assert_equal(self.command.stderr.getvalue(), 'Couldn\'t find projects with following slugs: aaa, bbb')
+        assert_equal(self.command.stderr.getvalue(),
+                     'Couldn\'t find projects with following slugs: aaa, bbb')
 
     def test_cant_commit(self):
         """If project.can_commit is False, do not sync it."""

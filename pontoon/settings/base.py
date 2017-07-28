@@ -29,7 +29,8 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') != 'False'
 
 HEROKU_DEMO = os.environ.get('HEROKU_DEMO', 'False') != 'False'
 
-DJANGO_LOGIN = os.environ.get('DJANGO_LOGIN', 'False') != 'False' or HEROKU_DEMO
+DJANGO_LOGIN = os.environ.get(
+    'DJANGO_LOGIN', 'False') != 'False' or HEROKU_DEMO
 
 # Automatically log in the user with username 'AUTO_LOGIN_USERNAME'
 # and password 'AUTO_LOGIN_PASSWORD'
@@ -59,8 +60,10 @@ STATIC_ROOT = os.environ.get('STATIC_ROOT', path('static'))
 # Optional CDN hostname for static files, e.g. '//asdf.cloudfront.net'
 STATIC_HOST = os.environ.get('STATIC_HOST', '')
 
-SESSION_COOKIE_HTTPONLY = os.environ.get('SESSION_COOKIE_HTTPONLY', 'True') != 'False'
-SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') != 'False'
+SESSION_COOKIE_HTTPONLY = os.environ.get(
+    'SESSION_COOKIE_HTTPONLY', 'True') != 'False'
+SESSION_COOKIE_SECURE = os.environ.get(
+    'SESSION_COOKIE_SECURE', 'True') != 'False'
 
 APP_URL_KEY = 'APP_URL'
 
@@ -95,7 +98,8 @@ SSLIFY_DISABLE = DEBUG or os.environ.get('CI', False)
 BROKER_URL = os.environ.get('RABBITMQ_URL', None)
 
 # Microsoft Translator API Key
-MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')
+MICROSOFT_TRANSLATOR_API_KEY = os.environ.get(
+    'MICROSOFT_TRANSLATOR_API_KEY', '')
 
 # Google Analytics Key
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY', '')
@@ -512,7 +516,7 @@ else:
 # Site ID is used by Django's Sites framework.
 SITE_ID = 1
 
-## Media and templates.
+# Media and templates.
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -543,9 +547,11 @@ def _allowed_hosts():
     host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
     host = host.rsplit(':', 1)[0]  # Remove port
     return [host]
+
+
 ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
 
-## Auth
+# Auth
 # The first hasher in this list will be used for new passwords.
 # Any other hasher in the list can be used for existing passwords.
 PASSWORD_HASHERS = (
@@ -558,7 +564,7 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
 )
 
-## Logging
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -593,7 +599,7 @@ if os.environ.get('DJANGO_SQL_LOG', False):
         'handlers': ['console']
     }
 
-## Tests
+# Tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = ['--logging-filter=-factory,-django.db,-raygun4py',
              '--logging-clear-handlers']
@@ -674,7 +680,7 @@ PORT = 80
 # Names for slave databases from the DATABASES setting.
 SLAVE_DATABASES = []
 
-## Internationalization.
+# Internationalization.
 
 # Enable timezone-aware datetimes.
 USE_TZ = True
@@ -745,7 +751,8 @@ CELERY_ALWAYS_EAGER = os.environ.get('CELERY_ALWAYS_EAGER', 'True') != 'False'
 
 # Limit the number of tasks a celery worker can handle before being replaced.
 try:
-    CELERYD_MAX_TASKS_PER_CHILD = int(os.environ.get('CELERYD_MAX_TASKS_PER_CHILD', ''))
+    CELERYD_MAX_TASKS_PER_CHILD = int(
+        os.environ.get('CELERYD_MAX_TASKS_PER_CHILD', ''))
 except ValueError:
     CELERYD_MAX_TASKS_PER_CHILD = 20
 
@@ -764,8 +771,10 @@ CORS_URLS_REGEX = r'^/pontoon\.js$'
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
 
+
 def account_username(user):
     return user.name_or_email
+
 
 ACCOUNT_AUTHENTICATED_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True

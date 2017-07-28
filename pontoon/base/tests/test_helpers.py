@@ -39,7 +39,8 @@ class FormatTimedeltaTests(TestCase):
 
     def test_format_timedelta_days(self):
         duration = timedelta(days=2, minutes=1, seconds=8)
-        assert_equal(format_timedelta(duration), '2 days, 1 minutes, 8 seconds')
+        assert_equal(format_timedelta(duration),
+                     '2 days, 1 minutes, 8 seconds')
 
     def test_format_timedelta_0(self):
         assert_equal(format_timedelta(timedelta(seconds=0)), '0 seconds')

@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='repository',
             name='website',
-            field=models.URLField(blank=True, max_length=2000, verbose_name=b'Public Repository Website'),
+            field=models.URLField(
+                blank=True, max_length=2000, verbose_name=b'Public Repository Website'),
         ),
     ]

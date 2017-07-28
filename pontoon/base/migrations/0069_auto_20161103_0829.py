@@ -17,11 +17,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='translation',
             name='approved_user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='approved_translations', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='approved_translations', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AlterField(
             model_name='translation',
             name='unapproved_user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='unapproved_translations', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='unapproved_translations', to=settings.AUTH_USER_MODEL),
         ),
     ]

@@ -68,7 +68,8 @@ class LocaleAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(LocaleAdminForm, self).__init__(*args, **kwargs)
         self.fields['db_collation'].choices = self.db_collations_choices
-        self.fields['db_collation'].help_text = self._meta.model._meta.get_field('db_collation').help_text
+        self.fields['db_collation'].help_text = self._meta.model._meta.get_field(
+            'db_collation').help_text
 
 
 class LocaleAdmin(admin.ModelAdmin):
@@ -96,7 +97,8 @@ class RepositoryInline(admin.TabularInline):
     model = models.Repository
     extra = 0
     verbose_name_plural = 'Repositories'
-    fields = ('type', 'url', 'branch', 'website', 'permalink_prefix', 'last_synced_revisions', 'source_repo',)
+    fields = ('type', 'url', 'branch', 'website', 'permalink_prefix',
+              'last_synced_revisions', 'source_repo',)
 
 
 class SubpageInline(admin.TabularInline):
@@ -109,7 +111,8 @@ class SubpageInline(admin.TabularInline):
 
 class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['name', 'slug']
-    list_display = ('name', 'slug', 'deadline', 'priority', 'contact_person', 'pk', 'enabled')
+    list_display = ('name', 'slug', 'deadline', 'priority',
+                    'contact_person', 'pk', 'enabled')
     ordering = ('disabled',)
 
     def contact_person(self, obj):

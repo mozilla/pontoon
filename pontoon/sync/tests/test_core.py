@@ -50,13 +50,15 @@ class UpdateEntityTests(FakeCheckoutTestCase):
         """If VCS is missing the entity in question, obsolete it."""
         self.changeset.obsolete_db_entity = Mock()
         self.call_update_entities([('key', self.main_db_entity, None)])
-        self.changeset.obsolete_db_entity.assert_called_with(self.main_db_entity)
+        self.changeset.obsolete_db_entity.assert_called_with(
+            self.main_db_entity)
 
     def test_create(self):
         """If the DB is missing an entity in VCS, create it."""
         self.changeset.create_db_entity = Mock()
         self.call_update_entities([('key', None, self.main_vcs_entity)])
-        self.changeset.create_db_entity.assert_called_with(self.main_vcs_entity)
+        self.changeset.create_db_entity.assert_called_with(
+            self.main_vcs_entity)
 
 
 class UpdateTranslationsTests(FakeCheckoutTestCase):
@@ -85,7 +87,8 @@ class UpdateTranslationsTests(FakeCheckoutTestCase):
         self.changeset.update_db_entity = Mock()
         self.main_vcs_entity.has_translation_for = Mock(return_value=False)
 
-        self.call_update_translations([('key', self.main_db_entity, self.main_vcs_entity)])
+        self.call_update_translations(
+            [('key', self.main_db_entity, self.main_vcs_entity)])
         assert_false(self.changeset.update_vcs_entity.called)
         assert_false(self.changeset.update_db_entity.called)
 
@@ -96,7 +99,8 @@ class UpdateTranslationsTests(FakeCheckoutTestCase):
         """
         self.changeset.update_vcs_entity = Mock()
         with patch.object(Entity, 'has_changed', return_value=True):
-            self.call_update_translations([('key', self.main_db_entity, self.main_vcs_entity)])
+            self.call_update_translations(
+                [('key', self.main_db_entity, self.main_vcs_entity)])
 
         self.changeset.update_vcs_entity.assert_called_with(
             self.translated_locale, self.main_db_entity, self.main_vcs_entity
@@ -109,7 +113,8 @@ class UpdateTranslationsTests(FakeCheckoutTestCase):
         """
         self.changeset.update_db_entity = Mock()
         with patch.object(Entity, 'has_changed', return_value=False):
-            self.call_update_translations([('key', self.main_db_entity, self.main_vcs_entity)])
+            self.call_update_translations(
+                [('key', self.main_db_entity, self.main_vcs_entity)])
 
         self.changeset.update_db_entity.assert_called_with(
             self.translated_locale, self.main_db_entity, self.main_vcs_entity
@@ -126,10 +131,13 @@ class UpdateResourcesTests(FakeCheckoutTestCase):
 
         update_resources(self.db_project, self.vcs_project)
         self.main_db_resource.refresh_from_db()
-        assert_equal(self.main_db_resource.total_strings, len(self.main_vcs_resource.entities))
+        assert_equal(self.main_db_resource.total_strings,
+                     len(self.main_vcs_resource.entities))
 
-        other_db_resource = Resource.objects.get(path=self.other_vcs_resource.path)
-        assert_equal(other_db_resource.total_strings, len(self.other_vcs_resource.entities))
+        other_db_resource = Resource.objects.get(
+            path=self.other_vcs_resource.path)
+        assert_equal(other_db_resource.total_strings,
+                     len(self.other_vcs_resource.entities))
 
 
 class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
@@ -228,12 +236,14 @@ class CommitChangesTests(FakeCheckoutTestCase):
         self.changeset.commit_authors_per_locale = {
             self.translated_locale.code: [first_author, first_author, second_author]
         }
-        self.db_project.repository_for_path = Mock(return_value=self.repository)
+        self.db_project.repository_for_path = Mock(
+            return_value=self.repository)
 
         commit_changes(self.db_project, self.vcs_project,
                        self.changeset, self.translated_locale)
         self.repository.commit.assert_called_with(
-            CONTAINS(first_author.display_name_and_email, second_author.display_name_and_email),
+            CONTAINS(first_author.display_name_and_email,
+                     second_author.display_name_and_email),
             first_author,
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code)
         )
@@ -246,7 +256,8 @@ class CommitChangesTests(FakeCheckoutTestCase):
         self.changeset.commit_authors_per_locale = {
             self.translated_locale.code: [author, author]
         }
-        self.db_project.repository_for_path = Mock(return_value=self.repository)
+        self.db_project.repository_for_path = Mock(
+            return_value=self.repository)
 
         commit_changes(self.db_project, self.vcs_project,
                        self.changeset, self.translated_locale)
@@ -266,7 +277,8 @@ class CommitChangesTests(FakeCheckoutTestCase):
         self.changeset.commit_authors_per_locale = {
             self.translated_locale.code: []
         }
-        self.db_project.repository_for_path = Mock(return_value=self.repository)
+        self.db_project.repository_for_path = Mock(
+            return_value=self.repository)
 
         commit_changes(self.db_project, self.vcs_project,
                        self.changeset, self.translated_locale)

@@ -18,6 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='locale',
             name='db_collation',
-            field=models.CharField(blank=True, help_text=b"\n        Some of locales require to use different database collation than default ('en_US').\n\n        <strong>Use with caution, because it may brake the search for this locale.</strong>\n        ", max_length=20),
+            field=models.CharField(
+                blank=True, help_text=b"\n        Some of locales require to use different database collation than default ('en_US').\n\n        <strong>Use with caution, because it may brake the search for this locale.</strong>\n        ", max_length=20),
         )
     ]

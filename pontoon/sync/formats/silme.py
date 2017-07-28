@@ -156,7 +156,8 @@ class SilmeResource(ParsedResource):
         # translation for it
         new_structure = self.parser.get_structure(read_file(
             self.source_resource.path,
-            uncomment_moz_langpack=self.entities.get('MOZ_LANGPACK_CONTRIBUTORS', False)
+            uncomment_moz_langpack=self.entities.get(
+                'MOZ_LANGPACK_CONTRIBUTORS', False)
         ))
 
         # Update translations in the copied resource.

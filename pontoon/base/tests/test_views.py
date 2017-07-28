@@ -36,6 +36,7 @@ from pontoon.base.views import build_translation_memory_file
 
 class UserTestCase(TestCase):
     """Default testcase for the views that require logged accounts."""
+
     def setUp(self):
         self.user = UserFactory.create()
         self.client.force_login(self.user)
@@ -51,7 +52,8 @@ class TranslationActionsTests(UserTestCase):
 
         ProjectLocale.objects.create(project=project, locale=locale)
 
-        translation = TranslationFactory.create(locale=locale, entity__resource__project=project)
+        translation = TranslationFactory.create(
+            locale=locale, entity__resource__project=project)
         translation.approved = True
         translation.save()
 
@@ -112,8 +114,10 @@ class TranslateTests(TestCase):
         # Clear out existing project with ID=1 if necessary.
         Project.objects.filter(id=1).delete()
         locale = LocaleFactory.create(code='fakelocale')
-        project = ProjectFactory.create(id=1, slug='valid-project', locales=[locale])
-        resource = ResourceFactory.create(project=project, path='foo.lang', total_strings=1)
+        project = ProjectFactory.create(
+            id=1, slug='valid-project', locales=[locale])
+        resource = ResourceFactory.create(
+            project=project, path='foo.lang', total_strings=1)
         TranslatedResourceFactory.create(resource=resource, locale=locale)
 
         response = self.client.get('/fakelocale/valid-project/foo.lang/')
@@ -146,7 +150,8 @@ class TranslationUpdateTestCase(UserTestCase):
         resource = ResourceFactory.create(project=project)
         entity = EntityFactory.create(resource=resource)
 
-        self.translation = TranslationFactory.create(entity=entity, locale=locale)
+        self.translation = TranslationFactory.create(
+            entity=entity, locale=locale)
         self.translation.locale.translators_group.user_set.add(self.user)
 
     def post_translation(self, translation, **params):
@@ -179,10 +184,12 @@ class TranslationUpdateTestCase(UserTestCase):
         translation = self.post_translation('approved translation')
         assert_true(translation.approved)
 
-        translation = self.post_translation('approved translation2', force_suggestions='false')
+        translation = self.post_translation(
+            'approved translation2', force_suggestions='false')
         assert_true(translation.approved)
 
-        translation = self.post_translation('unapproved translation', force_suggestions='true')
+        translation = self.post_translation(
+            'unapproved translation', force_suggestions='true')
         assert_true(not(translation.approved))
 
 
@@ -193,16 +200,20 @@ class TranslateMemoryTests(ViewTestCase):
         translation string.
         """
         new_locale = LocaleFactory.create()
-        memory_entry = TranslationMemoryFactory.create(source="aaa", target="ccc", locale=new_locale)
-        TranslationMemoryFactory.create(source="aaa", target="ddd", locale=new_locale)
-        TranslationMemoryFactory.create(source="bbb", target="ccc", locale=new_locale)
+        memory_entry = TranslationMemoryFactory.create(
+            source="aaa", target="ccc", locale=new_locale)
+        TranslationMemoryFactory.create(
+            source="aaa", target="ddd", locale=new_locale)
+        TranslationMemoryFactory.create(
+            source="bbb", target="ccc", locale=new_locale)
 
         response = self.client.get('/translation-memory/', {
             'text': 'aaa',
             'pk': memory_entry.entity.pk,
             'locale': new_locale.code
         })
-        assert_json(response, [{"count": 1, "source": "aaa", "quality": 100.0, "target": "ddd"}])
+        assert_json(
+            response, [{"count": 1, "source": "aaa", "quality": 100.0, "target": "ddd"}])
 
     def test_translation_counts(self):
         """
@@ -210,10 +221,14 @@ class TranslateMemoryTests(ViewTestCase):
         from the different entities and count up their occurrences.
         """
         new_locale = LocaleFactory.create()
-        memory_entry = TranslationMemoryFactory.create(source="aaaa", target="ccc", locale=new_locale)
-        TranslationMemoryFactory.create(source="abaa", target="ccc", locale=new_locale)
-        TranslationMemoryFactory.create(source="aaab", target="ccc", locale=new_locale)
-        TranslationMemoryFactory.create(source="aaab", target="ccc", locale=new_locale)
+        memory_entry = TranslationMemoryFactory.create(
+            source="aaaa", target="ccc", locale=new_locale)
+        TranslationMemoryFactory.create(
+            source="abaa", target="ccc", locale=new_locale)
+        TranslationMemoryFactory.create(
+            source="aaab", target="ccc", locale=new_locale)
+        TranslationMemoryFactory.create(
+            source="aaab", target="ccc", locale=new_locale)
 
         response = self.client.get('/translation-memory/', {
             'text': 'aaaa',
@@ -221,9 +236,9 @@ class TranslateMemoryTests(ViewTestCase):
             'locale': memory_entry.locale.code
         })
         assert_json(response, [{u'count': 3,
-                     u'quality': 75.0,
-                     u'source': u'abaa',
-                     u'target': u'ccc'}])
+                                u'quality': 75.0,
+                                u'source': u'abaa',
+                                u'target': u'ccc'}])
 
     def test_exclude_entity(self):
         """
@@ -262,8 +277,10 @@ class EntityViewTests(TestCase):
     def setUp(self):
         self.resource = ResourceFactory.create()
         self.locale = LocaleFactory.create()
-        ProjectLocale.objects.create(project=self.resource.project, locale=self.locale)
-        TranslatedResource.objects.create(resource=self.resource, locale=self.locale)
+        ProjectLocale.objects.create(
+            project=self.resource.project, locale=self.locale)
+        TranslatedResource.objects.create(
+            resource=self.resource, locale=self.locale)
         self.entities = EntityFactory.create_batch(3, resource=self.resource)
         self.entities_pks = [e.pk for e in self.entities]
 
@@ -282,7 +299,8 @@ class EntityViewTests(TestCase):
 
         assert_code(response, 200)
         assert_equal(response.json()['has_next'], False)
-        assert_equal([e['pk'] for e in response.json()['entities']], self.entities_pks)
+        assert_equal([e['pk']
+                      for e in response.json()['entities']], self.entities_pks)
 
     def test_entity_filters(self):
         """
@@ -331,7 +349,8 @@ class EntityViewTests(TestCase):
         assert_code(response, 200)
 
         assert_equal(response.json()['has_next'], True)
-        assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[0].pk,])
+        assert_equal([e['pk'] for e in response.json()[
+                     'entities']], [self.entities[0].pk, ])
 
         excludeEntities = ','.join(map(str, [
             self.entities[0].pk,
@@ -349,7 +368,8 @@ class EntityViewTests(TestCase):
         assert_code(response, 200)
 
         assert_equal(response.json()['has_next'], False)
-        assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[2].pk])
+        assert_equal([e['pk'] for e in response.json()[
+                     'entities']], [self.entities[2].pk])
 
 
 def assert_xml(xml_content, expected_xml=None, dtd_path=None):
@@ -383,6 +403,7 @@ class TMXDownloadViewTests(TestCase):
     """
     Backend should be able to return a valid (and empty) TMX file.
     """
+
     def setUp(self):
         self.project = EntityFactory.create().resource.project
         self.locale = LocaleFactory.create()
@@ -390,9 +411,9 @@ class TMXDownloadViewTests(TestCase):
     def get_tmx_file(self, locale, project):
         """Shortcut function to request tmx contents from server."""
         response = self.client.get('/{locale}/{project}/{locale}.{project}.tmx'.format(
-                locale=locale,
-                project=project
-            )
+            locale=locale,
+            project=project
+        )
         )
         return response
 
@@ -443,16 +464,20 @@ class TMXFileGeneratorTests(TestCase):
             datetime(2010, 01, 01),
             'sl',
             (
-                ('aa/bb/ccc', 'xxx', 'source string', 'translation', 'Pontoon App', 'pontoon'),
+                ('aa/bb/ccc', 'xxx', 'source string',
+                 'translation', 'Pontoon App', 'pontoon'),
 
                 # Test escape of characters
-                ('aa/bb/ccc', 'x&x&x#"', 'source string', 'translation', 'Pontoon & App', 'pontoon'),
+                ('aa/bb/ccc', 'x&x&x#"', 'source string',
+                 'translation', 'Pontoon & App', 'pontoon'),
 
                 # Handle unicode characters
-                ('aa/bb/ccc', 'xxx', u'source string łążśźć', u'translation łążśźć', 'pontoon', 'pontoon'),
+                ('aa/bb/ccc', 'xxx', u'source string łążśźć',
+                 u'translation łążśźć', 'pontoon', 'pontoon'),
 
                 # Handle html content
-                ('aa/bb/ccc', 'xxx', u'<p>source <strong>string</p>', u'<p>translation łążśźć</p>', 'pontoon', 'pontoon'),
+                ('aa/bb/ccc', 'xxx', u'<p>source <strong>string</p>',
+                 u'<p>translation łążśźć</p>', 'pontoon', 'pontoon'),
 
             )
         )

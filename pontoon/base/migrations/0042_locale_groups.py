@@ -11,6 +11,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField("Locale", "translators_group", models.ForeignKey(to="auth.Group", null=True, related_name='translated_locales', on_delete=models.SET_NULL)),
-        migrations.AddField("Locale", "managers_group", models.ForeignKey(to="auth.Group", null=True, related_name='managed_locales', on_delete=models.SET_NULL)),
+        migrations.AddField("Locale", "translators_group", models.ForeignKey(
+            to="auth.Group", null=True, related_name='translated_locales', on_delete=models.SET_NULL)),
+        migrations.AddField("Locale", "managers_group", models.ForeignKey(
+            to="auth.Group", null=True, related_name='managed_locales', on_delete=models.SET_NULL)),
     ]

@@ -21,16 +21,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='resource',
             name='priority',
-            field=models.IntegerField(choices=[(1, b'Lowest'), (2, b'Low'), (3, b'Normal'), (4, b'High'), (5, b'Highest')], default=3),
+            field=models.IntegerField(choices=[(
+                1, b'Lowest'), (2, b'Low'), (3, b'Normal'), (4, b'High'), (5, b'Highest')], default=3),
         ),
         migrations.AlterField(
             model_name='projectlocale',
             name='locale',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_locale', to='base.Locale'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='project_locale', to='base.Locale'),
         ),
         migrations.AlterField(
             model_name='projectlocale',
             name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_locale', to='base.Project'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='project_locale', to='base.Project'),
         ),
     ]

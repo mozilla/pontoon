@@ -14,6 +14,7 @@ class HerokuDemoSetupMiddleware(object):
     typing an url in the browser window. That's why we have to ensure
     that setup view is called as the first view.
     """
+
     def process_request(self, request):
         path = request.path
         current_domain = Site.objects.get(pk=1).domain
@@ -54,6 +55,7 @@ class AutomaticLoginUserMiddleware(object):
     """
     This middleware automatically logs in the user specified for AUTO_LOGIN.
     """
+
     def process_request(self, request):
         if settings.AUTO_LOGIN and not request.user.is_authenticated():
             user = auth.authenticate(

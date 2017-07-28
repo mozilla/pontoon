@@ -71,5 +71,6 @@ class MultiFieldTRGMIndex(GINIndex):
     def sql(self):
         def index_field(field_name):
             return 'UPPER({}) gin_trgm_ops'.format(field_name)
-        self.sql_opts['expression'] = ','.join(map(index_field, self.sql_opts['from_fields']))
+        self.sql_opts['expression'] = ','.join(
+            map(index_field, self.sql_opts['from_fields']))
         return self.forward_sql.format(**self.sql_opts)

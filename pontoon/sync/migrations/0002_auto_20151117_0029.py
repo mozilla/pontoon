@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='repositorysynclog',
             name='end_time',
-            field=models.DateTimeField(default=django.utils.timezone.now, null=True, blank=True),
+            field=models.DateTimeField(
+                default=django.utils.timezone.now, null=True, blank=True),
         ),
     ]

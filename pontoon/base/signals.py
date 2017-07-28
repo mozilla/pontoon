@@ -27,7 +27,8 @@ def project_locale_removed(sender, **kwargs):
         project = project_locale.project
         locale = project_locale.locale
 
-        TranslatedResource.objects.filter(resource__project=project, locale=locale).delete()
+        TranslatedResource.objects.filter(
+            resource__project=project, locale=locale).delete()
         project.aggregate_stats()
         locale.aggregate_stats()
 
@@ -58,8 +59,10 @@ def create_group(instance, group_name, perms, name_prefix):
     """
     Create all objects related to a group of users, e.g. translators, managers.
     """
-    ct = ContentType.objects.get(app_label='base', model=instance.__class__.__name__.lower())
-    group, _ = Group.objects.get_or_create(name='{} {}'.format(name_prefix, group_name))
+    ct = ContentType.objects.get(
+        app_label='base', model=instance.__class__.__name__.lower())
+    group, _ = Group.objects.get_or_create(
+        name='{} {}'.format(name_prefix, group_name))
 
     for perm_name in perms:
         perm = Permission.objects.get(content_type=ct, codename=perm_name)
@@ -72,7 +75,8 @@ def assign_group_permissions(instance, group_name, perms):
     """
     Create group object permissions.
     """
-    ct = ContentType.objects.get(app_label='base', model=instance.__class__.__name__.lower())
+    ct = ContentType.objects.get(
+        app_label='base', model=instance.__class__.__name__.lower())
 
     for perm_name in perms:
         perm = Permission.objects.get(content_type=ct, codename=perm_name)
@@ -94,8 +98,9 @@ def create_locale_permissions_groups(sender, **kwargs):
         return
 
     try:
-        create_group(instance, 'translators', ['can_translate_locale'], '{} translators'.format(instance.code))
-        create_group(instance, 'managers', ['can_translate_locale', 'can_manage_locale'], '{} managers'.format(instance.code)) # noqa
+        create_group(instance, 'translators', [
+                     'can_translate_locale'], '{} translators'.format(instance.code))
+        create_group(instance, 'managers', ['can_translate_locale', 'can_manage_locale'], '{} managers'.format(instance.code))  # noqa
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
 
@@ -130,8 +135,10 @@ def assign_locale_group_permissions(sender, **kwargs):
     instance = kwargs['instance']
 
     try:
-        assign_group_permissions(instance, 'translators', ['can_translate_locale'])
-        assign_group_permissions(instance, 'managers', ['can_translate_locale', 'can_manage_locale'])
+        assign_group_permissions(instance, 'translators', [
+                                 'can_translate_locale'])
+        assign_group_permissions(instance, 'managers', [
+                                 'can_translate_locale', 'can_manage_locale'])
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
 
@@ -147,7 +154,8 @@ def assign_project_locale_group_permissions(sender, **kwargs):
     instance = kwargs['instance']
 
     try:
-        assign_group_permissions(instance, 'translators', ['can_translate_project_locale'])
+        assign_group_permissions(instance, 'translators', [
+                                 'can_translate_project_locale'])
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
 

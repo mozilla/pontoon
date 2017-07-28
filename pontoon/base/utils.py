@@ -83,7 +83,8 @@ class SpacesPlaceable(base.Ph):
 class PythonFormatNamedPlaceable(base.Ph):
     """Placeable handling named format string in python"""
     istranslatable = False
-    regex = re.compile(r'%\([[\w\d\!\.,\[\]%:$<>\+\-= ]*\)[+|-|0\d+|#]?[\.\d+]?[s|d|e|f|g|o|x|c|%]', re.IGNORECASE)
+    regex = re.compile(
+        r'%\([[\w\d\!\.,\[\]%:$<>\+\-= ]*\)[+|-|0\d+|#]?[\.\d+]?[s|d|e|f|g|o|x|c|%]', re.IGNORECASE)
     parse = classmethod(general.regex_parse)
 
 
@@ -190,9 +191,11 @@ def mark_placeables(text):
                     u'\n': u'\\n<br/>\n',
                 }.get(placeable),
                 'PythonFormatPlaceable':
-                    placeable.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'),
+                    placeable.replace('&', '&amp;').replace(
+                        '<', '&lt;').replace('>', '&gt;'),
                 'PythonFormatNamedPlaceable':
-                    placeable.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'),
+                    placeable.replace('&', '&amp;').replace(
+                        '<', '&lt;').replace('>', '&gt;'),
                 'XMLEntityPlaceable': placeable.replace('&', '&amp;'),
                 'XMLTagPlaceable':
                     placeable.replace('<', '&lt;').replace('>', '&gt;'),
@@ -344,7 +347,8 @@ def require_AJAX(f):
 def _download_file(prefixes, dirnames, relative_path):
     for prefix in prefixes:
         for dirname in dirnames:
-            url = os.path.join(prefix.format(locale_code=dirname), relative_path)
+            url = os.path.join(prefix.format(
+                locale_code=dirname), relative_path)
             r = requests.get(url, stream=True)
             if not r.ok:
                 continue
@@ -386,7 +390,8 @@ def get_download_content(slug, code, part):
     locale = get_object_or_404(Locale, code=code)
 
     # Download a ZIP of all files if project has > 1 and < 10 resources
-    resources = Resource.objects.filter(project=project, translatedresources__locale=locale)
+    resources = Resource.objects.filter(
+        project=project, translatedresources__locale=locale)
     isZipable = 1 < len(resources) < 10
     if isZipable:
         s = StringIO.StringIO()
@@ -395,12 +400,14 @@ def get_download_content(slug, code, part):
     # Download a single file if project has 1 or >= 10 resources
     else:
         relative_path = _get_relative_path_from_part(slug, part)
-        resources = [get_object_or_404(Resource, project__slug=slug, path=relative_path)]
+        resources = [get_object_or_404(
+            Resource, project__slug=slug, path=relative_path)]
 
     for resource in resources:
         # Get locale file
         locale_prefixes = (
-            project.repositories.filter(permalink_prefix__contains='{locale_code}')
+            project.repositories.filter(
+                permalink_prefix__contains='{locale_code}')
             .values_list('permalink_prefix', flat=True)
             .distinct()
         )
@@ -418,7 +425,8 @@ def get_download_content(slug, code, part):
                 .distinct()
             )
             dirnames = VCSProject.SOURCE_DIR_NAMES
-            source_path = _download_file(source_prefixes, dirnames, resource.path)
+            source_path = _download_file(
+                source_prefixes, dirnames, resource.path)
             if not source_path:
                 return None, None
 
@@ -440,7 +448,8 @@ def get_download_content(slug, code, part):
         )
 
         for e in entities_qs:
-            entities_dict[e.key] = e.translation_set.filter(approved=True, locale=locale)
+            entities_dict[e.key] = e.translation_set.filter(
+                approved=True, locale=locale)
 
         for vcs_translation in resource_file.translations:
             key = vcs_translation.key
@@ -500,7 +509,8 @@ def handle_upload_content(slug, code, part, f, user):
     relative_path = _get_relative_path_from_part(slug, part)
     project = get_object_or_404(Project, slug=slug)
     locale = get_object_or_404(Locale, code=code)
-    resource = get_object_or_404(Resource, project__slug=slug, path=relative_path)
+    resource = get_object_or_404(
+        Resource, project__slug=slug, path=relative_path)
 
     # Store uploaded file to a temporary file and parse it
     extension = os.path.splitext(f.name)[1]
@@ -529,7 +539,8 @@ def handle_upload_content(slug, code, part, f, user):
     ).prefetch_related(
         Prefetch(
             'translation_set',
-            queryset=Translation.objects.filter(locale=locale, approved_date__lte=timezone.now()),
+            queryset=Translation.objects.filter(
+                locale=locale, approved_date__lte=timezone.now()),
             to_attr='old_translations'
         )
     )
@@ -546,16 +557,19 @@ def handle_upload_content(slug, code, part, f, user):
 
     changeset.bulk_create_translations()
     changeset.bulk_update_translations()
-    TranslatedResource.objects.get(resource=resource, locale=locale).calculate_stats()
+    TranslatedResource.objects.get(
+        resource=resource, locale=locale).calculate_stats()
 
     # Mark translations as changed
     changed_entities = {}
-    existing = ChangedEntityLocale.objects.values_list('entity', 'locale').distinct()
+    existing = ChangedEntityLocale.objects.values_list(
+        'entity', 'locale').distinct()
     for t in changeset.translations_to_create + changeset.translations_to_update:
         key = (t.entity.pk, t.locale.pk)
         # Remove duplicate changes to prevent unique constraint violation
         if not key in existing:
-            changed_entities[key] = ChangedEntityLocale(entity=t.entity, locale=t.locale)
+            changed_entities[key] = ChangedEntityLocale(
+                entity=t.entity, locale=t.locale)
 
     ChangedEntityLocale.objects.bulk_create(changed_entities.values())
 

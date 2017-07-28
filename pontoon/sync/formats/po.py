@@ -81,7 +81,8 @@ class POResource(ParsedResource):
         if len(self.translations) > 0:
             latest_translation = max(
                 self.translations,
-                key=lambda t: t.last_updated or timezone.make_aware(datetime.min)
+                key=lambda t: t.last_updated or timezone.make_aware(
+                    datetime.min)
             )
             if latest_translation.last_updated:
                 metadata['PO-Revision-Date'] = latest_translation.last_updated.strftime(
@@ -107,7 +108,8 @@ def parse(path, source_path=None, locale=None):
     try:
         pofile = polib.pofile(path, wrapwidth=200)
     except IOError as err:
-        wrapped = ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
+        wrapped = ParseError(
+            u'Failed to parse {path}: {err}'.format(path=path, err=err))
         raise wrapped, None, sys.exc_info()[2]
 
     return POResource(pofile)

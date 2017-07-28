@@ -14,7 +14,8 @@ from allauth.socialaccount import views as socialaccount_views, providers
 if settings.DJANGO_LOGIN:
     urlpatterns = [
         url(r'^standalone-login/$', login, name='standalone_login'),
-        url(r'^standalone-logout/$', logout, name='standalone_logout', kwargs={'next_page': '/'}),
+        url(r'^standalone-logout/$', logout,
+            name='standalone_logout', kwargs={'next_page': '/'}),
     ]
 else:
     urlpatterns = [
@@ -23,7 +24,8 @@ else:
         url(r'^inactive/$', account_views.account_inactive, name='account_inactive'),
         url('^social/login/cancelled/$', socialaccount_views.login_cancelled,
             name='socialaccount_login_cancelled'),
-        url('^social/login/error/$', socialaccount_views.login_error, name='socialaccount_login_error'),
+        url('^social/login/error/$', socialaccount_views.login_error,
+            name='socialaccount_login_error'),
     ]
 
 for provider in providers.registry.get_list():

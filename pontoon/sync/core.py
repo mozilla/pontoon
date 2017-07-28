@@ -47,11 +47,12 @@ def serial_task(timeout, lock_key="", on_error=None, **celery_args):
         @shared_task(bind=True, **celery_args)
         @wraps(func)
         def wrapped_func(self, *args, **kwargs):
-            lock_name = "serial_task.{}[{}]".format(self.name, lock_key.format(*args, **kwargs))
+            lock_name = "serial_task.{}[{}]".format(
+                self.name, lock_key.format(*args, **kwargs))
             # Acquire the lock
             if not cache.add(lock_name, True, timeout=timeout):
                 error = RuntimeError("Can't execute task '{}' because the previously called"
-                    " task is still running.".format(lock_name))
+                                     " task is still running.".format(lock_name))
                 if callable(on_error):
                     on_error(error, *args, **kwargs)
                 raise error
@@ -86,7 +87,8 @@ def update_entities(db_project, vcs_project, changeset):
         if vcs_entity is None:
             if db_entity is None:
                 # This should never happen. What? Hard abort.
-                raise ValueError(u'No entities found for key `{0}`'.format(key))
+                raise ValueError(
+                    u'No entities found for key `{0}`'.format(key))
             else:
                 # VCS no longer has the entity, obsolete it.
                 changeset.obsolete_db_entity(db_entity)
@@ -111,7 +113,8 @@ def update_resources(db_project, vcs_project):
     removed_resources.delete()
 
     for relative_path, vcs_resource in vcs_project.resources.items():
-        resource, created = db_project.resources.get_or_create(path=relative_path)
+        resource, created = db_project.resources.get_or_create(
+            path=relative_path)
         resource.format = Resource.get_path_format(relative_path)
         resource.total_strings = len(vcs_resource.entities)
         resource.save()
@@ -155,7 +158,8 @@ def update_translated_resources(db_project, vcs_project, locale):
         if vcs_resource is not None:
             resource_exists = vcs_resource.files.get(locale) is not None
             if resource_exists or resource.is_asymmetric:
-                translatedresource, _ = TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
+                translatedresource, _ = TranslatedResource.objects.get_or_create(
+                    resource=resource, locale=locale)
                 translatedresource.calculate_stats()
 
 
@@ -165,9 +169,9 @@ def get_vcs_entities(vcs_project):
 
 def get_changed_entities(db_project, changed_resources):
     entities = (Entity.objects
-            .select_related('resource')
-            .prefetch_related('changed_locales')
-            .filter(resource__project=db_project, obsolete=False))
+                .select_related('resource')
+                .prefetch_related('changed_locales')
+                .filter(resource__project=db_project, obsolete=False))
 
     if changed_resources is not None:
         entities = entities.filter(resource__path__in=changed_resources)
@@ -193,13 +197,15 @@ def pull_changes(db_project, source_only=False):
     if any of the updated repos have changed since the last sync.
     """
     changed = False
-    repositories = [db_project.source_repository] if source_only else db_project.repositories.all()
+    repositories = [
+        db_project.source_repository] if source_only else db_project.repositories.all()
     repo_locales = {}
     skip_locales = []  # Skip already pulled locales
 
     for repo in repositories:
         repo_revisions = repo.pull(skip_locales)
-        repo_locales[repo.pk] = Locale.objects.filter(code__in=repo_revisions.keys())
+        repo_locales[repo.pk] = Locale.objects.filter(
+            code__in=repo_revisions.keys())
         skip_locales += repo_revisions.keys()
         # If any revision is None, we can't be sure if a change
         # happened or not, so we default to assuming it did.
@@ -219,7 +225,8 @@ def commit_changes(db_project, vcs_project, changeset, locale):
     if len(authors) > 0:
         commit_author = Counter(authors).most_common(1)[0][0]
     else:
-        commit_author = User(first_name="Mozilla Pontoon", email="pontoon@mozilla.com")
+        commit_author = User(first_name="Mozilla Pontoon",
+                             email="pontoon@mozilla.com")
 
     commit_message = render_to_string('sync/commit_message.jinja', {
         'locale': locale,

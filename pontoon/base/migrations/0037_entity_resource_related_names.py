@@ -14,11 +14,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='entity',
             name='resource',
-            field=models.ForeignKey(related_name='entities', to='base.Resource'),
+            field=models.ForeignKey(
+                related_name='entities', to='base.Resource'),
         ),
         migrations.AlterField(
             model_name='resource',
             name='project',
-            field=models.ForeignKey(related_name='resources', to='base.Project'),
+            field=models.ForeignKey(
+                related_name='resources', to='base.Project'),
         ),
     ]

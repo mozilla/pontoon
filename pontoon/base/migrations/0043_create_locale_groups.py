@@ -11,31 +11,36 @@ def create_locale_groups(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     GroupObjectPermission = apps.get_model('guardian', 'GroupObjectPermission')
 
-    locale_content_type = ContentType.objects.get(app_label='base', model='locale') 
-    can_translate = Permission.objects.get(content_type=locale_content_type, codename='can_translate_locale')
-    can_manage = Permission.objects.get(content_type=locale_content_type, codename='can_manage_locale')
+    locale_content_type = ContentType.objects.get(
+        app_label='base', model='locale')
+    can_translate = Permission.objects.get(
+        content_type=locale_content_type, codename='can_translate_locale')
+    can_manage = Permission.objects.get(
+        content_type=locale_content_type, codename='can_manage_locale')
 
     # Create translators groups
     for locale in Locale.objects.all():
-        translators_group = Group.objects.create(name='{} translators'.format(locale.code))
+        translators_group = Group.objects.create(
+            name='{} translators'.format(locale.code))
         translators_group.permissions.add(can_translate)
         GroupObjectPermission.objects.create(object_pk=locale.pk,
-            content_type=locale_content_type,
-            group=translators_group,
-            permission=can_translate)
+                                             content_type=locale_content_type,
+                                             group=translators_group,
+                                             permission=can_translate)
 
-        managers_group = Group.objects.create(name='{} managers'.format(locale.code))
+        managers_group = Group.objects.create(
+            name='{} managers'.format(locale.code))
         managers_group.permissions.add(can_translate)
         GroupObjectPermission.objects.create(object_pk=locale.pk,
-            content_type=locale_content_type,
-            group=managers_group,
-            permission=can_translate)
+                                             content_type=locale_content_type,
+                                             group=managers_group,
+                                             permission=can_translate)
 
         managers_group.permissions.add(can_manage)
         GroupObjectPermission.objects.create(object_pk=locale.pk,
-            content_type=locale_content_type,
-            group=managers_group,
-            permission=can_manage)
+                                             content_type=locale_content_type,
+                                             group=managers_group,
+                                             permission=can_manage)
 
         locale.translators_group = translators_group
         locale.managers_group = managers_group

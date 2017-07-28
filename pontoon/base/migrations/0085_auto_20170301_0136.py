@@ -15,7 +15,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='locale',
             name='direction',
-            field=models.CharField(choices=[(b'ltr', b'left-to-right'), (b'rtl', b'right-to-left')], default=b'ltr', help_text=b'\n        Writing direction. Set to "right-to-left" if "rtl" value for the locale\n        script is set to "YES" in\n        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/scriptMetadata.json">CLDR scriptMetadata.json</a>.\n        ', max_length=3),
+            field=models.CharField(choices=[(b'ltr', b'left-to-right'), (b'rtl', b'right-to-left')], default=b'ltr',
+                                   help_text=b'\n        Writing direction. Set to "right-to-left" if "rtl" value for the locale\n        script is set to "YES" in\n        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/scriptMetadata.json">CLDR scriptMetadata.json</a>.\n        ', max_length=3),
         ),
         migrations.AlterField(
             model_name='locale',
@@ -25,6 +26,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='locale',
             name='script',
-            field=models.CharField(default=b'Latin', help_text=b'\n        Script locale is written in. Find it in\n        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/languageData.json">CLDR languageData.json</a>.\n        ', max_length=128),
+            field=models.CharField(
+                default=b'Latin', help_text=b'\n        Script locale is written in. Find it in\n        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/languageData.json">CLDR languageData.json</a>.\n        ', max_length=128),
         ),
     ]

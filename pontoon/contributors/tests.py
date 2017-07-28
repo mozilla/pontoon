@@ -37,8 +37,10 @@ def commajoin(*items):
 
 class ContributorProfileTests(UserTestCase):
     """Tests related to the saving user profile."""
+
     def test_invalid_first_name(self):
-        response = self.client.post('/save-user-name/', {'first_name': '<aa>"\'"'})
+        response = self.client.post(
+            '/save-user-name/', {'first_name': '<aa>"\'"'})
 
         assert_equal(response.status_code, 400)
         assert_equal(response.content, 'Enter a valid value.')
@@ -50,7 +52,8 @@ class ContributorProfileTests(UserTestCase):
         assert_equal(response.content, 'This field is required.')
 
     def test_valid_first_name(self):
-        response = self.client.post('/save-user-name/', {'first_name': 'contributor'})
+        response = self.client.post(
+            '/save-user-name/', {'first_name': 'contributor'})
 
         assert_equal(response.status_code, 200)
         assert_equal(response.content, 'ok')
@@ -81,8 +84,8 @@ class ContributorProfileTests(UserTestCase):
             'locales_order': ''
         })
         assert_equal(response.status_code, 302)
-        assert_equal(list(User.objects.get(pk=self.user.pk).profile.sorted_locales), [])
-
+        assert_equal(list(User.objects.get(
+            pk=self.user.pk).profile.sorted_locales), [])
 
         # Test if form handles duplicated locales
         response = self.client.post('/settings/', {
@@ -105,7 +108,8 @@ class ContributorProfileViewTests(UserTestCase):
     def setUp(self):
         super(ContributorProfileViewTests, self).setUp()
 
-        mock_render = patch('pontoon.contributors.views.render', return_value=HttpResponse(''))
+        mock_render = patch('pontoon.contributors.views.render',
+                            return_value=HttpResponse(''))
         self.mock_render = mock_render.start()
         self.addCleanup(mock_render.stop)
 
@@ -113,19 +117,22 @@ class ContributorProfileViewTests(UserTestCase):
         """Users should be able to retrieve contributor's profile by its username."""
         self.client.get('/contributors/{}/'.format(self.user.username))
 
-        assert_equal(self.mock_render.call_args[0][2]['contributor'], self.user)
+        assert_equal(
+            self.mock_render.call_args[0][2]['contributor'], self.user)
 
     def test_contributor_profile_by_email(self):
         """Check if we can access contributor profile by its email."""
         self.client.get('/contributors/{}/'.format(self.user.email))
 
-        assert_equal(self.mock_render.call_args[0][2]['contributor'], self.user)
+        assert_equal(
+            self.mock_render.call_args[0][2]['contributor'], self.user)
 
     def test_logged_user_profile(self):
         """Logged user should be able to re"""
         self.client.get('/profile/')
 
-        assert_equal(self.mock_render.call_args[0][2]['contributor'], self.user)
+        assert_equal(
+            self.mock_render.call_args[0][2]['contributor'], self.user)
 
     def test_unlogged_user_profile(self):
         """Unlogged users shouldn't have access to edit any profile."""
@@ -136,6 +143,7 @@ class ContributorProfileViewTests(UserTestCase):
 
 class ContributorTimelineViewTests(UserTestCase):
     """User timeline is a list of events created by a certain contributor."""
+
     def setUp(self):
         """
         We setup a sample contributor with random set of translations.
@@ -150,22 +158,24 @@ class ContributorTimelineViewTests(UserTestCase):
             self.translations.setdefault((date, translations_count), []).append(
                 sorted(
                     TranslationFactory.create_batch(translations_count,
-                        date=date,
-                        user=self.user,
-                        entity__resource__project=self.project,
-                    ),
+                                                    date=date,
+                                                    user=self.user,
+                                                    entity__resource__project=self.project,
+                                                    ),
                     key=lambda t: t.pk,
                     reverse=True,
                 )
             )
 
-        mock_render = patch('pontoon.contributors.views.render', return_value=HttpResponse(''))
+        mock_render = patch('pontoon.contributors.views.render',
+                            return_value=HttpResponse(''))
         self.mock_render = mock_render.start()
         self.addCleanup(mock_render.stop)
 
     def test_timeline(self):
         """Backend should return events filtered by page number requested by user."""
-        self.client.get('/contributors/{}/timeline/?page=2'.format(self.user.username))
+        self.client.get(
+            '/contributors/{}/timeline/?page=2'.format(self.user.username))
 
         assert_equal(
             self.mock_render.call_args[0][2]['events'],
@@ -175,32 +185,36 @@ class ContributorTimelineViewTests(UserTestCase):
                 'count': count,
                 'project': self.project,
                 'translation': translations[0][0],
-            } for (dt,count), translations in self.translations.items()[10:20]
-        ])
+            } for (dt, count), translations in self.translations.items()[10:20]
+            ])
 
     def test_timeline_invalid_page(self):
         """Backend should return 404 error when user requests an invalid/empty page."""
-        resp = self.client.get('/contributors/{}/timeline/?page=45'.format(self.user.username))
+        resp = self.client.get(
+            '/contributors/{}/timeline/?page=45'.format(self.user.username))
         assert_code(resp, 404)
 
-        resp = self.client.get('/contributors/{}/timeline/?page=-aa45'.format(self.user.username))
+        resp = self.client.get(
+            '/contributors/{}/timeline/?page=-aa45'.format(self.user.username))
         assert_code(resp, 404)
 
     def test_non_active_contributor(self):
         """Test if backend is able return events for a user without contributions."""
         nonactive_contributor = UserFactory.create()
-        self.client.get('/contributors/{}/timeline/'.format(nonactive_contributor.username))
+        self.client.get(
+            '/contributors/{}/timeline/'.format(nonactive_contributor.username))
         assert_equal(
             self.mock_render.call_args[0][2]['events'], [
-            {
-                'date': nonactive_contributor.date_joined,
-                'type': 'join'
-            }
-        ])
+                {
+                    'date': nonactive_contributor.date_joined,
+                    'type': 'join'
+                }
+            ])
 
     def test_timeline_join(self):
         """Last page of results should include informations about the when user joined pontoon."""
-        self.client.get('/contributors/{}/timeline/?page=3'.format(self.user.username))
+        self.client.get(
+            '/contributors/{}/timeline/?page=3'.format(self.user.username))
 
         assert_equal(self.mock_render.call_args[0][2]['events'][-1], {
             'date': self.user.date_joined,
@@ -210,11 +224,13 @@ class ContributorTimelineViewTests(UserTestCase):
 
 class ContributorsTests(TestCase):
     def setUp(self):
-        mock_render = patch.object(views.ContributorsView, 'render_to_response', return_value=HttpResponse(''))
+        mock_render = patch.object(
+            views.ContributorsView, 'render_to_response', return_value=HttpResponse(''))
         self.mock_render = mock_render.start()
         self.addCleanup(mock_render.stop)
 
-        mock_translations_manager = patch('pontoon.base.models.UserTranslationsManager.with_translation_counts')
+        mock_translations_manager = patch(
+            'pontoon.base.models.UserTranslationsManager.with_translation_counts')
         self.mock_translations_manager = mock_translations_manager.start()
         self.addCleanup(mock_translations_manager.stop)
 
@@ -246,4 +262,5 @@ class ContributorsTests(TestCase):
         with patch('django.utils.timezone.now', wraps=now, return_value=aware_datetime(2015, 7, 5)):
             self.client.get('/contributors/?period=6')
             assert_equal(self.mock_render.call_args[0][0]['period'], 6)
-            assert_equal(self.mock_translations_manager.call_args[0][0], aware_datetime(2015, 1, 5))
+            assert_equal(
+                self.mock_translations_manager.call_args[0][0], aware_datetime(2015, 1, 5))

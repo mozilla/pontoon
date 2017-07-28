@@ -24,6 +24,7 @@ register = template.Library()
 
 class LazyObjectsJsonEncoder(json.JSONEncoder):
     """Default encoder isn't able to handle Django lazy-objects."""
+
     def default(self, obj):
         if isinstance(obj, Promise):
             return force_text(obj)

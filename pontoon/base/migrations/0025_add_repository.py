@@ -14,9 +14,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Repository',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('type', models.CharField(default=b'file', max_length=255, choices=[(b'file', b'File'), (b'git', b'Git'), (b'hg', b'HG'), (b'svn', b'SVN'), (b'transifex', b'Transifex')])),
-                ('url', models.CharField(max_length=2000, verbose_name=b'URL', blank=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
+                ('type', models.CharField(default=b'file', max_length=255, choices=[
+                 (b'file', b'File'), (b'git', b'Git'), (b'hg', b'HG'), (b'svn', b'SVN'), (b'transifex', b'Transifex')])),
+                ('url', models.CharField(max_length=2000,
+                                         verbose_name=b'URL', blank=True)),
                 ('project', models.ForeignKey(to='base.Project')),
             ],
             options={

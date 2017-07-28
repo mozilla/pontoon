@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='locale',
-            options={'ordering': ['name', 'code'], 'permissions': (('can_translate_locale', 'Can add translations'), ('can_manage_locale', 'Can manage locale'))},
+            options={'ordering': ['name', 'code'], 'permissions': (
+                ('can_translate_locale', 'Can add translations'), ('can_manage_locale', 'Can manage locale'))},
         ),
     ]

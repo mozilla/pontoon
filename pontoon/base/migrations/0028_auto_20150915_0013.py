@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='repository',
             name='project',
-            field=models.ForeignKey(related_name='repositories', to='base.Project'),
+            field=models.ForeignKey(
+                related_name='repositories', to='base.Project'),
         ),
     ]

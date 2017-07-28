@@ -36,11 +36,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='translatedresource',
             name='locale',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='translatedresources', to='base.Locale'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='translatedresources', to='base.Locale'),
         ),
         migrations.AlterField(
             model_name='translatedresource',
             name='resource',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='translatedresources', to='base.Resource'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='translatedresources', to='base.Resource'),
         ),
     ]

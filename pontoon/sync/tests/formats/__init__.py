@@ -80,7 +80,8 @@ class FormatTestsMixin(object):
         )
 
         if self.supports_source:
-            assert_equal(resource.translations[translation_index].source, [('file.py', '1')])
+            assert_equal(resource.translations[translation_index].source, [
+                         ('file.py', '1')])
 
         if self.supports_source_string:
             assert_attributes_equal(
@@ -266,7 +267,8 @@ class FormatTestsMixin(object):
         """
         Test saving changes to an entity with a single translation.
         """
-        path, resource = self.parse_string(input_string, source_string=source_string)
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
 
         def test_default(res):
             translation = res.translations[0]
@@ -280,7 +282,8 @@ class FormatTestsMixin(object):
 
     def run_save_remove(self, input_string, expected_string, source_string=None, remove_cb=None):
         """Test saving a removed entity with a single translation."""
-        path, resource = self.parse_string(input_string, source_string=source_string)
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
 
         def default_remove(res):
             translation = res.translations[0]
@@ -292,7 +295,8 @@ class FormatTestsMixin(object):
         self.assert_file_content(path, expected_string)
 
     def run_save_plural(self, input_string, expected_string, source_string=None):
-        path, resource = self.parse_string(input_string, source_string=source_string)
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
 
         translation = resource.translations[0]
         translation.strings[0] = 'New Plural'
@@ -306,7 +310,8 @@ class FormatTestsMixin(object):
         Any missing plurals should be set to an empty string in the
         pofile.
         """
-        path, resource = self.parse_string(input_string, source_string=source_string)
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
 
         translation = resource.translations[0]
         translation.strings[0] = 'New Plural'
@@ -316,7 +321,8 @@ class FormatTestsMixin(object):
         self.assert_file_content(path, expected_string)
 
     def run_save_remove_fuzzy(self, input_string, expected_string, source_string=None):
-        path, resource = self.parse_string(input_string, source_string=source_string)
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
 
         resource.translations[0].fuzzy = False
         resource.save(self.locale)
@@ -342,9 +348,11 @@ class FormatTestsMixin(object):
             String=Translated String
             MissingString=Translated Missing String
         """
-        path, resource = self.parse_string(input_string, source_string=source_string)
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
 
-        missing_translation = match_attr(resource.translations, key='MissingString')
+        missing_translation = match_attr(
+            resource.translations, key='MissingString')
         missing_translation.strings = {None: 'Translated Missing String'}
         resource.save(self.locale)
 
@@ -364,7 +372,8 @@ class FormatTestsMixin(object):
         Expected Example:
             String=Source String
         """
-        path, resource = self.parse_string(input_string, source_string=source_string)
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
 
         translation = match_attr(resource.translations, key='String')
         translation.strings = {None: 'Source String'}
@@ -374,7 +383,8 @@ class FormatTestsMixin(object):
 
     def run_save_no_changes(self, input_string, expected_string, source_string=None):
         """Test what happens when no changes are made."""
-        path, resource = self.parse_string(input_string, source_string=source_string)
+        path, resource = self.parse_string(
+            input_string, source_string=source_string)
         resource.save(self.locale)
 
         self.assert_file_content(path, expected_string)

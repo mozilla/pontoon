@@ -16,6 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userprofile',
             name='locales_order',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.PositiveIntegerField(), blank=True, default=list, size=None),
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.PositiveIntegerField(), blank=True, default=list, size=None),
         ),
     ]

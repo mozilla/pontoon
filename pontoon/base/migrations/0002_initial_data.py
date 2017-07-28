@@ -31,7 +31,8 @@ def load_initial_data(apps, schema_editor):
     # model. Our workaround is to use the auto-generated intermediate
     # model directly to create the relation between project and locales.
     locale = Locale.objects.get(code='en-GB')
-    Project.locales.through.objects.create(project_id=project.id, locale_id=locale.id)
+    Project.locales.through.objects.create(
+        project_id=project.id, locale_id=locale.id)
 
 
 class Migration(migrations.Migration):

@@ -14,7 +14,8 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         Generates an unique username in the same way as it was done in django-browserid.
         This is required to avoid collisions and the backward compatibility.
         """
-        user = super(PontoonSocialAdapter, self).save_user(request, sociallogin, form)
+        user = super(PontoonSocialAdapter, self).save_user(
+            request, sociallogin, form)
         user.username = base64.urlsafe_b64encode(
             hashlib.sha1(smart_bytes(user.email)).digest()
         ).rstrip(b'=')

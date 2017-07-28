@@ -113,13 +113,15 @@ class Command(BaseCommand):
         users_dict = {}
         users = User.objects.filter(email__in=emails)
         missing_users_list = []
-        locale_translators_map = dict(Locale.objects.values_list('code', 'translators_group'))
+        locale_translators_map = dict(
+            Locale.objects.values_list('code', 'translators_group'))
         for u in users:
             users_dict[u.email] = u
 
             if 'base.can_translate_locale' not in u.get_all_permissions():
                 u.groups.add(locale_translators_map[locale])
-                self.stdout.write("Permission granted to user {} to locale: {}.".format(u.email, locale))
+                self.stdout.write(
+                    "Permission granted to user {} to locale: {}.".format(u.email, locale))
 
         if users:
             bulk_update(users)
@@ -143,7 +145,8 @@ class Command(BaseCommand):
 
             # Save date
             date = pootle_translation["date"].split("+")[0]
-            dateObj = timezone.make_aware(datetime.strptime(date, "%Y-%m-%d %H:%M:%S"))
+            dateObj = timezone.make_aware(
+                datetime.strptime(date, "%Y-%m-%d %H:%M:%S"))
             t.date = dateObj
             t.approved_date = dateObj
 
@@ -152,6 +155,7 @@ class Command(BaseCommand):
 
         missing_users = Counter(missing_users_list)
         for missing_user in missing_users.keys():
-            self.stdout.write("Pontoon user {} not found: {} translations.".format(missing_user, missing_users[missing_user]))
+            self.stdout.write("Pontoon user {} not found: {} translations.".format(
+                missing_user, missing_users[missing_user]))
 
         self.stdout.write("+++ Imported data from file {}.".format(filename))

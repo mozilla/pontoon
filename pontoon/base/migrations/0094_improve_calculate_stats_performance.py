@@ -18,6 +18,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterIndexTogether(
             name='translation',
-            index_together=set([('entity', 'locale', 'approved'), ('entity', 'locale', 'fuzzy')]),
+            index_together=set(
+                [('entity', 'locale', 'approved'), ('entity', 'locale', 'fuzzy')]),
         ),
     ]

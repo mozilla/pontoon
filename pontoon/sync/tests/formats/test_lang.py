@@ -105,7 +105,8 @@ class LangTests(FormatTestsMixin, TestCase):
         assert_equal(resource.children[1].content, '1 hash')
         assert_equal(resource.children[2].content, '2 hash')
         assert_equal(resource.children[3].content, '3 hash')
-        assert_equal(resource.translations[0].comments, ['1 hash', '2 hash', '3 hash'])
+        assert_equal(resource.translations[0].comments, [
+                     '1 hash', '2 hash', '3 hash'])
 
     def test_parse_eof(self):
         """Langfiles do not need to end in a newline."""

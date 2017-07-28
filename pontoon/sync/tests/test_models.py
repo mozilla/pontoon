@@ -17,7 +17,8 @@ class SyncLogTests(TestCase):
 
         # Create repo without existing log so sync is unfinished.
         repo = RepositoryFactory.create()
-        ProjectSyncLogFactory.create(sync_log=sync_log, project__repositories=[repo])
+        ProjectSyncLogFactory.create(
+            sync_log=sync_log, project__repositories=[repo])
 
         assert_is_none(sync_log.end_time)
 
@@ -76,7 +77,8 @@ class ProjectSyncLogTests(TestCase):
     def test_end_time_unfinished(self):
         """If a sync is unfinished, it's end_time is None."""
         repo = RepositoryFactory.create()
-        project_sync_log = ProjectSyncLogFactory.create(project__repositories=[repo])
+        project_sync_log = ProjectSyncLogFactory.create(
+            project__repositories=[repo])
         assert_is_none(project_sync_log.end_time)
 
     def test_end_time(self):
@@ -84,7 +86,8 @@ class ProjectSyncLogTests(TestCase):
         Return the latest end time among repo sync logs for this log.
         """
         project = ProjectFactory.create(repositories=[])
-        source_repo, repo1, repo2 = RepositoryFactory.create_batch(3, project=project)
+        source_repo, repo1, repo2 = RepositoryFactory.create_batch(
+            3, project=project)
         project_sync_log = ProjectSyncLogFactory.create(project=project)
 
         RepositorySyncLogFactory.create(project_sync_log=project_sync_log,
@@ -137,7 +140,8 @@ class ProjectSyncLogTests(TestCase):
 
     def test_finished(self):
         repo = RepositoryFactory.create()
-        project_sync_log = ProjectSyncLogFactory.create(project__repositories=[repo])
+        project_sync_log = ProjectSyncLogFactory.create(
+            project__repositories=[repo])
 
         # Sync isn't finished until all repos are finished.
         assert_false(project_sync_log.finished)

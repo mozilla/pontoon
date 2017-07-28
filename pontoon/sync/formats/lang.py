@@ -38,7 +38,8 @@ class LangEntity(VCSTranslation):
         super(LangEntity, self).__init__(
             key=source_string,  # Langfiles use the source as the key.
             source_string=source_string,
-            strings={None: translation_string},  # Langfiles lack plural support
+            # Langfiles lack plural support
+            strings={None: translation_string},
             comments=[],
             fuzzy=False,  # Langfiles don't support fuzzy status
         )
@@ -191,7 +192,8 @@ def parse(path, source_path=None, locale=None):
     try:
         children = LangVisitor().parse(content)
     except (ParsimoniousParseError, VisitationError) as err:
-        wrapped = ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
+        wrapped = ParseError(
+            u'Failed to parse {path}: {err}'.format(path=path, err=err))
         raise wrapped, None, sys.exc_info()[2]  # NOQA
 
     return LangResource(path, children)

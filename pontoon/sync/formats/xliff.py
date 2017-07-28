@@ -11,6 +11,7 @@ class XLIFFEntity(VCSTranslation):
     """
     Interface for modifying a single entity in an xliff file.
     """
+
     def __init__(self, order, unit):
         self.order = order
         self.unit = unit
@@ -80,6 +81,7 @@ class XLIFFEntity(VCSTranslation):
         # Clear unused state tag
         if target is not None and 'state' in target.attrib:
             del target.attrib["state"]
+
 
 class XLIFFResource(ParsedResource):
     def __init__(self, path, xliff_file):
