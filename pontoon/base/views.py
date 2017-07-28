@@ -492,7 +492,7 @@ def unapprove_translation(request):
     latest_translation = translation.entity.translation_set.filter(
         locale=translation.locale,
         plural_form=translation.plural_form,
-    ).latest('date').serialize()
+    ).order_by('-approved', 'rejected', 'date')[0].serialize()
     project = translation.entity.resource.project
     locale = translation.locale
     return JsonResponse({
@@ -535,6 +535,10 @@ def reject_translation(request):
     translation.approved_date = None
     translation.save()
 
+    latest_translation = translation.entity.translation_set.filter(
+        locale=translation.locale,
+        plural_form=translation.plural_form,
+    ).order_by('-approved', 'rejected', 'date')[0].serialize()
     project = translation.entity.resource.project
     locale = translation.locale
 
@@ -548,6 +552,7 @@ def reject_translation(request):
         translation.entity.mark_changed(locale)
 
     return JsonResponse({
+        'translation': latest_translation,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
@@ -582,7 +587,7 @@ def unreject_translation(request):
     latest_translation = translation.entity.translation_set.filter(
         locale=translation.locale,
         plural_form=translation.plural_form,
-    ).latest('date').serialize()
+    ).order_by('-approved', 'rejected', 'date')[0].serialize()
     project = translation.entity.resource.project
     locale = translation.locale
     return JsonResponse({

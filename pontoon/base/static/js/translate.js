@@ -2021,7 +2021,6 @@ var Pontoon = (function (my) {
               pf = self.getPluralForm(true);
 
           self.stats = data.stats;
-          self.updateProgress(entity);
 
           self.updateTranslation(entity, pf, data.translation);
 
@@ -2070,9 +2069,12 @@ var Pontoon = (function (my) {
             paths: self.getPartPaths(self.currentPart)
           },
           success: function(data) {
-            self.stats = data.stats;
             var entity = self.getEditorEntity();
-            self.updateProgress(entity);
+            var pf = self.getPluralForm(true);
+
+            self.stats = data.stats;
+
+            self.updateTranslation(entity, pf, data.translation);
 
             var item = button.parents('li');
             item.addClass('rejected').removeClass('translated');
@@ -2094,11 +2096,10 @@ var Pontoon = (function (my) {
             translation: translationId,
             paths: self.getPartPaths(self.currentPart)
          }).then(function(data) {
-           var entity = self.getEditorEntity(),
-               pf = self.getPluralForm(true);
+           var entity = self.getEditorEntity();
+           var pf = self.getPluralForm(true);
 
            self.stats = data.stats;
-           self.updateProgress(entity);
 
            self.updateTranslation(entity, pf, data.translation);
 
