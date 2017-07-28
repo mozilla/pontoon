@@ -654,7 +654,9 @@ def update_translation(request):
     if len(translations) > 0:
 
         # Same translation exists
-        same_translations = translations.filter(string=string).order_by('-approved', '-date')
+        same_translations = translations.filter(string=string).order_by(
+            '-approved', 'rejected', '-date'
+        )
         if len(same_translations) > 0:
             t = same_translations[0]
 
