@@ -1,0 +1,184 @@
+============
+Contributing
+============
+
+Bugs
+====
+
+All bugs are tracked in `<https://bugzilla.mozilla.org/>`_.
+
+Write up a new bug:
+
+https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon
+
+
+Docker
+======
+
+Everything runs in a Docker container. Thus Pontoon requires fewer things to get
+started and you're guaranteed to have the same setup as everyone else and it
+solves some other problems, too.
+
+If you're not familiar with `Docker <https://docs.docker.com/>`_ and
+`docker-compose <https://docs.docker.com/compose/overview/>`_, it's worth
+reading up on.
+
+
+Python code conventions
+=======================
+
+Python code should follow PEP-8.
+
+Max line length is 100 characters.
+
+4-space indentation.
+
+To run the linter, do::
+
+  $ pylama pontoon
+
+
+If you hit issues, use ``# noqa`` to make the linter ignore that error. Note that in most cases,
+it is better to fix the issues than ignoring them.
+
+
+Javascript code conventions
+===========================
+
+2-space indentation.
+
+
+Git conventions
+===============
+
+First line is a summary of the commit. It should start with one of the following::
+
+  Fixes bug XXXXXXX
+
+or::
+
+  Bug XXXXXXX
+
+
+The first, when it lands, will cause the bug to be closed. The second one does not.
+
+After that, the commit should explain *why* the changes are being made and any
+notes that future readers should know for context or be aware of.
+
+
+Pull requests
+=============
+
+Pull request summary should indicate the bug the pull request addresses.
+
+Pull request descriptions should cover at least some of the following:
+
+1. what is the issue the pull request is addressing?
+2. why does this pull request fix the issue?
+3. how should a reviewer review the pull request?
+4. what did you do to test the changes?
+5. any steps-to-reproduce for the reviewer to use to test the changes
+
+
+Code reviews
+============
+
+Pull requests should be reviewed before merging.
+
+Style nits should be covered by linting as much as possible.
+
+Code reviews should review the changes in the context of the rest of the system.
+
+
+Dependencies
+============
+
+Dependencies for production Pontoon are in ``requirements.txt``. Development dependencies are in
+``requirements-dev.txt``. They need to be pinned and hashed.
+Use `hashin <https://pypi.python.org/pypi/hashin>`_.
+
+For example, to add ``foobar`` version 5::
+
+  $ hashin -r requirements.txt foobar==5
+
+Then rebuild your docker environment::
+
+  $ make dockerbuild
+
+If there are problems, it'll tell you.
+
+
+Documentation
+=============
+
+Documentation for Pontoon is built with `Sphinx
+<http://www.sphinx-doc.org/en/stable/>`_ and is available on ReadTheDocs.
+
+Building docs is not covered with docker yet, so you will have to do it on your host. To make
+a virtualenv to build docs, do this:
+
+.. code-blocks:: shell
+
+    $ cd docs/
+    $ virtualenv venv
+    $ source venv/bin/activate
+    $ pip install --require-hashes -r requirements.txt
+
+Then, to build the docs, run this:
+
+.. code-block:: shell
+
+    $ make html
+
+The HTML documentation will be in `docs/_build/html/`. Try to open `docs/_build/html/index.html`
+for example.
+
+
+Running tests
+=============
+
+To run the tests, do::
+
+  $ make dockertest
+
+
+To run specific tests or specify arguments, you'll want to start a shell in the
+test container::
+
+  $ make dockershell
+
+
+Then you can run tests as you like.
+
+Running all the unittests (make sure you run ``./manage.py collectstatic`` first)::
+
+  app@...:/app$ ./manage.py test
+
+
+Running a directory of tests::
+
+  app@...:/app$ ./manage.py test pontoon/base/
+
+
+Running a file of tests::
+
+  app@...:/app$ ./manage.py test pontoon/base/tests/test_views.py
+
+
+Writing tests
+=============
+
+Put your tests in the ``tests/`` directory of the appropriate app in
+``pontoon/``.
+
+
+Mock usage
+----------
+
+`Mock <http://www.voidspace.org.uk/python/mock/>`_ is a python library for mocks
+objects. This allows us to write isolated tests by simulating services beside
+using the real ones. Best examples is existing tests which admittedly do mocking
+different depending on the context.
+
+Tip! Try to mock in limited context so that individual tests don't affect other
+tests. Use context managers instead of monkey patching imported modules.
