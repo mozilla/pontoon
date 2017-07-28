@@ -578,14 +578,13 @@ LOGGING = {
         },
         'pontoon': {
             'handlers': ['console'],
-            'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': os.environ.get('DJANGO_LOG_LEVEL', 'DEBUG' if DEBUG else 'INFO'),
         },
     }
 }
 
 if DEBUG:
     LOGGING['handlers']['console']['formatter'] = 'verbose'
-
 
 if os.environ.get('DJANGO_SQL_LOG', False):
     LOGGING['loggers']['django.db.backends'] = {
