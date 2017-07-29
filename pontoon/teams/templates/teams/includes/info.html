@@ -1,23 +1,36 @@
-{% if request.user.has_perm('base.can_manage_locale', locale) %}
-<a class="edit-info" href=""><i class="fa fa-wrench fa-fw"></i></a>
-{% endif %}
-<div class="read-only-info">
-{% if locale.team_description %}
-  <div class="info">{{ locale.team_description|safe }}</div>
-{% else %}
-  <p class="no-results">No team info available.</p>
-{% endif %}
-</div>
-{% if request.user.has_perm('base.can_manage_locale', locale) %}
-<div class="editable-info hidden"
-     data-url="{{ url('pontoon.teams.ajax.update-info', locale.code) }}"
-     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}>
+<div id="info-wrapper">
+  {% if request.user.has_perm('base.can_manage_locale', locale) %}
+  <div class="controls">
+    <a class="edit-info button" href="#"><span class="fa fa-pencil"></span>Edit</a>
+  </div>
+  {% endif %}
 
-  <textarea class="editing-info" rows="20"/>
-  <div class="controls clearfix">
-    <button class="button active save info">Save project</button>
-    <a href="" class="cancel">Cancel</a>
+  <div class="read-only-info">
+    <div class="info">
+    {% if locale.team_description %}
+      {{ locale.team_description|safe }}
+    {% else %}
+      <p class="no-results">No team info available.</p>
+    {% endif %}
+    </div>
   </div>
 
+  {% if request.user.has_perm('base.can_manage_locale', locale) %}
+  <div class="read-write-info hidden"
+       data-url="{{ url('pontoon.teams.ajax.update-info', locale.code) }}"
+       {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}>
+
+    <textarea rows="10" />
+    <div class="toolbar clearfix">
+      <div class="subtitle">
+        <p>Supports html</p>
+      </div>
+    </div>
+
+    <div class="controls clearfix">
+      <a href="#" class="cancel">Cancel</a>
+      <button class="button active save">Save</button>
+    </div>
+  </div>
+  {% endif %}
 </div>
-{% endif %}

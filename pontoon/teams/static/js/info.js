@@ -4,35 +4,45 @@ $(function() {
 
   container.on('click', '.edit-info', function(e) {
     e.preventDefault();
-    var infobox = $(".info");
-    var content = infobox.html();
-    var text_area = $(".editable-info textarea").val(content);
-    $(".edit-info").hide();
-    $(".read-only-info").hide();
-    $(".editable-info").toggleClass("hidden");
-    text_area.focus();
+    var infoBox = container.find('.info');
+    var content = infoBox.html();
+    var textArea = $('.read-write-info textarea').val($.trim(content));
+    $('.edit-info').hide();
+    $('.read-only-info').hide();
+    $('.read-write-info').toggleClass('hidden');
+    textArea.focus();
+  });
+
+  container.on('click', '.cancel', function(e) {
+    e.preventDefault();
+    $('.edit-info').show();
+    $('.read-only-info').show();
+    $('.read-write-info').toggleClass('hidden');
     return false;
   });
-  container.on('click', '.save.info', function(e) {
-    var text_area = $(".editable-info textarea");
-    var content = text_area.val();
+
+  container.on('click', '.save', function(e) {
+    var textArea = $('.read-write-info textarea');
+    var content = textArea.val();
     $.ajax({
-      url: text_area.parent().data('url'),
-      method: 'POST',
-      beforeSend: function(xhr) {
-        xhr.setRequestHeader("X-CSRFToken", text_area.parent().data('csrf'));
+      url: textArea.parent().data('url'),
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: textArea.parent().data('csrf'),
+        team_info: content
       },
-      data: content,
-      dataType: "text",
+      success: function(data) {
+        container.find('.info').html(data);
+        $('.read-write-info').toggleClass('hidden');
+        $('.edit-info').show();
+        $('.read-only-info').show();
+        Pontoon.endLoader('Team info saved.');
+      },
+      error: function(request) {
+        Pontoon.endLoader(request.responseText, 'error');
+      }
     })
-      .done(function(jqXHR) {
-        $(".info").html(jqXHR.responseText);
-        $(".editable-info").toggleClass("hidden");
-        $(".edit-info").show();
-        $(".read-only-info").show();
-      })
-      .fail(function(jqXHR) {
-        $(".editable-info textarea").val(jqXHR.responseText);
-      });
+    return false;
   });
+
 });
