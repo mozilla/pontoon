@@ -1,9 +1,12 @@
 # -*- coding: utf8 -*-
 from __future__ import absolute_import
+
 import logging
 import os
 import scandir
 import subprocess
+
+from six import text_type
 
 from django.conf import settings
 
@@ -47,13 +50,13 @@ class PullFromGit(PullFromRepository):
         code, output, error = execute(command, target)
 
         if code != 0:
-            log.info("Git: " + unicode(error))
+            log.info("Git: " + text_type(error))
             log.debug("Git: Clone instead.")
             command = ["git", "clone", source, target]
             code, output, error = execute(command)
 
             if code != 0:
-                raise PullFromRepositoryException(unicode(error))
+                raise PullFromRepositoryException(text_type(error))
 
             log.debug("Git: Repository at " + source + " cloned.")
         else:
@@ -64,7 +67,7 @@ class PullFromGit(PullFromRepository):
             code, output, error = execute(command, target)
 
             if code != 0:
-                raise PullFromRepositoryException(unicode(error))
+                raise PullFromRepositoryException(text_type(error))
 
             log.debug("Git: Branch " + branch + " checked out.")
 
@@ -88,7 +91,7 @@ class PullFromHg(PullFromRepository):
             log.debug("Mercurial: Repository at " + source + " cloned.")
 
         else:
-            raise PullFromRepositoryException(unicode(error))
+            raise PullFromRepositoryException(text_type(error))
 
 
 class PullFromSvn(PullFromRepository):
@@ -111,7 +114,7 @@ class PullFromSvn(PullFromRepository):
         code, output, error = execute(command, env=get_svn_env())
 
         if code != 0:
-            raise PullFromRepositoryException(unicode(error))
+            raise PullFromRepositoryException(text_type(error))
 
         log.debug("Subversion: Repository at " + source + " %s." % status)
 
@@ -158,7 +161,7 @@ class CommitToGit(CommitToRepository):
         commit = git_cmd + ['commit', '-m', message, '--author', author]
         code, output, error = execute(commit, path)
         if code != 0 and len(error):
-            raise CommitToRepositoryException(unicode(error))
+            raise CommitToRepositoryException(text_type(error))
 
         # Push
         push_target = 'HEAD'
@@ -168,7 +171,7 @@ class CommitToGit(CommitToRepository):
         push = ["git", "push", self.url, push_target]
         code, output, error = execute(push, path)
         if code != 0:
-            raise CommitToRepositoryException(unicode(error))
+            raise CommitToRepositoryException(text_type(error))
 
         if 'Everything up-to-date' in error:
             return self.nothing_to_commit()
@@ -194,7 +197,7 @@ class CommitToHg(CommitToRepository):
         commit = ["hg", "commit", "-m", message, "-u", author]
         code, output, error = execute(commit, path)
         if code != 0 and len(error):
-            raise CommitToRepositoryException(unicode(error))
+            raise CommitToRepositoryException(text_type(error))
 
         # Push
         push = ["hg", "push"]
@@ -203,7 +206,7 @@ class CommitToHg(CommitToRepository):
             return self.nothing_to_commit()
 
         if code != 0 and len(error):
-            raise CommitToRepositoryException(unicode(error))
+            raise CommitToRepositoryException(text_type(error))
 
         log.info(message)
 
@@ -290,7 +293,7 @@ class VCSRepository(object):
         code, output, error = execute(cmd, cwd=cwd, env=env)
         if log_errors and code != 0:
             log.error('Error while executing command `{cmd}` in `{cwd}`: {stderr}'.format(
-                cmd=unicode(cmd), cwd=cwd, stderr=error
+                cmd=text_type(cmd), cwd=cwd, stderr=error
             ))
         return code, output, error
 

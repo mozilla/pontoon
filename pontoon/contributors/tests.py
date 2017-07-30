@@ -5,6 +5,7 @@ from datetime import (
 )
 from mock import patch
 from random import randint
+from six.moves import range
 
 from django.http import HttpResponse
 from django.utils.timezone import now, make_aware
@@ -145,7 +146,7 @@ class ContributorTimelineViewTests(UserTestCase):
         self.project = ProjectFactory.create()
         self.translations = OrderedDict()
 
-        for i in xrange(26):
+        for i in range(26):
             date = make_aware(datetime(2016, 12, 1) - timedelta(days=i))
             translations_count = randint(1, 3)
             self.translations.setdefault((date, translations_count), []).append(

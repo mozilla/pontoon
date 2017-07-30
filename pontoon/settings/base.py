@@ -538,7 +538,7 @@ STATICFILES_FINDERS = (
 # Set ALLOWED_HOSTS based on SITE_URL setting.
 def _allowed_hosts():
     from django.conf import settings
-    from urlparse import urlparse
+    from six.moves.urllib.parse import urlparse
 
     host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
     host = host.rsplit(':', 1)[0]  # Remove port
