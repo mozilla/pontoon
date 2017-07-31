@@ -2081,7 +2081,7 @@ var Pontoon = (function (my) {
                   // Make newest alternative translation active
                   if (next.length) {
                     next.click();
-                    var newTranslation = $('#translation').val();
+                    var newTranslation = self.fluent.serializeTranslation(entity, $('#translation').val());
 
                     if (entity.body && pluralForm === 0) {
                       self.postMessage("SAVE", {
