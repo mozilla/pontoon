@@ -55,7 +55,7 @@ class UserTranslationsManager(UserManager):
         """
         translation_query = (
             ~Q(translation__string=F('translation__entity__string')) &
-            ~Q(translation__string=F('translation__entity__string_plural')) &
+            ~Q(translation__string=F('translation__entity__string_plural')) &  # noqa
             Q(translation__user__isnull=False)
         )
         for arg in args:

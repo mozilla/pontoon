@@ -6,7 +6,6 @@ from datetime import datetime
 from django.utils import timezone
 
 import polib
-import sys
 
 from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.exceptions import ParseError
@@ -88,7 +87,9 @@ class POResource(ParsedResource):
                     '%Y-%m-%d %H:%M%z'
                 )
             if latest_translation.last_translator:
-                metadata['Last-Translator'] = latest_translation.last_translator.display_name_and_email
+                metadata['Last-Translator'] = (
+                    latest_translation.last_translator.display_name_and_email
+                )
 
         metadata.update({
             'Language': locale.code.replace('-', '_'),
@@ -107,7 +108,6 @@ def parse(path, source_path=None, locale=None):
     try:
         pofile = polib.pofile(path, wrapwidth=200)
     except IOError as err:
-        wrapped = ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
-        raise wrapped, None, sys.exc_info()[2]
+        raise ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
 
     return POResource(pofile)
