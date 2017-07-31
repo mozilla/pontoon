@@ -47,9 +47,12 @@ var Pontoon = (function (my) {
             var variants = translation_ast.value.elements[0].variants;
           }
 
+          if (!Pontoon.locale.examples) {
+            Pontoon.generateLocalePluralExamples();
+          }
+
           $.each(pluralForms, function(pluralForm) {
-            var value = '',
-                example = pluralForm === 3 ? 5 : pluralForm + 1;
+            var value = '';
 
             if (translation_ast) {
               for (var i = 0; i < variants.length; i++) {
@@ -64,7 +67,7 @@ var Pontoon = (function (my) {
               .append(
                 '<li class="clearfix">' +
                   '<label class="id built-in" for="ftl-id-' + this + '">' +
-                    '<span>' + this + ' (e.g. </span><span class="stress">' + example + '</span>)<sub class="fa fa-remove remove" title="Remove"></sub>' +
+                    '<span>' + this + ' (e.g. </span><span class="stress">' + Pontoon.locale.examples[pluralForm] + '</span>)<sub class="fa fa-remove remove" title="Remove"></sub>' +
                   '</label>' +
                   '<input class="value" id="ftl-id-' + this + '" type="text" value="' + value + '">' +
                 '</li>');
