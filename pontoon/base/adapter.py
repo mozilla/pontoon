@@ -37,7 +37,7 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         except User.DoesNotExist:
             return
 
-        if not 'fxa' in [sa.provider for sa in user.socialaccount_set.all()]:
+        if 'fxa' not in [sa.provider for sa in user.socialaccount_set.all()]:
             messages.success(
                 request,
                 'Your Persona account and Firefox Account have been connected.'

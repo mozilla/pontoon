@@ -84,7 +84,7 @@ def heroku_setup(request):
     Site.objects.filter(pk=1).update(name=app_host, domain=app_host)
 
     Project.objects.filter(slug='pontoon-intro').update(
-       url='https://{}/intro/'.format(app_host)
+        url='https://{}/intro/'.format(app_host)
     )
 
     # Clear the cache to ensure that SITE_URL will be regenerated.
@@ -364,7 +364,7 @@ def batch_edit_translations(request):
         key = (changed_entity.pk, locale.pk)
 
         # Remove duplicate changes to prevent unique constraint violation
-        if not key in existing:
+        if key not in existing:
             changed_entities_array.append(
                 ChangedEntityLocale(entity=changed_entity, locale=locale)
             )
@@ -468,9 +468,9 @@ def unapprove_translation(request):
     translation = Translation.objects.get(pk=t)
 
     # Only privileged users or authors can un-approve translations
-    if not (request.user.can_translate(project=translation.entity.resource.project, locale=translation.locale)
-            or request.user == translation.user
-            or translation.approved):
+    if not (request.user.can_translate(project=translation.entity.resource.project, locale=translation.locale) or
+            request.user == translation.user or
+            translation.approved):
         return HttpResponseForbidden("Forbidden: You can't unapprove this translation.")
 
     translation.unapprove(request.user)
@@ -569,8 +569,8 @@ def update_translation(request):
 
     now = timezone.now()
     can_translate = (
-        request.user.can_translate(project=project, locale=l)
-        and (not force_suggestions or approve)
+        request.user.can_translate(project=project, locale=l) and
+        (not force_suggestions or approve)
     )
     translations = Translation.objects.filter(
         entity=e, locale=l, plural_form=plural_form)

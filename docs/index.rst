@@ -30,6 +30,7 @@ Contents
 
    dev/install
    dev/install-docker
+   dev/contributing
    dev/fluent
    dev/workflow
    dev/sync

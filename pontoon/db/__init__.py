@@ -16,6 +16,7 @@ class IContainsCollate(IContains):
     Reference bug:
     https://bugzilla.mozilla.org/show_bug.cgi?id=1346180
     """
+
     def __init__(self, lhs, rhs):
         if len(rhs) == 2 and not isinstance(rhs, basestring):
             rhs, self.collation = rhs
@@ -35,5 +36,6 @@ class IContainsCollate(IContains):
         if self.collation:
             return value.replace('%s', '%s COLLATE "{}"'.format(self.collation))
         return value
+
 
 Field.register_lookup(IContainsCollate, lookup_name='icontains_collate')

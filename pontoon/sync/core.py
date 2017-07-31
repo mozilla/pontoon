@@ -50,8 +50,10 @@ def serial_task(timeout, lock_key="", on_error=None, **celery_args):
             lock_name = "serial_task.{}[{}]".format(self.name, lock_key.format(*args, **kwargs))
             # Acquire the lock
             if not cache.add(lock_name, True, timeout=timeout):
-                error = RuntimeError("Can't execute task '{}' because the previously called"
-                    " task is still running.".format(lock_name))
+                error = RuntimeError(
+                    "Can't execute task '{}' because the previously called "
+                    "task is still running.".format(lock_name)
+                )
                 if callable(on_error):
                     on_error(error, *args, **kwargs)
                 raise error
@@ -164,10 +166,12 @@ def get_vcs_entities(vcs_project):
 
 
 def get_changed_entities(db_project, changed_resources):
-    entities = (Entity.objects
-            .select_related('resource')
-            .prefetch_related('changed_locales')
-            .filter(resource__project=db_project, obsolete=False))
+    entities = (
+        Entity.objects
+        .select_related('resource')
+        .prefetch_related('changed_locales')
+        .filter(resource__project=db_project, obsolete=False)
+    )
 
     if changed_resources is not None:
         entities = entities.filter(resource__path__in=changed_resources)
