@@ -301,11 +301,26 @@ var Pontoon = (function (my) {
         }
 
         var content = entity.key + translation,
-            ast = fluentParser.parseEntry(content);
+            ast = fluentParser.parseEntry(content),
+            entityAst = fluentParser.parseEntry(entity.original),
+            error = null;
 
+        // Parse error
         if (ast.type === 'Junk') {
+          error = ast.annotations[0].message;
+
+        // TODO: Should be removed by bug 1237667
+        // Detect missing values
+        } else if (entityAst && ast && entityAst.value && !ast.value) {
+          error = "Please make sure to fill in the value";
+        // Detect missing attributes
+        } else if (entityAst.attributes && ast.attributes && entityAst.attributes.length !== ast.attributes.length) {
+          error = "Please make sure to fill in all the attributes";
+        }
+
+        if (error) {
           return {
-            error: ast.annotations[0].message
+            error: error
           };
         }
 
