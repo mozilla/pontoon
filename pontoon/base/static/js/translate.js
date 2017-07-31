@@ -485,6 +485,30 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Get example number for each plural form based on locale plural rule
+     */
+    generateLocalePluralExamples: function () {
+      var self = this;
+      var examples = self.locale.examples = {};
+      var nplurals = self.locale.nplurals;
+      var n = 0;
+
+      if (nplurals === 2) {
+        examples = {0: 1, 1: 2};
+
+      } else {
+        while (Object.keys(examples).length < nplurals) {
+          var rule = eval(self.locale.plural_rule);
+          if (!examples[rule]) {
+            examples[rule] = n;
+          }
+          n++;
+        }
+      }
+    },
+
+
+    /*
      * Open translation editor in the main UI
      *
      * entity Entity
@@ -572,29 +596,13 @@ var Pontoon = (function (my) {
 
         var nplurals = this.locale.nplurals;
         if (nplurals > 1) {
-
-          // Get example number for each plural form based on locale plural rule
           if (!this.locale.examples) {
-            var examples = this.locale.examples = {},
-                n = 0;
-
-            if (nplurals === 2) {
-              examples = {0: 1, 1: 2};
-
-            } else {
-              while (Object.keys(examples).length < nplurals) {
-                var rule = eval(this.locale.plural_rule);
-                if (!examples[rule]) {
-                  examples[rule] = n;
-                }
-                n++;
-              }
-            }
+            self.generateLocalePluralExamples();
 
             $.each(this.locale.cldr_plurals, function(i) {
               $('#plural-tabs li:eq(' + i + ') a')
                 .find('span').html(self.CLDR_PLURALS[this]).end()
-                .find('sup').html(examples[i]);
+                .find('sup').html(self.locale.examples[i]);
             });
           }
           $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
