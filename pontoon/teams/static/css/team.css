@@ -135,6 +135,7 @@
   bottom: 25px;
   font-size: 13px;
   font-style: normal;
+  letter-spacing: 0;
   position: absolute;
   right: 0;
 }
