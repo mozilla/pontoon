@@ -261,7 +261,7 @@ var Pontoon = (function (my) {
 
           // Plurals
           if (entity.isFTLplural) {
-            value = '{ ' + '$num ->';
+            value = '';
             var variants = $('#ftl-area .main-value li:visible');
 
             variants.each(function(i) {
@@ -274,7 +274,9 @@ var Pontoon = (function (my) {
               }
             });
 
-            value += '\n  }';
+            if (value) {
+              value = '{ $num ->' + value + '\n  }';
+            }
           }
 
           // Attributes
