@@ -53,7 +53,7 @@ Git conventions
 
 First line is a summary of the commit. It should start with one of the following::
 
-  Fixes bug XXXXXXX
+  Fix bug XXXXXXX
 
 or::
 
@@ -64,6 +64,17 @@ The first, when it lands, will cause the bug to be closed. The second one does n
 
 After that, the commit should explain *why* the changes are being made and any
 notes that future readers should know for context or be aware of.
+
+We follow `The seven rules of a great Git commit message <https://chris.beams.io/posts/git-commit/#seven-rules>`_:
+
+1. Separate subject from body with a blank line
+2. Limit the subject line to 50 characters
+3. Capitalize the subject line
+4. Do not end the subject line with a period
+5. Use the imperative mood in the subject line
+6. Wrap the body at 72 characters
+7. Use the body to explain what and why vs. how
+
 
 
 Pull requests
