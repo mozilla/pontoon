@@ -43,9 +43,23 @@ var Pontoon = (function (my) {
             }
           ).get();
 
-          $.each(pluralForms, function(i) {
-            var example = i === 3 ? 5 : i+1,
-                value = isTranslated ? self.serializePlaceables(translation_ast.value.elements[0].variants[i].value.elements) : '';
+          if (translation_ast) {
+            var variants = translation_ast.value.elements[0].variants;
+          }
+
+          $.each(pluralForms, function(pluralForm) {
+            var value = '',
+                example = pluralForm === 3 ? 5 : pluralForm + 1;
+
+            if (translation_ast) {
+              for (var i = 0; i < variants.length; i++) {
+                if (variants[i].key.name === this.toString()) {
+                  value = self.serializePlaceables(variants[i].value.elements);
+                  break;
+                }
+              }
+            }
+
             $('#ftl-area .main-value ul')
               .append(
                 '<li class="clearfix">' +
