@@ -78,7 +78,7 @@ var Pontoon = (function (my) {
 
         // Main Value
         } else if (translation_ast && translation_ast.value) {
-          $('#ftl-area > .main-value #entity-value').val(translation_ast.value.elements[0].value);
+          $('#ftl-area > .main-value #entity-value').val(self.serializePlaceables(translation_ast.value.elements));
         }
 
         // Attributes
@@ -88,7 +88,7 @@ var Pontoon = (function (my) {
 
         $.each(attributes, function() {
           id = this.id.name;
-          value = isTranslated ? this.value.elements[0].value : '';
+          value = isTranslated ? self.serializePlaceables(this.value.elements) : '';
 
           var maxlength = label = input = cls = '';
 
