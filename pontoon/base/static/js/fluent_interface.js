@@ -298,8 +298,16 @@ var Pontoon = (function (my) {
           translation = ' = ' + translation;
         }
 
-        var content = entity.key + translation;
-        return fluentSerializer.serializeEntry(fluentParser.parseEntry(content));
+        var content = entity.key + translation,
+            ast = fluentParser.parseEntry(content);
+
+        if (ast.type === 'Junk') {
+          return {
+            error: ast.annotations[0].message
+          };
+        }
+
+        return fluentSerializer.serializeEntry(ast);
       },
 
 

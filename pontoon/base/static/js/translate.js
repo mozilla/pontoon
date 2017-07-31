@@ -1598,6 +1598,16 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Remove event first to avoid double handling
+     */
+    reattachSaveButtonHandler: function () {
+      $('#save, #save-anyway')
+        .off('click.save')
+        .on('click.save', this.saveTranslation);
+    },
+
+
+    /*
      * Submit translation to DB
      */
     saveTranslation: function (e) {
@@ -2594,6 +2604,13 @@ var Pontoon = (function (my) {
         self.XHRupdateOnServer.abort();
       }
 
+      // If Fluent translation contains error, display it and abort
+      var serializedTranslation = self.fluent.serializeTranslation(entity, translation);
+      if (serializedTranslation.error) {
+        self.endLoader(serializedTranslation.error, 'error', 5000);
+        return self.reattachSaveButtonHandler();
+      }
+
       self.XHRupdateOnServer = $.ajax({
         url: '/update/',
         type: 'POST',
@@ -2601,7 +2618,7 @@ var Pontoon = (function (my) {
           csrfmiddlewaretoken: $('#server').data('csrf'),
           locale: self.locale.code,
           entity: entity.pk,
-          translation: self.fluent.serializeTranslation(entity, translation),
+          translation: serializedTranslation,
           plural_form: submittedPluralForm,
           original: entity['original' + self.isPluralized()],
           ignore_check: $('#quality').is(':visible') || !syncLocalStorage || entity.format === 'ftl',
@@ -2641,8 +2658,7 @@ var Pontoon = (function (my) {
           }
         },
         complete: function(e) {
-          // Remove event first to avoid double handling
-          $('#save, #save-anyway').off('click.save').on('click.save', self.saveTranslation);
+          self.reattachSaveButtonHandler();
         }
       });
     },
