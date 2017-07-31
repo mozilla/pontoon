@@ -262,17 +262,27 @@ var Pontoon = (function (my) {
           // Plurals
           if (entity.isFTLplural) {
             value = '';
-            var variants = $('#ftl-area .main-value li:visible');
+            var variants = $('#ftl-area .main-value li:visible'),
+                nonEmptyVariants = [],
+                def = '';
 
             variants.each(function(i) {
               var id = $(this).find('.id span:first').html().split(' ')[0],
-                  val = $(this).find('.value').val(),
-                  def = (i === (variants.length - 1)) ? '*' : '';
+                  val = $(this).find('.value').val();
 
               if (id && val) {
-                value += '\n  ' + def + '[' + id + '] ' + val;
+                nonEmptyVariants.push('[' + id + '] ' + val);
               }
             });
+
+            for (var i = 0; i < nonEmptyVariants.length; i++) {
+              // Mark the last variant as default
+              // TODO: Should be removed by bug 1237667
+              if (i === nonEmptyVariants.length - 1) {
+                def = '*';
+              }
+              value += '\n  ' + def + nonEmptyVariants[i];
+            }
 
             if (value) {
               value = '{ $num ->' + value + '\n  }';
