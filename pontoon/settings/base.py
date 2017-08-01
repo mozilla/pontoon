@@ -728,6 +728,18 @@ MICROSOFT_TERMINOLOGY_LOCALES = [
     'vi-vn', 'wo-sn', 'xh-za', 'yo-ng', 'zh-cn', 'zh-hk', 'zh-tw', 'zu-za',
 ]
 
+# Bleach tags and attributes
+ALLOWED_TAGS = [
+    'a', 'abbr', 'acronym', 'b', 'blockquote', 'br', 'code', 'em', 'i',
+    'li', 'ol', 'p', 'strong', 'ul',
+]
+
+ALLOWED_ATTRIBUTES = {
+    'a': ['href', 'title', 'target'],
+    'abbr': ['title'],
+    'acronym': ['title'],
+}
+
 # Contributors to exclude from Top Contributors list
 EXCLUDE = os.environ.get('EXCLUDE', '').split(',')
 

@@ -83,16 +83,9 @@ def ajax_info(request, locale):
 @transaction.atomic
 def ajax_update_info(request, locale):
     team_description = request.POST.get('team_info', None)
-
-    # Allow <p> and <br> tags
-    tags = bleach.ALLOWED_TAGS
-    tags.extend(('br', 'p'))
-
-    # Allow <a target=""> attribute
-    attrs = bleach.ALLOWED_ATTRIBUTES
-    attrs['a'].append('target')
     team_description = bleach.clean(
-        team_description, tags=tags, attributes=attrs, strip=True
+        team_description, strip=True,
+        tags=settings.ALLOWED_TAGS, attributes=settings.ALLOWED_ATTRIBUTES
     )
     l = get_object_or_404(Locale, code=locale)
     l.team_description = team_description
