@@ -1080,7 +1080,7 @@ class TranslationTests(TestCase):
             locale=translation.locale
         )
 
-    def test_unapproved_translation_in_memory(self):
+    def test_unapproved_translation_not_in_memory(self):
         """
         Unapproved translation shouldn't be in the translation memory.
         """
@@ -1092,20 +1092,13 @@ class TranslationTests(TestCase):
                 locale=translation.locale
             )
 
-    def test_deleted_translation_not_in_memory(self):
+    def test_rejected_translation_not_in_memory(self):
         """
         When translation is deleted, its corresponding TranslationMemoryEntry
         needs to be deleted, too.
         """
-        translation = TranslationFactory.create(approved=True)
-        assert TranslationMemoryEntry.objects.get(
-            source=translation.entity.string,
-            target=translation.string,
-            locale=translation.locale
-        )
-
-        translation.delete()
-        with self.assertRaises(TranslationMemoryEntry.DoesNotExist):
+        translation = TranslationFactory.create(rejected=True)
+        with assert_raises(TranslationMemoryEntry.DoesNotExist):
             TranslationMemoryEntry.objects.get(
                 source=translation.entity.string,
                 target=translation.string,

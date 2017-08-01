@@ -2148,20 +2148,6 @@ class Translation(DirtyFieldsMixin, models.Model):
         TranslationMemoryEntry.objects.filter(translation=self).delete()
         self.entity.mark_changed(self.locale)
 
-    def delete(self, stats=True, *args, **kwargs):
-        TranslationMemoryEntry.objects.filter(translation=self).delete()
-
-        super(Translation, self).delete(*args, **kwargs)
-
-        if stats:
-            TranslatedResource.objects.get(resource=self.entity.resource, locale=self.locale).calculate_stats()
-
-        # Mark entity as changed before deleting. This is skipped during
-        # bulk delete operations, but we shouldn't be bulk-deleting
-        # translations anyway.
-        if self.approved:
-            self.entity.mark_changed(self.locale)
-
     def serialize(self):
         return {
             'pk': self.pk,

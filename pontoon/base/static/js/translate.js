@@ -2077,7 +2077,7 @@ var Pontoon = (function (my) {
             self.updateTranslation(entity, pf, data.translation);
 
             var item = button.parents('li');
-            item.addClass('rejected').removeClass('translated');
+            item.addClass('rejected').removeClass('translated suggested fuzzy');
             item.find('.unapprove').removeClass('unapprove').addClass('approve').prop('title', 'Approve');
             button.addClass('unreject').removeClass('reject').prop('title', 'Unreject');
           },
@@ -2103,7 +2103,7 @@ var Pontoon = (function (my) {
 
            self.updateTranslation(entity, pf, data.translation);
 
-           $('#translation').val(data.translation.string).focus();
+           self.updateAndFocusTranslationEditor(data.translation.string);
            self.updateCachedTranslation();
            self.updateCurrentTranslationLength();
 

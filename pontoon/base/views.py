@@ -306,18 +306,28 @@ def batch_edit_translations(request):
         return count, translated_resources, changed_entities
 
     if action == 'approve':
-        translations = translations.filter(approved=False)
-        changed_translation_pks = list(translations.values_list('pk', flat=True))
+        approved = translations.filter(approved=False)
+        changed_translation_pks = list(approved.values_list('pk', flat=True))
         if changed_translation_pks:
-            latest_translation_pk = translations.last().pk
-        count, translated_resources, changed_entities = get_translations_info(translations)
-        translations.update(
+            latest_translation_pk = approved.last().pk
+        count, translated_resources, changed_entities = get_translations_info(approved)
+        approved.update(
             approved=True,
             approved_user=request.user,
             approved_date=timezone.now(),
             rejected=False,
             rejected_user=None,
             rejected_date=None,
+            fuzzy=False,
+        )
+
+        # Reject all other non-rejected translations.
+        suggestions = translations.filter(approved=False, rejected=False)
+        suggestions.update(
+            rejected=True,
+            rejected_user=request.user,
+            rejected_date=timezone.now(),
+            fuzzy=False,
         )
 
     elif action == 'reject':
@@ -530,9 +540,12 @@ def reject_translation(request):
             )
 
     translation.rejected = True
+    translation.rejected_user = request.user
+    translation.rejected_date = timezone.now()
     translation.approved = False
     translation.approved_user = None
     translation.approved_date = None
+    translation.fuzzy = False
     translation.save()
 
     latest_translation = translation.entity.translation_set.filter(
