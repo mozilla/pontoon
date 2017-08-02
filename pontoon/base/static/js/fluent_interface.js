@@ -209,6 +209,9 @@ var Pontoon = (function (my) {
         var self = this,
             entity = Pontoon.getEditorEntity();
 
+        $('#original').show();
+        $('#ftl-original').hide();
+
         if (entity.format !== 'ftl') {
           return;
         }
@@ -255,10 +258,6 @@ var Pontoon = (function (my) {
 
           renderOriginal(ast);
           $('#ftl-original .main-value ul').append(original);
-
-        } else {
-          $('#original').show();
-          $('#ftl-original').hide();
         }
       },
 
