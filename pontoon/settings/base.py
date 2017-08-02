@@ -402,6 +402,7 @@ PIPELINE_JS = {
     },
     'localization': {
         'source_filenames': (
+            'js/fluent_interface.js',
             'js/table.js',
             'js/progress-chart.js',
             'js/tabs.js',
@@ -410,6 +411,7 @@ PIPELINE_JS = {
     },
     'project': {
         'source_filenames': (
+            'js/fluent_interface.js',
             'js/table.js',
             'js/progress-chart.js',
             'js/tabs.js',
@@ -421,6 +423,7 @@ PIPELINE_JS = {
     },
     'projects': {
         'source_filenames': (
+            'js/fluent_interface.js',
             'js/table.js',
             'js/progress-chart.js',
         ),
@@ -428,6 +431,7 @@ PIPELINE_JS = {
     },
     'team': {
         'source_filenames': (
+            'js/fluent_interface.js',
             'js/table.js',
             'js/progress-chart.js',
             'js/bugzilla.js',
@@ -440,6 +444,7 @@ PIPELINE_JS = {
     },
     'teams': {
         'source_filenames': (
+            'js/fluent_interface.js',
             'js/table.js',
             'js/progress-chart.js',
         ),
