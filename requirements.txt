@@ -24,8 +24,8 @@ pbr==1.6.0 \
     --hash=sha256:6d0f47c050cced1d9abfc89a937ad06870a2974fda31ec0adfcafc2600b947ce
 funcsigs==0.4 \
     --hash=sha256:ff5ad9e2f8d9e5d1e8bbfbcf47722ab527cf0d51caeeed9da6d0f40799383fde
-oauthlib==0.1.3 \
-    --hash=sha256:6066c9c0ab07953f98870bc97d29f6defd066b6c215de74b9976666f3f6c3d40
+oauthlib==2.0.2 \
+    --hash=sha256:b3b9b47f2a263fe249b5b48c4e25a5bce882ff20a0ac34d553ce43cff55b53ac
 polib==1.0.6 \
     --hash=sha256:b1ea141d58ed5e48aed2674f7c894dfb83f639c3286d7b32b2e19fa032a5b400 \
     --hash=sha256:20d2a0d589a692c11df549bd7cda83c665eef2a83e017b843fecdf956edbad74
@@ -38,8 +38,6 @@ https://github.com/projectfluent/python-fluent/archive/fca7345.zip#egg=fluent==0
 requests==2.6.2 \
     --hash=sha256:8f0f56813f82d0c27d9578221268ac9af48f076c71ee69693305ceca6ca355bd \
     --hash=sha256:0577249d4b6c4b11fd97c28037e98664bfaa0559022fee7bcef6b752a106e505
-rsa==3.1.4 \
-    --hash=sha256:e2b0b05936c276b1edd2e1525553233b666df9e29b5c3ba223eed738277c82a0
 https://github.com/mathjazz/silme/archive/v0.9.3.zip#egg=silme==0.9.3 \
     --hash=sha256:9aa618f068ed71ecc8820dd7538aa39e499ed4ce61a0074edbcfcf1008da1d1c
 https://github.com/jbalogh/test-utils/archive/e42e031.zip#egg=test-utils \
