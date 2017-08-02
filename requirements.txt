@@ -38,9 +38,6 @@ https://github.com/projectfluent/python-fluent/archive/fca7345.zip#egg=fluent==0
 requests==2.6.2 \
     --hash=sha256:8f0f56813f82d0c27d9578221268ac9af48f076c71ee69693305ceca6ca355bd \
     --hash=sha256:0577249d4b6c4b11fd97c28037e98664bfaa0559022fee7bcef6b752a106e505
-rsa==3.4.2 \
-    --hash=sha256:43f682fea81c452c98d09fc316aae12de6d30c4b5c84226642cf8f8fd1c93abd \
-    --hash=sha256:25df4e10c263fb88b5ace923dd84bf9aa7f5019687b5e55382ffcdb8bede9db5
 https://github.com/mathjazz/silme/archive/v0.9.3.zip#egg=silme==0.9.3 \
     --hash=sha256:9aa618f068ed71ecc8820dd7538aa39e499ed4ce61a0074edbcfcf1008da1d1c
 https://github.com/jbalogh/test-utils/archive/e42e031.zip#egg=test-utils \
