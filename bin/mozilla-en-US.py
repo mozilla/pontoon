@@ -11,6 +11,7 @@ https://bitbucket.org/ogi/mozilla-l10n-po/
 """
 
 from __future__ import print_function
+from six import text_type
 
 import datetime
 import os
@@ -85,14 +86,14 @@ def pull(url, target):
 
     # Clone
     else:
-        write(unicode(error))
+        write(text_type(error))
         write('Clone instead.')
 
         code, output, error = execute(['hg', 'clone', url, target])
         if code == 0:
             write('Repository at ' + url + ' cloned.')
         else:
-            write(unicode(error))
+            write(text_type(error))
 
 
 def push(path):
@@ -102,14 +103,14 @@ def push(path):
     # Commit
     code, output, error = execute(['hg', 'commit', '-m', 'Update'], path)
     if code != 0 and len(error):
-        write(unicode(error))
+        write(text_type(error))
 
     # Push
     code, output, error = execute(['hg', 'push'], path)
     if code == 0:
         write('Repository at ' + path + ' pushed.')
     elif len(error):
-        write(unicode(error))
+        write(text_type(error))
 
 # Change working directory to where script is located
 abspath = os.path.abspath(__file__)

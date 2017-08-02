@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from __future__ import division
 
 import hashlib
@@ -5,10 +6,11 @@ import logging
 import math
 import os.path
 import re
-import urllib
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
+from six.moves import reduce
+from six.moves.urllib.parse import (urlencode, urlparse)
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group, UserManager
@@ -20,6 +22,7 @@ from django.db import models
 from django.db.models import Case, Count, F, Prefetch, Q, Sum, When
 from django.templatetags.static import static
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 
 from guardian.shortcuts import get_objects_for_user
@@ -34,9 +37,6 @@ from pontoon.sync.vcs.repositories import (
 from pontoon.base import utils
 from pontoon.db import IContainsCollate  # noqa
 from pontoon.sync import KEY_SEPARATOR
-
-from urlparse import urlparse
-from functools import reduce
 
 
 log = logging.getLogger('pontoon')
@@ -197,7 +197,7 @@ def user_gravatar_url(self, size):
         data['d'] = settings.SITE_URL + static('img/anon' + append + '.jpg')
 
     return '//www.gravatar.com/avatar/{email}?{data}'.format(
-        email=email, data=urllib.urlencode(data))
+        email=email, data=urlencode(data))
 
 
 @property
@@ -469,6 +469,7 @@ class LocaleQuerySet(models.QuerySet):
         return AggregatedStats.get_top_instances(self)
 
 
+@python_2_unicode_compatible
 class Locale(AggregatedStats):
     code = models.CharField(max_length=20, unique=True)
     db_collation = models.CharField(
@@ -585,7 +586,7 @@ class Locale(AggregatedStats):
             ('can_manage_locale', 'Can manage locale')
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def serialize(self):
@@ -870,6 +871,7 @@ PRIORITY_CHOICES = (
 )
 
 
+@python_2_unicode_compatible
 class Project(AggregatedStats):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
@@ -926,7 +928,7 @@ class Project(AggregatedStats):
             ("can_manage_project", "Can manage project"),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def serialize(self):
@@ -1103,6 +1105,7 @@ class Project(AggregatedStats):
             return paths
 
 
+@python_2_unicode_compatible
 class ExternalResource(models.Model):
     """
     Represents links to external project resources like staging websites,
@@ -1116,7 +1119,7 @@ class ExternalResource(models.Model):
     name = models.CharField(max_length=32)
     url = models.URLField("URL", blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -1477,6 +1480,7 @@ class ResourceQuerySet(models.QuerySet):
         ).asymmetric().values_list('path', flat=True).distinct()
 
 
+@python_2_unicode_compatible
 class Resource(models.Model):
     project = models.ForeignKey(Project, related_name='resources')
     path = models.TextField()  # Path to localization file
@@ -1512,7 +1516,7 @@ class Resource(models.Model):
         """Return True if this resource is in an asymmetric format."""
         return self.format in self.ASYMMETRIC_FORMATS
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s: %s' % (self.project.name, self.path)
 
     def save(self, *args, **kwargs):
@@ -1537,13 +1541,14 @@ class Resource(models.Model):
             return path_format
 
 
+@python_2_unicode_compatible
 class Subpage(models.Model):
     project = models.ForeignKey(Project)
     name = models.CharField(max_length=128)
     url = models.URLField("URL", blank=True)
     resources = models.ManyToManyField(Resource, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -1665,6 +1670,7 @@ class EntityQuerySet(models.QuerySet):
         )
 
 
+@python_2_unicode_compatible
 class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, related_name='entities')
     string = models.TextField()
@@ -1709,7 +1715,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         return key
 
-    def __unicode__(self):
+    def __str__(self):
         return self.string
 
     def has_changed(self, locale):
@@ -1947,6 +1953,7 @@ class TranslationQuerySet(models.QuerySet):
         return data
 
 
+@python_2_unicode_compatible
 class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity)
     locale = models.ForeignKey(Locale)
@@ -2022,7 +2029,7 @@ class Translation(DirtyFieldsMixin, models.Model):
                 'type': 'submitted',
             }
 
-    def __unicode__(self):
+    def __str__(self):
         return self.string
 
     def save(self, imported=False, *args, **kwargs):

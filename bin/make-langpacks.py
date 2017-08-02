@@ -20,6 +20,7 @@ Required libraries:
 
 from __future__ import print_function
 from lxml import html
+from six import text_type
 
 import datetime
 import os
@@ -71,14 +72,14 @@ def pull(url, target):
 
     # Clone
     else:
-        write(unicode(error))
+        write(text_type(error))
         write('Clone instead.')
 
         code, output, error = execute(['hg', 'clone', url, target])
         if code == 0:
             write('Repository at ' + url + ' cloned.')
         else:
-            write(unicode(error))
+            write(text_type(error))
 
 
 write('Building langpacks initiated.')

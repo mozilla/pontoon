@@ -1,8 +1,8 @@
 import logging
 import requests
-import urllib
 import xml.etree.ElementTree as ET
 from uuid import uuid4
+from six.moves.urllib.parse import quote
 
 from collections import defaultdict
 from django.conf import settings
@@ -166,7 +166,7 @@ def microsoft_terminology(request):
 
     payload = {
         'uuid': uuid4(),
-        'text': urllib.quote(text.encode('utf-8')),
+        'text': quote(text.encode('utf-8')),
         'to': locale,
         'max_result': 5
     }
@@ -204,7 +204,7 @@ def amagama(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     try:
-        text = urllib.quote(text.encode('utf-8'))
+        text = quote(text.encode('utf-8'))
     except KeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
@@ -237,7 +237,7 @@ def transvision(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     try:
-        text = urllib.quote(text.encode('utf-8'))
+        text = quote(text.encode('utf-8'))
     except KeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 

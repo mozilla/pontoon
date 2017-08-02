@@ -12,6 +12,7 @@ import time
 import zipfile
 
 from datetime import datetime, timedelta
+from six import text_type
 from xml.sax.saxutils import (
     escape as xml_escape,
     quoteattr,
@@ -168,7 +169,7 @@ def mark_placeables(text):
         # Placeable: mark
         if isinstance(item, BasePlaceable):
             class_name = item.__class__.__name__
-            placeable = unicode(item)
+            placeable = text_type(item)
 
             # CSS class used to mark the placeable
             css = {
@@ -203,7 +204,7 @@ def mark_placeables(text):
 
         # Not a placeable: skip
         else:
-            output += unicode(item).replace('<', '&lt;').replace('>', '&gt;')
+            output += text_type(item).replace('<', '&lt;').replace('>', '&gt;')
 
     return output
 
