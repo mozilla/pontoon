@@ -2060,11 +2060,25 @@ class Translation(DirtyFieldsMixin, models.Model):
         # Only one translation can be approved at a time for any
         # Entity/Locale.
         if self.approved:
-            (Translation.objects
-                .filter(entity=self.entity, locale=self.locale, plural_form=self.plural_form)
+            (
+                Translation.objects
+                .filter(
+                    entity=self.entity,
+                    locale=self.locale,
+                    plural_form=self.plural_form,
+                    rejected=False,
+                )
                 .exclude(pk=self.pk)
-                .update(approved=False, approved_user=None, approved_date=None,
-                        rejected=True, rejected_user=None, rejected_date=None))
+                .update(
+                    approved=False,
+                    approved_user=None,
+                    approved_date=None,
+                    rejected=True,
+                    rejected_user=self.approved_user,
+                    rejected_date=self.approved_date,
+                    fuzzy=False,
+                )
+            )
 
             if not self.memory_entries.exists():
                 TranslationMemoryEntry.objects.create(

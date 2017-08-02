@@ -274,7 +274,9 @@ def batch_edit_translations(request):
 
     # Batch editing is only available to translators.
     # Check if user has translate permissions for all of the projects in passed entities.
-    projects = Project.objects.filter(pk__in=entities.values_list('resource__project__pk', flat=True).distinct())
+    projects = Project.objects.filter(
+        pk__in=entities.values_list('resource__project__pk', flat=True).distinct()
+    )
     for project in projects:
         if not request.user.can_translate(project=project, locale=locale):
             return HttpResponseForbidden(
@@ -322,7 +324,12 @@ def batch_edit_translations(request):
         )
 
         # Reject all other non-rejected translations.
-        suggestions = translations.filter(approved=False, rejected=False)
+        suggestions = Translation.objects.filter(
+            locale=locale,
+            entity__pk__in=entities,
+            approved=False,
+            rejected=False,
+        )
         suggestions.update(
             rejected=True,
             rejected_user=request.user,
@@ -345,6 +352,7 @@ def batch_edit_translations(request):
             rejected=True,
             rejected_user=request.user,
             rejected_date=timezone.now(),
+            fuzzy=False,
         )
 
     elif action == 'replace':
@@ -352,7 +360,9 @@ def batch_edit_translations(request):
         replace = request.POST.get('replace')
 
         try:
-            translations, changed_translations = translations.find_and_replace(find, replace, request.user)
+            translations, changed_translations = translations.find_and_replace(
+                find, replace, request.user
+            )
             changed_translation_pks = [c.pk for c in changed_translations]
             if changed_translation_pks:
                 latest_translation_pk = max(changed_translation_pks)
@@ -588,9 +598,9 @@ def unreject_translation(request):
         request.user.can_translate(
             project=translation.entity.resource.project,
             locale=translation.locale
-        )
-        or request.user == translation.user
-        or translation.approved
+        ) or
+        request.user == translation.user or
+        translation.approved
     ):
         return HttpResponseForbidden(
             "Forbidden: You can't unreject this translation."

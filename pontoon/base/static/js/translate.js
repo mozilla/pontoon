@@ -2244,7 +2244,7 @@ var Pontoon = (function (my) {
             },
             success: function(data) {
               if ('count' in data) {
-                var strings = data.count === 1 ? 'string' : 'strings';
+                var itemsText = data.count === 1 ? 'string' : 'strings';
                 var actionText = action + 'd';
 
                 if (action === 'reject') {
