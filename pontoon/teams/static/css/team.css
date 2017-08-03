@@ -123,10 +123,6 @@
   color: #7BC876;
 }
 
-#info-wrapper .edit-info {
-  float: right;
-}
-
 #info-wrapper .edit-info .fa {
   padding-right: 5px;
 }
@@ -152,14 +148,19 @@
 }
 
 #info-wrapper .controls {
-  margin: 0;
+  margin-bottom: 10px;
   text-align: right;
 }
 
 #info-wrapper .controls .cancel {
+  display: none;
   color: #7BC876;
   margin: 9px;
   text-transform: uppercase;
+}
+
+#info-wrapper .controls .save {
+  display: none;
 }
 
 #permissions-form .selector-wrapper {
