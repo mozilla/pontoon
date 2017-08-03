@@ -2,6 +2,8 @@
   {% if request.user.has_perm('base.can_manage_locale', locale) %}
   <div class="controls">
     <a class="edit-info button" href="#"><span class="fa fa-pencil"></span>Edit</a>
+    <a href="#" class="cancel">Cancel</a>
+    <button class="button active save">Save</button>
   </div>
   {% endif %}
 
@@ -21,11 +23,6 @@
       <div class="subtitle">
         <p>Supports html</p>
       </div>
-    </div>
-
-    <div class="controls clearfix">
-      <a href="#" class="cancel">Cancel</a>
-      <button class="button active save">Save</button>
     </div>
   </div>
   {% endif %}

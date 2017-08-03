@@ -4,7 +4,7 @@ $(function() {
 
   function toggleWidgets() {
     container
-      .find('.edit-info').toggle().end()
+      .find('.controls > *').toggle().end()
       .find('.read-only-info').toggle().end()
       .find('.read-write-info').toggleClass('hidden');
   }
