@@ -434,7 +434,7 @@ PIPELINE_JS = {
             'js/tabs.js',
             'js/request_projects.js',
             'js/permissions.js',
-            'js/team.js',
+            'js/info.js',
         ),
         'output_filename': 'js/team.min.js',
     },
@@ -728,6 +728,18 @@ MICROSOFT_TERMINOLOGY_LOCALES = [
     'tn-za', 'tr-tr', 'tt-ru', 'ug-cn', 'uk-ua', 'ur-pk', 'uz-latn-uz',
     'vi-vn', 'wo-sn', 'xh-za', 'yo-ng', 'zh-cn', 'zh-hk', 'zh-tw', 'zu-za',
 ]
+
+# Bleach tags and attributes
+ALLOWED_TAGS = [
+    'a', 'abbr', 'acronym', 'b', 'blockquote', 'br', 'code', 'em', 'i',
+    'li', 'ol', 'p', 'strong', 'ul',
+]
+
+ALLOWED_ATTRIBUTES = {
+    'a': ['href', 'title', 'target'],
+    'abbr': ['title'],
+    'acronym': ['title'],
+}
 
 # Contributors to exclude from Top Contributors list
 EXCLUDE = os.environ.get('EXCLUDE', '').split(',')

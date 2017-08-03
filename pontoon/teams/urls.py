@@ -53,6 +53,11 @@ urlpatterns = [
         views.ajax_info,
         name='pontoon.teams.ajax.info'),
 
+    # AJAX view: Update team info
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/ajax/update-info/$',
+        views.ajax_update_info,
+        name='pontoon.teams.ajax.update-info'),
+
     # AJAX view: Team permissions
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/ajax/permissions/$',
         views.ajax_permissions,
