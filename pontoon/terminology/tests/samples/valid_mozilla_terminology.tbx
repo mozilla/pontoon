@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<martif type="TBX" xml:lang="en-US">
+    <martifHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>Mozilla Terminology Collection</title>
+            </titleStmt>
+            <sourceDesc>
+                <p>This term base was built based on the translations of the FireFox browser and Mozilla.org</p>
+            </sourceDesc>
+        </fileDesc>
+    </martifHeader>
+    <text>
+        <body>
+            <termEntry id="0717_0001">
+                <descripGrp>
+                    <descrip type="definition"></descrip>
+                    <admin type="source">FireFox</admin>
+                </descripGrp>
+                <langSet xml:lang="en-US">
+                    <tig>
+                        <term>abnormality</term>
+                        <termNote type="partOfSpeech">Noun</termNote>
+                        <descrip type="context">Mozilla detected a serious abnormality in its internal data</descrip>
+                    </tig>
+                </langSet>
+                <langSet xml:lang="pl">
+                    <tig>
+                        <term>nieprawidłowość</term>
+                        <termNote type="partOfSpeech"></termNote>
+                    </tig>
+                </langSet>
+            </termEntry>
+            <termEntry id="0717_0002">
+                <descripGrp>
+                    <descrip type="definition"></descrip>
+                    <admin type="source">FireFox</admin>
+                </descripGrp>
+                <langSet xml:lang="en-US">
+                    <tig>
+                        <term>abort</term>
+                        <termNote type="partOfSpeech">Noun</termNote>
+                        <descrip type="context">Do you want to abort this download</descrip>
+                    </tig>
+                </langSet>
+                <langSet xml:lang="pl">
+                    <tig>
+                        <term>przerwać</term>
+                        <termNote type="partOfSpeech"></termNote>
+                    </tig>
+                </langSet>
+            </termEntry>
+            <termEntry id="0717_0003">
+                <descripGrp>
+                    <descrip type="definition"></descrip>
+                    <admin type="source">Mozilla.org</admin>
+                </descripGrp>
+                <langSet xml:lang="en-US">
+                    <tig>
+                        <term>abuse</term>
+                        <termNote type="partOfSpeech">Noun</termNote>
+                        <descrip type="context">Special thanks to all of you who help report abuses of Mozilla mark</descrip>
+                    </tig>
+                </langSet>
+                <langSet xml:lang="pl">
+                    <tig>
+                        <term>nadużycie</term>
+                        <termNote type="partOfSpeech"></termNote>
+                    </tig>
+                </langSet>
+            </termEntry>
+            <termEntry id="0717_0004">
+                <descripGrp>
+                    <descrip type="definition"></descrip>
+                    <admin type="source">Mozilla.org</admin>
+                </descripGrp>
+                <langSet xml:lang="en-US">
+                    <tig>
+                        <term>abuse</term>
+                        <termNote type="partOfSpeech">Verb</termNote>
+                        <descrip type="context">In addition any participants who abuse the reporting process will be considered to be in violation of these guidelines</descrip>
+                    </tig>
+                </langSet>
+                <langSet xml:lang="pl">
+                    <tig>
+                        <term>nadużywać</term>
+                        <termNote type="partOfSpeech"></termNote>
+                    </tig>
+                </langSet>
+            </termEntry>
+        </body>
+    </text>
+</martif>

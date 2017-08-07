@@ -35,6 +35,13 @@
 # Requirements with no sub-dependencies.
 # ==================================================================================
 
+beautifulsoup4==4.5.1 \
+    --hash=sha256:bb3dba571c2f7ddcaf3e70ad8b67878a85ac41889dcba75a30b8f7b0b5960b6d \
+    --hash=sha256:35815098d9d0bf5d3a782346a3945b000592d0e93e2538a502d0d6807130d675 \
+    --hash=sha256:3c9474036afda9136aac6463def733f81017bf9ef3510d25634f335b0c87f5e1
+defusedxml==0.4.1 \
+    --hash=sha256:cd551d5a518b745407635bb85116eb813818ecaf182e773c35b36239fc3f2478 \
+    --hash=sha256:1f7e2f6546caba6a52bcd6a6087df60c1cc63cdbc0d9ca3e5d517adcb5823d0c
 dj-database-url==0.3.0 \
     --hash=sha256:f2e273ed34acbb560962d5cf12917936d8df02297df09bd3089b8546d4584138 \
     --hash=sha256:ca01768fdecde134301f3170743226f60edff5c3935f12437378ebd911506353
@@ -94,6 +101,8 @@ pytz==2017.2 \
     --hash=sha256:39504670abb5dae77f56f8eb63823937ce727d7cdd0088e6909e6dcac0f89043 \
     --hash=sha256:ddc93b6d41cfb81266a27d23a79e13805d4a5521032b512643af8729041a81b4 \
     --hash=sha256:f5c056e8f62d45ba8215e5cb8f50dfccb198b4b9fbea8500674f3443e4689589
+retrying==1.3.3 \
+    --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b
 requests==2.6.2 \
     --hash=sha256:8f0f56813f82d0c27d9578221268ac9af48f076c71ee69693305ceca6ca355bd \
     --hash=sha256:0577249d4b6c4b11fd97c28037e98664bfaa0559022fee7bcef6b752a106e505
@@ -204,9 +213,9 @@ django-pipeline==1.5.3 \
     --hash=sha256:752fa35d40cb645e6d3a54ccde01726732e441a2d54d904219c68e402f78e194
 
 # Required by django-pipeline
-futures==3.0.4 \
-    --hash=sha256:4e860d18d866ff6c5f2804ebcbb16415f4f29cf57efea919178b809cf99326b6 \
-    --hash=sha256:19485d83f7bd2151c0aeaf88fbba3ee50dadfb222ffc3b66a344ef4952b782a3
+futures==3.1.1 \
+    --hash=sha256:c4884a65654a7c45435063e14ae85280eb1f111d94e542396717ba9828c4337f \
+    --hash=sha256:51ecb45f0add83c806c68e4b06106f90db260585b25ef2abfcda0bd95c0132fd
 
 # ----------------------------------------------------------------------------------
 django-pylibmc==0.6.1 \
@@ -261,6 +270,16 @@ blinker==1.3 \
     --hash=sha256:6811010809262261e41ab7b92f3f6d23f35cf816fbec2bc05077992eebec6e2f
 jsonpickle==0.7.0 \
     --hash=sha256:177b0e8311c6edbfc7d184157a7e80f68b6b874c5645f7300d41f475f05f231e
+
+# ----------------------------------------------------------------------------------
+stemming==1.0.1 \
+    --hash=sha256:6a1153547d9a67b8dd523ce83972716da3ee07d6043b0e92154ddc1fffb28c16 \
+    --hash=sha256:59678702e1d06caffecee82910f048edf12ad89dcf430776b4b05bfb8850bc51 \
+    --hash=sha256:3a812fbe64a8c74e95651f5a48bae3a7a47282aa58cd5a61f3384e73674ac23d
+
+# Required by stemming
+Pattern==2.6 \
+    --hash=sha256:003aa285adc23b72255ca8b9f052c6a2644b245b3a9666af007e086428a950be
 
 # ----------------------------------------------------------------------------------
 https://github.com/mathjazz/translate/archive/2.2.5.zip#egg=translate-toolkit==2.2.5 \

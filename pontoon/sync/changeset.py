@@ -13,7 +13,11 @@ from pontoon.base.models import (
     Translation,
     TranslationMemoryEntry
 )
-from pontoon.base.utils import match_attr
+from pontoon.base.utils import (
+    match_attr,
+    get_singulars
+)
+from pontoon.terminology.models import Term
 
 log = logging.getLogger(__name__)
 
@@ -144,6 +148,8 @@ class ChangeSet(object):
             'date_created': db_entity.date_created if db_entity else self.now,
             'order': vcs_entity.order,
             'source': vcs_entity.source,
+            'string_singulars': ' '.join(get_singulars(vcs_entity.string)),
+            'string_plural_singulars': ' '.join(get_singulars(vcs_entity.string_plural))
         }
 
     def send_notifications(self, new_entities):
@@ -191,6 +197,13 @@ class ChangeSet(object):
                         fuzzy=vcs_translation.fuzzy
                     ))
 
+        Term.objects.assign_terms_to_entities([(
+            e.pk,
+            e.string,
+            e.string_singulars,
+            e.string_plural,
+            e.string_plural_singulars,
+        ) for e in new_entities])
         self.send_notifications(new_entities)
 
     def update_entity_translations_from_vcs(
@@ -313,12 +326,20 @@ class ChangeSet(object):
         if self.changes['update_db']:
             entities_with_translations = self.prefetch_entity_translations()
 
+        updated_entities = []
         for locale_code, db_entity, vcs_entity in self.changes['update_db']:
             for field, value in self.get_entity_updates(vcs_entity, db_entity).items():
                 setattr(db_entity, field, value)
 
             if db_entity.is_dirty(check_relationship=True):
                 self.entities_to_update.append(db_entity)
+                updated_entities.append((
+                    db_entity.pk,
+                    db_entity.string,
+                    ' '.join(get_singulars(db_entity.string)),
+                    db_entity.string_plural,
+                    ' '.join(get_singulars(db_entity.string_plural))
+                ))
 
             if locale_code is not None:
                 # Update translations for the entity.
@@ -332,6 +353,8 @@ class ChangeSet(object):
                     prefetched_entity.db_translations,
                     prefetched_entity.db_translations_approved_before_sync
                 )
+
+        Term.objects.assign_terms_to_entities(updated_entities)
 
     def execute_obsolete_db(self):
         (Entity.objects

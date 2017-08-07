@@ -59,7 +59,6 @@ def contributor_timeline(request, username):
 
     try:
         events_paginator = Paginator(counts_by_day, 10)
-        timeline_events = []
 
         timeline_events = User.objects.map_translations_to_events(
             events_paginator.page(page).object_list,

@@ -41,6 +41,15 @@ mark.search {
   border-radius: 2px;
 }
 
+mark.term {
+  background: transparent;
+  border-bottom: 1px dotted #FFA10F;
+  color: inherit;
+  cursor: pointer;
+  font-style: normal;
+  font-weight: normal;
+}
+
 #source {
   display: none;
   background: #FFFFFF;
@@ -1264,6 +1273,70 @@ body > header aside p {
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+#terminology-tooltip {
+  background: rgba(28, 30, 33, 0.98);
+  border-radius: 3px;
+  color: #EBEBEB;
+  display: none;
+  margin-top: -1px;
+  max-width: 500px;
+  position: absolute;
+  width: calc(100% - 20px);
+  z-index: 10;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#terminology-tooltip ul {
+  border-bottom: 1px solid #444444;
+  margin: 0;
+  max-height: 400px;
+  list-style: none;
+  overflow: auto;
+}
+
+#terminology-tooltip li {
+  border-bottom: 1px solid #444444;
+  padding: 10px;
+}
+
+#terminology-tooltip li:last-child {
+  border-bottom: none;
+}
+
+#terminology-tooltip li:hover {
+  background: #272A2F;
+}
+
+#terminology-tooltip li:first-child:hover {
+  border-radius: 3px 3px 0 0;
+}
+
+#terminology-tooltip .note {
+  color: #AAAAAA;
+}
+
+#terminology-tooltip .translation {
+  color: #FFA10F;
+  float: right;
+}
+
+#terminology-tooltip .description {
+  color: #AAAAAA;
+  font-size: 12px;
+  font-style: italic;
+  padding-left: 20px;
+}
+
+#terminology-tooltip footer p {
+  cursor: default;
+  font-size: 10px;
+  padding: 10px;
+  text-align: right;
+  text-transform: uppercase;
 }
 
 #source-pane.screenshots {
