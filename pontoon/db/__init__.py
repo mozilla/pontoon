@@ -11,7 +11,8 @@ class IContainsCollate(IContains):
 
     E.g. translation__string__icontains_collate=('search_phrase', 'tr_tr')
 
-    **Warning** For the sake of the security, collation shouldn't be provided from the unvalidated input data.
+    **Warning** For the sake of security, collation shouldn't be provided from the unvalidated
+    input data.
 
     Reference bug:
     https://bugzilla.mozilla.org/show_bug.cgi?id=1346180
