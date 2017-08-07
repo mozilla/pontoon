@@ -61,8 +61,16 @@ def ajax_resources(request, code, slug):
         )
 
         for page_translatedresource in page_translatedresources_qs:
-            latest = latest_page_translatedresource.latest_translation if latest_page_translatedresource else None
-            if latest is None or page_translatedresource.latest_translation.latest_activity['date'] > latest.latest_activity['date']:
+            latest = (
+                latest_page_translatedresource.latest_translation
+                if latest_page_translatedresource
+                else None
+            )
+            latest_activity = page_translatedresource.latest_translation.latest_activity
+            if (
+                latest is None or
+                latest_activity['date'] > latest.latest_activity['date']
+            ):
                 latest_page_translatedresource = page_translatedresource
 
         pages[page.name] = latest_page_translatedresource
@@ -83,10 +91,16 @@ def ajax_resources(request, code, slug):
             'fuzzy_strings': part['fuzzy_strings'],
             'total_strings': part['resource__total_strings'],
             'approved_strings': part['approved_strings'],
-            'approved_share': round(part['approved_strings'] / part['resource__total_strings'] * 100),
-            'translated_share': round(part['translated_strings'] / part['resource__total_strings'] * 100),
+            'approved_share': round(
+                part['approved_strings'] / part['resource__total_strings'] * 100
+            ),
+            'translated_share': round(
+                part['translated_strings'] / part['resource__total_strings'] * 100
+            ),
             'fuzzy_share': round(part['fuzzy_strings'] / part['resource__total_strings'] * 100),
-            'approved_percent': int(math.floor(part['approved_strings'] / part['resource__total_strings'] * 100)),
+            'approved_percent': int(
+                math.floor(part['approved_strings'] / part['resource__total_strings'] * 100)
+            ),
         }
 
     return render(request, 'localizations/includes/resources.html', {
@@ -113,4 +127,7 @@ class LocalizationContributorsView(ContributorsMixin, DetailView):
         return 'projectlocale'
 
     def contributors_filter(self, **kwargs):
-        return Q(translation__entity__resource__project=self.object.project, translation__locale=self.object.locale)
+        return Q(
+            translation__entity__resource__project=self.object.project,
+            translation__locale=self.object.locale
+        )
