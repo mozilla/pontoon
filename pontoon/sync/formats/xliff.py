@@ -82,6 +82,7 @@ class XLIFFEntity(VCSTranslation):
         if target is not None and 'state' in target.attrib:
             del target.attrib["state"]
 
+
 class XLIFFResource(ParsedResource):
     def __init__(self, path, xliff_file):
         self.path = path

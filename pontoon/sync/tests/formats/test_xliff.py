@@ -37,7 +37,8 @@ BASE_XLIFF_FILE = """
 
 XLIFF_TEMPLATE = """
 <xliff>
-    <file original="filename" source-language="en" datatype="plaintext" target-language="{locale_code}">
+    <file original="filename" source-language="en" datatype="plaintext"
+          target-language="{locale_code}">
         <body>
             {body}
         </body>

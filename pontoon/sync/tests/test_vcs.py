@@ -16,7 +16,7 @@ class VCSRepositoryTests(TestCase):
         repo = VCSRepository('/path')
 
         with patch('pontoon.sync.vcs.repositories.execute') as mock_execute, \
-             patch('pontoon.sync.vcs.repositories.log') as mock_log:
+                patch('pontoon.sync.vcs.repositories.log') as mock_log:
             mock_execute.return_value = 1, 'output', 'stderr'
             assert_equal(
                 repo.execute('command', cwd='working_dir', log_errors=True),
@@ -51,24 +51,32 @@ class VCSChangedFilesTests(object):
         return 1, '', None
 
     def test_changed_files(self):
-        with patch.object(self.vcsrepository, 'execute', side_effect=self.execute_success) as mock_execute:
+        with patch.object(
+            self.vcsrepository, 'execute', side_effect=self.execute_success
+        ) as mock_execute:
             changed_files = self.vcsrepository.get_changed_files('/path', '1')
             assert_true(mock_execute.called)
             assert_equal(changed_files, ['changed_file1.properties', 'changed_file2.properties'])
 
     def test_changed_files_error(self):
-        with patch.object(self.vcsrepository, 'execute', side_effect=self.execute_failure) as mock_execute:
+        with patch.object(
+            self.vcsrepository, 'execute', side_effect=self.execute_failure
+        ) as mock_execute:
             assert_equal(self.vcsrepository.get_changed_files('path', '1'), [])
             assert_true(mock_execute.called)
 
     def test_removed_files(self):
-        with patch.object(self.vcsrepository, 'execute', side_effect=self.execute_success) as mock_execute:
+        with patch.object(
+            self.vcsrepository, 'execute', side_effect=self.execute_success
+        ) as mock_execute:
             removed_files = self.vcsrepository.get_removed_files('/path', '1')
             assert_true(mock_execute.called)
             assert_equal(removed_files, ['removed_file1.properties', 'removed_file2.properties'])
 
     def test_removed_files_error(self):
-        with patch.object(self.vcsrepository, 'execute', side_effect=self.execute_failure) as mock_execute:
+        with patch.object(
+            self.vcsrepository, 'execute', side_effect=self.execute_failure
+        ) as mock_execute:
             assert_equal(self.vcsrepository.get_removed_files('path', '1'), [])
             assert_true(mock_execute.called)
 
