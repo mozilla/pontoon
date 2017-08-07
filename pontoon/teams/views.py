@@ -126,7 +126,12 @@ def ajax_permissions(request, locale):
     translators = l.translators_group.user_set.exclude(pk__in=managers).all()
     all_users = User.objects.exclude(pk__in=managers).exclude(pk__in=translators).exclude(email='')
 
-    contributors = User.translators.filter(translation__locale=l).values_list('email', flat=True).distinct()
+    contributors = (
+        User.translators
+        .filter(translation__locale=l)
+        .values_list('email', flat=True)
+        .distinct()
+    )
     locale_projects = l.projects_permissions
     return render(request, 'teams/includes/permissions.html', {
         'locale': l,
@@ -160,7 +165,9 @@ def request_projects(request, locale):
 
     if settings.PROJECT_MANAGERS[0] != '':
         EmailMessage(
-            subject=u'Project request for {locale} ({code})'.format(locale=locale.name, code=locale.code),
+            subject=u'Project request for {locale} ({code})'.format(
+                locale=locale.name, code=locale.code
+            ),
             body=u'''
             Please add the following projects to {locale} ({code}):
             {projects}
