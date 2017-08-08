@@ -262,7 +262,6 @@ class ChangeSetTests(FakeCheckoutTestCase):
             fuzzy=False
         )
 
-
     def test_update_db_unapprove_existing(self):
         """
         Any existing translations that don't match anything in VCS get
@@ -321,12 +320,20 @@ class ChangeSetTests(FakeCheckoutTestCase):
         """
         Don't change any resource if there aren't any new translations.
         """
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            approved=True, date=aware_datetime(2015, 1, 1))
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            approved=True,
+            date=aware_datetime(2015, 1, 1)
+        )
 
-        with patch.object(self.main_db_entity, 'has_changed', return_value=False) as mock_has_changed:
+        with patch.object(
+            self.main_db_entity, 'has_changed', return_value=False
+        ) as mock_has_changed:
             resource_file = MagicMock()
-            self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
+            self.changeset.update_vcs_entity(
+                self.translated_locale, self.main_db_entity, MagicMock()
+            )
             self.changeset.vcs_project.resources = {
                 self.main_db_entity.resource.path: resource_file
             }
@@ -341,16 +348,24 @@ class ChangeSetTests(FakeCheckoutTestCase):
         Synchronization should modify resource files if there
         are changed translations.
         """
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            approved=True, date=aware_datetime(2015, 1, 1))
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            approved=True,
+            date=aware_datetime(2015, 1, 1)
+        )
 
         resource_file = MagicMock()
         self.changeset.vcs_project.resources = {
             self.main_db_entity.resource.path: resource_file
         }
 
-        with patch.object(self.main_db_entity, 'has_changed', return_value=True) as mock_has_changed:
-            self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
+        with patch.object(
+            self.main_db_entity, 'has_changed', return_value=True
+        ) as mock_has_changed:
+            self.changeset.update_vcs_entity(
+                self.translated_locale, self.main_db_entity, MagicMock()
+            )
 
             self.changeset.execute_update_vcs()
             assert mock_has_changed.called
@@ -361,16 +376,24 @@ class ChangeSetTests(FakeCheckoutTestCase):
         Synchronization shouldn't modify resources if their
         entities weren't changed.
         """
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            approved=True, date=aware_datetime(2015, 1, 1))
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            approved=True,
+            date=aware_datetime(2015, 1, 1)
+        )
 
         resource_file = MagicMock()
         self.changeset.vcs_project.resources = {
             self.main_db_entity.resource.path: resource_file
         }
 
-        with patch.object(self.main_db_entity, 'has_changed', return_value=False) as mock_has_changed:
-            self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
+        with patch.object(
+            self.main_db_entity, 'has_changed', return_value=False
+        ) as mock_has_changed:
+            self.changeset.update_vcs_entity(
+                self.translated_locale, self.main_db_entity, MagicMock()
+            )
 
             self.changeset.execute_update_vcs()
             assert mock_has_changed.called
@@ -387,21 +410,36 @@ class AuthorsTests(FakeCheckoutTestCase):
         entities.
         """
         first_author, second_author = UserFactory.create_batch(2)
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            user=first_author, approved=True)
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            approved=False)
-        TranslationFactory.create(locale=self.translated_locale, entity=self.other_db_entity,
-            user=second_author, approved=True)
-        TranslationFactory.create(locale=self.translated_locale, entity=self.other_db_entity,
-            approved=False)
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            user=first_author,
+            approved=True
+        )
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            approved=False
+        )
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.other_db_entity,
+            user=second_author,
+            approved=True
+        )
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.other_db_entity,
+            approved=False
+        )
 
         self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
         self.changeset.update_vcs_entity(self.translated_locale, self.other_db_entity, MagicMock())
 
         self.changeset.execute_update_vcs()
 
-        assert_equal(self.changeset.commit_authors_per_locale[self.translated_locale.code],
+        assert_equal(
+            self.changeset.commit_authors_per_locale[self.translated_locale.code],
             [first_author, second_author]
         )
 
@@ -412,19 +450,34 @@ class AuthorsTests(FakeCheckoutTestCase):
         """
         first_author, second_author, third_author = UserFactory.create_batch(3)
 
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            user=first_author, approved=True)
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            user=third_author, approved=True, plural_form=1)
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            user=second_author, approved=False)
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            user=first_author,
+            approved=True
+        )
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            user=third_author,
+            approved=True,
+            plural_form=1
+        )
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            user=second_author,
+            approved=False
+        )
 
         self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
 
         self.changeset.execute_update_vcs()
 
-        assert_equal(set(self.changeset.commit_authors_per_locale[self.translated_locale.code]),
-             {first_author, third_author})
+        assert_equal(
+            set(self.changeset.commit_authors_per_locale[self.translated_locale.code]),
+            {first_author, third_author}
+        )
 
     def test_multiple_translations(self):
         """
@@ -433,27 +486,42 @@ class AuthorsTests(FakeCheckoutTestCase):
         """
         first_author, second_author = UserFactory.create_batch(2)
 
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            user=first_author, approved=True)
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            user=second_author, approved=False)
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            user=first_author,
+            approved=True
+        )
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            user=second_author,
+            approved=False
+        )
 
         self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
 
         self.changeset.execute_update_vcs()
 
-        assert_equal(self.changeset.commit_authors_per_locale[self.translated_locale.code],
-            [first_author])
-
+        assert_equal(
+            self.changeset.commit_authors_per_locale[self.translated_locale.code],
+            [first_author]
+        )
 
     def test_no_translations(self):
         """
         We don't attribute anyone if there aren't any new translations.
         """
-        TranslationFactory.create(locale=self.translated_locale, entity=self.main_db_entity,
-            approved=True, date=aware_datetime(2015, 1, 1))
+        TranslationFactory.create(
+            locale=self.translated_locale,
+            entity=self.main_db_entity,
+            approved=True,
+            date=aware_datetime(2015, 1, 1)
+        )
 
         with patch.object(self.main_db_entity, 'has_changed', return_value=False):
-            self.changeset.update_vcs_entity(self.translated_locale, self.main_db_entity, MagicMock())
+            self.changeset.update_vcs_entity(
+                self.translated_locale, self.main_db_entity, MagicMock()
+            )
             self.changeset.execute_update_vcs()
             assert_equal(self.changeset.commit_authors_per_locale[self.translated_locale.code], [])

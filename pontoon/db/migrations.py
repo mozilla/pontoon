@@ -1,8 +1,9 @@
 """
-Django 1.10.5 doesn't support migrations/updates for fulltext fields,
-django-pg-fts isn't actively maintained and current codebase is broken between various versions of Django.
+Django 1.10.5 doesn't support migrations/updates for fulltext fields, django-pg-fts isn't
+actively maintained and current codebase is broken between various versions of Django.
 
-Because of that I decided to implement our migrations with intent to drop it when django develops its own solution.
+Because of that I decided to implement our migrations with intent to drop it when django develops
+its own solution.
 """
 import copy
 

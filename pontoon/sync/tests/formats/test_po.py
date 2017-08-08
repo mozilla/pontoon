@@ -275,7 +275,8 @@ class POTests(FormatTestsMixin, TestCase):
 
     def test_save_metadata(self):
         """Ensure pofile metadata is updated correctly."""
-        test_input = self.generate_pofile('',
+        test_input = self.generate_pofile(
+            '',
             language='different_code',
             generator='Not Pontoon',
             plural_forms='nplurals=1; plural=0;'
@@ -283,7 +284,8 @@ class POTests(FormatTestsMixin, TestCase):
         path, resource = self.parse_string(test_input)
 
         resource.save(self.locale)
-        self.assert_file_content(path, self.generate_pofile('',
+        self.assert_file_content(path, self.generate_pofile(
+            '',
             language='test_locale',
             generator='Pontoon',
             plural_forms='nplurals=2; plural=(n != 1);'

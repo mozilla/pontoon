@@ -51,14 +51,20 @@ def translation_memory(request):
 
     try:
         for entry in entries:
-            if entry['target'] not in suggestions or entry['quality'] > suggestions[entry['target']]['quality']:
+            if (
+                entry['target'] not in suggestions or
+                entry['quality'] > suggestions[entry['target']]['quality']
+            ):
                 suggestions[entry['target']].update(entry)
             suggestions[entry['target']]['count'] += 1
     except DataError as e:
         # Catches 'argument exceeds the maximum length of 255 bytes' Error
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    return JsonResponse(sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results], safe=False)
+    return JsonResponse(
+        sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
+        safe=False
+    )
 
 
 def machine_translation(request):
@@ -134,7 +140,9 @@ def microsoft_terminology(request):
     locale = locale.lower()
     url = 'http://api.terminology.microsoft.com/Terminology.svc'
     headers = {
-        'SOAPAction': '"http://api.terminology.microsoft.com/terminology/Terminology/GetTranslations"',
+        'SOAPAction': (
+            '"http://api.terminology.microsoft.com/terminology/Terminology/GetTranslations"'
+        ),
         'Content-Type': 'text/xml; charset=utf-8'
     }
 

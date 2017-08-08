@@ -255,7 +255,7 @@ class PropertiesTests(FormatTestsMixin, TestCase):
         self.run_parse_basic(BASE_PROPERTIES_FILE, 0)
 
     def test_parse_multiple_comments(self):
-        #import ipdb; ipdb.set_trace()
+        # import ipdb; ipdb.set_trace()
         self.run_parse_multiple_comments(BASE_PROPERTIES_FILE, 1)
 
     def test_parse_no_comments_no_sources(self):

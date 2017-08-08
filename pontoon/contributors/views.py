@@ -177,7 +177,9 @@ def notifications(request):
 
     # Sort projects by the number of notifications
     ordered_projects = []
-    for slug in sorted(projects, key=lambda slug: len(projects[slug]['notifications']), reverse=True):
+    for slug in sorted(
+        projects, key=lambda slug: len(projects[slug]['notifications']), reverse=True
+    ):
         ordered_projects.append(slug)
 
     return render(request, 'contributors/notifications.html', {
@@ -216,7 +218,10 @@ class ContributorsMixin(object):
             period = None
             start_date = None
 
-        context['contributors'] = User.translators.with_translation_counts(start_date, self.contributors_filter(**kwargs))
+        context['contributors'] = (
+            User.translators
+            .with_translation_counts(start_date, self.contributors_filter(**kwargs))
+        )
         context['period'] = period
         return context
 

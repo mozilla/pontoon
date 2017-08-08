@@ -21,7 +21,9 @@ class ProjectForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
-        self.fields['contact'].queryset = User.objects.filter(groups__name='project_managers').order_by('email')
+        self.fields['contact'].queryset = (
+            User.objects.filter(groups__name='project_managers').order_by('email')
+        )
 
 
 SubpageInlineFormSet = inlineformset_factory(

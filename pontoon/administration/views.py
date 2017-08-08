@@ -103,7 +103,9 @@ def manage_project(request, slug=None, template='admin_project.html'):
             # Needed if form invalid
             subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
             repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
-            external_resource_formset = ExternalResourceInlineFormSet(request.POST, instance=project)
+            external_resource_formset = ExternalResourceInlineFormSet(
+                request.POST, instance=project
+            )
             subtitle = 'Edit project'
 
         # Add a new project
@@ -118,9 +120,15 @@ def manage_project(request, slug=None, template='admin_project.html'):
             project = form.save(commit=False)
             subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
             repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
-            external_resource_formset = ExternalResourceInlineFormSet(request.POST, instance=project)
+            external_resource_formset = ExternalResourceInlineFormSet(
+                request.POST, instance=project
+            )
 
-            if subpage_formset.is_valid() and repo_formset.is_valid() and external_resource_formset.is_valid():
+            if (
+                subpage_formset.is_valid() and
+                repo_formset.is_valid() and
+                external_resource_formset.is_valid()
+            ):
                 project.save()
 
                 # Manually save ProjectLocales due to intermediary

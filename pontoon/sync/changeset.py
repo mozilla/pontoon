@@ -116,7 +116,9 @@ class ChangeSet(object):
             vcs_translation.update_from_db(db_translations)
 
             # Track which translators were involved.
-            self.commit_authors_per_locale[locale_code].extend([t.user for t in db_translations if t.user])
+            self.commit_authors_per_locale[locale_code].extend(
+                [t.user for t in db_translations if t.user]
+            )
 
         for resource in changed_resources:
             resource.save(self.locale)
@@ -270,7 +272,10 @@ class ChangeSet(object):
             ).prefetch_related(
                 Prefetch(
                     'translation_set',
-                    queryset=Translation.objects.filter(locale__code=locale, approved_date__lte=self.now),
+                    queryset=Translation.objects.filter(
+                        locale__code=locale,
+                        approved_date__lte=self.now
+                    ),
                     to_attr='old_translations'
                 )
             )

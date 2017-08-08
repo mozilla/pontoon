@@ -1,4 +1,5 @@
-"""A various settings that enable additional packages that are helpful in day to day development."""
+"""A various settings that enable additional packages that are helpful in day to day development.
+"""
 
 import copy
 import base
@@ -19,7 +20,9 @@ MIDDLEWARE_CLASSES = base.MIDDLEWARE_CLASSES + (
 )
 
 TEMPLATES = copy.copy(base.TEMPLATES)
-TEMPLATES[0]['OPTIONS']['match_regex'] = r'^(?!(admin|debug_toolbar|registration|account|socialaccount)/).*\.(html|jinja|js)$'
+TEMPLATES[0]['OPTIONS']['match_regex'] = (
+    r'^(?!(admin|debug_toolbar|registration|account|socialaccount)/).*\.(html|jinja|js)$'
+)
 
 CSP_SCRIPT_SRC = base.CSP_SCRIPT_SRC + ('http://ajax.googleapis.com',)
 CSP_IMG_SRC = base.CSP_IMG_SRC + ('data:',)

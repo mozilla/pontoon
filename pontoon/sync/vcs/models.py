@@ -59,7 +59,10 @@ class VCSProject(object):
     }
     SOURCE_DIR_NAMES = SOURCE_DIR_SCORES.keys()
 
-    def __init__(self, db_project, locales=None, repo_locales=None, obsolete_entities_paths=None, new_paths=None, full_scan=False):
+    def __init__(
+        self, db_project, locales=None, repo_locales=None, obsolete_entities_paths=None,
+        new_paths=None, full_scan=False
+    ):
         """
         Load resource paths from the given db_project and parse them
         for translation data.
@@ -114,17 +117,24 @@ class VCSProject(object):
         source_directory = self.source_directory_path
         last_revision = source_resources_repo.get_last_synced_revisions()
 
-        modified_files, removed_files = get_changed_files(source_resources_repo.type, source_directory, last_revision)
+        modified_files, removed_files = get_changed_files(
+            source_resources_repo.type, source_directory, last_revision
+        )
 
         # Unify filesystem and data model file extensions
         modified_files = map(source_to_locale_path, modified_files)
         removed_files = map(source_to_locale_path, removed_files)
 
         if source_resources_repo.source_repo or not last_revision:
-            get_path = lambda path: (path, [])
+            def get_path(path):
+                return (path, [])
         else:
-            relative_source_path = source_directory[len(source_resources_repo.checkout_path):].lstrip(os.sep)
-            get_path = lambda path: (path[len(relative_source_path):].lstrip(os.sep), [])
+            relative_source_path = (
+                source_directory[len(source_resources_repo.checkout_path):].lstrip(os.sep)
+            )
+
+            def get_path(path):
+                return (path[len(relative_source_path):].lstrip(os.sep), [])
 
         return dict(map(get_path, modified_files)), dict(map(get_path, removed_files))
 
@@ -138,7 +148,10 @@ class VCSProject(object):
         # VCS changes
         for repo in self.db_project.translation_repositories():
             if repo.multi_locale:
-                locales = self.repo_locales[repo.pk] if self.repo_locales else self.db_project.locales.all()
+                locales = (
+                    self.repo_locales[repo.pk] if self.repo_locales
+                    else self.db_project.locales.all()
+                )
                 for locale in locales:
                     changed_files = get_changed_files(
                         repo.type,
@@ -155,7 +168,11 @@ class VCSProject(object):
                     repo.get_last_synced_revisions()
                 )[0]
 
-                log.info('Changed files in {} repository, all: {}'.format(self.db_project.name, changed_files))
+                log.info(
+                    'Changed files in {} repository, all: {}'.format(
+                        self.db_project.name, changed_files
+                    )
+                )
 
                 # Find relevant changes in repository by matching changed
                 # paths against locale repository paths
@@ -173,7 +190,11 @@ class VCSProject(object):
                             files.setdefault(path, []).append(locale)
                             break
 
-        log.info('Changed files in {} repository, relevant for enabled locales: {}'.format(self.db_project.name, files))
+        log.info(
+            'Changed files in {} repository, relevant for enabled locales: {}'.format(
+                self.db_project.name, files
+            )
+        )
 
         # DB changes
         vcs = files
@@ -266,7 +287,11 @@ class VCSProject(object):
         """
         resources = {}
 
-        log.info('Changed files in {} repository and Pontoon: {}'.format(self.db_project, self.changed_files))
+        log.info(
+            'Changed files in {} repository and Pontoon: {}'.format(
+                self.db_project, self.changed_files
+            )
+        )
 
         for path in self.relative_resource_paths():
             # Syncing translations
@@ -274,16 +299,24 @@ class VCSProject(object):
                 # Copy list instead of cloning
                 locales = list(self.db_project.unsynced_locales)
 
-                if (self.changed_files is not None and
-                    ((not self.changed_files or path not in self.changed_files) and
+                if (
+                    self.changed_files is not None and
+                    (
+                        (not self.changed_files or path not in self.changed_files) and
                         path not in self.obsolete_entities_paths and
-                            path not in self.new_paths)):
+                        path not in self.new_paths
+                    )
+                ):
                     if not locales:
                         log.debug('Skipping unchanged file: {}'.format(path))
                         continue
 
                 else:
-                    if self.changed_files is None or path in self.obsolete_entities_paths or path in self.new_paths:
+                    if (
+                        self.changed_files is None or
+                        path in self.obsolete_entities_paths or
+                        path in self.new_paths
+                    ):
                         locales += self.locales
                     else:
                         locales += self.changed_files[path]
@@ -298,7 +331,11 @@ class VCSProject(object):
             locales = set(locales)
             map(self.synced_locales.add, locales)
 
-            log.debug('Detected resource file {} for {}'.format(path, ','.join([l.code for l in locales]) or 'source'))
+            log.debug(
+                'Detected resource file {} for {}'.format(
+                    path, ','.join([l.code for l in locales]) or 'source'
+                )
+            )
 
             try:
                 resources[path] = VCSResource(self, path, locales=locales)
@@ -352,7 +389,9 @@ class VCSProject(object):
         if possible_sources:
             return max(possible_sources, key=lambda s: s[1])[0]
         else:
-            raise MissingSourceDirectoryError('No source directory found for project {0}'.format(self.db_project.slug))
+            raise MissingSourceDirectoryError(
+                'No source directory found for project {0}'.format(self.db_project.slug)
+            )
 
     def relative_resource_paths(self):
         """
@@ -403,7 +442,10 @@ class VCSResource(object):
         # Create entities using resources from the source directory,
         source_resource_path = os.path.join(vcs_project.source_directory_path, self.path)
         source_resource_path = locale_to_source_path(source_resource_path)
-        source_resource_file = formats.parse(source_resource_path, locale=Locale.objects.get(code='en-US'))
+        source_resource_file = formats.parse(
+            source_resource_path,
+            locale=Locale.objects.get(code='en-US')
+        )
 
         for index, translation in enumerate(source_resource_file.translations):
             vcs_entity = VCSEntity(

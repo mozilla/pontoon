@@ -317,8 +317,11 @@ class SvnRepository(VCSRepository):
 
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ('A', 'M')
-        # Remove all non digit characters from the revision number.
-        normalize_revision = lambda rev: ''.join(filter(lambda c: c.isdigit(), rev))
+
+        def normalize_revision(rev):
+            """Remove all non digit characters from the revision number. """
+            return ''.join(filter(lambda c: c.isdigit(), rev))
+
         from_revision = normalize_revision(from_revision)
         code, output, error = self.execute(
             ['svn', 'diff', '-r', '{}:{}'.format(from_revision, 'HEAD'), '--summarize'],
@@ -372,7 +375,10 @@ class HgRepository(VCSRepository):
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ('A', 'M')
         code, output, error = self.execute(
-            ['hg', 'status', '-a', '-m', '-r', '--rev={}'.format(self._strip(from_revision)), '--rev=default'],
+            [
+                'hg', 'status', '-a', '-m', '-r', '--rev={}'.format(self._strip(from_revision)),
+                '--rev=default',
+            ],
             cwd=path
         )
         if code == 0:

@@ -119,7 +119,9 @@ class Command(BaseCommand):
 
             if 'base.can_translate_locale' not in u.get_all_permissions():
                 u.groups.add(locale_translators_map[locale])
-                self.stdout.write("Permission granted to user {} to locale: {}.".format(u.email, locale))
+                self.stdout.write(
+                    'Permission granted to user {} to locale: {}.'.format(u.email, locale)
+                )
 
         if users:
             bulk_update(users)
@@ -152,6 +154,10 @@ class Command(BaseCommand):
 
         missing_users = Counter(missing_users_list)
         for missing_user in missing_users.keys():
-            self.stdout.write("Pontoon user {} not found: {} translations.".format(missing_user, missing_users[missing_user]))
+            self.stdout.write(
+                'Pontoon user {} not found: {} translations.'.format(
+                    missing_user, missing_users[missing_user]
+                )
+            )
 
         self.stdout.write("+++ Imported data from file {}.".format(filename))

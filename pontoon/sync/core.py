@@ -126,7 +126,8 @@ def update_resources(db_project, vcs_project):
 
 
 def update_translations(db_project, vcs_project, locale, changeset):
-    for key, db_entity, vcs_entity in collect_entities(db_project, vcs_project, db_project.unsynced_locales):
+    all_entities = collect_entities(db_project, vcs_project, db_project.unsynced_locales)
+    for key, db_entity, vcs_entity in all_entities:
         # If we don't have both the db_entity and cs_entity we can't
         # do anything with the translations.
         if db_entity is None or vcs_entity is None:
@@ -157,7 +158,9 @@ def update_translated_resources(db_project, vcs_project, locale):
         if vcs_resource is not None:
             resource_exists = vcs_resource.files.get(locale) is not None
             if resource_exists or resource.is_asymmetric:
-                translatedresource, _ = TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
+                translatedresource, _ = (
+                    TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
+                )
                 translatedresource.calculate_stats()
 
 
@@ -179,7 +182,11 @@ def get_changed_entities(db_project, changed_resources):
 
 
 def get_db_entities(db_project, changed_resources=None):
-    return {entity_key(entity): entity for entity in get_changed_entities(db_project, changed_resources)}
+    return {
+        entity_key(entity): entity for entity in get_changed_entities(
+            db_project, changed_resources
+        )
+    }
 
 
 def entity_key(entity):

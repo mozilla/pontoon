@@ -216,11 +216,17 @@ class ContributorTimelineViewTests(UserTestCase):
 
 class ContributorsTests(TestCase):
     def setUp(self):
-        mock_render = patch.object(views.ContributorsView, 'render_to_response', return_value=HttpResponse(''))
+        mock_render = patch.object(
+            views.ContributorsView,
+            'render_to_response',
+            return_value=HttpResponse('')
+        )
         self.mock_render = mock_render.start()
         self.addCleanup(mock_render.stop)
 
-        mock_translations_manager = patch('pontoon.base.models.UserTranslationsManager.with_translation_counts')
+        mock_translations_manager = patch(
+            'pontoon.base.models.UserTranslationsManager.with_translation_counts'
+        )
         self.mock_translations_manager = mock_translations_manager.start()
         self.addCleanup(mock_translations_manager.stop)
 
@@ -234,7 +240,8 @@ class ContributorsTests(TestCase):
 
     def test_invalid_period(self):
         """
-        Checks how view handles invalid period, it result in period being None - displays all data.  """
+        Checks how view handles invalid period, it result in period being None - displays all data.
+        """
         # If period parameter is invalid value
         self.client.get('/contributors/?period=invalidperiod')
         assert_true(self.mock_render.call_args[0][0]['period'] is None)
@@ -249,7 +256,14 @@ class ContributorsTests(TestCase):
         """
         Checks if view sets and returns data for right period.
         """
-        with patch('django.utils.timezone.now', wraps=now, return_value=aware_datetime(2015, 7, 5)):
+        with patch(
+            'django.utils.timezone.now',
+            wraps=now,
+            return_value=aware_datetime(2015, 7, 5)
+        ):
             self.client.get('/contributors/?period=6')
             assert_equal(self.mock_render.call_args[0][0]['period'], 6)
-            assert_equal(self.mock_translations_manager.call_args[0][0], aware_datetime(2015, 1, 5))
+            assert_equal(
+                self.mock_translations_manager.call_args[0][0],
+                aware_datetime(2015, 1, 5)
+            )

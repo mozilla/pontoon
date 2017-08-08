@@ -62,7 +62,12 @@ class SyncLog(BaseLog):
 
         # total_strings missmatch between TranslatedResource & Resource
         translated_resources = []
-        for t in TranslatedResource.objects.exclude(total_strings=F('resource__total_strings')).select_related('resource'):
+        tr_source = (
+            TranslatedResource.objects
+            .exclude(total_strings=F('resource__total_strings'))
+            .select_related('resource')
+        )
+        for t in tr_source:
             t.total_strings = t.resource.total_strings
             translated_resources.append(t)
 
@@ -70,7 +75,13 @@ class SyncLog(BaseLog):
 
         # total_strings missmatch in ProjectLocales within the same project
         for p in Project.objects.available():
-            if ProjectLocale.objects.filter(project=p).values("total_strings").distinct().count() > 1:
+            count = (
+                ProjectLocale.objects
+                .filter(project=p)
+                .values("total_strings")
+                .distinct().count()
+            )
+            if count > 1:
                 for pl in ProjectLocale.objects.filter(project=p):
                     pl.aggregate_stats()
 

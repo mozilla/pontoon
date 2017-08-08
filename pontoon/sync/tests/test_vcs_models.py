@@ -1,5 +1,4 @@
 import os
-import os.path
 import scandir
 
 from django_nose.tools import (
@@ -41,7 +40,9 @@ class VCSProjectTests(TestCase):
         self.vcs_project = VCSProject(self.project)
 
     def test_relative_resource_paths(self):
-        with patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'):
+        with patch.object(
+            VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'
+        ):
             self.vcs_project.resources_for_path = Mock(return_value=[
                 '/root/foo.po',
                 '/root/meh/bar.po'
@@ -58,7 +59,9 @@ class VCSProjectTests(TestCase):
         relative paths are used within non-source locales that do not
         have .pot files.
         """
-        with patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'):
+        with patch.object(
+            VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'
+        ):
             self.vcs_project.resources_for_path = Mock(return_value=[
                 '/root/foo.pot',
                 '/root/meh/bar.pot'
@@ -138,7 +141,10 @@ class VCSProjectTests(TestCase):
         changed_vcs_resources = {'success': [], 'failure': []}
         with patch('pontoon.sync.vcs.models.VCSResource') as MockVCSResource, \
             patch('pontoon.sync.vcs.models.log') as mock_log, \
-            patch.object(VCSProject, 'changed_files', new_callable=PropertyMock, return_value=changed_vcs_resources):
+            patch.object(
+                VCSProject, 'changed_files', new_callable=PropertyMock,
+                return_value=changed_vcs_resources
+        ):
             MockVCSResource.side_effect = vcs_resource_constructor
 
             assert_equal(self.vcs_project.resources, {'success': 'successful resource'})
@@ -155,7 +161,9 @@ class VCSProjectTests(TestCase):
         self.project.repositories.add(RepositoryFactory.create(url=url))
 
         with patch('pontoon.sync.vcs.models.scandir', wraps=scandir) as mock_scandir, \
-             patch('pontoon.sync.vcs.models.MOZILLA_REPOS', [url]):
+            patch(
+                'pontoon.sync.vcs.models.MOZILLA_REPOS', [url]
+        ):
             mock_scandir.walk.return_value = [
                 ('/root', [], ['foo.pot', 'region.properties'])
             ]
@@ -173,7 +181,9 @@ class VCSProjectTests(TestCase):
             ('/root/.hidden_folder/templates', [], ('bar.pot',)),
             ('/root/templates', [], ('foo.pot',)),
         )
-        with patch('pontoon.sync.vcs.models.scandir.walk', wraps=scandir, return_value=hidden_paths):
+        with patch(
+            'pontoon.sync.vcs.models.scandir.walk', wraps=scandir, return_value=hidden_paths
+        ):
             assert_equal(
                 list(self.vcs_project.resources_for_path('/root')),
                 ['/root/templates/foo.pot']

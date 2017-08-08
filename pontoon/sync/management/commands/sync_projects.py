@@ -58,7 +58,10 @@ class Command(BaseCommand):
         sync_log = SyncLog.objects.create(start_time=timezone.now())
 
         projects = Project.objects.filter(disabled=False)
-        slugs = options['projects'].split(',') if 'projects' in options and options['projects'] else None
+        slugs = (
+            options['projects'].split(',') if 'projects' in options and options['projects']
+            else None
+        )
         if slugs:
             projects = projects.filter(slug__in=slugs)
 
@@ -66,8 +69,14 @@ class Command(BaseCommand):
             raise CommandError('No matching projects found.')
 
         if slugs and len(projects) != len(slugs):
-            invalid_slugs = sorted(set(slugs).difference(set(projects.values_list('slug', flat=True))))
-            self.stderr.write('Couldn\'t find projects with following slugs: {}'.format(', '.join(invalid_slugs)))
+            invalid_slugs = sorted(
+                set(slugs).difference(set(projects.values_list('slug', flat=True)))
+            )
+            self.stderr.write(
+                "Couldn't find projects with following slugs: {}".format(
+                    ', '.join(invalid_slugs)
+                )
+            )
 
         locale = None
         if options['locale']:
