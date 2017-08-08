@@ -1576,8 +1576,10 @@ class EntityQuerySet(models.QuerySet):
         """
         Helper method that returns a set with annotation of following fields:
             * approved_count - a number of approved translations in the entity.
-            * fuzzy_count - a number of fuzzy translations in the antity
+            * fuzzy_count - a number of fuzzy translations in the entity
             * suggested_count - a number of translations assigned do the entity.
+            * unreviewed_count - a number of translations that have not yet been
+              approved or rejected in the entity.
             * expected_count - a number of translations that should cover entity.
             * unchanged_count - a number of translations that have the same string as the entity.
         """
@@ -1597,6 +1599,20 @@ class EntityQuerySet(models.QuerySet):
                 )
             ),
             suggested_count=Sum(
+                Case(
+                    When(
+                        Q(
+                            translation__locale=locale,
+                            translation__approved=False,
+                            translation__fuzzy=False,
+                        ),
+                        then=1
+                    ),
+                    output_field=models.IntegerField(),
+                    default=0
+                )
+            ),
+            unreviewed_count=Sum(
                 Case(
                     When(
                         Q(
@@ -1640,7 +1656,7 @@ class EntityQuerySet(models.QuerySet):
         return Q(approved_count=F('expected_count'))
 
     def has_suggestions(self):
-        return Q(suggested_count__gt=0)
+        return Q(unreviewed_count__gt=0)
 
     def unchanged(self):
         return Q(unchanged_count=F('expected_count'))
