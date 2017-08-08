@@ -9,7 +9,7 @@ $(function() {
       .find('.read-write-info').toggleClass('hidden');
   }
 
-  container.on('click', '.edit-info', function(e) {
+  container.on('click', '#info-wrapper .edit-info', function(e) {
     e.preventDefault();
     var content = container.find('.info').html();
     var textArea = container.find('.read-write-info textarea').val($.trim(content));
@@ -17,12 +17,12 @@ $(function() {
     textArea.focus();
   });
 
-  container.on('click', '.cancel', function(e) {
+  container.on('click', '#info-wrapper .cancel', function(e) {
     e.preventDefault();
     toggleWidgets();
   });
 
-  container.on('click', '.save', function(e) {
+  container.on('click', '#info-wrapper .save', function(e) {
     e.preventDefault();
     var textArea = container.find('.read-write-info textarea');
     $.ajax({
