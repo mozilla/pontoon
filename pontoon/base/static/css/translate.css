@@ -1349,24 +1349,9 @@ body > header aside p {
   color: #CCCCCC;
 }
 
-#editor nav li a > span > .fa {
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 2px;
-  vertical-align: 0;
-  /* Bug 1312228: Stop tab loading animations when not needed to avoid high CPU usage */
-  display: none;
-  visibility: hidden;
-}
-
-#editor nav li a.loading > span > .fa {
-  display: block;
-  visibility: visible;
-}
-
 #editor nav li a > span > .count {
   background: #3F4752;
+  display: none;
   margin-left: 0;
 }
 
@@ -1377,18 +1362,6 @@ body > header aside p {
 
 #editor nav li a > span > .count > .preferred {
   color: #7BC876;
-}
-
-#editor nav li a > span {
-  position: relative;
-}
-
-#editor nav li a.loading > span {
-  visibility: hidden;
-}
-
-#editor nav li a.loading[href="#machinery"] span.count {
-  visibility: visible;
 }
 
 #editor textarea {

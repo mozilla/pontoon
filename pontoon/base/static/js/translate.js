@@ -120,11 +120,13 @@ var Pontoon = (function (my) {
     getOtherLocales: function (entity) {
       var self = this,
           list = $('#helpers .other-locales ul').empty(),
-          tab = $('#helpers a[href="#other-locales"]').addClass('loading'),
+          tab = $('#helpers a[href="#other-locales"]'),
           count = '',
           preferred = 0,
           remaining = 0,
           localesOrder = self.user.localesOrder;
+
+      self.NProgressUnbind();
 
       if (self.XHRgetOtherLocales) {
         self.XHRgetOtherLocales.abort();
@@ -203,7 +205,7 @@ var Pontoon = (function (my) {
           }
         },
         complete: function() {
-          tab.removeClass('loading')
+          tab
             .find('.count')
               .find('.preferred').html(preferred).toggle(preferred > 0).end()
               .find('.plus').html('+').toggle(preferred > 0 && remaining > 0).end()
@@ -211,6 +213,8 @@ var Pontoon = (function (my) {
               .toggle(count !== '');
         }
       });
+
+      self.NProgressBind();
     },
 
 
@@ -252,8 +256,10 @@ var Pontoon = (function (my) {
     getHistory: function (entity) {
       var self = this,
           list = $('#helpers .history ul').empty(),
-          tab = $('#helpers a[href="#history"]').addClass('loading'),
+          tab = $('#helpers a[href="#history"]'),
           count = '';
+
+      self.NProgressUnbind();
 
       if (self.XHRgetHistory) {
         self.XHRgetHistory.abort();
@@ -321,10 +327,11 @@ var Pontoon = (function (my) {
           }
         },
         complete: function() {
-          tab.removeClass('loading')
-            .find('.count').html(count).toggle(count !== '');
+          tab.find('.count').html(count).toggle(count !== '');
         }
       });
+
+      self.NProgressBind();
     },
 
 

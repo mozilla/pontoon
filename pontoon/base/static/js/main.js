@@ -268,10 +268,12 @@ var Pontoon = (function (my) {
       var self = this,
           loader = loader || 'helpers li a[href="#machinery"]',
           ul = $('#helpers > .machinery').children('ul').empty(),
-          tab = $('#' + loader).addClass('loading'),
+          tab = $('#' + loader).addClass('loading'), // .loading class used on the /machinery page
           requests = 0,
           count = 0,
           sourcesMap = {};
+
+      self.NProgressUnbind();
 
       function append(data) {
         var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : ' title="Copy to clipboard"',
@@ -378,10 +380,11 @@ var Pontoon = (function (my) {
       function complete(jqXHR, status) {
         if (status !== "abort") {
           requests--;
-          tab.find('.count').html(count).toggle(count !== 0);
+          tab.find('.count').html(count).show();
           if (requests === 0) {
             tab.removeClass('loading');
             if (ul.children('li').length === 0) {
+              tab.find('.count').hide();
               ul.append('<li class="disabled">' +
                 '<p>No translations available.</p>' +
               '</li>');
@@ -389,9 +392,6 @@ var Pontoon = (function (my) {
           }
         }
       }
-
-      // Reset count
-      tab.find('.count').html('').hide();
 
       // Translation memory
       requests++;
@@ -560,8 +560,9 @@ var Pontoon = (function (my) {
           });
         }
       }).error(error).complete(complete);
-    }
 
+      self.NProgressBind();
+    }
   });
 }(Pontoon || {}));
 
