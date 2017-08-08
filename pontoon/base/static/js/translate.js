@@ -2051,7 +2051,7 @@ var Pontoon = (function (my) {
             unapproved_user: self.user.display_name
           }));
 
-          self.endLoader('Translation has been unapproved.');
+          self.endLoader('Translation unapproved');
         }, function() {
           self.endLoader("Couldn't unapprove this translation.");
         });
@@ -2080,6 +2080,8 @@ var Pontoon = (function (my) {
             item.addClass('rejected').removeClass('translated suggested fuzzy');
             item.find('.unapprove').removeClass('unapprove').addClass('approve').prop('title', 'Approve');
             button.addClass('unreject').removeClass('reject').prop('title', 'Unreject');
+
+            self.endLoader('Translation rejected');
           },
           error: function() {
             self.endLoader('Oops, something went wrong.', 'error');
@@ -2122,7 +2124,7 @@ var Pontoon = (function (my) {
              unrejected_user: self.user.display_name
            }));
 
-           self.endLoader('Translation has been unrejected.');
+           self.endLoader('Translation unrejected');
          }, function() {
            self.endLoader("Couldn't unreject this translation.");
          });
