@@ -36,6 +36,12 @@ SQL = """
     );
 """
 
+REVERSE_SQL = """
+    UPDATE base_translation
+    SET rejected = FALSE
+    WHERE rejected = TRUE;
+"""
+
 
 class Migration(migrations.Migration):
     dependencies = [
@@ -43,5 +49,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(SQL),
+        migrations.RunSQL(SQL, REVERSE_SQL),
     ]
