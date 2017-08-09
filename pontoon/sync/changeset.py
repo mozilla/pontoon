@@ -209,6 +209,7 @@ class ChangeSet(object):
                     db_translation.approved = True
                     db_translation.approved_date = self.now
                     db_translation.approved_user = user
+                db_translation.rejected = False
                 db_translation.fuzzy = vcs_translation.fuzzy
                 db_translation.extra = vcs_translation.extra
 
@@ -342,6 +343,7 @@ class ChangeSet(object):
                 'approved',
                 'approved_user_id',
                 'approved_date',
+                'rejected',
                 'fuzzy',
                 'extra'
             ])
