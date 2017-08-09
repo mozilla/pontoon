@@ -22,14 +22,17 @@ SQL = """
     UPDATE base_translation
     SET rejected = TRUE
     WHERE approved = FALSE
+    AND fuzzy = FALSE
     AND date < (
         SELECT GREATEST(bt.date, bt.approved_date)
         FROM base_translation bt
         WHERE bt.approved = TRUE
         AND bt.entity_id = base_translation.entity_id
         AND bt.locale_id = base_translation.locale_id
-        ORDER BY bt.date, bt.approved_date
-        LIMIT 1
+        AND (
+            bt.plural_form IS NULL OR
+            bt.plural_form = base_translation.plural_form
+        )
     );
 """
 
