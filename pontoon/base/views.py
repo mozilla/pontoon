@@ -532,6 +532,7 @@ def reject_translation(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     translation = get_object_or_404(Translation, pk=t)
+    locale = translation.locale
 
     # Non-privileged users can only reject own unapproved translations
     if (
@@ -549,6 +550,10 @@ def reject_translation(request):
                 "Forbidden: Can't reject translations from other users"
             )
 
+    # Check if translation was approved. We must do this before unapproving it.
+    if translation.approved:
+        translation.entity.mark_changed(locale)
+
     translation.rejected = True
     translation.rejected_user = request.user
     translation.rejected_date = timezone.now()
@@ -563,16 +568,12 @@ def reject_translation(request):
         plural_form=translation.plural_form,
     ).order_by('-approved', 'rejected', '-date')[0].serialize()
     project = translation.entity.resource.project
-    locale = translation.locale
 
     TranslationMemoryEntry.objects.filter(translation=translation).delete()
     TranslatedResource.objects.get(
         resource=translation.entity.resource,
         locale=locale
     ).calculate_stats()
-
-    if translation.approved:
-        translation.entity.mark_changed(locale)
 
     return JsonResponse({
         'translation': latest_translation,
