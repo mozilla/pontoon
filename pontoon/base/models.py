@@ -2160,7 +2160,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         TranslationMemoryEntry.objects.filter(translation=self).delete()
         self.entity.mark_changed(self.locale)
 
-    def unreject(self, user, stats=True):
+    def unreject(self, user):
         """
         Unreject translation.
         """
@@ -2168,15 +2168,6 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.unrejected_user = user
         self.unrejected_date = timezone.now()
         self.save()
-
-        if stats:
-            TranslatedResource.objects.get(
-                resource=self.entity.resource,
-                locale=self.locale
-            ).calculate_stats()
-
-        TranslationMemoryEntry.objects.filter(translation=self).delete()
-        self.entity.mark_changed(self.locale)
 
     def serialize(self):
         return {
