@@ -66,10 +66,12 @@ def ajax_resources(request, code, slug):
                 if latest_page_translatedresource
                 else None
             )
-            latest_activity = page_translatedresource.latest_translation.latest_activity
             if (
                 latest is None or
-                latest_activity['date'] > latest.latest_activity['date']
+                (
+                    page_translatedresource.latest_translation.latest_activity['date'] >
+                    latest.latest_activity['date']
+                )
             ):
                 latest_page_translatedresource = page_translatedresource
 
