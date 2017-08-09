@@ -300,10 +300,12 @@ def batch_edit_translations(request):
 
     # Must be executed before translations set changes, which is why
     # we need to force evaluate QuerySets by wrapping them inside list()
-    def get_translations_info(translations):
+    def get_translations_info(translations, changed_entities=None):
         count = translations.count()
         translated_resources = list(translations.translated_resources(locale))
-        changed_entities = list(Entity.objects.filter(translation__in=translations).distinct())
+
+        if changed_entities is None:
+            changed_entities = list(Entity.objects.filter(translation__in=translations).distinct())
 
         return count, translated_resources, changed_entities
 
@@ -345,7 +347,7 @@ def batch_edit_translations(request):
             rejected=False
         )
         count, translated_resources, changed_entities = get_translations_info(
-            suggestions
+            suggestions, []
         )
         TranslationMemoryEntry.objects.filter(translation__in=suggestions).delete()
         suggestions.update(
