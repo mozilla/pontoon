@@ -1820,11 +1820,6 @@ p#sign-in-required > a#sidebar-signin {
   transition: all 0.1s ease-out;
 }
 
-#helpers > section ul li.delete {
-  -webkit-transform: scale(0); /* MANDATORY! Or transitionend in main.js triggered too late */
-  transform: scale(0);
-}
-
 #helpers > section ul li:not(.disabled):hover,
 #helpers > section ul li:not(.disabled).hover {
   background: #4D5967;
@@ -1873,7 +1868,8 @@ p#sign-in-required > a#sidebar-signin {
 }
 
 #helpers > section ul li > header.translator button,
-#helpers > section ul li > header.own button.delete,
+#helpers > section ul li > header.own button.reject,
+#helpers > section ul li > header.own button.unreject,
 #helpers > section ul li.translated > header button.approve {
   display: inline-block;
 }
