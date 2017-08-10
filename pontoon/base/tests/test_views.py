@@ -307,11 +307,7 @@ class EntityViewTests(TestCase):
                 'limit': 1,
             }
 
-            if (
-                filter_ == 'unchanged' or
-                filter_ == 'has-suggestions' or
-                filter_ == 'rejected'
-            ):
+            if filter_ in ('unchanged', 'has-suggestions', 'rejected'):
                 params['extra'] = filter_
 
             else:
