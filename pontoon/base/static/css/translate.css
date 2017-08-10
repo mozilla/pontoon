@@ -1820,11 +1820,6 @@ p#sign-in-required > a#sidebar-signin {
   transition: all 0.1s ease-out;
 }
 
-#helpers > section ul li.delete {
-  -webkit-transform: scale(0); /* MANDATORY! Or transitionend in main.js triggered too late */
-  transform: scale(0);
-}
-
 #helpers > section ul li:not(.disabled):hover,
 #helpers > section ul li:not(.disabled).hover {
   background: #4D5967;
@@ -1873,21 +1868,18 @@ p#sign-in-required > a#sidebar-signin {
 }
 
 #helpers > section ul li > header.translator button,
-#helpers > section ul li > header.own button.delete,
+#helpers > section ul li > header.own button.reject,
+#helpers > section ul li > header.own button.unreject,
 #helpers > section ul li.translated > header button.approve {
   display: inline-block;
 }
 
-#helpers > section ul li > header button.approve:before {
-  content: "";
+#helpers > section ul li.rejected {
+  opacity: 0.4;
 }
 
 #helpers > section ul li.fuzzy > header button.approve:before {
   color: #FED271;
-}
-
-#helpers > section ul li.suggested > header button.approve:before {
-  color: #4FC4F6;
 }
 
 #helpers > section ul li > header button.approve:hover:before,
@@ -1899,17 +1891,24 @@ p#sign-in-required > a#sidebar-signin {
 
 #helpers > section ul li > header button.approve:before,
 #helpers > section ul li > header button.unapprove:hover:before {
-   content: "";
-   color: #4FC4F6;
+   content: "";
 }
 
-#helpers > section ul li > header button.delete:before {
-  content: "";
+#helpers > section ul li > header button.unreject:before,
+#helpers > section ul li > header button.reject:hover:before,
+#helpers > section ul li.rejected > header button.reject:before,
+#helpers > section ul li.rejected > header button.unreject:before {
+  color: #F36;
+  content: "";
   margin-left: 5px;
 }
 
-#helpers > section ul li > header button.delete:hover:before {
-  color: #F36;
+#helpers > section ul li > header button.reject:before,
+#helpers > section ul li > header button.unreject:hover:before,
+#helpers > section ul li.rejected > header button.reject:hover:before,
+#helpers > section ul li.rejected > header button.unreject:hover:before {
+  content: "";
+  margin-left: 5px;
 }
 
 
@@ -2032,7 +2031,7 @@ p#sign-in-required > a#sidebar-signin {
   display: none;
 }
 
-#batch button#delete-all {
+#batch button#reject-all {
   background: #F36;
 }
 

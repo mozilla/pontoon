@@ -280,7 +280,7 @@ var Pontoon = (function (my) {
 
               list.append(
                 '<li data-id="' + this.pk + '" class="suggestion ' +
-                (this.approved ? 'translated' : this.fuzzy ? 'fuzzy' : 'suggested') +
+                (this.approved ? 'translated' : this.rejected ? 'rejected' : this.fuzzy ? 'fuzzy' : 'suggested') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
                     ((self.user.canTranslate()) ? ' translator' :
@@ -296,7 +296,9 @@ var Pontoon = (function (my) {
                       ((i > 0) ? '<a href="#" class="toggle-diff" data-alternative-text="Hide diff" title="Show diff against the currently active translation">Show diff</a>' : '') +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
-                      ((self.user.id && (self.user.id === this.uid) || self.user.canTranslate()) ? '<button class="delete fa" title="Delete"></button>' : '') +
+                      ((self.user.id && (self.user.id === this.uid) || self.user.canTranslate()) ? '<button class="' +
+                       (this.rejected ? 'unreject' : 'reject') + ' fa" title="' +
+                       (this.rejected ? 'Unreject' : 'Reject') + '"></button>' : '') +
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
@@ -2019,7 +2021,6 @@ var Pontoon = (function (my) {
               pf = self.getPluralForm(true);
 
           self.stats = data.stats;
-          self.updateProgress(entity);
 
           self.updateTranslation(entity, pf, data.translation);
 
@@ -2050,17 +2051,17 @@ var Pontoon = (function (my) {
             unapproved_user: self.user.display_name
           }));
 
-          self.endLoader('Translation has been unapproved.');
+          self.endLoader('Translation unapproved');
         }, function() {
           self.endLoader("Couldn't unapprove this translation.");
         });
       });
 
-      $('#helpers .history').on('click', 'menu .delete', function (e) {
+      $('#helpers .history').on('click', 'menu .reject', function (e) {
         var button = $(this);
-        // Delete
+        // Reject a translation.
         $.ajax({
-          url: '/delete-translation/',
+          url: '/reject-translation/',
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),
@@ -2068,84 +2069,65 @@ var Pontoon = (function (my) {
             paths: self.getPartPaths(self.currentPart)
           },
           success: function(data) {
-            var item = button.parents('li'),
-                next = item.next(),
-                index = item.index(),
-                entity = self.getEditorEntity(),
-                pluralForm = self.getPluralForm(true);
+            var entity = self.getEditorEntity();
+            var pf = self.getPluralForm(true);
 
             self.stats = data.stats;
 
-            item
-              .addClass('delete')
-              .bind('transitionend', function() {
-                $(this).remove();
-                self.endLoader('Translation deleted');
+            self.updateTranslation(entity, pf, data.translation);
 
-                // Active (approved or latest) translation deleted
-                if (index === 0) {
+            var item = button.parents('li');
+            item.addClass('rejected').removeClass('translated suggested fuzzy');
+            item.find('.unapprove').removeClass('unapprove').addClass('approve').prop('title', 'Approve');
+            button.addClass('unreject').removeClass('reject').prop('title', 'Unreject');
 
-                  // Make newest alternative translation active
-                  if (next.length) {
-                    next.click();
-                    var newTranslation = self.fluent.serializeTranslation(entity, $('#translation').val());
-
-                    if (entity.body && pluralForm === 0) {
-                      self.postMessage("SAVE", {
-                        translation: newTranslation,
-                        id: entity.id
-                      });
-                    }
-
-                    self.updateTranslation(entity, pluralForm, {
-                      pk: next.data('id'),
-                      string: newTranslation,
-                      approved: false,
-                      fuzzy: false
-                    });
-
-                  // Last translation deleted, no alternative available
-                  } else {
-                    if (self.cachedTranslation === $('#translation').val()) {
-                      $('#clear').click();
-                    }
-
-                    if (entity.body && pluralForm === 0) {
-                      self.postMessage("DELETE", {
-                        id: entity.id
-                      });
-                    }
-
-                    self.updateTranslation(entity, pluralForm, {
-                      pk: null,
-                      string: null,
-                      approved: false,
-                      fuzzy: false
-                    });
-
-                    $('#helpers .history ul')
-                      .append('<li class="disabled">' +
-                                '<p>No translations available.</p>' +
-                              '</li>');
-                  }
-
-                  self.moveCursorToBeginning();
-                  self.updateCurrentTranslationLength();
-                  self.updateCachedTranslation();
-                  self.updateFilterUI();
-                }
-
-                // Update number of history entities
-                var count = $('#helpers .history .suggestion').length;
-                $('#helpers a[href="#history"] .count')
-                  .toggle(count > 0)
-                  .html(count);
-              });
+            self.endLoader('Translation rejected');
           },
           error: function() {
             self.endLoader('Oops, something went wrong.', 'error');
           }
         });
+      });
+
+      $('#helpers .history').on('click', 'menu .unreject', function (e) {
+         var button = $(this),
+             translationId = parseInt($(this).parents('li').data('id'));
+
+         $.post('/unreject-translation/', {
+            csrfmiddlewaretoken: $('#server').data('csrf'),
+            translation: translationId,
+            paths: self.getPartPaths(self.currentPart)
+         }).then(function(data) {
+           var entity = self.getEditorEntity();
+           var pf = self.getPluralForm(true);
+
+           self.stats = data.stats;
+
+           self.updateTranslation(entity, pf, data.translation);
+
+           self.updateAndFocusTranslationEditor(data.translation.string);
+           self.updateCachedTranslation();
+           self.updateCurrentTranslationLength();
+
+           if (entity.body && pf === 0) {
+             self.postMessage("SAVE", {
+               translation: data.translation.string,
+               id: entity.id
+             });
+           }
+
+           button.removeClass('unreject').addClass('reject');
+           button.prop('title', 'Reject');
+           button.parents('li.rejected').removeClass('rejected').addClass('suggested');
+           button.parents('li').find('.info a').prop('title', self.getApproveButtonTitle({
+             rejected: false,
+             unrejected_user: self.user.display_name
+           }));
+
+           self.endLoader('Translation unrejected');
+         }, function() {
+           self.endLoader("Couldn't unreject this translation.");
+         });
       });
 
       // Toggle suggestion diff
@@ -2208,7 +2190,7 @@ var Pontoon = (function (my) {
       });
 
       // Actions
-      $('#approve-all, #delete-all, #replace-all').click(function(e) {
+      $('#approve-all, #reject-all, #replace-all').click(function(e) {
         e.preventDefault();
 
         var button = this,
@@ -2225,7 +2207,7 @@ var Pontoon = (function (my) {
         clearTimeout(self.batchButttonTimer);
 
         // Delete check
-        if ($(button).is('#delete-all')) {
+        if ($(button).is('#reject-all')) {
           if ($(button).is('.confirmed')) {
             $(button).removeClass('confirmed show-message');
 
@@ -2264,8 +2246,15 @@ var Pontoon = (function (my) {
             },
             success: function(data) {
               if ('count' in data) {
-                var strings = data.count === 1 ? 'string' : 'strings';
-                message = data.count + ' ' + strings + ' ' + action + 'd';
+                var itemsText = data.count === 1 ? 'string' : 'strings';
+                var actionText = action + 'd';
+
+                if (action === 'reject') {
+                  itemsText = 'suggestion' + (data.count === 1 ? '' : 's');
+                  actionText = 'rejected';
+                }
+
+                message = data.count + ' ' + itemsText + ' ' + actionText;
 
                 // Update UI (entity list, progress, in-place)
                 if (data.count > 0) {
@@ -2288,7 +2277,7 @@ var Pontoon = (function (my) {
                         self.updateEntityUI(entity);
 
                         if (entity.body) {
-                          if ($(button).is('#delete-all') && !entity.translation[0].pk) {
+                          if ($(button).is('#reject-all') && !entity.translation[0].pk) {
                             self.postMessage("DELETE", {
                               id: entity.id
                             });

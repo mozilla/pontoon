@@ -274,7 +274,9 @@ def batch_edit_translations(request):
 
     # Batch editing is only available to translators.
     # Check if user has translate permissions for all of the projects in passed entities.
-    projects = Project.objects.filter(pk__in=entities.values_list('resource__project__pk', flat=True).distinct())
+    projects = Project.objects.filter(
+        pk__in=entities.values_list('resource__project__pk', flat=True).distinct()
+    )
     for project in projects:
         if not request.user.can_translate(project=project, locale=locale):
             return HttpResponseForbidden(
@@ -298,36 +300,71 @@ def batch_edit_translations(request):
 
     # Must be executed before translations set changes, which is why
     # we need to force evaluate QuerySets by wrapping them inside list()
-    def get_translations_info(translations):
+    def get_translations_info(translations, changed_entities=None):
         count = translations.count()
         translated_resources = list(translations.translated_resources(locale))
-        changed_entities = list(Entity.objects.filter(translation__in=translations).distinct())
+
+        if changed_entities is None:
+            changed_entities = list(Entity.objects.filter(translation__in=translations).distinct())
 
         return count, translated_resources, changed_entities
 
     if action == 'approve':
-        translations = translations.filter(approved=False)
-        changed_translation_pks = list(translations.values_list('pk', flat=True))
+        approved = translations.filter(approved=False)
+        changed_translation_pks = list(approved.values_list('pk', flat=True))
         if changed_translation_pks:
-            latest_translation_pk = translations.last().pk
-        count, translated_resources, changed_entities = get_translations_info(translations)
-        translations.update(
+            latest_translation_pk = approved.last().pk
+        count, translated_resources, changed_entities = get_translations_info(approved)
+        approved.update(
             approved=True,
             approved_user=request.user,
-            approved_date=timezone.now()
+            approved_date=timezone.now(),
+            rejected=False,
+            rejected_user=None,
+            rejected_date=None,
+            fuzzy=False,
         )
 
-    elif action == 'delete':
-        count, translated_resources, changed_entities = get_translations_info(translations)
-        TranslationMemoryEntry.objects.filter(translation__in=translations).delete()
-        translations.delete()
+        # Reject all other non-rejected translations.
+        suggestions = Translation.objects.filter(
+            locale=locale,
+            entity__pk__in=entities,
+            approved=False,
+            rejected=False,
+        )
+        suggestions.update(
+            rejected=True,
+            rejected_user=request.user,
+            rejected_date=timezone.now(),
+            fuzzy=False,
+        )
+
+    elif action == 'reject':
+        suggestions = Translation.objects.filter(
+            locale=locale,
+            entity__pk__in=entities,
+            approved=False,
+            rejected=False
+        )
+        count, translated_resources, changed_entities = get_translations_info(
+            suggestions, []
+        )
+        TranslationMemoryEntry.objects.filter(translation__in=suggestions).delete()
+        suggestions.update(
+            rejected=True,
+            rejected_user=request.user,
+            rejected_date=timezone.now(),
+            fuzzy=False,
+        )
 
     elif action == 'replace':
         find = request.POST.get('find')
         replace = request.POST.get('replace')
 
         try:
-            translations, changed_translations = translations.find_and_replace(find, replace, request.user)
+            translations, changed_translations = translations.find_and_replace(
+                find, replace, request.user
+            )
             changed_translation_pks = [c.pk for c in changed_translations]
             if changed_translation_pks:
                 latest_translation_pk = max(changed_translation_pks)
@@ -432,7 +469,7 @@ def get_translation_history(request):
     translations = Translation.objects.filter(entity=entity, locale=locale)
     if plural_form != "-1":
         translations = translations.filter(plural_form=plural_form)
-    translations = translations.order_by('-approved', '-date')
+    translations = translations.order_by('-approved', 'rejected', '-date')
 
     payload = []
     offset = timezone.now().strftime('%z')
@@ -477,7 +514,7 @@ def unapprove_translation(request):
     latest_translation = translation.entity.translation_set.filter(
         locale=translation.locale,
         plural_form=translation.plural_form,
-    ).latest('date').serialize()
+    ).order_by('-approved', 'rejected', '-date')[0].serialize()
     project = translation.entity.resource.project
     locale = translation.locale
     return JsonResponse({
@@ -488,8 +525,8 @@ def unapprove_translation(request):
 
 @require_AJAX
 @transaction.atomic
-def delete_translation(request):
-    """Delete given translation."""
+def reject_translation(request):
+    """Reject given translation."""
     try:
         t = request.POST['translation']
         paths = request.POST.getlist('paths[]')
@@ -497,25 +534,90 @@ def delete_translation(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     translation = get_object_or_404(Translation, pk=t)
+    locale = translation.locale
 
-    # Non-privileged users can only delete own unapproved translations
-    if not request.user.can_translate(translation.locale, translation.entity.resource.project):
+    # Non-privileged users can only reject own unapproved translations
+    if (
+        not request.user.can_translate(
+            translation.locale, translation.entity.resource.project
+        )
+    ):
         if translation.user == request.user:
             if translation.approved is True:
                 return HttpResponseForbidden(
-                    "Forbidden: Can't delete approved translations"
+                    "Forbidden: Can't reject approved translations"
                 )
         else:
             return HttpResponseForbidden(
-                "Forbidden: Can't delete translations from other users"
+                "Forbidden: Can't reject translations from other users"
             )
 
-    translation.delete()
+    # Check if translation was approved. We must do this before unapproving it.
+    if translation.approved:
+        translation.entity.mark_changed(locale)
 
+    translation.rejected = True
+    translation.rejected_user = request.user
+    translation.rejected_date = timezone.now()
+    translation.approved = False
+    translation.approved_user = None
+    translation.approved_date = None
+    translation.fuzzy = False
+    translation.save()
+
+    latest_translation = translation.entity.translation_set.filter(
+        locale=translation.locale,
+        plural_form=translation.plural_form,
+    ).order_by('-approved', 'rejected', '-date')[0].serialize()
     project = translation.entity.resource.project
-    locale = translation.locale
+
+    TranslationMemoryEntry.objects.filter(translation=translation).delete()
+    TranslatedResource.objects.get(
+        resource=translation.entity.resource,
+        locale=locale
+    ).calculate_stats()
 
     return JsonResponse({
+        'translation': latest_translation,
+        'stats': TranslatedResource.objects.stats(project, paths, locale),
+    })
+
+
+@require_AJAX
+@login_required(redirect_field_name='', login_url='/403')
+@transaction.atomic
+def unreject_translation(request):
+    """Unreject given translation."""
+    try:
+        t = request.POST['translation']
+        paths = request.POST.getlist('paths[]')
+    except MultiValueDictKeyError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    translation = Translation.objects.get(pk=t)
+
+    # Only privileged users or authors can un-reject translations
+    if not (
+        request.user.can_translate(
+            project=translation.entity.resource.project,
+            locale=translation.locale
+        ) or
+        request.user == translation.user or
+        translation.approved
+    ):
+        return HttpResponseForbidden(
+            "Forbidden: You can't unreject this translation."
+        )
+
+    translation.unreject(request.user)
+    latest_translation = translation.entity.translation_set.filter(
+        locale=translation.locale,
+        plural_form=translation.plural_form,
+    ).order_by('-approved', 'rejected', '-date')[0].serialize()
+    project = translation.entity.resource.project
+    locale = translation.locale
+    return JsonResponse({
+        'translation': latest_translation,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
@@ -583,7 +685,9 @@ def update_translation(request):
     if len(translations) > 0:
 
         # Same translation exists
-        same_translations = translations.filter(string=string).order_by('-approved', '-date')
+        same_translations = translations.filter(string=string).order_by(
+            '-approved', 'rejected', '-date'
+        )
         if len(same_translations) > 0:
             t = same_translations[0]
 
@@ -602,8 +706,15 @@ def update_translation(request):
                 if warnings:
                     return warnings
 
-                translations.update(approved=False, approved_user=None, approved_date=None)
-                translations.update(fuzzy=False)
+                translations.update(
+                    approved=False,
+                    approved_user=None,
+                    approved_date=None,
+                    rejected=True,
+                    rejected_user=request.user,
+                    rejected_date=timezone.now(),
+                    fuzzy=False,
+                )
 
                 if t.user is None:
                     t.user = user
@@ -611,6 +722,9 @@ def update_translation(request):
                 t.approved = True
                 t.approved_date = timezone.now()
                 t.fuzzy = False
+                t.rejected = False
+                t.rejected_user = None
+                t.rejected_date = None
 
                 if t.approved_user is None:
                     t.approved_user = user

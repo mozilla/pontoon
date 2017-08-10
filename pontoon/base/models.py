@@ -1576,8 +1576,10 @@ class EntityQuerySet(models.QuerySet):
         """
         Helper method that returns a set with annotation of following fields:
             * approved_count - a number of approved translations in the entity.
-            * fuzzy_count - a number of fuzzy translations in the antity
+            * fuzzy_count - a number of fuzzy translations in the entity
             * suggested_count - a number of translations assigned do the entity.
+            * unreviewed_count - a number of translations that have not yet been
+              approved or rejected in the entity.
             * expected_count - a number of translations that should cover entity.
             * unchanged_count - a number of translations that have the same string as the entity.
         """
@@ -1599,8 +1601,30 @@ class EntityQuerySet(models.QuerySet):
             suggested_count=Sum(
                 Case(
                     When(
-                        Q(translation__locale=locale, translation__approved=False, translation__fuzzy=False), then=1
-                    ), output_field=models.IntegerField(), default=0
+                        Q(
+                            translation__locale=locale,
+                            translation__approved=False,
+                            translation__fuzzy=False,
+                        ),
+                        then=1
+                    ),
+                    output_field=models.IntegerField(),
+                    default=0
+                )
+            ),
+            unreviewed_count=Sum(
+                Case(
+                    When(
+                        Q(
+                            translation__locale=locale,
+                            translation__approved=False,
+                            translation__fuzzy=False,
+                            translation__rejected=False,
+                        ),
+                        then=1
+                    ),
+                    output_field=models.IntegerField(),
+                    default=0
                 )
             ),
             expected_count=Case(
@@ -1632,7 +1656,7 @@ class EntityQuerySet(models.QuerySet):
         return Q(approved_count=F('expected_count'))
 
     def has_suggestions(self):
-        return Q(suggested_count__gt=0)
+        return Q(unreviewed_count__gt=0)
 
     def unchanged(self):
         return Q(unchanged_count=F('expected_count'))
@@ -1740,7 +1764,11 @@ class Entity(DirtyFieldsMixin, models.Model):
             translations = [t for t in translations if t.plural_form == plural_form]
 
         if translations:
-            translation = sorted(translations, key=lambda k: (k.approved, k.date), reverse=True)[0]
+            translation = sorted(
+                translations,
+                key=lambda k: (k.approved, not k.rejected, k.date),
+                reverse=True
+            )[0]
             return translation.serialize()
 
         else:
@@ -1962,6 +1990,8 @@ class Translation(DirtyFieldsMixin, models.Model):
     # 0=zero, 1=one, 2=two, 3=few, 4=many, 5=other, null=no plural forms
     plural_form = models.SmallIntegerField(null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
+    fuzzy = models.BooleanField(default=False)
+
     approved = models.BooleanField(default=False)
     approved_user = models.ForeignKey(
         User, related_name='approved_translations', null=True, blank=True)
@@ -1970,7 +2000,15 @@ class Translation(DirtyFieldsMixin, models.Model):
     unapproved_user = models.ForeignKey(
         User, related_name='unapproved_translations', null=True, blank=True)
     unapproved_date = models.DateTimeField(null=True, blank=True)
-    fuzzy = models.BooleanField(default=False)
+
+    rejected = models.BooleanField(default=False)
+    rejected_user = models.ForeignKey(
+        User, related_name='rejected_translations', null=True, blank=True)
+    rejected_date = models.DateTimeField(null=True, blank=True)
+
+    unrejected_user = models.ForeignKey(
+        User, related_name='unrejected_translations', null=True, blank=True)
+    unrejected_date = models.DateTimeField(null=True, blank=True)
 
     # Field contains a concatenated state of the  entity for faster search lookups.
     # Due to the nature of sql queries, it's faster to perform `icontains` filter on the same table
@@ -2038,10 +2076,25 @@ class Translation(DirtyFieldsMixin, models.Model):
         # Only one translation can be approved at a time for any
         # Entity/Locale.
         if self.approved:
-            (Translation.objects
-                .filter(entity=self.entity, locale=self.locale, plural_form=self.plural_form)
+            (
+                Translation.objects
+                .filter(
+                    entity=self.entity,
+                    locale=self.locale,
+                    plural_form=self.plural_form,
+                    rejected=False,
+                )
                 .exclude(pk=self.pk)
-                .update(approved=False, approved_user=None, approved_date=None))
+                .update(
+                    approved=False,
+                    approved_user=None,
+                    approved_date=None,
+                    rejected=True,
+                    rejected_user=self.approved_user,
+                    rejected_date=self.approved_date,
+                    fuzzy=False,
+                )
+            )
 
             if not self.memory_entries.exists():
                 TranslationMemoryEntry.objects.create(
@@ -2098,29 +2151,30 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.unapproved_date = timezone.now()
         self.save()
 
-        TranslatedResource.objects.get(resource=self.entity.resource, locale=self.locale).calculate_stats()
+        if stats:
+            TranslatedResource.objects.get(
+                resource=self.entity.resource,
+                locale=self.locale
+            ).calculate_stats()
+
         TranslationMemoryEntry.objects.filter(translation=self).delete()
         self.entity.mark_changed(self.locale)
 
-    def delete(self, stats=True, *args, **kwargs):
-        TranslationMemoryEntry.objects.filter(translation=self).delete()
-
-        super(Translation, self).delete(*args, **kwargs)
-
-        if stats:
-            TranslatedResource.objects.get(resource=self.entity.resource, locale=self.locale).calculate_stats()
-
-        # Mark entity as changed before deleting. This is skipped during
-        # bulk delete operations, but we shouldn't be bulk-deleting
-        # translations anyway.
-        if self.approved:
-            self.entity.mark_changed(self.locale)
+    def unreject(self, user):
+        """
+        Unreject translation.
+        """
+        self.rejected = False
+        self.unrejected_user = user
+        self.unrejected_date = timezone.now()
+        self.save()
 
     def serialize(self):
         return {
             'pk': self.pk,
             'string': self.string,
             'approved': self.approved,
+            'rejected': self.rejected,
             'fuzzy': self.fuzzy,
         }
 
