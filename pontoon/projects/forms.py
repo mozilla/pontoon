@@ -1,8 +1,5 @@
-import bleach
-
 from django import forms
 from django.core import validators
-from django.conf import settings
 
 from pontoon.base.forms import HtmlField
 
