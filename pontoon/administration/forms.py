@@ -1,11 +1,9 @@
-import bleach
-
 from django import forms
 from django.contrib.auth.models import User
-from django.conf import settings
 from django.forms.models import inlineformset_factory
 
 from pontoon.base.models import Project, Repository, Subpage, ExternalResource
+from pontoon.base.forms import HtmlField
 
 
 class ContactChoiceField(forms.ModelChoiceField):
@@ -15,6 +13,7 @@ class ContactChoiceField(forms.ModelChoiceField):
 
 class ProjectForm(forms.ModelForm):
     contact = ContactChoiceField(None, required=False)
+    info = HtmlField()
 
     class Meta:
         model = Project
@@ -27,14 +26,6 @@ class ProjectForm(forms.ModelForm):
         self.fields['contact'].queryset = (
             User.objects.filter(groups__name='project_managers').order_by('email')
         )
-
-    def clean_info(self):
-        info = self.cleaned_data['info']
-        info = bleach.clean(
-            info, strip=True,
-            tags=settings.ALLOWED_TAGS, attributes=settings.ALLOWED_ATTRIBUTES
-        )
-        return info
 
 
 SubpageInlineFormSet = inlineformset_factory(

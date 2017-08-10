@@ -1,6 +1,9 @@
 import os
 
+import bleach
+
 from django import forms
+from django.conf import settings
 
 from pontoon.base.models import (
     Locale,
@@ -9,6 +12,16 @@ from pontoon.base.models import (
     UserProfile
 )
 from pontoon.sync.formats import SUPPORTED_FORMAT_PARSERS
+
+
+class HtmlField(forms.CharField):
+    def clean(self, value):
+        value = super(HtmlField, self).clean(value)
+        bleach.clean(
+            value, strip=True,
+            tags=settings.ALLOWED_TAGS, attributes=settings.ALLOWED_ATTRIBUTES
+        )
+        return value
 
 
 class NoTabStopCharField(forms.CharField):
