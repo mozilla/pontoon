@@ -318,6 +318,11 @@ body > header .locale.select {
   content: "";
 }
 
+.rejected .status:before {
+  color: #AAAAAA;
+  content: "";
+}
+
 .time-range .status:before {
   color: #AAAAAA;
   content: "";

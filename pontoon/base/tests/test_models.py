@@ -1542,21 +1542,14 @@ class EntityFilterTests(TestCase):
         TranslationFactory.create(
             locale=self.plural_locale,
             entity=first_entity,
-            approved=True,
+            approved=False,
             fuzzy=False,
             plural_form=1,
         )
         TranslationFactory.create(
             locale=self.plural_locale,
-            entity=first_entity,
-            approved=False,
-            fuzzy=False,
-            plural_form=2,
-        )
-        TranslationFactory.create(
-            locale=self.plural_locale,
             entity=third_entity,
-            approved=True,
+            approved=False,
             fuzzy=False,
             plural_form=0,
         )
@@ -1567,16 +1560,67 @@ class EntityFilterTests(TestCase):
             fuzzy=False,
             plural_form=1
         )
+        assert_equal(
+            {first_entity, third_entity},
+            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.has_suggestions()))
+        )
+
+    def test_rejected_plural(self):
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3,
+            string='Unchanged string',
+            string_plural='Unchanged plural string'
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=True,
+            fuzzy=False,
+            rejected=False,
+            plural_form=0
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=first_entity,
+            approved=True,
+            fuzzy=False,
+            rejected=False,
+            plural_form=1,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=second_entity,
+            approved=True,
+            fuzzy=False,
+            rejected=False,
+            plural_form=0,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=second_entity,
+            approved=False,
+            fuzzy=False,
+            rejected=True,
+            plural_form=1
+        )
         TranslationFactory.create(
             locale=self.plural_locale,
             entity=third_entity,
             approved=False,
             fuzzy=False,
-            plural_form=2
+            rejected=True,
+            plural_form=0,
+        )
+        TranslationFactory.create(
+            locale=self.plural_locale,
+            entity=third_entity,
+            approved=False,
+            fuzzy=False,
+            rejected=True,
+            plural_form=1
         )
         assert_equal(
-            {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.has_suggestions()))
+            {second_entity, third_entity},
+            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.rejected()))
         )
 
     def test_combined_filters(self):

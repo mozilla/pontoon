@@ -251,21 +251,6 @@ button {  width: auto; overflow: visible; }
   color: #FED271;
 }
 
-.untranslated .status.fa:before {
-  color: #AAAAAA;
-  content: "";
-}
-
-.has-suggestions .status.fa:before {
-  color: #AAAAAA;
-  content: "";
-}
-
-.unchanged .status.fa:before {
-  color: #AAAAAA;
-  content: "";
-}
-
 /* Reset HTML5 Search Input in Webkit */
 input[type=search] {
   -webkit-appearance:none;
