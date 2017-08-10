@@ -164,10 +164,17 @@ class UserProfileForm(forms.ModelForm):
     Form is responsible for saving user's name.
     """
     first_name = forms.RegexField(regex='^[^<>"\'&]+$', max_length=30, strip=True)
+    email = forms.EmailField()
 
     class Meta:
         model = User
         fields = ('first_name', 'email')
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email=email).exclude(username=self.instance.username).exists():
+            raise forms.ValidationError(u'Email address must be unique.')
+        return email
 
 
 class UserCustomHomepageForm(forms.ModelForm):
