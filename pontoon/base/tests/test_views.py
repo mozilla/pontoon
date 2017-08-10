@@ -295,6 +295,7 @@ class EntityViewTests(TestCase):
             'translated',
             'unchanged',
             'has-suggestions',
+            'rejected',
         )
 
         for filter_ in filters:
@@ -306,7 +307,7 @@ class EntityViewTests(TestCase):
                 'limit': 1,
             }
 
-            if filter_ == 'unchanged' or filter_ == 'has-suggestions':
+            if filter_ in ('unchanged', 'has-suggestions', 'rejected'):
                 params['extra'] = filter_
 
             else:

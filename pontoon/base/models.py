@@ -1557,7 +1557,7 @@ class EntityQuerySet(models.QuerySet):
     Queryset provides a set of additional methods that should allow us to filter entities.
     """
     user_entity_filters = ('missing', 'fuzzy', 'suggested', 'translated')
-    user_extra_filters = ('has-suggestions', 'unchanged')
+    user_extra_filters = ('has-suggestions', 'rejected', 'unchanged')
 
     def filter_statuses(self, locale, statuses):
         sanitized_statuses = filter(lambda s: s in self.user_entity_filters, statuses)
@@ -1576,12 +1576,16 @@ class EntityQuerySet(models.QuerySet):
         """
         Helper method that returns a set with annotation of following fields:
             * approved_count - a number of approved translations in the entity.
-            * fuzzy_count - a number of fuzzy translations in the entity
-            * suggested_count - a number of translations assigned do the entity.
-            * unreviewed_count - a number of translations that have not yet been
-              approved or rejected in the entity.
-            * expected_count - a number of translations that should cover entity.
-            * unchanged_count - a number of translations that have the same string as the entity.
+            * fuzzy_count - a number of fuzzy translations in the entity.
+            * suggested_count - a number of suggested translations in the
+              entity.
+            * unreviewed_count - a number of translations in the entity that
+              have not yet been approved or rejected.
+            * rejected_count - a number of rejected translations in the entity.
+            * expected_count - a number of translations that should cover
+              entity.
+            * unchanged_count - a number of translations that have the same
+              string as the entity.
         """
         return self.annotate(
             approved_count=Sum(
@@ -1627,6 +1631,21 @@ class EntityQuerySet(models.QuerySet):
                     default=0
                 )
             ),
+            rejected_count=Sum(
+                Case(
+                    When(
+                        Q(
+                            translation__locale=locale,
+                            translation__approved=False,
+                            translation__fuzzy=False,
+                            translation__rejected=True,
+                        ),
+                        then=1
+                    ),
+                    output_field=models.IntegerField(),
+                    default=0
+                )
+            ),
             expected_count=Case(
                 When(
                     Q(string_plural__isnull=True) | Q(string_plural=""), then=1
@@ -1657,6 +1676,9 @@ class EntityQuerySet(models.QuerySet):
 
     def has_suggestions(self):
         return Q(unreviewed_count__gt=0)
+
+    def rejected(self):
+        return Q(rejected_count__gt=0)
 
     def unchanged(self):
         return Q(unchanged_count=F('expected_count'))

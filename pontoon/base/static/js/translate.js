@@ -1341,6 +1341,13 @@ var Pontoon = (function (my) {
     attachEntityListHandlers: function() {
       var self = this;
 
+      function isExtraFilter(el) {
+        return el.hasClass('untranslated') ||
+               el.hasClass('unchanged') ||
+               el.hasClass('has-suggestions') ||
+               el.hasClass('rejected');
+      }
+
       // Filter entities by multiple filters
       $('#filter').on('click', 'li[data-type]:not(".editing"):not(".all") .status', function(e) {
         e.stopPropagation();
@@ -1365,7 +1372,7 @@ var Pontoon = (function (my) {
         } else if (el.hasClass('author')) {
           updateFilterValue('author');
 
-        } else if (el.hasClass('untranslated') || el.hasClass('unchanged') || el.hasClass('has-suggestions')) {
+        } else if (isExtraFilter(el)) {
           // Special case: Untranslated filter is a union of missing, fuzzy, and suggested
           if (value === 'untranslated') {
             if (self.untranslatedFilterApplied(filter.status)) {
@@ -1400,7 +1407,7 @@ var Pontoon = (function (my) {
         } else if (el.hasClass('author')) {
           filter.author.push(value);
 
-        } else if (el.hasClass('untranslated') || el.hasClass('unchanged') || el.hasClass('has-suggestions')) {
+        } else if (isExtraFilter(el)) {
           if (value === 'untranslated') {
             self.applyUntranslatedFilter(filter.status);
 
