@@ -46,7 +46,7 @@ a.avatar:hover .desc ~ img {
   width: 620px;
 }
 #profile-form .field {
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 #profile-form .field input {
@@ -60,11 +60,6 @@ a.avatar:hover .desc ~ img {
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-}
-
-#profile-form .field input:hover,
-#profile-form .field input:focus {
-  border-color: #888888;
 }
 
 #profile-form button {
