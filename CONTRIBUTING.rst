@@ -76,7 +76,6 @@ We follow `The seven rules of a great Git commit message <https://chris.beams.io
 7. Use the body to explain what and why vs. how
 
 
-
 Pull requests
 =============
 
@@ -128,7 +127,7 @@ Documentation for Pontoon is built with `Sphinx
 Building docs is not covered with docker yet, so you will have to do it on your host. To make
 a virtualenv to build docs, do this:
 
-.. code-blocks:: shell
+.. code-block:: shell
 
     $ cd docs/
     $ virtualenv venv
@@ -143,6 +142,13 @@ Then, to build the docs, run this:
 
 The HTML documentation will be in `docs/_build/html/`. Try to open `docs/_build/html/index.html`
 for example.
+
+.. note:: Pontoon uses `GraphViz`_ as part of the documentation generation, so
+   you'll need to install it to generate graphs that use it. Most package
+   managers, including `Homebrew`_, have a package available for install.
+
+.. _GraphViz: http://www.graphviz.org/
+.. _Homebrew: http://brew.sh/
 
 
 Running tests
@@ -193,3 +199,48 @@ different depending on the context.
 
 Tip! Try to mock in limited context so that individual tests don't affect other
 tests. Use context managers instead of monkey patching imported modules.
+
+
+Updating Your Local Instance
+============================
+When changes are merged to the main Pontoon repository, you'll want to update
+your local development instance to reflect the latest version of the site. You
+can use Git as normal to pull the latest changes, but if the changes add any new
+dependencies or alter the database, you'll want to install any new libraries and
+run any new migrations.
+
+If you're unsure what needs to be run, it's safe to just perform all of these
+steps, as they don't affect your setup if nothing has changed:
+
+.. code-block:: shell
+
+   # Pull latest code (assuming you've already checked out master).
+   git pull origin master
+
+   # Install new dependencies or update existing ones.
+   pip install -U --force --require-hashes -r requirements.txt
+
+   # Run database migrations.
+   python manage.py migrate
+
+
+Integration with fluent
+=======================
+
+Pontoon is able to synchronize translations produced by libraries provided by
+`Project Fluent <http://projectfluent.io/>`_ and provides advanced editor for translators.
+
+Because of our very close integration, we'll need to compile the fresh versions of
+javascript/python libraries in order to provide new features.
+
+It's important to remember to update both packages:
+* python-fluent (responsible for e.g. server-side sync process)
+* fluent-syntax (required by the fluent editor)
+
+How to build the fresh version of fluent-syntax.js
+--------------------------------------------------
+
+.. code-block:: shell
+
+    npm install fluent-syntax
+    cp node_modules/fluent-syntax/compat.js pontoon/base/static/js/lib/fluent-syntax.js
