@@ -15,9 +15,11 @@ from pontoon.sync.formats import SUPPORTED_FORMAT_PARSERS
 
 
 class HtmlField(forms.CharField):
+    widget = forms.Textarea
+
     def clean(self, value):
         value = super(HtmlField, self).clean(value)
-        bleach.clean(
+        value = bleach.clean(
             value, strip=True,
             tags=settings.ALLOWED_TAGS, attributes=settings.ALLOWED_ATTRIBUTES
         )
