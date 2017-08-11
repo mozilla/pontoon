@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 
 from pontoon.base.models import Project, Repository, Subpage, ExternalResource
+from pontoon.base.forms import HtmlField
 
 
 class ContactChoiceField(forms.ModelChoiceField):
@@ -12,6 +13,7 @@ class ContactChoiceField(forms.ModelChoiceField):
 
 class ProjectForm(forms.ModelForm):
     contact = ContactChoiceField(None, required=False)
+    info = HtmlField()
 
     class Meta:
         model = Project
