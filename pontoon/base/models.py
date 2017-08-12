@@ -472,6 +472,44 @@ class LocaleQuerySet(models.QuerySet):
 @python_2_unicode_compatible
 class Locale(AggregatedStats):
     code = models.CharField(max_length=20, unique=True)
+
+    # Codes related to Microsoft products.
+    ms_translator_code = models.CharField(
+        max_length=20,
+        blank=True,
+        help_text="""
+        Microsoft Translator maintains its own list of
+        <a href="https://msdn.microsoft.com/en-us/library/hh456380.aspx">supported locales</a>.
+        Choose a locale from that list that's is the closest match or leave it blank to disable
+        support for Microsoft Translator.
+        """
+    )
+    ms_terminology_code = models.CharField(
+        max_length=20,
+        blank=True,
+        help_text="""
+        Microsoft Terminology uses language codes that include both the language and
+        the country/region. Chose a matching locale from the list or leave blank to disable support
+        for Microsoft terminology:
+
+        af-za, am-et, ar-dz, ar-eg, ar-sa, as-in, az-latn-az, be-by, bg-bg, bn-bd, bn-in,
+        bs-cyrl-ba, bs-latn-ba, ca-es, ca-es-valencia, chr-cher-us, cs-cz, cy-gb, da-dk, de-at,
+        de-ch, de-de, el-gr, en-au, en-ca, en-gb, en-hk, en-ie, en-in, en-my, en-ng, en-nz, en-ph,
+        en-pk, en-sg, en-tt, en-us, en-za, es-ar, es-bo, es-cl, es-co, es-cr, es-do, es-ec, es-es,
+        es-gt, es-hn, es-mx, es-ni, es-pa, es-pe, es-pr, es-py, es-sv, es-us, es-uy, es-ve, et-ee,
+        eu-es, fa-ir, fi-fi, fil-ph, fo-fo, fr-be, fr-ca, fr-ch, fr-dz, fr-fr, fr-ma, fr-tn,
+        fuc-latn-sn, ga-ie, gd-gb, gl-es, gu-in, guc-ve, ha-latn-ng, he-il, hi-in, hr-hr, hu-hu,
+        hy-am, id-id, ig-ng, is-is, it-ch, it-it, iu-latn-ca, ja-jp, ka-ge, kk-kz, km-kh, kn-in,
+        ko-kr, kok-in, ku-arab-iq, ky-kg, lb-lu, lo-la, lt-lt, lv-lv, mi-nz, mk-mk, ml-in, mn-mn,
+        mr-in, ms-bn, ms-my, mt-mt, my-mm, nb-no, ne-np, nl-be, nl-nl, nn-no, nso-za, or-in,
+        pa-arab-pk, pa-in, pl-pl, prs-af, ps-af, pt-br, pt-pt, quc-latn-gt, quz-pe, ro-md, ro-ro,
+        ru-kz, ru-ru, rw-rw, sd-arab-pk, si-lk, sk-sk, sl-si, sp-xl, sq-al, sr-cyrl-ba, sr-cyrl-rs,
+        sr-latn-me, sr-latn-rs, sv-se, sw-ke, ta-in, te-in, tg-cyrl-tj, th-th, ti-et, tk-tm, tl-ph,
+        tn-za, tr-tr, tt-ru, ug-cn, uk-ua, ur-pk, uz-cyrl-uz, uz-latn-uz, vi-vn, wo-sn, xh-za,
+        yo-ng, zh-cn, zh-hk, zh-sg, zh-tw, zu-za
+        """
+    )
+
     db_collation = models.CharField(
         max_length=20,
         blank=True,
@@ -488,7 +526,9 @@ class Locale(AggregatedStats):
         blank=True,
         help_text="""
         Plural rule is part of the plurals header in
-        <a href="https://www.gnu.org/software/gettext/manual/gettext.html#Plural-forms">Gettext PO files</a>,
+        <a href="https://www.gnu.org/software/gettext/manual/gettext.html#Plural-forms">
+        Gettext PO files
+        </a>,
         that follows the <i>plural=</i> string, without the trailing semicolon.
         E.g. (n != 1)
         """
@@ -598,6 +638,8 @@ class Locale(AggregatedStats):
             'cldr_plurals': self.cldr_id_list(),
             'direction': self.direction,
             'script': self.script,
+            'ms_translator_code': self.ms_translator_code,
+            'ms_terminology_code': self.ms_terminology_code,
         }
 
     def cldr_id_list(self):
@@ -1898,7 +1940,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'visible': (
                     False if entity.pk not in visible_entities or not visible_entities
                     else True
-                )
+                ),
             })
 
         return entities_array

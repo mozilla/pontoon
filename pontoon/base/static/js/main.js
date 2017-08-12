@@ -425,7 +425,7 @@ var Pontoon = (function (my) {
       }).error(error).complete(complete);
 
       // Machine translation
-      if (self.locale.mt !== false) {
+      if (self.locale.ms_translator_code.length) {
         requests++;
 
         if (self.XHRmachineTranslation) {
@@ -436,17 +436,9 @@ var Pontoon = (function (my) {
           url: '/machine-translation/',
           data: {
             text: original,
-            // On first run, check if target locale supported
-            check: (self.locale.mt === undefined) ? true : false,
-            // Use MT locale, Pontoon's might not be supported
-            locale: (self.locale.mt === undefined) ?
-                    self.locale.code : self.locale.mt
+            locale: self.locale.ms_translator_code
           }
-
         }).success(function(data) {
-          if (data.locale) {
-            self.locale.mt = data.locale;
-          }
           if (data.translation) {
             append({
               url: 'http://www.bing.com/translator',
@@ -454,14 +446,12 @@ var Pontoon = (function (my) {
               source: 'Machine Translation',
               translation: data.translation
             });
-          } else if (data === "not-supported") {
-            self.locale.mt = false;
           }
         }).error(error).complete(complete);
       }
 
       // Microsoft Terminology
-      if (self.locale.msTerminology !== false) {
+      if (self.locale.ms_terminology_code.length) {
         requests++;
 
         if (self.XHRmicrosoftTerminology) {
@@ -472,32 +462,21 @@ var Pontoon = (function (my) {
           url: '/microsoft-terminology/',
           data: {
             text: original,
-            // On first run, check if target locale supported
-            check: (self.locale.msTerminology === undefined) ? true : false,
-            // Use Microsoft Terminology locale, Pontoon's might not be supported
-            locale: (self.locale.msTerminology === undefined) ?
-                    self.locale.code : self.locale.msTerminology
+            locale: self.locale.ms_terminology_code
           }
 
         }).success(function(data) {
-          if (data.locale) {
-            self.locale.msTerminology = data.locale;
-          }
-          if (data.translations) {
-            $.each(data.translations, function() {
-              append({
-                original: this.source,
-                quality: Math.round(this.quality) + '%',
-                url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' + this.source + '&langID=' + self.locale.msTerminology,
-                title: 'Visit Microsoft Terminology Service API.\n' +
-                       '© 2014 Microsoft Corporation. All rights reserved.',
-                source: 'Microsoft',
-                translation: this.target
-              });
+          $.each(data.translations, function() {
+            append({
+              original: this.source,
+              quality: Math.round(this.quality) + '%',
+              url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' + this.source + '&langID=' + self.locale.ms_terminology_code,
+              title: 'Visit Microsoft Terminology Service API.\n' +
+                     '© 2014 Microsoft Corporation. All rights reserved.',
+              source: 'Microsoft',
+              translation: this.target
             });
-          } else if (data === "not-supported") {
-            self.locale.msTerminology = false;
-          }
+          });
         }).error(error).complete(complete);
       }
 
