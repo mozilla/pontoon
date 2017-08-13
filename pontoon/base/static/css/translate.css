@@ -43,6 +43,7 @@ mark.search {
 
 #source {
   display: none;
+  background: #FFFFFF;
   height: 0;
   padding: 60px 0 0 0;
   width: 100%;
