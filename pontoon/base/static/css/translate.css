@@ -1883,6 +1883,11 @@ p#sign-in-required > a#sidebar-signin {
   opacity: 0.4;
 }
 
+#helpers > section ul li.rejected:hover,
+#helpers > section ul li.rejected.hover {
+  opacity: 1;
+}
+
 #helpers > section ul li.fuzzy > header button.approve:before {
   color: #FED271;
 }
