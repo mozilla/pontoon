@@ -8,7 +8,7 @@ from collections import defaultdict
 from django.conf import settings
 from django.db import DataError
 from django.http import HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, get_list_or_404, render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
 
@@ -82,7 +82,7 @@ def machine_translation(request):
         return HttpResponseBadRequest("Missing api key.")
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
-    get_object_or_404(Locale, ms_translator_code=locale_code)
+    get_list_or_404(Locale, ms_translator_code=locale_code)
 
     obj = {
         'locale': locale_code,
@@ -95,6 +95,7 @@ def machine_translation(request):
         "to": locale_code,
         "contentType": "text/html",
     }
+
     try:
         r = requests.get(url, params=payload)
         # Parse XML response
@@ -116,10 +117,10 @@ def microsoft_terminology(request):
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    obj = {}
     # Validate if locale exists in the database to avoid any potential XSS attacks.
-    get_object_or_404(Locale, ms_terminology_code=locale_code)
+    get_list_or_404(Locale, ms_terminology_code=locale_code)
 
+    obj = {}
     url = 'http://api.terminology.microsoft.com/Terminology.svc'
     headers = {
         'SOAPAction': (
@@ -127,7 +128,6 @@ def microsoft_terminology(request):
         ),
         'Content-Type': 'text/xml; charset=utf-8'
     }
-
     payload = {
         'uuid': uuid4(),
         'text': quote(text.encode('utf-8')),
