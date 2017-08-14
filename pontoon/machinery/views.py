@@ -7,7 +7,7 @@ from six.moves.urllib.parse import quote
 from collections import defaultdict
 from django.conf import settings
 from django.db import DataError
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
@@ -71,51 +71,32 @@ def machine_translation(request):
     """Get translation from machine translation service."""
     try:
         text = request.GET['text']
-        locale = request.GET['locale']
-        check = request.GET['check']
+        locale_code = request.GET['locale']
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    if hasattr(settings, 'MICROSOFT_TRANSLATOR_API_KEY'):
-        api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
-    else:
+    api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
+
+    if not api_key:
         log.error("MICROSOFT_TRANSLATOR_API_KEY not set")
-        return HttpResponse("apikey")
+        return HttpResponseBadRequest("Missing api key.")
 
-    obj = {}
+    # Validate if locale exists in the database to avoid any potential XSS attacks.
+    get_object_or_404(Locale, ms_translator_code=locale_code)
 
-    # On first run, check if target language supported
-    if check == "true":
-        supported = False
-        languages = settings.MICROSOFT_TRANSLATOR_LOCALES
-
-        if locale in languages:
-            supported = True
-
-        else:
-            for lang in languages:
-                if lang.startswith(locale.split("-")[0]):  # Neutral locales
-                    supported = True
-                    locale = lang
-                    break
-
-        if not supported:
-            return HttpResponse("not-supported")
-
-        obj['locale'] = locale
-
+    obj = {
+        'locale': locale_code,
+    }
     url = "http://api.microsofttranslator.com/V2/Http.svc/Translate"
     payload = {
         "appId": api_key,
         "text": text,
         "from": "en",
-        "to": locale,
+        "to": locale_code,
         "contentType": "text/html",
     }
-
     try:
         r = requests.get(url, params=payload)
-
         # Parse XML response
         root = ET.fromstring(r.content)
         translation = root.text
@@ -131,13 +112,14 @@ def microsoft_terminology(request):
     """Get translations from Microsoft Terminology Service."""
     try:
         text = request.GET['text']
-        locale = request.GET['locale']
-        check = request.GET['check']
+        locale_code = request.GET['locale']
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     obj = {}
-    locale = locale.lower()
+    # Validate if locale exists in the database to avoid any potential XSS attacks.
+    get_object_or_404(Locale, ms_terminology_code=locale_code)
+
     url = 'http://api.terminology.microsoft.com/Terminology.svc'
     headers = {
         'SOAPAction': (
@@ -146,39 +128,14 @@ def microsoft_terminology(request):
         'Content-Type': 'text/xml; charset=utf-8'
     }
 
-    # On first run, check if target language supported
-    if check == "true":
-        supported = False
-        languages = settings.MICROSOFT_TERMINOLOGY_LOCALES
-
-        if locale in languages:
-            supported = True
-
-        elif "-" not in locale:
-            temp = locale + "-" + locale  # Try e.g. "de-de"
-            if temp in languages:
-                supported = True
-                locale = temp
-
-            else:
-                for lang in languages:
-                    if lang.startswith(locale + "-"):  # Try e.g. "de-XY"
-                        supported = True
-                        locale = lang
-                        break
-
-        if not supported:
-            return HttpResponse("not-supported")
-
-        obj['locale'] = locale
-
     payload = {
         'uuid': uuid4(),
         'text': quote(text.encode('utf-8')),
-        'to': locale,
+        'to': locale_code,
         'max_result': 5
     }
     template = get_template('machinery/microsoft_terminology.jinja')
+
     payload = template.render(payload)
 
     try:
