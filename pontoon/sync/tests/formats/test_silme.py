@@ -188,9 +188,11 @@ class DTDTests(FormatTestsMixin, TestCase):
     def test_quotes(self):
         input_strings = dedent("""
             <!ENTITY SingleQuote "\'">
-            <!ENTITY SingleQuoteEntity "\&apos;">
+            <!ENTITY SingleQuoteHTMLEntity "\&apos;">
+            <!ENTITY SingleQuoteUnicode "\u0027">
             <!ENTITY DoubleQuote '\"'>
-            <!ENTITY DoubleQuoteEntity "\&quot;">
+            <!ENTITY DoubleQuoteHTMLEntity "\&quot;">
+            <!ENTITY DoubleQuoteUnicode "\u0022">
         """)
 
         # Make sure path contains 'mobile/android/base'
@@ -206,23 +208,27 @@ class DTDTests(FormatTestsMixin, TestCase):
         # Unescape quotes when parsing
         assert_attributes_equal(resource.translations[0], strings={None: "'"})
         assert_attributes_equal(resource.translations[1], strings={None: "'"})
-        assert_attributes_equal(resource.translations[2], strings={None: '"'})
+        assert_attributes_equal(resource.translations[2], strings={None: "'"})
         assert_attributes_equal(resource.translations[3], strings={None: '"'})
+        assert_attributes_equal(resource.translations[4], strings={None: '"'})
+        assert_attributes_equal(resource.translations[5], strings={None: '"'})
 
         # Escape quotes when saving
         translated_resource = silme.SilmeResource(
             DTDParser, path, source_resource=resource
         )
         translated_resource.translations[0].strings[None] = "Single Quote '"
-        translated_resource.translations[1].strings[None] = 'Double Quote "'
+        translated_resource.translations[3].strings[None] = 'Double Quote "'
 
         translated_resource.save(self.locale)
 
         expected_string = dedent("""
             <!ENTITY SingleQuote "Single Quote \&apos;">
-            <!ENTITY SingleQuoteEntity "Double Quote \&quot;">
-            <!ENTITY DoubleQuote '\&quot;'>
-            <!ENTITY DoubleQuoteEntity "\&quot;">
+            <!ENTITY SingleQuoteHTMLEntity "\&apos;">
+            <!ENTITY SingleQuoteUnicode "\&apos;">
+            <!ENTITY DoubleQuote 'Double Quote \&quot;'>
+            <!ENTITY DoubleQuoteHTMLEntity "\&quot;">
+            <!ENTITY DoubleQuoteUnicode "\&quot;">
         """)
         self.assert_file_content(path, expected_string)
 

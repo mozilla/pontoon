@@ -134,13 +134,18 @@ class SilmeResource(ParsedResource):
         """
         value = value.replace('"', '\\&quot;')
         value = value.replace("'", '\\&apos;')
+
         return value
 
     def unescape_quotes(self, value):
         value = value.replace('\\&quot;', '"')
+        value = value.replace('\\u0022', '"')  # Bug 1390111
         value = value.replace('\\"', '"')
+
         value = value.replace('\\&apos;', "'")
+        value = value.replace('\\u0027', "'")  # Bug 1390111
         value = value.replace("\\'", "'")
+
         return value
 
     def save(self, locale):
