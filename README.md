@@ -24,8 +24,8 @@ Get involved
 * Join `#pontoon` on [IRC](https://cbe001.chat.mibbit.com/?url=irc%3A%2F%2Firc.mozilla.org%2Fpontoon)
 * [Set up](http://mozilla-pontoon.readthedocs.io/en/latest/) Pontoon for local development.
 
-Servers
--------
+Servers (used for Mozilla projects only)
+----------------------------------------
 * [Staging](https://mozilla-pontoon-staging.herokuapp.com/)
 * [Production](https://pontoon.mozilla.org/)
 
