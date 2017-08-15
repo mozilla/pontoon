@@ -195,6 +195,10 @@ class ChangeSet(object):
             db_translations = db_entity.translation_set.filter(
                 locale__code=locale_code,
             )
+
+        if old_translations is None:
+            old_translations = db_translations.filter(approved_date__lte=self.now)
+
         approved_translations = []
         fuzzy_translations = []
 
@@ -234,24 +238,29 @@ class ChangeSet(object):
                 ))
 
         # Any existing translations that were not approved get unapproved.
-        if old_translations is None:
-            old_translations = db_translations.filter(approved_date__lte=self.now)
-
         for translation in old_translations:
             if translation not in approved_translations:
+                # Use the translation instance already set for update if it exists
+                translation = (
+                    match_attr(self.translations_to_update, pk=translation.pk) or translation
+                )
                 translation.approved = False
                 translation.approved_user = None
                 translation.approved_date = None
 
-                if translation.is_dirty():
+                if translation not in self.translations_to_update and translation.is_dirty():
                     self.translations_to_update.append(translation)
 
         # Any existing translations that are no longer fuzzy get unfuzzied.
         for translation in db_translations:
             if translation not in fuzzy_translations:
+                # Use the translation instance already set for update if it exists
+                translation = (
+                    match_attr(self.translations_to_update, pk=translation.pk) or translation
+                )
                 translation.fuzzy = False
 
-                if translation.is_dirty():
+                if translation not in self.translations_to_update and translation.is_dirty():
                     self.translations_to_update.append(translation)
 
     def prefetch_entity_translations(self):
