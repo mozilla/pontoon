@@ -886,11 +886,10 @@ def download_translation_memory(request, locale, slug, filename):
     project = get_object_or_404(Project, slug=slug)
 
     tm_entries = (
-        TranslationMemoryEntry.objects.filter(
-            locale=locale,
-            project=project,
-            translation__isnull=False,
-        ).exclude(Q(source='') | Q(target=''))
+        TranslationMemoryEntry.objects
+        .filter(locale=locale, project=project, translation__isnull=False)
+        .exclude(Q(source='') | Q(target=''))
+        .exclude(translation__approved=False, translation__fuzzy=False)
     )
     filename = '{code}.{slug}.tmx'.format(code=locale.code, slug=project.slug)
 

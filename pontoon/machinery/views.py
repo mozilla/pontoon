@@ -40,7 +40,12 @@ def translation_memory(request):
 
     max_results = 5
     locale = get_object_or_404(Locale, code=locale)
-    entries = TranslationMemoryEntry.objects.minimum_levenshtein_ratio(text).filter(locale=locale)
+    entries = (
+        TranslationMemoryEntry.objects
+        .minimum_levenshtein_ratio(text)
+        .filter(locale=locale)
+        .exclude(translation__approved=False, translation__fuzzy=False)
+    )
 
     # Exclude existing entity
     if pk:
