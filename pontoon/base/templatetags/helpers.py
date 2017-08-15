@@ -239,3 +239,10 @@ def local_url(url, code=None):
     """Replace occurences of `{locale_code} in URL with provided code."""
     code = code or 'en-US'
     return url.format(locale_code=code)
+
+@library.filter
+def dict_html_attrs(dict_obj):
+    """Render json object properties into a series of data-* attributes."""
+    return jinja2.Markup(' '.join(
+        [u'data-{}="{}"'.format(k, v) for k, v in dict_obj.items()]
+    ))

@@ -163,6 +163,15 @@ class UserProfileForm(forms.ModelForm):
         fields = ('first_name',)
 
 
+class UserCustomHomepageForm(forms.ModelForm):
+    """
+    Form is responsible for saving custom home page.
+    """
+    class Meta:
+        model = UserProfile
+        fields = ('custom_homepage',)
+
+
 class UserLocalesSettings(forms.ModelForm):
     """
     Form is responsible for saving preferred locales of contributor.

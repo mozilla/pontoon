@@ -64,6 +64,18 @@ def home(request):
     return translate(request, locale, project.slug, path)
 
 
+def custom_homepage(request):
+    """
+    Redirect user to the selected home page or '/'. Because of circular redirects at home() this logic is moved to
+    a separate view.
+    """
+    user = request.user
+
+    if user.is_authenticated() and user.profile.custom_homepage:
+        return redirect('pontoon.teams.info', locale=user.profile.custom_homepage.code)
+    return redirect('/')
+
+
 def heroku_setup(request):
     """
     Heroku doesn't allow us to set SITE_URL or Site during the build phase of an app.
@@ -731,7 +743,6 @@ def update_translation(request):
                     t.approved_date = now
 
                 t.save()
-
                 return JsonResponse({
                     'type': 'updated',
                     'translation': t.serialize(),
@@ -754,7 +765,6 @@ def update_translation(request):
                     t.fuzzy = False
 
                     t.save()
-
                     return JsonResponse({
                         'type': 'updated',
                         'translation': t.serialize(),

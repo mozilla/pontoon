@@ -7,6 +7,8 @@ urlpatterns = [
     # Home
     url(r'^$', views.home, name='pontoon.home'),
 
+    url(r'^custom-homepage/$', views.custom_homepage, name='pontoon.custom_homepage'),
+
     # Terms
     url(r'^terms/$',
         TemplateView.as_view(template_name='terms.html'),

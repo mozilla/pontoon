@@ -130,6 +130,20 @@ def save_user_name(request):
 
 
 @login_required(redirect_field_name='', login_url='/403')
+@require_POST
+@transaction.atomic
+def save_custom_homepage(request):
+    """Save user name."""
+    profile_form = forms.UserCustomHomepageForm(request.POST, instance=request.user)
+
+    if not profile_form.is_valid():
+        return HttpResponseBadRequest(u'Invalid custom homepage.')
+
+    profile_form.save()
+
+    return HttpResponse('ok')
+
+@login_required(redirect_field_name='', login_url='/403')
 def settings(request):
     """View and edit user settings."""
     if request.method == 'POST':
@@ -141,9 +155,11 @@ def settings(request):
 
     selected_locales = list(request.user.profile.sorted_locales)
     available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
+    all_locales = Locale.objects.all()
     return render(request, 'contributors/settings.html', {
         'available_locales': available_locales,
         'selected_locales': selected_locales,
+        'all_locales': all_locales,
     })
 
 
