@@ -48,7 +48,7 @@ class ChangeSet(object):
         }
 
         self.entities_to_update = []
-        self.translations_to_update = []
+        self.translations_to_update = set()
         self.translations_to_create = []
         self.commit_authors_per_locale = defaultdict(list)
         self.locales_to_commit = set()
@@ -218,7 +218,7 @@ class ChangeSet(object):
                 db_translation.extra = vcs_translation.extra
 
                 if db_translation.is_dirty():
-                    self.translations_to_update.append(db_translation)
+                    self.translations_to_update.add(db_translation)
                 if not db_translation.fuzzy:
                     approved_translations.append(db_translation)
                 else:
@@ -248,8 +248,8 @@ class ChangeSet(object):
                 translation.approved_user = None
                 translation.approved_date = None
 
-                if translation not in self.translations_to_update and translation.is_dirty():
-                    self.translations_to_update.append(translation)
+                if translation.is_dirty():
+                    self.translations_to_update.add(translation)
 
         # Any existing translations that are no longer fuzzy get unfuzzied.
         for translation in db_translations:
@@ -260,8 +260,8 @@ class ChangeSet(object):
                 )
                 translation.fuzzy = False
 
-                if translation not in self.translations_to_update and translation.is_dirty():
-                    self.translations_to_update.append(translation)
+                if translation.is_dirty():
+                    self.translations_to_update.add(translation)
 
     def prefetch_entity_translations(self):
         prefetched_entities = {}
@@ -344,7 +344,7 @@ class ChangeSet(object):
 
     def bulk_update_translations(self):
         if len(self.translations_to_update) > 0:
-            bulk_update(self.translations_to_update, update_fields=[
+            bulk_update(list(self.translations_to_update), update_fields=[
                 'entity',
                 'locale',
                 'string',
