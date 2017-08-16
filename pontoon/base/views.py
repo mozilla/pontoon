@@ -553,8 +553,12 @@ def reject_translation(request):
             )
 
     # Check if translation was approved. We must do this before unapproving it.
-    if translation.approved:
+    if translation.approved or translation.fuzzy:
         translation.entity.mark_changed(locale)
+        TranslatedResource.objects.get(
+            resource=translation.entity.resource,
+            locale=locale
+        ).calculate_stats()
 
     translation.rejected = True
     translation.rejected_user = request.user
@@ -572,10 +576,6 @@ def reject_translation(request):
     project = translation.entity.resource.project
 
     TranslationMemoryEntry.objects.filter(translation=translation).delete()
-    TranslatedResource.objects.get(
-        resource=translation.entity.resource,
-        locale=locale
-    ).calculate_stats()
 
     return JsonResponse({
         'translation': latest_translation,
