@@ -48,7 +48,7 @@ class ChangeSet(object):
         }
 
         self.entities_to_update = []
-        self.translations_to_update = []
+        self.translations_to_update = {}
         self.translations_to_create = []
         self.commit_authors_per_locale = defaultdict(list)
         self.locales_to_commit = set()
@@ -195,6 +195,10 @@ class ChangeSet(object):
             db_translations = db_entity.translation_set.filter(
                 locale__code=locale_code,
             )
+
+        if old_translations is None:
+            old_translations = db_translations.filter(approved_date__lte=self.now)
+
         approved_translations = []
         fuzzy_translations = []
 
@@ -214,7 +218,7 @@ class ChangeSet(object):
                 db_translation.extra = vcs_translation.extra
 
                 if db_translation.is_dirty():
-                    self.translations_to_update.append(db_translation)
+                    self.translations_to_update[db_translation.pk] = db_translation
                 if not db_translation.fuzzy:
                     approved_translations.append(db_translation)
                 else:
@@ -234,25 +238,26 @@ class ChangeSet(object):
                 ))
 
         # Any existing translations that were not approved get unapproved.
-        if old_translations is None:
-            old_translations = db_translations.filter(approved_date__lte=self.now)
-
         for translation in old_translations:
             if translation not in approved_translations:
+                # Use the translation instance already set for update if it exists
+                translation = self.translations_to_update.get(translation.pk, translation)
                 translation.approved = False
                 translation.approved_user = None
                 translation.approved_date = None
 
                 if translation.is_dirty():
-                    self.translations_to_update.append(translation)
+                    self.translations_to_update[translation.pk] = translation
 
         # Any existing translations that are no longer fuzzy get unfuzzied.
         for translation in db_translations:
             if translation not in fuzzy_translations:
+                # Use the translation instance already set for update if it exists
+                translation = self.translations_to_update.get(translation.pk, translation)
                 translation.fuzzy = False
 
                 if translation.is_dirty():
-                    self.translations_to_update.append(translation)
+                    self.translations_to_update[translation.pk] = translation
 
     def prefetch_entity_translations(self):
         prefetched_entities = {}
@@ -335,7 +340,7 @@ class ChangeSet(object):
 
     def bulk_update_translations(self):
         if len(self.translations_to_update) > 0:
-            bulk_update(self.translations_to_update, update_fields=[
+            bulk_update(self.translations_to_update.values(), update_fields=[
                 'entity',
                 'locale',
                 'string',
