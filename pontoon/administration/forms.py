@@ -13,7 +13,7 @@ class ContactChoiceField(forms.ModelChoiceField):
 
 class ProjectForm(forms.ModelForm):
     contact = ContactChoiceField(None, required=False)
-    info = HtmlField()
+    info = HtmlField(required=False)
 
     class Meta:
         model = Project
