@@ -101,6 +101,7 @@ class ChangeSet(object):
         self.bulk_update_entities()
         self.bulk_create_translations()
         self.bulk_update_translations()
+        self.bulk_create_translaton_memory_entries()
 
     def execute_update_vcs(self):
         resources = self.vcs_project.resources
@@ -328,15 +329,6 @@ class ChangeSet(object):
 
     def bulk_create_translations(self):
         Translation.objects.bulk_create(self.translations_to_create)
-        memory_entries = [TranslationMemoryEntry(
-            source=t.entity.string,
-            target=t.string,
-            locale_id=t.locale_id,
-            entity_id=t.entity.pk,
-            translation_id=t.pk,
-            project=self.db_project,
-        ) for t in self.translations_to_create if t.plural_form in (None, 0)]
-        TranslationMemoryEntry.objects.bulk_create(memory_entries)
 
     def bulk_update_translations(self):
         if len(self.translations_to_update) > 0:
@@ -352,3 +344,30 @@ class ChangeSet(object):
                 'fuzzy',
                 'extra'
             ])
+
+    def bulk_create_translaton_memory_entries(self):
+        """
+        Create Translation Memory entries for:
+            - new translations
+            - updated translations that are approved and don't have a TM entry yet
+        """
+        translations_to_create_translaton_memory_entries_for = (
+            self.translations_to_create +
+            list(
+                Translation.objects.filter(
+                    pk__in=[pk for pk, t in self.translations_to_update.items() if t.approved],
+                    memory_entries__isnull=True
+                )
+            )
+        )
+
+        memory_entries = [TranslationMemoryEntry(
+            source=t.entity.string,
+            target=t.string,
+            locale_id=t.locale_id,
+            entity_id=t.entity.pk,
+            translation_id=t.pk,
+            project=self.db_project,
+        ) for t in translations_to_create_translaton_memory_entries_for]
+
+        TranslationMemoryEntry.objects.bulk_create(memory_entries)
