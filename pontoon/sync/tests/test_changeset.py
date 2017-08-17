@@ -310,6 +310,44 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_db_translation.refresh_from_db()
         assert_not_in(self.main_db_translation, self.changeset.translations_to_update)
 
+    def test_update_db_reject_approved(self):
+        """
+        When a translation is submitted through VCS, reject any existing approved translations.
+        """
+        self.main_db_translation.approved = True
+        self.main_db_translation.approved_date = aware_datetime(1970, 1, 1)
+        self.main_db_translation.approved_user = UserFactory.create()
+        self.main_db_translation.rejected = False
+        self.main_db_translation.save()
+        self.main_vcs_translation.strings[None] = 'New Translated String'
+
+        self.update_main_db_entity()
+        self.main_db_translation.refresh_from_db()
+        assert_attributes_equal(
+            self.main_db_translation,
+            rejected=True,
+        )
+
+    def test_update_db_reject_approved_skip_fuzzy(self):
+        """
+        When a translation is submitted through VCS, reject any existing approved translations.
+        Unless the same translation is submitted and only made fuzzy.
+        """
+        self.main_db_translation.approved = True
+        self.main_db_translation.approved_date = aware_datetime(1970, 1, 1)
+        self.main_db_translation.approved_user = UserFactory.create()
+        self.main_db_translation.rejected = False
+        self.main_db_translation.save()
+        self.main_vcs_translation.strings[None] = self.main_db_translation.string
+        self.main_vcs_translation.fuzzy = True
+
+        self.update_main_db_entity()
+        self.main_db_translation.refresh_from_db()
+        assert_attributes_equal(
+            self.main_db_translation,
+            rejected=False,
+        )
+
     def test_obsolete_db(self):
         self.changeset.obsolete_db_entity(self.main_db_entity)
         self.changeset.execute()

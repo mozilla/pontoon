@@ -252,6 +252,13 @@ class ChangeSet(object):
                 translation.approved_user = None
                 translation.approved_date = None
 
+                # Reject translations unless they became fuzzy during sync. Condition is sufficient
+                # because they were approved previously.
+                if not translation.fuzzy:
+                    translation.rejected = True
+                    translation.rejected_user = user
+                    translation.rejected_date = self.now
+
                 if translation.is_dirty():
                     self.translations_to_update[translation.pk] = translation
 
