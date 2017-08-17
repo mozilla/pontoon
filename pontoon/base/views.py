@@ -56,24 +56,20 @@ log = logging.getLogger(__name__)
 
 def home(request):
     """Home view."""
+
+    user = request.user
     project = Project.objects.get(id=1)
+
+    # Redirect user to the selected home page or '/'. Because of circular redirects at home() this logic is moved to
+    # a separate view.
+    if user.is_authenticated() and user.profile.custom_homepage:
+        return redirect('pontoon.teams.info', locale=user.profile.custom_homepage.code)
+
     locale = utils.get_project_locale_from_request(
         request, project.locales) or 'en-GB'
     path = Resource.objects.filter(project=project, translatedresources__locale__code=locale)[0].path
 
     return translate(request, locale, project.slug, path)
-
-
-def custom_homepage(request):
-    """
-    Redirect user to the selected home page or '/'. Because of circular redirects at home() this logic is moved to
-    a separate view.
-    """
-    user = request.user
-
-    if user.is_authenticated() and user.profile.custom_homepage:
-        return redirect('pontoon.teams.info', locale=user.profile.custom_homepage.code)
-    return redirect('/')
 
 
 def heroku_setup(request):

@@ -609,7 +609,7 @@ if not os.environ.get('CI', False):
 
 # General auth settings
 LOGIN_URL = '/'
-LOGIN_REDIRECT_URL = '/custom-homepage/'
+LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
 
 # Should robots.txt deny everything or disallow a calculated list of
