@@ -22,7 +22,7 @@ class UserProfileInline(admin.StackedInline):
     model = models.UserProfile
     max_num = 1
     can_delete = False
-    fields = ('quality_checks', 'force_suggestions',)
+    exclude = ('locales_order',)
     verbose_name_plural = 'Settings'
 
 
