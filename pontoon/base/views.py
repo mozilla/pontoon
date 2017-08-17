@@ -739,6 +739,7 @@ def update_translation(request):
                     t.approved_date = now
 
                 t.save()
+
                 return JsonResponse({
                     'type': 'updated',
                     'translation': t.serialize(),
@@ -761,6 +762,7 @@ def update_translation(request):
                     t.fuzzy = False
 
                     t.save()
+
                     return JsonResponse({
                         'type': 'updated',
                         'translation': t.serialize(),
