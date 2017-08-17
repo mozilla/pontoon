@@ -156,6 +156,9 @@ ProjectLocalePermsFormsSet = forms.modelformset_factory(
 
 
 class UserFirstNameForm(forms.ModelForm):
+    """
+    Form is responsible for saving user's name.
+    """
     first_name = forms.RegexField(regex='^[^<>"\'&]+$', max_length=30, strip=True)
 
     class Meta:

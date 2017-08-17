@@ -133,7 +133,7 @@ def save_user_name(request):
 @require_POST
 @transaction.atomic
 def save_custom_homepage(request):
-    """Save user name."""
+    """Save custom homepage."""
     profile_form = forms.UserCustomHomepageForm(request.POST, instance=request.user)
 
     if not profile_form.is_valid():
