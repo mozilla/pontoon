@@ -119,7 +119,7 @@ def toggle_user_profile_attribute(request, username):
 @transaction.atomic
 def save_user_name(request):
     """Save user name."""
-    profile_form = forms.UserProfileForm(request.POST, instance=request.user)
+    profile_form = forms.UserFirstNameForm(request.POST, instance=request.user)
 
     if not profile_form.is_valid():
         return HttpResponseBadRequest(u'\n'.join(profile_form.errors['first_name']))
@@ -147,7 +147,7 @@ def save_custom_homepage(request):
 def settings(request):
     """View and edit user settings."""
     if request.method == 'POST':
-        form = forms.UserLocalesSettings(request.POST, instance=request.user.profile)
+        form = forms.UserLocalesOrderForm(request.POST, instance=request.user.profile)
         if form.is_valid():
             form.save()
             messages.success(request, 'Settings saved.')

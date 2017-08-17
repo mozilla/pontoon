@@ -155,7 +155,7 @@ ProjectLocalePermsFormsSet = forms.modelformset_factory(
 )
 
 
-class UserProfileForm(forms.ModelForm):
+class UserFirstNameForm(forms.ModelForm):
     first_name = forms.RegexField(regex='^[^<>"\'&]+$', max_length=30, strip=True)
 
     class Meta:
@@ -172,7 +172,7 @@ class UserCustomHomepageForm(forms.ModelForm):
         fields = ('custom_homepage',)
 
 
-class UserLocalesSettings(forms.ModelForm):
+class UserLocalesOrderForm(forms.ModelForm):
     """
     Form is responsible for saving preferred locales of contributor.
     """
