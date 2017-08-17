@@ -531,7 +531,7 @@ def handle_upload_content(slug, code, part, f, user):
         Prefetch(
             'translation_set',
             queryset=Translation.objects.filter(locale=locale, approved_date__lte=timezone.now()),
-            to_attr='old_translations'
+            to_attr='db_translations_approved_before_sync'
         )
     )
     entities_dict = {entity.key: entity for entity in entities_qs}
@@ -542,7 +542,7 @@ def handle_upload_content(slug, code, part, f, user):
             entity = entities_dict[key]
             changeset.update_entity_translations_from_vcs(
                 entity, locale.code, vcs_translation, user,
-                entity.db_translations, entity.old_translations
+                entity.db_translations, entity.db_translations_approved_before_sync
             )
 
     changeset.bulk_create_translations()
