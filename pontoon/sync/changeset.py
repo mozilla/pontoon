@@ -190,40 +190,42 @@ class ChangeSet(object):
 
     def update_entity_translations_from_vcs(
             self, db_entity, locale_code, vcs_translation,
-            user=None, db_translations=None, old_translations=None
+            user=None, db_translations=None, db_translations_approved_before_sync=None
     ):
         if db_translations is None:
             db_translations = db_entity.translation_set.filter(
                 locale__code=locale_code,
             )
 
-        if old_translations is None:
-            old_translations = db_translations.filter(approved_date__lte=self.now)
+        if db_translations_approved_before_sync is None:
+            db_translations_approved_before_sync = db_translations.filter(
+                approved_date__lte=self.now
+            )
 
         approved_translations = []
         fuzzy_translations = []
 
         for plural_form, string in vcs_translation.strings.items():
-            # Check if we need to modify an existing translation or
-            # create a new one.
-            db_translation = match_attr(db_translations,
-                                        plural_form=plural_form,
-                                        string=string)
+            db_translation = match_attr(db_translations, plural_form=plural_form, string=string)
+
+            # Modify existing translation.
             if db_translation:
                 if not db_translation.approved and not vcs_translation.fuzzy:
                     db_translation.approved = True
-                    db_translation.approved_date = self.now
                     db_translation.approved_user = user
+                    db_translation.approved_date = self.now
                 db_translation.rejected = False
                 db_translation.fuzzy = vcs_translation.fuzzy
                 db_translation.extra = vcs_translation.extra
 
                 if db_translation.is_dirty():
                     self.translations_to_update[db_translation.pk] = db_translation
-                if not db_translation.fuzzy:
-                    approved_translations.append(db_translation)
-                else:
+                if db_translation.fuzzy:
                     fuzzy_translations.append(db_translation)
+                else:
+                    approved_translations.append(db_translation)
+
+            # Create new translation.
             else:
                 self.translations_to_create.append(Translation(
                     entity=db_entity,
@@ -231,17 +233,20 @@ class ChangeSet(object):
                     string=string,
                     plural_form=plural_form,
                     approved=not vcs_translation.fuzzy,
-                    approved_date=self.now if not vcs_translation.fuzzy else None,
                     approved_user=user,
+                    approved_date=self.now if not vcs_translation.fuzzy else None,
                     user=user,
                     fuzzy=vcs_translation.fuzzy,
                     extra=vcs_translation.extra
                 ))
 
-        # Any existing translations that were not approved get unapproved.
-        for translation in old_translations:
+        # Unapprove translations that were approved before the sync job started unless sync
+        # resolves them as active approved translations.
+        # Note: If translations get approved after the sync starts, duplicate approvals can arise.
+        # We take care of that at the and of the sync job in tasks.py.
+        for translation in db_translations_approved_before_sync:
             if translation not in approved_translations:
-                # Use the translation instance already set for update if it exists
+                # Use the translation instance already set for update if it exists.
                 translation = self.translations_to_update.get(translation.pk, translation)
                 translation.approved = False
                 translation.approved_user = None
@@ -250,10 +255,12 @@ class ChangeSet(object):
                 if translation.is_dirty():
                     self.translations_to_update[translation.pk] = translation
 
-        # Any existing translations that are no longer fuzzy get unfuzzied.
+        # Unfuzzy existing translations unless sync resolves them as active fuzzy translations.
+        # Note: Translations cannot get fuzzy after the sync job starts, because they cannot be
+        # made fuzzy in Pontoon.
         for translation in db_translations:
             if translation not in fuzzy_translations:
-                # Use the translation instance already set for update if it exists
+                # Use the translation instance already set for update if it exists.
                 translation = self.translations_to_update.get(translation.pk, translation)
                 translation.fuzzy = False
 
@@ -283,7 +290,7 @@ class ChangeSet(object):
                         locale__code=locale,
                         approved_date__lte=self.now
                     ),
-                    to_attr='old_translations'
+                    to_attr='db_translations_approved_before_sync'
                 )
             )
             prefetched_entities[locale] = {entity.id: entity for entity in entities_qs}
@@ -306,8 +313,12 @@ class ChangeSet(object):
                 vcs_translation = vcs_entity.translations[locale_code]
                 prefetched_entity = entities_with_translations[locale_code][db_entity.id]
                 self.update_entity_translations_from_vcs(
-                    db_entity, locale_code, vcs_translation, None,
-                    prefetched_entity.db_translations, prefetched_entity.old_translations
+                    db_entity,
+                    locale_code,
+                    vcs_translation,
+                    None,
+                    prefetched_entity.db_translations,
+                    prefetched_entity.db_translations_approved_before_sync
                 )
 
     def execute_obsolete_db(self):
