@@ -12,7 +12,7 @@ from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.paginator import Paginator, EmptyPage
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import (
     Http404,
     HttpResponse,
@@ -62,8 +62,20 @@ def home(request):
 
     # Redirect user to the selected home page or '/'. Because of circular redirects at home() this logic is moved to
     # a separate view.
-    if user.is_authenticated() and user.profile.custom_homepage:
-        return redirect('pontoon.teams.info', locale=user.profile.custom_homepage.code)
+    if user.is_authenticated() and user.profile.custom_homepage != '':
+        if user.profile.custom_homepage is None:
+            locale = (
+                user.translation_set
+                    .values('locale__code')
+                    .annotate(total=Count('locale__code'))
+                    .distinct()
+                    .order_by('-total')
+                    .first()
+            )
+            user.profile.custom_homepage = locale['locale__code'] if locale else ''
+            user.profile.save()
+
+        return redirect('pontoon.teams.team', locale=user.profile.custom_homepage)
 
     locale = utils.get_project_locale_from_request(
         request, project.locales) or 'en-GB'

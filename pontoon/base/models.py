@@ -345,7 +345,7 @@ class UserProfile(models.Model):
     force_suggestions = models.BooleanField(default=False)
 
     """Redirect user to a custom team page after login."""
-    custom_homepage = models.ForeignKey('Locale', null=True, related_name='users_custom_homepages')
+    custom_homepage = models.CharField(max_length=10, blank=True, null=True)
 
     """Defines the order of locales displayed in locale tab."""
     locales_order = ArrayField(
