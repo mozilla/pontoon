@@ -234,6 +234,7 @@ Because of our very close integration, we'll need to compile the fresh versions 
 javascript/python libraries in order to provide new features.
 
 It's important to remember to update both packages:
+
 * python-fluent (responsible for e.g. server-side sync process)
 * fluent-syntax (required by the fluent editor)
 
