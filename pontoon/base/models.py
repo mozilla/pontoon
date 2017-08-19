@@ -306,6 +306,19 @@ def contributed_translations(self):
     return translations
 
 
+@property
+def top_contributed_locale(self):
+    """Locale the user has made the most contributions to."""
+    return (
+        self.translation_set
+            .values('locale__code')
+            .annotate(total=Count('locale__code'))
+            .distinct()
+            .order_by('-total')
+            .first()
+    )
+
+
 def can_translate(self, locale, project):
     """Check if user has suitable permissions to translate in given locale or project/locale."""
 
@@ -334,20 +347,21 @@ User.add_to_class('locale_role', user_locale_role)
 User.add_to_class('translators', UserTranslationsManager())
 User.add_to_class('objects', UserCustomManager.from_queryset(UserQuerySet)())
 User.add_to_class('contributed_translations', contributed_translations)
+User.add_to_class('top_contributed_locale', top_contributed_locale)
 User.add_to_class('can_translate', can_translate)
 
 
 class UserProfile(models.Model):
     # This field is required.
     user = models.OneToOneField(User, related_name='profile')
-    # Other fields here
+    # Other fields here.
     quality_checks = models.BooleanField(default=True)
     force_suggestions = models.BooleanField(default=False)
 
-    """Redirect user to a custom team page after login."""
+    # Used to redirect a user to a custom team page.
     custom_homepage = models.CharField(max_length=10, blank=True, null=True)
 
-    """Defines the order of locales displayed in locale tab."""
+    # Defines the order of locales displayed in locale tab.
     locales_order = ArrayField(
         models.PositiveIntegerField(),
         default=list,

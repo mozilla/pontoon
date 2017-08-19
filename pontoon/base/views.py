@@ -12,7 +12,7 @@ from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.paginator import Paginator, EmptyPage
 from django.db import transaction
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.http import (
     Http404,
     HttpResponse,
@@ -62,26 +62,16 @@ def home(request):
 
     # Redirect user to the selected home page or '/'.
     if user.is_authenticated() and user.profile.custom_homepage != '':
+        # If custom homepage not set yet, set it to the most contributed locale team page
         if user.profile.custom_homepage is None:
-            # Select locale with highest humber of contributions from the current user.
-            user_top_locale = (
-                user.translation_set
-                    .values('locale__code')
-                    .annotate(total=Count('locale__code'))
-                    .distinct()
-                    .order_by('-total')
-                    .first()
-            )
-
-            if user_top_locale:
-                user.profile.custom_homepage = user_top_locale['locale__code']
+            if user.top_contributed_locale:
+                user.profile.custom_homepage = user.top_contributed_locale['locale__code']
                 user.profile.save(update_fields=['custom_homepage'])
 
         if user.profile.custom_homepage:
             return redirect('pontoon.teams.team', locale=user.profile.custom_homepage)
 
-    locale = utils.get_project_locale_from_request(
-        request, project.locales) or 'en-GB'
+    locale = utils.get_project_locale_from_request(request, project.locales) or 'en-GB'
     path = Resource.objects.filter(project=project, translatedresources__locale__code=locale)[0].path
 
     return translate(request, locale, project.slug, path)
