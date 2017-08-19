@@ -12,6 +12,8 @@ import time
 import zipfile
 
 from datetime import datetime, timedelta
+
+from django.utils.text import slugify
 from six import text_type
 from xml.sax.saxutils import (
     escape as xml_escape,
@@ -633,6 +635,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
         }
     )
     for resource_path, key, source, target, project_name, project_slug in entries:
+        tuid = ':'.join((project_slug, slugify(resource_path), slugify(key)))
         yield (
             u'\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
             u'\n\t\t\t<tuv xml:lang="en-US">'
@@ -642,7 +645,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
             u'\n\t\t\t\t<seg>%(target)s</seg>'
             u'\n\t\t\t</tuv>'
             u'\n\t\t</tu>' % {
-                'tuid': quoteattr('%s:%s:%s' % (project_slug, resource_path, key)),
+                'tuid': quoteattr(tuid),
                 'source': xml_escape(source),
                 'locale_code': quoteattr(locale_code),
                 'target': xml_escape(target),
