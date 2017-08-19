@@ -76,10 +76,6 @@ def home(request):
             if user_top_locale:
                 user.profile.custom_homepage = user_top_locale['locale__code']
                 user.profile.save(update_fields=['custom_homepage'])
-                messages.info(
-                    request,
-                    "We've set your custom homepage based on your previous contributions."
-                )
 
         if user.profile.custom_homepage:
             return redirect('pontoon.teams.team', locale=user.profile.custom_homepage)
