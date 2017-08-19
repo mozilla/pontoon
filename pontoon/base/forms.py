@@ -174,6 +174,14 @@ class UserCustomHomepageForm(forms.ModelForm):
         model = UserProfile
         fields = ('custom_homepage',)
 
+    def __init__(self, *args, **kwargs):
+        super(UserCustomHomepageForm, self).__init__(*args, **kwargs)
+        all_locales = list(Locale.objects.all().values_list('code', 'name'))
+
+        self.fields['custom_homepage'] = forms.ChoiceField(choices=[
+            ('', 'Default homepage')
+        ] + all_locales, required=False, label="Custom homepage")
+
 
 class UserLocalesOrderForm(forms.ModelForm):
     """
