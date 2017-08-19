@@ -155,11 +155,13 @@ def settings(request):
 
     selected_locales = list(request.user.profile.sorted_locales)
     available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
+    custom_homepage_locale = Locale.objects.filter(code=request.user.profile.custom_homepage).first()
     all_locales = Locale.objects.all()
     return render(request, 'contributors/settings.html', {
         'available_locales': available_locales,
         'selected_locales': selected_locales,
-        'all_locales': all_locales,
+        'custom_homepage_locale': custom_homepage_locale,
+        'all_locales': all_locales
     })
 
 

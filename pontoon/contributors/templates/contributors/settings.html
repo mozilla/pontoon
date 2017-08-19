@@ -34,8 +34,9 @@
   {% if user.translated_locales %}
     {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
   {% endif %}
-  
-  {{ LocaleHomepage.select(user.profile.custom_homepage, all_locales) }}
+  <li>
+      {{ LocaleHomepage.select(custom_homepage_locale, all_locales) }}
+  </li>
   </ul>
 </section>
 {% endblock %}

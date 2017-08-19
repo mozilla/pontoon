@@ -1,42 +1,5 @@
 {% macro select(value, locales) %}
-<div id="selectLocaleHomepage" class="clearfix" style="margin-top: 30px;">
-  <span class="label" style="color: #AAA;font-size: 16px;font-weight: 300;display: inline-block;margin: 6px 10px 0 0;vertical-align: top;">Select your homepage</span>
-
-  <div class="locale select" style="width: auto;">
-  <div style="background: #272A2F;padding: 8px 12px;height: 36px;text-transform: uppercase;color: #AAA;border-radius: 2px;width: 280px;box-sizing: border-box;font-weight: 400;margin: 0;" class="button breadcrumbs selector noselect">
-        <span class="language" data-code="{{ value.code | default('en-GB') }}" style="text-align: left;">{{ value.name | default('English') }}</span><span class="code" style="float: right;">{{ value.code | default('en-GB') }}</span>
-  </div>
-
-  <div class="menu" style="display: none;">
-    <div class="search-wrapper clearfix">
-      <div class="icon fa fa-search"></div>
-      <input autocomplete="off" autofocus="" type="search">
-    </div>
-
-    <ul>
-        <li class="clearfix">
-          <span class="language">
-            Default Pontoon Homepage
-          </span>
-          <span class="code"></span>
-        </li>
-        {% for locale in locales %}
-        <li class="clearfix language">
-          <span class="language" {{ locale.serialize() | dict_html_attrs }}>
-            {{ locale.name }}
-          </span>
-          <span class="code">
-            {{ locale.code }}
-          </span>
-        </li>
-        {% endfor %}
-
-        <!-- More languages -->
-
-        <li class="no-match" style="display: none;">No results</li>
-    </ul>
-
-  </div>
-  </div>
-</div>
+    {% with locale=value,part=None %}
+        {% include 'teams/widgets/team_selector.html' %}
+    {% endwith %}
 {% endmacro %}
