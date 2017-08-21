@@ -655,14 +655,6 @@ tfoot td a {
   padding-right: 50px;
 }
 
-.locale.select .menu ul li span.language {
-  width: 140px;
-}
-
-.locale.select .menu ul li span.code {
-  width: 80px;
-}
-
 .select .menu ul li {
   cursor: pointer;
 }
