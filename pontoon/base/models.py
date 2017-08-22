@@ -1391,6 +1391,41 @@ class Repository(models.Model):
         """True if we can commit strings back to this repo."""
         return self.type in ('svn', 'git', 'hg')
 
+    @cached_property
+    def api_config(self):
+        """
+        Repository API configuration consists of:
+        - Endpoint: A URL pattern to get repository metadata from. Used during sync for faster
+          retrieval of latest commit hashes in combination with the Key.
+          Supports {locale_code} wildcard.
+        - Key: A string used to retrieve the latest commit hash from the JSON response.
+        """
+        url = self.url
+
+        if url.startswith('ssh://hg.mozilla.org/'):
+            parsed_url = urlparse(url)
+            endpoint = (
+                'https://{netloc}/{path}/json-rev/default'
+                .format(netloc=parsed_url.netloc, path=parsed_url.path.strip('/'))
+            )
+            return {
+                'endpoint': endpoint,
+                'get_key': lambda x: x['node'],
+            }
+
+        if url.startswith('ssh://hg@bitbucket.org/'):
+            parsed_url = urlparse(url)
+            endpoint = (
+                'https://api.bitbucket.org/2.0/repositories/{path}/commit/default'
+                .format(path=parsed_url.path.strip('/'))
+            )
+            return {
+                'endpoint': endpoint,
+                'get_key': lambda x: x['hash'],
+            }
+
+        return None
+
     def locale_checkout_path(self, locale):
         """
         Path where the checkout for the given locale for this repo is
@@ -1425,7 +1460,7 @@ class Repository(models.Model):
 
         raise ValueError('No repo found for path: {0}'.format(path))
 
-    def pull(self, skip_locales=None):
+    def pull(self, locales=None):
         """
         Pull changes from VCS. Returns the revision(s) of the repo after
         pulling.
@@ -1437,8 +1472,9 @@ class Repository(models.Model):
             }
         else:
             current_revisions = {}
-            skip_locales = skip_locales or []
-            for locale in self.project.locales.exclude(code__in=skip_locales):
+            locales = locales or self.project.locales.all()
+
+            for locale in locales:
                 repo_type = self.type
                 url = self.locale_url(locale)
                 checkout_path = self.locale_checkout_path(locale)

@@ -146,7 +146,11 @@ class VCSProject(object):
         files = {}
 
         # VCS changes
-        for repo in self.db_project.translation_repositories():
+        repos = self.db_project.translation_repositories()
+        if self.repo_locales:
+            repos = repos.filter(pk__in=self.repo_locales.keys())
+
+        for repo in repos:
             if repo.multi_locale:
                 locales = (
                     self.repo_locales[repo.pk] if self.repo_locales
