@@ -25,7 +25,7 @@ TARGET_REPOS = {
             'browser/extensions/onboarding',
             'browser/extensions/pocket',
             'browser/extensions/webcompat-reporter',
-            'devtools/client', 'devtools/shared',
+            'devtools/client', 'devtools/shared', 'devtools/shim',
             'dom', 'netwerk', 'security/manager',
             'services/sync', 'toolkit', 'webapprt',
         ],
