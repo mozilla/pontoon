@@ -27,10 +27,10 @@ class Project(DjangoObjectType):
             'total_strings', 'approved_strings', 'translated_strings',
             'fuzzy_strings')
 
-    locales = graphene.List(ProjectLocale)
+    localizations = graphene.List(ProjectLocale)
 
     @graphene.resolve_only_args
-    def resolve_locales(self):
+    def resolve_localizations(self):
         return self.project_locale.all()
 
 
@@ -42,10 +42,10 @@ class Locale(DjangoObjectType):
             'total_strings', 'approved_strings', 'translated_strings',
             'fuzzy_strings')
 
-    projects = graphene.List(ProjectLocale)
+    localizations = graphene.List(ProjectLocale)
 
     @graphene.resolve_only_args
-    def resolve_projects(self):
+    def resolve_localizations(self):
         return self.project_locale.all()
 
 
@@ -62,10 +62,10 @@ class Query(graphene.ObjectType):
         qs = ProjectModel.objects.all()
         fields = get_fields(info)
 
-        if 'projects.locales' in fields:
+        if 'projects.localizations' in fields:
             qs = qs.prefetch_related('project_locale__locale')
 
-        if 'projects.locales.locale.projects' in fields:
+        if 'projects.localizations.locale.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')
 
         return qs
@@ -74,10 +74,10 @@ class Query(graphene.ObjectType):
         qs = ProjectModel.objects
         fields = get_fields(info)
 
-        if 'project.locales' in fields:
+        if 'project.localizations' in fields:
             qs = qs.prefetch_related('project_locale__locale')
 
-        if 'project.locales.locale.projects' in fields:
+        if 'project.localizations.locale.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')
 
         return qs.get(slug=args['slug'])
@@ -86,10 +86,10 @@ class Query(graphene.ObjectType):
         qs = LocaleModel.objects.all()
         fields = get_fields(info)
 
-        if 'locales.projects' in fields:
+        if 'locales.localizations' in fields:
             qs = qs.prefetch_related('project_locale__project')
 
-        if 'locales.projects.project.locales' in fields:
+        if 'locales.localizations.project.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')
 
         return qs
@@ -98,10 +98,10 @@ class Query(graphene.ObjectType):
         qs = LocaleModel.objects
         fields = get_fields(info)
 
-        if 'locale.projects' in fields:
+        if 'locale.localizations' in fields:
             qs = qs.prefetch_related('project_locale__project')
 
-        if 'locale.projects.project.locales' in fields:
+        if 'locale.localizations.project.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')
 
         return qs.get(code=args['code'])
