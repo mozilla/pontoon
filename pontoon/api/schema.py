@@ -11,7 +11,17 @@ from ..base.models import (
 )
 
 
-class ProjectLocale(DjangoObjectType):
+class StringStats(graphene.AbstractType):
+    missing_strings = graphene.Int()
+
+    @graphene.resolve_only_args
+    def resolve_missing_strings(self):
+        return (
+            self.total_strings - self.translated_strings -
+            self.approved_strings - self.fuzzy_strings)
+
+
+class ProjectLocale(DjangoObjectType, StringStats):
     class Meta:
         model = ProjectLocaleModel
         only_fields = (
@@ -19,7 +29,7 @@ class ProjectLocale(DjangoObjectType):
             'fuzzy_strings', 'project', 'locale')
 
 
-class Project(DjangoObjectType):
+class Project(DjangoObjectType, StringStats):
     class Meta:
         model = ProjectModel
         only_fields = (
@@ -34,7 +44,7 @@ class Project(DjangoObjectType):
         return self.project_locale.all()
 
 
-class Locale(DjangoObjectType):
+class Locale(DjangoObjectType, StringStats):
     class Meta:
         model = LocaleModel
         only_fields = (
