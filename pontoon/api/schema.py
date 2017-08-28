@@ -40,7 +40,7 @@ class Project(DjangoObjectType):
     class Meta:
         model = ProjectModel
         only_fields = (
-            'name', 'info', 'deadline', 'priority', 'contact',
+            'name', 'slug', 'info', 'deadline', 'priority', 'contact',
             'total_strings', 'approved_strings', 'translated_strings',
             'fuzzy_strings')
 
@@ -78,10 +78,10 @@ class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name='__debug')
 
     projects = graphene.Field(ProjectPage, page=graphene.Int(default_value=1))
-    project = graphene.Field(Project, pk=graphene.Int())
+    project = graphene.Field(Project, slug=graphene.String())
 
     locales = graphene.Field(LocalePage, page=graphene.Int(default_value=1))
-    locale = graphene.Field(Locale, pk=graphene.Int())
+    locale = graphene.Field(Locale, code=graphene.String())
 
     def resolve_projects(self, args, context, info):
         qs = ProjectModel.objects.all()
@@ -105,7 +105,7 @@ class Query(graphene.ObjectType):
         if 'project.locales.items.locale.projects' in fields:
             raise Exception('Cyclic queries are forbidden')
 
-        return qs.get(pk=args['pk'])
+        return qs.get(slug=args['slug'])
 
     def resolve_locales(self, args, context, info):
         qs = LocaleModel.objects.all()
@@ -129,7 +129,7 @@ class Query(graphene.ObjectType):
         if 'locale.projects.items.project.locales' in fields:
             raise Exception('Cyclic queries are forbidden')
 
-        return qs.get(pk=args['pk'])
+        return qs.get(code=args['code'])
 
 
 def get_page(shape, queryset, page):
