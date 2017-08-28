@@ -11,20 +11,12 @@ from ..base.models import (
 )
 
 
-class Items(graphene.AbstractType):
-    total_count = graphene.Int()
-
-
 class ProjectLocale(DjangoObjectType):
     class Meta:
         model = ProjectLocaleModel
         only_fields = (
             'total_strings', 'approved_strings', 'translated_strings',
             'fuzzy_strings', 'project', 'locale')
-
-
-class ProjectLocaleItems(graphene.ObjectType, Items):
-    items = graphene.List(ProjectLocale)
 
 
 class Project(DjangoObjectType):
@@ -35,19 +27,11 @@ class Project(DjangoObjectType):
             'total_strings', 'approved_strings', 'translated_strings',
             'fuzzy_strings')
 
-    locales = graphene.Field(ProjectLocaleItems)
+    locales = graphene.List(ProjectLocale)
 
     @graphene.resolve_only_args
     def resolve_locales(self):
-        qs = self.project_locale.all()
-        return ProjectLocaleItems(
-            total_count=qs.count(),
-            items=qs
-        )
-
-
-class ProjectItems(graphene.ObjectType, Items):
-    items = graphene.List(Project)
+        return self.project_locale.all()
 
 
 class Locale(DjangoObjectType):
@@ -58,44 +42,33 @@ class Locale(DjangoObjectType):
             'total_strings', 'approved_strings', 'translated_strings',
             'fuzzy_strings')
 
-    projects = graphene.Field(ProjectLocaleItems)
+    projects = graphene.List(ProjectLocale)
 
     @graphene.resolve_only_args
     def resolve_projects(self):
-        qs = self.project_locale.all()
-        return ProjectLocaleItems(
-            total_count=qs.count(),
-            items=qs
-        )
-
-
-class LocaleItems(graphene.ObjectType, Items):
-    items = graphene.List(Locale)
+        return self.project_locale.all()
 
 
 class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name='__debug')
 
-    projects = graphene.Field(ProjectItems)
+    projects = graphene.List(Project)
     project = graphene.Field(Project, slug=graphene.String())
 
-    locales = graphene.Field(LocaleItems)
+    locales = graphene.List(Project)
     locale = graphene.Field(Locale, code=graphene.String())
 
     def resolve_projects(self, args, context, info):
         qs = ProjectModel.objects.all()
         fields = get_fields(info)
 
-        if 'projects.items.locales' in fields:
+        if 'projects.locales' in fields:
             qs = qs.prefetch_related('project_locale__locale')
 
-        if 'projects.items.locales.items.locale.projects' in fields:
+        if 'projects.locales.locale.projects' in fields:
             raise Exception('Cyclic queries are forbidden')
 
-        return ProjectItems(
-            total_count=qs.count(),
-            items=qs
-        )
+        return qs
 
     def resolve_project(self, args, context, info):
         qs = ProjectModel.objects
@@ -104,7 +77,7 @@ class Query(graphene.ObjectType):
         if 'project.locales' in fields:
             qs = qs.prefetch_related('project_locale__locale')
 
-        if 'project.locales.items.locale.projects' in fields:
+        if 'project.locales.locale.projects' in fields:
             raise Exception('Cyclic queries are forbidden')
 
         return qs.get(slug=args['slug'])
@@ -113,16 +86,13 @@ class Query(graphene.ObjectType):
         qs = LocaleModel.objects.all()
         fields = get_fields(info)
 
-        if 'locales.items.projects' in fields:
+        if 'locales.projects' in fields:
             qs = qs.prefetch_related('project_locale__project')
 
-        if 'locales.items.projects.items.project.locales' in fields:
+        if 'locales.projects.project.locales' in fields:
             raise Exception('Cyclic queries are forbidden')
 
-        return LocaleItems(
-            total_count=qs.count(),
-            items=qs
-        )
+        return qs
 
     def resolve_locale(self, args, context, info):
         qs = LocaleModel.objects
@@ -131,7 +101,7 @@ class Query(graphene.ObjectType):
         if 'locale.projects' in fields:
             qs = qs.prefetch_related('project_locale__project')
 
-        if 'locale.projects.items.project.locales' in fields:
+        if 'locale.projects.project.locales' in fields:
             raise Exception('Cyclic queries are forbidden')
 
         return qs.get(code=args['code'])
