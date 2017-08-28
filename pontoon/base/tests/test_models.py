@@ -1230,7 +1230,7 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.translated()))
+            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.translated(self.locale, False)))
         )
 
     def test_translated_plurals(self):
@@ -1268,7 +1268,7 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.translated()))
+            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.translated(self.locale, False)))
         )
 
     def test_fuzzy(self):
@@ -1291,7 +1291,7 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.fuzzy()))
+            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.fuzzy(self.locale, False)))
         )
 
     def test_fuzzy_plurals(self):
@@ -1329,7 +1329,7 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.fuzzy()))
+            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.fuzzy(self.locale, False)))
         )
 
     def test_missing(self):
@@ -1350,7 +1350,7 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {second_entity},
-            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.missing()))
+            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.missing(self.locale, False)))
         )
 
     def test_partially_translated_plurals(self):
@@ -1379,7 +1379,7 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {second_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.missing()))
+            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.missing(self.locale, False)))
         )
 
     def test_suggested(self):
@@ -1399,7 +1399,7 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {second_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.suggested()))
+            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.suggested(self.locale, False)))
         )
 
     def test_unchanged(self):
@@ -1422,7 +1422,7 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.unchanged()))
+            set(Entity.objects.with_status_counts(self.locale).filter(Entity.objects.unchanged(self.locale, False)))
         )
 
     def test_missing_plural(self):
@@ -1454,7 +1454,7 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {second_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.missing()))
+            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.missing(self.locale, False)))
         )
 
     def test_suggested_plural(self):
@@ -1490,7 +1490,7 @@ class EntityFilterTests(TestCase):
 
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.suggested()))
+            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.suggested(self.locale, False)))
         )
 
     def test_unchanged_plural(self):
@@ -1529,7 +1529,7 @@ class EntityFilterTests(TestCase):
         )
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.unchanged()))
+            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.unchanged(self.locale, False)))
         )
 
     def test_has_suggestions_plural(self):
@@ -1568,7 +1568,7 @@ class EntityFilterTests(TestCase):
         )
         assert_equal(
             {first_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.has_suggestions()))
+            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.has_suggestions(self.locale, False)))
         )
 
     def test_rejected_plural(self):
@@ -1627,7 +1627,7 @@ class EntityFilterTests(TestCase):
         )
         assert_equal(
             {second_entity, third_entity},
-            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.rejected()))
+            set(Entity.objects.with_status_counts(self.plural_locale).filter(Entity.objects.rejected(self.locale, False)))
         )
 
     def test_combined_filters(self):
