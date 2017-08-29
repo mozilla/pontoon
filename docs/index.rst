@@ -32,5 +32,6 @@ Contents
    dev/install-docker
    dev/contributing
    dev/sync
+   dev/api
    admin/deployment
    admin/maintenance
