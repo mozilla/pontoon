@@ -36,11 +36,14 @@ def get_fields(info):
         if isinstance(field, FragmentSpread):
             results = []
             new_prefix = prefix
-            sub_selection = fragments[field.name.value].selection_set.selections
+            sub_selection = fragments[name].selection_set.selections
         else:
             results = [prefix + name]
             new_prefix = prefix + name + "."
-            sub_selection = field.selection_set.selections if field.selection_set else []
+            if field.selection_set:
+                sub_selection = field.selection_set.selections
+            else:
+                sub_selection = []
 
         for sub_field in sub_selection:
             results += iterate_field_names(new_prefix, sub_field)
