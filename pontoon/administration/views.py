@@ -28,7 +28,7 @@ from pontoon.sync.models import SyncLog
 from pontoon.sync.tasks import sync_project
 
 
-log = logging.getLogger('pontoon')
+log = logging.getLogger(__name__)
 
 
 def admin(request, template='admin.html'):

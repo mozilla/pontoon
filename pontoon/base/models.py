@@ -39,7 +39,7 @@ from pontoon.db import IContainsCollate  # noqa
 from pontoon.sync import KEY_SEPARATOR
 
 
-log = logging.getLogger('pontoon')
+log = logging.getLogger(__name__)
 
 
 # User class extensions

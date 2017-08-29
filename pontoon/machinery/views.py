@@ -16,7 +16,7 @@ from pontoon.base import utils
 from pontoon.base.models import Locale, TranslationMemoryEntry
 
 
-log = logging.getLogger('pontoon')
+log = logging.getLogger(__name__)
 
 
 def machinery(request):

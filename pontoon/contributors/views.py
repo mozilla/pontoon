@@ -24,7 +24,7 @@ from pontoon.base.models import Locale, Project
 from pontoon.base.utils import require_AJAX
 
 
-log = logging.getLogger('pontoon')
+log = logging.getLogger(__name__)
 
 
 @login_required(redirect_field_name='', login_url='/403')

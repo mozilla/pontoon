@@ -33,7 +33,7 @@ from translate.storage.placeables.interfaces import BasePlaceable
 from translate.lang import data as lang_data
 
 
-log = logging.getLogger('pontoon')
+log = logging.getLogger(__name__)
 
 
 def split_ints(s):

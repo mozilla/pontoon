@@ -19,7 +19,7 @@ from pontoon.contributors.views import ContributorsMixin
 from pontoon.projects import forms
 
 
-log = logging.getLogger('pontoon')
+log = logging.getLogger(__name__)
 
 
 def projects(request):

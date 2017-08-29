@@ -22,7 +22,7 @@ from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 
 
-log = logging.getLogger('pontoon')
+log = logging.getLogger(__name__)
 
 
 def teams(request):
