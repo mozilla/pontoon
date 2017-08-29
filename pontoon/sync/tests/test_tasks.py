@@ -81,7 +81,7 @@ class SyncProjectTests(TestCase):
         sync_project(self.db_project.pk, self.sync_log.pk)
         assert_false(self.mock_update_originals.called)
         mock_log.info.assert_called_with(
-            CONTAINS('Skipping syncing resources', self.db_project.slug)
+            CONTAINS('Skipping syncing sources', self.db_project.slug)
         )
 
     def test_no_changes_skip(self):

@@ -317,5 +317,5 @@ class PullChangesTests(FakeCheckoutTestCase):
         self.mock_repo_pull.return_value = {'single_locale': 'asdf'}
         self.repository.last_synced_revisions = {'single_locale': 'asdf'}
         self.repository.save()
-        has_changed, _ = pull_changes(self.db_project)
+        has_changed, _ = pull_changes(self.db_project, locales=self.db_project.locales.all())
         assert_false(has_changed)
