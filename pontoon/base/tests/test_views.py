@@ -313,7 +313,7 @@ class EntityViewTests(TestCase):
             else:
                 params['status'] = filter_
 
-            with patch('pontoon.base.models.Entity.objects.{}'.format(filter_name), return_value=getattr(Entity.objects, filter_name)()) as filter_mock:
+            with patch('pontoon.base.models.Entity.objects.{}'.format(filter_name), return_value=getattr(Entity.objects, filter_name)(self.locale, False)) as filter_mock:
                 self.client.ajax_post('/get-entities/', params)
                 assert_true(filter_mock.called)
 
