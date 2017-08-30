@@ -284,7 +284,7 @@ def commit_changes(db_project, vcs_project, changeset, locale):
     repo.commit(commit_message, commit_author, locale_path)
 
 
-def get_changed_locales(db_project, locales):
+def get_changed_locales(db_project, locales, now):
     """
     Narrow down locales to the ones that have changed since the last sync by fetching latest
     repository commit hashes via API. For projects with many repositories, this is much faster
@@ -301,7 +301,8 @@ def get_changed_locales(db_project, locales):
 
     # If locale has changed in the DB, we need to sync it.
     changed_locale_pks = list(locales.filter(
-        changedentitylocale__entity__resource__project=db_project
+        changedentitylocale__entity__resource__project=db_project,
+        changedentitylocale__when__lte=now
     ).values_list('pk', flat=True))
 
     unchanged_locale_pks = []

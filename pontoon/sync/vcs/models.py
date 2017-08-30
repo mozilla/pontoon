@@ -60,7 +60,7 @@ class VCSProject(object):
     SOURCE_DIR_NAMES = SOURCE_DIR_SCORES.keys()
 
     def __init__(
-        self, db_project, locales=None, repo_locales=None, obsolete_entities_paths=None,
+        self, db_project, now=None, locales=None, repo_locales=None, obsolete_entities_paths=None,
         new_paths=None, full_scan=False
     ):
         """
@@ -70,6 +70,8 @@ class VCSProject(object):
         :param Project db_project:
             Project model instance for the project we're going to be
             reading files for.
+        :param datetime.datetime now:
+            Sync start time.
         :param list locales:
             List of Locale model instances for the locales that we want
             to parse. Defaults to parsing resources for all enabled
@@ -85,6 +87,7 @@ class VCSProject(object):
             Scans all resources in repository
         """
         self.db_project = db_project
+        self.now = now
         self.locales = locales if locales is not None else db_project.locales.all()
         self.repo_locales = repo_locales
         self.obsolete_entities_paths = obsolete_entities_paths or []
@@ -202,7 +205,7 @@ class VCSProject(object):
 
         # DB changes
         vcs = files
-        db = self.db_project.changed_resources
+        db = self.db_project.changed_resources(self.now)
         for path in set(vcs.keys() + db.keys()):
             if path in vcs and path in db:
                 vcs[path] = set(list(vcs[path]) + list(db[path]))
@@ -332,7 +335,7 @@ class VCSProject(object):
                     continue
                 locales = []
 
-            locales = set(locales)
+            locales = set([l for l in locales if l in self.locales])
             map(self.synced_locales.add, locales)
 
             log.debug(

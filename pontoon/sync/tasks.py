@@ -230,7 +230,7 @@ def sync_translations(
     # changed locales before the expensive VCS pull/clone operations. When performing full scan,
     # we still need to sync all locales.
     if not full_scan:
-        locales = get_changed_locales(db_project, locales)
+        locales = get_changed_locales(db_project, locales, now)
 
     # Pull VCS changes in case we're on a different worker than the one
     # sync started on.
@@ -275,6 +275,7 @@ def sync_translations(
 
     vcs_project = VCSProject(
         db_project,
+        now,
         locales=locales,
         repo_locales=repo_locales,
         obsolete_entities_paths=obsolete_entities_paths,
