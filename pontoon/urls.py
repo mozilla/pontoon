@@ -1,10 +1,12 @@
+from csp.decorators import csp_exempt
+from graphene_django.views import GraphQLView
+
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.views import logout
 from django.views.generic import RedirectView, TemplateView
 from django.views.decorators.csrf import csrf_exempt
-from csp.decorators import csp_exempt
-from graphene_django.views import GraphQLView
+
 from pontoon.settings.base import DEV
 from pontoon.api.schema import schema
 from pontoon.base.views import heroku_setup
