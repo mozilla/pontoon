@@ -220,7 +220,20 @@ class TranslateMemoryTests(ViewTestCase):
             'pk': memory_entry.entity.pk,
             'locale': memory_entry.locale.code
         })
-        assert_equal(response.json()[0]['count'], 3)
+
+        result = response.json()
+        src_string = result[0].pop('source')
+
+        assert_equal(len(result), 1)
+        assert_true(src_string in ('abaa', 'aaab', 'aaab'))
+        assert_equal(
+            result,
+            [{
+                u'count': 3,
+                u'quality': 75.0,
+                u'target': u'ccc',
+            }]
+        )
 
     def test_exclude_entity(self):
         """
