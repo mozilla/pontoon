@@ -13,13 +13,7 @@ from ..base.models import (
 
 class Stats(graphene.AbstractType):
     missing_strings = graphene.Int()
-
-    @graphene.resolve_only_args
-    def resolve_missing_strings(obj):
-        return (
-            obj.total_strings - obj.translated_strings -
-            obj.approved_strings - obj.fuzzy_strings
-        )
+    complete = graphene.Boolean()
 
 
 class ProjectLocale(DjangoObjectType, Stats):
