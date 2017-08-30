@@ -11,18 +11,18 @@ from ..base.models import (
 )
 
 
-class StringStats(graphene.AbstractType):
+class Stats(graphene.AbstractType):
     missing_strings = graphene.Int()
 
     @graphene.resolve_only_args
-    def resolve_missing_strings(self):
+    def resolve_missing_strings(obj):
         return (
-            self.total_strings - self.translated_strings -
-            self.approved_strings - self.fuzzy_strings
+            obj.total_strings - obj.translated_strings -
+            obj.approved_strings - obj.fuzzy_strings
         )
 
 
-class ProjectLocale(DjangoObjectType, StringStats):
+class ProjectLocale(DjangoObjectType, Stats):
     class Meta:
         model = ProjectLocaleModel
         only_fields = (
@@ -31,7 +31,7 @@ class ProjectLocale(DjangoObjectType, StringStats):
         )
 
 
-class Project(DjangoObjectType, StringStats):
+class Project(DjangoObjectType, Stats):
     class Meta:
         model = ProjectModel
         only_fields = (
@@ -43,11 +43,11 @@ class Project(DjangoObjectType, StringStats):
     localizations = graphene.List(ProjectLocale)
 
     @graphene.resolve_only_args
-    def resolve_localizations(self):
-        return self.project_locale.all()
+    def resolve_localizations(obj):
+        return obj.project_locale.all()
 
 
-class Locale(DjangoObjectType, StringStats):
+class Locale(DjangoObjectType, Stats):
     class Meta:
         model = LocaleModel
         only_fields = (
@@ -59,8 +59,8 @@ class Locale(DjangoObjectType, StringStats):
     localizations = graphene.List(ProjectLocale)
 
     @graphene.resolve_only_args
-    def resolve_localizations(self):
-        return self.project_locale.all()
+    def resolve_localizations(obj):
+        return obj.project_locale.all()
 
 
 class Query(graphene.ObjectType):
@@ -72,7 +72,7 @@ class Query(graphene.ObjectType):
     locales = graphene.List(Project)
     locale = graphene.Field(Locale, code=graphene.String())
 
-    def resolve_projects(self, args, context, info):
+    def resolve_projects(obj, args, context, info):
         qs = ProjectModel.objects.all()
         fields = get_fields(info)
 
@@ -84,7 +84,7 @@ class Query(graphene.ObjectType):
 
         return qs
 
-    def resolve_project(self, args, context, info):
+    def resolve_project(obj, args, context, info):
         qs = ProjectModel.objects
         fields = get_fields(info)
 
@@ -96,7 +96,7 @@ class Query(graphene.ObjectType):
 
         return qs.get(slug=args['slug'])
 
-    def resolve_locales(self, args, context, info):
+    def resolve_locales(obj, args, context, info):
         qs = LocaleModel.objects.all()
         fields = get_fields(info)
 
@@ -108,7 +108,7 @@ class Query(graphene.ObjectType):
 
         return qs
 
-    def resolve_locale(self, args, context, info):
+    def resolve_locale(obj, args, context, info):
         qs = LocaleModel.objects
         fields = get_fields(info)
 
