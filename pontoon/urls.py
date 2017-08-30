@@ -82,10 +82,9 @@ urlpatterns = [
     # Team page: Must be at the end
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$', team, name='pontoon.teams.team'),
 
-    # GraphQL endpoint
-    # In DEV mode it serves the GraphiQL editor if accessed with
-    # Accept: text/html
-    url(r'^graphql', csp_exempt(
-        csrf_exempt(
-            GraphQLView.as_view(schema=schema, graphiql=DEV)))),
+    # GraphQL endpoint. In DEV mode it serves the GraphiQL IDE if accessed with Accept: text/html
+    url(
+        r'^graphql',
+        csp_exempt(csrf_exempt(GraphQLView.as_view(schema=schema, graphiql=DEV)))
+    ),
 ]

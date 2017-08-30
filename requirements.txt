@@ -171,8 +171,12 @@ setuptools==36.2.4 \
     --hash=sha256:88355a63434a5e3c8e1dfb26a2227744512958434c7332c7a4a8847f128f364e
 webencodings==0.5.1 \
     --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78
+
+# ----------------------------------------------------------------------------------
 graphene-django==1.3 \
     --hash=sha256:6679eaa73768a760aef76e1860a4ca3273db4213f0505dc13cdfa44278e027fc
+
+# Required by graphene-django
 graphene==1.4.1 \
     --hash=sha256:36134e026ec987514b240b57e3b6a995d6aed0fc5dece0567e77d5aed0ad0ece
 iso8601==0.1.11 \

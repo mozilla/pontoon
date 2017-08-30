@@ -18,7 +18,8 @@ class StringStats(graphene.AbstractType):
     def resolve_missing_strings(self):
         return (
             self.total_strings - self.translated_strings -
-            self.approved_strings - self.fuzzy_strings)
+            self.approved_strings - self.fuzzy_strings
+        )
 
 
 class ProjectLocale(DjangoObjectType, StringStats):
@@ -26,7 +27,8 @@ class ProjectLocale(DjangoObjectType, StringStats):
         model = ProjectLocaleModel
         only_fields = (
             'total_strings', 'approved_strings', 'translated_strings',
-            'fuzzy_strings', 'project', 'locale')
+            'fuzzy_strings', 'project', 'locale'
+        )
 
 
 class Project(DjangoObjectType, StringStats):
@@ -35,7 +37,8 @@ class Project(DjangoObjectType, StringStats):
         only_fields = (
             'name', 'slug', 'info', 'deadline', 'priority', 'contact',
             'total_strings', 'approved_strings', 'translated_strings',
-            'fuzzy_strings')
+            'fuzzy_strings'
+        )
 
     localizations = graphene.List(ProjectLocale)
 
@@ -50,7 +53,8 @@ class Locale(DjangoObjectType, StringStats):
         only_fields = (
             'name', 'code', 'direction', 'script', 'population',
             'total_strings', 'approved_strings', 'translated_strings',
-            'fuzzy_strings')
+            'fuzzy_strings'
+        )
 
     localizations = graphene.List(ProjectLocale)
 
