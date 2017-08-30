@@ -1,5 +1,4 @@
 import json
-import logging
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -20,9 +19,6 @@ from pontoon.base import forms
 from pontoon.base.models import Locale, Project
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
-
-
-log = logging.getLogger(__name__)
 
 
 def teams(request):

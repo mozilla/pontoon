@@ -1,4 +1,3 @@
-import logging
 import uuid
 
 from django.contrib.auth.models import User
@@ -17,9 +16,6 @@ from pontoon.base.models import Project
 from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.projects import forms
-
-
-log = logging.getLogger(__name__)
 
 
 def projects(request):
