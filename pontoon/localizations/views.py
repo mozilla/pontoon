@@ -1,6 +1,5 @@
 from __future__ import division
 
-import logging
 import math
 
 from django.db.models import Q
@@ -11,9 +10,6 @@ from django.views.generic.detail import DetailView
 from pontoon.base.models import Locale, Project, ProjectLocale, TranslatedResource
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
-
-
-log = logging.getLogger('pontoon')
 
 
 def localization(request, code, slug):

@@ -51,7 +51,7 @@ from pontoon.base.utils import (
 )
 
 
-log = logging.getLogger('pontoon')
+log = logging.getLogger(__name__)
 
 
 def home(request):

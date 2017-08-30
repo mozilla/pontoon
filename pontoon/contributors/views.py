@@ -1,5 +1,4 @@
 import json
-import logging
 
 from dateutil.relativedelta import relativedelta
 from django.contrib import messages
@@ -22,9 +21,6 @@ from django.views.generic import TemplateView
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project
 from pontoon.base.utils import require_AJAX
-
-
-log = logging.getLogger('pontoon')
 
 
 @login_required(redirect_field_name='', login_url='/403')

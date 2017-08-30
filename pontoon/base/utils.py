@@ -1,7 +1,6 @@
 import codecs
 import functools
 import json
-import logging
 import os
 import pytz
 import re
@@ -31,9 +30,6 @@ from translate.storage import base as storage_base
 from translate.storage.placeables import base, general, parse
 from translate.storage.placeables.interfaces import BasePlaceable
 from translate.lang import data as lang_data
-
-
-log = logging.getLogger('pontoon')
 
 
 def split_ints(s):
