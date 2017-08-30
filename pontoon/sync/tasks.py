@@ -240,7 +240,7 @@ def sync_translations(
         repos = repos.filter(pk__in=repo_locales.keys())
         log.info('Pulling changes for project {0} complete.'.format(db_project.slug))
 
-    changed_resources = None
+    changed_resources = []
     obsolete_vcs_entities = []
 
     if project_changes:
@@ -252,7 +252,7 @@ def sync_translations(
         changed_resources = db_project.resources.filter(
             Q(entities__date_created=now) |
             Q(entities__pk__in=updated_entity_pks + obsolete_entity_pks)
-        )
+        ).distinct()
 
         obsolete_vcs_entities = project_changes['obsolete_db']
 
@@ -365,24 +365,30 @@ def sync_translations(
 
             failed_locales.add(locale.code)
 
-    with transaction.atomic():
-        # If sources have changed, update stats for all locales.
-        if changed_resources or obsolete_vcs_resources:
-            for locale in db_project.locales.all():
-                # Already synced.
-                if locale in synced_locales:
-                    continue
+    # If sources have changed, update stats for all locales.
+    if changed_resources or obsolete_vcs_resources:
+        for locale in db_project.locales.all():
+            # Already synced.
+            if locale.code in synced_locales:
+                continue
 
-                # We have files: update all translated resources.
-                if locale in locales:
-                    update_translated_resources(db_project, vcs_project, locale)
+            # We have files: update all translated resources.
+            if locale in locales:
+                update_translated_resources(db_project, vcs_project, locale)
 
-                # We don't have files: we can still update asymmetric translated resources.
-                else:
-                    update_translated_resources_no_files(db_project, locale, changed_resources)
+            # We don't have files: we can still update asymmetric translated resources.
+            else:
+                update_translated_resources_no_files(db_project, locale, changed_resources)
 
-                update_locale_project_locale_stats(locale, db_project)
-                synced_locales.add(locale.code)
+            update_locale_project_locale_stats(locale, db_project)
+            synced_locales.add(locale.code)
+
+            log.info(
+                'Synced source changes for locale {locale} for project {project}.'.format(
+                    locale=locale.code,
+                    project=db_project.slug,
+                )
+            )
 
         db_project.aggregate_stats()
 
