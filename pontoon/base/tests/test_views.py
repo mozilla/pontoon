@@ -224,7 +224,6 @@ class TranslateMemoryTests(ViewTestCase):
         result = response.json()
         src_string = result[0].pop('source')
 
-        assert_equal(len(result), 1)
         assert_true(src_string in ('abaa', 'aaab', 'aaab'))
         assert_equal(
             result,
