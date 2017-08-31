@@ -156,12 +156,17 @@ def settings(request):
 
     selected_locales = list(request.user.profile.sorted_locales)
     available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
-    all_locales = list(Locale.objects.all())
-    all_locales.insert(0, Locale(name='Default homepage', code=''))
 
-    custom_homepage_locale = Locale.objects.filter(
-        code=request.user.profile.custom_homepage
-    ).first()
+    default_homepage_locale = Locale(name='Default homepage', code='')
+    all_locales = list(Locale.objects.all())
+    all_locales.insert(0, default_homepage_locale)
+
+    # Set custom homepage selector value
+    custom_homepage = request.user.profile.custom_homepage
+    if custom_homepage:
+        custom_homepage_locale = Locale.objects.filter(code=custom_homepage).first()
+    else:
+        custom_homepage_locale = default_homepage_locale
 
     return render(request, 'contributors/settings.html', {
         'selected_locales': selected_locales,
