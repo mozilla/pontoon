@@ -471,6 +471,7 @@ PIPELINE_JS = {
             'js/lib/jquery-ui.js',
             'js/multiple_locale_selector.js',
             'js/contributor.js',
+            'js/team_selector.js',
             'js/settings.js'
         ),
         'output_filename': 'js/settings.min.js',
@@ -486,6 +487,7 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/lib/diff.js',
             'js/lib/clipboard.min.js',
+            'js/team_selector.js',
             'js/machinery.js',
         ),
         'output_filename': 'js/machinery.min.js',
