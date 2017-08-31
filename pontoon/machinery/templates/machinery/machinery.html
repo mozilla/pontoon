@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import 'heading.html' as Heading %}
+{% import 'teams/widgets/team_selector.html' as TeamSelector %}
 
 {% block title %}Machinery{% endblock %}
 
@@ -19,7 +20,7 @@
         <input type="search" autocomplete="off" autofocus placeholder="Type and press Enter to search">
       </div>
 
-      {% include 'teams/widgets/team_selector.html' %}
+      {{ TeamSelector.select(locale, locales) }}
     </menu>
 
     <div id="helpers">
