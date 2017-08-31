@@ -2,7 +2,7 @@
 
 {% import "widgets/checkbox.html" as Checkbox %}
 {% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
-{% import 'contributors/widgets/locale_homepage.html' as LocaleHomepage %}
+{% import 'teams/widgets/team_selector.html' as TeamSelector %}
 
 {% block title %}Settings{% endblock %}
 
@@ -30,14 +30,17 @@
   </h2>
 
   <ul class="info">
-  {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run quality checks before submitting translations') }}
-  {% if user.translated_locales %}
-    {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
-  {% endif %}
-  <li>
-      {{ LocaleHomepage.select(custom_homepage_locale, all_locales) }}
-  </li>
+    {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run quality checks before submitting translations') }}
+
+    {% if user.translated_locales %}
+      {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
+    {% endif %}
   </ul>
+
+  <div id="homepage" class="clearfix">
+    <span class="label">Select your homepage</span>
+    {{ TeamSelector.select(custom_homepage_locale, all_locales) }}
+  </div>
 </section>
 {% endblock %}
 

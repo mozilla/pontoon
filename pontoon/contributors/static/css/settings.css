@@ -1,3 +1,69 @@
+#homepage {
+  margin-top: 30px;
+}
+
+#homepage .label {
+  color: #AAA;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 300;
+  margin: 6px 10px 0 0;
+  vertical-align: top;
+}
+
+#homepage .locale.select {
+  width: 280px;
+}
+
+#homepage .locale.select .button {
+  background: #272A2F;
+  border-radius: 2px;
+  box-sizing: border-box;
+  color: #AAA;
+  font-weight: 400;
+  height: 36px;
+  margin: 0;
+  padding: 8px 12px;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+#homepage .locale.select .button:before,
+#homepage .locale.select .button:after {
+  display: none;
+}
+
+#homepage .locale.select.opened .button {
+  border-radius: 2px 2px 0 0;
+}
+
+#homepage .locale.select .button .language {
+  text-align: left;
+}
+
+#homepage .locale .code {
+  float: right;
+}
+
+#homepage .locale.select .button .code {
+  text-transform: none;
+}
+
+#homepage .locale.select .menu {
+  display: none;
+  border: 1px solid #333941;
+  border-top: none;
+  position: absolute;
+  top: 36px;
+  left: -1px;
+  width: 282px;
+  z-index: 30;
+}
+
+#homepage .locale.select .menu ul {
+  max-height: 214px;
+}
+
 #main form {
   margin: 0 auto;
 }
