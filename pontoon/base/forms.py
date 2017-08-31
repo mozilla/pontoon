@@ -180,7 +180,7 @@ class UserCustomHomepageForm(forms.ModelForm):
 
         self.fields['custom_homepage'] = forms.ChoiceField(choices=[
             ('', 'Default homepage')
-        ] + all_locales, required=False, label="Custom homepage")
+        ] + all_locales, required=False, label="Select your homepage")
 
 
 class UserLocalesOrderForm(forms.ModelForm):

@@ -20,8 +20,7 @@ log = logging.getLogger(__name__)
 
 
 def machinery(request):
-    locale = utils.get_project_locale_from_request(
-        request, Locale.objects) or 'en-GB'
+    locale = utils.get_project_locale_from_request(request, Locale.objects) or 'en-GB'
 
     return render(request, 'machinery/machinery.html', {
         'locale': Locale.objects.get(code=locale),
