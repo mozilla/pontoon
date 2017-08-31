@@ -1005,8 +1005,7 @@ class Project(AggregatedStats):
             for locale in self.locales.all():
                 locale.aggregate_stats()
 
-    @property
-    def changed_resources(self):
+    def changed_resources(self, now):
         """
         Returns a map of resource paths and their locales
         that where changed from the last sync.
@@ -1014,7 +1013,7 @@ class Project(AggregatedStats):
         resources = defaultdict(set)
         changes = (
             ChangedEntityLocale.objects
-            .filter(entity__resource__project=self)
+            .filter(entity__resource__project=self, when__lte=now)
             .prefetch_related('locale', 'entity__resource')
         )
 
