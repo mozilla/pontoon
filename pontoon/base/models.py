@@ -315,7 +315,7 @@ def top_contributed_locale(self):
             .annotate(total=Count('locale__code'))
             .distinct()
             .order_by('-total')
-            .first()
+            .first()['locale__code']
     )
 
 
