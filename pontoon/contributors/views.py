@@ -119,12 +119,12 @@ def toggle_user_profile_attribute(request, username):
 @transaction.atomic
 def save_user_name(request):
     """Save user name."""
-    profile_form = forms.UserFirstNameForm(request.POST, instance=request.user)
+    form = forms.UserFirstNameForm(request.POST, instance=request.user)
 
-    if not profile_form.is_valid():
-        return HttpResponseBadRequest(u'\n'.join(profile_form.errors['first_name']))
+    if not form.is_valid():
+        return HttpResponseBadRequest(u'\n'.join(form.errors['first_name']))
 
-    profile_form.save()
+    form.save()
 
     return HttpResponse('ok')
 
@@ -134,12 +134,12 @@ def save_user_name(request):
 @transaction.atomic
 def save_custom_homepage(request):
     """Save custom homepage."""
-    profile_form = forms.UserCustomHomepageForm(request.POST, instance=request.user)
+    form = forms.UserCustomHomepageForm(request.POST, instance=request.user.profile)
 
-    if not profile_form.is_valid():
-        return HttpResponseBadRequest(u'Invalid custom homepage.')
+    if not form.is_valid():
+        return HttpResponseBadRequest(u'\n'.join(form.errors['custom_homepage']))
 
-    profile_form.save()
+    form.save()
 
     return HttpResponse('ok')
 
