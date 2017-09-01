@@ -171,8 +171,8 @@ def settings(request):
     return render(request, 'contributors/settings.html', {
         'selected_locales': selected_locales,
         'available_locales': available_locales,
-        'all_locales': all_locales,
-        'custom_homepage_locale': custom_homepage_locale,
+        'locales': all_locales,
+        'locale': custom_homepage_locale,
     })
 
 
