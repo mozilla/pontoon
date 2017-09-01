@@ -52,7 +52,7 @@ var Pontoon = (function (my) {
         url: '/notifications/mark-all-as-read/',
         success: function() {
           $('#notifications.unread .button .icon').animate({color: '#4D5967'}, 1000);
-          var unreadNotifications = $('#main.notifications .right-column li.notification-item[data-unread="true"]');
+          var unreadNotifications = $('.notifications .menu ul.notification-list li.notification-item[data-unread="true"]');
 
           unreadNotifications.animate({backgroundColor: 'transparent'}, 1000, function() {
             // Remove inline style and unread mark to make hover work again

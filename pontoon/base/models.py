@@ -333,6 +333,18 @@ def can_translate(self, locale, project):
     return self.has_perm('base.can_translate_locale', locale)
 
 
+@property
+def menu_notifications(self):
+    """A list of notifications to display in the notifications menu."""
+    unread_count = self.notifications.unread().count()
+    count = settings.NOTIFICATIONS_MAX_COUNT
+
+    if unread_count > count:
+        count = unread_count
+
+    return self.notifications.all()[:count]
+
+
 User.add_to_class('profile_url', user_profile_url)
 User.add_to_class('gravatar_url', user_gravatar_url)
 User.add_to_class('name_or_email', user_name_or_email)
@@ -349,6 +361,7 @@ User.add_to_class('objects', UserCustomManager.from_queryset(UserQuerySet)())
 User.add_to_class('contributed_translations', contributed_translations)
 User.add_to_class('top_contributed_locale', top_contributed_locale)
 User.add_to_class('can_translate', can_translate)
+User.add_to_class('menu_notifications', menu_notifications)
 
 
 class UserProfile(models.Model):

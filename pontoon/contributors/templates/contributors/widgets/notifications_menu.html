@@ -1,14 +1,14 @@
 {% macro menu() %}
 {% if user.is_authenticated() %}
-{% set unread_notifications = user.notifications.unread() %}
-<div id="notifications" class="notifications select{% if unread_notifications|length > 0 %} unread{% endif %}">
+
+<div id="notifications" class="notifications select{% if user.notifications.unread() %} unread{% endif %}">
 
   <div class="button selector">
     <i class="icon fa fa-bell-o fa-fw"></i>
   </div>
 
   <div class="menu">
-    {{ list(notifications=unread_notifications) }}
+    {{ list(notifications=user.menu_notifications) }}
 
     <ul>
       <li class="horizontal-separator"></li>
@@ -17,6 +17,7 @@
   </div>
 
 </div>
+
 {% endif %}
 {% endmacro %}
 

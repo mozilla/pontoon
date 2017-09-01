@@ -2,10 +2,6 @@
   max-height: none;
 }
 
-.right-column li.notification-item[data-unread="true"] {
-  background: #3F4752;
-}
-
 /* No notifications */
 #main.no .left-column {
   display: none;

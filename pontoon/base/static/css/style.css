@@ -1011,6 +1011,10 @@ header .right .select .menu {
   padding: 0;
 }
 
+.notifications .menu ul.notification-list li.notification-item[data-unread="true"] {
+  background: #3F4752;
+}
+
 .notifications .menu li.notification-item span {
   float: none;
 }
