@@ -290,7 +290,7 @@ var Pontoon = (function (my) {
                     '<div class="info">' +
                       ((!this.uid) ? '<span>' + this.user + '</span>' :
                         '<a href="/contributors/' + this.username + '" title="' + self.getApproveButtonTitle(this) + '">' + this.user + '</a>') +
-                      '<time class="stress" datetime="' + this.date_iso + '">' + this.date + ' UTC</time>' +
+                      '<time dir="ltr" class="stress" datetime="' + this.date_iso + '">' + this.date + ' UTC</time>' +
                     '</div>' +
                     '<menu class="toolbar">' +
                       ((i > 0) ? '<a href="#" class="toggle-diff" data-alternative-text="Hide diff" title="Show diff against the currently active translation">Show diff</a>' : '') +
