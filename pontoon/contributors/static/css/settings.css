@@ -1,8 +1,50 @@
+#homepage {
+  margin-top: 30px;
+}
+
+#homepage .label {
+  color: #AAA;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 300;
+  margin: 6px 10px 0 0;
+  vertical-align: top;
+}
+
+#homepage .locale-selector {
+  display: inline-block;
+}
+
+#homepage .locale-selector .locale.select {
+  width: 280px;
+}
+
+#homepage .locale-selector .locale.select .button {
+  background: #272A2F;
+  color: #AAAAAA;
+  font-size: 16px;
+  font-weight: 400;
+  height: 36px;
+  margin: 0;
+  padding: 8px 12px;
+  width: 100%;
+}
+
+#homepage .locale-selector .locale.select .menu {
+  background: #272A2F;
+  border: 1px solid #333941;
+  border-top: none;
+  top: 36px;
+  left: -1px;
+  width: 282px;
+  z-index: 30;
+}
+
 #main form {
   margin: 0 auto;
 }
 
-#main .locale-selector {
+#main .multiple-locale-selector {
   margin: 30px 0;
 }
 

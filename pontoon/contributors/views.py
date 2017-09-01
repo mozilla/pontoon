@@ -119,12 +119,27 @@ def toggle_user_profile_attribute(request, username):
 @transaction.atomic
 def save_user_name(request):
     """Save user name."""
-    profile_form = forms.UserProfileForm(request.POST, instance=request.user)
+    form = forms.UserFirstNameForm(request.POST, instance=request.user)
 
-    if not profile_form.is_valid():
-        return HttpResponseBadRequest(u'\n'.join(profile_form.errors['first_name']))
+    if not form.is_valid():
+        return HttpResponseBadRequest(u'\n'.join(form.errors['first_name']))
 
-    profile_form.save()
+    form.save()
+
+    return HttpResponse('ok')
+
+
+@login_required(redirect_field_name='', login_url='/403')
+@require_POST
+@transaction.atomic
+def save_custom_homepage(request):
+    """Save custom homepage."""
+    form = forms.UserCustomHomepageForm(request.POST, instance=request.user.profile)
+
+    if not form.is_valid():
+        return HttpResponseBadRequest(u'\n'.join(form.errors['custom_homepage']))
+
+    form.save()
 
     return HttpResponse('ok')
 
@@ -133,7 +148,7 @@ def save_user_name(request):
 def settings(request):
     """View and edit user settings."""
     if request.method == 'POST':
-        form = forms.UserLocalesSettings(request.POST, instance=request.user.profile)
+        form = forms.UserLocalesOrderForm(request.POST, instance=request.user.profile)
         if form.is_valid():
             form.save()
             messages.success(request, 'Settings saved.')
@@ -141,9 +156,23 @@ def settings(request):
 
     selected_locales = list(request.user.profile.sorted_locales)
     available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
+
+    default_homepage_locale = Locale(name='Default homepage', code='')
+    all_locales = list(Locale.objects.all())
+    all_locales.insert(0, default_homepage_locale)
+
+    # Set custom homepage selector value
+    custom_homepage = request.user.profile.custom_homepage
+    if custom_homepage:
+        custom_homepage_locale = Locale.objects.filter(code=custom_homepage).first()
+    else:
+        custom_homepage_locale = default_homepage_locale
+
     return render(request, 'contributors/settings.html', {
-        'available_locales': available_locales,
         'selected_locales': selected_locales,
+        'available_locales': available_locales,
+        'locales': all_locales,
+        'locale': custom_homepage_locale,
     })
 
 

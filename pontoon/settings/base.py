@@ -338,6 +338,7 @@ PIPELINE_CSS = {
         'source_filenames': (
             'css/multiple_locale_selector.css',
             'css/contributor.css',
+            'css/team_selector.css',
             'css/settings.css',
         ),
         'output_filename': 'css/settings.min.css',
@@ -351,6 +352,7 @@ PIPELINE_CSS = {
     },
     'machinery': {
         'source_filenames': (
+            'css/team_selector.css',
             'css/machinery.css',
         ),
         'output_filename': 'css/machinery.min.css',
@@ -471,6 +473,8 @@ PIPELINE_JS = {
             'js/lib/jquery-ui.js',
             'js/multiple_locale_selector.js',
             'js/contributor.js',
+            'js/team_selector.js',
+            'js/settings.js'
         ),
         'output_filename': 'js/settings.min.js',
     },
@@ -485,6 +489,7 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/lib/diff.js',
             'js/lib/clipboard.min.js',
+            'js/team_selector.js',
             'js/machinery.js',
         ),
         'output_filename': 'js/machinery.min.js',

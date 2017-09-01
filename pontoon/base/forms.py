@@ -155,7 +155,10 @@ ProjectLocalePermsFormsSet = forms.modelformset_factory(
 )
 
 
-class UserProfileForm(forms.ModelForm):
+class UserFirstNameForm(forms.ModelForm):
+    """
+    Form is responsible for saving user's name.
+    """
     first_name = forms.RegexField(regex='^[^<>"\'&]+$', max_length=30, strip=True)
 
     class Meta:
@@ -163,7 +166,24 @@ class UserProfileForm(forms.ModelForm):
         fields = ('first_name',)
 
 
-class UserLocalesSettings(forms.ModelForm):
+class UserCustomHomepageForm(forms.ModelForm):
+    """
+    Form is responsible for saving custom home page.
+    """
+    class Meta:
+        model = UserProfile
+        fields = ('custom_homepage',)
+
+    def __init__(self, *args, **kwargs):
+        super(UserCustomHomepageForm, self).__init__(*args, **kwargs)
+        all_locales = list(Locale.objects.all().values_list('code', 'name'))
+
+        self.fields['custom_homepage'] = forms.ChoiceField(choices=[
+            ('', 'Default homepage')
+        ] + all_locales, required=False)
+
+
+class UserLocalesOrderForm(forms.ModelForm):
     """
     Form is responsible for saving preferred locales of contributor.
     """

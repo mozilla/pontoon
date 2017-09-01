@@ -29,11 +29,17 @@
   </h2>
 
   <ul class="info">
-  {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run quality checks before submitting translations') }}
-  {% if user.translated_locales %}
-    {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
-  {% endif %}
+    {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run quality checks before submitting translations') }}
+
+    {% if user.translated_locales %}
+      {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
+    {% endif %}
   </ul>
+
+  <div id="homepage" class="clearfix">
+    <span class="label">Select your homepage</span>
+    {% include 'teams/widgets/team_selector.html' %}
+  </div>
 </section>
 {% endblock %}
 
@@ -45,9 +51,7 @@
 
     <h3>Preferred locales <span class="small stress">(to get suggestions from)</span></h3>
 
-    <div class="clearfix locale-selector">
-      {{ multiple_locale_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
-    </div>
+    {{ multiple_locale_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
 
     <div class="controls">
       <a class="cancel" href="{{ return_url(request) }}">Cancel</a>
