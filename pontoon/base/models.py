@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from __future__ import division
 
 import hashlib
+import json
 import logging
 import math
 import os.path
@@ -540,6 +541,11 @@ class Locale(AggregatedStats):
         """
     )
 
+    transvision = models.BooleanField(default=False, help_text="""
+        Enable Machinery suggestions from <a href="https://transvision.mozfr.org/">Transvision</a>.
+        Only useful for locales that don't translate all projects on Pontoon.
+    """)
+
     db_collation = models.CharField(
         max_length=20,
         blank=True,
@@ -670,6 +676,7 @@ class Locale(AggregatedStats):
             'script': self.script,
             'ms_translator_code': self.ms_translator_code,
             'ms_terminology_code': self.ms_terminology_code,
+            'transvision': json.dumps(self.transvision),
         }
 
     def cldr_id_list(self):
