@@ -790,3 +790,6 @@ else:
 # Attach extra arguments passed to notify.send(...) to the .data attribute
 # of the Notification object.
 NOTIFICATIONS_USE_JSONFIELD = True
+
+# Maximum number of read notifications to display in the notifications menu
+NOTIFICATIONS_MAX_COUNT = 7
