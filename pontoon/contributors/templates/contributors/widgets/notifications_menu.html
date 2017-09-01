@@ -6,7 +6,7 @@
 {% set limit = 7 %}
 {% set notifications_to_display_count = unread_notifications_count if unread_notifications_count > limit else limit %}
 
-<div id="notifications" class="notifications select{% if unread_notifications_count > 0 %} unread{% endif %}">
+<div id="notifications" class="notifications select{% if unread_notifications %} unread{% endif %}">
 
   <div class="button selector">
     <i class="icon fa fa-bell-o fa-fw"></i>
