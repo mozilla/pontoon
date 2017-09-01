@@ -338,6 +338,7 @@ PIPELINE_CSS = {
         'source_filenames': (
             'css/multiple_locale_selector.css',
             'css/contributor.css',
+            'css/team_selector.css',
             'css/settings.css',
         ),
         'output_filename': 'css/settings.min.css',
@@ -351,6 +352,7 @@ PIPELINE_CSS = {
     },
     'machinery': {
         'source_filenames': (
+            'css/team_selector.css',
             'css/machinery.css',
         ),
         'output_filename': 'css/machinery.min.css',

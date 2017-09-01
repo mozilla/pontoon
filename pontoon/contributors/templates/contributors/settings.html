@@ -52,9 +52,7 @@
 
     <h3>Preferred locales <span class="small stress">(to get suggestions from)</span></h3>
 
-    <div class="clearfix locale-selector">
-      {{ multiple_locale_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
-    </div>
+    {{ multiple_locale_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
 
     <div class="controls">
       <a class="cancel" href="{{ return_url(request) }}">Cancel</a>
