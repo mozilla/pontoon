@@ -2,6 +2,8 @@ import cgi
 import datetime
 import json
 
+from xml.sax.saxutils import escape
+
 from six import text_type
 from six.moves.urllib import parse as six_parse
 
@@ -240,9 +242,29 @@ def local_url(url, code=None):
     code = code or 'en-US'
     return url.format(locale_code=code)
 
+
+def html_escape_attr(attr_val):
+    """
+    Escape values passed to html attribute.
+    """
+    return escape(attr_val, {"'": '&apos;', '"': '&quot;'})
+
+
 @library.filter
 def dict_html_attrs(dict_obj):
     """Render json object properties into a series of data-* attributes."""
+    def json_attr(v):
+        if isinstance(v, (float, int, bool, dict, list, tuple)):
+            # This doesn't support corner-cases like e.g. nested dictionaries.
+            return '"{}"'.format(html_escape_attr(json.dumps(v)))
+
+        elif isinstance(v, basestring):
+            return json.dumps(html_escape_attr(v))
+
+        else:
+            raise TypeError("Can't serialize unsupported type: {}".format(type(v)))
+
     return jinja2.Markup(' '.join(
-        [u'data-{}="{}"'.format(k, v) for k, v in dict_obj.items()]
+        # return all data attributes sorted by a key name
+        (u'data-{}={}'.format(k, json_attr(v)) for k, v in sorted(dict_obj.items(), key=lambda x: x[0]))
     ))

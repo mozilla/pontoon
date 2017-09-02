@@ -14,9 +14,8 @@
       {% for p in projects %}
         <li class="clearfix{% if locale and p.slug in locale.available_projects_list() %} limited{% endif %}">
           <span class="name"
-            {% for key, value in p.serialize().iteritems() %}
-              data-{{ key }}="{{ value }}"
-            {% endfor %}
+            {{ p.serialize()|dict_html_attrs }}
+
             {% if project and locale and project == p %}
               data-parts="{{ {locale.code: locale.parts_stats(p)}|to_json }}"
             {% endif %}
