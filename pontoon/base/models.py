@@ -309,14 +309,19 @@ def contributed_translations(self):
 @property
 def top_contributed_locale(self):
     """Locale the user has made the most contributions to."""
-    return (
-        self.translation_set
-            .values('locale__code')
-            .annotate(total=Count('locale__code'))
-            .distinct()
-            .order_by('-total')
-            .first()['locale__code']
-    )
+    try:
+        return (
+            self.translation_set
+                .values('locale__code')
+                .annotate(total=Count('locale__code'))
+                .distinct()
+                .order_by('-total')
+                .first()['locale__code']
+        )
+    except TypeError:
+        # This error is raised if `top_contribution` is null. That happens if the user
+        # has never contributed to any locales.
+        return None
 
 
 def can_translate(self, locale, project):
