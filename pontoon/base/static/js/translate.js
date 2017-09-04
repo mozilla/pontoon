@@ -4021,9 +4021,11 @@ var Pontoon = (function (my) {
         return decodeURIComponent(encodedURI);
 
       // If querystring not encoded, we need to encode it first
-      } catch (e if e instanceof URIError) {
-        encodedURI = encodeURIComponent(encodedURI);
-        return decodeURIComponent(encodedURI);
+      } catch (e) {
+        if (e instanceof URIError) {
+          encodedURI = encodeURIComponent(encodedURI);
+          return decodeURIComponent(encodedURI);
+        }
       }
     },
 
