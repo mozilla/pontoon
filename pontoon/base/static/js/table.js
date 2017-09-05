@@ -74,12 +74,12 @@ var Pontoon = (function (my) {
               list = $(this).data('list') || '.table-sort tbody',
               // Selector of the list item element, relative to list
               item = $(this).data('item') || 'tr',
-              // Optional selector to match filter query against
-              filter = $(this).data('filter') || ' td:first-child';
+              // Selector of the list item element's child to match filter query against
+              filter = $(this).data('filter') || 'td:first-child';
 
           $(list)
-            .find(item + '.limited').show().end()
-            .find(item + '.limited' + filter + ':not(":containsi(\'' + $(field).val() + '\')")').parents(item).hide();
+            .find(item + '.limited').hide().end()
+            .find(item + '.limited ' + filter + ':containsi("' + $(field).val() + '")').parents(item).show();
         });
       }(),
 
