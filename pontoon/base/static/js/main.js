@@ -510,35 +510,37 @@ var Pontoon = (function (my) {
       }).error(error).complete(complete);
 
       // Transvision
-      requests++;
+      if (self.locale.transvision) {
+        requests++;
 
-      if (self.XHRtransvision) {
-        self.XHRtransvision.abort();
-      }
-
-      self.XHRtransvision = $.ajax({
-        url: '/transvision/',
-        data: {
-          text: original,
-          locale: self.locale.code
+        if (self.XHRtransvision) {
+          self.XHRtransvision.abort();
         }
 
-      }).success(function(data) {
-        if (data) {
-          $.each(data, function() {
-            append({
-              original: this.source,
-              quality: Math.round(this.quality) + '%',
-              url: 'https://transvision.mozfr.org/?repo=global' +
-                   '&recherche=' + encodeURIComponent(original) +
-                   '&locale=' + self.locale.code,
-              title: 'Visit Transvision',
-              source: 'Mozilla',
-              translation: this.target
+        self.XHRtransvision = $.ajax({
+          url: '/transvision/',
+          data: {
+            text: original,
+            locale: self.locale.code
+          }
+
+        }).success(function(data) {
+          if (data) {
+            $.each(data, function() {
+              append({
+                original: this.source,
+                quality: Math.round(this.quality) + '%',
+                url: 'https://transvision.mozfr.org/?repo=global' +
+                     '&recherche=' + encodeURIComponent(original) +
+                     '&locale=' + self.locale.code,
+                title: 'Visit Transvision',
+                source: 'Mozilla',
+                translation: this.target
+              });
             });
-          });
-        }
-      }).error(error).complete(complete);
+          }
+        }).error(error).complete(complete);
+      }
 
       self.NProgressBind();
     }
