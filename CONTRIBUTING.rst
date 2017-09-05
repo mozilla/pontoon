@@ -104,14 +104,21 @@ Dependencies
 ============
 
 Dependencies for production Pontoon are in ``requirements.txt``. Development dependencies are in
-``requirements-dev.txt``. They need to be pinned and hashed.
-Use `hashin <https://pypi.python.org/pypi/hashin>`_.
+``requirements-dev.txt``. They need to be pinned and hashed, and we use `hashin <https://pypi.python.org/pypi/hashin>`_ for that.
+
+Note that we use a specific format for our dependencies, in order to make them more maintainable. When adding a new requirement, you should add it to the appropriate section and group it with its sub-dependencies if applicable.
 
 For example, to add ``foobar`` version 5::
 
   $ hashin -r requirements.txt foobar==5
 
-Then rebuild your docker environment::
+Then open ``requirements.txt`` and move the added dependencies to:
+* the first section if it has no other requirements
+* the second section if it has sub-dependencies, and add all its dependencies there as well.
+
+That format is documented more extensively inside the ``requirements.txt`` file.
+
+Once you are done adding or updating requirements, rebuild your docker environment::
 
   $ make dockerbuild
 
