@@ -4015,7 +4015,18 @@ var Pontoon = (function (my) {
         return null;
       }
 
-      return decodeURIComponent(results[2].replace(/\+/g, " "));
+      var encodedURI = results[2].replace(/\+/g, " ");
+
+      try {
+        return decodeURIComponent(encodedURI);
+
+      // If querystring not encoded, we need to encode it first
+      } catch (e) {
+        if (e instanceof URIError) {
+          encodedURI = encodeURIComponent(encodedURI);
+          return decodeURIComponent(encodedURI);
+        }
+      }
     },
 
 
