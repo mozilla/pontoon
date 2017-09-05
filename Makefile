@@ -1,4 +1,5 @@
 DC := $(shell which docker-compose)
+WEBAPP_HOST ?= localhost:8000
 
 .PHONY: dockerbuild dockersetup dockerclean dockertest dockertestshell dockerrun
 
@@ -8,8 +9,12 @@ all: dockerrun
 	make dockerbuild
 
 dockerbuild:
+	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
+	sed -i 's/#WEBAPP_HOST#/${WEBAPP_HOST}/g' ./docker/config/webapp.env
+
 	${DC} build base
 	${DC} build webapp
+
 	touch .docker-build
 
 dockersetup: .docker-build
