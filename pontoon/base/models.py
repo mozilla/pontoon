@@ -2031,8 +2031,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     translation__string__icontains_collate=search_query,
                     translation__locale=locale,
                 )
-                .distinct()
-                .values_list('id')
+                .values_list('id', flat=True)
             )
             entity_matches = (
                 entities.filter(
@@ -2041,13 +2040,10 @@ class Entity(DirtyFieldsMixin, models.Model):
                     Q(comment__icontains=search) |
                     Q(key__icontains=search)
                 )
-                .distinct()
-                .values_list('id')
+                .values_list('id', flat=True)
             )
             entities = Entity.objects.filter(
-                pk__in=set(
-                    e[0] for e in list(translation_matches) + list(entity_matches)
-                )
+                pk__in=set(list(translation_matches) + list(entity_matches))
             )
 
         entities = entities.prefetch_resources_translations(locale)
