@@ -348,7 +348,7 @@ def menu_notifications(self):
     if unread_count > count:
         count = unread_count
 
-    return self.notifications.all()[:count]
+    return self.notifications.prefetch_related('actor', 'target')[:count]
 
 
 User.add_to_class('profile_url', user_profile_url)
