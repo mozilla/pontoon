@@ -2026,12 +2026,24 @@ class Entity(DirtyFieldsMixin, models.Model):
         if search:
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
             search_query = (search, locale.db_collation)
-            entities = (
-                Entity.objects.filter(
-                    Q(translation__string__icontains_collate=search_query, translation__locale=locale) | Q(string__icontains=search) | Q(string_plural__icontains=search) | Q(comment__icontains=search) | Q(key__icontains=search),
-                    pk__in=entities
+            translation_matches = (
+                entities.filter(
+                    translation__string__icontains_collate=search_query,
+                    translation__locale=locale,
                 )
-                .distinct()
+                .values_list('id', flat=True)
+            )
+            entity_matches = (
+                entities.filter(
+                    Q(string__icontains=search) |
+                    Q(string_plural__icontains=search) |
+                    Q(comment__icontains=search) |
+                    Q(key__icontains=search)
+                )
+                .values_list('id', flat=True)
+            )
+            entities = Entity.objects.filter(
+                pk__in=set(list(translation_matches) + list(entity_matches))
             )
 
         entities = entities.prefetch_resources_translations(locale)
