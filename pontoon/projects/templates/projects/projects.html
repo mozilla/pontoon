@@ -20,7 +20,7 @@
       {{ HeadingInfo.details_item(
         title='Number of projects',
         class='projects-count',
-        value=projects.count())
+        value=projects|length)
       }}
       {{ HeadingInfo.details_item(
         title='Most translations',
