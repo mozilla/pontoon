@@ -10,7 +10,6 @@ from django_nose.tools import (
     assert_true,
 )
 from django.db.models import Q
-from django.test.utils import override_settings
 
 from mock import call, Mock, patch
 
@@ -452,19 +451,6 @@ class RepositoryTests(TestCase):
 
 
 class UserTranslationManagerTests(TestCase):
-    @override_settings(EXCLUDE=('excluded@example.com',))
-    def test_excluded_contributors(self):
-        """
-        Checks if contributors with mails in settings.EXCLUDE are excluded
-        from top contributors list.
-        """
-        included_contributor = TranslationFactory.create(user__email='included@example.com').user
-        excluded_contributor = TranslationFactory.create(user__email='excluded@example.com').user
-
-        top_contributors = User.translators.with_translation_counts()
-        assert_true(included_contributor in top_contributors)
-        assert_true(excluded_contributor not in top_contributors)
-
     def test_users_without_translations(self):
         """
         Checks if user contributors without translations aren't returned.

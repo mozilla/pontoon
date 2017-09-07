@@ -717,9 +717,6 @@ ALLOWED_ATTRIBUTES = {
     'acronym': ['title'],
 }
 
-# Contributors to exclude from Top Contributors list
-EXCLUDE = os.environ.get('EXCLUDE', '').split(',')
-
 SYNC_TASK_TIMEOUT = 60 * 60 * 1  # 1 hour
 
 SYNC_LOG_RETENTION = 90  # days

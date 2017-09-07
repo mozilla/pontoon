@@ -124,7 +124,6 @@ class UserTranslationsManager(UserManager):
 
         return with_roles(
             self
-            .exclude(email__in=settings.EXCLUDE)
             .annotate(translations_count=translations_count(),
                       translations_approved_count=translations_count(Q(translation__approved=True)),
                       translations_unapproved_count=translations_count(Q(translation__approved=False, translation__fuzzy=False)),
