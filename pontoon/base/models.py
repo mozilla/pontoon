@@ -412,18 +412,11 @@ class AggregatedStats(models.Model):
         """
         Get sum of stats for all items in the queryset.
         """
-        stats = qs.aggregate(
-            Sum('total_strings'),
-            Sum('approved_strings'),
-            Sum('translated_strings'),
-            Sum('fuzzy_strings'),
-        )
-
         return cls(
-            total_strings=stats['total_strings__sum'],
-            approved_strings=stats['approved_strings__sum'],
-            translated_strings=stats['translated_strings__sum'],
-            fuzzy_strings=stats['fuzzy_strings__sum'],
+            total_strings=sum(x.total_strings for x in qs),
+            approved_strings=sum(x.approved_strings for x in qs),
+            translated_strings=sum(x.translated_strings for x in qs),
+            fuzzy_strings=sum(x.fuzzy_strings for x in qs),
         )
 
     @classmethod
@@ -432,12 +425,14 @@ class AggregatedStats(models.Model):
         Get top instances in the queryset.
         """
         return {
-            'most_strings': qs.order_by('-total_strings')[0],
-            'most_translations': qs.order_by('-approved_strings')[0],
-            'most_suggestions': qs.order_by('-translated_strings')[0],
-            'most_missing': qs.annotate(
-                missing=F('total_strings') - F('approved_strings') - F('translated_strings') - F('fuzzy_strings')
-            ).order_by('-missing')[0],
+            'most_strings': sorted(qs, key=lambda x: x.total_strings)[-1],
+            'most_translations': sorted(qs, key=lambda x: x.approved_strings)[-1],
+            'most_suggestions': sorted(qs, key=lambda x: x.translated_strings)[-1],
+            'most_missing': sorted(
+                qs,
+                key=lambda x:
+                    x.total_strings - x.approved_strings - x.translated_strings - x.fuzzy_strings
+            )[-1],
         }
 
     def adjust_stats(self, total_strings_diff, approved_strings_diff,
@@ -475,7 +470,7 @@ class LocaleQuerySet(models.QuerySet):
         """
         Available locales have at least one TranslatedResource defined.
         """
-        return self.filter(translatedresources__isnull=False).distinct()
+        return self.filter(pk__in=TranslatedResource.objects.values_list('locale', flat=True))
 
     def prefetch_project_locale(self, project):
         """
