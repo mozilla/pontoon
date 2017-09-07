@@ -1,5 +1,9 @@
 DC := $(shell which docker-compose)
-WEBAPP_HOST ?= localhost:8000
+
+# *IMPORTANT*
+# Don't use this instance in a production setting. More info at:
+# https://docs.djangoproject.com/en/dev/ref/django-admin/#runserver
+SITE_URL ?= http://localhost:8000
 
 .PHONY: dockerbuild dockersetup dockerclean dockertest dockertestshell dockerrun
 
@@ -10,7 +14,7 @@ all: dockerrun
 
 dockerbuild:
 	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
-	sed -i 's/#WEBAPP_HOST#/${WEBAPP_HOST}/g' ./docker/config/webapp.env
+	sed -i 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' ./docker/config/webapp.env
 
 	${DC} build base
 	${DC} build webapp
