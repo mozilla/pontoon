@@ -179,7 +179,7 @@ def settings(request):
 @login_required(redirect_field_name='', login_url='/403')
 def notifications(request):
     """View and edit user notifications."""
-    notifications = request.user.notifications.order_by('-pk')
+    notifications = request.user.notifications.prefetch_related('actor', 'target').order_by('-pk')
     projects = {}
 
     for notification in notifications:
