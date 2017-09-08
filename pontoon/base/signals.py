@@ -94,8 +94,8 @@ def create_locale_permissions_groups(sender, **kwargs):
         return
 
     try:
-        create_group(instance, 'translators', ['can_translate_locale'], '{} translators'.format(instance.code))
-        create_group(instance, 'managers', ['can_translate_locale', 'can_manage_locale'], '{} managers'.format(instance.code))  # noqa
+        create_group(instance, 'translators', ['can_translate_locale'], instance.code)
+        create_group(instance, 'managers', ['can_translate_locale', 'can_manage_locale'], instance.code)  # noqa
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
 
@@ -111,7 +111,7 @@ def create_project_locale_permissions_groups(sender, **kwargs):
         return
 
     try:
-        create_group(instance, 'translators', ['can_translate_project_locale'], '{}/{} translators'.format(
+        create_group(instance, 'translators', ['can_translate_project_locale'], '{}/{}'.format(
             instance.project.slug, instance.locale.code,
         ))
     except ObjectDoesNotExist as e:
