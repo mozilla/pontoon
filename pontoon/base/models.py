@@ -91,27 +91,27 @@ class UserTranslationsManager(UserManager):
 
             return self._changed_translations_count(query)
 
-        def extract_locale(name):
-            """Extract locale code from group name."""
-            name = name.split(' ')[0]
-            if '/' in name:
-                name = name.split('/')[1]
-            return name
-
         def with_roles(self):
             """Add user roles."""
             managers = defaultdict(set)
-            manager_groups = Group.objects.filter(name__endswith='managers').prefetch_related('user_set')
-
-            for group in manager_groups:
-                for user in group.user_set.all():
-                    managers[user].add(extract_locale(group.name))
-
             translators = defaultdict(set)
-            translator_groups = Group.objects.filter(name__endswith='translators').prefetch_related('user_set')
-            for group in translator_groups:
-                for user in group.user_set.all():
-                    translators[user].add(extract_locale(group.name))
+
+            locales = Locale.objects.prefetch_related(
+                Prefetch(
+                    'managers_group__user_set',
+                    to_attr='fetched_managers'
+                ),
+                Prefetch(
+                    'translators_group__user_set',
+                    to_attr='fetched_translators'
+                )
+            )
+
+            for locale in locales:
+                for user in locale.managers_group.fetched_managers:
+                    managers[user].add(locale.code)
+                for user in locale.translators_group.fetched_translators:
+                    translators[user].add(locale.code)
 
             for contributor in self:
                 contributor.user_role = contributor.role(managers, translators)
