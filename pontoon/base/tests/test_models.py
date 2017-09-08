@@ -23,7 +23,6 @@ from pontoon.base.tests import (
     assert_attributes_equal,
     ChangedEntityLocaleFactory,
     EntityFactory,
-    IdenticalTranslationFactory,
     LocaleFactory,
     PluralEntityFactory,
     ProjectFactory,
@@ -461,18 +460,6 @@ class UserTranslationManagerTests(TestCase):
         top_contributors = User.translators.with_translation_counts()
         assert_true(active_contributor in top_contributors)
         assert_true(inactive_contributor not in top_contributors)
-
-    def test_unique_translations(self):
-        """
-        Checks if contributors with identical translations are returned.
-        """
-
-        unique_translator = TranslationFactory.create().user
-        identical_translator = IdenticalTranslationFactory.create().user
-        top_contributors = User.translators.with_translation_counts()
-
-        assert_true(unique_translator in top_contributors)
-        assert_true(identical_translator not in top_contributors)
 
     def test_contributors_order(self):
         """

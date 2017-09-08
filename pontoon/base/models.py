@@ -54,11 +54,7 @@ class UserTranslationsManager(UserManager):
         Helper method, returns expression object which allows us to annotate querysets
         with counts of translations.
         """
-        translation_query = (
-            ~Q(translation__string=F('translation__entity__string')) &
-            ~Q(translation__string=F('translation__entity__string_plural')) &  # noqa
-            Q(translation__user__isnull=False)
-        )
+        translation_query = Q(translation__user__isnull=False)
         for arg in args:
             translation_query &= arg
 
@@ -298,12 +294,7 @@ def user_locale_role(self, locale):
 @property
 def contributed_translations(self):
     """Filtered contributions provided by user."""
-    translations = (
-        Translation.objects.filter(user=self)
-        .exclude(string=F('entity__string'))
-        .exclude(string=F('entity__string_plural'))
-    )
-    return translations
+    return Translation.objects.filter(user=self)
 
 
 @property
