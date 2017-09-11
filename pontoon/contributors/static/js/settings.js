@@ -1,5 +1,5 @@
 $(function() {
-  $('.locale .menu li:not(".no-match")').click(function () {
+  $('#homepage .locale .menu li:not(".no-match")').click(function () {
     var custom_homepage = $(this).find('.language').data('code');
 
     $.ajax({
