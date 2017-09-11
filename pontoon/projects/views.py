@@ -155,4 +155,4 @@ class ProjectContributorsView(ContributorsMixin, DetailView):
         return 'project'
 
     def contributors_filter(self, **kwargs):
-        return Q(translation__entity__resource__project=self.object)
+        return Q(entity__resource__project=self.object)

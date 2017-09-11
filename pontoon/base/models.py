@@ -43,101 +43,100 @@ from pontoon.sync import KEY_SEPARATOR
 log = logging.getLogger(__name__)
 
 
-# User class extensions
 class UserTranslationsManager(UserManager):
-    """
-    Provides various method to interact with larger sets of translations and their stats for user.
-    """
-
-    def _changed_translations_count(self, *args):
-        """
-        Helper method, returns expression object which allows us to annotate querysets
-        with counts of translations.
-        """
-        translation_query = (
-            ~Q(translation__string=F('translation__entity__string')) &
-            ~Q(translation__string=F('translation__entity__string_plural')) &  # noqa
-            Q(translation__user__isnull=False)
-        )
-        for arg in args:
-            translation_query &= arg
-
-        # For each translation that matches the filter, return 1. Aggregate
-        # the sum of all those results to count the number of matching
-        # translations.
-        return Sum(
-            Case(
-                When(translation_query, then=1), output_field=models.IntegerField(), default=0))
-
     def with_translation_counts(self, start_date=None, query_filters=None, limit=100):
         """
-        Returns contributors list, sorted by count of their translations.
-        Every user instance has added following properties:
+        Returns contributors list, sorted by count of their translations. Every user instance has
+        the following properties:
         * translations_count
         * translations_approved_count
         * translations_unapproved_count
         * translations_needs_work_count
-        Method has been created mainly to improve performance and to optimize
-        count of sql queries during generation of metrics.
+        * user_role
+
         All counts will be returned from start_date to now().
         :param date start_date: start date for translations.
         :param django.db.models.Q query_filters: filters contributors by given query_filters.
         :param int limit: limit results to this number.
         """
-        def translations_count(query=None):
-            """Short helper to avoid duplication of passing dates."""
-            query = query or Q()
-            if start_date:
-                query &= Q(translation__date__gte=start_date)
 
-            if query_filters:
-                query &= query_filters
+        # Collect data for faster user stats calculation.
+        user_stats = {}
+        translations = Translation.objects.exclude(user=None)
 
-            return self._changed_translations_count(query)
+        if start_date:
+            translations = translations.filter(date__gte=start_date)
+        if query_filters:
+            translations = translations.filter(query_filters)
 
-        def extract_locale(name):
-            """Extract locale code from group name."""
-            name = name.split(' ')[0]
-            if '/' in name:
-                name = name.split('/')[1]
-            return name
-
-        def with_roles(self):
-            """Add user roles."""
-            managers = defaultdict(set)
-            manager_groups = Group.objects.filter(name__endswith='managers').prefetch_related('user_set')
-
-            for group in manager_groups:
-                for user in group.user_set.all():
-                    managers[user].add(extract_locale(group.name))
-
-            translators = defaultdict(set)
-            translator_groups = Group.objects.filter(name__endswith='translators').prefetch_related('user_set')
-            for group in translator_groups:
-                for user in group.user_set.all():
-                    translators[user].add(extract_locale(group.name))
-
-            for contributor in self:
-                contributor.user_role = contributor.role(managers, translators)
-
-            return self
-
-        return with_roles(
-            self
-            .exclude(email__in=settings.EXCLUDE)
-            .annotate(translations_count=translations_count(),
-                      translations_approved_count=translations_count(Q(translation__approved=True)),
-                      translations_unapproved_count=translations_count(Q(translation__approved=False, translation__fuzzy=False)),
-                      translations_needs_work_count=translations_count(Q(translation__fuzzy=True)))
-            .exclude(translations_count=0)
-            .distinct().order_by('-translations_count')[:limit]
+        translations = (
+            translations
+            .values('user', 'approved', 'fuzzy')
+            .annotate(count=Count('user'))
         )
+
+        for translation in translations:
+            count = translation['count']
+            user = translation['user']
+
+            if translation['approved']:
+                status = 'approved'
+            elif translation['fuzzy']:
+                status = 'fuzzy'
+            else:
+                status = 'suggested'
+
+            if user not in user_stats:
+                user_stats[user] = {
+                    'total': 0,
+                    'approved': 0,
+                    'suggested': 0,
+                    'fuzzy': 0,
+                }
+
+            user_stats[user]['total'] += count
+            user_stats[user][status] += count
+
+        # Collect data for faster user role detection.
+        managers = defaultdict(set)
+        translators = defaultdict(set)
+
+        locales = Locale.objects.prefetch_related(
+            Prefetch(
+                'managers_group__user_set',
+                to_attr='fetched_managers'
+            ),
+            Prefetch(
+                'translators_group__user_set',
+                to_attr='fetched_translators'
+            )
+        )
+
+        for locale in locales:
+            for user in locale.managers_group.fetched_managers:
+                managers[user].add(locale.code)
+            for user in locale.translators_group.fetched_translators:
+                translators[user].add(locale.code)
+
+        # Assign properties to user objects.
+        contributors = self.filter(pk__in=user_stats.keys())
+
+        for contributor in contributors:
+            user = user_stats[contributor.pk]
+            contributor.translations_count = user['total']
+            contributor.translations_approved_count = user['approved']
+            contributor.translations_unapproved_count = user['suggested']
+            contributor.translations_needs_work_count = user['fuzzy']
+            contributor.user_role = contributor.role(managers, translators)
+
+        return sorted(contributors, key=lambda x: -x.translations_count)[:100]
 
 
 class UserCustomManager(UserManager):
     """
-    Django migrations is able to migrate managers, and throws an error if we directly call UserManager.from_queryset():
-        Please note that you need to inherit from managers you dynamically generated with 'from_queryset()'.
+    Django migrations is able to migrate managers, and throws an error if we directly call
+    UserManager.from_queryset(): Please note that you need to inherit from managers you dynamically
+    generated with 'from_queryset()'.
     """
     use_in_migrations = False
 
@@ -299,12 +298,7 @@ def user_locale_role(self, locale):
 @property
 def contributed_translations(self):
     """Filtered contributions provided by user."""
-    translations = (
-        Translation.objects.filter(user=self)
-        .exclude(string=F('entity__string'))
-        .exclude(string=F('entity__string_plural'))
-    )
-    return translations
+    return Translation.objects.filter(user=self)
 
 
 @property

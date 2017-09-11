@@ -10,7 +10,6 @@ from django_nose.tools import (
     assert_true,
 )
 from django.db.models import Q
-from django.test.utils import override_settings
 
 from mock import call, Mock, patch
 
@@ -24,7 +23,6 @@ from pontoon.base.tests import (
     assert_attributes_equal,
     ChangedEntityLocaleFactory,
     EntityFactory,
-    IdenticalTranslationFactory,
     LocaleFactory,
     PluralEntityFactory,
     ProjectFactory,
@@ -452,19 +450,6 @@ class RepositoryTests(TestCase):
 
 
 class UserTranslationManagerTests(TestCase):
-    @override_settings(EXCLUDE=('excluded@example.com',))
-    def test_excluded_contributors(self):
-        """
-        Checks if contributors with mails in settings.EXCLUDE are excluded
-        from top contributors list.
-        """
-        included_contributor = TranslationFactory.create(user__email='included@example.com').user
-        excluded_contributor = TranslationFactory.create(user__email='excluded@example.com').user
-
-        top_contributors = User.translators.with_translation_counts()
-        assert_true(included_contributor in top_contributors)
-        assert_true(excluded_contributor not in top_contributors)
-
     def test_users_without_translations(self):
         """
         Checks if user contributors without translations aren't returned.
@@ -475,18 +460,6 @@ class UserTranslationManagerTests(TestCase):
         top_contributors = User.translators.with_translation_counts()
         assert_true(active_contributor in top_contributors)
         assert_true(inactive_contributor not in top_contributors)
-
-    def test_unique_translations(self):
-        """
-        Checks if contributors with identical translations are returned.
-        """
-
-        unique_translator = TranslationFactory.create().user
-        identical_translator = IdenticalTranslationFactory.create().user
-        top_contributors = User.translators.with_translation_counts()
-
-        assert_true(unique_translator in top_contributors)
-        assert_true(identical_translator not in top_contributors)
 
     def test_contributors_order(self):
         """
@@ -515,7 +488,7 @@ class UserTranslationManagerTests(TestCase):
 
         top_contributors = User.translators.with_translation_counts()
 
-        assert_equal(top_contributors.count(), 100)
+        assert_equal(len(top_contributors), 100)
 
     def create_contributor_with_translation_counts(self, approved=0, unapproved=0, needs_work=0, **kwargs):
         """
@@ -538,7 +511,7 @@ class UserTranslationManagerTests(TestCase):
         third_contributor = self.create_contributor_with_translation_counts(approved=1, unapproved=2, needs_work=5)
 
         top_contributors = User.translators.with_translation_counts()
-        assert_equal(top_contributors.count(), 3)
+        assert_equal(len(top_contributors), 3)
 
         assert_equal(top_contributors[0], second_contributor)
         assert_equal(top_contributors[1], first_contributor)
@@ -571,14 +544,14 @@ class UserTranslationManagerTests(TestCase):
 
         top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 6, 10))
 
-        assert_equal(top_contributors.count(), 1)
+        assert_equal(len(top_contributors), 1)
         assert_attributes_equal(top_contributors[0], translations_count=5,
             translations_approved_count=5, translations_unapproved_count=0,
             translations_needs_work_count=0)
 
         top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 5, 10))
 
-        assert_equal(top_contributors.count(), 2)
+        assert_equal(len(top_contributors), 2)
         assert_attributes_equal(top_contributors[0], translations_count=15,
             translations_approved_count=2, translations_unapproved_count=11,
             translations_needs_work_count=2)
@@ -588,7 +561,7 @@ class UserTranslationManagerTests(TestCase):
 
         top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 10))
 
-        assert_equal(top_contributors.count(), 2)
+        assert_equal(len(top_contributors), 2)
         assert_attributes_equal(top_contributors[0], translations_count=20,
             translations_approved_count=17, translations_unapproved_count=1,
             translations_needs_work_count=2)
@@ -610,8 +583,8 @@ class UserTranslationManagerTests(TestCase):
             approved=10, unapproved=12, needs_work=2, locale=locale_first)
 
         # Testing filtering for the first locale
-        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 1), Q(translation__locale=locale_first))
-        assert_equal(top_contributors.count(), 2)
+        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 1), Q(locale=locale_first))
+        assert_equal(len(top_contributors), 2)
         assert_equal(top_contributors[0], third_contributor)
         assert_attributes_equal(top_contributors[0], translations_count=24,
             translations_approved_count=10, translations_unapproved_count=12,
@@ -623,9 +596,9 @@ class UserTranslationManagerTests(TestCase):
             translations_needs_work_count=2)
 
         # Testing filtering for the second locale
-        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 1), Q(translation__locale=locale_second))
+        top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 1), Q(locale=locale_second))
 
-        assert_equal(top_contributors.count(), 1)
+        assert_equal(len(top_contributors), 1)
         assert_equal(top_contributors[0], second_contributor)
         assert_attributes_equal(top_contributors[0], translations_count=14,
             translations_approved_count=11, translations_unapproved_count=1,

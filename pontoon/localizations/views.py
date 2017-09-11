@@ -126,6 +126,6 @@ class LocalizationContributorsView(ContributorsMixin, DetailView):
 
     def contributors_filter(self, **kwargs):
         return Q(
-            translation__entity__resource__project=self.object.project,
-            translation__locale=self.object.locale
+            entity__resource__project=self.object.project,
+            locale=self.object.locale
         )

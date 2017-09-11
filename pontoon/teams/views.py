@@ -198,4 +198,4 @@ class LocaleContributorsView(ContributorsMixin, DetailView):
         return 'locale'
 
     def contributors_filter(self, **kwargs):
-        return Q(translation__locale=self.object)
+        return Q(locale=self.object)
