@@ -41,6 +41,12 @@ initialize submodules with ``git submodule update --init --recursive``.
    That will build the containers required for development: base and
    webapp.
 
+   If you want to share your development instance in your local network, you set SITE_URL to bind
+   the webapp to any address you like.
+
+     $ make dockerbuild SITE_URL="https://192.168.1.14:8000"
+
+
 2. Then run the webapp::
 
       $ make dockerrun
@@ -65,7 +71,8 @@ initialize submodules with ``git submodule update --init --recursive``.
    This will ask you to create a superuser, and then will update your Firefox
    account settings.
 
-At that point, you're good to go. Access the webapp via this URL: http://localhost:8000/
+At that point, you're good to go. Access the webapp via this URL: http://localhost:8000/ or the custom SITE_URL.
+
 
 Database
 --------
