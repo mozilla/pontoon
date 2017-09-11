@@ -3953,6 +3953,17 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Update title of the current view.
+     */
+    updateTitle: function() {
+      var project = this.getProjectData(),
+          locale = this.getLocaleData();
+
+      document.title = project.name + ' · ' + locale.name + ' (' + locale.code + ')';
+    },
+
+
+    /*
      * Updates Pontoon and history state, and the URL
      */
     pushState: function(state) {
@@ -3962,7 +3973,7 @@ var Pontoon = (function (my) {
           queryParams = {};
 
       self.state = state;
-
+      self.updateTitle();
       // Keep homepage URL
       if (window.location.pathname === '/' && state.project === 'pontoon-intro') {
         url = '/';
@@ -4117,6 +4128,7 @@ Pontoon.attachEntityListHandlers();
 Pontoon.attachEditorHandlers();
 Pontoon.attachBatchEditorHandlers();
 
+Pontoon.updateTitle();
 Pontoon.updateInitialState();
 Pontoon.updateFilterUI();
 Pontoon.initializePart();
