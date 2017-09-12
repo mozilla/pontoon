@@ -19,40 +19,12 @@ import shutil
 import subprocess
 
 TARGET_REPOS = {
-    'firefox': {
-        'folders': [
-            'browser', 'browser/branding/official',
-            'browser/extensions/onboarding',
-            'browser/extensions/pocket',
-            'browser/extensions/webcompat-reporter',
-            'devtools/client', 'devtools/shared', 'devtools/shim',
-            'dom', 'netwerk', 'security/manager',
-            'services/sync', 'toolkit', 'webapprt',
-        ],
-        'source': 'mozilla',
-    },
-    'firefox-for-android': {
-        'folders': ['mobile', 'mobile/android', 'mobile/android/base'],
-        'source': 'mozilla',
-    },
-    'thunderbird': {
-        'folders': [
-            'chat', 'editor/ui', 'mail',
-            'other-licenses/branding/thunderbird'
-        ],
-        'source': 'comm',
-    },
-    'lightning': {
-        'folders': ['calendar'],
-        'source': 'comm',
-    },
-    'seamonkey': {
-        'folders': ['suite'],
-        'source': 'comm',
-    },
+    'firefox': ['browser', 'devtools', 'dom', 'netwerk', 'security', 'services', 'toolkit'],
+    'firefox-for-android': ['mobile'],
+    'thunderbird': ['chat', 'editor', 'mail', 'other-licenses'],
+    'lightning': ['calendar'],
+    'seamonkey': ['suite'],
 }
-
-SOURCE_REPOS = set(v["source"] for v in TARGET_REPOS.values())
 
 
 def write(text):
@@ -117,45 +89,29 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-for channel in ['beta', 'central']:
-    for repo in SOURCE_REPOS:
-        ending = repo + '-' + channel
+# Clone or update source repository
+url = 'ssh://hg.mozilla.org/users/axel_mozilla.com/gecko-strings/'
+target = 'source'
+pull(url, target)
 
-        url_folder = ''
-        if channel == 'central':
-            if repo == 'mozilla':
-                url_folder = 'l10n/'
-        else:
-            url_folder = 'releases/'
+for repo in TARGET_REPOS.keys():
+    ending = repo + '-central'
+    url = 'ssh://hg.mozilla.org/users/m_owca.info/' + ending
+    target = os.path.join('target', ending)
 
-        url = 'ssh://hg.mozilla.org/' + url_folder + ending
-        target = os.path.join('source', ending)
+    # Clone or update target repository
+    pull(url, target)
 
-        # Clone or update source repositories
-        pull(url, target)
+    # Copy folders from source to target
+    for folder in TARGET_REPOS[repo]:
+        origin = os.path.join('source', folder)
+        destination = os.path.join('target', ending, folder)
 
-    for repo in TARGET_REPOS.keys():
-        ending = repo + '-' + channel
-        url = 'ssh://hg.mozilla.org/users/m_owca.info/' + ending
-        target = os.path.join('target', ending)
+        if os.path.exists(destination):
+            shutil.rmtree(destination)
 
-        # Clone or update target repositories
-        pull(url, target)
+        if os.path.exists(origin):
+            shutil.copytree(origin, destination)
 
-        # Copy folders from source to target
-        folders = TARGET_REPOS[repo]['folders']
-        source = TARGET_REPOS[repo]['source'] + '-' + channel
-
-        for folder in folders:
-            origin = os.path.join('source', source, folder, 'locales/en-US')
-            destination = os.path.join('target', ending, folder)
-
-            if os.path.exists(destination):
-                shutil.rmtree(destination)
-
-            # Needed temporarily because devtools aren't moved in beta yet
-            if os.path.exists(origin):
-                shutil.copytree(origin, destination)
-
-        # Commit and push target repositories
-        push(target)
+    # Commit and push target repositories
+    push(target)
