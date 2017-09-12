@@ -1,8 +1,8 @@
 import logging
 import os
+from datetime import datetime
 
 from bulk_update.helper import bulk_update
-from datetime import datetime
 
 from django.conf import settings
 from django.contrib import messages
@@ -181,6 +181,11 @@ def entities(request):
     except (MultiValueDictKeyError, ValueError) as err:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=err))
 
+    utils.add_newrelic_context(
+        get_entities_project=project,
+        get_entities_locale=locale,
+    )
+
     project = get_object_or_404(Project, slug=project)
     locale = get_object_or_404(Locale, code=locale)
 
@@ -190,6 +195,13 @@ def entities(request):
     author = request.POST.get('author', '')
     search = request.POST.get('search', '')
     exclude_entities = split_ints(request.POST.get('excludeEntities', ''))
+
+    utils.add_newrelic_context(
+        get_entities_status=status,
+        get_entities_extra=extra,
+        get_entities_author=author,
+        get_entities_search=search,
+    )
 
     # Only return entities with provided IDs (batch editing)
     entity_ids = split_ints(request.POST.get('entityIds', ''))
