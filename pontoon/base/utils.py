@@ -664,7 +664,8 @@ def build_translation_memory_file(creation_date, locale_code, entries):
 def add_newrelic_context(**kwargs):
     try:
         for key, value in kwargs.items():
-            newrelic.agent.add_custom_parameter(key, value)
+            if not newrelic.agent.add_custom_parameter(key, value):
+                log.debug('Cannot add parameter %s to newrelic' % key)
     except AttributeError:
         # If newrelic-admin isn't used, for example in local development,
         # then newrelic.agent will not be set.
