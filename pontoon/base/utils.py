@@ -669,5 +669,5 @@ def add_newrelic_context(**kwargs):
     except AttributeError:
         # If newrelic-admin isn't used, for example in local development,
         # then newrelic.agent will not be set.
-        log.warning('Unable to add context to newrelic')
+        log.warning('Unable to add context to newrelic', exc_info=True)
         pass
