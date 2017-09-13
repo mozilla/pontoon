@@ -6,7 +6,7 @@
     <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <title>{% block title %}Pontoon{% endblock %}</title>
+    <title>{% block title %}{{ project.name }} &middot; {{ locale.name }} ({{ locale.code }}){% endblock %}</title>
     <meta name="description" content="Live web localization tool">
     <meta name="author" content="Mozilla">
 

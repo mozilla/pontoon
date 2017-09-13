@@ -3666,6 +3666,8 @@ var Pontoon = (function (my) {
       self.entities = entitiesData.entities;
       self.hasNext = hasNext;
 
+      self.updateTitle();
+
       // No entities found
       if (!self.entities.length) {
         if (!self.requiresInplaceEditor()) {
@@ -3949,6 +3951,17 @@ var Pontoon = (function (my) {
       }
 
       this.updatePartSelector(this.currentPart.title);
+    },
+
+
+    /*
+     * Update title of the current view.
+     */
+    updateTitle: function() {
+      var project = this.getProjectData(),
+          locale = this.getLocaleData();
+
+      document.title = project.name + ' · ' + locale.name + ' (' + locale.code + ')';
     },
 
 
