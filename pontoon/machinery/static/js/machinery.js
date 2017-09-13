@@ -1,13 +1,11 @@
 $(function() {
   // Trigger search with Enter
   $('#search input').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
-    var value = $(this).val(),
-        self = Pontoon;
+    var self = Pontoon,
+        value = $(this).val();
+
     if (e.which === 13 && value.length > 0) {
-      var code = $('.locale .selector .language').data('code');
-      self.locale = {
-        code: code
-      };
+      self.locale = $('.locale .selector .language').data();
       self.getMachinery(value, "helpers", "search");
       return false;
     }
