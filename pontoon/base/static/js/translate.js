@@ -530,8 +530,9 @@ var Pontoon = (function (my) {
 
       // Metadata: comment
       $('#metadata').empty();
-      if (entity.comment) {
+      $('#source-pane').removeClass().find('#screenshots').empty();
 
+      if (entity.comment) {
         // Translation length limit
         var split = entity.comment.split('\n'),
             splitComment = entity.comment;
@@ -549,7 +550,6 @@ var Pontoon = (function (my) {
         self.appendMetaData('Comment', comment);
 
         // Screenshot
-        $('#source-pane').removeClass().find('#screenshots').empty();
         $('#metadata').find('a').each(function() {
           var url = $(this).html();
           if (/(https?:\/\/.*\.(?:png|jpg))/im.test(url)) {
