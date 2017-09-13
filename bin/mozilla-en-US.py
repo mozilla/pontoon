@@ -19,11 +19,30 @@ import shutil
 import subprocess
 
 TARGET_REPOS = {
-    'firefox': ['browser', 'devtools', 'dom', 'netwerk', 'security', 'services', 'toolkit'],
-    'firefox-for-android': ['mobile'],
-    'thunderbird': ['chat', 'editor', 'mail', 'other-licenses'],
-    'lightning': ['calendar'],
-    'seamonkey': ['suite'],
+    'firefox': [
+        'browser',
+        'devtools',
+        'dom',
+        'netwerk',
+        'security',
+        'services',
+        'toolkit',
+    ],
+    'firefox-for-android': [
+        'mobile',
+    ],
+    'thunderbird': [
+        'chat',
+        'editor',
+        'mail',
+        'other-licenses',
+    ],
+    'lightning': [
+        'calendar',
+    ],
+    'seamonkey': [
+        'suite',
+    ],
 }
 
 
