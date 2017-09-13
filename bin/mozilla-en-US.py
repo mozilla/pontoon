@@ -80,6 +80,10 @@ def pull(url, target):
         write(text_type(error))
         write('Clone instead.')
 
+        # Clean up target directory on a failed pull, so that it's empty for a clone
+        command = ["rm", "-rf", target]
+        code, output, error = execute(command)
+
         code, output, error = execute(['hg', 'clone', url, target])
         if code == 0:
             write('Repository at ' + url + ' cloned.')
