@@ -125,13 +125,17 @@ for repo in TARGET_REPOS.keys():
     # Clone or update target repository
     pull(url, target)
 
+    # Prune all subdirectories in target repository in case they get removed from source
+    for root, subdirs, files in os.walk(target, True):
+        for subdir in subdirs:
+            if not subdir.startswith('.'):
+                shutil.rmtree(os.path.join(root, subdir))
+        break
+
     # Copy folders from source to target
     for folder in TARGET_REPOS[repo]:
         origin = os.path.join('source', folder)
         destination = os.path.join('target', ending, folder)
-
-        if os.path.exists(destination):
-            shutil.rmtree(destination)
 
         if os.path.exists(origin):
             shutil.copytree(origin, destination)
