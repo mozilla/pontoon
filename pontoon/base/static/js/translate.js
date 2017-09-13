@@ -4130,7 +4130,6 @@ Pontoon.attachEntityListHandlers();
 Pontoon.attachEditorHandlers();
 Pontoon.attachBatchEditorHandlers();
 
-Pontoon.updateTitle();
 Pontoon.updateInitialState();
 Pontoon.updateFilterUI();
 Pontoon.initializePart();
