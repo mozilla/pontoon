@@ -3666,6 +3666,8 @@ var Pontoon = (function (my) {
       self.entities = entitiesData.entities;
       self.hasNext = hasNext;
 
+      self.updateTitle();
+
       // No entities found
       if (!self.entities.length) {
         if (!self.requiresInplaceEditor()) {
@@ -3973,7 +3975,7 @@ var Pontoon = (function (my) {
           queryParams = {};
 
       self.state = state;
-      self.updateTitle();
+
       // Keep homepage URL
       if (window.location.pathname === '/' && state.project === 'pontoon-intro') {
         url = '/';
