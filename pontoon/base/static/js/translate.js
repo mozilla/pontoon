@@ -2161,7 +2161,7 @@ var Pontoon = (function (my) {
       self.selectedEntities = [];
       self.openBatchEditor(true);
 
-      this.getEntities({pkOnly: true}).then(function(data) {
+      this.getEntities({pk_only: true}).then(function(data) {
         var locallySelectedEntities = self.getEntitiesIds('#entitylist .entity:visible.selected'),
             mergedEntities = data.entity_pks.concat(locallySelectedEntities),
             uniqueEntities = self.removeDuplicates(mergedEntities);
@@ -2266,7 +2266,7 @@ var Pontoon = (function (my) {
                 // Update UI (entity list, progress, in-place)
                 if (data.count > 0) {
                   var checkedEntities = self.getEntitiesIds('#entitylist .entity.selected');
-                  self.getEntities({entityIds: checkedEntities.join(',')}).then(function(entitiesData, state, hasNext) {
+                  self.getEntities({entity_ids: checkedEntities.join(',')}).then(function(entitiesData, state, hasNext) {
                     self.stats = entitiesData.stats;
                     self.updateFilterUI();
 
@@ -3630,7 +3630,7 @@ var Pontoon = (function (my) {
             'extra': self.getFilter('extra').join(','),
             'time': self.getFilter('time'),
             'author': self.getFilter('author').join(','),
-            'inplaceEditor': self.requiresInplaceEditor()
+            'inplace_editor': self.requiresInplaceEditor()
           },
           deferred = $.Deferred();
 
@@ -3835,7 +3835,7 @@ var Pontoon = (function (my) {
       var self = this,
           requiresInplaceEditor = self.requiresInplaceEditor(),
           // Join IDs into string due to bug 1344322
-          excludeEntities = requiresInplaceEditor ? {} : {excludeEntities: self.getEntitiesIds('#entitylist .entity').join(',')};
+          excludeEntities = requiresInplaceEditor ? {} : {exclude_entities: self.getEntitiesIds('#entitylist .entity').join(',')};
 
       self.setSidebarLoading(true);
 

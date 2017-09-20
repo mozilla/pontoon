@@ -1640,8 +1640,8 @@ class EntityFilterTests(TestCase):
             list(Entity.for_project_locale(
                 project,
                 self.locale,
-                statuses='suggested',
-                authors=contributor.email
+                status='suggested',
+                author=contributor.email
             )),
             []
         )
@@ -1649,7 +1649,7 @@ class EntityFilterTests(TestCase):
             list(Entity.for_project_locale(
                 project,
                 self.locale,
-                statuses='suggested',
+                status='suggested',
                 time='201001010100-205001010100'
             )),
             []
