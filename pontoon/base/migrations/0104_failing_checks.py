@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0094_improve_calculate_stats_performance'),
+        ('base', '0103_bug_1398108_rename_groups_with_duplicate_words'),
     ]
 
     operations = [

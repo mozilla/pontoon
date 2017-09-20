@@ -1763,11 +1763,7 @@ class EntityQuerySet(models.QuerySet):
             errors_count=Sum(
                 Case(
                     When(
-                        Q(
-                            translation__locale=locale,
-                            translation__approved=False,
-                            translation__fuzzy=False,
-                        ),
+                        Q(translation__failing_checks__severity='error',translation__locale=locale),
                         then=1
                     ),
                     output_field=models.IntegerField(),
@@ -1802,8 +1798,6 @@ class EntityQuerySet(models.QuerySet):
                     ),
                     output_field=models.IntegerField(),
                     default=0
-                        Q(translation__failing_checks__severity='error', translation__locale=locale), then=1
-                    ), output_field=models.IntegerField(), default=0
                 )
             ),
             warnings_count=Sum(
@@ -2278,7 +2272,6 @@ class TranslationQuerySet(models.QuerySet):
         return data
 
 
-@python_2_unicode_compatible
 class TranslationErrorManager(models.Manager):
     def check_translation(self, translation):
         """
