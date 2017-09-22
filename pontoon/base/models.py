@@ -1690,18 +1690,24 @@ class Subpage(models.Model):
 
 class EntityQuerySet(models.QuerySet):
     def get_filtered_entities(self, locale, query, rule):
-        entities = Translation.objects.filter(locale=locale).filter(query).values('entity')
-        singular = list(self.filter(string_plural='', pk__in=entities).values_list('pk', flat=True))
+        translations = Translation.objects.filter(locale=locale).filter(query)
 
+        plural_pks = []
         nplurals = locale.nplurals or 1
-        plural = []
-        plural_candidates = self.exclude(string_plural='').filter(pk__in=entities).prefetch_translations(locale)
+        plural_candidates = (
+            self
+            .exclude(string_plural='')
+            .filter(pk__in=translations.values('entity'))
+            .prefetch_translations(locale)
+        )
 
         for candidate in plural_candidates:
             if len([x for x in candidate.fetched_translations if rule(x, candidate)]) == nplurals:
-                plural.append(candidate.pk)
+                plural_pks.append(candidate.pk)
 
-        return singular + plural
+        return translations.filter(
+            Q(entity__string_plural='') | Q(pk__in=plural_pks)
+        ).values('entity')
 
     def missing(self, locale):
         # TODO: partially translated/missing pluralized strings
