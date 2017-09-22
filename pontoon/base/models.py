@@ -1953,20 +1953,21 @@ class Entity(DirtyFieldsMixin, models.Model):
             )[0]
             return translation.serialize()
 
-        else:
-            return {
-                'fuzzy': False,
-                'string': None,
-                'approved': False,
-                'pk': None,
-            }
+        return {
+            'fuzzy': False,
+            'string': None,
+            'approved': False,
+            'pk': None,
+        }
 
     @classmethod
-    def for_project_locale(self, project, locale, paths=None, statuses=None,
-                           search=None, exclude=None, extra=None, time=None, authors=None):
+    def for_project_locale(
+        self, project, locale, paths=None, status=None,
+        search=None, exclude_entities=None, extra=None, time=None, author=None,
+    ):
         """Get project entities with locale translations."""
 
-        # Time & authors filters have to be applied before the aggregation
+        # Time & author filters have to be applied before the aggregation
         # (with_status_counts) and the status & extra filters to avoid
         # unnecessary joins causing performance and logic issues.
         pre_filters = []
@@ -1984,21 +1985,21 @@ class Entity(DirtyFieldsMixin, models.Model):
             else:
                 raise ValueError(time)
 
-        if authors:
-            pre_filters.append(Entity.objects.authored_by(locale, authors.split(',')))
+        if author:
+            pre_filters.append(Entity.objects.authored_by(locale, author.split(',')))
 
         if pre_filters:
             entities = Entity.objects.filter(pk__in=Entity.objects.filter(Q(*pre_filters)))
         else:
             entities = Entity.objects.all()
 
-        if statuses:
+        if status:
             # Apply a combination of filters based on the list of statuses the user sent.
             status_filter_choices = ('missing', 'fuzzy', 'suggested', 'translated')
             post_filters.append(
                 combine_entity_filters(
                     status_filter_choices,
-                    statuses.split(','),
+                    status.split(','),
                     locale,
                     no_plurals
                 )
@@ -2058,8 +2059,8 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         entities = entities.prefetch_resources_translations(locale)
 
-        if exclude:
-            entities = entities.exclude(pk__in=exclude)
+        if exclude_entities:
+            entities = entities.exclude(pk__in=exclude_entities)
 
         return entities.distinct().order_by('resource__path', 'order')
 

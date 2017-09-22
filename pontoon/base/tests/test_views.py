@@ -31,7 +31,7 @@ from pontoon.base.tests import (
     TestCase,
     UserFactory,
 )
-from pontoon.base.views import build_translation_memory_file
+from pontoon.base.utils import build_translation_memory_file
 
 
 class UserTestCase(TestCase):
@@ -284,7 +284,7 @@ class EntityViewTests(TestCase):
             'project': self.resource.project.slug,
             'locale': self.locale.code,
             'paths[]': [self.resource.path],
-            'inplaceEditor': True,
+            'inplace_editor': True,
             # Inplace mode shouldn't respect paging or limiting page
             'limit': 1,
         })
@@ -334,7 +334,7 @@ class EntityViewTests(TestCase):
             'project': self.resource.project.slug,
             'locale': self.locale.code,
             'paths[]': [self.resource.path],
-            'excludeEntities[]': [self.entities[1].pk],
+            'exclude_entities': [self.entities[1].pk],
             'limit': 1,
         })
 
@@ -343,7 +343,7 @@ class EntityViewTests(TestCase):
         assert_equal(response.json()['has_next'], True)
         assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[0].pk,])
 
-        excludeEntities = ','.join(map(str, [
+        exclude_entities = ','.join(map(str, [
             self.entities[0].pk,
             self.entities[1].pk
         ]))
@@ -352,7 +352,7 @@ class EntityViewTests(TestCase):
             'project': self.resource.project.slug,
             'locale': self.locale.code,
             'paths[]': [self.resource.path],
-            'excludeEntities': excludeEntities,
+            'exclude_entities': exclude_entities,
             'limit': 1,
         })
 

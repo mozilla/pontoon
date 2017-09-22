@@ -5,6 +5,7 @@ import bleach
 from django import forms
 from django.conf import settings
 
+from pontoon.base import utils
 from pontoon.base.models import (
     Locale,
     ProjectLocale,
@@ -66,7 +67,10 @@ class UploadFileForm(DownloadFileForm):
                 part_extension = os.path.splitext(part)[1].lower()
 
                 # For now, skip if uploading file while using subpages
-                if part_extension in SUPPORTED_FORMAT_PARSERS.keys() and part_extension != file_extension:
+                if (
+                    part_extension in SUPPORTED_FORMAT_PARSERS.keys() and
+                    part_extension != file_extension
+                ):
                     message = (
                         'Upload failed. File format not supported. Use {supported}.'
                         .format(supported=part_extension)
@@ -190,3 +194,38 @@ class UserLocalesOrderForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('locales_order',)
+
+
+class GetEntitiesForm(forms.Form):
+    """
+    Form for parameters to the `entities` view.
+    """
+    project = forms.CharField()
+    locale = forms.CharField()
+    paths = forms.MultipleChoiceField(required=False)
+    limit = forms.IntegerField(required=False, initial=50)
+    status = forms.CharField(required=False)
+    extra = forms.CharField(required=False)
+    time = forms.CharField(required=False)
+    author = forms.CharField(required=False)
+    search = forms.CharField(required=False)
+    exclude_entities = forms.CharField(required=False)
+    entity_ids = forms.CharField(required=False)
+    pk_only = forms.BooleanField(required=False)
+    inplace_editor = forms.BooleanField(required=False)
+    entity = forms.IntegerField(required=False)
+
+    def clean_paths(self):
+        return self.data.getlist('paths[]')
+
+    def clean_limit(self):
+        try:
+            return int(self.cleaned_data['limit'])
+        except (TypeError, ValueError):
+            return 50
+
+    def clean_exclude_entities(self):
+        return utils.split_ints(self.cleaned_data['exclude_entities'])
+
+    def clean_entity_ids(self):
+        return utils.split_ints(self.cleaned_data['entity_ids'])

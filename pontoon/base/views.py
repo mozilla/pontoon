@@ -44,11 +44,6 @@ from pontoon.base.models import (
     Translation,
     UserProfile,
 )
-from pontoon.base.utils import (
-    build_translation_memory_file,
-    split_ints,
-    require_AJAX,
-)
 
 
 log = logging.getLogger(__name__)
@@ -72,7 +67,10 @@ def home(request):
             return redirect('pontoon.teams.team', locale=user.profile.custom_homepage)
 
     locale = utils.get_project_locale_from_request(request, project.locales) or 'en-GB'
-    path = Resource.objects.filter(project=project, translatedresources__locale__code=locale)[0].path
+    path = Resource.objects.filter(
+        project=project,
+        translatedresources__locale__code=locale
+    ).values_list('path', flat=True)[0]
 
     return translate(request, locale, project.slug, path)
 
@@ -134,7 +132,7 @@ def translate(request, locale, slug, part):
     })
 
 
-@require_AJAX
+@utils.require_AJAX
 def locale_projects(request, locale):
     """Get active projects for locale."""
     locale = get_object_or_404(Locale, code=locale)
@@ -142,7 +140,7 @@ def locale_projects(request, locale):
     return JsonResponse(locale.available_projects_list(), safe=False)
 
 
-@require_AJAX
+@utils.require_AJAX
 def locale_project_parts(request, locale, slug):
     """Get locale-project pages/paths with stats."""
     locale = get_object_or_404(Locale, code=locale)
@@ -154,7 +152,7 @@ def locale_project_parts(request, locale, slug):
         raise Http404('Locale not enabled for selected project.')
 
 
-@require_AJAX
+@utils.require_AJAX
 def authors_and_time_range(request, locale, slug, part):
     locale = get_object_or_404(Locale, code=locale)
     project = get_object_or_404(Project.objects.available(), slug=slug)
@@ -168,111 +166,135 @@ def authors_and_time_range(request, locale, slug, part):
     }, safe=False)
 
 
-@csrf_exempt
-@require_POST
-@require_AJAX
-def entities(request):
-    """Get entities for the specified project, locale and paths."""
-    try:
-        project = request.POST['project']
-        locale = request.POST['locale']
-        paths = request.POST.getlist('paths[]')
-        limit = int(request.POST.get('limit', 50))
-    except (MultiValueDictKeyError, ValueError) as err:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=err))
+def _get_entities_list(locale, project, form):
+    """Return a specific list of entities, as defined by the `entity_ids` field of the form.
 
-    project = get_object_or_404(Project, slug=project)
-    locale = get_object_or_404(Locale, code=locale)
-
-    status = request.POST.get('status', '')
-    extra = request.POST.get('extra', '')
-    time = request.POST.get('time', '')
-    author = request.POST.get('author', '')
-    search = request.POST.get('search', '')
-    exclude_entities = split_ints(request.POST.get('excludeEntities', ''))
-
-    # Only return entities with provided IDs (batch editing)
-    entity_ids = split_ints(request.POST.get('entityIds', ''))
-
-    if entity_ids:
-        entities = (
-            Entity.objects.filter(pk__in=entity_ids)
-            .prefetch_resources_translations(locale)
-            .distinct()
-            .order_by('order')
-        )
-
-        return JsonResponse({
-            'entities': Entity.map_entities(locale, entities),
-            'stats': TranslatedResource.objects.stats(project, paths, locale),
-        }, safe=False)
-
-    entities = Entity.for_project_locale(
-        project, locale, paths, status, search, exclude_entities, extra, time, author
+    This is used for batch editing.
+    """
+    entities = (
+        Entity.objects.filter(pk__in=form.cleaned_data['entity_ids'])
+        .prefetch_resources_translations(locale)
+        .distinct()
+        .order_by('order')
     )
 
-    # Only return a list of entity PKs (batch editing: select all)
-    if request.POST.get('pkOnly', None):
-        return JsonResponse({
-            'entity_pks': list(entities.values_list('pk', flat=True)),
-        })
+    return JsonResponse({
+        'entities': Entity.map_entities(locale, entities),
+        'stats': TranslatedResource.objects.stats(
+            project, form.cleaned_data['paths'], locale
+        ),
+    }, safe=False)
 
-    visible_entities = []
 
-    # In-place view: load all entities
-    if request.POST.get('inplaceEditor', None):
-        has_next = False
-        entities_to_map = Entity.for_project_locale(
-            project, locale, paths, None, None, exclude_entities
-        )
-        visible_entities = entities.values_list('pk', flat=True)
+def _get_all_entities(locale, project, form, entities):
+    """Return entities without pagination.
 
-    # Out-of-context view: paginate entities
-    else:
-        paginator = Paginator(entities, limit)
-
-        try:
-            entities_page = paginator.page(1)
-        except EmptyPage:
-            return JsonResponse({
-                'has_next': False,
-                'stats': {},
-                'authors': [],
-                'counts_per_minute': [],
-            })
-
-        has_next = entities_page.has_next()
-        entities_to_map = entities_page.object_list
-
-        # If requested entity not on the first page
-        entity = request.POST.get('entity', None)
-        if entity:
-            try:
-                entity_pk = int(entity)
-            except ValueError as err:
-                return HttpResponseBadRequest('Bad Request: {error}'.format(error=err))
-
-            # TODO: entities_to_map.values_list() doesn't return entities from selected page
-            if entity_pk not in [e.pk for e in entities_to_map]:
-                if entity_pk in entities.values_list('pk', flat=True):
-                    entities_to_map = list(entities_to_map) + list(entities.filter(pk=entity_pk))
+    This is used by the in-context mode of the Translate page.
+    """
+    has_next = False
+    entities_to_map = Entity.for_project_locale(
+        project,
+        locale,
+        paths=form.cleaned_data['paths'],
+        exclude_entities=form.cleaned_data['exclude_entities']
+    )
+    visible_entities = entities.values_list('pk', flat=True)
 
     return JsonResponse({
         'entities': Entity.map_entities(locale, entities_to_map, visible_entities),
         'has_next': has_next,
-        'stats': TranslatedResource.objects.stats(project, paths, locale),
+        'stats': TranslatedResource.objects.stats(
+            project, form.cleaned_data['paths'], locale
+        ),
     }, safe=False)
+
+
+def _get_paginated_entities(locale, project, form, entities):
+    """Return a paginated list of entities.
+
+    This is used by the regular mode of the Translate page.
+    """
+    paginator = Paginator(entities, form.cleaned_data['limit'])
+
+    try:
+        entities_page = paginator.page(1)
+    except EmptyPage:
+        return JsonResponse({
+            'has_next': False,
+            'stats': {},
+            'authors': [],
+            'counts_per_minute': [],
+        })
+
+    has_next = entities_page.has_next()
+    entities_to_map = entities_page.object_list
+
+    # If requested entity not on the first page
+    if form.cleaned_data['entity']:
+        entity_pk = form.cleaned_data['entity']
+
+        # TODO: entities_to_map.values_list() doesn't return entities from selected page
+        if entity_pk not in [e.pk for e in entities_to_map]:
+            if entity_pk in entities.values_list('pk', flat=True):
+                entities_to_map = list(entities_to_map) + list(entities.filter(pk=entity_pk))
+
+    return JsonResponse({
+        'entities': Entity.map_entities(locale, entities_to_map, []),
+        'has_next': has_next,
+        'stats': TranslatedResource.objects.stats(
+            project, form.cleaned_data['paths'], locale
+        ),
+    }, safe=False)
+
+
+@csrf_exempt
+@require_POST
+@utils.require_AJAX
+def entities(request):
+    """Get entities for the specified project, locale and paths."""
+    form = forms.GetEntitiesForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors.as_json())
+
+    project = get_object_or_404(Project, slug=form.cleaned_data['project'])
+    locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
+
+    # Only return entities with provided IDs (batch editing)
+    if form.cleaned_data['entity_ids']:
+        return _get_entities_list(locale, project, form)
+
+    # `Entity.for_project_locale` only requires a subset of the fields the form contains. We thus
+    # make a new dict with only the keys we want to pass to that function.
+    restrict_to_keys = (
+        'paths', 'status', 'search', 'exclude_entities', 'extra', 'time', 'author',
+    )
+    form_data = {k: form.cleaned_data[k] for k in restrict_to_keys if k in form.cleaned_data}
+
+    entities = Entity.for_project_locale(project, locale, **form_data)
+
+    # Only return a list of entity PKs (batch editing: select all)
+    if form.cleaned_data['pk_only']:
+        return JsonResponse({
+            'entity_pks': list(entities.values_list('pk', flat=True)),
+        })
+
+    # In-place view: load all entities
+    if form.cleaned_data['inplace_editor']:
+        return _get_all_entities(locale, project, form, entities)
+
+    # Out-of-context view: paginate entities
+    return _get_paginated_entities(locale, project, form, entities)
 
 
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
-@require_AJAX
+@utils.require_AJAX
 @transaction.atomic
 def batch_edit_translations(request):
     try:
         l = request.POST['locale']
         action = request.POST['action']
-        entity_pks = split_ints(request.POST.get('entities', ''))
+        entity_pks = utils.split_ints(request.POST.get('entities', ''))
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
@@ -426,14 +448,21 @@ def batch_edit_translations(request):
         Translation.objects.get(pk=latest_translation_pk).update_latest_translation()
 
     # Update translation memory
-    memory_entries = [TranslationMemoryEntry(
-        source=t.entity.string,
-        target=t.string,
-        locale=locale,
-        entity=t.entity,
-        translation=t,
-        project=project,
-    ) for t in Translation.objects.filter(pk__in=changed_translation_pks).prefetch_related('entity__resource')]
+    memory_entries = [
+        TranslationMemoryEntry(
+            source=t.entity.string,
+            target=t.string,
+            locale=locale,
+            entity=t.entity,
+            translation=t,
+            project=project,
+        )
+        for t in (
+            Translation.objects
+            .filter(pk__in=changed_translation_pks)
+            .prefetch_related('entity__resource')
+        )
+    ]
     TranslationMemoryEntry.objects.bulk_create(memory_entries)
 
     return JsonResponse({
@@ -441,7 +470,7 @@ def batch_edit_translations(request):
     })
 
 
-@require_AJAX
+@utils.require_AJAX
 def get_translations_from_other_locales(request):
     """Get entity translations for all but specified locale."""
     try:
@@ -467,7 +496,7 @@ def get_translations_from_other_locales(request):
     return JsonResponse(payload, safe=False)
 
 
-@require_AJAX
+@utils.require_AJAX
 def get_translation_history(request):
     """Get history of translations of given entity to given locale."""
     try:
@@ -505,7 +534,7 @@ def get_translation_history(request):
     return JsonResponse(payload, safe=False)
 
 
-@require_AJAX
+@utils.require_AJAX
 @login_required(redirect_field_name='', login_url='/403')
 @transaction.atomic
 def unapprove_translation(request):
@@ -519,9 +548,14 @@ def unapprove_translation(request):
     translation = Translation.objects.get(pk=t)
 
     # Only privileged users or authors can un-approve translations
-    if not (request.user.can_translate(project=translation.entity.resource.project, locale=translation.locale) or
-            request.user == translation.user or
-            translation.approved):
+    if not (
+        request.user.can_translate(
+            project=translation.entity.resource.project,
+            locale=translation.locale
+        ) or
+        request.user == translation.user or
+        translation.approved
+    ):
         return HttpResponseForbidden("Forbidden: You can't unapprove this translation.")
 
     translation.unapprove(request.user)
@@ -537,7 +571,7 @@ def unapprove_translation(request):
     })
 
 
-@require_AJAX
+@utils.require_AJAX
 @transaction.atomic
 def reject_translation(request):
     """Reject given translation."""
@@ -551,10 +585,8 @@ def reject_translation(request):
     locale = translation.locale
 
     # Non-privileged users can only reject own unapproved translations
-    if (
-        not request.user.can_translate(
-            translation.locale, translation.entity.resource.project
-        )
+    if not request.user.can_translate(
+        translation.locale, translation.entity.resource.project
     ):
         if translation.user == request.user:
             if translation.approved is True:
@@ -597,7 +629,7 @@ def reject_translation(request):
     })
 
 
-@require_AJAX
+@utils.require_AJAX
 @login_required(redirect_field_name='', login_url='/403')
 @transaction.atomic
 def unreject_translation(request):
@@ -637,7 +669,7 @@ def unreject_translation(request):
 
 
 @require_POST
-@require_AJAX
+@utils.require_AJAX
 @login_required(redirect_field_name='', login_url='/403')
 @transaction.atomic
 def update_translation(request):
@@ -908,7 +940,7 @@ def download_translation_memory(request, locale, slug, filename):
     filename = '{code}.{slug}.tmx'.format(code=locale.code, slug=project.slug)
 
     response = StreamingHttpResponse(
-        build_translation_memory_file(
+        utils.build_translation_memory_file(
             datetime.now(),
             locale.code,
             tm_entries.values_list(
