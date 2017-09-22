@@ -44,7 +44,7 @@ from pontoon.sync import KEY_SEPARATOR
 log = logging.getLogger(__name__)
 
 
-def combine_entity_filters(filter_choices, filters, *args):
+def combine_entity_filters(entities, filter_choices, filters, *args):
     """Return a combination of filters to apply to an Entity object.
 
     The content for each filter is defined in the EntityQuerySet helper class, using methods
@@ -63,7 +63,7 @@ def combine_entity_filters(filter_choices, filters, *args):
 
     filters = [Q()]
     for filter_name in sanitized_filters:
-        filters.append(getattr(Entity.objects, filter_name.replace('-', '_'))(*args))
+        filters.append(getattr(entities, filter_name.replace('-', '_'))(*args))
 
     # Combine all generated filters with an OR operator.
     # `operator.ior` is the pipe (|) Python operator, which turns into a logical OR
@@ -1912,11 +1912,25 @@ class Entity(DirtyFieldsMixin, models.Model):
         else:
             entities = Entity.objects.all()
 
+        entities = entities.filter(
+            resource__translatedresources__locale=locale,
+            obsolete=False
+        )
+
+        if project.slug != 'all-projects':
+            entities = entities.filter(resource__project=project)
+
+        # Filter by path
+        if paths:
+            paths = project.parts_to_paths(paths)
+            entities = entities.filter(resource__path__in=paths)
+
         if status:
             # Apply a combination of filters based on the list of statuses the user sent.
             status_filter_choices = ('missing', 'fuzzy', 'suggested', 'translated')
             post_filters.append(
                 combine_entity_filters(
+                    entities,
                     status_filter_choices,
                     status.split(','),
                     locale
@@ -1928,6 +1942,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             extra_filter_choices = ('has-suggestions', 'rejected', 'unchanged')
             post_filters.append(
                 combine_entity_filters(
+                    entities,
                     extra_filter_choices,
                     extra.split(','),
                     locale
@@ -1936,17 +1951,6 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if post_filters:
             entities = entities.filter(Q(*post_filters))
-
-        entities = entities.filter(
-            resource__project=project,
-            resource__translatedresources__locale=locale,
-            obsolete=False
-        )
-
-        # Filter by path
-        if paths:
-            paths = project.parts_to_paths(paths)
-            entities = entities.filter(resource__path__in=paths)
 
         # Filter by search parameters
         if search:
