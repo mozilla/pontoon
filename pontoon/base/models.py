@@ -1702,7 +1702,7 @@ class EntityQuerySet(models.QuerySet):
         )
 
         for candidate in plural_candidates:
-            if len([x for x in candidate.fetched_translations if rule(x, candidate)]) == nplurals:
+            if len([x for x in candidate.fetched_translations if rule(x)]) == nplurals:
                 plural_pks.append(candidate.pk)
 
         return translations.filter(
@@ -1722,7 +1722,7 @@ class EntityQuerySet(models.QuerySet):
             pk__in=self.get_filtered_entities(
                 locale,
                 Q(fuzzy=True),
-                lambda x, y: x.fuzzy
+                lambda x: x.fuzzy
             )
         )
 
@@ -1743,7 +1743,7 @@ class EntityQuerySet(models.QuerySet):
             pk__in=self.get_filtered_entities(
                 locale,
                 Q(approved=True),
-                lambda x, y: x.approved
+                lambda x: x.approved
             )
         )
 
@@ -1752,7 +1752,7 @@ class EntityQuerySet(models.QuerySet):
             pk__in=self.get_filtered_entities(
                 locale,
                 Q(approved=False, rejected=False, fuzzy=False),
-                lambda x, y: not x.approved and not x.rejected and not x.fuzzy
+                lambda x: not x.approved and not x.rejected and not x.fuzzy
             )
         )
 
@@ -1761,7 +1761,7 @@ class EntityQuerySet(models.QuerySet):
             pk__in=self.get_filtered_entities(
                 locale,
                 Q(rejected=True),
-                lambda x, y: x.rejected
+                lambda x: x.rejected
             )
         )
 
@@ -1770,7 +1770,7 @@ class EntityQuerySet(models.QuerySet):
             pk__in=self.get_filtered_entities(
                 locale,
                 Q(string=F('entity__string')),
-                lambda x, y: x.string == y.string
+                lambda x: x.string == x.entity.string
             )
         )
 
