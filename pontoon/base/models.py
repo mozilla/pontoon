@@ -1726,13 +1726,7 @@ class EntityQuerySet(models.QuerySet):
         singular = list(self.filter(string_plural='', pk__in=entities).values_list('pk', flat=True))
         nplurals = locale.nplurals or 1
         plural = []
-        plural_candidates = self.exclude(string_plural='').filter(pk__in=entities).prefetch_related(
-            Prefetch(
-                'translation_set',
-                queryset=Translation.objects.filter(locale=locale),
-                to_attr='fetched_translations'
-            )
-        )
+        plural_candidates = self.exclude(string_plural='').filter(pk__in=entities).prefetch_translations(locale)
 
         for candidate in plural_candidates:
             if len([x for x in candidate.fetched_translations if rule(x, candidate)]) == nplurals:
@@ -1824,12 +1818,11 @@ class EntityQuerySet(models.QuerySet):
     def between_time_interval(self, locale, start, end):
         return Q(translation__locale=locale, translation__date__range=(start, end))
 
-    def prefetch_resources_translations(self, locale):
+    def prefetch_translations(self, locale):
         """
-        Prefetch resources and translations for given locale.
+        Prefetch translations for given locale.
         """
         return self.prefetch_related(
-            'resource',
             Prefetch(
                 'translation_set',
                 queryset=Translation.objects.filter(locale=locale),
@@ -2010,7 +2003,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
 
-        entities = entities.prefetch_resources_translations(locale)
+        entities = entities.prefetch_related('resource').prefetch_translations(locale)
 
         if exclude_entities:
             entities = entities.exclude(pk__in=exclude_entities)
