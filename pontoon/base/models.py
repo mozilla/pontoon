@@ -5,6 +5,7 @@ import hashlib
 import json
 import logging
 import math
+import operator
 import os.path
 import re
 
@@ -41,6 +42,33 @@ from pontoon.sync import KEY_SEPARATOR
 
 
 log = logging.getLogger(__name__)
+
+
+def combine_entity_filters(filter_choices, filters, *args):
+    """Return a combination of filters to apply to an Entity object.
+
+    The content for each filter is defined in the EntityQuerySet helper class, using methods
+    that have the same name as the filter. Each subset of filters is combined with the others
+    with the OR operator.
+
+    :arg list filter_choices: list of valid choices, used to sanitize the content of `filters`
+    :arg list filters: the filters to get and combine
+    :arg *args: arguments that will be passed to the filter methods of the EntityQuerySet class
+
+    :returns: a combination of django ORM Q() objects containing all the required filters
+
+    """
+    # We first sanitize the list sent by the user and restrict it to only values we accept.
+    sanitized_filters = filter(lambda s: s in filter_choices, filters)
+
+    filters = [Q()]
+    for filter_name in sanitized_filters:
+        filters.append(getattr(Entity.objects, filter_name.replace('-', '_'))(*args))
+
+    # Combine all generated filters with an OR operator.
+    # `operator.ior` is the pipe (|) Python operator, which turns into a logical OR
+    # when used between django ORM query objects.
+    return reduce(operator.ior, filters)
 
 
 class UserTranslationsManager(UserManager):
@@ -1664,27 +1692,6 @@ class EntityQuerySet(models.QuerySet):
     """
     Queryset provides a set of additional methods that should allow us to filter entities.
     """
-    user_entity_filters = ('missing', 'fuzzy', 'suggested', 'translated')
-    user_extra_filters = ('has-suggestions', 'rejected', 'unchanged')
-
-    def filter_statuses(self, locale, statuses, no_plurals):
-        sanitized_statuses = filter(lambda s: s in self.user_entity_filters, statuses)
-        if sanitized_statuses:
-            return reduce(
-                lambda x, y: x | y,
-                [getattr(Entity.objects, s)(locale, no_plurals) for s in sanitized_statuses]
-            )
-        return Q()
-
-    def filter_extra(self, locale, extra, no_plurals):
-        sanitized_extras = filter(lambda f: f in self.user_extra_filters, extra)
-
-        if sanitized_extras:
-            return reduce(
-                lambda x, y: x | y,
-                [getattr(Entity.objects, s.replace('-', '_'))(locale, no_plurals) for s in sanitized_extras]
-            )
-        return Q()
 
     def with_status_counts(self, locale):
         """
@@ -1986,13 +1993,27 @@ class Entity(DirtyFieldsMixin, models.Model):
             entities = Entity.objects.all()
 
         if statuses:
+            # Apply a combination of filters based on the list of statuses the user sent.
+            status_filter_choices = ('missing', 'fuzzy', 'suggested', 'translated')
             post_filters.append(
-                Entity.objects.filter_statuses(locale, statuses.split(','), no_plurals)
+                combine_entity_filters(
+                    status_filter_choices,
+                    statuses.split(','),
+                    locale,
+                    no_plurals
+                )
             )
 
         if extra:
+            # Apply a combination of filters based on the list of extras the user sent.
+            extra_filter_choices = ('has-suggestions', 'rejected', 'unchanged')
             post_filters.append(
-                Entity.objects.filter_extra(locale, extra.split(','), no_plurals)
+                combine_entity_filters(
+                    extra_filter_choices,
+                    extra.split(','),
+                    locale,
+                    no_plurals
+                )
             )
 
         if post_filters:
