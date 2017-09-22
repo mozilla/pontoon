@@ -1,6 +1,7 @@
 import codecs
 import functools
 import json
+import logging
 import os
 import pytz
 import re
@@ -11,6 +12,8 @@ import time
 import zipfile
 
 from datetime import datetime, timedelta
+
+import newrelic
 
 from django.utils.text import slugify
 from six import text_type
@@ -30,6 +33,9 @@ from translate.storage import base as storage_base
 from translate.storage.placeables import base, general, parse
 from translate.storage.placeables.interfaces import BasePlaceable
 from translate.lang import data as lang_data
+
+
+log = logging.getLogger(__name__)
 
 
 def split_ints(s):
@@ -653,3 +659,15 @@ def build_translation_memory_file(creation_date, locale_code, entries):
         u'\n\t</body>'
         u'\n</tmx>'
     )
+
+
+def add_newrelic_context(**kwargs):
+    try:
+        for key, value in kwargs.items():
+            if not newrelic.agent.add_custom_parameter(key, value):
+                log.debug('Cannot add parameter %s to newrelic' % key)
+    except AttributeError:
+        # If newrelic-admin isn't used, for example in local development,
+        # then newrelic.agent will not be set.
+        log.warning('Unable to add context to newrelic', exc_info=True)
+        pass
