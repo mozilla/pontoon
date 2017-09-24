@@ -14,7 +14,7 @@ all: dockerrun
 
 dockerbuild:
 	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
-	sed -i 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' ./docker/config/webapp.env
+	sed -i -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' ./docker/config/webapp.env
 
 	${DC} build base
 	${DC} build webapp
