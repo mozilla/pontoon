@@ -63,7 +63,7 @@ class Query(graphene.ObjectType):
     projects = graphene.List(Project)
     project = graphene.Field(Project, slug=graphene.String())
 
-    locales = graphene.List(Project)
+    locales = graphene.List(Locale)
     locale = graphene.Field(Locale, code=graphene.String())
 
     def resolve_projects(obj, args, context, info):
