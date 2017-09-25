@@ -395,7 +395,7 @@ class ChangeSet(object):
                 'extra'
             ])
             self.bulk_create_failing_checks(
-                Translation.objects.filter(pk__in=[t.pk for t in self.translations_to_update]).prefetch_related('entity')
+                Translation.objects.filter(pk__in=[t for t in self.translations_to_update]).prefetch_related('entity')
             )
 
 

@@ -519,13 +519,13 @@ class UserTranslationManagerTests(TestCase):
 
         assert_attributes_equal(top_contributors[0], translations_count=16,
             translations_approved_count=5, translations_unapproved_count=9,
-            translations_fuzzy_count=2)
+            translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[1], translations_count=12,
             translations_approved_count=7, translations_unapproved_count=3,
-            translations_fuzzy_count=2)
+            translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[2], translations_count=8,
             translations_approved_count=1, translations_unapproved_count=2,
-            translations_fuzzy_count=5)
+            translations_needs_work_count=5)
 
     def test_period_filters(self):
         """
@@ -547,27 +547,27 @@ class UserTranslationManagerTests(TestCase):
         assert_equal(len(top_contributors), 1)
         assert_attributes_equal(top_contributors[0], translations_count=5,
             translations_approved_count=5, translations_unapproved_count=0,
-            translations_fuzzy_count=0)
+            translations_needs_work_count=0)
 
         top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 5, 10))
 
         assert_equal(len(top_contributors), 2)
         assert_attributes_equal(top_contributors[0], translations_count=15,
             translations_approved_count=2, translations_unapproved_count=11,
-            translations_fuzzy_count=2)
+            translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[1], translations_count=5,
             translations_approved_count=5, translations_unapproved_count=0,
-            translations_fuzzy_count=0)
+            translations_needs_work_count=0)
 
         top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 10))
 
         assert_equal(len(top_contributors), 2)
         assert_attributes_equal(top_contributors[0], translations_count=20,
             translations_approved_count=17, translations_unapproved_count=1,
-            translations_fuzzy_count=2)
+            translations_needs_work_count=2)
         assert_attributes_equal(top_contributors[1], translations_count=15,
             translations_approved_count=2, translations_unapproved_count=11,
-            translations_fuzzy_count=2)
+            translations_needs_work_count=2)
 
     def test_query_args_filtering(self):
         """
@@ -588,12 +588,12 @@ class UserTranslationManagerTests(TestCase):
         assert_equal(top_contributors[0], third_contributor)
         assert_attributes_equal(top_contributors[0], translations_count=24,
             translations_approved_count=10, translations_unapproved_count=12,
-            translations_fuzzy_count=2)
+            translations_needs_work_count=2)
 
         assert_equal(top_contributors[1], first_contributor)
         assert_attributes_equal(top_contributors[1], translations_count=15,
             translations_approved_count=12, translations_unapproved_count=1,
-            translations_fuzzy_count=2)
+            translations_needs_work_count=2)
 
         # Testing filtering for the second locale
         top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 1), Q(locale=locale_second))
@@ -602,7 +602,7 @@ class UserTranslationManagerTests(TestCase):
         assert_equal(top_contributors[0], second_contributor)
         assert_attributes_equal(top_contributors[0], translations_count=14,
             translations_approved_count=11, translations_unapproved_count=1,
-            translations_fuzzy_count=2)
+            translations_needs_work_count=2)
 
 
 class EntityTests(TestCase):

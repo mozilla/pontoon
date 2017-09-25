@@ -111,7 +111,7 @@ def check_translations(resource, check_translations):
     if entity_map_function:
         check_values = map(
             entity_map_function,
-            check_translations.prefetch_related('entity')
+            check_translations
         )
     else:
         # File format isn't supported yet.

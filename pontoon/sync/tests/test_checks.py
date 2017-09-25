@@ -2,7 +2,7 @@ from textwrap import dedent
 
 from nose.tools import assert_equal
 
-from base.checks import check_translations
+from pontoon.base.checks import check_translations
 from pontoon.base.tests import (
     TestCase,
     TranslationFactory,

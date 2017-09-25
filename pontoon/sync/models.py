@@ -90,7 +90,7 @@ class SyncLog(BaseLog):
             TranslatedResource.objects
             .filter(resource__project__disabled=False)
             .annotate(
-                total=Sum(F('approved_strings') + F('translated_strings') + F('fuzzy_strings') + + F('errors') + F('warnings'))
+                total=Sum(F('approved_strings') + F('translated_strings') + F('fuzzy_strings') + F('errors') + F('warnings'))
             )
             .filter(total__gt=F('total_strings'))
         ):

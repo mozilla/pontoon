@@ -674,17 +674,17 @@ def translation_failing_checks(translation, ignore_warnings):
     """
     Returns failing checks from translation.
     """
-    failing_checks = translation.get_failing_checks()
+    t = translation.serialize()
 
-    if 'error' in failing_checks:
+    if t['errors']:
         return JsonResponse({
-            'warnings': failing_checks.get('warning'),
-            'errors': failing_checks['errors']
+            'warnings': t['warnings'],
+            'errors': t['errors']
         })
 
-    if 'warning' in failing_checks and not ignore_warnings:
+    if t['warnings'] and not ignore_warnings:
         return JsonResponse({
-            'warnings': failing_checks['warnings']
+            'warnings': t['warnings']
         })
 
 
