@@ -38,46 +38,7 @@ CompareFluentEntity = namedtuple(
 ftl_parser = FluentParser()
 
 
-def fluent_entities(t):
-    return (
-        t.pk,
-        CompareFluentEntity(ftl_parser.parse_entry(t.entity.string)),
-        CompareFluentEntity(ftl_parser.parse_entry(t.string)),
-    )
-
-
-
 DTD_ENTITY_TMPL = '<!ENTITY %s \"%s\">'
-
-
-def dtd_entities(t):
-    e = t.entity
-    xml_entity = DTD_ENTITY_TMPL % (e.key, e.string)
-    return (
-        t.pk,
-        CompareDTDEntity(e.key, e.string, e.comment, xml_entity),
-        CompareDTDEntity(e.key, t.string, e.comment, xml_entity)
-    )
-
-
-def properties_entities(t):
-    if t.plural_form is None:
-        entity_string = t.entity.string
-    else:
-        entity_string = t.entity.string_plural
-
-    return (
-        t.pk,
-        ComparePropertiesEntity(t.entity.key, entity_string, entity_string, t.entity.comment),
-        ComparePropertiesEntity(t.entity.key, t.string, t.string, t.entity.comment)
-    )
-
-
-MAP_ENTITIES_TO = {
-    '.properties': properties_entities,
-    '.dtd': dtd_entities,
-    '.ftl': fluent_entities
-}
 
 
 def check_translations(resource, check_translations):
@@ -106,13 +67,40 @@ def check_translations(resource, check_translations):
         return failed_checks
 
     file_ext = os.path.splitext(resource.path.lower())[1]
-    entity_map_function = MAP_ENTITIES_TO.get(file_ext, None)
 
-    if entity_map_function:
-        check_values = map(
-            entity_map_function,
-            check_translations
-        )
+    if file_ext == '.properties':
+        get_string = lambda t: t.entity.string_plural if t.plural_form else t.entity.string
+
+        check_values = [(
+            t.pk,
+            ComparePropertiesEntity(t.entity.key, get_string(t), get_string(t), t.entity.comment),
+            ComparePropertiesEntity(t.entity.key, t.string, t.string, t.entity.comment)
+        ) for t in check_translations]
+
+    elif file_ext == '.dtd':
+        check_values = [(
+            t.pk,
+            CompareDTDEntity(
+                t.entity.key,
+                t.entity.string,
+                t.entity.comment,
+                DTD_ENTITY_TMPL % (t.entity.key, t.entity.string)
+            ),
+            CompareDTDEntity(
+                t.entity.key,
+                t.string,
+                t.entity.comment,
+                DTD_ENTITY_TMPL % (t.entity.key, t.entity.string)
+            ),
+        ) for t in check_translations]
+
+    elif file_ext == '.ftl':
+        check_values = [(
+            t.pk,
+            CompareFluentEntity(ftl_parser.parse_entry(t.entity.string)),
+            CompareFluentEntity(ftl_parser.parse_entry(t.string)),
+        ) for t in check_translations]
+
     else:
         # File format isn't supported yet.
         check_values = []
