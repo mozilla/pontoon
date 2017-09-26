@@ -2,33 +2,35 @@ from graphql.language.ast import FragmentSpread
 
 
 def get_fields(info):
-    """
-    Parses a query info into a list of composite field names.
+    """Return a list of composite field names.
+
+    Parse a GraphQL query into a flat list of all paths and leaves.
+
     For example the following query:
+
         {
-          carts {
-            edges {
-              node {
-                id
-                name
-                ...cartInfo
-              }
-            }
+          projects {
+            name
+            slug
+            ...stats
           }
         }
-        fragment cartInfo on CartType { whatever }
+
+        fragment stats on Project {
+          totalStrings
+          missingStrings
+        }
 
     Will result in an array:
+
         [
-            'carts',
-            'carts.edges',
-            'carts.edges.node',
-            'carts.edges.node.id',
-            'carts.edges.node.name',
-            'carts.edges.node.whatever'
+            'projects',
+            'projects.name',
+            'projects.slug',
+            'projects.totalStrings',
+            'projects.missingStrings'
         ]
     """
-    fragments = info.fragments
 
     def iterate_field_names(prefix, field):
         name = field.name.value
@@ -36,7 +38,7 @@ def get_fields(info):
         if isinstance(field, FragmentSpread):
             results = []
             new_prefix = prefix
-            sub_selection = fragments[name].selection_set.selections
+            sub_selection = info.fragments[name].selection_set.selections
         else:
             results = [prefix + name]
             new_prefix = prefix + name + "."
@@ -50,5 +52,8 @@ def get_fields(info):
 
         return results
 
-    results = iterate_field_names('', info.field_asts[0])
+    results = []
+    for field_ast in info.field_asts:
+        results.extend(iterate_field_names('', field_ast))
+
     return results
