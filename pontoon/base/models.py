@@ -10,7 +10,6 @@ import os.path
 import re
 
 from collections import defaultdict
-from urlparse import urlparse
 
 from compare_locales.checks import getChecker
 from dirtyfields import DirtyFieldsMixin
@@ -32,8 +31,10 @@ from django.utils.functional import cached_property
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
+
 from pontoon.base import utils
 from pontoon.base.checks import check_translations
+from pontoon.db import IContainsCollate  # noqa
 from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.vcs.repositories import (
     commit_to_vcs,
@@ -41,9 +42,6 @@ from pontoon.sync.vcs.repositories import (
     update_from_vcs,
     PullFromRepositoryException,
 )
-from pontoon.base import utils
-from pontoon.db import IContainsCollate  # noqa
-from pontoon.sync import KEY_SEPARATOR
 
 
 log = logging.getLogger(__name__)
@@ -1867,7 +1865,7 @@ class EntityQuerySet(models.QuerySet):
 
         return Q(unreviewed_count__gt=0)
 
-    def errors(self, no_plurals):
+    def errors(self, locale, no_plurals):
         if no_plurals:
             errors = Translation.objects.filter(
                 locale=locale, failing_checks__severity='error'
@@ -1876,7 +1874,7 @@ class EntityQuerySet(models.QuerySet):
 
         return Q(errors_count=F('expected_count'))
 
-    def warnings(self, no_plurals):
+    def warnings(self, locale, no_plurals):
         if no_plurals:
             warnings = Translation.objects.filter(
                 locale=locale, failing_checks__severity='warnings'
