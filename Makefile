@@ -35,7 +35,7 @@ dockershell:
 
 dockerloaddb:
 	-${DC} stop webapp
-	-
+	-docker exec -i `${DC} ps -q postgresql` dropdb -U pontoon pontoon
 	docker exec -i `${DC} ps -q postgresql` createdb -U pontoon pontoon
 	docker exec -i `${DC} ps -q postgresql` pg_restore -U pontoon -d pontoon -O < ${DB_DUMP_FILE}
 
