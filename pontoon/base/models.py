@@ -1693,7 +1693,6 @@ class EntityQuerySet(models.QuerySet):
         translations = Translation.objects.filter(locale=locale).filter(query)
 
         plural_pks = []
-        nplurals = locale.nplurals or 1
         plural_candidates = (
             self
             .exclude(string_plural='')
@@ -1702,7 +1701,7 @@ class EntityQuerySet(models.QuerySet):
         )
 
         for candidate in plural_candidates:
-            if len([x for x in candidate.fetched_translations if rule(x)]) == nplurals:
+            if len([x for x in candidate.fetched_translations if rule(x)]) == locale.nplurals:
                 plural_pks.append(candidate.pk)
 
         return translations.filter(
