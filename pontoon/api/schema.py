@@ -29,9 +29,9 @@ class Project(DjangoObjectType, Stats):
     class Meta:
         model = ProjectModel
         only_fields = (
-            'name', 'slug', 'info', 'deadline', 'priority', 'contact',
-            'total_strings', 'approved_strings', 'translated_strings',
-            'fuzzy_strings'
+            'name', 'slug', 'disabled', 'info', 'deadline', 'priority',
+            'contact', 'total_strings', 'approved_strings',
+            'translated_strings', 'fuzzy_strings'
         )
 
     localizations = graphene.List(ProjectLocale)
@@ -60,14 +60,14 @@ class Locale(DjangoObjectType, Stats):
 class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name='__debug')
 
-    projects = graphene.List(Project)
+    projects = graphene.List(Project, with_disabled=graphene.Boolean(False))
     project = graphene.Field(Project, slug=graphene.String())
 
     locales = graphene.List(Locale)
     locale = graphene.Field(Locale, code=graphene.String())
 
     def resolve_projects(obj, args, context, info):
-        qs = ProjectModel.objects.all()
+        qs = ProjectModel.objects
         fields = get_fields(info)
 
         if 'projects.localizations' in fields:
@@ -76,7 +76,10 @@ class Query(graphene.ObjectType):
         if 'projects.localizations.locale.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')
 
-        return qs
+        if args['with_disabled']:
+            return qs.all()
+
+        return qs.filter(disabled=False)
 
     def resolve_project(obj, args, context, info):
         qs = ProjectModel.objects
@@ -91,7 +94,7 @@ class Query(graphene.ObjectType):
         return qs.get(slug=args['slug'])
 
     def resolve_locales(obj, args, context, info):
-        qs = LocaleModel.objects.all()
+        qs = LocaleModel.objects
         fields = get_fields(info)
 
         if 'locales.localizations' in fields:
@@ -100,7 +103,7 @@ class Query(graphene.ObjectType):
         if 'locales.localizations.project.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')
 
-        return qs
+        return qs.all()
 
     def resolve_locale(obj, args, context, info):
         qs = LocaleModel.objects
