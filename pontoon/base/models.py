@@ -1741,9 +1741,20 @@ class EntityQuerySet(models.QuerySet):
         ).values('entity')
 
     def missing(self, locale):
-        # TODO: partially translated/missing pluralized strings
-        translated = self.filter(translation__locale=locale)
-        return ~Q(pk__in=translated)
+        have_translations = self.filter(translation__locale=locale)
+
+        have_missing_plural_forms = []
+        plural_candidates = (
+            self
+            .exclude(string_plural='')
+            .prefetch_translations(locale)
+        )
+
+        for candidate in plural_candidates:
+            if len(set([x.plural_form for x in candidate.fetched_translations])) < locale.nplurals:
+                have_missing_plural_forms.append(candidate.pk)
+
+        return ~Q(pk__in=have_translations) | Q(pk__in=have_missing_plural_forms)
 
     def fuzzy(self, locale):
         return Q(
