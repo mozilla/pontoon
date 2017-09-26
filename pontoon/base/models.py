@@ -1743,11 +1743,8 @@ class EntityQuerySet(models.QuerySet):
 
     def missing(self, locale):
         # TODO: partially translated/missing pluralized strings
-        missing = self.exclude(
-            pk__in=Translation.objects.filter(locale=locale).values('entity')
-        )
-
-        return Q(pk__in=missing)
+        translated = self.filter(translation__locale=locale)
+        return ~Q(pk__in=translated)
 
     def fuzzy(self, locale):
         return Q(
@@ -1760,15 +1757,13 @@ class EntityQuerySet(models.QuerySet):
 
     def suggested(self, locale):
         # TODO: pluralized strings
-        missing = self.exclude(
-            pk__in=Translation.objects.filter(locale=locale).values('entity')
-        )
+        translated = self.filter(translation__locale=locale)
 
         approved_or_fuzzy = Translation.objects.filter(locale=locale).filter(
             Q(approved=True) | Q(fuzzy=True)
         ).values('entity')
 
-        return ~Q(pk__in=missing) & ~Q(pk__in=approved_or_fuzzy)
+        return Q(pk__in=translated) & ~Q(pk__in=approved_or_fuzzy)
 
     def translated(self, locale):
         return Q(
