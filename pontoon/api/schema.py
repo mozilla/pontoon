@@ -50,11 +50,16 @@ class Locale(DjangoObjectType, Stats):
             'fuzzy_strings'
         )
 
-    localizations = graphene.List(ProjectLocale)
+    localizations = graphene.List(ProjectLocale, include_disabled=graphene.Boolean(False))
 
     @graphene.resolve_only_args
-    def resolve_localizations(obj):
-        return obj.project_locale.all()
+    def resolve_localizations(obj, include_disabled):
+        qs = obj.project_locale
+
+        if include_disabled:
+            return qs.all()
+
+        return qs.filter(project__disabled=False)
 
 
 class Query(graphene.ObjectType):
