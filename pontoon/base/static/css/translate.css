@@ -293,7 +293,10 @@ body > header .locale.select {
 #filter .missing:not(.hover) .status:before,
 #entitylist .wrapper .selected.missing .status:before,
 #entitylist .wrapper .hovered.missing .status:before,
-#entitylist .wrapper li:hover.missing .status:before {
+#entitylist .wrapper li:hover.missing .status:before,
+#entitylist .wrapper .selected.partial .status:before,
+#entitylist .wrapper .hovered.partial .status:before,
+#entitylist .wrapper li:hover.partial .status:before {
   color: #3F4752;
 }
 
