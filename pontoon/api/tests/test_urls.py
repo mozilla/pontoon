@@ -11,7 +11,7 @@ def reload_urls():
     reload(sys.modules[settings.ROOT_URLCONF])
 
 
-class TestGraphiQL(TestCase):
+class TestGraphQL(TestCase):
 
     body = {
         'query': '{projects{name}}'
@@ -42,6 +42,13 @@ class TestGraphiQL(TestCase):
             response = self.client.post('/graphql', self.body,
                                         HTTP_ACCEPT="application/json")
             self.assertEqual(response.status_code, 200)
+
+
+class TestGraphiQL(TestCase):
+
+    body = {
+        'query': '{projects{name}}'
+    }
 
     def test_graphiql_dev_get(self):
         with self.settings(DEV=True):
