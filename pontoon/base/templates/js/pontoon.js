@@ -10,11 +10,8 @@
        * Send data to main Pontoon code
        */
       function sendData() {
-        // Deep copy: http://api.jquery.com/jQuery.extend
-        var entities = $.extend(true, [], Pontoon.entities);
-        $(entities).each(function () {
-          delete this.node;
-        });
+        const entities = Pontoon.entities.map(entity => Object.assign({}, entity));
+        entities.forEach(entity => delete entity.node);
 
         postMessage("DATA", {
           entities: entities
