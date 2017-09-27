@@ -172,3 +172,25 @@ setuptools==36.2.4 \
     --hash=sha256:88355a63434a5e3c8e1dfb26a2227744512958434c7332c7a4a8847f128f364e
 webencodings==0.5.1 \
     --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78
+
+# ----------------------------------------------------------------------------------
+graphene-django==1.3 \
+    --hash=sha256:6679eaa73768a760aef76e1860a4ca3273db4213f0505dc13cdfa44278e027fc
+
+# Required by graphene-django
+graphene==1.4.1 \
+    --hash=sha256:36134e026ec987514b240b57e3b6a995d6aed0fc5dece0567e77d5aed0ad0ece
+iso8601==0.1.11 \
+    --hash=sha256:c68dbd1b6ecc0c13c1d94116aec79d5d5c3bc7444f99159b968f12d83cbc7fa6 \
+    --hash=sha256:e8fb52f78880ae063336c94eb5b87b181e6a0cc33a6c008511bac9a6e980ef30
+singledispatch==3.4.0.3 \
+    --hash=sha256:833b46966687b3de7f438c761ac475213e53b306740f1abfaa86e1d1aae56aa8 \
+    --hash=sha256:5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c
+graphql-core==1.1 \
+    --hash=sha256:63bb8593aeeadb0a53e14207b910027fe51158d017927fad87326dac806185ee
+graphql-relay==0.4.5 \
+    --hash=sha256:2716b7245d97091af21abf096fabafac576905096d21ba7118fba722596f65db
+promise==2.0.2 \
+    --hash=sha256:f6ac7ec189bfb14ab8987f211db85fa8147fe13ca5d2a8c15926307d8948c082
+typing==3.6.1 \
+    --hash=sha256:c36dec260238e7464213dcd50d4b5ef63a507972f5780652e835d0228d0edace

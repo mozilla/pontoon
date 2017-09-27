@@ -469,6 +469,17 @@ class AggregatedStats(models.Model):
             'fuzzy_strings', 'translated_strings'
         ])
 
+    @property
+    def missing_strings(self):
+        return (
+            self.total_strings - self.translated_strings -
+            self.approved_strings - self.fuzzy_strings
+        )
+
+    @property
+    def complete(self):
+        return self.missing_strings == 0
+
 
 def validate_cldr(value):
     for item in value.split(','):

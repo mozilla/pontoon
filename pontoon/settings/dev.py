@@ -26,3 +26,9 @@ TEMPLATES[0]['OPTIONS']['match_regex'] = (
 
 CSP_SCRIPT_SRC = base.CSP_SCRIPT_SRC + ('http://ajax.googleapis.com',)
 CSP_IMG_SRC = base.CSP_IMG_SRC + ('data:',)
+
+GRAPHENE = {
+    'MIDDLEWARE': [
+        'graphene_django.debug.DjangoDebugMiddleware',
+    ]
+}

@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.views import logout
 from django.views.generic import RedirectView, TemplateView
+
 from pontoon.base.views import heroku_setup
 from pontoon.intro.views import intro
 from pontoon.teams.views import team
@@ -73,7 +74,9 @@ urlpatterns = [
     url(r'', include('pontoon.contributors.urls')),
     url(r'', include('pontoon.localizations.urls')),
     url(r'', include('pontoon.base.urls')),
+    url(r'', include('pontoon.api.urls')),
 
     # Team page: Must be at the end
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$', team, name='pontoon.teams.team'),
+
 ]
