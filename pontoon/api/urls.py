@@ -4,8 +4,8 @@ from graphene_django.views import GraphQLView
 from django.conf.urls import url
 from django.views.decorators.csrf import csrf_exempt
 
+from pontoon.settings import DEV
 from pontoon.api.schema import schema
-from pontoon.settings.base import DEV
 
 
 urlpatterns = [
