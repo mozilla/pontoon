@@ -70,34 +70,28 @@
       /**
        * Makes DOM nodes hoverable and localizable in the sidebar
        *
-       * entity Entity object
+       * entity Entity object with list of jQuery nodes
        */
       function makeLocalizable(entity) {
         entity.body = true;
-        $(entity.node).each(function() {
-          this[0].entity = entity; // Store entity reference to the node
- 
-          this.prop('lang', Pontoon.locale.code);
-          this.prop('dir', 'auto');
- 
+        entity.node.forEach(node => {
+          const domNode = node[0];
+          domNode.entity = entity; // Store entity reference to the node
+
+          domNode.setAttribute('lang', Pontoon.locale.code);
+          domNode.setAttribute('dir', 'auto');
+
           // Show/hide toolbar on node hover
-          if (!this.handlersAttached) {
-            this.hover(function () {
-              showToolbar(this);
-            }, function() {
-              hideToolbar(this);
-            });
-            this.handlersAttached = true;
+          if (!domNode.handlersAttached) {
+            domNode.addEventListener('mouseenter', e => showToolbar(domNode));
+            domNode.addEventListener('mouseleave', e => hideToolbar(domNode));
+            domNode.handlersAttached = true;
           }
         });
 
         // Show/hide toolbar on entity hover
-        entity.hover = function () {
-          showToolbar(this.node[0][0]);
-        };
-        entity.unhover = function () {
-          hideToolbar(this.node[0][0]);
-        };
+        entity.hover = e => showToolbar(entity.node[0][0]);
+        entity.unhover =  e => hideToolbar(entity.node[0][0]);
       }
 
 
