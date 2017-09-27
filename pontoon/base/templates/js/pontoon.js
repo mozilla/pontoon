@@ -21,6 +21,25 @@
 
 
       /**
+       * In-place keyboard shortcuts handler
+       */
+      function keydownPontoonHandler(e) {
+        const key = e.keyCode,
+            toolbar = document.querySelector('.pontoon-editable-toolbar'),
+            cancel = toolbar.querySelector('.cancel');
+
+        if (toolbar.style.display !== 'none' && cancel.style.display !== 'none') {
+          if (key === 27) { // Esc: status quo
+            cancel.click();
+            hideToolbar(toolbar);
+            return false;
+          }
+        }
+      }
+
+
+
+      /**
        * Render main UI and handle events
        */
       function renderHandle() {
@@ -31,29 +50,19 @@
         });
 
         // Do not change anything when cancelled
-        $(".pontoon-editable-toolbar > .cancel").click(function () {
-          var element = $(this).parent()[0].target,
-              entity = element.entity,
-              string = entity.translation[0].string;
+        document.querySelectorAll('.pontoon-editable-toolbar > .cancel').forEach(dotCancel => {
+          dotCancel.addEventListener('click', e => {
+            const element = dotCancel.parentNode.target,
+                entity = element.entity,
+                string = entity.translation[0].string;
 
-          $(element).html(string !== null ? string : entity.original);
-          postMessage("INACTIVE", entity.id);
+            element.innerHTML.innerHTML = string !== null ? string : entity.original;
+            postMessage("INACTIVE", entity.id);
+          })
         });
 
         // In-place keyboard shortcuts
-        $("html").unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
-          var key = e.which,
-              toolbar = $(".pontoon-editable-toolbar"),
-              cancel = toolbar.find(".cancel");
-
-          if (cancel.is(":visible")) {
-            if (key === 27) { // Esc: status quo
-              cancel.click();
-              hideToolbar(toolbar[0].target);
-              return false;
-            }
-          }
-        });
+        document.querySelector('html').addEventListener("keydown", keydownPontoonHandler);
       }
 
 
