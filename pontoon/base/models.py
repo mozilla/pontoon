@@ -1734,14 +1734,29 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def suggested(self, locale):
-        # TODO: pluralized strings
-        translated = self.filter(translation__locale=locale)
+        have_translations = self.filter(translation__locale=locale)
 
         approved_or_fuzzy = Translation.objects.filter(locale=locale).filter(
             Q(approved=True) | Q(fuzzy=True)
         ).values('entity')
 
-        return Q(pk__in=translated) & ~Q(pk__in=approved_or_fuzzy)
+        have_partially_suggested_plurals_forms = []
+        plural_candidates = (
+            self
+            .exclude(string_plural='')
+            .prefetch_translations(locale)
+        )
+
+        for candidate in plural_candidates:
+            x = [x.plural_form for x in candidate.fetched_translations if not x.approved and not x.fuzzy]
+            if len(set(x)) < locale.nplurals:
+                have_partially_suggested_plurals_forms.append(candidate.pk)
+
+        return (
+            Q(pk__in=have_translations) &
+            ~Q(pk__in=approved_or_fuzzy) &
+            ~Q(pk__in=have_partially_suggested_plurals_forms)
+        )
 
     def translated(self, locale):
         return Q(
