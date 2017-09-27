@@ -746,7 +746,7 @@ CELERY_SEND_EVENTS = False  # We aren't yet monitoring events
 # some of javascript files (e.g. pontoon.js)
 # require Access-Control-Allow-Origin header to be set as '*'.
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_URLS_REGEX = r'^/pontoon\.js$'
+CORS_URLS_REGEX = r'^/(pontoon\.js|graphql/?)$'
 
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
