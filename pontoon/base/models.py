@@ -1690,6 +1690,18 @@ class Subpage(models.Model):
 
 class EntityQuerySet(models.QuerySet):
     def get_filtered_entities(self, locale, query, rule):
+        """Return a QuerySet of values of entity PKs matching the locale, query and rule.
+
+        Filter entities that match the given filter provided by the `locale` and `query`
+        parameteres. For performance reasons the `rule` parameter is also provided to filter
+        entities in python instead of the DB.
+
+        :arg Locale locale: a Locale object to get translations for
+        :arg Q query: a django ORM Q() object describing translations to filter
+        :arg function rule: a lambda function implementing the `query` logic
+
+        :returns: a QuerySet of values of entity PKs
+        """
         translations = Translation.objects.filter(locale=locale).filter(query)
 
         plural_pks = []
