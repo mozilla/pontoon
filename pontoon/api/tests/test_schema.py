@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.utils.encoding import force_text
 
 
 class TestCyclicQueries(TestCase):
@@ -13,14 +12,21 @@ class TestCyclicQueries(TestCase):
             }'''
         }
 
-        response = self.client.get('/graphql', body,
-                                   HTTP_ACCEPT="application/json")
+        response = self.client.get('/graphql', body, HTTP_ACCEPT="application/json")
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
-            force_text(response.content),
-            {"data": {"projects": [
-                {"name": "Pontoon Intro"}]}})
+            response.content,
+            {
+                'data': {
+                    'projects': [
+                        {
+                            'name': 'Pontoon Intro'
+                        }
+                    ]
+                }
+            }
+        )
 
     def test_projects_localizations(self):
         body = {
@@ -35,14 +41,27 @@ class TestCyclicQueries(TestCase):
             }'''
         }
 
-        response = self.client.get('/graphql', body,
-                                   HTTP_ACCEPT="application/json")
+        response = self.client.get('/graphql', body, HTTP_ACCEPT="application/json")
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
-            force_text(response.content),
-            {'data': {'projects': [
-                {'localizations': [{'locale': {'name': 'English'}}]}]}})
+            response.content,
+            {
+                'data': {
+                    'projects': [
+                        {
+                            'localizations': [
+                                {
+                                    'locale': {
+                                        'name': 'English'
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        )
 
     def test_projects_localizations_cyclic(self):
         body = {
@@ -59,16 +78,10 @@ class TestCyclicQueries(TestCase):
             }'''
         }
 
-        response = self.client.get('/graphql', body,
-                                   HTTP_ACCEPT="application/json")
+        response = self.client.get('/graphql', body, HTTP_ACCEPT="application/json")
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            force_text(response.content),
-            {'data': {'projects': None},
-             'errors': [
-                 {'locations': [{'column': 17, 'line': 2}],
-                  'message': 'Cyclic queries are forbidden'}]})
+        self.assertContains(response, 'Cyclic queries are forbidden')
 
     def test_project_localizations_cyclic(self):
         body = {
@@ -85,16 +98,10 @@ class TestCyclicQueries(TestCase):
             }'''
         }
 
-        response = self.client.get('/graphql', body,
-                                   HTTP_ACCEPT="application/json")
+        response = self.client.get('/graphql', body, HTTP_ACCEPT="application/json")
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            force_text(response.content),
-            {'data': {'project': None},
-             'errors': [
-                 {'locations': [{'column': 17, 'line': 2}],
-                  'message': 'Cyclic queries are forbidden'}]})
+        self.assertContains(response, 'Cyclic queries are forbidden')
 
     def test_locales_localizations_cyclic(self):
         body = {
@@ -111,16 +118,10 @@ class TestCyclicQueries(TestCase):
             }'''
         }
 
-        response = self.client.get('/graphql', body,
-                                   HTTP_ACCEPT="application/json")
+        response = self.client.get('/graphql', body, HTTP_ACCEPT="application/json")
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            force_text(response.content),
-            {'data': {'locales': None},
-             'errors': [
-                 {'locations': [{'column': 17, 'line': 2}],
-                  'message': 'Cyclic queries are forbidden'}]})
+        self.assertContains(response, 'Cyclic queries are forbidden')
 
     def test_locale_localizations_cyclic(self):
         body = {
@@ -137,13 +138,7 @@ class TestCyclicQueries(TestCase):
             }'''
         }
 
-        response = self.client.get('/graphql', body,
-                                   HTTP_ACCEPT="application/json")
+        response = self.client.get('/graphql', body, HTTP_ACCEPT="application/json")
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            force_text(response.content),
-            {'data': {'locale': None},
-             'errors': [
-                 {'locations': [{'column': 17, 'line': 2}],
-                  'message': 'Cyclic queries are forbidden'}]})
+        self.assertContains(response, 'Cyclic queries are forbidden')

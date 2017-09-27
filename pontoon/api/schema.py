@@ -56,7 +56,8 @@ class Locale(DjangoObjectType):
 class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name='__debug')
 
-    projects = graphene.List(Project, with_disabled=graphene.Boolean(False))
+    # include_disabled=True will return both active and disabled projects.
+    projects = graphene.List(Project, include_disabled=graphene.Boolean(False))
     project = graphene.Field(Project, slug=graphene.String())
 
     locales = graphene.List(Locale)
@@ -72,7 +73,7 @@ class Query(graphene.ObjectType):
         if 'projects.localizations.locale.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')
 
-        if args['with_disabled']:
+        if args['include_disabled']:
             return qs.all()
 
         return qs.filter(disabled=False)

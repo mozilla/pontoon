@@ -5,12 +5,18 @@ from pontoon.api.util import get_fields
 
 
 class MockResolveInfo:
+    """Mock of ResolveInfo with data required by get_fields.
+
+    GraphQL passes ResolveInfo objects to resolvers. They include the name of the field being
+    resolved, the query AST, fragments ASTs, the schema, the execution context and others.
+    get_fields uses ResolveInfo to introspect the AST and return a flat list of requested fields.
+    """
     def __init__(self, query, fragments=None):
         self.field_asts = query.selection_set.selections
         self.fragments = fragments
 
 
-def parse(query):
+def parse_graphql_query(query):
     """Return a list of queries and fragments"""
     source = Source(query)
     document = parse_source(source)
@@ -27,7 +33,7 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, = parse(input)
+        query, = parse_graphql_query(input)
         info = MockResolveInfo(query)
 
         self.assertEqual(
@@ -48,7 +54,7 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, = parse(input)
+        query, = parse_graphql_query(input)
         info = MockResolveInfo(query)
 
         self.assertEqual(
@@ -76,7 +82,7 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, frag = parse(input)
+        query, frag = parse_graphql_query(input)
         info = MockResolveInfo(query, {'stats': frag})
 
         self.assertEqual(
@@ -107,7 +113,7 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, = parse(input)
+        query, = parse_graphql_query(input)
         info = MockResolveInfo(query)
 
         self.assertEqual(
@@ -145,7 +151,7 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, frag = parse(input)
+        query, frag = parse_graphql_query(input)
         info = MockResolveInfo(query, {'stats': frag})
 
         self.assertEqual(
@@ -184,7 +190,7 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, frag = parse(input)
+        query, frag = parse_graphql_query(input)
         info = MockResolveInfo(query, {'localizations': frag})
 
         self.assertEqual(
@@ -216,7 +222,7 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query1, query2 = parse(input)
+        query1, query2 = parse_graphql_query(input)
 
         info1 = MockResolveInfo(query1)
         self.assertEqual(
@@ -248,7 +254,7 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, = parse(input)
+        query, = parse_graphql_query(input)
         info = MockResolveInfo(query)
 
         self.assertEqual(
