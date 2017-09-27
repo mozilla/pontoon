@@ -1,5 +1,7 @@
 import os
 import scandir
+import os.path
+from collections import namedtuple
 
 from django_nose.tools import (
     assert_equal,
@@ -130,13 +132,15 @@ class VCSProjectTests(TestCase):
         and skip the resource.
         """
         self.vcs_project.relative_resource_paths = Mock(return_value=['failure', 'success'])
+        MockResource = namedtuple('MockResource', 'unparsed_files')
+        successful_resource = MockResource([])
 
         # Fail only if the path is failure so we can test the ignore.
         def vcs_resource_constructor(project, path, locales=None):
             if path == 'failure':
                 raise ParseError('error message')
             else:
-                return 'successful resource'
+                return successful_resource
 
         changed_vcs_resources = {'success': [], 'failure': []}
         with patch('pontoon.sync.vcs.models.VCSResource') as MockVCSResource, \
@@ -146,8 +150,7 @@ class VCSProjectTests(TestCase):
                 return_value=changed_vcs_resources
         ):
             MockVCSResource.side_effect = vcs_resource_constructor
-
-            assert_equal(self.vcs_project.resources, {'success': 'successful resource'})
+            assert_equal(self.vcs_project.resources, {'success': successful_resource})
             mock_log.error.assert_called_with(CONTAINS('failure', 'error message'))
 
     def test_resource_for_path_region_properties(self):

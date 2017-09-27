@@ -300,6 +300,10 @@ body > header .locale.select {
   color: #3F4752;
 }
 
+.translated .status:before {
+  color: #7BC876;
+}
+
 .suggested .status:before {
   color: #4FC4F6;
 }
@@ -308,8 +312,12 @@ body > header .locale.select {
   color: #FED271;
 }
 
-.translated .status:before {
-  color: #7BC876;
+.errors .status:before {
+  color: #F36;
+}
+
+.warnings .status:before {
+  color: #FF6D33;
 }
 
 .untranslated .status:before {
@@ -407,10 +415,10 @@ body > header .locale.select {
   cursor: auto;
   left: 50%;
   line-height: 18px;
-  margin-left: -180px; /* Must be half the width */
+  margin-left: -240px; /* Must be half the width */
   padding: 0;
   text-align: center;
-  top: 48px;
+  top: 52px;
 }
 
 #progress .menu > div:first-child {
@@ -437,6 +445,14 @@ body > header .locale.select {
   width: 100%;
 }
 
+#progress .menu .details div {
+  width: 79px;
+}
+
+#progress .menu .details div:last-child {
+  width: 80px;
+}
+
 body > header .notification.hide {
   display: none;
 }
@@ -455,7 +471,7 @@ body > header .notification.hide {
 }
 
 body > header .select aside.menu {
-  width: 360px;
+  width: 480px;
 }
 
 body > header aside h2 {
@@ -1115,6 +1131,8 @@ body > header aside p {
 #entitylist > .wrapper > ul > li.translated p span.source-string,
 #entitylist > .wrapper > ul > li.suggested p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
+#entitylist > .wrapper > ul > li.errors p span.source-string,
+#entitylist > .wrapper > ul > li.warnings p span.source-string,
 #entitylist > .wrapper > ul > li.partial p span.source-string,
 #entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {
   display: inline-block;
@@ -1892,8 +1910,20 @@ p#sign-in-required > a#sidebar-signin {
   opacity: 1;
 }
 
+#helpers > section ul li.suggested > header button.approve:before {
+    color: #4FC4F6;
+}
+
 #helpers > section ul li.fuzzy > header button.approve:before {
   color: #FED271;
+}
+
+#helpers > section ul li.errors > header button.approve:before {
+    color: #F36;
+}
+
+#helpers > section ul li.warnings > header button.approve:before {
+    color: #FF6D33;
 }
 
 #helpers > section ul li > header button.approve:hover:before,

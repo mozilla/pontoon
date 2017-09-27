@@ -31,7 +31,7 @@ def sync_log_details(request, sync_log_pk):
     sync_log = get_object_or_404(queryset, pk=sync_log_pk)
     project_sync_logs = sync_log.project_sync_logs.all()
     repository_sync_logs = {
-        project_log: project_log.repository_sync_logs.all()
+        project_log: project_log.repository_sync_logs.prefetch_related('skipped_files')
         for project_log in project_sync_logs
     }
 

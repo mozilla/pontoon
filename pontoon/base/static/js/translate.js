@@ -276,11 +276,11 @@ var Pontoon = (function (my) {
           if (data.length) {
             $.each(data, function(i) {
               var baseString = self.fluent.getSimplePreview(data[0], data[0].string, entity),
-                  translationString = self.fluent.getSimplePreview(this, this.string, entity);
+                  translationString = self.fluent.getSimplePreview(this, this.string, entity),;
 
               list.append(
                 '<li data-id="' + this.pk + '" class="suggestion ' +
-                (this.approved ? 'translated' : this.rejected ? 'rejected' : this.fuzzy ? 'fuzzy' : 'suggested') +
+                (this.approved ? 'translated' : this.fuzzy ? 'fuzzy' : this.errors ? 'errors' : this.warnings ? 'warnings' :'suggested') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
                     ((self.user.canTranslate()) ? ' translator' :
@@ -1372,7 +1372,7 @@ var Pontoon = (function (my) {
         } else if (el.hasClass('author')) {
           updateFilterValue('author');
 
-        } else if (isExtraFilter(el)) {
+        } else if (el.hasClass('untranslated') || el.hasClass('unchanged') || el.hasClass('has-suggestions')) {
           // Special case: Untranslated filter is a union of missing, fuzzy, and suggested
           if (value === 'untranslated') {
             if (self.untranslatedFilterApplied(filter.status)) {

@@ -34,6 +34,8 @@ class LocaleProjectTests(ViewTestCase):
                     'approved_strings': 0,
                     'translated_strings': 1,
                     'fuzzy_strings': 0,
+                    'errors': 0,
+                    'warnings': 0
                 },
                 {
                     'title': 'no/stats.po',
@@ -42,6 +44,8 @@ class LocaleProjectTests(ViewTestCase):
                     'approved_strings': 0,
                     'translated_strings': 0,
                     'fuzzy_strings': 0,
+                    'errors': 0,
+                    'warnings': 0
                 }
             ]
             views.ajax_resources(
@@ -59,7 +63,11 @@ class LocaleProjectTests(ViewTestCase):
                     'approved_strings': 0,
                     'translated_strings': 1,
                     'fuzzy_strings': 0,
+                    'errors': 0,
+                    'warnings': 0,
                     'chart': {
+                        'errors': 0,
+                        'warnings': 0,
                         'fuzzy_strings': 0,
                         'total_strings': 1,
                         'approved_strings': 0,
@@ -67,6 +75,8 @@ class LocaleProjectTests(ViewTestCase):
                         'approved_share': 0.0,
                         'translated_share': 100.0,
                         'fuzzy_share': 0.0,
+                        'errors_share': 0.0,
+                        'warnings_share': 0.0,
                         'approved_percent': 0
                     }
                 },
@@ -78,13 +88,19 @@ class LocaleProjectTests(ViewTestCase):
                     'approved_strings': 0,
                     'translated_strings': 0,
                     'fuzzy_strings': 0,
+                    'errors': 0,
+                    'warnings': 0,
                     'chart': {
+                        'errors': 0,
+                        'warnings': 0,
                         'fuzzy_strings': 0,
                         'total_strings': 1,
                         'approved_strings': 0,
                         'translated_strings': 0,
                         'approved_share': 0.0,
                         'translated_share': 0.0,
+                        'errors_share': 0.0,
+                        'warnings_share': 0.0,
                         'fuzzy_share': 0.0,
                         'approved_percent': 0
                     }

@@ -13,7 +13,6 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 
 from pontoon.base import MOZILLA_REPOS
-from pontoon.sync.exceptions import ParseError
 from pontoon.sync.utils import (
     is_hidden,
     is_resource,
@@ -94,6 +93,7 @@ class VCSProject(object):
         self.new_paths = new_paths or []
         self.full_scan = full_scan
         self.synced_locales = set()
+        self.unparsed_files = {}
 
     @cached_property
     def changed_files(self):
@@ -345,8 +345,11 @@ class VCSProject(object):
             )
 
             try:
-                resources[path] = VCSResource(self, path, locales=locales)
-            except ParseError as err:
+                res = VCSResource(self, path, locales=locales)
+                self.unparsed_files.update(res.unparsed_files)
+                resources[path] = res
+            except Exception as err:
+                self.unparsed_files[path] = err
                 log.error('Skipping resource {path} due to ParseError: {err}'.format(
                     path=path, err=err
                 ))
@@ -445,6 +448,7 @@ class VCSResource(object):
         self.locales = locales or []
         self.files = {}
         self.entities = {}
+        self.unparsed_files = {}
 
         # Create entities using resources from the source directory,
         source_resource_path = os.path.join(vcs_project.source_directory_path, self.path)
@@ -466,6 +470,7 @@ class VCSResource(object):
             )
             self.entities[vcs_entity.key] = vcs_entity
 
+
         # Fill in translations from the locale resources.
         for locale in locales:
             locale_directory = self.vcs_project.locale_directory_paths[locale.code]
@@ -475,8 +480,11 @@ class VCSResource(object):
 
             try:
                 resource_file = formats.parse(resource_path, source_resource_path, locale)
-            except (IOError, ParseError):
-                continue  # File doesn't exist or is invalid, let's move on
+            except Exception as err:
+                log.error("Can't parse file: %s because of: %s", resource_path, err)
+                unparsed_file_path = resource_path.rsplit(self.vcs_project.checkout_path)[-1]
+                self.unparsed_files[unparsed_file_path] = err
+                continue  # File doesn't exist or is invalid, let's log it and move on
 
             self.files[locale] = resource_file
 
@@ -494,6 +502,7 @@ class VCSResource(object):
         """
         Save changes made to any of the translations in this resource
         back to the filesystem for all locales.
+
         """
         if locale:
             self.files[locale].save(locale)

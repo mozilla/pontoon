@@ -490,14 +490,14 @@ class UserTranslationManagerTests(TestCase):
 
         assert_equal(len(top_contributors), 100)
 
-    def create_contributor_with_translation_counts(self, approved=0, unapproved=0, needs_work=0, **kwargs):
+    def create_contributor_with_translation_counts(self, approved=0, unapproved=0, fuzzy=0, **kwargs):
         """
         Helper method, creates contributor with given translations counts.
         """
         contributor = UserFactory.create()
         TranslationFactory.create_batch(approved, user=contributor, approved=True, **kwargs)
         TranslationFactory.create_batch(unapproved, user=contributor, approved=False, fuzzy=False, **kwargs)
-        TranslationFactory.create_batch(needs_work, user=contributor, fuzzy=True, **kwargs)
+        TranslationFactory.create_batch(fuzzy, user=contributor, fuzzy=True, **kwargs)
         return contributor
 
     def test_translation_counts(self):
@@ -506,9 +506,9 @@ class UserTranslationManagerTests(TestCase):
         Tests creates 3 contributors with different numbers translations and checks if their counts match.
         """
 
-        first_contributor = self.create_contributor_with_translation_counts(approved=7, unapproved=3, needs_work=2)
-        second_contributor = self.create_contributor_with_translation_counts(approved=5, unapproved=9, needs_work=2)
-        third_contributor = self.create_contributor_with_translation_counts(approved=1, unapproved=2, needs_work=5)
+        first_contributor = self.create_contributor_with_translation_counts(approved=7, unapproved=3, fuzzy=2)
+        second_contributor = self.create_contributor_with_translation_counts(approved=5, unapproved=9, fuzzy=2)
+        third_contributor = self.create_contributor_with_translation_counts(approved=1, unapproved=2, fuzzy=5)
 
         top_contributors = User.translators.with_translation_counts()
         assert_equal(len(top_contributors), 3)
@@ -533,11 +533,11 @@ class UserTranslationManagerTests(TestCase):
         Test creates 2 contributors with different activity periods and checks if they are filtered properly.
         """
 
-        first_contributor = self.create_contributor_with_translation_counts(approved=12, unapproved=1, needs_work=2,
+        first_contributor = self.create_contributor_with_translation_counts(approved=12, unapproved=1, fuzzy=2,
             date=aware_datetime(2015, 3, 2))
 
         # Second contributor
-        self.create_contributor_with_translation_counts(approved=2, unapproved=11, needs_work=2,
+        self.create_contributor_with_translation_counts(approved=2, unapproved=11, fuzzy=2,
             date=aware_datetime(2015, 6, 1))
 
         TranslationFactory.create_batch(5, approved=True, user=first_contributor, date=aware_datetime(2015, 7, 2))
@@ -576,11 +576,11 @@ class UserTranslationManagerTests(TestCase):
         locale_first, locale_second = LocaleFactory.create_batch(2)
 
         first_contributor = self.create_contributor_with_translation_counts(
-            approved=12, unapproved=1, needs_work=2, locale=locale_first)
+            approved=12, unapproved=1, fuzzy=2, locale=locale_first)
         second_contributor = self.create_contributor_with_translation_counts(
-            approved=11, unapproved=1, needs_work=2, locale=locale_second)
+            approved=11, unapproved=1, fuzzy=2, locale=locale_second)
         third_contributor = self.create_contributor_with_translation_counts(
-            approved=10, unapproved=12, needs_work=2, locale=locale_first)
+            approved=10, unapproved=12, fuzzy=2, locale=locale_first)
 
         # Testing filtering for the first locale
         top_contributors = User.translators.with_translation_counts(aware_datetime(2015, 1, 1), Q(locale=locale_first))
@@ -707,13 +707,19 @@ class EntityTests(TestCase):
                 'fuzzy': False,
                 'string': 'Translated String',
                 'approved': False,
-                'rejected': False
+                'rejected': False,
+                'approved': False,
+                'errors': [],
+                'warnings': [],
             }, {
                 'pk': self.main_translation_plural.pk,
                 'fuzzy': False,
                 'string': 'Translated Plural String',
                 'approved': False,
-                'rejected': False
+                'rejected': False,
+                'approved': False,
+                'errors': [],
+                'warnings': [],
             }],
             'order': 0,
             'source': [],

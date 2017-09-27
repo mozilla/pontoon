@@ -55,6 +55,11 @@
                       {{ detail_item('Start', repo_log.start_time|format_datetime('time'), class='start-time') }}
                       {{ detail_item('End', repo_log.end_time|format_datetime('time'), class='end-time') }}
                       {{ detail_item('Duration', repo_log.duration|format_timedelta, class='duration') }}
+		      <ul>
+		      {% for skipped_file in repo_log.skipped_files.all() %}
+		      	<li>{{ skipped_file.path }} - {{ skipped_file.error_message }}</li>
+		      {% endfor %}
+		      </ul>
                     {% endcall %}
                   </td>
                 </tr>

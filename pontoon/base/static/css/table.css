@@ -227,6 +227,14 @@ table.table {
   background: #FED271;
 }
 
+.table .progress .chart-wrapper .errors {
+  background: #F36;
+}
+
+.table .progress .chart-wrapper .warnings {
+  background: #FF6D33;
+}
+
 .table .progress .chart-wrapper .missing {
   background: #637283;
 }
@@ -279,6 +287,14 @@ table.table {
 
 .table .progress .legend li.fuzzy .title {
   color: #FED271;
+}
+
+.table .progress .legend li.errors .title {
+  color: #F36;
+}
+
+.table .progress .legend li.warnings .title {
+  color: #FF6D33;
 }
 
 .table .progress .legend li.missing .title {

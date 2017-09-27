@@ -8,7 +8,6 @@ from django.utils import timezone
 import polib
 
 from pontoon.sync import KEY_SEPARATOR
-from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.models import VCSTranslation
 
@@ -105,9 +104,5 @@ class POResource(ParsedResource):
 
 
 def parse(path, source_path=None, locale=None):
-    try:
-        pofile = polib.pofile(path, wrapwidth=200)
-    except IOError as err:
-        raise ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
-
+    pofile = polib.pofile(path, wrapwidth=200)
     return POResource(pofile)

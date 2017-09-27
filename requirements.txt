@@ -172,3 +172,7 @@ setuptools==36.2.4 \
     --hash=sha256:88355a63434a5e3c8e1dfb26a2227744512958434c7332c7a4a8847f128f364e
 webencodings==0.5.1 \
     --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78
+https://github.com/pike/compare-locales/archive/dcff2dd18b.zip#egg=compare-locales==2.1 \
+    --hash=sha256:b1df03188eef4c2affdf7ebd12ee48ea4eedb385370605f14770ab4c615fcb2c
+https://pypi.python.org/packages/6d/2a/c5a0eb781cff59df8613a531f07f9d82bb47ea595aa91c6f114f1621a94a/pytoml-0.1.14.tar.gz#egg=pytoml==0.1.14 \
+    --hash=sha256:aff69147d436c3ba8c7f3bc1b3f4aa3d7e47d305a495f2631872e6429694aabf

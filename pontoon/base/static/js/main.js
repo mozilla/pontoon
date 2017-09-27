@@ -633,6 +633,8 @@ $(function() {
             '<div class="translated">Translated<span></span></div>' +
             '<div class="suggested">Suggested<span></span></div>' +
             '<div class="fuzzy">Fuzzy<span></span></div>' +
+            '<div class="errors">Errors<span></span></div>' +
+            '<div class="warnings">Warnings<span></span></div>' +
             '<div class="missing">Missing<span></span></div>' +
           '</aside>');
       }
@@ -650,6 +652,8 @@ $(function() {
         .find('.translated span').html(data.approved_strings).end()
         .find('.suggested span').html(data.translated_strings).end()
         .find('.fuzzy span').html(data.fuzzy_strings).end()
+        .find('.errors span').html(data.errors).end()
+        .find('.warnings span').html(data.warnings).end()
         .find('.missing span').html(untranslated_strings).end()
         .css('left', left)
         .css('top', top)

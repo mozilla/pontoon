@@ -132,6 +132,7 @@ class LocaleFactory(DjangoModelFactory):
 class EntityFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
     string = Sequence(lambda n: 'string {0}'.format(n))
+    key = Sequence(lambda n: 'key-{0}'.format(n))
 
     class Meta:
         model = Entity

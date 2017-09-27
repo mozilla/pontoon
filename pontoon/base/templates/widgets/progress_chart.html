@@ -6,6 +6,8 @@
       <span class="translated" style="width:{{ chart.approved_share }}%;"></span>
       <span class="suggested" style="width:{{ chart.translated_share }}%;"></span>
       <span class="fuzzy" style="width:{{ chart.fuzzy_share }}%;"></span>
+      <span class="errors" style="width:{{ chart.errors_share }}%;"></span>
+      <span class="warnings" style="width:{{ chart.warnings_share }}%;"></span>
       <span class="missing" style="width:{{ 100 - chart.approved_share - chart.translated_share - chart.fuzzy_share }}%;"></span>
     </span>
   </div>
@@ -27,6 +29,18 @@
         <a href="{{ link }}{% if link_parameter %}?status=fuzzy{% endif %}">
           <div class="title">Fuzzy</div>
           <div class="value" data-value="{{ chart.fuzzy_strings }}">{{ chart.fuzzy_strings|intcomma }}</div>
+        </a>
+      </li>
+      <li class="warnings">
+        <a href="{{ link }}{% if link_parameter %}?status=warnings{% endif %}">
+          <div class="title">Warnings</div>
+          <div class="value" data-value="{{ chart.warnings }}">{{ chart.warnings|intcomma }}</div>
+        </a>
+      </li>
+      <li class="errors">
+        <a href="{{ link }}{% if link_parameter %}?status=errors{% endif %}">
+          <div class="title">Errors</div>
+          <div class="value" data-value="{{ chart.errors }}">{{ chart.errors|intcomma }}</div>
         </a>
       </li>
       <li class="missing">

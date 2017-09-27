@@ -101,14 +101,35 @@ ul {
   float: right;
 }
 
+#heading .legend ul {
+  width: 165px;
+}
+
+#heading .legend ul.top {
+  width: 100%;
+}
+
+#heading .legend ul.left {
+  float: left;
+}
+
+#heading .legend ul.right {
+  float: right;
+}
+
+#heading .legend ul.bottom {
+  padding-right: 10px;
+}
+
 #heading .legend li {
   color: #AAAAAA;
-  padding-left: 25px;
+  padding-left: 20px;
   position: relative;
   text-align: left;
   text-transform: uppercase;
 }
 
+#heading .legend li.all,
 #heading .legend li.banner {
   padding: 0;
 }
