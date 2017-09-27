@@ -11,23 +11,27 @@ from pontoon.base.models import (
 )
 
 
-class ProjectLocale(DjangoObjectType):
+class Stats(graphene.AbstractType):
+    missing_strings = graphene.Int()
+    complete = graphene.Boolean()
+
+
+class ProjectLocale(DjangoObjectType, Stats):
     class Meta:
         model = ProjectLocaleModel
         only_fields = (
             'total_strings', 'approved_strings', 'translated_strings',
-            'fuzzy_strings', 'missing_strings', 'complete', 'project', 'locale'
+            'fuzzy_strings', 'project', 'locale'
         )
 
 
-class Project(DjangoObjectType):
+class Project(DjangoObjectType, Stats):
     class Meta:
         model = ProjectModel
         only_fields = (
             'name', 'slug', 'disabled', 'info', 'deadline', 'priority',
             'contact', 'total_strings', 'approved_strings',
-            'translated_strings', 'fuzzy_strings', 'missing_strings',
-            'complete'
+            'translated_strings', 'fuzzy_strings'
         )
 
     localizations = graphene.List(ProjectLocale)
@@ -37,13 +41,13 @@ class Project(DjangoObjectType):
         return obj.project_locale.all()
 
 
-class Locale(DjangoObjectType):
+class Locale(DjangoObjectType, Stats):
     class Meta:
         model = LocaleModel
         only_fields = (
             'name', 'code', 'direction', 'script', 'population',
             'total_strings', 'approved_strings', 'translated_strings',
-            'fuzzy_strings', 'missing_strings', 'complete'
+            'fuzzy_strings'
         )
 
     localizations = graphene.List(ProjectLocale)
