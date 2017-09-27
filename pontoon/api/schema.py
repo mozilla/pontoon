@@ -2,9 +2,9 @@ import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.debug import DjangoDebug
 
-from .util import get_fields
+from pontoon.api.util import get_fields
 
-from ..base.models import (
+from pontoon.base.models import (
     Project as ProjectModel,
     Locale as LocaleModel,
     ProjectLocale as ProjectLocaleModel

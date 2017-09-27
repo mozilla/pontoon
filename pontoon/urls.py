@@ -3,7 +3,6 @@ from django.contrib import admin
 from django.contrib.auth.views import logout
 from django.views.generic import RedirectView, TemplateView
 
-from pontoon.settings.base import DEV
 from pontoon.base.views import heroku_setup
 from pontoon.intro.views import intro
 from pontoon.teams.views import team
