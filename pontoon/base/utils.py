@@ -82,7 +82,10 @@ class SpacesPlaceable(base.Ph):
 class PythonFormatNamedPlaceable(base.Ph):
     """Placeable handling named format string in python"""
     istranslatable = False
-    regex = re.compile(r'%\([[\w\d\!\.,\[\]%:$<>\+\-= ]*\)[+|-|0\d+|#]?[\.\d+]?[s|d|e|f|g|o|x|c|%]', re.IGNORECASE)
+    regex = re.compile(
+        r'%\([[\w\d\!\.,\[\]%:$<>\+\-= ]*\)[+|-|0\d+|#]?[\.\d+]?[s|d|e|f|g|o|x|c|%]',
+        re.IGNORECASE
+    )
     parse = classmethod(general.regex_parse)
 
 
@@ -601,7 +604,8 @@ def convert_to_unix_time(my_datetime):
 
 def build_translation_memory_file(creation_date, locale_code, entries):
     """
-    TMX files will contain large amount of entries and it's impossible to render all the data with django templates.
+    TMX files will contain large amount of entries and it's impossible to render all the data with
+    django templates.
     Rendering of string in memory is a lot faster.
     :param datetime creation_date: when TMX file is being created.
     :param str locale_code: code of a locale

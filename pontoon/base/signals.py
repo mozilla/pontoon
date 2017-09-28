@@ -138,7 +138,9 @@ def assign_locale_group_permissions(sender, **kwargs):
 
     try:
         assign_group_permissions(instance, 'translators', ['can_translate_locale'])
-        assign_group_permissions(instance, 'managers', ['can_translate_locale', 'can_manage_locale'])
+        assign_group_permissions(
+            instance, 'managers', ['can_translate_locale', 'can_manage_locale']
+        )
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
 

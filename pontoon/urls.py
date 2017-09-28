@@ -7,7 +7,11 @@ from pontoon.base.views import heroku_setup
 from pontoon.intro.views import intro
 from pontoon.teams.views import team
 
-pontoon_js_view = TemplateView.as_view(template_name='js/pontoon.js', content_type='text/javascript')
+
+pontoon_js_view = TemplateView.as_view(
+    template_name='js/pontoon.js', content_type='text/javascript'
+)
+
 
 urlpatterns = [
     # Legacy: Locale redirect for compatibility with i18n ready URL scheme
@@ -18,16 +22,46 @@ urlpatterns = [
     url(r'^pt/(?P<url>.*)$', RedirectView.as_view(url="/pt-PT/%(url)s", permanent=True)),
 
     # Redirect legacy Aurora projects
-    url(r'^projects/firefox-aurora/(?P<url>.*)$', RedirectView.as_view(url="/projects/firefox/%(url)s", permanent=True)),
-    url(r'^projects/firefox-for-android-aurora/(?P<url>.*)$', RedirectView.as_view(url="/projects/firefox-for-android/%(url)s", permanent=True)),
-    url(r'^projects/thunderbird-aurora/(?P<url>.*)$', RedirectView.as_view(url="/projects/thunderbird/%(url)s", permanent=True)),
-    url(r'^projects/lightning-aurora/(?P<url>.*)$', RedirectView.as_view(url="/projects/lightning/%(url)s", permanent=True)),
-    url(r'^projects/seamonkey-aurora/(?P<url>.*)$', RedirectView.as_view(url="/projects/seamonkey/%(url)s", permanent=True)),
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/firefox-aurora/(?P<url>.*)$', RedirectView.as_view(url="/%(locale)s/firefox/%(url)s", permanent=True)),
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/firefox-for-android-aurora/(?P<url>.*)$', RedirectView.as_view(url="/%(locale)s/firefox-for-android/%(url)s", permanent=True)),
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/thunderbird-aurora/(?P<url>.*)$', RedirectView.as_view(url="/%(locale)s/thunderbird/%(url)s", permanent=True)),
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/lightning-aurora/(?P<url>.*)$', RedirectView.as_view(url="/%(locale)s/lightning/%(url)s", permanent=True)),
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/seamonkey-aurora/(?P<url>.*)$', RedirectView.as_view(url="/%(locale)s/seamonkey/%(url)s", permanent=True)),
+    url(
+        r'^projects/firefox-aurora/(?P<url>.*)$',
+        RedirectView.as_view(url="/projects/firefox/%(url)s", permanent=True)
+    ),
+    url(
+        r'^projects/firefox-for-android-aurora/(?P<url>.*)$',
+        RedirectView.as_view(url="/projects/firefox-for-android/%(url)s", permanent=True)
+    ),
+    url(
+        r'^projects/thunderbird-aurora/(?P<url>.*)$',
+        RedirectView.as_view(url="/projects/thunderbird/%(url)s", permanent=True)
+    ),
+    url(
+        r'^projects/lightning-aurora/(?P<url>.*)$',
+        RedirectView.as_view(url="/projects/lightning/%(url)s", permanent=True)
+    ),
+    url(
+        r'^projects/seamonkey-aurora/(?P<url>.*)$',
+        RedirectView.as_view(url="/projects/seamonkey/%(url)s", permanent=True)
+    ),
+    url(
+        r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/firefox-aurora/(?P<url>.*)$',
+        RedirectView.as_view(url="/%(locale)s/firefox/%(url)s", permanent=True)
+    ),
+    url(
+        r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/firefox-for-android-aurora/(?P<url>.*)$',
+        RedirectView.as_view(url="/%(locale)s/firefox-for-android/%(url)s", permanent=True)
+    ),
+    url(
+        r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/thunderbird-aurora/(?P<url>.*)$',
+        RedirectView.as_view(url="/%(locale)s/thunderbird/%(url)s", permanent=True)
+    ),
+    url(
+        r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/lightning-aurora/(?P<url>.*)$',
+        RedirectView.as_view(url="/%(locale)s/lightning/%(url)s", permanent=True)
+    ),
+    url(
+        r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/seamonkey-aurora/(?P<url>.*)$',
+        RedirectView.as_view(url="/%(locale)s/seamonkey/%(url)s", permanent=True)
+    ),
 
     # Accounts
     url(r'^accounts/', include('pontoon.allauth_urls')),
@@ -50,14 +84,22 @@ urlpatterns = [
     url(r'^500/$', TemplateView.as_view(template_name='500.html')),
 
     # Urls related to integration with Heroku
-    url(r'^heroku-setup/', heroku_setup,
-        name='pontoon.heroku_setup'),
+    url(
+        r'^heroku-setup/', heroku_setup,
+        name='pontoon.heroku_setup'
+    ),
 
     # Robots.txt
-    url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
+    url(
+        r'^robots.txt$',
+        TemplateView.as_view(template_name='robots.txt', content_type='text/plain')
+    ),
 
     # contribute.json
-    url(r'^contribute.json$', TemplateView.as_view(template_name='contribute.json', content_type='text/plain')),
+    url(
+        r'^contribute.json$',
+        TemplateView.as_view(template_name='contribute.json', content_type='text/plain')
+    ),
 
     # Favicon
     url(r'^favicon\.ico$', RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),

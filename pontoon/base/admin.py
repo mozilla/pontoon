@@ -68,7 +68,9 @@ class LocaleAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(LocaleAdminForm, self).__init__(*args, **kwargs)
         self.fields['db_collation'].choices = self.db_collations_choices
-        self.fields['db_collation'].help_text = self._meta.model._meta.get_field('db_collation').help_text
+        self.fields['db_collation'].help_text = (
+            self._meta.model._meta.get_field('db_collation').help_text
+        )
 
 
 class LocaleAdmin(admin.ModelAdmin):

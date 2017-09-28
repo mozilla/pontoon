@@ -634,8 +634,9 @@ class Locale(AggregatedStats):
         max_length=11,
         validators=[validate_cldr],
         help_text="""
-        A comma separated list of <a href="http://www.unicode.org/cldr/charts/dev/supplemental/language_plural_rules.html">CLDR plural rules</a>,
-        where 0 represents zero, 1 one, 2 two, 3 few, 4 many, and 5 other.
+        A comma separated list of
+        <a href="http://www.unicode.org/cldr/charts/dev/supplemental/language_plural_rules.html">
+        CLDR plural rules</a>, where 0 represents zero, 1 one, 2 two, 3 few, 4 many, and 5 other.
         E.g. 1,5
         """
     )
@@ -645,7 +646,9 @@ class Locale(AggregatedStats):
         default='Latin',
         help_text="""
         The script used by this locale. Find it in
-        <a href="http://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html">CLDR Languages and Scripts</a>.
+        <a
+        href="http://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html">
+        CLDR Languages and Scripts</a>.
         """
     )
 
@@ -661,15 +664,16 @@ class Locale(AggregatedStats):
         help_text="""
         Writing direction of the script. Set to "right-to-left" if "rtl" value
         for the locale script is set to "YES" in
-        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/scriptMetadata.json">CLDR scriptMetadata.json</a>.
+        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/scriptMetadata.json">
+        CLDR scriptMetadata.json</a>.
         """
     )
 
     population = models.PositiveIntegerField(
         default=0,
         help_text="""
-        Number of native speakers. Find locale code in
-        <a href="https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/territoryInfo.json">CLDR territoryInfo.json</a>
+        Number of native speakers. Find locale code in CLDR territoryInfo.json:
+        https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/territoryInfo.json
         and multiply its "_populationPercent" with the territory "_population".
         Repeat if multiple occurrences of locale code exist and sum products.
         """
@@ -748,9 +752,11 @@ class Locale(AggregatedStats):
             id  - id of project locale
             slug - slug of the project
             name - name of the project
-            all_users - (id, first_name, email) users that aren't translators of given project locale.
+            all_users - (id, first_name, email) users that aren't translators of given project
+                locale.
             translators - (id, first_name, email) translators assigned to a project locale.
-            contributors - (id, first_name, email) people who contributed for a project in current locale.
+            contributors - (id, first_name, email) people who contributed for a project in
+                current locale.
             has_custom_translators - Flag if locale has a translators group for the project.
         """
         locale_projects = []
@@ -780,12 +786,17 @@ class Locale(AggregatedStats):
         )
 
         projects_translators = create_users_map(
-            User.objects
-                .filter(groups__pk__in=[project_locale['translators_group__pk'] for project_locale in project_locales])
+            (
+                User.objects
+                .filter(groups__pk__in=[
+                    project_locale['translators_group__pk']
+                    for project_locale in project_locales
+                ])
                 .exclude(email='')
                 .prefetch_related('groups')
                 .values('id', 'first_name', 'email', 'groups__pk')
-                .distinct(),
+                .distinct()
+            ),
             'groups__pk'
         )
 
@@ -905,8 +916,12 @@ class Locale(AggregatedStats):
                         resource__path=F('project__resources__path'),
                         resource__total_strings=F('project__resources__total_strings'),
                         fuzzy_strings=F('project__resources__translatedresources__fuzzy_strings'),
-                        translated_strings=F('project__resources__translatedresources__translated_strings'),
-                        approved_strings=F('project__resources__translatedresources__approved_strings')
+                        translated_strings=F(
+                            'project__resources__translatedresources__translated_strings'
+                        ),
+                        approved_strings=F(
+                            'project__resources__translatedresources__approved_strings'
+                        )
                     )
                 )
 
@@ -1302,7 +1317,9 @@ class ProjectLocale(AggregatedStats):
         else:
             project = self if isinstance(self, Project) else extra
             locale = self if isinstance(self, Locale) else extra
-            project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
+            project_locale = utils.get_object_or_none(
+                ProjectLocale, project=project, locale=locale
+            )
 
             if project_locale is not None:
                 latest_translation = project_locale.latest_translation
@@ -1331,7 +1348,9 @@ class ProjectLocale(AggregatedStats):
         else:
             project = self if isinstance(self, Project) else extra
             locale = self if isinstance(self, Locale) else extra
-            project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
+            project_locale = utils.get_object_or_none(
+                ProjectLocale, project=project, locale=locale
+            )
 
             if project_locale is not None:
                 chart = cls.get_chart_dict(project_locale)
@@ -1350,7 +1369,9 @@ class ProjectLocale(AggregatedStats):
                 'approved_share': round(obj.approved_strings / obj.total_strings * 100),
                 'translated_share': round(obj.translated_strings / obj.total_strings * 100),
                 'fuzzy_share': round(obj.fuzzy_strings / obj.total_strings * 100),
-                'approved_percent': int(math.floor(obj.approved_strings / obj.total_strings * 100)),
+                'approved_percent': int(
+                    math.floor(obj.approved_strings / obj.total_strings * 100)
+                ),
             }
 
     def aggregate_stats(self):
@@ -1723,14 +1744,22 @@ class EntityQuerySet(models.QuerySet):
             approved_count=Sum(
                 Case(
                     When(
-                        Q(translation__approved=True, translation__fuzzy=False, translation__locale=locale), then=1
+                        Q(
+                            translation__approved=True,
+                            translation__fuzzy=False,
+                            translation__locale=locale
+                        ), then=1
                     ), output_field=models.IntegerField(), default=0
                 )
             ),
             fuzzy_count=Sum(
                 Case(
                     When(
-                        Q(translation__fuzzy=True, translation__approved=False, translation__locale=locale), then=1
+                        Q(
+                            translation__fuzzy=True,
+                            translation__approved=False,
+                            translation__locale=locale
+                        ), then=1
                     ), output_field=models.IntegerField(), default=0
                 )
             ),
@@ -1787,8 +1816,12 @@ class EntityQuerySet(models.QuerySet):
                 Case(
                     When(
                         Q(translation__locale=locale, translation__string=F('string')) |
-                        Q(translation__locale=locale, translation__plural_form__gt=-1,
-                          translation__plural_form__isnull=False, translation__string=F('string_plural')), then=1
+                        Q(
+                            translation__locale=locale,
+                            translation__plural_form__gt=-1,
+                            translation__plural_form__isnull=False,
+                            translation__string=F('string_plural')
+                        ), then=1
                     ), output_field=models.IntegerField(), default=0
                 )
             )
@@ -1801,7 +1834,11 @@ class EntityQuerySet(models.QuerySet):
             )
             return Q(pk__in=missing)
 
-        return Q(approved_count__lt=F('expected_count')) & Q(fuzzy_count__lt=F('expected_count')) & Q(suggested_count__lt=F('expected_count'))
+        return (
+            Q(approved_count__lt=F('expected_count')) &
+            Q(fuzzy_count__lt=F('expected_count')) &
+            Q(suggested_count__lt=F('expected_count'))
+        )
 
     def fuzzy(self, locale, no_plurals):
         if no_plurals:
@@ -1820,7 +1857,11 @@ class EntityQuerySet(models.QuerySet):
             ).values('entity')
             return ~Q(pk__in=missing) & ~Q(pk__in=approved_fuzzy)
 
-        return Q(suggested_count__gt=0) & ~Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
+        return (
+            Q(suggested_count__gt=0) &
+            ~Q(fuzzy_count=F('expected_count')) &
+            ~Q(approved_count=F('expected_count'))
+        )
 
     def translated(self, locale, no_plurals):
         if no_plurals:
@@ -2339,7 +2380,9 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         if not imported:
             # Update stats AFTER changing approval status.
-            translatedresource, _ = TranslatedResource.objects.get_or_create(resource=self.entity.resource, locale=self.locale)
+            translatedresource, _ = TranslatedResource.objects.get_or_create(
+                resource=self.entity.resource, locale=self.locale
+            )
             translatedresource.calculate_stats()
 
             # Whenever a translation changes, mark the entity as having
