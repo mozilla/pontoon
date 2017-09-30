@@ -1,7 +1,7 @@
 $(function() {
 
-  var username = $('#profile-username');
-  var email = $('#profile-email');
+  var username = $.trim($('#profile-username').val());
+  var email = $.trim($('#profile-email').val());
 
   // Save user profile handler
   function save() {
@@ -32,13 +32,7 @@ $(function() {
   $('.submit').click(function() {
     save();
   });
-  username.keydown(function(e) {
-    if (e.which === 13) {
-      e.preventDefault();
-      save();
-    }
-  });
-  email.keydown(function(e) {
+  $('#profile-form').on('keydown', function(e){
     if (e.which === 13) {
       e.preventDefault();
       save();
