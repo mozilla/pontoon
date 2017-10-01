@@ -37,8 +37,8 @@ py-bcrypt==0.3 \
     --hash=sha256:af12f99454e895e9e430c75723c3b9419c0bccd0ea77803662d6a9ac56f6425b
 pyasn1==0.1.7 \
     --hash=sha256:e4f81d53c533f6bd9526b047f047f7b101c24ab17339c1a7ad8f98b25c101eab
-https://github.com/projectfluent/python-fluent/archive/fca7345.zip#egg=fluent==0.4.1 \
-    --hash=sha256:55a8f3749282b943500cbde13dcbab5048a14d1d0b49a28a04c68c024712c519
+https://github.com/projectfluent/python-fluent/archive/c7819dd.zip#egg=fluent==0.4.2 \
+    --hash=sha256:3d479bf226ebeaa5419842cd58c9324217fb1600b2cf94c62b339775a8ace14d
 requests==2.6.2 \
     --hash=sha256:8f0f56813f82d0c27d9578221268ac9af48f076c71ee69693305ceca6ca355bd \
     --hash=sha256:0577249d4b6c4b11fd97c28037e98664bfaa0559022fee7bcef6b752a106e505
