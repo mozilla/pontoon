@@ -44,7 +44,7 @@ from pontoon.sync import KEY_SEPARATOR
 log = logging.getLogger(__name__)
 
 
-def combine_entity_filters(filter_choices, filters, *args):
+def combine_entity_filters(entities, filter_choices, filters, *args):
     """Return a combination of filters to apply to an Entity object.
 
     The content for each filter is defined in the EntityQuerySet helper class, using methods
@@ -63,7 +63,7 @@ def combine_entity_filters(filter_choices, filters, *args):
 
     filters = [Q()]
     for filter_name in sanitized_filters:
-        filters.append(getattr(Entity.objects, filter_name.replace('-', '_'))(*args))
+        filters.append(getattr(entities, filter_name.replace('-', '_'))(*args))
 
     # Combine all generated filters with an OR operator.
     # `operator.ior` is the pipe (|) Python operator, which turns into a logical OR
@@ -1700,159 +1700,122 @@ class Subpage(models.Model):
 
 
 class EntityQuerySet(models.QuerySet):
-    """
-    Queryset provides a set of additional methods that should allow us to filter entities.
-    """
+    def get_filtered_entities(self, locale, query, rule):
+        """Return a QuerySet of values of entity PKs matching the locale, query and rule.
 
-    def with_status_counts(self, locale):
+        Filter entities that match the given filter provided by the `locale` and `query`
+        parameteres. For performance reasons the `rule` parameter is also provided to filter
+        entities in python instead of the DB.
+
+        :arg Locale locale: a Locale object to get translations for
+        :arg Q query: a django ORM Q() object describing translations to filter
+        :arg function rule: a lambda function implementing the `query` logic
+
+        :returns: a QuerySet of values of entity PKs
         """
-        Helper method that returns a set with annotation of following fields:
-            * approved_count - a number of approved translations in the entity.
-            * fuzzy_count - a number of fuzzy translations in the entity.
-            * suggested_count - a number of suggested translations in the
-              entity.
-            * unreviewed_count - a number of translations in the entity that
-              have not yet been approved or rejected.
-            * rejected_count - a number of rejected translations in the entity.
-            * expected_count - a number of translations that should cover
-              entity.
-            * unchanged_count - a number of translations that have the same
-              string as the entity.
-        """
-        return self.annotate(
-            approved_count=Sum(
-                Case(
-                    When(
-                        Q(translation__approved=True, translation__fuzzy=False, translation__locale=locale), then=1
-                    ), output_field=models.IntegerField(), default=0
-                )
-            ),
-            fuzzy_count=Sum(
-                Case(
-                    When(
-                        Q(translation__fuzzy=True, translation__approved=False, translation__locale=locale), then=1
-                    ), output_field=models.IntegerField(), default=0
-                )
-            ),
-            suggested_count=Sum(
-                Case(
-                    When(
-                        Q(
-                            translation__locale=locale,
-                            translation__approved=False,
-                            translation__fuzzy=False,
-                        ),
-                        then=1
-                    ),
-                    output_field=models.IntegerField(),
-                    default=0
-                )
-            ),
-            unreviewed_count=Sum(
-                Case(
-                    When(
-                        Q(
-                            translation__locale=locale,
-                            translation__approved=False,
-                            translation__fuzzy=False,
-                            translation__rejected=False,
-                        ),
-                        then=1
-                    ),
-                    output_field=models.IntegerField(),
-                    default=0
-                )
-            ),
-            rejected_count=Sum(
-                Case(
-                    When(
-                        Q(
-                            translation__locale=locale,
-                            translation__approved=False,
-                            translation__fuzzy=False,
-                            translation__rejected=True,
-                        ),
-                        then=1
-                    ),
-                    output_field=models.IntegerField(),
-                    default=0
-                )
-            ),
-            expected_count=Case(
-                When(
-                    Q(string_plural__isnull=True) | Q(string_plural=""), then=1
-                ), output_field=models.IntegerField(), default=locale.nplurals
-            ),
-            unchanged_count=Sum(
-                Case(
-                    When(
-                        Q(translation__locale=locale, translation__string=F('string')) |
-                        Q(translation__locale=locale, translation__plural_form__gt=-1,
-                          translation__plural_form__isnull=False, translation__string=F('string_plural')), then=1
-                    ), output_field=models.IntegerField(), default=0
-                )
+        translations = Translation.objects.filter(locale=locale).filter(query)
+
+        plural_pks = []
+        plural_candidates = (
+            self
+            .exclude(string_plural='')
+            .filter(pk__in=translations.values('entity'))
+            .prefetch_translations(locale)
+        )
+
+        for candidate in plural_candidates:
+            if len([x for x in candidate.fetched_translations if rule(x)]) == locale.nplurals:
+                plural_pks.append(candidate.pk)
+
+        return translations.filter(
+            Q(entity__string_plural='') | Q(pk__in=plural_pks)
+        ).values('entity')
+
+    def missing(self, locale):
+        have_translations = self.filter(translation__locale=locale)
+
+        have_missing_plural_forms = []
+        plural_candidates = (
+            self
+            .exclude(string_plural='')
+            .prefetch_translations(locale)
+        )
+
+        for candidate in plural_candidates:
+            if len(set([x.plural_form for x in candidate.fetched_translations])) < locale.nplurals:
+                have_missing_plural_forms.append(candidate.pk)
+
+        return ~Q(pk__in=have_translations) | Q(pk__in=have_missing_plural_forms)
+
+    def fuzzy(self, locale):
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(fuzzy=True),
+                lambda x: x.fuzzy
             )
         )
 
-    def missing(self, locale, no_plurals):
-        if no_plurals:
-            missing = self.exclude(
-                pk__in=Translation.objects.filter(locale=locale).values('entity')
+    def suggested(self, locale):
+        have_translations = self.filter(translation__locale=locale)
+
+        approved_or_fuzzy = Translation.objects.filter(locale=locale).filter(
+            Q(approved=True) | Q(fuzzy=True)
+        ).values('entity')
+
+        have_partially_suggested_plurals_forms = []
+        plural_candidates = (
+            self
+            .exclude(string_plural='')
+            .prefetch_translations(locale)
+        )
+
+        for candidate in plural_candidates:
+            x = [x.plural_form for x in candidate.fetched_translations if not x.approved and not x.fuzzy]
+            if len(set(x)) < locale.nplurals:
+                have_partially_suggested_plurals_forms.append(candidate.pk)
+
+        return (
+            Q(pk__in=have_translations) &
+            ~Q(pk__in=approved_or_fuzzy) &
+            ~Q(pk__in=have_partially_suggested_plurals_forms)
+        )
+
+    def translated(self, locale):
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(approved=True),
+                lambda x: x.approved
             )
-            return Q(pk__in=missing)
+        )
 
-        return Q(approved_count__lt=F('expected_count')) & Q(fuzzy_count__lt=F('expected_count')) & Q(suggested_count__lt=F('expected_count'))
-
-    def fuzzy(self, locale, no_plurals):
-        if no_plurals:
-            fuzzy = Translation.objects.filter(locale=locale, fuzzy=True).values('entity')
-            return Q(pk__in=fuzzy)
-
-        return Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
-
-    def suggested(self, locale, no_plurals):
-        if no_plurals:
-            missing = self.exclude(
-                pk__in=Translation.objects.filter(locale=locale).values('entity')
+    def has_suggestions(self, locale):
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(approved=False, rejected=False, fuzzy=False),
+                lambda x: not x.approved and not x.rejected and not x.fuzzy
             )
-            approved_fuzzy = Translation.objects.filter(locale=locale).filter(
-                Q(approved=True) | Q(fuzzy=True)
-            ).values('entity')
-            return ~Q(pk__in=missing) & ~Q(pk__in=approved_fuzzy)
+        )
 
-        return Q(suggested_count__gt=0) & ~Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
+    def rejected(self, locale):
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(rejected=True),
+                lambda x: x.rejected
+            )
+        )
 
-    def translated(self, locale, no_plurals):
-        if no_plurals:
-            approved = Translation.objects.filter(locale=locale, approved=True).values('entity')
-            return Q(pk__in=approved)
-
-        return Q(approved_count=F('expected_count'))
-
-    def has_suggestions(self, locale, no_plurals):
-        if no_plurals:
-            unreviewed = Translation.objects.filter(
-                locale=locale, approved=False, rejected=False, fuzzy=False
-            ).values('entity')
-            return Q(pk__in=unreviewed)
-
-        return Q(unreviewed_count__gt=0)
-
-    def rejected(self, locale, no_plurals):
-        if no_plurals:
-            rejected = Translation.objects.filter(locale=locale, rejected=True).values('entity')
-            return Q(pk__in=rejected)
-
-        return Q(rejected_count__gt=0)
-
-    def unchanged(self, locale, no_plurals):
-        if no_plurals:
-            unchanged = Translation.objects.filter(
-                locale=locale, entity__in=self, string=F('entity__string')
-            ).values('entity')
-            return Q(pk__in=unchanged)
-
-        return Q(unchanged_count=F('expected_count'))
+    def unchanged(self, locale):
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(string=F('entity__string')),
+                lambda x: x.string == x.entity.string
+            )
+        )
 
     def authored_by(self, locale, emails):
         def is_email(email):
@@ -1873,12 +1836,11 @@ class EntityQuerySet(models.QuerySet):
     def between_time_interval(self, locale, start, end):
         return Q(translation__locale=locale, translation__date__range=(start, end))
 
-    def prefetch_resources_translations(self, locale):
+    def prefetch_translations(self, locale):
         """
-        Prefetch resources and translations for given locale.
+        Prefetch translations for given locale.
         """
         return self.prefetch_related(
-            'resource',
             Prefetch(
                 'translation_set',
                 queryset=Translation.objects.filter(locale=locale),
@@ -1984,11 +1946,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         pre_filters = []
         post_filters = []
 
-        # Temporary optimization: use simpler status & extra filter DB queries for non-PO projects,
-        # which don't store translations for different plural forms in separate Translation model
-        # instances.
-        no_plurals = not project.resources.filter(format='po').exists()
-
         if time:
             if re.match('^[0-9]{12}-[0-9]{12}$', time):
                 start, end = utils.parse_time_interval(time)
@@ -2004,15 +1961,28 @@ class Entity(DirtyFieldsMixin, models.Model):
         else:
             entities = Entity.objects.all()
 
+        entities = entities.filter(
+            resource__translatedresources__locale=locale,
+            obsolete=False
+        )
+
+        if project.slug != 'all-projects':
+            entities = entities.filter(resource__project=project)
+
+        # Filter by path
+        if paths:
+            paths = project.parts_to_paths(paths)
+            entities = entities.filter(resource__path__in=paths)
+
         if status:
             # Apply a combination of filters based on the list of statuses the user sent.
             status_filter_choices = ('missing', 'fuzzy', 'suggested', 'translated')
             post_filters.append(
                 combine_entity_filters(
+                    entities,
                     status_filter_choices,
                     status.split(','),
-                    locale,
-                    no_plurals
+                    locale
                 )
             )
 
@@ -2021,28 +1991,15 @@ class Entity(DirtyFieldsMixin, models.Model):
             extra_filter_choices = ('has-suggestions', 'rejected', 'unchanged')
             post_filters.append(
                 combine_entity_filters(
+                    entities,
                     extra_filter_choices,
                     extra.split(','),
-                    locale,
-                    no_plurals
+                    locale
                 )
             )
 
         if post_filters:
-            if not no_plurals:
-                entities = entities.with_status_counts(locale)
             entities = entities.filter(Q(*post_filters))
-
-        entities = entities.filter(
-            resource__project=project,
-            resource__translatedresources__locale=locale,
-            obsolete=False
-        )
-
-        # Filter by path
-        if paths:
-            paths = project.parts_to_paths(paths)
-            entities = entities.filter(resource__path__in=paths)
 
         # Filter by search parameters
         if search:
@@ -2068,7 +2025,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
 
-        entities = entities.prefetch_resources_translations(locale)
+        entities = entities.prefetch_related('resource').prefetch_translations(locale)
 
         if exclude_entities:
             entities = entities.exclude(pk__in=exclude_entities)
