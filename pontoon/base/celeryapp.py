@@ -23,7 +23,7 @@ dotenv.read_dotenv(path('.env'))
 
 # Set the default Django settings module for `celery`.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pontoon.settings')
-from django.conf import settings
+from django.conf import settings  # noqa
 
 
 app = Celery('pontoon')

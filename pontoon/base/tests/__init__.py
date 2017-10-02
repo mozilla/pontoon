@@ -38,9 +38,9 @@ class PontoonClient(BaseClient):
         return self.post(url, params, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
 
-
 class TestCase(BaseTestCase):
     client_class = PontoonClient
+
     def patch(self, *args, **kwargs):
         """
         Wrapper around mock.patch that automatically cleans up the patch
@@ -141,6 +141,7 @@ class PluralEntityFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
     string = Sequence(lambda n: 'string {0}'.format(n))
     string_plural = Sequence(lambda n: 'string plural {0}'.format(n))
+
     class Meta:
         model = Entity
 

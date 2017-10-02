@@ -18,7 +18,8 @@ from pontoon.base.models import (
     Entity,
     ProjectLocale,
     TranslatedResource,
-    Translation)
+    Translation,
+)
 from pontoon.base.tests import (
     assert_json,
     EntityFactory,
@@ -193,7 +194,9 @@ class TranslateMemoryTests(ViewTestCase):
         translation string.
         """
         new_locale = LocaleFactory.create()
-        memory_entry = TranslationMemoryFactory.create(source="aaa", target="ccc", locale=new_locale)
+        memory_entry = TranslationMemoryFactory.create(
+            source="aaa", target="ccc", locale=new_locale
+        )
         TranslationMemoryFactory.create(source="aaa", target="ddd", locale=new_locale)
         TranslationMemoryFactory.create(source="bbb", target="ccc", locale=new_locale)
 
@@ -210,7 +213,9 @@ class TranslateMemoryTests(ViewTestCase):
         from the different entities and count up their occurrences.
         """
         new_locale = LocaleFactory.create()
-        memory_entry = TranslationMemoryFactory.create(source="aaaa", target="ccc", locale=new_locale)
+        memory_entry = TranslationMemoryFactory.create(
+            source="aaaa", target="ccc", locale=new_locale
+        )
         TranslationMemoryFactory.create(source="abaa", target="ccc", locale=new_locale)
         TranslationMemoryFactory.create(source="aaab", target="ccc", locale=new_locale)
         TranslationMemoryFactory.create(source="aaab", target="ccc", locale=new_locale)
@@ -322,7 +327,10 @@ class EntityViewTests(TestCase):
             else:
                 params['status'] = filter_
 
-            with patch('pontoon.base.models.Entity.objects.{}'.format(filter_name), return_value=getattr(Entity.objects, filter_name)(self.locale, False)) as filter_mock:
+            with patch(
+                'pontoon.base.models.Entity.objects.{}'.format(filter_name),
+                return_value=getattr(Entity.objects, filter_name)(self.locale, False)
+            ) as filter_mock:
                 self.client.ajax_post('/get-entities/', params)
                 assert_true(filter_mock.called)
 
@@ -341,7 +349,7 @@ class EntityViewTests(TestCase):
         assert_code(response, 200)
 
         assert_equal(response.json()['has_next'], True)
-        assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[0].pk,])
+        assert_equal([e['pk'] for e in response.json()['entities']], [self.entities[0].pk, ])
 
         exclude_entities = ','.join(map(str, [
             self.entities[0].pk,
@@ -399,7 +407,8 @@ class TMXDownloadViewTests(TestCase):
 
     def get_tmx_file(self, locale, project):
         """Shortcut function to request tmx contents from server."""
-        response = self.client.get('/{locale}/{project}/{locale}.{project}.tmx'.format(
+        response = self.client.get(
+            '/{locale}/{project}/{locale}.{project}.tmx'.format(
                 locale=locale,
                 project=project
             )
@@ -456,14 +465,22 @@ class TMXFileGeneratorTests(TestCase):
                 ('aa/bb/ccc', 'xxx', 'source string', 'translation', 'Pontoon App', 'pontoon'),
 
                 # Test escape of characters
-                ('aa/bb/ccc', 'x&x&x#"', 'source string', 'translation', 'Pontoon & App', 'pontoon'),
+                (
+                    'aa/bb/ccc', 'x&x&x#"', 'source string', 'translation', 'Pontoon & App',
+                    'pontoon'
+                ),
 
                 # Handle unicode characters
-                ('aa/bb/ccc', 'xxx', u'source string łążśźć', u'translation łążśźć', 'pontoon', 'pontoon'),
+                (
+                    'aa/bb/ccc', 'xxx', u'source string łążśźć', u'translation łążśźć', 'pontoon',
+                    'pontoon'
+                ),
 
                 # Handle html content
-                ('aa/bb/ccc', 'xxx', u'<p>source <strong>string</p>', u'<p>translation łążśźć</p>', 'pontoon', 'pontoon'),
-
+                (
+                    'aa/bb/ccc', 'xxx', u'<p>source <strong>string</p>',
+                    u'<p>translation łążśźć</p>', 'pontoon', 'pontoon'
+                ),
             )
         )
         assert_xml(

@@ -12,7 +12,6 @@ from django.core.wsgi import get_wsgi_application
 # Set settings env var before importing whitenoise as it depends on
 # some settings.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pontoon.settings')
+from whitenoise.django import DjangoWhiteNoise  # noqa
 
-
-from whitenoise.django import DjangoWhiteNoise
 application = DjangoWhiteNoise(get_wsgi_application())

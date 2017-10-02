@@ -70,8 +70,9 @@ def urlparams(url_, hash=None, **query):
 
     query_string = _urlencode([(k, v) for k, v in query_dict.items()
                                if v is not None])
-    new = six_parse.ParseResult(url.scheme, url.netloc, url.path, url.params,
-                               query_string, fragment)
+    new = six_parse.ParseResult(
+        url.scheme, url.netloc, url.path, url.params, query_string, fragment
+    )
     return new.geturl()
 
 
@@ -186,7 +187,9 @@ def format_timedelta(value):
 @register.filter
 @library.filter
 def nospam(self):
-    return jinja2.Markup(cgi.escape(self, True).replace('@', '&#64;').replace('.', '&#46;').replace('\'', '&quot;'))
+    return jinja2.Markup(
+        cgi.escape(self, True).replace('@', '&#64;').replace('.', '&#46;').replace('\'', '&quot;')
+    )
 
 
 @library.global_function
@@ -239,6 +242,7 @@ def local_url(url, code=None):
     """Replace occurences of `{locale_code} in URL with provided code."""
     code = code or 'en-US'
     return url.format(locale_code=code)
+
 
 @library.filter
 def dict_html_attrs(dict_obj):
