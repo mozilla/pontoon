@@ -6,8 +6,9 @@
 argparse==1.3.0 \
     --hash=sha256:d01978e9a8c51ea7b34ec71f3fced1326437cd366b9c2e19265ace050924e0e2 \
     --hash=sha256:b3a79a23d37b5a02faa550b92cbbbebeb4aa1d77e649c3eb39c19abf5262da04
-bleach==2.0.0 \
-    --hash=sha256:a6d9d5f5b7368c1689ad7f128af8e792beea23393688872b576c0271e6564a16
+bleach==2.1.1 \
+    --hash=sha256:7a316eac1eef1e98b9813636ebe05878aab1a658d2708047fb00fe2bcbc49f84 \
+    --hash=sha256:760a9368002180fb8a0f4ea48dc6275378e6f311c39d0236d7b904fca1f5ea0d
 certifi==14.05.14 \
     --hash=sha256:1e1bcbacd6357c151ae37cf0290dcc809721d32ce21fd6b7339568f3ddef1b69
 chardet==2.3.0 \
