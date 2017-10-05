@@ -21,7 +21,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.db import models
-from django.db.models import Case, Count, F, Prefetch, Q, Sum, When
+from django.db.models import Count, F, Prefetch, Q, Sum
 from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -1721,7 +1721,7 @@ class Subpage(models.Model):
 
 
 class EntityQuerySet(models.QuerySet):
-    def get_filtered_entities(self, locale, query, rule):
+    def get_filtered_entities(self, locale, query, rule, match_all=True):
         """Return a QuerySet of values of entity PKs matching the locale, query and rule.
 
         Filter entities that match the given filter provided by the `locale` and `query`
@@ -1731,40 +1731,89 @@ class EntityQuerySet(models.QuerySet):
         :arg Locale locale: a Locale object to get translations for
         :arg Q query: a django ORM Q() object describing translations to filter
         :arg function rule: a lambda function implementing the `query` logic
+        :arg boolean match_all: if true, all plural forms must match the rule.
+            Otherwise, only one matching is enough
 
         :returns: a QuerySet of values of entity PKs
+
         """
+        # First of find all translations that match the criteria.
         translations = Translation.objects.filter(locale=locale).filter(query)
 
         plural_pks = []
-        plural_candidates = (
-            self
-            .exclude(string_plural='')
-            .filter(pk__in=translations.values('entity'))
-            .prefetch_translations(locale)
+
+        if locale.nplurals:
+            # Then we want to find the active translation of each plural form of each
+            # entity that has plurals.
+            # So we query all those entities, with for each a list of translations ordered
+            # so that the first one for each plural form will be the active one.
+            plural_candidates = (
+                self
+                .exclude(string_plural='')
+                .filter(pk__in=translations.values('entity'))
+                .prefetch_related(Prefetch(
+                    'translation_set',
+                    queryset=(
+                        Translation.objects
+                        .filter(locale=locale)
+                        .order_by('approved', 'fuzzy', '-date')
+                    ),
+                    to_attr='fetched_translations'
+                ))
+            )
+
+            # Now that we have all those translations, we'll want to extract just the
+            # active one and then make sure it matches the `rule`. If it does, we store
+            # it to be retrieved in the finale query.
+            for candidate in plural_candidates:
+                # Walk through the plural forms one by one.
+                count = 0
+                for i in range(locale.nplurals):
+                    candidate_translations = filter(
+                        lambda x: x.plural_form == i,
+                        candidate.fetched_translations
+                    )
+                    if len(candidate_translations) and rule(candidate_translations[0]):
+                        count += 1
+
+                        # No point going on if we don't care about matching all.
+                        if not match_all:
+                            continue
+
+                # If `match_all` is True, we want all plural forms to have a match.
+                # Otherwise, just one of them matching is enough.
+                if (match_all and count == locale.nplurals) or (not match_all and count):
+                    plural_pks.append(candidate.pk)
+
+        # Finally, we return a query that returns both the matching entities with no
+        # plurals and the entities with plurals that were stored earlier.
+        return (
+            Translation.objects
+            .filter(locale=locale)
+            .filter(
+                Q(Q(entity__string_plural='') & query) |
+                Q(entity_id__in=plural_pks)
+            )
+            .values('entity')
         )
-
-        for candidate in plural_candidates:
-            if len([x for x in candidate.fetched_translations if rule(x)]) == locale.nplurals:
-                plural_pks.append(candidate.pk)
-
-        return translations.filter(
-            Q(entity__string_plural='') | Q(pk__in=plural_pks)
-        ).values('entity')
 
     def missing(self, locale):
         have_translations = self.filter(translation__locale=locale)
 
         have_missing_plural_forms = []
-        plural_candidates = (
-            self
-            .exclude(string_plural='')
-            .prefetch_translations(locale)
-        )
+        if locale.nplurals:
+            plural_candidates = (
+                self
+                .exclude(string_plural='')
+                .prefetch_translations(locale)
+            )
 
-        for candidate in plural_candidates:
-            if len(set([x.plural_form for x in candidate.fetched_translations])) < locale.nplurals:
-                have_missing_plural_forms.append(candidate.pk)
+            for candidate in plural_candidates:
+                candidate_translations = set(
+                    x.plural_form for x in candidate.fetched_translations
+                )
+                if len(candidate_translations) < locale.nplurals:
+                    have_missing_plural_forms.append(candidate.pk)
 
         return ~Q(pk__in=have_translations) | Q(pk__in=have_missing_plural_forms)
 
@@ -1778,31 +1827,45 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def suggested(self, locale):
+        # First, we only care about entities that actually have translations.
         have_translations = self.filter(translation__locale=locale)
 
-        approved_or_fuzzy = Translation.objects.filter(locale=locale).filter(
-            Q(approved=True) | Q(fuzzy=True)
-        ).values('entity')
-
-        have_partially_suggested_plurals_forms = []
-        plural_candidates = (
-            self
-            .exclude(string_plural='')
-            .prefetch_translations(locale)
+        # We can remove all entities that have approved or fuzzy translations.
+        approved_or_fuzzy = (
+            Translation.objects
+            .filter(locale=locale)
+            .filter(Q(approved=True) | Q(fuzzy=True))
+            .values('entity')
         )
 
-        for candidate in plural_candidates:
-            x = [x.plural_form for x in candidate.fetched_translations if not x.approved and not x.fuzzy]
-            if len(set(x)) < locale.nplurals:
-                have_partially_suggested_plurals_forms.append(candidate.pk)
+        # And we can remove all entities with plurals that have a number of
+        # approved + fuzzy translations equal to the number of plural forms.
+        approved_or_fuzzy_plurals_forms = []
+        if locale.nplurals:
+            plural_candidates = (
+                self
+                .exclude(string_plural='')
+                .prefetch_translations(locale)
+            )
+
+            for candidate in plural_candidates:
+                approved_or_fuzzy_plurals = set(
+                    x.plural_form
+                    for x in candidate.fetched_translations
+                    if x.approved or x.fuzzy
+                )
+                if len(approved_or_fuzzy_plurals) == locale.nplurals:
+                    approved_or_fuzzy_plurals_forms.append(candidate.pk)
 
         return (
             Q(pk__in=have_translations) &
-            ~Q(pk__in=approved_or_fuzzy) &
-            ~Q(pk__in=have_partially_suggested_plurals_forms)
+            ~Q(pk__in=approved_or_fuzzy, string_plural='') &
+            ~Q(pk__in=approved_or_fuzzy_plurals_forms)
         )
 
     def translated(self, locale):
+        """Return filters to get entities with only approved translations.
+        """
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
@@ -1816,7 +1879,8 @@ class EntityQuerySet(models.QuerySet):
             pk__in=self.get_filtered_entities(
                 locale,
                 Q(approved=False, rejected=False, fuzzy=False),
-                lambda x: not x.approved and not x.rejected and not x.fuzzy
+                lambda x: not x.approved and not x.rejected and not x.fuzzy,
+                match_all=False,
             )
         )
 
@@ -1825,7 +1889,8 @@ class EntityQuerySet(models.QuerySet):
             pk__in=self.get_filtered_entities(
                 locale,
                 Q(rejected=True),
-                lambda x: x.rejected
+                lambda x: x.rejected,
+                match_all=False,
             )
         )
 
@@ -1833,8 +1898,9 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(string=F('entity__string')),
-                lambda x: x.string == x.entity.string
+                Q(Q(string=F('entity__string')) | Q(string=F('entity__string_plural'))),
+                lambda x: x.string == x.entity.string,
+                match_all=False,
             )
         )
 
