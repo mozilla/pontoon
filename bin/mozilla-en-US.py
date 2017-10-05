@@ -113,7 +113,7 @@ dname = os.path.dirname(abspath)
 os.chdir(dname)
 
 # Clone or update source repository
-url = 'ssh://hg.mozilla.org/users/axel_mozilla.com/gecko-strings/'
+url = 'https://hg.mozilla.org/users/axel_mozilla.com/gecko-strings/'
 target = 'source'
 pull(url, target)
 
@@ -126,11 +126,9 @@ for repo in TARGET_REPOS.keys():
     pull(url, target)
 
     # Prune all subdirectories in target repository in case they get removed from source
-    for root, subdirs, files in os.walk(target, True):
-        for subdir in subdirs:
-            if not subdir.startswith('.'):
-                shutil.rmtree(os.path.join(root, subdir))
-        break
+    for subdir in os.listdir(target):
+        if not subdir.startswith('.'):
+            shutil.rmtree(os.path.join(target, subdir))
 
     # Copy folders from source to target
     for folder in TARGET_REPOS[repo]:
