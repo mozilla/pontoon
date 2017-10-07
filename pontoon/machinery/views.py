@@ -62,8 +62,9 @@ def translation_memory(request):
                 suggestions[entry['target']].update(entry)
             suggestions[entry['target']]['count'] += 1
     except DataError as e:
-        # Catches 'argument exceeds the maximum length of 255 bytes' Error
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        #  Catches the error number in the argument that have the status number 501
+        return HttpResponse(status=501,\
+            reason='Not Implemented:{error}'.format(error=e))
 
     return JsonResponse(
         sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
