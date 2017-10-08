@@ -14,6 +14,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from pontoon.base import utils
 from pontoon.base.models import Locale, TranslationMemoryEntry
+from django.http import HttpResponse
 
 
 log = logging.getLogger(__name__)
@@ -63,8 +64,7 @@ def translation_memory(request):
             suggestions[entry['target']]['count'] += 1
     except DataError as e:
         #  Catches the error number in the argument that have the status number 501
-        return HttpResponse(status=501,\
-            reason='Not Implemented:{error}'.format(error=e))
+        return HttpResponse(status=501, reason='Not Implemented:{error}'.format(error=e))
 
     return JsonResponse(
         sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
