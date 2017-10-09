@@ -1798,6 +1798,16 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def missing(self, locale):
+        """Return a filter to be used to select entities marked as "missing".
+
+        An entity is marked as "missing" if at least one of its plural forms has
+        zero translations.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
         have_translations = self.filter(translation__locale=locale)
 
         have_missing_plural_forms = []
@@ -1818,6 +1828,16 @@ class EntityQuerySet(models.QuerySet):
         return ~Q(pk__in=have_translations) | Q(pk__in=have_missing_plural_forms)
 
     def fuzzy(self, locale):
+        """Return a filter to be used to select entities marked as "fuzzy".
+
+        An entity is marked as "fuzzy" if all of its plural forms have a fuzzy
+        translation. Note that a fuzzy translation is always the active one.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
@@ -1827,6 +1847,16 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def suggested(self, locale):
+        """Return a filter to be used to select entities marked as "suggested".
+
+        An entity is marked as "suggested" if at least one of its plural forms has
+        translations none of which are either fuzzy or approved.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
         # First, we only care about entities that actually have translations.
         have_translations = self.filter(translation__locale=locale)
 
@@ -1864,7 +1894,15 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def translated(self, locale):
-        """Return filters to get entities with only approved translations.
+        """Return a filter to be used to select entities marked as "approved".
+
+        An entity is marked as "approved" if all of its plural forms have an approved
+        translation. Note that an approved translation is always the active one.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
         """
         return Q(
             pk__in=self.get_filtered_entities(
@@ -1875,6 +1913,16 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def has_suggestions(self, locale):
+        """Return a filter to be used to select entities with suggested translations.
+
+        An entity is said to have suggestions if at least one of its plural forms
+        has at least one unreviewed suggestion (not fuzzy, not approved, not rejected).
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
@@ -1885,6 +1933,16 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def rejected(self, locale):
+        """Return a filter to be used to select entities with rejected translations.
+
+        This filter will return any entities that have a rejected translation, whether
+        they have approved or fuzzy translations or not.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
@@ -1895,6 +1953,16 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def unchanged(self, locale):
+        """Return a filter to be used to select entities that have unchanged translations.
+
+        An entity is marked as "unchanged" if all of its plural forms have translations
+        equal to the source string.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
