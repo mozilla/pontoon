@@ -63,7 +63,11 @@ def translation_memory(request):
                 suggestions[entry['target']].update(entry)
             suggestions[entry['target']]['count'] += 1
     except DataError as e:
+<<<<<<< f20acdc7f530e60e72287788d2f247020261fd12
         # Catches 'argument exceeds the maximum length of 255 bytes' Error
+=======
+        # Catches argument exceeds the maximum length of 255 bytes' Error
+>>>>>>> Fix bug 1377840: Update return code of TM requests exceeding 255 bytes
         return HttpResponse(status=501, reason='Not Implemented: {error}'.format(error=e))
 
     return JsonResponse(
