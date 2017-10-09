@@ -44,7 +44,7 @@ from pontoon.sync import KEY_SEPARATOR
 log = logging.getLogger(__name__)
 
 
-def combine_entity_filters(entities, filter_choices, filters, *args):
+def combine_entity_filters(filter_choices, filters, *args):
     """Return a combination of filters to apply to an Entity object.
 
     The content for each filter is defined in the EntityQuerySet helper class, using methods
@@ -63,7 +63,7 @@ def combine_entity_filters(entities, filter_choices, filters, *args):
 
     filters = [Q()]
     for filter_name in sanitized_filters:
-        filters.append(getattr(entities, filter_name.replace('-', '_'))(*args))
+        filters.append(getattr(Entity.objects, filter_name.replace('-', '_'))(*args))
 
     # Combine all generated filters with an OR operator.
     # `operator.ior` is the pipe (|) Python operator, which turns into a logical OR
@@ -2134,7 +2134,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             status_filter_choices = ('missing', 'fuzzy', 'suggested', 'translated')
             post_filters.append(
                 combine_entity_filters(
-                    entities,
                     status_filter_choices,
                     status.split(','),
                     locale
@@ -2146,7 +2145,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             extra_filter_choices = ('has-suggestions', 'rejected', 'unchanged')
             post_filters.append(
                 combine_entity_filters(
-                    entities,
                     extra_filter_choices,
                     extra.split(','),
                     locale
