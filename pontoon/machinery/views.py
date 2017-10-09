@@ -14,7 +14,6 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from pontoon.base import utils
 from pontoon.base.models import Locale, TranslationMemoryEntry
-from django.http import HttpResponse
 
 
 log = logging.getLogger(__name__)
