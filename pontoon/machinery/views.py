@@ -7,7 +7,7 @@ from six.moves.urllib.parse import quote
 from collections import defaultdict
 from django.conf import settings
 from django.db import DataError
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
@@ -63,12 +63,9 @@ def translation_memory(request):
                 suggestions[entry['target']].update(entry)
             suggestions[entry['target']]['count'] += 1
     except DataError as e:
-<<<<<<< f20acdc7f530e60e72287788d2f247020261fd12
-        # Catches 'argument exceeds the maximum length of 255 bytes' Error
-=======
+
         # Catches argument exceeds the maximum length of 255 bytes' Error
->>>>>>> Fix bug 1377840: Update return code of TM requests exceeding 255 bytes
-        return HttpResponse(status=501, reason='Not Implemented: {error}'.format(error=e))
+        return HttpResponse('Not Implemented: {error}'.format(error=e), status=501)
 
     return JsonResponse(
         sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
