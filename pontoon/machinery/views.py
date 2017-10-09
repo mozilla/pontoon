@@ -62,7 +62,6 @@ def translation_memory(request):
                 suggestions[entry['target']].update(entry)
             suggestions[entry['target']]['count'] += 1
     except DataError as e:
-
         # Catches argument exceeds the maximum length of 255 bytes' Error
         return HttpResponse('Not Implemented: {error}'.format(error=e), status=501)
 
