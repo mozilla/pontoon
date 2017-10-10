@@ -53,6 +53,11 @@ class ChangeSet(object):
         self.commit_authors_per_locale = defaultdict(list)
         self.locales_to_commit = set()
 
+    @property
+    def changed_translations(self):
+        """A list of Translation objects that have been created or updated."""
+        return self.translations_to_create + self.translations_to_update.values()
+
     def update_vcs_entity(self, locale, db_entity, vcs_entity):
         """
         Replace the translations in VCS with the translations from the
