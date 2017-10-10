@@ -36,6 +36,21 @@ class ChangeSetTests(FakeCheckoutTestCase):
         )
         self.changeset.execute()
 
+    def test_changed_translations_created(self):
+        """
+        Return a list of Translation objects that have been created.
+        """
+        self.main_db_translation.delete()
+        self.update_main_db_entity()
+        translation = self.main_db_entity.translation_set.all()[0]
+        assert_equal([translation], self.changeset.changed_translations)
+
+    def test_changed_translations_no_changes(self):
+        """
+        If there are no changes, changed_translations should return empty list.
+        """
+        assert_equal([], self.changeset.changed_translations)
+
     def test_update_vcs_entity(self):
         """
         Update the VCS translations with translations in the database.

@@ -554,7 +554,7 @@ def handle_upload_content(slug, code, part, f, user):
     # Mark translations as changed
     changed_entities = {}
     existing = ChangedEntityLocale.objects.values_list('entity', 'locale').distinct()
-    for t in changeset.translations_to_create + changeset.translations_to_update.values():
+    for t in changeset.changed_translations:
         key = (t.entity.pk, t.locale.pk)
         # Remove duplicate changes to prevent unique constraint violation
         if key not in existing:
