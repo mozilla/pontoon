@@ -14,7 +14,6 @@ from django.db.models import Q
 from mock import call, Mock, patch
 
 from pontoon.base.models import (
-    combine_entity_filters,
     Entity,
     ProjectLocale,
     TranslationMemoryEntry,
