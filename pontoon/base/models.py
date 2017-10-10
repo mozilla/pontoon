@@ -1749,22 +1749,21 @@ class EntityQuerySet(models.QuerySet):
             # so that the first one for each plural form will be the active one.
             plural_candidates = (
                 self
+                .filter(
+                    resource__translatedresources__locale=locale,
+                    obsolete=False
+                )
                 .exclude(string_plural='')
-                .filter(pk__in=translations.values('entity'))
                 .prefetch_related(Prefetch(
                     'translation_set',
-                    queryset=(
-                        Translation.objects
-                        .filter(locale=locale)
-                        .order_by('approved', 'fuzzy', '-date')
-                    ),
+                    queryset=translations.order_by('approved', 'fuzzy', '-date'),
                     to_attr='fetched_translations'
                 ))
             )
 
             # Now that we have all those translations, we'll want to extract just the
             # active one and then make sure it matches the `rule`. If it does, we store
-            # it to be retrieved in the finale query.
+            # it to be retrieved in the final query.
             for candidate in plural_candidates:
                 # Walk through the plural forms one by one.
                 count = 0
@@ -1935,7 +1934,7 @@ class EntityQuerySet(models.QuerySet):
     def rejected(self, locale):
         """Return a filter to be used to select entities with rejected translations.
 
-        This filter will return any entities that have a rejected translation, whether
+        This filter will return all entities that have a rejected translation, whether
         they have approved or fuzzy translations or not.
 
         :arg Locale locale: a Locale object to get translations for
