@@ -69,7 +69,7 @@ var Pontoon = (function (my) {
                   '<label class="id built-in" for="ftl-id-' + this + '">' +
                     '<span>' + this + ' (e.g. </span><span class="stress">' + Pontoon.locale.examples[pluralForm] + '</span>)<sub class="fa fa-remove remove" title="Remove"></sub>' +
                   '</label>' +
-                  '<input class="value" id="ftl-id-' + this + '" type="text" value="' + value + '">' +
+                  '<input class="value" id="ftl-id-' + this + '" type="text" value="' + value + '" dir="' + Pontoon.locale.direction + '" data-script="' + Pontoon.locale.script + '"  lang="' + Pontoon.locale.code + '">' +
                 '</li>');
           });
 
@@ -96,7 +96,7 @@ var Pontoon = (function (my) {
             maxlength = '1';
             input = '<div class="accesskeys"></div>';
           }
-          input += '<input class="value" id="ftl-id-' + id + '" type="text" value="' + value + '" maxlength="' + maxlength + '">';
+          input += '<input class="value" id="ftl-id-' + id + '" type="text" value="' + value + '" maxlength="' + maxlength + '" dir="' + Pontoon.locale.direction + '" data-script="' + Pontoon.locale.script + '" lang="' + Pontoon.locale.code + '">';
 
           if ($.inArray(id, [entityAttributes])) {
             label = '<label class="id" for="ftl-id-' + id + '">' +
@@ -106,7 +106,7 @@ var Pontoon = (function (my) {
           } else {
             cls = ' class="custom-attribute clearfix"';
             label = '<div class="wrapper">' +
-              '<input type="text" class="id" placeholder="enter-attribute-id" value="' + id + '">' +
+              '<input type="text" class="id" placeholder="enter-attribute-id" value="' + id + '" dir="' + Pontoon.locale.direction + '" data-script="' + Pontoon.locale.script + '"  lang="' + Pontoon.locale.code + '">' +
               '<sub class="fa fa-remove remove" title="Remove"></sub>' +
             '</div>';
           }
