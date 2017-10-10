@@ -44,13 +44,14 @@ from pontoon.sync import KEY_SEPARATOR
 log = logging.getLogger(__name__)
 
 
-def combine_entity_filters(filter_choices, filters, *args):
+def combine_entity_filters(entities, filter_choices, filters, *args):
     """Return a combination of filters to apply to an Entity object.
 
     The content for each filter is defined in the EntityQuerySet helper class, using methods
     that have the same name as the filter. Each subset of filters is combined with the others
     with the OR operator.
 
+    :arg EntityQuerySet entities: an Entity query set object with predefined filters
     :arg list filter_choices: list of valid choices, used to sanitize the content of `filters`
     :arg list filters: the filters to get and combine
     :arg *args: arguments that will be passed to the filter methods of the EntityQuerySet class
@@ -63,7 +64,7 @@ def combine_entity_filters(filter_choices, filters, *args):
 
     filters = [Q()]
     for filter_name in sanitized_filters:
-        filters.append(getattr(Entity.objects, filter_name.replace('-', '_'))(*args))
+        filters.append(getattr(entities, filter_name.replace('-', '_'))(*args))
 
     # Combine all generated filters with an OR operator.
     # `operator.ior` is the pipe (|) Python operator, which turns into a logical OR
@@ -1725,7 +1726,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a QuerySet of values of entity PKs matching the locale, query and rule.
 
         Filter entities that match the given filter provided by the `locale` and `query`
-        parameteres. For performance reasons the `rule` parameter is also provided to filter
+        parameters. For performance reasons the `rule` parameter is also provided to filter
         entities in python instead of the DB.
 
         :arg Locale locale: a Locale object to get translations for
@@ -1749,10 +1750,6 @@ class EntityQuerySet(models.QuerySet):
             # so that the first one for each plural form will be the active one.
             plural_candidates = (
                 self
-                .filter(
-                    resource__translatedresources__locale=locale,
-                    obsolete=False
-                )
                 .exclude(string_plural='')
                 .prefetch_related(Prefetch(
                     'translation_set',
@@ -2133,6 +2130,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             status_filter_choices = ('missing', 'fuzzy', 'suggested', 'translated')
             post_filters.append(
                 combine_entity_filters(
+                    entities,
                     status_filter_choices,
                     status.split(','),
                     locale
@@ -2144,6 +2142,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             extra_filter_choices = ('has-suggestions', 'rejected', 'unchanged')
             post_filters.append(
                 combine_entity_filters(
+                    entities,
                     extra_filter_choices,
                     extra.split(','),
                     locale
