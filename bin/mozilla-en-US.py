@@ -113,7 +113,7 @@ dname = os.path.dirname(abspath)
 os.chdir(dname)
 
 # Clone or update source repository
-url = 'https://hg.mozilla.org/users/axel_mozilla.com/gecko-strings/'
+url = 'https://hg.mozilla.org/l10n/gecko-strings/'
 target = 'source'
 pull(url, target)
 
