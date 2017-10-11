@@ -4,7 +4,7 @@
    "keywords": ["l10n", "localization", "mozilla", "collaboration", "python", "django"],
    "website": "https://pontoon.mozilla.org",
    "logo": "https://pontoon.mozilla.org/static/img/logo.svg",
-   "success_url": "/heroku-setup/",
+   "success_url": "/",
    "image": "heroku/python",
    "addons": [
      {
@@ -32,6 +32,10 @@
      }
    ],
    "env": {
+     "SITE_URL": {
+       "description": "Base URL of the site. Has to be https://{app-name}.herokuapp.com.",
+       "required": true
+     },
      "ADMIN_EMAIL": {
        "value": "pontoon@example.com",
        "description": "Email address for the ``ADMINS`` setting."
@@ -109,7 +113,7 @@
    },
    "buildpacks": [
      {
-       "url": "https://github.com/dmathieu/heroku-buildpack-submodules#b37ffe4361bb9c975dd8e93068c9d296365d748c"
+       "url": "https://github.com/dmathieu/heroku-buildpack-submodules#0caf30af7737bf1bc32b7aafc009f19af3e603c1"
      },
      {
        "url": "https://github.com/Osmose/heroku-buildpack-ssh"
@@ -125,7 +129,7 @@
      }
    ],
    "scripts": {
-    "postdeploy": "./bin/heroku_postdeploy"
+     "postdeploy": "./bin/heroku_postdeploy && ./manage.py heroku_deploy_setup"
    },
    "formation": {
      "worker": {
