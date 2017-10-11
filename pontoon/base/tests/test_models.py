@@ -1287,8 +1287,7 @@ class EntityFilterTests(TestCase):
             {first_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.locale)
-                .filter(Entity.objects.translated(self.locale, False))
+                .filter(Entity.objects.translated(self.locale))
             )
         )
 
@@ -1329,8 +1328,7 @@ class EntityFilterTests(TestCase):
             {first_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.plural_locale)
-                .filter(Entity.objects.translated(self.locale, False))
+                .filter(Entity.objects.translated(self.plural_locale))
             )
         )
 
@@ -1356,8 +1354,7 @@ class EntityFilterTests(TestCase):
             {first_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.locale)
-                .filter(Entity.objects.fuzzy(self.locale, False))
+                .filter(Entity.objects.fuzzy(self.locale))
             )
         )
 
@@ -1398,8 +1395,7 @@ class EntityFilterTests(TestCase):
             {first_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.plural_locale)
-                .filter(Entity.objects.fuzzy(self.locale, False))
+                .filter(Entity.objects.fuzzy(self.plural_locale))
             )
         )
 
@@ -1423,8 +1419,7 @@ class EntityFilterTests(TestCase):
             {second_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.locale)
-                .filter(Entity.objects.missing(self.locale, False))
+                .filter(Entity.objects.missing(self.locale))
             )
         )
 
@@ -1456,8 +1451,7 @@ class EntityFilterTests(TestCase):
             {second_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.plural_locale)
-                .filter(Entity.objects.missing(self.locale, False))
+                .filter(Entity.objects.missing(self.plural_locale))
             )
         )
 
@@ -1480,8 +1474,7 @@ class EntityFilterTests(TestCase):
             {second_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.locale)
-                .filter(Entity.objects.suggested(self.locale, False))
+                .filter(Entity.objects.suggested(self.locale))
             )
         )
 
@@ -1507,8 +1500,7 @@ class EntityFilterTests(TestCase):
             {first_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.locale)
-                .filter(Entity.objects.unchanged(self.locale, False))
+                .filter(Entity.objects.unchanged(self.locale))
             )
         )
 
@@ -1543,8 +1535,7 @@ class EntityFilterTests(TestCase):
             {second_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.plural_locale)
-                .filter(Entity.objects.missing(self.locale, False))
+                .filter(Entity.objects.missing(self.plural_locale))
             )
         )
 
@@ -1583,8 +1574,7 @@ class EntityFilterTests(TestCase):
             {first_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.plural_locale)
-                .filter(Entity.objects.suggested(self.locale, False))
+                .filter(Entity.objects.suggested(self.plural_locale))
             )
         )
 
@@ -1626,8 +1616,7 @@ class EntityFilterTests(TestCase):
             {first_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.plural_locale)
-                .filter(Entity.objects.unchanged(self.locale, False))
+                .filter(Entity.objects.unchanged(self.plural_locale))
             )
         )
 
@@ -1669,17 +1658,58 @@ class EntityFilterTests(TestCase):
             {first_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.plural_locale)
-                .filter(Entity.objects.has_suggestions(self.locale, False))
+                .filter(Entity.objects.has_suggestions(self.plural_locale))
+            )
+        )
+
+    def test_rejected(self):
+        first_entity, second_entity, third_entity = EntityFactory.create_batch(3)
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=first_entity,
+            approved=False,
+            fuzzy=False,
+            rejected=True,
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=first_entity,
+            approved=True,
+            fuzzy=False,
+            rejected=False,
+        )
+
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=second_entity,
+            approved=True,
+            fuzzy=False,
+            rejected=False,
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=second_entity,
+            approved=False,
+            fuzzy=False,
+            rejected=True,
+        )
+        TranslationFactory.create(
+            locale=self.locale,
+            entity=third_entity,
+            approved=False,
+            fuzzy=False,
+            rejected=False,
+        )
+        assert_equal(
+            {first_entity, second_entity},
+            set(
+                Entity.objects
+                .filter(Entity.objects.rejected(self.locale))
             )
         )
 
     def test_rejected_plural(self):
-        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(
-            3,
-            string='Unchanged string',
-            string_plural='Unchanged plural string'
-        )
+        first_entity, second_entity, third_entity = PluralEntityFactory.create_batch(3)
         TranslationFactory.create(
             locale=self.plural_locale,
             entity=first_entity,
@@ -1732,8 +1762,7 @@ class EntityFilterTests(TestCase):
             {second_entity, third_entity},
             set(
                 Entity.objects
-                .with_status_counts(self.plural_locale)
-                .filter(Entity.objects.rejected(self.locale, False))
+                .filter(Entity.objects.rejected(self.plural_locale))
             )
         )
 

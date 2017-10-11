@@ -21,7 +21,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.db import models
-from django.db.models import Case, Count, F, Prefetch, Q, Sum, When
+from django.db.models import Count, F, Prefetch, Q, Sum
 from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -44,13 +44,14 @@ from pontoon.sync import KEY_SEPARATOR
 log = logging.getLogger(__name__)
 
 
-def combine_entity_filters(filter_choices, filters, *args):
+def combine_entity_filters(entities, filter_choices, filters, *args):
     """Return a combination of filters to apply to an Entity object.
 
     The content for each filter is defined in the EntityQuerySet helper class, using methods
     that have the same name as the filter. Each subset of filters is combined with the others
     with the OR operator.
 
+    :arg EntityQuerySet entities: an Entity query set object with predefined filters
     :arg list filter_choices: list of valid choices, used to sanitize the content of `filters`
     :arg list filters: the filters to get and combine
     :arg *args: arguments that will be passed to the filter methods of the EntityQuerySet class
@@ -63,7 +64,7 @@ def combine_entity_filters(filter_choices, filters, *args):
 
     filters = [Q()]
     for filter_name in sanitized_filters:
-        filters.append(getattr(Entity.objects, filter_name.replace('-', '_'))(*args))
+        filters.append(getattr(entities, filter_name.replace('-', '_'))(*args))
 
     # Combine all generated filters with an OR operator.
     # `operator.ior` is the pipe (|) Python operator, which turns into a logical OR
@@ -1721,179 +1722,251 @@ class Subpage(models.Model):
 
 
 class EntityQuerySet(models.QuerySet):
-    """
-    Queryset provides a set of additional methods that should allow us to filter entities.
-    """
+    def get_filtered_entities(self, locale, query, rule, match_all=True):
+        """Return a QuerySet of values of entity PKs matching the locale, query and rule.
 
-    def with_status_counts(self, locale):
+        Filter entities that match the given filter provided by the `locale` and `query`
+        parameters. For performance reasons the `rule` parameter is also provided to filter
+        entities in python instead of the DB.
+
+        :arg Locale locale: a Locale object to get translations for
+        :arg Q query: a django ORM Q() object describing translations to filter
+        :arg function rule: a lambda function implementing the `query` logic
+        :arg boolean match_all: if true, all plural forms must match the rule.
+            Otherwise, only one matching is enough
+
+        :returns: a QuerySet of values of entity PKs
+
         """
-        Helper method that returns a set with annotation of following fields:
-            * approved_count - a number of approved translations in the entity.
-            * fuzzy_count - a number of fuzzy translations in the entity.
-            * suggested_count - a number of suggested translations in the
-              entity.
-            * unreviewed_count - a number of translations in the entity that
-              have not yet been approved or rejected.
-            * rejected_count - a number of rejected translations in the entity.
-            * expected_count - a number of translations that should cover
-              entity.
-            * unchanged_count - a number of translations that have the same
-              string as the entity.
+        # First of find all translations that match the criteria.
+        translations = Translation.objects.filter(locale=locale).filter(query)
+
+        plural_pks = []
+
+        if locale.nplurals:
+            # Then we want to find the active translation of each plural form of each
+            # entity that has plurals.
+            # So we query all those entities, with for each a list of translations ordered
+            # so that the first one for each plural form will be the active one.
+            plural_candidates = (
+                self
+                .exclude(string_plural='')
+                .prefetch_related(Prefetch(
+                    'translation_set',
+                    queryset=translations.order_by('approved', 'fuzzy', '-date'),
+                    to_attr='fetched_translations'
+                ))
+            )
+
+            # Now that we have all those translations, we'll want to extract just the
+            # active one and then make sure it matches the `rule`. If it does, we store
+            # it to be retrieved in the final query.
+            for candidate in plural_candidates:
+                # Walk through the plural forms one by one.
+                count = 0
+                for i in range(locale.nplurals):
+                    candidate_translations = filter(
+                        lambda x: x.plural_form == i,
+                        candidate.fetched_translations
+                    )
+                    if len(candidate_translations) and rule(candidate_translations[0]):
+                        count += 1
+
+                        # No point going on if we don't care about matching all.
+                        if not match_all:
+                            continue
+
+                # If `match_all` is True, we want all plural forms to have a match.
+                # Otherwise, just one of them matching is enough.
+                if (match_all and count == locale.nplurals) or (not match_all and count):
+                    plural_pks.append(candidate.pk)
+
+        # Finally, we return a query that returns both the matching entities with no
+        # plurals and the entities with plurals that were stored earlier.
+        return (
+            Translation.objects
+            .filter(locale=locale)
+            .filter(
+                Q(Q(entity__string_plural='') & query) |
+                Q(entity_id__in=plural_pks)
+            )
+            .values('entity')
+        )
+
+    def missing(self, locale):
+        """Return a filter to be used to select entities marked as "missing".
+
+        An entity is marked as "missing" if at least one of its plural forms has
+        zero translations.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
         """
-        return self.annotate(
-            approved_count=Sum(
-                Case(
-                    When(
-                        Q(
-                            translation__approved=True,
-                            translation__fuzzy=False,
-                            translation__locale=locale
-                        ), then=1
-                    ), output_field=models.IntegerField(), default=0
+        have_translations = self.filter(translation__locale=locale)
+
+        have_missing_plural_forms = []
+        if locale.nplurals:
+            plural_candidates = (
+                self
+                .exclude(string_plural='')
+                .prefetch_translations(locale)
+            )
+
+            for candidate in plural_candidates:
+                candidate_translations = set(
+                    x.plural_form for x in candidate.fetched_translations
                 )
-            ),
-            fuzzy_count=Sum(
-                Case(
-                    When(
-                        Q(
-                            translation__fuzzy=True,
-                            translation__approved=False,
-                            translation__locale=locale
-                        ), then=1
-                    ), output_field=models.IntegerField(), default=0
-                )
-            ),
-            suggested_count=Sum(
-                Case(
-                    When(
-                        Q(
-                            translation__locale=locale,
-                            translation__approved=False,
-                            translation__fuzzy=False,
-                        ),
-                        then=1
-                    ),
-                    output_field=models.IntegerField(),
-                    default=0
-                )
-            ),
-            unreviewed_count=Sum(
-                Case(
-                    When(
-                        Q(
-                            translation__locale=locale,
-                            translation__approved=False,
-                            translation__fuzzy=False,
-                            translation__rejected=False,
-                        ),
-                        then=1
-                    ),
-                    output_field=models.IntegerField(),
-                    default=0
-                )
-            ),
-            rejected_count=Sum(
-                Case(
-                    When(
-                        Q(
-                            translation__locale=locale,
-                            translation__approved=False,
-                            translation__fuzzy=False,
-                            translation__rejected=True,
-                        ),
-                        then=1
-                    ),
-                    output_field=models.IntegerField(),
-                    default=0
-                )
-            ),
-            expected_count=Case(
-                When(
-                    Q(string_plural__isnull=True) | Q(string_plural=""), then=1
-                ), output_field=models.IntegerField(), default=locale.nplurals
-            ),
-            unchanged_count=Sum(
-                Case(
-                    When(
-                        Q(translation__locale=locale, translation__string=F('string')) |
-                        Q(
-                            translation__locale=locale,
-                            translation__plural_form__gt=-1,
-                            translation__plural_form__isnull=False,
-                            translation__string=F('string_plural')
-                        ), then=1
-                    ), output_field=models.IntegerField(), default=0
-                )
+                if len(candidate_translations) < locale.nplurals:
+                    have_missing_plural_forms.append(candidate.pk)
+
+        return ~Q(pk__in=have_translations) | Q(pk__in=have_missing_plural_forms)
+
+    def fuzzy(self, locale):
+        """Return a filter to be used to select entities marked as "fuzzy".
+
+        An entity is marked as "fuzzy" if all of its plural forms have a fuzzy
+        translation. Note that a fuzzy translation is always the active one.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(fuzzy=True),
+                lambda x: x.fuzzy
             )
         )
 
-    def missing(self, locale, no_plurals):
-        if no_plurals:
-            missing = self.exclude(
-                pk__in=Translation.objects.filter(locale=locale).values('entity')
+    def suggested(self, locale):
+        """Return a filter to be used to select entities marked as "suggested".
+
+        An entity is marked as "suggested" if at least one of its plural forms has
+        translations none of which are either fuzzy or approved.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        # First, we only care about entities that actually have translations.
+        have_translations = self.filter(translation__locale=locale)
+
+        # We can remove all entities that have approved or fuzzy translations.
+        approved_or_fuzzy = (
+            Translation.objects
+            .filter(locale=locale)
+            .filter(Q(approved=True) | Q(fuzzy=True))
+            .values('entity')
+        )
+
+        # And we can remove all entities with plurals that have a number of
+        # approved + fuzzy translations equal to the number of plural forms.
+        approved_or_fuzzy_plurals_forms = []
+        if locale.nplurals:
+            plural_candidates = (
+                self
+                .exclude(string_plural='')
+                .prefetch_translations(locale)
             )
-            return Q(pk__in=missing)
+
+            for candidate in plural_candidates:
+                approved_or_fuzzy_plurals = set(
+                    x.plural_form
+                    for x in candidate.fetched_translations
+                    if x.approved or x.fuzzy
+                )
+                if len(approved_or_fuzzy_plurals) == locale.nplurals:
+                    approved_or_fuzzy_plurals_forms.append(candidate.pk)
 
         return (
-            Q(approved_count__lt=F('expected_count')) &
-            Q(fuzzy_count__lt=F('expected_count')) &
-            Q(suggested_count__lt=F('expected_count'))
+            Q(pk__in=have_translations) &
+            ~Q(pk__in=approved_or_fuzzy, string_plural='') &
+            ~Q(pk__in=approved_or_fuzzy_plurals_forms)
         )
 
-    def fuzzy(self, locale, no_plurals):
-        if no_plurals:
-            fuzzy = Translation.objects.filter(locale=locale, fuzzy=True).values('entity')
-            return Q(pk__in=fuzzy)
+    def translated(self, locale):
+        """Return a filter to be used to select entities marked as "approved".
 
-        return Q(fuzzy_count=F('expected_count')) & ~Q(approved_count=F('expected_count'))
+        An entity is marked as "approved" if all of its plural forms have an approved
+        translation. Note that an approved translation is always the active one.
 
-    def suggested(self, locale, no_plurals):
-        if no_plurals:
-            missing = self.exclude(
-                pk__in=Translation.objects.filter(locale=locale).values('entity')
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(approved=True),
+                lambda x: x.approved
             )
-            approved_fuzzy = Translation.objects.filter(locale=locale).filter(
-                Q(approved=True) | Q(fuzzy=True)
-            ).values('entity')
-            return ~Q(pk__in=missing) & ~Q(pk__in=approved_fuzzy)
-
-        return (
-            Q(suggested_count__gt=0) &
-            ~Q(fuzzy_count=F('expected_count')) &
-            ~Q(approved_count=F('expected_count'))
         )
 
-    def translated(self, locale, no_plurals):
-        if no_plurals:
-            approved = Translation.objects.filter(locale=locale, approved=True).values('entity')
-            return Q(pk__in=approved)
+    def has_suggestions(self, locale):
+        """Return a filter to be used to select entities with suggested translations.
 
-        return Q(approved_count=F('expected_count'))
+        An entity is said to have suggestions if at least one of its plural forms
+        has at least one unreviewed suggestion (not fuzzy, not approved, not rejected).
 
-    def has_suggestions(self, locale, no_plurals):
-        if no_plurals:
-            unreviewed = Translation.objects.filter(
-                locale=locale, approved=False, rejected=False, fuzzy=False
-            ).values('entity')
-            return Q(pk__in=unreviewed)
+        :arg Locale locale: a Locale object to get translations for
 
-        return Q(unreviewed_count__gt=0)
+        :returns: a django ORM Q object to use as a filter
 
-    def rejected(self, locale, no_plurals):
-        if no_plurals:
-            rejected = Translation.objects.filter(locale=locale, rejected=True).values('entity')
-            return Q(pk__in=rejected)
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(approved=False, rejected=False, fuzzy=False),
+                lambda x: not x.approved and not x.rejected and not x.fuzzy,
+                match_all=False,
+            )
+        )
 
-        return Q(rejected_count__gt=0)
+    def rejected(self, locale):
+        """Return a filter to be used to select entities with rejected translations.
 
-    def unchanged(self, locale, no_plurals):
-        if no_plurals:
-            unchanged = Translation.objects.filter(
-                locale=locale, entity__in=self, string=F('entity__string')
-            ).values('entity')
-            return Q(pk__in=unchanged)
+        This filter will return all entities that have a rejected translation, whether
+        they have approved or fuzzy translations or not.
 
-        return Q(unchanged_count=F('expected_count'))
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(rejected=True),
+                lambda x: x.rejected,
+                match_all=False,
+            )
+        )
+
+    def unchanged(self, locale):
+        """Return a filter to be used to select entities that have unchanged translations.
+
+        An entity is marked as "unchanged" if all of its plural forms have translations
+        equal to the source string.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(Q(string=F('entity__string')) | Q(string=F('entity__string_plural'))),
+                lambda x: x.string == x.entity.string,
+                match_all=False,
+            )
+        )
 
     def authored_by(self, locale, emails):
         def is_email(email):
@@ -1914,12 +1987,11 @@ class EntityQuerySet(models.QuerySet):
     def between_time_interval(self, locale, start, end):
         return Q(translation__locale=locale, translation__date__range=(start, end))
 
-    def prefetch_resources_translations(self, locale):
+    def prefetch_translations(self, locale):
         """
-        Prefetch resources and translations for given locale.
+        Prefetch translations for given locale.
         """
         return self.prefetch_related(
-            'resource',
             Prefetch(
                 'translation_set',
                 queryset=Translation.objects.filter(locale=locale),
@@ -2025,11 +2097,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         pre_filters = []
         post_filters = []
 
-        # Temporary optimization: use simpler status & extra filter DB queries for non-PO projects,
-        # which don't store translations for different plural forms in separate Translation model
-        # instances.
-        no_plurals = not project.resources.filter(format='po').exists()
-
         if time:
             if re.match('^[0-9]{12}-[0-9]{12}$', time):
                 start, end = utils.parse_time_interval(time)
@@ -2045,15 +2112,28 @@ class Entity(DirtyFieldsMixin, models.Model):
         else:
             entities = Entity.objects.all()
 
+        entities = entities.filter(
+            resource__translatedresources__locale=locale,
+            obsolete=False
+        )
+
+        if project.slug != 'all-projects':
+            entities = entities.filter(resource__project=project)
+
+        # Filter by path
+        if paths:
+            paths = project.parts_to_paths(paths)
+            entities = entities.filter(resource__path__in=paths)
+
         if status:
             # Apply a combination of filters based on the list of statuses the user sent.
             status_filter_choices = ('missing', 'fuzzy', 'suggested', 'translated')
             post_filters.append(
                 combine_entity_filters(
+                    entities,
                     status_filter_choices,
                     status.split(','),
-                    locale,
-                    no_plurals
+                    locale
                 )
             )
 
@@ -2062,28 +2142,15 @@ class Entity(DirtyFieldsMixin, models.Model):
             extra_filter_choices = ('has-suggestions', 'rejected', 'unchanged')
             post_filters.append(
                 combine_entity_filters(
+                    entities,
                     extra_filter_choices,
                     extra.split(','),
-                    locale,
-                    no_plurals
+                    locale
                 )
             )
 
         if post_filters:
-            if not no_plurals:
-                entities = entities.with_status_counts(locale)
             entities = entities.filter(Q(*post_filters))
-
-        entities = entities.filter(
-            resource__project=project,
-            resource__translatedresources__locale=locale,
-            obsolete=False
-        )
-
-        # Filter by path
-        if paths:
-            paths = project.parts_to_paths(paths)
-            entities = entities.filter(resource__path__in=paths)
 
         # Filter by search parameters
         if search:
@@ -2109,7 +2176,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
 
-        entities = entities.prefetch_resources_translations(locale)
+        entities = entities.prefetch_related('resource').prefetch_translations(locale)
 
         if exclude_entities:
             entities = entities.exclude(pk__in=exclude_entities)
