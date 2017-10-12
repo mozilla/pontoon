@@ -1,11 +1,13 @@
 # requirements.txt contains all dependencies required to run python in the production environment.
 -r requirements.txt
 
+# ==================================================================================
+# Requirements with no sub-dependencies.
+# ==================================================================================
+
 django-debug-toolbar==1.4 \
     --hash=sha256:0cbae8760f4851d480a70b72ace5b075f8191ecf899bc97427715e50fb0e90b9 \
     --hash=sha256:852a37b80df9597048591ebc87d0ce85a4edceaef015dc5360ad89cc5960c27b
-sqlparse==0.1.19 \
-    --hash=sha256:d896be1a1c7f24bffe08d7a64e6f0176b260e281c5f3685afe7826f8bada4ee8
 django-extensions==1.6.7 \
     --hash=sha256:7c33f1be6acf7414539cfdef2967bf6240d3c9317551b5d84622dff7824cd3c6 \
     --hash=sha256:ebdfc329207231f63b5ccb591407aadbc1a524af752e52690f0646eb7ff52943
@@ -13,3 +15,19 @@ django-sslserver==0.19 \
     --hash=sha256:1363835229a0585f89c42f3beca836572f3f6babdc1508f13352aed84b0924b3
 hashin==0.11.2 \
     --hash=sha256:aaf11abf155830b7c2b868bb6dbc5dfde49cd0b17a4c0dc1b8b67ca9f31ec490
+sqlparse==0.1.19 \
+    --hash=sha256:d896be1a1c7f24bffe08d7a64e6f0176b260e281c5f3685afe7826f8bada4ee8
+
+# ==================================================================================
+# Requirements with dependencies.
+# ==================================================================================
+
+nose-progressive==1.5.1 \
+    --hash=sha256:44bd41344c1cc1de434a72764ed47fdbbbdbcf03c7801114c0433cd6c696cb55 \
+    --hash=sha256:aac01f33c8446407b3c5e6f2185d5b09f5f3e6cb773f1db2df99efce5a70b81b
+
+# Required by nose-progressive
+blessings==1.6 \
+    --hash=sha256:edc5713061f10966048bf6b40d9a514b381e0ba849c64e034c4ef6c1847d3007
+
+# ----------------------------------------------------------------------------------
