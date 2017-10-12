@@ -167,7 +167,7 @@ var Pontoon = (function (my) {
        * Generate Input value element
        */
       inputValueElement: function (id, value, maxLength) {
-         var base = '<input class="value" id="ftl-id-' + id + '" type="text" value="' + value + '"';
+        var base = '<input class="value" id="ftl-id-' + id + '" type="text" value="' + value + '"';
 
         if (typeof maxlength !== "undefined"){
           base += ' maxlength="' + maxlength + '"';
