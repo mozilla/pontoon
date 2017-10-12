@@ -11,8 +11,6 @@ django-debug-toolbar==1.4 \
 django-extensions==1.6.7 \
     --hash=sha256:7c33f1be6acf7414539cfdef2967bf6240d3c9317551b5d84622dff7824cd3c6 \
     --hash=sha256:ebdfc329207231f63b5ccb591407aadbc1a524af752e52690f0646eb7ff52943
-django-nose==1.4.4 \
-    --hash=sha256:ea24863cd7278aa503af4e693fc639cc86f6ab5cc79fd36dafe17d4f5d8ea114
 django-sslserver==0.19 \
     --hash=sha256:1363835229a0585f89c42f3beca836572f3f6babdc1508f13352aed84b0924b3
 hashin==0.11.2 \

@@ -11,9 +11,6 @@ INSTALLED_APPS = base.INSTALLED_APPS + (
     # Adds various commands like e.g. shell which has all models loaded by default.
     'django_extensions',
 
-    # A bridge between nosetest and django.
-    'django_nose',
-
     # sslserver helps to develop features that require HTTPS.
     'sslserver',
 )

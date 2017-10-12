@@ -145,6 +145,7 @@ INSTALLED_APPS = (
 
     # Third-party apps, patches, fixes
     'django_jinja',
+    'django_nose',
     'pipeline',
     'session_csrf',
     'guardian',

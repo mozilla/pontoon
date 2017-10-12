@@ -54,6 +54,8 @@ django-dotenv==1.3.0 \
     --hash=sha256:120c4621d1e4f5adabe0a683463d1be7a5a6b992edd4764d323c627d229251e0
 django-guardian==1.4.6 \
     --hash=sha256:aa0979b1955f07fc37fea96be7ee16ef4a42ac3423e64847cbbf8a36aa80ca6b
+django-nose==1.4.4 \
+    --hash=sha256:ea24863cd7278aa503af4e693fc639cc86f6ab5cc79fd36dafe17d4f5d8ea114
 django-session-csrf==0.7.1 \
     --hash=sha256:e17177e6e2e6518ec7ce6693ad10a5c747f8571d09f4cfa9082599334421605d \
     --hash=sha256:ff8c10e30d312c77fc6a6db7710e22b9383e28c03b7fe958876ca96f39aa6cf2
