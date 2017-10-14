@@ -173,7 +173,8 @@ def _get_entities_list(locale, project, form):
     """
     entities = (
         Entity.objects.filter(pk__in=form.cleaned_data['entity_ids'])
-        .prefetch_resources_translations(locale)
+        .prefetch_related('resource')
+        .prefetch_translations(locale)
         .distinct()
         .order_by('order')
     )
@@ -302,7 +303,8 @@ def batch_edit_translations(request):
 
     entities = (
         Entity.objects.filter(pk__in=entity_pks)
-        .prefetch_resources_translations(locale)
+        .prefetch_related('resource')
+        .prefetch_translations(locale)
     )
 
     if not entities.exists():
