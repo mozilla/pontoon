@@ -1,7 +1,7 @@
 $(function() {
 
-  var username = $.trim($('#profile-username').val());
-  var email = $.trim($('#profile-email').val());
+  var username = $('#profile-username');
+  var email = $('#profile-email');
 
   // Save user profile handler
   function save() {
@@ -17,6 +17,10 @@ $(function() {
         if (data === "ok") {
           Pontoon.endLoader('Thank you!');
         }
+        if (data === 'logout') {
+          window.location.href = '/';
+          Pontoon.endLoader('Logging out');
+        }
       },
       error: function(request) {
         if (request.responseText === "error") {
@@ -29,7 +33,7 @@ $(function() {
   }
 
   // Save user profile by mouse or keyboard
-  $('.submit').click(function() {
+  $('.submit').click(function(e) {
     save();
   });
   $('#profile-form').on('keydown', function(e){
@@ -37,6 +41,13 @@ $(function() {
       e.preventDefault();
       save();
     }
+  });
+  $('#profile-email').focus(function(e) {
+      e.preventDefault();
+      console.log("Email changed");
+      if($('#profile-email').next('.validation').length == 0) {
+        $('#profile-email').after('<span class=\'validation\' style=\'color:red;margin-left: 10px;\'>Changing email will cause a logout.</span>')
+      }
   });
 
   function loadNextEvents(cb) {
