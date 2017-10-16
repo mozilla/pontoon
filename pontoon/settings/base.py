@@ -64,25 +64,7 @@ SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') != 'Fals
 
 APP_URL_KEY = 'APP_URL'
 
-# For the sake of integration with Heroku, we dynamically load domain name
-# From the file that's set right after the build phase.
-if os.environ.get('HEROKU_DEMO') and not os.environ.get('SITE_URL'):
-    def _site_url():
-        from django.contrib.sites.models import Site
-        from django.core.cache import cache
-
-        app_url = cache.get(APP_URL_KEY)
-
-        # Sometimes data from cache is flushed, We can't do anything about that.
-        if not app_url:
-            app_url = "https://{}".format(Site.objects.get(pk=1).domain)
-            cache.set(APP_URL_KEY, app_url)
-
-        return app_url
-
-    SITE_URL = lazy(_site_url, str)()
-else:
-    SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
+SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
@@ -165,7 +147,6 @@ MIDDLEWARE_CLASSES = (
     'sslify.middleware.SSLifyMiddleware',
     'pontoon.base.middleware.RaygunExceptionMiddleware',
     'pontoon.base.middleware.BlockedIpMiddleware',
-    'pontoon.base.middleware.HerokuDemoSetupMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
