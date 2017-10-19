@@ -63,6 +63,11 @@
     </section>
   </div>
 
+  {% if pk %}
+  <a href="{{ url('pontoon.admin.project.strings', slug) }}">Manage strings</a>
+  {% endif %}
+
+
   <h3>
     <span>Repositories</span>
     <a href="#add-repo" class="add-repo">Add more</a>
@@ -249,4 +254,3 @@
 {% block extend_js %}
   {% javascript 'admin_project' %}
 {% endblock %}
-

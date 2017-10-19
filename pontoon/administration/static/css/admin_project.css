@@ -328,6 +328,9 @@ form a.add-repo {
 textarea {
   height: 60px;
 }
+textarea.strings-source {
+    height: 400px;
+}
 
 .subtitle {
   font-size: 12px;
