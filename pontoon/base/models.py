@@ -479,7 +479,7 @@ class AggregatedStats(models.Model):
 
     @property
     def complete(self):
-        return self.missing_strings == 0
+        return self.total_strings == self.approved_strings
 
 
 def validate_cldr(value):
