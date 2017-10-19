@@ -8,8 +8,14 @@
 <form id="admin-form" method="POST" action="{{ request.path }}">
 
   <h1>
-  {{ 'Manage strings for %(project)s' | format(project=project.name) }}
+    {{ 'Manage strings for %(project)s' | format(project=project.name) }}
   </h1>
+
+  <section>
+    <button type="submit">Save strings</button>
+    <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">Cancel</a>
+    <a href="{{ url('pontoon.admin.project.strings', project.slug) }}?format=csv">Download Strings</a>
+  </section>
 
   {% csrf_token %}
 
@@ -28,8 +34,8 @@
   {% endif %}
 
   <div class="controls clearfix">
-      <button type="submit">Save strings</button>
-      <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">Cancel</a>
+    <button type="submit">Save strings</button>
+    <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">Cancel</a>
   </div>
 
 </form>

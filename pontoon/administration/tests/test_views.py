@@ -14,6 +14,7 @@ from pontoon.base.models import (
     Project,
     Resource,
     TranslatedResource,
+    Translation,
 )
 from pontoon.base.tests import (
     EntityFactory,
@@ -199,3 +200,86 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         assert_contains(response, 'Wubba lubba dub dub')
         assert_not_contains(response, 'string 0')
         assert_contains(response, 'string 1')
+
+    def test_manage_project_strings_download_csv(self):
+        locale_kl = LocaleFactory.create(code='kl', name='Klingon')
+        locale_gs = LocaleFactory.create(code='gs', name='Geonosian')
+        project = ProjectFactory.create(locales=[locale_kl, locale_gs])
+
+        url = reverse('pontoon.admin.project.strings', args=(project.slug,))
+
+        new_strings = """
+             And on the pedestal these words appear:
+            'My name is Ozymandias, king of kings:
+            Look on my works, ye Mighty, and despair!'
+        """
+        response = self.client.post(url, {'new_strings': new_strings})
+        assert_code(response, 200)
+
+        # Test downloading the data.
+        response = self.client.get(url, {'format': 'csv'})
+        assert_code(response, 200)
+        assert_equal(response._headers['content-type'], ('Content-Type', 'text/csv'))
+
+        # Verify the original content is here.
+        assert_contains(response, 'pedestal')
+        assert_contains(response, 'Ozymandias')
+        assert_contains(response, 'Mighty')
+
+        # Verify we have the locale columns.
+        assert_contains(response, 'kl')
+        assert_contains(response, 'gs')
+
+        # Now add some translations.
+        entity = Entity.objects.filter(string='And on the pedestal these words appear:')[0]
+        Translation(
+            string='Et sur le piédestal il y a ces mots :',
+            entity=entity,
+            locale=locale_kl,
+            approved=True,
+        ).save()
+        Translation(
+            string='Und auf dem Sockel steht die Schrift: ‚Mein Name',
+            entity=entity,
+            locale=locale_gs,
+            approved=True,
+        ).save()
+
+        entity = Entity.objects.filter(string='\'My name is Ozymandias, king of kings:')[0]
+        Translation(
+            string='"Mon nom est Ozymandias, Roi des Rois.',
+            entity=entity,
+            locale=locale_kl,
+            approved=True,
+        ).save()
+        Translation(
+            string='Ist Osymandias, aller Kön’ge König: –',
+            entity=entity,
+            locale=locale_gs,
+            approved=True,
+        ).save()
+
+        entity = Entity.objects.filter(string='Look on my works, ye Mighty, and despair!\'')[0]
+        Translation(
+            string='Voyez mon œuvre, vous puissants, et désespérez !"',
+            entity=entity,
+            locale=locale_kl,
+            approved=True,
+        ).save()
+        Translation(
+            string='Seht meine Werke, Mächt’ge, und erbebt!‘',
+            entity=entity,
+            locale=locale_gs,
+            approved=True,
+        ).save()
+
+        response = self.client.get(url, {'format': 'csv'})
+
+        # Verify the translated content is here.
+        assert_contains(response, 'pedestal')
+        assert_contains(response, 'piédestal')
+        assert_contains(response, 'Sockel')
+
+        assert_contains(response, 'Mighty')
+        assert_contains(response, 'puissants')
+        assert_contains(response, 'Mächt’ge')

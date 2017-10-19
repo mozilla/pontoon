@@ -1,5 +1,7 @@
 import logging
 
+from backports import csv
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -26,6 +28,7 @@ from pontoon.base.models import (
     ProjectLocale,
     Resource,
     TranslatedResource,
+    Translation,
 )
 from pontoon.sync.models import SyncLog
 from pontoon.sync.tasks import sync_project
@@ -209,6 +212,32 @@ def manage_project(request, slug=None, template='admin_project.html'):
     return render(request, template, data)
 
 
+def _get_project_strings_csv(project, entities, output):
+    locales = Locale.objects.filter(project_locale__project=project)
+    translations = (
+        Translation.objects
+        .filter(
+            entity__resource__project=project,
+            approved=True,
+        )
+        .prefetch_related('locale')
+        .prefetch_related('entity')
+    )
+    all_data = dict((x.id, {'source': x.string}) for x in entities)
+
+    for translation in translations:
+        all_data[translation.entity.id][translation.locale.code] = translation.string
+
+    writer = csv.writer(output)
+    headers = ['source'] + [x.code for x in locales]
+    writer.writerow(headers)
+    for string in all_data.values():
+        row = [string.get(key, '') for key in headers]
+        writer.writerow(row)
+
+    return output
+
+
 def manage_project_strings(request, slug=None):
     """View to manage the source strings of a project.
 
@@ -230,6 +259,13 @@ def manage_project_strings(request, slug=None):
     entities = Entity.objects.filter(resource__project=project)
     project_has_strings = entities.exists()
     formset = EntityFormSet(queryset=entities)
+
+    if request.GET.get('format') == 'csv':
+        # Return a CSV document containing all translations for this project.
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="%s.csv"' % project.name
+
+        return _get_project_strings_csv(project, entities, response)
 
     if request.method == 'POST':
         if not project_has_strings:
