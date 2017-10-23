@@ -197,6 +197,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'subtitle': subtitle,
         'pk': pk,
         'projects': projects,
+        'has_repositories': project.repositories.exists()
     }
 
     # Set locale in Translate link
@@ -254,7 +255,10 @@ def manage_project_strings(request, slug=None):
     except Project.DoesNotExist:
         raise Http404
 
-    # TODO: verify project has no source repo.
+    if project.repositories.exists():
+        return HttpResponseForbidden(
+            'Project %s has a repository, managing strings is forbidden.' % project.name
+        )
 
     entities = Entity.objects.filter(resource__project=project)
     project_has_strings = entities.exists()

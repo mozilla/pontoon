@@ -63,7 +63,7 @@
     </section>
   </div>
 
-  {% if pk %}
+  {% if pk and not has_repositories %}
   <a href="{{ url('pontoon.admin.project.strings', slug) }}">Manage strings</a>
   {% endif %}
 
