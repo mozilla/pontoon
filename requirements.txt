@@ -260,8 +260,8 @@ jsonpickle==0.7.0 \
     --hash=sha256:177b0e8311c6edbfc7d184157a7e80f68b6b874c5645f7300d41f475f05f231e
 
 # ----------------------------------------------------------------------------------
-https://github.com/mathjazz/translate/archive/1.13.1.zip#egg=translate-toolkit==1.13.1 \
-    --hash=sha256:0c35524756fe9f1f12ec7cfba84fc434ff0e74f8fb239ff7b3b21518e226b7ca
+https://github.com/mathjazz/translate/archive/2.2.5.zip#egg=translate-toolkit==2.2.5 \
+    --hash=sha256:9a23bda0f3ec07f36b6b662bf2a25492b6a354709500c736213229e94f462443
 
 # Required by translate-toolkit
 argparse==1.3.0 \
