@@ -177,7 +177,7 @@ class VCSProject(object):
 
                 log.info(
                     'Changed files in {} repository, all: {}'.format(
-                        self.db_project.name, changed_files
+                        self.db_project, changed_files
                     )
                 )
 
@@ -199,7 +199,7 @@ class VCSProject(object):
 
         log.info(
             'Changed files in {} repository, relevant for enabled locales: {}'.format(
-                self.db_project.name, files
+                self.db_project, files
             )
         )
 
