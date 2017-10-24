@@ -22,8 +22,6 @@ urlpatterns = [
         name='pontoon.machine_translation'),
     url(r'^microsoft-terminology/$', views.microsoft_terminology,
         name='pontoon.microsoft_terminology'),
-    url(r'^amagama/$', views.amagama,
-        name='pontoon.amagama'),
     url(r'^transvision/$', views.transvision,
         name='pontoon.transvision'),
 ]

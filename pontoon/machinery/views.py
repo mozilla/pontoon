@@ -164,39 +164,6 @@ def microsoft_terminology(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 
-def amagama(request):
-    """Get open source translations from amaGama service."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-    except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    try:
-        text = quote(text.encode('utf-8'))
-    except KeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    # No trailing slash at the end or slash becomes part of the source text
-    url = (
-        u'https://amagama-live.translatehouse.org/api/v1/en/{locale}/unit/'
-        .format(locale=locale)
-    )
-
-    payload = {
-        'source': text,
-        'max_candidates': 5,
-        'min_similarity': 70,
-    }
-
-    try:
-        r = requests.get(url, params=payload)
-        return JsonResponse(r.json(), safe=False)
-
-    except Exception as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-
 def transvision(request):
     """Get Mozilla translations from Transvision service."""
     try:

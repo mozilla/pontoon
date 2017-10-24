@@ -480,35 +480,6 @@ var Pontoon = (function (my) {
         }).error(error).complete(complete);
       }
 
-      // amaGama
-      requests++;
-
-      if (self.XHRamagama) {
-        self.XHRamagama.abort();
-      }
-
-      self.XHRamagama = $.ajax({
-        url: '/amagama/',
-        data: {
-          text: original,
-          locale: self.locale.code
-        }
-
-      }).success(function(data) {
-        if (data) {
-          $.each(data, function() {
-            append({
-              original: this.source,
-              quality: Math.round(this.quality) + '%',
-              url: 'http://amagama.translatehouse.org/',
-              title: 'Visit amaGama',
-              source: 'Open Source',
-              translation: this.target
-            });
-          });
-        }
-      }).error(error).complete(complete);
-
       // Transvision
       if (self.locale.transvision) {
         requests++;
