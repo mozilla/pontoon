@@ -216,13 +216,22 @@ class GetEntitiesForm(forms.Form):
     entity = forms.IntegerField(required=False)
 
     def clean_paths(self):
-        return self.data.getlist('paths[]')
+        try:
+            return self.data.getlist('paths[]')
+        except AttributeError:
+            # If the data source is not a QueryDict, it won't have a `getlist` method.
+            return self.data.get('paths[]') or []
 
     def clean_limit(self):
         try:
             return int(self.cleaned_data['limit'])
         except (TypeError, ValueError):
             return 50
+
+    def clean_search(self):
+        # Return the search input as is, without any cleaning. This is in order to allow
+        # users to search for strings with leading or trailing whitespaces.
+        return self.data.get('search')
 
     def clean_exclude_entities(self):
         return utils.split_ints(self.cleaned_data['exclude_entities'])
