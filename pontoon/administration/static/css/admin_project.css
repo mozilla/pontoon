@@ -100,6 +100,7 @@ form .button {
   padding: 4px;
 }
 
+#admin-strings-form .controls .button,
 #admin-form .controls .button {
   border-radius: 3px;
   font-weight: 400;
@@ -121,8 +122,8 @@ form a:link, form a:visited {
   text-transform: uppercase;
 }
 
-form a.add-inline,
-form a.add-repo {
+#admin-form form a.add-inline,
+#admin-form form a.add-repo {
   font-size: 14px;
   font-style: normal;
   letter-spacing: 0;
@@ -285,6 +286,7 @@ form a.add-repo {
 }
 
 .inline[data-count],
+.entity[data-count],
 .repository-empty {
   display: none;
 }
@@ -358,4 +360,9 @@ textarea.strings-source {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Code specific to the manage strings page */
+.strings-list .entity {
+  margin-bottom: 30px;
 }

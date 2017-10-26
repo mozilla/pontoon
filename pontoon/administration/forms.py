@@ -72,5 +72,5 @@ ExternalResourceInlineFormSet = inlineformset_factory(
 EntityFormSet = forms.modelformset_factory(
     Entity,
     fields=('string', 'comment'),
-    extra=0,
+    extra=1,
 )

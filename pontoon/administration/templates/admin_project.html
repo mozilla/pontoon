@@ -18,6 +18,9 @@
     {% if translate_locale and form.slug.value() != '' %}
     <a class="translate{% if not ready %} hidden{% endif %}" href="{{ url('pontoon.localizations.localization', translate_locale, form.slug.value()) }}">Translate</a>
     {% endif %}
+    {% if pk and not has_repositories %}
+    <a href="{{ url('pontoon.admin.project.strings', slug) }}">Strings</a>
+    {% endif %}
   </aside>
   {% endif %}
   </h1>
@@ -62,10 +65,6 @@
       </select>
     </section>
   </div>
-
-  {% if pk and not has_repositories %}
-  <a href="{{ url('pontoon.admin.project.strings', slug) }}">Manage strings</a>
-  {% endif %}
 
 
   <h3>

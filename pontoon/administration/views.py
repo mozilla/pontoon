@@ -324,11 +324,14 @@ def manage_project_strings(request, slug=None):
                         if not entity.resource_id:
                             entity.resource = resource
 
-                        # Note that we save all entities one by one. That should be a problem
+                        # Note that we save all entities one by one. That shouldn't be a problem
                         # because we don't expect users to change thousands of strings at once.
                         # Also, django is smart and ``formset.save()`` only returns Entity
                         # objects that have changed.
                         entity.save()
+
+            # Reinitialize the formset.
+            formset = EntityFormSet(queryset=entities)
 
     data = {
         'project': project,
