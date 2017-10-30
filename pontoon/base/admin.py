@@ -6,6 +6,7 @@ from django.contrib.auth.admin import (
 from django.contrib.auth.models import User, Group
 from django.forms.models import ModelForm
 from django.forms import ChoiceField
+from django.urls import reverse
 
 from pontoon.base import models
 
@@ -31,6 +32,44 @@ class UserAdmin(AuthUserAdmin):
     list_display = ('email', 'first_name', 'last_login', 'date_joined')
     list_filter = ('is_staff', 'is_superuser')
     inlines = (UserProfileInline,)
+
+    def save_model(self, request, obj, form, change):
+        """
+        Save an user and log changes in its roles.
+        """
+        groups = form.cleaned_data['groups']
+
+        added_groups = groups.exclude(
+            pk__in=obj.groups.values_list('pk', flat=True)
+        )
+
+        if groups.exists():
+            removed_groups = (
+                Group.objects
+                .filter(
+                    user=obj,
+                ).exclude(
+                    pk__in=groups.values_list('pk', flat=True)
+                )
+            )
+
+        else:
+            removed_groups = obj.groups.all()
+
+        super(UserAdmin, self).save_model(request, obj, form, change)
+
+        models.UserRoleLogEntry.objects.log_user_roles(
+            request.user,
+            obj,
+            added_groups,
+            models.UserRoleLogAction.add,
+        )
+        models.UserRoleLogEntry.objects.log_user_roles(
+            request.user,
+            obj,
+            removed_groups,
+            models.UserRoleLog.remove,
+        )
 
 
 class ExternalResourceInline(admin.TabularInline):
@@ -174,6 +213,52 @@ class ChangedEntityLocaleAdmin(admin.ModelAdmin):
     raw_id_fields = ('entity',)
 
 
+class UserRoleLogAdmin(admin.ModelAdmin):
+    search_fields = (
+        'performed_by__email',
+        'performed_on__email',
+        'group__name',
+        'created_at'
+    )
+    list_display = (
+        'performed_by_email',
+        'action_type',
+        'performed_on_email',
+        'group',
+        'created_at'
+    )
+    ordering = (
+        '-created_at',
+    )
+
+    def get_user_edit_url(self, user_pk):
+        return reverse(
+            'admin:{}_{}_change'.format(
+                User._meta.app_label,
+                User._meta.model_name,
+            ),
+            args=(user_pk,)
+        )
+
+    def performed_on_email(self, obj):
+        return '<a href="{}">{}</a>'.format(
+            self.get_user_edit_url(obj.performed_on_id),
+            obj.performed_on.email
+        )
+
+    performed_on_email.short_description = "Performed on"
+    performed_on_email.allow_tags = True
+
+    def performed_by_email(self, obj):
+        return '<a href="{}">{}</a>'.format(
+            self.get_user_edit_url(obj.performed_by_id),
+            obj.performed_by.email
+        )
+
+    performed_by_email.short_description = "Performed by"
+    performed_by_email.allow_tags = True
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(models.Locale, LocaleAdmin)
@@ -184,3 +269,4 @@ admin.site.register(models.Entity, EntityAdmin)
 admin.site.register(models.Translation, TranslationAdmin)
 admin.site.register(models.TranslationMemoryEntry, TranslationMemoryEntryAdmin)
 admin.site.register(models.ChangedEntityLocale, ChangedEntityLocaleAdmin)
+admin.site.register(models.UserRoleLogEntry, UserRoleLogAdmin)

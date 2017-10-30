@@ -490,3 +490,16 @@ class TMXFileGeneratorTests(TestCase):
             self.get_sample('tmx/valid_entries.tmx'),
             os.path.join(self.samples_root, 'tmx/tmx14.dtd')
         )
+
+
+class UserRoleLogLocaleTest(TestCase):
+    """
+    Check if The Locale Permissions Form saves logs of changes on users groups they are
+    assigned to.
+    """
+    def test_add_user_to_group(self):
+        # Check idempotency
+        assert False
+
+    def test_remove_user_from_group(self):
+        assert False

@@ -1,16 +1,19 @@
-import os
-
 import bleach
 
 from django import forms
 from django.conf import settings
+from django.contrib.admin.models import CHANGE
+from django.contrib.contenttypes.models import ContentType
+from django.forms import BaseModelFormSet
 
 from pontoon.base import utils
 from pontoon.base.models import (
     Locale,
     ProjectLocale,
     User,
-    UserProfile
+    UserProfile,
+    UserRoleLogAction,
+    UserRoleLogEntry
 )
 from pontoon.sync.formats import SUPPORTED_FORMAT_PARSERS
 
@@ -79,17 +82,55 @@ class UploadFileForm(DownloadFileForm):
 
 
 class UserPermissionGroupForm(object):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+
+        super(UserPermissionGroupForm, self).__init__(*args, **kwargs)
+
+
     def assign_users_to_groups(self, group_name, users):
         """
         Clear group membership and assign a set of users to a given group of users.
         """
         group = getattr(self.instance, '{}_group'.format(group_name))
+
+        users_to_add = list(
+            User.objects
+                .filter(pk__in=users)
+                .exclude(pk__in=group.user_set.all())
+                .only('pk')
+        )
+
+        if users.exists():
+            users_to_remove = list(
+                group.user_set
+                    .exclude(pk__in=users)
+                    .only('pk')
+            )
+
+        else:
+            users_to_remove = group.user_set.all()
+
         group.user_set.clear()
+
         if users:
             group.user_set.add(*users)
 
+        UserRoleLogEntry.objects.log_users_roles(
+            self.request.user,
+            group,
+            users_to_add,
+            UserRoleLogAction.add,
+        )
+        UserRoleLogEntry.objects.log_users_roles(
+            self.request.user,
+            group,
+            users_to_remove,
+            UserRoleLogAction.remove
+        )
 
-class LocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
+
+class LocalePermsForm(UserPermissionGroupForm, forms.ModelForm):
     translators = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
     managers = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
 
@@ -98,8 +139,14 @@ class LocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
         fields = ('translators', 'managers')
 
     def save(self, *args, **kwargs):
-        self.assign_users_to_groups('translators', self.cleaned_data.get('translators', []))
-        self.assign_users_to_groups('managers', self.cleaned_data.get('managers', []))
+        """
+        Locale perms logs
+        """
+        translators = self.cleaned_data.get('translators', User.objects.none())
+        managers = self.cleaned_data.get('managers', User.objects.none())
+
+        self.assign_users_to_groups('translators', translators)
+        self.assign_users_to_groups('managers', managers)
 
 
 class ProjectLocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
@@ -111,7 +158,10 @@ class ProjectLocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
 
     def save(self, *args, **kwargs):
         super(ProjectLocalePermsForm, self).save(*args, **kwargs)
-        self.assign_users_to_groups('translators', self.cleaned_data.get('translators', []))
+
+        translators = self.cleaned_data.get('translators', User.objects.none())
+
+        self.assign_users_to_groups('translators', translators)
 
 
 class ProjectLocaleFormSet(forms.models.BaseModelFormSet):

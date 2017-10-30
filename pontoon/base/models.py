@@ -10,6 +10,10 @@ import os.path
 import re
 
 from collections import defaultdict
+from enumfields import (
+    EnumField,
+    Enum
+)
 from dirtyfields import DirtyFieldsMixin
 from six.moves import reduce
 from six.moves.urllib.parse import (urlencode, urlparse)
@@ -419,6 +423,65 @@ class UserProfile(models.Model):
     def sorted_locales_codes(self):
         """Return the codes of locales that contributor set in his preferences."""
         return [l.code for l in self.sorted_locales]
+
+
+class UserRoleLogEntryManager(models.Manager):
+    def log_users_roles(self, manager, group, users, action_type):
+        """
+        Logs
+        """
+        log_entries = [
+            UserRoleLogEntry(
+                action_type=action_type,
+                performed_by=manager,
+                performed_on=user,
+                group=group,
+            )
+            for user in users
+        ]
+
+        UserRoleLogEntry.objects.bulk_create(log_entries)
+
+    def log_user_roles(self, manager, user, groups, change_type):
+        log_entries = [
+            UserRoleLogEntry(
+                action_type=change_type,
+                performed_by=manager,
+                performed_on=user,
+                group=group,
+            )
+            for group in groups
+        ]
+        UserRoleLogEntry.objects.bulk_create(log_entries)
+
+
+class UserRoleLogAction(Enum):
+    """
+    Managers can perform various action on a user.
+    """
+    # User has been added to a group (e.g. translators, managers).
+    add = 'add'
+
+    # User has been removed from a group (e.g. translators, managers).
+    remove = 'remove'
+
+
+class UserRoleLogEntry(models.Model):
+    """
+    Track changes of roles added or removed from a user.
+    """
+    action_type = EnumField(UserRoleLogAction)
+
+    performed_by = models.ForeignKey(User, related_name='changed_roles_log')
+    performed_on = models.ForeignKey(User, related_name='roles_log')
+    group = models.ForeignKey(Group)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = UserRoleLogEntryManager()
+
+    class Meta:
+        verbose_name = 'User roles log'
+        verbose_name_plural = 'Users roles logs'
 
 
 class AggregatedStats(models.Model):
