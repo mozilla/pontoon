@@ -376,9 +376,9 @@ def get_download_content(slug, code, part):
     """
     Get content of the file to be downloaded.
 
-    :param str slug: Project slug.
-    :param str code: Locale code.
-    :param str part: Resource path or Subpage name.
+    :arg str slug: Project slug.
+    :arg str code: Locale code.
+    :arg str part: Resource path or Subpage name.
     """
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.sync import formats
@@ -480,11 +480,11 @@ def handle_upload_content(slug, code, part, f, user):
     """
     Update translations in the database from uploaded file.
 
-    :param str slug: Project slug.
-    :param str code: Locale code.
-    :param str part: Resource path or Subpage name.
-    :param UploadedFile f: UploadedFile instance.
-    :param User user: User uploading the file.
+    :arg str slug: Project slug.
+    :arg str code: Locale code.
+    :arg str part: Resource path or Subpage name.
+    :arg UploadedFile f: UploadedFile instance.
+    :arg User user: User uploading the file.
     """
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.sync import formats
@@ -608,9 +608,9 @@ def build_translation_memory_file(creation_date, locale_code, entries):
     TMX files will contain large amount of entries and it's impossible to render all the data with
     django templates.
     Rendering of string in memory is a lot faster.
-    :param datetime creation_date: when TMX file is being created.
-    :param str locale_code: code of a locale
-    :param list entries: A list which contains tuples with following items:
+    :arg datetime creation_date: when TMX file is being created.
+    :arg str locale_code: code of a locale
+    :arg list entries: A list which contains tuples with following items:
                          * resource_path - path of a resource,
                          * key - key of an entity,
                          * source - source string of entity,
@@ -673,3 +673,26 @@ def glob_to_regex(glob):
         "%s$" % regex[:-7]
         if regex[-7:] == "\Z(?ms)"
         else regex)
+
+
+def get_m2m_changes(current_qs, new_qs):
+    """
+    Get difference between states of m2m relation.
+    When formfield_items is empty, return all items from object_items as removed.
+
+    :arg django.db.models.QuerySet `current_qs`: objects from the current state of relation.
+    :arg django.db.models.QuerySet `final_qs`: objects from the future state of m2m
+    :returns: A tuple with 2 querysets for added and removed items from m2m
+    """
+
+    add_items = new_qs.exclude(
+        pk__in=current_qs.values_list('pk', flat=True)
+    )
+
+    remove_items = (
+        current_qs.exclude(
+            pk__in=new_qs.values_list('pk', flat=True)
+        )
+    )
+
+    return list(add_items), list(remove_items)

@@ -10,7 +10,10 @@ from pontoon.base.models import (
     Locale,
     ProjectLocale,
     User,
-    UserProfile
+    UserProfile,
+)
+from pontoon.teams.utils import (
+    log_group_members,
 )
 from pontoon.sync.formats import SUPPORTED_FORMAT_PARSERS
 
@@ -78,18 +81,40 @@ class UploadFileForm(DownloadFileForm):
                     raise forms.ValidationError(message)
 
 
-class UserPermissionGroupForm(object):
+class UserPermissionLogFormMixin(object):
+    """
+    Logging of changes requires knowledge about the current user.
+    We fetch information about a user from `request` object and
+    log informations about changes they've made.
+    """
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super(UserPermissionLogFormMixin, self).__init__(*args, **kwargs)
+
     def assign_users_to_groups(self, group_name, users):
         """
         Clear group membership and assign a set of users to a given group of users.
         """
         group = getattr(self.instance, '{}_group'.format(group_name))
+
+        add_users, remove_users = utils.get_m2m_changes(
+            group.user_set.all(),
+            users
+        )
+
         group.user_set.clear()
+
         if users:
             group.user_set.add(*users)
 
+        log_group_members(
+            self.user,
+            group,
+            (add_users, remove_users)
+        )
 
-class LocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
+
+class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
     translators = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
     managers = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
 
@@ -98,11 +123,17 @@ class LocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
         fields = ('translators', 'managers')
 
     def save(self, *args, **kwargs):
-        self.assign_users_to_groups('translators', self.cleaned_data.get('translators', []))
-        self.assign_users_to_groups('managers', self.cleaned_data.get('managers', []))
+        """
+        Locale perms logs
+        """
+        translators = self.cleaned_data.get('translators', User.objects.none())
+        managers = self.cleaned_data.get('managers', User.objects.none())
+
+        self.assign_users_to_groups('translators', translators)
+        self.assign_users_to_groups('managers', managers)
 
 
-class ProjectLocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
+class ProjectLocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
     translators = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
 
     class Meta:
@@ -111,7 +142,10 @@ class ProjectLocalePermsForm(forms.ModelForm, UserPermissionGroupForm):
 
     def save(self, *args, **kwargs):
         super(ProjectLocalePermsForm, self).save(*args, **kwargs)
-        self.assign_users_to_groups('translators', self.cleaned_data.get('translators', []))
+
+        translators = self.cleaned_data.get('translators', User.objects.none())
+
+        self.assign_users_to_groups('translators', translators)
 
 
 class ProjectLocaleFormSet(forms.models.BaseModelFormSet):
