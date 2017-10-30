@@ -197,7 +197,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'subtitle': subtitle,
         'pk': pk,
         'projects': projects,
-        'has_repositories': project.repositories.exists()
+        'has_repositories': project and project.repositories.exists()
     }
 
     # Set locale in Translate link

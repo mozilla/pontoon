@@ -64,6 +64,12 @@ class AdministrationViewsTests(TestCase):
 class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
     """Test views of the administration app with a superuser logged in by default.
     """
+
+    def test_manage_project(self):
+        url = reverse('pontoon.admin.project.new')
+        response = self.client.get(url)
+        assert_code(response, 200)
+
     def test_manage_project_strings_bad_request(self):
         # Tets an unknown project returns a 404 error.
         url = reverse('pontoon.admin.project.strings', args=('unknown',))

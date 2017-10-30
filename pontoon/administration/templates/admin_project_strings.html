@@ -17,7 +17,9 @@
   <div class="controls clearfix">
     <button type="submit" class="button active">Save strings</button>
     <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">Cancel</a>
+    {% if project_has_strings %}
     <a href="#" class="add-inline" data-type="entity">Add more</a>
+    {% endif %}
   </div>
 
   {% csrf_token %}
@@ -58,7 +60,9 @@
   <div class="controls clearfix">
     <button type="submit" class="button active">Save strings</button>
     <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">Cancel</a>
+    {% if project_has_strings %}
     <a href="#" class="add-inline" data-type="entity">Add more</a>
+    {% endif %}
   </div>
 
 </form>
