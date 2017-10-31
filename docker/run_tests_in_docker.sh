@@ -61,7 +61,7 @@ else
            --env-file ./docker/config/webapp.env \
            -e LOCAL_USER_ID=$UID \
            local/pontoon \
-           python manage.py test
+           python manage.py test $@
 
     echo "Done!"
 fi
