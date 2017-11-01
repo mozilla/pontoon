@@ -3,11 +3,12 @@ Pontoon requires a very specific subset of functionality implemented in django a
 Because of concerns related to the security concerns it's a better to keep only selected
 views and don't allow user to tamper with the state of an account.
 '''
+import importlib
+
 from django.conf.urls import url
 from django.conf import settings
 from django.contrib.auth.views import login, logout
 
-from allauth.compat import importlib
 from allauth.account import views as account_views
 from allauth.socialaccount import views as socialaccount_views, providers
 
