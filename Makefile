@@ -40,4 +40,4 @@ dockerloaddb:
 	docker exec -i `${DC} ps -q postgresql` pg_restore -U pontoon -d pontoon -O < ${DB_DUMP_FILE}
 
 dockerrun:
-	${DC} up webapp
+	${DC} run --service-ports webapp
