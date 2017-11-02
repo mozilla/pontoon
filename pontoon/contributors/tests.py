@@ -39,6 +39,7 @@ def commajoin(*items):
 
 class ContributorProfileTests(UserTestCase):
     """Tests related to the saving user profile."""
+
     def test_invalid_first_name(self):
         response = self.client.post('/save-user-profile/', {'first_name': '<aa>"\'"'})
 
@@ -55,7 +56,8 @@ class ContributorProfileTests(UserTestCase):
         assert_contains(response, 'This field is required.', count=2, status_code=400)
 
     def test_valid_first_name(self):
-        response = self.client.post('/save-user-profile/', {'first_name': 'contributor', 'email': 'test4@example.com'})
+        response = self.client.post('/save-user-profile/',
+                                    {'first_name': 'contributor', 'email': self.user.email})
 
         assert_equal(response.status_code, 200)
         assert_equal(response.content, 'ok')
@@ -260,9 +262,9 @@ class ContributorsTests(TestCase):
         Checks if view sets and returns data for right period.
         """
         with patch(
-            'django.utils.timezone.now',
-            wraps=now,
-            return_value=aware_datetime(2015, 7, 5)
+                'django.utils.timezone.now',
+                wraps=now,
+                return_value=aware_datetime(2015, 7, 5)
         ):
             self.client.get('/contributors/?period=6')
             assert_equal(self.mock_render.call_args[0][0]['period'], 6)
