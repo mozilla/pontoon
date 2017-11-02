@@ -132,8 +132,8 @@ def save_user_profile(request):
     if user.email != request.user.email:
         logout(request)
         return HttpResponse('logout')
-    else:
-        return HttpResponse('ok')
+
+    return HttpResponse('ok')
 
 
 @login_required(redirect_field_name='', login_url='/403')
