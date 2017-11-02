@@ -15,7 +15,7 @@ $(function() {
       },
       success: function(data) {
         if (data === "ok") {
-          Pontoon.endLoader('Thank you!');
+          Pontoon.endLoader('Changes saved!');
         }
         if (data === 'logout') {
           window.location.href = '/';
@@ -41,13 +41,6 @@ $(function() {
       e.preventDefault();
       save();
     }
-  });
-  $('#profile-email').focus(function(e) {
-      e.preventDefault();
-      console.log("Email changed");
-      if($('#profile-email').next('.validation').length == 0) {
-        $('#profile-email').after('<span class=\'validation\' style=\'color:red;margin-left: 10px;\'>Changing email will cause a logout.</span>')
-      }
   });
 
   function loadNextEvents(cb) {

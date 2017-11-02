@@ -41,6 +41,7 @@
 {% block bottom %}
 <section id="main">
   <div id="profile-form">
+      {% csrf_token %}
       <h3>Personal infomation</h3>
       <div class="field">
           <label for="profile-username">Username</label>
@@ -49,6 +50,7 @@
       <div class="field">
           <label for="profile-email">Email</label>
           <input type="email" id="profile-email" value="{{ user.email }}">
+          <span id="email-warning">Changing email will cause a logout.</span>
       </div>
   </div>
 
