@@ -65,6 +65,14 @@ a.avatar:hover .desc ~ img {
 #profile-form button {
   margin-top: 10px;
 }
+#email-warning {
+  display: none;
+  margin-top: 5px;
+  color: red;
+}
+#profile-email:focus + span{
+  display: block;
+}
 
 .info {
   list-style: none;
