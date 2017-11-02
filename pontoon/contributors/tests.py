@@ -39,7 +39,6 @@ def commajoin(*items):
 
 class ContributorProfileTests(UserTestCase):
     """Tests related to the saving user profile."""
-
     def test_invalid_first_name(self):
         response = self.client.post('/save-user-profile/', {'first_name': '<aa>"\'"'})
 
@@ -56,7 +55,7 @@ class ContributorProfileTests(UserTestCase):
         assert_contains(response, 'This field is required.', count=2, status_code=400)
 
     def test_valid_first_name(self):
-        response = self.client.post('/save-user-profile/', {'first_name': 'contributor', 'email': 'contributor@mail.com'})
+        response = self.client.post('/save-user-profile/', {'first_name': 'contributor', 'email': 'test4@example.com'})
 
         assert_equal(response.status_code, 200)
         assert_equal(response.content, 'ok')
