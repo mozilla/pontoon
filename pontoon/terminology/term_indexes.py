@@ -13,7 +13,7 @@ class CachedDBTermIndex(object):
     @classmethod
     def get_terms_candidates(cls, phrase):
         """
-        Keeps a memory index of terms for a faster lookups. However, the first call will always take a moment.
+        Keeps a memory index of terms for faster lookups. The first call will always take some time.
         Index is built from words extracted from terms. Entries can look like e.g.
         Term: Pontoon App, id = 1
         Term: Pontoon Author, id = 2
@@ -73,9 +73,9 @@ class DBTermIndex(object):
         )
         terms = (
             Term.objects
-                .annotate(search_field=SearchVector('source_term_singulars', config='simple'))
-                .filter(search_field=search_words)
-                .values_list('pk', 'source_term_singulars')
+            .annotate(search_field=SearchVector('source_term_singulars', config='simple'))
+            .filter(search_field=search_words)
+            .values_list('pk', 'source_term_singulars')
         )
 
         for term_pk, term_singulars in terms:

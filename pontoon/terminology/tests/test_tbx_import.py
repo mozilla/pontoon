@@ -64,7 +64,8 @@ class TestTBXFormatParser(TestCase):
                     u'term_id': u'0717_0003',
                     u'term': u'abuse',
                     u'note': u'Noun',
-                    u'description': u'Special thanks to all of you who help report abuses of Mozilla mark',
+                    u'description': (u'Special thanks to all of you '
+                                     u'who help report abuses of Mozilla mark'),
                     u'translations': {
                         u'pl': u'nadużycie'
                     }
@@ -74,7 +75,8 @@ class TestTBXFormatParser(TestCase):
                     u'term': u'abuse',
                     u'note': u'Verb',
                     u'description': (
-                        u'In addition any participants who abuse the reporting process will be considered '
+                        u'In addition any participants who abuse the reporting process '
+                        u'will be considered '
                         u'to be in violation of these guidelines'
                     ),
                     u'translations': {

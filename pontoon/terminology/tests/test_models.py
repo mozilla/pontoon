@@ -18,6 +18,7 @@ class _TestEntityTermMatching(TestCase):
     A set of tests that should be executed agains every available term index.
     """
     term_index_cls = None
+
     def setUp(self):
         # Save an index in order to restore it later.
         self.original_term_index = Term.objects.term_index
@@ -69,8 +70,10 @@ class _TestEntityTermMatching(TestCase):
             assert_equal(test_phrases, expected_phrases)
 
             for entity_term in entity_terms:
-                assert_true(entity_term.phrase in entity.string or \
-                            entity_term.phrase in entity.string)
+                assert_true(
+                    entity_term.phrase in entity.string or
+                    entity_term.phrase in entity.string_plural
+                )
 
     def test_matching_single_word_terms(self):
         """
@@ -164,7 +167,8 @@ class _TestEntityTermMatching(TestCase):
             # Algorithm will detect only one phrase.
             {'string': 'Firefox & Chrome are web browsers and web browsers.'},
 
-            # Algorithm will detect two matching phrases for browsers because they have different pluralilty.
+            # Algorithm will detect two matching phrases for browsers because
+            # they have different pluralilty.
             {'string': 'The web is full of web browsers, mail clients and a web browser.'},
 
             {'string': 'Web browsers like to use pc desktops, a web browser and a pc desktop.'},
@@ -174,7 +178,7 @@ class _TestEntityTermMatching(TestCase):
             (browsers, {'web browsers'}),
         ))
         self.assert_terms_phrases(entity2, (
-            (browsers, {'web browsers',  'web browser'}),
+            (browsers, {'web browsers', 'web browser'}),
             (mail_clients, {'mail clients'})
         ))
         self.assert_terms_phrases(entity3, (
@@ -204,6 +208,7 @@ class _TestEntityTermMatching(TestCase):
 
 class TestCachedDBTermIndexTest(_TestEntityTermMatching):
     term_index_cls = CachedDBTermIndex
+
 
 class TestDBTermIndexTest(_TestEntityTermMatching):
     term_index_cls = DBTermIndex

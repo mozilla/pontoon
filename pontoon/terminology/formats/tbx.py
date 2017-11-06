@@ -2,7 +2,8 @@
 This module tries to implement subset of The TBX Basic format.
 
 First version of the implementation allows to import terminology from The Microsoft Language Portal.
-However, there's a lot corner-cases that aren't handled and they will be implemented in the future versions.
+However, there's a lot corner-cases that aren't handled and they will be implemented
+in future versions.
 As the name suggest, TBX is the xml compliant format, that can be parsed by any xml library.
 We try to wrap all xml structures in python classes to make the code more readable.
 """
@@ -95,8 +96,9 @@ class Language(XMLObject):
 
 class XMLTerm(XMLObject):
     """
-    It describes a term on The Conceptual level. In files provided by Microsoft, this is container for a single term
-    and doesn't contain any top-level information, all data is stored in specific language sets.
+    It describes a term on The Conceptual level. In files provided by Microsoft, this is container
+    for a single term and doesn't contain any top-level information, all data is stored
+    in specific language sets.
     """
     @property
     def id(self):
@@ -116,8 +118,8 @@ class XMLTerm(XMLObject):
     def source_language(self):
         """
         Most of the code/structure in pontoon assume that base source strings are in en-GB or en-US.
-        That implies that we'll need strings from these locales to perform join between existing entities and terms
-        from the new terminology module.
+        That implies that we'll need strings from these locales to perform join between existing
+        entities and terms from the new terminology module.
         """
         lang = self.languages.get('en-US')
         if not lang:

@@ -673,11 +673,18 @@ def unicode_make_trans(chars, replace_chars):
         for i, c in enumerate(chars)
     }
 
-# Translation tables are on the module level to avoid re-calculcation of them during every get_words call.
+# Translation tables are on the module level to avoid re-calculcation of them
+# during every get_words call.
+WHITESPACES = unicode_make_trans(
+    unicode(string.whitespace),
+    u' ' * len(string.whitespace)
+)
 
-WHITESPACES = unicode_make_trans(unicode(string.whitespace), u' ' * len(string.whitespace))
 # Remove dash from punctuations because that may cause errors in matching terms with dashes.
-PUNCTUATION = unicode_make_trans(unicode(string.punctuation.replace('-', '')), u' ' * (len(string.punctuation) - 1))
+PUNCTUATION = unicode_make_trans(
+    unicode(string.punctuation.replace('-', '')),
+    u' ' * (len(string.punctuation) - 1)
+)
 
 
 def get_words(string_words, lower=True):
@@ -693,7 +700,7 @@ def get_words(string_words, lower=True):
 
 def get_singulars(s):
     """
-    Retrieves an unified list of singular forms from a string (removes whitespaces, punctuation etc.).
+    Retrieves an unified list of singular forms from a string (removes whitespaces etc.)
     """
     stems = map(singularize, get_words(s))
     return stems

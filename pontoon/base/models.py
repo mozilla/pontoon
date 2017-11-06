@@ -2006,8 +2006,8 @@ class Entity(DirtyFieldsMixin, models.Model):
     string = models.TextField()
     string_plural = models.TextField(blank=True)
 
-    # We keep stemmed version of strings in order to avoid expensive stemming processing during operations such as
-    # terminology matching.
+    # We keep stemmed version of strings in order to avoid expensive stemming processing
+    # during operations such as a terms matching.
     string_singulars = models.TextField(blank=True)
     string_plural_singulars = models.TextField(blank=True)
 
@@ -2100,7 +2100,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         for term in terms:
             grouped_terms[term.phrase].append(
                 term.term.serialize(locale)
-           )
+            )
         return grouped_terms
 
     @classmethod
@@ -2197,7 +2197,9 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         entities = (
             entities.prefetch_related('resource').prefetch_translations(locale).prefetch_related(
-                Prefetch('terms', to_attr='prefetched_terms'), 'terms__term', 'terms__term__translations'
+                Prefetch('terms', to_attr='prefetched_terms'),
+                'terms__term',
+                'terms__term__translations'
             )
         )
         if exclude_entities:

@@ -36,10 +36,15 @@ class TermManager(models.Manager):
         # Algorithm for matching
         # 1. Sort candidates by length in descending order to match the longest terms first
         # 2. Scan list of words to check if term exists inside the string
-        # 3. If it exists, add it to the dict of terms with matched phrase and remove found phrase from string to
-        #   to avoid duplicates from terms with the same word prefix (e.g. mail and mail client).
+        # 3. If it exists, add it to the dict of terms with matched phrase and remove
+        # a phrase from string to to avoid duplicates from terms with the same
+        # word prefix (e.g. mail and mail client).
         # 4. If not, scan again. If scan throws valueError, jump to the next term.
-        sorted_terms = sorted(candidates.items(), key=lambda t: (len(t[0].split()), t[0]), reverse=True)
+        sorted_terms = sorted(
+            candidates.items(),
+            key=lambda t: (len(t[0].split()), t[0]),
+            reverse=True
+        )
         for term_singulars, term_pks in sorted_terms:
             scan_start = 0
             term_words = term_singulars.split()
@@ -79,7 +84,8 @@ class TermManager(models.Manager):
             if string_plural_singulars:
                 entity_terms.extend([
                     (entity_pk, term_pks, phrase)
-                    for (phrase, term_pks) in self.find_terms(string_plural, string_plural_singulars)
+                    for (phrase, term_pks) in self.find_terms(
+                        string_plural, string_plural_singulars)
                 ])
         terms_db = []
 
@@ -89,25 +95,25 @@ class TermManager(models.Manager):
                     EntityTerm(entity_id=entity_pk, term_id=term_pk, phrase=phrase)
                 )
         EntityTerm.objects.bulk_create(terms_db, 10000)
-        terms_count = (
-            Term.objects
-                .filter(entityterm__entity__pk__in=entities_pks)
-                .distinct()
-                .count()
-        )
-        phrases_count = (
-            EntityTerm.objects
-                .filter(entity__pk__in=entities_pks)
-                .distinct()
-                .count()
 
+        terms_count = (
+            Term.objects.filter(entityterm__entity__pk__in=entities_pks)
+            .distinct()
+            .count()
         )
+
+        phrases_count = (
+            EntityTerm.objects.filter(entity__pk__in=entities_pks)
+            .distinct()
+            .count()
+        )
+
         log.info(
             'Assigned %s terms to %s entities and matched %s phrases.',
             terms_count,
             len(entities),
             phrases_count
-         )
+        )
 
     @transaction.atomic
     def import_tbx_terms(self, tbx_terms):
@@ -179,7 +185,6 @@ class TermManager(models.Manager):
                 'string_plural_singulars'
             )
         )
-
 
 
 class EntityTerm(models.Model):

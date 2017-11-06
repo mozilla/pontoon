@@ -18,6 +18,7 @@ from pontoon.base.models import (
 
 from pontoon.base.utils import get_singulars
 
+
 @receiver(pre_save, sender=Entity)
 def entity_singular_forms(sender, **kwargs):
     """

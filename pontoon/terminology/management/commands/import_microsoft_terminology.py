@@ -81,7 +81,6 @@ def retrieve_microsoft_terms((locale_code, ms_locale_code)):
         parseString(tbx_contents)
         return tbx_contents
 
-
     # Replace MS locale code with Pontoon code to make it easier to import.
     tbx_contents = get_tbx_contents().replace(
         'xml:lang="{}"'.format(ms_locale_code),
@@ -93,14 +92,11 @@ def retrieve_microsoft_terms((locale_code, ms_locale_code)):
     return tbx.parse_terms(tbx_contents)
 
 
-
-
 class Command(BaseCommand):
     """
     Import terminology files for a set of locales or all of them in the concurrent fashion.
     """
     help = 'Import all or selected terminology files from the Microsoft Language Portal.'
-
 
     def add_arguments(self, parser):
         # A number of processes that will be spawned to download and parse terms from tbx files.
@@ -109,7 +105,6 @@ class Command(BaseCommand):
         # A list of locales to import. Fetches all files if no parameter is passed.
         parser.add_argument('locales', nargs='*', help='A list of locales to download.')
 
-
     def handle(self, *args, **options):
         locale_codes = options.get('locales')
         workers_num = options.get('workers')
@@ -117,11 +112,10 @@ class Command(BaseCommand):
 
         # A list of Pontoon locales that share terminology with Microsoft Portal.
         terminology_locales = (
-            Locale
-                .objects
-                .filter(ms_terminology_code__isnull=False)
-                .exclude(ms_terminology_code='')
-                .order_by('code')
+            Locale.objects
+                  .filter(ms_terminology_code__isnull=False)
+                  .exclude(ms_terminology_code='')
+                  .order_by('code')
         )
 
         if locale_codes:
@@ -165,12 +159,14 @@ class Command(BaseCommand):
                 else:
                     terms[term.term_id] = term
 
-
         log.info('Loaded %s terms.', (len(terms)))
         log.info('Importing terms to Pontoon')
 
         # Filter terms with MS specific phrases
-        cleaned_terms = {k: v for k, v in terms.items() if not self.ms_term(v.source_text, v.description)}
+        cleaned_terms = {
+            k: v for k, v in terms.items()
+            if not self.ms_term(v.source_text, v.description)
+        }
 
         log.info('Removed %s MS Terms.', len(terms) - len(cleaned_terms))
         Term.objects.import_tbx_terms(cleaned_terms)
