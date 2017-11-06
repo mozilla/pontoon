@@ -101,6 +101,23 @@ $(function() {
     });
   });
 
+  // Show new strings input or link when source type is "database".
+  function displayNewStringsInput(input) {
+    if (input.val() === 'database') {
+      $('.new-strings').show();
+      $('.manage-strings').show();
+    }
+    else {
+      $('.new-strings').hide();
+      $('.manage-strings').hide();
+    }
+  }
+  var dataSourceInput = $('#id_data_source');
+  dataSourceInput.on('change', function () {
+    displayNewStringsInput(dataSourceInput);
+  });
+  displayNewStringsInput(dataSourceInput);
+
   // Suggest public repository website URL
   $('body').on('blur', '.repo input', function() {
     var val = $(this).val()

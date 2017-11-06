@@ -18,9 +18,6 @@
     {% if translate_locale and form.slug.value() != '' %}
     <a class="translate{% if not ready %} hidden{% endif %}" href="{{ url('pontoon.localizations.localization', translate_locale, form.slug.value()) }}">Translate</a>
     {% endif %}
-    {% if pk and not has_repositories %}
-    <a href="{{ url('pontoon.admin.project.strings', slug) }}">Strings</a>
-    {% endif %}
   </aside>
   {% endif %}
   </h1>
@@ -67,9 +64,32 @@
   </div>
 
   <h3>
+    <span>Data Source</span>
+  </h3>
+  <section class="data-source">
+    <div class="clearfix">
+      {{ form.data_source.label_tag(contents='Source type', label_suffix='') }}
+      {{ form.data_source }}
+    </div>
+    {% if not pk %}
+    <div class="clearfix new-strings">
+      <label for="new_strings">Initial strings</label>
+      <textarea name="new_strings" class="strings-source" placeholder="Enter new strings"></textarea>
+    </div>
+    {% endif %}
+    {% if pk %}
+    <div class="clearfix manage-strings">
+      <a href="{{ url('pontoon.admin.project.strings', slug) }}">Manage Strings</a>
+      <a href="{{ url('pontoon.admin.project.strings', slug) }}?format=csv">Download Strings</a>
+    </div>
+    {% endif %}
+  </section>
+
+  <h3>
     <span>Repositories</span>
     <a href="#add-repo" class="add-repo">Add more</a>
   </h3>
+
   {{ repo_formset.management_form }}
   {{ repo_formset.non_form_errors() }}
   {% for repo_form in repo_formset %}

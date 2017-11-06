@@ -122,8 +122,8 @@ form a:link, form a:visited {
   text-transform: uppercase;
 }
 
-#admin-form form a.add-inline,
-#admin-form form a.add-repo {
+#admin-form a.add-inline,
+#admin-form a.add-repo {
   font-size: 14px;
   font-style: normal;
   letter-spacing: 0;
@@ -360,6 +360,13 @@ textarea.strings-source {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+.new-strings {
+  display: none;
+}
+.manage-strings a {
+  margin-left: 20px;
 }
 
 /* Code specific to the manage strings page */

@@ -23,9 +23,22 @@ class ProjectForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ('name', 'slug', 'locales', 'can_be_requested',
-                  'url', 'width', 'links', 'info', 'admin_notes',
-                  'deadline', 'priority', 'contact', 'disabled')
+        fields = (
+            'name',
+            'slug',
+            'locales',
+            'data_source',
+            'can_be_requested',
+            'url',
+            'width',
+            'links',
+            'info',
+            'admin_notes',
+            'deadline',
+            'priority',
+            'contact',
+            'disabled',
+        )
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)

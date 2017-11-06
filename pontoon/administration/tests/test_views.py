@@ -39,7 +39,7 @@ class AdministrationViewsTests(TestCase):
     """
 
     def test_manage_project_strings(self):
-        project = ProjectFactory.create(repositories=[])
+        project = ProjectFactory.create(data_source='database', repositories=[])
         url = reverse('pontoon.admin.project.strings', args=(project.slug,))
 
         # Test with anonymous user.
@@ -77,7 +77,7 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         assert_code(response, 404)
 
     def test_manage_project_strings_new(self):
-        project = ProjectFactory.create(repositories=[])
+        project = ProjectFactory.create(data_source='database', repositories=[])
         url = reverse('pontoon.admin.project.strings', args=(project.slug,))
 
         # Test sending a well-formatted batch of strings.
@@ -117,7 +117,11 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         """
         locale_kl = LocaleFactory.create(code='kl', name='Klingon')
         locale_gs = LocaleFactory.create(code='gs', name='Geonosian')
-        project = ProjectFactory.create(locales=[locale_kl, locale_gs], repositories=[])
+        project = ProjectFactory.create(
+            data_source='database',
+            locales=[locale_kl, locale_gs],
+            repositories=[]
+        )
         locales_count = 2
 
         url = reverse('pontoon.admin.project.strings', args=(project.slug,))
@@ -162,7 +166,7 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
     def test_manage_project_strings_new_all_empty(self):
         """Test that sending empty data doesn't create empty strings in the database.
         """
-        project = ProjectFactory.create(repositories=[])
+        project = ProjectFactory.create(data_source='database', repositories=[])
         url = reverse('pontoon.admin.project.strings', args=(project.slug,))
 
         # Test sending a well-formatted batch of strings.
@@ -175,7 +179,7 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         assert_equal(len(entities), 0)
 
     def test_manage_project_strings_list(self):
-        project = ProjectFactory.create(repositories=[])
+        project = ProjectFactory.create(data_source='database', repositories=[])
         resource = ResourceFactory.create(project=project)
         nb_entities = 2
         entities = EntityFactory.create_batch(nb_entities, resource=resource)
@@ -210,7 +214,11 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
     def test_manage_project_strings_download_csv(self):
         locale_kl = LocaleFactory.create(code='kl', name='Klingon')
         locale_gs = LocaleFactory.create(code='gs', name='Geonosian')
-        project = ProjectFactory.create(locales=[locale_kl, locale_gs], repositories=[])
+        project = ProjectFactory.create(
+            data_source='database',
+            locales=[locale_kl, locale_gs],
+            repositories=[]
+        )
 
         url = reverse('pontoon.admin.project.strings', args=(project.slug,))
 

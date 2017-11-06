@@ -150,6 +150,11 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 subpage_formset.save()
                 repo_formset.save()
                 external_resource_formset.save()
+
+                # If the data source is database and there are new strings, save them.
+                if project.data_source == 'database':
+                    _save_new_strings(project, request.POST.get('new_strings', ''))
+
                 # Properly displays formsets, but removes errors (if valid only)
                 subpage_formset = SubpageInlineFormSet(instance=project)
                 repo_formset = RepositoryInlineFormSet(instance=project)
@@ -197,7 +202,6 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'subtitle': subtitle,
         'pk': pk,
         'projects': projects,
-        'has_repositories': project and project.repositories.exists()
     }
 
     # Set locale in Translate link
@@ -214,6 +218,25 @@ def manage_project(request, slug=None, template='admin_project.html'):
 
 
 def _get_project_strings_csv(project, entities, output):
+    """Return a CSV content of all strings and translations for a project and locale.
+
+    The file format looks as follow:
+
+        source, locale_code_1, locale_code_2
+        "string A", "tranlation A1", "tranlation A2"
+        "string B", "tranlation B1", "tranlation B2"
+
+    The first column has all source strings. Then there is one column per enabled locale, each
+    containing available translations for each source string (or an empty cell). The first line
+    contains the code of each locale, expect for the first cell which is always "source".
+
+    :arg Project project: the project from which to take strings
+    :arg list entities: the list of all entities of the project
+    :arg buffer output: a buffer to which the CSV writed will send its data
+
+    :returns: the same output object with the CSV data
+
+    """
     locales = Locale.objects.filter(project_locale__project=project)
     translations = (
         Translation.objects
@@ -239,6 +262,55 @@ def _get_project_strings_csv(project, entities, output):
     return output
 
 
+def _save_new_strings(project, source):
+    """Save a batch of strings into an existing project.
+
+    This function takes a batch of new strings as a blob of text, separate individual
+    strings by new lines, and then stores each one as a new source string for the project.
+
+    :arg Project project: the Project object to which new strings will be associated
+    :arg string source: a text of new-line-separated source strings
+
+    :returns: True if new strings have been saved, False otherwise
+
+    """
+    new_strings = source.strip().split('\n')
+
+    # Remove empty strings from the list.
+    new_strings = [x.strip() for x in new_strings if x.strip()]
+
+    if new_strings:
+        # Create a new fake resource for that project.
+        resource = Resource(path='all', project=project, total_strings=len(new_strings))
+        resource.save()
+
+        # Insert all new strings into Entity objects, associated to the fake resource.
+        new_entities = []
+        for new_string in new_strings:
+            string = new_string.strip()
+            new_entities.append(Entity(string=string, resource=resource))
+
+        Entity.objects.bulk_create(new_entities)
+
+        # Enable the new Resource for all active locales for that project.
+        locales = (
+            ProjectLocale.objects
+            .filter(project=project)
+            .values_list('locale_id', flat=True)
+        )
+        for locale_id in locales:
+            tr = TranslatedResource(
+                locale_id=locale_id,
+                resource=resource,
+            )
+            tr.save()
+            tr.calculate_stats()
+
+        return True
+
+    return False
+
+
 def manage_project_strings(request, slug=None):
     """View to manage the source strings of a project.
 
@@ -255,9 +327,10 @@ def manage_project_strings(request, slug=None):
     except Project.DoesNotExist:
         raise Http404
 
-    if project.repositories.exists():
+    if project.data_source != 'database':
         return HttpResponseForbidden(
-            'Project %s has a repository, managing strings is forbidden.' % project.name
+            'Project %s\'s strings come from a repository, managing strings is forbidden.'
+            % project.name
         )
 
     entities = Entity.objects.filter(resource__project=project)
@@ -274,39 +347,8 @@ def manage_project_strings(request, slug=None):
     if request.method == 'POST':
         if not project_has_strings:
             # We are receiving new strings in a batch.
-            new_string_source = request.POST.get('new_strings', '')
-            new_strings = new_string_source.strip().split('\n')
-
-            # Remove empty strings from the list.
-            new_strings = [x.strip() for x in new_strings if x.strip()]
-
-            if new_strings:
-                # Create a new fake resource for that project.
-                resource = Resource(path='all', project=project, total_strings=len(new_strings))
-                resource.save()
-
-                # Insert all new strings into Entity objects, associated to the fake resource.
-                new_entities = []
-                for new_string in new_strings:
-                    string = new_string.strip()
-                    new_entities.append(Entity(string=string, resource=resource))
-
-                Entity.objects.bulk_create(new_entities)
-
-                # Enable the new Resource for all active locales for that project.
-                locales = (
-                    ProjectLocale.objects
-                    .filter(project=project)
-                    .values_list('locale_id', flat=True)
-                )
-                for locale_id in locales:
-                    tr = TranslatedResource(
-                        locale_id=locale_id,
-                        resource=resource,
-                    )
-                    tr.save()
-                    tr.calculate_stats()
-
+            new_strings_source = request.POST.get('new_strings', '')
+            if _save_new_strings(project, new_strings_source):
                 project_has_strings = True  # we have strings now!
         else:
             # Get all strings, find the ones that changed, update them in the database.
