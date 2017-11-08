@@ -770,6 +770,7 @@ class EntityTests(TestCase):
             'marked': 'Source String',
             'key': '',
             'path': 'main.lang',
+            'project': self.project.name,
             'translation': [{
                 'pk': self.main_translation.pk,
                 'fuzzy': False,
