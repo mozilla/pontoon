@@ -2403,7 +2403,7 @@ var Pontoon = (function (my) {
       // Update parts menu
       if (entity && total) {
         var paths = [],
-            parts = $('.project .menu li .name[data-slug=' + self.project.slug + ']')
+            parts = $('.project .menu .name[data-slug=' + self.project.slug + ']')
                       .data('parts')[self.locale.code];
 
         $(parts).each(function() {
