@@ -581,18 +581,24 @@ var Pontoon = (function (my) {
             linkClass = null;
 
         // Resources can be mapped into multiple subpages.
-        if (!self.project.hasSubPages) {
+        if (!entity.project.url) {
           link = self.getResourceLink(
             self.locale.code,
-            self.project.slug,
+            entity.project.slug,
             entity.path
           );
 
-          linkClass = 'resource-path';
+          if (self.project.slug !== 'all-projects') {
+            linkClass = 'resource-path';
+          }
         }
 
-        self.appendMetaData('Resource path', entity.path, link, linkClass);
+        self.appendMetaData('Resource', entity.path, link, linkClass);
       }
+
+      // Metadata: project
+      var projectLink = '/' + self.locale.code + '/' +  entity.project.slug + '/';
+      self.appendMetaData('Project', entity.project.name, projectLink);
 
       // Original string and plurals
       $('#original').html(entity.marked);
@@ -3552,10 +3558,7 @@ var Pontoon = (function (my) {
         info: self.getProjectData('info') || '',
         width: self.getProjectWidth(),
         links: self.getProjectData('links') === 'True' ? true : false,
-        langpack_url: self.getProjectData('langpack_url') || '',
-        hasSubPages: self.getProjectData('parts')[this.locale.code].some(function(item) {
-          return !!item['url'];
-        })
+        langpack_url: self.getProjectData('langpack_url') || ''
       };
 
       /* Copy of User.can_translate(), used on client to improve performance */

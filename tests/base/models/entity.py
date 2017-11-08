@@ -52,6 +52,7 @@ def test_entity_project_locale_no_paths(entity_test_models, localeX, project1):
         'marked': unicode(entity0.string),
         'key': '',
         'path': unicode(resource0.path),
+        'project': project0.serialize(),
         'translation': [
             {'pk': tr0.pk,
              'fuzzy': False,
