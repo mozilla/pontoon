@@ -4110,7 +4110,7 @@ var Pontoon = (function (my) {
 window.onpopstate = function(e) {
   if (e.state) {
     // Update main menu
-    $('.project .menu li [data-slug="' + e.state.project + '"]').parent().click();
+    $('.project .menu .name[data-slug="' + e.state.project + '"]').parent().click();
     $('.locale .menu li .language[data-code="' + e.state.locale + '"]').parent().click();
 
     if (e.state.paths) {
