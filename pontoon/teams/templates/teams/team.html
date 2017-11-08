@@ -63,7 +63,8 @@
     </ul>
 
     {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(locale) }}
+    {{ HeadingInfo.progress_chart_legend(locale, url('pontoon.translate', locale.code, 'all-projects', 'all-resources')) }}
+
   </div>
 </section>
 {% endblock %}
