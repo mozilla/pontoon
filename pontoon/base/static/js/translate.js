@@ -592,6 +592,17 @@ var Pontoon = (function (my) {
         self.appendMetaData('Resource path', entity.path, link, linkClass);
       }
 
+      // Metadata: project
+      if (self.project.slug === 'all-projects') {
+        var projectLink = self.getResourceLink(
+          self.locale.code,
+          self.project.slug,
+          'all-resources'
+        );
+
+        self.appendMetaData('Project', entity.project, projectLink, 'resource-path');
+      }
+
       // Original string and plurals
       $('#original').html(entity.marked);
       $('#source-pane').removeClass('pluralized');

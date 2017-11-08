@@ -2213,6 +2213,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'marked_plural': entity.marked_plural,
                 'key': entity.cleaned_key,
                 'path': entity.resource.path,
+                'project': entity.resource.project.name,
                 'format': entity.resource.format,
                 'comment': entity.comment,
                 'order': entity.order,
