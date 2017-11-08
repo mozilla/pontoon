@@ -131,12 +131,8 @@ def locale_project_parts(request, locale, slug):
 @utils.require_AJAX
 def authors_and_time_range(request, locale, slug, part):
     locale = get_object_or_404(Locale, code=locale)
+    project = get_object_or_404(Project.objects.available(), slug=slug)
     paths = [part] if part != 'all-resources' else None
-
-    if slug == 'all-projects':
-        project = Project(slug=slug)
-    else:
-        project = get_object_or_404(Project.objects.available(), slug=slug)
 
     translations = Translation.for_locale_project_paths(locale, project, paths)
 
