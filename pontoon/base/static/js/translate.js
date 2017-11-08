@@ -1450,6 +1450,13 @@ var Pontoon = (function (my) {
           return;
         }
 
+        // Disable for All Projects for performance reasons
+        if (self.project.slug === 'all-projects') {
+          self.updateRangePicker([]);
+          self.updateAuthors([]);
+          return;
+        }
+
         self.NProgressUnbind();
 
         $.ajax({
