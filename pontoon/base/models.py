@@ -856,7 +856,7 @@ class Locale(AggregatedStats):
             locale=self
         ).distinct().aggregate_stats(self)
 
-    def parts_stats(self, project=None):
+    def parts_stats(self, project):
         """Get locale-project pages/paths with stats."""
         def get_details(parts):
             return parts.order_by('title').values(
@@ -869,7 +869,7 @@ class Locale(AggregatedStats):
                 'approved_strings',
             )
 
-        if project:
+        if project.slug != 'all-projects':
             pages = project.subpage_set.all()
         else:
             pages = Subpage.objects.filter(project__in=self.project_set.all())
@@ -878,7 +878,7 @@ class Locale(AggregatedStats):
             resource__entities__obsolete=False,
             locale=self
         )
-        if project:
+        if project.slug != 'all-projects':
             translatedresources = translatedresources.filter(resource__project=project)
         translatedresources = translatedresources.distinct()
 
@@ -898,7 +898,7 @@ class Locale(AggregatedStats):
         # only include stats for page resources.
         elif len(pages) > 0:
             # Each subpage must have resources defined
-            if pages[0].resources.exists() or not project:
+            if pages[0].resources.exists() or project.slug == 'all-projects':
                 locale_pages = pages.filter(resources__translatedresources__locale=self)
                 details = get_details(
                     # List only subpages, whose resources are available for locale
@@ -941,7 +941,7 @@ class Locale(AggregatedStats):
                 url=F('resource__project__url')
             ))
 
-        if project:
+        if project.slug != 'all-projects':
             stats = ProjectLocale.objects.get(project=project, locale=self)
         else:
             stats = self
