@@ -117,7 +117,7 @@ def locale_project_parts(request, locale, slug):
     """Get locale-project pages/paths with stats."""
     locale = get_object_or_404(Locale, code=locale)
 
-    if slug != 'all-projects':
+    if slug == 'all-projects':
         project = None
     else:
         project = get_object_or_404(Project, slug=slug)
