@@ -498,14 +498,11 @@ var Pontoon = (function (my) {
      */
     generateLocalePluralExamples: function () {
       var self = this;
-      var examples = self.locale.examples = {};
+      var examples = self.locale.examples = {0: 1, 1: 2};
       var nplurals = self.locale.nplurals;
       var n = 0;
 
-      if (nplurals === 2) {
-        examples = {0: 1, 1: 2};
-
-      } else {
+      if (nplurals !== 2) {
         while (Object.keys(examples).length < nplurals) {
           var rule = eval(self.locale.plural_rule);
           if (!examples[rule]) {
