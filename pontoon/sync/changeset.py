@@ -371,11 +371,11 @@ class ChangeSet(object):
     def bulk_create_translaton_memory_entries(self):
         """
         Create Translation Memory entries for:
-            - new translations
+            - new approved translations
             - updated translations that are approved and don't have a TM entry yet
         """
         translations_to_create_translaton_memory_entries_for = (
-            self.translations_to_create +
+            [t for t in self.translations_to_create if t.approved] +
             list(
                 Translation.objects.filter(
                     pk__in=[pk for pk, t in self.translations_to_update.items() if t.approved],
