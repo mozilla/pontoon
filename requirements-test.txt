@@ -1,0 +1,44 @@
+# This requirements file is formatted to make it easy to see what are the
+# direct requirements of our application, and what are dependencies of
+# those requirements.
+#
+# The intent is to make this big mess of a file more maintainable. When removing
+# a dependency, it should be easy to see exactly what else can be removed. This
+# way we avoid keeping things in here that we don't require anymore.
+#
+# When adding a new requirement, it should fall in one of two categories:
+#
+# 1. Top-level requirements with no dependencies.
+# 2. Top-level requirement, followed by its dependencies.
+#
+# The first group is straight-forward: all top-level dependencies (resources that
+# are used by the application directly) are sorted by alphabetical order.
+# Dependencies that do not come from pypi (eg. eggs from github) are listed at
+# the end of that list.
+#
+# The second group has sub-groups. Each group has, at the top, the requirement
+# being used by the application, followed by all the requirements of that resource.
+# These groups are order by alphabetical order of the top-level requirement.
+#
+# For example:
+#   # ---------------------------
+#   depA==1.1
+#
+#   # Required by depA
+#   resource1
+#   resource2
+#
+#   # Required by resource1
+#   depB
+
+# ==================================================================================
+# Requirements with no sub-dependencies
+# (or where dependencies are required by other packages).
+# ==================================================================================
+
+# ----------------------------------------------------------------------------------
+
+coverage==4.4.2	\
+    --hash=sha256:eea9135432428d3ca7ee9be86af27cb8e56243f73764a9b6c3e0bda1394916be
+codecov==2.0.9 \
+    --hash=sha256:ad82f054837b02081f86ed1eb6c04cddc029fbc734eaf92ff73da1db3a79188b
