@@ -1,3 +1,4 @@
+import json
 import logging
 import requests
 import xml.etree.ElementTree as ET
@@ -5,6 +6,11 @@ from uuid import uuid4
 from six.moves.urllib.parse import quote
 
 from collections import defaultdict
+
+from caighdean import Translator
+from caighdean.exceptions import TranslationError
+
+from django import http
 from django.conf import settings
 from django.db import DataError
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
@@ -13,7 +19,7 @@ from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
 
 from pontoon.base import utils
-from pontoon.base.models import Locale, TranslationMemoryEntry
+from pontoon.base.models import Entity, Locale, Translation, TranslationMemoryEntry
 
 
 log = logging.getLogger(__name__)
@@ -111,6 +117,38 @@ def machine_translation(request):
 
     except Exception as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+
+def machine_translation_caighdean(request):
+    """Get translation from Caighdean machine translation service."""
+    try:
+        entityid = int(request.GET['id'])
+    except (MultiValueDictKeyError, ValueError) as e:
+        return HttpResponseBadRequest(
+            json.dumps(
+                dict(error=400,
+                     message='Bad Request: {error}'.format(error=e))),
+            content_type='application/json')
+
+    try:
+        entity = get_object_or_404(Entity, id=entityid)
+    except http.Http404 as e:
+        return http.HttpResponseNotFound(
+            json.dumps(dict(error=404, message=str(e))),
+            content_type='application/json')
+
+    try:
+        text = entity.translation_set.get(locale__code='gd').string
+    except Translation.DoesNotExist:
+        return JsonResponse({})
+
+    try:
+        translation = Translator().translate(text)
+        return JsonResponse({'original': text, 'translation': translation})
+    except TranslationError as e:
+        return http.HttpResponseServerError(
+            json.dumps(dict(error=500, message=str(e))),
+            content_type='application/json')
 
 
 def microsoft_terminology(request):
