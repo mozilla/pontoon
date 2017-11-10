@@ -278,7 +278,8 @@ var Pontoon = (function (my) {
       function append(data) {
         var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : ' title="Copy to clipboard"',
             sources = sourcesMap[data.original + data.translation],
-            occurrencesTitle = 'Number of translation occurrences';
+            occurrencesTitle = 'Number of translation occurrences',
+            originalText = data.original;
 
         if (sources) {
           sources.append(
@@ -289,6 +290,9 @@ var Pontoon = (function (my) {
           );
 
         } else {
+          if (data.source !== 'Caighdean') {
+            originalText = (originalText ? self.diff(original, originalText) : '');
+          }
           var li = $('<li class="suggestion"' + title + ' data-clipboard-text="' + self.doNotRender(data.translation) + '">' +
             '<header>' +
               (data.quality ? '<span class="stress">' + data.quality + '</span>' : '') +
@@ -301,7 +305,7 @@ var Pontoon = (function (my) {
                 '</li>' +
               '</ul>' +
             '</header>' +
-            '<p class="original">' + (data.original ? self.diff(original, data.original) : '') + '</p>' +
+            '<p class="original">' + originalText + '</p>' +
             '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
               self.markPlaceables(data.translation) +
             '</p>' +
@@ -508,6 +512,33 @@ var Pontoon = (function (my) {
                 source: 'Mozilla',
                 translation: this.target
               });
+            });
+          }
+        }).error(error).complete(complete);
+      }
+
+      // Machine translation (Caighdean)
+      if (self.locale.code === 'ga-IE') {
+        requests++;
+
+        if (self.XHRCaighdeanMT) {
+          self.XHRCaighdeanMT.abort();
+        }
+
+        self.XHRCaighdeanMT = $.ajax({
+          url: '/machine-translation-caighdean/',
+          data: {
+            id: self.getEditorEntity().pk,
+            locale: self.locale.code
+          }
+        }).success(function(data) {
+          if (data.translation) {
+            append({
+              url: 'https://github.com/kscanne/caighdean',
+              title: 'Visit Caighdean Machine Translation',
+              source: 'Caighdean',
+              original: data.original,
+              translation: data.translation
             });
           }
         }).error(error).complete(complete);
