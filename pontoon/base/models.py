@@ -687,7 +687,7 @@ class Locale(AggregatedStats):
         'Translation',
         blank=True,
         null=True,
-        related_name='+',
+        related_name='locale_latest',
         on_delete=models.SET_NULL
     )
 
@@ -1053,7 +1053,7 @@ class Project(AggregatedStats):
         'Translation',
         blank=True,
         null=True,
-        related_name='+',
+        related_name='project_latest',
         on_delete=models.SET_NULL
     )
 
@@ -1277,7 +1277,7 @@ class ProjectLocale(AggregatedStats):
         'Translation',
         blank=True,
         null=True,
-        related_name='+',
+        related_name='project_locale_latest',
         on_delete=models.SET_NULL
     )
 
@@ -2613,7 +2613,7 @@ class TranslatedResource(AggregatedStats):
         'Translation',
         blank=True,
         null=True,
-        related_name='+',
+        related_name='resource_latest',
         on_delete=models.SET_NULL
     )
 
