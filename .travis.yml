@@ -7,11 +7,13 @@ before_install:
 install:
   - pip install -U --force pip
   - pip install --require-hashes -r requirements.txt
+  - pip install --require-hashes -r requirements-test.txt
 before_script:
   - psql -c 'create database pontoon;' -U postgres
 script:
   - pylama pontoon
-  - python manage.py test
+  - python manage.py test --with-coverage
+  - codecov
 
   # Heroku deployment file is valid
   - cat app.json | python -m json.tool > /dev/null
