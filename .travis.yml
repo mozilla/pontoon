@@ -13,6 +13,7 @@ before_script:
 script:
   - pylama pontoon
   - python manage.py test --with-coverage
+  - py.test --cov-append --cov-report=term --cov=. -v
   - codecov
 
   # Heroku deployment file is valid
