@@ -415,6 +415,24 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Mark Terminology terms in source string
+     *
+     * text Source string
+     */
+    markTerms: function (text, terms) {
+      for (var term in terms) {
+        var re = new RegExp(term, 'gi'),
+            details = encodeURI(JSON.stringify(terms[term]));
+
+        // TODO: Make sure only actual text is marked (avoid placeables and previously marked terms)
+        text = text.replace(re, '<mark class="term" data-details="' + details + '">$&</mark>');
+      }
+
+      return text;
+    },
+
+
+    /*
      * Move cursor to the beginning of translation textarea
      */
     moveCursorToBeginning: function () {
@@ -592,8 +610,10 @@ var Pontoon = (function (my) {
         self.appendMetaData('Resource path', entity.path, link, linkClass);
       }
 
-      // Original string and plurals
-      $('#original').html(entity.marked);
+      // Original string
+      $('#original').html(self.markTerms(entity.marked, entity.terms));
+
+      // Plurals
       $('#source-pane').removeClass('pluralized');
       $('#plural-tabs li').css('display', 'none');
 
@@ -617,7 +637,7 @@ var Pontoon = (function (my) {
         // Show plural string to locales with a single plural form (includes variable identifier)
         } else {
           $('#source-pane h2').html('Plural').show();
-          $('#original').html(entity.marked_plural);
+          $('#original').html(self.markTerms(entity.marked_plural, entity.terms));
         }
       }
 
@@ -1738,8 +1758,44 @@ var Pontoon = (function (my) {
         self.jumpToPart($(this).html());
       });
 
-      // Insert placeable at cursor, replace selection or at the end if not focused
-      $('#original').on('click', '.placeable', function (e) {
+      // Show Terminology tooltip
+      // TODO: Improve positioning to avoid closing the tooltip by mistake; maybe add an arrow
+      $('#original').on('mouseenter', '.term', function () {
+        var terms = JSON.parse(decodeURI($(this).data().details));
+
+        $(this).append('<div id="terminology-tooltip">' +
+          '<ul class="terms"></ul>' +
+          '<footer>' +
+            '<p><a href="https://www.microsoft.com/Language/" target="_blank">Provided by Microsoft Terminology</a></p>' +
+          '</footer>' +
+        '</div>');
+
+        for (var i=0; i<terms.length; i++) {
+          var term = terms[i];
+
+          $('#terminology-tooltip .terms').append('<li>' +
+            '<p class="clearfix">' +
+              '<span class="source">' + term.term + '</span>' +
+              '<span class="note"> &middot; ' + term.note + '</span>' +
+              '<span class="translation">' + (term.translations[0] || term.term) + '</span>' +
+            '</p>' +
+            '<p class="description">' + term.description + '</p>' +
+          '</li>');
+        }
+
+        $('#terminology-tooltip').show();
+
+      }).on('mouseleave', '.term', function () {
+        $('#terminology-tooltip').remove();
+      });
+
+      // Close Terminology on term insert
+      $('#original').on('click', '#terminology-tooltip .terms li', function () {
+        $('#terminology-tooltip').remove();
+      });
+
+      // Insert placeable/term at cursor, replace selection or at the end if not focused
+      $('#original').on('click', '.placeable, #terminology-tooltip .terms li', function (e) {
         e.preventDefault();
 
         // Ignore for anonymous users
@@ -1750,10 +1806,10 @@ var Pontoon = (function (my) {
         var textarea = $('#translation'),
             selectionStart = textarea.prop('selectionStart'),
             selectionEnd = textarea.prop('selectionEnd'),
-            placeable = $(this).text(),
-            cursorPos = selectionStart + placeable.length,
+            value = $(this).is('.placeable') ? $(this).text() : $(this).find('.translation').text(),
+            cursorPos = selectionStart + value.length,
             before = textarea.val(),
-            after = before.substring(0, selectionStart) + placeable + before.substring(selectionEnd);
+            after = before.substring(0, selectionStart) + value + before.substring(selectionEnd);
 
         textarea.val(after).focus();
         textarea[0].setSelectionRange(cursorPos, cursorPos);
@@ -1773,7 +1829,7 @@ var Pontoon = (function (my) {
             source = entity.translation[i].string;
 
         $('#source-pane h2').html(title).show();
-        $('#original').html(marked);
+        $('#original').html(self.markTerms(marked, entity.terms));
 
         self.updateAndFocusTranslationEditor(source);
         $('#translation-length .original-length').html(original.length);

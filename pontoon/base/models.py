@@ -2005,6 +2005,12 @@ class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, related_name='entities')
     string = models.TextField()
     string_plural = models.TextField(blank=True)
+
+    # We keep stemmed version of strings in order to avoid expensive stemming processing
+    # during operations such as a terms matching.
+    string_singulars = models.TextField(blank=True)
+    string_plural_singulars = models.TextField(blank=True)
+
     key = models.TextField(blank=True)
     comment = models.TextField(blank=True)
     date_created = models.DateTimeField(default=timezone.now)
@@ -2083,6 +2089,19 @@ class Entity(DirtyFieldsMixin, models.Model):
             'approved': False,
             'pk': None,
         }
+
+    def get_terms(self, locale):
+        """
+        Terminology terms for a given locale, ready to be serialized in JSON.
+        """
+        terms = getattr(self, 'prefetched_terms', self.terms.all())
+        grouped_terms = defaultdict(list)
+
+        for term in terms:
+            grouped_terms[term.phrase].append(
+                term.term.serialize(locale)
+            )
+        return grouped_terms
 
     @classmethod
     def for_project_locale(
@@ -2176,8 +2195,13 @@ class Entity(DirtyFieldsMixin, models.Model):
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
 
-        entities = entities.prefetch_related('resource').prefetch_translations(locale)
-
+        entities = (
+            entities.prefetch_related('resource').prefetch_translations(locale).prefetch_related(
+                Prefetch('terms', to_attr='prefetched_terms'),
+                'terms__term',
+                'terms__term__translations'
+            )
+        )
         if exclude_entities:
             entities = entities.exclude(pk__in=exclude_entities)
 
@@ -2187,10 +2211,8 @@ class Entity(DirtyFieldsMixin, models.Model):
     def map_entities(cls, locale, entities, visible_entities=None):
         entities_array = []
         visible_entities = visible_entities or []
-
         for entity in entities:
             translation_array = []
-
             if entity.string_plural == "":
                 translation_array.append(entity.get_translation())
 
@@ -2216,6 +2238,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     False if entity.pk not in visible_entities or not visible_entities
                     else True
                 ),
+                'terms': entity.get_terms(locale),
             })
 
         return entities_array

@@ -99,7 +99,6 @@ def machine_translation(request):
         "to": locale_code,
         "contentType": "text/html",
     }
-
     try:
         r = requests.get(url, params=payload)
         # Parse XML response
