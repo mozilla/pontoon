@@ -264,6 +264,7 @@ class GetEntitiesForm(forms.Form):
     limit = forms.IntegerField(required=False, initial=50)
     status = forms.CharField(required=False)
     extra = forms.CharField(required=False)
+    tag = forms.CharField(required=False)
     time = forms.CharField(required=False)
     author = forms.CharField(required=False)
     search = forms.CharField(required=False)

@@ -171,6 +171,14 @@
             {{ Filter.item('suggested', 'Suggested', count=True) }}
             {{ Filter.item('translated', 'Translated', count=True) }}
 
+            {% if tags %}
+            <li class="horizontal-separator tags-header">Tags</li>
+
+            {% for tag in tags %}
+            {{ Filter.item('tag-' + tag.slug, tag.name) }}
+            {% endfor %}
+            {% endif %}
+
             <li class="horizontal-separator">Extra Filters</li>
 
             {{ Filter.item('untranslated', 'Untranslated') }}

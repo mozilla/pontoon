@@ -1,4 +1,4 @@
-{% macro span(chart, link, link_parameter=False) %}
+{% macro span(chart, link, link_parameter=False, has_params=False) %}
 {% if chart != None %}
   <div class="chart-wrapper">
     <span class="percent">{{ chart.approved_percent }}%</span>
@@ -12,25 +12,25 @@
   <div class="legend">
     <ul>
       <li class="translated">
-        <a href="{{ link }}{% if link_parameter %}?status=translated{% endif %}">
+        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=translated{% endif %}">
           <div class="title">Translated</div>
           <div class="value" data-value="{{ chart.approved_strings }}">{{ chart.approved_strings|intcomma }}</div>
         </a>
       </li>
       <li class="suggested">
-        <a href="{{ link }}{% if link_parameter %}?status=suggested{% endif %}">
+        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=suggested{% endif %}">
           <div class="title">Suggested</div>
           <div class="value" data-value="{{ chart.translated_strings }}">{{ chart.translated_strings|intcomma }}</div>
         </a>
       </li>
       <li class="fuzzy">
-        <a href="{{ link }}{% if link_parameter %}?status=fuzzy{% endif %}">
+        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=fuzzy{% endif %}">
           <div class="title">Fuzzy</div>
           <div class="value" data-value="{{ chart.fuzzy_strings }}">{{ chart.fuzzy_strings|intcomma }}</div>
         </a>
       </li>
       <li class="missing">
-        <a href="{{ link }}{% if link_parameter %}?status=missing{% endif %}">
+        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=missing{% endif %}">
           <div class="title">Missing</div>
           {% set missing_strings = chart.total_strings - chart.approved_strings - chart.translated_strings - chart.fuzzy_strings %}
           <div class="value" data-value="{{ missing_strings }}">{{ missing_strings|intcomma }}</div>

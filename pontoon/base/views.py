@@ -42,6 +42,7 @@ from pontoon.base.models import (
     Translation,
     UserProfile,
 )
+from pontoon.tags.utils.tags import TagsTool
 
 
 log = logging.getLogger(__name__)
@@ -93,7 +94,6 @@ def translate(request, locale, slug, part):
         project = get_object_or_404(Project.objects.available(), slug=slug)
         if locale not in project.locales.all():
             raise Http404
-
     return render(request, 'translate.html', {
         'download_form': forms.DownloadFileForm(),
         'upload_form': forms.UploadFileForm(),
@@ -103,6 +103,10 @@ def translate(request, locale, slug, part):
         'part': part,
         'project': project,
         'projects': projects,
+        'tags': (
+            TagsTool(projects=[project], priority=True)
+            if project.tags_enabled
+            else None)
     })
 
 
@@ -281,7 +285,7 @@ def entities(request):
     # `Entity.for_project_locale` only requires a subset of the fields the form contains. We thus
     # make a new dict with only the keys we want to pass to that function.
     restrict_to_keys = (
-        'paths', 'status', 'search', 'exclude_entities', 'extra', 'time', 'author',
+        'paths', 'status', 'search', 'exclude_entities', 'extra', 'time', 'author', 'tag',
     )
     form_data = {k: form.cleaned_data[k] for k in restrict_to_keys if k in form.cleaned_data}
 

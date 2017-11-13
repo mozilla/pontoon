@@ -2152,7 +2152,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     @classmethod
     def for_project_locale(
-        self, project, locale, paths=None, status=None,
+        self, project, locale, paths=None, status=None, tag=None,
         search=None, exclude_entities=None, extra=None, time=None, author=None,
     ):
         """Get project entities with locale translations."""
@@ -2216,8 +2216,14 @@ class Entity(DirtyFieldsMixin, models.Model):
                 )
             )
 
+        if tag:
+            post_filters.append(Q(resource__tag__slug__in=tag.split(',')))
+
         if post_filters:
             entities = entities.filter(Q(*post_filters))
+            if tag:
+                # only tag needs `distinct` as it traverses m2m fields
+                entities = entities.distinct()
 
         # Filter by search parameters
         if search:

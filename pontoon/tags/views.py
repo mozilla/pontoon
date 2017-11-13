@@ -31,11 +31,11 @@ class ProjectTagView(DetailView):
         try:
             tag = TagsTool(
                 projects=[self.object],
-                priority=True).get()
+                priority=True)[self.kwargs['tag']].get()
         except IndexError:
             raise Http404
         if self.request.is_ajax():
-            return dict(project=self.object, locales=list(tag.iter_locales()))
+            return dict(project=self.object, locales=list(tag.iter_locales()), tag=tag)
         return dict(project=self.object, tag=tag)
 
 

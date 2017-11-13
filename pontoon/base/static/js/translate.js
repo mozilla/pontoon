@@ -375,9 +375,9 @@ var Pontoon = (function (my) {
      */
     jumpToPart: function(part) {
       var self = this;
-
       self.checkUnsavedChanges(function() {
         $('.part .selector').attr('title', part);
+
         self.updateCurrentPart(part);
 
         // Reset optional state parameters and update state
@@ -1147,6 +1147,7 @@ var Pontoon = (function (my) {
         status: [],
         extra: [],
         time: '',
+        tag: [],
         author: []
       };
     },
@@ -1195,6 +1196,15 @@ var Pontoon = (function (my) {
         }
       }
 
+      function markTagFilters(type) {
+        for (var i=0, l=filter[type].length; i < l; i++) {
+          var node = $('#filter .menu [data-type="tag-' + filter[type][i] + '"]'),
+              titleNode = node.find('.title');
+          node.addClass('selected');
+          placeholder.push('tag: "' + titleNode.text() + '"');
+        }
+      }
+
       for (var type in filter) {
         if (filter[type] && filter[type] !== []) {
           if (type === 'status' || type === 'extra' || type === 'author') {
@@ -1204,6 +1214,8 @@ var Pontoon = (function (my) {
             var node = $('#filter .menu [data-type="time-range"]');
             node.addClass('selected');
             placeholder.push(node.find('.title').text());
+          } else {
+            markTagFilters(type);
           }
         }
       }
@@ -1355,6 +1367,10 @@ var Pontoon = (function (my) {
                el.hasClass('rejected');
       }
 
+      function isTagFilter(el) {
+        return Array.from(el[0].classList).some(function(clz) { return clz.startsWith('tag-') });
+      }
+
       // Filter entities by multiple filters
       $('#filter').on('click', 'li[data-type]:not(".editing"):not(".all") .status', function(e) {
         e.stopPropagation();
@@ -1365,6 +1381,9 @@ var Pontoon = (function (my) {
             num = -1;
 
         function updateFilterValue(type) {
+          if (type === 'tag') {
+            value = value.substring(4);
+          }
           num = filter[type].indexOf(value);
           if (num === -1) {
             filter[type].push(value);
@@ -1378,6 +1397,9 @@ var Pontoon = (function (my) {
 
         } else if (el.hasClass('author')) {
           updateFilterValue('author');
+
+        } else if (isTagFilter(el)) {
+          updateFilterValue('tag');
 
         } else if (isExtraFilter(el)) {
           // Special case: Untranslated filter is a union of missing, fuzzy, and suggested
@@ -1410,6 +1432,9 @@ var Pontoon = (function (my) {
           if (!filter.time) {
             return;
           }
+
+        } else if (isTagFilter(el)) {
+          filter.tag.push(value.substr(4));
 
         } else if (el.hasClass('author')) {
           filter.author.push(value);
@@ -3700,6 +3725,7 @@ var Pontoon = (function (my) {
             'locale': state.locale,
             'paths': self.getPartPaths(self.currentPart),
             'search': self.getSearch(),
+            'tag': self.getFilter('tag').join(','),
             'status': self.getFilter('status').join(','),
             'extra': self.getFilter('extra').join(','),
             'time': self.getFilter('time'),
@@ -4043,6 +4069,9 @@ var Pontoon = (function (my) {
         this.currentPart = matchingParts[0];
       }
 
+      $('#filter .menu li[class^="tag-"], #filter .menu li.tags-header')
+        .toggle(this.currentPart.title === 'all-resources');
+
       this.updatePartSelector(this.currentPart.title);
     },
 
@@ -4076,6 +4105,10 @@ var Pontoon = (function (my) {
 
       if (state.filter.status.length > 0) {
         queryParams.status = state.filter.status.join(',');
+      }
+
+      if (state.filter.tag.length > 0) {
+        queryParams.tag = state.filter.tag.join(',');
       }
 
       if (state.filter.extra.length > 0) {
@@ -4162,6 +4195,7 @@ var Pontoon = (function (my) {
         status: this.getQueryParam('status') ? this.getQueryParam('status').split(',') : [],
         extra: this.getQueryParam('extra') ? this.getQueryParam('extra').split(',') : [],
         time: this.getQueryParam('time'),
+        tag: this.getQueryParam('tag') ? this.getQueryParam('tag').split(',') : [],
         author: this.getQueryParam('author') ? this.getQueryParam('author').split(',') : []
       };
       state.search = this.getQueryParam('search');

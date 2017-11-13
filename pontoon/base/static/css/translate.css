@@ -708,6 +708,12 @@ body > header aside p {
   display: none;
 }
 
+[class^="tag-"] .status.fa:before,
+[class*=" tag-"] .status.fa:before {
+  content: "";
+  color: #aaa;
+}
+
 #filter .menu li.time-range {
   display: none;
   padding: 4px 0;
