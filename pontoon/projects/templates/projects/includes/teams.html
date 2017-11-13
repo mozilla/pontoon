@@ -20,7 +20,15 @@
       {% set main_link = url('pontoon.localizations.localization', locale.code, project.slug) %}
     {% endif %}
 
-    {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, request=False, link_parameter=True) }}
+    {% if tag %}
+      {% set main_link = url('pontoon.projects.project', project.slug) + '?tag=' + tag.slug %}
+      {% set chart_link = url('pontoon.translate', locale.code, project.slug, 'all-resources') + '?tag=' + tag.slug %}
+      {% if chart %}
+        {% set main_link = chart_link %}
+      {% endif %}
+    {% endif %}
+
+    {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, request=False, link_parameter=True, has_param=tag) }}
   {% endfor %}
 
   {{ TeamList.footer() }}

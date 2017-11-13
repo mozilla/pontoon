@@ -5,10 +5,9 @@
   {{ TagList.header() }}
   {% for tag in tags %}
   {% set main_link = url('pontoon.tags.project.tag', project=project[0].slug, tag=tag.slug) %}
-  {% set chart_link = main_link %}
   {% set latest_activity = tag.latest_activity %}
   {% set chart = tag.chart %}
-  {{ TagList.item(tag, main_link, chart_link, latest_activity, chart) }}
+  {{ TagList.item(tag, main_link, main_link, latest_activity, chart) }}
   {% endfor %}
 
   {{ TagList.footer() }}

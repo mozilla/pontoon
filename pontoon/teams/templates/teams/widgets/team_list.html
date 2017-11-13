@@ -18,7 +18,7 @@
     <tbody>
 {% endmacro %}
 
-{% macro item(locale, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False) %}
+{% macro item(locale, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False, has_param=False) %}
   <tr class="{{ class }}">
     <td class="name">
       <h4>
@@ -36,7 +36,7 @@
     </td>
     <td class="progress">
       {% if locale.total_strings %}
-        {{ ProgressChart.span(chart, chart_link, link_parameter) }}
+        {{ ProgressChart.span(chart, chart_link, link_parameter, has_param) }}
       {% else %}
         <span class="not-ready">Not synced yet</span>
       {% endif %}

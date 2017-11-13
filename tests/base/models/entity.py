@@ -183,3 +183,21 @@ def test_entity_project_locale_cleaned_key(entity_test_models):
             locale0))
     assert entities[0]['key'] == ''
     assert entities[1]['key'] == 'Key'
+
+
+@pytest.mark.django_db
+def test_entity_project_locale_tags(entity0, locale0, tag0):
+    """ Test filtering of tags in for_project_locale
+    """
+    resource0 = entity0.resource
+    project0 = resource0.project
+    entities = Entity.for_project_locale(
+        project0, locale0, tag=tag0.slug)
+    assert entity0 in entities
+
+    # remove the resource <> tag association
+    resource0.tag_set.remove(tag0)
+
+    entities = Entity.for_project_locale(
+        project0, locale0, tag=tag0.slug)
+    assert entity0 not in entities
