@@ -12,3 +12,8 @@ def project0():
 @pytest.fixture
 def project1():
     return Project.objects.create(slug="project1", name="Project 1")
+
+
+@pytest.fixture
+def projectX():
+    return Project.objects.create(slug="projectX", name="Project X")
