@@ -27,7 +27,6 @@ from pontoon.base.models import (
     Repository,
     Resource,
     TranslatedResource,
-    Subpage,
     Translation,
     TranslationMemoryEntry
 )
@@ -194,23 +193,6 @@ class TranslatedResourceFactory(DjangoModelFactory):
 
     class Meta:
         model = TranslatedResource
-
-
-class SubpageFactory(DjangoModelFactory):
-    project = SubFactory(ProjectFactory)
-    name = Sequence(lambda n: 'subpage {0}'.format(n))
-
-    class Meta:
-        model = Subpage
-
-    @factory.post_generation
-    def resources(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        if extracted:
-            for resource in extracted:
-                self.resources.add(resource)
 
 
 def assert_redirects(response, expected_url, status_code=302, host=None, secure=False):
