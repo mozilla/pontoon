@@ -3,7 +3,8 @@ import functools
 
 import pytest
 
-from pontoon.base.models import Locale
+from pontoon.base.models import (
+    Entity, Locale, ProjectLocale, Resource, TranslatedResource)
 
 
 @pytest.fixture
@@ -42,3 +43,16 @@ def locale_factory(factory):
 
     return functools.partial(
         factory, Model=Locale, instance_attrs=instance_attrs)
+
+
+@pytest.fixture
+def locale_parts(projectX, localeX, locale1, entity0):
+    ProjectLocale.objects.create(project=projectX, locale=localeX)
+    ProjectLocale.objects.create(project=projectX, locale=locale1)
+    resourceX = Resource.objects.create(
+        project=projectX, path="resourceX.po", format="po")
+    entityX = Entity.objects.create(resource=resourceX, string="entityX")
+    resourceX.total_strings = 1
+    resourceX.save()
+    TranslatedResource.objects.create(locale=localeX, resource=resourceX)
+    return localeX, locale1, entityX
