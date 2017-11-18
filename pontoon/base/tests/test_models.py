@@ -26,7 +26,7 @@ from pontoon.sync import KEY_SEPARATOR
 
 
 class UserTranslationManagerTests(TestCase):
-    def test_users_without_translations(self):
+    def __test_users_without_translations(self):
         """
         Checks if user contributors without translations aren't returned.
         """
@@ -37,7 +37,7 @@ class UserTranslationManagerTests(TestCase):
         assert_true(active_contributor in top_contributors)
         assert_true(inactive_contributor not in top_contributors)
 
-    def test_contributors_order(self):
+    def __test_contributors_order(self):
         """
         Checks if users are ordered by count of contributions.
         """
@@ -56,7 +56,7 @@ class UserTranslationManagerTests(TestCase):
             contributors[0],
             contributors[3]])
 
-    def test_contributors_limit(self):
+    def __test_contributors_limit(self):
         """
         Checks if proper count of user is returned.
         """
@@ -80,7 +80,7 @@ class UserTranslationManagerTests(TestCase):
         TranslationFactory.create_batch(needs_work, user=contributor, fuzzy=True, **kwargs)
         return contributor
 
-    def test_translation_counts(self):
+    def __test_translation_counts(self):
         """Checks if translation counts are calculated properly.
 
         Tests creates 3 contributors with different numbers translations and checks if their
@@ -126,7 +126,7 @@ class UserTranslationManagerTests(TestCase):
             translations_needs_work_count=5,
         )
 
-    def test_period_filters(self):
+    def __test_period_filters(self):
         """Total counts should be filtered by given date.
 
         Test creates 2 contributors with different activity periods and checks if they are
@@ -193,7 +193,7 @@ class UserTranslationManagerTests(TestCase):
             translations_needs_work_count=2,
         )
 
-    def test_query_args_filtering(self):
+    def __test_query_args_filtering(self):
         """
         Tests if query args are honored properly and contributors are filtered.
         """
