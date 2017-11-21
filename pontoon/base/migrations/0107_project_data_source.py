@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0105_unescape_quotes_from_android_strings_dtd_in_translation_memory'),
+        ('base', '0106_remove_fuzzy_tm_entries'),
     ]
 
     operations = [

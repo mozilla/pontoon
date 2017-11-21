@@ -281,7 +281,7 @@ def _save_new_strings(project, source):
 
     if new_strings:
         # Create a new fake resource for that project.
-        resource = Resource(path='all', project=project, total_strings=len(new_strings))
+        resource = Resource(path='database', project=project, total_strings=len(new_strings))
         resource.save()
 
         # Insert all new strings into Entity objects, associated to the fake resource.
@@ -333,7 +333,7 @@ def manage_project_strings(request, slug=None):
             % project.name
         )
 
-    entities = Entity.objects.filter(resource__project=project)
+    entities = Entity.objects.filter(resource__project=project, obsolete=False)
     project_has_strings = entities.exists()
     formset = EntityFormSet(queryset=entities)
 
@@ -361,7 +361,7 @@ def manage_project_strings(request, slug=None):
                     # it has no resource, and that's a violation of the database
                     # constraints. So, we want to make sure all entries have a resource.
                     new_entities = formset.save(commit=False)
-                    resource = Resource.objects.filter(project=project)[0]
+                    resource = Resource.objects.filter(project=project).first()
                     for entity in new_entities:
                         if not entity.resource_id:
                             entity.resource = resource

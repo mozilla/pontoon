@@ -93,7 +93,7 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         resources = list(Resource.objects.filter(project=project))
         assert_equal(len(resources), 1)
 
-        assert_equal(resources[0].path, 'all')
+        assert_equal(resources[0].path, 'database')
 
         # Verify all strings have been created as entities.
         entities = list(Entity.objects.filter(resource__project=project))
@@ -202,6 +202,7 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
             'form-0-comment': 'Wubba lubba dub dub',
             'form-1-id': entities[1].id,
             'form-1-string': 'string 1',
+            'form-1-obsolete': 'on',  # Remove this one.
         }
 
         response = self.client.post(url, form_data)
@@ -209,7 +210,7 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         assert_contains(response, 'changed 0')
         assert_contains(response, 'Wubba lubba dub dub')
         assert_not_contains(response, 'string 0')
-        assert_contains(response, 'string 1')
+        assert_not_contains(response, 'string 1')  # It's been removed.
 
     def test_manage_project_strings_download_csv(self):
         locale_kl = LocaleFactory.create(code='kl', name='Klingon')

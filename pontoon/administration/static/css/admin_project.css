@@ -50,7 +50,8 @@ form > div.controls {
   margin-top: 70px;
 }
 
-form > div.inline.delete {
+form > div.inline.delete,
+form > section > div.inline.delete {
   opacity: 0.3;
 }
 
@@ -313,7 +314,8 @@ form a:link, form a:visited {
   width: 201px;
 }
 
-.inline input[id$=DELETE] {
+.inline input[id$=DELETE],
+.inline input[id$=obsolete] {
   display: none;
 }
 
