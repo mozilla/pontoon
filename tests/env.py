@@ -1,0 +1,39 @@
+
+from pontoon.base.models import (
+    Entity, Locale, Project, ProjectLocale, Resource, Translation)
+
+from django.contrib.auth import get_user_model
+
+
+class Environment(object):
+
+    def setup(self):
+        for i in range(0, 2):
+            self.setup_translations(i)
+        self.setup_x()
+
+    def setup_translations(self, i):
+        locale = Locale.objects.create(
+            code="locale%s" % i, name="Locale %s" % i)
+        project = Project.objects.create(
+            slug="project%s" % i, name="Project %s" % i)
+        ProjectLocale.objects.create(project=project, locale=locale)
+        user = get_user_model().objects.create(
+            username="user%s" % i,
+            email="user%s@user.email" % i)
+        resource = Resource.objects.create(
+            project=project, path="resource%s.po" % i, format="po")
+        entity = Entity.objects.create(
+            resource=resource, string="entity%s" % i)
+        Translation.objects.create(
+            entity=entity,
+            string="Translation for entity%s" % i,
+            locale=locale,
+            user=user)
+
+    def setup_x(self):
+        Locale.objects.create(code="localeX", name="LocaleX")
+        Project.objects.create(slug="projectX", name="Project X")
+        get_user_model().objects.create(
+            username="userX",
+            email="userX@user.email")
