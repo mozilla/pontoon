@@ -6,9 +6,17 @@ from pontoon.base.models import Locale
 
 @pytest.fixture
 def locale0():
-    return Locale.objects.create(code="locale0", name="Locale 0")
+    """Locale 0"""
+    return Locale.objects.get(code="locale0")
 
 
 @pytest.fixture
 def locale1():
-    return Locale.objects.create(code="locale1", name="Locale 1")
+    """Locale 1"""
+    return Locale.objects.get(code="locale1")
+
+
+@pytest.fixture
+def localeX():
+    """Locale X - empty locale"""
+    return Locale.objects.get(code="localeX")
