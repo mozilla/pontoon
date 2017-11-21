@@ -68,13 +68,21 @@
   </h3>
   <section class="data-source">
     <div class="clearfix">
-      {{ form.data_source.label_tag(contents='Source type', label_suffix='') }}
       {{ form.data_source }}
     </div>
+  </section>
+
+  <section class="new-strings">
+    <h3>
+      <span>Strings</span>
+    </h3>
     {% if not pk %}
-    <div class="clearfix new-strings">
-      <label for="new_strings">Initial strings</label>
+    <div class="clearfix">
       <textarea name="new_strings" class="strings-source" placeholder="Enter new strings"></textarea>
+      <p>
+        Enter strings to create the first entities. Strings are separated on new line
+        characters. Content must be in en-US locale.
+      </p>
     </div>
     {% endif %}
     {% if pk %}
@@ -85,6 +93,7 @@
     {% endif %}
   </section>
 
+  <section class="repositories">
   <h3>
     <span>Repositories</span>
     <a href="#add-repo" class="add-repo">Add more</a>
@@ -186,6 +195,7 @@
     </div>
     {{ repo_formset.empty_form.errors }}
   </div>
+  </section>
 
   <h3>Project info <span class="small stress">(optional)</span></h3>
 

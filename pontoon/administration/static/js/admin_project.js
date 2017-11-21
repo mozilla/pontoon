@@ -106,10 +106,15 @@ $(function() {
     if (input.val() === 'database') {
       $('.new-strings').show();
       $('.manage-strings').show();
+
+      // For now, we also hide the entire Repositories section. We might
+      // want to revisit that behavior later.
+      $('.repositories').hide();
     }
     else {
       $('.new-strings').hide();
       $('.manage-strings').hide();
+      $('.repositories').show();
     }
   }
   var dataSourceInput = $('#id_data_source');
