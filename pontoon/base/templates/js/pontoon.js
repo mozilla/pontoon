@@ -10,15 +10,31 @@
        * Send data to main Pontoon code
        */
       function sendData() {
-        // Deep copy: http://api.jquery.com/jQuery.extend
-        var entities = $.extend(true, [], Pontoon.entities);
-        $(entities).each(function () {
-          delete this.node;
-        });
+        const entities = Pontoon.entities.map(entity => Object.assign({}, entity));
+        entities.forEach(entity => delete entity.node);
 
         postMessage("DATA", {
           entities: entities
         });
+      }
+
+
+
+      /**
+       * In-place keyboard shortcuts handler
+       */
+      function keydownPontoonHandler(e) {
+        const key = e.keyCode,
+            toolbar = document.querySelector('.pontoon-editable-toolbar'),
+            cancel = toolbar.querySelector('.cancel');
+
+        if (toolbar.style.display !== 'none' && cancel.style.display !== 'none') {
+          if (key === 27) { // Esc: status quo
+            cancel.click();
+            hideToolbar(toolbar);
+            return false;
+          }
+        }
       }
 
 
@@ -34,29 +50,19 @@
         });
 
         // Do not change anything when cancelled
-        $(".pontoon-editable-toolbar > .cancel").click(function () {
-          var element = $(this).parent()[0].target,
-              entity = element.entity,
-              string = entity.translation[0].string;
+        document.querySelectorAll('.pontoon-editable-toolbar > .cancel').forEach(dotCancel => {
+          dotCancel.addEventListener('click', e => {
+            const element = dotCancel.parentNode.target,
+                entity = element.entity,
+                string = entity.translation[0].string;
 
-          $(element).html(string !== null ? string : entity.original);
-          postMessage("INACTIVE", entity.id);
+            element.innerHTML.innerHTML = string !== null ? string : entity.original;
+            postMessage("INACTIVE", entity.id);
+          })
         });
 
         // In-place keyboard shortcuts
-        $("html").unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
-          var key = e.which,
-              toolbar = $(".pontoon-editable-toolbar"),
-              cancel = toolbar.find(".cancel");
-
-          if (cancel.is(":visible")) {
-            if (key === 27) { // Esc: status quo
-              cancel.click();
-              hideToolbar(toolbar[0].target);
-              return false;
-            }
-          }
-        });
+        document.querySelector('html').addEventListener("keydown", keydownPontoonHandler);
       }
 
 
@@ -64,34 +70,28 @@
       /**
        * Makes DOM nodes hoverable and localizable in the sidebar
        *
-       * entity Entity object
+       * entity Entity object with list of jQuery nodes
        */
       function makeLocalizable(entity) {
         entity.body = true;
-        $(entity.node).each(function() {
-          this[0].entity = entity; // Store entity reference to the node
- 
-          this.prop('lang', Pontoon.locale.code);
-          this.prop('dir', 'auto');
- 
+        entity.node.forEach(node => {
+          const domNode = node[0];
+          domNode.entity = entity; // Store entity reference to the node
+
+          domNode.setAttribute('lang', Pontoon.locale.code);
+          domNode.setAttribute('dir', 'auto');
+
           // Show/hide toolbar on node hover
-          if (!this.handlersAttached) {
-            this.hover(function () {
-              showToolbar(this);
-            }, function() {
-              hideToolbar(this);
-            });
-            this.handlersAttached = true;
+          if (!domNode.handlersAttached) {
+            domNode.addEventListener('mouseenter', e => showToolbar(domNode));
+            domNode.addEventListener('mouseleave', e => hideToolbar(domNode));
+            domNode.handlersAttached = true;
           }
         });
 
         // Show/hide toolbar on entity hover
-        entity.hover = function () {
-          showToolbar(this.node[0][0]);
-        };
-        entity.unhover = function () {
-          hideToolbar(this.node[0][0]);
-        };
+        entity.hover = e => showToolbar(entity.node[0][0]);
+        entity.unhover =  e => hideToolbar(entity.node[0][0]);
       }
 
 
