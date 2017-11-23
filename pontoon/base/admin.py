@@ -62,13 +62,13 @@ class UserAdmin(AuthUserAdmin):
             request.user,
             obj,
             added_groups,
-            models.UserRoleLogAction.add,
+            'add',
         )
         models.UserRoleLogAction.objects.log_user_roles(
             request.user,
             obj,
             removed_groups,
-            models.UserRoleLog.remove,
+            'remove',
         )
 
 

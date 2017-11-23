@@ -119,13 +119,13 @@ class UserPermissionGroupForm(object):
             self.request.user,
             group,
             users_to_add,
-            UserRoleLogAction.add,
+            'add'
         )
         UserRoleLogAction.objects.log_users_roles(
             self.request.user,
             group,
             users_to_remove,
-            UserRoleLogAction.remove
+            'remove'
         )
 
 
