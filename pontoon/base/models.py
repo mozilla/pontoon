@@ -10,10 +10,6 @@ import os.path
 import re
 
 from collections import defaultdict
-from enumfields import (
-    EnumField,
-    Enum
-)
 from dirtyfields import DirtyFieldsMixin
 from six.moves import reduce
 from six.moves.urllib.parse import (urlencode, urlparse)
@@ -455,23 +451,21 @@ class UserRoleLogEntryManager(models.Manager):
         UserRoleLogEntry.objects.bulk_create(log_entries)
 
 
-class UserRoleLogAction(Enum):
-    """
-    Managers can perform various action on a user.
-    """
-    # User has been added to a group (e.g. translators, managers).
-    add = 'add'
-
-    # User has been removed from a group (e.g. translators, managers).
-    remove = 'remove'
-
-
-class UserRoleLogEntry(models.Model):
+class UserRoleLogAction(models.Model):
     """
     Track changes of roles added or removed from a user.
     """
-    action_type = EnumField(UserRoleLogAction)
 
+    # Managers can perform various action on a user.
+    ACTIONS_TYPES = (
+        # User has been added to a group (e.g. translators, managers).
+        ('add', 'Add'),
+
+        # User has been removed from a group (e.g. translators, managers).
+        ('remove', 'Remove')
+    )
+
+    action_type = models.CharField(max_length=6, choices=ACTIONS_TYPES)
     performed_by = models.ForeignKey(User, related_name='changed_roles_log')
     performed_on = models.ForeignKey(User, related_name='roles_log')
     group = models.ForeignKey(Group)

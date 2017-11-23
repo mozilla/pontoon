@@ -13,7 +13,6 @@ from pontoon.base.models import (
     User,
     UserProfile,
     UserRoleLogAction,
-    UserRoleLogEntry
 )
 from pontoon.sync.formats import SUPPORTED_FORMAT_PARSERS
 
@@ -116,13 +115,13 @@ class UserPermissionGroupForm(object):
         if users:
             group.user_set.add(*users)
 
-        UserRoleLogEntry.objects.log_users_roles(
+        UserRoleLogAction.objects.log_users_roles(
             self.request.user,
             group,
             users_to_add,
             UserRoleLogAction.add,
         )
-        UserRoleLogEntry.objects.log_users_roles(
+        UserRoleLogAction.objects.log_users_roles(
             self.request.user,
             group,
             users_to_remove,

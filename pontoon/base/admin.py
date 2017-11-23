@@ -58,13 +58,13 @@ class UserAdmin(AuthUserAdmin):
 
         super(UserAdmin, self).save_model(request, obj, form, change)
 
-        models.UserRoleLogEntry.objects.log_user_roles(
+        models.UserRoleLogAction.objects.log_user_roles(
             request.user,
             obj,
             added_groups,
             models.UserRoleLogAction.add,
         )
-        models.UserRoleLogEntry.objects.log_user_roles(
+        models.UserRoleLogAction.objects.log_user_roles(
             request.user,
             obj,
             removed_groups,
@@ -213,7 +213,7 @@ class ChangedEntityLocaleAdmin(admin.ModelAdmin):
     raw_id_fields = ('entity',)
 
 
-class UserRoleLogAdmin(admin.ModelAdmin):
+class UserRoleLogActionAdmin(admin.ModelAdmin):
     search_fields = (
         'performed_by__email',
         'performed_on__email',
@@ -269,4 +269,4 @@ admin.site.register(models.Entity, EntityAdmin)
 admin.site.register(models.Translation, TranslationAdmin)
 admin.site.register(models.TranslationMemoryEntry, TranslationMemoryEntryAdmin)
 admin.site.register(models.ChangedEntityLocale, ChangedEntityLocaleAdmin)
-admin.site.register(models.UserRoleLogEntry, UserRoleLogAdmin)
+admin.site.register(models.UserRoleLogAction, UserRoleLogActionAdmin)

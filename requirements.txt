@@ -165,18 +165,6 @@ oauthlib==2.0.2 \
     --hash=sha256:b3b9b47f2a263fe249b5b48c4e25a5bce882ff20a0ac34d553ce43cff55b53ac
 
 # ----------------------------------------------------------------------------------
-django-enumfields==0.9.0 \
-    --hash=sha256:ed6f388efc19610997f430406df4c717a70d91f64855ec337552488b1ced666c \
-    --hash=sha256:d517e796a298b63c55863c65d162298b8f07e8d0233cc1014db09b0d6aa0545f
-
-# Required by django-enumfields
-enum34==1.1.6 \
-    --hash=sha256:6bd0f6ad48ec2aa117d3d141940d484deccda84d4fcd884f5c3d93c23ecd8c79 \
-    --hash=sha256:644837f692e5f550741432dd3f223bbb9852018674981b1664e5dc339387588a \
-    --hash=sha256:8ad8c4783bf61ded74527bffb48ed9b54166685e4230386a9ed9b1279e2df5b1 \
-    --hash=sha256:2d81cbbe0e73112bdfe6ef8576f2238f2ba27dd0d55752a776c41d38b7da2850
-
-# ----------------------------------------------------------------------------------
 django-jinja==2.2.2 \
     --hash=sha256:f2456d767dfbe4123e42b96015ea4b119838e2d88457999bd574cf7c634a2b25
 
