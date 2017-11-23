@@ -57,7 +57,7 @@ class Command(BaseCommand):
         """
         sync_log = SyncLog.objects.create(start_time=timezone.now())
 
-        projects = Project.objects.filter(disabled=False)
+        projects = Project.objects.filter(disabled=False, data_source='repository')
         slugs = (
             options['projects'].split(',') if 'projects' in options and options['projects']
             else None
