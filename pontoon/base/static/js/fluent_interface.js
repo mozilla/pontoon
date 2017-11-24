@@ -151,6 +151,7 @@ var Pontoon = (function (my) {
           }
 
           $('#translation').val(value);
+          Pontoon.updateCachedTranslation();
           Pontoon.fluent.toggleEditor(false);
           return;
         }
@@ -582,6 +583,7 @@ $(function () {
       }
 
       $('#translation').val(translation);
+      Pontoon.updateCachedTranslation();
     }
 
     Pontoon.fluent.toggleEditor($(this).is('.active'));

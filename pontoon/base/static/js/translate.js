@@ -706,11 +706,11 @@ var Pontoon = (function (my) {
       }
 
       var before = this.cachedTranslation,
-          after = $('#translation').val();
+          after = this.fluent.serializeTranslation(entity, $('#translation').val());
 
       if ((before !== null) && (before !== after)) {
         $('#unsaved').show();
-        $('#translation').focus();
+        $('#editor textarea:visible:first').focus();
         this.checkUnsavedChangesCallback = callback;
 
       } else {
