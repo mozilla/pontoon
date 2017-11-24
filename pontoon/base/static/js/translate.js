@@ -618,7 +618,7 @@ var Pontoon = (function (my) {
       $('.warning-overlay:visible .cancel').click();
 
       // Length
-      var original = entity['original' + this.isPluralized()].length;
+      var original = entity['original' + this.isPluralized()];
 
       // Toggle translation length display
       $('#translation-length')
@@ -626,7 +626,7 @@ var Pontoon = (function (my) {
         .find('.countdown').toggle(!!self.translationLengthLimit);
 
       // Need to show if sidebar opened by default
-      $('#translation-length').show().find('.original-length').html(original);
+      $('#translation-length').show().find('.original-length').html(original.length);
       self.moveCursorToBeginning();
       self.updateCurrentTranslationLength();
       self.updateCachedTranslation();

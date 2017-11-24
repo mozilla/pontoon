@@ -167,6 +167,11 @@ var Pontoon = (function (my) {
 
         Pontoon.fluent.focusFirstField();
         Pontoon.fluent.toggleEditorToolbar();
+
+        Pontoon.moveCursorToBeginning();
+        Pontoon.updateCurrentTranslationLength();
+        Pontoon.updateInPlaceTranslation();
+
         return true;
       },
 
@@ -275,6 +280,11 @@ var Pontoon = (function (my) {
         var show = entity.format !== 'ftl' || !Pontoon.fluent.isComplexFTL();
 
         $('#translation-length, #copy').toggle(show);
+
+        if ($('#translation-length').is(':visible')) {
+          var original = this.getSimplePreview(entity, entity.original, entity);
+          $('#translation-length').find('.original-length').html(original.length);
+        }
       },
 
 
