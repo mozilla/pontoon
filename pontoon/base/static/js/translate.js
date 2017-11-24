@@ -418,17 +418,8 @@ var Pontoon = (function (my) {
      * Move cursor to the beginning of translation textarea
      */
     moveCursorToBeginning: function () {
-      var standard = $('#translation'),
-          ftl = $('#ftl-area input.value:visible:first'),
-          element = null;
-
-      if (standard.is(':visible')) {
-        element = standard;
-      } else if (ftl.is(':visible')) {
-        element = ftl;
-      }
-
-      if (element) {
+      var element = $('#editor textarea:visible:first');
+      if (element.length) {
         element[0].setSelectionRange(0, 0);
       }
     },
@@ -439,7 +430,7 @@ var Pontoon = (function (my) {
      */
     updateCurrentTranslationLength: function () {
       var limit = this.translationLengthLimit,
-          translation = $('#translation').val();
+          translation = $('#editor textarea:visible:first').val() || '';
 
       if (limit) {
         var length = this.stripHTML(translation).length,
@@ -468,7 +459,7 @@ var Pontoon = (function (my) {
      * Update the standard translation editor and focus it
      */
     updateAndFocusTranslationEditor: function (translation) {
-      $('#translation').val(translation).focus();
+      $('#editor textarea:visible:first').val(translation).focus();
     },
 
 
@@ -1680,7 +1671,7 @@ var Pontoon = (function (my) {
     updateInPlaceTranslation: function (translation) {
       var entity = this.getEditorEntity(),
           pluralForm = this.getPluralForm(true),
-          translation = translation || $('#translation').val();
+          translation = translation || $('#editor textarea:visible:first').val();
 
       if (entity.body && pluralForm === 0 && (this.user.canTranslate() || !entity.translation[pluralForm].approved)) {
         this.postMessage("SAVE", {
@@ -1980,7 +1971,7 @@ var Pontoon = (function (my) {
         }
 
         // FTL Editor
-        if (self.fluent.isFTLEditorEnabled()) {
+        if (self.fluent.isFTLEditorEnabled() && $('#helpers .history').is(':visible')) {
           self.fluent.renderEditor({
             pk: $(this).data('id'),
             string: this.string
