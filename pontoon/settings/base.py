@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     'pontoon.projects',
     'pontoon.sync',
     'pontoon.teams',
+    'pontoon.tags',
 
     # Django contrib apps
     'django.contrib.admin',
