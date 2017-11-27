@@ -1,7 +1,23 @@
+import sys
+
 from django.test import TestCase
 
 
 class TestCyclicQueries(TestCase):
+    def setUp(self):
+        # graphql-core's ExecutionContext.report_error uses sys.excepthook to
+        # print error stack traces. According to Python docs this hooks can be
+        # safely customized:
+        #
+        #     The handling of such top-level exceptions can be customized by
+        #     assigning another three-argument function to sys.excepthook.
+        #
+        # Cf. https://docs.python.org/2/library/sys.html#sys.excepthook
+        self.excepthook_orig = sys.excepthook
+        sys.excepthook = lambda *x: None
+
+    def tearDown(self):
+        sys.excepthook = self.excepthook_orig
 
     def test_projects(self):
         body = {

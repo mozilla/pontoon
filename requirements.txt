@@ -96,9 +96,9 @@ pytz==2017.2 \
     --hash=sha256:f5c056e8f62d45ba8215e5cb8f50dfccb198b4b9fbea8500674f3443e4689589
 scandir==1.5 \
     --hash=sha256:c2612d1a487d80fb4701b4a91ca1b8f8a695b1ae820570815e85e8c8b23f1283
-six==1.10.0 \
-    --hash=sha256:0ff78c403d9bccf5a425a6d31a12aa6b47f1c21ca4dc2573a7e2f32a97335eb1 \
-    --hash=sha256:105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a
+six==1.11.0 \
+    --hash=sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb \
+    --hash=sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9
 whitenoise==1.0.6 \
     --hash=sha256:3e4d80199960959b828951aa24cbfaa36cebed149dcd728c11e855798b15f870 \
     --hash=sha256:dac9419db3ece27bb53c7433243fc22ed42cf68de9d6c4129390e1d9aefe6310
@@ -214,30 +214,42 @@ pylibmc==1.5.0 \
     --hash=sha256:16255595616a6d78cd786a55cc6431da5b7accf46512df854712a0cdbb3acfaa
 
 # ----------------------------------------------------------------------------------
-graphene-django==1.3 \
-    --hash=sha256:6679eaa73768a760aef76e1860a4ca3273db4213f0505dc13cdfa44278e027fc
+graphene-django==2.0.0 \
+    --hash=sha256:70d9358bc48c806b6a9458e8344f0a1211cd1f1ef923a092aa55e6bcacc2c3fc \
+    --hash=sha256:5cabf46b59f242a533fe1df1912c87d5ad6606246937609be2e6c9086cfdf7a4
 
 # Required by graphene-django
-graphene==1.4.1 \
-    --hash=sha256:36134e026ec987514b240b57e3b6a995d6aed0fc5dece0567e77d5aed0ad0ece
-iso8601==0.1.11 \
-    --hash=sha256:c68dbd1b6ecc0c13c1d94116aec79d5d5c3bc7444f99159b968f12d83cbc7fa6 \
-    --hash=sha256:e8fb52f78880ae063336c94eb5b87b181e6a0cc33a6c008511bac9a6e980ef30
+graphene==2.0.1 \
+    --hash=sha256:698543001858c908c5e3526ddf38ae1d13049c6c1313ec3bb0afad02c81bd242 \
+    --hash=sha256:0763563fdccb6817311f15d0f0a4d4fe820a46cbe5de022076f95cd99413fd0f
+iso8601==0.1.12 \
+    --hash=sha256:210e0134677cc0d02f6028087fee1df1e1d76d372ee1db0bf30bf66c5c1c89a3 \
+    --hash=sha256:bbbae5fb4a7abfe71d4688fd64bff70b91bbd74ef6a99d964bab18f7fdf286dd \
+    --hash=sha256:49c4b20e1f38aa5cf109ddcd39647ac419f928512c869dc01d5c7098eddede82
 singledispatch==3.4.0.3 \
     --hash=sha256:833b46966687b3de7f438c761ac475213e53b306740f1abfaa86e1d1aae56aa8 \
     --hash=sha256:5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c
 
 # Required by graphene
-graphql-core==1.1 \
-    --hash=sha256:63bb8593aeeadb0a53e14207b910027fe51158d017927fad87326dac806185ee
+graphql-core==2.0 \
+    --hash=sha256:4830699be53f9154273fa15726fc8b0c90bc22bbb8fc7c932586503b3cb9330e \
+    --hash=sha256:539355351343dede3ecb771e0d273a1b72405cb6d64f45bb8f92ecc4d7109af0
 graphql-relay==0.4.5 \
     --hash=sha256:2716b7245d97091af21abf096fabafac576905096d21ba7118fba722596f65db
-promise==2.0.2 \
-    --hash=sha256:f6ac7ec189bfb14ab8987f211db85fa8147fe13ca5d2a8c15926307d8948c082
+promise==2.1 \
+    --hash=sha256:0bca4ed933e3d50e3d18fb54fc1432fa84b0564838cd093e824abcd718ab9304 \
+    --hash=sha256:95506bac89df7a495e0b8c813fd782dd1ae590decb52f95248e316c6659ca49b
+
+# Required by graphql-core
+Rx==1.6.0 \
+    --hash=sha256:ad793d79843feba2ea25c0c01be245f3163d5d469418279d4019737b93d88c78 \
+    --hash=sha256:84ac6e140f2129266fd4c77a3d0903bbff0a761386079ea0cb99c8524695cac1
 
 # Required by promise
-typing==3.6.1 \
-    --hash=sha256:c36dec260238e7464213dcd50d4b5ef63a507972f5780652e835d0228d0edace
+typing==3.6.2 \
+    --hash=sha256:349b1f9c109c84b53ac79ac1d822eaa68fc91d63b321bd9392df15098f746f53 \
+    --hash=sha256:63a8255fe7c6269916baa440eb9b6a67139b0b97a01af632e7bd2842e1e02f15 \
+    --hash=sha256:d514bd84b284dd3e844f0305ac07511f097e325171f6cc4a20878d11ad771849
 
 # ----------------------------------------------------------------------------------
 mock==1.3.0 \
