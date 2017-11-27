@@ -2,12 +2,15 @@ $(function() {
   var container = $('#main .container');
 
   function inputHidden(name, value) {
-    return $('<input type="hidden" name="' + name + '" value="' + value + '">');
+    return $('<input class="permissions-form-item" type="hidden" name="' + name + '" value="' + value + '">');
   }
 
   container.on('click', '#permissions-form .save', function(e) {
     e.preventDefault();
     var $form = $('#permissions-form');
+
+    // Remove stale permissions items (bug 1416890)
+    $('input.permissions-form-item').remove();
 
     // Before submitting the form, update translators and managers
     $.each(['translators', 'managers'], function(i, value) {
