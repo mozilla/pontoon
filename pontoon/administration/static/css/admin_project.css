@@ -209,6 +209,25 @@ form a:link, form a:visited {
   padding: 6px 0 0 15px;
 }
 
+.data-source,
+.new-strings {
+  position: relative;
+}
+
+.data-source #id_data_source,
+.new-strings .manage-strings {
+  position: absolute;
+  right: 0;
+}
+
+.data-source #id_data_source {
+  top: 5px;
+}
+
+.new-strings .manage-strings {
+  top: -3px;
+}
+
 .repository .delete-wrapper label {
   display: inline;
 }
