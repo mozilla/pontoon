@@ -113,6 +113,11 @@ form .button {
   width: 130px;
 }
 
+#admin-strings-form .controls .add-inline {
+  float: left;
+  margin-left: 0;
+}
+
 .controls .button.sync,
 .controls .button.sync:hover {
   background: #F36;
