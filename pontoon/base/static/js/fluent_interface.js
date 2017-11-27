@@ -374,8 +374,8 @@ var Pontoon = (function (my) {
        * Return translation in the editor as FTL source
        */
       getTranslationSource: function () {
-        var entity = Pontoon.getEditorEntity(),
-            fallback = $('#translation').val();
+        var entity = Pontoon.getEditorEntity();
+        var fallback = $('#translation').val();
 
         // For non-FTL entities, return unchanged translations
         if (entity.format !== 'ftl') {
