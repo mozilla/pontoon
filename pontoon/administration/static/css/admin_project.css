@@ -118,6 +118,10 @@ form .button {
   margin-left: 0;
 }
 
+#admin-strings-form .strings-list .entity textarea:nth-child(3) {
+  margin-bottom: 20px;
+}
+
 .controls .button.sync,
 .controls .button.sync:hover {
   background: #F36;
