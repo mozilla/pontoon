@@ -78,11 +78,10 @@
     </h3>
     {% if not pk %}
     <div class="clearfix">
-      <textarea name="new_strings" class="strings-source" placeholder="Enter new strings"></textarea>
-      <p>
-        Enter strings to create the first entities. Strings are separated on new line
-        characters. Content must be in en-US locale.
-      </p>
+      <label for="id_new_strings">
+        Enter strings to create the first entities. Strings are separated on new line characters.
+      </label>
+      <textarea id="id_new_strings" name="new_strings" class="strings-source" placeholder="Enter new strings"></textarea>
     </div>
     {% endif %}
     {% if pk %}
