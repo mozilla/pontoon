@@ -11,7 +11,7 @@ from pontoon.base.models import (
 )
 
 
-class Stats(graphene.AbstractType):
+class Stats(object):
     missing_strings = graphene.Int()
     complete = graphene.Boolean()
 
@@ -34,8 +34,7 @@ class Project(DjangoObjectType, Stats):
 
     localizations = graphene.List(ProjectLocale)
 
-    @graphene.resolve_only_args
-    def resolve_localizations(obj):
+    def resolve_localizations(obj, _info):
         return obj.project_locale.all()
 
 
@@ -49,8 +48,7 @@ class Locale(DjangoObjectType, Stats):
 
     localizations = graphene.List(ProjectLocale, include_disabled=graphene.Boolean(False))
 
-    @graphene.resolve_only_args
-    def resolve_localizations(obj, include_disabled):
+    def resolve_localizations(obj, _info, include_disabled):
         qs = obj.project_locale
 
         if include_disabled:
@@ -69,7 +67,7 @@ class Query(graphene.ObjectType):
     locales = graphene.List(Locale)
     locale = graphene.Field(Locale, code=graphene.String())
 
-    def resolve_projects(obj, args, context, info):
+    def resolve_projects(obj, info, include_disabled):
         qs = ProjectModel.objects
         fields = get_fields(info)
 
@@ -79,12 +77,12 @@ class Query(graphene.ObjectType):
         if 'projects.localizations.locale.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')
 
-        if args['include_disabled']:
+        if include_disabled:
             return qs.all()
 
         return qs.filter(disabled=False)
 
-    def resolve_project(obj, args, context, info):
+    def resolve_project(obj, info, slug):
         qs = ProjectModel.objects
         fields = get_fields(info)
 
@@ -94,9 +92,9 @@ class Query(graphene.ObjectType):
         if 'project.localizations.locale.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')
 
-        return qs.get(slug=args['slug'])
+        return qs.get(slug=slug)
 
-    def resolve_locales(obj, args, context, info):
+    def resolve_locales(obj, info):
         qs = LocaleModel.objects
         fields = get_fields(info)
 
@@ -108,7 +106,7 @@ class Query(graphene.ObjectType):
 
         return qs.all()
 
-    def resolve_locale(obj, args, context, info):
+    def resolve_locale(obj, info, code):
         qs = LocaleModel.objects
         fields = get_fields(info)
 
@@ -118,7 +116,7 @@ class Query(graphene.ObjectType):
         if 'locale.localizations.project.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')
 
-        return qs.get(code=args['code'])
+        return qs.get(code=code)
 
 
 schema = graphene.Schema(query=Query)
