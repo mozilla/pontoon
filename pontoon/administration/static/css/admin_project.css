@@ -50,6 +50,10 @@ form > div.controls {
   margin-top: 70px;
 }
 
+form > section > div {
+  margin-top: 20px;
+}
+
 form > div.inline.delete,
 form > section > div.inline.delete {
   opacity: 0.3;
