@@ -706,7 +706,7 @@ var Pontoon = (function (my) {
       }
 
       var before = this.cachedTranslation,
-          after = this.fluent.serializeTranslation(entity, $('#translation').val());
+          after = this.fluent.getTranslationSource();
 
       if ((before !== null) && (before !== after)) {
         $('#unsaved').show();

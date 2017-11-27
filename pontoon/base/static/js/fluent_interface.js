@@ -144,7 +144,7 @@ var Pontoon = (function (my) {
         // Show source if rich FTL editor does not support the translation or
         // if translation is not available and source string is displayed as source
         else if ($('#ftl-original .main-value ul li.source').length) {
-          var value = entity.key + ' = ';
+          var value = entity.key + ' = \n';
 
           if (isTranslated) {
             value = translation.string;
@@ -371,6 +371,37 @@ var Pontoon = (function (my) {
 
 
       /*
+       * Return translation in the editor as FTL source
+       */
+      getTranslationSource: function () {
+        var entity = Pontoon.getEditorEntity(),
+            fallback = $('#translation').val();
+
+        // For non-FTL entities, return unchanged translations
+        if (entity.format !== 'ftl') {
+          return fallback;
+        }
+
+        var translation = this.serializeTranslation(entity, fallback);
+
+        // Special case: empty translations in rich FTL editor don't serialize properly
+        if (this.isFTLEditorEnabled()) {
+          var richTranslation = $.map(
+            $('#ftl-area input.value:visible, #ftl-area textarea:visible'), function(i) {
+              return $(i).val();
+            }
+          ).join('');
+
+          if (!richTranslation.length) {
+            translation = '';
+          }
+        }
+
+        return translation;
+      },
+
+
+      /*
        * Get AST and any errors for the entity's translation
        */
       serializeTranslation: function (entity, translation) {
@@ -579,7 +610,7 @@ $(function () {
 
       // If translation broken, incomplete or empty
       if (translation.error) {
-        translation = entity.key + ' = ';
+        translation = entity.key + ' = \n';
       }
 
       $('#translation').val(translation);
