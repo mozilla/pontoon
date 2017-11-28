@@ -9,22 +9,26 @@ from pontoon.base.models import (
 
 @pytest.mark.django_db
 def test_fixtures_base0(entity0, resource0, project0, project_locale0,
-                        translation0, locale0):
+                        translation0, locale0, translated_resource0):
     assert entity0.resource == resource0
     assert entity0.resource.project == project0
     assert translation0.entity == entity0
     assert project_locale0.project == project0
     assert project_locale0.locale == locale0
+    assert translated_resource0.resource == resource0
+    assert translated_resource0.locale == locale0
 
 
 @pytest.mark.django_db
 def test_fixtures_base1(entity1, resource1, project1, project_locale1,
-                        translation1, locale1):
+                        translation1, locale1, translated_resource1):
     assert entity1.resource == resource1
     assert entity1.resource.project == project1
     assert translation1.entity == entity1
     assert project_locale1.project == project1
     assert project_locale1.locale == locale1
+    assert translated_resource1.resource == resource1
+    assert translated_resource1.locale == locale1
 
 
 @pytest.mark.django_db
@@ -115,3 +119,17 @@ def test_fixtures_factory_translation(entity_factory, translation_factory,
     assert len(translations) == 2
     assert translations[0].string == "_1_"
     assert translations[1].string == "_2_"
+
+
+@pytest.mark.django_db
+def test_fixtures_site_matrix(site_matrix):
+    assert (
+        sorted(site_matrix.keys())
+        == ['factories', 'locales',
+            'project_locales', 'projects',
+            'resources', 'translated_resources'])
+    assert len(site_matrix['locales']) == 3
+    assert len(site_matrix['projects']) == 3
+    assert len(site_matrix['project_locales']) == 9
+    assert len(site_matrix["resources"]) == 21
+    assert len(site_matrix["translated_resources"]) == 63
