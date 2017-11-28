@@ -1005,6 +1005,14 @@ class Project(AggregatedStats):
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale, through='ProjectLocale')
 
+    data_source = models.CharField(
+        max_length=255,
+        default='repository',
+        choices=(
+            ('repository', 'Repository'),
+            ('database', 'Database'),
+        ),
+    )
     can_be_requested = models.BooleanField(default=True, help_text="""
         Allow localizers to request the project for their team.
     """)

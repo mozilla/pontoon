@@ -50,6 +50,21 @@ class CommandTests(TestCase):
             force=False
         )
 
+    def test_non_repository_projects(self):
+        """Only sync projects with data_source=repository."""
+        ProjectFactory.create(data_source='database')
+        repo_project = ProjectFactory.create(data_source='repository')
+
+        self.execute_command()
+        self.mock_sync_project.delay.assert_called_with(
+            repo_project.pk,
+            ANY,
+            locale=None,
+            no_pull=False,
+            no_commit=False,
+            force=False
+        )
+
     def test_project_slugs(self):
         """
         If project slugs are passed to Command.handle, only sync projects

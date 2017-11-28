@@ -63,10 +63,39 @@
     </section>
   </div>
 
+  <section class="data-source">
+    <h3>
+      <span>Data Source</span>
+    </h3>
+    {{ form.data_source }}
+  </section>
+
+  <section class="new-strings">
+    <h3>
+      <span>Strings</span>
+    </h3>
+    {% if not pk %}
+    <div class="clearfix">
+      <label for="id_new_strings">
+        Enter strings to create the first entities. Strings are separated on new line characters.
+      </label>
+      <textarea id="id_new_strings" name="new_strings" class="strings-source" placeholder="First strings"></textarea>
+    </div>
+    {% endif %}
+    {% if pk %}
+    <div class="clearfix manage-strings">
+      <a href="{{ url('pontoon.admin.project.strings', slug) }}">Manage Strings</a>
+      <a href="{{ url('pontoon.admin.project.strings', slug) }}?format=csv">Download Strings</a>
+    </div>
+    {% endif %}
+  </section>
+
+  <section class="repositories">
   <h3>
     <span>Repositories</span>
     <a href="#add-repo" class="add-repo">Add more</a>
   </h3>
+
   {{ repo_formset.management_form }}
   {{ repo_formset.non_form_errors() }}
   {% for repo_form in repo_formset %}
@@ -163,6 +192,7 @@
     </div>
     {{ repo_formset.empty_form.errors }}
   </div>
+  </section>
 
   <h3>Project info <span class="small stress">(optional)</span></h3>
 
@@ -249,4 +279,3 @@
 {% block extend_js %}
   {% javascript 'admin_project' %}
 {% endblock %}
-

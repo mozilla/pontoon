@@ -5,23 +5,44 @@ import views
 
 urlpatterns = [
     # Admin Home
-    url(r'^$', views.admin,
-        name='pontoon.admin'),
+    url(
+        r'^$',
+        views.admin,
+        name='pontoon.admin'
+    ),
 
     # Add new project
-    url(r'^projects/$', views.manage_project,
-        name='pontoon.admin.project.new'),
+    url(
+        r'^projects/$',
+        views.manage_project,
+        name='pontoon.admin.project.new'
+    ),
 
     # Sync project
-    url(r'^projects/(?P<slug>[\w-]+)/sync/$',
+    url(
+        r'^projects/(?P<slug>[\w-]+)/sync/$',
         views.manually_sync_project,
-        name='pontoon.project.sync'),
+        name='pontoon.project.sync'
+    ),
+
+    # Sync project
+    url(
+        r'^projects/(?P<slug>[\w-]+)/strings/$',
+        views.manage_project_strings,
+        name='pontoon.admin.project.strings'
+    ),
 
     # Edit project
-    url(r'^projects/(?P<slug>.+)/$', views.manage_project,
-        name='pontoon.admin.project'),
+    url(
+        r'^projects/(?P<slug>.+)/$',
+        views.manage_project,
+        name='pontoon.admin.project'
+    ),
 
     # Get slug
-    url(r'^get-slug/$', views.get_slug,
-        name='pontoon.admin.get_slug'),
+    url(
+        r'^get-slug/$',
+        views.get_slug,
+        name='pontoon.admin.get_slug'
+    ),
 ]
