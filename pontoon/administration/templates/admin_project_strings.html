@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{{'Manage strings for %(project)s' | format(project=project) }}{% endblock %}
+
+{% block class %}admin-project{% endblock %}
+
+{% block middle %}
+<form id="admin-strings-form" method="POST" action="{{ request.path }}">
+
+  <h1>
+    {{ 'Strings for %(project)s' | format(project=project.name) }}
+  </h1>
+
+  <div class="controls clearfix">
+    <button type="submit" class="button active">Save strings</button>
+    <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">Back to Project</a>
+    {% if project_has_strings %}
+    <a href="#" class="add-inline" data-type="entity">Add New String</a>
+    {% endif %}
+  </div>
+
+  {% csrf_token %}
+
+  {% if project_has_strings %}
+
+  <section class="strings-list">
+    {{ entities_form.management_form }}
+    {% for form in entities_form %}
+      <div class="entity inline clearfix">
+        {{ form.id }}
+        {% for field in ['string', 'comment'] %}
+          {{ form[field].label_tag(label_suffix='') }}
+          {{ form[field] }}
+          {{ form[field].errors }}
+        {% endfor %}
+        <button title="Delete" class="button delete-inline fa fa-trash-o" tabindex="-1"></button>
+        {{ form.obsolete }}
+      </div>
+    {% endfor %}
+
+    <div class="entity" data-count="{{ entities_form.total_form_count() }}">
+      {% for field in ['string', 'comment'] %}
+        {{ entities_form.empty_form[field].label_tag(label_suffix='') }}
+        {{ entities_form.empty_form[field] }}
+        {{ entities_form.empty_form[field].errors }}
+      {% endfor %}
+      <button title="Delete" class="button delete-inline fa fa-trash-o" tabindex="-1"></button>
+      {{ entities_form.empty_form.obsolete }}
+    </div>
+  </section>
+
+  {% else %}
+
+  <p>
+    There are currently no strings for {{ project }}. You can add new strings using the following form.
+    Enter one new string per line.
+  </p>
+  <textarea name="new_strings" class="strings-source" placeholder="Enter new strings"></textarea>
+  {% endif %}
+
+  <div class="controls clearfix">
+    <button type="submit" class="button active">Save strings</button>
+    <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">Back to Project</a>
+    {% if project_has_strings %}
+    <a href="#" class="add-inline" data-type="entity">Add New String</a>
+    {% endif %}
+  </div>
+
+</form>
+
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'admin_project' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'admin_project' %}
+{% endblock %}

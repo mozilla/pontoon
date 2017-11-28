@@ -50,7 +50,12 @@ form > div.controls {
   margin-top: 70px;
 }
 
-form > div.inline.delete {
+form > section > div {
+  margin-top: 20px;
+}
+
+form > div.inline.delete,
+form > section > div.inline.delete {
   opacity: 0.3;
 }
 
@@ -100,11 +105,21 @@ form .button {
   padding: 4px;
 }
 
+#admin-strings-form .controls .button,
 #admin-form .controls .button {
   border-radius: 3px;
   font-weight: 400;
   text-transform: uppercase;
   width: 130px;
+}
+
+#admin-strings-form .controls .add-inline {
+  float: left;
+  margin-left: 0;
+}
+
+#admin-strings-form .strings-list .entity textarea:nth-child(3) {
+  margin-bottom: 20px;
 }
 
 .controls .button.sync,
@@ -121,8 +136,8 @@ form a:link, form a:visited {
   text-transform: uppercase;
 }
 
-form a.add-inline,
-form a.add-repo {
+#admin-form a.add-inline,
+#admin-form a.add-repo {
   font-size: 14px;
   font-style: normal;
   letter-spacing: 0;
@@ -201,6 +216,25 @@ form a.add-repo {
 .checkbox label {
   float: left;
   padding: 6px 0 0 15px;
+}
+
+.data-source,
+.new-strings {
+  position: relative;
+}
+
+.data-source #id_data_source,
+.new-strings .manage-strings {
+  position: absolute;
+  right: 0;
+}
+
+.data-source #id_data_source {
+  top: 5px;
+}
+
+.new-strings .manage-strings {
+  top: -3px;
 }
 
 .repository .delete-wrapper label {
@@ -285,6 +319,7 @@ form a.add-repo {
 }
 
 .inline[data-count],
+.entity[data-count],
 .repository-empty {
   display: none;
 }
@@ -311,7 +346,8 @@ form a.add-repo {
   width: 201px;
 }
 
-.inline input[id$=DELETE] {
+.inline input[id$=DELETE],
+.inline input[id$=obsolete] {
   display: none;
 }
 
@@ -327,6 +363,9 @@ form a.add-repo {
 
 textarea {
   height: 60px;
+}
+textarea.strings-source {
+    height: 300px;
 }
 
 .subtitle {
@@ -355,4 +394,16 @@ textarea {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+.new-strings {
+  display: none;
+}
+.manage-strings a {
+  margin-left: 20px;
+}
+
+/* Code specific to the manage strings page */
+.strings-list .entity {
+  margin-bottom: 30px;
 }

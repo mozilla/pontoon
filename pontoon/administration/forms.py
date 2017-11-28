@@ -2,7 +2,13 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 
-from pontoon.base.models import Project, Repository, Subpage, ExternalResource
+from pontoon.base.models import (
+    Entity,
+    ExternalResource,
+    Project,
+    Repository,
+    Subpage,
+)
 from pontoon.base.forms import HtmlField
 
 
@@ -17,9 +23,22 @@ class ProjectForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ('name', 'slug', 'locales', 'can_be_requested',
-                  'url', 'width', 'links', 'info', 'admin_notes',
-                  'deadline', 'priority', 'contact', 'disabled')
+        fields = (
+            'name',
+            'slug',
+            'locales',
+            'data_source',
+            'can_be_requested',
+            'url',
+            'width',
+            'links',
+            'info',
+            'admin_notes',
+            'deadline',
+            'priority',
+            'contact',
+            'disabled',
+        )
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
@@ -37,8 +56,8 @@ SubpageInlineFormSet = inlineformset_factory(
 
 RepositoryInlineFormSet = inlineformset_factory(
     Project, Repository,
-    extra=0,
-    min_num=1,
+    extra=1,
+    min_num=0,
     validate_min=True,
     fields=('type', 'url', 'branch', 'website', 'source_repo', 'permalink_prefix'),
 )
@@ -60,4 +79,11 @@ ExternalResourceInlineFormSet = inlineformset_factory(
     Project, ExternalResource,
     form=ExternalResourceInlineForm,
     extra=1
+)
+
+
+EntityFormSet = forms.modelformset_factory(
+    Entity,
+    fields=('string', 'comment', 'obsolete'),
+    extra=1,
 )
