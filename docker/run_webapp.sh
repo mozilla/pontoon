@@ -6,6 +6,9 @@ echo "Install latest npm modules"
 cd /app
 npm install
 
+echo "Prepare revision file"
+git rev-parse HEAD > static/revision.txt
+
 echo "Setting up the db for Django"
 python manage.py migrate
 
