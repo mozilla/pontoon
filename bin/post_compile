@@ -5,6 +5,11 @@ export PATH=/app/.heroku/node/bin:$PATH
 ./manage.py migrate --noinput
 ./manage.py collectstatic --noinput
 
+# Create a file with the current git HEAD revision.
+# We use that file to expose the git revision in our web app, allowing
+# us to use services like whatsdeployed to compare what is deployed to stage and prod for example.
+echo $HEROKU_SLUG_COMMIT > static/revision.txt
+
 # Inform New Relic that a deploy is happening.
 if [ -n "${NEW_RELIC_API_KEY}" ] && [ -n "${NEW_RELIC_APP_NAME}" ]; then
     echo "Sending deploy notification to New Relic...."
