@@ -8,10 +8,12 @@ install:
   - pip install -U --force pip
   - pip install --require-hashes -r requirements.txt
   - pip install --require-hashes -r requirements-test.txt
+  - npm install
 before_script:
   - psql -c 'create database pontoon;' -U postgres
 script:
   - pylama pontoon
+  - python manage.py collectstatic --noinput
   - python manage.py test --with-coverage
   - py.test --cov-append --cov-report=term --cov=. -v
   - codecov
