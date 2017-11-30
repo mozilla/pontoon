@@ -1510,16 +1510,9 @@ body > header aside p {
   padding: 0;
 }
 
-#editor .ftl-area textarea.value {
-  height: 24px;
-  padding: 0 4px;
-  width: 75%;
-}
-
 .ftl-area .attributes .value#ftl-id-accesskey {
   margin-right: 3px;
   padding: 0 4px;
-  resize: none;
   text-align: center;
   text-transform: uppercase;
   width: 24px;
