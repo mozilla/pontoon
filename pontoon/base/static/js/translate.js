@@ -342,7 +342,7 @@ var Pontoon = (function (my) {
      */
     updateHelpers: function () {
       var entity = this.getEditorEntity(),
-          source = this.fluent.getSimplePreview(entity, entity['original' + this.isPluralized()], entity);
+          source = entity['original' + this.isPluralized()];
 
       this.getHistory(entity);
 
@@ -418,8 +418,17 @@ var Pontoon = (function (my) {
      * Move cursor to the beginning of translation textarea
      */
     moveCursorToBeginning: function () {
-      var element = $('#editor textarea:visible:first');
-      if (element.length) {
+      var standard = $('#translation'),
+          ftl = $('#ftl-area input.value:visible:first'),
+          element = null;
+
+      if (standard.is(':visible')) {
+        element = standard;
+      } else if (ftl.is(':visible')) {
+        element = ftl;
+      }
+
+      if (element) {
         element[0].setSelectionRange(0, 0);
       }
     },
@@ -430,7 +439,7 @@ var Pontoon = (function (my) {
      */
     updateCurrentTranslationLength: function () {
       var limit = this.translationLengthLimit,
-          translation = $('#editor textarea:visible:first').val() || '';
+          translation = $('#translation').val();
 
       if (limit) {
         var length = this.stripHTML(translation).length,
@@ -459,7 +468,7 @@ var Pontoon = (function (my) {
      * Update the standard translation editor and focus it
      */
     updateAndFocusTranslationEditor: function (translation) {
-      $('#editor textarea:visible:first').val(translation).focus();
+      $('#translation').val(translation).focus();
     },
 
 
@@ -618,7 +627,7 @@ var Pontoon = (function (my) {
       $('.warning-overlay:visible .cancel').click();
 
       // Length
-      var original = entity['original' + this.isPluralized()];
+      var original = entity['original' + this.isPluralized()].length;
 
       // Toggle translation length display
       $('#translation-length')
@@ -626,7 +635,7 @@ var Pontoon = (function (my) {
         .find('.countdown').toggle(!!self.translationLengthLimit);
 
       // Need to show if sidebar opened by default
-      $('#translation-length').show().find('.original-length').html(original.length);
+      $('#translation-length').show().find('.original-length').html(original);
       self.moveCursorToBeginning();
       self.updateCurrentTranslationLength();
       self.updateCachedTranslation();
@@ -644,13 +653,9 @@ var Pontoon = (function (my) {
 
       // FTL: Complex original string and translation
       self.fluent.toggleOriginal();
-      self.fluent.toggleEditor();
-
-      if (self.fluent.isFTLEditorEnabled()) {
-        self.fluent.renderEditor();
-      }
-
-      self.fluent.toggleButton();
+      self.fluent.toggleEditor(translation.isComplexFTL || (entity.isComplexFTL && !translation.pk));
+      // TODO: Uncomment once source view support is implemented
+      // self.fluent.toggleButton();
 
       self.updateHelpers();
       self.pushState();
@@ -706,11 +711,11 @@ var Pontoon = (function (my) {
       }
 
       var before = this.cachedTranslation,
-          after = this.fluent.getTranslationSource();
+          after = $('#translation').val();
 
       if ((before !== null) && (before !== after)) {
         $('#unsaved').show();
-        $('#editor textarea:visible:first').focus();
+        $('#translation').focus();
         this.checkUnsavedChangesCallback = callback;
 
       } else {
@@ -1671,7 +1676,7 @@ var Pontoon = (function (my) {
     updateInPlaceTranslation: function (translation) {
       var entity = this.getEditorEntity(),
           pluralForm = this.getPluralForm(true),
-          translation = translation || $('#editor textarea:visible:first').val();
+          translation = translation || $('#translation').val();
 
       if (entity.body && pluralForm === 0 && (this.user.canTranslate() || !entity.translation[pluralForm].approved)) {
         this.postMessage("SAVE", {
@@ -1802,7 +1807,7 @@ var Pontoon = (function (my) {
        * - Czech Windows keyboard: Ctrl + Alt + C/F/./,
        * - Polish keyboard: Alt + C
        */
-      $('#editor').on('keydown', 'textarea, #ftl-area input', function (e) {
+      $('#editor').on('keydown', '#translation, #ftl-area input', function (e) {
         var key = e.which;
 
         // Prevent triggering unnecessary events in 1-column layout
@@ -1849,7 +1854,7 @@ var Pontoon = (function (my) {
         if (!$('.menu').is(':visible') && key === 9 && !e.ctrlKey) {
 
           // Prevent in complex FTL mode
-          if (self.fluent.isFTLEditorEnabled() && self.fluent.isComplexFTL()) {
+          if ($('#ftl').is('.active')) {
             return;
           }
 
@@ -1903,7 +1908,7 @@ var Pontoon = (function (my) {
 
         var entity = self.getEditorEntity(),
             original = entity['original' + self.isPluralized()],
-            source = self.fluent.getSimplePreview(entity, original, entity);
+            source = original;
 
         self.updateAndFocusTranslationEditor(source);
         self.moveCursorToBeginning();
@@ -1916,8 +1921,8 @@ var Pontoon = (function (my) {
         e.preventDefault();
 
         // FTL Editor
-        if (self.fluent.isFTLEditorEnabled()) {
-          self.fluent.renderEditor({
+        if ($('#ftl').is('.active')) {
+          Pontoon.fluent.renderEditorWithTranslation({
             pk: null,
             string: ''
           });
@@ -1971,8 +1976,8 @@ var Pontoon = (function (my) {
         }
 
         // FTL Editor
-        if (self.fluent.isFTLEditorEnabled() && $('#helpers .history').is(':visible')) {
-          self.fluent.renderEditor({
+        if ($('#ftl').is('.active')) {
+          Pontoon.fluent.renderEditorWithTranslation({
             pk: $(this).data('id'),
             string: this.string
           });
@@ -2024,12 +2029,13 @@ var Pontoon = (function (my) {
           self.updateTranslation(entity, pf, data.translation);
 
           // FTL Editor
-          if (self.fluent.isFTLEditorEnabled()) {
-            self.fluent.renderEditor(data.translation);
+          if ($('#ftl').is('.active')) {
+            self.fluent.renderEditorWithTranslation(data.translation);
 
           // Standard Editor
           } else {
-            self.updateAndFocusTranslationEditor(data.translation.string);
+            var translationString = self.fluent.getSimplePreview(data.translation, data.translation.string, entity);
+            self.updateAndFocusTranslationEditor(translationString);
             self.updateCachedTranslation();
             self.updateCurrentTranslationLength();
           }
@@ -2088,51 +2094,44 @@ var Pontoon = (function (my) {
       });
 
       $('#helpers .history').on('click', 'menu .unreject', function (e) {
-        var button = $(this),
-            translationId = parseInt($(this).parents('li').data('id'));
+         var button = $(this),
+             translationId = parseInt($(this).parents('li').data('id'));
 
-        $.post('/unreject-translation/', {
-          csrfmiddlewaretoken: $('#server').data('csrf'),
-          translation: translationId,
-          paths: self.getPartPaths(self.currentPart)
-        }).then(function(data) {
-          var entity = self.getEditorEntity();
-          var pf = self.getPluralForm(true);
+         $.post('/unreject-translation/', {
+            csrfmiddlewaretoken: $('#server').data('csrf'),
+            translation: translationId,
+            paths: self.getPartPaths(self.currentPart)
+         }).then(function(data) {
+           var entity = self.getEditorEntity();
+           var pf = self.getPluralForm(true);
 
-          self.stats = data.stats;
+           self.stats = data.stats;
 
-          self.updateTranslation(entity, pf, data.translation);
+           self.updateTranslation(entity, pf, data.translation);
 
-          // FTL Editor
-          if (self.fluent.isFTLEditorEnabled()) {
-            self.fluent.renderEditor(data.translation);
+           self.updateAndFocusTranslationEditor(data.translation.string);
+           self.updateCachedTranslation();
+           self.updateCurrentTranslationLength();
 
-          // Standard Editor
-          } else {
-            self.updateAndFocusTranslationEditor(data.translation.string);
-            self.updateCachedTranslation();
-            self.updateCurrentTranslationLength();
-          }
+           if (entity.body && pf === 0) {
+             self.postMessage("SAVE", {
+               translation: data.translation.string,
+               id: entity.id
+             });
+           }
 
-          if (entity.body && pf === 0) {
-            self.postMessage("SAVE", {
-              translation: data.translation.string,
-              id: entity.id
-            });
-          }
+           button.removeClass('unreject').addClass('reject');
+           button.prop('title', 'Reject');
+           button.parents('li.rejected').removeClass('rejected').addClass('suggested');
+           button.parents('li').find('.info a').prop('title', self.getApproveButtonTitle({
+             rejected: false,
+             unrejected_user: self.user.display_name
+           }));
 
-          button.removeClass('unreject').addClass('reject');
-          button.prop('title', 'Reject');
-          button.parents('li.rejected').removeClass('rejected').addClass('suggested');
-          button.parents('li').find('.info a').prop('title', self.getApproveButtonTitle({
-            rejected: false,
-            unrejected_user: self.user.display_name
-          }));
-
-          self.endLoader('Translation unrejected');
-        }, function() {
-          self.endLoader("Couldn't unreject this translation.");
-        });
+           self.endLoader('Translation unrejected');
+         }, function() {
+           self.endLoader("Couldn't unreject this translation.");
+         });
       });
 
       // Toggle suggestion diff
@@ -3013,10 +3012,10 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Update textarea lang, dir and data-script attributes
+     * Update textarea lang and dir attributes
      */
     updateTextareaAttributes: function () {
-      $('#editor textarea')
+      $('#translation')
         .attr('dir', this.locale.direction)
         .attr('lang', this.locale.code)
         .attr('data-script', this.locale.script);
