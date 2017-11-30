@@ -1207,7 +1207,6 @@ body > header aside p {
 
 #editor p#original,
 #editor p.original,
-#ftl-original .main-value li,
 #editor p.translation {
   text-align: start;
   white-space: pre-wrap;
@@ -1379,7 +1378,9 @@ body > header aside p {
   color: #222222;
   display: block;
   font-size: 13px;
+  height: 20%;
   line-height: 22px;
+  min-height: 100px;
   overflow: auto;
   padding: 10px;
   width: 100%;
@@ -1390,22 +1391,6 @@ body > header aside p {
 
 #editor textarea[data-script="Arabic"] {
   font-size: 15px;
-}
-
-#editor #translation {
-  height: 20%;
-  min-height: 100px;
-}
-
-#ftl-area {
-  position: relative;
-}
-
-#ftl-area #only-value {
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
 }
 
 .ftl-area {
@@ -1641,6 +1626,7 @@ body > header aside p {
 }
 
 #editor #single #ftl {
+  display: none; /* TODO: Remove once source view support is implemented */
   color: #AAAAAA;
   float: left;
   font-size: 18px;
