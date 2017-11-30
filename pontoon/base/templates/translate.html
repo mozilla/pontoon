@@ -285,7 +285,10 @@
         <section class="main-value">
           <ul>
             <li>
-              <textarea {% if not user.is_authenticated() %} readonly {% endif %} id="only-value" placeholder="Type translation and press Enter to save"></textarea>
+              <label class="id" for="entity-value">
+                <span>Value</span>
+              </label>
+              <input type="text" id="entity-value" class="value" placeholder="Enter translation"></li>
             </li>
           </ul>
         </section>
