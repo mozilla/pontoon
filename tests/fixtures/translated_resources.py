@@ -19,6 +19,14 @@ def translated_resource1(locale1, resource1):
 
 
 @pytest.fixture
+def translated_resourceX(localeX, resourceX):
+    """Translated Resource X"""
+    return TranslatedResource.objects.create(
+        resource=resourceX,
+        locale=localeX)
+
+
+@pytest.fixture
 def translated_resource_factory(factory):
     """TranslatedResource factory
     create translated resources in a hurry!
