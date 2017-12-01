@@ -125,9 +125,10 @@ def test_fixtures_factory_translation(entity_factory, translation_factory,
 def test_fixtures_site_matrix(site_matrix):
     assert (
         sorted(site_matrix.keys())
-        == ['factories', 'locales',
+        == ['entities', 'factories', 'locales',
             'project_locales', 'projects',
-            'resources', 'translated_resources'])
+            'resources', 'translated_resources',
+            'translations'])
     assert len(site_matrix['locales']) == 3
     assert len(site_matrix['projects']) == 3
     assert len(site_matrix['project_locales']) == 9

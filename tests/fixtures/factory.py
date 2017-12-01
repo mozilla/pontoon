@@ -44,11 +44,13 @@ def factory():
 @pytest.fixture
 def factories(project_factory, locale_factory, resource_factory,
               entity_factory, translated_resource_factory,
-              project_locale_factory):
+              project_locale_factory,
+              translation_factory):
     return dict(
         project=project_factory,
         locale=locale_factory,
         resource=resource_factory,
         entity=entity_factory,
         project_locale=project_locale_factory,
+        translation=translation_factory,
         translated_resource=translated_resource_factory)
