@@ -10,7 +10,8 @@
     <meta name="description" content="Live web localization tool">
     <meta name="author" content="Mozilla">
 
-    <link rel="icon" href="{{ static('img/logo.svg') }}">
+    <!-- Defining a type is a workaround for bug 1422289. -->
+    <link rel="icon" href="{{ static('img/logo.svg') }}" type="image/svg+xml">
     <link rel="icon" href="{{ static('img/favicon.ico') }}">
 
     {% block site_css %}
