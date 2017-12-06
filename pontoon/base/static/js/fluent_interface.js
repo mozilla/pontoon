@@ -316,7 +316,8 @@ var Pontoon = (function (my) {
             }
 
             if (value) {
-              value = '{ $num ->' + value + '\n  }';
+              var entity_ast = fluentParser.parseEntry(entity.original);
+              value = '{ ' + entity_ast.value.elements[0].expression.id.name + ' ->' + value + '\n  }';
             }
           }
 
