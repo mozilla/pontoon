@@ -317,7 +317,7 @@ var Pontoon = (function (my) {
 
             if (value) {
               var entity_ast = fluentParser.parseEntry(entity.original);
-              value = '{ ' + entity_ast.value.elements[0].expression.id.name + ' ->' + value + '\n  }';
+              value = '{ $' + entity_ast.value.elements[0].expression.id.name + ' ->' + value + '\n  }';
             }
           }
 
