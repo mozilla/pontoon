@@ -253,7 +253,7 @@ var Pontoon = (function (my) {
             var id, value;
             $.each(obj.attributes, function() {
               id = this.id.name;
-              value = this.value.elements[0].value;
+              value = self.serializePlaceables(this.value.elements);
 
               $('#ftl-original .attributes ul')
                 .append(
