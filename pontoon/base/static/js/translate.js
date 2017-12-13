@@ -1808,7 +1808,7 @@ var Pontoon = (function (my) {
        * - Czech Windows keyboard: Ctrl + Alt + C/F/./,
        * - Polish keyboard: Alt + C
        */
-      $('#editor').on('keydown', 'textarea, #ftl-area input', function (e) {
+      $('#editor').on('keydown', 'textarea', function (e) {
         var key = e.which;
 
         // Prevent triggering unnecessary events in 1-column layout
