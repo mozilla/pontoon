@@ -5,6 +5,24 @@ var Pontoon = (function (my) {
   var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
   var fluentSerializer = new FluentSyntax.FluentSerializer();
 
+  function renderPluralEditor(value, name, pluralIndex) {
+    var example = Pontoon.locale.examples[pluralIndex];
+
+    $('#ftl-area .main-value ul')
+      .append(
+        '<li class="clearfix">' +
+          '<label class="id built-in" for="ftl-id-' + name + '">' +
+            '<span>' + name + '</span>' +
+            (Pontoon.fluent.isCLDRplural(name) && example !== undefined ? '<span> (e.g. ' +
+              '<span class="stress">' + example + '</span>' +
+            ')</span>' : '') +
+            '<sub class="fa fa-remove remove" title="Remove"></sub>' +
+          '</label>' +
+          Pontoon.fluent.getTextareaElement(name, value) +
+        '</li>'
+      );
+  }
+
   return $.extend(true, my, {
     fluent: {
 
@@ -56,44 +74,36 @@ var Pontoon = (function (my) {
             .show();
         }
         // Plurals
-        else if (entity.isFTLplural) {
+        else if (self.isPlural(entityAST)) {
           var pluralForms = Pontoon.locale.cldr_plurals.map(function (item) {
             return Pontoon.CLDR_PLURALS[item];
           });
-
-          var variants;
-          if (translationAST) {
-            variants = translationAST.value.elements[0].variants;
-          }
 
           if (!Pontoon.locale.examples) {
             Pontoon.generateLocalePluralExamples();
           }
 
-          pluralForms.forEach(function (pluralStr, pluralInt) {
-            var value = '';
+          // Translated
+          if (translationAST) {
+            translationAST.value.elements[0].variants.forEach(function (variant, i) {
+              var value = self.serializePlaceables(variant.value.elements);
+              var name = variant.key.name || variant.key.value;
+              var pluralIndex = pluralForms.findIndex(function(item) {
+                return item === name;
+              });
 
-            if (translationAST) {
-              for (var i = 0; i < variants.length; i++) {
-                if (variants[i].key.name === pluralStr) {
-                  value = self.serializePlaceables(variants[i].value.elements);
-                  break;
-                }
-              }
-            }
+              renderPluralEditor(value, name, pluralIndex);
+            });
+          }
+          // Untranslated
+          else {
+            pluralForms.forEach(function (pluralName, pluralIndex) {
+              var value = '';
+              var name = pluralName;
 
-            $('#ftl-area .main-value ul')
-              .append(
-                '<li class="clearfix">' +
-                  '<label class="id built-in" for="ftl-id-' + pluralStr + '">' +
-                    '<span>' + pluralStr + ' (e.g. </span>' +
-                    '<span class="stress">' + Pontoon.locale.examples[pluralInt] + '</span>)' +
-                    '<sub class="fa fa-remove remove" title="Remove"></sub>' +
-                  '</label>' +
-                  self.getTextareaElement(pluralStr, value) +
-                '</li>'
-              );
-          });
+              renderPluralEditor(value, name, pluralIndex);
+            });
+          }
 
           $('#only-value').parents('li').hide();
         }
@@ -179,13 +189,55 @@ var Pontoon = (function (my) {
 
       /*
        * Is ast of a simple string?
+       *
+       * A simple string has no attributes or tags,
+       * and the value can only contains text and
+       * references to external arguments or other messages.
        */
       isSimpleString: function (ast) {
         if (
           ast &&
+          !ast.attributes.length &&
+          !ast.tags.length &&
           ast.value &&
-          ast.value.elements.length === 1 &&
-          ast.value.elements[0].type === 'TextElement'
+          ast.value.elements.every(function(item) {
+            return [
+              'TextElement',
+              'ExternalArgument',
+              'MessageReference'
+            ].indexOf(item.type) >= 0;
+          })
+        ) {
+          return true;
+        }
+
+        return false;
+      },
+
+
+      /*
+       * Is CLDR plural name?
+       */
+      isCLDRplural: function (name) {
+        return Pontoon.CLDR_PLURALS.indexOf(name) !== -1;
+      },
+
+
+      /*
+       * Is ast of a pluralized string?
+       */
+      isPlural: function (ast) {
+        var self = this;
+
+        if (
+          ast &&
+          ast.value &&
+          ast.value.elements &&
+          ast.value.elements.length &&
+          ast.value.elements[0].expression &&
+          ast.value.elements[0].variants.every(function (element) {
+            return self.isCLDRplural(element.key.name) || element.key.type === 'NumberExpression';
+          })
         ) {
           return true;
         }
@@ -327,8 +379,12 @@ var Pontoon = (function (my) {
         $('#original').hide();
         $('#ftl-original').show();
 
+        // Simple string: only value
+        if (self.isSimpleString(ast)) {
+          original += '<li><p>' + self.serializePlaceables(ast.value.elements) + '</p></li>';
+        }
         // Plurals
-        if (entity.isFTLplural) {
+        else if (self.isPlural(ast)) {
           var variants = ast.value.elements[0].variants;
           variants.forEach(function (item) {
             original += '<li>' +
@@ -339,14 +395,6 @@ var Pontoon = (function (my) {
           });
 
         }
-        else if (
-          ast.value &&
-          ast.value.elements.length === 1 &&
-          ast.value.elements[0].type === 'TextElement'
-        ) {
-          original += '<li><p>' + self.serializePlaceables(ast.value.elements) + '</p></li>';
-        }
-
         // Attributes
         if (ast.attributes && ast.attributes.length) {
           ast.attributes.forEach(function (attr) {
@@ -393,7 +441,7 @@ var Pontoon = (function (my) {
           ).join('');
 
           if (!richTranslation.length) {
-            translation = '';
+            translation = entity.key + ' = \n';
           }
         }
 
@@ -423,11 +471,12 @@ var Pontoon = (function (my) {
         }
         else if (this.isFTLEditorEnabled()) {
           // Main value
+          var entityAST = fluentParser.parseEntry(entity.original);
           var value = $('#ftl-area > .main-value textarea').val();
           var attributes = '';
 
           // Plurals
-          if (entity.isFTLplural) {
+          if (this.isPlural(entityAST)) {
             value = '';
             var variants = $('#ftl-area .main-value li:visible');
             var nonEmptyVariants = [];
@@ -453,8 +502,7 @@ var Pontoon = (function (my) {
             });
 
             if (value) {
-              var entity_ast = fluentParser.parseEntry(entity.original);
-              value = '{ $' + entity_ast.value.elements[0].expression.id.name + ' ->' + value + '\n  }';
+              value = '{ $' + entityAST.value.elements[0].expression.id.name + ' ->' + value + '\n  }';
             }
           }
 
@@ -536,28 +584,10 @@ var Pontoon = (function (my) {
               response = this.serializePlaceables(attributes[0].value.elements);
             }
           }
-
           // Plurals
-          if (
-            ast.value &&
-            ast.value.elements &&
-            ast.value.elements.length &&
-            ast.value.elements[0].expression &&
-            ast.value.elements[0].variants
-          ) {
+          if (this.isPlural(ast)) {
             var variants = ast.value.elements[0].variants;
-            var isFTLplural = variants.every(function (element) {
-              var key = element.key.name;
-              var isPlural = Pontoon.CLDR_PLURALS.indexOf(key) !== -1;
-              var isInteger = element.key.type === 'NumberExpression';
-
-              return isPlural || isInteger;
-            });
-
-            if (isFTLplural) {
-              response = this.serializePlaceables(variants[0].value.elements);
-              entity.isFTLplural = true;
-            }
+            response = this.serializePlaceables(variants[0].value.elements);
           }
         }
 
@@ -594,7 +624,11 @@ $(function () {
     if ($(this).is('.active')) {
       translation = $('#translation').val();
 
-      var translated = (translation !== entity.key + ' = ');
+      // Strip trailing newlines for easier translated status detection
+      translation = translation.replace(/\n$/, '');
+
+      var translated = (translation && translation !== entity.key + ' = ');
+
       var isRichEditorSupported = Pontoon.fluent.renderEditor({
         pk: translated, // An indicator that the string is translated
         string: translation,

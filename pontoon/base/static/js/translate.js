@@ -157,7 +157,7 @@ var Pontoon = (function (my) {
                   self.markPlaceables(translationString) +
                 '</p>' +
                 '<p class="translation-clipboard">' +
-                  self.doNotRender(translationString) +
+                  self.doNotRender(this.string) +
                 '</p>' +
               '</li>');
 
@@ -308,12 +308,9 @@ var Pontoon = (function (my) {
                     ((i > 0) ? self.diff(baseString, translationString) : self.markPlaceables(translationString)) +
                   '</p>' +
                   '<p class="translation-clipboard">' +
-                    self.doNotRender(translationString) +
+                    self.doNotRender(this.string) +
                   '</p>' +
                 '</li>');
-
-              // Storing string value, needed for FTL
-              list.find('[data-id="' + this.pk + '"]')[0].string = this.string;
             });
 
             $("#helpers .history time").timeago();
@@ -451,7 +448,7 @@ var Pontoon = (function (my) {
      * Update cached translation, needed for unsaved changes check
      */
     updateCachedTranslation: function () {
-      this.cachedTranslation = $('#translation').val();
+      this.cachedTranslation = this.fluent.getTranslationSource();
     },
 
 
@@ -635,7 +632,6 @@ var Pontoon = (function (my) {
       $('#translation-length').show().find('.original-length').html(original.length);
       self.moveCursorToBeginning();
       self.updateCurrentTranslationLength();
-      self.updateCachedTranslation();
 
       // Update entity list
       $("#entitylist .hovered").removeClass('hovered');
@@ -658,6 +654,7 @@ var Pontoon = (function (my) {
 
       self.fluent.toggleButton();
 
+      self.updateCachedTranslation();
       self.updateHelpers();
       self.pushState();
     },
@@ -1859,6 +1856,21 @@ var Pontoon = (function (my) {
             return;
           }
 
+          // Special case in FTL source editor
+          if ($('#translation').is(':visible') || $('#ftl').is('.active')) {
+            e.preventDefault();
+
+            var textarea = $('#translation')[0];
+            var oldStart = textarea.selectionStart;
+            var start = textarea.value.substring(0, textarea.selectionStart);
+            var end = textarea.value.substring(textarea.selectionEnd);
+
+            textarea.value = start + '\t' + end;
+            textarea.selectionEnd = oldStart + 1;
+
+            return;
+          }
+
           var section = $('#helpers section:visible'),
               index = section.find('li.suggestion.hover').index() + 1;
 
@@ -1961,6 +1973,8 @@ var Pontoon = (function (my) {
 
       // Copy helpers result to translation
       $('#helpers section').on('click', 'li:not(".disabled")', function (e) {
+        var source = $(this).find('.translation-clipboard').text();
+
         // Ignore clicks on links and buttons
         if ($(e.target).closest('a, menu button').length) {
           return;
@@ -1977,16 +1991,14 @@ var Pontoon = (function (my) {
         }
 
         // FTL Editor
-        if (self.fluent.isFTLEditorEnabled() && $('#helpers .history').is(':visible')) {
+        if (self.fluent.isFTLEditorEnabled() && !$('#helpers .machinery').is(':visible')) {
           self.fluent.renderEditor({
-            pk: $(this).data('id'),
-            string: this.string
+            pk: true,
+            string: source
           });
 
         // Standard Editor
         } else {
-          var source = $(this).find('.translation-clipboard').text();
-
           self.updateAndFocusTranslationEditor(source);
           self.moveCursorToBeginning();
           self.updateCurrentTranslationLength();
@@ -2574,7 +2586,7 @@ var Pontoon = (function (my) {
           }
 
           var pf = self.getPluralForm(true);
-          self.cachedTranslation = translation;
+          self.cachedTranslation = self.fluent.getTranslationSource();
           self.updateTranslation(entity, pf, data.translation);
           self.updateInPlaceTranslation(data.translation.string);
           self.updateFilterUI();
