@@ -13,7 +13,7 @@ var Pontoon = (function (my) {
        * string and the translation.
        */
       renderEditor: function (translation) {
-        $('#ftl-area > .main-value').show().find('input').val('');
+        $('#ftl-area > .main-value').show().find('textarea').val('');
         $('#ftl-area .attributes ul:first').empty();
         $('#ftl-area > .main-value ul li:not(":first")').remove();
 
@@ -90,7 +90,7 @@ var Pontoon = (function (my) {
                     '<span class="stress">' + Pontoon.locale.examples[pluralInt] + '</span>)' +
                     '<sub class="fa fa-remove remove" title="Remove"></sub>' +
                   '</label>' +
-                  self.inputValueElement(pluralStr, value) +
+                  self.getTextareaElement(pluralStr, value) +
                 '</li>'
               );
           });
@@ -105,14 +105,14 @@ var Pontoon = (function (my) {
 
             var maxlength = '';
             var label = '';
-            var input = '';
+            var textarea = '';
             var cls = '';
 
             if (id === 'accesskey') {
               maxlength = '1';
-              input = '<div class="accesskeys"></div>';
+              textarea = '<div class="accesskeys"></div>';
             }
-            input += self.inputValueElement(id, value, maxlength);
+            textarea += self.getTextareaElement(id, value, maxlength);
 
             if ($.inArray(id, [entityAttributes])) {
               label = '<label class="id" for="ftl-id-' + id + '">' +
@@ -123,7 +123,7 @@ var Pontoon = (function (my) {
             else {
               cls = ' class="custom-attribute clearfix"';
               label = '<div class="wrapper">' +
-                '<input type="text" class="id" placeholder="enter-attribute-id" value="' + id + '">' +
+                '<textarea class="id" placeholder="enter-attribute-id">' + id + '</textarea>' +
                 '<sub class="fa fa-remove remove" title="Remove"></sub>' +
               '</div>';
             }
@@ -132,13 +132,13 @@ var Pontoon = (function (my) {
               .append(
                 '<li' + cls + '>' +
                   label +
-                  input +
+                  textarea +
                 '</li>'
               );
           });
 
           // Update access keys presentation
-          $('#ftl-area .attributes input').keyup();
+          $('#ftl-area .attributes textarea').keyup();
 
         }
         // Show source if rich FTL editor does not support the translation or
@@ -163,7 +163,7 @@ var Pontoon = (function (my) {
 
         // Ignore editing for anonymous users
         if (!Pontoon.user.id) {
-          $('#ftl-area input').prop('readonly', true);
+          $('#ftl-area textarea').prop('readonly', true);
         }
 
         Pontoon.fluent.focusFirstField();
@@ -217,10 +217,10 @@ var Pontoon = (function (my) {
 
 
       /*
-       * Generate input element with the given properties
+       * Generate textarea element with the given properties
        */
-      inputValueElement: function (id, value, maxlength) {
-        var base = '<input class="value" id="ftl-id-' + id + '" type="text" value="' + value + '"';
+      getTextareaElement: function (id, value, maxlength) {
+        var base = '<textarea class="value" id="ftl-id-' + id + '"';
 
         if (typeof maxlength !== 'undefined' && maxlength !== null) {
           base += ' maxlength="' + maxlength + '"';
@@ -228,7 +228,7 @@ var Pontoon = (function (my) {
 
         base += ' dir="' + Pontoon.locale.direction +
           '" data-script="' + Pontoon.locale.script +
-          '" lang="' + Pontoon.locale.code + '">';
+          '" lang="' + Pontoon.locale.code + '">' + value + '</textarea>';
         return base;
       },
 
@@ -387,7 +387,7 @@ var Pontoon = (function (my) {
         // Special case: empty translations in rich FTL editor don't serialize properly
         if (this.isFTLEditorEnabled()) {
           var richTranslation = $.map(
-            $('#ftl-area input.value:visible, #ftl-area textarea:visible'), function(i) {
+            $('#ftl-area textarea:not(".id"):visible'), function(i) {
               return $(i).val();
             }
           ).join('');
@@ -423,7 +423,7 @@ var Pontoon = (function (my) {
         }
         else if (this.isFTLEditorEnabled()) {
           // Main value
-          var value = $('#ftl-area > .main-value input').val();
+          var value = $('#ftl-area > .main-value textarea').val();
           var attributes = '';
 
           // Plurals
@@ -569,7 +569,7 @@ var Pontoon = (function (my) {
        * Focus first field of the FTL editor
        */
       focusFirstField: function () {
-        $('#ftl-area input.value:visible, #ftl-area textarea:visible').first().focus();
+        $('#ftl-area textarea:not(".id"):visible').first().focus();
       },
 
     },
@@ -634,7 +634,7 @@ $(function () {
   });
 
   // Generate access key list
-  $('#ftl-area .attributes').on('keyup', 'input:first', function () {
+  $('#ftl-area .attributes').on('keyup', 'textarea:first', function () {
     var active = $('.accesskeys').find('.active').html();
     var unique = $(this).val()
       .toUpperCase()
@@ -664,7 +664,7 @@ $(function () {
     $('#ftl-id-accesskey').val($('.accesskeys div.active').html());
   });
 
-  // Select access key via input
+  // Select access key using text input
   $('#ftl-area .attributes').on('keyup', '#ftl-id-accesskey', function () {
     var accesskey = $(this).val().toUpperCase();
 
