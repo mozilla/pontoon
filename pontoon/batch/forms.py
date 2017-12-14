@@ -1,6 +1,7 @@
 from django import forms
 
 from pontoon.base import utils
+from pontoon.batch.actions import ACTIONS_FN_MAP
 
 
 class BatchActionsForm(forms.Form):
@@ -8,7 +9,7 @@ class BatchActionsForm(forms.Form):
     """
 
     locale = forms.CharField()
-    action = forms.CharField()
+    action = forms.ChoiceField(choices=[(x, x) for x in ACTIONS_FN_MAP.keys()])
     entities = forms.CharField(required=False)
     find = forms.CharField(required=False)
     replace = forms.CharField(required=False)
