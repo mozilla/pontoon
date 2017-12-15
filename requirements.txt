@@ -81,8 +81,9 @@ parsimonious==0.6.2 \
 polib==1.0.6 \
     --hash=sha256:b1ea141d58ed5e48aed2674f7c894dfb83f639c3286d7b32b2e19fa032a5b400 \
     --hash=sha256:20d2a0d589a692c11df549bd7cda83c665eef2a83e017b843fecdf956edbad74
-psycopg2==2.6 \
-    --hash=sha256:c00afecb302a99a4f83dec9b055c4d1cc196926d62c8db015d68432df8118ca8
+psycopg2==2.7.3.2 \
+    --hash=sha256:317612d5d0ca4a9f7e42afb2add69b10be360784d21ce4ecfbca19f1f5eadf43 \
+    --hash=sha256:7a9c6c62e6e05df5406e9b5235c31c376a22620ef26715a663cee57083b3c2ea
 py-dateutil==2.2 \
     --hash=sha256:7efa2ca17159c590408cb624de9aa10d360f14097cb70dd7559e632f2cf4b048
 pylama==6.4.0 \
