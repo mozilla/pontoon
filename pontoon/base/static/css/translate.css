@@ -1320,11 +1320,11 @@ body > header aside p {
   text-align: left;
 }
 
-#source-pane #original mark.placeable {
+#source-pane mark.placeable {
   cursor: pointer;
 }
 
-#source-pane #original mark.placeable:hover {
+#source-pane mark.placeable:hover {
   color: #7BC876;
 }
 
