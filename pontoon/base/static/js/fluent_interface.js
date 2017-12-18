@@ -248,19 +248,31 @@ var Pontoon = (function (my) {
 
       /*
        * Serialize value with placeables into a simple string
+       *
+       * markPlaceables Should placeables be marked up?
        */
-      serializePlaceables: function (elements) {
+      serializePlaceables: function (elements, markPlaceables) {
         var translatedValue = '';
+        var startMarker = '';
+        var endMarker = '';
 
         elements.forEach(function (item) {
           if (item.type === 'TextElement') {
             translatedValue += item.value;
           }
           else if (item.type === 'ExternalArgument') {
-            translatedValue += '{$' + item.id.name + '}';
+            if (markPlaceables) {
+              startMarker = '<mark class="placeable" title="External Argument">';
+              endMarker = '</mark>';
+            }
+            translatedValue += startMarker + '{$' + item.id.name + '}' + endMarker;
           }
           else if (item.type === 'MessageReference') {
-            translatedValue += '{' + item.id.name + '}';
+            if (markPlaceables) {
+              startMarker = '<mark class="placeable" title="Message Reference">';
+              endMarker = '</mark>';
+            }
+            translatedValue += startMarker + '{' + item.id.name + '}' + endMarker;
           }
         });
 
@@ -381,7 +393,7 @@ var Pontoon = (function (my) {
 
         // Simple string: only value
         if (self.isSimpleString(ast)) {
-          original += '<li><p>' + self.serializePlaceables(ast.value.elements) + '</p></li>';
+          original += '<li><p>' + self.serializePlaceables(ast.value.elements, true) + '</p></li>';
         }
         // Plurals
         else if (self.isPlural(ast)) {
@@ -389,7 +401,7 @@ var Pontoon = (function (my) {
           variants.forEach(function (item) {
             original += '<li>' +
               '<span class="id">' + (item.key.value || item.key.name) + '</span>' +
-              '<span class="value">' + self.serializePlaceables(item.value.elements) +
+              '<span class="value">' + self.serializePlaceables(item.value.elements, true) +
               '</span>' +
             '</li>';
           });
@@ -402,7 +414,7 @@ var Pontoon = (function (my) {
               .append(
                 '<li>' +
                   '<span class="id">' + attr.id.name + '</span>' +
-                  '<span class="value">' + self.serializePlaceables(attr.value.elements) + '</span>' +
+                  '<span class="value">' + self.serializePlaceables(attr.value.elements, true) + '</span>' +
                 '</li>'
               );
           });

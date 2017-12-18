@@ -1737,7 +1737,8 @@ var Pontoon = (function (my) {
       });
 
       // Insert placeable at cursor, replace selection or at the end if not focused
-      $('#original').on('click', '.placeable', function (e) {
+      // Use mousedown instead of click to be able to detect the last focused textarea
+      $('#source-pane').on('mousedown', '.placeable', function (e) {
         e.preventDefault();
 
         // Ignore for anonymous users
@@ -1745,7 +1746,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var textarea = $('#translation'),
+        var textarea = $('#editor textarea:visible:focus'),
             selectionStart = textarea.prop('selectionStart'),
             selectionEnd = textarea.prop('selectionEnd'),
             placeable = $(this).text(),
