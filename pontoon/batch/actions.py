@@ -4,36 +4,13 @@ from django.http import (
 from django.utils import timezone
 
 from pontoon.base.models import (
-    Entity,
     TranslationMemoryEntry,
     Translation,
 )
+from pontoon.batch import utils
 
 
-def get_translations_info(translations, locale):
-    """Return data about a translations set.
-
-    :arg QuerySet translations: a django QuerySet of Translation objects
-    :arg Locale locale: the Locale object of the current locale
-
-    :returns: a tuple with:
-              * the number of translations in the QuerySet
-              * a list of corresponding TranslatedResource objects
-              * a list of corresponding Entity objects
-
-    """
-    # Must be executed before translations set changes, which is why
-    # we need to force evaluate QuerySets by wrapping them inside list()
-    count = translations.count()
-    translated_resources = list(translations.translated_resources(locale))
-    changed_entities = list(
-        Entity.objects.filter(translation__in=translations).distinct()
-    )
-
-    return count, translated_resources, changed_entities
-
-
-def batch_action(form, user, translations, locale):
+def batch_action_template(form, user, translations, locale):
     """Empty batch action, does nothing, only used for documentation.
 
     :arg BatchActionsForm form:
@@ -63,10 +40,10 @@ def batch_action(form, user, translations, locale):
     }
 
 
-def batch_approve_translations(form, user, translations, locale):
+def approve_translations(form, user, translations, locale):
     """Approve a series of translations.
 
-    For documentation, refer to the `batch_action` function.
+    For documentation, refer to the `batch_action_template` function.
 
     """
     translations = translations.filter(approved=False)
@@ -76,7 +53,7 @@ def batch_approve_translations(form, user, translations, locale):
     if changed_translation_pks:
         latest_translation_pk = translations.last().pk
 
-    count, translated_resources, changed_entities = get_translations_info(
+    count, translated_resources, changed_entities = utils.get_translations_info(
         translations,
         locale,
     )
@@ -98,14 +75,14 @@ def batch_approve_translations(form, user, translations, locale):
     }
 
 
-def batch_reject_translations(form, user, translations, locale):
+def reject_translations(form, user, translations, locale):
     """Reject a series of translations.
 
     Note that this function doesn't use the `translations` parameter, as it
     needs to impact non-active translations. Hence it will generate its own
     list of suggested translations to work on.
 
-    For documentation, refer to the `batch_action` function.
+    For documentation, refer to the `batch_action_template` function.
 
     """
     suggestions = Translation.objects.filter(
@@ -114,7 +91,7 @@ def batch_reject_translations(form, user, translations, locale):
         approved=False,
         rejected=False
     )
-    count, translated_resources, changed_entities = get_translations_info(
+    count, translated_resources, changed_entities = utils.get_translations_info(
         suggestions,
         locale,
     )
@@ -137,20 +114,22 @@ def batch_reject_translations(form, user, translations, locale):
     }
 
 
-def batch_replace_translations(form, user, translations, locale):
+def replace_translations(form, user, translations, locale):
     """Replace characters in a series of translations.
 
     Replaces all occurences of the content of the `find` parameter with the
     content of the `replace` parameter.
 
-    For documentation, refer to the `batch_action` function.
+    For documentation, refer to the `batch_action_template` function.
 
     """
     find = form.cleaned_data['find']
     replace = form.cleaned_data['replace']
+    latest_translation_pk = None
 
     try:
-        translations, changed_translations = translations.find_and_replace(
+        translations, changed_translations = utils.find_and_replace(
+            translations,
             find,
             replace,
             user
@@ -172,7 +151,7 @@ def batch_replace_translations(form, user, translations, locale):
             'error': 'Empty translations not allowed',
         })
 
-    count, translated_resources, changed_entities = get_translations_info(
+    count, translated_resources, changed_entities = utils.get_translations_info(
         translations,
         locale,
     )
@@ -194,7 +173,7 @@ See above for those functions.
 
 """
 ACTIONS_FN_MAP = {
-    'approve': batch_approve_translations,
-    'reject': batch_reject_translations,
-    'replace': batch_replace_translations,
+    'approve': approve_translations,
+    'reject': reject_translations,
+    'replace': replace_translations,
 }

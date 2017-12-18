@@ -2258,44 +2258,6 @@ class TranslationQuerySet(models.QuerySet):
             locale=locale
         ).distinct()
 
-    def find_and_replace(self, find, replace, user):
-        """
-        :return: A tuple
-            - a queryset of old translations (to be changed)
-            - a list of newly created translations
-        """
-        translations = self.filter(string__contains=find)
-
-        if translations.count() == 0:
-            return translations, []
-
-        # Empty translations produced by replace might not be always allowed
-        forbidden = (
-            translations.filter(string=find)
-            .exclude(entity__resource__format__in=Resource.ASYMMETRIC_FORMATS)
-        )
-        if not replace and forbidden.exists():
-            raise Translation.NotAllowed
-
-        # Create translations' clones and replace strings
-        now = timezone.now()
-        translations_to_create = []
-        for translation in translations:
-            translation.pk = None  # Create new translation
-            translation.string = translation.string.replace(find, replace)
-            translation.user = translation.approved_user = user
-            translation.date = translation.approved_date = now
-            translation.approved = True
-            translation.fuzzy = False
-            translations_to_create.append(translation)
-
-        # Unapprove old translations
-        translations.update(approved=False, approved_user=None, approved_date=None)
-
-        # Create new translations
-        changed_translations = Translation.objects.bulk_create(translations_to_create)
-        return translations, changed_translations
-
     def authors(self):
         """
         Return a QuerySet of translation authors.

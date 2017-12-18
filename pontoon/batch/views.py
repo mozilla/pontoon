@@ -30,7 +30,7 @@ from pontoon.batch import forms
 from pontoon.batch.actions import ACTIONS_FN_MAP
 
 
-log = logging.getLogger('pontoon')
+log = logging.getLogger(__name__)
 
 
 def update_stats(translated_resources, entity, locale):
@@ -129,25 +129,31 @@ def batch_edit_translations(request):
                 "Forbidden: You don't have permission for batch editing"
             )
 
-    translation_pks = set()
+    active_translation_pks = set()
 
-    # Find all impacted translations, including plural forms.
+    # Find all impacted active translations, including plural forms.
     for entity in entities:
         if entity.string_plural == "":
-            translation_pks.add(entity.get_translation()['pk'])
+            active_translation_pks.add(entity.get_translation()['pk'])
         else:
             for plural_form in range(0, locale.nplurals or 1):
-                translation_pks.add(entity.get_translation(plural_form)['pk'])
+                active_translation_pks.add(
+                    entity.get_translation(plural_form)['pk']
+                )
 
-    translation_pks.discard(None)
-    translations = Translation.objects.filter(pk__in=translation_pks)
+    active_translation_pks.discard(None)
+
+    active_translations = (
+        Translation.objects
+        .filter(pk__in=active_translation_pks)
+    )
 
     # Execute the actual action.
     action_function = ACTIONS_FN_MAP[form.cleaned_data['action']]
     action_status = action_function(
         form,
         request.user,
-        translations,
+        active_translations,
         locale,
     )
 
