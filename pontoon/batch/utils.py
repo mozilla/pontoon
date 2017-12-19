@@ -48,20 +48,18 @@ def ftl_find_and_replace(string, find, replace):
     :arg string replace: what to replace the original string with
 
     :returns: a serialized FTL string
+
     """
 
-    def fun(value):
-        if type(value) == ast.TextElement:
-            value.value = value.value.replace(find, replace)
-        return value
+    def replace_text_elements(node):
+        """Recursively traverse the AST and perform find and replace on text values only"""
+        if type(node) == ast.TextElement:
+            node.value = node.value.replace(find, replace)
+        return node
 
-    # Parse FTL string and get AST
     old_ast = parser.parse_entry(string)
+    new_ast = old_ast.traverse(replace_text_elements)
 
-    # Recursively traverse the AST and perform find and replace on text values only
-    new_ast = old_ast.traverse(fun)
-
-    # Serialize updated AST
     return serializer.serialize_entry(new_ast)
 
 
@@ -96,8 +94,11 @@ def find_and_replace(translations, find, replace, user):
     now = timezone.now()
     translations_to_create = []
     for translation in translations:
+        # Cache the old value to identify changed translations
         string = translation.string
-        translation.pk = None  # Create new translation
+
+        # Create new translation
+        translation.pk = None
 
         if translation.entity.resource.format == 'ftl':
             translation.string = ftl_find_and_replace(string, find, replace)
