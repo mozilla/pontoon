@@ -51,8 +51,6 @@ urlpatterns = [
     # AJAX
     url(r'^get-entities/', views.entities,
         name='pontoon.entities'),
-    url(r'^batch-edit-translations/', views.batch_edit_translations,
-        name='pontoon.batch.edit.translations'),
     url(r'^update/', views.update_translation,
         name='pontoon.update'),
     url(r'^get-history/', views.get_translation_history,
