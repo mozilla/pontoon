@@ -71,17 +71,6 @@ def find_and_replace(translations, find, replace, user):
         translation.fuzzy = False
         translations_to_create.append(translation)
 
-    # Unapprove old translations
-    translations.update(
-        approved=False,
-        approved_user=None,
-        approved_date=None,
-        rejected=True,
-        rejected_user=user,
-        rejected_date=now,
-        fuzzy=False,
-    )
-
     # Create new translations
     changed_translations = Translation.objects.bulk_create(
         translations_to_create

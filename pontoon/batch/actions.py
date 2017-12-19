@@ -142,6 +142,17 @@ def replace_translations(form, user, translations, locale):
             'error': 'Empty translations not allowed',
         })
 
+    # Unapprove old translations
+    old_translations.update(
+        approved=False,
+        approved_user=None,
+        approved_date=None,
+        rejected=True,
+        rejected_user=user,
+        rejected_date=timezone.now(),
+        fuzzy=False,
+    )
+
     count, translated_resources, changed_entities = utils.get_translations_info(
         old_translations,
         locale,
