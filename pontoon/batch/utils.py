@@ -97,14 +97,16 @@ def find_and_replace(translations, find, replace, user):
         # Cache the old value to identify changed translations
         string = translation.string
 
-        # Create new translation
-        translation.pk = None
-
         if translation.entity.resource.format == 'ftl':
             translation.string = ftl_find_and_replace(string, find, replace)
         else:
             translation.string = string.replace(find, replace)
 
+        # Quit early if no changes are made
+        if translation.string == string:
+            return
+
+        translation.pk = None  # Create new translation
         translation.user = translation.approved_user = user
         translation.date = translation.approved_date = now
         translation.approved = True
@@ -112,9 +114,7 @@ def find_and_replace(translations, find, replace, user):
         translation.rejected_date = None
         translation.rejected_user = None
         translation.fuzzy = False
-
-        if translation.string != string:
-            translations_to_create.append(translation)
+        translations_to_create.append(translation)
 
     # Create new translations
     changed_translations = Translation.objects.bulk_create(translations_to_create)
