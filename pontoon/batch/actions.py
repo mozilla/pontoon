@@ -128,20 +128,11 @@ def replace_translations(form, user, translations, locale):
     latest_translation_pk = None
 
     try:
-        translations, changed_translations = utils.find_and_replace(
+        old_translations, changed_translations = utils.find_and_replace(
             translations,
             find,
             replace,
             user
-        )
-        translations.update(
-            approved=False,
-            approved_user=None,
-            approved_date=None,
-            rejected=True,
-            rejected_user=user,
-            rejected_date=timezone.now(),
-            fuzzy=False,
         )
         changed_translation_pks = [c.pk for c in changed_translations]
         if changed_translation_pks:
@@ -152,7 +143,7 @@ def replace_translations(form, user, translations, locale):
         })
 
     count, translated_resources, changed_entities = utils.get_translations_info(
-        translations,
+        old_translations,
         locale,
     )
 
