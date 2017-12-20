@@ -274,11 +274,6 @@ def _serialize_elements(elements):
 @library.filter
 def as_simple_translation(source):
     """Transfrom complex FTL-based strings into single-value strings."""
-
-    # Empty string
-    if not source:
-        return source
-
     translation_ast = parser.parse_entry(source)
 
     # Non-FTL string or string with an error
