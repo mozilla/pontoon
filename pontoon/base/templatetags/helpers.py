@@ -261,11 +261,12 @@ def _serialize_elements(elements):
         if type(element) == ast.TextElement:
             response += element.value
 
-        elif type(element) == ast.ExternalArgument:
-            response += '{$' + element.id.name + '}'
+        elif type(element) == ast.Placeable:
+            if type(element.expression) == ast.ExternalArgument:
+                response += '{$' + element.expression.id.name + '}'
 
-        elif type(element) == ast.MessageReference:
-            response += '{' + element.id.name + '}'
+            elif type(element.expression) == ast.MessageReference:
+                response += '{' + element.expression.id.name + '}'
 
     return response
 
