@@ -292,7 +292,7 @@ def as_simple_translation(source):
             return _serialize_elements(variants[0].value.elements)
 
         # Simple strings
-        except (AttributeError, IndexError) as e:
+        except (AttributeError, IndexError):
             return _serialize_elements(translation_ast.value.elements)
 
     else:
@@ -302,5 +302,5 @@ def as_simple_translation(source):
             return _serialize_elements(attributes[0].value.elements)
 
         # All other strings: display unchanged
-        except (AttributeError, IndexError) as e:
+        except (AttributeError, IndexError):
             return source
