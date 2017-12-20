@@ -5,7 +5,14 @@ See base.py for the ParsedResource base class.
 """
 import os.path
 
-from pontoon.sync.formats import lang, po, silme, xliff, ftl
+from pontoon.sync.formats import (
+    ftl,
+    json_extensions,
+    lang,
+    po,
+    silme,
+    xliff,
+)
 
 # To add support for a new resource format, add an entry to this dict
 # where the key is the extension you're parsing and the value is a
@@ -21,6 +28,7 @@ SUPPORTED_FORMAT_PARSERS = {
     '.ini': silme.parse_ini,
     '.inc': silme.parse_inc,
     '.ftl': ftl.parse,
+    '.json': json_extensions.parse,
 }
 
 

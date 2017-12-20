@@ -1735,15 +1735,16 @@ class Resource(models.Model):
 
     # Format
     FORMAT_CHOICES = (
-        ('po', 'po'),
-        ('xliff', 'xliff'),
-        ('xlf', 'xliff'),
-        ('properties', 'properties'),
         ('dtd', 'dtd'),
+        ('ftl', 'ftl'),
         ('inc', 'inc'),
         ('ini', 'ini'),
+        ('json', 'json'),
         ('lang', 'lang'),
-        ('ftl', 'ftl'),
+        ('po', 'po'),
+        ('properties', 'properties'),
+        ('xlf', 'xliff'),
+        ('xliff', 'xliff'),
     )
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
@@ -1754,7 +1755,14 @@ class Resource(models.Model):
     SOURCE_EXTENSIONS = ['pot']  # Extensions of source-only formats.
     ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + SOURCE_EXTENSIONS
 
-    ASYMMETRIC_FORMATS = ('dtd', 'properties', 'ini', 'inc', 'ftl')
+    ASYMMETRIC_FORMATS = (
+        'dtd',
+        'ftl',
+        'inc',
+        'ini',
+        'json',
+        'properties',
+    )
 
     objects = ResourceQuerySet.as_manager()
 
