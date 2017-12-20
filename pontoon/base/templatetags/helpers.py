@@ -263,10 +263,10 @@ def _serialize_elements(elements):
 
         elif type(element) == ast.Placeable:
             if type(element.expression) == ast.ExternalArgument:
-                response += '{$' + element.expression.id.name + '}'
+                response += '{ $' + element.expression.id.name + ' }'
 
             elif type(element.expression) == ast.MessageReference:
-                response += '{' + element.expression.id.name + '}'
+                response += '{ ' + element.expression.id.name + ' }'
 
     return response
 
