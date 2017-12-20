@@ -4,7 +4,13 @@ from six import text_type
 
 from django_nose.tools import assert_equal
 
-from pontoon.base.templatetags.helpers import format_datetime, format_timedelta, nospam
+from pontoon.base.templatetags.helpers import (
+    as_simple_translation,
+    format_datetime,
+    format_timedelta,
+    nospam,
+)
+
 from pontoon.base.tests import TestCase
 from pontoon.base.utils import aware_datetime
 
@@ -54,3 +60,49 @@ class NoSpamTests(TestCase):
 
     def test_escape(self):
         assert_equal(str(nospam('<>\'"@&')), '&lt;&gt;&quot;&quot;&#64;&amp;')
+
+
+class AsSimpleTranslationTests(TestCase):
+    """Tests related to the as_simple_translation template filter."""
+
+    def test_empty_string(self):
+        source = ''
+        assert_equal(as_simple_translation(source), '')
+
+    def test_non_ftl(self):
+        source = 'Simple String'
+        assert_equal(as_simple_translation(source), 'Simple String')
+
+    def test_simple(self):
+        source = 'key = Simple String'
+        assert_equal(as_simple_translation(source), 'Simple String')
+
+    def test_multiline(self):
+        source = '''key =
+    Simple String
+    In Multiple
+    Lines'''
+        assert_equal(as_simple_translation(source), 'Simple String\nIn Multiple\nLines')
+
+    def test_plural(self):
+        source = '''key =
+    { $number ->
+        [1] Simple String
+       *[other] Other Simple String
+    }'''
+        assert_equal(as_simple_translation(source), 'Simple String')
+
+    def test_attribute(self):
+        source = '''key
+    .placeholder = Simple String'''
+        assert_equal(as_simple_translation(source), 'Simple String')
+
+    def test_attributes(self):
+        source = '''key
+    .attribute = Simple String
+    .other = Other Simple String'''
+        assert_equal(as_simple_translation(source), 'Simple String')
+
+    def test_other_ftl(self):
+        source = 'warning-upgrade = { LINK("Link text", title: "Link title") }Simple String'
+        assert_equal(as_simple_translation(source), 'Simple String')
