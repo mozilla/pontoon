@@ -778,6 +778,9 @@ var Pontoon = (function (my) {
       var self = this;
 
       self.checkUnsavedChanges(function() {
+        // We must hide batch editor first in order to display FTL editor properly
+        self.clearSelection();
+
         var oldEntity = self.getEditorEntity();
 
         if (newEntity.body || (oldEntity && oldEntity.body)) {
@@ -786,8 +789,6 @@ var Pontoon = (function (my) {
         if (!newEntity.body) {
           self.openEditor(newEntity);
         }
-
-        self.clearSelection();
       });
     },
 

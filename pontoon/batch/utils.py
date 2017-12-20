@@ -6,6 +6,16 @@ from pontoon.base.models import (
     Translation,
 )
 
+from fluent.syntax import (
+    ast,
+    FluentParser,
+    FluentSerializer,
+)
+
+
+parser = FluentParser()
+serializer = FluentSerializer()
+
 
 def get_translations_info(translations, locale):
     """Return data about a translations set.
@@ -30,6 +40,29 @@ def get_translations_info(translations, locale):
     return count, translated_resources, changed_entities
 
 
+def ftl_find_and_replace(string, find, replace):
+    """Replace text values in an FTL string.
+
+    :arg string string: a serialized FTL string
+    :arg string find: a string to search for, and replace, in translations
+    :arg string replace: what to replace the original string with
+
+    :returns: a serialized FTL string
+
+    """
+
+    def replace_text_elements(node):
+        """Perform find and replace on text values only"""
+        if type(node) == ast.TextElement:
+            node.value = node.value.replace(find, replace)
+        return node
+
+    old_ast = parser.parse_entry(string)
+    new_ast = old_ast.traverse(replace_text_elements)
+
+    return serializer.serialize_entry(new_ast)
+
+
 def find_and_replace(translations, find, replace, user):
     """Replace text in a set of translation.
 
@@ -45,10 +78,11 @@ def find_and_replace(translations, find, replace, user):
     """
     translations = translations.filter(string__contains=find)
 
+    # No matches found
     if translations.count() == 0:
         return translations, []
 
-    # Empty translations produced by replace might not be always allowed
+    # Empty translations produced by replace are not allowed for all formats
     forbidden = (
         translations.filter(string=find)
         .exclude(entity__resource__format__in=Resource.ASYMMETRIC_FORMATS)
@@ -60,8 +94,19 @@ def find_and_replace(translations, find, replace, user):
     now = timezone.now()
     translations_to_create = []
     for translation in translations:
+        # Cache the old value to identify changed translations
+        string = translation.string
+
+        if translation.entity.resource.format == 'ftl':
+            translation.string = ftl_find_and_replace(string, find, replace)
+        else:
+            translation.string = string.replace(find, replace)
+
+        # Quit early if no changes are made
+        if translation.string == string:
+            return
+
         translation.pk = None  # Create new translation
-        translation.string = translation.string.replace(find, replace)
         translation.user = translation.approved_user = user
         translation.date = translation.approved_date = now
         translation.approved = True
@@ -75,4 +120,5 @@ def find_and_replace(translations, find, replace, user):
     changed_translations = Translation.objects.bulk_create(
         translations_to_create
     )
+
     return translations, changed_translations
