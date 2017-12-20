@@ -52,7 +52,7 @@ def ftl_find_and_replace(string, find, replace):
     """
 
     def replace_text_elements(node):
-        """Recursively traverse the AST and perform find and replace on text values only"""
+        """Perform find and replace on text values only"""
         if type(node) == ast.TextElement:
             node.value = node.value.replace(find, replace)
         return node
@@ -117,6 +117,8 @@ def find_and_replace(translations, find, replace, user):
         translations_to_create.append(translation)
 
     # Create new translations
-    changed_translations = Translation.objects.bulk_create(translations_to_create)
+    changed_translations = Translation.objects.bulk_create(
+        translations_to_create
+    )
 
     return translations, changed_translations
