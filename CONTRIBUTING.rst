@@ -51,7 +51,7 @@ Javascript code conventions
 Git conventions
 ===============
 
-First line is a summary of the commit. It should start with one of the following::
+The first line is a summary of the commit. It should start with one of the following::
 
   Fix bug XXXXXXX
 
@@ -131,7 +131,7 @@ Documentation
 Documentation for Pontoon is built with `Sphinx
 <http://www.sphinx-doc.org/en/stable/>`_ and is available on ReadTheDocs.
 
-Building docs is not covered with docker yet, so you will have to do it on your host. To make
+Building docs are not covered with docker yet, so you will have to do it on your host. To make
 a virtualenv to build docs, do this:
 
 .. code-block:: shell
@@ -200,8 +200,8 @@ Mock usage
 ----------
 
 `Mock <http://www.voidspace.org.uk/python/mock/>`_ is a python library for mocks
-objects. This allows us to write isolated tests by simulating services beside
-using the real ones. Best examples is existing tests which admittedly do mocking
+objects. This allows us to write isolated tests by simulating services besides
+using the real ones. Best examples are existing tests which admittedly do mocking
 different depending on the context.
 
 Tip! Try to mock in limited context so that individual tests don't affect other
@@ -210,7 +210,7 @@ tests. Use context managers instead of monkey patching imported modules.
 
 Updating Your Local Instance
 ============================
-When changes are merged to the main Pontoon repository, you'll want to update
+When changes are merged into the main Pontoon repository, you'll want to update
 your local development instance to reflect the latest version of the site. You
 can use Git as normal to pull the latest changes, but if the changes add any new
 dependencies or alter the database, you'll want to install any new libraries and
@@ -221,7 +221,7 @@ steps, as they don't affect your setup if nothing has changed:
 
 .. code-block:: shell
 
-   # Pull latest code (assuming you've already checked out master).
+   # Pull the latest code (assuming you've already checked out master).
    git pull origin master
 
    # Install new dependencies or update existing ones.
@@ -235,7 +235,7 @@ Integration with fluent
 =======================
 
 Pontoon is able to synchronize translations produced by libraries provided by
-`Project Fluent <http://projectfluent.io/>`_ and provides advanced editor for translators.
+`Project Fluent <http://projectfluent.io/>`_ and provides an advanced editor for translators.
 
 Because of our very close integration, we'll need to compile the fresh versions of
 javascript/python libraries in order to provide new features.
