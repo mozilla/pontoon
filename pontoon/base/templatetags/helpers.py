@@ -2,6 +2,11 @@ import cgi
 import datetime
 import json
 
+import jinja2
+from allauth.socialaccount import providers
+from allauth.utils import get_request_param
+from django_jinja import library
+from fluent.syntax import FluentParser, ast
 from six import text_type
 from six.moves.urllib import parse as six_parse
 
@@ -14,13 +19,9 @@ from django.utils.encoding import smart_str
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
 
-import jinja2
-from django_jinja import library
-from allauth.socialaccount import providers
-from allauth.utils import get_request_param
-
 
 register = template.Library()
+parser = FluentParser()
 
 
 class LazyObjectsJsonEncoder(json.JSONEncoder):
@@ -250,3 +251,52 @@ def dict_html_attrs(dict_obj):
     return jinja2.Markup(' '.join(
         [u'data-{}="{}"'.format(k, v) for k, v in dict_obj.items()]
     ))
+
+
+def _serialize_elements(elements):
+    """Serialize text elements and references into a simple string."""
+    response = ''
+
+    for element in elements:
+        if type(element) == ast.TextElement:
+            response += element.value
+
+        elif type(element) == ast.Placeable:
+            if type(element.expression) == ast.ExternalArgument:
+                response += '{ $' + element.expression.id.name + ' }'
+
+            elif type(element.expression) == ast.MessageReference:
+                response += '{ ' + element.expression.id.name + ' }'
+
+    return response
+
+
+@library.filter
+def as_simple_translation(source):
+    """Transfrom complex FTL-based strings into single-value strings."""
+    translation_ast = parser.parse_entry(source)
+
+    # Non-FTL string or string with an error
+    if type(translation_ast) == ast.Junk:
+        return source
+
+    if translation_ast.value:
+        # Strings with variants: display first variant
+        try:
+            elements = translation_ast.value.elements
+            variants = elements[0].expression.variants
+            return _serialize_elements(variants[0].value.elements)
+
+        # Simple strings
+        except (AttributeError, IndexError):
+            return _serialize_elements(translation_ast.value.elements)
+
+    else:
+        # Strings with attributes: display first attribute
+        try:
+            attributes = translation_ast.attributes
+            return _serialize_elements(attributes[0].value.elements)
+
+        # All other strings: display unchanged
+        except (AttributeError, IndexError):
+            return source
