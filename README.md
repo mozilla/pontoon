@@ -16,6 +16,8 @@ For quick and easy deployment without leaving your web browser, click this butto
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
+---
+
 Get involved
 ------------
 * Check out development roadmap on the [wiki](http://wiki.mozilla.org/Pontoon)
@@ -24,10 +26,14 @@ Get involved
 * Join `#pontoon` on [IRC](https://cbe001.chat.mibbit.com/?url=irc:%2F%2Firc.mozilla.org%2Fpontoon)
 * [Set up](http://mozilla-pontoon.readthedocs.io/en/latest/) Pontoon for local development.
 
+---
+
 Servers (used for Mozilla projects only)
 ----------------------------------------
 * [Staging](https://mozilla-pontoon-staging.herokuapp.com/)
 * [Production](https://pontoon.mozilla.org/)
+
+---
 
 License
 -------
