@@ -53,7 +53,7 @@ class JSONEntity(VCSTranslation):
 
     @property
     def source(self):
-        return []
+        return self.data['placeholders'] if 'placeholders' in self.data else []
 
 
 class JSONResource(ParsedResource):
