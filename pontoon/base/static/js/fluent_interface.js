@@ -258,7 +258,13 @@ var Pontoon = (function (my) {
 
         elements.forEach(function (item) {
           if (item.type === 'TextElement') {
-            translatedValue += item.value;
+            // TODO: We shouldn't rely on markPlaceables in determining when to not render HTML.
+            if (markPlaceables) {
+              translatedValue += Pontoon.doNotRender(item.value);
+            }
+            else {
+              translatedValue += item.value;
+            }
           }
           else if (item.type === 'ExternalArgument') {
             if (markPlaceables) {
@@ -600,6 +606,11 @@ var Pontoon = (function (my) {
           if (this.isPlural(ast)) {
             var variants = ast.value.elements[0].variants;
             response = this.serializePlaceables(variants[0].value.elements);
+          }
+
+          // Update source string markup
+          if (object.hasOwnProperty('original')) {
+            response = Pontoon.doNotRender(response);
           }
         }
 
