@@ -131,7 +131,7 @@ Documentation
 Documentation for Pontoon is built with `Sphinx
 <http://www.sphinx-doc.org/en/stable/>`_ and is available on ReadTheDocs.
 
-Building docs are not covered with docker yet, so you will have to do it on your host. To make
+Building docs is not covered with docker yet, so you will have to do it on your host. To make
 a virtualenv to build docs, do this:
 
 .. code-block:: shell
