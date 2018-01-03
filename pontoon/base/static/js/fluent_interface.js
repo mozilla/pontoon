@@ -368,6 +368,14 @@ var Pontoon = (function (my) {
 
 
       /*
+       * Is Source FTL editor enabled?
+       */
+      isSourceFTLEditorEnabled: function () {
+        return $('#ftl:visible').is('.active');
+      },
+
+
+      /*
        * Is string in FTL editor complex?
        * As opposed to simple which only contains a string value.
        */
