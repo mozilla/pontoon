@@ -1,8 +1,8 @@
 $(function() {
   var container = $('#main .container');
 
-  function inputHidden(name, value) {
-    return $('<input class="permissions-form-item" type="hidden" name="' + name + '" value="' + value + '">');
+  function inputHidden(name, value, cssClass) {
+    return $('<input class="' + (cssClass || '') + '" type="hidden" name="' + name + '" value="' + value + '">');
   }
 
   container.on('click', '#permissions-form .save', function(e) {
@@ -20,12 +20,12 @@ $(function() {
         var itemId = $(this).data('id');
 
         if ($(this).parents('.general').length > 0) {
-          $form.append(inputHidden('general-' + value, itemId));
+          $form.append(inputHidden('general-' + value, itemId, 'permissions-form-item'));
 
         } else {
           // We have to retrieve an index of parent project locale form
           var localeProjectIndex = $(this).parents('.project-locale').data('index');
-          $form.append(inputHidden('project-locale-' + localeProjectIndex + '-translators', itemId));
+          $form.append(inputHidden('project-locale-' + localeProjectIndex + '-translators', itemId, 'permissions-form-item'));
         }
       });
     });
