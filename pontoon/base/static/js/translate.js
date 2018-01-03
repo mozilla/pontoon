@@ -1853,13 +1853,13 @@ var Pontoon = (function (my) {
         // Tab: Select suggestions
         if (!$('.menu').is(':visible') && key === 9 && !e.ctrlKey) {
 
-          // Rich FTL editor: ignore tab key
+          // Rich FTL editor with complex message: ignore tab key
           if (self.fluent.isFTLEditorEnabled() && self.fluent.isComplexFTL()) {
             return;
           }
 
           // Source FTL editor: insert tab character
-          if ($('#ftl:visible').is('.active')) {
+          if (self.fluent.isSourceFTLEditorEnabled()) {
             e.preventDefault();
 
             var textarea = $('#translation')[0];
