@@ -53,7 +53,4 @@ urlpatterns = [
     # AJAX
     url(r'^save-custom-homepage/$', views.save_custom_homepage,
         name='pontoon.contributors.save_custom_homepage'),
-
-    url(r'^save-user-profile/$', views.save_user_profile,
-        name='pontoon.contributors.save_user_profile'),
 ]

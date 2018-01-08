@@ -118,27 +118,6 @@ def toggle_user_profile_attribute(request, username):
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
 @transaction.atomic
-def save_user_profile(request):
-    """Save user profile."""
-    profile_form = forms.UserProfileForm(request.POST, instance=request.user)
-    user = get_object_or_404(User, username=request.user.username)
-
-    if not profile_form.is_valid():
-        errors = (unicode(v) for k, v in profile_form.errors.items())
-        return HttpResponseBadRequest(errors)
-
-    profile_form.save()
-
-    if user.email != request.user.email:
-        logout(request)
-        return HttpResponse('logout')
-
-    return HttpResponse('ok')
-
-
-@login_required(redirect_field_name='', login_url='/403')
-@require_POST
-@transaction.atomic
 def save_custom_homepage(request):
     """Save custom homepage."""
     form = forms.UserCustomHomepageForm(request.POST, instance=request.user.profile)
@@ -155,14 +134,32 @@ def save_custom_homepage(request):
 def settings(request):
     """View and edit user settings."""
     if request.method == 'POST':
-        form = forms.UserLocalesOrderForm(request.POST, instance=request.user.profile)
-        if form.is_valid():
-            form.save()
+        locales_form = forms.UserLocalesOrderForm(
+            request.POST,
+            instance=request.user.profile,
+        )
+        profile_form = forms.UserProfileForm(
+            request.POST,
+            instance=request.user,
+        )
+        user = get_object_or_404(User, username=request.user.username)
+
+        if locales_form.is_valid() and profile_form.is_valid():
+            locales_form.save()
+            profile_form.save()
+
             messages.success(request, 'Settings saved.')
-            return redirect(request.POST.get('return_url', '/'))
+
+            if user.email != request.user.email:
+                logout(request)
+                return redirect(request.POST.get('return_url', '/'))
+    else:
+        profile_form = forms.UserProfileForm(instance=request.user)
 
     selected_locales = list(request.user.profile.sorted_locales)
-    available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
+    available_locales = Locale.objects.exclude(
+        pk__in=[l.pk for l in selected_locales]
+    )
 
     default_homepage_locale = Locale(name='Default homepage', code='')
     all_locales = list(Locale.objects.all())
@@ -171,7 +168,9 @@ def settings(request):
     # Set custom homepage selector value
     custom_homepage = request.user.profile.custom_homepage
     if custom_homepage:
-        custom_homepage_locale = Locale.objects.filter(code=custom_homepage).first()
+        custom_homepage_locale = (
+            Locale.objects.filter(code=custom_homepage).first()
+        )
     else:
         custom_homepage_locale = default_homepage_locale
 
@@ -180,6 +179,7 @@ def settings(request):
         'available_locales': available_locales,
         'locales': all_locales,
         'locale': custom_homepage_locale,
+        'profile_form': profile_form,
     })
 
 

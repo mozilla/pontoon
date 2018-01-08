@@ -7,6 +7,7 @@ from mock import patch
 from random import randint
 from six.moves import range
 
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.utils.timezone import now, make_aware
 from django_nose.tools import (
@@ -39,47 +40,50 @@ def commajoin(*items):
 
 class ContributorProfileTests(UserTestCase):
     """Tests related to the saving user profile."""
+    url = reverse('pontoon.contributors.settings')
 
     def test_invalid_first_name(self):
-        response = self.client.post('/save-user-profile/', {'first_name': '<aa>"\'"'})
+        response = self.client.post(self.url, {'first_name': '<aa>"\'"'})
 
-        assert_contains(response, 'Enter a valid value.', status_code=400)
+        assert_contains(response, 'Enter a valid value.')
 
     def test_invalid_email(self):
-        response = self.client.post('/save-user-profile/', {'email': 'usermail'})
+        response = self.client.post(self.url, {'email': 'usermail'})
 
-        assert_contains(response, 'Enter a valid email address.', status_code=400)
+        assert_contains(response, 'Enter a valid email address.')
 
     def test_missing_profile_fields(self):
-        response = self.client.post('/save-user-profile/', {})
+        response = self.client.post(self.url, {})
 
-        assert_contains(response, 'This field is required.', count=2, status_code=400)
+        assert_contains(response, 'This field is required.', count=2)
 
     def test_valid_first_name(self):
         response = self.client.post(
-            '/save-user-profile/',
+            self.url,
             {'first_name': 'contributor', 'email': self.user.email}
         )
 
-        assert_equal(response.status_code, 200)
-        assert_equal(response.content, 'ok')
+        assert_contains(response, 'Settings saved.')
 
     def test_user_locales_order(self):
         locale1, locale2, locale3 = LocaleFactory.create_batch(3)
-        response = self.client.get('/settings/')
+        response = self.client.get(self.url)
         assert_equal(response.status_code, 200)
 
         response = self.client.post('/settings/', {
+            'first_name': 'contributor',
+            'email': self.user.email,
             'locales_order': commajoin(
                 locale2.pk,
                 locale1.pk,
                 locale3.pk,
-            )
+            ),
         })
 
-        assert_equal(response.status_code, 302)
+        assert_equal(response.status_code, 200)
         assert_equal(
-            list(User.objects.get(pk=self.user.pk).profile.sorted_locales), [
+            list(User.objects.get(pk=self.user.pk).profile.sorted_locales),
+            [
                 locale2,
                 locale1,
                 locale3,
@@ -87,20 +91,27 @@ class ContributorProfileTests(UserTestCase):
         )
         # Test if you can clear all locales
         response = self.client.post('/settings/', {
-            'locales_order': ''
+            'first_name': 'contributor',
+            'email': self.user.email,
+            'locales_order': '',
         })
-        assert_equal(response.status_code, 302)
-        assert_equal(list(User.objects.get(pk=self.user.pk).profile.sorted_locales), [])
+        assert_equal(response.status_code, 200)
+        assert_equal(
+            list(User.objects.get(pk=self.user.pk).profile.sorted_locales),
+            []
+        )
 
         # Test if form handles duplicated locales
         response = self.client.post('/settings/', {
+            'first_name': 'contributor',
+            'email': self.user.email,
             'locales_order': commajoin(
                 locale1.pk,
                 locale2.pk,
                 locale2.pk,
             )
         })
-        assert_equal(response.status_code, 302)
+        assert_equal(response.status_code, 200)
         assert_equal(
             list(User.objects.get(pk=self.user.pk).profile.sorted_locales), [
                 locale1,

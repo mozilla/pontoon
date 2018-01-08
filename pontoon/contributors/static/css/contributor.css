@@ -47,6 +47,7 @@ a.avatar:hover .desc ~ img {
 }
 #profile-form .field {
   margin-top: 20px;
+  text-align: left;
 }
 
 #profile-form .field input {
@@ -70,7 +71,7 @@ a.avatar:hover .desc ~ img {
   margin-top: 5px;
   color: red;
 }
-#profile-email:focus + span{
+#id_email:focus + span{
   display: block;
 }
 

@@ -1,48 +1,5 @@
 $(function() {
 
-  var username = $('#profile-username');
-  var email = $('#profile-email');
-
-  // Save user profile handler
-  function save() {
-    $.ajax({
-      url: '/save-user-profile/',
-      type: 'POST',
-      data: {
-        csrfmiddlewaretoken: $('#server').data('csrf'),
-        first_name: $.trim(username.val()),
-        email: $.trim(email.val())
-      },
-      success: function(data) {
-        if (data === "ok") {
-          Pontoon.endLoader('Changes saved!');
-        }
-        if (data === 'logout') {
-          window.location.href = '/';
-          Pontoon.endLoader('Logging out');
-        }
-      },
-      error: function(request) {
-        if (request.responseText === "error") {
-          Pontoon.endLoader('Oops, something went wrong.', 'error');
-        } else {
-          Pontoon.endLoader(request.responseText, 'error');
-        }
-      }
-    });
-  }
-
-  // Save user profile by mouse or keyboard
-  $('.submit').click(function(e) {
-    save();
-  });
-  $('#profile-form').on('keydown', function(e){
-    if (e.which === 13) {
-      e.preventDefault();
-      save();
-    }
-  });
-
   function loadNextEvents(cb) {
     var currentPage = $timeline.data('page'),
       nextPage = parseInt(currentPage, 10) + 1,
