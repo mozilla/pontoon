@@ -21,12 +21,7 @@
     <img class="rounded" src="{{ user.gravatar_url(200) }}">
   </a>
 
-  <h2 id="username">
-    <div class="container">
-      <input type="text" placeholder="What's your name?" value="{{ user.first_name }}" maxlength="30">
-      <div class="submit fa fa-arrow-circle-right"></div>
-    </div>
-  </h2>
+  <h2 id="username">{{ user.first_name }}</h2>
 
   <ul class="info">
     {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run quality checks before submitting translations') }}
@@ -45,6 +40,19 @@
 
 {% block bottom %}
 <section id="main">
+  <div id="profile-form">
+      <h3>Personal infomation</h3>
+      <div class="field">
+          <label for="profile-username">Username</label>
+          <input type="text" id="profile-username" value="{{ user.first_name }}" maxlength="30">
+      </div>
+      <div class="field">
+          <label for="profile-email">Email</label>
+          <input type="email" id="profile-email" value="{{ user.email }}">
+          <span id="email-warning">Changing email will cause a logout.</span>
+      </div>
+  </div>
+
   <form method="POST" action="{{ url('pontoon.contributors.settings') }}" class="user-locales-settings">
     {% csrf_token %}
     <input type="hidden" name="return_url" value="{{ return_url(request) }}">
@@ -55,7 +63,7 @@
 
     <div class="controls">
       <a class="cancel" href="{{ return_url(request) }}">Cancel</a>
-      <button class="button active">Save</button>
+      <button class="submit button active">Save</button>
     </div>
   </form>
 </section>

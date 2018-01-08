@@ -13,6 +13,7 @@ from django_nose.tools import (
     assert_equal,
     assert_true,
     assert_code,
+    assert_contains
 )
 
 from pontoon.base.models import User
@@ -40,19 +41,25 @@ class ContributorProfileTests(UserTestCase):
     """Tests related to the saving user profile."""
 
     def test_invalid_first_name(self):
-        response = self.client.post('/save-user-name/', {'first_name': '<aa>"\'"'})
+        response = self.client.post('/save-user-profile/', {'first_name': '<aa>"\'"'})
 
-        assert_equal(response.status_code, 400)
-        assert_equal(response.content, 'Enter a valid value.')
+        assert_contains(response, 'Enter a valid value.', status_code=400)
 
-    def test_missing_first_name(self):
-        response = self.client.post('/save-user-name/', {})
+    def test_invalid_email(self):
+        response = self.client.post('/save-user-profile/', {'email': 'usermail'})
 
-        assert_equal(response.status_code, 400)
-        assert_equal(response.content, 'This field is required.')
+        assert_contains(response, 'Enter a valid email address.', status_code=400)
+
+    def test_missing_profile_fields(self):
+        response = self.client.post('/save-user-profile/', {})
+
+        assert_contains(response, 'This field is required.', count=2, status_code=400)
 
     def test_valid_first_name(self):
-        response = self.client.post('/save-user-name/', {'first_name': 'contributor'})
+        response = self.client.post(
+            '/save-user-profile/',
+            {'first_name': 'contributor', 'email': self.user.email}
+        )
 
         assert_equal(response.status_code, 200)
         assert_equal(response.content, 'ok')

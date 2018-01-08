@@ -2,6 +2,7 @@ import json
 
 from dateutil.relativedelta import relativedelta
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
@@ -117,14 +118,20 @@ def toggle_user_profile_attribute(request, username):
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
 @transaction.atomic
-def save_user_name(request):
-    """Save user name."""
-    form = forms.UserFirstNameForm(request.POST, instance=request.user)
+def save_user_profile(request):
+    """Save user profile."""
+    profile_form = forms.UserProfileForm(request.POST, instance=request.user)
+    user = get_object_or_404(User, username=request.user.username)
 
-    if not form.is_valid():
-        return HttpResponseBadRequest(u'\n'.join(form.errors['first_name']))
+    if not profile_form.is_valid():
+        errors = (unicode(v) for k, v in profile_form.errors.items())
+        return HttpResponseBadRequest(errors)
 
-    form.save()
+    profile_form.save()
+
+    if user.email != request.user.email:
+        logout(request)
+        return HttpResponse('logout')
 
     return HttpResponse('ok')
 

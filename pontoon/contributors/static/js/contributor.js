@@ -1,20 +1,25 @@
 $(function() {
 
-  var input = $('#username input');
+  var username = $('#profile-username');
+  var email = $('#profile-email');
 
-  // Save user name handler
+  // Save user profile handler
   function save() {
     $.ajax({
-      url: '/save-user-name/',
+      url: '/save-user-profile/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('#server').data('csrf'),
-        first_name: $.trim(input.val())
+        first_name: $.trim(username.val()),
+        email: $.trim(email.val())
       },
       success: function(data) {
         if (data === "ok") {
-          input.blur();
-          Pontoon.endLoader('Thank you!');
+          Pontoon.endLoader('Changes saved!');
+        }
+        if (data === 'logout') {
+          window.location.href = '/';
+          Pontoon.endLoader('Logging out');
         }
       },
       error: function(request) {
@@ -27,14 +32,11 @@ $(function() {
     });
   }
 
-  // Save user name by mouse or keyboard
-  $('.submit').click(function() {
-    if ($(this).css('opacity') === "0") {
-      return;
-    }
+  // Save user profile by mouse or keyboard
+  $('.submit').click(function(e) {
     save();
   });
-  input.keydown(function(e) {
+  $('#profile-form').on('keydown', function(e){
     if (e.which === 13) {
       e.preventDefault();
       save();
