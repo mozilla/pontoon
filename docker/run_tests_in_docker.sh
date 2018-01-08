@@ -63,5 +63,16 @@ else
            local/pontoon \
            python manage.py test $@
 
+    docker run \
+           --rm \
+           --volumes-from pontoon-tests \
+           --workdir /app \
+           --network pontoon_default \
+           --link "${DC} ps -q postgresql" \
+           --env-file ./docker/config/webapp.env \
+           -e LOCAL_USER_ID=$UID \
+           local/pontoon \
+           py.test
+
     echo "Done!"
 fi
