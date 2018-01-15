@@ -38,43 +38,6 @@ a.avatar:hover .desc ~ img {
   text-transform: none;
 }
 
-#profile-form {
-  display: block;
-  position: relative;
-  text-align: left;
-  margin: 0 auto 70px auto;
-  width: 620px;
-}
-#profile-form .field {
-  margin-top: 20px;
-  text-align: left;
-}
-
-#profile-form .field input {
-  color: #FFFFFF;
-  background: #333941;
-  border: 1px solid #4d5967;
-  border-radius: 3px;
-  float: none;
-  width: 290px;
-  padding: 4px;
-
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-#profile-form button {
-  margin-top: 10px;
-}
-#email-warning {
-  display: none;
-  margin-top: 5px;
-  color: red;
-}
-#id_email:focus + span{
-  display: block;
-}
-
 .info {
   list-style: none;
   margin: 0;

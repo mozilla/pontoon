@@ -23,4 +23,19 @@ $(function() {
       }
     });
   });
+
+  // Show a warning when a user changes their email address.
+  var emailField = $('#id_email');
+  var warningContent = $('#email-warning');
+  var originalEmail = emailField.val();
+
+  emailField.on('keyup', function () {
+    var newEmail = emailField.val();
+    if (newEmail === originalEmail && warningContent.is(':visible')) {
+      warningContent.hide();
+    }
+    else if (newEmail !== originalEmail && !warningContent.is(':visible')) {
+      warningContent.show();
+    }
+  });
 });
