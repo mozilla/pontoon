@@ -24,16 +24,7 @@
     <img class="rounded" src="{{ contributor.gravatar_url(200) }}">
   </a>
 
-  <h2 id="username">
-    {% if my_profile %}
-      <div class="container">
-        <input type="text" placeholder="What's your name?" value="{{ contributor.first_name }}" maxlength="30">
-        <div class="submit fa fa-arrow-circle-right"></div>
-      </div>
-    {% else %}
-      <div class="uneditable">{{ contributor.first_name }}</div>
-    {% endif %}
-  </h2>
+  <h2 id="username">{{ contributor.first_name }}</h2>
 
   <ul class="info">
     <li><span class="fa fa-fw fa-envelope"></span><a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a></li>

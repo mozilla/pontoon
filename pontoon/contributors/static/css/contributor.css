@@ -3,7 +3,7 @@
 }
 
 a.avatar {
-  display: inline-block;
+  display: block;
   position: relative;
 }
 
@@ -33,57 +33,9 @@ a.avatar:hover .desc ~ img {
 #username {
   color: #EBEBEB;
   font-size: 48px;
-  letter-spacing: -2px;
-  text-transform: none;
-}
-
-#username .uneditable {
   letter-spacing: normal;
   padding: 8px 0 20px;
-}
-
-#username .container {
-  display: inline-block;
-  position: relative;
-}
-
-#username .container input {
-  background: transparent;
-  border-bottom: 1px dashed transparent;
-  color: #FFFFFF;
-  font-size: 48px;
-  font-weight: 300;
-  padding: 4px 50px;
-  text-align: center;
-  width: 100%;
-
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-#username .container input:hover,
-#username .container input:focus {
-  border-color: #888888;
-}
-
-#username .container .submit {
-  bottom: -8px;
-  color: #888888;
-  opacity: 0;
-  padding: 20px 0;
-  position: absolute;
-  right: 0;
-  /* Needed or click doesn't trigger */
-  transition: all 0.1s ease-out;
-}
-
-#username .container input:focus + .submit {
-  cursor: pointer;
-  opacity: 1;
-}
-
-#username .container input:focus + .submit:hover {
-  color: #7BC876;
+  text-transform: none;
 }
 
 .info {
