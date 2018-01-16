@@ -84,9 +84,9 @@
 }
 
 #profile-form .help {
-  color: #FED271;
+  color: #888888;
   font-style: italic;
-  font-weight: bold;
+  margin-top: 5px;
 }
 
 .errorlist {
