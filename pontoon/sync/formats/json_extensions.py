@@ -11,6 +11,8 @@ import json
 import logging
 import os
 
+from collections import OrderedDict
+
 from pontoon.sync import SyncError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.models import VCSTranslation
@@ -73,7 +75,7 @@ class JSONResource(ParsedResource):
 
         try:
             with codecs.open(path, 'r', 'utf-8') as resource:
-                self.json_file = json.load(resource)
+                self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
         except IOError:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
@@ -104,7 +106,7 @@ class JSONResource(ParsedResource):
                             .format(self.path))
 
         with codecs.open(self.source_resource.path, 'r', 'utf-8') as resource:
-            json_file = json.load(resource)
+            json_file = json.load(resource, object_pairs_hook=OrderedDict)
 
         # Iterate over a copy, leaving original free to modify
         for key, value in json_file.copy().items():
