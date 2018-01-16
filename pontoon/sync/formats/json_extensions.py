@@ -53,7 +53,7 @@ class JSONEntity(VCSTranslation):
 
     @property
     def source(self):
-        return self.data['placeholders'] if 'placeholders' in self.data else []
+        return self.data.get('placeholders', [])
 
 
 class JSONResource(ParsedResource):
@@ -73,8 +73,7 @@ class JSONResource(ParsedResource):
 
         try:
             with codecs.open(path, 'r', 'utf-8') as resource:
-                content = resource.read()
-                self.json_file = json.loads(content)
+                self.json_file = json.load(resource)
         except IOError:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
@@ -83,9 +82,7 @@ class JSONResource(ParsedResource):
             else:
                 raise
 
-        for order, unit in enumerate(self.json_file.items()):
-            key = unit[0]
-            data = unit[1]
+        for order, (key, data) in enumerate(self.json_file.items()):
             self.entities[key] = JSONEntity(
                 order,
                 key,
@@ -107,7 +104,7 @@ class JSONResource(ParsedResource):
                             .format(self.path))
 
         with codecs.open(self.source_resource.path, 'r', 'utf-8') as resource:
-            json_file = json.loads(resource.read())
+            json_file = json.load(resource)
 
         # Iterate over a copy, leaving original free to modify
         for key, value in json_file.copy().items():
