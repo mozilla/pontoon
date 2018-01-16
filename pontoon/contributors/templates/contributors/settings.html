@@ -21,12 +21,7 @@
     <img class="rounded" src="{{ user.gravatar_url(200) }}">
   </a>
 
-  <h2 id="username">
-    <div class="container">
-      <input type="text" placeholder="What's your name?" value="{{ user.first_name }}" maxlength="30">
-      <div class="submit fa fa-arrow-circle-right"></div>
-    </div>
-  </h2>
+  <h2 id="username">{{ user.first_name }}</h2>
 
   <ul class="info">
     {{ Checkbox.checkbox('Quality checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run quality checks before submitting translations') }}
@@ -49,13 +44,28 @@
     {% csrf_token %}
     <input type="hidden" name="return_url" value="{{ return_url(request) }}">
 
+    <div id="profile-form">
+      <h3>Personal infomation</h3>
+      <div class="field">
+          {{ profile_form.first_name.label_tag(label_suffix='') }}
+          {{ profile_form.first_name }}
+          {{ profile_form.first_name.errors }}
+      </div>
+      <div class="field">
+          {{ profile_form.email.label_tag(label_suffix='') }}
+          {{ profile_form.email }}
+          {{ profile_form.email.errors }}
+          <p class="help">{{ profile_form.email.help_text }}</p>
+      </div>
+    </div>
+
     <h3>Preferred locales <span class="small stress">(to get suggestions from)</span></h3>
 
     {{ multiple_locale_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
 
     <div class="controls">
       <a class="cancel" href="{{ return_url(request) }}">Cancel</a>
-      <button class="button active">Save</button>
+      <button class="submit button active">Save</button>
     </div>
   </form>
 </section>

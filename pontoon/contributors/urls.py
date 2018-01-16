@@ -51,9 +51,6 @@ urlpatterns = [
         name='pontoon.contributors.toggle_user_profile_attribute'),
 
     # AJAX
-    url(r'^save-user-name/$', views.save_user_name,
-        name='pontoon.contributors.save_user_name'),
-
     url(r'^save-custom-homepage/$', views.save_custom_homepage,
         name='pontoon.contributors.save_custom_homepage'),
 ]

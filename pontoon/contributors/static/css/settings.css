@@ -52,3 +52,47 @@
   float: none;
   margin: 9px;
 }
+
+#profile-form {
+  display: block;
+  position: relative;
+  text-align: left;
+  margin: 0 auto 70px auto;
+  width: 620px;
+}
+
+#profile-form .field {
+  margin-top: 20px;
+  text-align: left;
+}
+
+#profile-form .field input {
+  color: #FFFFFF;
+  background: #333941;
+  border: 1px solid #4d5967;
+  border-radius: 3px;
+  float: none;
+  width: 290px;
+  padding: 4px;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#profile-form button {
+  margin-top: 10px;
+}
+
+#profile-form .help {
+  color: #888888;
+  font-style: italic;
+  margin-top: 5px;
+}
+
+.errorlist {
+  color: #F36;
+  list-style: none;
+  margin: 0;
+  margin-top: 5px;
+  text-align: left;
+}

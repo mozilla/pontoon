@@ -159,15 +159,34 @@ ProjectLocalePermsFormsSet = forms.modelformset_factory(
 )
 
 
-class UserFirstNameForm(forms.ModelForm):
+class UserProfileForm(forms.ModelForm):
     """
     Form is responsible for saving user's name.
     """
     first_name = forms.RegexField(regex='^[^<>"\'&]+$', max_length=30, strip=True)
+    email = forms.EmailField(
+        help_text=(
+            'Changing your email address will cause a logout. '
+            'Make sure the new one is correct before saving!'
+        )
+    )
 
     class Meta:
         model = User
-        fields = ('first_name',)
+        fields = ('first_name', 'email')
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if (
+            email and
+            (
+                User.objects.filter(email=email)
+                .exclude(username=self.instance.username)
+                .exists()
+            )
+        ):
+            raise forms.ValidationError(u'Email address must be unique.')
+        return email
 
 
 class UserCustomHomepageForm(forms.ModelForm):

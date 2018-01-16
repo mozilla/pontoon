@@ -1,46 +1,5 @@
 $(function() {
 
-  var input = $('#username input');
-
-  // Save user name handler
-  function save() {
-    $.ajax({
-      url: '/save-user-name/',
-      type: 'POST',
-      data: {
-        csrfmiddlewaretoken: $('#server').data('csrf'),
-        first_name: $.trim(input.val())
-      },
-      success: function(data) {
-        if (data === "ok") {
-          input.blur();
-          Pontoon.endLoader('Thank you!');
-        }
-      },
-      error: function(request) {
-        if (request.responseText === "error") {
-          Pontoon.endLoader('Oops, something went wrong.', 'error');
-        } else {
-          Pontoon.endLoader(request.responseText, 'error');
-        }
-      }
-    });
-  }
-
-  // Save user name by mouse or keyboard
-  $('.submit').click(function() {
-    if ($(this).css('opacity') === "0") {
-      return;
-    }
-    save();
-  });
-  input.keydown(function(e) {
-    if (e.which === 13) {
-      e.preventDefault();
-      save();
-    }
-  });
-
   function loadNextEvents(cb) {
     var currentPage = $timeline.data('page'),
       nextPage = parseInt(currentPage, 10) + 1,
