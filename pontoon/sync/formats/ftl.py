@@ -139,8 +139,8 @@ class FTLResource(ParsedResource):
             pass  # Already exists, phew!
 
         with codecs.open(self.path, 'w+', 'utf-8') as f:
-            f.write(serializer.serialize(structure))
             log.debug('Saved file: %s', self.path)
+            f.write(serializer.serialize(structure))
 
 
 def parse(path, source_path=None, locale=None):
