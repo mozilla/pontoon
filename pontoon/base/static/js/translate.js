@@ -591,7 +591,9 @@ var Pontoon = (function (my) {
       if (entity.source) {
         if (typeof(entity.source) === 'object') {
           $.each(entity.source, function() {
-            self.appendMetaData('#:', this.join(':'));
+            if (Array.isArray(this)) {
+              self.appendMetaData('#:', this.join(':'));
+            }
           });
         } else {
           self.appendMetaData('Source', entity.source);
