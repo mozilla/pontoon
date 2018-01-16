@@ -9,5 +9,5 @@ set -v -e -x
 apt-get update
 
 # Install packages for building python packages, postgres, lxml, sasl, and cffi
-apt-get install -y git nodejs-legacy npm libxml2-dev libxslt1-dev libmemcached-dev \
+apt-get install -y git build-essential libxml2-dev libxslt1-dev libmemcached-dev \
     postgresql-server-dev-9.4 postgresql-client-9.4

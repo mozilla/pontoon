@@ -139,6 +139,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.fxa',
     'notifications',
     'graphene_django',
+    'webpack_loader',
 )
 
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
@@ -192,6 +193,7 @@ TEMPLATES = [
                 'django_jinja.builtins.extensions.StaticFilesExtension',
                 'django_jinja.builtins.extensions.DjangoFiltersExtension',
                 'pipeline.templatetags.ext.PipelineExtension',
+                'webpack_loader.contrib.jinja2ext.WebpackExtension',
             ],
         }
     },
@@ -219,11 +221,6 @@ AUTHENTICATION_BACKENDS = [
 # App supports giving permissions for anonymous users.
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RAISE_403 = True
-
-PIPELINE_COMPILERS = (
-    'pipeline.compilers.es6.ES6Compiler',
-)
-
 PIPELINE_YUGLIFY_BINARY = path('node_modules/.bin/yuglify')
 PIPELINE_BABEL_BINARY = path('node_modules/.bin/babel')
 PIPELINE_BABEL_ARGUMENTS = '--modules ignore'
@@ -520,9 +517,9 @@ STATIC_URL = STATIC_HOST + '/static/'
 
 STATICFILES_STORAGE = 'pontoon.base.storage.GzipManifestPipelineStorage'
 STATICFILES_FINDERS = (
+    'pipeline.finders.PipelineFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'pipeline.finders.PipelineFinder',
 )
 
 

@@ -15,6 +15,7 @@ script:
   - pylama pontoon
   - python manage.py collectstatic --noinput
   - python manage.py test --with-coverage
+  - ./node_modules/.bin/webpack
   - py.test --cov-append --cov-report=term --cov=. -v
   - codecov
 

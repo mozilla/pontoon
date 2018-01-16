@@ -2,6 +2,11 @@
 
 # Prepares then runs the webapp.
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+# This loads the already installed nvm
+nvm install node
+
 echo "Install latest npm modules"
 cd /app
 npm install

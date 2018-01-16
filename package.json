@@ -4,8 +4,6 @@
   "description": "Mozilla in-place localization tool.",
   "private": true,
   "dependencies": {
-    "babel": "6.23.0",
-    "yuglify": "0.1.4"
   },
   "engines": {
     "node": "6.9.5"
@@ -15,5 +13,23 @@
     "url": "https://github.com/mozilla/pontoon.git"
   },
   "author": "Mozilla",
-  "license": "BSD"
+  "license": "BSD",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-builtin-extend": "^1.1.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-plugin-uglify": "^1.0.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "react": "^16.2.0",
+    "sync-exec": "^0.6.2",
+    "webpack": "^3.10.0",
+    "webpack-bundle-tracker": "^0.2.1",
+    "yuglify": "^2.0.0"
+  }
 }
