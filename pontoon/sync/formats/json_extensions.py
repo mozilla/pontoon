@@ -12,6 +12,8 @@ import logging
 import os
 
 from collections import OrderedDict
+from jsonschema import validate
+from jsonschema.exceptions import ValidationError
 
 from pontoon.sync import SyncError
 from pontoon.sync.exceptions import ParseError
@@ -20,6 +22,41 @@ from pontoon.sync.vcs.models import VCSTranslation
 
 
 log = logging.getLogger(__name__)
+
+SCHEMA = {
+    "type": "object",
+    "patternProperties": {
+        ".*": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "placeholders": {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*": {
+                            "type": "object",
+                            "properties": {
+                                "content": {
+                                    "type": "string"
+                                },
+                                "example": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["content"]
+                        }
+                    }
+                }
+            },
+            "required": ["message", "description"]
+        }
+    }
+}
 
 
 class JSONEntity(VCSTranslation):
@@ -76,7 +113,13 @@ class JSONResource(ParsedResource):
 
         try:
             with codecs.open(path, 'r', 'utf-8') as resource:
-                self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
+                self.json_file = json.load(resource)
+
+                try:
+                    validate(self.json_file, SCHEMA)
+                except ValidationError as e:
+                    raise ParseError(e)
+
         except (IOError, ValueError) as err:
             # If the file doesn't exist or cannot be decoded,
             # but we have a source resource,
@@ -109,6 +152,11 @@ class JSONResource(ParsedResource):
 
         with codecs.open(self.source_resource.path, 'r', 'utf-8') as resource:
             json_file = json.load(resource, object_pairs_hook=OrderedDict)
+
+            try:
+                validate(json_file, SCHEMA)
+            except ValidationError as e:
+                raise ParseError(e)
 
         # Iterate over a copy, leaving original free to modify
         for key, value in json_file.copy().items():
