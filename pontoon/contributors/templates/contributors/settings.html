@@ -55,10 +55,7 @@
           {{ profile_form.email.label_tag(label_suffix='') }}
           {{ profile_form.email }}
           {{ profile_form.email.errors }}
-          <div id="email-warning">
-            Caution: Changing your email address will cause a logout.<br />
-            Make sure the new one is correct before saving!
-          </div>
+          <p class="help">{{ profile_form.email.help_text }}</p>
       </div>
     </div>
 

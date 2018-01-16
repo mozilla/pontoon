@@ -83,10 +83,12 @@
   margin-top: 10px;
 }
 
-#email-warning {
-  display: none;
+#profile-form .help {
+  color: #FED271;
+  font-style: italic;
+  font-weight: bold;
 }
-#email-warning,
+
 .errorlist {
   color: #F36;
   list-style: none;
