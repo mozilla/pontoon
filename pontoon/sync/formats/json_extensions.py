@@ -14,6 +14,7 @@ import os
 from collections import OrderedDict
 
 from pontoon.sync import SyncError
+from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.models import VCSTranslation
 
@@ -76,13 +77,14 @@ class JSONResource(ParsedResource):
         try:
             with codecs.open(path, 'r', 'utf-8') as resource:
                 self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
-        except IOError:
-            # If the file doesn't exist, but we have a source resource,
+        except (IOError, ValueError) as err:
+            # If the file doesn't exist or cannot be decoded,
+            # but we have a source resource,
             # we can keep going, we'll just not have any translations.
             if source_resource:
                 return
             else:
-                raise
+                raise ParseError(err)
 
         for order, (key, data) in enumerate(self.json_file.items()):
             self.entities[key] = JSONEntity(
