@@ -645,6 +645,19 @@ var Pontoon = (function (my) {
 
 
       /*
+       * Get source string value of a simple FTL message
+       */
+      getSourceStringValue: function (entity, fallback) {
+        if (entity.format !== 'ftl' || this.isComplexFTL()) {
+          return fallback;
+        }
+
+        var ast = fluentParser.parseEntry(entity.original);
+        return this.serializePlaceables(ast.value.elements);
+      },
+
+
+      /*
        * Focus first field of the FTL editor
        */
       focusFirstField: function () {
