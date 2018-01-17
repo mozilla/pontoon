@@ -34,6 +34,7 @@ var Pontoon = (function (my) {
         $('#ftl-area > .main-value').show().find('textarea').val('');
         $('#ftl-area .attributes ul:first').empty();
         $('#ftl-area > .main-value ul li:not(":first")').remove();
+        $('#only-value').parents('li').hide();
 
         var self = this;
         var entity = Pontoon.getEditorEntity();
@@ -104,11 +105,21 @@ var Pontoon = (function (my) {
               renderPluralEditor(value, name, pluralIndex);
             });
           }
+        }
+        // Value and attributes
+        else if (entityAST && entityAST.value && entityAST.attributes.length) {
+          var value = isTranslated ? self.serializePlaceables(translationAST.value.elements) : '';
 
-          $('#only-value').parents('li').hide();
+          $('#ftl-area .main-value ul')
+            .append(
+              '<li class="clearfix">' +
+                '<label class="id" for="ftl-id-value">Value</label>' +
+                Pontoon.fluent.getTextareaElement('value', value) +
+              '</li>'
+            );
         }
         // Attributes
-        else if (attributes && attributes.length) {
+        if (attributes && attributes.length) {
           attributes.forEach(function (attr) {
             var id = attr.id.name;
             var value = isTranslated ? self.serializePlaceables(attr.value.elements) : '';
@@ -151,9 +162,9 @@ var Pontoon = (function (my) {
           $('#ftl-area .attributes textarea').keyup();
 
         }
-        // Show source if rich FTL editor does not support the translation or
-        // if translation is not available and source string is displayed as source
-        else if ($('#ftl-original .main-value ul li.source').length) {
+
+        // Show source editor if source string is displayed as source
+        if ($('#ftl-original .main-value ul li.source').length) {
           var value = entity.key + ' = \n';
 
           if (isTranslated) {
@@ -419,7 +430,14 @@ var Pontoon = (function (my) {
               '</span>' +
             '</li>';
           });
-
+        }
+        // Value and attributes
+        else if (ast && ast.value && ast.attributes.length) {
+          original += '<li>' +
+            '<span class="id">Value</span>' +
+            '<span class="value">' + self.serializePlaceables(ast.value.elements, true) +
+            '</span>' +
+          '</li>';
         }
         // Attributes
         if (ast.attributes && ast.attributes.length) {
@@ -498,7 +516,7 @@ var Pontoon = (function (my) {
         else if (this.isFTLEditorEnabled()) {
           // Main value
           var entityAST = fluentParser.parseEntry(entity.original);
-          var value = $('#ftl-area > .main-value textarea').val();
+          var value = $('#ftl-area > .main-value textarea:visible').val();
           var attributes = '';
 
           // Plurals
