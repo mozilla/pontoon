@@ -114,13 +114,9 @@ class JSONResource(ParsedResource):
         try:
             with codecs.open(path, 'r', 'utf-8') as resource:
                 self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
+                validate(self.json_file, SCHEMA)
 
-                try:
-                    validate(self.json_file, SCHEMA)
-                except ValidationError as e:
-                    raise ParseError(e)
-
-        except (IOError, ValueError) as err:
+        except (IOError, ValueError, ValidationError) as err:
             # If the file doesn't exist or cannot be decoded,
             # but we have a source resource,
             # we can keep going, we'll just not have any translations.
