@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "description": "Mozilla in-place localization tool.",
   "private": true,
-  "dependencies": {
-  },
+  "dependencies": {},
   "engines": {
     "node": "6.9.5"
   },
@@ -14,6 +13,27 @@
   },
   "author": "Mozilla",
   "license": "BSD",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "testMatch": [
+      "**/tests/js/**/*.js?(x)"
+    ],
+    "modulePaths": [
+      "<rootDir>/pontoon/static/js",
+      "<rootDir>/static/placeholder"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/static/placeholder/**/*.{js,jsx}",
+      "**/pontoon/**/static/**/*.{js,jsx}",
+      "**/tests/js/**/*.{js,jsx}",
+      "!static/*",
+      "!**/*.min.js",
+      "!**/js/lib/**/*.js"
+    ]
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
@@ -26,7 +46,12 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^4.15.0",
+    "eslint-plugin-react": "^7.5.1",
+    "jest": "^22.1.2",
     "react": "^16.2.0",
+    "react-test-renderer": "^16.2.0",
     "sync-exec": "^0.6.2",
     "webpack": "^3.10.0",
     "webpack-bundle-tracker": "^0.2.1",
