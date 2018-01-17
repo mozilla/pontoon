@@ -14,9 +14,12 @@ before_script:
 script:
   - pylama pontoon
   - python manage.py collectstatic --noinput
-  - python manage.py test --with-coverage
   - ./node_modules/.bin/webpack
+  - npm test
+  - python manage.py test --with-coverage
   - py.test --cov-append --cov-report=term --cov=. -v
+  # This temporarily exits 0 while we cleanup
+  - (./node_modules/.bin/eslint .; exit 0)
   - codecov
 
   # Heroku deployment file is valid

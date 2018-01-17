@@ -1,0 +1,11 @@
+**/*.bundle.js
+**/*.js.map
+**/dist/**
+vendor/**
+webpack.config.js
+coverage/**
+static/*
+**/*.min.js
+**/js/lib/**/*.js
+**/app/error_pages/**/*.js
+**/*blockrain*js
