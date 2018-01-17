@@ -1457,7 +1457,7 @@ body > header aside p {
   font-weight: 300;
   border: 1px solid #5E6475;
   background: transparent;
-  color: #FFFFFF;
+  color: #AAAAAA;
   display: inline-block;
   font-weight: normal;
   margin: 2px 5px 2px 0;
@@ -1467,11 +1467,6 @@ body > header aside p {
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-}
-
-.ftl-area section .id.built-in,
-.ftl-area .main-value .id {
-  color: #AAAAAA;
 }
 
 .ftl-area section .id .stress {
