@@ -11,7 +11,7 @@ var Pontoon = (function (my) {
     $('#ftl-area .main-value ul')
       .append(
         '<li class="clearfix">' +
-          '<label class="id built-in" for="ftl-id-' + name + '">' +
+          '<label class="id" for="ftl-id-' + name + '">' +
             '<span>' + name + '</span>' +
             (Pontoon.fluent.isCLDRplural(name) && example !== undefined ? '<span> (e.g. ' +
               '<span class="stress">' + example + '</span>' +
