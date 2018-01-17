@@ -29,6 +29,9 @@
       "<rootDir>/pontoon/static/js",
       "<rootDir>/static/placeholder"
     ],
+    "moduleNameMapper": {
+      "\\.(css|less)$": "identity-obj-proxy"
+    },
     "setupFiles": [
       "./tests/js/__setup__"
     ],
@@ -54,14 +57,20 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "css-loader": "^0.28.8",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^4.15.0",
     "eslint-plugin-react": "^7.5.1",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^22.1.2",
+    "jsdom": "^11.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-table": "^6.7.6",
     "react-test-renderer": "^16.2.0",
+    "request": "^2.83.0",
+    "style-loader": "^0.19.1",
     "sync-exec": "^0.6.2",
     "webpack": "^3.10.0",
     "webpack-bundle-tracker": "^0.2.1",
