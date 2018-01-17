@@ -25,36 +25,32 @@ log = logging.getLogger(__name__)
 
 SCHEMA = {
     "type": "object",
-    "patternProperties": {
-        ".*": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "placeholders": {
-                    "type": "object",
-                    "patternProperties": {
-                        ".*": {
-                            "type": "object",
-                            "properties": {
-                                "content": {
-                                    "type": "string"
-                                },
-                                "example": {
-                                    "type": "string"
-                                }
-                            },
-                            "required": ["content"]
-                        }
-                    }
-                }
+    "additionalProperties": {
+        "type": "object",
+        "properties": {
+            "message": {
+                "type": "string"
             },
-            "required": ["message", "description"]
-        }
+            "description": {
+                "type": "string"
+            },
+            "placeholders": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                        "content": {
+                            "type": "string"
+                        },
+                        "example": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["content"]
+                }
+            }
+        },
+        "required": ["message", "description"]
     }
 }
 
