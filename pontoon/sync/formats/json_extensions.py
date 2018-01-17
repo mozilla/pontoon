@@ -113,7 +113,7 @@ class JSONResource(ParsedResource):
 
         try:
             with codecs.open(path, 'r', 'utf-8') as resource:
-                self.json_file = json.load(resource)
+                self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
 
                 try:
                     validate(self.json_file, SCHEMA)
