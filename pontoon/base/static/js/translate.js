@@ -1923,7 +1923,7 @@ var Pontoon = (function (my) {
 
         var entity = self.getEditorEntity(),
             original = entity['original' + self.isPluralized()],
-            source = self.fluent.getSimplePreview(entity, original, entity);
+            source = self.fluent.getSourceStringValue(entity, original);
 
         self.updateAndFocusTranslationEditor(source);
         self.moveCursorToBeginning();
