@@ -103,6 +103,14 @@ class AsSimpleTranslationTests(TestCase):
     .other = Other Simple String'''
         assert_equal(as_simple_translation(source), 'Simple String')
 
+    def test_attribute_select_expression(self):
+        source = '''key
+    .placeholder = { PLATFORM() ->
+        [win] Simple String
+       *[other] Other Simple String
+    }'''
+        assert_equal(as_simple_translation(source), 'Simple String')
+
     def test_other_ftl(self):
         source = 'warning-upgrade = { LINK("Link text", title: "Link title") }Simple String'
         assert_equal(as_simple_translation(source), 'Simple String')

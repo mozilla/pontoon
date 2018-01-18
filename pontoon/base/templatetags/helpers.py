@@ -280,23 +280,27 @@ def as_simple_translation(source):
     if type(translation_ast) == ast.Junk:
         return source
 
+    # Value: use entire ast
     if translation_ast.value:
-        # Strings with variants: display first variant
-        try:
-            elements = translation_ast.value.elements
-            variants = elements[0].expression.variants
-            return _serialize_elements(variants[0].value.elements)
+        tree = translation_ast
 
-        # Simple strings
-        except (AttributeError, IndexError):
-            return _serialize_elements(translation_ast.value.elements)
+    # Attributes: use first attribute
+    elif translation_ast.attributes:
+        tree = translation_ast.attributes[0]
 
+    # This should never happen! Return fallback.
     else:
-        # Strings with attributes: display first attribute
-        try:
-            attributes = translation_ast.attributes
-            return _serialize_elements(attributes[0].value.elements)
+        return source
 
-        # All other strings: display unchanged
-        except (AttributeError, IndexError):
-            return source
+    elements = tree.value.elements
+
+    # String with variants: use first variant
+    try:
+        print elements
+        elements = elements[0].expression.variants[0].value.elements
+
+    # Simple string: use entire value
+    except (AttributeError, IndexError):
+        pass
+
+    return _serialize_elements(elements)

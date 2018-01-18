@@ -258,6 +258,27 @@ var Pontoon = (function (my) {
 
 
       /*
+       * Is SelectExpression?
+       */
+      isSelectExpression: function (ast) {
+        var self = this;
+
+        if (
+          ast &&
+          ast.value &&
+          ast.value.elements &&
+          ast.value.elements.length &&
+          ast.value.elements[0].type &&
+          ast.value.elements[0].type === 'SelectExpression'
+        ) {
+          return true;
+        }
+
+        return false;
+      },
+
+
+      /*
        * Serialize value with placeables into a simple string
        *
        * markPlaceables Should placeables be marked up?
@@ -613,26 +634,36 @@ var Pontoon = (function (my) {
           var source = object.original || object.string;
 
           if (!source) {
-            return response;
+            return fallback;
           }
 
           var ast = fluentParser.parseEntry(source);
+          var tree = null;
 
+          // Value: use entire ast
           if (ast.value) {
-            response = this.serializePlaceables(ast.value.elements);
+            tree = ast;
           }
-          // Attributes
+
+          // Attributes: use first attribute
+          else if (ast.attributes.length) {
+            tree = ast.attributes[0];
+          }
+
+          // This should never happen! Return fallback.
           else {
-            var attributes = ast.attributes;
-            if (attributes && attributes.length) {
-              response = this.serializePlaceables(attributes[0].value.elements);
-            }
+            return fallback;
           }
-          // Plurals
-          if (this.isPlural(ast)) {
-            var variants = ast.value.elements[0].variants;
-            response = this.serializePlaceables(variants[0].value.elements);
+
+          // Simple string: use entire value
+          var elements = tree.value.elements;
+
+          // SelectExpression: use first variant
+          if (this.isSelectExpression(tree)) {
+            elements = elements[0].variants[0].value.elements;
           }
+
+          response = this.serializePlaceables(elements);
 
           // Update source string markup
           if (object.hasOwnProperty('original')) {
