@@ -20,9 +20,17 @@
     "testMatch": [
       "**/tests/js/**/*.js?(x)"
     ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/tests/js/__setup__"
+    ],
+    "testURL": "https://nowhere.com/at/all",
     "modulePaths": [
       "<rootDir>/pontoon/static/js",
       "<rootDir>/static/placeholder"
+    ],
+    "setupFiles": [
+      "./tests/js/__setup__"
     ],
     "collectCoverage": true,
     "collectCoverageFrom": [
@@ -46,11 +54,13 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^4.15.0",
     "eslint-plugin-react": "^7.5.1",
     "jest": "^22.1.2",
     "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "react-test-renderer": "^16.2.0",
     "sync-exec": "^0.6.2",
     "webpack": "^3.10.0",
