@@ -123,7 +123,7 @@ def ajax_permissions(request, locale):
     all_users = User.objects.exclude(pk__in=managers).exclude(pk__in=translators).exclude(email='')
 
     contributors_qs = User.translators.with_translation_counts(None, Q(locale=l))
-    contributors = set([contributor.email for contributor in contributors_qs])
+    contributors = set(contributor.email for contributor in contributors_qs)
 
     locale_projects = l.projects_permissions
 
