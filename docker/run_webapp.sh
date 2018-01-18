@@ -2,14 +2,12 @@
 
 # Prepares then runs the webapp.
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-# This loads the already installed nvm
-nvm install node
-
 echo "Install latest npm modules"
 cd /app
-npm install
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+nvm use node
+npm install .
 
 echo "Prepare revision file"
 git rev-parse HEAD > static/revision.txt

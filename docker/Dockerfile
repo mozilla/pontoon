@@ -6,6 +6,13 @@ WORKDIR /app
 COPY docker/set_up_ubuntu.sh /app/
 RUN DEBIAN_FRONTEND=noninteractive /app/set_up_ubuntu.sh
 
+# Create the app user
+RUN useradd --shell /bin/bash -c "" -m app
+
+# Setup apps's env
+COPY docker/set_up_env.sh /app/
+RUN sudo -u app /app/set_up_env.sh
+
 # Install Pontoon Python requirements
 COPY requirements.txt /app/requirements.txt
 COPY requirements-dev.txt /app/requirements-dev.txt
