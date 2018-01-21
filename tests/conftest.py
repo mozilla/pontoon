@@ -17,7 +17,16 @@ def _load_fixtures(*modules):
 
 
 @pytest.fixture(scope='session')
-def tests_use_db(request):
+def doctests_use_db(request):
+    # mark all doctests as using db as they
+    # are unable to do it themselves
+    for item in request.node.items:
+        if item.name.endswith('.tst'):
+            item.add_marker('django_db')
+
+
+@pytest.fixture(scope='session')
+def tests_use_db(request, doctests_use_db):
     """Check if any of the tests in this run require db setup"""
     return any(
         item for item
