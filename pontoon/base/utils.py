@@ -1,4 +1,5 @@
 import codecs
+import fnmatch
 import functools
 import json
 import os
@@ -657,3 +658,18 @@ def build_translation_memory_file(creation_date, locale_code, entries):
         u'\n\t</body>'
         u'\n</tmx>'
     )
+
+
+def glob_to_regex(glob):
+    """This util uses python's fnmatch to convert a glob to a regex in a way
+    that can then be used with django's `__regex` queryset selector.
+
+    It prefixes the regex with `^`, and replaces the more complex match ending
+    provided by fnmatch, with the simpler `$`
+
+    """
+    regex = "^%s" % fnmatch.translate(glob)
+    return (
+        "%s$" % regex[:-7]
+        if regex[-7:] == "\Z(?ms)"
+        else regex)
