@@ -158,7 +158,11 @@ class UserTranslationsManager(UserManager):
             contributor.translations_needs_work_count = user['fuzzy']
             contributor.user_role = contributor.role(managers, translators)
 
-        return sorted(contributors, key=lambda x: -x.translations_count)[:100]
+        contributors_list = sorted(contributors, key=lambda x: -x.translations_count)
+        if limit:
+            contributors_list = contributors_list[:limit]
+
+        return contributors_list
 
 
 class UserCustomManager(UserManager):
