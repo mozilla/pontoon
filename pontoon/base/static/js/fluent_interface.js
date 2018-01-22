@@ -23,6 +23,57 @@ var Pontoon = (function (my) {
       );
   }
 
+  function renderOriginalVariant(value, elements) {
+    return '<li>' +
+      '<span class="id">' +
+        value +
+      '</span>' +
+      '<span class="value">' +
+        Pontoon.fluent.serializePlaceables(elements, true) +
+      '</span>' +
+    '</li>';
+  }
+
+  function renderOriginalSimpleElement(simpleElements, title) {
+    if (simpleElements.length) {
+      var response = renderOriginalVariant(title, simpleElements);
+      simpleElements = [];
+      return response;
+    }
+
+    return '';
+  }
+
+  /*
+   * Render original string elements.
+   */
+  function renderOriginalElements(elements, title) {
+    var content = '';
+    var simpleElements = [];
+
+    elements.forEach(function (element, i, array) {
+      // Adjoining simple elements are concatenated and presented as a simple string
+      if (Pontoon.fluent.isSimpleElement(element)) {
+        simpleElements.push(element);
+
+        if (i === array.length - 1) {
+          content += renderOriginalSimpleElement(simpleElements, title);
+        }
+      }
+
+      // SelectExpression elements are presented as a list of variants
+      else if (element.type === 'SelectExpression') {
+        content += renderOriginalSimpleElement(simpleElements, title);
+
+        element.variants.forEach(function (item) {
+          content += renderOriginalVariant(item.key.value || item.key.name, item.value.elements);
+        });
+      }
+    });
+
+    return content;
+  }
+
   return $.extend(true, my, {
     fluent: {
 
@@ -199,24 +250,68 @@ var Pontoon = (function (my) {
 
 
       /*
+       * Is ast of a supported message?
+       *
+       * Message is supported if all value elements
+       * and all attribute elements are of type:
+       * - TextElement
+       * - ExternalArgument
+       * - MessageReference
+       * - SelectExpression?
+       */
+      isSupportedMessage: function (ast) {
+        function elementsSupported(elements) {
+          return elements.every(function(item) {
+            return [
+              'TextElement',
+              'ExternalArgument',
+              'MessageReference',
+              'SelectExpression'
+            ].indexOf(item.type) >= 0;
+          });
+        }
+
+        var valueSupported = !ast.value || elementsSupported(ast.value.elements);
+        var attributesSupported = ast.attributes.every(function (attribute) {
+          return attribute.value && elementsSupported(attribute.value.elements);
+        });
+
+        return valueSupported && attributesSupported;
+      },
+
+
+      /*
+       * Is element of type that can be presented as a simple string:
+       * - TextElement
+       * - ExternalArgument
+       * - MessageReference
+       */
+      isSimpleElement: function (element) {
+        return [
+          'TextElement',
+          'ExternalArgument',
+          'MessageReference'
+        ].indexOf(element.type) >= 0;
+      },
+
+
+      /*
        * Is ast of a simple string?
        *
        * A simple string has no attributes or tags,
-       * and the value can only contains text and
+       * and the value can only contain text and
        * references to external arguments or other messages.
        */
       isSimpleString: function (ast) {
+        var self = this;
+
         if (
           ast &&
           !ast.attributes.length &&
           !ast.tags.length &&
           ast.value &&
           ast.value.elements.every(function(item) {
-            return [
-              'TextElement',
-              'ExternalArgument',
-              'MessageReference'
-            ].indexOf(item.type) >= 0;
+            return self.isSimpleElement(item);
           })
         ) {
           return true;
@@ -268,7 +363,6 @@ var Pontoon = (function (my) {
           ast.value &&
           ast.value.elements &&
           ast.value.elements.length &&
-          ast.value.elements[0].type &&
           ast.value.elements[0].type === 'SelectExpression'
         ) {
           return true;
@@ -430,56 +524,46 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var ast = fluentParser.parseEntry(entity.original);
-        var original = '';
-
-        $('#ftl-original section ul').empty();
         $('#original').hide();
         $('#ftl-original').show();
+        $('#ftl-original section ul').empty();
+
+        var ast = fluentParser.parseEntry(entity.original);
+        var unsupported = false;
+        var value = '';
+        var attributes = '';
 
         // Simple string: only value
         if (self.isSimpleString(ast)) {
-          original += '<li><p>' + self.serializePlaceables(ast.value.elements, true) + '</p></li>';
-        }
-        // Plurals
-        else if (self.isPlural(ast)) {
-          var variants = ast.value.elements[0].variants;
-          variants.forEach(function (item) {
-            original += '<li>' +
-              '<span class="id">' + (item.key.value || item.key.name) + '</span>' +
-              '<span class="value">' + self.serializePlaceables(item.value.elements, true) +
-              '</span>' +
-            '</li>';
-          });
-        }
-        // Value and attributes
-        else if (ast && ast.value && ast.attributes.length) {
-          original += '<li>' +
-            '<span class="id">Value</span>' +
-            '<span class="value">' + self.serializePlaceables(ast.value.elements, true) +
-            '</span>' +
-          '</li>';
-        }
-        // Attributes
-        if (ast.attributes && ast.attributes.length) {
-          ast.attributes.forEach(function (attr) {
-            $('#ftl-original .attributes ul')
-              .append(
-                '<li>' +
-                  '<span class="id">' + attr.id.name + '</span>' +
-                  '<span class="value">' + self.serializePlaceables(attr.value.elements, true) + '</span>' +
-                '</li>'
-              );
-          });
-        }
-        // Rich FTL string display does not support the translation: show source
-        else if (original === '') {
-          // Remove comment
-          ast.comment = null;
-          original = '<li class="source">' + fluentSerializer.serializeEntry(ast) + '</li>';
+          value = '<li><p>' +
+            self.serializePlaceables(ast.value.elements, true) +
+          '</p></li>';
         }
 
-        $('#ftl-original .main-value ul').append(original);
+        // Unsupported string: render as source
+        else if (!self.isSupportedMessage(ast)) {
+          ast.comment = null; // Remove comment
+          value = '<li class="source">' +
+            fluentSerializer.serializeEntry(ast) +
+          '</li>';
+
+          unsupported = true;
+        }
+
+        // Value
+        else if (ast.value) {
+          value = renderOriginalElements(ast.value.elements, 'Value');
+        }
+
+        // Attributes
+        if (ast.attributes.length && !unsupported) {
+          ast.attributes.forEach(function (attr) {
+            attributes += renderOriginalElements(attr.value.elements, attr.id.name);
+          });
+        }
+
+        $('#ftl-original .attributes ul').append(attributes);
+        $('#ftl-original .main-value ul').append(value);
       },
 
 
