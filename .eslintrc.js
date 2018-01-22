@@ -4,12 +4,14 @@ module.exports = {
         "plugin:react/recommended"
     ],
     env: {
+        es6: true,
         browser: true,
     },
     parserOptions: {
-        ecmaVersion: 6,
+        ecmaVersion: 2017,
         ecmaFeatures: {
             jsx: true,
+            experimentalObjectRestSpread: true
         },
         sourceType: 'module',
     },
@@ -23,6 +25,9 @@ module.exports = {
         browser: false,
         jest: false,
         Promise: false,
+        Set: false,
+        URLSearchParameters: false,
+        FormData: false,
         require: false,
         shortcut: false,
         sorttable: false,
@@ -40,5 +45,6 @@ module.exports = {
         "react/jsx-key": 0,
         "react/jsx-uses-react": 1,
         'react/jsx-uses-vars': 1,
+        "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }],
     },
 };

@@ -9,3 +9,4 @@ static/*
 **/js/lib/**/*.js
 **/app/error_pages/**/*.js
 **/*blockrain*js
+assets/*
