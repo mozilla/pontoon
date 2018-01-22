@@ -296,7 +296,6 @@ def as_simple_translation(source):
 
     # String with variants: use first variant
     try:
-        print elements
         elements = elements[0].expression.variants[0].value.elements
 
     # Simple string: use entire value

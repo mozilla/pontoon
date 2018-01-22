@@ -51,16 +51,15 @@ var Pontoon = (function (my) {
     var content = '';
     var simpleElements = [];
 
-    elements.forEach(function (element, i, array) {
+    elements.forEach(function (element, i) {
       // Adjoining simple elements are concatenated and presented as a simple string
       if (Pontoon.fluent.isSimpleElement(element)) {
         simpleElements.push(element);
 
-        if (i === array.length - 1) {
+        if (i === elements.length - 1) {
           content += renderOriginalSimpleElement(simpleElements, title);
         }
       }
-
       // SelectExpression elements are presented as a list of variants
       else if (element.type === 'SelectExpression') {
         content += renderOriginalSimpleElement(simpleElements, title);
@@ -267,7 +266,7 @@ var Pontoon = (function (my) {
               'ExternalArgument',
               'MessageReference',
               'SelectExpression'
-            ].indexOf(item.type) >= 0;
+            ].indexOf(item.type) === 0;
           });
         }
 
@@ -291,7 +290,7 @@ var Pontoon = (function (my) {
           'TextElement',
           'ExternalArgument',
           'MessageReference'
-        ].indexOf(element.type) >= 0;
+        ].indexOf(element.type) === 0;
       },
 
 
@@ -356,8 +355,6 @@ var Pontoon = (function (my) {
        * Is SelectExpression?
        */
       isSelectExpression: function (ast) {
-        var self = this;
-
         if (
           ast &&
           ast.value &&
