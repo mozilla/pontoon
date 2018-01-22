@@ -20,12 +20,14 @@ before_script:
   - psql -c 'create database pontoon;' -U postgres
 script:
   - pylama pontoon
+  - pylama tests
   - ./node_modules/.bin/webpack
   - python manage.py collectstatic --noinput
   - npm test
   - python manage.py test --with-coverage
   - py.test --cov-append --cov-report=term --cov=. -v
   # This temporarily exits 0 while we cleanup
+  - ./node_modules/.bin/eslint pontoon/static tests/js
   - (./node_modules/.bin/eslint .; exit 0)
   - codecov
 

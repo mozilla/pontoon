@@ -156,8 +156,8 @@ def test_locale_parts_stats_pages_tied_to_resources(locale_parts):
     locale0, locale1, entity0 = locale_parts
     project = entity0.resource.project
     resourceX = Resource.objects.create(
-            project=project,
-            path='/other/path.po')
+        project=project,
+        path='/other/path.po')
     Entity.objects.create(resource=resourceX, string="Entity X")
     TranslatedResource.objects.create(
         resource=resourceX, locale=locale0)
