@@ -5,13 +5,13 @@ var BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
   entry: {
-      'placeholder': 'placeholder'
+      'placeholder': 'placeholder/placeholder'
   },
   output: {
     // This copies each source entry into the extension dist folder named
     // after its entry config key.
-      path: path.resolve(__dirname, 'static/webpack_bundles/'),
-      filename: '[name].js',
+      path: path.resolve(__dirname, 'assets/webpack_bundles/'),
+      filename: '[name].js'
   },
   module: {
     // This transpiles all code (except for third party modules) using Babel.
@@ -30,7 +30,7 @@ module.exports = {
   resolve: {
     // This allows you to import modules just like you would in a NodeJS app.
     extensions: ['.js', '.jsx'],
-    modules: [path.resolve(__dirname, 'static/placeholder/'), "node_modules"]
+    modules: [path.resolve(__dirname, 'pontoon/static/js/'), "node_modules"]
   },
 
   plugins: [
