@@ -41,3 +41,10 @@ dockerloaddb:
 
 dockerrun:
 	${DC} run --rm --service-ports webapp
+
+dockerwebpack:
+	./docker/run_tests_in_docker.sh --shell -c " \
+	  export NVM_DIR=\"/home/app/.nvm\" \
+	    && . \"/home/app/.nvm/nvm.sh\" \
+	    && nvm use node \
+	    && ./node_modules/.bin/webpack -w"
