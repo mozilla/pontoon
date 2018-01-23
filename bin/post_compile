@@ -2,8 +2,10 @@
 
 # Compile static assets
 export PATH=/app/.heroku/node/bin:$PATH
+npm install .
 ./manage.py migrate --noinput
 ./manage.py collectstatic --noinput
+./node_modules/.bin/webpack
 
 # Create a file with the current git HEAD revision.
 # We use that file to expose the git revision in our web app, allowing
