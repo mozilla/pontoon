@@ -33,7 +33,7 @@ if [ "$1" == "--shell" ]; then
            -e LOCAL_USER_ID=$UID \
            --tty \
            --interactive \
-           local/pontoon /bin/bash
+           local/pontoon /bin/bash "${@:2}"
 
 else
     # Create a data container to hold the repo directory contents and copy the
