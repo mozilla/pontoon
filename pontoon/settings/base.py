@@ -521,6 +521,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
+STATICFILES_DIRS = [path('assets')]
 
 
 # Set ALLOWED_HOSTS based on SITE_URL setting.

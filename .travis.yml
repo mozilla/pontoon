@@ -20,8 +20,8 @@ before_script:
   - psql -c 'create database pontoon;' -U postgres
 script:
   - pylama pontoon
-  - python manage.py collectstatic --noinput
   - ./node_modules/.bin/webpack
+  - python manage.py collectstatic --noinput
   - npm test
   - python manage.py test --with-coverage
   - py.test --cov-append --cov-report=term --cov=. -v
