@@ -288,10 +288,6 @@ def as_simple_translation(source):
     elif translation_ast.attributes:
         tree = translation_ast.attributes[0]
 
-    # This should never happen! Return fallback.
-    else:
-        return source
-
     elements = tree.value.elements
 
     # String with variants: use first variant

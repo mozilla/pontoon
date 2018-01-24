@@ -731,11 +731,6 @@ var Pontoon = (function (my) {
             tree = ast.attributes[0];
           }
 
-          // This should never happen! Return fallback.
-          else {
-            return fallback;
-          }
-
           // Simple string: use entire value
           var elements = tree.value.elements;
 
