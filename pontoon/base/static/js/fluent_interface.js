@@ -702,17 +702,17 @@ var Pontoon = (function (my) {
           var ast = fluentParser.parseEntry(source);
           var tree;
 
-          // Value: use entire ast
+          // Value: use entire AST
           if (ast.value) {
             tree = ast;
           }
 
-          // Attributes: use ast of the first attribute
-          else if (ast.attributes.length) {
+          // Attributes (must be present in valid AST if value isn't):
+          // use AST of the first attribute
+          else {
             tree = ast.attributes[0];
           }
 
-          // Simple string: use entire value
           var elements = tree.value.elements;
 
           // String with variants: use default variant

@@ -280,12 +280,13 @@ def as_simple_translation(source):
     if type(translation_ast) == ast.Junk:
         return source
 
-    # Value: use entire ast
+    # Value: use entire AST
     if translation_ast.value:
         tree = translation_ast
 
-    # Attributes: use first attribute
-    elif translation_ast.attributes:
+    # Attributes (must be present in valid AST if value isn't):
+    # use AST of the first attribute
+    else:
         tree = translation_ast.attributes[0]
 
     elements = tree.value.elements
