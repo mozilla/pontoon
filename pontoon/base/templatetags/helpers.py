@@ -290,9 +290,11 @@ def as_simple_translation(source):
 
     elements = tree.value.elements
 
-    # String with variants: use first variant
+    # String with variants: use default variant
     try:
-        elements = elements[0].expression.variants[0].value.elements
+        elements = filter(
+            lambda x: x.default, elements[0].expression.variants
+        )[0].value.elements
 
     # Simple string: use entire value
     except (AttributeError, IndexError):

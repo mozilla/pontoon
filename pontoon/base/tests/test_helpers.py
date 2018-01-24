@@ -90,7 +90,7 @@ class AsSimpleTranslationTests(TestCase):
         [1] Simple String
        *[other] Other Simple String
     }'''
-        assert_equal(as_simple_translation(source), 'Simple String')
+        assert_equal(as_simple_translation(source), 'Other Simple String')
 
     def test_attribute(self):
         source = '''key
@@ -109,7 +109,7 @@ class AsSimpleTranslationTests(TestCase):
         [win] Simple String
        *[other] Other Simple String
     }'''
-        assert_equal(as_simple_translation(source), 'Simple String')
+        assert_equal(as_simple_translation(source), 'Other Simple String')
 
     def test_other_ftl(self):
         source = 'warning-upgrade = { LINK("Link text", title: "Link title") }Simple String'

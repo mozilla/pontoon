@@ -725,7 +725,7 @@ var Pontoon = (function (my) {
             tree = ast;
           }
 
-          // Attributes: use first attribute
+          // Attributes: use ast of the first attribute
           else if (ast.attributes.length) {
             tree = ast.attributes[0];
           }
@@ -733,9 +733,11 @@ var Pontoon = (function (my) {
           // Simple string: use entire value
           var elements = tree.value.elements;
 
-          // SelectExpression: use first variant
+          // SelectExpression: use default variant
           if (this.isSelectExpression(tree)) {
-            elements = elements[0].variants[0].value.elements;
+            elements = elements[0].variants.filter(function (item) {
+              return item.default;
+            })[0].value.elements;
           }
 
           response = this.serializePlaceables(elements);
