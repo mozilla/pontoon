@@ -5,24 +5,6 @@ var Pontoon = (function (my) {
   var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
   var fluentSerializer = new FluentSyntax.FluentSerializer();
 
-  function renderPluralEditor(value, name, pluralIndex) {
-    var example = Pontoon.locale.examples[pluralIndex];
-
-    $('#ftl-area .main-value ul')
-      .append(
-        '<li class="clearfix">' +
-          '<label class="id" for="ftl-id-' + name + '">' +
-            '<span>' + name + '</span>' +
-            (Pontoon.fluent.isCLDRplural(name) && example !== undefined ? '<span> (e.g. ' +
-              '<span class="stress">' + example + '</span>' +
-            ')</span>' : '') +
-            '<sub class="fa fa-remove remove" title="Remove"></sub>' +
-          '</label>' +
-          Pontoon.fluent.getTextareaElement(name, value) +
-        '</li>'
-      );
-  }
-
   function renderOriginalVariant(value, elements) {
     return '<li>' +
       '<span class="id">' +
@@ -78,31 +60,109 @@ var Pontoon = (function (my) {
        * string and the translation.
        */
       renderEditor: function (translation) {
-        $('#ftl-area > .main-value').show().find('textarea').val('');
-        $('#ftl-area .attributes ul:first').empty();
-        $('#ftl-area > .main-value ul li:not(":first")').remove();
-        $('#only-value').parents('li').hide();
-
         var self = this;
         var entity = Pontoon.getEditorEntity();
+        var value = '';
+        var attributes = '';
+        var attributesTree = [];
 
-        translation = translation || entity.translation[0];
-
-        var isTranslated = translation.pk;
         var entityAST = fluentParser.parseEntry(entity.original);
-        var entityAttributes = [];
-        var attributes = entityAST.attributes;
-
-        var translationAST;
-        if (isTranslated) {
-          translationAST = fluentParser.parseEntry(translation.string);
-          attributes = translationAST.attributes;
+        if (entityAST.attributes.length) {
+          attributesTree = entityAST.attributes;
         }
 
-        if (entityAST.attributes) {
-          entityAttributes = entityAST.attributes.map(function (item) {
-            return item.id.name;
+        translation = translation || entity.translation[0];
+        var translationAST = null;
+        if (translation.pk) {
+          translationAST = fluentParser.parseEntry(translation.string);
+          if (translationAST.attributes.length) {
+            attributesTree = translationAST.attributes;
+          }
+        }
+
+        // Reset default editor values
+        $('#ftl-area > .main-value').show().find('textarea').val('');
+        $('#ftl-area > .main-value ul li:not(":first")').remove();
+        $('#ftl-area .attributes ul:first').empty();
+        $('#only-value').parents('li').hide();
+
+        function renderEditorVariant(title, elements, isPlural) {
+          // Special case: Access keys
+          var maxlength = '';
+          var accesskeysDiv = '';
+          if (title === 'accesskey') {
+            maxlength = '1';
+            accesskeysDiv = '<div class="accesskeys"></div>';
+          }
+
+          // Special case: Plurals
+          var exampleSpan = '';
+          if (isPlural) {
+            var example = Pontoon.locale.plural_examples[title];
+
+            if (example !== undefined) {
+              exampleSpan = '<span> (e.g. ' +
+                '<span class="stress">' + example + '</span>' +
+              ')</span>';
+            }
+          }
+
+          var value = translationAST ? self.serializePlaceables(elements) : '';
+          var textarea = Pontoon.fluent.getTextareaElement(title, value, maxlength);
+
+          return '<li>' +
+            '<label class="id" for="ftl-id-' + title + '">' +
+              '<span>' + title + '</span>' +
+              exampleSpan +
+            '</label>' +
+            accesskeysDiv +
+            textarea +
+          '</li>';
+        }
+
+        function renderEditorSimpleElement(simpleElements, title) {
+          if (simpleElements.length) {
+            var response = renderEditorVariant(title, simpleElements);
+            simpleElements = [];
+            return response;
+          }
+
+          return '';
+        }
+
+        function renderEditorElements(elements, title) {
+          var content = '';
+          var simpleElements = [];
+
+          elements.forEach(function (element, i, array) {
+            // Adjoining simple elements are concatenated and presented as a simple string
+            if (Pontoon.fluent.isSimpleElement(element)) {
+              simpleElements.push(element);
+
+              if (i === array.length - 1) {
+                content += renderEditorSimpleElement(simpleElements, title);
+              }
+            }
+
+            // SelectExpression elements are presented as a list of variants
+            else if (element.type === 'SelectExpression') {
+              content += renderEditorSimpleElement(simpleElements, title);
+
+              var isPlural = Pontoon.fluent.isPluralElement(element);
+              if (isPlural && !translationAST) {
+                Pontoon.locale.cldr_plurals.forEach(function (pluralName) {
+                  content += renderEditorVariant(pluralName, [], true);
+                });
+              }
+              else {
+                element.variants.forEach(function (item, i) {
+                  content += renderEditorVariant(item.key.value || item.key.name, item.value.elements, isPlural);
+                });
+              }
+            }
           });
+
+          return content;
         }
 
         // Simple string: only value
@@ -110,7 +170,7 @@ var Pontoon = (function (my) {
           self.isSimpleString(translationAST) ||
           self.isSimpleString(entityAST)
         ) {
-          var value = '';
+          value = '';
 
           if (translationAST) {
             value = self.serializePlaceables(translationAST.value.elements);
@@ -121,112 +181,53 @@ var Pontoon = (function (my) {
             .parents('li')
             .show();
         }
-        // Plurals
-        else if (self.isPlural(entityAST)) {
-          var pluralForms = Pontoon.locale.cldr_plurals.map(function (item) {
-            return Pontoon.CLDR_PLURALS[item];
-          });
 
-          if (!Pontoon.locale.examples) {
-            Pontoon.generateLocalePluralExamples();
-          }
+        // Unsupported translation or unsuppported original: show source view
+        else if (
+          (translationAST && !self.isSupportedMessage(translationAST)) ||
+          (!translationAST && !self.isSupportedMessage(entityAST))
+        ) {
+          value = entity.key + ' = \n';
 
-          // Translated
           if (translationAST) {
-            translationAST.value.elements[0].variants.forEach(function (variant, i) {
-              var value = self.serializePlaceables(variant.value.elements);
-              var name = variant.key.name || variant.key.value;
-              var pluralIndex = pluralForms.findIndex(function(item) {
-                return item === name;
-              });
-
-              renderPluralEditor(value, name, pluralIndex);
-            });
-          }
-          // Untranslated
-          else {
-            pluralForms.forEach(function (pluralName, pluralIndex) {
-              var value = '';
-              var name = pluralName;
-
-              renderPluralEditor(value, name, pluralIndex);
-            });
-          }
-        }
-        // Value and attributes
-        else if (entityAST && entityAST.value && entityAST.attributes.length) {
-          var value = isTranslated ? self.serializePlaceables(translationAST.value.elements) : '';
-
-          $('#ftl-area .main-value ul')
-            .append(
-              '<li class="clearfix">' +
-                '<label class="id" for="ftl-id-value">Value</label>' +
-                Pontoon.fluent.getTextareaElement('value', value) +
-              '</li>'
-            );
-        }
-        // Attributes
-        if (attributes && attributes.length) {
-          attributes.forEach(function (attr) {
-            var id = attr.id.name;
-            var value = isTranslated ? self.serializePlaceables(attr.value.elements) : '';
-
-            var maxlength = '';
-            var label = '';
-            var textarea = '';
-            var cls = '';
-
-            if (id === 'accesskey') {
-              maxlength = '1';
-              textarea = '<div class="accesskeys"></div>';
-            }
-            textarea += self.getTextareaElement(id, value, maxlength);
-
-            if ($.inArray(id, [entityAttributes])) {
-              label = '<label class="id" for="ftl-id-' + id + '">' +
-                '<span>' + id + '</span>' +
-              '</label>';
-
-            }
-            else {
-              cls = ' class="custom-attribute clearfix"';
-              label = '<div class="wrapper">' +
-                '<textarea class="id" placeholder="enter-attribute-id">' + id + '</textarea>' +
-                '<sub class="fa fa-remove remove" title="Remove"></sub>' +
-              '</div>';
-            }
-
-            $('#ftl-area .attributes ul:first')
-              .append(
-                '<li' + cls + '>' +
-                  label +
-                  textarea +
-                '</li>'
-              );
-          });
-
-          // Update access keys presentation
-          $('#ftl-area .attributes textarea').keyup();
-
-        }
-
-        // Show source editor if source string is displayed as source
-        if ($('#ftl-original .main-value ul li.source').length) {
-          var value = entity.key + ' = \n';
-
-          if (isTranslated) {
             value = translation.string;
           }
 
           $('#translation').val(value);
+
           Pontoon.updateCachedTranslation();
           Pontoon.fluent.toggleEditor(false);
+
           return;
         }
 
-        // If no value in source string, no value in translation
-        if (!entityAST.value) {
+        // Value
+        else if (
+          (translationAST && translationAST.value) ||
+          entityAST.value
+        ) {
+          var ast = translationAST || entityAST;
+          value = renderEditorElements(ast.value.elements, 'Value');
+
+          $('#ftl-area .main-value ul').append(value);
+        }
+
+        // No value in source string: no value in translation
+        else {
           $('#ftl-area > .main-value').hide();
+        }
+
+        // Attributes
+        if (attributesTree.length) {
+          attributesTree.forEach(function (attr) {
+            var ast = translationAST || entityAST;
+            attributes += renderEditorElements(attr.value.elements, attr.id.name);
+          });
+
+          $('#ftl-area .attributes ul:first').append(attributes);
+
+          // Update access keys presentation
+          $('#ftl-area .attributes textarea').keyup();
         }
 
         // Ignore editing for anonymous users
@@ -318,33 +319,24 @@ var Pontoon = (function (my) {
 
 
       /*
-       * Is CLDR plural name?
+       * Is element representing a pluralized string?
+       *
+       * Keys of all variants of such elements are either
+       * CLDR plurals or numbers.
        */
-      isCLDRplural: function (name) {
-        return Pontoon.CLDR_PLURALS.indexOf(name) !== -1;
-      },
-
-
-      /*
-       * Is ast of a pluralized string?
-       */
-      isPlural: function (ast) {
-        var self = this;
-
-        if (
-          ast &&
-          ast.value &&
-          ast.value.elements &&
-          ast.value.elements.length &&
-          ast.value.elements[0].expression &&
-          ast.value.elements[0].variants.every(function (element) {
-            return self.isCLDRplural(element.key.name) || element.key.type === 'NumberExpression';
-          })
-        ) {
-          return true;
+      isPluralElement: function (element) {
+        if (!element.variants) {
+          return false;
         }
 
-        return false;
+        var CLDRplurals = ['zero', 'one', 'two', 'few', 'many', 'other'];
+
+        return element.variants.every(function (item) {
+          return (
+            CLDRplurals.indexOf(item.key.name) !== -1 ||
+            item.key.type === 'NumberExpression'
+          );
+        });
       },
 
 
@@ -602,6 +594,7 @@ var Pontoon = (function (my) {
             translation = ' = ' + translation;
           }
         }
+
         else if (this.isFTLEditorEnabled()) {
           // Main value
           var entityAST = fluentParser.parseEntry(entity.original);
@@ -609,7 +602,7 @@ var Pontoon = (function (my) {
           var attributes = '';
 
           // Plurals
-          if (this.isPlural(entityAST)) {
+          if (entityAST.value && this.isPluralElement(entityAST.value.elements[0])) {
             value = '';
             var variants = $('#ftl-area .main-value li:visible');
             var nonEmptyVariants = [];
@@ -625,7 +618,6 @@ var Pontoon = (function (my) {
             });
 
             nonEmptyVariants.forEach(function (variant, i) {
-            // for (var i = 0; i < nonEmptyVariants.length; i++) {
               // Mark the last variant as default
               // TODO: Should be removed by bug 1237667
               if (i === nonEmptyVariants.length - 1) {
@@ -653,6 +645,7 @@ var Pontoon = (function (my) {
         }
 
         var content = entity.key + translation;
+
         // Source view
         if (!this.isFTLEditorEnabled()) {
           content = translation;
@@ -808,12 +801,6 @@ $(function () {
   $('#add-attribute').click(function (e) {
     e.preventDefault();
     $('#ftl-area .attributes ul:first').append($('#ftl-area .attributes .template li').clone());
-  });
-
-  // Remove attribute
-  $('#ftl-area section').on('click', 'sub.remove', function (e) {
-    e.preventDefault();
-    $(this).parents('li').remove();
   });
 
   // Generate access key list

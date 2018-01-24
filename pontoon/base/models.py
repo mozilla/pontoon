@@ -748,7 +748,7 @@ class Locale(AggregatedStats):
             'name': self.name,
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
-            'cldr_plurals': self.cldr_id_list(),
+            'cldr_plurals': self.cldr_plurals_list(),
             'direction': self.direction,
             'script': self.script,
             'ms_translator_code': self.ms_translator_code,

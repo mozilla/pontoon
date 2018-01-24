@@ -2,8 +2,6 @@
 var Pontoon = (function (my) {
 
   return $.extend(true, my, {
-    CLDR_PLURALS: ['zero', 'one', 'two', 'few', 'many', 'other'],
-
     /*
      * UI helper methods
      *
@@ -487,24 +485,34 @@ var Pontoon = (function (my) {
     generateLocalePluralExamples: function () {
       var self = this;
       var nplurals = self.locale.nplurals;
+      var cldr_plurals = self.locale.cldr_plurals;
 
       if (nplurals === 2) {
-        self.locale.examples = {0: 1, 1: 2};
+        self.locale.plural_examples = {};
+        self.locale.plural_examples[cldr_plurals[0]] = 1;
+        self.locale.plural_examples[cldr_plurals[1]] = 2;
 
       } else {
-        var examples = self.locale.examples = {};
+        var examples = self.locale.plural_examples = {};
 
         // Example candidate: n is a variable used in the eval()
         var n = 0;
 
         while (Object.keys(examples).length < nplurals) {
           var rule = eval(self.locale.plural_rule);
-          if (!examples[rule]) {
-            examples[rule] = n;
+          if (!examples[cldr_plurals[rule]]) {
+            examples[cldr_plurals[rule]] = n;
           }
           n++;
         }
       }
+
+      // Update plural tabs
+      $.each(cldr_plurals, function(i) {
+        $('#plural-tabs li:eq(' + i + ') a')
+          .find('span').html(this).end()
+          .find('sup').html(self.locale.plural_examples[this]);
+      });
     },
 
 
@@ -596,15 +604,6 @@ var Pontoon = (function (my) {
 
         var nplurals = this.locale.nplurals;
         if (nplurals > 1) {
-          if (!this.locale.examples) {
-            self.generateLocalePluralExamples();
-
-            $.each(this.locale.cldr_plurals, function(i) {
-              $('#plural-tabs li:eq(' + i + ') a')
-                .find('span').html(self.CLDR_PLURALS[this]).end()
-                .find('sup').html(self.locale.examples[i]);
-            });
-          }
           $('#plural-tabs li:lt(' + nplurals + ')').css('display', 'table-cell');
           $('#plural-tabs li:first a').click();
 
@@ -3504,6 +3503,16 @@ var Pontoon = (function (my) {
       this.part = this.getSelectedPart();
 
       this.locale = self.getLocaleData();
+
+      // Convert CLDR plurals to Array
+      if (!Array.isArray(this.locale.cldr_plurals)) {
+        this.locale.cldr_plurals = this.locale.cldr_plurals.split(', ');
+      }
+
+      // Generate examples for CLDR plurals
+      if (!this.locale.plural_examples) {
+        self.generateLocalePluralExamples();
+      }
 
       this.project = {
         win: projectWindow,
