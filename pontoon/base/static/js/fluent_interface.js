@@ -265,7 +265,7 @@ var Pontoon = (function (my) {
               'ExternalArgument',
               'MessageReference',
               'SelectExpression'
-            ].indexOf(item.type) === 0;
+            ].indexOf(item.type) >= 0;
           });
         }
 
@@ -289,7 +289,7 @@ var Pontoon = (function (my) {
           'TextElement',
           'ExternalArgument',
           'MessageReference'
-        ].indexOf(element.type) === 0;
+        ].indexOf(element.type) >= 0;
       },
 
 
