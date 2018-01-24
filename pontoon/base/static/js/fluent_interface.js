@@ -181,34 +181,29 @@ var Pontoon = (function (my) {
           '</li>';
         }
 
-        function renderEditorSimpleElement(simpleElements, title) {
-          if (simpleElements.length) {
-            var response = renderEditorVariant(title, simpleElements);
-            simpleElements = [];
-            return response;
-          }
-
-          return '';
-        }
-
         function renderEditorElements(elements, title) {
           var content = '';
           var simpleElements = [];
 
-          elements.forEach(function (element, i, array) {
-            // Adjoining simple elements are concatenated and presented as a simple string
-            if (Pontoon.fluent.isSimpleElement(element)) {
-              simpleElements.push(element);
+          elements.forEach(function (element, i) {
+            var isSimpleElement = Pontoon.fluent.isSimpleElement(element);
+            var isLastElement = i === elements.length - 1;
 
-              if (i === array.length - 1) {
-                content += renderEditorSimpleElement(simpleElements, title);
+            // Collect simple elements
+            if (isSimpleElement) {
+              simpleElements.push(element);
+            }
+
+            // Render collected simple elements when non-simple or last element is met
+            if (!isSimpleElement || isLastElement) {
+              if (simpleElements.length) {
+                content += renderEditorVariant(title, simpleElements);
+                simpleElements = [];
               }
             }
 
-            // SelectExpression elements are presented as a list of variants
-            else if (element.type === 'SelectExpression') {
-              content += renderEditorSimpleElement(simpleElements, title);
-
+            // Render SelectExpression
+            if (element.type === 'SelectExpression') {
               var expression = serializeExpression(element.expression);
               content = '<li data-expression="' + expression + '"><ul>' + content;
 
