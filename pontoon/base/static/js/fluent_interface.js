@@ -5,6 +5,27 @@ var Pontoon = (function (my) {
   var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
   var fluentSerializer = new FluentSyntax.FluentSerializer();
 
+  function serializeExpression(expression) {
+    switch (expression.type) {
+      case 'MessageReference':
+        return expression.id.name;
+      case 'ExternalArgument':
+        return '$' + expression.id.name;
+      case 'NumberExpression':
+        return expression.value || expression.val.value;
+      case 'StringExpression':
+        return '"' + (expression.value || expression.val.value) + '"';
+      case 'NamedArgument':
+        return expression.name.name + ': ' + serializeExpression(expression.val);
+      case 'CallExpression':
+        var args = [];
+        expression.args.forEach(function (arg) {
+          args.push(serializeExpression(arg));
+        });
+        return expression.callee.name + '(' + args.join(', ') + ')';
+    }
+  }
+
   function renderOriginalVariant(value, elements) {
     return '<li>' +
       '<span class="id">' +
@@ -50,6 +71,46 @@ var Pontoon = (function (my) {
     });
 
     return content;
+  }
+
+  function serializeElements(elements) {
+    var value = '';
+
+    elements.each(function (i, element) {
+      var expression = $(element).data('expression');
+
+      // Simple element
+      if (!expression) {
+        value += $(this).find('textarea').val();
+      }
+
+      // SelectExpression
+      else {
+        var elementValue = expression + ' ->';
+        var variants = $(element).find('ul li');
+        var def = '';
+
+        variants.each(function(index) {
+          var id = $(this).find('.id span:first').html();
+          var val = $(this).find('.value').val();
+
+          // TODO: UI should allow for explicitly selecting a default variant
+          if (index === variants.length - 1) {
+            def = '*';
+          }
+
+          if (id && val) {
+            elementValue += '\n  ' + def + '[' + id + '] ' + val;
+          }
+        });
+
+        if (elementValue) {
+          value += '{ ' + elementValue + '\n  }';
+        }
+      }
+    });
+
+    return value;
   }
 
   return $.extend(true, my, {
@@ -148,6 +209,9 @@ var Pontoon = (function (my) {
             else if (element.type === 'SelectExpression') {
               content += renderEditorSimpleElement(simpleElements, title);
 
+              var expression = serializeExpression(element.expression);
+              content = '<li data-expression="' + expression + '"><ul>' + content;
+
               var isPlural = Pontoon.fluent.isPluralElement(element);
               if (isPlural && !translationAST) {
                 Pontoon.locale.cldr_plurals.forEach(function (pluralName) {
@@ -159,6 +223,8 @@ var Pontoon = (function (my) {
                   content += renderEditorVariant(item.key.value || item.key.name, item.value.elements, isPlural);
                 });
               }
+
+              content += '</ul></li>';
             }
           });
 
@@ -195,8 +261,8 @@ var Pontoon = (function (my) {
 
           $('#translation').val(value);
 
-          Pontoon.updateCachedTranslation();
           Pontoon.fluent.toggleEditor(false);
+          Pontoon.updateCachedTranslation();
 
           return;
         }
@@ -221,7 +287,15 @@ var Pontoon = (function (my) {
         if (attributesTree.length) {
           attributesTree.forEach(function (attr) {
             var ast = translationAST || entityAST;
-            attributes += renderEditorElements(attr.value.elements, attr.id.name);
+            var id = attr.id.name;
+
+            attributes += (
+              '<li data-id="' + id + '">' +
+                '<ul>' +
+                  renderEditorElements(attr.value.elements, id) +
+                '</ul>' +
+              '</li>'
+            );
           });
 
           $('#ftl-area .attributes ul:first').append(attributes);
@@ -582,77 +656,56 @@ var Pontoon = (function (my) {
           return translation;
         }
 
+        var entityAST = fluentParser.parseEntry(entity.original);
+        var content;
+        var valueElements = $('#ftl-area .main-value ul:first > li:visible');
+        var attributeElements = $('#ftl-area .attributes ul:first > li:visible');
+        var value = '';
+        var attributes = '';
+
+        // Simple string
         if (!this.isComplexFTL()) {
-          translation = $('#only-value').val();
+          value = $('#only-value').val();
 
           // Multiline strings: mark with indent
-          if (translation.indexOf('\n') !== -1) {
-            translation = ' = \n  ' + translation.replace(/\n/g, '\n  ');
+          if (value.indexOf('\n') !== -1) {
+            value = '\n  ' + value.replace(/\n/g, '\n  ');
           }
-          // Simple strings
-          else {
-            translation = ' = ' + translation;
+
+          content = entity.key + ' = ' + value;
+        }
+
+        // Unsupported string
+        else if (!this.isFTLEditorEnabled()) {
+          content = translation;
+        }
+
+        // Value
+        else if (valueElements.length) {
+          value = serializeElements(valueElements);
+
+          if (value) {
+            content = entity.key + ' = ' + value;
           }
         }
 
-        else if (this.isFTLEditorEnabled()) {
-          // Main value
-          var entityAST = fluentParser.parseEntry(entity.original);
-          var value = $('#ftl-area > .main-value textarea:visible').val();
-          var attributes = '';
-
-          // Plurals
-          if (entityAST.value && this.isPluralElement(entityAST.value.elements[0])) {
-            value = '';
-            var variants = $('#ftl-area .main-value li:visible');
-            var nonEmptyVariants = [];
-            var def = '';
-
-            variants.each(function () {
-              var id = $(this).find('.id span:first').html().split(' ')[0];
-              var val = $(this).find('.value').val();
-
-              if (id && val) {
-                nonEmptyVariants.push('[' + id + '] ' + val);
-              }
-            });
-
-            nonEmptyVariants.forEach(function (variant, i) {
-              // Mark the last variant as default
-              // TODO: Should be removed by bug 1237667
-              if (i === nonEmptyVariants.length - 1) {
-                def = '*';
-              }
-              value += '\n  ' + def + variant;
-            });
-
-            if (value) {
-              value = '{ $' + entityAST.value.elements[0].expression.id.name + ' ->' + value + '\n  }';
-            }
-          }
-
-          // Attributes
-          $('#ftl-area .attributes ul:first li').each(function () {
-            var id = $(this).find('.id span').html() || $(this).find('.id').val();
-            var val = $(this).find('.value').val();
+        // Attributes
+        if (attributeElements.length) {
+          attributeElements.each(function () {
+            var id = $(this).data('id');
+            var val = serializeElements($(this).find('ul:first > li'));
 
             if (id && val) {
               attributes += '\n  .' + id + ' = ' + val;
             }
           });
 
-          translation = (value ? ' = ' + value : '') + (attributes || '');
-        }
-
-        var content = entity.key + translation;
-
-        // Source view
-        if (!this.isFTLEditorEnabled()) {
-          content = translation;
+          if (attributes) {
+            content = (value ? content : entity.key) + attributes;
+          }
         }
 
         var ast = fluentParser.parseEntry(content);
-        var entityAst = fluentParser.parseEntry(entity.original);
         var error = null;
 
         // Parse error
@@ -661,14 +714,14 @@ var Pontoon = (function (my) {
         }
         // TODO: Should be removed by bug 1237667
         // Detect missing values
-        else if (entityAst && ast && entityAst.value && !ast.value) {
+        else if (entityAST && ast && entityAST.value && !ast.value) {
           error = 'Please make sure to fill in the value';
         }
         // Detect missing attributes
         else if (
-          entityAst.attributes &&
+          entityAST.attributes &&
           ast.attributes &&
-          entityAst.attributes.length !== ast.attributes.length
+          entityAST.attributes.length !== ast.attributes.length
         ) {
           error = 'Please make sure to fill in all the attributes';
         }
