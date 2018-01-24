@@ -34,36 +34,35 @@ var Pontoon = (function (my) {
     '</li>';
   }
 
-  function renderOriginalSimpleElement(simpleElements, title) {
-    if (simpleElements.length) {
-      var response = renderOriginalVariant(title, simpleElements);
-      simpleElements = [];
-      return response;
-    }
-
-    return '';
-  }
-
   /*
    * Render original string elements.
+   *
+   * - Adjoining simple elements are concatenated and presented as a simple string
+   * - SelectExpression elements are presented as a list of variants
    */
   function renderOriginalElements(elements, title) {
     var content = '';
     var simpleElements = [];
 
     elements.forEach(function (element, i) {
-      // Adjoining simple elements are concatenated and presented as a simple string
-      if (Pontoon.fluent.isSimpleElement(element)) {
-        simpleElements.push(element);
+      var isSimpleElement = Pontoon.fluent.isSimpleElement(element);
+      var isLastElement = i === elements.length - 1;
 
-        if (i === elements.length - 1) {
-          content += renderOriginalSimpleElement(simpleElements, title);
+      // Collect simple elements
+      if (isSimpleElement) {
+        simpleElements.push(element);
+      }
+
+      // Render collected simple elements when non-simple or last element is met
+      if (!isSimpleElement || isLastElement) {
+        if (simpleElements.length) {
+          content += renderOriginalVariant(title, simpleElements);
+          simpleElements = [];
         }
       }
-      // SelectExpression elements are presented as a list of variants
-      else if (element.type === 'SelectExpression') {
-        content += renderOriginalSimpleElement(simpleElements, title);
 
+      // Render SelectExpression
+      if (element.type === 'SelectExpression') {
         element.variants.forEach(function (item) {
           content += renderOriginalVariant(item.key.value || item.key.name, item.value.elements);
         });
