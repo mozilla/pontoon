@@ -677,8 +677,7 @@ def glob_to_regex(glob):
 
 def get_m2m_changes(current_qs, new_qs):
     """
-    Get difference between states of m2m relation.
-    When formfield_items is empty, return all items from object_items as removed.
+    Get difference between states of a m2m relation.
 
     :arg django.db.models.QuerySet `current_qs`: objects from the current state of relation.
     :arg django.db.models.QuerySet `final_qs`: objects from the future state of m2m
@@ -689,10 +688,8 @@ def get_m2m_changes(current_qs, new_qs):
         pk__in=current_qs.values_list('pk', flat=True)
     )
 
-    remove_items = (
-        current_qs.exclude(
-            pk__in=new_qs.values_list('pk', flat=True)
-        )
+    remove_items = current_qs.exclude(
+        pk__in=new_qs.values_list('pk', flat=True)
     )
 
     return list(add_items), list(remove_items)

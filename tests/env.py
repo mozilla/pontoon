@@ -19,7 +19,7 @@ class Environment(object):
             name='locale%s translators' % i,
         )
         managers_group = Group.objects.create(
-            name='local%s managers' % i,
+            name='locale%s managers' % i,
         )
         locale = Locale.objects.create(
             code="locale%s" % i,

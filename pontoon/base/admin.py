@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import (
     UserAdmin as AuthUserAdmin,
     GroupAdmin,
@@ -218,8 +219,8 @@ class UserRoleLogActionAdmin(admin.ModelAdmin):
     def get_user_edit_url(self, user_pk):
         return reverse(
             'admin:{}_{}_change'.format(
-                User._meta.app_label,
-                User._meta.model_name,
+                get_user_model()._meta.app_label,
+                get_user_model()._meta.model_name,
             ),
             args=(user_pk,)
         )

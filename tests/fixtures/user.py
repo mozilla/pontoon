@@ -71,14 +71,14 @@ def translators_group0():
 
 @pytest.fixture
 def managers_group0():
-    """Translators group 0"""
+    """Managers group 0"""
     return Group.objects.get(name='locale0 managers')
 
 
 @pytest.fixture
 def translators_group1():
     """Translators group 1"""
-    return Group.objects.get(name='locale2 translators')
+    return Group.objects.get(name='locale1 translators')
 
 
 @pytest.fixture
