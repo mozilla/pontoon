@@ -351,24 +351,6 @@ var Pontoon = (function (my) {
 
 
       /*
-       * Is SelectExpression?
-       */
-      isSelectExpression: function (ast) {
-        if (
-          ast &&
-          ast.value &&
-          ast.value.elements &&
-          ast.value.elements.length &&
-          ast.value.elements[0].type === 'SelectExpression'
-        ) {
-          return true;
-        }
-
-        return false;
-      },
-
-
-      /*
        * Serialize value with placeables into a simple string
        *
        * markPlaceables Should placeables be marked up?
@@ -718,7 +700,7 @@ var Pontoon = (function (my) {
           }
 
           var ast = fluentParser.parseEntry(source);
-          var tree = null;
+          var tree;
 
           // Value: use entire ast
           if (ast.value) {
@@ -733,12 +715,15 @@ var Pontoon = (function (my) {
           // Simple string: use entire value
           var elements = tree.value.elements;
 
-          // SelectExpression: use default variant
-          if (this.isSelectExpression(tree)) {
+          // String with variants: use default variant
+          try {
             elements = elements[0].variants.filter(function (item) {
               return item.default;
             })[0].value.elements;
           }
+
+          // Simple string: use entire value
+          catch (e) {}
 
           response = this.serializePlaceables(elements);
 
