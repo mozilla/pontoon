@@ -1061,6 +1061,8 @@ class Project(AggregatedStats):
         on_delete=models.SET_NULL
     )
 
+    tags_enabled = models.BooleanField(default=True)
+
     objects = ProjectQuerySet.as_manager()
 
     class Meta:
