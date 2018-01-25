@@ -5,6 +5,7 @@ var Pontoon = (function (my) {
   var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
   var fluentSerializer = new FluentSyntax.FluentSerializer();
 
+  // TODO: Replace with fluentSerializer.serializeExpression() on fluent.js 0.6 update
   function serializeExpression(expression) {
     switch (expression.type) {
       case 'MessageReference':
@@ -26,7 +27,10 @@ var Pontoon = (function (my) {
     }
   }
 
-  function renderOriginalVariant(value, elements) {
+  /*
+   * Render original string element: simple string value or a variant.
+   */
+  function renderOriginalElement(value, elements) {
     return '<li>' +
       '<span class="id">' +
         value +
@@ -34,6 +38,43 @@ var Pontoon = (function (my) {
       '<span class="value">' +
         Pontoon.fluent.serializePlaceables(elements, true) +
       '</span>' +
+    '</li>';
+  }
+
+  /*
+   * Render editor element: simple string value or a variant.
+   */
+  function renderEditorElement(title, elements, isPlural, isTranslated) {
+    // Special case: Access keys
+    var maxlength = '';
+    var accesskeysDiv = '';
+    if (title === 'accesskey') {
+      maxlength = '1';
+      accesskeysDiv = '<div class="accesskeys"></div>';
+    }
+
+    // Special case: Plurals
+    var exampleSpan = '';
+    if (isPlural) {
+      var example = Pontoon.locale.plural_examples[title];
+
+      if (example !== undefined) {
+        exampleSpan = '<span> (e.g. ' +
+          '<span class="stress">' + example + '</span>' +
+        ')</span>';
+      }
+    }
+
+    var value = isTranslated ? Pontoon.fluent.serializePlaceables(elements) : '';
+    var textarea = Pontoon.fluent.getTextareaElement(title, value, maxlength);
+
+    return '<li>' +
+      '<label class="id" for="ftl-id-' + title + '">' +
+        '<span>' + title + '</span>' +
+        exampleSpan +
+      '</label>' +
+      accesskeysDiv +
+      textarea +
     '</li>';
   }
 
@@ -58,14 +99,14 @@ var Pontoon = (function (my) {
 
       // Render collected simple elements when non-simple or last element is met
       if ((!isSimpleElement || isLastElement) && simpleElements.length) {
-        content += renderOriginalVariant(title, simpleElements);
+        content += renderOriginalElement(title, simpleElements);
         simpleElements = [];
       }
 
       // Render SelectExpression
       if (element.type === 'SelectExpression') {
         element.variants.forEach(function (item) {
-          content += renderOriginalVariant(item.key.value || item.key.name, item.value.elements);
+          content += renderOriginalElement(item.key.value || item.key.name, item.value.elements);
         });
       }
     });
@@ -73,6 +114,63 @@ var Pontoon = (function (my) {
     return content;
   }
 
+  /*
+   * Render editor elements.
+   *
+   * - Adjoining simple elements are concatenated and presented as a simple string
+   * - SelectExpression elements are presented as a list of variants
+   */
+  function renderEditorElements(elements, title, isTranslated) {
+    var content = '';
+    var simpleElements = [];
+
+    elements.forEach(function (element, i) {
+      var isSimpleElement = Pontoon.fluent.isSimpleElement(element);
+      var isLastElement = i === elements.length - 1;
+
+      // Collect simple elements
+      if (isSimpleElement) {
+        simpleElements.push(element);
+      }
+
+      // Render collected simple elements when non-simple or last element is met
+      if ((!isSimpleElement || isLastElement) && simpleElements.length) {
+        content += renderEditorElement(title, simpleElements, false, isTranslated);
+        simpleElements = [];
+      }
+
+      // Render SelectExpression
+      if (element.type === 'SelectExpression') {
+        var expression = serializeExpression(element.expression);
+        content = '<li data-expression="' + expression + '"><ul>' + content;
+
+        var isPlural = Pontoon.fluent.isPluralElement(element);
+        if (isPlural && !isTranslated) {
+          Pontoon.locale.cldr_plurals.forEach(function (pluralName) {
+            content += renderEditorElement(pluralName, [], true, isTranslated);
+          });
+        }
+        else {
+          element.variants.forEach(function (item, i) {
+            content += renderEditorElement(
+              item.key.value || item.key.name,
+              item.value.elements,
+              isPlural,
+              isTranslated
+            );
+          });
+        }
+
+        content += '</ul></li>';
+      }
+    });
+
+    return content;
+  }
+
+  /*
+   * Serialize values in FTL editor forms into an FTL string.
+   */
   function serializeElements(elements) {
     var value = '';
 
@@ -147,85 +245,6 @@ var Pontoon = (function (my) {
         $('#ftl-area .attributes ul:first').empty();
         $('#only-value').parents('li').hide();
 
-        function renderEditorVariant(title, elements, isPlural) {
-          // Special case: Access keys
-          var maxlength = '';
-          var accesskeysDiv = '';
-          if (title === 'accesskey') {
-            maxlength = '1';
-            accesskeysDiv = '<div class="accesskeys"></div>';
-          }
-
-          // Special case: Plurals
-          var exampleSpan = '';
-          if (isPlural) {
-            var example = Pontoon.locale.plural_examples[title];
-
-            if (example !== undefined) {
-              exampleSpan = '<span> (e.g. ' +
-                '<span class="stress">' + example + '</span>' +
-              ')</span>';
-            }
-          }
-
-          var value = translationAST ? self.serializePlaceables(elements) : '';
-          var textarea = Pontoon.fluent.getTextareaElement(title, value, maxlength);
-
-          return '<li>' +
-            '<label class="id" for="ftl-id-' + title + '">' +
-              '<span>' + title + '</span>' +
-              exampleSpan +
-            '</label>' +
-            accesskeysDiv +
-            textarea +
-          '</li>';
-        }
-
-        function renderEditorElements(elements, title) {
-          var content = '';
-          var simpleElements = [];
-
-          elements.forEach(function (element, i) {
-            var isSimpleElement = Pontoon.fluent.isSimpleElement(element);
-            var isLastElement = i === elements.length - 1;
-
-            // Collect simple elements
-            if (isSimpleElement) {
-              simpleElements.push(element);
-            }
-
-            // Render collected simple elements when non-simple or last element is met
-            if (!isSimpleElement || isLastElement) {
-              if (simpleElements.length) {
-                content += renderEditorVariant(title, simpleElements);
-                simpleElements = [];
-              }
-            }
-
-            // Render SelectExpression
-            if (element.type === 'SelectExpression') {
-              var expression = serializeExpression(element.expression);
-              content = '<li data-expression="' + expression + '"><ul>' + content;
-
-              var isPlural = Pontoon.fluent.isPluralElement(element);
-              if (isPlural && !translationAST) {
-                Pontoon.locale.cldr_plurals.forEach(function (pluralName) {
-                  content += renderEditorVariant(pluralName, [], true);
-                });
-              }
-              else {
-                element.variants.forEach(function (item, i) {
-                  content += renderEditorVariant(item.key.value || item.key.name, item.value.elements, isPlural);
-                });
-              }
-
-              content += '</ul></li>';
-            }
-          });
-
-          return content;
-        }
-
         // Simple string: only value
         if (
           self.isSimpleString(translationAST) ||
@@ -268,7 +287,7 @@ var Pontoon = (function (my) {
           entityAST.value
         ) {
           var ast = translationAST || entityAST;
-          value = renderEditorElements(ast.value.elements, 'Value');
+          value = renderEditorElements(ast.value.elements, 'Value', translationAST);
 
           $('#ftl-area .main-value ul').append(value);
         }
@@ -287,7 +306,7 @@ var Pontoon = (function (my) {
             attributes += (
               '<li data-id="' + id + '">' +
                 '<ul>' +
-                  renderEditorElements(attr.value.elements, id) +
+                  renderEditorElements(attr.value.elements, id, translationAST) +
                 '</ul>' +
               '</li>'
             );
