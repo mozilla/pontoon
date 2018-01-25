@@ -792,7 +792,7 @@ class AjaxFormView(FormView):
             content_type='application/json')
 
     def form_valid(self, form):
-        return JsonResponse(dict(result=form.save()))
+        return JsonResponse(dict(data=form.save()))
 
 
 class AjaxFormPostView(AjaxFormView):
