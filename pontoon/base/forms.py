@@ -163,7 +163,12 @@ class UserProfileForm(forms.ModelForm):
     """
     Form is responsible for saving user's name.
     """
-    first_name = forms.RegexField(regex='^[^<>"\'&]+$', max_length=30, strip=True)
+    first_name = forms.RegexField(
+        label='Name',
+        regex='^[^<>"\'&]+$',
+        max_length=30,
+        strip=True,
+    )
     email = forms.EmailField(
         help_text=(
             'Changing your email address will cause a logout. '
