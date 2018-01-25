@@ -92,6 +92,15 @@ class AsSimpleTranslationTests(TestCase):
     }'''
         assert_equal(as_simple_translation(source), 'Other Simple String')
 
+    def test_wrapped_select_expression(self):
+        source = '''key =
+    Anne liked your comment on { $photo_count ->
+        [male] his
+        [female] her
+       *[other] their
+    } post.'''
+        assert_equal(as_simple_translation(source), 'Anne liked your comment on their post.')
+
     def test_attribute(self):
         source = '''key
     .placeholder = Simple String'''

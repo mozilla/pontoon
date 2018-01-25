@@ -354,6 +354,7 @@ var Pontoon = (function (my) {
        * markPlaceables Should placeables be marked up?
        */
       serializePlaceables: function (elements, markPlaceables) {
+        var self = this;
         var translatedValue = '';
         var startMarker = '';
         var endMarker = '';
@@ -381,6 +382,13 @@ var Pontoon = (function (my) {
               endMarker = '</mark>';
             }
             translatedValue += startMarker + '{' + item.id.name + '}' + endMarker;
+          }
+          else if (item.variants) {
+            var variantElements = item.variants.filter(function (item) {
+              return item.default;
+            })[0].value.elements;
+
+            translatedValue += self.serializePlaceables(variantElements);
           }
         });
 
@@ -711,19 +719,7 @@ var Pontoon = (function (my) {
             tree = ast.attributes[0];
           }
 
-          var elements = tree.value.elements;
-
-          // String with variants: use default variant
-          try {
-            elements = elements[0].variants.filter(function (item) {
-              return item.default;
-            })[0].value.elements;
-          }
-
-          // Simple string: use entire value
-          catch (e) {}
-
-          response = this.serializePlaceables(elements);
+          response = this.serializePlaceables(tree.value.elements);
 
           // Update source string markup
           if (object.hasOwnProperty('original')) {
