@@ -9,6 +9,7 @@ import CheckboxTable from 'widgets/tables/checkbox';
 
 import TagResourcesButton from 'tags/admin/button';
 import {TagResourceManagerWidget} from 'tags/admin/manager';
+import {TagResourcesLoader} from 'tags/admin/';
 import TagResourceSearch from 'tags/admin/search';
 import TagResourceTable from 'tags/admin/table';
 
