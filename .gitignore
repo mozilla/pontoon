@@ -32,3 +32,7 @@ venv
 # For docker
 .docker-build
 docker/config/webapp.env
+
+# Webpack
+/assets/
+webpack-stats.json
