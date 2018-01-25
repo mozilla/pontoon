@@ -54,11 +54,9 @@ var Pontoon = (function (my) {
       }
 
       // Render collected simple elements when non-simple or last element is met
-      if (!isSimpleElement || isLastElement) {
-        if (simpleElements.length) {
-          content += renderOriginalVariant(title, simpleElements);
-          simpleElements = [];
-        }
+      if ((!isSimpleElement || isLastElement) && simpleElements.length) {
+        content += renderOriginalVariant(title, simpleElements);
+        simpleElements = [];
       }
 
       // Render SelectExpression
