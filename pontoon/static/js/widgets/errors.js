@@ -1,6 +1,8 @@
 
 import React from 'react';
 
+import './errors.css';
+
 
 export class Error extends React.PureComponent {
 

@@ -5,7 +5,7 @@ var BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
   entry: {
-      'placeholder': 'placeholder/placeholder'
+      'tag_admin': 'tags/admin'
   },
   output: {
     // This copies each source entry into the extension dist folder named

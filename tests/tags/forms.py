@@ -160,12 +160,10 @@ def test_form_project_tag_resources_action_type(project0):
 
     form = LinkTagResourcesAdminForm(project=project0)
     form.cleaned_data = dict()
-    assert form.action_type is False
+    assert not form.action_type
     form.cleaned_data = dict(type='assoc')
-    assert form.action_type is False
-    form.cleaned_data = dict(type='assoc', action=1)
     assert form.action_type == 'unlink'
-    form.cleaned_data = dict(type='nonassoc', action=1)
+    form.cleaned_data = dict(type='nonassoc')
     assert form.action_type == 'link'
 
 
