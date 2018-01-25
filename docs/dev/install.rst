@@ -143,6 +143,12 @@ Installation
 
       npm install
 
+11. Run webpack:
+
+   .. code-block:: bash
+
+      ./node_modules/.bin/webpack -p
+
 Once you've finished these steps, you should be able to start the site by
 running:
 
