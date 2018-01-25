@@ -61,7 +61,7 @@ class LinkTagResourcesAdminForm(forms.Form):
     def action_type(self):
         """Returns the action type name, used for error message"""
         return (
-            self.cleaned_data.get('action') is not None
+            self.cleaned_data.get('type') is not None
             and ('link'
                  if self.cleaned_data['type'] == 'nonassoc'
                  else 'unlink'))

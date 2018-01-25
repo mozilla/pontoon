@@ -31,6 +31,14 @@
     </div>
   </div>
   {% endif %}
+
+  {% if form.slug.value() %}
+  <div class="js-tag-resources tag-resources"
+       data-api="{{ url('pontoon.admin.project.ajax.tag', project=project.slug, tag=form.slug.value()) }}"
+       data-project="{{ project.slug }}"
+       data-tag="{{ form.slug.value() }}">
+  </div>
+  {% endif %}
 </div>
 {% endfor %}
 
