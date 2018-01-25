@@ -15,6 +15,7 @@ class Environment(object):
         for i in range(0, 2):
             self.setup_translations(i)
         self.setup_x()
+        self.setup_admin()
 
     def setup_collations(self):
         """Required for collation lookup tests
@@ -59,6 +60,13 @@ class Environment(object):
             string="Translation for entity%s" % i,
             locale=locale,
             user=user)
+
+    def setup_admin(self):
+        admin0 = get_user_model().objects.create(
+            username="admin0",
+            email="admin0@user.email")
+        admin0.is_superuser = True
+        admin0.save()
 
     def setup_x(self):
         Locale.objects.create(code="localeX", name="LocaleX")

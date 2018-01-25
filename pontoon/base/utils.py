@@ -13,6 +13,9 @@ import zipfile
 
 from datetime import datetime, timedelta
 
+from guardian.decorators import (
+    permission_required as guardian_permission_required)
+
 from django.utils.text import slugify
 from six import text_type
 from xml.sax.saxutils import (
@@ -342,6 +345,28 @@ def require_AJAX(f):
             return HttpResponseBadRequest('Bad Request: Request must be AJAX')
         return f(request, *args, **kwargs)
     return wrap
+
+
+def permission_required(perm, *args, **kwargs):
+    """Wrapper for guardian permission_required decorator.
+
+    If the request is not permitted and user is anon then it returns 404
+    otherwise 403.
+    """
+
+    def wrapper(f):
+
+        @functools.wraps(f)
+        def wrap(request, *_args, **_kwargs):
+            perm_kwargs = (
+                dict(return_404=True)
+                if request.user.is_anonymous
+                else dict(return_403=True))
+            perm_kwargs.update(kwargs)
+            protected = guardian_permission_required(perm, *args, **perm_kwargs)
+            return protected(f)(request, *_args, **_kwargs)
+        return wrap
+    return wrapper
 
 
 def _download_file(prefixes, dirnames, relative_path):

@@ -2,6 +2,8 @@ from django.conf.urls import url
 
 import views
 
+import pontoon.tags.admin.views as tags_admin_views
+
 
 urlpatterns = [
     # Admin Home
@@ -10,6 +12,11 @@ urlpatterns = [
         views.admin,
         name='pontoon.admin'
     ),
+
+    # AJAX view: Project tags
+    url(r'^projects/(?P<project>[\w-]+)/ajax/tag/(?P<tag>[\w-]+)/$',
+        tags_admin_views.ProjectTagAdminAjaxView.as_view(),
+        name='pontoon.admin.project.ajax.tag'),
 
     # Add new project
     url(
