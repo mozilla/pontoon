@@ -403,7 +403,44 @@ textarea.strings-source {
   margin-left: 20px;
 }
 
-/* Code specific to the manage strings page */
+/* Code specific to the manage tags widget */
+
 .strings-list .entity {
   margin-bottom: 30px;
+}
+
+
+.tag.inline label[for*=slug] {
+  float: left;
+  width: 211px;
+}
+
+
+.tag.inline input[id*=slug] {
+  float: left;
+  width: 201px;
+  margin-right: 6px;
+}
+
+
+.tag.inline label[for*=name] {
+  float: left;
+  width: 286px;
+}
+
+.tag.inline input[id*=name] {
+  float: left;
+  width: 280px;
+}
+
+
+.tag.inline label[for*=priority] {
+  float: left;
+  width: 115px;
+}
+
+.tag.inline input[id*=priority] {
+  float: left;
+  width: 74px;
+  margin-right: 6px;
 }
