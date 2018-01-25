@@ -83,7 +83,7 @@ def translators_group1():
 
 @pytest.fixture
 def managers_group1():
-    """Translators group 0"""
+    """Managers group 1"""
     return Group.objects.get(name='locale1 managers')
 
 

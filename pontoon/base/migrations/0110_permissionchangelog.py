@@ -10,7 +10,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0108_reverse_accessors'),
+        ('base', '0109_project_tags_enabled'),
     ]
 
     operations = [

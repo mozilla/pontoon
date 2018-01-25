@@ -677,7 +677,7 @@ def glob_to_regex(glob):
 
 def get_m2m_changes(current_qs, new_qs):
     """
-    Get difference between states of a m2m relation.
+    Get difference between states of a many to many relation.
 
     :arg django.db.models.QuerySet `current_qs`: objects from the current state of relation.
     :arg django.db.models.QuerySet `final_qs`: objects from the future state of m2m

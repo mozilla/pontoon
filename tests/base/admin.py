@@ -11,7 +11,7 @@ from pontoon.base.models import PermissionChangelog
 @pytest.fixture
 def user_form_request():
     """
-    Mock for request object which is passed to every django admin form.
+    Mock for a request object which is passed to every django admin form.
     """
     def _get_user_form_request(request_user, user, **override_fields):
         rf = RequestFactory()
