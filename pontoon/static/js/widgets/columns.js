@@ -81,7 +81,7 @@ export class Container extends React.Component {
 }
 
 
-export class Column extends React.Component {
+export class Column extends React.PureComponent {
 
     render () {
         const {className} = this.props;
