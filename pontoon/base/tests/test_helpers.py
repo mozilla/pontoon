@@ -90,7 +90,16 @@ class AsSimpleTranslationTests(TestCase):
         [1] Simple String
        *[other] Other Simple String
     }'''
-        assert_equal(as_simple_translation(source), 'Simple String')
+        assert_equal(as_simple_translation(source), 'Other Simple String')
+
+    def test_wrapped_select_expression(self):
+        source = '''key =
+    Anne liked your comment on { $photo_count ->
+        [male] his
+        [female] her
+       *[other] their
+    } post.'''
+        assert_equal(as_simple_translation(source), 'Anne liked your comment on their post.')
 
     def test_attribute(self):
         source = '''key
@@ -102,6 +111,14 @@ class AsSimpleTranslationTests(TestCase):
     .attribute = Simple String
     .other = Other Simple String'''
         assert_equal(as_simple_translation(source), 'Simple String')
+
+    def test_attribute_select_expression(self):
+        source = '''key
+    .placeholder = { PLATFORM() ->
+        [win] Simple String
+       *[other] Other Simple String
+    }'''
+        assert_equal(as_simple_translation(source), 'Other Simple String')
 
     def test_other_ftl(self):
         source = 'warning-upgrade = { LINK("Link text", title: "Link title") }Simple String'

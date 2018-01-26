@@ -268,6 +268,13 @@ def _serialize_elements(elements):
             elif type(element.expression) == ast.MessageReference:
                 response += '{ ' + element.expression.id.name + ' }'
 
+            elif hasattr(element, 'expression') and hasattr(element.expression, 'variants'):
+                variant_elements = filter(
+                    lambda x: x.default, element.expression.variants
+                )[0].value.elements
+
+                response += _serialize_elements(variant_elements)
+
     return response
 
 
@@ -280,23 +287,13 @@ def as_simple_translation(source):
     if type(translation_ast) == ast.Junk:
         return source
 
+    # Value: use entire AST
     if translation_ast.value:
-        # Strings with variants: display first variant
-        try:
-            elements = translation_ast.value.elements
-            variants = elements[0].expression.variants
-            return _serialize_elements(variants[0].value.elements)
+        tree = translation_ast
 
-        # Simple strings
-        except (AttributeError, IndexError):
-            return _serialize_elements(translation_ast.value.elements)
-
+    # Attributes (must be present in valid AST if value isn't):
+    # use AST of the first attribute
     else:
-        # Strings with attributes: display first attribute
-        try:
-            attributes = translation_ast.attributes
-            return _serialize_elements(attributes[0].value.elements)
+        tree = translation_ast.attributes[0]
 
-        # All other strings: display unchanged
-        except (AttributeError, IndexError):
-            return source
+    return _serialize_elements(tree.value.elements)
