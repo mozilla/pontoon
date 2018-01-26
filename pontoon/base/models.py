@@ -425,6 +425,41 @@ class UserProfile(models.Model):
         return [l.code for l in self.sorted_locales]
 
 
+class PermissionChangelog(models.Model):
+    """
+    Track changes of roles added or removed from a user.
+    """
+
+    # Managers can perform various action on a user.
+    ACTIONS_TYPES = (
+        # User has been added to a group (e.g. translators, managers).
+        ('added', 'Added'),
+
+        # User has been removed from a group (e.g. translators, managers).
+        ('removed', 'Removed')
+    )
+
+    action_type = models.CharField(max_length=20, choices=ACTIONS_TYPES)
+    performed_by = models.ForeignKey(User, related_name='changed_permissions_log')
+    performed_on = models.ForeignKey(User, related_name='permisions_log')
+    group = models.ForeignKey(Group)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'User permissions log'
+        verbose_name_plural = 'Users permissions logs'
+        ordering = ('pk',)
+
+    def __repr__(self):
+        return u'User(pk={}) {} User(pk={}) from {}'.format(
+            self.performed_by_id,
+            self.action_type,
+            self.performed_on_id,
+            self.group.name
+        )
+
+
 class AggregatedStats(models.Model):
     total_strings = models.PositiveIntegerField(default=0)
     approved_strings = models.PositiveIntegerField(default=0)

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 
 from pontoon.base.models import (
     Entity, Locale, Project, ProjectLocale, Resource,
@@ -14,8 +15,18 @@ class Environment(object):
         self.setup_x()
 
     def setup_translations(self, i):
+        translators_group = Group.objects.create(
+            name='locale%s translators' % i,
+        )
+        managers_group = Group.objects.create(
+            name='locale%s managers' % i,
+        )
         locale = Locale.objects.create(
-            code="locale%s" % i, name="Locale %s" % i)
+            code="locale%s" % i,
+            name="Locale %s" % i,
+            translators_group=translators_group,
+            managers_group=managers_group
+        )
         project = Project.objects.create(
             slug="project%s" % i, name="Project %s" % i)
         ProjectLocale.objects.create(project=project, locale=locale)

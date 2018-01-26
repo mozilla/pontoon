@@ -2,7 +2,10 @@ import json
 import os
 import tempfile
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import (
+    Group,
+    User,
+)
 from django.template.defaultfilters import slugify
 from django.test import (
     TestCase as BaseTestCase,
@@ -66,6 +69,13 @@ class UserFactory(DjangoModelFactory):
 
     class Meta:
         model = User
+
+
+class GroupFactory(DjangoModelFactory):
+    name = Sequence(lambda n: 'group%s' % n)
+
+    class Meta:
+        model = Group
 
 
 class ProjectFactory(DjangoModelFactory):

@@ -3,7 +3,12 @@ from guardian.models import GroupObjectPermission
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
+from django.db.models.signals import (
+    post_save,
+    pre_save,
+    post_delete,
+    pre_delete
+)
 from django.dispatch import receiver
 
 from pontoon.base import errors
