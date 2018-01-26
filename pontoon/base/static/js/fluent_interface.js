@@ -186,6 +186,7 @@ var Pontoon = (function (my) {
       else {
         var elementValue = expression + ' ->';
         var variants = $(element).find('ul li');
+        var hasTranslatedVariants = false;
         var def = '';
 
         variants.each(function(index) {
@@ -199,10 +200,11 @@ var Pontoon = (function (my) {
 
           if (id && val) {
             elementValue += '\n  ' + def + '[' + id + '] ' + val;
+            hasTranslatedVariants = true;
           }
         });
 
-        if (elementValue) {
+        if (hasTranslatedVariants) {
           value += '{ ' + elementValue + '\n  }';
         }
       }
