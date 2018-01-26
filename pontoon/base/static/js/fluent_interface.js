@@ -686,7 +686,7 @@ var Pontoon = (function (my) {
             value = '\n  ' + value.replace(/\n/g, '\n  ');
           }
 
-          content = entity.key + ' = ' + value;
+          content += value;
         }
 
         // Unsupported string
@@ -699,7 +699,7 @@ var Pontoon = (function (my) {
           value = serializeElements(valueElements);
 
           if (value) {
-            content = entity.key + ' = ' + value;
+            content += value;
           }
         }
 
