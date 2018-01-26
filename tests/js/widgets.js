@@ -5,39 +5,61 @@ import {mount, shallow} from 'enzyme';
 
 import {Columns, Container, Column} from 'widgets/columns';
 import Checkbox from 'widgets/checkbox';
+import {ErrorList, Error} from 'widgets/errors';
+
+
+test('Error render', () => {
+    let error = shallow(<Error name='FOO' error='BAR' />);
+    expect(error.text()).toBe("FOO: BAR");
+    let li = error.find('li.error');
+    expect(li.length).toBe(1);
+});
+
+
+test('ErrorList render', () => {
+    let errors = shallow(<ErrorList errors={{}} />);
+    expect(errors.text()).toBe("");
+    expect(errors.find('ul').length).toBe(0);
+    errors = shallow(<ErrorList errors={{foo: 'Did a foo', bar: 'Bars happen'}} />);
+    let ul = errors.find('ul.errors');
+    expect(ul.length).toBe(1);
+    let lis = ul.find(Error);
+    expect(lis.length).toBe(2);
+    expect(errors.text()).toBe("<Error /><Error />");
+});
 
 
 test('Checkbox render', () => {
     let checkbox = shallow(<Checkbox />);
     expect(checkbox.text()).toBe('');
-    expect(checkbox.instance().el.indeterminate).toBe(false)
+    expect(checkbox.instance().el.indeterminate).toBe(false);
 
     checkbox = shallow(<Checkbox indeterminate="true" />);
     expect(checkbox.text()).toBe('');
-    expect(checkbox.instance().el.indeterminate).toBe(true)
-    expect(checkbox.instance().el.nodeName).toBe(undefined)
+    expect(checkbox.instance().el.indeterminate).toBe(true);
+    expect(checkbox.instance().el.nodeName).toBe(undefined);
 
     checkbox = mount(<Checkbox />);
     // this time el is an HTML node
-    expect(checkbox.instance().el.indeterminate).toBe(false)
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT')
+    expect(checkbox.instance().el.indeterminate).toBe(false);
+    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
 
     checkbox = mount(<Checkbox indeterminate={true} />);
-    expect(checkbox.instance().el.indeterminate).toBe(true)
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT')
+    expect(checkbox.instance().el.indeterminate).toBe(true);
+    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
 
     let prevProp = checkbox.props();
-    checkbox.setProps({indeterminate: false})
-    checkbox.instance().componentDidUpdate(prevProp)
-    expect(checkbox.instance().el.indeterminate).toBe(false)
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT')
+    checkbox.setProps({indeterminate: false});
+    checkbox.instance().componentDidUpdate(prevProp);
+    expect(checkbox.instance().el.indeterminate).toBe(false);
+    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
 
     prevProp = checkbox.props();
-    checkbox.setProps({indeterminate: true})
-    checkbox.instance().componentDidUpdate(prevProp)
-    expect(checkbox.instance().el.indeterminate).toBe(true)
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT')
-})
+    checkbox.setProps({indeterminate: true});
+    checkbox.instance().componentDidUpdate(prevProp);
+    expect(checkbox.instance().el.indeterminate).toBe(true);
+    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
+});
 
 
 test('Columns render', () => {
@@ -110,11 +132,12 @@ test('Container render', () => {
 
 
 test('Container render children', () => {
-    const children = [<div>FOO...</div>, <div>...BAR</div>]
+    const children = [<div>FOO...</div>, <div>...BAR</div>];
     const styles = jest.fn(() => {
         return [
             {background: 'black', color: 'red'},
-            {background: 'green', color: 'gold'}]})
+            {background: 'green', color: 'gold'}];
+    });
 
     class MockContainer extends Container {
 
@@ -125,16 +148,16 @@ test('Container render children', () => {
 
     const container = shallow(<MockContainer>{children}</MockContainer>);
     expect(container.text()).toBe('FOO......BAR');
-    expect(styles.mock.calls).toEqual([[], [], [], []])
+    expect(styles.mock.calls).toEqual([[], [], [], []]);
     const div = container.find('div.container');
-    expect(div.length).toBe(1)
-    expect(div.props().children.length).toBe(2)
-    const child0 = div.props().children[0]
-    const child1 = div.props().children[1]
+    expect(div.length).toBe(1);
+    expect(div.props().children.length).toBe(2);
+    const child0 = div.props().children[0];
+    const child1 = div.props().children[1];
     expect(child0.props.style).toEqual(
-        {background: 'black', color: 'red'})
-    expect(child0.props.children).toEqual(children[0])
+        {background: 'black', color: 'red'});
+    expect(child0.props.children).toEqual(children[0]);
     expect(child1.props.style).toEqual(
-        {background: 'green', color: 'gold'})
-    expect(child1.props.children).toEqual(children[1])
+        {background: 'green', color: 'gold'});
+    expect(child1.props.children).toEqual(children[1]);
 });
