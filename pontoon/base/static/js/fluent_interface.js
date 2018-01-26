@@ -671,7 +671,7 @@ var Pontoon = (function (my) {
         }
 
         var entityAST = fluentParser.parseEntry(entity.original);
-        var content;
+        var content = entity.key + ' = '; // Initialize untranslated string
         var valueElements = $('#ftl-area .main-value ul:first > li:visible');
         var attributeElements = $('#ftl-area .attributes ul:first > li:visible');
         var value = '';
