@@ -96,11 +96,19 @@ def ajax_permissions(request, locale):
     project_locales = l.project_locale.available()
 
     if request.method == 'POST':
-        locale_form = forms.LocalePermsForm(request.POST, instance=l, prefix='general')
+        locale_form = forms.LocalePermsForm(
+            request.POST,
+            instance=l,
+            prefix='general',
+            user=request.user
+        )
         project_locale_form = forms.ProjectLocalePermsFormsSet(
             request.POST,
             prefix='project-locale',
             queryset=project_locales,
+            form_kwargs={
+                'user': request.user
+            }
         )
 
         if locale_form.is_valid() and project_locale_form.is_valid():
@@ -116,6 +124,9 @@ def ajax_permissions(request, locale):
         project_locale_form = forms.ProjectLocalePermsFormsSet(
             prefix='project-locale',
             queryset=project_locales,
+            form_kwargs={
+                'user': request.user
+            }
         )
 
     managers = l.managers_group.user_set.all()

@@ -490,3 +490,4 @@ class TMXFileGeneratorTests(TestCase):
             self.get_sample('tmx/valid_entries.tmx'),
             os.path.join(self.samples_root, 'tmx/tmx14.dtd')
         )
+

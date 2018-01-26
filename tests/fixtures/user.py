@@ -4,6 +4,7 @@ import functools
 import pytest
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
 
 @pytest.fixture
@@ -60,3 +61,47 @@ def user_factory(factory):
 
     return functools.partial(
         factory, Model=get_user_model(), instance_attrs=instance_attrs)
+
+
+@pytest.fixture
+def translators_group0():
+    """Translators group 0"""
+    return Group.objects.get(name='locale0 translators')
+
+
+@pytest.fixture
+def managers_group0():
+    """Managers group 0"""
+    return Group.objects.get(name='locale0 managers')
+
+
+@pytest.fixture
+def translators_group1():
+    """Translators group 1"""
+    return Group.objects.get(name='locale1 translators')
+
+
+@pytest.fixture
+def managers_group1():
+    """Managers group 1"""
+    return Group.objects.get(name='locale1 managers')
+
+
+@pytest.fixture
+def group_factory(factory):
+    """Group factory
+
+    Provides a group factory function that accepts the following args:
+
+    :arg int `batch`: number of groups to instantiate, defaults to len of
+        `batch_kwargs` or 1
+    :arg list `batch_kwargs`: a list of groups to instantiate the groups
+    """
+    def instance_attrs(instance, i):
+        instance.name = "Group %d" % i
+
+    return functools.partial(
+        factory,
+        Model=Group,
+        instance_attrs=instance_attrs
+    )
