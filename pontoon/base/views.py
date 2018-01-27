@@ -1,3 +1,4 @@
+import json
 import logging
 
 from datetime import datetime
@@ -19,11 +20,13 @@ from django.http import (
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import (
     condition,
     require_POST
 )
+from django.views.generic.edit import FormView
 
 from pontoon.base import forms
 from pontoon.base import utils
@@ -739,3 +742,34 @@ def download_translation_memory(request, locale, slug, filename):
     )
     response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(filename=filename)
     return response
+
+
+class AjaxFormView(FormView):
+    """A form view that when the form is submitted, it will return a json
+    response containing either an ``errors`` object with a bad response status
+    if the form fails, or a ``result`` object supplied by the form's save
+    method
+    """
+
+    @method_decorator(utils.require_AJAX)
+    def get(self, *args, **kwargs):
+        return super(AjaxFormView, self).get(*args, **kwargs)
+
+    @method_decorator(utils.require_AJAX)
+    def post(self, *args, **kwargs):
+        return super(AjaxFormView, self).post(*args, **kwargs)
+
+    def form_invalid(self, form):
+        return HttpResponseBadRequest(
+            json.dumps(dict(errors=form.errors)),
+            content_type='application/json')
+
+    def form_valid(self, form):
+        return JsonResponse(dict(result=form.save()))
+
+
+class AjaxFormPostView(AjaxFormView):
+    """An Ajax form view that only allows POST requests"""
+
+    def get(self, *args, **kwargs):
+        raise Http404
