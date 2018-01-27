@@ -29,7 +29,8 @@ table.table {
 }
 
 .table th.population,
-.table th.deadline {
+.table th.deadline,
+.table th.all-strings {
   width: 90px;
 }
 
