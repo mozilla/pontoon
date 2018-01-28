@@ -1,4 +1,8 @@
 
+# The classes here provide similar functionality to
+# TranslatedResource.stats in mangling stats data,
+# although they use queryset `values` rather than objects
+
 from django.db.models import F, Sum, Value
 from django.db.models.functions import Coalesce
 
@@ -61,7 +65,7 @@ class TagsStatsTool(TagsTRTool):
                     pk__in=(
                         r['locale']
                         for r
-                        in result)).values('pk', 'name', 'code')}
+                        in result)).values('pk', 'name', 'code', 'population')}
             for r in result:
                 # update the stats with locale data
                 r.update(locales[r['locale']])
