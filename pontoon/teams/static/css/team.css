@@ -26,12 +26,17 @@
   display: block;
 }
 
+.projects.request .project-list .all-strings {
+  display: table-cell;
+}
+
 .projects.request .project-list th.check {
   text-align: right;
   width: auto;
 }
 
-.project-list .check {
+.project-list .check,
+.project-list .all-strings {
   display: none;
 }
 
