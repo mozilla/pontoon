@@ -11,6 +11,7 @@
         <th class="latest-activity">Latest Activity<i class="fa"></i></th>
         <th class="progress">Progress<i class="fa"></i></th>
         {% if request %}
+          <th class="all-strings">Number of Strings<i class="fa"></i></th>
           <th class="check">Request<i class="fa"></i></th>
         {% endif %}
       </tr>
@@ -44,6 +45,13 @@
       {% endif %}
     </td>
     {% if request %}
+      <td class="all-strings">
+        {% if project.total_strings %}
+          <span>{{ project.total_strings|intcomma }}</span>
+        {% else %}
+          <span class="not">Not synced yet</span>
+        {% endif %}
+      </td>
       <td class="check fa fa-fw"></td>
     {% endif %}
   </tr>
