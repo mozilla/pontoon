@@ -29,8 +29,7 @@ table.table {
 }
 
 .table th.population,
-.table th.deadline,
-.table th.all-strings {
+.table th.deadline {
   width: 90px;
 }
 
@@ -39,7 +38,8 @@ table.table {
   width: 70px;
 }
 
-.table th.latest-activity {
+.table th.latest-activity,
+.table th.all-strings {
   width: 140px;
 }
 
