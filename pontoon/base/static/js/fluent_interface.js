@@ -335,7 +335,7 @@ var Pontoon = (function (my) {
 
 
       /*
-       * Is ast of a supported message?
+       * Is ast of a message, supported in rich FTL editor?
        *
        * Message is supported if all value elements
        * and all attribute elements are of type:
@@ -354,6 +354,11 @@ var Pontoon = (function (my) {
               'SelectExpression'
             ].indexOf(item.type) >= 0;
           });
+        }
+
+        // Parse error
+        if (ast.type === 'Junk') {
+          return false;
         }
 
         var valueSupported = !ast.value || elementsSupported(ast.value.elements);
