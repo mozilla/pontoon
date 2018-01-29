@@ -186,7 +186,7 @@ var Pontoon = (function (my) {
         var elementValue = expression + ' ->';
         var variants = $(element).find('ul li');
         var hasTranslatedVariants = false;
-        var def = '';
+        var defaultMarker = '';
 
         variants.each(function(index) {
           var id = $(this).find('.id span:first').html();
@@ -194,11 +194,11 @@ var Pontoon = (function (my) {
 
           // TODO: UI should allow for explicitly selecting a default variant
           if (index === variants.length - 1) {
-            def = '*';
+            defaultMarker = '*';
           }
 
           if (id && val) {
-            elementValue += '\n  ' + def + '[' + id + '] ' + val;
+            elementValue += '\n  ' + defaultMarker + '[' + id + '] ' + val;
             hasTranslatedVariants = true;
           }
         });
