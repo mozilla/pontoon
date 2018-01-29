@@ -244,25 +244,8 @@ var Pontoon = (function (my) {
         $('#ftl-area .attributes ul:first').empty();
         $('#only-value').parents('li').hide();
 
-        // Simple string: only value
-        if (
-          (translationAST && self.isSimpleString(translationAST)) ||
-          (!translationAST && self.isSimpleString(entityAST))
-        ) {
-          value = '';
-
-          if (translationAST) {
-            value = self.serializePlaceables(translationAST.value.elements);
-          }
-
-          $('#only-value')
-            .val(value)
-            .parents('li')
-            .show();
-        }
-
         // Unsupported translation or unsuppported original: show source view
-        else if (
+        if (
           (translationAST && !self.isSupportedMessage(translationAST)) ||
           (!translationAST && !self.isSupportedMessage(entityAST))
         ) {
@@ -278,6 +261,24 @@ var Pontoon = (function (my) {
           Pontoon.updateCachedTranslation();
 
           return;
+        }
+
+
+        // Simple string: only value
+        else if (
+          (translationAST && self.isSimpleString(translationAST)) ||
+          (!translationAST && self.isSimpleString(entityAST))
+        ) {
+          value = '';
+
+          if (translationAST) {
+            value = self.serializePlaceables(translationAST.value.elements);
+          }
+
+          $('#only-value')
+            .val(value)
+            .parents('li')
+            .show();
         }
 
         // Value
@@ -596,21 +597,21 @@ var Pontoon = (function (my) {
         var value = '';
         var attributes = '';
 
-        // Simple string: only value
-        if (self.isSimpleString(ast)) {
-          value = '<li><p>' +
-            self.serializePlaceables(ast.value.elements, true) +
-          '</p></li>';
-        }
-
         // Unsupported string: render as source
-        else if (!self.isSupportedMessage(ast)) {
+        if (!self.isSupportedMessage(ast)) {
           ast.comment = null; // Remove comment
           value = '<li class="source">' +
             fluentSerializer.serializeEntry(ast) +
           '</li>';
 
           unsupported = true;
+        }
+
+        // Simple string: only value
+        else if (self.isSimpleString(ast)) {
+          value = '<li><p>' +
+            self.serializePlaceables(ast.value.elements, true) +
+          '</p></li>';
         }
 
         // Value
@@ -676,8 +677,13 @@ var Pontoon = (function (my) {
         var value = '';
         var attributes = '';
 
+        // Unsupported string
+        if (!this.isFTLEditorEnabled()) {
+          content = translation;
+        }
+
         // Simple string
-        if (!this.isComplexFTL()) {
+        else if (!this.isComplexFTL()) {
           value = $('#only-value').val();
 
           // Multiline strings: mark with indent
@@ -686,11 +692,6 @@ var Pontoon = (function (my) {
           }
 
           content += value;
-        }
-
-        // Unsupported string
-        else if (!this.isFTLEditorEnabled()) {
-          content = translation;
         }
 
         // Value
