@@ -38,7 +38,8 @@ table.table {
   width: 70px;
 }
 
-.table th.latest-activity {
+.table th.latest-activity,
+.table th.all-strings {
   width: 140px;
 }
 
