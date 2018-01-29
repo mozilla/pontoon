@@ -19,9 +19,8 @@ var Pontoon = (function (my) {
       case 'NamedArgument':
         return expression.name.name + ': ' + serializeExpression(expression.val);
       case 'CallExpression':
-        var args = [];
-        expression.args.forEach(function (arg) {
-          args.push(serializeExpression(arg));
+        var args = expression.args.map(function (arg) {
+          return serializeExpression(arg);
         });
         return expression.callee.name + '(' + args.join(', ') + ')';
     }
