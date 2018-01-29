@@ -236,9 +236,7 @@ var Pontoon = (function (my) {
         var translationAST = null;
         if (translation.pk) {
           translationAST = fluentParser.parseEntry(translation.string);
-          if (translationAST.attributes.length) {
-            attributesTree = translationAST.attributes;
-          }
+          attributesTree = translationAST.attributes;
         }
 
         // Reset default editor values
