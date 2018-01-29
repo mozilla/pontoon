@@ -246,8 +246,8 @@ var Pontoon = (function (my) {
 
         // Simple string: only value
         if (
-          self.isSimpleString(translationAST) ||
-          self.isSimpleString(entityAST)
+          (translationAST && self.isSimpleString(translationAST)) ||
+          (!translationAST && self.isSimpleString(entityAST))
         ) {
           value = '';
 
