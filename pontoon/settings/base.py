@@ -177,6 +177,7 @@ TEMPLATES = [
         'NAME': 'jinja2',
         'APP_DIRS': True,
         'OPTIONS': {
+            'environment': 'pontoon.settings.jinja2_setup.environment',
             'match_extension': '',
             'match_regex': r'^(?!(admin|registration|account|socialaccount)/).*\.(html|jinja|js)$',
             'context_processors': CONTEXT_PROCESSORS,
