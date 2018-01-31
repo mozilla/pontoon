@@ -446,9 +446,8 @@ var Pontoon = (function (my) {
 
         elements.forEach(function (item) {
           if (item.type === 'TextElement') {
-            // TODO: We shouldn't rely on markPlaceables in determining when to not render HTML.
             if (markPlaceables) {
-              translatedValue += Pontoon.doNotRender(item.value);
+              translatedValue += Pontoon.markXMLTags(item.value);
             }
             else {
               translatedValue += item.value;
