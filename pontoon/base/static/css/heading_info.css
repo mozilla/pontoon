@@ -49,10 +49,15 @@ ul {
 }
 
 #heading .details .value a {
-  color: #EBEBEB;
+  color: #FFFFFF;
 }
 
 #heading .details .value a:hover {
+  color: #7BC876;
+}
+
+#heading .details li:hover .value a {
+  text-decoration: underline;
   color: #7BC876;
 }
 
@@ -107,6 +112,15 @@ ul {
   position: relative;
   text-align: left;
   text-transform: uppercase;
+}
+
+#heading .legend li a {
+  color: #FFFFFF;
+}
+
+#heading .legend li:hover a {
+  text-decoration: underline;
+  color: #7BC876;
 }
 
 #heading .legend li.banner {
