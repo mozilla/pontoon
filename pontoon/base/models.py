@@ -2375,6 +2375,7 @@ class Translation(DirtyFieldsMixin, models.Model):
 
     class Meta:
         index_together = (
+            ('entity', 'user'),
             ('entity', 'locale', 'approved'),
             ('entity', 'locale', 'fuzzy'),
         )
