@@ -13,6 +13,8 @@ django-extensions==1.6.7 \
     --hash=sha256:ebdfc329207231f63b5ccb591407aadbc1a524af752e52690f0646eb7ff52943
 django-sslserver==0.19 \
     --hash=sha256:1363835229a0585f89c42f3beca836572f3f6babdc1508f13352aed84b0924b3
+dj.debug==0.0.2 \
+    --hash=sha256:0b7629bde97f1cce6077ac430537089f5a2552973004951cb3590e30fec9054a
 hashin==0.11.2 \
     --hash=sha256:aaf11abf155830b7c2b868bb6dbc5dfde49cd0b17a4c0dc1b8b67ca9f31ec490
 sqlparse==0.1.19 \
