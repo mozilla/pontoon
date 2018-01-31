@@ -148,6 +148,45 @@ var Pontoon = (function (my) {
     },
 
     /*
+     * Markup XML Tags
+     *
+     * Find any XML Tags in a string and mark them up, while making sure
+     * the rest of the text in a string is displayed not rendered.
+     */
+    markXMLTags: function (string) {
+      var self = this;
+
+      var markedString = '';
+      var startMarker = '<mark class="placeable" title="XML Tag">';
+      var endMarker = '</mark>';
+
+      var re = /(<[^(><.)]+>)/gi;
+      var results;
+      var previousIndex = 0;
+
+      function doNotRenderSubstring(start, end) {
+        return self.doNotRender(string.substring(start, end));
+      }
+
+      // Find successive matches
+      while ((results = re.exec(string)) !== null) {
+        markedString += (
+          // Substring between the previous and the current tag: do not render
+          doNotRenderSubstring(previousIndex, results.index) +
+
+          // Tag: do not render and wrap in markup
+          startMarker + doNotRenderSubstring(results.index, re.lastIndex) + endMarker
+        );
+        previousIndex = re.lastIndex;
+      }
+
+      // Substring between the last tag and the end of the string: do not render
+      markedString += doNotRenderSubstring(previousIndex, string.length);
+
+      return markedString;
+    },
+
+    /*
      * Markup placeables
      */
     markPlaceables: function (string) {
