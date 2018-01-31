@@ -836,6 +836,7 @@ class Locale(AggregatedStats):
                 .prefetch_related('groups')
                 .values('id', 'first_name', 'email', 'groups__pk')
                 .distinct()
+                .order_by('email')
             ),
             'groups__pk'
         )
@@ -849,6 +850,7 @@ class Locale(AggregatedStats):
                     .exclude(groups__projectlocales__pk=project_locale['id'])
                     .values('id', 'first_name', 'email')
                     .distinct()
+                    .order_by('email')
             )
 
         for project_locale in project_locales:
