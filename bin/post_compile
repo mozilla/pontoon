@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Install requirements-dev.txt on staging
+if [ "$DJANGO_STAGE" = True ]; then
+    echo "Installing dev requirements..."
+    pip install -r requirements-dev.txt
+fi
+
 # Compile static assets
 export PATH=/app/.heroku/node/bin:$PATH
 npm install .
