@@ -7,7 +7,7 @@
         label='<a class="contributors active" href="#">team contributors</a> &middot; <a class="all" href="#">all users</a>',
         description="Click on user's email address to move it to the group pointed to by the arrow.",
         index=index,
-        extra=contributors
+        extra=contributors_emails
     ) }}
 {% endmacro %}
 
@@ -18,7 +18,7 @@
         label='translators',
         description=description,
         index=index,
-        extra=contributors
+        extra=contributors_emails
     ) }}
 {% endmacro %}
 
@@ -28,7 +28,7 @@
         choices=managers,
         label='managers',
         description='Managers can change team permissions and edit other settings like team description.',
-        extra=contributors
+        extra=contributors_emails
     ) }}
 {% endmacro %}
 

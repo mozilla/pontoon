@@ -129,19 +129,26 @@ def ajax_permissions(request, locale):
             }
         )
 
-    managers = l.managers_group.user_set.all()
-    translators = l.translators_group.user_set.exclude(pk__in=managers).all()
-    all_users = User.objects.exclude(pk__in=managers).exclude(pk__in=translators).exclude(email='')
+    managers = l.managers_group.user_set.order_by('email')
+    translators = l.translators_group.user_set.exclude(pk__in=managers).order_by('email')
+    all_users = (
+        User.objects
+            .exclude(pk__in=managers | translators)
+            .exclude(email='')
+            .order_by('email')
+    )
 
-    contributors_qs = User.translators.with_translation_counts(None, Q(locale=l), None)
-    contributors = set(contributor.email for contributor in contributors_qs)
+    contributors_emails = set(
+        contributor.email
+        for contributor in User.translators.with_translation_counts(None, Q(locale=l), None)
+    )
 
     locale_projects = l.projects_permissions
 
     return render(request, 'teams/includes/permissions.html', {
         'locale': l,
         'all_users': all_users,
-        'contributors': contributors,
+        'contributors_emails': contributors_emails,
         'translators': translators,
         'managers': managers,
         'locale_projects': locale_projects,
