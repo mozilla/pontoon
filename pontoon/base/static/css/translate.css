@@ -16,11 +16,12 @@ body {
 
 #overlay img {
   position: absolute;
-  height: 90%;
-  top: 5%;
+  max-height: 90%;
+  top: 0;
   left: 0;
   right: 0;
-  margin: 0 auto;
+  bottom: 0;
+  margin: auto;
   max-width: 90%;
 }
 
