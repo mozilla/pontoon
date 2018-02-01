@@ -45,6 +45,7 @@ ul {
 }
 
 #heading .details .value {
+  color: #AAA;
   float: right;
 }
 
@@ -131,7 +132,7 @@ ul {
 }
 
 #heading .legend li span.value {
-  color: #EBEBEB;
+  color: #AAA;
   float: right;
 }
 
