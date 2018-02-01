@@ -57,10 +57,6 @@ ul {
   color: #7BC876;
 }
 
-#heading .details li:hover .value a {
-  color: #7BC876;
-}
-
 #heading .details .priority .value {
   margin-top: 6px;
 }
