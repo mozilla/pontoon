@@ -109,3 +109,64 @@ def test_ajax_permissions_project_locale_translators_order(
 
     # Check project_locale0 translators
     assert locale_projects[0][4] == sorted_project_locale0_translators
+
+
+@pytest.mark.django_db
+def test_users_permissions_for_ajax_permissions_view(
+    client,
+    locale0,
+    member0
+):
+    """
+    Check if anonymous users and users without permissions can't access Permissions Tab.
+    """
+
+    response = client.get('/{locale}/ajax/permissions/'.format(
+        locale=locale0.code
+    ))
+    assert response.status_code == 403
+    assert '<title>Forbidden page</title>' in response.content
+
+    # Check if users without permissions for the locale can get this tab.
+    response = member0.client.get('/{locale}/ajax/permissions/'.format(
+        locale=locale0.code
+    ))
+    assert response.status_code == 403
+    assert '<title>Forbidden page</title>' in response.content
+
+    locale0.managers_group.user_set.add(member0.user)
+
+    # Bump up permissions for user0 and check if the view is accessible.
+    response = member0.client.get('/{locale}/ajax/permissions/'.format(
+        locale=locale0.code
+    ))
+    assert response.status_code == 200
+    assert '<title>Forbidden page</title>' not in response.content
+
+    # Remove permissions for user0 and check if the view is not accessible.
+    locale0.managers_group.user_set.clear()
+
+    response = member0.client.get('/{locale}/ajax/permissions/'.format(
+        locale=locale0.code
+    ))
+    assert response.status_code == 403
+    assert '<title>Forbidden page</title>' in response.content
+
+    # All unauthorized attempts to POST data should be blocked
+    response = member0.client.post(
+        '/{locale}/ajax/permissions/'.format(
+            locale=locale0.code
+        ),
+        data={'smth': 'smth'}
+    )
+    assert response.status_code == 403
+    assert '<title>Forbidden page</title>' in response.content
+
+    response = client.post(
+        '/{locale}/ajax/permissions/'.format(
+            locale=locale0.code
+        ),
+        data={'smth': 'smth'}
+    )
+    assert response.status_code == 403
+    assert '<title>Forbidden page</title>' in response.content
