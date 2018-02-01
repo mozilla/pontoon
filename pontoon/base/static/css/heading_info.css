@@ -45,11 +45,12 @@ ul {
 }
 
 #heading .details .value {
+  color: #AAA;
   float: right;
 }
 
 #heading .details .value a {
-  color: #EBEBEB;
+  color: #FFFFFF;
 }
 
 #heading .details .value a:hover {
@@ -109,6 +110,14 @@ ul {
   text-transform: uppercase;
 }
 
+#heading .legend li a {
+  color: #FFFFFF;
+}
+
+#heading .legend li:hover a {
+  color: #7BC876;
+}
+
 #heading .legend li.banner {
   padding: 0;
 }
@@ -119,8 +128,16 @@ ul {
 }
 
 #heading .legend li span.value {
-  color: #EBEBEB;
+  color: #AAA;
   float: right;
+}
+
+#heading .legend li a span.value {
+  color: #FFFFFF;
+}
+
+#heading .legend li:hover a span.value {
+  color: #7BC876;
 }
 
 #heading .banner .title {
